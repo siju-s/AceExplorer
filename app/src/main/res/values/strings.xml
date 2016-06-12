@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">File Manager</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="nav_menu_internal_storage">Internal Storage</string>
+    <string name="nav_menu_root">Root</string>
+    <string name="nav_menu_ext_storage">External SD</string>
+    <string name="nav_header_storages">Storages</string>
+    <string name="nav_header_bookmarks">Bookmarks</string>
+    <string name="nav_header_collections">Collections</string>
+    <string name="nav_header_others">Others</string>
+    <string name="msg_free">free of</string>
+</resources>

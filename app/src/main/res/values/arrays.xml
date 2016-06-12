@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="expand_headers">
+        <item name="item1">@string/nav_header_storages</item>
+        <item name="item1">@string/nav_header_bookmarks</item>
+        <item name="item1">@string/nav_header_collections</item>
+        <item name="item1">@string/nav_header_others</item>
+    </array>
+</resources>
