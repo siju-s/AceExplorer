@@ -1,8 +1,11 @@
 package com.siju.filemanager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -12,7 +15,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.RelativeLayout;
 
+import com.siju.filemanager.filesystem.FileConstants;
 import com.siju.filemanager.group.StorageGroup;
 import com.siju.filemanager.model.SectionGroup;
 import com.siju.filemanager.model.SectionItems;
@@ -23,6 +28,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.siju.filemanager.group.StorageGroup.getInternalStorage;
+
 public class BaseActivity extends AppCompatActivity {
 
     ExpandableListAdapter expandableListAdapter;
@@ -32,6 +39,9 @@ public class BaseActivity extends AppCompatActivity {
     HashMap<String, List<String>> listDataChild;
     //    private ArrayList<SectionGroup> sectionGroupArrayList;
     ArrayList<SectionGroup> storageGroup;
+    public static final String ACTION_VIEW_FOLDER_LIST = "folder_list";
+    private DrawerLayout drawerLayout;
+    private RelativeLayout relativeLayoutDrawerPane;
 
 
     @Override
@@ -50,20 +60,14 @@ public class BaseActivity extends AppCompatActivity {
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        relativeLayoutDrawerPane = (RelativeLayout) findViewById(R.id.drawerPane);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.setDrawerListener(toggle);
         toggle.syncState();
         // get the listview
         expandableListView = (ExpandableListView) findViewById(R.id.expand_list_drawer);
-//
-//        DisplayMetrics metrics;
-//        int width;
-//        metrics = new DisplayMetrics();
-//        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-//        width = metrics.widthPixels;
-//        expListView.setIndicatorBoundsRelative(width - GetDipsFromPixel(50), width - GetDipsFromPixel(10));
 
         // preparing list data
         prepareListData();
@@ -75,15 +79,59 @@ public class BaseActivity extends AppCompatActivity {
         expandableListView.setAdapter(expandableListAdapter);
         for (int i = 0; i < expandableListAdapter.getGroupCount(); i++)
             expandableListView.expandGroup(i);
+        displayDefaultStorage();
 
 
     }
 
-    public int GetDipsFromPixel(float pixels) {
-        // Get the screen's density scale
-        final float scale = getResources().getDisplayMetrics().density;
-        // Convert the dps to pixels, based on density scale
-        return (int) (pixels * scale + 0.5f);
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        boolean intentHandled = createFragmentForIntent(intent);
+//        Log.d(TAG, "On onNewIntent");
+    }
+
+    /**
+     * Displaying fragment view for selected nav drawer list item
+     */
+    private void displayDefaultStorage() {
+        // update the main content by replacing fragments
+        // Fragment fragment = null;
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        String internalStoragePath = StorageGroup.getInternalStorage().getAbsolutePath();
+        Bundle args = new Bundle();
+        args.putString(FileConstants.KEY_PATH, internalStoragePath);
+
+        TabsFragment tabsFragment = new TabsFragment();
+        tabsFragment.setArguments(args);
+        ft.replace(R.id.frame_container, tabsFragment);
+//        ft.addToBackStack(null);
+        ft.commitAllowingStateLoss();
+        drawerLayout.closeDrawer(relativeLayoutDrawerPane);
+
+    }
+
+
+    public boolean createFragmentForIntent(Intent intent) {
+//        Log.d(TAG, "createFragmentForIntent");
+        if (intent.getAction() != null) {
+            final String action = intent.getAction();
+            Fragment targetFragment = null;
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+            if (action.equals(ACTION_VIEW_FOLDER_LIST)) {
+                targetFragment = new TabsFragment();
+            }
+            if (targetFragment != null) {
+                targetFragment.setArguments(intent.getExtras());
+                transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                transaction.replace(R.id.frame_container, targetFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+            return true;
+        }
+        return false;
     }
 
     /*
@@ -100,10 +148,10 @@ public class BaseActivity extends AppCompatActivity {
         StorageGroup storageGroup1 = new StorageGroup(this);
         ArrayList<SectionItems> storageChild = new ArrayList<>();
         File root = storageGroup1.getRootDirectory();
-        File internalSD = storageGroup1.getInternalStorage();
+        File internalSD = getInternalStorage();
         File extSD = storageGroup1.getExternalStorage();
         String freePlaceholder = " " + getResources().getString(R.string.msg_free) + " ";
-        String rootSpace = storageGroup1.getSpaceLeft(root) +  freePlaceholder +  storageGroup1.getTotalSpace(root);
+        String rootSpace = storageGroup1.getSpaceLeft(root) + freePlaceholder + storageGroup1.getTotalSpace(root);
         String internalSDSpace = storageGroup1.getSpaceLeft(internalSD) + freePlaceholder + storageGroup1.getTotalSpace(internalSD);
 
         storageChild.add(new SectionItems(StorageGroup.STORAGE_ROOT, rootSpace, R.drawable.ic_root_black));

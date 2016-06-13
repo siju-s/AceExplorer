@@ -8,6 +8,7 @@ import android.text.format.Formatter;
 import com.siju.filemanager.R;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 
 /**
  * Created by Siju on 12-06-2016.
@@ -33,16 +34,16 @@ public class StorageGroup {
     }
 
 
-    public File getRootDirectory() {
+    public static File getRootDirectory() {
         return Environment.getRootDirectory();
     }
 
-    public File getInternalStorage() {
+    public static File getInternalStorage() {
         return Environment.getExternalStorageDirectory();
     }
 
 
-    public File getExternalStorage() {
+    public static File getExternalStorage() {
 
         File internalStorage = getInternalStorage();
         File parent = internalStorage.getParentFile().getParentFile();
@@ -74,6 +75,13 @@ public class StorageGroup {
     public String getTotalSpace(File path) {
         String totalSpace = Formatter.formatFileSize(mContext, path.getTotalSpace());
         return totalSpace;
+    }
+
+    public static String convertDate(long dateInMs)
+    {
+        SimpleDateFormat df2 = new SimpleDateFormat("MMM dd, yyyy hh:mm");
+        String dateText = df2.format(dateInMs);
+        return dateText;
     }
 
 

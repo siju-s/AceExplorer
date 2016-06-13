@@ -13,4 +13,11 @@
     <string name="nav_header_collections">Collections</string>
     <string name="nav_header_others">Others</string>
     <string name="msg_free">free of</string>
+
+    <plurals name="number_of_files">
+        <item quantity="zero">Empty</item>
+        <item quantity="one">%d file</item>
+        <item quantity="other">%d files</item>
+
+    </plurals>
 </resources>

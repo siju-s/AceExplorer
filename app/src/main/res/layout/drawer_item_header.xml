@@ -2,23 +2,24 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:padding="10dp">
+    android:layout_marginTop="@dimen/drawer_item_margin"
+    android:orientation="horizontal">
 
 
     <TextView
         android:id="@+id/textDrawerHeaders"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="14sp"
+        android:layout_marginLeft="@dimen/drawer_item_margin"
+        android:layout_marginStart="@dimen/drawer_item_margin"
         android:text="SIJU"
-        />
+        android:textSize="14sp" />
 
     <ImageView
         android:id="@+id/imageExpand"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_expand_more_black"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_expand_more_black" />
 
 </RelativeLayout>
