@@ -10,6 +10,8 @@ import com.siju.filemanager.group.StorageGroup;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  * Created by Siju on 13-06-2016.
@@ -20,6 +22,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private ArrayList<FileInfo> fileInfoArrayList;
     private String mPath;
     private Context mContext;
+    private boolean showHidden = false;
 
     public FileListLoader(Context context, String path) {
         super(context);
@@ -45,6 +48,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
         if (file.exists()) {
             File[] listFiles = file.listFiles();
+            Arrays.sort(listFiles, comparatorByName);
 
             if (listFiles != null) {
                 for (File file1 : listFiles) {
@@ -52,10 +56,19 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                     String fileName = file1.getName();
                     String filePath = file1.getAbsolutePath();
                     String noOfFilesOrSize;
+
+                    // Dont show hidden files by default
+                    if (file1.getName().startsWith(".") && !showHidden) {
+                        continue;
+                    }
                     if (file1.isDirectory()) {
                         isDirectory = true;
                         int childFileListSize = file1.list().length;
-                        noOfFilesOrSize = mContext.getResources().getQuantityString(R.plurals.number_of_files, childFileListSize, childFileListSize);
+                        if (childFileListSize == 0) {
+                            noOfFilesOrSize = mContext.getResources().getString(R.string.empty);
+                        } else {
+                            noOfFilesOrSize = mContext.getResources().getQuantityString(R.plurals.number_of_files, childFileListSize, childFileListSize);
+                        }
                     } else {
                         long size = file1.length();
                         noOfFilesOrSize = Formatter.formatFileSize(mContext, size);
@@ -74,4 +87,34 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             return null;
         }
     }
+
+    Comparator<? super File> comparatorByName = new Comparator<File>() {
+
+        public int compare(File file1, File file2) {
+            // sort folders first
+            if ((file1.isDirectory()) && (!file2.isDirectory()))
+                return -1;
+            if ((!file1.isDirectory()) && (file2.isDirectory()))
+                return 1;
+
+            // here both are folders or both are files : sort alpha
+            return file1.getName().toLowerCase()
+                    .compareTo(file2.getName().toLowerCase());
+        }
+
+    };
+
+//    private Comparator<? super String> getSortMode(int sortmode) {
+//
+//        switch (sortmode) {
+//            case 1:
+//
+//                return name;
+//
+//            default:
+//                return name;
+//
+//        }
+//
+//    }
 }

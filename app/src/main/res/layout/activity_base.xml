@@ -5,27 +5,12 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
     <include
         layout="@layout/app_bar_base"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
-    <!--<android.support.design.widget.NavigationView-->
-    <!--android:id="@+id/nav_view"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:layout_gravity="start"-->
-    <!--android:fitsSystemWindows="true"-->
-    <!--app:headerLayout="@layout/nav_header_base"-->
-    <!--app:menu="@menu/activity_base_drawer" >-->
-
-    <!--<include layout="@layout/nav_drawer_counter"-->
-
-    <!--/>-->
-    <!--</android.support.design.widget.NavigationView>-->
 
     <RelativeLayout
         android:id="@+id/drawerPane"
@@ -38,7 +23,7 @@
             android:id="@+id/header"
             android:layout_width="match_parent"
             android:layout_height="120dp"
-            android:background="@drawable/nav_drawer_bg">
+            android:background="@drawable/ic_drawer_bg">
 
             <TextView
                 android:id="@+id/name"
@@ -50,7 +35,7 @@
                 android:layout_marginStart="@dimen/drawer_item_margin"
                 android:text="@string/app_name"
                 android:textColor="#ffffff"
-                android:textSize="14sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
         </RelativeLayout>
 

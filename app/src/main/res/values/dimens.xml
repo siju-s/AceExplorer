@@ -10,4 +10,6 @@
     <dimen name="drawer_item_margin">16dp</dimen>
     <dimen name="drawer_item_row_width">48dp</dimen>
     <dimen name="drawer_item_text_margin">31dp</dimen>
+    <dimen name="folder_icon">50dp</dimen>
+    <dimen name="toolbar_top_padding">30dp</dimen>
 </resources>

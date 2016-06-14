@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/drawer_item_row_width"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="5dp"
     android:layout_marginEnd="@dimen/drawer_item_margin"
     android:layout_marginRight="@dimen/drawer_item_margin"
+    android:layout_marginTop="5dp"
     android:orientation="vertical">
 
     <ImageView
@@ -22,7 +24,9 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/drawer_item_text_margin"
         android:layout_marginStart="@dimen/drawer_item_text_margin"
-        android:layout_toRightOf="@id/image_drawer_item" />
+        android:layout_marginTop="12dp"
+        android:layout_toRightOf="@id/image_drawer_item"
+        android:text="Root" />
 
     <TextView
         android:id="@+id/textSecondLine"
@@ -31,7 +35,9 @@
         android:layout_below="@id/textFirstLine"
         android:layout_marginLeft="@dimen/drawer_item_text_margin"
         android:layout_marginStart="@dimen/drawer_item_text_margin"
-        android:layout_toRightOf="@id/image_drawer_item" />
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@id/image_drawer_item"
+        android:text="Free Freee" />
 
 
 </RelativeLayout>

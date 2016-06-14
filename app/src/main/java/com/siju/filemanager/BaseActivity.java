@@ -75,7 +75,7 @@ public class BaseActivity extends AppCompatActivity {
         expandableListAdapter = new ExpandableListAdapter(this, storageGroup);
 
 
-        // setting list adapter
+        // setting list mAdapter
         expandableListView.setAdapter(expandableListAdapter);
         for (int i = 0; i < expandableListAdapter.getGroupCount(); i++)
             expandableListView.expandGroup(i);

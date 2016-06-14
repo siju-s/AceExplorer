@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.siju.filemanager.filesystem.FileConstants;
 import com.siju.filemanager.filesystem.FileListFragment;
@@ -23,6 +25,9 @@ public class TabsFragment extends Fragment {
 
     ViewPager mViewPager;
     View rootView;
+    TabsPagerAdapter mAdapter;
+    String internalStorage;
+    TabLayout mTabLayout;
 
     @Override
     public View onCreateView(
@@ -42,19 +47,72 @@ public class TabsFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        TabsPagerAdapter adapter;
-        TabLayout tabLayout;
+
+
         mViewPager = (ViewPager) rootView.findViewById(R.id.pager);
-        tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
-        adapter = new TabsPagerAdapter(getChildFragmentManager(), getActivity());
-        String internalStorage = getResources().getString(R.string.nav_menu_internal_storage);
+        mTabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
+        mAdapter = new TabsPagerAdapter(getChildFragmentManager(), getActivity());
+        internalStorage = getResources().getString(R.string.nav_menu_internal_storage);
         FileListFragment fileListFragment = new FileListFragment();
         Bundle bundle = getArguments();
         String path = bundle.getString(FileConstants.KEY_PATH);
         fileListFragment.setArguments(bundle);
-        adapter.addFragment(fileListFragment, internalStorage);
-        mViewPager.setAdapter(adapter);
-        tabLayout.setupWithViewPager(mViewPager);
+        mAdapter.addFragment(fileListFragment, internalStorage);
+        mViewPager.setAdapter(mAdapter);
+        mTabLayout.setupWithViewPager(mViewPager);
+        LinearLayout tabStrip = (LinearLayout) mTabLayout.getChildAt(0);
+        for (int i = 0; i < tabStrip.getChildCount(); i++) {
+            final int finalI = i;
+            tabStrip.getChildAt(i).setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Toast.makeText(getContext(), "Long click --" + finalI, Toast.LENGTH_LONG);
+                    return true;
+                }
+            });
+        }
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+                if (state == ViewPager.SCROLL_STATE_DRAGGING) {
+                    if (mAdapter.getCount() == 1) {
+                        addView();
+                    }
+                }
+
+            }
+        });
+    }
+
+    private void addView() {
+        FileListFragment fileListFragment = new FileListFragment();
+        Bundle bundle = getArguments();
+//        String path = bundle.getString(FileConstants.KEY_PATH);
+        fileListFragment.setArguments(bundle);
+        mAdapter.addFragment(fileListFragment, internalStorage);
+        mAdapter.notifyDataSetChanged();
+        LinearLayout tabStrip = (LinearLayout) mTabLayout.getChildAt(0);
+        for (int i = 0; i < tabStrip.getChildCount(); i++) {
+            final int finalI = i;
+            tabStrip.getChildAt(i).setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Toast.makeText(getContext(), "Long click --" + finalI, Toast.LENGTH_LONG);
+                    return true;
+                }
+            });
+        }
     }
 
 //    @Override
@@ -76,4 +134,6 @@ public class TabsFragment extends Fragment {
             }
         }
     }
+
+
 }

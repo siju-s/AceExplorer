@@ -79,7 +79,7 @@ public class StorageGroup {
 
     public static String convertDate(long dateInMs)
     {
-        SimpleDateFormat df2 = new SimpleDateFormat("MMM dd, yyyy hh:mm");
+        SimpleDateFormat df2 = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
         String dateText = df2.format(dateInMs);
         return dateText;
     }

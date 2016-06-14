@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="@dimen/drawer_item_margin"
     android:orientation="horizontal">
 
 
@@ -12,6 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/drawer_item_margin"
         android:layout_marginStart="@dimen/drawer_item_margin"
+        android:layout_marginTop="@dimen/drawer_item_margin"
         android:text="SIJU"
         android:textSize="14sp" />
 
@@ -20,6 +20,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:layout_marginEnd="@dimen/drawer_item_margin"
+        android:layout_marginRight="@dimen/drawer_item_margin"
+        android:layout_marginTop="@dimen/drawer_item_margin"
         android:src="@drawable/ic_expand_more_black" />
 
 </RelativeLayout>
