@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     private Context mContext;
-//    private List<String> _listDataHeader; // header titles
+    //    private List<String> _listDataHeader; // header titles
     // child data in format of header title, child title
 //    private HashMap<String, List<String>> _listDataChild;
     private ArrayList<SectionGroup> groups;
@@ -76,8 +76,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         childViewHolder.image.setBackgroundResource(child.getmImage());
         childViewHolder.textFirstLine.setText(child.getmFirstLine());
-        childViewHolder.textSecondLine.setText(child.getmSecondLine());
-
+        if (groupPosition == 0) {
+            childViewHolder.textSecondLine.setText(child.getmSecondLine());
+        }
         return view;
     }
 

@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
     private final int LOADER_ID = 1000;
     private FileListAdapter fileListAdapter;
     private ArrayList<FileInfo> fileInfoArrayList;
+    private boolean isDualMode;
 
     @Override
     public View onCreateView(
@@ -50,7 +52,11 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
         if (getArguments() != null && getArguments().getString(FileConstants.KEY_PATH) != null) {
             filePath = getArguments().getString(FileConstants.KEY_PATH);
             fileName = getArguments().getString(FileConstants.KEY_FILENAME);
+            isDualMode = getArguments().getBoolean(FileConstants.KEY_DUAL_MODE, false);
         }
+
+        Log.d("TAG", "on onActivityCreated--Fragment"+isDualMode);
+
 //        else {
 //            filePath = getArguments().getString(FileConstants.KEY_PATH);
 //        }
@@ -68,7 +74,12 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                 Bundle bundle = new Bundle();
                 bundle.putString(FileConstants.KEY_PATH, fileInfoArrayList.get(position).getFilePath());
                 Intent intent = new Intent(getActivity(), BaseActivity.class);
-                intent.setAction(BaseActivity.ACTION_VIEW_FOLDER_LIST);
+                if (!isDualMode) {
+                    intent.setAction(BaseActivity.ACTION_VIEW_FOLDER_LIST);
+                } else {
+                    intent.setAction(BaseActivity.ACTION_DUAL_VIEW_FOLDER_LIST);
+                }
+
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
@@ -94,6 +105,13 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoaderReset(Loader<ArrayList<FileInfo>> loader) {
+
+    }
+
+    @Override
+    public void onDestroy() {
+//        Log.d("TAG", "on onDestroy--Fragment");
+        super.onDestroy();
 
     }
 }

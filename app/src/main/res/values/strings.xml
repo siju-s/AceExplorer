@@ -20,4 +20,5 @@
         <item quantity="other">%d files</item>
 
     </plurals>
+    <string name="downloads">Downloads</string>
 </resources>

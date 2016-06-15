@@ -9,12 +9,22 @@ public class SectionItems {
     private String mFirstLine;
     private String mSecondLine;
     private int mImage;
+    private String path;
 
 
-    public SectionItems(String mFirstLine, String mSecondLine, int mImage) {
+    public SectionItems(String mFirstLine, String mSecondLine, int mImage,String path) {
         this.mFirstLine = mFirstLine;
         this.mSecondLine = mSecondLine;
         this.mImage = mImage;
+        this.path = path;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public int getmImage() {

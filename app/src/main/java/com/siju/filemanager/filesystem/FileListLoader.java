@@ -6,7 +6,6 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.text.format.Formatter;
 
 import com.siju.filemanager.R;
-import com.siju.filemanager.group.StorageGroup;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -74,7 +73,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                         noOfFilesOrSize = Formatter.formatFileSize(mContext, size);
                     }
                     long date = file1.lastModified();
-                    String fileModifiedDate = StorageGroup.convertDate(date);
+                    String fileModifiedDate = FileUtils.convertDate(date);
                     FileInfo fileInfo = new FileInfo(fileName, filePath, fileModifiedDate, noOfFilesOrSize, isDirectory);
                     fileInfoArrayList.add(fileInfo);
 
