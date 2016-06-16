@@ -55,7 +55,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
             isDualMode = getArguments().getBoolean(FileConstants.KEY_DUAL_MODE, false);
         }
 
-        Log.d("TAG", "on onActivityCreated--Fragment"+isDualMode);
+        Log.d("TAG", "on onActivityCreated--Fragment" + isDualMode);
 
 //        else {
 //            filePath = getArguments().getString(FileConstants.KEY_PATH);
@@ -72,7 +72,8 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Bundle bundle = new Bundle();
-                bundle.putString(FileConstants.KEY_PATH, fileInfoArrayList.get(position).getFilePath());
+                String path = fileInfoArrayList.get(position).getFilePath();
+                bundle.putString(FileConstants.KEY_PATH, path);
                 Intent intent = new Intent(getActivity(), BaseActivity.class);
                 if (!isDualMode) {
                     intent.setAction(BaseActivity.ACTION_VIEW_FOLDER_LIST);

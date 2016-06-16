@@ -2,10 +2,12 @@ package com.siju.filemanager;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -13,11 +15,16 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.siju.filemanager.common.Logger;
@@ -33,6 +40,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
+import static com.siju.filemanager.filesystem.FileUtils.getInternalStorage;
 
 
 public class BaseActivity extends AppCompatActivity {
@@ -51,6 +60,10 @@ public class BaseActivity extends AppCompatActivity {
     private String mCurrentDir = FileUtils.getInternalStorage().getAbsolutePath();
     public String STORAGE_ROOT, STORAGE_INTERNAL, STORAGE_EXTERNAL, DOWNLOADS;
     private boolean mIsDualMode;
+    private LinearLayout navDirectory;
+    private String mStartingDir = FileUtils.getInternalStorage().getAbsolutePath();
+    private HorizontalScrollView scrollNavigation;
+    private int navigationLevelSinglePane = 0;
 
 
     @Override
@@ -67,7 +80,8 @@ public class BaseActivity extends AppCompatActivity {
         Logger.log("TAG", "on create--Activity");
         prepareListData();
         setListAdapter();
-        displayView();
+        setNavDirectory();
+        displayView(mCurrentDir);
     }
 
     private void checkScreenOrientation() {
@@ -97,6 +111,8 @@ public class BaseActivity extends AppCompatActivity {
         toggle.syncState();
         // get the listview
         expandableListView = (ExpandableListView) findViewById(R.id.expand_list_drawer);
+        navDirectory = (LinearLayout) findViewById(R.id.navButtons);
+        scrollNavigation = (HorizontalScrollView) findViewById(R.id.scrollNavigation);
 
     }
 
@@ -124,7 +140,7 @@ public class BaseActivity extends AppCompatActivity {
     private void initializeStorageGroup() {
         ArrayList<SectionItems> storageGroupChild = new ArrayList<>();
         File root = FileUtils.getRootDirectory();
-        File internalSD = FileUtils.getInternalStorage();
+        File internalSD = getInternalStorage();
         File extSD = FileUtils.getExternalStorage();
         storageGroupChild.add(new SectionItems(STORAGE_ROOT, storageSpace(root), R.drawable.ic_root_black, FileUtils.getAbsolutePath(root)));
         storageGroupChild.add(new SectionItems(STORAGE_INTERNAL, storageSpace(internalSD), R.drawable.ic_storage_black, FileUtils.getAbsolutePath(internalSD)));
@@ -168,36 +184,138 @@ public class BaseActivity extends AppCompatActivity {
         switch (groupPos) {
             case 0:
             case 1:
-                mCurrentDir = storageGroup.get(groupPos).getmChildItems().get(childPos).getPath();
-                displayView();
+                mCurrentDir = mStartingDir = storageGroup.get(groupPos).getmChildItems().get(childPos).getPath();
+                setNavDirectory();
+                displayView(mCurrentDir);
                 break;
 
         }
 
     }
 
+    private void setNavDirectory() {
+        String[] parts = mCurrentDir.split("/");
+
+        navDirectory.removeAllViews();
+        navigationLevelSinglePane = 0;
+        int WRAP_CONTENT = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int MATCH_PARENT = LinearLayout.LayoutParams.MATCH_PARENT;
+
+        String dir = "";
+        for (int i = 1; i < parts.length; i++) {
+            dir += "/" + parts[i];
+
+            if (!dir.contains(mStartingDir)) {
+                continue;
+            }
+
+            if (dir.equals(FileUtils.getInternalStorage().getAbsolutePath())) {
+                createNavButton(STORAGE_INTERNAL, dir);
+            } else if (dir.equals("/system")) {
+                createNavButton(STORAGE_ROOT, dir);
+            } else if (FileUtils.getExternalStorage() != null && dir.equals(FileUtils.getExternalStorage().getAbsolutePath())) {
+                createNavButton(STORAGE_EXTERNAL, dir);
+            } else {
+                ImageView navArrow = new ImageView(this);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(MATCH_PARENT,
+                        WRAP_CONTENT);
+                layoutParams.gravity = Gravity.CENTER;
+                layoutParams.weight = 1.0f;
+                navArrow.setLayoutParams(layoutParams);
+                navArrow.setBackgroundResource(R.drawable.ic_more_white);
+                navDirectory.addView(navArrow);
+                createNavButton(parts[i], dir);
+
+                scrollNavigation.postDelayed(new Runnable() {
+                    public void run() {
+                        HorizontalScrollView hv = (HorizontalScrollView) findViewById(R.id.scrollNavigation);
+                        hv.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
+                    }
+                }, 100L);
+            }
+        }
+
+    }
+
+    private void createNavButton(String text, final String dir) {
+        int WRAP_CONTENT = LinearLayout.LayoutParams.WRAP_CONTENT;
+        final Button button = new Button(this);
+        button.setLayoutParams(new LinearLayout.LayoutParams(WRAP_CONTENT,
+                WRAP_CONTENT));
+        button.setText(text);
+        if (Build.VERSION.SDK_INT < 23) {
+            button.setTextAppearance(this, R.style.NavigationButton);
+        } else {
+            button.setTextAppearance(R.style.NavigationButton);
+        }
+
+        button.setBackgroundResource(
+                android.R.color.transparent);
+        button.setTag(++navigationLevelSinglePane);
+        Log.d("TAG", "Button tag=" + navigationLevelSinglePane);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int level = (int) view.getTag();
+                Log.d("TAG", "Button tag click=" + level);
+                boolean isUpNavigation = checkIfUpNavigation(level);
+                if (isUpNavigation) {
+                    removeFragments(level);
+                } else {
+                    // Check If user tries to load the same directory
+                    if (!mCurrentDir.equals(dir)) {
+                        mCurrentDir = dir;
+                        displayView(dir); // TODO Handle root case by passing /
+                    }
+                }
+            }
+        });
+        navDirectory.addView(button);
+    }
+
+
     /**
-     * Displaying fragment view for default case (Internal storage)
+     *
      */
-    private void displayView() {
+    private void displayView(String directory) {
         // update the main content by replacing fragments
         // Fragment fragment = null;
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Bundle args = new Bundle();
-        args.putString(FileConstants.KEY_PATH, mCurrentDir);
+        args.putString(FileConstants.KEY_PATH, directory);
         if (mIsDualMode) {
             args.putBoolean(FileConstants.KEY_DUAL_MODE, true);
             FileListDualFragment fileListDualFragment = new FileListDualFragment();
             fileListDualFragment.setArguments(args);
-            ft.replace(R.id.frame_container_dual, fileListDualFragment);
+            ft.replace(R.id.frame_container_dual, fileListDualFragment, directory);
         } else {
             FileListFragment fileListFragment = new FileListFragment();
             fileListFragment.setArguments(args);
-            ft.replace(R.id.frame_container, fileListFragment);
+            ft.replace(R.id.frame_container, fileListFragment, directory);
         }
-//        ft.addToBackStack(null);
+
+        ft.addToBackStack(null);
         ft.commitAllowingStateLoss();
         drawerLayout.closeDrawer(relativeLayoutDrawerPane);
+    }
+
+    private void removeFragments(int level) {
+
+        int fragCount = getSupportFragmentManager().getBackStackEntryCount();
+        for (int i = fragCount; i > level; i--) {
+            getSupportFragmentManager().popBackStack();
+        }
+
+
+
+    }
+
+    private boolean checkIfUpNavigation(int level) {
+        if (getSupportFragmentManager().getBackStackEntryCount() > level) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -207,16 +325,19 @@ public class BaseActivity extends AppCompatActivity {
             final String action = intent.getAction();
             Fragment targetFragment = null;
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            mCurrentDir = intent.getStringExtra(FileConstants.KEY_PATH);
 
             if (action.equals(ACTION_VIEW_FOLDER_LIST)) {
                 targetFragment = new FileListFragment();
                 intent.putExtra(FileConstants.KEY_DUAL_MODE, false);
-                transaction.replace(R.id.frame_container, targetFragment);
+                transaction.replace(R.id.frame_container, targetFragment, mCurrentDir);
             } else if (action.equals(ACTION_DUAL_VIEW_FOLDER_LIST)) {
                 targetFragment = new FileListDualFragment();
                 intent.putExtra(FileConstants.KEY_DUAL_MODE, true);
-                transaction.replace(R.id.frame_container_dual, targetFragment);
+                transaction.replace(R.id.frame_container_dual, targetFragment, mCurrentDir);
             }
+
+            setNavDirectory();
             if (targetFragment != null) {
                 targetFragment.setArguments(intent.getExtras());
                 transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
@@ -231,12 +352,31 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        int count = fragmentManager.getBackStackEntryCount();
+        Log.d("TAG", "Onbackpress--Frag count=" + count);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (navigationLevelSinglePane != 0)
+            navigationLevelSinglePane--;
+
+        if (count == 1) {
+            finish();
         } else {
+            scrollNavigation.postDelayed(new Runnable() {
+                public void run() {
+                    HorizontalScrollView hv = (HorizontalScrollView) findViewById(R.id.scrollNavigation);
+                    hv.fullScroll(HorizontalScrollView.FOCUS_LEFT);
+                }
+            }, 100L);
             super.onBackPressed();
         }
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        }
+        /*else {
+            super.onBackPressed();
+
+        }*/
     }
 
     @Override
@@ -269,7 +409,7 @@ public class BaseActivity extends AppCompatActivity {
             FrameLayout frameLayout = (FrameLayout) findViewById(R.id.frame_container_dual);
             frameLayout.setVisibility(View.VISIBLE);
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            String internalStoragePath = FileUtils.getInternalStorage().getAbsolutePath();
+            String internalStoragePath = getInternalStorage().getAbsolutePath();
             Bundle args = new Bundle();
             args.putString(FileConstants.KEY_PATH, internalStoragePath);
             args.putBoolean(FileConstants.KEY_DUAL_MODE, true);

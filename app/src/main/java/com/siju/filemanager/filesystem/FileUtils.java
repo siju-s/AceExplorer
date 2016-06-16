@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat;
 
 public class FileUtils {
 
-
+    private static String mCurrentDirectory;
     public static File getRootDirectory() {
         return Environment.getRootDirectory();
     }
@@ -40,6 +40,16 @@ public class FileUtils {
     public static String getTotalSpace(Context context, File path) {
         String totalSpace = Formatter.formatFileSize(context, path.getTotalSpace());
         return totalSpace;
+    }
+
+    public static String getCurrentDirectory()
+    {
+        return mCurrentDirectory;
+    }
+
+    public static void setCurrentDirectory(String path)
+    {
+        mCurrentDirectory = path;
     }
 
 
