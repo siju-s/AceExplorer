@@ -4,4 +4,7 @@
     <color name="colorPrimaryDark">#800080</color>
     <color name="colorAccent">#FF4081</color>
     <color name="navDrawerBg">#fafafa</color>
+    <color name="navButtons">#ffffff</color>
+    <color name="navButtonsInactive">#33ffffff</color>  <!--20% transparent -->
+
 </resources>

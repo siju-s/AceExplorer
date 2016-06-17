@@ -27,7 +27,7 @@
         <item name="android:textSize">15sp</item>
         <item name="android:singleLine">true</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/navDrawerBg</item>
+        <item name="android:textColor">@color/navButtons</item>
 
     </style>
 

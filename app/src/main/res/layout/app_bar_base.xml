@@ -19,32 +19,73 @@
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-        <HorizontalScrollView
-            android:id="@+id/scrollNavigation"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/nav_dir_height">
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <HorizontalScrollView
+                android:id="@+id/scrollNavigation"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/nav_dir_height"
+                android:layout_weight="0.5"
+                android:background="@android:color/holo_green_dark"
+                android:scrollbars="none">
 
 
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="7dp"
-                android:background="@android:color/transparent" >
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="7dp"
+                    android:background="@android:color/transparent">
 
-            <LinearLayout
-                android:id="@+id/navButtons"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+                    <LinearLayout
+                        android:id="@+id/navButtons"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
 
-                <!--<Button-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:text="Intertnal"/>-->
-            </LinearLayout>
-            </FrameLayout>
+                        <!--<Button-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="match_parent"-->
+                        <!--android:text="SIJU" />-->
 
-        </HorizontalScrollView>
+                    </LinearLayout>
+                </FrameLayout>
+
+            </HorizontalScrollView>
+
+            <HorizontalScrollView
+                android:id="@+id/scrollNavigationDualPane"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/nav_dir_height"
+                android:layout_weight="0.5"
+                android:background="@android:color/holo_red_dark"
+                android:scrollbars="none"
+                android:visibility="visible">
+
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="7dp"
+                    android:background="@android:color/transparent">
+
+                    <LinearLayout
+                        android:id="@+id/navButtonsDualPane"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <!--<Button-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="match_parent"-->
+                        <!--android:text="SIJU2222" />-->
+                    </LinearLayout>
+                </FrameLayout>
+
+            </HorizontalScrollView>
+        </LinearLayout>
 
     </android.support.design.widget.AppBarLayout>
 

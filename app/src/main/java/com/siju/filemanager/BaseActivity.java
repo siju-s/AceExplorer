@@ -58,12 +58,18 @@ public class BaseActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private RelativeLayout relativeLayoutDrawerPane;
     private String mCurrentDir = FileUtils.getInternalStorage().getAbsolutePath();
+    private String mCurrentDirDualPane = FileUtils.getInternalStorage().getAbsolutePath();
     public String STORAGE_ROOT, STORAGE_INTERNAL, STORAGE_EXTERNAL, DOWNLOADS;
     private boolean mIsDualMode;
     private LinearLayout navDirectory;
     private String mStartingDir = FileUtils.getInternalStorage().getAbsolutePath();
-    private HorizontalScrollView scrollNavigation;
+    private HorizontalScrollView scrollNavigation,scrollNavigationDualPane;
     private int navigationLevelSinglePane = 0;
+    private int navigationLevelDualPane = 0;
+    private String mStartingDirDualPane = FileUtils.getInternalStorage().getAbsolutePath();
+    private LinearLayout navDirectoryDualPane;
+
+
 
 
     @Override
@@ -121,7 +127,7 @@ public class BaseActivity extends AppCompatActivity {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 Log.d("TAG", "Group pos-->" + groupPosition + "CHILD POS-->" + childPosition);
-                displayView(groupPosition, childPosition);
+                displaySelectedGroup(groupPosition, childPosition);
                 return false;
             }
         });
@@ -179,14 +185,17 @@ public class BaseActivity extends AppCompatActivity {
 //        Log.d(TAG, "On onNewIntent");
     }
 
-    private void displayView(int groupPos, int childPos) {
+    private void displaySelectedGroup(int groupPos, int childPos) {
 
         switch (groupPos) {
             case 0:
             case 1:
-                mCurrentDir = mStartingDir = storageGroup.get(groupPos).getmChildItems().get(childPos).getPath();
-                setNavDirectory();
-                displayView(mCurrentDir);
+                mStartingDir = storageGroup.get(groupPos).getmChildItems().get(childPos).getPath();
+                if (!mCurrentDir.equals(mStartingDir)) {
+                    mCurrentDir = mStartingDir;
+                    setNavDirectory();
+                    displayView(mCurrentDir);
+                }
                 break;
 
         }
@@ -195,6 +204,7 @@ public class BaseActivity extends AppCompatActivity {
 
     private void setNavDirectory() {
         String[] parts = mCurrentDir.split("/");
+
 
         navDirectory.removeAllViews();
         navigationLevelSinglePane = 0;
@@ -237,6 +247,53 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
+    private void setNavDirectoryDualPane() {
+        String[] parts = mCurrentDirDualPane.split("/");
+
+
+        navDirectoryDualPane.removeAllViews();
+        navigationLevelDualPane = 0;
+        int WRAP_CONTENT = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int MATCH_PARENT = LinearLayout.LayoutParams.MATCH_PARENT;
+
+        String dir = "";
+        for (int i = 1; i < parts.length; i++) {
+            dir += "/" + parts[i];
+
+            if (!dir.contains(mStartingDirDualPane)) {
+                continue;
+            }
+
+            if (dir.equals(FileUtils.getInternalStorage().getAbsolutePath())) {
+                createNavButton(STORAGE_INTERNAL, dir);
+            } else if (dir.equals("/system")) {
+                createNavButton(STORAGE_ROOT, dir);
+            } else if (FileUtils.getExternalStorage() != null && dir.equals(FileUtils.getExternalStorage().getAbsolutePath())) {
+                createNavButton(STORAGE_EXTERNAL, dir);
+            } else {
+                ImageView navArrow = new ImageView(this);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(MATCH_PARENT,
+                        WRAP_CONTENT);
+                layoutParams.gravity = Gravity.CENTER;
+                layoutParams.weight = 1.0f;
+                navArrow.setLayoutParams(layoutParams);
+                navArrow.setBackgroundResource(R.drawable.ic_more_white);
+                navDirectoryDualPane.addView(navArrow);
+                createNavButton(parts[i], dir);
+
+                scrollNavigation.postDelayed(new Runnable() {
+                    public void run() {
+                        HorizontalScrollView hv = (HorizontalScrollView) findViewById(R.id.scrollNavigationDualPane);
+                        hv.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
+                    }
+                }, 100L);
+            }
+        }
+
+    }
+
+
+
     private void createNavButton(String text, final String dir) {
         int WRAP_CONTENT = LinearLayout.LayoutParams.WRAP_CONTENT;
         final Button button = new Button(this);
@@ -252,22 +309,39 @@ public class BaseActivity extends AppCompatActivity {
         button.setBackgroundResource(
                 android.R.color.transparent);
         button.setTag(++navigationLevelSinglePane);
+//        navigationLevelSinglePane++;
+//        button.setTag(dir);
         Log.d("TAG", "Button tag=" + navigationLevelSinglePane);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int level = (int) view.getTag();
+//                String path  = (String) view.getTag();
+
+//                if (!mCurrentDir.equals(path) && getSupportFragmentManager().findFragmentByTag(path) == null) {
+//                    mCurrentDir = path;
+//                    displayView(path); // TODO Handle root case by passing /
+//                }
                 Log.d("TAG", "Button tag click=" + level);
-                boolean isUpNavigation = checkIfUpNavigation(level);
-                if (isUpNavigation) {
-                    removeFragments(level);
-                } else {
-                    // Check If user tries to load the same directory
-                    if (!mCurrentDir.equals(dir)) {
-                        mCurrentDir = dir;
-                        displayView(dir); // TODO Handle root case by passing /
+                Log.d("TAG", "Dir=" + dir);
+//                boolean isUpNavigation = checkIfUpNavigation(level);
+//                if (isUpNavigation) {
+                if (!mCurrentDir.equals(dir)) {
+                    mCurrentDir = dir;
+                    removeFragments(level, dir);
+                    for (int i = navDirectory.getChildCount() - 1; i >= level; i--) {
+                        navDirectory.removeViewAt(i);
                     }
+
                 }
+
+//                } else {
+//                    // Check If user tries to load the same directory
+//                    if (!mCurrentDir.equals(dir)) {
+//                        mCurrentDir = dir;
+//                        displayView(dir); // TODO Handle root case by passing /
+//                    }
+//                }
             }
         });
         navDirectory.addView(button);
@@ -299,13 +373,16 @@ public class BaseActivity extends AppCompatActivity {
         drawerLayout.closeDrawer(relativeLayoutDrawerPane);
     }
 
-    private void removeFragments(int level) {
+    private void removeFragments(int level, String newPath) {
 
         int fragCount = getSupportFragmentManager().getBackStackEntryCount();
         for (int i = fragCount; i > level; i--) {
             getSupportFragmentManager().popBackStack();
-        }
 
+        }
+        String newPathParts[] = newPath.split("/");
+        int count = newPathParts.length;
+        String currentDirParts[] = mCurrentDir.split("/");
 
 
     }
@@ -362,6 +439,10 @@ public class BaseActivity extends AppCompatActivity {
         if (count == 1) {
             finish();
         } else {
+            int childCount = navDirectory.getChildCount();
+            Log.d("TAG", "Onbackpress--childCount count=" + childCount);
+            navDirectory.removeViewAt(childCount - 1); // Remove view
+            navDirectory.removeViewAt(childCount - 2); // Remove > symbol
             scrollNavigation.postDelayed(new Runnable() {
                 public void run() {
                     HorizontalScrollView hv = (HorizontalScrollView) findViewById(R.id.scrollNavigation);
