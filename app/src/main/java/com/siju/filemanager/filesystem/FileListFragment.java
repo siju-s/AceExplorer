@@ -15,6 +15,7 @@ import android.widget.ListView;
 
 import com.siju.filemanager.BaseActivity;
 import com.siju.filemanager.R;
+import com.siju.filemanager.common.Logger;
 
 import java.util.ArrayList;
 
@@ -31,6 +32,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
     private FileListAdapter fileListAdapter;
     private ArrayList<FileInfo> fileInfoArrayList;
     private boolean isDualMode;
+
 
     @Override
     public View onCreateView(
@@ -52,10 +54,10 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
         if (getArguments() != null && getArguments().getString(FileConstants.KEY_PATH) != null) {
             filePath = getArguments().getString(FileConstants.KEY_PATH);
             fileName = getArguments().getString(FileConstants.KEY_FILENAME);
-            isDualMode = getArguments().getBoolean(FileConstants.KEY_DUAL_MODE, false);
+//            isDualMode = getArguments().getBoolean(FileConstants.KEY_DUAL_MODE, false);
         }
 
-        Log.d("TAG", "on onActivityCreated--Fragment" + isDualMode);
+        Log.d("TAG", "on onActivityCreated--Fragment" + filePath);
 
 //        else {
 //            filePath = getArguments().getString(FileConstants.KEY_PATH);
@@ -71,14 +73,17 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+
                 Bundle bundle = new Bundle();
                 String path = fileInfoArrayList.get(position).getFilePath();
                 bundle.putString(FileConstants.KEY_PATH, path);
                 Intent intent = new Intent(getActivity(), BaseActivity.class);
-                if (!isDualMode) {
-                    intent.setAction(BaseActivity.ACTION_VIEW_FOLDER_LIST);
-                } else {
+                if (FileListFragment.this instanceof FileListDualFragment) {
                     intent.setAction(BaseActivity.ACTION_DUAL_VIEW_FOLDER_LIST);
+                    intent.putExtra(BaseActivity.ACTION_DUAL_PANEL, true);
+                } else {
+                    intent.setAction(BaseActivity.ACTION_VIEW_FOLDER_LIST);
+                    intent.putExtra(BaseActivity.ACTION_DUAL_PANEL, false);
                 }
 
                 intent.putExtras(bundle);
@@ -86,7 +91,22 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
             }
         });
 
+        fileList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                //                }
+                Logger.log("TAG", "On long click");
+                ((BaseActivity) getActivity()).inflateBottomMenu();
+//                // Start the CAB using the ActionMode.Callback defined above
+//                mActionMode = ((AppCompatActivity) getActivity())
+//                        .startSupportActionMode(new ActionModeCallback());
+                return true;
+//        return false;
+            }
+        });
+
     }
+
 
     @Override
     public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
@@ -98,7 +118,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoadFinished(Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
-        if (!data.isEmpty()) {
+        if (data != null && !data.isEmpty()) {
             fileInfoArrayList = data;
             fileListAdapter.updateAdapter(fileInfoArrayList);
         }
@@ -108,6 +128,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
     public void onLoaderReset(Loader<ArrayList<FileInfo>> loader) {
 
     }
+
 
     @Override
     public void onDestroy() {

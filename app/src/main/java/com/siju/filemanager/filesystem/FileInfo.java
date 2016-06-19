@@ -11,13 +11,34 @@ public class FileInfo  {
     private String fileDate;
     private String noOfFilesOrSize;
     private boolean isDirectory;
+    private String extension;
+    private int type;
 
-    public FileInfo(String fileName, String filePath, String fileDate, String noOfFilesOrSize, boolean isDirectory) {
+    public FileInfo(String fileName, String filePath, String fileDate, String noOfFilesOrSize, boolean isDirectory,
+                    String extension,int type) {
         this.fileName = fileName;
         this.filePath = filePath;
         this.fileDate = fileDate;
         this.noOfFilesOrSize = noOfFilesOrSize;
         this.isDirectory = isDirectory;
+        this.extension = extension;
+        this.type = type;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public String getExtension() {
+        return extension;
+    }
+
+    public void setExtension(String extension) {
+        this.extension = extension;
     }
 
     public String getFileName() {

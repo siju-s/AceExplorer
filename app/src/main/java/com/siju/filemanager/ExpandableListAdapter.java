@@ -79,6 +79,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         if (groupPosition == 0) {
             childViewHolder.textSecondLine.setText(child.getmSecondLine());
         }
+//        else {
+//            RelativeLayout.LayoutParams layoutParams =
+//                    (RelativeLayout.LayoutParams) childViewHolder.textSecondLine.getLayoutParams();
+//            layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+//            childViewHolder.textFirstLine.setLayoutParams(layoutParams);
+//        }
         return view;
     }
 

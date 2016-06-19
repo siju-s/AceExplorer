@@ -1,5 +1,6 @@
 package com.siju.filemanager;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -15,6 +16,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -51,25 +53,31 @@ public class BaseActivity extends AppCompatActivity {
     String[] listDataHeader;
     List<String> mListHeader;
     HashMap<String, List<String>> listDataChild;
-    //    private ArrayList<SectionGroup> sectionGroupArrayList;
     ArrayList<SectionGroup> storageGroup;
     public static final String ACTION_VIEW_FOLDER_LIST = "folder_list";
     public static final String ACTION_DUAL_VIEW_FOLDER_LIST = "dual_folder_list";
+    public static final String ACTION_DUAL_PANEL = "ACTION_DUAL_PANEL";
+
     private DrawerLayout drawerLayout;
     private RelativeLayout relativeLayoutDrawerPane;
-    private String mCurrentDir = FileUtils.getInternalStorage().getAbsolutePath();
-    private String mCurrentDirDualPane = FileUtils.getInternalStorage().getAbsolutePath();
-    public String STORAGE_ROOT, STORAGE_INTERNAL, STORAGE_EXTERNAL, DOWNLOADS;
+    private String mCurrentDir = getInternalStorage().getAbsolutePath();
+    private String mCurrentDirDualPane = getInternalStorage().getAbsolutePath();
+    public String STORAGE_ROOT, STORAGE_INTERNAL, STORAGE_EXTERNAL, DOWNLOADS, IMAGES, VIDEO, MUSIC, DOCS;
     private boolean mIsDualMode;
     private LinearLayout navDirectory;
-    private String mStartingDir = FileUtils.getInternalStorage().getAbsolutePath();
-    private HorizontalScrollView scrollNavigation,scrollNavigationDualPane;
+    private String mStartingDir = getInternalStorage().getAbsolutePath();
+    private HorizontalScrollView scrollNavigation, scrollNavigationDualPane;
     private int navigationLevelSinglePane = 0;
     private int navigationLevelDualPane = 0;
-    private String mStartingDirDualPane = FileUtils.getInternalStorage().getAbsolutePath();
+    private String mStartingDirDualPane = getInternalStorage().getAbsolutePath();
     private LinearLayout navDirectoryDualPane;
-
-
+    // Returns true if user is currently navigating in Dual Panel fragment
+    private boolean isDualPaneInFocus;
+    private List<Fragment> singlePaneFragments = new ArrayList<>();
+    private List<Fragment> dualPaneFragments = new ArrayList<>();
+    private boolean isCurrentDirRoot;
+    private Toolbar mBottomToolbar;
+    private ActionMode mActionMode;
 
 
     @Override
@@ -80,6 +88,12 @@ public class BaseActivity extends AppCompatActivity {
         STORAGE_INTERNAL = getResources().getString(R.string.nav_menu_internal_storage);
         STORAGE_EXTERNAL = getResources().getString(R.string.nav_menu_ext_storage);
         DOWNLOADS = getResources().getString(R.string.downloads);
+        MUSIC = getResources().getString(R.string.nav_menu_music);
+        VIDEO = getResources().getString(R.string.nav_menu_video);
+        DOCS = getResources().getString(R.string.nav_menu_docs);
+        IMAGES = getResources().getString(R.string.nav_menu_image);
+
+
         checkScreenOrientation();
         initViews();
         initListeners();
@@ -87,9 +101,12 @@ public class BaseActivity extends AppCompatActivity {
         prepareListData();
         setListAdapter();
         setNavDirectory();
-        displayView(mCurrentDir);
+        displayInitialFragment(mCurrentDir);
     }
 
+    /**
+     * Checks if orientation is landscape when app is run 1st time to enable Dual Panel
+     */
     private void checkScreenOrientation() {
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             mIsDualMode = true;
@@ -101,6 +118,9 @@ public class BaseActivity extends AppCompatActivity {
     private void initViews() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mBottomToolbar = (Toolbar) findViewById(R.id.toolbar_bottom);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,14 +138,17 @@ public class BaseActivity extends AppCompatActivity {
         // get the listview
         expandableListView = (ExpandableListView) findViewById(R.id.expand_list_drawer);
         navDirectory = (LinearLayout) findViewById(R.id.navButtons);
+        navDirectoryDualPane = (LinearLayout) findViewById(R.id.navButtonsDualPane);
         scrollNavigation = (HorizontalScrollView) findViewById(R.id.scrollNavigation);
+        scrollNavigationDualPane = (HorizontalScrollView) findViewById(R.id.scrollNavigationDualPane);
 
     }
 
     private void initListeners() {
         expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
-            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long
+                    id) {
                 Log.d("TAG", "Group pos-->" + groupPosition + "CHILD POS-->" + childPosition);
                 displaySelectedGroup(groupPosition, childPosition);
                 return false;
@@ -141,25 +164,40 @@ public class BaseActivity extends AppCompatActivity {
         storageGroup = new ArrayList<>();
         initializeStorageGroup();
         initializeBookMarksGroup();
+        initializeLibraryGroup();
     }
 
     private void initializeStorageGroup() {
         ArrayList<SectionItems> storageGroupChild = new ArrayList<>();
-        File root = FileUtils.getRootDirectory();
-        File internalSD = getInternalStorage();
+        File systemDir = FileUtils.getRootDirectory();
+        File rootDir = systemDir.getParentFile();
+        File internalSD = FileUtils.getInternalStorage();
         File extSD = FileUtils.getExternalStorage();
-        storageGroupChild.add(new SectionItems(STORAGE_ROOT, storageSpace(root), R.drawable.ic_root_black, FileUtils.getAbsolutePath(root)));
-        storageGroupChild.add(new SectionItems(STORAGE_INTERNAL, storageSpace(internalSD), R.drawable.ic_storage_black, FileUtils.getAbsolutePath(internalSD)));
+        storageGroupChild.add(new SectionItems(STORAGE_ROOT, storageSpace(systemDir), R.drawable.ic_root_black, FileUtils
+                .getAbsolutePath(rootDir)));
+        storageGroupChild.add(new SectionItems(STORAGE_INTERNAL, storageSpace(internalSD), R.drawable
+                .ic_storage_black, FileUtils.getAbsolutePath(internalSD)));
         if (extSD != null) {
-            storageGroupChild.add(new SectionItems(STORAGE_EXTERNAL, storageSpace(extSD), R.drawable.ic_ext_sd_black, FileUtils.getAbsolutePath(extSD)));
+            storageGroupChild.add(new SectionItems(STORAGE_EXTERNAL, storageSpace(extSD), R.drawable.ic_ext_sd_black,
+                    FileUtils.getAbsolutePath(extSD)));
         }
         storageGroup.add(new SectionGroup(mListHeader.get(0), storageGroupChild));
     }
 
     private void initializeBookMarksGroup() {
         ArrayList<SectionItems> bookmarksGroupChild = new ArrayList<>();
-        bookmarksGroupChild.add(new SectionItems(DOWNLOADS, null, R.drawable.ic_download_black, FileUtils.getAbsolutePath(FileUtils.getDownloadsDirectory())));
+        bookmarksGroupChild.add(new SectionItems(DOWNLOADS, null, R.drawable.ic_download_black, FileUtils
+                .getAbsolutePath(FileUtils.getDownloadsDirectory())));
         storageGroup.add(new SectionGroup(mListHeader.get(1), bookmarksGroupChild));
+    }
+
+    private void initializeLibraryGroup() {
+        ArrayList<SectionItems> libraryGroupChild = new ArrayList<>();
+        libraryGroupChild.add(new SectionItems(MUSIC, null, R.drawable.ic_music_black, null));
+        libraryGroupChild.add(new SectionItems(VIDEO, null, R.drawable.ic_video_black, null));
+        libraryGroupChild.add(new SectionItems(IMAGES, null, R.drawable.ic_photo_black, null));
+        libraryGroupChild.add(new SectionItems(DOCS, null, R.drawable.ic_doc_black, null));
+        storageGroup.add(new SectionGroup(mListHeader.get(2), libraryGroupChild));
     }
 
 
@@ -178,6 +216,11 @@ public class BaseActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Called everytime when a file item is clicked
+     *
+     * @param intent Contains path of the file whose children need to be shown
+     */
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -190,11 +233,23 @@ public class BaseActivity extends AppCompatActivity {
         switch (groupPos) {
             case 0:
             case 1:
-                mStartingDir = storageGroup.get(groupPos).getmChildItems().get(childPos).getPath();
-                if (!mCurrentDir.equals(mStartingDir)) {
-                    mCurrentDir = mStartingDir;
-                    setNavDirectory();
-                    displayView(mCurrentDir);
+                if (!isDualPaneInFocus) {
+                    mStartingDir = storageGroup.get(groupPos).getmChildItems().get(childPos).getPath();
+
+                    if (!mCurrentDir.equals(mStartingDir)) {
+                        mCurrentDir = mStartingDir;
+                        singlePaneFragments.clear();
+                        setNavDirectory();
+                        displayInitialFragment(mCurrentDir);
+                    }
+                } else {
+                    mStartingDirDualPane = storageGroup.get(groupPos).getmChildItems().get(childPos).getPath();
+                    if (!mCurrentDirDualPane.equals(mStartingDirDualPane)) {
+                        mCurrentDirDualPane = mStartingDirDualPane;
+                        dualPaneFragments.clear();
+                        setNavDirectory();
+                        displayInitialFragment(mCurrentDirDualPane);
+                    }
                 }
                 break;
 
@@ -203,96 +258,94 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     private void setNavDirectory() {
-        String[] parts = mCurrentDir.split("/");
+        String[] parts;
+        if (!isDualPaneInFocus) {
+            parts = mCurrentDir.split("/");
+            navDirectory.removeAllViews();
+            navigationLevelSinglePane = 0;
+        } else {
+            parts = mCurrentDirDualPane.split("/");
+            navDirectoryDualPane.removeAllViews();
+            navigationLevelDualPane = 0;
+        }
 
 
-        navDirectory.removeAllViews();
-        navigationLevelSinglePane = 0;
+        String dir = "";
+       // If root dir , parts will be 0
+        if (parts.length == 0) {
+            isCurrentDirRoot = true;
+            setNavDir("/","/"); // Add Root button
+        }
+        else {
+
+            for (int i = 1; i < parts.length; i++) {
+                dir += "/" + parts[i];
+
+                if (!isDualPaneInFocus) {
+                    if (!dir.contains(mStartingDir)) {
+                        continue;
+                    }
+                } else {
+                    if (!dir.contains(mStartingDirDualPane)) {
+                        continue;
+                    }
+                }
+                if (isCurrentDirRoot) {
+                    setNavDir("/","/");
+                }
+                setNavDir(dir, parts[i]);
+            }
+        }
+
+    }
+
+    private void setNavDir(String dir,String parts) {
+
+
         int WRAP_CONTENT = LinearLayout.LayoutParams.WRAP_CONTENT;
         int MATCH_PARENT = LinearLayout.LayoutParams.MATCH_PARENT;
 
-        String dir = "";
-        for (int i = 1; i < parts.length; i++) {
-            dir += "/" + parts[i];
-
-            if (!dir.contains(mStartingDir)) {
-                continue;
-            }
-
-            if (dir.equals(FileUtils.getInternalStorage().getAbsolutePath())) {
-                createNavButton(STORAGE_INTERNAL, dir);
-            } else if (dir.equals("/system")) {
-                createNavButton(STORAGE_ROOT, dir);
-            } else if (FileUtils.getExternalStorage() != null && dir.equals(FileUtils.getExternalStorage().getAbsolutePath())) {
-                createNavButton(STORAGE_EXTERNAL, dir);
-            } else {
-                ImageView navArrow = new ImageView(this);
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(MATCH_PARENT,
-                        WRAP_CONTENT);
-                layoutParams.gravity = Gravity.CENTER;
-                layoutParams.weight = 1.0f;
-                navArrow.setLayoutParams(layoutParams);
-                navArrow.setBackgroundResource(R.drawable.ic_more_white);
+        if (dir.equals(getInternalStorage().getAbsolutePath())) {
+            isCurrentDirRoot = false;
+            createNavButton(STORAGE_INTERNAL, dir);
+        } else if (dir.equals("/")) {
+            createNavButton(STORAGE_ROOT, dir);
+        } else if (FileUtils.getExternalStorage() != null && dir.equals(FileUtils.getExternalStorage()
+                .getAbsolutePath())) {
+            isCurrentDirRoot = false;
+            createNavButton(STORAGE_EXTERNAL, dir);
+        } else {
+            ImageView navArrow = new ImageView(this);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(MATCH_PARENT,
+                    WRAP_CONTENT);
+            layoutParams.gravity = Gravity.CENTER;
+            layoutParams.weight = 1.0f;
+            navArrow.setLayoutParams(layoutParams);
+            navArrow.setBackgroundResource(R.drawable.ic_more_white);
+            if (!isDualPaneInFocus) {
                 navDirectory.addView(navArrow);
-                createNavButton(parts[i], dir);
-
+            } else {
+                navDirectoryDualPane.addView(navArrow);
+            }
+            createNavButton(parts, dir);
+            if (!isDualPaneInFocus) {
                 scrollNavigation.postDelayed(new Runnable() {
                     public void run() {
                         HorizontalScrollView hv = (HorizontalScrollView) findViewById(R.id.scrollNavigation);
                         hv.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
                     }
                 }, 100L);
-            }
-        }
-
-    }
-
-    private void setNavDirectoryDualPane() {
-        String[] parts = mCurrentDirDualPane.split("/");
-
-
-        navDirectoryDualPane.removeAllViews();
-        navigationLevelDualPane = 0;
-        int WRAP_CONTENT = LinearLayout.LayoutParams.WRAP_CONTENT;
-        int MATCH_PARENT = LinearLayout.LayoutParams.MATCH_PARENT;
-
-        String dir = "";
-        for (int i = 1; i < parts.length; i++) {
-            dir += "/" + parts[i];
-
-            if (!dir.contains(mStartingDirDualPane)) {
-                continue;
-            }
-
-            if (dir.equals(FileUtils.getInternalStorage().getAbsolutePath())) {
-                createNavButton(STORAGE_INTERNAL, dir);
-            } else if (dir.equals("/system")) {
-                createNavButton(STORAGE_ROOT, dir);
-            } else if (FileUtils.getExternalStorage() != null && dir.equals(FileUtils.getExternalStorage().getAbsolutePath())) {
-                createNavButton(STORAGE_EXTERNAL, dir);
             } else {
-                ImageView navArrow = new ImageView(this);
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(MATCH_PARENT,
-                        WRAP_CONTENT);
-                layoutParams.gravity = Gravity.CENTER;
-                layoutParams.weight = 1.0f;
-                navArrow.setLayoutParams(layoutParams);
-                navArrow.setBackgroundResource(R.drawable.ic_more_white);
-                navDirectoryDualPane.addView(navArrow);
-                createNavButton(parts[i], dir);
-
-                scrollNavigation.postDelayed(new Runnable() {
+                scrollNavigationDualPane.postDelayed(new Runnable() {
                     public void run() {
-                        HorizontalScrollView hv = (HorizontalScrollView) findViewById(R.id.scrollNavigationDualPane);
+                        HorizontalScrollView hv = (HorizontalScrollView) findViewById(R.id
+                                .scrollNavigationDualPane);
                         hv.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
                     }
                 }, 100L);
             }
         }
-
     }
-
-
 
     private void createNavButton(String text, final String dir) {
         int WRAP_CONTENT = LinearLayout.LayoutParams.WRAP_CONTENT;
@@ -308,10 +361,15 @@ public class BaseActivity extends AppCompatActivity {
 
         button.setBackgroundResource(
                 android.R.color.transparent);
-        button.setTag(++navigationLevelSinglePane);
+        if (!isDualPaneInFocus) {
+            button.setTag(++navigationLevelSinglePane);
+        } else {
+            button.setTag(++navigationLevelDualPane);
+        }
 //        navigationLevelSinglePane++;
 //        button.setTag(dir);
-        Log.d("TAG", "Button tag=" + navigationLevelSinglePane);
+        Log.d("TAG", "Button tag SINGLE=" + navigationLevelSinglePane);
+        Log.d("TAG", "Button tag DUAL=" + navDirectoryDualPane);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -320,38 +378,61 @@ public class BaseActivity extends AppCompatActivity {
 
 //                if (!mCurrentDir.equals(path) && getSupportFragmentManager().findFragmentByTag(path) == null) {
 //                    mCurrentDir = path;
-//                    displayView(path); // TODO Handle root case by passing /
+//                    displayInitialFragment(path); // TODO Handle root case by passing /
 //                }
                 Log.d("TAG", "Button tag click=" + level);
                 Log.d("TAG", "Dir=" + dir);
 //                boolean isUpNavigation = checkIfUpNavigation(level);
 //                if (isUpNavigation) {
-                if (!mCurrentDir.equals(dir)) {
-                    mCurrentDir = dir;
-                    removeFragments(level, dir);
-                    for (int i = navDirectory.getChildCount() - 1; i >= level; i--) {
-                        navDirectory.removeViewAt(i);
+
+                int singlePaneCount = singlePaneFragments.size();
+                int dualPaneCount = dualPaneFragments.size();
+
+                if (!isDualPaneInFocus) {
+                    if (!mCurrentDir.equals(dir)) {
+                        mCurrentDir = dir;
+
+                        Fragment fragment = singlePaneFragments.get(level - 1);
+                        replaceFragment(fragment);
+//                        removeFragments(level, dir);
+
+                        for (int i = singlePaneFragments.size(); i > level; i--) {
+                            singlePaneFragments.remove(i - 1);
+                        }
+                        for (int i = navDirectory.getChildCount(); i > level; i--) {
+                            navDirectory.removeViewAt(i - 1);
+                        }
+
                     }
+                } else {
+                    if (!mCurrentDirDualPane.equals(dir)) {
+                        mCurrentDirDualPane = dir;
+                        Fragment fragment = dualPaneFragments.get(level - 1);
+                        replaceFragment(fragment);
+//                        removeFragments(level, dir);
+                        for (int i = dualPaneFragments.size(); i > level; i--) {
+                            dualPaneFragments.remove(i - 1);
+                        }
+                        for (int i = navDirectoryDualPane.getChildCount(); i > level; i--) {
+                            navDirectoryDualPane.removeViewAt(i - 1);
+                        }
 
+                    }
                 }
-
-//                } else {
-//                    // Check If user tries to load the same directory
-//                    if (!mCurrentDir.equals(dir)) {
-//                        mCurrentDir = dir;
-//                        displayView(dir); // TODO Handle root case by passing /
-//                    }
-//                }
             }
         });
-        navDirectory.addView(button);
+        if (!isDualPaneInFocus) {
+            navDirectory.addView(button);
+        } else {
+            navDirectoryDualPane.addView(button);
+        }
     }
 
 
     /**
      *
      */
-    private void displayView(String directory) {
+    private void displayInitialFragment(String directory) {
         // update the main content by replacing fragments
         // Fragment fragment = null;
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -362,27 +443,53 @@ public class BaseActivity extends AppCompatActivity {
             FileListDualFragment fileListDualFragment = new FileListDualFragment();
             fileListDualFragment.setArguments(args);
             ft.replace(R.id.frame_container_dual, fileListDualFragment, directory);
+            dualPaneFragments.add(fileListDualFragment);
         } else {
             FileListFragment fileListFragment = new FileListFragment();
             fileListFragment.setArguments(args);
             ft.replace(R.id.frame_container, fileListFragment, directory);
+            singlePaneFragments.add(fileListFragment);
         }
 
-        ft.addToBackStack(null);
+//        ft.addToBackStack(null);
         ft.commitAllowingStateLoss();
         drawerLayout.closeDrawer(relativeLayoutDrawerPane);
     }
 
     private void removeFragments(int level, String newPath) {
 
-        int fragCount = getSupportFragmentManager().getBackStackEntryCount();
-        for (int i = fragCount; i > level; i--) {
-            getSupportFragmentManager().popBackStack();
+//        int fragCount = getSupportFragmentManager().getBackStackEntryCount();
+//        for (int i = fragCount; i > level; i--) {
+//            getSupportFragmentManager().popBackStack();
+//
+//        }
+//        String newPathParts[] = newPath.split("/");
+//        int count = newPathParts.length;
+//        String currentDirParts[] = mCurrentDir.split("/");
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        if (!isDualPaneInFocus) {
+            int fragCount = singlePaneFragments.size();
+            for (int i = fragCount; i > level; i--) {
+                Fragment fragment = singlePaneFragments.get(i - 1); // Since list starts from 0, so i-1
+                singlePaneFragments.remove(fragment);
+                getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+//                if (getSupportFragmentManager().findFragmentById(R.id.frame_container).)
+//                getSupportFragmentManager().popBackStack();
+//                getSupportFragmentManager().findFragmentById().
+
+            }
+
+        } else {
+            int fragCount = dualPaneFragments.size();
+            for (int i = fragCount; i > level; i--) {
+                Fragment fragment = dualPaneFragments.get(i - 1); // Since list starts from 0, so i-1
+                dualPaneFragments.remove(fragment);
+                getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+//                getSupportFragmentManager().popBackStack();
+
+            }
 
         }
-        String newPathParts[] = newPath.split("/");
-        int count = newPathParts.length;
-        String currentDirParts[] = mCurrentDir.split("/");
 
 
     }
@@ -402,23 +509,35 @@ public class BaseActivity extends AppCompatActivity {
             final String action = intent.getAction();
             Fragment targetFragment = null;
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            mCurrentDir = intent.getStringExtra(FileConstants.KEY_PATH);
+            isDualPaneInFocus = intent.getBooleanExtra(ACTION_DUAL_PANEL, false);
+
 
             if (action.equals(ACTION_VIEW_FOLDER_LIST)) {
                 targetFragment = new FileListFragment();
-                intent.putExtra(FileConstants.KEY_DUAL_MODE, false);
-                transaction.replace(R.id.frame_container, targetFragment, mCurrentDir);
+
+//                intent.putExtra(FileConstants.KEY_DUAL_MODE, false);
+                transaction.replace(R.id.frame_container, targetFragment, mCurrentDirDualPane);
             } else if (action.equals(ACTION_DUAL_VIEW_FOLDER_LIST)) {
                 targetFragment = new FileListDualFragment();
-                intent.putExtra(FileConstants.KEY_DUAL_MODE, true);
+//                intent.putExtra(FileConstants.KEY_DUAL_MODE, true);
                 transaction.replace(R.id.frame_container_dual, targetFragment, mCurrentDir);
             }
+
+            if (!isDualPaneInFocus) {
+                mCurrentDir = intent.getStringExtra(FileConstants.KEY_PATH);
+                singlePaneFragments.add(targetFragment);
+            } else {
+                mCurrentDirDualPane = intent.getStringExtra(FileConstants.KEY_PATH);
+                dualPaneFragments.add(targetFragment);
+
+            }
+
 
             setNavDirectory();
             if (targetFragment != null) {
                 targetFragment.setArguments(intent.getExtras());
                 transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-                transaction.addToBackStack(null);
+//                transaction.addToBackStack(null);
                 transaction.commit();
             }
             return true;
@@ -431,33 +550,142 @@ public class BaseActivity extends AppCompatActivity {
     public void onBackPressed() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         int count = fragmentManager.getBackStackEntryCount();
-        Log.d("TAG", "Onbackpress--Frag count=" + count);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (navigationLevelSinglePane != 0)
-            navigationLevelSinglePane--;
+        Logger.log("TAG", "Onbackpress--TOTAL FRAGMENTS count=" + count);
 
-        if (count == 1) {
-            finish();
-        } else {
-            int childCount = navDirectory.getChildCount();
-            Log.d("TAG", "Onbackpress--childCount count=" + childCount);
-            navDirectory.removeViewAt(childCount - 1); // Remove view
-            navDirectory.removeViewAt(childCount - 2); // Remove > symbol
-            scrollNavigation.postDelayed(new Runnable() {
-                public void run() {
-                    HorizontalScrollView hv = (HorizontalScrollView) findViewById(R.id.scrollNavigation);
-                    hv.fullScroll(HorizontalScrollView.FOCUS_LEFT);
-                }
-            }, 100L);
-            super.onBackPressed();
-        }
+
+        int singlePaneCount = singlePaneFragments.size();
+        int dualPaneCount = dualPaneFragments.size();
+
+        Logger.log("TAG", "Onbackpress--SINGLEPANEL count=" + singlePaneCount);
+        Logger.log("TAG", "Onbackpress--DUALPANEL count=" + dualPaneCount);
+
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else {
+            if (!isDualPaneInFocus) {
+
+                if (navigationLevelSinglePane != 0) {
+                    navigationLevelSinglePane--;
+                }
+
+            } else {
+                if (navigationLevelDualPane != 0) {
+                    navigationLevelDualPane--;
+                }
+            }
+
+            if (!isDualPaneInFocus) {
+                if (singlePaneCount == 1) {
+//                    finish();
+//                    getSupportFragmentManager().popBackStack();
+//                    getSupportFragmentManager().popBackStack();
+                    super.onBackPressed();
+
+                } else {
+                    int childCount = navDirectory.getChildCount();
+                    Log.d("TAG", "Onbackpress--Navbuttons count=" + childCount);
+                    navDirectory.removeViewAt(childCount - 1); // Remove view
+                    navDirectory.removeViewAt(childCount - 2); // Remove > symbol
+                    scrollNavigation.postDelayed(new Runnable() {
+                        public void run() {
+                            HorizontalScrollView hv = (HorizontalScrollView) findViewById(R.id.scrollNavigation);
+                            hv.fullScroll(HorizontalScrollView.FOCUS_LEFT);
+                        }
+                    }, 100L);
+//                    if (singlePaneCount == 2) {
+//                        Fragment fragment = singlePaneFragments.get(singlePaneCount - 1);
+//                        getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+//                    }
+//                    else {
+                    Fragment fragment = singlePaneFragments.get(singlePaneCount - 2);
+                    replaceFragment(fragment);
+//                    }
+                    singlePaneFragments.remove(singlePaneCount - 1);  // Removing the last fragment
+
+                }
+
+            } else {
+                if (dualPaneCount == 1) {
+//                    finish();
+                    super.onBackPressed();
+                } else {
+                    int childCount = navDirectoryDualPane.getChildCount();
+                    Log.d("TAG", "Onbackpress--Navbuttonsdualpane childCount=" + childCount);
+                    navDirectoryDualPane.removeViewAt(childCount - 1); // Remove view
+                    navDirectoryDualPane.removeViewAt(childCount - 2); // Remove > symbol
+                    scrollNavigationDualPane.postDelayed(new Runnable() {
+                        public void run() {
+                            HorizontalScrollView hv = (HorizontalScrollView) findViewById(R.id
+                                    .scrollNavigationDualPane);
+                            hv.fullScroll(HorizontalScrollView.FOCUS_LEFT);
+                        }
+                    }, 100L);
+                    Fragment fragment = dualPaneFragments.get(dualPaneCount - 2);
+                    replaceFragment(fragment);
+                    dualPaneFragments.remove(dualPaneCount - 1);  // Removing the last fragment
+
+                }
+
+
+//                getSupportFragmentManager().beginTransaction().remove()
+
+//                if (getSupportFragmentManager().getBackStackEntryAt(count-1).getName() == R.id.frame_container_dual) {
+//                    Logger.log("TAG","TRUE");
+//
+//                }
+//                else {
+//                    Logger.log("TAG","FALSE"+getSupportFragmentManager().getBackStackEntryAt(co.unt-1).getId());
+//
+//                }
+            }
+//            super.onBackPressed();
         }
+
+
+//        if (count == 1) {
+//            finish();
+//        } else {
+//            int childCount = navDirectory.getChildCount();
+//            Log.d("TAG", "Onbackpress--childCount count=" + childCount);
+//            navDirectory.removeViewAt(childCount - 1); // Remove view
+//            navDirectory.removeViewAt(childCount - 2); // Remove > symbol
+//            scrollNavigation.postDelayed(new Runnable() {
+//                public void run() {
+//                    HorizontalScrollView hv = (HorizontalScrollView) findViewById(R.id.scrollNavigation);
+//                    hv.fullScroll(HorizontalScrollView.FOCUS_LEFT);
+//                }
+//            }, 100L);
+//            super.onBackPressed();
+//        }
+
         /*else {
             super.onBackPressed();
 
         }*/
+    }
+
+    public void replaceFragment(Fragment fragment) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+//        Logger.log("TAG","Fragment tag ="+fragment.getTag());
+        String path = fragment.getArguments().getString(FileConstants.KEY_PATH);
+        Logger.log("TAG", "Fragment bundle =" + path);
+        if (isDualPaneInFocus) {
+            FileListDualFragment dualFragment = new FileListDualFragment();
+            dualFragment.setArguments(fragment.getArguments());
+            fragmentTransaction.replace(R.id.frame_container_dual, dualFragment, path);
+        } else {
+            FileListFragment fileListFragment = new FileListFragment();
+            fileListFragment.setArguments(fragment.getArguments());
+            fragmentTransaction.replace(R.id.frame_container, fileListFragment, path);
+        }
+        fragmentTransaction.commitAllowingStateLoss();
+
+    }
+
+    private void removeSpecificFragmentFromBackStack(int backStackCount, int containerId) {
+
     }
 
     @Override
@@ -483,19 +711,76 @@ public class BaseActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void inflateBottomMenu()
+    {
+
+        mBottomToolbar.setVisibility(View.VISIBLE);
+        mBottomToolbar.startActionMode(new ActionModeCallback());
+        mBottomToolbar.inflateMenu(R.menu.action_mode);
+
+    }
+
+    /**
+     * Triggered on long press click on item
+     */
+    private final class ActionModeCallback implements ActionMode.Callback {
+
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mActionMode = mode;
+//            MenuInflater inflater = mActionMode.getMenuInflater();
+//            inflater.inflate(R.menu.action_music_home, menu);
+            return true;
+        }
+
+        @SuppressLint("NewApi")
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.action_delete:
+
+                    mActionMode.finish();
+                    return true;
+
+                case R.id.action_share:
+
+                    mActionMode.finish();
+                    return true;
+                default:
+                    return false;
+            }
+
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mActionMode = null;
+        }
+    }
+
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         Log.d("TAG", "On config" + newConfig.orientation);
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             FrameLayout frameLayout = (FrameLayout) findViewById(R.id.frame_container_dual);
             frameLayout.setVisibility(View.VISIBLE);
+            scrollNavigationDualPane.setVisibility(View.VISIBLE);
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             String internalStoragePath = getInternalStorage().getAbsolutePath();
             Bundle args = new Bundle();
             args.putString(FileConstants.KEY_PATH, internalStoragePath);
             args.putBoolean(FileConstants.KEY_DUAL_MODE, true);
-
+            isDualPaneInFocus = true;
+            setNavDirectory();
             FileListDualFragment dualFragment = new FileListDualFragment();
+            dualPaneFragments.add(dualFragment);
             dualFragment.setArguments(args);
             ft.replace(R.id.frame_container_dual, dualFragment);
 //            ft.addToBackStack(null);
@@ -503,6 +788,8 @@ public class BaseActivity extends AppCompatActivity {
         } else {
             FrameLayout frameLayout = (FrameLayout) findViewById(R.id.frame_container_dual);
             frameLayout.setVisibility(View.GONE);
+            scrollNavigationDualPane.setVisibility(View.GONE);
+            isDualPaneInFocus = false;
         }
         super.onConfigurationChanged(newConfig);
     }

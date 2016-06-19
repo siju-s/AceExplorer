@@ -4,10 +4,17 @@ package com.siju.filemanager.filesystem;
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 import android.text.format.Formatter;
+import android.util.Log;
 
 import com.siju.filemanager.R;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -18,7 +25,7 @@ import java.util.Comparator;
 
 public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
-    private ArrayList<FileInfo> fileInfoArrayList;
+    private ArrayList<FileInfo> fileInfoList;
     private String mPath;
     private Context mContext;
     private boolean showHidden = false;
@@ -31,8 +38,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
     @Override
     protected void onStartLoading() {
-        if (fileInfoArrayList != null) {
-            deliverResult(fileInfoArrayList);
+        if (fileInfoList != null) {
+            deliverResult(fileInfoList);
         } else {
             forceLoad();
         }
@@ -42,49 +49,117 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     public ArrayList<FileInfo> loadInBackground() {
 //        android.os.Debug.waitForDebugger();
 
-        fileInfoArrayList = new ArrayList<>();
+        fileInfoList = new ArrayList<>();
         File file = new File(mPath);
 
         if (file.exists()) {
             File[] listFiles = file.listFiles();
-            Arrays.sort(listFiles, comparatorByName);
 
             if (listFiles != null) {
+                Arrays.sort(listFiles, comparatorByName);
                 for (File file1 : listFiles) {
                     boolean isDirectory = false;
                     String fileName = file1.getName();
                     String filePath = file1.getAbsolutePath();
-                    String noOfFilesOrSize;
+                    String noOfFilesOrSize = null;
+                    String extension = null;
+                    int type = 0;
 
                     // Dont show hidden files by default
                     if (file1.getName().startsWith(".") && !showHidden) {
                         continue;
                     }
                     if (file1.isDirectory()) {
+
                         isDirectory = true;
-                        int childFileListSize = file1.list().length;
+                        int childFileListSize = 0;
+//                        if (file1.list() == null) {
+//                            noOfFilesOrSize = getPermissionOfFile(file1);
+//                        }
+//                        else {
+                        if (file1.list() != null) {
+                            childFileListSize = file1.list().length;
+                        }
+
                         if (childFileListSize == 0) {
                             noOfFilesOrSize = mContext.getResources().getString(R.string.empty);
                         } else {
-                            noOfFilesOrSize = mContext.getResources().getQuantityString(R.plurals.number_of_files, childFileListSize, childFileListSize);
+                            noOfFilesOrSize = mContext.getResources().getQuantityString(R.plurals.number_of_files,
+                                    childFileListSize, childFileListSize);
                         }
+//                        }
                     } else {
                         long size = file1.length();
                         noOfFilesOrSize = Formatter.formatFileSize(mContext, size);
+                        extension = filePath.substring(filePath.lastIndexOf(".") + 1);
+                        type = checkMimeType(filePath);
                     }
                     long date = file1.lastModified();
                     String fileModifiedDate = FileUtils.convertDate(date);
-                    FileInfo fileInfo = new FileInfo(fileName, filePath, fileModifiedDate, noOfFilesOrSize, isDirectory);
-                    fileInfoArrayList.add(fileInfo);
+
+
+                    FileInfo fileInfo = new FileInfo(fileName, filePath, fileModifiedDate, noOfFilesOrSize,
+                            isDirectory, extension, type);
+                    fileInfoList.add(fileInfo);
 
                 }
-                return fileInfoArrayList;
+                return fileInfoList;
             } else {
                 return null;
             }
         } else {
             return null;
         }
+    }
+
+    private boolean checkIfRootDir(File file) {
+        if (!file.getAbsolutePath().contains(FileUtils.getInternalStorage().getAbsolutePath())) {
+            return true;
+        }
+        return false;
+    }
+
+    private String getPermissionOfFile(File file) {
+        ProcessBuilder processBuilder = new ProcessBuilder("ls", "-l").directory(new File(file.getParent()));// TODO
+        // CHECK IF THE FILE IS SD CARD PARENT IS NULL
+        Log.d("TAG", "dir:-" + processBuilder.directory());
+        Process process = null;
+        try {
+            process = processBuilder.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        PrintWriter out = new PrintWriter(new OutputStreamWriter(process.getOutputStream()));
+        BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        out.flush();
+        String resultLine = null;
+        try {
+            resultLine = in.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (resultLine != null) {
+            resultLine = resultLine.substring(1, 9);
+        }
+        Log.d("TAG", "Result==" + resultLine);
+        return resultLine;
+    }
+
+    private int checkMimeType(String path) {
+        String mimeType = URLConnection.guessContentTypeFromName(path);
+        int value = 0;
+        if (mimeType != null) {
+            if (mimeType.indexOf("image") == 0) {
+                value = FileConstants.CATEGORY.IMAGE.getValue();
+            } else if (mimeType.indexOf("video") == 0) {
+                value = FileConstants.CATEGORY.VIDEO.getValue();
+            } else if (mimeType.indexOf("audio") == 0) {
+                value = FileConstants.CATEGORY.AUDIO.getValue();
+            }
+        }
+//        Logger.log("TAG", "Mime type=" + value);
+        return value;
     }
 
     Comparator<? super File> comparatorByName = new Comparator<File>() {

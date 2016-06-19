@@ -16,8 +16,9 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="#63162d"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -29,7 +30,6 @@
                 android:layout_width="0dp"
                 android:layout_height="@dimen/nav_dir_height"
                 android:layout_weight="0.5"
-                android:background="@android:color/holo_green_dark"
                 android:scrollbars="none">
 
 
@@ -60,9 +60,8 @@
                 android:layout_width="0dp"
                 android:layout_height="@dimen/nav_dir_height"
                 android:layout_weight="0.5"
-                android:background="@android:color/holo_red_dark"
                 android:scrollbars="none"
-                android:visibility="visible">
+                android:visibility="gone">
 
 
                 <FrameLayout
@@ -97,6 +96,18 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_dialog_email" />
+        android:src="@android:drawable/ic_input_add" />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_bottom"
+        android:layout_width="match_parent"
+        android:layout_gravity="bottom"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#63162d"
+        android:visibility="gone"
+        app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    <!--<include layout="@layout/bottom_menu"/>-->
+
 
 </android.support.design.widget.CoordinatorLayout>

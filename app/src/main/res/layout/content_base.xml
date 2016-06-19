@@ -12,25 +12,107 @@
     <!---->
     <!--<TextViewandroid:layout_width="wrap_content"android:layout_height="wrap_content"android:text="Hello World!"app:layout_constraintBottom_toBottomOf="@+id/content_base"app:layout_constraintLeft_toLeftOf="@+id/content_base"app:layout_constraintRight_toRightOf="@+id/content_base"app:layout_constraintTop_toTopOf="@+id/content_base" />-->
 
+    <!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:orientation="vertical">-->
 
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
-
-        <FrameLayout
-            android:id="@+id/frame_container"
-            android:layout_width="0dp"
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="0.5" />
+            android:orientation="horizontal">
 
-        <FrameLayout
-            android:id="@+id/frame_container_dual"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            android:visibility="gone" />
-    </LinearLayout>
+            <FrameLayout
+                android:id="@+id/frame_container"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5" />
+
+            <FrameLayout
+                android:id="@+id/frame_container_dual"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:layout_alignParentTop="true"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:background="@android:color/holo_red_dark"-->
+            <!--android:gravity="bottom"-->
+            <!--android:orientation="horizontal">-->
+
+            <!--<ImageButton-->
+                <!--android:id="@+id/imageButtonCut"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignParentLeft="true"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:layout_margin="10dp"-->
+                <!--android:background="@null"-->
+                <!--android:src="@drawable/ic_cut_black" />-->
+
+            <!--<ImageButton-->
+                <!--android:id="@+id/imageButtonPaste"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignParentLeft="true"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:layout_margin="10dp"-->
+                <!--android:background="@null"-->
+                <!--android:src="@drawable/ic_paste_black"-->
+                <!--android:visibility="visible" />-->
+
+            <!--<ImageButton-->
+                <!--android:id="@+id/imageButtonDelete"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_centerInParent="true"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:background="@null"-->
+                <!--android:src="@drawable/ic_delete_black" />-->
+
+
+            <!--<ImageButton-->
+                <!--android:id="@+id/imageButtonShare"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:layout_margin="10dp"-->
+                <!--android:background="@null"-->
+                <!--android:src="@drawable/ic_share" />-->
+
+            <!--<ImageButton-->
+                <!--android:id="@+id/imageButtonCopy"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignTop="@+id/imageButtonDelete"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:layout_marginEnd="60dp"-->
+                <!--android:layout_marginRight="60dp"-->
+                <!--android:layout_toLeftOf="@+id/imageButtonDelete"-->
+                <!--android:layout_toStartOf="@+id/imageButtonDelete"-->
+                <!--android:background="@null"-->
+                <!--android:src="@drawable/ic_copy_black" />-->
+
+            <!--<ImageButton-->
+                <!--android:id="@+id/imageButtonInfo"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignTop="@+id/imageButtonDelete"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:layout_marginLeft="60dp"-->
+                <!--android:layout_marginStart="60dp"-->
+                <!--android:layout_toEndOf="@+id/imageButtonDelete"-->
+                <!--android:layout_toRightOf="@+id/imageButtonDelete"-->
+                <!--android:background="@null"-->
+                <!--android:src="@drawable/ic_info_black" />-->
+
+        <!--</RelativeLayout>-->
+    <!--</RelativeLayout>-->
 
 </android.support.constraint.ConstraintLayout>

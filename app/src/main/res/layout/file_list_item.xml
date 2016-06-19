@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="5dp">
+    android:layout_height="80dp"
+    android:layout_margin="10dp" >
 
     <ImageView
         android:id="@+id/imageIcon"
@@ -10,9 +10,11 @@
         android:layout_height="@dimen/folder_icon"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/drawer_item_margin"
         android:layout_marginRight="@dimen/drawer_item_margin"
-        android:src="@drawable/ic_folder_black" />
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_folder_main" />
 
     <TextView
         android:id="@+id/textFolderName"
@@ -22,7 +24,7 @@
         android:layout_marginTop="12dp"
         android:layout_toRightOf="@+id/imageIcon"
         android:text="SIJU"
-        android:textSize="14sp"/>
+        android:textSize="14sp" />
 
     <!-- This will be no of files for directory & size for file -->
     <TextView
@@ -30,22 +32,31 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textFolderName"
-        android:layout_toRightOf="@+id/imageIcon"
         android:layout_marginTop="10dp"
+        android:layout_toRightOf="@+id/imageIcon"
         android:text="Second line"
-        android:textSize="12sp"
-        android:textAppearance="?attr/textAppearanceListItemSmall"/>
+        android:textAppearance="?attr/textAppearanceListItemSmall"
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/textDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="12dp"
         android:layout_below="@+id/textFolderName"
-        android:textSize="12sp"
-        android:layout_marginRight="5dp"
         android:layout_marginEnd="5dp"
-        android:text="14 Jun,2016 12:00 pm"/>
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="12dp"
+        android:text="14 Jun,2016 12:00 pm"
+        android:textSize="12sp" />
+
+    <ImageView
+        android:id="@+id/imageThumbIcon"
+        android:layout_width="@dimen/folder_thumb_icon"
+        android:layout_height="@dimen/folder_thumb_icon"
+        android:scaleType="fitXY"
+        android:layout_alignTop="@+id/textSecondLine"
+        android:layout_alignRight="@+id/imageIcon"
+        android:layout_alignEnd="@+id/imageIcon" />
 
 </RelativeLayout>

@@ -8,9 +8,13 @@
     <string name="nav_menu_internal_storage">Internal Storage</string>
     <string name="nav_menu_root">Root</string>
     <string name="nav_menu_ext_storage">External SD</string>
+    <string name="nav_menu_music">Music</string>
+    <string name="nav_menu_video">Videos</string>
+    <string name="nav_menu_image">Images</string>
+    <string name="nav_menu_docs">Documents</string>
     <string name="nav_header_storages">Storages</string>
     <string name="nav_header_bookmarks">Bookmarks</string>
-    <string name="nav_header_collections">Collections</string>
+    <string name="nav_header_collections">Library</string>
     <string name="nav_header_others">Others</string>
     <string name="msg_free">free of</string>
     <string name="empty">Empty</string>
@@ -21,4 +25,12 @@
 
     </plurals>
     <string name="downloads">Downloads</string>
+    <string name="action_rename">Rename</string>
+    <string name="action_info">Properties</string>
+    <string name="action_archive">Archive</string>
+    <string name="action_cut">Cut</string>
+    <string name="action_copy">Copy</string>
+    <string name="action_paste">Paste</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_share">Share</string>
 </resources>

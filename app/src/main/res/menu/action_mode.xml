@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_cut"
+        android:icon="@drawable/ic_cut_black"
+        android:orderInCategory="1"
+        android:title="@string/action_cut"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_copy"
+        android:icon="@drawable/ic_copy_black"
+        android:orderInCategory="2"
+        android:title="@string/action_copy"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_paste"
+        android:icon="@drawable/ic_paste_black"
+        android:orderInCategory="3"
+        android:title="@string/action_paste"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_delete"
+        android:icon="@drawable/ic_delete_black"
+        android:orderInCategory="4"
+        android:title="@string/action_delete"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_share"
+        android:icon="@drawable/ic_share"
+        android:orderInCategory="5"
+        android:title="@string/action_share"
+        app:showAsAction="ifRoom" />
+
+
+    <item
+        android:id="@+id/action_rename"
+        android:icon="@drawable/ic_rename"
+        android:orderInCategory="6"
+        android:title="@string/action_rename"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_info"
+        android:icon="@drawable/ic_info_black"
+        android:orderInCategory="7"
+        android:title="@string/action_info"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_archive"
+        android:icon="@drawable/ic_archive"
+        android:orderInCategory="8"
+        android:title="@string/action_archive"
+        app:showAsAction="ifRoom" />
+
+
+</menu>
