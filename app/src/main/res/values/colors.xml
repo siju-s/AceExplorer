@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#910a72</color>
+    <color name="colorPrimary">#73066e</color>
     <color name="colorPrimaryDark">#800080</color>
     <color name="colorAccent">#FF4081</color>
     <color name="navDrawerBg">#fafafa</color>
     <color name="navButtons">#ffffff</color>
     <color name="navButtonsInactive">#33ffffff</color>  <!--20% transparent -->
+    <color name="actionModeItemSelected">#33800080</color>
 
 </resources>

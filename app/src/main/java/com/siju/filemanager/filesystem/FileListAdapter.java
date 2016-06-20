@@ -3,8 +3,11 @@ package com.siju.filemanager.filesystem;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.v4.content.ContextCompat;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,11 +31,13 @@ public class FileListAdapter extends BaseAdapter {
 
     private Context mContext;
     private ArrayList<FileInfo> fileInfoArrayList;
+    private SparseBooleanArray mSelectedItemsIds;
 //    OnItemClickListener mItemClickListener;
 
     public FileListAdapter(Context mContext, ArrayList<FileInfo> fileInfoArrayList) {
         this.mContext = mContext;
         this.fileInfoArrayList = fileInfoArrayList;
+        mSelectedItemsIds = new SparseBooleanArray();
     }
 
     public void updateAdapter(ArrayList<FileInfo> fileInfos) {
@@ -111,6 +116,10 @@ public class FileListAdapter extends BaseAdapter {
         } else {
             fileListViewHolder = (FileListViewHolder) view.getTag();
         }
+        //change background color if list item is selected
+        int color = ContextCompat.getColor(mContext, R.color.actionModeItemSelected);
+        view.setBackgroundColor(mSelectedItemsIds.get(position) ? color :
+                Color.TRANSPARENT);
         String fileName = fileInfoArrayList.get(position).getFileName();
         String fileDate = fileInfoArrayList.get(position).getFileDate();
         boolean isDirectory = fileInfoArrayList.get(position).isDirectory();
@@ -121,7 +130,7 @@ public class FileListAdapter extends BaseAdapter {
         fileListViewHolder.textFileModifiedDate.setText(fileDate);
 
         if (isDirectory) {
-            fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_folder3);
+            fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_folder);
 
         } else {
             if (fileInfoArrayList.get(position).getExtension().equals(FileConstants.APK_EXTENSION)) {
@@ -156,6 +165,32 @@ public class FileListAdapter extends BaseAdapter {
 
         Drawable apkIcon = packageInfo.applicationInfo.loadIcon(pm);
         return apkIcon;
+    }
+
+    public void toggleSelection(int position) {
+        selectView(position, !mSelectedItemsIds.get(position));
+    }
+
+    public void removeSelection() {
+        mSelectedItemsIds = new SparseBooleanArray();
+        notifyDataSetChanged();
+    }
+
+    public void selectView(int position, boolean value) {
+        if (value)
+            mSelectedItemsIds.put(position, value);
+        else
+            mSelectedItemsIds.delete(position);
+
+        notifyDataSetChanged();
+    }
+
+    public int getSelectedCount() {
+        return mSelectedItemsIds.size();// mSelectedCount;
+    }
+
+    public SparseBooleanArray getSelectedItemPositions() {
+        return mSelectedItemsIds;
     }
 
 

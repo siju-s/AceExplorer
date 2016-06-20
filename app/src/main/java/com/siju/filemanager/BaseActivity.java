@@ -16,9 +16,11 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -28,14 +30,17 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.siju.filemanager.common.Logger;
 import com.siju.filemanager.filesystem.FileConstants;
+import com.siju.filemanager.filesystem.FileListAdapter;
 import com.siju.filemanager.filesystem.FileListDualFragment;
 import com.siju.filemanager.filesystem.FileListFragment;
 import com.siju.filemanager.filesystem.FileUtils;
 import com.siju.filemanager.model.SectionGroup;
 import com.siju.filemanager.model.SectionItems;
+import com.siju.filemanager.ui.EnhancedMenuInflater;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -46,7 +51,7 @@ import java.util.List;
 import static com.siju.filemanager.filesystem.FileUtils.getInternalStorage;
 
 
-public class BaseActivity extends AppCompatActivity {
+public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener {
 
     ExpandableListAdapter expandableListAdapter;
     ExpandableListView expandableListView;
@@ -78,6 +83,8 @@ public class BaseActivity extends AppCompatActivity {
     private boolean isCurrentDirRoot;
     private Toolbar mBottomToolbar;
     private ActionMode mActionMode;
+    private FileListAdapter fileListAdapter;
+    private SparseBooleanArray mSelectedItemPositions = new SparseBooleanArray();
 
 
     @Override
@@ -173,8 +180,9 @@ public class BaseActivity extends AppCompatActivity {
         File rootDir = systemDir.getParentFile();
         File internalSD = FileUtils.getInternalStorage();
         File extSD = FileUtils.getExternalStorage();
-        storageGroupChild.add(new SectionItems(STORAGE_ROOT, storageSpace(systemDir), R.drawable.ic_root_black, FileUtils
-                .getAbsolutePath(rootDir)));
+        storageGroupChild.add(new SectionItems(STORAGE_ROOT, storageSpace(systemDir), R.drawable.ic_root_black,
+                FileUtils
+                        .getAbsolutePath(rootDir)));
         storageGroupChild.add(new SectionItems(STORAGE_INTERNAL, storageSpace(internalSD), R.drawable
                 .ic_storage_black, FileUtils.getAbsolutePath(internalSD)));
         if (extSD != null) {
@@ -271,12 +279,11 @@ public class BaseActivity extends AppCompatActivity {
 
 
         String dir = "";
-       // If root dir , parts will be 0
+        // If root dir , parts will be 0
         if (parts.length == 0) {
             isCurrentDirRoot = true;
-            setNavDir("/","/"); // Add Root button
-        }
-        else {
+            setNavDir("/", "/"); // Add Root button
+        } else {
 
             for (int i = 1; i < parts.length; i++) {
                 dir += "/" + parts[i];
@@ -291,7 +298,7 @@ public class BaseActivity extends AppCompatActivity {
                     }
                 }
                 if (isCurrentDirRoot) {
-                    setNavDir("/","/");
+                    setNavDir("/", "/");
                 }
                 setNavDir(dir, parts[i]);
             }
@@ -299,7 +306,7 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
-    private void setNavDir(String dir,String parts) {
+    private void setNavDir(String dir, String parts) {
 
 
         int WRAP_CONTENT = LinearLayout.LayoutParams.WRAP_CONTENT;
@@ -711,13 +718,61 @@ public class BaseActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void inflateBottomMenu()
-    {
+    public void startActionMode() {
 
         mBottomToolbar.setVisibility(View.VISIBLE);
         mBottomToolbar.startActionMode(new ActionModeCallback());
-        mBottomToolbar.inflateMenu(R.menu.action_mode);
+//        mBottomToolbar.inflateMenu(R.menu.action_mode_bottom);
+        mBottomToolbar.getMenu().clear();
+        EnhancedMenuInflater.inflate(getMenuInflater(), mBottomToolbar.getMenu(), true);
+        mBottomToolbar.setOnMenuItemClickListener(this);
+    }
 
+
+    public ActionMode getActionMode() {
+        return mActionMode;
+    }
+
+    public void setFileListAdapter(FileListAdapter adapter) {
+        fileListAdapter = adapter;
+    }
+
+    public void setSelectedItemPos(SparseBooleanArray selectedItemPos) {
+          mSelectedItemPositions = selectedItemPos;
+    }
+
+    /**
+     * Toolbar menu item click listener
+     *
+     * @param item
+     * @return
+     */
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_cut:
+                if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+                    showMessage(mSelectedItemPositions.size() + " " + getString(R.string.msg_cut));
+                }
+                break;
+            case R.id.action_copy:
+                if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+                    showMessage(mSelectedItemPositions.size() + " " + getString(R.string.msg_cut));
+                }
+                break;
+            case R.id.action_paste:
+                break;
+            case R.id.action_delete:
+                break;
+            case R.id.action_share:
+                break;
+        }
+        return false;
+    }
+
+    private void showMessage(String msg) {
+        Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -729,8 +784,8 @@ public class BaseActivity extends AppCompatActivity {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             mActionMode = mode;
-//            MenuInflater inflater = mActionMode.getMenuInflater();
-//            inflater.inflate(R.menu.action_music_home, menu);
+            MenuInflater inflater = mActionMode.getMenuInflater();
+            inflater.inflate(R.menu.action_mode, menu);
             return true;
         }
 
@@ -743,12 +798,16 @@ public class BaseActivity extends AppCompatActivity {
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.action_delete:
+                case R.id.action_rename:
 
                     mActionMode.finish();
                     return true;
 
-                case R.id.action_share:
+                case R.id.action_info:
+
+                    mActionMode.finish();
+                    return true;
+                case R.id.action_archive:
 
                     mActionMode.finish();
                     return true;
@@ -760,7 +819,14 @@ public class BaseActivity extends AppCompatActivity {
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
+            FileListFragment fileListFragment = (FileListFragment) getSupportFragmentManager().findFragmentById(R.id
+                    .frame_container);
+            if (fileListFragment != null) {
+                fileListFragment.clearSelection();
+            }
+
             mActionMode = null;
+            mBottomToolbar.setVisibility(View.GONE);
         }
     }
 
