@@ -16,13 +16,7 @@
         android:title="@string/action_copy"
         app:showAsAction="ifRoom" />
 
-    <item
-        android:id="@+id/action_paste"
-        android:icon="@drawable/ic_paste_white"
-        android:orderInCategory="3"
-        android:title="@string/action_paste"
-        android:visible="false"
-        app:showAsAction="ifRoom" />
+
 
     <item
         android:id="@+id/action_delete"

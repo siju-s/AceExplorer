@@ -11,6 +11,8 @@ public class FileConstants {
     public static final String KEY_DUAL_MODE = "DUAL_MODE";
     public static final String APK_EXTENSION = "apk";
 
+
+
     public enum CATEGORY {
         IMAGE(1),
         VIDEO(2),

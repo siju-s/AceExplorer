@@ -34,6 +34,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
     private FileListAdapter fileListAdapter;
     private ArrayList<FileInfo> fileInfoList;
     private boolean isDualMode;
+    private String mFilePath;
 
 
     @Override
@@ -51,15 +52,15 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
         fileList = (ListView) root.findViewById(R.id.fileList);
 
         Bundle args = new Bundle();
-        String filePath = null, fileName;
+        String fileName;
 
         if (getArguments() != null && getArguments().getString(FileConstants.KEY_PATH) != null) {
-            filePath = getArguments().getString(FileConstants.KEY_PATH);
+            mFilePath = getArguments().getString(FileConstants.KEY_PATH);
             fileName = getArguments().getString(FileConstants.KEY_FILENAME);
 //            isDualMode = getArguments().getBoolean(FileConstants.KEY_DUAL_MODE, false);
         }
 
-        Log.d("TAG", "on onActivityCreated--Fragment" + filePath);
+        Log.d("TAG", "on onActivityCreated--Fragment" + mFilePath);
 
 //        else {
 //            filePath = getArguments().getString(FileConstants.KEY_PATH);
@@ -67,8 +68,8 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 //        fileList.setLayoutManager(new LinearLayoutManager(getContext()));
         fileListAdapter = new FileListAdapter(getContext(), fileInfoList);
         fileList.setAdapter(fileListAdapter);
-        if (filePath != null) {
-            args.putString(FileConstants.KEY_PATH, filePath);
+        if (mFilePath != null) {
+            args.putString(FileConstants.KEY_PATH, mFilePath);
             getLoaderManager().initLoader(LOADER_ID, args, this);
         }
         fileList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -120,6 +121,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
         if (hasCheckedItems && actionMode == null) {
             // there are some selected items, start the actionMode
             ((BaseActivity) getActivity()).startActionMode();
+            ((BaseActivity) getActivity()).setFileList(fileInfoList);
         } else if (!hasCheckedItems && actionMode != null) {
             // there no selected items, finish the actionMode
             actionMode.finish();
@@ -137,6 +139,17 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 
       }
 
+    public void refreshList()
+    {
+        Bundle args = new Bundle();
+        args.putString(FileConstants.KEY_PATH, mFilePath);
+        getLoaderManager().restartLoader(LOADER_ID,args,this);
+    }
+
+
+
+
+
 
     @Override
     public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
@@ -148,6 +161,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoadFinished(Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
+        Log.d("TAG", "on onLoadFinished--" + data.size());
         if (data != null && !data.isEmpty()) {
             fileInfoList = data;
             fileListAdapter.updateAdapter(fileInfoList);

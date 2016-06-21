@@ -1,8 +1,11 @@
 package com.siju.filemanager;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -34,6 +37,7 @@ import android.widget.Toast;
 
 import com.siju.filemanager.common.Logger;
 import com.siju.filemanager.filesystem.FileConstants;
+import com.siju.filemanager.filesystem.FileInfo;
 import com.siju.filemanager.filesystem.FileListAdapter;
 import com.siju.filemanager.filesystem.FileListDualFragment;
 import com.siju.filemanager.filesystem.FileListFragment;
@@ -85,6 +89,13 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private ActionMode mActionMode;
     private FileListAdapter fileListAdapter;
     private SparseBooleanArray mSelectedItemPositions = new SparseBooleanArray();
+    MenuItem mPasteItem;
+    private static final int PASTE_OPERATION = 1;
+    private static final int DELETE_OPERATION = 2;
+    private static final int ARCHIVE_OPERATION = 3;
+    private static final int DECRYPT_OPERATION = 4;
+    private boolean mIsMoveOperation = false;
+    private ArrayList<FileInfo> mFileList;
 
 
     @Override
@@ -511,7 +522,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
 
     private boolean createFragmentForIntent(Intent intent) {
-//        Log.d(TAG, "createFragmentForIntent");
+
         if (intent.getAction() != null) {
             final String action = intent.getAction();
             Fragment targetFragment = null;
@@ -538,6 +549,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                 dualPaneFragments.add(targetFragment);
 
             }
+            Logger.log("TAG", "createFragmentForIntent--currentdir="+mCurrentDir);
 
 
             setNavDirectory();
@@ -563,8 +575,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         int singlePaneCount = singlePaneFragments.size();
         int dualPaneCount = dualPaneFragments.size();
 
-        Logger.log("TAG", "Onbackpress--SINGLEPANEL count=" + singlePaneCount);
-        Logger.log("TAG", "Onbackpress--DUALPANEL count=" + dualPaneCount);
+//        Logger.log("TAG", "Onbackpress--SINGLEPANEL count=" + singlePaneCount);
+//        Logger.log("TAG", "Onbackpress--DUALPANEL count=" + dualPaneCount);
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -591,6 +603,9 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                     super.onBackPressed();
 
                 } else {
+                    // Changing the current dir  to 1 up on back press
+                    mCurrentDir = new File(mCurrentDir).getParent();
+                    Log.d("TAG", "Onbackpress--mCurrentDir=" + mCurrentDir);
                     int childCount = navDirectory.getChildCount();
                     Log.d("TAG", "Onbackpress--Navbuttons count=" + childCount);
                     navDirectory.removeViewAt(childCount - 1); // Remove view
@@ -618,6 +633,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 //                    finish();
                     super.onBackPressed();
                 } else {
+                    mCurrentDirDualPane = new File(mCurrentDirDualPane).getParent();
+                    Log.d("TAG", "Onbackpress--mCurrentDirDual=" + mCurrentDirDualPane);
                     int childCount = navDirectoryDualPane.getChildCount();
                     Log.d("TAG", "Onbackpress--Navbuttonsdualpane childCount=" + childCount);
                     navDirectoryDualPane.removeViewAt(childCount - 1); // Remove view
@@ -699,6 +716,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.base, menu);
+        mPasteItem = menu.findItem(R.id.action_paste);
 
         return true;
     }
@@ -708,14 +726,30 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        switch (item.getItemId()) {
+            case R.id.action_paste:
+                ArrayList<String> filePaths = new ArrayList<>();
+                if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+                    for (int i = 0; i < mSelectedItemPositions.size(); i++) {
+                        if (mSelectedItemPositions.valueAt(i)) {
+                            filePaths.add(mFileList.get(mSelectedItemPositions.keyAt(i)).getFilePath());
+                            new BackGroundOperationsTask(PASTE_OPERATION).execute(filePaths);
+                        }
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+                    }
+                }
+                break;
         }
+        //noinspection SimplifiableIfStatement
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void setFileList(ArrayList<FileInfo> list) {
+        mFileList = list;
     }
 
     public void startActionMode() {
@@ -728,6 +762,10 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         mBottomToolbar.setOnMenuItemClickListener(this);
     }
 
+    private void togglePasteVisibility(boolean isVisible) {
+        mPasteItem.setVisible(isVisible);
+    }
+
 
     public ActionMode getActionMode() {
         return mActionMode;
@@ -738,7 +776,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     }
 
     public void setSelectedItemPos(SparseBooleanArray selectedItemPos) {
-          mSelectedItemPositions = selectedItemPos;
+        mSelectedItemPositions = selectedItemPos;
     }
 
     /**
@@ -753,15 +791,19 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         switch (item.getItemId()) {
             case R.id.action_cut:
                 if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
-                    showMessage(mSelectedItemPositions.size() + " " + getString(R.string.msg_cut));
+                    showMessage(mSelectedItemPositions.size() + " " + getString(R.string.msg_cut_copy));
+                    mIsMoveOperation = true;
+                    togglePasteVisibility(true);
+                    mActionMode.finish();
                 }
                 break;
             case R.id.action_copy:
                 if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
-                    showMessage(mSelectedItemPositions.size() + " " + getString(R.string.msg_cut));
+                    mIsMoveOperation = false;
+                    showMessage(mSelectedItemPositions.size() + " " + getString(R.string.msg_cut_copy));
+                    togglePasteVisibility(true);
+                    mActionMode.finish();
                 }
-                break;
-            case R.id.action_paste:
                 break;
             case R.id.action_delete:
                 break;
@@ -772,7 +814,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     }
 
     private void showMessage(String msg) {
-        Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -859,4 +901,132 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         }
         super.onConfigurationChanged(newConfig);
     }
+
+    private class BackGroundOperationsTask extends AsyncTask<ArrayList<String>, Void, ArrayList<String>> {
+
+        private String fileName;
+        private String filePath;
+        private int copyStatus = -1;
+        private ProgressDialog progressDialog;
+        private int operation;
+        private int progressCount = 0;
+        private int filesCopied;
+
+        private BackGroundOperationsTask(int operation) {
+            this.operation = operation;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            Context mContext = BaseActivity.this;
+            switch (operation) {
+
+                case PASTE_OPERATION:
+                    progressDialog = new ProgressDialog(mContext);
+                    progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                    if (mIsMoveOperation) {
+                        progressDialog.setMessage(mContext.getString(R.string.msg_cut));
+                    } else {
+                        progressDialog.setMessage(mContext.getString(R.string.msg_copy));
+                    }
+                    progressDialog.show();
+                    progressDialog.setMax(mSelectedItemPositions.size());
+                    progressDialog.setProgress(0);
+                    break;
+
+                case DELETE_OPERATION:
+
+                    progressDialog = ProgressDialog.show(mContext, "Please wait",
+                            getString(R.string.msg_delete), true, false);
+                    break;
+            }
+
+        }
+
+        @Override
+        protected ArrayList<String> doInBackground(ArrayList<String>... params) {
+
+            ArrayList<String> paths = params[0];
+//            android.os.Debug.waitForDebugger();
+            switch (operation) {
+
+                case PASTE_OPERATION:
+                    if (paths.size() > 0) {
+                        for (int i = 0; i < paths.size(); i++) {
+                            copyStatus = FileUtils.copyToDirectory(paths.get(i), mCurrentDir, mIsMoveOperation);
+                            if (copyStatus == 0) {
+                                filesCopied++;
+                            }
+                            progressCount++;
+                            progressDialog.setProgress((i
+                                    / paths.size()));
+                        }
+                    }
+                    break;
+
+            }
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(final ArrayList<String> file) {
+            FileListFragment singlePaneFragment = (FileListFragment) getSupportFragmentManager().findFragmentById(R.id.frame_container);
+
+            switch (operation) {
+
+                case PASTE_OPERATION:
+
+                    if (mSelectedItemPositions != null && mSelectedItemPositions.size() != 0) {
+                        mSelectedItemPositions.clear();
+                    }
+                    togglePasteVisibility(false);
+
+                    // On Copy/Move success
+                    if (copyStatus == 0) {
+                        if (singlePaneFragment != null) {
+                            singlePaneFragment.refreshList();
+                        }
+                        if (mIsMoveOperation) {
+                            showMessage(getResources().getQuantityString(R.plurals.number_of_files, filesCopied,
+                                    filesCopied) + " " +
+                                    getString(R.string.msg_move_success));
+
+                        } else {
+                            showMessage(getResources().getQuantityString(R.plurals.number_of_files, filesCopied,
+                                    filesCopied) + " " +
+                                    getString(R.string.msg_copy_success));
+                        }
+                    } else {
+                        // On Copy/Move failure
+                        if (mIsMoveOperation) {
+                            showMessage(getString(R.string.msg_move_failure));
+                        } else {
+                            showMessage(getString(R.string.msg_copy_failure));
+                        }
+                    }
+                    mIsMoveOperation = false;
+                    progressDialog.dismiss();
+                    filesCopied = 0;
+                    break;
+
+                case DELETE_OPERATION:
+
+                    if (mSelectedItemPositions != null && mSelectedItemPositions.size() != 0) {
+
+                        mSelectedItemPositions.clear();
+
+                    }
+//                    Toast.makeText(FilebrowserULTRAActivity.this,
+//                            " Delete successfull !", Toast.LENGTH_SHORT).show();
+//                    refreshList();
+                    progressDialog.dismiss();
+
+                    break;
+            }
+        }
+
+
+    }
 }
+

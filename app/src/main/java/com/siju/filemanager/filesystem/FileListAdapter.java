@@ -32,12 +32,14 @@ public class FileListAdapter extends BaseAdapter {
     private Context mContext;
     private ArrayList<FileInfo> fileInfoArrayList;
     private SparseBooleanArray mSelectedItemsIds;
+    private ArrayList<FileInfo> mSelectedFileList;
 //    OnItemClickListener mItemClickListener;
 
     public FileListAdapter(Context mContext, ArrayList<FileInfo> fileInfoArrayList) {
         this.mContext = mContext;
         this.fileInfoArrayList = fileInfoArrayList;
         mSelectedItemsIds = new SparseBooleanArray();
+        mSelectedFileList = new ArrayList<>();
     }
 
     public void updateAdapter(ArrayList<FileInfo> fileInfos) {
@@ -154,6 +156,8 @@ public class FileListAdapter extends BaseAdapter {
         return view;
     }
 
+
+
     private Drawable getApkIcon(String path) {
         PackageManager pm = mContext.getPackageManager();
         PackageInfo packageInfo = pm.getPackageArchiveInfo(path, 0);
@@ -173,14 +177,20 @@ public class FileListAdapter extends BaseAdapter {
 
     public void removeSelection() {
         mSelectedItemsIds = new SparseBooleanArray();
+        mSelectedFileList = new ArrayList<>();
         notifyDataSetChanged();
+
     }
 
     public void selectView(int position, boolean value) {
-        if (value)
+        if (value) {
             mSelectedItemsIds.put(position, value);
-        else
+//            mSelectedFileList.add(fileInfoArrayList.get(position));
+        }
+        else {
             mSelectedItemsIds.delete(position);
+
+        }
 
         notifyDataSetChanged();
     }
