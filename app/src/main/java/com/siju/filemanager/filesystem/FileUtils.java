@@ -2,6 +2,10 @@ package com.siju.filemanager.filesystem;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.text.format.Formatter;
@@ -42,6 +46,11 @@ public class FileUtils {
     private static int fileCount = 0;
     static final String TAG = "FileUtils";
     private static Activity activity;
+    public static final int ACTION_NONE = 0;
+    public static final int ACTION_REPLACE = 1;
+    public static final int ACTION_SKIP = 2;
+    public static final int ACTION_KEEP = 3;
+    public static final int ACTION_CANCEL = 4;
 
 
     public static File getRootDirectory() {
@@ -123,28 +132,40 @@ public class FileUtils {
      * @return
      */
 
-    public static int copyToDirectory(String source, String destination, boolean isMoveOperation) {
+    public static int copyToDirectory(Context context, String source, String destination, boolean isMoveOperation, int
+            action) {
         File sourceFile = new File(source);
         File destinationDir = new File(destination);
         byte[] data = new byte[BUFFER];
         int read = 0;
         boolean isMove = isMoveOperation;
+        int fileAction = action;
 
         boolean exists = destinationDir.exists();
         boolean value = destinationDir.canWrite();
         boolean sourceisFile = sourceFile.isFile();
         boolean destIsDir = destinationDir.isDirectory();
+        File newFile = null;
 
         if (destinationDir.canWrite()) {
             if (sourceFile.isFile() && destinationDir.isDirectory()) {
                 String file_name = source.substring(source.lastIndexOf("/"), source.length());
-                File cp_file = new File(destination + file_name);
+                if (fileAction == ACTION_SKIP) {
+                    return -1;
+                } else if (fileAction == ACTION_KEEP) {
+                    newFile = new File(destination + file_name + (2));
+                } else if (fileAction == ACTION_REPLACE) {
+                    String destinationDirFile = destinationDir + "/" + file_name;
+                    new File(destinationDirFile).delete();
+                } else {
+                    newFile = new File(destination + file_name);
+                }
 
 
                 try {
 
                     BufferedOutputStream outputStream = new BufferedOutputStream(
-                            new FileOutputStream(cp_file));
+                            new FileOutputStream(newFile));
                     BufferedInputStream bufferedInputStream = new BufferedInputStream(
                             new FileInputStream(sourceFile));
 
@@ -174,7 +195,7 @@ public class FileUtils {
                     return -1;
 
                 for (int i = 0; i < len; i++)
-                    copyToDirectory(source + "/" + files[i], dir, isMove);
+                    copyToDirectory(context, source + "/" + files[i], dir, isMove, fileAction);
 
             }
         } else {
@@ -513,41 +534,33 @@ public class FileUtils {
         return !fileInCanonicalDir.getCanonicalFile().equals(fileInCanonicalDir.getAbsoluteFile());
     }
 
-       /* public Drawable getapkicon(String url){
+    public static Drawable getAppIcon(Context context, String url) {
 
 
-            Drawable icon ;
-            String filePath = url;
-            try{
-                PackageInfo packageInfo = activity.getPackageManager().getPackageArchiveInfo(filePath, PackageManager
-                .GET_ACTIVITIES);
-                ApplicationInfo appInfo = packageInfo.applicationInfo;
+        Drawable icon;
+        String filePath = url;
+        try {
+            PackageInfo packageInfo = context.getPackageManager().getPackageArchiveInfo(filePath, PackageManager
+                    .GET_ACTIVITIES);
+            ApplicationInfo appInfo = packageInfo.applicationInfo;
+            appInfo.sourceDir = filePath;
+            appInfo.publicSourceDir = filePath;
+
+            icon = appInfo.loadIcon(context.getPackageManager());
+//                    if(icon.getIntrinsicHeight() >50 && icon.getIntrinsicWidth()>50){
+//                        //Bitmap bitmap = ((BitmapDrawable) icon).getBitmap();
+//                        // int dp5 = (int)(activity.getResources().getDisplayMetrics().densityDpi/120);
+//                        //icon= new BitmapDrawable(activity.getResources(),Bitmap.createScaledBitmap(bitmap, 50*dp5,
+//                        50*dp5, true));
+//                    }
 
 
-                if (Build.VERSION.SDK_INT >= 5) {
-                    appInfo.sourceDir = filePath;
-                    appInfo.publicSourceDir = filePath;
+            return icon;
+        } catch (Exception e) {
 
-                    icon = appInfo.loadIcon(activity.getPackageManager());
-                    if(icon.getIntrinsicHeight() >50 && icon.getIntrinsicWidth()>50){
-                        //Bitmap bitmap = ((BitmapDrawable) icon).getBitmap();
-                        // int dp5 = (int)(activity.getResources().getDisplayMetrics().densityDpi/120);
-                        //icon= new BitmapDrawable(activity.getResources(),Bitmap.createScaledBitmap(bitmap, 50*dp5,
-                        50*dp5, true));
-                    }
-
-                }else {
-                    icon = activity.getResources().getDrawable(R.drawable.apk_file);
-
-                }
-
-                return icon;
-            }
-            catch (Exception e) {
-                // TODO: handle exception
-                return activity.getResources().getDrawable(R.drawable.apk_file);
-            }
-        }*/
+            return null;
+        }
+    }
 
     /*
      * (non-JavaDoc)

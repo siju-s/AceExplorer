@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+
+    <RelativeLayout
+        android:id="@+id/layoutFileDetail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/imageFileIcon"
+            android:src="@drawable/ic_file_black"
+            android:layout_width="@dimen/dialog_image"
+            android:layout_height="@dimen/dialog_image"
+            android:layout_alignParentLeft="true"/>
+
+
+        <TextView
+            android:id="@+id/textFileName"
+            android:layout_width="wrap_content"
+            android:textStyle="bold"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/imageFileIcon"/>
+
+        <TextView
+            android:id="@+id/textFileDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textFileName"
+            android:layout_toRightOf="@+id/imageFileIcon"/>
+
+        <TextView
+            android:id="@+id/textFileSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textFileDate"
+            android:layout_toRightOf="@+id/imageFileIcon"/>
+
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/buttonReplace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_replace"/>
+
+        <Button
+            android:id="@+id/buttonSkip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_skip"/>
+
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/buttonKeepBoth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/dialog_keep_both"/>
+
+
+    <Button
+        android:id="@+id/buttonCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="@string/dialog_cancel"/>
+</LinearLayout>

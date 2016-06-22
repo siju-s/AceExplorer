@@ -43,8 +43,12 @@
     <string name="msg_copy_failure">Copy operation failed</string>
     <string name="msg_move_failure">Move operation failed</string>
     <string name="msg_delete_failure">Delete operation failed</string>
-
-
+    <string name="dialog_skip">Skip</string>
+    <string name="dialog_replace">Replace</string>
+    <string name="dialog_keep_both">Keep both files</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_title_paste_conflict">File exists</string>
+    <string name="msg_operation_cancel">Operation cancelled</string>
 
 
 </resources>
