@@ -12,7 +12,7 @@
         android:layout_marginLeft="@dimen/drawer_item_margin"
         android:layout_marginStart="@dimen/drawer_item_margin"
         android:layout_marginTop="@dimen/drawer_item_margin"
-        android:text="SIJU"
+        android:textStyle="bold"
         android:textSize="14sp" />
 
     <ImageView

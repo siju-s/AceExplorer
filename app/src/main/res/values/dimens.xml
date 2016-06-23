@@ -16,7 +16,8 @@
     <dimen name="folder_thumb_icon">20dp</dimen>
     <dimen name="toolbar_top_padding">30dp</dimen>
     <dimen name="nav_dir_height">50dp</dimen>
-    <dimen name="dialog_image">25dp</dimen>
+    <dimen name="dialog_image">50dp</dimen>
+    <dimen name="dialog_paste_conflict">300dp</dimen>
 
 
 </resources>

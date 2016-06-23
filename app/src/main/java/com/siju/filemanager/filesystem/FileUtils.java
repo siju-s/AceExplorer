@@ -11,6 +11,8 @@ import android.os.Environment;
 import android.text.format.Formatter;
 import android.util.Log;
 
+import com.siju.filemanager.common.Logger;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -134,6 +136,7 @@ public class FileUtils {
 
     public static int copyToDirectory(Context context, String source, String destination, boolean isMoveOperation, int
             action) {
+        Logger.log("TAG","ACTION=="+action);
         File sourceFile = new File(source);
         File destinationDir = new File(destination);
         byte[] data = new byte[BUFFER];
@@ -150,13 +153,19 @@ public class FileUtils {
         if (destinationDir.canWrite()) {
             if (sourceFile.isFile() && destinationDir.isDirectory()) {
                 String file_name = source.substring(source.lastIndexOf("/"), source.length());
+                String fileNameWithoutExt = file_name.substring(0,file_name.lastIndexOf("."));
+                Logger.log("TAG","fileNameWithoutExt=="+fileNameWithoutExt);
                 if (fileAction == ACTION_SKIP) {
                     return -1;
                 } else if (fileAction == ACTION_KEEP) {
-                    newFile = new File(destination + file_name + (2));
+                    String extension = file_name.substring(file_name.lastIndexOf("."),file_name.length());
+                    String newName = destination + fileNameWithoutExt + "(2)" + extension;
+                    Logger.log("TAG","newName=="+newName);
+                    newFile = new File(newName);
                 } else if (fileAction == ACTION_REPLACE) {
                     String destinationDirFile = destinationDir + "/" + file_name;
                     new File(destinationDirFile).delete();
+                    newFile = new File(destination + file_name);
                 } else {
                     newFile = new File(destination + file_name);
                 }

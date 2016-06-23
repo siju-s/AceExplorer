@@ -56,12 +56,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.siju.filemanager.R.id.buttonReplace;
-import static com.siju.filemanager.R.id.buttonSkip;
 import static com.siju.filemanager.filesystem.FileUtils.getInternalStorage;
 
 
-public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener {
+public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener,
+        View.OnClickListener {
 
     ExpandableListAdapter expandableListAdapter;
     ExpandableListView expandableListView;
@@ -102,6 +101,13 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private static final int DECRYPT_OPERATION = 4;
     private boolean mIsMoveOperation = false;
     private ArrayList<FileInfo> mFileList;
+    private HashMap<String, Integer> mPathActionMap = new HashMap<>();
+    private int mPasteAction = FileUtils.ACTION_NONE;
+    private boolean isPasteConflictDialogShown;
+    private String mSourceFilePath = null;
+    private ArrayList<String> tempSourceFile = new ArrayList<>();
+    private int tempConflictCounter = 0;
+    private Dialog mPasteConflictDialog;
 
 
     @Override
@@ -197,13 +203,13 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         File rootDir = systemDir.getParentFile();
         File internalSD = FileUtils.getInternalStorage();
         File extSD = FileUtils.getExternalStorage();
-        storageGroupChild.add(new SectionItems(STORAGE_ROOT, storageSpace(systemDir), R.drawable.lock_150,
+        storageGroupChild.add(new SectionItems(STORAGE_ROOT, storageSpace(systemDir), R.drawable.ic_root_white,
                 FileUtils
                         .getAbsolutePath(rootDir)));
         storageGroupChild.add(new SectionItems(STORAGE_INTERNAL, storageSpace(internalSD), R.drawable
-                .phone_150, FileUtils.getAbsolutePath(internalSD)));
+                .ic_storage_white, FileUtils.getAbsolutePath(internalSD)));
         if (extSD != null) {
-            storageGroupChild.add(new SectionItems(STORAGE_EXTERNAL, storageSpace(extSD), R.drawable.ic_ext_sd_black,
+            storageGroupChild.add(new SectionItems(STORAGE_EXTERNAL, storageSpace(extSD), R.drawable.ic_ext_sd_white,
                     FileUtils.getAbsolutePath(extSD)));
         }
         storageGroup.add(new SectionGroup(mListHeader.get(0), storageGroupChild));
@@ -211,17 +217,17 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
     private void initializeBookMarksGroup() {
         ArrayList<SectionItems> bookmarksGroupChild = new ArrayList<>();
-        bookmarksGroupChild.add(new SectionItems(DOWNLOADS, null, R.drawable.ic_download_black, FileUtils
+        bookmarksGroupChild.add(new SectionItems(DOWNLOADS, null, R.drawable.ic_download_white, FileUtils
                 .getAbsolutePath(FileUtils.getDownloadsDirectory())));
         storageGroup.add(new SectionGroup(mListHeader.get(1), bookmarksGroupChild));
     }
 
     private void initializeLibraryGroup() {
         ArrayList<SectionItems> libraryGroupChild = new ArrayList<>();
-        libraryGroupChild.add(new SectionItems(MUSIC, null, R.drawable.ic_music_black, null));
-        libraryGroupChild.add(new SectionItems(VIDEO, null, R.drawable.ic_video_black, null));
-        libraryGroupChild.add(new SectionItems(IMAGES, null, R.drawable.ic_photo_black, null));
-        libraryGroupChild.add(new SectionItems(DOCS, null, R.drawable.ic_doc_black, null));
+        libraryGroupChild.add(new SectionItems(MUSIC, null, R.drawable.ic_music_white, null));
+        libraryGroupChild.add(new SectionItems(VIDEO, null, R.drawable.ic_video_white, null));
+        libraryGroupChild.add(new SectionItems(IMAGES, null, R.drawable.ic_photo_white, null));
+        libraryGroupChild.add(new SectionItems(DOCS, null, R.drawable.ic_doc_white, null));
         storageGroup.add(new SectionGroup(mListHeader.get(2), libraryGroupChild));
     }
 
@@ -729,20 +735,40 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.action_paste:
-                ArrayList<String> filePaths = new ArrayList<>();
+//                ArrayList<String> filePaths = new ArrayList<>();
+                pasteOperationCleanUp();
                 if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
                     for (int i = 0; i < mSelectedItemPositions.size(); i++) {
-                        if (mSelectedItemPositions.valueAt(i)) {
-                            filePaths.add(mFileList.get(mSelectedItemPositions.keyAt(i)).getFilePath());
-                            new BackGroundOperationsTask(PASTE_OPERATION).execute(filePaths);
-                        }
+//                        if (mSelectedItemPositions.valueAt(i)) {
+                        checkIfFileExists(mFileList.get(mSelectedItemPositions.keyAt(i)).getFilePath(), new File
+                                (mCurrentDir));
+//                            filePaths.add(mFileList.get(mSelectedItemPositions.keyAt(i)).getFilePath());
+//                            new BackGroundOperationsTask(PASTE_OPERATION).execute(filePaths);
+//                        }
+
+//                        if (!isPasteConflictDialogShown) {
+//                            String path = mFileList.get(mSelectedItemPositions.keyAt(i)).getFilePath();
+//                            int action = mPathActionMap.get(mFileList.get(mSelectedItemPositions.keyAt(i))
+//                                    .getFilePath());
+//                            Logger.log("TAG", "SOURCE==" + path + "ACTION==" + action);
+//                            callAsyncTask();
+//                        }
 
                     }
+                    if (!isPasteConflictDialogShown) {
+//                            String path = mFileList.get(mSelectedItemPositions.keyAt(i)).getFilePath();
+//                            int action = mPathActionMap.get(mFileList.get(mSelectedItemPositions.keyAt(i))
+//                                    .getFilePath());
+//                            Logger.log("TAG", "SOURCE==" + path + "ACTION==" + action);
+                        callAsyncTask();
+                    } else {
+                        showDialog(tempSourceFile.get(0));
+                        isPasteConflictDialogShown = false;
+                    }
+
+
                 }
                 break;
         }
@@ -753,6 +779,144 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
         return super.onOptionsItemSelected(item);
     }
+
+    private void callAsyncTask() {
+        new BackGroundOperationsTask(PASTE_OPERATION).execute(mPathActionMap);
+    }
+
+    private void pasteOperationCleanUp() {
+        mPathActionMap.clear();
+        isPasteConflictDialogShown = false;
+        tempConflictCounter = 0;
+        tempSourceFile = new ArrayList<>();
+    }
+
+    public void checkIfFileExists(String sourceFilePath, File destinationDir) {
+        int counter = 0;
+        Context mContext = BaseActivity.this;
+
+        String[] destinationDirList = destinationDir.list();
+        String fileName = sourceFilePath.substring(sourceFilePath.lastIndexOf("/") + 1, sourceFilePath.length());
+        mSourceFilePath = sourceFilePath;
+        // If source file is directory,compare source & destination directory names
+        if (new File(sourceFilePath).isDirectory()) {
+            if (!fileName.equals(destinationDir.getName())) {
+                mPasteAction = FileUtils.ACTION_NONE;
+                mPathActionMap.put(sourceFilePath, mPasteAction);
+//                return false;
+            } else {
+                isPasteConflictDialogShown = true;
+                tempSourceFile.add(sourceFilePath);
+//                showDialog(fileName, sourceFilePath);
+            }
+        } else {
+            // If source file is file,compare source file name & destination directory children names
+            for (int i = 0; i < destinationDirList.length; i++) {
+                if (fileName.equals(destinationDirList[i])) {
+                    isPasteConflictDialogShown = true;
+                    tempSourceFile.add(sourceFilePath);
+//                    showDialog(fileName, sourceFilePath);
+                    break;
+                } else {
+                    mPasteAction = FileUtils.ACTION_NONE;
+                    mPathActionMap.put(sourceFilePath, mPasteAction);
+                }
+            }
+
+        }
+        Logger.log("TAG", "SOURCE==" + sourceFilePath + "isPasteConflictDialogShown==" + isPasteConflictDialogShown);
+
+    }
+
+    private void showDialog(final String sourceFilePath) {
+        Context mContext = BaseActivity.this;
+        mPasteConflictDialog = new Dialog(mContext);
+        mPasteConflictDialog.setContentView(R.layout.dialog_paste_conflict);
+        mPasteConflictDialog.setTitle(mContext.getResources().getString(R.string.dialog_title_paste_conflict));
+        mPasteConflictDialog.setCancelable(false);
+        ImageView icon = (ImageView) mPasteConflictDialog.findViewById(R.id.imageFileIcon);
+        TextView textFileName = (TextView) mPasteConflictDialog.findViewById(R.id.textFileName);
+        TextView textFileDate = (TextView) mPasteConflictDialog.findViewById(R.id.textFileDate);
+        TextView textFileSize = (TextView) mPasteConflictDialog.findViewById(R.id.textFileSize);
+        Button buttonReplace = (Button) mPasteConflictDialog.findViewById(R.id.buttonReplace);
+        Button buttonSkip = (Button) mPasteConflictDialog.findViewById(R.id.buttonSkip);
+        Button buttonKeep = (Button) mPasteConflictDialog.findViewById(R.id.buttonKeepBoth);
+        String fileName = sourceFilePath.substring(sourceFilePath.lastIndexOf("/") + 1, sourceFilePath.length());
+
+        textFileName.setText(fileName);
+        File sourceFile = new File(sourceFilePath);
+        long date = sourceFile.lastModified();
+        String fileModifiedDate = FileUtils.convertDate(date);
+        long size = sourceFile.length();
+        String fileSize = Formatter.formatFileSize(mContext, size);
+        textFileDate.setText(fileModifiedDate);
+        textFileSize.setText(fileSize);
+        Drawable drawable = FileUtils.getAppIcon(mContext, sourceFilePath);
+        if (drawable != null) {
+            icon.setImageDrawable(drawable);
+        }
+        mPasteConflictDialog.show();
+//        buttonReplace.setOnClickListener(this);
+//        buttonSkip.setOnClickListener(this);
+//        buttonKeep.setOnClickListener(this);
+        buttonReplace.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkIfPasteConflictFinished(FileUtils.ACTION_REPLACE);
+            }
+        });
+
+        buttonSkip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkIfPasteConflictFinished(FileUtils.ACTION_SKIP);
+            }
+        });
+
+        buttonKeep.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkIfPasteConflictFinished(FileUtils.ACTION_KEEP);
+            }
+        });
+
+    }
+
+
+    @Override
+    public void onClick(View view) {
+//        switch (view.getId()) {
+//            case R.id.buttonReplace:
+//                checkIfPasteConflictFinished(FileUtils.ACTION_REPLACE);
+//                break;
+//            case R.id.buttonSkip:
+//                checkIfPasteConflictFinished(FileUtils.ACTION_SKIP);
+//                break;
+//            case R.id.buttonKeepBoth:
+//                checkIfPasteConflictFinished(FileUtils.ACTION_KEEP);
+//                break;
+//        }
+    }
+
+    /**
+     * Shows another alert dialog when user clicks on any button Skip,Keep or Replace
+     *
+     * @param action Button action --> {@link FileUtils#ACTION_REPLACE,FileUtils#ACTION_SKIP,FileUtils#ACTION_KEEP}
+     *               Calls Async task to do the copy operation once user resolves all conflicts
+     */
+    private void checkIfPasteConflictFinished(int action) {
+        mPasteConflictDialog.dismiss();
+        int count = ++tempConflictCounter;
+        mPasteAction = action;
+        mPathActionMap.put(mSourceFilePath, mPasteAction);
+        Logger.log("TAG", "tempConflictCounter==" + tempConflictCounter + "tempSize==" + tempSourceFile.size());
+        if (count < tempSourceFile.size()) {
+            showDialog(tempSourceFile.get(count));
+        } else {
+            callAsyncTask();
+        }
+    }
+
 
     public void setFileList(ArrayList<FileInfo> list) {
         mFileList = list;
@@ -908,8 +1072,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         super.onConfigurationChanged(newConfig);
     }
 
-    private class BackGroundOperationsTask extends AsyncTask<ArrayList<String>, Void, ArrayList<String>> implements
-            View.OnClickListener {
+    private class BackGroundOperationsTask extends AsyncTask<HashMap<String, Integer>, Void, Void> {
 
         private String fileName;
         private String filePath;
@@ -956,31 +1119,52 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         }
 
         @Override
-        protected ArrayList<String> doInBackground(ArrayList<String>... params) {
+        protected Void doInBackground(HashMap<String, Integer>... params) {
 
-            ArrayList<String> paths = params[0];
+            HashMap<String, Integer> pathActions = params[0];
 //            android.os.Debug.waitForDebugger();
             switch (operation) {
 
                 case PASTE_OPERATION:
-                    if (paths.size() > 0) {
-                        for (int i = 0; i < paths.size(); i++) {
-                            boolean ifExists = checkIfFileExists(paths.get(i), new File(mCurrentDir));
-                            if (mClickedButton == FileUtils.ACTION_CANCEL) {
+                    if (pathActions.size() > 0) {
+                        for (String key : pathActions.keySet()) {
+                            int action = pathActions.get(key);
+                            String sourcePath = key;
+                            System.out.println("key : " + key);
+                            System.out.println("value : " + pathActions.get(key));
+                            if (action == FileUtils.ACTION_CANCEL) {
                                 isActionCancelled = true;
                             } else {
-                                copyStatus = FileUtils.copyToDirectory(BaseActivity.this, paths.get(i), mCurrentDir,
-                                        mIsMoveOperation, mClickedButton);
+                                copyStatus = FileUtils.copyToDirectory(BaseActivity.this, sourcePath, mCurrentDir,
+                                        mIsMoveOperation, action);
 
                                 if (copyStatus == 0) {
                                     filesCopied++;
                                 }
                                 progressCount++;
                                 progressDialog.setProgress((progressCount
-                                        / paths.size()));
+                                        / pathActions.size()));
                             }
+
+
                         }
-                        return paths;
+//                        for (int i = 0; i < pathActions.size(); i++) {
+//                            pathActions.g
+////                            boolean ifExists = checkIfFileExists(paths.get(i), new File(mCurrentDir));
+//                            if (mClickedButton == FileUtils.ACTION_CANCEL) {
+//                                isActionCancelled = true;
+//                            } else {
+//                                copyStatus = FileUtils.copyToDirectory(BaseActivity.this, paths.get(i), mCurrentDir,
+//                                        mIsMoveOperation, mClickedButton);
+//
+//                                if (copyStatus == 0) {
+//                                    filesCopied++;
+//                                }
+//                                progressCount++;
+//                                progressDialog.setProgress((progressCount
+//                                        / paths.size()));
+//                            }
+//                        }
                     }
                     break;
 
@@ -990,7 +1174,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
 
         @Override
-        protected void onPostExecute(final ArrayList<String> paths) {
+        protected void onPostExecute(Void result) {
             FileListFragment singlePaneFragment = (FileListFragment) getSupportFragmentManager().findFragmentById(R
                     .id.frame_container);
 
@@ -1002,8 +1186,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                         mSelectedItemPositions.clear();
                     }
                     togglePasteVisibility(false);
-                    if (paths != null) {
-                        if (paths.size() != filesCopied) {
+                    if (mPathActionMap != null) {
+                        if (mPathActionMap.size() != filesCopied) {
 
                             if (isActionCancelled) {
                                 showMessage(getString(R.string.msg_operation_cancel));
@@ -1056,87 +1240,6 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         }
 
 
-        public boolean checkIfFileExists(String sourceFilePath, File destinationDir) {
-            int counter = 0;
-            Context mContext = BaseActivity.this;
-            String[] destinationDirList = destinationDir.list();
-            String fileName = sourceFilePath.substring(sourceFilePath.lastIndexOf("/"), sourceFilePath.length());
-            // If source file is directory,compare source & destination directory names
-            if (new File(sourceFilePath).isDirectory()) {
-                if (!fileName.equals(destinationDir.getName())) {
-                    mClickedButton = FileUtils.ACTION_NONE;
-                    return false;
-                } else {
-                    showDialog(fileName, sourceFilePath);
-                }
-            } else {
-                // If source file is file,compare source file name & destination directory children names
-                for (int i = 0; i < destinationDirList.length; i++) {
-                    if (fileName.equals(destinationDirList[i])) {
-                        showDialog(fileName, sourceFilePath);
-                        return true;
-                    }
-                }
-                mClickedButton = FileUtils.ACTION_NONE;
-            }
-
-            return false;
-        }
-
-        private void showDialog(String fileName, String sourceFilePath) {
-            Context mContext = BaseActivity.this;
-            final Dialog dialog = new Dialog(mContext);
-            dialog.setContentView(R.layout.dialog_paste_conflict);
-            dialog.setTitle(mContext.getResources().getString(R.string.dialog_title_paste_conflict));
-            ImageView icon = (ImageView) dialog.findViewById(R.id.imageFileIcon);
-            TextView textFileName = (TextView) dialog.findViewById(R.id.textFileName);
-            TextView textFileDate = (TextView) dialog.findViewById(R.id.textFileDate);
-            TextView textFileSize = (TextView) dialog.findViewById(R.id.textFileSize);
-            Button buttonReplace = (Button) dialog.findViewById(R.id.buttonReplace);
-            Button buttonSkip = (Button) dialog.findViewById(R.id.buttonSkip);
-            Button buttonKeep = (Button) dialog.findViewById(R.id.buttonKeepBoth);
-            Button buttonCancel = (Button) dialog.findViewById(R.id.buttonCancel);
-
-            textFileName.setText(fileName);
-            textFileName.setText(fileName);
-            File sourceFile = new File(fileName);
-            long date = sourceFile.lastModified();
-            String fileModifiedDate = FileUtils.convertDate(date);
-            long size = sourceFile.length();
-            String fileSize = Formatter.formatFileSize(mContext, size);
-            textFileDate.setText(fileModifiedDate);
-            textFileSize.setText(fileSize);
-            Drawable drawable = FileUtils.getAppIcon(mContext, sourceFilePath);
-            if (drawable != null) {
-                icon.setImageDrawable(drawable);
-            }
-            dialog.show();
-            buttonReplace.setOnClickListener(this);
-            buttonSkip.setOnClickListener(this);
-            buttonKeep.setOnClickListener(this);
-            buttonCancel.setOnClickListener(this);
-        }
-
-
-        @Override
-        public void onClick(View view) {
-            switch (view.getId()) {
-                case buttonReplace:
-                    mClickedButton = FileUtils.ACTION_REPLACE;
-                    break;
-                case buttonSkip:
-                    mClickedButton = FileUtils.ACTION_SKIP;
-                    break;
-                case R.id.buttonKeepBoth:
-                    mClickedButton = FileUtils.ACTION_KEEP;
-                    break;
-                case R.id.buttonCancel:
-                    mClickedButton = FileUtils.ACTION_CANCEL;
-                    break;
-
-
-            }
-        }
     }
 }
 

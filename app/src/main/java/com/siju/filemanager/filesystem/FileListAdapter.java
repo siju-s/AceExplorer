@@ -136,7 +136,8 @@ public class FileListAdapter extends BaseAdapter {
 
         } else {
             if (fileInfoArrayList.get(position).getExtension().equals(FileConstants.APK_EXTENSION)) {
-                Drawable apkIcon = getApkIcon(filePath);
+                Drawable apkIcon = FileUtils.getAppIcon(mContext,filePath);
+//                Drawable apkIcon = getApkIcon(filePath);
                 fileListViewHolder.imageIcon.setImageDrawable(apkIcon);
             } else {
                 fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_file_black);
@@ -184,7 +185,7 @@ public class FileListAdapter extends BaseAdapter {
 
     public void selectView(int position, boolean value) {
         if (value) {
-            mSelectedItemsIds.put(position, value);
+            mSelectedItemsIds.put(position, true);
 //            mSelectedFileList.add(fileInfoArrayList.get(position));
         }
         else {
