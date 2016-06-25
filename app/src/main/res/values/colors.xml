@@ -7,5 +7,6 @@
     <color name="navButtons">#ffffff</color>
     <color name="navButtonsInactive">#33ffffff</color>  <!--20% transparent -->
     <color name="actionModeItemSelected">#33800080</color>
+    <color name="white">#ffffff</color>
 
 </resources>

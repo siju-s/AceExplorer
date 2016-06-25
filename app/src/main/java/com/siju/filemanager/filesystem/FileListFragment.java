@@ -147,10 +147,6 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
 
-
-
-
-
     @Override
     public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
         fileInfoList = new ArrayList<>();

@@ -54,7 +54,7 @@
         android:id="@+id/imageThumbIcon"
         android:layout_width="@dimen/folder_thumb_icon"
         android:layout_height="@dimen/folder_thumb_icon"
-        android:scaleType="fitXY"
+        android:scaleType="centerCrop"
         android:layout_alignTop="@+id/textSecondLine"
         android:layout_alignRight="@+id/imageIcon"
         android:layout_alignEnd="@+id/imageIcon" />

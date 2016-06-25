@@ -1,8 +1,6 @@
 package com.siju.filemanager.filesystem;
 
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -113,6 +111,7 @@ public class FileListAdapter extends BaseAdapter {
                     .findViewById(R.id.textFolderName);
             fileListViewHolder.textFileModifiedDate = (TextView) view.findViewById(R.id.textDate);
             fileListViewHolder.imageIcon = (ImageView) view.findViewById(imageIcon);
+            fileListViewHolder.imageThumbIcon = (ImageView) view.findViewById(R.id.imageThumbIcon);
             fileListViewHolder.textNoOfFileOrSize = (TextView) view.findViewById(R.id.textSecondLine);
             view.setTag(fileListViewHolder);
         } else {
@@ -133,14 +132,19 @@ public class FileListAdapter extends BaseAdapter {
 
         if (isDirectory) {
             fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_folder);
+            Drawable apkIcon = FileUtils.getAppIconForFolder(mContext, fileName);
+            if (apkIcon != null) {
+                fileListViewHolder.imageThumbIcon.setImageDrawable(apkIcon);
+            }
+
 
         } else {
             if (fileInfoArrayList.get(position).getExtension().equals(FileConstants.APK_EXTENSION)) {
-                Drawable apkIcon = FileUtils.getAppIcon(mContext,filePath);
+                Drawable apkIcon = FileUtils.getAppIcon(mContext, filePath);
 //                Drawable apkIcon = getApkIcon(filePath);
                 fileListViewHolder.imageIcon.setImageDrawable(apkIcon);
             } else {
-                fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_file_black);
+                fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_doc_white);
             }
             if ((fileInfoArrayList.get(position).getType() == 1) || (fileInfoArrayList.get(position).getType() == 2)) {
 
@@ -158,20 +162,6 @@ public class FileListAdapter extends BaseAdapter {
     }
 
 
-
-    private Drawable getApkIcon(String path) {
-        PackageManager pm = mContext.getPackageManager();
-        PackageInfo packageInfo = pm.getPackageArchiveInfo(path, 0);
-
-        // the secret are these two lines....
-        packageInfo.applicationInfo.sourceDir = path;
-        packageInfo.applicationInfo.publicSourceDir = path;
-        //
-
-        Drawable apkIcon = packageInfo.applicationInfo.loadIcon(pm);
-        return apkIcon;
-    }
-
     public void toggleSelection(int position) {
         selectView(position, !mSelectedItemsIds.get(position));
     }
@@ -187,8 +177,7 @@ public class FileListAdapter extends BaseAdapter {
         if (value) {
             mSelectedItemsIds.put(position, true);
 //            mSelectedFileList.add(fileInfoArrayList.get(position));
-        }
-        else {
+        } else {
             mSelectedItemsIds.delete(position);
 
         }
@@ -207,6 +196,7 @@ public class FileListAdapter extends BaseAdapter {
 
     static class FileListViewHolder {
         ImageView imageIcon;
+        ImageView imageThumbIcon;
         TextView textFileName;
         TextView textFileModifiedDate;
         TextView textNoOfFileOrSize;

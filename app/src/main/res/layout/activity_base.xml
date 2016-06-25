@@ -22,7 +22,7 @@
         <RelativeLayout
             android:id="@+id/header"
             android:layout_width="match_parent"
-            android:layout_height="125dp"
+            android:layout_height="130dp"
             android:background="@drawable/ic_drawer_bg1">
 
             <TextView

@@ -2,6 +2,7 @@ package com.siju.filemanager.filesystem;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -11,6 +12,7 @@ import android.os.Environment;
 import android.text.format.Formatter;
 import android.util.Log;
 
+import com.siju.filemanager.BaseActivity;
 import com.siju.filemanager.common.Logger;
 
 import java.io.BufferedInputStream;
@@ -135,8 +137,9 @@ public class FileUtils {
      */
 
     public static int copyToDirectory(Context context, String source, String destination, boolean isMoveOperation, int
-            action) {
-        Logger.log("TAG","ACTION=="+action);
+            action, BaseActivity.BackGroundOperationsTask.Progress progress) {
+        BaseActivity.BackGroundOperationsTask.Progress progressBg = progress;
+        Logger.log("TAG", "ACTION==" + action);
         File sourceFile = new File(source);
         File destinationDir = new File(destination);
         byte[] data = new byte[BUFFER];
@@ -151,16 +154,17 @@ public class FileUtils {
         File newFile = null;
 
         if (destinationDir.canWrite()) {
+            String file_name = source.substring(source.lastIndexOf("/"), source.length());
             if (sourceFile.isFile() && destinationDir.isDirectory()) {
-                String file_name = source.substring(source.lastIndexOf("/"), source.length());
-                String fileNameWithoutExt = file_name.substring(0,file_name.lastIndexOf("."));
-                Logger.log("TAG","fileNameWithoutExt=="+fileNameWithoutExt);
+                String fileNameWithoutExt = file_name.substring(0, file_name.lastIndexOf("."));
+                long size = sourceFile.length();
+                Logger.log("TAG", "fileNameWithoutExt==" + fileNameWithoutExt);
                 if (fileAction == ACTION_SKIP) {
                     return -1;
                 } else if (fileAction == ACTION_KEEP) {
-                    String extension = file_name.substring(file_name.lastIndexOf("."),file_name.length());
+                    String extension = file_name.substring(file_name.lastIndexOf("."), file_name.length());
                     String newName = destination + fileNameWithoutExt + "(2)" + extension;
-                    Logger.log("TAG","newName=="+newName);
+                    Logger.log("TAG", "newName==" + newName);
                     newFile = new File(newName);
                 } else if (fileAction == ACTION_REPLACE) {
                     String destinationDirFile = destinationDir + "/" + file_name;
@@ -170,17 +174,31 @@ public class FileUtils {
                     newFile = new File(destination + file_name);
                 }
 
-
+                int progress1 = 0;
                 try {
 
                     BufferedOutputStream outputStream = new BufferedOutputStream(
                             new FileOutputStream(newFile));
                     BufferedInputStream bufferedInputStream = new BufferedInputStream(
                             new FileInputStream(sourceFile));
-
-                    while ((read = bufferedInputStream.read(data, 0, BUFFER)) != -1)
+                    int count = 0;
+                    int tempProgress = 0;
+                    while ((read = bufferedInputStream.read(data, 0, BUFFER)) != -1) {
+                        count++;
                         outputStream.write(data, 0, read);
+                        double value1 = (double) BUFFER / size;
+                        progress1 = (int) (value1 * count * 100);
+                        if (tempProgress != progress1) {
+                            tempProgress = progress1;
+                            progress.publish(tempProgress);
+//                            System.out.println("Progress==" + progress1 + "File=" + file_name);
+                        }
 
+
+                    }
+//                    if (progress1 != 100) {
+//                        progress.publish(100);
+//                    }
                     outputStream.flush();
                     bufferedInputStream.close();
                     outputStream.close();
@@ -196,15 +214,24 @@ public class FileUtils {
                 }
 
             } else if (sourceFile.isDirectory() && destinationDir.isDirectory()) {
+                if (fileAction == ACTION_SKIP) {
+                    return -1;
+                } else if (fileAction == ACTION_REPLACE) {
+                    String destinationDirFile = destinationDir + "/" + file_name;
+                    new File(destinationDirFile).delete();
+                }
+
                 String files[] = sourceFile.list();
-                String dir = destination + source.substring(source.lastIndexOf("/"), source.length());
+                String dir = destination + file_name;
                 int len = files.length;
 
-                if (!new File(dir).mkdir())
+                if (!new File(dir).mkdir()) {
                     return -1;
+                }
 
-                for (int i = 0; i < len; i++)
-                    copyToDirectory(context, source + "/" + files[i], dir, isMove, fileAction);
+                for (int i = 0; i < len; i++) {
+                    copyToDirectory(context, source + "/" + files[i], dir, isMove, fileAction, progressBg);
+                }
 
             }
         } else {
@@ -217,6 +244,24 @@ public class FileUtils {
             sourceFile.delete();
         }
         return 0;
+    }
+
+    public static void shareFiles (Context context,ArrayList<FileInfo> fileInfo) {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND_MULTIPLE);
+        intent.setType("*/*");
+
+        ArrayList<Uri> files = new ArrayList<Uri>();
+
+        for(FileInfo info : fileInfo) {
+            File file = new File(info.getFilePath());
+            Uri uri = Uri.fromFile(file);
+            System.out.println("shareuri=="+uri);
+            files.add(uri);
+        }
+
+        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
+        context.startActivity(intent);
     }
 
 
@@ -556,20 +601,25 @@ public class FileUtils {
             appInfo.publicSourceDir = filePath;
 
             icon = appInfo.loadIcon(context.getPackageManager());
-//                    if(icon.getIntrinsicHeight() >50 && icon.getIntrinsicWidth()>50){
-//                        //Bitmap bitmap = ((BitmapDrawable) icon).getBitmap();
-//                        // int dp5 = (int)(activity.getResources().getDisplayMetrics().densityDpi/120);
-//                        //icon= new BitmapDrawable(activity.getResources(),Bitmap.createScaledBitmap(bitmap, 50*dp5,
-//                        50*dp5, true));
-//                    }
-
-
             return icon;
         } catch (Exception e) {
 
             return null;
         }
     }
+
+
+    public static Drawable getAppIconForFolder(Context context, String packageName) {
+
+        try {
+            Drawable d = context.getPackageManager().getApplicationIcon(packageName);
+            return d;
+        } catch (PackageManager.NameNotFoundException e) {
+            return null;
+        }
+
+    }
+
 
     /*
      * (non-JavaDoc)

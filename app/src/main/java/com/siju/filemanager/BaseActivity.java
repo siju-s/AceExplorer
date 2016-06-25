@@ -2,7 +2,6 @@ package com.siju.filemanager;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -30,11 +29,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -94,7 +95,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private ActionMode mActionMode;
     private FileListAdapter fileListAdapter;
     private SparseBooleanArray mSelectedItemPositions = new SparseBooleanArray();
-    MenuItem mPasteItem;
+    MenuItem mPasteItem, mRenameItem, mInfoItem;
     private static final int PASTE_OPERATION = 1;
     private static final int DELETE_OPERATION = 2;
     private static final int ARCHIVE_OPERATION = 3;
@@ -203,11 +204,12 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         File rootDir = systemDir.getParentFile();
         File internalSD = FileUtils.getInternalStorage();
         File extSD = FileUtils.getExternalStorage();
-        storageGroupChild.add(new SectionItems(STORAGE_ROOT, storageSpace(systemDir), R.drawable.ic_root_white,
+        storageGroupChild.add(new SectionItems(STORAGE_ROOT, storageSpace(systemDir), R.drawable
+                .ic_lock_white_24dp_66cd00,
                 FileUtils
                         .getAbsolutePath(rootDir)));
         storageGroupChild.add(new SectionItems(STORAGE_INTERNAL, storageSpace(internalSD), R.drawable
-                .ic_storage_white, FileUtils.getAbsolutePath(internalSD)));
+                .ic_phone_android_white_24dp_66cd00, FileUtils.getAbsolutePath(internalSD)));
         if (extSD != null) {
             storageGroupChild.add(new SectionItems(STORAGE_EXTERNAL, storageSpace(extSD), R.drawable.ic_ext_sd_white,
                     FileUtils.getAbsolutePath(extSD)));
@@ -217,17 +219,18 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
     private void initializeBookMarksGroup() {
         ArrayList<SectionItems> bookmarksGroupChild = new ArrayList<>();
-        bookmarksGroupChild.add(new SectionItems(DOWNLOADS, null, R.drawable.ic_download_white, FileUtils
-                .getAbsolutePath(FileUtils.getDownloadsDirectory())));
+        bookmarksGroupChild.add(new SectionItems(DOWNLOADS, null, R.drawable.ic_file_download_white_24dp_42c0fb,
+                FileUtils
+                        .getAbsolutePath(FileUtils.getDownloadsDirectory())));
         storageGroup.add(new SectionGroup(mListHeader.get(1), bookmarksGroupChild));
     }
 
     private void initializeLibraryGroup() {
         ArrayList<SectionItems> libraryGroupChild = new ArrayList<>();
-        libraryGroupChild.add(new SectionItems(MUSIC, null, R.drawable.ic_music_white, null));
-        libraryGroupChild.add(new SectionItems(VIDEO, null, R.drawable.ic_video_white, null));
-        libraryGroupChild.add(new SectionItems(IMAGES, null, R.drawable.ic_photo_white, null));
-        libraryGroupChild.add(new SectionItems(DOCS, null, R.drawable.ic_doc_white, null));
+        libraryGroupChild.add(new SectionItems(MUSIC, null, R.drawable.ic_library_music_white_24dp_fb3742, null));
+        libraryGroupChild.add(new SectionItems(VIDEO, null, R.drawable.ic_video_library_white_24dp_fb3742, null));
+        libraryGroupChild.add(new SectionItems(IMAGES, null, R.drawable.ic_collections_white_24dp_fb3742, null));
+        libraryGroupChild.add(new SectionItems(DOCS, null, R.drawable.ic_insert_drive_file_white_24dp_fb3742, null));
         storageGroup.add(new SectionGroup(mListHeader.get(2), libraryGroupChild));
     }
 
@@ -728,7 +731,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.base, menu);
-        mPasteItem = menu.findItem(R.id.action_paste);
+
 
         return true;
     }
@@ -737,31 +740,13 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_paste:
-//                ArrayList<String> filePaths = new ArrayList<>();
                 pasteOperationCleanUp();
                 if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
                     for (int i = 0; i < mSelectedItemPositions.size(); i++) {
-//                        if (mSelectedItemPositions.valueAt(i)) {
                         checkIfFileExists(mFileList.get(mSelectedItemPositions.keyAt(i)).getFilePath(), new File
                                 (mCurrentDir));
-//                            filePaths.add(mFileList.get(mSelectedItemPositions.keyAt(i)).getFilePath());
-//                            new BackGroundOperationsTask(PASTE_OPERATION).execute(filePaths);
-//                        }
-
-//                        if (!isPasteConflictDialogShown) {
-//                            String path = mFileList.get(mSelectedItemPositions.keyAt(i)).getFilePath();
-//                            int action = mPathActionMap.get(mFileList.get(mSelectedItemPositions.keyAt(i))
-//                                    .getFilePath());
-//                            Logger.log("TAG", "SOURCE==" + path + "ACTION==" + action);
-//                            callAsyncTask();
-//                        }
-
                     }
                     if (!isPasteConflictDialogShown) {
-//                            String path = mFileList.get(mSelectedItemPositions.keyAt(i)).getFilePath();
-//                            int action = mPathActionMap.get(mFileList.get(mSelectedItemPositions.keyAt(i))
-//                                    .getFilePath());
-//                            Logger.log("TAG", "SOURCE==" + path + "ACTION==" + action);
                         callAsyncTask();
                     } else {
                         showDialog(tempSourceFile.get(0));
@@ -771,12 +756,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
                 }
                 break;
-        }
-        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
 
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -792,38 +773,24 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     }
 
     public void checkIfFileExists(String sourceFilePath, File destinationDir) {
-        int counter = 0;
-        Context mContext = BaseActivity.this;
-
         String[] destinationDirList = destinationDir.list();
         String fileName = sourceFilePath.substring(sourceFilePath.lastIndexOf("/") + 1, sourceFilePath.length());
         mSourceFilePath = sourceFilePath;
         // If source file is directory,compare source & destination directory names
-        if (new File(sourceFilePath).isDirectory()) {
-            if (!fileName.equals(destinationDir.getName())) {
-                mPasteAction = FileUtils.ACTION_NONE;
-                mPathActionMap.put(sourceFilePath, mPasteAction);
-//                return false;
-            } else {
+
+        // If source file is file,compare source file name & destination directory children names
+        for (int i = 0; i < destinationDirList.length; i++) {
+            if (fileName.equals(destinationDirList[i])) {
                 isPasteConflictDialogShown = true;
                 tempSourceFile.add(sourceFilePath);
-//                showDialog(fileName, sourceFilePath);
+                break;
+            } else {
+                mPasteAction = FileUtils.ACTION_NONE;
+                mPathActionMap.put(sourceFilePath, mPasteAction);
             }
-        } else {
-            // If source file is file,compare source file name & destination directory children names
-            for (int i = 0; i < destinationDirList.length; i++) {
-                if (fileName.equals(destinationDirList[i])) {
-                    isPasteConflictDialogShown = true;
-                    tempSourceFile.add(sourceFilePath);
-//                    showDialog(fileName, sourceFilePath);
-                    break;
-                } else {
-                    mPasteAction = FileUtils.ACTION_NONE;
-                    mPathActionMap.put(sourceFilePath, mPasteAction);
-                }
-            }
-
         }
+
+
         Logger.log("TAG", "SOURCE==" + sourceFilePath + "isPasteConflictDialogShown==" + isPasteConflictDialogShown);
 
     }
@@ -832,7 +799,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         Context mContext = BaseActivity.this;
         mPasteConflictDialog = new Dialog(mContext);
         mPasteConflictDialog.setContentView(R.layout.dialog_paste_conflict);
-        mPasteConflictDialog.setTitle(mContext.getResources().getString(R.string.dialog_title_paste_conflict));
+//        mPasteConflictDialog.setTitle(getResources().getString(R.string.dialog_title_paste_conflict));
         mPasteConflictDialog.setCancelable(false);
         ImageView icon = (ImageView) mPasteConflictDialog.findViewById(R.id.imageFileIcon);
         TextView textFileName = (TextView) mPasteConflictDialog.findViewById(R.id.textFileName);
@@ -841,6 +808,9 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         Button buttonReplace = (Button) mPasteConflictDialog.findViewById(R.id.buttonReplace);
         Button buttonSkip = (Button) mPasteConflictDialog.findViewById(R.id.buttonSkip);
         Button buttonKeep = (Button) mPasteConflictDialog.findViewById(R.id.buttonKeepBoth);
+        if (new File(sourceFilePath).isDirectory()) {
+            buttonKeep.setVisibility(View.GONE);
+        }
         String fileName = sourceFilePath.substring(sourceFilePath.lastIndexOf("/") + 1, sourceFilePath.length());
 
         textFileName.setText(fileName);
@@ -947,6 +917,14 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
     public void setSelectedItemPos(SparseBooleanArray selectedItemPos) {
         mSelectedItemPositions = selectedItemPos;
+        if (selectedItemPos.size() > 1) {
+            mRenameItem.setVisible(false);
+            mInfoItem.setVisible(false);
+
+        } else {
+            mRenameItem.setVisible(true);
+            mInfoItem.setVisible(true);
+        }
     }
 
     /**
@@ -976,8 +954,28 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                 }
                 break;
             case R.id.action_delete:
+                if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+                    ArrayList<String> filesToDelete = new ArrayList<>();
+                    for (int i = 0; i < mSelectedItemPositions.size(); i++) {
+                        String path = mFileList.get(mSelectedItemPositions.keyAt(i)).getFilePath();
+                        filesToDelete.add(path);
+                    }
+                    showDialog(filesToDelete);
+                    mActionMode.finish();
+                }
                 break;
             case R.id.action_share:
+                if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+                    ArrayList<FileInfo> filesToShare = new ArrayList<>();
+                    for (int i = 0; i < mSelectedItemPositions.size(); i++) {
+                        FileInfo info = mFileList.get(mSelectedItemPositions.keyAt(i));
+                        if (!info.isDirectory()) {
+                            filesToShare.add(info);
+                        }
+                    }
+                    FileUtils.shareFiles(this, filesToShare);
+                    mActionMode.finish();
+                }
                 break;
         }
         return false;
@@ -998,12 +996,24 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             mActionMode = mode;
             MenuInflater inflater = mActionMode.getMenuInflater();
             inflater.inflate(R.menu.action_mode, menu);
+            mPasteItem = menu.findItem(R.id.action_paste);
+            mRenameItem = menu.findItem(R.id.action_rename);
+            mInfoItem = menu.findItem(R.id.action_info);
             return true;
         }
 
         @SuppressLint("NewApi")
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+
+            if (mSelectedItemPositions.size() > 1) {
+                mRenameItem.setVisible(false);
+                mInfoItem.setVisible(false);
+
+            } else {
+                mRenameItem.setVisible(true);
+                mInfoItem.setVisible(true);
+            }
             return false;
         }
 
@@ -1011,6 +1021,76 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_rename:
+                    if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+                        final String filePath = mFileList.get(mSelectedItemPositions.keyAt(0)).getFilePath();
+                        String fileName = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.length());
+                        String extension = null;
+                        boolean file = false;
+                        if (new File(filePath).isFile()) {
+                            String[] tokens = fileName.split("\\.(?=[^\\.]+$)");
+                            fileName = tokens[0];
+                            extension = tokens[1];
+                            file = true;
+                        }
+                        final boolean isFile = file;
+                        final String ext = extension;
+
+                        final Dialog dialog = new Dialog(
+                                BaseActivity.this);
+//                dialog.requestWindowFeature(Window.FEATURE_LEFT_ICON);
+                        dialog.setContentView(R.layout.dialog_rename);
+                        dialog.setCancelable(true);
+                        // end of dialog declaration
+
+                        // define the contents of edit dialog
+                        final EditText rename = (EditText) dialog
+                                .findViewById(R.id.editRename);
+
+                        rename.setText(fileName);
+                        // dialog save button to save the edited item
+                        Button saveButton = (Button) dialog
+                                .findViewById(R.id.buttonRename);
+                        // for updating the list item
+                        saveButton.setOnClickListener(new View.OnClickListener() {
+
+                            public void onClick(View v) {
+                                final CharSequence name = rename.getText();
+                                if (name.length() == 0) {
+                                    rename.setError(getResources().getString(R.string.msg_error_valid_name));
+                                    return;
+                                }
+                                FileListFragment singlePaneFragment = (FileListFragment) getSupportFragmentManager()
+                                        .findFragmentById(R
+                                                .id.frame_container);
+                                String renamedName;
+                                if (isFile) {
+                                    renamedName = rename.getText().toString() + "." + ext;
+                                } else {
+                                    renamedName = rename.getText().toString();
+                                }
+                                FileUtils.renameTarget(filePath, renamedName);
+
+                                if (singlePaneFragment != null) {
+                                    singlePaneFragment.refreshList();
+                                }
+                                dialog.dismiss();
+
+                            }
+                        });
+
+                        // cancel button declaration
+                        Button cancelButton = (Button) dialog
+                                .findViewById(R.id.buttonCancel);
+                        cancelButton.setOnClickListener(new View.OnClickListener() {
+
+                            public void onClick(View v) {
+                                dialog.dismiss();
+
+                            }
+                        });
+
+                        dialog.show();
+                    }
 
                     mActionMode.finish();
                     return true;
@@ -1072,22 +1152,65 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         super.onConfigurationChanged(newConfig);
     }
 
-    private class BackGroundOperationsTask extends AsyncTask<HashMap<String, Integer>, Void, Void> {
+    private void showDialog(final ArrayList<String> paths) {
+        final Dialog deleteDialog = new Dialog(this);
+        deleteDialog.setContentView(R.layout.dialog_delete);
+        deleteDialog.setCancelable(false);
+        TextView textFileName = (TextView) deleteDialog.findViewById(R.id.textFileNames);
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < paths.size(); i++) {
+            String path = paths.get(i);
+            stringBuilder.append(path);
+            stringBuilder.append("\n");
+        }
+        textFileName.setText(stringBuilder.toString());
+        Button buttonOk = (Button) deleteDialog.findViewById(R.id.buttonOk);
+        Button buttonCancel = (Button) deleteDialog.findViewById(R.id.buttonCancel);
+        buttonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteDialog.dismiss();
+            }
+        });
+        buttonOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new BgOperationsTask(DELETE_OPERATION).execute(paths);
+                deleteDialog.dismiss();
+            }
+        });
+        deleteDialog.show();
+
+    }
+
+    public class BackGroundOperationsTask extends AsyncTask<HashMap<String, Integer>, Integer, Void> {
 
         private String fileName;
         private String filePath;
         private int copyStatus = -1;
-        private ProgressDialog progressDialog;
+        //        private ProgressDialog progressDialog;
+        private Dialog progressDialog;
+        private Dialog deleteDialog;
         private int operation;
-        private int progressCount = 0;
+        private int currentFile = 0;
         private int filesCopied;
         private boolean isActionCancelled;
-
-        private int mClickedButton;
+        TextView textFileName;
+        TextView textFileSource;
+        TextView textFileDest;
+        TextView textFilesLeft;
+        TextView textProgressPercent;
+        ProgressBar pasteProgress;
+        Progress progress;
+        private int totalFiles;
+        private String sourcePath;
 
 
         private BackGroundOperationsTask(int operation) {
             this.operation = operation;
+            progress = new Progress(this);
+            sourcePath = mSourceFilePath;
+
         }
 
         @Override
@@ -1096,25 +1219,57 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             switch (operation) {
 
                 case PASTE_OPERATION:
-
-                    progressDialog = new ProgressDialog(mContext);
-                    progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                    if (mIsMoveOperation) {
-                        progressDialog.setMessage(mContext.getString(R.string.msg_cut));
-                    } else {
-                        progressDialog.setMessage(mContext.getString(R.string.msg_copy));
-                    }
-                    progressDialog.show();
-                    progressDialog.setMax(mSelectedItemPositions.size());
-                    progressDialog.setProgress(0);
+                    showProgressDialog();
                     break;
 
-                case DELETE_OPERATION:
-
-                    progressDialog = ProgressDialog.show(mContext, "Please wait",
-                            getString(R.string.msg_delete), true, false);
-                    break;
             }
+
+        }
+
+        private void showProgressDialog() {
+            Context mContext = BaseActivity.this;
+            switch (operation) {
+                case PASTE_OPERATION:
+                    progressDialog = new Dialog(mContext);
+                    progressDialog.setContentView(R.layout.dialog_progress_paste);
+                    progressDialog.setCancelable(false);
+                    TextView textTitle = (TextView) progressDialog.findViewById(R.id.textDialogTitle);
+                    if (mIsMoveOperation) {
+                        textTitle.setText(mContext.getString(R.string.msg_cut));
+                    } else {
+                        textTitle.setText(mContext.getString(R.string.msg_copy));
+                    }
+
+                    textFileName = (TextView) progressDialog.findViewById(R.id.textFileName);
+                    textFileSource = (TextView) progressDialog.findViewById(R.id.textFileFromPath);
+                    textFileDest = (TextView) progressDialog.findViewById(R.id.textFileToPath);
+                    textFilesLeft = (TextView) progressDialog.findViewById(R.id.textFilesLeft);
+                    textProgressPercent = (TextView) progressDialog.findViewById(R.id.textProgressPercent);
+                    pasteProgress = (ProgressBar) progressDialog.findViewById(R.id.progressBarPaste);
+                    Button buttonBackground = (Button) progressDialog.findViewById(R.id.buttonBg);
+
+                    String fileName = mSourceFilePath.substring(mSourceFilePath.lastIndexOf("/") + 1, mSourceFilePath
+                            .length());
+                    textFileName.setText(fileName);
+                    textFileSource.setText(mSourceFilePath);
+                    textFileDest.setText(mCurrentDir);
+                    progressDialog.show();
+                    buttonBackground.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            progressDialog.dismiss();
+                        }
+                    });
+                    break;
+                case DELETE_OPERATION:
+                    deleteDialog = new Dialog(mContext);
+                    deleteDialog.setContentView(R.layout.dialog_delete);
+                    deleteDialog.setCancelable(false);
+                    textFileName = (TextView) deleteDialog.findViewById(R.id.textFileNames);
+                    break;
+
+            }
+
 
         }
 
@@ -1126,7 +1281,9 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             switch (operation) {
 
                 case PASTE_OPERATION:
+                    totalFiles = pathActions.size();
                     if (pathActions.size() > 0) {
+                        currentFile = 0;
                         for (String key : pathActions.keySet()) {
                             int action = pathActions.get(key);
                             String sourcePath = key;
@@ -1135,36 +1292,21 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                             if (action == FileUtils.ACTION_CANCEL) {
                                 isActionCancelled = true;
                             } else {
+
+                                currentFile++;
+                                System.out.println("currentFile BG : " + currentFile);
                                 copyStatus = FileUtils.copyToDirectory(BaseActivity.this, sourcePath, mCurrentDir,
-                                        mIsMoveOperation, action);
+                                        mIsMoveOperation, action, progress);
+                                System.out.println("copyStatus : " + copyStatus);
 
                                 if (copyStatus == 0) {
                                     filesCopied++;
                                 }
-                                progressCount++;
-                                progressDialog.setProgress((progressCount
-                                        / pathActions.size()));
+
                             }
 
 
                         }
-//                        for (int i = 0; i < pathActions.size(); i++) {
-//                            pathActions.g
-////                            boolean ifExists = checkIfFileExists(paths.get(i), new File(mCurrentDir));
-//                            if (mClickedButton == FileUtils.ACTION_CANCEL) {
-//                                isActionCancelled = true;
-//                            } else {
-//                                copyStatus = FileUtils.copyToDirectory(BaseActivity.this, paths.get(i), mCurrentDir,
-//                                        mIsMoveOperation, mClickedButton);
-//
-//                                if (copyStatus == 0) {
-//                                    filesCopied++;
-//                                }
-//                                progressCount++;
-//                                progressDialog.setProgress((progressCount
-//                                        / paths.size()));
-//                            }
-//                        }
                     }
                     break;
 
@@ -1172,6 +1314,21 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             return null;
         }
 
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            textFilesLeft.setText(currentFile + "/" + totalFiles);
+            int progress = values[0];
+            textProgressPercent.setText(progress + "%");
+            pasteProgress.setProgress(progress);
+
+            if (progress == 100 && currentFile == totalFiles) {
+//                    System.out.println("progress ELSE: " + progress + "currentFile:" + currentFile);
+                progressDialog.dismiss();
+            }
+
+
+        }
 
         @Override
         protected void onPostExecute(Void result) {
@@ -1239,7 +1396,87 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             }
         }
 
+        public class Progress {
+            private BackGroundOperationsTask task;
 
+            public Progress(BackGroundOperationsTask task) {
+                this.task = task;
+            }
+
+            public void publish(int val) {
+                task.publishProgress(val);
+            }
+        }
+
+
+    }
+
+
+    public class BgOperationsTask extends AsyncTask<ArrayList<String>, Void, Integer> {
+
+        private String fileName;
+        private String filePath;
+        private int copyStatus = -1;
+        //        private ProgressDialog progressDialog;
+        private Dialog progressDialog;
+        private Dialog deleteDialog;
+        private int operation;
+        private int currentFile = 0;
+        private int filesCopied;
+        private boolean isActionCancelled;
+        TextView textFileName;
+        private int totalFiles;
+        private String sourcePath;
+
+
+        private BgOperationsTask(int operation) {
+            this.operation = operation;
+            sourcePath = mSourceFilePath;
+
+        }
+
+        @Override
+        protected Integer doInBackground(ArrayList<String>... params) {
+            int deletedCount = 0;
+            ArrayList<String> paths = params[0];
+            totalFiles = paths.size();
+            for (int i = 0; i < totalFiles; i++) {
+                int result = FileUtils.deleteTarget(paths.get(i));
+                if (result == 0) {
+                    deletedCount++;
+                }
+            }
+            return deletedCount;
+        }
+
+        @Override
+        protected void onPostExecute(Integer filesDel) {
+            FileListFragment singlePaneFragment = (FileListFragment) getSupportFragmentManager().findFragmentById(R
+                    .id.frame_container);
+            int deletedFiles = filesDel;
+            switch (operation) {
+
+                case DELETE_OPERATION:
+                    if (mSelectedItemPositions != null && mSelectedItemPositions.size() != 0) {
+                        mSelectedItemPositions.clear();
+                    }
+
+                    if (deletedFiles != 0) {
+                        showMessage(getResources().getQuantityString(R.plurals.number_of_files, deletedFiles,
+                                deletedFiles) + " " +
+                                getString(R.string.msg_delete_success));
+                        if (singlePaneFragment != null) {
+                            singlePaneFragment.refreshList();
+                        }
+                    }
+
+                    if (totalFiles != deletedFiles) {
+                        showMessage(getString(R.string.msg_delete_failure));
+                    }
+                    break;
+
+            }
+        }
     }
 }
 

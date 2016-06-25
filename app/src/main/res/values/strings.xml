@@ -49,6 +49,14 @@
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_title_paste_conflict">File exists</string>
     <string name="msg_operation_cancel">Operation cancelled</string>
+    <string name="dialog_from_placeholder">From</string>
+    <string name="dialog_to_placeholder">To</string>
+    <string name="button_paste_progress">Background</string>
+    <string name="dialog_delete_title">Are you sure you want to delete the following files?</string>
+    <string name="msg_ok">Ok</string>
+    <string name="msg_save">Save</string>
+    <string name="no_files">No files</string>
+    <string name="msg_error_valid_name">Enter a valid name</string>
 
 
 </resources>
