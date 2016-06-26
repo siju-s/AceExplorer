@@ -246,17 +246,17 @@ public class FileUtils {
         return 0;
     }
 
-    public static void shareFiles (Context context,ArrayList<FileInfo> fileInfo) {
+    public static void shareFiles(Context context, ArrayList<FileInfo> fileInfo) {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND_MULTIPLE);
         intent.setType("*/*");
 
         ArrayList<Uri> files = new ArrayList<Uri>();
 
-        for(FileInfo info : fileInfo) {
+        for (FileInfo info : fileInfo) {
             File file = new File(info.getFilePath());
             Uri uri = Uri.fromFile(file);
-            System.out.println("shareuri=="+uri);
+            System.out.println("shareuri==" + uri);
             files.add(uri);
         }
 
@@ -348,7 +348,7 @@ public class FileUtils {
      */
 
 
-    public static void createZipFile(String path) {
+    public static int createZipFile(String path) {
 
         File dir = new File(path);
 
@@ -358,11 +358,13 @@ public class FileUtils {
         String name = path.substring(path.lastIndexOf("/"), path.length());
         String _path;
 
-
         if (!dir.canRead() || !dir.canWrite())
-            return;
+            return -1;
 
-        int len = list.length;
+        int len = 1;
+        if (list != null) {
+            len = list.length;
+        }
 
         if (path.charAt(path.length() - 1) != '/')
             _path = path + "/";
@@ -374,19 +376,26 @@ public class FileUtils {
                     new BufferedOutputStream(
                             new FileOutputStream(filepath + name + ".zip"), BUFFER));
 
-            for (int i = 0; i < len; i++)
-                zip_folder(new File(_path + list[i]), zip_out);
+            for (int i = 0; i < len; i++) {
+                if (list != null) {
+                    zip_folder(new File(_path + list[i]), zip_out);
+                } else {
+                    zip_folder(new File(_path), zip_out);
+                }
+            }
 
             zip_out.close();
 
         } catch (FileNotFoundException e) {
             Log.e("File not found", e.getMessage());
+            return -1;
 
         } catch (IOException e) {
             Log.e("IOException", e.getMessage());
+            return -1;
         }
 
-
+        return 0;
     }
 
 

@@ -13,7 +13,7 @@
     <string name="nav_menu_image">Images</string>
     <string name="nav_menu_docs">Documents</string>
     <string name="nav_header_storages">Storages</string>
-    <string name="nav_header_bookmarks">Bookmarks</string>
+    <string name="nav_header_favourites">Favourites</string>
     <string name="nav_header_collections">Library</string>
     <string name="nav_header_others">Others</string>
     <string name="msg_free">free of</string>
@@ -57,6 +57,28 @@
     <string name="msg_save">Save</string>
     <string name="no_files">No files</string>
     <string name="msg_error_valid_name">Enter a valid name</string>
+    <string name="path">Path:</string>
+    <string name="size">Size:</string>
+    <string name="date_modified">Date Modified:</string>
+    <string name="hidden">Hidden:</string>
+    <string name="readable">Readable:</string>
+    <string name="writeable">Writeable:</string>
+    <string name="md5">MD5:</string>
+    <string name="permissions">Permissions:</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="properties">Properties</string>
+    <string name="msg_zip_success">Zip file created successfully</string>
+    <string name="msg_zip_failure">Zip operation failed</string>
+    <string name="new_folder">New Folder</string>
+    <string name="new_file">New file</string>
+    <string name="msg_file_create_success">File created successfully</string>
+    <string name="msg_file_create_failure">Unable to create new file</string>
+    <string name="msg_folder_create_success">Folder created successfully</string>
+    <string name="msg_folder_create_failure">Unable to create new folder</string>
+    <string name="rate_us">Rate Us</string>
+    <string name="add_fav">Add to Favourites</string>
+    <string name="msg_added_to_fav">Added to Favourites</string>
 
 
 </resources>

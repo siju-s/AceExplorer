@@ -6,11 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -27,12 +26,14 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -40,13 +41,18 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.siju.filemanager.common.Logger;
+import com.siju.filemanager.filesystem.FavInfo;
 import com.siju.filemanager.filesystem.FileConstants;
 import com.siju.filemanager.filesystem.FileInfo;
 import com.siju.filemanager.filesystem.FileListAdapter;
 import com.siju.filemanager.filesystem.FileListDualFragment;
 import com.siju.filemanager.filesystem.FileListFragment;
 import com.siju.filemanager.filesystem.FileUtils;
+import com.siju.filemanager.filesystem.SharedPreference;
 import com.siju.filemanager.model.SectionGroup;
 import com.siju.filemanager.model.SectionItems;
 import com.siju.filemanager.ui.EnhancedMenuInflater;
@@ -68,7 +74,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     String[] listDataHeader;
     List<String> mListHeader;
     HashMap<String, List<String>> listDataChild;
-    ArrayList<SectionGroup> storageGroup;
+    ArrayList<SectionGroup> totalGroups;
     public static final String ACTION_VIEW_FOLDER_LIST = "folder_list";
     public static final String ACTION_DUAL_VIEW_FOLDER_LIST = "dual_folder_list";
     public static final String ACTION_DUAL_PANEL = "ACTION_DUAL_PANEL";
@@ -77,7 +83,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private RelativeLayout relativeLayoutDrawerPane;
     private String mCurrentDir = getInternalStorage().getAbsolutePath();
     private String mCurrentDirDualPane = getInternalStorage().getAbsolutePath();
-    public String STORAGE_ROOT, STORAGE_INTERNAL, STORAGE_EXTERNAL, DOWNLOADS, IMAGES, VIDEO, MUSIC, DOCS;
+    public String STORAGE_ROOT, STORAGE_INTERNAL, STORAGE_EXTERNAL, DOWNLOADS, IMAGES, VIDEO, MUSIC, DOCS, SETTINGS,
+            RATE;
     private boolean mIsDualMode;
     private LinearLayout navDirectory;
     private String mStartingDir = getInternalStorage().getAbsolutePath();
@@ -109,22 +116,21 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private ArrayList<String> tempSourceFile = new ArrayList<>();
     private int tempConflictCounter = 0;
     private Dialog mPasteConflictDialog;
+    private FloatingActionsMenu fabCreateMenu;
+    private FloatingActionButton fabCreateFolder;
+    private FloatingActionButton fabCreateFile;
+    private ArrayList<SectionItems> favouritesGroupChild = new ArrayList<>();
+    public static final String KEY_FAV = "KEY_FAVOURITES";
+    private SharedPreference sharedPreference;
+    private ArrayList<FavInfo> savedFavourites = new ArrayList<>();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
-        STORAGE_ROOT = getResources().getString(R.string.nav_menu_root);
-        STORAGE_INTERNAL = getResources().getString(R.string.nav_menu_internal_storage);
-        STORAGE_EXTERNAL = getResources().getString(R.string.nav_menu_ext_storage);
-        DOWNLOADS = getResources().getString(R.string.downloads);
-        MUSIC = getResources().getString(R.string.nav_menu_music);
-        VIDEO = getResources().getString(R.string.nav_menu_video);
-        DOCS = getResources().getString(R.string.nav_menu_docs);
-        IMAGES = getResources().getString(R.string.nav_menu_image);
-
-
+        getSavedFavourites();
+        initConstants();
         checkScreenOrientation();
         initViews();
         initListeners();
@@ -133,6 +139,25 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         setListAdapter();
         setNavDirectory();
         displayInitialFragment(mCurrentDir);
+    }
+
+    private void getSavedFavourites() {
+        sharedPreference = new SharedPreference();
+        savedFavourites = sharedPreference.getFavorites(this);
+    }
+
+
+    private void initConstants() {
+        STORAGE_ROOT = getResources().getString(R.string.nav_menu_root);
+        STORAGE_INTERNAL = getResources().getString(R.string.nav_menu_internal_storage);
+        STORAGE_EXTERNAL = getResources().getString(R.string.nav_menu_ext_storage);
+        DOWNLOADS = getResources().getString(R.string.downloads);
+        MUSIC = getResources().getString(R.string.nav_menu_music);
+        VIDEO = getResources().getString(R.string.nav_menu_video);
+        DOCS = getResources().getString(R.string.nav_menu_docs);
+        IMAGES = getResources().getString(R.string.nav_menu_image);
+        SETTINGS = getResources().getString(R.string.action_settings);
+        RATE = getResources().getString(R.string.rate_us);
     }
 
     /**
@@ -146,18 +171,38 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         }
     }
 
+
     private void initViews() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         mBottomToolbar = (Toolbar) findViewById(R.id.toolbar_bottom);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        fabCreateMenu = (FloatingActionsMenu) findViewById(R.id.fabCreate);
+        fabCreateFolder = (FloatingActionButton) findViewById(R.id.fabCreateFolder);
+        fabCreateFile = (FloatingActionButton) findViewById(R.id.fabCreateFile);
+        final FrameLayout frameLayout = (FrameLayout) findViewById(R.id.frameLayoutFab);
+        frameLayout.getBackground().setAlpha(0);
+        fabCreateMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu
+                .OnFloatingActionsMenuUpdateListener() {
+
+
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onMenuExpanded() {
+                frameLayout.getBackground().setAlpha(240);
+                frameLayout.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        fabCreateMenu.collapse();
+                        return true;
+                    }
+                });
+            }
+
+            @Override
+            public void onMenuCollapsed() {
+                frameLayout.getBackground().setAlpha(0);
+                frameLayout.setOnTouchListener(null);
             }
         });
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -185,6 +230,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                 return false;
             }
         });
+        fabCreateFile.setOnClickListener(this);
+        fabCreateFolder.setOnClickListener(this);
     }
 
     private void prepareListData() {
@@ -192,10 +239,11 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         listDataChild = new HashMap<>();
         listDataHeader = getResources().getStringArray(R.array.expand_headers);
         mListHeader = Arrays.asList(listDataHeader);
-        storageGroup = new ArrayList<>();
+        totalGroups = new ArrayList<>();
         initializeStorageGroup();
-        initializeBookMarksGroup();
+        initializeFavouritesGroup();
         initializeLibraryGroup();
+        initializeOthersGroup();
     }
 
     private void initializeStorageGroup() {
@@ -205,33 +253,47 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         File internalSD = FileUtils.getInternalStorage();
         File extSD = FileUtils.getExternalStorage();
         storageGroupChild.add(new SectionItems(STORAGE_ROOT, storageSpace(systemDir), R.drawable
-                .ic_lock_white_24dp_66cd00,
+                .ic_root_white,
                 FileUtils
                         .getAbsolutePath(rootDir)));
         storageGroupChild.add(new SectionItems(STORAGE_INTERNAL, storageSpace(internalSD), R.drawable
-                .ic_phone_android_white_24dp_66cd00, FileUtils.getAbsolutePath(internalSD)));
+                .ic_phone_white, FileUtils.getAbsolutePath(internalSD)));
         if (extSD != null) {
-            storageGroupChild.add(new SectionItems(STORAGE_EXTERNAL, storageSpace(extSD), R.drawable.ic_ext_sd_white,
+            storageGroupChild.add(new SectionItems(STORAGE_EXTERNAL, storageSpace(extSD), R.drawable.ic_ext_white,
                     FileUtils.getAbsolutePath(extSD)));
         }
-        storageGroup.add(new SectionGroup(mListHeader.get(0), storageGroupChild));
+        totalGroups.add(new SectionGroup(mListHeader.get(0), storageGroupChild));
     }
 
-    private void initializeBookMarksGroup() {
-        ArrayList<SectionItems> bookmarksGroupChild = new ArrayList<>();
-        bookmarksGroupChild.add(new SectionItems(DOWNLOADS, null, R.drawable.ic_file_download_white_24dp_42c0fb,
+    private void initializeFavouritesGroup() {
+
+        favouritesGroupChild.add(new SectionItems(DOWNLOADS, null, R.drawable.ic_download_white,
                 FileUtils
                         .getAbsolutePath(FileUtils.getDownloadsDirectory())));
-        storageGroup.add(new SectionGroup(mListHeader.get(1), bookmarksGroupChild));
+        if (savedFavourites != null && savedFavourites.size() > 0) {
+            for (int i = 0; i < savedFavourites.size(); i++) {
+                favouritesGroupChild.add(new SectionItems(savedFavourites.get(i).getFileName(), null, R.drawable
+                        .ic_folder_white,
+                        savedFavourites.get(i).getFilePath()));
+            }
+        }
+        totalGroups.add(new SectionGroup(mListHeader.get(1), favouritesGroupChild));
     }
 
     private void initializeLibraryGroup() {
         ArrayList<SectionItems> libraryGroupChild = new ArrayList<>();
-        libraryGroupChild.add(new SectionItems(MUSIC, null, R.drawable.ic_library_music_white_24dp_fb3742, null));
-        libraryGroupChild.add(new SectionItems(VIDEO, null, R.drawable.ic_video_library_white_24dp_fb3742, null));
-        libraryGroupChild.add(new SectionItems(IMAGES, null, R.drawable.ic_collections_white_24dp_fb3742, null));
-        libraryGroupChild.add(new SectionItems(DOCS, null, R.drawable.ic_insert_drive_file_white_24dp_fb3742, null));
-        storageGroup.add(new SectionGroup(mListHeader.get(2), libraryGroupChild));
+        libraryGroupChild.add(new SectionItems(MUSIC, null, R.drawable.ic_music_white, null));
+        libraryGroupChild.add(new SectionItems(VIDEO, null, R.drawable.ic_video_white, null));
+        libraryGroupChild.add(new SectionItems(IMAGES, null, R.drawable.ic_photos_white, null));
+        libraryGroupChild.add(new SectionItems(DOCS, null, R.drawable.ic_file_white, null));
+        totalGroups.add(new SectionGroup(mListHeader.get(2), libraryGroupChild));
+    }
+
+    private void initializeOthersGroup() {
+        ArrayList<SectionItems> othersGroupChild = new ArrayList<>();
+        othersGroupChild.add(new SectionItems(RATE, null, R.drawable.ic_rate_white, null));
+        othersGroupChild.add(new SectionItems(SETTINGS, null, R.drawable.ic_settings_white, null));
+        totalGroups.add(new SectionGroup(mListHeader.get(3), othersGroupChild));
     }
 
 
@@ -241,7 +303,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     }
 
     private void setListAdapter() {
-        expandableListAdapter = new ExpandableListAdapter(this, storageGroup);
+        expandableListAdapter = new ExpandableListAdapter(this, totalGroups);
         // setting list mAdapter
         expandableListView.setAdapter(expandableListAdapter);
         for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
@@ -268,7 +330,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             case 0:
             case 1:
                 if (!isDualPaneInFocus) {
-                    mStartingDir = storageGroup.get(groupPos).getmChildItems().get(childPos).getPath();
+                    mStartingDir = totalGroups.get(groupPos).getmChildItems().get(childPos).getPath();
 
                     if (!mCurrentDir.equals(mStartingDir)) {
                         mCurrentDir = mStartingDir;
@@ -277,7 +339,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                         displayInitialFragment(mCurrentDir);
                     }
                 } else {
-                    mStartingDirDualPane = storageGroup.get(groupPos).getmChildItems().get(childPos).getPath();
+                    mStartingDirDualPane = totalGroups.get(groupPos).getmChildItems().get(childPos).getPath();
                     if (!mCurrentDirDualPane.equals(mStartingDirDualPane)) {
                         mCurrentDirDualPane = mStartingDirDualPane;
                         dualPaneFragments.clear();
@@ -597,6 +659,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else if (fabCreateMenu.isExpanded()) {
+            fabCreateMenu.collapse();
         } else {
             if (!isDualPaneInFocus) {
 
@@ -854,8 +918,84 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
 
     @Override
-    public void onClick(View view) {
-//        switch (view.getId()) {
+    public void onClick(final View view) {
+        switch (view.getId()) {
+
+            case R.id.fabCreateFile:
+            case R.id.fabCreateFolder:
+                fabCreateMenu.collapse();
+                final Dialog dialog = new Dialog(
+                        BaseActivity.this);
+//                dialog.requestWindowFeature(Window.FEATURE_LEFT_ICON);
+                dialog.setContentView(R.layout.dialog_rename);
+                dialog.setCancelable(true);
+                // end of dialog declaration
+                String title = setDialogTitle(view.getId());
+                TextView dialogTitle = (TextView) dialog.findViewById(R.id.textDialogTitle);
+                dialogTitle.setText(title);
+
+
+                // define the contents of edit dialog
+                final EditText rename = (EditText) dialog
+                        .findViewById(R.id.editRename);
+
+                // dialog save button to save the edited item
+                Button saveButton = (Button) dialog
+                        .findViewById(R.id.buttonRename);
+                // for updating the list item
+                saveButton.setOnClickListener(new View.OnClickListener() {
+
+                    public void onClick(View v) {
+                        final CharSequence name = rename.getText();
+                        if (name.length() == 0) {
+                            rename.setError(getResources().getString(R.string.msg_error_valid_name));
+                            return;
+                        }
+                        FileListFragment singlePaneFragment = (FileListFragment) getSupportFragmentManager()
+                                .findFragmentById(R
+                                        .id.frame_container);
+                        String fileName = rename.getText().toString() + "";
+
+                        int result;
+                        if (view.getId() == R.id.fabCreateFile) {
+                            result = FileUtils.createFile(mCurrentDir, fileName + ".txt");
+                            if (result == 0) {
+                                showMessage(getString(R.string.msg_file_create_success));
+                            } else {
+                                showMessage(getString(R.string.msg_file_create_failure));
+                            }
+                        } else {
+                            result = FileUtils.createDir(mCurrentDir, fileName);
+                            if (result == 0) {
+                                showMessage(getString(R.string.msg_folder_create_success));
+                            } else {
+                                showMessage(getString(R.string.msg_folder_create_failure));
+                            }
+                        }
+
+                        if (singlePaneFragment != null) {
+                            singlePaneFragment.refreshList();
+                        }
+                        dialog.dismiss();
+
+                    }
+                });
+
+                // cancel button declaration
+                Button cancelButton = (Button) dialog
+                        .findViewById(R.id.buttonCancel);
+                cancelButton.setOnClickListener(new View.OnClickListener() {
+
+                    public void onClick(View v) {
+                        dialog.dismiss();
+
+                    }
+                });
+
+                dialog.show();
+                break;
+
+
 //            case R.id.buttonReplace:
 //                checkIfPasteConflictFinished(FileUtils.ACTION_REPLACE);
 //                break;
@@ -865,7 +1005,23 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 //            case R.id.buttonKeepBoth:
 //                checkIfPasteConflictFinished(FileUtils.ACTION_KEEP);
 //                break;
-//        }
+        }
+    }
+
+    private String setDialogTitle(int id) {
+        String title = "";
+        switch (id) {
+            case R.id.fabCreateFile:
+                title = getString(R.string.new_file);
+                break;
+            case R.id.fabCreateFolder:
+                title = getString(R.string.new_folder);
+                break;
+            case R.id.action_rename:
+                title = getString(R.string.action_rename);
+        }
+        return title;
+
     }
 
     /**
@@ -894,6 +1050,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
     public void startActionMode() {
 
+        fabCreateMenu.setVisibility(View.GONE);
         mBottomToolbar.setVisibility(View.VISIBLE);
         mBottomToolbar.startActionMode(new ActionModeCallback());
 //        mBottomToolbar.inflateMenu(R.menu.action_mode_bottom);
@@ -1096,11 +1253,40 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                     return true;
 
                 case R.id.action_info:
+                    if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+                        FileInfo fileInfo = mFileList.get(mSelectedItemPositions.keyAt(0));
+                        showDialog(fileInfo);
 
+                    }
                     mActionMode.finish();
                     return true;
                 case R.id.action_archive:
+                    if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+                        FileInfo fileInfo = mFileList.get(mSelectedItemPositions.keyAt(0));
+                        int result = FileUtils.createZipFile(fileInfo.getFilePath());
+                        FileListFragment singlePaneFragment = (FileListFragment) getSupportFragmentManager()
+                                .findFragmentById(R
+                                        .id.frame_container);
+                        if (result == 0) {
+                            showMessage(getString(R.string.msg_zip_success));
+                            if (singlePaneFragment != null) {
+                                singlePaneFragment.refreshList();
+                            }
 
+                        } else {
+                            showMessage(getString(R.string.msg_zip_failure));
+                        }
+                    }
+                    mActionMode.finish();
+                    return true;
+                case R.id.action_fav:
+                    if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+                        for (int i = 0; i < mSelectedItemPositions.size(); i++) {
+                            FileInfo info = mFileList.get(mSelectedItemPositions.keyAt(i));
+                            updateFavouritesGroup(info);
+                        }
+                        showMessage(getString(R.string.msg_added_to_fav));
+                    }
                     mActionMode.finish();
                     return true;
                 default:
@@ -1116,9 +1302,92 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             if (fileListFragment != null) {
                 fileListFragment.clearSelection();
             }
-
             mActionMode = null;
             mBottomToolbar.setVisibility(View.GONE);
+            fabCreateMenu.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void updateFavouritesGroup(FileInfo info) {
+
+        String name = info.getFileName();
+        String path = info.getFilePath();
+        FavInfo favInfo = new FavInfo();
+        favInfo.setFileName(name);
+        favInfo.setFilePath(path);
+        sharedPreference.addFavorite(this, favInfo);
+        favouritesGroupChild.add(new SectionItems(name, null, R.drawable.ic_folder_white, path));
+        expandableListAdapter.notifyDataSetChanged();
+
+    }
+
+
+    private void showDialog(FileInfo fileInfo) {
+        final Dialog dialog = new Dialog(
+                BaseActivity.this);
+        dialog.setContentView(R.layout.dialog_file_properties);
+        dialog.setCancelable(true);
+        ImageView imageFileIcon = (ImageView) dialog.findViewById(R.id.imageFileIcon);
+        TextView textFileName = (TextView) dialog.findViewById(R.id.textFileName);
+        ImageButton imageButtonClose = (ImageButton) dialog.findViewById(R.id.imageButtonClose);
+        TextView textPath = (TextView) dialog.findViewById(R.id.textPath);
+        TextView textFileSize = (TextView) dialog.findViewById(R.id.textFileSize);
+        TextView textDateModified = (TextView) dialog.findViewById(R.id.textDateModified);
+        TextView textHidden = (TextView) dialog.findViewById(R.id.textHidden);
+        TextView textReadable = (TextView) dialog.findViewById(R.id.textReadable);
+        TextView textWriteable = (TextView) dialog.findViewById(R.id.textWriteable);
+        TextView textMD5 = (TextView) dialog.findViewById(R.id.textMD5);
+        TextView textMD5Placeholder = (TextView) dialog.findViewById(R.id.textMD5PlaceHolder);
+
+        String path = fileInfo.getFilePath();
+        String fileName = fileInfo.getFileName();
+        String dateModified = fileInfo.getFileDate();
+        String fileNoOrSize = fileInfo.getNoOfFilesOrSize();
+        boolean isReadable = new File(path).canRead();
+        boolean isWriteable = new File(path).canWrite();
+        boolean isHidden = new File(path).isHidden();
+
+        textFileName.setText(fileName);
+        textPath.setText(path);
+        textFileSize.setText(fileNoOrSize);
+        textDateModified.setText(dateModified);
+        textReadable.setText(isReadable ? getString(R.string.yes) : getString(R.string.no));
+        textWriteable.setText(isWriteable ? getString(R.string.yes) : getString(R.string.no));
+        textHidden.setText(isHidden ? getString(R.string.yes) : getString(R.string.no));
+
+        dialog.show();
+
+        imageButtonClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        if (new File(path).isDirectory()) {
+            textMD5.setVisibility(View.GONE);
+            textMD5Placeholder.setVisibility(View.GONE);
+            Drawable apkIcon = FileUtils.getAppIconForFolder(this, fileName);
+            if (apkIcon != null) {
+                imageFileIcon.setImageDrawable(apkIcon);
+            } else {
+                imageFileIcon.setImageResource(R.drawable.ic_folder);
+            }
+        } else {
+            String md5 = FileUtils.getFastHash(path);
+            textMD5.setText(md5);
+            if (fileInfo.getType() == FileConstants.CATEGORY.IMAGE.getValue() ||
+                    fileInfo.getType() == FileConstants.CATEGORY.VIDEO.getValue()) {
+                Uri imageUri = Uri.fromFile(new File(path));
+                Glide.with(this).load(imageUri).centerCrop()
+                        .crossFade(2)
+                        .into(imageFileIcon);
+            } else if (fileInfo.getExtension().equals(FileConstants.APK_EXTENSION)) {
+                Drawable apkIcon = FileUtils.getAppIcon(this, path);
+                imageFileIcon.setImageDrawable(apkIcon);
+            } else {
+                imageFileIcon.setImageResource(R.drawable.ic_doc_white);
+            }
         }
     }
 
@@ -1151,6 +1420,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         }
         super.onConfigurationChanged(newConfig);
     }
+
 
     private void showDialog(final ArrayList<String> paths) {
         final Dialog deleteDialog = new Dialog(this);

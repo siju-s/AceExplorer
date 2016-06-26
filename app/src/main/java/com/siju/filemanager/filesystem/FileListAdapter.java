@@ -131,7 +131,7 @@ public class FileListAdapter extends BaseAdapter {
         fileListViewHolder.textFileModifiedDate.setText(fileDate);
 
         if (isDirectory) {
-            fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_folder);
+            fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_folder_white);
             Drawable apkIcon = FileUtils.getAppIconForFolder(mContext, fileName);
             if (apkIcon != null) {
                 fileListViewHolder.imageThumbIcon.setImageDrawable(apkIcon);

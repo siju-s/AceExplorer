@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.siju.filemanager.BaseActivity;
 import com.siju.filemanager.R;
@@ -157,12 +158,19 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoadFinished(Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
-        Log.d("TAG", "on onLoadFinished--" + data.size());
-        if (data != null && !data.isEmpty()) {
-            fileInfoList = data;
-            fileListAdapter.updateAdapter(fileInfoList);
-            ((BaseActivity) getActivity()).setFileListAdapter(fileListAdapter);
+//        Log.d("TAG", "on onLoadFinished--" + data.size());
+        if (data != null) {
+            Log.d("TAG", "on onLoadFinished--" + data.size());
+            if (!data.isEmpty()) {
+                fileInfoList = data;
+                fileListAdapter.updateAdapter(fileInfoList);
+                ((BaseActivity) getActivity()).setFileListAdapter(fileListAdapter);
+            } else {
+                TextView textEmpty = (TextView)getActivity().findViewById(R.id.textEmpty);
+                textEmpty.setVisibility(View.VISIBLE);
+            }
         }
+
     }
 
     @Override

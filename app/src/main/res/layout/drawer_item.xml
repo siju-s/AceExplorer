@@ -27,7 +27,6 @@
         android:layout_marginLeft="@dimen/drawer_item_text_margin"
         android:layout_marginStart="@dimen/drawer_item_text_margin"
         android:layout_toRightOf="@+id/image_drawer_item"
-        android:text="Root"
         android:textSize="14sp" />
 
     <TextView

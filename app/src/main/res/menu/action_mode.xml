@@ -20,4 +20,10 @@
         android:icon="@drawable/ic_archive"
         android:title="@string/action_archive"
         app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_fav"
+        android:icon="@drawable/ic_bookmark_black"
+        android:title="@string/add_fav"
+        app:showAsAction="never"/>
 </menu>
