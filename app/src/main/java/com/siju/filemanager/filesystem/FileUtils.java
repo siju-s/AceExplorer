@@ -11,8 +11,11 @@ import android.net.Uri;
 import android.os.Environment;
 import android.text.format.Formatter;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
+import android.widget.Toast;
 
 import com.siju.filemanager.BaseActivity;
+import com.siju.filemanager.R;
 import com.siju.filemanager.common.Logger;
 
 import java.io.BufferedInputStream;
@@ -244,6 +247,36 @@ public class FileUtils {
             sourceFile.delete();
         }
         return 0;
+    }
+
+    /**
+     * View the file in external apps based on Mime Type
+     * @param context
+     * @param path
+     * @param extension
+     */
+    public static void viewFile(Context context,String path,String extension) {
+
+        Uri uri = Uri.fromFile(new File(path));
+
+        Intent intent = new Intent();
+        intent.setAction(android.content.Intent.ACTION_VIEW);
+        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        Logger.log("TAG","uri=="+uri+"MIME="+mimeType);
+        intent.setDataAndType(uri,mimeType);
+        PackageManager packageManager = context.getPackageManager();
+        if (intent.resolveActivity(packageManager) != null) {
+            Intent chooser = Intent.createChooser(intent,context.getString(R.string.msg_open_file));
+            context.startActivity(chooser);
+        }
+        else {
+            showMessage(context,context.getString(R.string.msg_error_not_supported));
+        }
+
+    }
+
+    private static void showMessage(Context context,String msg) {
+        Toast .makeText(context,msg,Toast.LENGTH_SHORT).show();
     }
 
     public static void shareFiles(Context context, ArrayList<FileInfo> fileInfo) {

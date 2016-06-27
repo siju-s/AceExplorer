@@ -74,7 +74,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     String[] listDataHeader;
     List<String> mListHeader;
     HashMap<String, List<String>> listDataChild;
-    ArrayList<SectionGroup> totalGroups;
+    ArrayList<SectionGroup> totalGroup;
     public static final String ACTION_VIEW_FOLDER_LIST = "folder_list";
     public static final String ACTION_DUAL_VIEW_FOLDER_LIST = "dual_folder_list";
     public static final String ACTION_DUAL_PANEL = "ACTION_DUAL_PANEL";
@@ -123,16 +123,17 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     public static final String KEY_FAV = "KEY_FAVOURITES";
     private SharedPreference sharedPreference;
     private ArrayList<FavInfo> savedFavourites = new ArrayList<>();
+    private View mViewSeperator;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base);
+        setContentView(R.layout.drawer_layout);
         getSavedFavourites();
         initConstants();
-        checkScreenOrientation();
         initViews();
+        checkScreenOrientation();
         initListeners();
         Logger.log("TAG", "on create--Activity");
         prepareListData();
@@ -166,8 +167,11 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private void checkScreenOrientation() {
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             mIsDualMode = true;
+            mViewSeperator.setVisibility(View.VISIBLE);
         } else {
             mIsDualMode = false;
+            mViewSeperator.setVisibility(View.GONE);
+
         }
     }
 
@@ -217,6 +221,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         navDirectoryDualPane = (LinearLayout) findViewById(R.id.navButtonsDualPane);
         scrollNavigation = (HorizontalScrollView) findViewById(R.id.scrollNavigation);
         scrollNavigationDualPane = (HorizontalScrollView) findViewById(R.id.scrollNavigationDualPane);
+        mViewSeperator = findViewById(R.id.viewSeperator);
 
     }
 
@@ -239,7 +244,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         listDataChild = new HashMap<>();
         listDataHeader = getResources().getStringArray(R.array.expand_headers);
         mListHeader = Arrays.asList(listDataHeader);
-        totalGroups = new ArrayList<>();
+        totalGroup = new ArrayList<>();
         initializeStorageGroup();
         initializeFavouritesGroup();
         initializeLibraryGroup();
@@ -262,22 +267,24 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             storageGroupChild.add(new SectionItems(STORAGE_EXTERNAL, storageSpace(extSD), R.drawable.ic_ext_white,
                     FileUtils.getAbsolutePath(extSD)));
         }
-        totalGroups.add(new SectionGroup(mListHeader.get(0), storageGroupChild));
+        totalGroup.add(new SectionGroup(mListHeader.get(0), storageGroupChild));
     }
 
     private void initializeFavouritesGroup() {
 
-        favouritesGroupChild.add(new SectionItems(DOWNLOADS, null, R.drawable.ic_download_white,
-                FileUtils
-                        .getAbsolutePath(FileUtils.getDownloadsDirectory())));
+        String path = FileUtils
+                .getAbsolutePath(FileUtils.getDownloadsDirectory());
+        favouritesGroupChild.add(new SectionItems(DOWNLOADS, path, R.drawable.d_613854,
+                path));
         if (savedFavourites != null && savedFavourites.size() > 0) {
             for (int i = 0; i < savedFavourites.size(); i++) {
-                favouritesGroupChild.add(new SectionItems(savedFavourites.get(i).getFileName(), null, R.drawable
-                        .ic_folder_white,
-                        savedFavourites.get(i).getFilePath()));
+                String savedPath = savedFavourites.get(i).getFilePath();
+                favouritesGroupChild.add(new SectionItems(savedFavourites.get(i).getFileName(), savedPath, R.drawable
+                        .f_613854,
+                        savedPath));
             }
         }
-        totalGroups.add(new SectionGroup(mListHeader.get(1), favouritesGroupChild));
+        totalGroup.add(new SectionGroup(mListHeader.get(1), favouritesGroupChild));
     }
 
     private void initializeLibraryGroup() {
@@ -286,14 +293,14 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         libraryGroupChild.add(new SectionItems(VIDEO, null, R.drawable.ic_video_white, null));
         libraryGroupChild.add(new SectionItems(IMAGES, null, R.drawable.ic_photos_white, null));
         libraryGroupChild.add(new SectionItems(DOCS, null, R.drawable.ic_file_white, null));
-        totalGroups.add(new SectionGroup(mListHeader.get(2), libraryGroupChild));
+        totalGroup.add(new SectionGroup(mListHeader.get(2), libraryGroupChild));
     }
 
     private void initializeOthersGroup() {
         ArrayList<SectionItems> othersGroupChild = new ArrayList<>();
         othersGroupChild.add(new SectionItems(RATE, null, R.drawable.ic_rate_white, null));
         othersGroupChild.add(new SectionItems(SETTINGS, null, R.drawable.ic_settings_white, null));
-        totalGroups.add(new SectionGroup(mListHeader.get(3), othersGroupChild));
+        totalGroup.add(new SectionGroup(mListHeader.get(3), othersGroupChild));
     }
 
 
@@ -303,7 +310,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     }
 
     private void setListAdapter() {
-        expandableListAdapter = new ExpandableListAdapter(this, totalGroups);
+        expandableListAdapter = new ExpandableListAdapter(this, totalGroup);
         // setting list mAdapter
         expandableListView.setAdapter(expandableListAdapter);
         for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
@@ -330,7 +337,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             case 0:
             case 1:
                 if (!isDualPaneInFocus) {
-                    mStartingDir = totalGroups.get(groupPos).getmChildItems().get(childPos).getPath();
+                    mStartingDir = totalGroup.get(groupPos).getmChildItems().get(childPos).getPath();
 
                     if (!mCurrentDir.equals(mStartingDir)) {
                         mCurrentDir = mStartingDir;
@@ -339,7 +346,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                         displayInitialFragment(mCurrentDir);
                     }
                 } else {
-                    mStartingDirDualPane = totalGroups.get(groupPos).getmChildItems().get(childPos).getPath();
+                    mStartingDirDualPane = totalGroup.get(groupPos).getmChildItems().get(childPos).getPath();
                     if (!mCurrentDirDualPane.equals(mStartingDirDualPane)) {
                         mCurrentDirDualPane = mStartingDirDualPane;
                         dualPaneFragments.clear();
@@ -1410,11 +1417,14 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             dualPaneFragments.add(dualFragment);
             dualFragment.setArguments(args);
             ft.replace(R.id.frame_container_dual, dualFragment);
+            mViewSeperator.setVisibility(View.VISIBLE);
+
 //            ft.addToBackStack(null);
             ft.commitAllowingStateLoss();
         } else {
             FrameLayout frameLayout = (FrameLayout) findViewById(R.id.frame_container_dual);
             frameLayout.setVisibility(View.GONE);
+            mViewSeperator.setVisibility(View.GONE);
             scrollNavigationDualPane.setVisibility(View.GONE);
             isDualPaneInFocus = false;
         }

@@ -5,11 +5,11 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,19 +19,18 @@ import com.siju.filemanager.R;
 import java.io.File;
 import java.util.ArrayList;
 
-import static com.siju.filemanager.R.id.imageIcon;
-
 /**
  * Created by Siju on 13-06-2016.
  */
 
-public class FileListAdapter extends BaseAdapter {
+public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileListViewHolder> {
 
     private Context mContext;
     private ArrayList<FileInfo> fileInfoArrayList;
     private SparseBooleanArray mSelectedItemsIds;
     private ArrayList<FileInfo> mSelectedFileList;
-//    OnItemClickListener mItemClickListener;
+    OnItemClickListener mItemClickListener;
+    OnItemLongClickListener mOnItemLongClickListener;
 
     public FileListAdapter(Context mContext, ArrayList<FileInfo> fileInfoArrayList) {
         this.mContext = mContext;
@@ -45,6 +44,22 @@ public class FileListAdapter extends BaseAdapter {
 //        Log.d("SIJU","updateAdapter"+fileInfoArrayList.size());
         notifyDataSetChanged();
     }
+
+    public interface OnItemClickListener {
+         void onItemClick(View view, int position);
+    }
+
+    public interface OnItemLongClickListener {
+         void onItemLongClick(View view, int position);
+    }
+
+    public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
+        this.mItemClickListener = mItemClickListener;
+    }
+    public void setOnItemLongClickListener(final OnItemLongClickListener mItemClickListener) {
+        this.mOnItemLongClickListener = mItemClickListener;
+    }
+
 //
 //    @Override
 //    public FileListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -77,49 +92,17 @@ public class FileListAdapter extends BaseAdapter {
 //    }
 
     @Override
-    public int getCount() {
-
-        if (fileInfoArrayList == null) {
-            return 0;
-        } else {
-
-            return fileInfoArrayList.size();
-        }
+    public FileListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_list_item, parent, false);
+        FileListViewHolder tvh = new FileListViewHolder(v);
+        return tvh;
     }
 
     @Override
-    public Object getItem(int position) {
-        return fileInfoArrayList.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View view = convertView;
-        FileListViewHolder fileListViewHolder;
-        if (view == null) {
-            LayoutInflater layoutInflater = (LayoutInflater) this.mContext
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = layoutInflater.inflate(R.layout.file_list_item, null);
-            fileListViewHolder = new FileListViewHolder();
-            fileListViewHolder.textFileName = (TextView) view
-                    .findViewById(R.id.textFolderName);
-            fileListViewHolder.textFileModifiedDate = (TextView) view.findViewById(R.id.textDate);
-            fileListViewHolder.imageIcon = (ImageView) view.findViewById(imageIcon);
-            fileListViewHolder.imageThumbIcon = (ImageView) view.findViewById(R.id.imageThumbIcon);
-            fileListViewHolder.textNoOfFileOrSize = (TextView) view.findViewById(R.id.textSecondLine);
-            view.setTag(fileListViewHolder);
-        } else {
-            fileListViewHolder = (FileListViewHolder) view.getTag();
-        }
+    public void onBindViewHolder(FileListViewHolder fileListViewHolder, int position) {
         //change background color if list item is selected
         int color = ContextCompat.getColor(mContext, R.color.actionModeItemSelected);
-        view.setBackgroundColor(mSelectedItemsIds.get(position) ? color :
+        fileListViewHolder.itemView.setBackgroundColor(mSelectedItemsIds.get(position) ? color :
                 Color.TRANSPARENT);
         String fileName = fileInfoArrayList.get(position).getFileName();
         String fileDate = fileInfoArrayList.get(position).getFileDate();
@@ -158,7 +141,16 @@ public class FileListAdapter extends BaseAdapter {
 
         }
         fileListViewHolder.textNoOfFileOrSize.setText(fileNoOrSize);
-        return view;
+    }
+
+
+    @Override
+    public int getItemCount() {
+        if (fileInfoArrayList == null) {
+            return 0;
+        } else {
+            return fileInfoArrayList.size();
+        }
     }
 
 
@@ -194,13 +186,41 @@ public class FileListAdapter extends BaseAdapter {
     }
 
 
-    static class FileListViewHolder {
+    class FileListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
+                                                                    View.OnLongClickListener{
         ImageView imageIcon;
         ImageView imageThumbIcon;
         TextView textFileName;
         TextView textFileModifiedDate;
         TextView textNoOfFileOrSize;
 
+        public FileListViewHolder(View itemView) {
+            super(itemView);
+            textFileName = (TextView) itemView
+                    .findViewById(R.id.textFolderName);
+            imageIcon = (ImageView) itemView.findViewById(R.id.imageIcon);
+            imageThumbIcon = (ImageView) itemView.findViewById(R.id.imageThumbIcon);
+            textNoOfFileOrSize = (TextView) itemView.findViewById(R.id.textSecondLine);
+            textFileModifiedDate = (TextView) itemView.findViewById(R.id.textDate);
+            itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
+
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (mItemClickListener != null) {
+                mItemClickListener.onItemClick(v, getAdapterPosition());
+            }
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            if (mOnItemLongClickListener != null) {
+                mOnItemLongClickListener.onItemLongClick(v, getAdapterPosition());
+            }
+            return true;
+        }
     }
 
 

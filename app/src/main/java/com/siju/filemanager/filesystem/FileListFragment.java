@@ -6,19 +6,21 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.siju.filemanager.BaseActivity;
 import com.siju.filemanager.R;
 import com.siju.filemanager.common.Logger;
+import com.siju.filemanager.ui.DividerItemDecoration;
 
 import java.util.ArrayList;
 
@@ -29,7 +31,8 @@ import java.util.ArrayList;
 
 public class FileListFragment extends Fragment implements LoaderManager.LoaderCallbacks<ArrayList<FileInfo>> {
 
-    private ListView fileList;
+    //    private ListView fileList;
+    private RecyclerView recyclerViewFileList;
     private View root;
     private final int LOADER_ID = 1000;
     private FileListAdapter fileListAdapter;
@@ -50,7 +53,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        fileList = (ListView) root.findViewById(R.id.fileList);
+        initializeViews();
 
         Bundle args = new Bundle();
         String fileName;
@@ -67,52 +70,76 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 //            filePath = getArguments().getString(FileConstants.KEY_PATH);
 //        }
 //        fileList.setLayoutManager(new LinearLayoutManager(getContext()));
+//        fileListAdapter = new FileListAdapter(getContext(), fileInfoList);
+//        fileList.setAdapter(fileListAdapter);
         fileListAdapter = new FileListAdapter(getContext(), fileInfoList);
-        fileList.setAdapter(fileListAdapter);
+        recyclerViewFileList.setAdapter(fileListAdapter);
         if (mFilePath != null) {
             args.putString(FileConstants.KEY_PATH, mFilePath);
             getLoaderManager().initLoader(LOADER_ID, args, this);
         }
-        fileList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        fileListAdapter.setOnItemClickListener(new FileListAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+            public void onItemClick(View view, int position) {
                 if (((BaseActivity) getActivity()).getActionMode() != null) {
                     itemClick(position);
                 } else {
-                    Bundle bundle = new Bundle();
-                    String path = fileInfoList.get(position).getFilePath();
-                    bundle.putString(FileConstants.KEY_PATH, path);
-                    Intent intent = new Intent(getActivity(), BaseActivity.class);
-                    if (FileListFragment.this instanceof FileListDualFragment) {
-                        intent.setAction(BaseActivity.ACTION_DUAL_VIEW_FOLDER_LIST);
-                        intent.putExtra(BaseActivity.ACTION_DUAL_PANEL, true);
+                    // For file, open external apps based on Mime Type
+                    if (!fileInfoList.get(position).isDirectory()) {
+                        FileUtils.viewFile(getActivity(), fileInfoList.get(position).getFilePath(),fileInfoList.get
+                                (position).getExtension());
                     } else {
-                        intent.setAction(BaseActivity.ACTION_VIEW_FOLDER_LIST);
-                        intent.putExtra(BaseActivity.ACTION_DUAL_PANEL, false);
-                    }
+                        Bundle bundle = new Bundle();
+                        String path = fileInfoList.get(position).getFilePath();
+                        bundle.putString(FileConstants.KEY_PATH, path);
+                        Intent intent = new Intent(getActivity(), BaseActivity.class);
+                        if (FileListFragment.this instanceof FileListDualFragment) {
+                            intent.setAction(BaseActivity.ACTION_DUAL_VIEW_FOLDER_LIST);
+                            intent.putExtra(BaseActivity.ACTION_DUAL_PANEL, true);
+                        } else {
+                            intent.setAction(BaseActivity.ACTION_VIEW_FOLDER_LIST);
+                            intent.putExtra(BaseActivity.ACTION_DUAL_PANEL, false);
+                        }
 
-                    intent.putExtras(bundle);
-                    startActivity(intent);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+                    }
                 }
             }
         });
 
-        fileList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        fileListAdapter.setOnItemLongClickListener(new FileListAdapter.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                //                }
+            public void onItemLongClick(View view, int position) {
                 Logger.log("TAG", "On long click");
                 itemClick(position);
-
-//                // Start the CAB using the ActionMode.Callback defined above
-//                mActionMode = ((AppCompatActivity) getActivity())
-//                        .startSupportActionMode(new ActionModeCallback());
-                return true;
-//        return false;
             }
         });
 
+//        fileList.setOnLong(new AdapterView.OnItemLongClickListener() {
+//            @Override
+//            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+//                //                }
+//                Logger.log("TAG", "On long click");
+//                itemClick(position);
+//
+////                // Start the CAB using the ActionMode.Callback defined above
+////                mActionMode = ((AppCompatActivity) getActivity())
+////                        .startSupportActionMode(new ActionModeCallback());
+//                return true;
+////        return false;
+//            }
+//        });
+
+    }
+
+    private void initializeViews() {
+        recyclerViewFileList = (RecyclerView) root.findViewById(R.id.recyclerViewFileList);
+        recyclerViewFileList.setHasFixedSize(true);
+        RecyclerView.LayoutManager llm = new LinearLayoutManager(getActivity());
+        recyclerViewFileList.setLayoutManager(llm);
+        recyclerViewFileList.setItemAnimator(new DefaultItemAnimator());
+        recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
     }
 
     private void itemClick(int position) {
@@ -138,13 +165,12 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
     public void clearSelection() {
         fileListAdapter.removeSelection();
 
-      }
+    }
 
-    public void refreshList()
-    {
+    public void refreshList() {
         Bundle args = new Bundle();
         args.putString(FileConstants.KEY_PATH, mFilePath);
-        getLoaderManager().restartLoader(LOADER_ID,args,this);
+        getLoaderManager().restartLoader(LOADER_ID, args, this);
     }
 
 
@@ -166,7 +192,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                 fileListAdapter.updateAdapter(fileInfoList);
                 ((BaseActivity) getActivity()).setFileListAdapter(fileListAdapter);
             } else {
-                TextView textEmpty = (TextView)getActivity().findViewById(R.id.textEmpty);
+                TextView textEmpty = (TextView) getActivity().findViewById(R.id.textEmpty);
                 textEmpty.setVisibility(View.VISIBLE);
             }
         }

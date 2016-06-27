@@ -76,7 +76,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         childViewHolder.image.setBackgroundResource(child.getmImage());
         childViewHolder.textFirstLine.setText(child.getmFirstLine());
-        if (groupPosition == 0) {
+        if (groupPosition == 0 || groupPosition == 1) {
             childViewHolder.textSecondLine.setText(child.getmSecondLine());
         }
 //        else {
