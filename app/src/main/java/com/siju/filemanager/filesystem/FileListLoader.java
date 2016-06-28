@@ -2,6 +2,9 @@ package com.siju.filemanager.filesystem;
 
 
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v4.content.AsyncTaskLoader;
 import android.text.format.Formatter;
 import android.util.Log;
@@ -19,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import static com.siju.filemanager.filesystem.FileUtils.convertDate;
+
 /**
  * Created by Siju on 13-06-2016.
  */
@@ -29,11 +34,13 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private String mPath;
     private Context mContext;
     private boolean showHidden = false;
+    private int mCategory;
 
-    public FileListLoader(Context context, String path) {
+    public FileListLoader(Context context, String path, int category) {
         super(context);
         mPath = path;
         mContext = context;
+        mCategory = category;
     }
 
     @Override
@@ -50,66 +57,9 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 //        android.os.Debug.waitForDebugger();
 
         fileInfoList = new ArrayList<>();
-        File file = new File(mPath);
+        fetchDataByCategory();
+        return fileInfoList;
 
-        if (file.exists()) {
-            File[] listFiles = file.listFiles();
-
-            if (listFiles != null) {
-                Arrays.sort(listFiles, comparatorByName);
-                for (File file1 : listFiles) {
-                    boolean isDirectory = false;
-                    String fileName = file1.getName();
-                    String filePath = file1.getAbsolutePath();
-                    String noOfFilesOrSize = null;
-                    String extension = null;
-                    int type = 0;
-
-                    // Dont show hidden files by default
-                    if (file1.getName().startsWith(".") && !showHidden) {
-                        continue;
-                    }
-                    if (file1.isDirectory()) {
-
-                        isDirectory = true;
-                        int childFileListSize = 0;
-//                        if (file1.list() == null) {
-//                            noOfFilesOrSize = getPermissionOfFile(file1);
-//                        }
-//                        else {
-                        if (file1.list() != null) {
-                            childFileListSize = file1.list().length;
-                        }
-
-                        if (childFileListSize == 0) {
-                            noOfFilesOrSize = mContext.getResources().getString(R.string.empty);
-                        } else {
-                            noOfFilesOrSize = mContext.getResources().getQuantityString(R.plurals.number_of_files,
-                                    childFileListSize, childFileListSize);
-                        }
-//                        }
-                    } else {
-                        long size = file1.length();
-                        noOfFilesOrSize = Formatter.formatFileSize(mContext, size);
-                        extension = filePath.substring(filePath.lastIndexOf(".") + 1);
-                        type = checkMimeType(filePath);
-                    }
-                    long date = file1.lastModified();
-                    String fileModifiedDate = FileUtils.convertDate(date);
-
-
-                    FileInfo fileInfo = new FileInfo(fileName, filePath, fileModifiedDate, noOfFilesOrSize,
-                            isDirectory, extension, type);
-                    fileInfoList.add(fileInfo);
-
-                }
-                return fileInfoList;
-            } else {
-                return null;
-            }
-        } else {
-            return null;
-        }
     }
 
     private boolean checkIfRootDir(File file) {
@@ -178,7 +128,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
     };
 
-//    private Comparator<? super String> getSortMode(int sortmode) {
+    //    private Comparator<? super String> getSortMode(int sortmode) {
 //
 //        switch (sortmode) {
 //            case 1:
@@ -191,4 +141,113 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 //        }
 //
 //    }
+    private void fetchDataByCategory() {
+        switch (mCategory) {
+            case 0:
+                fetchFiles();
+                break;
+            case 3:
+                fetchMusicFiles();
+                break;
+
+        }
+    }
+
+    private ArrayList<FileInfo> fetchFiles() {
+        File file = new File(mPath);
+
+        if (file.exists()) {
+            File[] listFiles = file.listFiles();
+
+            if (listFiles != null) {
+                Arrays.sort(listFiles, comparatorByName);
+                for (File file1 : listFiles) {
+                    boolean isDirectory = false;
+                    String fileName = file1.getName();
+                    String filePath = file1.getAbsolutePath();
+                    String noOfFilesOrSize = null;
+                    String extension = null;
+                    int type = 0;
+
+                    // Dont show hidden files by default
+                    if (file1.getName().startsWith(".") && !showHidden) {
+                        continue;
+                    }
+                    if (file1.isDirectory()) {
+
+                        isDirectory = true;
+                        int childFileListSize = 0;
+//                        if (file1.list() == null) {
+//                            noOfFilesOrSize = getPermissionOfFile(file1);
+//                        }
+//                        else {
+                        if (file1.list() != null) {
+                            childFileListSize = file1.list().length;
+                        }
+
+                        if (childFileListSize == 0) {
+                            noOfFilesOrSize = mContext.getResources().getString(R.string.empty);
+                        } else {
+                            noOfFilesOrSize = mContext.getResources().getQuantityString(R.plurals.number_of_files,
+                                    childFileListSize, childFileListSize);
+                        }
+//                        }
+                    } else {
+                        long size = file1.length();
+                        noOfFilesOrSize = Formatter.formatFileSize(mContext, size);
+                        extension = filePath.substring(filePath.lastIndexOf(".") + 1);
+                        type = checkMimeType(filePath);
+                    }
+                    long date = file1.lastModified();
+                    String fileModifiedDate = convertDate(date);
+
+
+                    FileInfo fileInfo = new FileInfo(fileName, filePath, fileModifiedDate, noOfFilesOrSize,
+                            isDirectory, extension, type);
+                    fileInfoList.add(fileInfo);
+
+
+                }
+                return fileInfoList;
+
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    private ArrayList<FileInfo> fetchMusicFiles() {
+        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        StringBuilder where = new StringBuilder();
+        where.append(MediaStore.Audio.Media.TITLE + " != ''");
+        where.append(" AND " + MediaStore.Audio.Media.IS_MUSIC + "=1");
+        String sortOrder = MediaStore.Audio.Media.DATE_MODIFIED + " DESC";
+        Cursor cursor = mContext.getContentResolver().query(uri, null, where.toString(), null, sortOrder);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE);
+                int sizeIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE);
+                int dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATE_MODIFIED);
+                int audioIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID);
+                int pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
+
+                String fileName = cursor.getString(titleIndex);
+                long size1 = cursor.getLong(sizeIndex);
+                long date1 = cursor.getLong(dateIndex);
+                long albumId = cursor.getLong(audioIdIndex);
+                String path = cursor.getString(pathIndex);
+                int type = FileConstants.CATEGORY.AUDIO.getValue();
+                String date = FileUtils.convertDate(date1 * 1000); // converting it to ms
+                String size = Formatter.formatFileSize(mContext, size1);
+                fileInfoList.add(new FileInfo(albumId, fileName, path, date, size, type));
+
+            } while (cursor.moveToNext());
+            cursor.close();
+        } else {
+            return null;
+        }
+        return fileInfoList;
+    }
 }

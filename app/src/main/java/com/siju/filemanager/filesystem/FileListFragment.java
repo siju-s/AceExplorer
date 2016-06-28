@@ -39,6 +39,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
     private ArrayList<FileInfo> fileInfoList;
     private boolean isDualMode;
     private String mFilePath;
+    private int mCategory;
 
 
     @Override
@@ -58,10 +59,11 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
         Bundle args = new Bundle();
         String fileName;
 
-        if (getArguments() != null && getArguments().getString(FileConstants.KEY_PATH) != null) {
-            mFilePath = getArguments().getString(FileConstants.KEY_PATH);
-            fileName = getArguments().getString(FileConstants.KEY_FILENAME);
-//            isDualMode = getArguments().getBoolean(FileConstants.KEY_DUAL_MODE, false);
+        if (getArguments() != null) {
+            if (getArguments().getString(FileConstants.KEY_PATH) != null) {
+                mFilePath = getArguments().getString(FileConstants.KEY_PATH);
+            }
+            mCategory = getArguments().getInt(FileConstants.KEY_CATEGORY, FileConstants.CATEGORY.FILES.getValue());
         }
 
         Log.d("TAG", "on onActivityCreated--Fragment" + mFilePath);
@@ -72,12 +74,19 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 //        fileList.setLayoutManager(new LinearLayoutManager(getContext()));
 //        fileListAdapter = new FileListAdapter(getContext(), fileInfoList);
 //        fileList.setAdapter(fileListAdapter);
-        fileListAdapter = new FileListAdapter(getContext(), fileInfoList);
+        fileListAdapter = new FileListAdapter(getContext(), fileInfoList, mCategory);
         recyclerViewFileList.setAdapter(fileListAdapter);
-        if (mFilePath != null) {
-            args.putString(FileConstants.KEY_PATH, mFilePath);
-            getLoaderManager().initLoader(LOADER_ID, args, this);
-        }
+/*        recyclerViewFileList.setHasFixedSize(true);
+        RecyclerView.LayoutManager llm = new LinearLayoutManager(getActivity());
+        recyclerViewFileList.setLayoutManager(llm);*/
+/*        recyclerViewFileList.setItemAnimator(new DefaultItemAnimator());
+        recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL)
+        );*/
+//        if (mFilePath != null) {
+        args.putString(FileConstants.KEY_PATH, mFilePath);
+
+        getLoaderManager().initLoader(LOADER_ID, args, this);
+//        }
         fileListAdapter.setOnItemClickListener(new FileListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -86,7 +95,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                 } else {
                     // For file, open external apps based on Mime Type
                     if (!fileInfoList.get(position).isDirectory()) {
-                        FileUtils.viewFile(getActivity(), fileInfoList.get(position).getFilePath(),fileInfoList.get
+                        FileUtils.viewFile(getActivity(), fileInfoList.get(position).getFilePath(), fileInfoList.get
                                 (position).getExtension());
                     } else {
                         Bundle bundle = new Bundle();
@@ -135,11 +144,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 
     private void initializeViews() {
         recyclerViewFileList = (RecyclerView) root.findViewById(R.id.recyclerViewFileList);
-        recyclerViewFileList.setHasFixedSize(true);
-        RecyclerView.LayoutManager llm = new LinearLayoutManager(getActivity());
-        recyclerViewFileList.setLayoutManager(llm);
-        recyclerViewFileList.setItemAnimator(new DefaultItemAnimator());
-        recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+
     }
 
     private void itemClick(int position) {
@@ -178,8 +183,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
     public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
         fileInfoList = new ArrayList<>();
         String path = args.getString(FileConstants.KEY_PATH);
-        return new FileListLoader(getContext(), path);
-
+        return new FileListLoader(getContext(), path, mCategory);
     }
 
     @Override
@@ -190,6 +194,13 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
             if (!data.isEmpty()) {
                 fileInfoList = data;
                 fileListAdapter.updateAdapter(fileInfoList);
+                recyclerViewFileList.setHasFixedSize(true);
+                RecyclerView.LayoutManager llm = new LinearLayoutManager(getActivity());
+                llm.setAutoMeasureEnabled(false);
+                recyclerViewFileList.setLayoutManager(llm);
+                recyclerViewFileList.setItemAnimator(new DefaultItemAnimator());
+                recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
+                        .VERTICAL));
                 ((BaseActivity) getActivity()).setFileListAdapter(fileListAdapter);
             } else {
                 TextView textEmpty = (TextView) getActivity().findViewById(R.id.textEmpty);

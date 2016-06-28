@@ -124,6 +124,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private SharedPreference sharedPreference;
     private ArrayList<FavInfo> savedFavourites = new ArrayList<>();
     private View mViewSeperator;
+    private int mCategory = FileConstants.CATEGORY.FILES.getValue();
 
 
     @Override
@@ -139,7 +140,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         prepareListData();
         setListAdapter();
         setNavDirectory();
-        displayInitialFragment(mCurrentDir);
+        displayInitialFragment(mCurrentDir, FileConstants.CATEGORY.FILES.getValue());
     }
 
     private void getSavedFavourites() {
@@ -343,7 +344,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                         mCurrentDir = mStartingDir;
                         singlePaneFragments.clear();
                         setNavDirectory();
-                        displayInitialFragment(mCurrentDir);
+                        mCategory = FileConstants.CATEGORY.FILES.getValue();
+                        displayInitialFragment(mCurrentDir, mCategory);
                     }
                 } else {
                     mStartingDirDualPane = totalGroup.get(groupPos).getmChildItems().get(childPos).getPath();
@@ -351,10 +353,19 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                         mCurrentDirDualPane = mStartingDirDualPane;
                         dualPaneFragments.clear();
                         setNavDirectory();
-                        displayInitialFragment(mCurrentDirDualPane);
+                        mCategory = FileConstants.CATEGORY.FILES.getValue();
+                        displayInitialFragment(mCurrentDirDualPane, mCategory);
                     }
                 }
                 break;
+            // When Library category item is clicked
+            case 2:
+                switch (childPos) {
+                    case 0:
+                        mCategory = FileConstants.CATEGORY.AUDIO.getValue();
+                        displayInitialFragment(null, mCategory);
+                        break;
+                }
 
         }
 
@@ -534,12 +545,13 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     /**
      *
      */
-    private void displayInitialFragment(String directory) {
+    private void displayInitialFragment(String directory, int category) {
         // update the main content by replacing fragments
         // Fragment fragment = null;
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Bundle args = new Bundle();
         args.putString(FileConstants.KEY_PATH, directory);
+        args.putInt(FileConstants.KEY_CATEGORY, category);
         if (mIsDualMode) {
             args.putBoolean(FileConstants.KEY_DUAL_MODE, true);
             FileListDualFragment fileListDualFragment = new FileListDualFragment();
@@ -668,7 +680,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             drawer.closeDrawer(GravityCompat.START);
         } else if (fabCreateMenu.isExpanded()) {
             fabCreateMenu.collapse();
-        } else {
+        } else if (mCategory == 0) {
             if (!isDualPaneInFocus) {
 
                 if (navigationLevelSinglePane != 0) {
@@ -751,6 +763,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 //                }
             }
 //            super.onBackPressed();
+        } else {
+            super.onBackPressed();
         }
 
 

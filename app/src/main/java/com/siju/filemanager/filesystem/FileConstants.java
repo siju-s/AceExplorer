@@ -10,10 +10,13 @@ public class FileConstants {
     public static final String KEY_FILENAME = "FILENAME";
     public static final String KEY_DUAL_MODE = "DUAL_MODE";
     public static final String APK_EXTENSION = "apk";
+    public static final String KEY_CATEGORY = "CATEGORY";
+
 
 
 
     public enum CATEGORY {
+        FILES(0),
         IMAGE(1),
         VIDEO(2),
         AUDIO(3);

@@ -13,6 +13,7 @@ public class FileInfo  {
     private boolean isDirectory;
     private String extension;
     private int type;
+    private long id;
 
     public FileInfo(String fileName, String filePath, String fileDate, String noOfFilesOrSize, boolean isDirectory,
                     String extension,int type) {
@@ -23,6 +24,23 @@ public class FileInfo  {
         this.isDirectory = isDirectory;
         this.extension = extension;
         this.type = type;
+    }
+
+    public FileInfo(long id, String fileName, String filePath, String fileDate, String noOfFilesOrSize, int type) {
+        this.id = id;
+        this.fileName = fileName;
+        this.filePath = filePath;
+        this.fileDate = fileDate;
+        this.noOfFilesOrSize = noOfFilesOrSize;
+        this.type = type;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public int getType() {

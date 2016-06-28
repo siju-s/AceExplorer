@@ -1,5 +1,6 @@
 package com.siju.filemanager.filesystem;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -31,12 +32,15 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     private ArrayList<FileInfo> mSelectedFileList;
     OnItemClickListener mItemClickListener;
     OnItemLongClickListener mOnItemLongClickListener;
+    private int mCategory;
+    private Uri audioUri = Uri.parse("content://media/external/audio/albumart");
 
-    public FileListAdapter(Context mContext, ArrayList<FileInfo> fileInfoArrayList) {
+    public FileListAdapter(Context mContext, ArrayList<FileInfo> fileInfoArrayList, int category) {
         this.mContext = mContext;
         this.fileInfoArrayList = fileInfoArrayList;
         mSelectedItemsIds = new SparseBooleanArray();
         mSelectedFileList = new ArrayList<>();
+        mCategory = category;
     }
 
     public void updateAdapter(ArrayList<FileInfo> fileInfos) {
@@ -46,16 +50,17 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     }
 
     public interface OnItemClickListener {
-         void onItemClick(View view, int position);
+        void onItemClick(View view, int position);
     }
 
     public interface OnItemLongClickListener {
-         void onItemLongClick(View view, int position);
+        void onItemLongClick(View view, int position);
     }
 
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
         this.mItemClickListener = mItemClickListener;
     }
+
     public void setOnItemLongClickListener(final OnItemLongClickListener mItemClickListener) {
         this.mOnItemLongClickListener = mItemClickListener;
     }
@@ -113,33 +118,48 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         fileListViewHolder.textFileName.setText(fileName);
         fileListViewHolder.textFileModifiedDate.setText(fileDate);
 
-        if (isDirectory) {
-            fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_folder_white);
-            Drawable apkIcon = FileUtils.getAppIconForFolder(mContext, fileName);
-            if (apkIcon != null) {
-                fileListViewHolder.imageThumbIcon.setImageDrawable(apkIcon);
-            }
+        switch (mCategory) {
+            case 0: // For file group
+                if (isDirectory) {
+                    fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_folder_white);
+                    Drawable apkIcon = FileUtils.getAppIconForFolder(mContext, fileName);
+                    if (apkIcon != null) {
+                        fileListViewHolder.imageThumbIcon.setImageDrawable(apkIcon);
+                    }
 
 
-        } else {
-            if (fileInfoArrayList.get(position).getExtension().equals(FileConstants.APK_EXTENSION)) {
-                Drawable apkIcon = FileUtils.getAppIcon(mContext, filePath);
+                } else {
+                    if (fileInfoArrayList.get(position).getExtension().equals(FileConstants.APK_EXTENSION)) {
+                        Drawable apkIcon = FileUtils.getAppIcon(mContext, filePath);
 //                Drawable apkIcon = getApkIcon(filePath);
-                fileListViewHolder.imageIcon.setImageDrawable(apkIcon);
-            } else {
-                fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_doc_white);
-            }
-            if ((fileInfoArrayList.get(position).getType() == 1) || (fileInfoArrayList.get(position).getType() == 2)) {
+                        fileListViewHolder.imageIcon.setImageDrawable(apkIcon);
+                    } else {
+                        fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_doc_white);
+                    }
+                    if ((fileInfoArrayList.get(position).getType() == 1) || (fileInfoArrayList.get(position).getType
+                            () == 2)) {
 
-                Uri imageUri = Uri.fromFile(new File(filePath));
-                Glide.with(mContext).load(imageUri).centerCrop()
+                        Uri imageUri = Uri.fromFile(new File(filePath));
+                        Glide.with(mContext).load(imageUri).centerCrop()
+                                .crossFade(2)
+                                .into(fileListViewHolder.imageIcon);
+
+                    }
+
+
+                }
+                break;
+            case 3: // For audio group
+                Uri uri = ContentUris.withAppendedId(audioUri, fileInfoArrayList.get(position).getId());
+                Glide.with(mContext).loadFromMediaStore(uri).centerCrop()
+                        .placeholder(R.drawable.unknown_albumart)
                         .crossFade(2)
                         .into(fileListViewHolder.imageIcon);
-
-            }
-
+                break;
 
         }
+
+
         fileListViewHolder.textNoOfFileOrSize.setText(fileNoOrSize);
     }
 
@@ -187,7 +207,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
 
     class FileListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
-                                                                    View.OnLongClickListener{
+            View.OnLongClickListener {
         ImageView imageIcon;
         ImageView imageThumbIcon;
         TextView textFileName;
