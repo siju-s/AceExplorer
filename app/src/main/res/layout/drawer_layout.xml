@@ -47,6 +47,7 @@
             android:layout_gravity="start"
             android:background="@color/navDrawerBg"
             android:divider="@null"
+            android:scrollbars="none"
             android:groupIndicator="@null" />
 
     </RelativeLayout>

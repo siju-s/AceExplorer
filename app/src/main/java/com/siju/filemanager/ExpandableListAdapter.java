@@ -80,6 +80,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         if (groupPosition == 0 || groupPosition == 1) {
             childViewHolder.textSecondLine.setText(child.getmSecondLine());
         }
+        else {
+            childViewHolder.textSecondLine.setText("");
+        }
         Logger.log("TAG","GROUP=="+child.getmFirstLine()+ "2ndline="+child.getmSecondLine());
 //        else {
 //            RelativeLayout.LayoutParams layoutParams =

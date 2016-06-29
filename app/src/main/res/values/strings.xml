@@ -81,6 +81,9 @@
     <string name="msg_added_to_fav">Added to Favourites</string>
     <string name="msg_error_not_supported">No app to handle the action</string>
     <string name="msg_open_file">Open file</string>
+    <string name="permission_request">Need storage permission to show all the files</string>
+    <string name="action_grant">GRANT</string>
+    <string name="permission_deny">Permission Denied.You cannot access storage.</string>
 
 
 </resources>

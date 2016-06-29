@@ -1,18 +1,26 @@
 package com.siju.filemanager;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -126,6 +134,10 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private View mViewSeperator;
     private int mCategory = FileConstants.CATEGORY.FILES.getValue();
     private LinearLayout mNavigationLayout;
+    private ConstraintLayout mMainLayout;
+    private static final int MY_PERMISSIONS_REQUEST = 1;
+    private static final int SETTINGS_REQUEST = 200;
+    private boolean mIsPermissionGranted;
 
 
     @Override
@@ -138,10 +150,96 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         checkScreenOrientation();
         initListeners();
         Logger.log("TAG", "on create--Activity");
+        // IF MarshMallow ask for permission
+        if (useRunTimePermissions()) {
+            checkPermissions();
+        } else {
+            mIsPermissionGranted = true;
+            setUpInitialData();
+        }
+    }
+
+    private void setUpInitialData() {
         prepareListData();
         setListAdapter();
         setNavDirectory();
         displayInitialFragment(mCurrentDir, FileConstants.CATEGORY.FILES.getValue());
+    }
+
+    private boolean useRunTimePermissions() {
+        return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M);
+    }
+
+    private void checkPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager
+                .PERMISSION_GRANTED) {
+            fabCreateMenu.setVisibility(View.GONE);
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+                //Explain to the user why we need permission
+                Snackbar.make(mMainLayout, getString(R.string.permission_request), Snackbar.LENGTH_INDEFINITE)
+                        .setAction(getString(R.string.action_settings), new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+//                                requestPermission();
+                                Intent intent = new Intent();
+                                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                Uri uri = Uri.fromParts("package", getPackageName(), null);
+                                intent.setData(uri);
+                                startActivityForResult(intent, SETTINGS_REQUEST);
+                            }
+                        })
+                        .show();
+            } else {
+                requestPermission();
+            }
+        } else {
+            mIsPermissionGranted = true;
+            fabCreateMenu.setVisibility(View.VISIBLE);
+            setUpInitialData();
+        }
+    }
+
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                MY_PERMISSIONS_REQUEST);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[]
+            grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST:
+
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission granted
+                    Log.d("TAG", "Permission granted");
+                    mIsPermissionGranted = true;
+                    fabCreateMenu.setVisibility(View.VISIBLE);
+                    setUpInitialData();
+
+                } else {
+                    fabCreateMenu.setVisibility(View.GONE);
+                    Snackbar.make(mMainLayout, getString(R.string.permission_deny), Snackbar.LENGTH_INDEFINITE)
+                            .setAction(getString(R.string.action_grant), new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    requestPermission();
+                                }
+                            })
+                            .show();
+                }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == SETTINGS_REQUEST) {
+            checkPermissions();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+
+
     }
 
     private void getSavedFavourites() {
@@ -181,7 +279,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private void initViews() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        mMainLayout = (ConstraintLayout) findViewById(R.id.content_base);
         mBottomToolbar = (Toolbar) findViewById(R.id.toolbar_bottom);
         mNavigationLayout = (LinearLayout) findViewById(R.id.layoutNavigate);
         fabCreateMenu = (FloatingActionsMenu) findViewById(R.id.fabCreate);
@@ -728,7 +826,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             drawer.closeDrawer(GravityCompat.START);
         } else if (fabCreateMenu.isExpanded()) {
             fabCreateMenu.collapse();
-        } else if (mCategory == 0) {
+        } else if (mCategory == 0 && mIsPermissionGranted) {
             if (!isDualPaneInFocus) {
 
                 if (navigationLevelSinglePane != 0) {
@@ -1467,13 +1565,13 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             // For Files category only, show dual pane
             if (mCategory == FileConstants.CATEGORY.FILES.getValue()) {
+                isDualPaneInFocus = true;
                 toggleDualPaneVisiblity(true);
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                 String internalStoragePath = getInternalStorage().getAbsolutePath();
                 Bundle args = new Bundle();
                 args.putString(FileConstants.KEY_PATH, internalStoragePath);
                 args.putBoolean(FileConstants.KEY_DUAL_MODE, true);
-                isDualPaneInFocus = true;
                 setNavDirectory();
                 FileListDualFragment dualFragment = new FileListDualFragment();
                 dualPaneFragments.add(dualFragment);
@@ -1486,8 +1584,9 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 //            ft.addToBackStack(null);
 
         } else {
-            toggleDualPaneVisiblity(false);
             isDualPaneInFocus = false;
+            toggleDualPaneVisiblity(false);
+
         }
         super.onConfigurationChanged(newConfig);
     }
