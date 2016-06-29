@@ -26,13 +26,15 @@ public class FileInfo  {
         this.type = type;
     }
 
-    public FileInfo(long id, String fileName, String filePath, String fileDate, String noOfFilesOrSize, int type) {
+    public FileInfo(long id, String fileName, String filePath, String fileDate, String noOfFilesOrSize, int type,
+                    String extension) {
         this.id = id;
         this.fileName = fileName;
         this.filePath = filePath;
         this.fileDate = fileDate;
         this.noOfFilesOrSize = noOfFilesOrSize;
         this.type = type;
+        this.extension = extension;
     }
 
     public long getId() {

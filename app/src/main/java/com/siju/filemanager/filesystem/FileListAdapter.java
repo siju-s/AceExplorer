@@ -33,7 +33,9 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     OnItemClickListener mItemClickListener;
     OnItemLongClickListener mOnItemLongClickListener;
     private int mCategory;
-    private Uri audioUri = Uri.parse("content://media/external/audio/albumart");
+    private Uri mAudioUri = Uri.parse("content://media/external/audio/albumart");
+    private Uri mImageUri = Uri.parse("content://media/external/images/albumart");
+
 
     public FileListAdapter(Context mContext, ArrayList<FileInfo> fileInfoArrayList, int category) {
         this.mContext = mContext;
@@ -65,37 +67,6 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         this.mOnItemLongClickListener = mItemClickListener;
     }
 
-//
-//    @Override
-//    public FileListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-//        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_list_item, parent, false);
-//        FileListViewHolder viewHolder = new FileListViewHolder(v);
-//        return viewHolder;
-//    }
-//
-//    @Override
-//    public void onBindViewHolder(FileListViewHolder holder, int position) {
-//
-//        Log.d("SIJU", "onBindViewHolder" + fileInfoArrayList.size());
-//
-//        String fileName = fileInfoArrayList.get(position).getFileName();
-//        String fileDate = fileInfoArrayList.get(position).getFileDate();
-//        boolean isDirectory = fileInfoArrayList.get(position).isDirectory();
-//        String fileNoOrSize = fileInfoArrayList.get(position).getNoOfFilesOrSize();
-//
-//        holder.textFileName.setText(fileName);
-//        holder.textFileModifiedDate.setText(fileDate);
-//
-//        if (isDirectory) {
-//            holder.imageIcon.setImageResource(R.drawable.ic_folder_black);
-//
-//        } else {
-//            holder.imageIcon.setImageResource(R.drawable.ic_file_black);
-//
-//        }
-//        holder.textNoOfFileOrSize.setText(fileNoOrSize);
-//    }
-
     @Override
     public FileListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_list_item, parent, false);
@@ -109,6 +80,22 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         int color = ContextCompat.getColor(mContext, R.color.actionModeItemSelected);
         fileListViewHolder.itemView.setBackgroundColor(mSelectedItemsIds.get(position) ? color :
                 Color.TRANSPARENT);
+        setViewByCategory(fileListViewHolder, position);
+
+    }
+
+
+    @Override
+    public int getItemCount() {
+        if (fileInfoArrayList == null) {
+            return 0;
+        } else {
+            return fileInfoArrayList.size();
+        }
+    }
+
+    private void setViewByCategory(FileListViewHolder fileListViewHolder, int position) {
+
         String fileName = fileInfoArrayList.get(position).getFileName();
         String fileDate = fileInfoArrayList.get(position).getFileDate();
         boolean isDirectory = fileInfoArrayList.get(position).isDirectory();
@@ -117,6 +104,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
         fileListViewHolder.textFileName.setText(fileName);
         fileListViewHolder.textFileModifiedDate.setText(fileDate);
+        fileListViewHolder.textNoOfFileOrSize.setText(fileNoOrSize);
 
         switch (mCategory) {
             case 0: // For file group
@@ -126,7 +114,6 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
                     if (apkIcon != null) {
                         fileListViewHolder.imageThumbIcon.setImageDrawable(apkIcon);
                     }
-
 
                 } else {
                     if (fileInfoArrayList.get(position).getExtension().equals(FileConstants.APK_EXTENSION)) {
@@ -149,28 +136,34 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
                 }
                 break;
-            case 3: // For audio group
-                Uri uri = ContentUris.withAppendedId(audioUri, fileInfoArrayList.get(position).getId());
+            case 1:
+                Uri uri = ContentUris.withAppendedId(mAudioUri, fileInfoArrayList.get(position).getId());
                 Glide.with(mContext).loadFromMediaStore(uri).centerCrop()
                         .placeholder(R.drawable.unknown_albumart)
                         .crossFade(2)
                         .into(fileListViewHolder.imageIcon);
                 break;
 
+            case 2:
+                // For videos group
+                Uri videoUri = Uri.fromFile(new File(filePath));
+                Glide.with(mContext).load(videoUri).centerCrop()
+                        .crossFade(2)
+                        .into(fileListViewHolder.imageIcon);
+                break;
+
+            case 3: // For images group
+                Uri imageUri = Uri.fromFile(new File(filePath));
+                Glide.with(mContext).load(imageUri).centerCrop()
+                        .crossFade(2)
+                        .into(fileListViewHolder.imageIcon);
+                break;
+            case 4: // For docs group
+                fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_doc_white);
+                break;
+
         }
 
-
-        fileListViewHolder.textNoOfFileOrSize.setText(fileNoOrSize);
-    }
-
-
-    @Override
-    public int getItemCount() {
-        if (fileInfoArrayList == null) {
-            return 0;
-        } else {
-            return fileInfoArrayList.size();
-        }
     }
 
 

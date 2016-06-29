@@ -8,6 +8,7 @@ import android.provider.MediaStore;
 import android.support.v4.content.AsyncTaskLoader;
 import android.text.format.Formatter;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import com.siju.filemanager.R;
 
@@ -146,10 +147,18 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             case 0:
                 fetchFiles();
                 break;
-            case 3:
-                fetchMusicFiles();
+            case 1:
+                fetchMusic();
                 break;
-
+            case 2:
+                fetchVideos();
+                break;
+            case 3:
+                fetchImages();
+                break;
+            case 4:
+                fetchDocuments();
+                break;
         }
     }
 
@@ -218,7 +227,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         }
     }
 
-    private ArrayList<FileInfo> fetchMusicFiles() {
+    private ArrayList<FileInfo> fetchMusic() {
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         StringBuilder where = new StringBuilder();
         where.append(MediaStore.Audio.Media.TITLE + " != ''");
@@ -241,7 +250,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 int type = FileConstants.CATEGORY.AUDIO.getValue();
                 String date = FileUtils.convertDate(date1 * 1000); // converting it to ms
                 String size = Formatter.formatFileSize(mContext, size1);
-                fileInfoList.add(new FileInfo(albumId, fileName, path, date, size, type));
+                String extension = path.substring(path.lastIndexOf(".") + 1);
+                fileInfoList.add(new FileInfo(albumId, fileName, path, date, size, type, extension));
 
             } while (cursor.moveToNext());
             cursor.close();
@@ -250,4 +260,133 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         }
         return fileInfoList;
     }
+
+    private ArrayList<FileInfo> fetchImages() {
+        Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        String sortOrder = MediaStore.Images.Media.DATE_MODIFIED + " DESC";
+        Cursor cursor = mContext.getContentResolver().query(uri, null, null, null, sortOrder);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.TITLE);
+                int sizeIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE);
+                int dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED);
+                int bucketIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID);
+                int pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+
+                String fileName = cursor.getString(titleIndex);
+                long size1 = cursor.getLong(sizeIndex);
+                long date1 = cursor.getLong(dateIndex);
+                long bucketId = cursor.getLong(bucketIdIndex);
+                String path = cursor.getString(pathIndex);
+                int type = FileConstants.CATEGORY.IMAGE.getValue();
+                String date = FileUtils.convertDate(date1 * 1000); // converting it to ms
+                String size = Formatter.formatFileSize(mContext, size1);
+                String extension = path.substring(path.lastIndexOf(".") + 1);
+                fileInfoList.add(new FileInfo(bucketId, fileName, path, date, size, type, extension));
+
+            } while (cursor.moveToNext());
+            cursor.close();
+        } else {
+            return null;
+        }
+        return fileInfoList;
+    }
+
+    /**
+     * Fetch all videos
+     * @return
+     */
+    private ArrayList<FileInfo> fetchVideos() {
+        Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+        String sortOrder = MediaStore.Video.Media.DATE_MODIFIED + " DESC";
+        Cursor cursor = mContext.getContentResolver().query(uri, null, null, null, sortOrder);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.TITLE);
+                int sizeIndex = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE);
+                int dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_MODIFIED);
+                int bucketIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.BUCKET_ID);
+                int pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA);
+
+                String fileName = cursor.getString(titleIndex);
+                long size1 = cursor.getLong(sizeIndex);
+                long date1 = cursor.getLong(dateIndex);
+                long bucketId = cursor.getLong(bucketIdIndex);
+                String path = cursor.getString(pathIndex);
+                int type = FileConstants.CATEGORY.VIDEO.getValue();
+                String date = FileUtils.convertDate(date1 * 1000); // converting it to ms
+                String size = Formatter.formatFileSize(mContext, size1);
+                String extension = path.substring(path.lastIndexOf(".") + 1);
+                fileInfoList.add(new FileInfo(bucketId, fileName, path, date, size, type, extension));
+
+            } while (cursor.moveToNext());
+            cursor.close();
+        } else {
+            return null;
+        }
+        return fileInfoList;
+    }
+
+
+    /**
+     * Fetch all the docs from device
+     * Formats as in {@link FileConstants}
+     * @return
+     */
+    private ArrayList<FileInfo> fetchDocuments() {
+        Uri uri = MediaStore.Files.getContentUri("external");
+
+        String doc = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_DOC);
+        String docx = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_DOCX);
+        String txt = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_TEXT);
+        String html = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_HTML);
+        String pdf = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_PDF);
+        String xls = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_XLS);
+        String xlxs = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_XLXS);
+        String ppt = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_PPT);
+        String pptx = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_PPTX);
+
+
+        String where = MediaStore.Files.FileColumns.MIME_TYPE + " IN " + "("
+                + "'" + doc + "'" + ","
+                + "'" + docx + "'" + ","
+                + "'" + txt + "'" + ","
+                + "'" + html + "'" + ","
+                + "'" + pdf + "'" + ","
+                + "'" + xls + "'" + ","
+                + "'" + xlxs + "'" + ","
+                + "'" + ppt + "'" + ","
+                + "'" + pptx + "'" + " )";
+
+
+        String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
+        Cursor cursor = mContext.getContentResolver().query(uri, null, where, null, sortOrder);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.TITLE);
+                int sizeIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.SIZE);
+                int dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_MODIFIED);
+                int bucketIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID);
+                int pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA);
+
+                String fileName = cursor.getString(titleIndex);
+                long size1 = cursor.getLong(sizeIndex);
+                long date1 = cursor.getLong(dateIndex);
+                long bucketId = cursor.getLong(bucketIdIndex);
+                String path = cursor.getString(pathIndex);
+                int type = FileConstants.CATEGORY.DOCS.getValue();
+                String date = FileUtils.convertDate(date1 * 1000); // converting it to ms
+                String size = Formatter.formatFileSize(mContext, size1);
+                String extension = path.substring(path.lastIndexOf(".") + 1);
+                fileInfoList.add(new FileInfo(bucketId, fileName, path, date, size, type, extension));
+
+            } while (cursor.moveToNext());
+            cursor.close();
+        } else {
+            return null;
+        }
+        return fileInfoList;
+    }
+
+
 }

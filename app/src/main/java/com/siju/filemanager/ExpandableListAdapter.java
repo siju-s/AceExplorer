@@ -13,6 +13,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.siju.filemanager.common.Logger;
 import com.siju.filemanager.model.SectionGroup;
 import com.siju.filemanager.model.SectionItems;
 
@@ -79,6 +80,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         if (groupPosition == 0 || groupPosition == 1) {
             childViewHolder.textSecondLine.setText(child.getmSecondLine());
         }
+        Logger.log("TAG","GROUP=="+child.getmFirstLine()+ "2ndline="+child.getmSecondLine());
 //        else {
 //            RelativeLayout.LayoutParams layoutParams =
 //                    (RelativeLayout.LayoutParams) childViewHolder.textSecondLine.getLayoutParams();
@@ -135,8 +137,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         } else {
             holder.imageArrow.setImageResource(R.drawable.ic_expand_more_black);
         }
-
-
         holder.textHeader.setTypeface(null, Typeface.BOLD);
         holder.textHeader.setText(group.getmHeader());
 

@@ -125,6 +125,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private ArrayList<FavInfo> savedFavourites = new ArrayList<>();
     private View mViewSeperator;
     private int mCategory = FileConstants.CATEGORY.FILES.getValue();
+    private LinearLayout mNavigationLayout;
 
 
     @Override
@@ -182,7 +183,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         setSupportActionBar(toolbar);
 
         mBottomToolbar = (Toolbar) findViewById(R.id.toolbar_bottom);
-
+        mNavigationLayout = (LinearLayout) findViewById(R.id.layoutNavigate);
         fabCreateMenu = (FloatingActionsMenu) findViewById(R.id.fabCreate);
         fabCreateFolder = (FloatingActionButton) findViewById(R.id.fabCreateFolder);
         fabCreateFile = (FloatingActionButton) findViewById(R.id.fabCreateFile);
@@ -299,8 +300,10 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
     private void initializeOthersGroup() {
         ArrayList<SectionItems> othersGroupChild = new ArrayList<>();
-        othersGroupChild.add(new SectionItems(RATE, null, R.drawable.ic_rate_white, null));
-        othersGroupChild.add(new SectionItems(SETTINGS, null, R.drawable.ic_settings_white, null));
+        othersGroupChild.add(new SectionItems(RATE, "", R.drawable.ic_rate_white, null));
+        othersGroupChild.add(new SectionItems(SETTINGS, "", R.drawable.ic_settings_white, null));
+//        othersGroupChild.add(new SectionItems(SETTINGS, null, R.drawable.ic_folder_white, null));
+
         totalGroup.add(new SectionGroup(mListHeader.get(3), othersGroupChild));
     }
 
@@ -337,10 +340,18 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         switch (groupPos) {
             case 0:
             case 1:
+                mNavigationLayout.setVisibility(View.VISIBLE);
+                toggleDualPaneVisiblity(true);
                 if (!isDualPaneInFocus) {
                     mStartingDir = totalGroup.get(groupPos).getmChildItems().get(childPos).getPath();
 
-                    if (!mCurrentDir.equals(mStartingDir)) {
+                    if (mCurrentDir == null) {
+                        mCurrentDir = mStartingDir;
+                        singlePaneFragments.clear();
+                        setNavDirectory();
+                        mCategory = FileConstants.CATEGORY.FILES.getValue();
+                        displayInitialFragment(mCurrentDir, mCategory);
+                    } else if (!mCurrentDir.equals(mStartingDir)) {
                         mCurrentDir = mStartingDir;
                         singlePaneFragments.clear();
                         setNavDirectory();
@@ -360,13 +371,50 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                 break;
             // When Library category item is clicked
             case 2:
+                mNavigationLayout.setVisibility(View.GONE);
+                toggleDualPaneVisiblity(false);
+                mCurrentDir = null;
+
                 switch (childPos) {
+                    // When Audio item is clicked
                     case 0:
                         mCategory = FileConstants.CATEGORY.AUDIO.getValue();
                         displayInitialFragment(null, mCategory);
                         break;
+                    // When Video item is clicked
+                    case 1:
+                        mCategory = FileConstants.CATEGORY.VIDEO.getValue();
+                        displayInitialFragment(null, mCategory);
+                        break;
+                    // When Images item is clicked
+                    case 2:
+                        mCategory = FileConstants.CATEGORY.IMAGE.getValue();
+                        displayInitialFragment(null, mCategory);
+                        break;
+                    // When Documents item is clicked
+                    case 3:
+                        mCategory = FileConstants.CATEGORY.DOCS.getValue();
+                        displayInitialFragment(null, mCategory);
+                        break;
                 }
 
+        }
+
+    }
+
+    private void toggleDualPaneVisiblity(boolean isFilesCategory) {
+        if (isFilesCategory) {
+            if (isDualPaneInFocus) {
+                FrameLayout frameLayout = (FrameLayout) findViewById(R.id.frame_container_dual);
+                frameLayout.setVisibility(View.VISIBLE);
+                mViewSeperator.setVisibility(View.VISIBLE);
+                scrollNavigationDualPane.setVisibility(View.VISIBLE);
+            }
+        } else {
+            FrameLayout frameLayout = (FrameLayout) findViewById(R.id.frame_container_dual);
+            frameLayout.setVisibility(View.GONE);
+            mViewSeperator.setVisibility(View.GONE);
+            scrollNavigationDualPane.setVisibility(View.GONE);
         }
 
     }
@@ -1417,29 +1465,28 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     public void onConfigurationChanged(Configuration newConfig) {
         Log.d("TAG", "On config" + newConfig.orientation);
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            FrameLayout frameLayout = (FrameLayout) findViewById(R.id.frame_container_dual);
-            frameLayout.setVisibility(View.VISIBLE);
-            scrollNavigationDualPane.setVisibility(View.VISIBLE);
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            String internalStoragePath = getInternalStorage().getAbsolutePath();
-            Bundle args = new Bundle();
-            args.putString(FileConstants.KEY_PATH, internalStoragePath);
-            args.putBoolean(FileConstants.KEY_DUAL_MODE, true);
-            isDualPaneInFocus = true;
-            setNavDirectory();
-            FileListDualFragment dualFragment = new FileListDualFragment();
-            dualPaneFragments.add(dualFragment);
-            dualFragment.setArguments(args);
-            ft.replace(R.id.frame_container_dual, dualFragment);
-            mViewSeperator.setVisibility(View.VISIBLE);
+            // For Files category only, show dual pane
+            if (mCategory == FileConstants.CATEGORY.FILES.getValue()) {
+                toggleDualPaneVisiblity(true);
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                String internalStoragePath = getInternalStorage().getAbsolutePath();
+                Bundle args = new Bundle();
+                args.putString(FileConstants.KEY_PATH, internalStoragePath);
+                args.putBoolean(FileConstants.KEY_DUAL_MODE, true);
+                isDualPaneInFocus = true;
+                setNavDirectory();
+                FileListDualFragment dualFragment = new FileListDualFragment();
+                dualPaneFragments.add(dualFragment);
+                dualFragment.setArguments(args);
+                ft.replace(R.id.frame_container_dual, dualFragment);
+                mViewSeperator.setVisibility(View.VISIBLE);
+                ft.commitAllowingStateLoss();
+            }
 
 //            ft.addToBackStack(null);
-            ft.commitAllowingStateLoss();
+
         } else {
-            FrameLayout frameLayout = (FrameLayout) findViewById(R.id.frame_container_dual);
-            frameLayout.setVisibility(View.GONE);
-            mViewSeperator.setVisibility(View.GONE);
-            scrollNavigationDualPane.setVisibility(View.GONE);
+            toggleDualPaneVisiblity(false);
             isDualPaneInFocus = false;
         }
         super.onConfigurationChanged(newConfig);

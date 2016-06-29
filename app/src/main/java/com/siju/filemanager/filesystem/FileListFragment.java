@@ -93,26 +93,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                 if (((BaseActivity) getActivity()).getActionMode() != null) {
                     itemClick(position);
                 } else {
-                    // For file, open external apps based on Mime Type
-                    if (!fileInfoList.get(position).isDirectory()) {
-                        FileUtils.viewFile(getActivity(), fileInfoList.get(position).getFilePath(), fileInfoList.get
-                                (position).getExtension());
-                    } else {
-                        Bundle bundle = new Bundle();
-                        String path = fileInfoList.get(position).getFilePath();
-                        bundle.putString(FileConstants.KEY_PATH, path);
-                        Intent intent = new Intent(getActivity(), BaseActivity.class);
-                        if (FileListFragment.this instanceof FileListDualFragment) {
-                            intent.setAction(BaseActivity.ACTION_DUAL_VIEW_FOLDER_LIST);
-                            intent.putExtra(BaseActivity.ACTION_DUAL_PANEL, true);
-                        } else {
-                            intent.setAction(BaseActivity.ACTION_VIEW_FOLDER_LIST);
-                            intent.putExtra(BaseActivity.ACTION_DUAL_PANEL, false);
-                        }
-
-                        intent.putExtras(bundle);
-                        startActivity(intent);
-                    }
+                    handleCategoryItemClick(position);
                 }
             }
         });
@@ -145,6 +126,41 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
     private void initializeViews() {
         recyclerViewFileList = (RecyclerView) root.findViewById(R.id.recyclerViewFileList);
 
+    }
+
+    private void handleCategoryItemClick(int position) {
+        switch (mCategory) {
+            case 0:
+                // For file, open external apps based on Mime Type
+                if (!fileInfoList.get(position).isDirectory()) {
+                    FileUtils.viewFile(getActivity(), fileInfoList.get(position).getFilePath(), fileInfoList.get
+                            (position).getExtension());
+                } else {
+                    Bundle bundle = new Bundle();
+                    String path = fileInfoList.get(position).getFilePath();
+                    bundle.putString(FileConstants.KEY_PATH, path);
+                    Intent intent = new Intent(getActivity(), BaseActivity.class);
+                    if (FileListFragment.this instanceof FileListDualFragment) {
+                        intent.setAction(BaseActivity.ACTION_DUAL_VIEW_FOLDER_LIST);
+                        intent.putExtra(BaseActivity.ACTION_DUAL_PANEL, true);
+                    } else {
+                        intent.setAction(BaseActivity.ACTION_VIEW_FOLDER_LIST);
+                        intent.putExtra(BaseActivity.ACTION_DUAL_PANEL, false);
+                    }
+
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
+                break;
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+                FileUtils.viewFile(getActivity(), fileInfoList.get(position).getFilePath(), fileInfoList.get(position)
+                        .getExtension());
+                break;
+
+        }
     }
 
     private void itemClick(int position) {
