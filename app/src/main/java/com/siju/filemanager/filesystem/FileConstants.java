@@ -11,6 +11,29 @@ public class FileConstants {
     public static final String KEY_DUAL_MODE = "DUAL_MODE";
     public static final String APK_EXTENSION = "apk";
     public static final String KEY_CATEGORY = "CATEGORY";
+    public static final String KEY_ZIP = "ZIP";
+
+
+    public static final int KEY_SORT_NAME = 0;
+    public static final int KEY_SORT_NAME_DESC = 1;
+
+    public static final int KEY_SORT_TYPE = 2;
+    public static final int KEY_SORT_TYPE_DESC = 3;
+
+    public static final int KEY_SORT_SIZE = 4;
+    public static final int KEY_SORT_SIZE_DESC = 5;
+
+    public static final int KEY_SORT_DATE = 6;
+    public static final int KEY_SORT_DATE_DESC = 7;
+
+
+    public static final int KEY_LISTVIEW = 0;
+    public static final int KEY_GRIDVIEW = 1;
+
+
+
+
+
 
     /********** DOCUMENT EXTENSIONS**************/
     public static final String EXT_TEXT = "txt";

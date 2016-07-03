@@ -1,4 +1,4 @@
-package com.siju.filemanager.ui;
+package com.siju.filemanager.filesystem.ui;
 
 /**
  * Created by Siju on 27-06-2016.

@@ -1,10 +1,10 @@
-package com.siju.filemanager.filesystem;
+package com.siju.filemanager.filesystem.model;
 
 /**
  * Created by Siju on 13-06-2016.
  */
 
-public class FileInfo  {
+public class FileInfo {
 
     private String fileName;
     private String filePath;
@@ -13,10 +13,11 @@ public class FileInfo  {
     private boolean isDirectory;
     private String extension;
     private int type;
-    private long id;
+    private long id = -1;
+    private long bucketId = -1;
 
     public FileInfo(String fileName, String filePath, String fileDate, String noOfFilesOrSize, boolean isDirectory,
-                    String extension,int type) {
+                    String extension, int type) {
         this.fileName = fileName;
         this.filePath = filePath;
         this.fileDate = fileDate;
@@ -35,6 +36,38 @@ public class FileInfo  {
         this.noOfFilesOrSize = noOfFilesOrSize;
         this.type = type;
         this.extension = extension;
+    }
+
+    /**
+     * Used for Audio,Videos,Images
+     * @param id
+     * @param bucketId
+     * @param fileName
+     * @param filePath
+     * @param fileDate
+     * @param noOfFilesOrSize
+     * @param type
+     * @param extension
+     */
+    public FileInfo(long id, long bucketId, String fileName, String filePath, String fileDate, String noOfFilesOrSize,
+                    int type,
+                    String extension) {
+        this.id = id;
+        this.bucketId = bucketId;
+        this.fileName = fileName;
+        this.filePath = filePath;
+        this.fileDate = fileDate;
+        this.noOfFilesOrSize = noOfFilesOrSize;
+        this.type = type;
+        this.extension = extension;
+    }
+
+    public long getBucketId() {
+        return bucketId;
+    }
+
+    public void setBucketId(long bucketId) {
+        this.bucketId = bucketId;
     }
 
     public long getId() {

@@ -84,6 +84,31 @@
     <string name="permission_request">Need storage permission to show all the files</string>
     <string name="action_grant">GRANT</string>
     <string name="permission_deny">Permission Denied.You cannot access storage.</string>
+    <string name="action_sort">Sort</string>
+    <string name="action_view">View</string>
+
+    <string name="action_view_list">List</string>
+    <string name="action_view_grid">Grid</string>
+
+    <string name="sort_name">Name (A-Z)</string>
+    <string name="sort_name_desc">Name (Z-A)</string>
+
+    <string name="sort_type">Type (Ascending)</string>
+    <string name="sort_type_desc">Type (Descending)</string>
+
+    <string name="sort_size">Size (Smaller)</string>
+    <string name="sort_size_desc">Size (Bigger)</string>
+
+    <string name="sort_date">Date (Older)</string>
+    <string name="sort_date_desc">Date (Newest)</string>
+    <string name="extract_here">Extract here</string>
+    <string name="extract_to">Extract to</string>
+    <string name="open_zip">Open</string>
+    <string name="dialog_title_options">Options</string>
+    <string name="extracting">Extracting..</string>
+    <string name="msg_extract_success">Successfully extracted files</string>
+    <string name="msg_extract_failure">Error in extracting file</string>
+    <string name="dialog_title_extract_file">Extract file</string>
 
 
 </resources>

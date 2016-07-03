@@ -1,9 +1,11 @@
-package com.siju.filemanager.filesystem;
+package com.siju.filemanager.common;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
+import com.siju.filemanager.filesystem.model.FavInfo;
+import com.siju.filemanager.filesystem.FileConstants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,8 +17,9 @@ import java.util.List;
 
 public class SharedPreference {
 
-    public static final String PREFS_NAME = "PRODUCT_APP";
+    public static final String PREFS_NAME = "PREFS";
     public static final String FAVORITES = "Product_Favorite";
+    public static final String PREFS_VIEW_MODE = "view-mode";
 
     public SharedPreference() {
         super();
@@ -36,8 +39,9 @@ public class SharedPreference {
 
         editor.putString(FAVORITES, jsonFavorites);
 
-        editor.commit();
+        editor.apply();
     }
+
     public void addFavorite(Context context, FavInfo favInfo) {
         List<FavInfo> favorites = getFavorites(context);
         if (favorites == null)
@@ -73,4 +77,31 @@ public class SharedPreference {
 
         return (ArrayList<FavInfo>) favorites;
     }
+
+    public void savePrefs(Context context, int viewMode) {
+        SharedPreferences sharedPreferences;
+        SharedPreferences.Editor editor;
+
+        sharedPreferences = context.getSharedPreferences(PREFS_NAME,
+                Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        editor.putInt(PREFS_VIEW_MODE, viewMode);
+        editor.apply();
+    }
+
+    public int getViewMode(Context context) {
+        SharedPreferences sharedPreferences;
+        int mode;
+
+        sharedPreferences = context.getSharedPreferences(PREFS_NAME,
+                Context.MODE_PRIVATE);
+        if (sharedPreferences.contains(PREFS_VIEW_MODE)) {
+            mode = sharedPreferences.getInt(PREFS_VIEW_MODE, FileConstants.KEY_LISTVIEW);
+        } else {
+            return FileConstants.KEY_LISTVIEW;
+        }
+        return mode;
+    }
+
+
 }

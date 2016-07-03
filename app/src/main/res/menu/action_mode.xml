@@ -5,15 +5,15 @@
 
     <item
         android:id="@+id/action_rename"
-        android:icon="@drawable/ic_rename"
+        android:icon="@drawable/ic_rename_white"
         android:title="@string/action_rename"
-        app:showAsAction="never"/>
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_info"
-        android:icon="@drawable/ic_info_black"
+        android:icon="@drawable/ic_info_white"
         android:title="@string/action_info"
-        app:showAsAction="never"/>
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_archive"

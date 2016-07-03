@@ -1,4 +1,4 @@
-package com.siju.filemanager.filesystem;
+package com.siju.filemanager.filesystem.model;
 
 /**
  * Created by Siju on 27-06-2016.

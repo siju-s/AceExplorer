@@ -27,8 +27,8 @@
             android:layout_width="@dimen/dialog_image"
             android:layout_height="@dimen/dialog_image"
             android:layout_below="@id/textDialogTitle"
-             android:paddingRight="5dp"
             android:layout_margin="10dp"
+            android:paddingRight="5dp"
             android:src="@drawable/ic_folder"/>
 
         <TextView
@@ -36,9 +36,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/textDialogTitle"
-            android:layout_margin="10dp"
+            android:layout_margin="15dp"
             android:layout_toRightOf="@+id/imageFileIcon"
-            android:ellipsize="marquee"
+            android:ellipsize="end"
             android:maxLines="1"
             android:textStyle="bold"/>
 
@@ -47,8 +47,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:src="@drawable/ic_close_white"
             android:background="@null"
+            android:paddingTop="10dp"
+            android:layout_marginRight="5dp"
+            android:src="@drawable/ic_close_white"
             />
 
 
@@ -76,7 +78,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@+id/textPathPlaceHolder"
+            android:layout_below="@+id/textPath"
             android:layout_margin="10dp"
             android:text="@string/size"
             android:textStyle="bold"/>
@@ -85,7 +87,7 @@
             android:id="@+id/textFileSize"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textPathPlaceHolder"
+            android:layout_below="@+id/textPath"
             android:layout_margin="10dp"
             android:layout_toRightOf="@+id/textSizePlaceHolder"
             />

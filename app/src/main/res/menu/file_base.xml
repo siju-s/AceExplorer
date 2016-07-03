@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!--    <item
+            android:id="@+id/action_paste"
+            android:icon="@drawable/ic_paste_white"
+            android:title="@string/action_paste"
+            android:visible="false"
+            app:showAsAction="ifRoom"/>-->
+    <item
+        android:id="@+id/action_view"
+        android:title="@string/action_view"
+        app:showAsAction="never">
+
+        <menu>
+            <item
+                android:id="@+id/action_view_list"
+                android:title="@string/action_view_list"
+                app:showAsAction="never"/>
+
+            <item
+                android:id="@+id/action_view_grid"
+                android:title="@string/action_view_grid"
+                app:showAsAction="never"/>
+
+        </menu>
+    </item>
+
+
+    <item
+        android:id="@+id/action_sort"
+        android:title="@string/action_sort"
+        app:showAsAction="never">
+
+        <menu>
+            <item
+                android:id="@+id/action_sort_name_asc"
+                android:title="@string/sort_name"
+                app:showAsAction="never"/>
+
+            <item
+                android:id="@+id/action_sort_name_desc"
+                android:title="@string/sort_name_desc"
+                app:showAsAction="never"/>
+            <item
+                android:id="@+id/action_sort_type_asc"
+                android:title="@string/sort_type"
+                app:showAsAction="never"/>
+
+            <item
+                android:id="@+id/action_sort_type_desc"
+                android:title="@string/sort_type_desc"
+                app:showAsAction="never"/>
+
+
+            <item
+                android:id="@+id/action_sort_size_asc"
+                android:title="@string/sort_size"
+                app:showAsAction="never"/>
+            <item
+                android:id="@+id/action_sort_size_desc"
+                android:title="@string/sort_size_desc"
+                app:showAsAction="never"/>
+            <item
+                android:id="@+id/action_sort_date_asc"
+                android:title="@string/sort_date"
+                app:showAsAction="never"/>
+            <item
+                android:id="@+id/action_sort_date_desc"
+                android:title="@string/sort_date_desc"
+                app:showAsAction="never"/>
+        </menu>
+    </item>
+
+</menu>

@@ -16,6 +16,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.siju.filemanager.R;
+import com.siju.filemanager.filesystem.model.FileInfo;
+import com.siju.filemanager.filesystem.utils.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,14 +37,16 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     private int mCategory;
     private Uri mAudioUri = Uri.parse("content://media/external/audio/albumart");
     private Uri mImageUri = Uri.parse("content://media/external/images/albumart");
+    private int mViewMode;
 
 
-    public FileListAdapter(Context mContext, ArrayList<FileInfo> fileInfoArrayList, int category) {
+    public FileListAdapter(Context mContext, ArrayList<FileInfo> fileInfoArrayList, int category, int viewMode) {
         this.mContext = mContext;
         this.fileInfoArrayList = fileInfoArrayList;
         mSelectedItemsIds = new SparseBooleanArray();
         mSelectedFileList = new ArrayList<>();
         mCategory = category;
+        this.mViewMode = viewMode;
     }
 
     public void updateAdapter(ArrayList<FileInfo> fileInfos) {
@@ -69,8 +73,13 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
     @Override
     public FileListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_list_item, parent, false);
-        FileListViewHolder tvh = new FileListViewHolder(v);
+        View view;
+        if (mViewMode == FileConstants.KEY_LISTVIEW) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_list_item, parent, false);
+        } else {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_grid_item, parent, false);
+        }
+        FileListViewHolder tvh = new FileListViewHolder(view);
         return tvh;
     }
 
@@ -103,7 +112,9 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         String filePath = fileInfoArrayList.get(position).getFilePath();
 
         fileListViewHolder.textFileName.setText(fileName);
-        fileListViewHolder.textFileModifiedDate.setText(fileDate);
+        if (mViewMode == FileConstants.KEY_LISTVIEW) {
+            fileListViewHolder.textFileModifiedDate.setText(fileDate);
+        }
         fileListViewHolder.textNoOfFileOrSize.setText(fileNoOrSize);
 
         switch (mCategory) {
@@ -113,18 +124,22 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
                     Drawable apkIcon = FileUtils.getAppIconForFolder(mContext, fileName);
                     if (apkIcon != null) {
                         fileListViewHolder.imageThumbIcon.setImageDrawable(apkIcon);
+                    } else {
+                        fileListViewHolder.imageThumbIcon.setImageDrawable(null);
                     }
 
                 } else {
-                    if (fileInfoArrayList.get(position).getExtension().equals(FileConstants.APK_EXTENSION)) {
+                    String extension = fileInfoArrayList.get(position).getExtension();
+                    if (extension.equals(FileConstants.APK_EXTENSION)) {
                         Drawable apkIcon = FileUtils.getAppIcon(mContext, filePath);
-//                Drawable apkIcon = getApkIcon(filePath);
                         fileListViewHolder.imageIcon.setImageDrawable(apkIcon);
                     } else {
-                        fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_doc_white);
+                        changeFileIcon(fileListViewHolder, extension);
                     }
-                    if ((fileInfoArrayList.get(position).getType() == 1) || (fileInfoArrayList.get(position).getType
-                            () == 2)) {
+                    int type = fileInfoArrayList.get(position).getType();
+                    // If Image or Video file, load thumbnail
+                    if (type == FileConstants.CATEGORY.IMAGE.getValue() ||
+                            type == FileConstants.CATEGORY.VIDEO.getValue()) {
 
                         Uri imageUri = Uri.fromFile(new File(filePath));
                         Glide.with(mContext).load(imageUri).centerCrop()
@@ -133,11 +148,10 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
                     }
 
-
                 }
                 break;
             case 1:
-                Uri uri = ContentUris.withAppendedId(mAudioUri, fileInfoArrayList.get(position).getId());
+                Uri uri = ContentUris.withAppendedId(mAudioUri, fileInfoArrayList.get(position).getBucketId());
                 Glide.with(mContext).loadFromMediaStore(uri).centerCrop()
                         .placeholder(R.drawable.unknown_albumart)
                         .crossFade(2)
@@ -159,11 +173,42 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
                         .into(fileListViewHolder.imageIcon);
                 break;
             case 4: // For docs group
-                fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_doc_white);
+                String extension = fileInfoArrayList.get(position).getExtension();
+                changeFileIcon(fileListViewHolder, extension);
                 break;
 
         }
 
+    }
+
+    private void changeFileIcon(FileListViewHolder fileListViewHolder, String extension) {
+        switch (extension) {
+            case FileConstants.EXT_DOC:
+            case FileConstants.EXT_DOCX:
+                fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_doc);
+                break;
+            case FileConstants.EXT_XLS:
+            case FileConstants.EXT_XLXS:
+                fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_xls);
+                break;
+            case FileConstants.EXT_PPT:
+            case FileConstants.EXT_PPTX:
+                fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_ppt);
+                break;
+            case FileConstants.EXT_PDF:
+                fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_pdf);
+                break;
+            case FileConstants.EXT_TEXT:
+                fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_txt);
+                break;
+            case FileConstants.EXT_HTML:
+                fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_html);
+                break;
+
+            default:
+                fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_doc_white);
+                break;
+        }
     }
 
 
@@ -214,7 +259,9 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
             imageIcon = (ImageView) itemView.findViewById(R.id.imageIcon);
             imageThumbIcon = (ImageView) itemView.findViewById(R.id.imageThumbIcon);
             textNoOfFileOrSize = (TextView) itemView.findViewById(R.id.textSecondLine);
-            textFileModifiedDate = (TextView) itemView.findViewById(R.id.textDate);
+            if (mViewMode == FileConstants.KEY_LISTVIEW) {
+                textFileModifiedDate = (TextView) itemView.findViewById(R.id.textDate);
+            }
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
 

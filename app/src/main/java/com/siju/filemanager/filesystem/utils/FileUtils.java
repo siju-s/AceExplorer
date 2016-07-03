@@ -1,4 +1,4 @@
-package com.siju.filemanager.filesystem;
+package com.siju.filemanager.filesystem.utils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.siju.filemanager.BaseActivity;
 import com.siju.filemanager.R;
 import com.siju.filemanager.common.Logger;
+import com.siju.filemanager.filesystem.model.FileInfo;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -29,16 +30,22 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.Collator;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
+import static android.webkit.MimeTypeMap.getSingleton;
+
 
 /**
  * Created by Siju on 16-06-2016.
@@ -58,6 +65,7 @@ public class FileUtils {
     public static final int ACTION_SKIP = 2;
     public static final int ACTION_KEEP = 3;
     public static final int ACTION_CANCEL = 4;
+
 
 
     public static File getRootDirectory() {
@@ -127,8 +135,6 @@ public class FileUtils {
         String dateText = df2.format(dateInMs);
         return dateText;
     }
-
-
 
 
     public FileUtils(Activity activity) {
@@ -253,40 +259,49 @@ public class FileUtils {
 
     /**
      * View the file in external apps based on Mime Type
+     *
      * @param context
      * @param path
      * @param extension
      */
-    public static void viewFile(Context context,String path,String extension) {
+    public static void viewFile(Context context, String path, String extension) {
 
         Uri uri = Uri.fromFile(new File(path));
 
         Intent intent = new Intent();
         intent.setAction(android.content.Intent.ACTION_VIEW);
-        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-        Logger.log("TAG","uri=="+uri+"MIME="+mimeType);
-        intent.setDataAndType(uri,mimeType);
+        // To lowercase used since MKV doesnt get recognised
+        String ext = extension.toLowerCase();
+        String mimeType = getSingleton().getMimeTypeFromExtension(ext);
+        Logger.log("TAG", "uri==" + uri + "MIME=" + mimeType);
+        intent.setDataAndType(uri, mimeType);
         PackageManager packageManager = context.getPackageManager();
         if (intent.resolveActivity(packageManager) != null) {
-            Intent chooser = Intent.createChooser(intent,context.getString(R.string.msg_open_file));
+            Intent chooser = Intent.createChooser(intent, context.getString(R.string.msg_open_file));
             context.startActivity(chooser);
-        }
-        else {
-            showMessage(context,context.getString(R.string.msg_error_not_supported));
+        } else {
+            showMessage(context, context.getString(R.string.msg_error_not_supported));
         }
 
     }
 
-    private static void showMessage(Context context,String msg) {
-        Toast .makeText(context,msg,Toast.LENGTH_SHORT).show();
+    private static void showMessage(Context context, String msg) {
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
     }
 
-    public static void shareFiles(Context context, ArrayList<FileInfo> fileInfo) {
+    public static void shareFiles(Context context, ArrayList<FileInfo> fileInfo, int category) {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND_MULTIPLE);
-        intent.setType("*/*");
+        if (category == 0) {
+            intent.setType("*/*");
+        }
+        else {
+            String extension = fileInfo.get(0).getExtension();
+            String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+            intent.setType(mimeType);
+        }
 
-        ArrayList<Uri> files = new ArrayList<Uri>();
+        ArrayList<Uri> files = new ArrayList<>();
 
         for (FileInfo info : fileInfo) {
             File file = new File(info.getFilePath());
@@ -297,6 +312,265 @@ public class FileUtils {
 
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
         context.startActivity(intent);
+    }
+
+
+
+
+    private final static Comparator<? super String> type = new Comparator<String>() {
+
+        public int compare(String arg0, String arg1) {
+            String ext = null;
+            String ext2 = null;
+            int ret;
+            File file1 = new File(arg0);
+            File file2 = new File(arg1);
+
+            try {
+                ext = arg0.substring(arg0.lastIndexOf(".") + 1, arg0.length())
+                        .toLowerCase();
+                ext2 = arg1.substring(arg1.lastIndexOf(".") + 1, arg1.length())
+                        .toLowerCase();
+
+            } catch (IndexOutOfBoundsException e) {
+                return 0;
+            }
+            ret = ext.compareTo(ext2);
+
+            if (ret == 0)
+                return arg0.toLowerCase().compareTo(arg1.toLowerCase());
+            else {
+                if ((file1.isDirectory()) && (!file2.isDirectory()))
+                    return -1;
+                if ((!file1.isDirectory()) && (file2.isDirectory()))
+                    return 1;
+                if ((file1.getName().startsWith("."))
+                        && (!file2.getName().startsWith(".")))
+                    return -1;
+                if ((!file1.getName().startsWith("."))
+                        && (file2.getName().startsWith(".")))
+                    return 1;
+            }
+
+            return ret;
+        }
+    };
+
+
+    public static Comparator<? super FileInfo> comparatorByName = new Comparator<FileInfo>() {
+
+        public int compare(FileInfo file1, FileInfo file2) {
+
+            if ((file1.isDirectory()) && (!file2.isDirectory()))
+                return -1;
+            if ((!file1.isDirectory()) && (file2.isDirectory()))
+                return 1;
+            // here both are folders or both are files : sort alpha
+            return file1.getFileName().toLowerCase()
+                    .compareTo(file2.getFileName().toLowerCase());
+        }
+
+    };
+
+    public static Comparator<? super FileInfo> comparatorByNameDesc = new Comparator<FileInfo>() {
+
+        public int compare(FileInfo file1, FileInfo file2) {
+
+            if ((file1.isDirectory()) && (!file2.isDirectory()))
+                return -1;
+            if ((!file1.isDirectory()) && (file2.isDirectory()))
+                return 1;
+            // here both are folders or both are files : sort alpha
+            return file2.getFileName().toLowerCase()
+                    .compareTo(file1.getFileName().toLowerCase());
+        }
+
+    };
+
+/*    private static Comparator<? super FileInfo> comparatorByTypeFiles = new Comparator<FileInfo>() {
+
+        public int compare(FileInfo file1, FileInfo file2) {
+            // sort folders first
+            if ((file1.isDirectory()) && (!file2.isDirectory()))
+                return -1;
+            if ((!file1.isDirectory()) && (file2.isDirectory()))
+                return 1;
+
+            // here both are folders or both are files : sort alpha
+            return file1.getName().toLowerCase()
+                    .compareTo(file2.getName().toLowerCase());
+        }
+
+    };*/
+
+
+    public static Comparator<? super FileInfo> comparatorBySize = new Comparator<FileInfo>() {
+
+        public int compare(FileInfo file1, FileInfo file2) {
+
+            if ((file1.isDirectory()) && (!file2.isDirectory())) {
+                return -1;
+            }
+            if ((!file1.isDirectory()) && (file2.isDirectory())) {
+                return 1;
+            }
+
+
+
+            Long first = getSize(new File(file1.getFilePath()));
+            Long second = getSize(new File(file2.getFilePath()));
+
+//            Logger.log("SIJU","Size1="+first+" Size2="+second);
+
+            return first.compareTo(second);
+        }
+    };
+
+    public static Comparator<? super FileInfo> comparatorBySizeDesc = new Comparator<FileInfo>() {
+
+        public int compare(FileInfo file1, FileInfo file2) {
+
+            if ((file1.isDirectory()) && (!file2.isDirectory())) {
+                return -1;
+            }
+            if ((!file1.isDirectory()) && (file2.isDirectory())) {
+                return 1;
+            }
+
+            Long first = getSize(new File(file1.getFilePath()));
+            Long second = getSize(new File(file2.getFilePath()));
+            Logger.log("SIJU","Size1="+first+" Size2="+second);
+
+
+            return second.compareTo(first);
+        }
+    };
+
+    public static Comparator<? super FileInfo> comparatorByType = new Comparator<FileInfo>() {
+
+        public int compare(FileInfo file1, FileInfo file2) {
+
+            String arg0 = file1.getFileName();
+            String arg1 = file2.getFileName();
+
+            final int s1Dot = arg0.lastIndexOf('.');
+            final int s2Dot = arg1.lastIndexOf('.');
+
+            if ((s1Dot == -1) == (s2Dot == -1)) { // both or neither
+
+                arg0 = arg0.substring(s1Dot + 1);
+                arg1 = arg1.substring(s2Dot + 1);
+                return (arg0.toLowerCase()).compareTo((arg1.toLowerCase()));
+            } else if (s1Dot == -1) { // only s2 has an extension, so s1 goes
+                // first
+                return -1;
+            } else { // only s1 has an extension, so s1 goes second
+                return 1;
+            }
+        }
+
+    };
+
+    public static Comparator<? super FileInfo> comparatorByTypeDesc = new Comparator<FileInfo>() {
+
+        public int compare(FileInfo file1, FileInfo file2) {
+
+            String arg0 = file2.getFileName();
+            String arg1 = file1.getFileName();
+
+            final int s1Dot = arg0.lastIndexOf('.');
+            final int s2Dot = arg1.lastIndexOf('.');
+
+            if ((s1Dot == -1) == (s2Dot == -1)) { // both or neither
+
+                arg0 = arg0.substring(s1Dot + 1);
+                arg1 = arg1.substring(s2Dot + 1);
+                return (arg0.toLowerCase()).compareTo((arg1.toLowerCase()));
+            } else if (s1Dot == -1) { // only s2 has an extension, so s1 goes
+                // first
+                return -1;
+            } else { // only s1 has an extension, so s1 goes second
+                return 1;
+            }
+        }
+
+    };
+
+
+    public static Comparator<? super FileInfo> comparatorByDate = new Comparator<FileInfo>() {
+
+        public int compare(FileInfo file1, FileInfo file2) {
+
+            Long date1 = new File(file1.getFilePath()).lastModified();
+            Long date2 = new File(file2.getFilePath()).lastModified();
+
+//            Long date1 = convertStringToLongDate(file1.getFileDate());
+//            Long date2 = convertStringToLongDate(file2.getFileDate());
+//
+//            Long first = file1.getFileDate();
+//            Long second = file2.getFileDate();
+
+            return date1.compareTo(date2);
+        }
+    };
+
+    public static Comparator<? super FileInfo> comparatorByDateDesc = new Comparator<FileInfo>() {
+
+        public int compare(FileInfo file1, FileInfo file2) {
+
+            Long date1 = new File(file1.getFilePath()).lastModified();
+            Long date2 = new File(file2.getFilePath()).lastModified();
+
+
+//            Long date1 = convertStringToLongDate(file1.getFileDate());
+//            Long date2 = convertStringToLongDate(file2.getFileDate());
+//
+//            Long first = file1.getFileDate();
+//            Long second = file2.getFileDate();
+
+            return date2.compareTo(date1);
+        }
+    };
+
+    private static long convertStringToLongDate(String dateModified) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy hh:mm a", Locale.getDefault());
+            Date date = sdf.parse(dateModified);
+
+            long modDate = date.getTime();
+            return modDate;
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    public static long getSize(File file) {
+
+        long size = 0;
+        long len = 0;
+        if (file.isFile()) {
+            size = file.length();
+        } else if (file.isDirectory()) {
+//            size = org.apache.commons.io.FileUtils.sizeOfDirectory(file);
+            File[] list = file.listFiles();
+            if (list != null) {
+                size = list.length;
+            }
+//
+//            for (int j = 0; j < len; j++) {
+//                if (list[j].isFile()) {
+//                    size = size + list[j].length();
+//                } else if (list[j].isDirectory()) {
+//                    size = size + getSize(list[j]);
+//
+//                }
+//
+//            }
+
+        }
+        return size;
     }
 
 
@@ -1063,30 +1337,6 @@ public class FileUtils {
         }
 */
 
-/*        private static void veiwImage(File file) {
-            DisplayMetrics dm = new DisplayMetrics();
-            activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
-            final int minrez = Math.min(dm.widthPixels, dm.heightPixels);
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            options.outHeight = options.outWidth = 0;
-            options.inSampleSize = 1;
-            String path = file.getAbsolutePath();
-            BitmapFactory.decodeFile(path, options);
-            if (options.outWidth > 0 && options.outHeight > 0) {
-                // Now see how much we need to scale it down.
-                int widthFactor = (options.outWidth + minrez - 1) / minrez;
-                widthFactor = Math.max(widthFactor, (options.outHeight + minrez - 1) / minrez);
-                widthFactor = Math.max(widthFactor, 1);
-                options.inSampleSize = widthFactor;
-                options.inJustDecodeBounds = false;
-                ImageView img = new ImageView(activity);
-                img.setImageBitmap(BitmapFactory.decodeFile(path, options));
-                new AlertDialog.Builder(activity).setTitle("Image Preview").setIcon(R.drawable.image).setView(img)
-                .create()
-                        .show();
-            }
-}*/
 
 
     public synchronized static void printDebug(String str) {
