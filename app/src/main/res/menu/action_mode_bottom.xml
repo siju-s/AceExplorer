@@ -3,19 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_select_all"
+        android:icon="@drawable/ic_select_all_white"
+        android:orderInCategory="1"
+        android:title="@string/action_select_all"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/action_cut"
         android:icon="@drawable/ic_cut_white"
-        android:orderInCategory="1"
+        android:orderInCategory="2"
         android:title="@string/action_cut"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_copy"
         android:icon="@drawable/ic_copy_white"
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         android:title="@string/action_copy"
         app:showAsAction="ifRoom" />
-
 
 
     <item
@@ -31,9 +37,6 @@
         android:orderInCategory="5"
         android:title="@string/action_share"
         app:showAsAction="ifRoom" />
-
-
-
 
 
 </menu>

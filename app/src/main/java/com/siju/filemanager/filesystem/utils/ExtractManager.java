@@ -1,5 +1,6 @@
 package com.siju.filemanager.filesystem.utils;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -7,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.siju.filemanager.BaseActivity;
 import com.siju.filemanager.R;
 import com.siju.filemanager.filesystem.FileListFragment;
 
@@ -28,16 +30,20 @@ public class ExtractManager {
     private static final int BUFFER_SIZE = 1024;
 
     private Fragment mFragment;
+    private Activity mActivity;
     private ProgressDialog progressDialog;
     private Context mContext;
 
-    public ExtractManager(Fragment fragment) {
-        this.mFragment = fragment;
-        mContext = mFragment.getContext();
+    public ExtractManager(Activity activity) {
+        this.mActivity = activity;
     }
 
-    public void extract(File f, String destinationPath) {
-        new ExtractTask().execute(f, destinationPath);
+    public void extract(File f, String destinationPath,String currentFileName) {
+        String newDirPath = destinationPath + "/" + currentFileName;
+        if (!new File(newDirPath).exists()) {
+            new File(newDirPath).mkdir();
+        }
+        new ExtractTask().execute(f, newDirPath);
     }
 
     private class ExtractTask extends AsyncTask<Object, Void, Integer> {
@@ -106,9 +112,9 @@ public class ExtractManager {
 
         @Override
         protected void onPreExecute() {
-            progressDialog = new ProgressDialog(mContext);
+            progressDialog = new ProgressDialog(mActivity);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            progressDialog.setMessage(mContext.getResources().getString(R.string.extracting));
+            progressDialog.setMessage(mActivity.getResources().getString(R.string.extracting));
             progressDialog.show();
             progressDialog.setProgress(0);
             isExtracted = 0;
@@ -126,11 +132,11 @@ public class ExtractManager {
         protected void onPostExecute(Integer result) {
             progressDialog.cancel();
             if (result == error) {
-                Toast.makeText(mContext, R.string.msg_extract_failure, Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivity, R.string.msg_extract_failure, Toast.LENGTH_SHORT).show();
             } else if (result == success) {
-                Toast.makeText(mContext, R.string.msg_extract_success, Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivity, R.string.msg_extract_success, Toast.LENGTH_SHORT).show();
             }
-            ((FileListFragment) mFragment).refreshList();
+            ((BaseActivity) mActivity).refreshFileList();
         }
     }
 }

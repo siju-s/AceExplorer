@@ -109,6 +109,13 @@
     <string name="msg_extract_success">Successfully extracted files</string>
     <string name="msg_extract_failure">Error in extracting file</string>
     <string name="dialog_title_extract_file">Extract file</string>
+    <string name="dialog_current_path">Current path</string>
+    <string name="dialog_specify_path">Specify path</string>
+    <string name="select_path">Select path</string>
+    <string name="enter_file_name">Enter file name</string>
+    <string name="extract">Extract</string>
+    <string name="dialog_title_browse">Choose folder</string>
+    <string name="action_select_all">Select All</string>
 
 
 </resources>

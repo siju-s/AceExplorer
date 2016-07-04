@@ -78,7 +78,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
             }
             mCategory = getArguments().getInt(FileConstants.KEY_CATEGORY, FileConstants.CATEGORY.FILES.getValue());
             mViewMode = getArguments().getInt(BaseActivity.ACTION_VIEW_MODE, FileConstants.KEY_LISTVIEW);
-            mIsZip =  getArguments().getBoolean(FileConstants.KEY_ZIP, false);
+            mIsZip = getArguments().getBoolean(FileConstants.KEY_ZIP, false);
         }
 
         Log.d("TAG", "on onActivityCreated--Fragment" + mFilePath);
@@ -116,21 +116,6 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
             }
         });
 
-//        fileList.setOnLong(new AdapterView.OnItemLongClickListener() {
-//            @Override
-//            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-//                //                }
-//                Logger.log("TAG", "On long click");
-//                itemClick(position);
-//
-////                // Start the CAB using the ActionMode.Callback defined above
-////                mActionMode = ((AppCompatActivity) getActivity())
-////                        .startSupportActionMode(new ActionModeCallback());
-//                return true;
-////        return false;
-//            }
-//        });
-
     }
 
     private void initializeViews() {
@@ -150,7 +135,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                         Bundle bundle = new Bundle();
                         bundle.putString(FileConstants.KEY_PATH, path);
                         bundle.putInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
-                        bundle.putBoolean(FileConstants.KEY_ZIP,true);
+                        bundle.putBoolean(FileConstants.KEY_ZIP, true);
                         Intent intent = new Intent(getActivity(), BaseActivity.class);
                         if (FileListFragment.this instanceof FileListDualFragment) {
                             intent.setAction(BaseActivity.ACTION_DUAL_VIEW_FOLDER_LIST);
@@ -307,6 +292,20 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
             ((BaseActivity) getActivity()).getActionMode().setTitle(String.valueOf(fileListAdapter.getSelectedCount()
             ) + " selected");
         }
+    }
+
+    public void toggleSelectAll(boolean selectAll) {
+        fileListAdapter.clearSelection();
+        for (int i = 0; i < fileListAdapter.getItemCount(); i++) {
+            fileListAdapter.toggleSelectAll(i, selectAll);
+        }
+        SparseBooleanArray checkedItemPos = fileListAdapter.getSelectedItemPositions();
+        ((BaseActivity) getActivity()).setSelectedItemPos(checkedItemPos);
+
+        ((BaseActivity) getActivity()).getActionMode().setTitle(String.valueOf(fileListAdapter.getSelectedCount()
+        ) + " selected");
+        fileListAdapter.notifyDataSetChanged();
+
     }
 
     public void clearSelection() {

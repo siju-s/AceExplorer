@@ -1,71 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/scrollView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true">
+    android:layout_width="@dimen/dialog_file_info"
+    android:layout_height="wrap_content"
+    android:fillViewport="true">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#00000000"
-        android:orientation="vertical"
-        android:padding="5dp">
+        android:layout_height="wrap_content">
 
 
-
-        <FrameLayout
+        <TextView
+            android:id="@+id/textDialogTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            >
+            android:background="@color/colorPrimary"
+            android:padding="10dp"
+            android:text="@string/extract_to"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
-            <TextView
+        <ImageButton
+            android:id="@+id/imageButtonClose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:background="@null"
+            android:paddingTop="10dp"
+            android:src="@drawable/ic_close_white" />
+
+
+        <RadioGroup
+            android:id="@+id/radioGroupPath"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textDialogTitle"
+            android:layout_margin="15dp"
+            android:checkedButton="@+id/radioButtonCurrentPath">
+
+            <RadioButton
+                android:id="@+id/radioButtonCurrentPath"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="5dp"
-                android:text="Extraction path : "/>
+                android:text="@string/dialog_current_path" />
 
-        </FrameLayout>
+            <RadioButton
+                android:id="@+id/radioButtonSpecifyPath"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/dialog_specify_path" />
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/textPathSelect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/radioGroupPath"
+            android:layout_margin="15dp"
+            android:text="@string/select_path"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:visibility="gone"/>
+
+        <EditText
+            android:id="@+id/editFileName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textPathSelect"
+            android:layout_marginTop="5dp"
+            android:hint="@string/enter_file_name" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_below="@+id/editFileName">
 
-            <TextView
+            <Button
+                android:id="@+id/buttonCancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:text="Current path :"/>
+                android:layout_weight="1"
+                android:text="@string/dialog_cancel" />
 
-            <CheckBox
-                android:id="@+id/check_current"
+
+            <Button
+                android:id="@+id/buttonExtract"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                />
+                android:layout_weight="1"
+                android:text="@string/extract" />
         </LinearLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="5dp"
-                android:text="Specify path : "/>
-
-        </FrameLayout>
-
-        <EditText
-            android:id="@+id/savetext"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:hint="Enter the name"
-            />
-    </LinearLayout>
+    </RelativeLayout>
 </ScrollView>

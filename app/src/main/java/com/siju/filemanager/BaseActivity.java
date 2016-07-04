@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -27,6 +28,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.Formatter;
@@ -34,12 +36,14 @@ import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
@@ -48,6 +52,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,6 +68,8 @@ import com.siju.filemanager.filesystem.model.FileInfo;
 import com.siju.filemanager.filesystem.FileListAdapter;
 import com.siju.filemanager.filesystem.FileListDualFragment;
 import com.siju.filemanager.filesystem.FileListFragment;
+import com.siju.filemanager.filesystem.ui.DialogBrowseFragment;
+import com.siju.filemanager.filesystem.utils.ExtractManager;
 import com.siju.filemanager.filesystem.utils.FileUtils;
 import com.siju.filemanager.common.SharedPreference;
 import com.siju.filemanager.model.SectionGroup;
@@ -78,7 +86,7 @@ import static com.siju.filemanager.filesystem.utils.FileUtils.getInternalStorage
 
 
 public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener,
-        View.OnClickListener {
+        View.OnClickListener, DialogBrowseFragment.SelectedPathListener {
 
     private final String TAG = this.getClass().getSimpleName();
     ExpandableListAdapter expandableListAdapter;
@@ -117,7 +125,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private ActionMode mActionMode;
     private FileListAdapter fileListAdapter;
     private SparseBooleanArray mSelectedItemPositions = new SparseBooleanArray();
-    MenuItem mPasteItem, mRenameItem, mInfoItem, mArchiveItem, mFavItem;
+    MenuItem mPasteItem, mRenameItem, mInfoItem, mArchiveItem, mFavItem, mExtractItem;
     private static final int PASTE_OPERATION = 1;
     private static final int DELETE_OPERATION = 2;
     private static final int ARCHIVE_OPERATION = 3;
@@ -152,6 +160,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private int mViewMode = FileConstants.KEY_LISTVIEW;
     private boolean mIsFavGroup;
     private FrameLayout frameLayoutFabDual;
+    private String mSelectedPath;
+    private TextView textPathSelect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -1408,12 +1418,39 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                     mActionMode.finish();
                 }
                 break;
+
+            case R.id.action_select_all:
+                if (mSelectedItemPositions != null) {
+                    FileListFragment singlePaneFragment = (FileListFragment) getSupportFragmentManager()
+                            .findFragmentById(R
+                                    .id.frame_container);
+                    if (mSelectedItemPositions.size() < fileListAdapter.getItemCount()) {
+
+                        if (singlePaneFragment != null) {
+                            singlePaneFragment.toggleSelectAll(true);
+                        }
+                    } else {
+                        if (singlePaneFragment != null) {
+                            singlePaneFragment.toggleSelectAll(false);
+                        }
+                    }
+                }
+                break;
         }
         return false;
     }
 
     private void showMessage(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void getSelectedPath(String path) {
+        mSelectedPath = path;
+        if (textPathSelect != null) {
+            textPathSelect.setText(mSelectedPath);
+        }
+
     }
 
     /**
@@ -1431,6 +1468,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             mInfoItem = menu.findItem(R.id.action_info);
             mArchiveItem = menu.findItem(R.id.action_archive);
             mFavItem = menu.findItem(R.id.action_fav);
+            mExtractItem = menu.findItem(R.id.action_extract);
 
             return true;
         }
@@ -1450,6 +1488,11 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             } else {
                 mRenameItem.setVisible(true);
                 mInfoItem.setVisible(true);
+                if (mSelectedItemPositions.size() == 1) {
+                    if (mFileList.get(mSelectedItemPositions.keyAt(0)).getExtension().equalsIgnoreCase("zip")) {
+                        mExtractItem.setVisible(true);
+                    }
+                }
             }
 
             return false;
@@ -1586,6 +1629,16 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                     }
                     mActionMode.finish();
                     return true;
+
+                case R.id.action_extract:
+                    if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+                        FileInfo fileInfo = mFileList.get(mSelectedItemPositions.keyAt(0));
+                        String currentFile = fileInfo.getFilePath();
+                        showExtractOptions(currentFile, mCurrentDir);
+                    }
+
+                    mActionMode.finish();
+                    return true;
                 default:
                     return false;
             }
@@ -1606,6 +1659,73 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                 fabCreateMenu.setVisibility(View.VISIBLE);
             }
         }
+    }
+
+    private void showExtractOptions(final String currentFilePath, final String currentDir) {
+
+        final File currentFile = new File(currentFilePath);
+        final String currentFileName = currentFilePath.substring(currentFilePath.lastIndexOf("/")
+                + 1, currentFilePath.lastIndexOf("."));
+        final Dialog dialog = new Dialog(
+                BaseActivity.this);
+        dialog.setContentView(R.layout.dialog_extract);
+        dialog.setCancelable(true);
+        mSelectedPath = null;
+
+        final RadioButton radioButtonSpecify = (RadioButton) dialog.findViewById(R.id
+                .radioButtonSpecifyPath);
+        textPathSelect = (TextView) dialog.findViewById(R.id.textPathSelect);
+        RadioGroup radioGroupPath = (RadioGroup) dialog.findViewById(R.id.radioGroupPath);
+        Button buttonExtract = (Button) dialog.findViewById(R.id.buttonExtract);
+        Button buttonCancel = (Button) dialog.findViewById(R.id.buttonCancel);
+        EditText editFileName = (EditText) dialog.findViewById(R.id.editFileName);
+        editFileName.setText(currentFileName);
+
+        dialog.show();
+        radioGroupPath.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+                if (checkedId == R.id.radioButtonCurrentPath) {
+                    textPathSelect.setVisibility(View.GONE);
+                } else {
+                    textPathSelect.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        textPathSelect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentManager fm = getSupportFragmentManager();
+                DialogBrowseFragment dialogFragment = new DialogBrowseFragment();
+                dialogFragment.show(fm, "Browse Fragment");
+            }
+        });
+
+        buttonExtract.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (radioButtonSpecify.isChecked()) {
+                    new ExtractManager(BaseActivity.this)
+                            .extract(currentFile, mSelectedPath, currentFileName);
+                } else {
+                    new ExtractManager(BaseActivity.this)
+                            .extract(currentFile, currentDir, currentFileName);
+                }
+                dialog.dismiss();
+
+
+            }
+        });
+
+        buttonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+
     }
 
     private void updateFavouritesGroup(FileInfo info) {
@@ -2141,6 +2261,16 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                         MediaStore.Files.FileColumns.DATA + "=?", new String[]{path});
                 break;
         }
+    }
+
+    public void refreshFileList() {
+        FileListFragment fileListFragment = (FileListFragment) getSupportFragmentManager().findFragmentById(R.id
+                .frame_container);
+        if (fileListFragment != null) {
+            fileListFragment.refreshList();
+        }
+
+
     }
 }
 

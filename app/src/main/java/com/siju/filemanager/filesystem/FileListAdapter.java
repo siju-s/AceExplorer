@@ -216,6 +216,17 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         selectView(position, !mSelectedItemsIds.get(position));
     }
 
+    public void toggleSelectAll(int position, boolean selectAll) {
+        if (selectAll)
+            mSelectedItemsIds.put(position, selectAll);
+        else
+            mSelectedItemsIds = new SparseBooleanArray();
+    }
+
+    public void clearSelection() {
+        mSelectedItemsIds = new SparseBooleanArray();
+    }
+
     public void removeSelection() {
         mSelectedItemsIds = new SparseBooleanArray();
         mSelectedFileList = new ArrayList<>();
