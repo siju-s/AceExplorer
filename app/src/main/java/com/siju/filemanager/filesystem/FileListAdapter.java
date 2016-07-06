@@ -21,6 +21,7 @@ import com.siju.filemanager.filesystem.utils.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Siju on 13-06-2016.
@@ -38,6 +39,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     private Uri mAudioUri = Uri.parse("content://media/external/audio/albumart");
     private Uri mImageUri = Uri.parse("content://media/external/images/albumart");
     private int mViewMode;
+    private ArrayList<FileInfo> fileInfoArrayListCopy = new ArrayList<>();
 
 
     public FileListAdapter(Context mContext, ArrayList<FileInfo> fileInfoArrayList, int category, int viewMode) {
@@ -51,7 +53,9 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
     public void updateAdapter(ArrayList<FileInfo> fileInfos) {
         this.fileInfoArrayList = fileInfos;
+        fileInfoArrayListCopy.addAll(fileInfos);
 //        Log.d("SIJU","updateAdapter"+fileInfoArrayList.size());
+
         notifyDataSetChanged();
     }
 
@@ -153,7 +157,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
             case 1:
                 Uri uri = ContentUris.withAppendedId(mAudioUri, fileInfoArrayList.get(position).getBucketId());
                 Glide.with(mContext).loadFromMediaStore(uri).centerCrop()
-                        .placeholder(R.drawable.unknown_albumart)
+                        .placeholder(R.drawable.ic_music)
                         .crossFade(2)
                         .into(fileListViewHolder.imageIcon);
                 break;
@@ -162,6 +166,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
                 // For videos group
                 Uri videoUri = Uri.fromFile(new File(filePath));
                 Glide.with(mContext).load(videoUri).centerCrop()
+                        .placeholder(R.drawable.ic_movie)
                         .crossFade(2)
                         .into(fileListViewHolder.imageIcon);
                 break;
@@ -204,7 +209,8 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
             case FileConstants.EXT_HTML:
                 fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_html);
                 break;
-
+            case FileConstants.EXT_ZIP:
+                fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_file_zip);
             default:
                 fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_doc_white);
                 break;
@@ -252,6 +258,82 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
     public SparseBooleanArray getSelectedItemPositions() {
         return mSelectedItemsIds;
+    }
+
+
+    public void setModel(List<FileInfo> models) {
+        fileInfoArrayList = new ArrayList<>(models);
+    }
+
+    public FileInfo removeItem(int position) {
+        final FileInfo model = fileInfoArrayList.remove(position);
+        notifyItemRemoved(position);
+        return model;
+    }
+
+    public void addItem(int position, FileInfo model) {
+        fileInfoArrayList.add(position, model);
+        notifyItemInserted(position);
+    }
+
+    public void moveItem(int fromPosition, int toPosition) {
+        final FileInfo model = fileInfoArrayList.remove(fromPosition);
+        fileInfoArrayList.add(toPosition, model);
+        notifyItemMoved(fromPosition, toPosition);
+    }
+
+    public void animateTo(List<FileInfo> models) {
+        applyAndAnimateRemovals(models);
+        applyAndAnimateAdditions(models);
+        applyAndAnimateMovedItems(models);
+    }
+
+    private void applyAndAnimateRemovals(List<FileInfo> newModels) {
+        for (int i = fileInfoArrayList.size() - 1; i >= 0; i--) {
+            final FileInfo model = fileInfoArrayList.get(i);
+            if (!newModels.contains(model)) {
+                removeItem(i);
+            }
+        }
+    }
+
+    private void applyAndAnimateAdditions(List<FileInfo> newModels) {
+        for (int i = 0, count = newModels.size(); i < count; i++) {
+            final FileInfo model = newModels.get(i);
+            if (!fileInfoArrayList.contains(model)) {
+                addItem(i, model);
+            }
+        }
+    }
+
+    private void applyAndAnimateMovedItems(List<FileInfo> newModels) {
+        for (int toPosition = newModels.size() - 1; toPosition >= 0; toPosition--) {
+            final FileInfo model = newModels.get(toPosition);
+            final int fromPosition = fileInfoArrayList.indexOf(model);
+            if (fromPosition >= 0 && fromPosition != toPosition) {
+                moveItem(fromPosition, toPosition);
+            }
+        }
+    }
+
+    public void filter(String text) {
+        if (text.isEmpty()) {
+            fileInfoArrayList.clear();
+            fileInfoArrayList.addAll(fileInfoArrayListCopy);
+        } else {
+            ArrayList<FileInfo> result = new ArrayList<>();
+            text = text.toLowerCase();
+            for (FileInfo item : fileInfoArrayListCopy) {
+                if (item.getFileName().toLowerCase().contains(text)) {
+                    result.add(item);
+                }
+            }
+            if (fileInfoArrayList != null) {
+                fileInfoArrayList.clear();
+                fileInfoArrayList.addAll(result);
+            }
+        }
+        notifyDataSetChanged();
     }
 
 

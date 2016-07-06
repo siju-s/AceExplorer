@@ -4,6 +4,7 @@ package com.siju.filemanager.filesystem;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.content.AsyncTaskLoader;
 import android.text.format.Formatter;
@@ -13,10 +14,12 @@ import android.webkit.MimeTypeMap;
 import com.siju.filemanager.R;
 import com.siju.filemanager.filesystem.model.FileInfo;
 import com.siju.filemanager.filesystem.utils.FileUtils;
+import com.siju.filemanager.settings.SettingsPreferenceFragment;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -33,6 +36,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.siju.filemanager.filesystem.utils.FileUtils.convertDate;
 
 /**
@@ -44,7 +48,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private ArrayList<FileInfo> fileInfoList;
     private String mPath;
     private Context mContext;
-    private boolean showHidden = false;
+    private boolean showHidden;
     private int mCategory;
     private List<String> mZipRootFiles;
 
@@ -53,6 +57,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         mPath = path;
         mContext = context;
         mCategory = category;
+        showHidden = PreferenceManager.getDefaultSharedPreferences(context).getBoolean
+                (FileConstants.PREFS_HIDDEN,false);
     }
 
     @Override
@@ -209,7 +215,18 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 //                        }
 //                        else {
                             if (file1.list() != null) {
-                                childFileListSize = file1.list().length;
+                                if (!showHidden) {
+                                    File[] nonHiddenList = file1.listFiles(new FilenameFilter() {
+                                        @Override
+                                        public boolean accept(File file, String name) {
+                                            return (!name.startsWith("."));
+                                        }
+                                    });
+                                    childFileListSize = nonHiddenList.length;
+                                }
+                                else {
+                                    childFileListSize = file1.list().length;
+                                }
                             }
 
                             if (childFileListSize == 0) {

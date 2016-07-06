@@ -1,15 +1,20 @@
 package com.siju.filemanager.filesystem;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
@@ -24,21 +29,26 @@ import android.widget.TextView;
 import com.siju.filemanager.BaseActivity;
 import com.siju.filemanager.R;
 import com.siju.filemanager.common.Logger;
+import com.siju.filemanager.common.SharedPreferenceWrapper;
 import com.siju.filemanager.filesystem.model.FileInfo;
 import com.siju.filemanager.filesystem.ui.DividerItemDecoration;
 import com.siju.filemanager.filesystem.utils.FileUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import static com.siju.filemanager.BaseActivity.ACTION_VIEW_MODE;
+import static com.siju.filemanager.R.id.textEmpty;
 
 
 /**
  * Created by Siju on 13-06-2016.
  */
 
-public class FileListFragment extends Fragment implements LoaderManager.LoaderCallbacks<ArrayList<FileInfo>> {
+public class FileListFragment extends Fragment implements LoaderManager
+        .LoaderCallbacks<ArrayList<FileInfo>>,
+        SearchView.OnQueryTextListener {
 
     //    private ListView fileList;
     private RecyclerView recyclerViewFileList;
@@ -46,12 +56,17 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
     private final int LOADER_ID = 1000;
     private FileListAdapter fileListAdapter;
     private ArrayList<FileInfo> fileInfoList;
-    private boolean isDualMode;
+    private boolean mIsDualMode;
     private String mFilePath;
     private int mCategory;
     private int mViewMode = FileConstants.KEY_LISTVIEW;
     private String mPath;
     private boolean mIsZip;
+    private SharedPreferenceWrapper preference;
+    private TextView mTextEmpty;
+    private boolean mIsDualActionModeActive;
+    private boolean mIsLandscapeMode;
+    private boolean mIsDualModeEnabledSettings;
 
 
     @Override
@@ -68,6 +83,10 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
         initializeViews();
+        mIsLandscapeMode = getResources().getConfiguration().orientation == Configuration
+                .ORIENTATION_LANDSCAPE;
+        mIsDualModeEnabledSettings = PreferenceManager.getDefaultSharedPreferences(getActivity())
+                .getBoolean(FileConstants.PREFS_DUAL_PANE, false);
 
         Bundle args = new Bundle();
         String fileName;
@@ -77,19 +96,16 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                 mFilePath = getArguments().getString(FileConstants.KEY_PATH);
             }
             mCategory = getArguments().getInt(FileConstants.KEY_CATEGORY, FileConstants.CATEGORY.FILES.getValue());
-            mViewMode = getArguments().getInt(BaseActivity.ACTION_VIEW_MODE, FileConstants.KEY_LISTVIEW);
+
             mIsZip = getArguments().getBoolean(FileConstants.KEY_ZIP, false);
+            mIsDualMode = getArguments().getBoolean(FileConstants.KEY_DUAL_MODE, false);
+
         }
+        mViewMode = preference.getViewMode(getActivity());
 
         Log.d("TAG", "on onActivityCreated--Fragment" + mFilePath);
         Log.d("TAG", "View mode=" + mViewMode);
 
-//        else {
-//            filePath = getArguments().getString(FileConstants.KEY_PATH);
-//        }
-//        fileList.setLayoutManager(new LinearLayoutManager(getContext()));
-//        fileListAdapter = new FileListAdapter(getContext(), fileInfoList);
-//        fileList.setAdapter(fileListAdapter);
         fileListAdapter = new FileListAdapter(getContext(), fileInfoList, mCategory, mViewMode);
         recyclerViewFileList.setAdapter(fileListAdapter);
 
@@ -100,8 +116,22 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
         fileListAdapter.setOnItemClickListener(new FileListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
+
                 if (((BaseActivity) getActivity()).getActionMode() != null) {
-                    itemClick(position);
+                    if (mIsDualActionModeActive) {
+                        if (FileListFragment.this instanceof FileListDualFragment) {
+                            itemClickActionMode(position);
+                        } else {
+                            handleCategoryItemClick(position);
+                        }
+                    } else {
+                        if (FileListFragment.this instanceof FileListDualFragment) {
+                            handleCategoryItemClick(position);
+                        } else {
+                            itemClickActionMode(position);
+                        }
+                    }
+                    itemClickActionMode(position);
                 } else {
                     handleCategoryItemClick(position);
                 }
@@ -112,7 +142,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
             @Override
             public void onItemLongClick(View view, int position) {
                 Logger.log("TAG", "On long click");
-                itemClick(position);
+                itemClickActionMode(position);
             }
         });
 
@@ -120,6 +150,8 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 
     private void initializeViews() {
         recyclerViewFileList = (RecyclerView) root.findViewById(R.id.recyclerViewFileList);
+        mTextEmpty = (TextView) root.findViewById(textEmpty);
+        preference = new SharedPreferenceWrapper();
 
     }
 
@@ -178,6 +210,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
             case 4:
                 FileUtils.viewFile(getActivity(), fileInfoList.get(position).getFilePath(), fileInfoList.get(position)
                         .getExtension());
+
                 break;
 
         }
@@ -274,13 +307,18 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
         alert.show();
     }*/
 
-    private void itemClick(int position) {
+    private void itemClickActionMode(int position) {
         fileListAdapter.toggleSelection(position);
         boolean hasCheckedItems = fileListAdapter.getSelectedCount() > 0;
         ActionMode actionMode = ((BaseActivity) getActivity()).getActionMode();
         if (hasCheckedItems && actionMode == null) {
             // there are some selected items, start the actionMode
             ((BaseActivity) getActivity()).startActionMode();
+            if (FileListFragment.this instanceof FileListDualFragment) {
+                mIsDualActionModeActive = true;
+            } else {
+                mIsDualActionModeActive = false;
+            }
             ((BaseActivity) getActivity()).setFileList(fileInfoList);
         } else if (!hasCheckedItems && actionMode != null) {
             // there no selected items, finish the actionMode
@@ -340,7 +378,9 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                 if (mViewMode == FileConstants.KEY_LISTVIEW) {
                     llm = new LinearLayoutManager(getActivity());
                 } else {
-                    llm = new GridLayoutManager(getActivity(), 4);
+                    llm = new GridLayoutManager(getActivity(), getResources().getInteger(R
+                            .integer.grid_columns));
+
                 }
                 llm.setAutoMeasureEnabled(false);
                 recyclerViewFileList.setLayoutManager(llm);
@@ -348,9 +388,12 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                 recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
                         .VERTICAL));
                 ((BaseActivity) getActivity()).setFileListAdapter(fileListAdapter);
+
+                if (mTextEmpty.getVisibility() == View.VISIBLE) {
+                    mTextEmpty.setVisibility(View.GONE);
+                }
             } else {
-                TextView textEmpty = (TextView) getActivity().findViewById(R.id.textEmpty);
-                textEmpty.setVisibility(View.VISIBLE);
+                mTextEmpty.setVisibility(View.VISIBLE);
             }
         }
 
@@ -363,8 +406,41 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
         inflater.inflate(R.menu.file_base, menu);
+        final MenuItem item = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+        searchView.setOnQueryTextListener(this);
 //        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onQueryTextChange(String query) {
+        fileListAdapter.filter(query);
+        // Here is where we are going to implement our filter logic
+/*        final List<FileInfo> filteredModelList = filter(fileInfoList, query);
+        fileListAdapter.animateTo(filteredModelList);
+        recyclerViewFileList.scrollToPosition(0);*/
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        fileListAdapter.filter(query);
+        return true;
+    }
+
+    private List<FileInfo> filter(List<FileInfo> models, String query) {
+        query = query.toLowerCase();
+
+        final List<FileInfo> filteredModelList = new ArrayList<>();
+        for (FileInfo model : models) {
+            final String text = model.getFileName().toLowerCase();
+            if (text.contains(query)) {
+                filteredModelList.add(model);
+            }
+        }
+        return filteredModelList;
     }
 
 
@@ -374,12 +450,14 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
             case R.id.action_view_list:
                 if (mViewMode != FileConstants.KEY_LISTVIEW) {
                     mViewMode = FileConstants.KEY_LISTVIEW;
+                    preference.savePrefs(getActivity(), mViewMode);
                     switchView();
                 }
                 break;
             case R.id.action_view_grid:
                 if (mViewMode != FileConstants.KEY_GRIDVIEW) {
                     mViewMode = FileConstants.KEY_GRIDVIEW;
+                    preference.savePrefs(getActivity(), mViewMode);
                     switchView();
                 }
                 break;

@@ -1,0 +1,44 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/pref_category_general"/>
+
+    <ListPreference
+        android:defaultValue="0"
+        android:entries="@array/pref_themes"
+        android:entryValues="@array/pref_themes_values"
+        android:key="prefThemes"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_theme"/>
+
+    <CheckBoxPreference android:title="@string/pref_title_show_hidden"
+        android:key="prefHidden"/>
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="prefDualPane"
+        android:title="@string/pref_title_disable_dual"/>
+
+    <Preference
+        android:key="prefsReset"
+        android:title="@string/pref_title_reset_fav"/>
+
+    <Preference
+        android:key="prefsUpdate"
+        android:title="@string/pref_title_check_update"
+        android:id="@+id/preference"/>
+
+    <Preference
+        android:key="prefsPro"
+        android:title="@string/pref_title_upgrade"/>
+
+    <Preference
+        android:key="prefsVersion"
+        android:title="@string/pref_title_version"/>
+
+    <Preference
+        android:summary="@string/prefs_summary_dev"
+        android:title="@string/pref_title_about"/>
+
+
+</PreferenceScreen>

@@ -11,4 +11,8 @@
     <color name="whiteOverlay">#F3F3F3</color>
     <color name="fabButtonText">#727272</color>
 
+    <color name="color_light_bg">#fafafa</color>
+    <color name="color_dark_bg">#0b0a0a</color>
+
+
 </resources>

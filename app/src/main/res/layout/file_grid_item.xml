@@ -22,9 +22,9 @@
         android:layout_below="@+id/imageIcon"
         android:layout_marginLeft="@dimen/drawer_item_margin"
         android:layout_marginTop="4dp"
-        android:maxLines="1"
         android:ellipsize="end"
         android:gravity="center"
+        android:maxLines="1"
         android:textSize="14sp"/>
 
     <!-- This will be no of files for directory & size for file -->

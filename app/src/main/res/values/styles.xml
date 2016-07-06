@@ -37,4 +37,20 @@
         <item name="android:background">@drawable/fab_background</item>
         <item name="android:textColor">@color/fabButtonText</item>
     </style>
+
+    <style name="SettingsTheme.AppCompat" parent="Theme.AppCompat.Light.NoActionBar">
+        <!--<item name="android:actionBarStyle">@style/MyActionBar</item>-->
+        <item name="android:listDivider">@null</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    </style>
+
+    <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
+
+    <style name="ToolbarTheme" parent="Theme.AppCompat.Light">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    </style>
+
 </resources>

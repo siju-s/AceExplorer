@@ -15,13 +15,13 @@ import java.util.List;
  * Created by Siju on 27-06-2016.
  */
 
-public class SharedPreference {
+public class SharedPreferenceWrapper {
 
     public static final String PREFS_NAME = "PREFS";
     public static final String FAVORITES = "Product_Favorite";
     public static final String PREFS_VIEW_MODE = "view-mode";
 
-    public SharedPreference() {
+    public SharedPreferenceWrapper() {
         super();
     }
 

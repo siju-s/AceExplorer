@@ -77,6 +77,12 @@
                 <data android:pathPattern=".*\..*\..*\..*\..*\..*\..*\..*\..*\.zip.*"/>
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".settings.SettingsActivity"
+            android:label="@string/action_settings"
+            android:theme="@style/SettingsTheme.AppCompat"
+            />
     </application>
 
 </manifest>

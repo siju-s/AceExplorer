@@ -277,8 +277,8 @@ public class FileUtils {
         intent.setDataAndType(uri, mimeType);
         PackageManager packageManager = context.getPackageManager();
         if (intent.resolveActivity(packageManager) != null) {
-            Intent chooser = Intent.createChooser(intent, context.getString(R.string.msg_open_file));
-            context.startActivity(chooser);
+//            Intent chooser = Intent.createChooser(intent, context.getString(R.string.msg_open_file));
+            context.startActivity(intent);
         } else {
             showMessage(context, context.getString(R.string.msg_error_not_supported));
         }

@@ -28,6 +28,8 @@
     <dimen name="dialog_paste_conflict">300dp</dimen>
     <dimen name="dialog_file_info">300dp</dimen>
 
+    <integer name="grid_columns">4</integer>
+
 
 
 

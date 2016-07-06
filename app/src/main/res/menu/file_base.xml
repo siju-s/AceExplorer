@@ -8,6 +8,11 @@
             android:title="@string/action_paste"
             android:visible="false"
             app:showAsAction="ifRoom"/>-->
+
+    <item android:id="@+id/action_search"
+          android:title="@string/action_search"
+          app:actionViewClass="android.support.v7.widget.SearchView"
+          app:showAsAction="always"/>
     <item
         android:id="@+id/action_view"
         android:title="@string/action_view"

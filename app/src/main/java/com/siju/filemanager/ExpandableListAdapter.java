@@ -162,6 +162,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return false;
     }
 
+    /**
+     * To make Child clickable
+     * @param groupPosition
+     * @param childPosition
+     * @return
+     */
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;

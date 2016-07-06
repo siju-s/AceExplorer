@@ -116,6 +116,24 @@
     <string name="extract">Extract</string>
     <string name="dialog_title_browse">Choose folder</string>
     <string name="action_select_all">Select All</string>
+    <string name="delete_fav">Delete favourite</string>
+    <string name="action_search">Search</string>
+    <string name="pref_category_general">GENERAL</string>
+    <string name="pref_title_theme">Theme</string>
+    <string name="pref_subs_light">Light</string>
+    <string name="pref_subs_dark">Dark</string>
+    <string name="pref_title_reset_fav">Reset favourites</string>
+    <string name="pref_title_show_hidden">Show Hidden Files</string>
+    <string name="pref_title_disable_dual">Dual pane in Landscape</string>
+    <string name="pref_title_check_update">Check for updates</string>
+    <string name="pref_title_change_lang">Change language</string>
+    <string name="pref_title_upgrade">Upgrade to Pro</string>
+    <string name="pref_title_donate">Donate</string>
+    <string name="pref_title_about">About Us</string>
+    <string name="pref_title_version">Version</string>
+
+
+    <string name="prefs_summary_dev">Developer : Siju</string>
 
 
 </resources>
