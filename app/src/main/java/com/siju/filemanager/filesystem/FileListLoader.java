@@ -163,6 +163,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         switch (mCategory) {
             case 0:
                 fetchFiles();
+//                testFetchFiles();
                 break;
             case 1:
                 fetchMusic();
@@ -264,6 +265,49 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
 
     }
+
+
+    private ArrayList<FileInfo> testFetchFiles() {
+        Uri uri = MediaStore.Files.getContentUri("external");
+
+        String selection = MediaStore.Files.FileColumns.DATA + " =? ";
+        String [] selectionArgs =  new String[] {mPath};
+
+
+        String sortOrder = MediaStore.Files.FileColumns.TITLE;
+        Cursor cursor = mContext.getContentResolver().query(uri, null, selection, selectionArgs, sortOrder);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+//                int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.TITLE);
+                int sizeIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.SIZE);
+                int dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_MODIFIED);
+                int fileIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID);
+                int pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA);
+
+//                String fileName = cursor.getString(titleIndex);
+                long size1 = cursor.getLong(sizeIndex);
+                long date1 = cursor.getLong(dateIndex);
+                long fileId = cursor.getLong(fileIdIndex);
+                String path = cursor.getString(pathIndex);
+                int type = FileConstants.CATEGORY.DOCS.getValue();
+                String date = FileUtils.convertDate(date1 * 1000); // converting it to ms
+                String size = Formatter.formatFileSize(mContext, size1);
+                String extension = path.substring(path.lastIndexOf(".") + 1);
+                String fileName = path.substring(path.lastIndexOf("/") + 1, path.length());
+                String[] tokens = fileName.split("\\.(?=[^\\.]+$)");
+                fileName = tokens[0];
+//                String extension = tokens[1];
+                String nameWithExt = fileName + "." + extension;
+                fileInfoList.add(new FileInfo(fileId, nameWithExt, path, date, size, type, extension));
+
+            } while (cursor.moveToNext());
+            cursor.close();
+        } else {
+            return null;
+        }
+        return fileInfoList;
+    }
+
 
     private ArrayList<FileInfo> fetchZipContent() {
         try {

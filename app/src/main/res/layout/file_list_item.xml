@@ -2,8 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
-    >
+                android:padding="5dp">
 
 
     <ImageView
@@ -60,6 +59,7 @@
         android:layout_alignEnd="@+id/imageIcon"
         android:layout_alignRight="@+id/imageIcon"
         android:layout_alignTop="@+id/textSecondLine"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop"
+        android:visibility="gone"/>
 
 </RelativeLayout>

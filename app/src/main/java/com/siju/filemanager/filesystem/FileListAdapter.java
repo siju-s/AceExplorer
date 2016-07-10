@@ -2,16 +2,23 @@ package com.siju.filemanager.filesystem;
 
 import android.content.ContentUris;
 import android.content.Context;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -35,6 +42,8 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     private ArrayList<FileInfo> mSelectedFileList;
     OnItemClickListener mItemClickListener;
     OnItemLongClickListener mOnItemLongClickListener;
+    OnItemTouchListener mOnItemTouchListener;
+
     private int mCategory;
     private Uri mAudioUri = Uri.parse("content://media/external/audio/albumart");
     private Uri mImageUri = Uri.parse("content://media/external/images/albumart");
@@ -67,12 +76,20 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         void onItemLongClick(View view, int position);
     }
 
+    public interface OnItemTouchListener{
+        void onItemTouch(View view, int position,MotionEvent event);
+    }
+
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
         this.mItemClickListener = mItemClickListener;
     }
 
     public void setOnItemLongClickListener(final OnItemLongClickListener mItemClickListener) {
         this.mOnItemLongClickListener = mItemClickListener;
+    }
+
+    public void setOnItemTouchListener(final OnItemTouchListener mItemTouchListener) {
+        this.mOnItemTouchListener = mItemTouchListener;
     }
 
     @Override
@@ -127,19 +144,14 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
                     fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_folder_white);
                     Drawable apkIcon = FileUtils.getAppIconForFolder(mContext, fileName);
                     if (apkIcon != null) {
+                        fileListViewHolder.imageThumbIcon.setVisibility(View.VISIBLE);
                         fileListViewHolder.imageThumbIcon.setImageDrawable(apkIcon);
                     } else {
+                        fileListViewHolder.imageThumbIcon.setVisibility(View.GONE);
                         fileListViewHolder.imageThumbIcon.setImageDrawable(null);
                     }
 
                 } else {
-                    String extension = fileInfoArrayList.get(position).getExtension();
-                    if (extension.equals(FileConstants.APK_EXTENSION)) {
-                        Drawable apkIcon = FileUtils.getAppIcon(mContext, filePath);
-                        fileListViewHolder.imageIcon.setImageDrawable(apkIcon);
-                    } else {
-                        changeFileIcon(fileListViewHolder, extension);
-                    }
                     int type = fileInfoArrayList.get(position).getType();
                     // If Image or Video file, load thumbnail
                     if (type == FileConstants.CATEGORY.IMAGE.getValue() ||
@@ -150,8 +162,20 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
                                 .crossFade(2)
                                 .into(fileListViewHolder.imageIcon);
 
-                    }
+                    } else if (type == FileConstants.CATEGORY.AUDIO.getValue()) {
+                        displayAudioAlbumArt(fileListViewHolder, fileInfoArrayList.get(position)
+                                .getFilePath());
+                    } else {
 
+                        String extension = fileInfoArrayList.get(position).getExtension();
+                        if (extension.equals(FileConstants.APK_EXTENSION)) {
+                            Drawable apkIcon = FileUtils.getAppIcon(mContext, filePath);
+                            fileListViewHolder.imageIcon.setImageDrawable(apkIcon);
+                        } else {
+                            changeFileIcon(fileListViewHolder, extension);
+                        }
+
+                    }
                 }
                 break;
             case 1:
@@ -211,12 +235,65 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
                 break;
             case FileConstants.EXT_ZIP:
                 fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_file_zip);
+                break;
             default:
                 fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_doc_white);
                 break;
         }
     }
 
+    private void displayAudioAlbumArt(FileListViewHolder fileListViewHolder, String path) {
+//        Uri uri = ContentUris.withAppendedId(mAudioUri, fileInfoArrayList.get(position).getBucketId());
+        Uri audioUri = Uri.fromFile(new File(path));
+
+        MediaMetadataRetriever myRetriever = new MediaMetadataRetriever();
+        myRetriever.setDataSource(mContext, audioUri);
+
+        byte[] artwork;
+
+
+
+        artwork = myRetriever.getEmbeddedPicture();
+        Glide.with(mContext).load(artwork).centerCrop()
+                .placeholder(R.drawable.ic_music)
+                .crossFade(2)
+                .into(fileListViewHolder.imageIcon);
+
+
+
+
+       /* if (artwork != null) {
+            Bitmap bMap = BitmapFactory.decodeByteArray(artwork, 0, artwork.length);
+            fileListViewHolder.imageIcon.setImageBitmap(bMap);
+        } else {
+            fileListViewHolder.imageIcon.setImageBitmap(null);*/
+//        }
+
+
+
+       /* String projection[] = { MediaStore.Audio.Media.ALBUM_ID };
+        String selection = MediaStore.Audio.Media.DATA + " = ? ";
+        String selectionArgs[] = new String[]{path};
+
+        Cursor cursor = mContext.getContentResolver().query(mAudioUri, projection,
+                selection,
+                selectionArgs, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                int albumIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID);
+                long albumId = cursor.getLong(albumIdIndex);
+                Uri uri = ContentUris.withAppendedId(mAudioUri, albumId);
+
+                Glide.with(mContext).loadFromMediaStore(uri)
+                        .centerCrop()
+                        .placeholder(R.drawable.ic_music)
+                        .crossFade(2)
+                        .into(fileListViewHolder.imageIcon);
+
+            } while (cursor.moveToNext());
+            cursor.close();
+        }*/
+    }
 
     public void toggleSelection(int position) {
         selectView(position, !mSelectedItemsIds.get(position));
@@ -338,7 +415,8 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
 
     class FileListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
-            View.OnLongClickListener {
+            View.OnLongClickListener
+             {
         ImageView imageIcon;
         ImageView imageThumbIcon;
         TextView textFileName;
@@ -357,6 +435,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
             }
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
+//            itemView.setOnTouchListener(this);
 
         }
 
@@ -374,6 +453,14 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
             }
             return true;
         }
+
+       /* @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            if (mOnItemTouchListener != null) {
+                mOnItemTouchListener.onItemTouch(view, getAdapterPosition(),motionEvent);
+            }
+            return true;
+        }*/
     }
 
 

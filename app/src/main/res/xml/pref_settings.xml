@@ -1,44 +1,59 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="@string/pref_category_general"/>
+    <PreferenceCategory
+        android:layout="@layout/prefs_header"
+        android:theme="@style/AppThemeSettings.NoActionBar"
+        android:title="@string/pref_category_general"/>
 
-    <ListPreference
-        android:defaultValue="0"
-        android:entries="@array/pref_themes"
-        android:entryValues="@array/pref_themes_values"
-        android:key="prefThemes"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_title_theme"/>
 
-    <CheckBoxPreference android:title="@string/pref_title_show_hidden"
-        android:key="prefHidden"/>
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/pref_themes"
+            android:entryValues="@array/pref_themes_values"
+            android:key="prefThemes"
+            android:layout="@layout/prefs_settings_item"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_theme"/>
 
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="prefDualPane"
-        android:title="@string/pref_title_disable_dual"/>
+        <CheckBoxPreference
+            android:key="prefHidden"
+            android:layout="@layout/prefs_checkbox"
+            android:title="@string/pref_title_show_hidden"/>
 
-    <Preference
-        android:key="prefsReset"
-        android:title="@string/pref_title_reset_fav"/>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="prefDualPane"
+            android:layout="@layout/prefs_checkbox"
+            android:title="@string/pref_title_disable_dual"/>
 
-    <Preference
-        android:key="prefsUpdate"
-        android:title="@string/pref_title_check_update"
-        android:id="@+id/preference"/>
+        <Preference
+            android:id="@+id/preference2"
+            android:key="prefsReset"
+            android:layout="@layout/prefs_settings_item"
+            android:title="@string/pref_title_reset_fav"/>
+        <Preference
+            android:id="@+id/preference"
+            android:key="prefsUpdate"
+            android:layout="@layout/prefs_settings_item"
+            android:title="@string/pref_title_check_update"/>
+        <Preference
+            android:id="@+id/preference4"
+            android:key="prefsPro"
+            android:layout="@layout/prefs_settings_item"
+            android:title="@string/pref_title_upgrade"/>
 
-    <Preference
-        android:key="prefsPro"
-        android:title="@string/pref_title_upgrade"/>
+        <Preference
+            android:id="@+id/preference5"
+            android:key="prefsVersion"
+            android:layout="@layout/prefs_settings_item"
+            android:title="@string/pref_title_version"/>
 
-    <Preference
-        android:key="prefsVersion"
-        android:title="@string/pref_title_version"/>
-
-    <Preference
-        android:summary="@string/prefs_summary_dev"
-        android:title="@string/pref_title_about"/>
+        <Preference
+            android:id="@+id/preference3"
+            android:layout="@layout/prefs_settings_item"
+            android:summary="@string/prefs_summary_dev"
+            android:title="@string/pref_title_about"/>
 
 
 </PreferenceScreen>

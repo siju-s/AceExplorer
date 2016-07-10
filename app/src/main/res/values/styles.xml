@@ -12,7 +12,14 @@
         <item name="actionModeBackground">@color/colorPrimary</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
+
+    <style name="AppThemeSettings" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+    <style name="AppThemeSettings.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
@@ -41,16 +48,31 @@
     <style name="SettingsTheme.AppCompat" parent="Theme.AppCompat.Light.NoActionBar">
         <!--<item name="android:actionBarStyle">@style/MyActionBar</item>-->
         <item name="android:listDivider">@null</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+
     </style>
 
     <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
         <item name="android:background">@color/colorPrimary</item>
     </style>
 
-    <style name="ToolbarTheme" parent="Theme.AppCompat.Light">
+    <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorControlNormal">@color/white</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    </style>
+
+
+    <style name="AppTheme.SettingsTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="titleTextStyle">@color/text_settings_list</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlNormal">#ffffffff</item>
+        <item name="android:listDivider">@null</item>
+    </style>
+
+    <style name="AppTheme.SettingsTheme.Toolbar" parent="AppTheme.SettingsTheme">
+        <item name="android:textColorPrimary">#ffffffff</item>
     </style>
 
 </resources>

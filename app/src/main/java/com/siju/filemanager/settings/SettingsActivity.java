@@ -4,10 +4,12 @@ package com.siju.filemanager.settings;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -37,21 +39,33 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pref_holder);
         mRelativeLayoutSettings = (RelativeLayout) findViewById(R.id.relativeLayoutSettings);
-        setupActionBar();
+//        setupActionBar();
         // Display the fragment as the main content.
+        setupActionBar();
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsPreferenceFragment())
                 .commit();
+
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+
     }
 
     /**
      * Set up the {@link android.app.ActionBar}, if the API is available.
      */
     private void setupActionBar() {
+        AppBarLayout bar;
         LinearLayout root = (LinearLayout) findViewById(android.R.id.list).getParent().getParent().getParent();
-        Toolbar toolbar = (Toolbar) LayoutInflater.from(this).inflate(R.layout.toolbar, root,
+        bar = (AppBarLayout) LayoutInflater.from(this).inflate(R.layout.toolbar, root,
                 false);
-        root.addView(toolbar, 0); // insert at top
+        root.addView(bar, 0); // insert at top
+        Toolbar toolbar = (Toolbar) bar.getChildAt(0);
+
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
 
@@ -59,24 +73,39 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         if (actionBar != null) {
             // Show the Up button in the action bar.
-    /*        actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color
-                    .colorPrimary)));*/
+            //*        actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color
+//                    .colorPrimary)));*//*
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
+
 
     void setApplicationTheme(int theme) {
         if (mIsTheme != theme) {
             mIsTheme = theme;
             if (theme == THEME_LIGHT) {
+        /*        getListView().setBackgroundColor(ContextCompat.getColor(this, R.color
+                        .color_light_bg));*/
                 mRelativeLayoutSettings.setBackgroundColor(ContextCompat.getColor(this, R.color
                         .color_light_bg));
             } else if (theme == THEME_DARK) {
+         /*       getListView().setBackgroundColor(ContextCompat.getColor(this, R.color
+                        .color_dark_bg));*/
                 mRelativeLayoutSettings.setBackgroundColor(ContextCompat.getColor(this, R.color.color_dark_bg));
 
             }
         }
     }
+
+/*    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+           finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }*/
 
 
 }

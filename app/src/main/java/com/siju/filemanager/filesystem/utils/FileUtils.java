@@ -198,12 +198,15 @@ public class FileUtils {
                         count++;
                         outputStream.write(data, 0, read);
                         double value1 = (double) BUFFER / size;
-                        progress1 = (int) (value1 * count * 100);
-                        if (tempProgress != progress1) {
-                            tempProgress = progress1;
-                            progress.publish(tempProgress);
+                        if (progress != null) {
+                            progress1 = (int) (value1 * count * 100);
+                            if (tempProgress != progress1) {
+                                tempProgress = progress1;
+                                progress.publish(tempProgress);
 //                            System.out.println("Progress==" + progress1 + "File=" + file_name);
+                            }
                         }
+
 
 
                     }

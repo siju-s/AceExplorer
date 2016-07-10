@@ -134,6 +134,10 @@
 
 
     <string name="prefs_summary_dev">Developer : Siju</string>
+    <string name="hide">Hide</string>
+    <string name="more">more</string>
+    <string name="drag">Drag</string>
+    <string name="move">Move</string>
 
 
 </resources>

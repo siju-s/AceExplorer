@@ -1,35 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+      xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
     <item
         android:id="@+id/action_rename"
         android:icon="@drawable/ic_rename_white"
         android:title="@string/action_rename"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_info"
         android:icon="@drawable/ic_info_white"
         android:title="@string/action_info"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_archive"
         android:icon="@drawable/ic_archive"
         android:title="@string/action_archive"
-        app:showAsAction="never" />
+        app:showAsAction="never"/>
 
     <item
         android:id="@+id/action_extract"
         android:title="@string/extract_to"
         android:visible="false"
-        app:showAsAction="never" />
+        app:showAsAction="never"/>
 
     <item
         android:id="@+id/action_fav"
         android:icon="@drawable/ic_bookmark_black"
         android:title="@string/add_fav"
-        app:showAsAction="never" />
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_hide"
+        android:title="@string/hide"
+        app:showAsAction="never"/>
 </menu>

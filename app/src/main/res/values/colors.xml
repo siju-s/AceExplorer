@@ -9,10 +9,12 @@
     <color name="actionModeItemSelected">#33800080</color>
     <color name="white">#ffffff</color>
     <color name="whiteOverlay">#F3F3F3</color>
+    <color name="whiteOverlayDual">#80F3F3F3</color>
+
     <color name="fabButtonText">#727272</color>
 
-    <color name="color_light_bg">#fafafa</color>
-    <color name="color_dark_bg">#0b0a0a</color>
-
+    <color name="color_light_bg">#e6ebed</color>
+    <color name="color_dark_bg">#161b1e</color>
+    <color name="text_settings_list">#5d6a77</color>
 
 </resources>

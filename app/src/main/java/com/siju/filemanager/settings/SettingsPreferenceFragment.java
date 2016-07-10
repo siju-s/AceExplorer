@@ -13,6 +13,7 @@ import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 
@@ -22,6 +23,7 @@ import android.util.DisplayMetrics;
 import android.view.MenuItem;
 
 import com.siju.filemanager.R;
+import com.siju.filemanager.common.Logger;
 import com.siju.filemanager.utils.LocaleHelper;
 
 import java.util.Locale;
@@ -61,6 +63,16 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         updatePreference = findPreference(PREFS_UPDATE);
 
         Preference version = findPreference(PREFS_VERSION);
+
+        CheckBoxPreference preference = (CheckBoxPreference)findPreference("prefDualPane");
+        preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                String value = o.toString();
+                Logger.log("Settings","Dualpane="+value);
+                return true;
+            }
+        });
 
         try {
             version.setSummary(getActivity().getPackageManager()

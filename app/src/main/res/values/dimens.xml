@@ -29,6 +29,7 @@
     <dimen name="dialog_file_info">300dp</dimen>
 
     <integer name="grid_columns">4</integer>
+    <dimen name="drag_shadow_font">20sp</dimen>
 
 
 

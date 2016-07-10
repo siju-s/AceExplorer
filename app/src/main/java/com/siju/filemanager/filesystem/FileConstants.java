@@ -53,6 +53,14 @@ public class FileConstants {
     public static final String EXT_ZIP = "zip";
     public static final String EXT_IMG = "img";
 
+    public static final String EXT_MP3 = "mp3";
+    public static final String EXT_WAV = "wav";
+    public static final String EXT_AAC = "aac";
+
+    public static final String EXT_MP4 = "mp4";
+    public static final String EXT_FLV = "flv";
+
+
 
 
 
