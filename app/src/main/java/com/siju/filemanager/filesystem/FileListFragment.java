@@ -6,10 +6,13 @@ import android.content.ClipDescription;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -18,6 +21,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -27,6 +31,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
@@ -65,16 +70,20 @@ import java.util.Collections;
 
 import static android.R.attr.action;
 import static android.R.attr.data;
+import static android.R.attr.width;
 import static android.R.attr.x;
+import static android.R.attr.y;
 import static android.R.id.list;
 import static android.content.ClipData.newPlainText;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 import static android.media.CamcorderProfile.get;
 import static com.siju.filemanager.BaseActivity.ACTION_VIEW_MODE;
+import static com.siju.filemanager.R.id.buttonCount;
 import static com.siju.filemanager.R.id.buttonExtract;
 import static com.siju.filemanager.R.id.radioGroupPath;
 import static com.siju.filemanager.R.id.textEmpty;
 import static com.siju.filemanager.R.id.textPathSelect;
+import static java.lang.System.currentTimeMillis;
 
 
 /**
@@ -107,6 +116,8 @@ public class FileListFragment extends Fragment implements LoaderManager
     private SearchView mSearchView;
     private boolean mStartDrag;
     private GestureDetectorCompat gestureDetector;
+    private long mLongPressedTime;
+    private boolean mIsDragInProgress;
 
 
     @Override
@@ -129,7 +140,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                 .getBoolean(FileConstants.PREFS_DUAL_PANE, false);
 
         Bundle args = new Bundle();
-        String fileName;
+        final String fileName;
 
         if (getArguments() != null) {
             if (getArguments().getString(FileConstants.KEY_PATH) != null) {
@@ -176,18 +187,19 @@ public class FileListFragment extends Fragment implements LoaderManager
                 }
             }
         });
-
         fileListAdapter.setOnItemLongClickListener(new FileListAdapter.OnItemLongClickListener() {
             @Override
             public void onItemLongClick(View view, int position) {
-                Logger.log("TAG", "On long click"+mStartDrag);
+                Logger.log("TAG", "On long click" + mStartDrag);
                 itemClickActionMode(position);
+                mLongPressedTime = System.currentTimeMillis();
 
                 if (((BaseActivity) getActivity()).getActionMode() != null && fileListAdapter
-                        .getSelectedCount() >= 1 ) {
-//                    mStartDrag = true;
+                        .getSelectedCount() >= 1) {
+                    mStartDrag = true;
+
 //                    Logger.log("TAG", "On long click drag");
-/*                    Intent intent = new Intent();
+     /*               Intent intent = new Intent();
 
                     intent.putExtra(FileConstants.KEY_PATH, fileInfoList.get(position).getFilePath());
                     ClipData data = ClipData.newIntent("", intent);
@@ -209,9 +221,9 @@ public class FileListFragment extends Fragment implements LoaderManager
             }
         });
 
-/*        fileListAdapter.setOnItemTouchListener(new FileListAdapter.OnItemTouchListener() {
+ /*      fileListAdapter.setOnItemTouchListener(new FileListAdapter.OnItemTouchListener() {
             @Override
-            public void onItemTouch(View view, int position, MotionEvent event) {
+            public boolean onItemTouch(View view, int position, MotionEvent event) {
                 Logger.log("TAG", "On item touch");
                 if (mStartDrag && event.getAction() == MotionEvent.ACTION_DOWN) {
                     Logger.log("TAG", "On item touch inside");
@@ -228,40 +240,65 @@ public class FileListFragment extends Fragment implements LoaderManager
 
                     View.DragShadowBuilder shadowBuilder = new MyDragShadowBuilder(view, count);
                     view.startDrag(data, shadowBuilder, view, 0);
+                    return true;
                 }
+                return true;
             }
         });*/
 
-/*        recyclerViewFileList.setOnTouchListener(new View.OnTouchListener() {
+        recyclerViewFileList.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-//                Logger.log("TAG", "On item touch"+ motionEvent.getActionMasked());
+                int event = motionEvent.getActionMasked();
 
-                if (mStartDrag) {
+                long timeElapsed = System.currentTimeMillis() - mLongPressedTime;
+                Logger.log("TAG", "On item touch time Elapsed" + timeElapsed);
+                if (mStartDrag && event == MotionEvent.ACTION_MOVE && mLongPressedTime != 0) {
 
-                    if (gestureDetector.onTouchEvent(motionEvent)) {
+                    if (timeElapsed > 1000) {
+                        mLongPressedTime = 0;
+                        mStartDrag = false;
+
+                        View top = recyclerViewFileList.findChildViewUnder(motionEvent.getX(), motionEvent.getY());
+                        int position = recyclerViewFileList.getChildAdapterPosition(top);
+
+                        Intent intent = new Intent();
+
+                        intent.putExtra(FileConstants.KEY_PATH, fileInfoList.get(position).getFilePath());
+                        ClipData data = ClipData.newIntent("", intent);
+                        int count = fileListAdapter
+                                .getSelectedCount();
+                        View.DragShadowBuilder shadowBuilder = new MyDragShadowBuilder(view, count);
+                        view.startDrag(data, shadowBuilder, view, 0);
+//                    LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//                    View view1 = inflater.inflate(R.layout.drag_shadow, null);
+//                    Button buttonCount = (Button) view1.findViewById(R.id.buttonCount);
+                        //                    textView.setLayoutParams(new LinearLayout.LayoutParams(100,100));
+//                    buttonCount.setText("" + count);
+
+
+                /*    if (gestureDetector.onTouchEvent(motionEvent)) {
                         Logger.log("TAG", "On item touch inside");
                         return false;
+                    }*/
                     }
-                   }
-                return true;
+                }
+                return false;
 //                return false;
             }
-        });*/
-
-
-
+        });
 
 
     }
+
 
     private void initializeViews() {
         recyclerViewFileList = (RecyclerView) root.findViewById(R.id.recyclerViewFileList);
         mTextEmpty = (TextView) root.findViewById(textEmpty);
         preference = new SharedPreferenceWrapper();
-//        recyclerViewFileList.setOnDragListener(new myDragEventListener());
-        /*gestureDetector = new GestureDetectorCompat(getActivity(),
-                new GestureListener());*/
+        recyclerViewFileList.setOnDragListener(new myDragEventListener());
+        gestureDetector = new GestureDetectorCompat(getActivity(),
+                new GestureListener());
 
     }
 
@@ -325,7 +362,6 @@ public class FileListFragment extends Fragment implements LoaderManager
 
         }
     }
-
 
 
     private void itemClickActionMode(int position) {
@@ -408,6 +444,9 @@ public class FileListFragment extends Fragment implements LoaderManager
                 recyclerViewFileList.setItemAnimator(new DefaultItemAnimator());
                 recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
                         .VERTICAL));
+         /*       ItemTouchHelper.Callback callback = new SimpleItemTouchHelper();
+                ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(callback);
+                mItemTouchHelper.attachToRecyclerView(recyclerViewFileList);*/
 
                 ((BaseActivity) getActivity()).setFileListAdapter(fileListAdapter);
 
@@ -424,7 +463,37 @@ public class FileListFragment extends Fragment implements LoaderManager
     @Override
     public void onLoaderReset(Loader<ArrayList<FileInfo>> loader) {
 
-}
+    }
+
+
+    public BitmapDrawable writeOnDrawable(String text) {
+
+//        Bitmap bm = BitmapFactory.decodeResource(getResources(), drawableId).copy(Bitmap.Config.ARGB_8888, true);
+        Bitmap bm = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888);
+        bm.eraseColor(ContextCompat.getColor(getActivity(), R.color.colorPrimary));
+
+        Paint paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+        paint.setAntiAlias(true);
+        paint.setColor(Color.BLACK);
+        int countFont = getResources()
+                .getDimensionPixelSize(R.dimen.drag_shadow_font);
+        paint.setTextSize(countFont);
+
+        Canvas canvas = new Canvas(bm);
+        int strLength = (int) paint.measureText(text);
+        int x = bm.getWidth()/2 - strLength;
+
+        // int y = s.titleOffset;
+        int y = (bm.getHeight() - countFont) / 2;
+//        drawText(canvas, x, y, title, labelWidth - s.leftMargin - x
+//                - s.titleRightMargin, mTitlePaint);
+
+        canvas.drawText(text, x, y - paint.getFontMetricsInt().ascent, paint);
+//        canvas.drawText(text, bm.getWidth() / 2, bm.getHeight() / 2, paint);
+
+        return new BitmapDrawable(getActivity().getResources(), bm);
+    }
 
     public class GestureListener extends GestureDetector.SimpleOnGestureListener {
 
@@ -436,7 +505,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         public boolean onFling(
                 MotionEvent e1, MotionEvent e2, float velocityX,
                 float velocityY) {
-            Logger.log("TAG","Gesture --e1="+e1+"e2=="+e2);
+            Logger.log("TAG", "Gesture --e1=" + e1 + "e2==" + e2);
        /*     if (e1==null)
                 e1 = mLastOnDownEvent;
             if (e1==null || e2==null)
@@ -445,22 +514,22 @@ public class FileListFragment extends Fragment implements LoaderManager
                     && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {*/
 
 
-                Intent intent = new Intent();
+            Intent intent = new Intent();
 
-                intent.putExtra(FileConstants.KEY_PATH, fileInfoList.get(0).getFilePath());
-                ClipData data = ClipData.newIntent("", intent);
-                int count = fileListAdapter
-                        .getSelectedCount();
-                LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View view1 = inflater.inflate(R.layout.drag_shadow, null);
-                Button buttonCount = (Button) view1.findViewById(R.id.buttonCount);
-                //                    textView.setLayoutParams(new LinearLayout.LayoutParams(100,100));
-                buttonCount.setText("" + count);
+            intent.putExtra(FileConstants.KEY_PATH, fileInfoList.get(0).getFilePath());
+            ClipData data = ClipData.newIntent("", intent);
+            int count = fileListAdapter
+                    .getSelectedCount();
+            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view1 = inflater.inflate(R.layout.drag_shadow, null);
+//            Button buttonCount = (Button) view1.findViewById(buttonCount);
+            //                    textView.setLayoutParams(new LinearLayout.LayoutParams(100,100));
+//            buttonCount.setText("" + count);
 
 //                View.DragShadowBuilder shadowBuilder = new MyDragShadowBuilder(view, count);
 //                view.startDrag(data, shadowBuilder, view, 0);
 
-                return true;
+            return true;
 //            }
 //            return false;
 
@@ -473,16 +542,16 @@ public class FileListFragment extends Fragment implements LoaderManager
             // if this returns false, the framework won't try to pick up onFling
             // for example.
             mLastOnDownEvent = e;
-            Logger.log("TAG","Gesture ondown");
+            Logger.log("TAG", "Gesture ondown");
             return true;
         }
 
     }
 
-    private  class MyDragShadowBuilder extends View.DragShadowBuilder {
+    private class MyDragShadowBuilder extends View.DragShadowBuilder {
 
         // The drag shadow image, defined as a drawable thing
-        private  Drawable shadow;
+        private Drawable shadow;
         private Point mScaleFactor;
 
         // Defines the constructor for myDragShadowBuilder
@@ -495,7 +564,8 @@ public class FileListFragment extends Fragment implements LoaderManager
 //            shadow = v
 //            shadow = new TextDrawable(getActivity(),"ABCDDDDDDDDDDDDDDDDDD");
 
-            shadow = new ColorDrawable(Color.LTGRAY);
+//            shadow = new ColorDrawable(Color.LTGRAY);
+            shadow = writeOnDrawable("" + count);
             //ColorDrawable(Color.RED);
 
         }
@@ -508,12 +578,12 @@ public class FileListFragment extends Fragment implements LoaderManager
             int width, height;
 
             // Sets the width of the shadow to half the width of the original View
-            width = getView().getWidth() / 4;
+            width = getView().getWidth() / 6;
 //            width = 100;
             Log.d("TAG", "width=" + width);
 
             // Sets the height of the shadow to half the height of the original View
-            height = getView().getHeight() / 4;
+            height = getView().getHeight() / 6;
 //            height = 100;
 
             Log.d("TAG", "height=" + height);
@@ -606,6 +676,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                 case DragEvent.ACTION_DRAG_STARTED:
 
                     Log.d("TAG", "DRag started");
+                    mIsDragInProgress = true;
 
                     // Determines if this View can accept the dragged data
                     if (event.getClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_INTENT)) {
@@ -651,7 +722,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
                 case DragEvent.ACTION_DRAG_EXITED:
                     Log.d("TAG", "DRag exit");
-
+                    mIsDragInProgress = false;
 
                     // Re-sets the color tint to blue. Returns true; the return value is ignored.
 //                    v.setColorFilter(Color.BLUE);
@@ -675,8 +746,11 @@ public class FileListFragment extends Fragment implements LoaderManager
                     Intent dragData = item.getIntent();
                     String path = dragData.getStringExtra(FileConstants.KEY_PATH);
                     String destinationDir = fileInfoList.get(position).getFilePath();
+                    Logger.log("TAG", "Source=" + path + "Dest=" + destinationDir);
+                    if (!destinationDir.equals(path)) {
 
-                    showDragDialog(path, destinationDir);
+                        showDragDialog(path, destinationDir);
+                    }
                     // Displays a message containing the dragged data.
                     Toast.makeText(getActivity(), "Dragged data is " + path, Toast
                             .LENGTH_LONG);
@@ -686,7 +760,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 //                    v.clearColorFilter();
 
                     // Invalidates the view to force a redraw
-                    v.invalidate();
+//                    v.invalidate();
 
                     // Returns true. DragEvent.getResult() will return true.
                     return true;
@@ -694,6 +768,8 @@ public class FileListFragment extends Fragment implements LoaderManager
                 case DragEvent.ACTION_DRAG_ENDED:
 
                     Log.d("TAG", "DRag end");
+                    mIsDragInProgress = false;
+
 
                     // Turns off any color tinting
 //                    v.clearColorFilter();

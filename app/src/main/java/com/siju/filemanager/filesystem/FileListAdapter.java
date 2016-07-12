@@ -76,8 +76,8 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         void onItemLongClick(View view, int position);
     }
 
-    public interface OnItemTouchListener{
-        void onItemTouch(View view, int position,MotionEvent event);
+    public interface OnItemTouchListener {
+        boolean onItemTouch(View view, int position, MotionEvent event);
     }
 
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
@@ -252,7 +252,6 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         byte[] artwork;
 
 
-
         artwork = myRetriever.getEmbeddedPicture();
         Glide.with(mContext).load(artwork).centerCrop()
                 .placeholder(R.drawable.ic_music)
@@ -415,8 +414,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
 
     class FileListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
-            View.OnLongClickListener
-             {
+            View.OnLongClickListener {
         ImageView imageIcon;
         ImageView imageThumbIcon;
         TextView textFileName;
@@ -454,7 +452,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
             return true;
         }
 
-       /* @Override
+  /*      @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if (mOnItemTouchListener != null) {
                 mOnItemTouchListener.onItemTouch(view, getAdapterPosition(),motionEvent);
