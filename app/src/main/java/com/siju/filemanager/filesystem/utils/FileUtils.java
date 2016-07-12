@@ -67,7 +67,6 @@ public class FileUtils {
     public static final int ACTION_CANCEL = 4;
 
 
-
     public static File getRootDirectory() {
         return Environment.getRootDirectory();
     }
@@ -208,7 +207,6 @@ public class FileUtils {
                         }
 
 
-
                     }
 //                    if (progress1 != 100) {
 //                        progress.publish(100);
@@ -297,8 +295,7 @@ public class FileUtils {
         intent.setAction(Intent.ACTION_SEND_MULTIPLE);
         if (category == 0) {
             intent.setType("*/*");
-        }
-        else {
+        } else {
             String extension = fileInfo.get(0).getExtension();
             String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
             intent.setType(mimeType);
@@ -316,8 +313,6 @@ public class FileUtils {
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
         context.startActivity(intent);
     }
-
-
 
 
     private final static Comparator<? super String> type = new Comparator<String>() {
@@ -419,7 +414,6 @@ public class FileUtils {
             }
 
 
-
             Long first = getSize(new File(file1.getFilePath()));
             Long second = getSize(new File(file2.getFilePath()));
 
@@ -442,7 +436,7 @@ public class FileUtils {
 
             Long first = getSize(new File(file1.getFilePath()));
             Long second = getSize(new File(file2.getFilePath()));
-            Logger.log("SIJU","Size1="+first+" Size2="+second);
+            Logger.log("SIJU", "Size1=" + first + " Size2=" + second);
 
 
             return second.compareTo(first);
@@ -667,7 +661,12 @@ public class FileUtils {
         File parent = dir.getParentFile();
         String filepath = parent.getAbsolutePath();
         String[] list = dir.list();
-        String name = path.substring(path.lastIndexOf("/"), path.length());
+        String name;
+        if (dir.isDirectory()) {
+            name = path.substring(path.lastIndexOf("/"), path.length());
+        } else {
+            name = path.substring(path.lastIndexOf("/"), path.lastIndexOf("."));
+        }
         String _path;
 
         if (!dir.canRead() || !dir.canWrite())
@@ -1339,7 +1338,6 @@ public class FileUtils {
             return mBitmap;
         }
 */
-
 
 
     public synchronized static void printDebug(String str) {

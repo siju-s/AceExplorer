@@ -1800,15 +1800,21 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             if (mSelectedItemPositions.size() > 1) {
                 mRenameItem.setVisible(false);
                 mInfoItem.setVisible(false);
+                mFavItem.setVisible(false);
 
             } else {
                 mRenameItem.setVisible(true);
                 mInfoItem.setVisible(true);
                 if (mSelectedItemPositions.size() == 1) {
+                    boolean isDirectory = mFileList.get(mSelectedItemPositions.keyAt(0))
+                            .isDirectory();
                     String extension = mFileList.get(mSelectedItemPositions.keyAt(0))
                             .getExtension();
                     if (extension != null && extension.equalsIgnoreCase("zip")) {
                         mExtractItem.setVisible(true);
+                    }
+                    if (!isDirectory) {
+                        mFavItem.setVisible(false);
                     }
                 }
             }

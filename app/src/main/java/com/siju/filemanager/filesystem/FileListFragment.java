@@ -185,7 +185,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
                 if (((BaseActivity) getActivity()).getActionMode() != null && fileListAdapter
                         .getSelectedCount() >= 1 ) {
-                    mStartDrag = true;
+//                    mStartDrag = true;
 //                    Logger.log("TAG", "On long click drag");
 /*                    Intent intent = new Intent();
 
@@ -259,9 +259,9 @@ public class FileListFragment extends Fragment implements LoaderManager
         recyclerViewFileList = (RecyclerView) root.findViewById(R.id.recyclerViewFileList);
         mTextEmpty = (TextView) root.findViewById(textEmpty);
         preference = new SharedPreferenceWrapper();
-        recyclerViewFileList.setOnDragListener(new myDragEventListener());
-        gestureDetector = new GestureDetectorCompat(getActivity(),
-                new GestureListener());
+//        recyclerViewFileList.setOnDragListener(new myDragEventListener());
+        /*gestureDetector = new GestureDetectorCompat(getActivity(),
+                new GestureListener());*/
 
     }
 
