@@ -10,8 +10,10 @@ import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -39,6 +41,8 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     private Context mContext;
     private ArrayList<FileInfo> fileInfoArrayList;
     private SparseBooleanArray mSelectedItemsIds;
+    private SparseBooleanArray mDraggedItemsIds;
+
     private ArrayList<FileInfo> mSelectedFileList;
     OnItemClickListener mItemClickListener;
     OnItemLongClickListener mOnItemLongClickListener;
@@ -49,12 +53,31 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     private Uri mImageUri = Uri.parse("content://media/external/images/albumart");
     private int mViewMode;
     private ArrayList<FileInfo> fileInfoArrayListCopy = new ArrayList<>();
+    private Fragment mFragment;
+    private int draggedPos = -1;
 
 
-    public FileListAdapter(Context mContext, ArrayList<FileInfo> fileInfoArrayList, int category, int viewMode) {
+    public FileListAdapter(Fragment fragment, Context mContext, ArrayList<FileInfo>
+            fileInfoArrayList, int
+                                   category, int viewMode) {
+        this.mFragment = fragment;
         this.mContext = mContext;
         this.fileInfoArrayList = fileInfoArrayList;
         mSelectedItemsIds = new SparseBooleanArray();
+        mDraggedItemsIds = new SparseBooleanArray();
+        mSelectedFileList = new ArrayList<>();
+        mCategory = category;
+        this.mViewMode = viewMode;
+    }
+
+    public FileListAdapter(Context mContext, ArrayList<FileInfo>
+            fileInfoArrayList, int
+                                   category, int viewMode) {
+
+        this.mContext = mContext;
+        this.fileInfoArrayList = fileInfoArrayList;
+        mSelectedItemsIds = new SparseBooleanArray();
+        mDraggedItemsIds = new SparseBooleanArray();
         mSelectedFileList = new ArrayList<>();
         mCategory = category;
         this.mViewMode = viewMode;
@@ -107,9 +130,22 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     @Override
     public void onBindViewHolder(FileListViewHolder fileListViewHolder, int position) {
         //change background color if list item is selected
+//        Log.d("TAG","OnBindviewholder Pos="+position);
+
         int color = ContextCompat.getColor(mContext, R.color.actionModeItemSelected);
+
         fileListViewHolder.itemView.setBackgroundColor(mSelectedItemsIds.get(position) ? color :
                 Color.TRANSPARENT);
+
+        if (!mSelectedItemsIds.get(position)) {
+            if (position == draggedPos) {
+                fileListViewHolder.itemView.setBackgroundColor(color);
+            }
+            else {
+                fileListViewHolder.itemView.setBackgroundColor(Color.TRANSPARENT);
+            }
+        }
+
         setViewByCategory(fileListViewHolder, position);
 
     }
@@ -122,6 +158,16 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         } else {
             return fileInfoArrayList.size();
         }
+    }
+
+    public void setDraggedPos(int pos) {
+        draggedPos = pos;
+        notifyDataSetChanged();
+    }
+
+    public void clearDragPos() {
+        draggedPos = -1;
+        notifyDataSetChanged();
     }
 
     private void setViewByCategory(FileListViewHolder fileListViewHolder, int position) {
@@ -294,9 +340,24 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         }*/
     }
 
-    public void toggleSelection(int position) {
-        selectView(position, !mSelectedItemsIds.get(position));
+    public void toggleSelection(int position,boolean isLongPress) {
+        if (isLongPress) {
+            selectView(position, true);
+        }
+        else {
+            selectView(position, !mSelectedItemsIds.get(position));
+
+        }
     }
+
+
+
+
+    public void toggleDragSelection(int position) {
+        selectDragView(position, !mDraggedItemsIds.get(position));
+    }
+
+
 
     public void toggleSelectAll(int position, boolean selectAll) {
         if (selectAll)
@@ -316,12 +377,33 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
     }
 
+    public void removeDragSelection() {
+        mDraggedItemsIds = new SparseBooleanArray();
+//        mSelectedFileList = new ArrayList<>();
+        notifyDataSetChanged();
+
+    }
+
+
+
     public void selectView(int position, boolean value) {
         if (value) {
             mSelectedItemsIds.put(position, true);
 //            mSelectedFileList.add(fileInfoArrayList.get(position));
         } else {
             mSelectedItemsIds.delete(position);
+
+        }
+
+        notifyDataSetChanged();
+    }
+
+    public void selectDragView(int position, boolean value) {
+        if (value) {
+            mDraggedItemsIds.put(position, true);
+//            mSelectedFileList.add(fileInfoArrayList.get(position));
+        } else {
+            mDraggedItemsIds.delete(position);
 
         }
 
@@ -433,6 +515,10 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
             }
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
+/*            FileListFragment.myDragEventListener dragEventListener = ((FileListFragment)
+                    mFragment).new myDragEventListener();
+
+            itemView.setOnDragListener(dragEventListener);*/
 //            itemView.setOnTouchListener(this);
 
         }

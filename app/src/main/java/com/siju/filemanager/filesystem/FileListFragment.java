@@ -10,8 +10,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -118,6 +121,9 @@ public class FileListFragment extends Fragment implements LoaderManager
     private GestureDetectorCompat gestureDetector;
     private long mLongPressedTime;
     private boolean mIsDragInProgress;
+    private View mItemView;
+    private int mDragInitialPos = -1;
+    private ArrayList<String> mDragPaths = new ArrayList<>();
 
 
     @Override
@@ -157,7 +163,8 @@ public class FileListFragment extends Fragment implements LoaderManager
         Log.d("TAG", "on onActivityCreated--Fragment" + mFilePath);
         Log.d("TAG", "View mode=" + mViewMode);
 
-        fileListAdapter = new FileListAdapter(getContext(), fileInfoList, mCategory, mViewMode);
+        fileListAdapter = new FileListAdapter(FileListFragment.this, getContext(), fileInfoList,
+                mCategory, mViewMode);
         recyclerViewFileList.setAdapter(fileListAdapter);
 
         args.putString(FileConstants.KEY_PATH, mFilePath);
@@ -171,7 +178,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                 if (((BaseActivity) getActivity()).getActionMode() != null) {
                     if (mIsDualActionModeActive) {
                         if (FileListFragment.this instanceof FileListDualFragment) {
-                            itemClickActionMode(position);
+                            itemClickActionMode(position, false);
                         } else {
                             handleCategoryItemClick(position);
                         }
@@ -179,7 +186,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                         if (FileListFragment.this instanceof FileListDualFragment) {
                             handleCategoryItemClick(position);
                         } else {
-                            itemClickActionMode(position);
+                            itemClickActionMode(position, false);
                         }
                     }
                 } else {
@@ -191,100 +198,53 @@ public class FileListFragment extends Fragment implements LoaderManager
             @Override
             public void onItemLongClick(View view, int position) {
                 Logger.log("TAG", "On long click" + mStartDrag);
-                itemClickActionMode(position);
+                itemClickActionMode(position, true);
                 mLongPressedTime = System.currentTimeMillis();
 
                 if (((BaseActivity) getActivity()).getActionMode() != null && fileListAdapter
                         .getSelectedCount() >= 1) {
+//                    mDragPaths = new ArrayList<String>();
+                    String path = fileInfoList.get(position).getFilePath();
+                    if (!mDragPaths.contains(path)) {
+                        mDragPaths.add(path);
+                    }
+                    mItemView = view;
                     mStartDrag = true;
 
-//                    Logger.log("TAG", "On long click drag");
-     /*               Intent intent = new Intent();
-
-                    intent.putExtra(FileConstants.KEY_PATH, fileInfoList.get(position).getFilePath());
-                    ClipData data = ClipData.newIntent("", intent);
-                    int count = fileListAdapter
-                            .getSelectedCount();
-                    LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    View view1 = inflater.inflate(R.layout.drag_shadow, null);
-                        Button buttonCount = (Button) view1.findViewById(R.id.buttonCount);
-    //                    textView.setLayoutParams(new LinearLayout.LayoutParams(100,100));
-                        buttonCount.setText("" + count);
-
-                    View.DragShadowBuilder shadowBuilder = new MyDragShadowBuilder(view, count);
-                    view.startDrag(data, shadowBuilder, view, 0);*/
-
-//                    view.setVisibility(View.INVISIBLE);
+                    mDragInitialPos = position;
                 }
-
-
             }
         });
-
- /*      fileListAdapter.setOnItemTouchListener(new FileListAdapter.OnItemTouchListener() {
-            @Override
-            public boolean onItemTouch(View view, int position, MotionEvent event) {
-                Logger.log("TAG", "On item touch");
-                if (mStartDrag && event.getAction() == MotionEvent.ACTION_DOWN) {
-                    Logger.log("TAG", "On item touch inside");
-                    Intent intent = new Intent();
-
-                    intent.putExtra(FileConstants.KEY_PATH, fileInfoList.get(position).getFilePath());
-                    ClipData data = ClipData.newIntent("", intent);
-                    int count = fileListAdapter
-                            .getSelectedCount();
-                    LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    View view1 = inflater.inflate(R.layout.drag_shadow, null);
-                    Button buttonCount = (Button) view1.findViewById(R.id.buttonCount);
-                    buttonCount.setText("" + count);
-
-                    View.DragShadowBuilder shadowBuilder = new MyDragShadowBuilder(view, count);
-                    view.startDrag(data, shadowBuilder, view, 0);
-                    return true;
-                }
-                return true;
-            }
-        });*/
 
         recyclerViewFileList.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 int event = motionEvent.getActionMasked();
 
-                long timeElapsed = System.currentTimeMillis() - mLongPressedTime;
-                Logger.log("TAG", "On item touch time Elapsed" + timeElapsed);
                 if (mStartDrag && event == MotionEvent.ACTION_MOVE && mLongPressedTime != 0) {
+                    long timeElapsed = System.currentTimeMillis() - mLongPressedTime;
+//                    Logger.log("TAG", "On item touch time Elapsed" + timeElapsed);
 
                     if (timeElapsed > 1000) {
                         mLongPressedTime = 0;
                         mStartDrag = false;
 
-                        View top = recyclerViewFileList.findChildViewUnder(motionEvent.getX(), motionEvent.getY());
-                        int position = recyclerViewFileList.getChildAdapterPosition(top);
-
+//                        View top = recyclerViewFileList.findChildViewUnder(motionEvent.getX(), motionEvent.getY());
+                        int position = mDragInitialPos; //recyclerViewFileList
+//                                .getChildAdapterPosition(top);
+                        mDragInitialPos = -1;
                         Intent intent = new Intent();
 
-                        intent.putExtra(FileConstants.KEY_PATH, fileInfoList.get(position).getFilePath());
+                        intent.putStringArrayListExtra(FileConstants.KEY_PATH, mDragPaths);
                         ClipData data = ClipData.newIntent("", intent);
                         int count = fileListAdapter
                                 .getSelectedCount();
-                        View.DragShadowBuilder shadowBuilder = new MyDragShadowBuilder(view, count);
+                        View.DragShadowBuilder shadowBuilder = new MyDragShadowBuilder(mItemView,
+                                count);
                         view.startDrag(data, shadowBuilder, view, 0);
-//                    LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//                    View view1 = inflater.inflate(R.layout.drag_shadow, null);
-//                    Button buttonCount = (Button) view1.findViewById(R.id.buttonCount);
-                        //                    textView.setLayoutParams(new LinearLayout.LayoutParams(100,100));
-//                    buttonCount.setText("" + count);
-
-
-                /*    if (gestureDetector.onTouchEvent(motionEvent)) {
-                        Logger.log("TAG", "On item touch inside");
-                        return false;
-                    }*/
                     }
                 }
                 return false;
-//                return false;
             }
         });
 
@@ -297,9 +257,6 @@ public class FileListFragment extends Fragment implements LoaderManager
         mTextEmpty = (TextView) root.findViewById(textEmpty);
         preference = new SharedPreferenceWrapper();
         recyclerViewFileList.setOnDragListener(new myDragEventListener());
-        gestureDetector = new GestureDetectorCompat(getActivity(),
-                new GestureListener());
-
     }
 
     private void handleCategoryItemClick(int position) {
@@ -364,8 +321,8 @@ public class FileListFragment extends Fragment implements LoaderManager
     }
 
 
-    private void itemClickActionMode(int position) {
-        fileListAdapter.toggleSelection(position);
+    private void itemClickActionMode(int position, boolean isLongPress) {
+        fileListAdapter.toggleSelection(position, isLongPress);
         boolean hasCheckedItems = fileListAdapter.getSelectedCount() > 0;
         ActionMode actionMode = ((BaseActivity) getActivity()).getActionMode();
         if (hasCheckedItems && actionMode == null) {
@@ -388,6 +345,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             ) + " selected");
         }
     }
+
 
     public void toggleSelectAll(boolean selectAll) {
         fileListAdapter.clearSelection();
@@ -470,19 +428,19 @@ public class FileListFragment extends Fragment implements LoaderManager
 
 //        Bitmap bm = BitmapFactory.decodeResource(getResources(), drawableId).copy(Bitmap.Config.ARGB_8888, true);
         Bitmap bm = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888);
-        bm.eraseColor(ContextCompat.getColor(getActivity(), R.color.colorPrimary));
+        bm.eraseColor(Color.DKGRAY);
 
         Paint paint = new Paint();
         paint.setStyle(Paint.Style.FILL);
         paint.setAntiAlias(true);
-        paint.setColor(Color.BLACK);
+        paint.setColor(Color.WHITE);
         int countFont = getResources()
                 .getDimensionPixelSize(R.dimen.drag_shadow_font);
         paint.setTextSize(countFont);
 
         Canvas canvas = new Canvas(bm);
         int strLength = (int) paint.measureText(text);
-        int x = bm.getWidth()/2 - strLength;
+        int x = bm.getWidth() / 2 - strLength;
 
         // int y = s.titleOffset;
         int y = (bm.getHeight() - countFont) / 2;
@@ -495,58 +453,6 @@ public class FileListFragment extends Fragment implements LoaderManager
         return new BitmapDrawable(getActivity().getResources(), bm);
     }
 
-    public class GestureListener extends GestureDetector.SimpleOnGestureListener {
-
-        private static final int SWIPE_MIN_DISTANCE = 100;
-        private static final int SWIPE_THRESHOLD_VELOCITY = 100;
-        protected MotionEvent mLastOnDownEvent = null;
-
-        @Override
-        public boolean onFling(
-                MotionEvent e1, MotionEvent e2, float velocityX,
-                float velocityY) {
-            Logger.log("TAG", "Gesture --e1=" + e1 + "e2==" + e2);
-       /*     if (e1==null)
-                e1 = mLastOnDownEvent;
-            if (e1==null || e2==null)
-                return false;*/
-           /* if (e1.getY() - e2.getY() > SWIPE_MIN_DISTANCE
-                    && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {*/
-
-
-            Intent intent = new Intent();
-
-            intent.putExtra(FileConstants.KEY_PATH, fileInfoList.get(0).getFilePath());
-            ClipData data = ClipData.newIntent("", intent);
-            int count = fileListAdapter
-                    .getSelectedCount();
-            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View view1 = inflater.inflate(R.layout.drag_shadow, null);
-//            Button buttonCount = (Button) view1.findViewById(buttonCount);
-            //                    textView.setLayoutParams(new LinearLayout.LayoutParams(100,100));
-//            buttonCount.setText("" + count);
-
-//                View.DragShadowBuilder shadowBuilder = new MyDragShadowBuilder(view, count);
-//                view.startDrag(data, shadowBuilder, view, 0);
-
-            return true;
-//            }
-//            return false;
-
-        }
-
-        @Override
-        public boolean onDown(MotionEvent e) {
-            // always return true since all gestures always begin with onDown
-            // and<br>
-            // if this returns false, the framework won't try to pick up onFling
-            // for example.
-            mLastOnDownEvent = e;
-            Logger.log("TAG", "Gesture ondown");
-            return true;
-        }
-
-    }
 
     private class MyDragShadowBuilder extends View.DragShadowBuilder {
 
@@ -583,7 +489,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             Log.d("TAG", "width=" + width);
 
             // Sets the height of the shadow to half the height of the original View
-            height = getView().getHeight() / 6;
+            height = getView().getHeight() / 2;
 //            height = 100;
 
             Log.d("TAG", "height=" + height);
@@ -601,7 +507,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             mScaleFactor = size;
 
             // Sets the touch point's position to be in the middle of the drag shadow
-//            touch.set(width / 4, height / 4);
+            touch.set(2 * width, height * 2);
         }
 
         // Defines a callback that draws the drag shadow in a Canvas that the system constructs
@@ -624,7 +530,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
     }
 
-    private void showDragDialog(final String sourcePath, final String destinationDir) {
+    private void showDragDialog(final ArrayList<String> sourcePaths, final String destinationDir) {
         final Dialog dialog = new Dialog(
                 getActivity());
         dialog.setContentView(R.layout.dialog_drag);
@@ -662,20 +568,21 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     protected class myDragEventListener implements View.OnDragListener {
 
+        int oldPos = -1;
+
         // This is the method that the system calls when it dispatches a drag event to the
         // listener.
         public boolean onDrag(View v, DragEvent event) {
 
             // Defines a variable to store the action type for the incoming event
             final int action = event.getAction();
-            int pos = 0;
 
             // Handles each of the expected events
             switch (action) {
 
                 case DragEvent.ACTION_DRAG_STARTED:
 
-                    Log.d("TAG", "DRag started");
+                    Log.d("TAG", "DRag started" + v);
                     mIsDragInProgress = true;
 
                     // Determines if this View can accept the dragged data
@@ -684,10 +591,16 @@ public class FileListFragment extends Fragment implements LoaderManager
                         // As an example of what your application might do,
                         // applies a blue color tint to the View to indicate that it can accept
                         // data.
-//                        v.setColorFilter(Color.BLUE);
+                        ColorFilter filter1 = new PorterDuffColorFilter(
+                                Color.BLUE, PorterDuff.Mode.MULTIPLY);
+
+//                        v.getBackground().setColorFilter(filter1);
+  /*                      int color = ContextCompat.getColor(getActivity(), R.color.actionModeItemSelected);
+
+                        v.setBackgroundColor(color);
 
                         // Invalidate the view to force a redraw in the new tint
-//                        v.invalidate();
+                        v.invalidate();*/
 
                         // returns true to indicate that the View can accept the dragged data.
                         return true;
@@ -700,36 +613,26 @@ public class FileListFragment extends Fragment implements LoaderManager
 
                 case DragEvent.ACTION_DRAG_ENTERED:
                     Log.d("TAG", "DRag entered");
-
-
-                    // Applies a green tint to the View. Return true; the return value is ignored.
-
-//                    v.setColorFilter(Color.GREEN);
-
-                    // Invalidate the view to force a redraw in the new tint
-                    v.invalidate();
-
                     return true;
 
                 case DragEvent.ACTION_DRAG_LOCATION:
-//                    View onTopOf = recyclerViewFileList.findChildViewUnder(event.getX(), event.getY());
-//                     pos = recyclerViewFileList.getChildAdapterPosition(onTopOf);
-//                    Logger.log("TAG","drag pos="+pos);
 
-//                    list.add(i, list.remove(prevPos));
+                    View onTopOf = recyclerViewFileList.findChildViewUnder(event.getX(), event.getY());
+                    int newPos = recyclerViewFileList.getChildAdapterPosition(onTopOf);
+
+                    if (oldPos != newPos && newPos != RecyclerView.NO_POSITION) {
+                        Logger.log("TAG", "drag old pos=" + oldPos + "new pos=" + newPos);
+                        oldPos = newPos;
+                        fileListAdapter.setDraggedPos(newPos);
+                    }
                     // Ignore the event
                     return true;
 
                 case DragEvent.ACTION_DRAG_EXITED:
                     Log.d("TAG", "DRag exit");
                     mIsDragInProgress = false;
-
-                    // Re-sets the color tint to blue. Returns true; the return value is ignored.
-//                    v.setColorFilter(Color.BLUE);
-
-                    // Invalidate the view to force a redraw in the new tint
-                    v.invalidate();
-
+                    fileListAdapter.clearDragPos();
+                    mDragPaths = new ArrayList<>();
                     return true;
 
                 case DragEvent.ACTION_DROP:
@@ -738,54 +641,31 @@ public class FileListFragment extends Fragment implements LoaderManager
                     View top = recyclerViewFileList.findChildViewUnder(event.getX(), event.getY());
                     int position = recyclerViewFileList.getChildAdapterPosition(top);
                     Logger.log("TAG", "DROP new pos=" + position);
+                    fileListAdapter.clearDragPos();
+
 
                     // Gets the item containing the dragged data
                     ClipData.Item item = event.getClipData().getItemAt(0);
 
                     // Gets the text data from the item.
                     Intent dragData = item.getIntent();
-                    String path = dragData.getStringExtra(FileConstants.KEY_PATH);
+                    ArrayList<String> paths = dragData.getStringArrayListExtra(FileConstants
+                            .KEY_PATH);
                     String destinationDir = fileInfoList.get(position).getFilePath();
-                    Logger.log("TAG", "Source=" + path + "Dest=" + destinationDir);
-                    if (!destinationDir.equals(path)) {
+//                    Logger.log("TAG", "Source=" + path + "Dest=" + destinationDir);
+                    if (!destinationDir.equals(paths.get(0))) {
 
-                        showDragDialog(path, destinationDir);
+                        showDragDialog(paths, destinationDir);
                     }
-                    // Displays a message containing the dragged data.
-                    Toast.makeText(getActivity(), "Dragged data is " + path, Toast
-                            .LENGTH_LONG);
-
-
-                    // Turns off any color tints
-//                    v.clearColorFilter();
-
-                    // Invalidates the view to force a redraw
-//                    v.invalidate();
-
-                    // Returns true. DragEvent.getResult() will return true.
+                    mDragPaths = new ArrayList<>();
                     return true;
 
                 case DragEvent.ACTION_DRAG_ENDED:
 
                     Log.d("TAG", "DRag end");
                     mIsDragInProgress = false;
-
-
-                    // Turns off any color tinting
-//                    v.clearColorFilter();
-
-                    // Invalidates the view to force a redraw
-                    v.invalidate();
-
-                    // Does a getResult(), and displays what happened.
-                    if (event.getResult()) {
-                        Toast.makeText(getActivity(), "The drop was handled.", Toast.LENGTH_LONG);
-
-                    } else {
-                        Toast.makeText(getActivity(), "The drop didn't work.", Toast.LENGTH_LONG);
-
-                    }
-
+                    fileListAdapter.clearDragPos();
+                    mDragPaths = new ArrayList<>();
                     // returns true; the value is ignored.
                     return true;
 

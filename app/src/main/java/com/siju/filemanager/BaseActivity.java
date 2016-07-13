@@ -135,6 +135,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private static final int DELETE_OPERATION = 2;
     private static final int ARCHIVE_OPERATION = 3;
     private static final int DECRYPT_OPERATION = 4;
+
     private boolean mIsMoveOperation = false;
     private ArrayList<FileInfo> mFileList;
     private HashMap<String, Integer> mPathActionMap = new HashMap<>();
@@ -144,6 +145,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private ArrayList<String> tempSourceFile = new ArrayList<>();
     private int tempConflictCounter = 0;
     private Dialog mPasteConflictDialog;
+
     private FloatingActionsMenu fabCreateMenu;
     private FloatingActionButton fabCreateFolder;
     private FloatingActionButton fabCreateFile;
