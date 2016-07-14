@@ -1,5 +1,6 @@
 package com.siju.filemanager.filesystem.utils;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -40,10 +41,28 @@ public class PasteUtils {
     private Dialog mPasteConflictDialog;
     private static final int PASTE_OPERATION = 1;
     private Fragment mFragment;
+    private String mCurrentDir;
+    private boolean mIsDrag;
+    private Activity mActivity;
 
-    PasteUtils(Context context, Fragment fragment) {
+
+    public PasteUtils(Context context, Fragment fragment, String currentDir, boolean isDrag) {
         mContext = context;
         mFragment = fragment;
+        mCurrentDir = currentDir;
+        mIsDrag = isDrag;
+        pasteOperationCleanUp();
+    }
+
+    PasteUtils(Activity activity, Context context, Fragment fragment, String currentDir, boolean
+            isDrag) {
+        mContext = context;
+        mFragment = fragment;
+        mCurrentDir = currentDir;
+        mIsDrag = isDrag;
+        mActivity = activity;
+        pasteOperationCleanUp();
+
     }
 
 
@@ -54,30 +73,44 @@ public class PasteUtils {
         tempSourceFile = new ArrayList<>();
     }
 
-    public void checkIfFileExists(String sourceFilePath, File destinationDir) {
+    public void setMoveOperation(boolean value) {
+        mIsMoveOperation = value;
+    }
+
+    public boolean checkIfFileExists(String sourceFilePath, File destinationDir) {
         String[] destinationDirList = destinationDir.list();
         String fileName = sourceFilePath.substring(sourceFilePath.lastIndexOf("/") + 1, sourceFilePath.length());
         mSourceFilePath = sourceFilePath;
         // If source file is directory,compare source & destination directory names
 
-        // If source file is file,compare source file name & destination directory children names
-        for (int i = 0; i < destinationDirList.length; i++) {
-            if (fileName.equals(destinationDirList[i])) {
-                isPasteConflictDialogShown = true;
-                tempSourceFile.add(sourceFilePath);
-                break;
-            } else {
-                mPasteAction = FileUtils.ACTION_NONE;
-                mPathActionMap.put(sourceFilePath, mPasteAction);
+        if (destinationDirList.length == 0) {
+            mPasteAction = FileUtils.ACTION_NONE;
+            mPathActionMap.put(sourceFilePath, mPasteAction);
+            Logger.log("TAG", "SOURCE==" + sourceFilePath + "isPasteConflictDialogShown==" + isPasteConflictDialogShown);
+            return isPasteConflictDialogShown;
+        }
+        else {
+            // If source file is file,compare source file name & destination directory children names
+            for (int i = 0; i < destinationDirList.length; i++) {
+                if (fileName.equals(destinationDirList[i])) {
+                    isPasteConflictDialogShown = true;
+                    tempSourceFile.add(sourceFilePath);
+                    break;
+                } else {
+                    mPasteAction = FileUtils.ACTION_NONE;
+                    mPathActionMap.put(sourceFilePath, mPasteAction);
+                }
             }
+
         }
 
-
         Logger.log("TAG", "SOURCE==" + sourceFilePath + "isPasteConflictDialogShown==" + isPasteConflictDialogShown);
+        return isPasteConflictDialogShown;
+
 
     }
 
-    private void showDialog(final String sourceFilePath) {
+    public void showDialog(final String sourceFilePath) {
 
         mPasteConflictDialog = new Dialog(mContext);
         mPasteConflictDialog.setContentView(R.layout.dialog_paste_conflict);
@@ -153,7 +186,7 @@ public class PasteUtils {
         }
     }
 
-    private void callAsyncTask() {
+    public void callAsyncTask() {
         new BackGroundOperationsTask(PASTE_OPERATION).execute(mPathActionMap);
     }
 
@@ -267,10 +300,10 @@ public class PasteUtils {
                             if (action == FileUtils.ACTION_CANCEL) {
                                 isActionCancelled = true;
                             } else {
-
                                 currentFile++;
                                 System.out.println("currentFile BG : " + currentFile);
-                                copyStatus = FileUtils.copyToDirectory(BaseActivity.this, sourcePath, mCurrentDir,
+                                Logger.log("TAG", "Destination dir==" + mCurrentDir);
+                                copyStatus = FileUtils.copyToDirectory(mContext, sourcePath, mCurrentDir,
                                         mIsMoveOperation, action, progress);
                                 System.out.println("copyStatus : " + copyStatus);
 
@@ -316,10 +349,12 @@ public class PasteUtils {
 
                 case PASTE_OPERATION:
 
-                    if (mSelectedItemPositions != null && mSelectedItemPositions.size() != 0) {
-                        mSelectedItemPositions.clear();
+                    if (!mIsDrag) {
+                        ((BaseActivity) mActivity).clearSelectedPos();
+                        ((BaseActivity) mActivity).togglePasteVisibility(false);
                     }
-                    togglePasteVisibility(false);
+
+
                     if (mPathActionMap != null) {
                         if (mPathActionMap.size() != filesCopied) {
 

@@ -1609,7 +1609,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         mBottomToolbar.setOnMenuItemClickListener(this);
     }
 
-    private void togglePasteVisibility(boolean isVisible) {
+    public void togglePasteVisibility(boolean isVisible) {
         mPasteItem.setVisible(isVisible);
         mIsPasteItemVisible = isVisible;
     }
@@ -2301,6 +2301,12 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
     }
 
+    public void clearSelectedPos() {
+        if (mSelectedItemPositions != null && mSelectedItemPositions.size() != 0) {
+            mSelectedItemPositions.clear();
+        }
+    }
+
     public class BackGroundOperationsTask extends AsyncTask<HashMap<String, Integer>, Integer, Void> {
 
         private String fileName;
@@ -2413,8 +2419,9 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
                                 currentFile++;
                                 System.out.println("currentFile BG : " + currentFile);
-                                copyStatus = FileUtils.copyToDirectory(BaseActivity.this, sourcePath, mCurrentDir,
-                                        mIsMoveOperation, action, progress);
+
+                                /*copyStatus = FileUtils.copyToDirectory(BaseActivity.this, sourcePath, mCurrentDir,
+                                        mIsMoveOperation, action, progress);*/
                                 System.out.println("copyStatus : " + copyStatus);
 
                                 if (copyStatus == 0) {

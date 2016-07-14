@@ -147,8 +147,8 @@ public class FileUtils {
      */
 
     public static int copyToDirectory(Context context, String source, String destination, boolean isMoveOperation, int
-            action, BaseActivity.BackGroundOperationsTask.Progress progress) {
-        BaseActivity.BackGroundOperationsTask.Progress progressBg = progress;
+            action, PasteUtils.BackGroundOperationsTask.Progress progress) {
+        PasteUtils.BackGroundOperationsTask.Progress progressBg = progress;
         Logger.log("TAG", "ACTION==" + action);
         File sourceFile = new File(source);
         File destinationDir = new File(destination);

@@ -66,6 +66,7 @@ import com.siju.filemanager.filesystem.ui.DividerItemDecoration;
 import com.siju.filemanager.filesystem.ui.TextDrawable;
 import com.siju.filemanager.filesystem.utils.ExtractManager;
 import com.siju.filemanager.filesystem.utils.FileUtils;
+import com.siju.filemanager.filesystem.utils.PasteUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -124,6 +125,8 @@ public class FileListFragment extends Fragment implements LoaderManager
     private View mItemView;
     private int mDragInitialPos = -1;
     private ArrayList<String> mDragPaths = new ArrayList<>();
+    private PasteUtils mPasteUtils;
+    private RecyclerView.LayoutManager llm;
 
 
     @Override
@@ -389,7 +392,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                 fileInfoList = data;
                 fileListAdapter.updateAdapter(fileInfoList);
                 recyclerViewFileList.setHasFixedSize(true);
-                RecyclerView.LayoutManager llm;
+
                 if (mViewMode == FileConstants.KEY_LISTVIEW) {
                     llm = new LinearLayoutManager(getActivity());
                 } else {
@@ -517,16 +520,6 @@ public class FileListFragment extends Fragment implements LoaderManager
 
             // Draws the ColorDrawable in the Canvas passed in from the system.
             shadow.draw(canvas);
-//            canvas.scale(mScaleFactor.x/(float)getView().getWidth(), mScaleFactor.y/(float)getView().getHeight());
-/*            Paint paint = new Paint();
-            paint.setColor(Color.RED);
-            paint.setStyle(Paint.Style.FILL);
-            canvas.drawPaint(paint);
-
-            paint.setColor(Color.BLACK);
-            paint.setTextSize(20);
-            canvas.drawText("10", 10, 25, paint);*/
-//            getView().draw(canvas);
         }
     }
 
@@ -552,8 +545,28 @@ public class FileListFragment extends Fragment implements LoaderManager
         buttonOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mPasteUtils = new PasteUtils(getActivity(), FileListFragment.this, destinationDir,
+                        true);
+                mPasteUtils.setMoveOperation(isMoveOperation);
+
+                boolean isPasteConflict = false;
+                for (int i = 0; i < sourcePaths.size(); i++) {
+                    isPasteConflict = mPasteUtils.checkIfFileExists(sourcePaths.get(i), new File
+                            (destinationDir));
+                }
+
+                if (!isPasteConflict) {
+                    mPasteUtils.callAsyncTask();
+                } else {
+                    mPasteUtils.showDialog(sourcePaths.get(0));
+//                        isPasteConflictDialogShown = false;
+
+                }
+                ((BaseActivity) getActivity()).getActionMode().finish();
+
+/*
                 FileUtils.copyToDirectory(getActivity(), sourcePath, destinationDir,
-                        isMoveOperation, action, null);
+                        isMoveOperation, action, null);*/
                 dialog.dismiss();
             }
         });
@@ -619,9 +632,14 @@ public class FileListFragment extends Fragment implements LoaderManager
 
                     View onTopOf = recyclerViewFileList.findChildViewUnder(event.getX(), event.getY());
                     int newPos = recyclerViewFileList.getChildAdapterPosition(onTopOf);
-
                     if (oldPos != newPos && newPos != RecyclerView.NO_POSITION) {
-                        Logger.log("TAG", "drag old pos=" + oldPos + "new pos=" + newPos);
+                        int visiblePos = ((LinearLayoutManager) llm).findLastVisibleItemPosition();
+                        if (newPos + 2 >= visiblePos) {
+                            ((LinearLayoutManager) llm).scrollToPosition(newPos + 1);
+                        }
+//                        recyclerViewFileList.smoothScrollToPosition(newPos+2);
+                        Logger.log("TAG", "drag old pos=" + oldPos + "new pos=" + newPos+"Last " +
+                                "visible="+visiblePos);
                         oldPos = newPos;
                         fileListAdapter.setDraggedPos(newPos);
                     }
