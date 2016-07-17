@@ -135,9 +135,11 @@
 
     <string name="prefs_summary_dev">Developer : Siju</string>
     <string name="hide">Hide</string>
+    <string name="unhide">Unhide</string>
     <string name="more">more</string>
     <string name="drag">Drag</string>
     <string name="move">Move</string>
+    <string name="msg_fav_reset">Favourites resetted to default.</string>
 
 
 </resources>

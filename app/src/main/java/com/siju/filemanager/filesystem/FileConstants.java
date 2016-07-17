@@ -8,7 +8,7 @@ public class FileConstants {
 
     public static final String PREFS_HIDDEN = "prefHidden";
     public static final String PREFS_DUAL_PANE = "prefDualPane";
-    public final String PREFS_RESET = "prefsReset";
+    public static final String PREFS_RESET = "prefsReset";
     public static final String PREFS_THEME = "prefThemes";
 
     public static final String KEY_PATH = "PATH";

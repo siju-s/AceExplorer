@@ -10,6 +10,7 @@
     <color name="white">#ffffff</color>
     <color name="whiteOverlay">#F3F3F3</color>
     <color name="whiteOverlayDual">#80F3F3F3</color>
+    <color name="hidden">#e5c0e3</color>
 
     <color name="fabButtonText">#727272</color>
 

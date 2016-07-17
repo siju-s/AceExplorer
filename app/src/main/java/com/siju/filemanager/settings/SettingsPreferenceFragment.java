@@ -5,6 +5,7 @@ package com.siju.filemanager.settings;
  */
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -21,13 +22,16 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.siju.filemanager.R;
 import com.siju.filemanager.common.Logger;
+import com.siju.filemanager.filesystem.FileConstants;
 import com.siju.filemanager.utils.LocaleHelper;
 
 import java.util.Locale;
 
+import static com.siju.filemanager.filesystem.FileConstants.PREFS_RESET;
 import static com.siju.filemanager.filesystem.FileConstants.PREFS_THEME;
 import static com.siju.filemanager.utils.LocaleHelper.getLanguage;
 
@@ -64,13 +68,26 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
 
         Preference version = findPreference(PREFS_VERSION);
 
-        CheckBoxPreference preference = (CheckBoxPreference)findPreference("prefDualPane");
+        CheckBoxPreference preference = (CheckBoxPreference) findPreference("prefDualPane");
         preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
                 String value = o.toString();
-                Logger.log("Settings","Dualpane="+value);
+                Logger.log("Settings", "Dualpane=" + value);
                 return true;
+            }
+        });
+
+        Preference resetPreference = findPreference(FileConstants.PREFS_RESET);
+        resetPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent data = new Intent();
+                data.putExtra(PREFS_RESET, true);
+                Toast.makeText(getActivity(), getString(R.string.msg_fav_reset), Toast
+                        .LENGTH_LONG).show();
+                getActivity().setResult(Activity.RESULT_OK, data);
+                return false;
             }
         });
 
@@ -106,7 +123,8 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
                                 // Market (Google play) app seems not installed,
                                 // let's try to open a webbrowser
                                 intent.setData(Uri
-                                        .parse("https://play.google.com/store/apps/details?id=com.siju.musicalmojo.free"));
+                                        .parse("https://play.google.com/store/apps/details?id=com
+                                        .siju.musicalmojo.free"));
                                 if (!MyStartActivity(intent)) {
                                     // Well if this also fails, we have run out of
                                     // options, inform the user.
@@ -125,7 +143,8 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
      */
-    private Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+    private Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new
+            Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
             String stringValue = value.toString();

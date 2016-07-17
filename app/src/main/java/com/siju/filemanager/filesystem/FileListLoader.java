@@ -14,6 +14,7 @@ import android.webkit.MimeTypeMap;
 import com.siju.filemanager.R;
 import com.siju.filemanager.filesystem.model.FileInfo;
 import com.siju.filemanager.filesystem.utils.FileUtils;
+import com.siju.filemanager.filesystem.utils.RootHelperWrapper;
 import com.siju.filemanager.settings.SettingsPreferenceFragment;
 
 import java.io.BufferedReader;
@@ -183,6 +184,34 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private ArrayList<FileInfo> fetchFiles() {
         File file = new File(mPath);
         String fileExtension = mPath.substring(mPath.lastIndexOf(".") + 1);
+        boolean isRootAccessGranted = false;
+        if (!mPath.contains(FileUtils.getInternalStorage().getAbsolutePath())) {
+            if (FileUtils.getExternalStorage() == null) {
+                isRootAccessGranted = RootHelperWrapper.canRunRootCommands();
+                if (isRootAccessGranted) {
+                    RootHelperWrapper wrapper = new RootHelperWrapper();
+                    wrapper.execute();
+                }
+            }
+
+            else if (FileUtils.getExternalStorage() != null && !mPath
+                    .contains(FileUtils
+                            .getExternalStorage().getAbsolutePath())) {
+
+                isRootAccessGranted = RootHelperWrapper.canRunRootCommands();
+                if (isRootAccessGranted) {
+                    RootHelperWrapper wrapper = new RootHelperWrapper();
+                    wrapper.execute();
+                }
+            }
+        }
+
+
+
+
+
+
+
 
         if (fileExtension.equalsIgnoreCase("zip")) {
 //            fileInfoList = fetchZipContent();

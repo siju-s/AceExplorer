@@ -6,9 +6,11 @@ import android.content.SharedPreferences;
 import com.google.gson.Gson;
 import com.siju.filemanager.filesystem.model.FavInfo;
 import com.siju.filemanager.filesystem.FileConstants;
+import com.siju.filemanager.filesystem.utils.FileUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -46,14 +48,42 @@ public class SharedPreferenceWrapper {
         List<FavInfo> favorites = getFavorites(context);
         if (favorites == null)
             favorites = new ArrayList<FavInfo>();
-        favorites.add(favInfo);
-        saveFavorites(context, favorites);
+        if (favorites.contains(favInfo)) {
+            favorites.add(favInfo);
+            saveFavorites(context, favorites);
+        }
     }
 
     public void removeFavorite(Context context, FavInfo favInfo) {
         ArrayList<FavInfo> favorites = getFavorites(context);
         if (favorites != null) {
             favorites.remove(favInfo);
+            saveFavorites(context, favorites);
+        }
+    }
+
+    /**
+     * Reset favourites to initial state
+     *
+     * @param context
+     */
+    public void resetFavourites(Context context) {
+        ArrayList<FavInfo> favorites = getFavorites(context);
+        if (favorites != null) {
+            for (int i = favorites.size() - 1; i > 0; i--) {
+                if (!favorites.get(i).getFilePath().equalsIgnoreCase(FileUtils
+                        .getDownloadsDirectory().getAbsolutePath())) {
+                    Logger.log("TAG", "Fav path=" + favorites.get(i).getFilePath());
+                    favorites.remove(i);
+                }
+            }
+
+           /* for (FavInfo info : favorites) {
+                if (!info.getFilePath().equalsIgnoreCase(FileUtils.getDownloadsDirectory()
+                .getAbsolutePath())) {
+                    favorites.remove(info);
+                }
+            }*/
             saveFavorites(context, favorites);
         }
     }

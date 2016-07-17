@@ -77,8 +77,6 @@ import com.siju.filemanager.model.SectionGroup;
 import com.siju.filemanager.model.SectionItems;
 import com.siju.filemanager.filesystem.ui.EnhancedMenuInflater;
 import com.siju.filemanager.settings.SettingsActivity;
-import com.siju.filemanager.settings.SettingsPreferenceFragment;
-import com.siju.filemanager.utils.LocaleHelper;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -111,7 +109,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private RelativeLayout relativeLayoutDrawerPane;
     private String mCurrentDir = getInternalStorage().getAbsolutePath();
     private String mCurrentDirDualPane = getInternalStorage().getAbsolutePath();
-    public String STORAGE_ROOT, STORAGE_INTERNAL, STORAGE_EXTERNAL, DOWNLOADS, IMAGES, VIDEO, MUSIC, DOCS, SETTINGS,
+    public String STORAGE_ROOT, STORAGE_INTERNAL, STORAGE_EXTERNAL, DOWNLOADS, IMAGES, VIDEO,
+            MUSIC, DOCS, SETTINGS,
             RATE;
     private boolean mIsDualModeEnabled;
     private LinearLayout navDirectory;
@@ -163,6 +162,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private ConstraintLayout mMainLayout;
     private static final int MY_PERMISSIONS_REQUEST = 1;
     private static final int SETTINGS_REQUEST = 200;
+    private static final int PREFS_REQUEST = 1000;
+
     private boolean mIsPermissionGranted;
     private Toolbar mToolbar;
     private int mViewMode = FileConstants.KEY_LISTVIEW;
@@ -217,6 +218,11 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         sharedPreference.registerOnSharedPreferenceChangeListener(this);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
 
     private void setUpInitialData() {
         prepareListData();
@@ -241,7 +247,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
      * Called for the 1st time when app is launched to check permissions
      */
     private void checkPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager
                 .PERMISSION_GRANTED) {
             fabCreateMenu.setVisibility(View.GONE);
             requestPermission();
@@ -257,17 +264,20 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
      * Brings up the Permission Dialog
      */
     private void requestPermission() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
+                        .WRITE_EXTERNAL_STORAGE},
                 MY_PERMISSIONS_REQUEST);
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[]
-            grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[]
+                                                   grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST:
 
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager
+                        .PERMISSION_GRANTED) {
                     // Permission granted
                     Log.d("TAG", "Permission granted");
                     mIsPermissionGranted = true;
@@ -284,7 +294,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission
                 .WRITE_EXTERNAL_STORAGE)) {
             // Shows after user denied permission
-            Snackbar.make(mMainLayout, getString(R.string.permission_deny), Snackbar.LENGTH_INDEFINITE)
+            Snackbar.make(mMainLayout, getString(R.string.permission_deny), Snackbar
+                    .LENGTH_INDEFINITE)
                     .setAction(getString(R.string.action_grant), new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -294,7 +305,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                     .show();
         } else {
             // Shows after user denied permission and checked Do Not Ask Again checkbox
-            Snackbar.make(mMainLayout, getString(R.string.permission_request), Snackbar.LENGTH_INDEFINITE)
+            Snackbar.make(mMainLayout, getString(R.string.permission_request), Snackbar
+                    .LENGTH_INDEFINITE)
                     .setAction(getString(R.string.action_settings), new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -316,6 +328,13 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         // Called when user returns from the settings screen
         if (requestCode == SETTINGS_REQUEST) {
             checkPermissions();
+        } else if (requestCode == PREFS_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                if (data.getBooleanExtra(FileConstants.PREFS_RESET, false)) {
+                    resetFavouritesGroup();
+                    expandableListView.smoothScrollToPosition(0);
+                }
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -440,7 +459,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         relativeLayoutDrawerPane = (RelativeLayout) findViewById(R.id.drawerPane);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawerLayout, mToolbar, R.string.navigation_drawer_open, R.string
+                .navigation_drawer_close);
         drawerLayout.setDrawerListener(toggle);
         toggle.syncState();
         // get the listview
@@ -448,7 +468,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         navDirectory = (LinearLayout) findViewById(R.id.navButtons);
         navDirectoryDualPane = (LinearLayout) findViewById(R.id.navButtonsDualPane);
         scrollNavigation = (HorizontalScrollView) findViewById(R.id.scrollNavigation);
-        scrollNavigationDualPane = (HorizontalScrollView) findViewById(R.id.scrollNavigationDualPane);
+        scrollNavigationDualPane = (HorizontalScrollView) findViewById(R.id
+                .scrollNavigationDualPane);
         mViewSeperator = findViewById(R.id.viewSeperator);
 
     }
@@ -456,8 +477,9 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private void initListeners() {
         expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
-            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long
-                    id) {
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int
+                    childPosition, long
+                                                id) {
                 Log.d("TAG", "Group pos-->" + groupPosition + "CHILD POS-->" + childPosition);
                 displaySelectedGroup(groupPosition, childPosition);
                 return false;
@@ -475,6 +497,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         fabCreateFileDual.setOnClickListener(this);
         fabCreateFolderDual.setOnClickListener(this);
         registerForContextMenu(expandableListView);
+
     }
 
     private void prepareListData() {
@@ -499,10 +522,12 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                 .ic_root_white,
                 FileUtils
                         .getAbsolutePath(rootDir)));
-        storageGroupChild.add(new SectionItems(STORAGE_INTERNAL, storageSpace(internalSD), R.drawable
+        storageGroupChild.add(new SectionItems(STORAGE_INTERNAL, storageSpace(internalSD), R
+                .drawable
                 .ic_phone_white, FileUtils.getAbsolutePath(internalSD)));
         if (extSD != null) {
-            storageGroupChild.add(new SectionItems(STORAGE_EXTERNAL, storageSpace(extSD), R.drawable.ic_ext_white,
+            storageGroupChild.add(new SectionItems(STORAGE_EXTERNAL, storageSpace(extSD), R
+                    .drawable.ic_ext_white,
                     FileUtils.getAbsolutePath(extSD)));
         }
         totalGroup.add(new SectionGroup(mListHeader.get(0), storageGroupChild));
@@ -523,7 +548,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         if (savedFavourites != null && savedFavourites.size() > 0) {
             for (int i = 0; i < savedFavourites.size(); i++) {
                 String savedPath = savedFavourites.get(i).getFilePath();
-                favouritesGroupChild.add(new SectionItems(savedFavourites.get(i).getFileName(), savedPath, R.drawable
+                favouritesGroupChild.add(new SectionItems(savedFavourites.get(i).getFileName(),
+                        savedPath, R.drawable
                         .ic_fav_folder,
                         savedPath));
             }
@@ -550,7 +576,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
     private String storageSpace(File file) {
         String freePlaceholder = " " + getResources().getString(R.string.msg_free) + " ";
-        return FileUtils.getSpaceLeft(this, file) + freePlaceholder + FileUtils.getTotalSpace(this, file);
+        return FileUtils.getSpaceLeft(this, file) + freePlaceholder + FileUtils.getTotalSpace
+                (this, file);
     }
 
     private void setListAdapter() {
@@ -601,7 +628,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                 }
 
                 if (!isDualPaneInFocus) {
-                    mStartingDir = totalGroup.get(groupPos).getmChildItems().get(childPos).getPath();
+                    mStartingDir = totalGroup.get(groupPos).getmChildItems().get(childPos)
+                            .getPath();
 
                     if (mCurrentDir == null) {
                         mCurrentDir = mStartingDir;
@@ -616,8 +644,9 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                         if (groupPos == 1) {
                             if (mCurrentDir.contains(getInternalStorage().getAbsolutePath())) {
                                 mStartingDir = getInternalStorage().getAbsolutePath();
-                            } else if (FileUtils.getExternalStorage() != null && mCurrentDir.contains(FileUtils
-                                    .getExternalStorage().getAbsolutePath())) {
+                            } else if (FileUtils.getExternalStorage() != null && mCurrentDir
+                                    .contains(FileUtils
+                                            .getExternalStorage().getAbsolutePath())) {
                                 mStartingDir = getInternalStorage().getAbsolutePath();
                             } else {
                                 isCurrentDirRoot = true;
@@ -630,7 +659,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                         displayInitialFragment(mCurrentDir, mCategory);
                     }
                 } else {
-                    mStartingDirDualPane = totalGroup.get(groupPos).getmChildItems().get(childPos).getPath();
+                    mStartingDirDualPane = totalGroup.get(groupPos).getmChildItems().get
+                            (childPos).getPath();
                     if (mCurrentDirDualPane == null) {
                         mCurrentDirDualPane = mStartingDirDualPane;
                         dualPaneFragments.clear();
@@ -642,7 +672,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                         dualPaneFragments.clear();
                         // For Favourites
                         if (groupPos == 1) {
-                            if (mCurrentDirDualPane.contains(getInternalStorage().getAbsolutePath())) {
+                            if (mCurrentDirDualPane.contains(getInternalStorage().getAbsolutePath
+                                    ())) {
                                 mStartingDirDualPane = getInternalStorage().getAbsolutePath();
                             } else if (FileUtils.getExternalStorage() != null && mCurrentDirDualPane
                                     .contains(FileUtils
@@ -700,7 +731,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                     case 0: // Rate us
                         break;
                     case 1: // Settings
-                        startActivity(new Intent(this, SettingsActivity.class));
+                        startActivityForResult(new Intent(this, SettingsActivity.class),
+                                PREFS_REQUEST);
                         drawerLayout.closeDrawer(relativeLayoutDrawerPane);
                         break;
                 }
@@ -756,7 +788,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         switch (menuItem.getItemId()) {
             case MENU_FAVOURITES:
                 String path = totalGroup.get(groupPos).getmChildItems().get(childPos).getPath();
-                String name = totalGroup.get(groupPos).getmChildItems().get(childPos).getmFirstLine();
+                String name = totalGroup.get(groupPos).getmChildItems().get(childPos)
+                        .getmFirstLine();
                 FavInfo favInfo = new FavInfo();
                 favInfo.setFileName(name);
                 favInfo.setFilePath(path);
@@ -857,7 +890,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             createNavButton(STORAGE_INTERNAL, dir);
         } else if (dir.equals("/")) {
             createNavButton(STORAGE_ROOT, dir);
-        } else if (FileUtils.getExternalStorage() != null && dir.equals(FileUtils.getExternalStorage()
+        } else if (FileUtils.getExternalStorage() != null && dir.equals(FileUtils
+                .getExternalStorage()
                 .getAbsolutePath())) {
             isCurrentDirRoot = false;
             createNavButton(STORAGE_EXTERNAL, dir);
@@ -878,7 +912,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             if (!isDualPaneInFocus) {
                 scrollNavigation.postDelayed(new Runnable() {
                     public void run() {
-                        HorizontalScrollView hv = (HorizontalScrollView) findViewById(R.id.scrollNavigation);
+                        HorizontalScrollView hv = (HorizontalScrollView) findViewById(R.id
+                                .scrollNavigation);
                         hv.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
                     }
                 }, 100L);
@@ -923,7 +958,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                 int level = (int) view.getTag();
 //                String path  = (String) view.getTag();
 
-//                if (!mCurrentDir.equals(path) && getSupportFragmentManager().findFragmentByTag(path) == null) {
+//                if (!mCurrentDir.equals(path) && getSupportFragmentManager().findFragmentByTag
+// (path) == null) {
 //                    mCurrentDir = path;
 //                    displayInitialFragment(path); // TODO Handle root case by passing /
 //                }
@@ -1105,13 +1141,14 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             Fragment targetFragment;
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             isDualPaneInFocus = intent.getBooleanExtra(ACTION_DUAL_PANEL, false);
-            mCategory = intent.getIntExtra(FileConstants.KEY_CATEGORY, FileConstants.CATEGORY.FILES.getValue());
+            mCategory = intent.getIntExtra(FileConstants.KEY_CATEGORY, FileConstants.CATEGORY
+                    .FILES.getValue());
             int mode = intent.getIntExtra(ACTION_VIEW_MODE, FileConstants.KEY_LISTVIEW);
 
 
             if (!isDualPaneInFocus) {
                 mCurrentDir = intent.getStringExtra(FileConstants.KEY_PATH);
-                intent.putExtra(FileConstants.KEY_PATH_OTHER,mCurrentDirDualPane);
+                intent.putExtra(FileConstants.KEY_PATH_OTHER, mCurrentDirDualPane);
 
                 targetFragment = new FileListFragment();
                 if (mViewMode == mode) {
@@ -1122,13 +1159,13 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             } else {
                 targetFragment = new FileListDualFragment();
                 mCurrentDirDualPane = intent.getStringExtra(FileConstants.KEY_PATH);
-                intent.putExtra(FileConstants.KEY_PATH_OTHER,mCurrentDir);
+                intent.putExtra(FileConstants.KEY_PATH_OTHER, mCurrentDir);
 
                 dualPaneFragments.add(targetFragment);
 
             }
 
-            intent.putExtra(FileConstants.KEY_FOCUS_DUAL,isDualPaneInFocus);
+            intent.putExtra(FileConstants.KEY_FOCUS_DUAL, isDualPaneInFocus);
 
 
             if (action.equals(ACTION_VIEW_FOLDER_LIST)) {
@@ -1138,7 +1175,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             }
             Logger.log("TAG", "createFragmentForIntent--currentdir=" + mCurrentDir);
             Logger.log("TAG", "createFragmentForIntent--currentDualdir=" + mCurrentDirDualPane);
-            Logger.log("TAG", "createFragmentForIntent--Singlepane size=" + singlePaneFragments.size());
+            Logger.log("TAG", "createFragmentForIntent--Singlepane size=" + singlePaneFragments
+                    .size());
             Logger.log("TAG", "createFragmentForIntent--Dualpane size=" + dualPaneFragments.size());
 
 
@@ -1148,7 +1186,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             }
 
             targetFragment.setArguments(intent.getExtras());
-            transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+            transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim
+                    .slide_out_right);
 //                transaction.addToBackStack(null);
             transaction.commit();
 
@@ -1206,7 +1245,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                     navDirectory.removeViewAt(childCount - 2); // Remove > symbol
                     scrollNavigation.postDelayed(new Runnable() {
                         public void run() {
-                            HorizontalScrollView hv = (HorizontalScrollView) findViewById(R.id.scrollNavigation);
+                            HorizontalScrollView hv = (HorizontalScrollView) findViewById(R.id
+                                    .scrollNavigation);
                             hv.fullScroll(HorizontalScrollView.FOCUS_LEFT);
                         }
                     }, 100L);
@@ -1259,7 +1299,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 //            navDirectory.removeViewAt(childCount - 2); // Remove > symbol
 //            scrollNavigation.postDelayed(new Runnable() {
 //                public void run() {
-//                    HorizontalScrollView hv = (HorizontalScrollView) findViewById(R.id.scrollNavigation);
+//                    HorizontalScrollView hv = (HorizontalScrollView) findViewById(R.id
+// .scrollNavigation);
 //                    hv.fullScroll(HorizontalScrollView.FOCUS_LEFT);
 //                }
 //            }, 100L);
@@ -1325,7 +1366,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                 pasteOperationCleanUp();
                 if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
                     for (int i = 0; i < mSelectedItemPositions.size(); i++) {
-                        checkIfFileExists(mFileList.get(mSelectedItemPositions.keyAt(i)).getFilePath(), new File
+                        checkIfFileExists(mFileList.get(mSelectedItemPositions.keyAt(i))
+                                .getFilePath(), new File
                                 (mCurrentDir));
                     }
                     if (!isPasteConflictDialogShown) {
@@ -1364,7 +1406,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
     public void checkIfFileExists(String sourceFilePath, File destinationDir) {
         String[] destinationDirList = destinationDir.list();
-        String fileName = sourceFilePath.substring(sourceFilePath.lastIndexOf("/") + 1, sourceFilePath.length());
+        String fileName = sourceFilePath.substring(sourceFilePath.lastIndexOf("/") + 1,
+                sourceFilePath.length());
         mSourceFilePath = sourceFilePath;
         // If source file is directory,compare source & destination directory names
 
@@ -1381,7 +1424,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         }
 
 
-        Logger.log("TAG", "SOURCE==" + sourceFilePath + "isPasteConflictDialogShown==" + isPasteConflictDialogShown);
+        Logger.log("TAG", "SOURCE==" + sourceFilePath + "isPasteConflictDialogShown==" +
+                isPasteConflictDialogShown);
 
     }
 
@@ -1389,7 +1433,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         Context mContext = BaseActivity.this;
         mPasteConflictDialog = new Dialog(mContext);
         mPasteConflictDialog.setContentView(R.layout.dialog_paste_conflict);
-//        mPasteConflictDialog.setTitle(getResources().getString(R.string.dialog_title_paste_conflict));
+//        mPasteConflictDialog.setTitle(getResources().getString(R.string
+// .dialog_title_paste_conflict));
         mPasteConflictDialog.setCancelable(false);
         ImageView icon = (ImageView) mPasteConflictDialog.findViewById(R.id.imageFileIcon);
         TextView textFileName = (TextView) mPasteConflictDialog.findViewById(R.id.textFileName);
@@ -1401,7 +1446,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         if (new File(sourceFilePath).isDirectory()) {
             buttonKeep.setVisibility(View.GONE);
         }
-        String fileName = sourceFilePath.substring(sourceFilePath.lastIndexOf("/") + 1, sourceFilePath.length());
+        String fileName = sourceFilePath.substring(sourceFilePath.lastIndexOf("/") + 1,
+                sourceFilePath.length());
 
         textFileName.setText(fileName);
         File sourceFile = new File(sourceFilePath);
@@ -1482,15 +1528,18 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                     public void onClick(View v) {
                         final CharSequence name = rename.getText();
                         if (name.length() == 0) {
-                            rename.setError(getResources().getString(R.string.msg_error_valid_name));
+                            rename.setError(getResources().getString(R.string
+                                    .msg_error_valid_name));
                             return;
                         }
-                        FileListFragment singlePaneFragment = (FileListFragment) getSupportFragmentManager()
-                                .findFragmentById(R
-                                        .id.frame_container);
-                        FileListFragment dualPaneFragment = (FileListDualFragment) getSupportFragmentManager()
-                                .findFragmentById(R
-                                        .id.frame_container_dual);
+                        FileListFragment singlePaneFragment = (FileListFragment)
+                                getSupportFragmentManager()
+                                        .findFragmentById(R
+                                                .id.frame_container);
+                        FileListFragment dualPaneFragment = (FileListDualFragment)
+                                getSupportFragmentManager()
+                                        .findFragmentById(R
+                                                .id.frame_container_dual);
                         String fileName = rename.getText().toString() + "";
 
                         int result;
@@ -1498,10 +1547,12 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                          * In landscape mode, FabCreateFile is on Dual Pane side and
                          * FabCreateFileDual on Single pane
                          */
-                        if (view.getId() == R.id.fabCreateFile || view.getId() == R.id.fabCreateFileDual) {
+                        if (view.getId() == R.id.fabCreateFile || view.getId() == R.id
+                                .fabCreateFileDual) {
                             if (view.getId() == R.id.fabCreateFile) {
                                 if (mIsDualModeEnabled) {
-                                    result = FileUtils.createFile(mCurrentDirDualPane, fileName + ".txt");
+                                    result = FileUtils.createFile(mCurrentDirDualPane, fileName +
+                                            ".txt");
                                 } else {
                                     result = FileUtils.createFile(mCurrentDir, fileName + ".txt");
                                 }
@@ -1590,7 +1641,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     /**
      * Shows another alert dialog when user clicks on any button Skip,Keep or Replace
      *
-     * @param action Button action --> {@link FileUtils#ACTION_REPLACE,FileUtils#ACTION_SKIP,FileUtils#ACTION_KEEP}
+     * @param action Button action -->
+     *               {@link FileUtils#ACTION_REPLACE,FileUtils#ACTION_SKIP,FileUtils#ACTION_KEEP}
      *               Calls Async task to do the copy operation once user resolves all conflicts
      */
     private void checkIfPasteConflictFinished(int action) {
@@ -1598,7 +1650,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         int count = ++tempConflictCounter;
         mPasteAction = action;
         mPathActionMap.put(mSourceFilePath, mPasteAction);
-        Logger.log("TAG", "tempConflictCounter==" + tempConflictCounter + "tempSize==" + tempSourceFile.size());
+        Logger.log("TAG", "tempConflictCounter==" + tempConflictCounter + "tempSize==" +
+                tempSourceFile.size());
         if (count < tempSourceFile.size()) {
             showDialog(tempSourceFile.get(count));
         } else {
@@ -1660,7 +1713,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         switch (item.getItemId()) {
             case R.id.action_cut:
                 if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
-                    showMessage(mSelectedItemPositions.size() + " " + getString(R.string.msg_cut_copy));
+                    showMessage(mSelectedItemPositions.size() + " " + getString(R.string
+                            .msg_cut_copy));
                     mIsMoveOperation = true;
                     togglePasteVisibility(true);
                     supportInvalidateOptionsMenu();
@@ -1671,7 +1725,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             case R.id.action_copy:
                 if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
                     mIsMoveOperation = false;
-                    showMessage(mSelectedItemPositions.size() + " " + getString(R.string.msg_cut_copy));
+                    showMessage(mSelectedItemPositions.size() + " " + getString(R.string
+                            .msg_cut_copy));
                     togglePasteVisibility(true);
                     supportInvalidateOptionsMenu();
                     mActionMode.finish();
@@ -1704,9 +1759,10 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
             case R.id.action_select_all:
                 if (mSelectedItemPositions != null) {
-                    FileListFragment singlePaneFragment = (FileListFragment) getSupportFragmentManager()
-                            .findFragmentById(R
-                                    .id.frame_container);
+                    FileListFragment singlePaneFragment = (FileListFragment)
+                            getSupportFragmentManager()
+                                    .findFragmentById(R
+                                            .id.frame_container);
                     if (mSelectedItemPositions.size() < fileListAdapter.getItemCount()) {
 
                         if (singlePaneFragment != null) {
@@ -1831,6 +1887,15 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                     if (!isDirectory) {
                         mFavItem.setVisible(false);
                     }
+                    String fileName = mFileList.get(mSelectedItemPositions.keyAt(0)).getFileName();
+                    if (fileName.startsWith(".")) {
+                        mHideItem.setTitle(getString(R.string.unhide));
+                        mHideItem.setIcon(R.drawable.ic_unhide_white);
+                    }
+                    else {
+                        mHideItem.setTitle(getString(R.string.hide));
+                        mHideItem.setIcon(R.drawable.ic_hide_black);
+                    }
                 }
             }
 
@@ -1842,13 +1907,17 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             switch (item.getItemId()) {
                 case R.id.action_rename:
                     if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
-                        final String filePath = mFileList.get(mSelectedItemPositions.keyAt(0)).getFilePath();
-//                        String fileName = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.length());
-                        String fileName = mFileList.get(mSelectedItemPositions.keyAt(0)).getFileName();
+                        final String filePath = mFileList.get(mSelectedItemPositions.keyAt(0))
+                                .getFilePath();
+//                        String fileName = filePath.substring(filePath.lastIndexOf("/") + 1,
+// filePath.length());
+                        String fileName = mFileList.get(mSelectedItemPositions.keyAt(0))
+                                .getFileName();
 
                         final long id = mFileList.get(mSelectedItemPositions.keyAt(0)).getId();
 //                        String extension = null;
-                        String extension = mFileList.get(mSelectedItemPositions.keyAt(0)).getExtension();
+                        String extension = mFileList.get(mSelectedItemPositions.keyAt(0))
+                                .getExtension();
                         boolean file = false;
                         if (new File(filePath).isFile()) {
                             String[] tokens = fileName.split("\\.(?=[^\\.]+$)");
@@ -1881,12 +1950,14 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                             public void onClick(View v) {
                                 final CharSequence name = rename.getText();
                                 if (name.length() == 0) {
-                                    rename.setError(getResources().getString(R.string.msg_error_valid_name));
+                                    rename.setError(getResources().getString(R.string
+                                            .msg_error_valid_name));
                                     return;
                                 }
-                                FileListFragment singlePaneFragment = (FileListFragment) getSupportFragmentManager()
-                                        .findFragmentById(R
-                                                .id.frame_container);
+                                FileListFragment singlePaneFragment = (FileListFragment)
+                                        getSupportFragmentManager()
+                                                .findFragmentById(R
+                                                        .id.frame_container);
                                 String renamedName;
                                 if (isFile) {
                                     renamedName = rename.getText().toString() + "." + ext;
@@ -1943,9 +2014,10 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                     if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
                         FileInfo fileInfo = mFileList.get(mSelectedItemPositions.keyAt(0));
                         int result = FileUtils.createZipFile(fileInfo.getFilePath());
-                        FileListFragment singlePaneFragment = (FileListFragment) getSupportFragmentManager()
-                                .findFragmentById(R
-                                        .id.frame_container);
+                        FileListFragment singlePaneFragment = (FileListFragment)
+                                getSupportFragmentManager()
+                                        .findFragmentById(R
+                                                .id.frame_container);
                         if (result == 0) {
                             showMessage(getString(R.string.msg_zip_success));
                             if (singlePaneFragment != null) {
@@ -1985,7 +2057,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                         for (int i = 0; i < mSelectedItemPositions.size(); i++) {
                             infoList.add(mFileList.get(mSelectedItemPositions.keyAt(i)));
                         }
-                        hideFiles(infoList);
+                        hideUnHideFiles(infoList);
                     }
                     mActionMode.finish();
                     return true;
@@ -1997,11 +2069,14 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-            FileListFragment fileListFragment = (FileListFragment) getSupportFragmentManager().findFragmentById(R.id
-                    .frame_container);
+            FileListFragment fileListFragment = (FileListFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id
+                            .frame_container);
             if (fileListFragment != null) {
                 fileListFragment.clearSelection();
+                fileListFragment.toggleDummyView(false);
             }
+
             mActionMode = null;
             mBottomToolbar.setVisibility(View.GONE);
             // FAB should be visible only for Files Category
@@ -2011,9 +2086,17 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         }
     }
 
-    private void hideFiles(ArrayList<FileInfo> fileInfo) {
+    private void hideUnHideFiles(ArrayList<FileInfo> fileInfo) {
         for (int i = 0; i < fileInfo.size(); i++) {
-            String renamedName = "." + fileInfo.get(i).getFileName();
+            String fileName = fileInfo.get(i).getFileName();
+            String renamedName;
+            if (fileName.startsWith(".")) {
+                renamedName = fileName.substring(1);
+            }
+            else {
+              renamedName = "." + fileName;
+            }
+
             int result = FileUtils.renameTarget(fileInfo.get(i).getFilePath(), renamedName);
         }
         FileListFragment singlePaneFragment = (FileListFragment) getSupportFragmentManager()
@@ -2098,8 +2181,26 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         FavInfo favInfo = new FavInfo();
         favInfo.setFileName(name);
         favInfo.setFilePath(path);
+
         sharedPreferenceWrapper.addFavorite(this, favInfo);
-        favouritesGroupChild.add(new SectionItems(name, path, R.drawable.ic_fav_folder, path));
+        SectionItems favItem = new SectionItems(name, path, R.drawable.ic_fav_folder, path);
+        if (!favouritesGroupChild.contains(favItem)) {
+            favouritesGroupChild.add(favItem);
+            expandableListAdapter.notifyDataSetChanged();
+        }
+
+
+    }
+
+    private void resetFavouritesGroup() {
+
+        for (int i = favouritesGroupChild.size() - 1; i > 0; i--) {
+            if (!favouritesGroupChild.get(i).getmSecondLine().equalsIgnoreCase(FileUtils
+                    .getDownloadsDirectory().getAbsolutePath())) {
+                favouritesGroupChild.remove(i);
+            }
+        }
+        sharedPreferenceWrapper.resetFavourites(this);
         expandableListAdapter.notifyDataSetChanged();
 
     }
@@ -2168,8 +2269,10 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         TextView textReadable = (TextView) dialog.findViewById(R.id.textReadable);
         TextView textWriteable = (TextView) dialog.findViewById(R.id.textWriteable);
         TextView textHiddenPlaceHolder = (TextView) dialog.findViewById(R.id.textHiddenPlaceHolder);
-        TextView textReadablePlaceHolder = (TextView) dialog.findViewById(R.id.textReadablePlaceHolder);
-        TextView textWriteablePlaceHolder = (TextView) dialog.findViewById(R.id.textWriteablePlaceHolder);
+        TextView textReadablePlaceHolder = (TextView) dialog.findViewById(R.id
+                .textReadablePlaceHolder);
+        TextView textWriteablePlaceHolder = (TextView) dialog.findViewById(R.id
+                .textWriteablePlaceHolder);
         TextView textMD5 = (TextView) dialog.findViewById(R.id.textMD5);
         TextView textMD5Placeholder = (TextView) dialog.findViewById(R.id.textMD5PlaceHolder);
 
@@ -2245,7 +2348,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         Log.d("TAG", "On config" + newConfig.orientation);
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE && mIsDualPaneEnabledSettings) {
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE &&
+                mIsDualPaneEnabledSettings) {
             // For Files category only, show dual pane
             if (mCategory == FileConstants.CATEGORY.FILES.getValue()) {
                 isDualPaneInFocus = true;
@@ -2324,7 +2428,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         }
     }
 
-    public class BackGroundOperationsTask extends AsyncTask<HashMap<String, Integer>, Integer, Void> {
+    public class BackGroundOperationsTask extends AsyncTask<HashMap<String, Integer>, Integer,
+            Void> {
 
         private String fileName;
         private String filePath;
@@ -2374,7 +2479,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                     progressDialog = new Dialog(mContext);
                     progressDialog.setContentView(R.layout.dialog_progress_paste);
                     progressDialog.setCancelable(false);
-                    TextView textTitle = (TextView) progressDialog.findViewById(R.id.textDialogTitle);
+                    TextView textTitle = (TextView) progressDialog.findViewById(R.id
+                            .textDialogTitle);
                     if (mIsMoveOperation) {
                         textTitle.setText(mContext.getString(R.string.msg_cut));
                     } else {
@@ -2385,11 +2491,14 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                     textFileSource = (TextView) progressDialog.findViewById(R.id.textFileFromPath);
                     textFileDest = (TextView) progressDialog.findViewById(R.id.textFileToPath);
                     textFilesLeft = (TextView) progressDialog.findViewById(R.id.textFilesLeft);
-                    textProgressPercent = (TextView) progressDialog.findViewById(R.id.textProgressPercent);
-                    pasteProgress = (ProgressBar) progressDialog.findViewById(R.id.progressBarPaste);
+                    textProgressPercent = (TextView) progressDialog.findViewById(R.id
+                            .textProgressPercent);
+                    pasteProgress = (ProgressBar) progressDialog.findViewById(R.id
+                            .progressBarPaste);
                     Button buttonBackground = (Button) progressDialog.findViewById(R.id.buttonBg);
 
-                    String fileName = mSourceFilePath.substring(mSourceFilePath.lastIndexOf("/") + 1, mSourceFilePath
+                    String fileName = mSourceFilePath.substring(mSourceFilePath.lastIndexOf("/")
+                            + 1, mSourceFilePath
                             .length());
                     textFileName.setText(fileName);
                     textFileSource.setText(mSourceFilePath);
@@ -2437,7 +2546,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                                 currentFile++;
                                 System.out.println("currentFile BG : " + currentFile);
 
-                                /*copyStatus = FileUtils.copyToDirectory(BaseActivity.this, sourcePath, mCurrentDir,
+                                /*copyStatus = FileUtils.copyToDirectory(BaseActivity.this,
+                                sourcePath, mCurrentDir,
                                         mIsMoveOperation, action, progress);*/
                                 System.out.println("copyStatus : " + copyStatus);
 
@@ -2465,7 +2575,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             pasteProgress.setProgress(progress);
 
             if (progress == 100 && currentFile == totalFiles) {
-//                    System.out.println("progress ELSE: " + progress + "currentFile:" + currentFile);
+//                    System.out.println("progress ELSE: " + progress + "currentFile:" +
+// currentFile);
                 progressDialog.dismiss();
             }
 
@@ -2474,8 +2585,9 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
         @Override
         protected void onPostExecute(Void result) {
-            FileListFragment singlePaneFragment = (FileListFragment) getSupportFragmentManager().findFragmentById(R
-                    .id.frame_container);
+            FileListFragment singlePaneFragment = (FileListFragment) getSupportFragmentManager()
+                    .findFragmentById(R
+                            .id.frame_container);
 
             switch (operation) {
 
@@ -2506,12 +2618,14 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                             singlePaneFragment.refreshList();
                         }
                         if (mIsMoveOperation) {
-                            showMessage(getResources().getQuantityString(R.plurals.number_of_files, filesCopied,
+                            showMessage(getResources().getQuantityString(R.plurals
+                                            .number_of_files, filesCopied,
                                     filesCopied) + " " +
                                     getString(R.string.msg_move_success));
 
                         } else {
-                            showMessage(getResources().getQuantityString(R.plurals.number_of_files, filesCopied,
+                            showMessage(getResources().getQuantityString(R.plurals
+                                            .number_of_files, filesCopied,
                                     filesCopied) + " " +
                                     getString(R.string.msg_copy_success));
                         }
@@ -2594,11 +2708,13 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
         @Override
         protected void onPostExecute(Integer filesDel) {
-            FileListFragment singlePaneFragment = (FileListFragment) getSupportFragmentManager().findFragmentById(R
-                    .id.frame_container);
-            FileListDualFragment dualPaneFragment = (FileListDualFragment) getSupportFragmentManager()
+            FileListFragment singlePaneFragment = (FileListFragment) getSupportFragmentManager()
                     .findFragmentById(R
-                            .id.frame_container_dual);
+                            .id.frame_container);
+            FileListDualFragment dualPaneFragment = (FileListDualFragment)
+                    getSupportFragmentManager()
+                            .findFragmentById(R
+                                    .id.frame_container_dual);
             int deletedFiles = filesDel;
             switch (operation) {
 
@@ -2608,7 +2724,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                     }
 
                     if (deletedFiles != 0) {
-                        showMessage(getResources().getQuantityString(R.plurals.number_of_files, deletedFiles,
+                        showMessage(getResources().getQuantityString(R.plurals.number_of_files,
+                                deletedFiles,
                                 deletedFiles) + " " +
                                 getString(R.string.msg_delete_success));
                         if (singlePaneFragment != null) {
@@ -2653,8 +2770,9 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     }
 
     public void refreshFileList() {
-        FileListFragment fileListFragment = (FileListFragment) getSupportFragmentManager().findFragmentById(R.id
-                .frame_container);
+        FileListFragment fileListFragment = (FileListFragment) getSupportFragmentManager()
+                .findFragmentById(R.id
+                        .frame_container);
         if (fileListFragment != null) {
             fileListFragment.refreshList();
         }

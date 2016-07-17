@@ -5,6 +5,7 @@
                 android:padding="5dp">
 
 
+
     <ImageView
         android:id="@+id/imageIcon"
         android:layout_width="@dimen/folder_icon"
@@ -15,7 +16,8 @@
         android:layout_marginLeft="@dimen/drawer_item_margin"
         android:layout_marginRight="@dimen/drawer_item_margin"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_folder_main"/>
+        android:src="@drawable/ic_folder_white"/>
+
 
     <TextView
         android:id="@+id/textFolderName"

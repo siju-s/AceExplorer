@@ -119,9 +119,11 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     public FileListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
         if (mViewMode == FileConstants.KEY_LISTVIEW) {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_list_item, parent, false);
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_list_item,
+                    parent, false);
         } else {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_grid_item, parent, false);
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_grid_item,
+                    parent, false);
         }
         FileListViewHolder tvh = new FileListViewHolder(view);
         return tvh;
@@ -140,8 +142,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         if (!mSelectedItemsIds.get(position)) {
             if (position == draggedPos) {
                 fileListViewHolder.itemView.setBackgroundColor(color);
-            }
-            else {
+            } else {
                 fileListViewHolder.itemView.setBackgroundColor(Color.TRANSPARENT);
             }
         }
@@ -187,7 +188,14 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         switch (mCategory) {
             case 0: // For file group
                 if (isDirectory) {
-                    fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_folder_white);
+                    if (fileName.startsWith(".")) {
+                        fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_folder_hidden);
+                   /*     fileListViewHolder.imageIcon.setBackgroundColor(ContextCompat.getColor
+                                (mContext, R.color.hidden));*/
+                    } else {
+                        fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_folder_white);
+
+                    }
                     Drawable apkIcon = FileUtils.getAppIconForFolder(mContext, fileName);
                     if (apkIcon != null) {
                         fileListViewHolder.imageThumbIcon.setVisibility(View.VISIBLE);
@@ -225,7 +233,8 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
                 }
                 break;
             case 1:
-                Uri uri = ContentUris.withAppendedId(mAudioUri, fileInfoArrayList.get(position).getBucketId());
+                Uri uri = ContentUris.withAppendedId(mAudioUri, fileInfoArrayList.get(position)
+                        .getBucketId());
                 Glide.with(mContext).loadFromMediaStore(uri).centerCrop()
                         .placeholder(R.drawable.ic_music)
                         .crossFade(2)
@@ -289,7 +298,8 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     }
 
     private void displayAudioAlbumArt(FileListViewHolder fileListViewHolder, String path) {
-//        Uri uri = ContentUris.withAppendedId(mAudioUri, fileInfoArrayList.get(position).getBucketId());
+//        Uri uri = ContentUris.withAppendedId(mAudioUri, fileInfoArrayList.get(position)
+// .getBucketId());
         Uri audioUri = Uri.fromFile(new File(path));
 
         MediaMetadataRetriever myRetriever = new MediaMetadataRetriever();
@@ -340,23 +350,19 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         }*/
     }
 
-    public void toggleSelection(int position,boolean isLongPress) {
+    public void toggleSelection(int position, boolean isLongPress) {
         if (isLongPress) {
             selectView(position, true);
-        }
-        else {
+        } else {
             selectView(position, !mSelectedItemsIds.get(position));
 
         }
     }
 
 
-
-
     public void toggleDragSelection(int position) {
         selectDragView(position, !mDraggedItemsIds.get(position));
     }
-
 
 
     public void toggleSelectAll(int position, boolean selectAll) {
@@ -383,7 +389,6 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         notifyDataSetChanged();
 
     }
-
 
 
     public void selectView(int position, boolean value) {

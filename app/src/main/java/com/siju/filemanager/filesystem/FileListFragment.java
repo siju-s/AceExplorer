@@ -28,6 +28,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -62,6 +63,7 @@ import com.siju.filemanager.R;
 import com.siju.filemanager.common.Logger;
 import com.siju.filemanager.common.SharedPreferenceWrapper;
 import com.siju.filemanager.filesystem.model.FileInfo;
+import com.siju.filemanager.filesystem.ui.CustomGridLayoutManager;
 import com.siju.filemanager.filesystem.ui.CustomLayoutManager;
 import com.siju.filemanager.filesystem.ui.DialogBrowseFragment;
 import com.siju.filemanager.filesystem.ui.DividerItemDecoration;
@@ -132,10 +134,12 @@ public class FileListFragment extends Fragment implements LoaderManager
     private ArrayList<String> mDragPaths = new ArrayList<>();
     private PasteUtils mPasteUtils;
     //    private RecyclerView.LayoutManager llm;
-    private CustomLayoutManager llm;
+    private RecyclerView.LayoutManager llm;
     private String mLastDualPaneDir;
     private String mLastSinglePaneDir;
     private boolean mDualPaneInFocus;
+    private View viewDummy;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
 
 
@@ -263,7 +267,10 @@ public class FileListFragment extends Fragment implements LoaderManager
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 int event = motionEvent.getActionMasked();
 
-                if (mStartDrag && event == MotionEvent.ACTION_MOVE && mLongPressedTime != 0) {
+                if (mStartDrag && event == MotionEvent.ACTION_UP) {
+                    mStartDrag = false;
+                }
+                else if (mStartDrag && event == MotionEvent.ACTION_MOVE && mLongPressedTime != 0) {
                     long timeElapsed = System.currentTimeMillis() - mLongPressedTime;
 //                    Logger.log("TAG", "On item touch time Elapsed" + timeElapsed);
 
@@ -301,7 +308,16 @@ public class FileListFragment extends Fragment implements LoaderManager
         preference = new SharedPreferenceWrapper();
         //ViewParent viewParent = recyclerViewFileList.getParent().getParent();
         recyclerViewFileList.setOnDragListener(new myDragEventListener());
-
+        viewDummy = root.findViewById(R.id.viewDummy);
+        mSwipeRefreshLayout = (SwipeRefreshLayout)root.findViewById(R.id.swipeRefreshLayout);
+         int colorResIds [] = {R.color.colorPrimaryDark,R.color.colorPrimary,R.color.colorPrimaryDark};
+        mSwipeRefreshLayout.setColorSchemeResources(colorResIds);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshList();
+            }
+        });
     }
 
     private void handleCategoryItemClick(int position) {
@@ -373,6 +389,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         if (hasCheckedItems && actionMode == null) {
             // there are some selected items, start the actionMode
             ((BaseActivity) getActivity()).startActionMode();
+            toggleDummyView(true);
             if (FileListFragment.this instanceof FileListDualFragment) {
                 mIsDualActionModeActive = true;
             } else {
@@ -381,6 +398,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             ((BaseActivity) getActivity()).setFileList(fileInfoList);
         } else if (!hasCheckedItems && actionMode != null) {
             // there no selected items, finish the actionMode
+            toggleDummyView(false);
             actionMode.finish();
         }
         if (((BaseActivity) getActivity()).getActionMode() != null) {
@@ -411,6 +429,14 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     }
 
+    public void toggleDummyView(boolean isVisible) {
+        if (isVisible)
+            viewDummy.setVisibility(View.VISIBLE);
+        else
+            viewDummy.setVisibility(View.GONE);
+
+    }
+
     public void refreshList() {
         Bundle args = new Bundle();
         args.putString(FileConstants.KEY_PATH, mFilePath);
@@ -429,7 +455,10 @@ public class FileListFragment extends Fragment implements LoaderManager
     public void onLoadFinished(Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
 //        Log.d("TAG", "on onLoadFinished--" + data.size());
         if (data != null) {
+
             Log.d("TAG", "on onLoadFinished--" + data.size());
+            // Stop refresh animation
+            mSwipeRefreshLayout.setRefreshing(false);
             if (!data.isEmpty()) {
                 fileInfoList = data;
                 fileListAdapter.updateAdapter(fileInfoList);
@@ -438,8 +467,8 @@ public class FileListFragment extends Fragment implements LoaderManager
                 if (mViewMode == FileConstants.KEY_LISTVIEW) {
                     llm = new CustomLayoutManager(getActivity());
                 } else {
-//                    llm = new GridLayoutManager(getActivity(), getResources().getInteger(R
-//                            .integer.grid_columns));
+                    llm = new CustomGridLayoutManager(getActivity(), getResources().getInteger(R
+                            .integer.grid_columns));
 
                 }
                 llm.setAutoMeasureEnabled(false);
