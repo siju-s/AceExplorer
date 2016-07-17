@@ -1111,6 +1111,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
             if (!isDualPaneInFocus) {
                 mCurrentDir = intent.getStringExtra(FileConstants.KEY_PATH);
+                intent.putExtra(FileConstants.KEY_PATH_OTHER,mCurrentDirDualPane);
+
                 targetFragment = new FileListFragment();
                 if (mViewMode == mode) {
                     singlePaneFragments.add(targetFragment);
@@ -1120,9 +1122,14 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             } else {
                 targetFragment = new FileListDualFragment();
                 mCurrentDirDualPane = intent.getStringExtra(FileConstants.KEY_PATH);
+                intent.putExtra(FileConstants.KEY_PATH_OTHER,mCurrentDir);
+
                 dualPaneFragments.add(targetFragment);
 
             }
+
+            intent.putExtra(FileConstants.KEY_FOCUS_DUAL,isDualPaneInFocus);
+
 
             if (action.equals(ACTION_VIEW_FOLDER_LIST)) {
                 transaction.replace(R.id.frame_container, targetFragment, mCurrentDir);
@@ -1270,15 +1277,21 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 //        Logger.log("TAG","Fragment tag ="+fragment.getTag());
         String path = fragment.getArguments().getString(FileConstants.KEY_PATH);
 
+        Bundle args = fragment.getArguments();
+
         Logger.log("TAG", "Fragment bundle =" + path);
 
         if (isDualPane) {
             FileListDualFragment dualFragment = new FileListDualFragment();
             dualFragment.setArguments(fragment.getArguments());
+            args.putString(FileConstants.KEY_PATH_OTHER, mCurrentDir);
+            args.putBoolean(FileConstants.KEY_FOCUS_DUAL, true);
             fragmentTransaction.replace(R.id.frame_container_dual, dualFragment, path);
         } else {
             FileListFragment fileListFragment = new FileListFragment();
             fileListFragment.setArguments(fragment.getArguments());
+            args.putString(FileConstants.KEY_PATH_OTHER, mCurrentDirDualPane);
+            args.putBoolean(FileConstants.KEY_FOCUS_DUAL, false);
             fragmentTransaction.replace(R.id.frame_container, fileListFragment, path);
         }
         fragmentTransaction.commitAllowingStateLoss();
@@ -2242,6 +2255,10 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                 String internalStoragePath = getInternalStorage().getAbsolutePath();
                 Bundle args = new Bundle();
                 args.putString(FileConstants.KEY_PATH, internalStoragePath);
+
+                args.putString(FileConstants.KEY_PATH_OTHER, mCurrentDir);
+                args.putBoolean(FileConstants.KEY_FOCUS_DUAL, true);
+
                 args.putBoolean(FileConstants.KEY_DUAL_MODE, true);
                 setNavDirectory();
                 FileListDualFragment dualFragment = new FileListDualFragment();

@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.siju.filemanager.BaseActivity;
 import com.siju.filemanager.R;
 import com.siju.filemanager.common.Logger;
+import com.siju.filemanager.filesystem.FileListDualFragment;
 import com.siju.filemanager.filesystem.FileListFragment;
 import com.siju.filemanager.filesystem.model.FileInfo;
 
@@ -88,8 +89,7 @@ public class PasteUtils {
             mPathActionMap.put(sourceFilePath, mPasteAction);
             Logger.log("TAG", "SOURCE==" + sourceFilePath + "isPasteConflictDialogShown==" + isPasteConflictDialogShown);
             return isPasteConflictDialogShown;
-        }
-        else {
+        } else {
             // If source file is file,compare source file name & destination directory children names
             for (int i = 0; i < destinationDirList.length; i++) {
                 if (fileName.equals(destinationDirList[i])) {
@@ -345,6 +345,11 @@ public class PasteUtils {
                     .findFragmentById(R
                             .id.frame_container);
 
+            FileListDualFragment dualPaneFragment = (FileListDualFragment) mFragment
+                    .getFragmentManager()
+                    .findFragmentById(R
+                            .id.frame_container_dual);
+
             switch (operation) {
 
                 case PASTE_OPERATION:
@@ -375,6 +380,11 @@ public class PasteUtils {
                         if (singlePaneFragment != null) {
                             singlePaneFragment.refreshList();
                         }
+                        if (dualPaneFragment != null) {
+                            dualPaneFragment.refreshList();
+                        }
+
+
                         if (mIsMoveOperation) {
                             showMessage(mContext.getResources().getQuantityString(R.plurals
                                             .number_of_files, filesCopied,

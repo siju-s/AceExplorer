@@ -12,11 +12,17 @@ public class FileConstants {
     public static final String PREFS_THEME = "prefThemes";
 
     public static final String KEY_PATH = "PATH";
+    public static final String KEY_PATH_OTHER = "OTHER_PATH";
+    public static final String KEY_FOCUS_DUAL = "DUAL_FOCUS";
+
     public static final String KEY_FILENAME = "FILENAME";
     public static final String KEY_DUAL_MODE = "DUAL_MODE";
     public static final String APK_EXTENSION = "apk";
     public static final String KEY_CATEGORY = "CATEGORY";
     public static final String KEY_ZIP = "ZIP";
+    public static final int KEY_SINGLE_PANE = 0;
+    public static final int KEY_DUAL_PANE = 1;
+
 
 
     public static final int KEY_SORT_NAME = 0;
