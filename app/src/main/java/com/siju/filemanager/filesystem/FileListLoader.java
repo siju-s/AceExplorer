@@ -12,6 +12,7 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.siju.filemanager.R;
+import com.siju.filemanager.common.Logger;
 import com.siju.filemanager.filesystem.model.FileInfo;
 import com.siju.filemanager.filesystem.utils.FileUtils;
 import com.siju.filemanager.filesystem.utils.RootHelperWrapper;
@@ -22,7 +23,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.URLConnection;
@@ -36,6 +39,8 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
+
+import eu.chainfire.libsuperuser.Shell;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.siju.filemanager.filesystem.utils.FileUtils.convertDate;
@@ -185,24 +190,35 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         File file = new File(mPath);
         String fileExtension = mPath.substring(mPath.lastIndexOf(".") + 1);
         boolean isRootAccessGranted = false;
+        boolean isRoot= false;
+        if (file.canRead()) {
+            Log.d("TAG","Hell yeah");
+        }
+        else {
+            Log.d("TAG","Hell NOOOO");
+
+        }
         if (!mPath.contains(FileUtils.getInternalStorage().getAbsolutePath())) {
             if (FileUtils.getExternalStorage() == null) {
-                isRootAccessGranted = RootHelperWrapper.canRunRootCommands();
+                isRoot = true;
+
+      /*          isRootAccessGranted = RootHelperWrapper.canRunRootCommands();
                 if (isRootAccessGranted) {
                     RootHelperWrapper wrapper = new RootHelperWrapper();
                     wrapper.execute();
-                }
+                }*/
             }
 
             else if (FileUtils.getExternalStorage() != null && !mPath
                     .contains(FileUtils
                             .getExternalStorage().getAbsolutePath())) {
+                isRoot = true;
 
-                isRootAccessGranted = RootHelperWrapper.canRunRootCommands();
+              /*  isRootAccessGranted = RootHelperWrapper.canRunRootCommands();
                 if (isRootAccessGranted) {
                     RootHelperWrapper wrapper = new RootHelperWrapper();
                     wrapper.execute();
-                }
+                }*/
             }
         }
 
@@ -284,7 +300,69 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                     }
                     return fileInfoList;
 
-                } else {
+                } else if (isRoot) {
+                    boolean suAvailable = Shell.SU.available();
+                    if (suAvailable) {
+
+                        try {
+                            String line;
+                            Process process = Runtime.getRuntime().exec("su");
+                            OutputStream stdin = process.getOutputStream();
+                            InputStream stderr = process.getErrorStream();
+                            InputStream stdout = process.getInputStream();
+
+                           /* byte [] b = new byte[12];
+                             b = "ls -lF\n";*/
+                            String command = "ls -lF\n";
+                            byte[] utf8Bytes = command.getBytes("UTF8");
+
+                            stdin.write(utf8Bytes);
+                            stdin.write("exit\n".getBytes("UTF-8"));
+                            stdin.flush();
+
+                            stdin.close();
+                            BufferedReader br =
+                                    new BufferedReader(new InputStreamReader(stdout));
+                            while ((line = br.readLine()) != null) {
+                                Log.d("[Output]", line);
+                            }
+                            br.close();
+                            br =
+                                    new BufferedReader(new InputStreamReader(stderr));
+                            while ((line = br.readLine()) != null) {
+                                Log.e("[Error]", line);
+                            }
+                            br.close();
+
+                            process.waitFor();
+                            process.destroy();
+
+                        } catch (Exception ex) {
+                        }
+
+                      /*  String [] commands = new String[1];
+                        commands[0] = "ls -pl " + file;
+                        List<String> suResult = Shell.SU.run(commands);
+                        StringBuilder sb = new StringBuilder();
+                        for (String line : suResult) {
+                            sb.append(line).append((char)10);
+                        }*/
+//                        Logger.log("TAG","List=="+sb);
+/*                        for (String line : suResult) {
+        *//*                    boolean isDirectory = false;
+                            String fileName = file1.getName();
+                            String filePath = file1.getAbsolutePath();
+                            String noOfFilesOrSize = null;
+                            String extension = null;
+                            int type = 0;*//*
+
+
+                        }*/
+                    }
+                    return null;
+                }
+
+                else {
                     return null;
                 }
             } else {

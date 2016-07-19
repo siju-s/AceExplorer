@@ -141,5 +141,6 @@
     <string name="move">Move</string>
     <string name="msg_fav_reset">Favourites resetted to default.</string>
 
+    <string name="pref_title_homescreen">Show HomeScreen</string>
 
 </resources>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+    <!-- <de.hdodenhof.circleimageview.CircleImageView
+         xmlns:app="http://schemas.android.com/apk/res-auto"
+         android:id="@+id/profile_image"
+         android:layout_width="96dp"
+         android:layout_height="96dp"
+         android:src="@drawable/ic_music_white"
+         app:civ_border_width="2dp"
+         app:civ_border_color="#FF000000"/>-->
+    <ImageView
+        android:id="@+id/imageLibrary"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@color/colorPrimaryDark"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_info_white"/>
+
+    <TextView
+        android:layout_width="40dp"
+        android:layout_height="20dp"
+        android:background="@android:color/darker_gray"
+        android:gravity="center"
+        android:text="20"
+        android:layout_above="@+id/textLibrary"
+        android:layout_alignRight="@+id/imageLibrary"
+        android:layout_alignEnd="@+id/imageLibrary"/>
+
+    <TextView
+        android:id="@+id/textLibrary"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageLibrary"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        android:text="Images"
+        />
+
+</RelativeLayout>

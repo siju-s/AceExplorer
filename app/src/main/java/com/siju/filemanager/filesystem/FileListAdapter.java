@@ -188,14 +188,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         switch (mCategory) {
             case 0: // For file group
                 if (isDirectory) {
-                    if (fileName.startsWith(".")) {
-                        fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_folder_hidden);
-                   /*     fileListViewHolder.imageIcon.setBackgroundColor(ContextCompat.getColor
-                                (mContext, R.color.hidden));*/
-                    } else {
-                        fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_folder_white);
-
-                    }
+                    fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_folder_white);
                     Drawable apkIcon = FileUtils.getAppIconForFolder(mContext, fileName);
                     if (apkIcon != null) {
                         fileListViewHolder.imageThumbIcon.setVisibility(View.VISIBLE);
@@ -230,6 +223,14 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
                         }
 
                     }
+
+                }
+                if (fileName.startsWith(".")) {
+                    fileListViewHolder.imageIcon.setColorFilter(Color.argb(200, 255, 255, 255));
+                }
+                else {
+                    fileListViewHolder.imageIcon.clearColorFilter();
+
                 }
                 break;
             case 1:

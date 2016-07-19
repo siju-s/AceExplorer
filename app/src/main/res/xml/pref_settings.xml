@@ -16,6 +16,12 @@
             android:positiveButtonText="@null"
             android:title="@string/pref_title_theme"/>
 
+    <CheckBoxPreference
+        android:key="prefHomeScreen"
+        android:layout="@layout/prefs_checkbox"
+        android:defaultValue="true"
+        android:title="@string/pref_title_homescreen"/>
+
         <CheckBoxPreference
             android:key="prefHidden"
             android:layout="@layout/prefs_checkbox"

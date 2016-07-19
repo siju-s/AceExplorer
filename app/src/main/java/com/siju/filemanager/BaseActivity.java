@@ -31,7 +31,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.format.Formatter;
+import android.text.style.ImageSpan;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
@@ -177,6 +180,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private boolean mIsDualPaneEnabledSettings = true;
     private boolean mIsPasteItemVisible;
     private boolean mIsFabOpen;
+    private boolean mIsHomeScreenEnabled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -213,6 +217,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             mIsFirstRun = true;
             sharedPreference.edit().putBoolean(PREFS_FIRST_RUN, false).apply();
         }
+        mIsHomeScreenEnabled = sharedPreference.getBoolean(FileConstants.PREFS_HOMESCREEN,
+                true);
         mIsDualPaneEnabledSettings = sharedPreference.getBoolean(FileConstants.PREFS_DUAL_PANE,
                 true);
         sharedPreference.registerOnSharedPreferenceChangeListener(this);
@@ -229,6 +235,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         setListAdapter();
         setNavDirectory();
         setUpPreferences();
+        initialHomeScreenSetup();
         initialFragmentSetup(mCurrentDir, FileConstants.CATEGORY.FILES.getValue());
     }
 
@@ -510,6 +517,10 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         initializeFavouritesGroup();
         initializeLibraryGroup();
         initializeOthersGroup();
+    }
+
+    private void initialHomeScreenSetup() {
+
     }
 
     private void initializeStorageGroup() {
@@ -1849,14 +1860,43 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             mActionMode = mode;
             MenuInflater inflater = mActionMode.getMenuInflater();
             inflater.inflate(R.menu.action_mode, menu);
+
             mRenameItem = menu.findItem(R.id.action_rename);
             mInfoItem = menu.findItem(R.id.action_info);
             mArchiveItem = menu.findItem(R.id.action_archive);
             mFavItem = menu.findItem(R.id.action_fav);
             mExtractItem = menu.findItem(R.id.action_extract);
             mHideItem = menu.findItem(R.id.action_hide);
+            setupMenu(menu);
 
             return true;
+        }
+
+        private void setupMenu(Menu menu) {
+            MenuItem item = menu.findItem(R.id.action_archive);
+            SpannableStringBuilder builder = new SpannableStringBuilder(" " + "  " + getString(R
+                    .string
+                    .action_archive));
+            // replace "*" with icon
+            builder.setSpan(new ImageSpan(BaseActivity.this, R.drawable.ic_archive_white), 0, 1,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            mArchiveItem.setTitle(builder);
+
+            SpannableStringBuilder favBuilder = new SpannableStringBuilder(" " + "  " + getString
+                    (R.string
+                            .add_fav));
+            // replace "*" with icon
+            favBuilder.setSpan(new ImageSpan(BaseActivity.this, R.drawable.ic_favorite_white), 0, 1,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            mFavItem.setTitle(favBuilder);
+
+            SpannableStringBuilder hideBuilder = new SpannableStringBuilder(" " + "  " +
+                    getString(R.string
+                            .hide));
+            // replace "*" with icon
+            hideBuilder.setSpan(new ImageSpan(BaseActivity.this, R.drawable.ic_hide_white), 0, 1,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            mHideItem.setTitle(hideBuilder);
         }
 
         @SuppressLint("NewApi")
@@ -1889,12 +1929,27 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                     }
                     String fileName = mFileList.get(mSelectedItemPositions.keyAt(0)).getFileName();
                     if (fileName.startsWith(".")) {
-                        mHideItem.setTitle(getString(R.string.unhide));
-                        mHideItem.setIcon(R.drawable.ic_unhide_white);
-                    }
-                    else {
-                        mHideItem.setTitle(getString(R.string.hide));
-                        mHideItem.setIcon(R.drawable.ic_hide_black);
+                        SpannableStringBuilder hideBuilder = new SpannableStringBuilder(" " + "  " +
+                                "" + getString(R.string
+                                .unhide));
+                        // replace "*" with icon
+                        hideBuilder.setSpan(new ImageSpan(BaseActivity.this, R.drawable
+                                        .ic_unhide_white), 0, 1,
+                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        mHideItem.setTitle(hideBuilder);
+                     /*   mHideItem.setTitle(getString(R.string.unhide));
+                        mHideItem.setIcon(R.drawable.ic_unhide_white);*/
+                    } else {
+                        SpannableStringBuilder hideBuilder = new SpannableStringBuilder(" " + "  " +
+                                "" + getString(R.string
+                                .hide));
+                        // replace "*" with icon
+                        hideBuilder.setSpan(new ImageSpan(BaseActivity.this, R.drawable
+                                        .ic_hide_white), 0, 1,
+                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        mHideItem.setTitle(hideBuilder);
+                /*        mHideItem.setTitle(getString(R.string.hide));
+                        mHideItem.setIcon(R.drawable.ic_hide_white);*/
                     }
                 }
             }
@@ -2092,9 +2147,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             String renamedName;
             if (fileName.startsWith(".")) {
                 renamedName = fileName.substring(1);
-            }
-            else {
-              renamedName = "." + fileName;
+            } else {
+                renamedName = "." + fileName;
             }
 
             int result = FileUtils.renameTarget(fileInfo.get(i).getFilePath(), renamedName);
