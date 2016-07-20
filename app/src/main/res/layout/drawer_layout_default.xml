@@ -7,11 +7,15 @@
     android:layout_height="match_parent"
     tools:openDrawer="start">
 
-    <include
-        layout="@layout/navigation_top"
+  <!--  <include
+        layout="@layout/homescreen"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent" />-->
 
+    <FrameLayout
+        android:id="@+id/frame_home"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 
     <RelativeLayout

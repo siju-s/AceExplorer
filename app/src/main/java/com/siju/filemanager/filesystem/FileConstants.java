@@ -14,6 +14,7 @@ public class FileConstants {
     public static final String PREFS_THEME = "prefThemes";
 
     public static final String KEY_PATH = "PATH";
+    public static final String KEY_HOME = "HOME";
     public static final String KEY_PATH_OTHER = "OTHER_PATH";
     public static final String KEY_FOCUS_DUAL = "DUAL_FOCUS";
 
