@@ -30,6 +30,8 @@
 
     <integer name="grid_columns">4</integer>
     <dimen name="drag_shadow_font">20sp</dimen>
+    <dimen name="home_library_width">75dp</dimen>
+    <dimen name="card_margin">10dp</dimen>
 
 
 

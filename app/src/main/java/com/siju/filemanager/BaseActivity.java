@@ -225,7 +225,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             sharedPreference.edit().putBoolean(PREFS_FIRST_RUN, false).apply();
         }
         mIsHomeScreenEnabled = sharedPreference.getBoolean(FileConstants.PREFS_HOMESCREEN,
-                false);
+                true);
         mIsDualPaneEnabledSettings = sharedPreference.getBoolean(FileConstants.PREFS_DUAL_PANE,
                 true);
         sharedPreference.registerOnSharedPreferenceChangeListener(this);
@@ -295,11 +295,11 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                     // Permission granted
                     Log.d("TAG", "Permission granted");
                     mIsPermissionGranted = true;
-                    fabCreateMenu.setVisibility(View.VISIBLE);
+//                    fabCreateMenu.setVisibility(View.VISIBLE);
                     setUpInitialData();
                 } else {
                     showRationale();
-                    fabCreateMenu.setVisibility(View.GONE);
+//                    fabCreateMenu.setVisibility(View.GONE);
                 }
         }
     }
@@ -396,8 +396,8 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private void initViews() {
         mFrameHomeScreen = (FrameLayout) findViewById(R.id.frame_home);
 
-//        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(mToolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
         mMainLayout = (ConstraintLayout) findViewById(R.id.content_base);
         mBottomToolbar = (Toolbar) findViewById(R.id.toolbar_bottom);
 
@@ -458,7 +458,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             HomeScreenFragment homeScreenFragment = new HomeScreenFragment();
             homeScreenFragment.setArguments(args);
             ft.replace(R.id.frame_home, homeScreenFragment);
-            ft.addToBackStack(FileConstants.KEY_HOME);
+//            ft.addToBackStack(FileConstants.KEY_HOME);
             ft.commitAllowingStateLoss();
         } else {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -472,7 +472,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             StoragesFragment storagesFragment = new StoragesFragment();
             storagesFragment.setArguments(args);
             ft.replace(R.id.frame_home, storagesFragment);
-            ft.addToBackStack(mCurrentDir);
+//            ft.addToBackStack(mCurrentDir);
             ft.commitAllowingStateLoss();
         }
     }
@@ -1097,9 +1097,9 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         int singlePaneCount = singlePaneFragments.size();
         int dualPaneCount = dualPaneFragments.size();
 
-        Logger.log(TAG, "onBackPressed--SINGLEPANELFRAG count=" + singlePaneCount);
+/*        Logger.log(TAG, "onBackPressed--SINGLEPANELFRAG count=" + singlePaneCount);
         Logger.log(TAG, "onBackPressed--DUALPANELFRAG count=" + dualPaneCount);
-        Logger.log(TAG, "onBackPressed--isDualPaneInFocus=" + isDualPaneInFocus);
+        Logger.log(TAG, "onBackPressed--isDualPaneInFocus=" + isDualPaneInFocus);*/
 
         mIsFavGroup = false;
 
@@ -1107,77 +1107,13 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         }
+        if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
+            getSupportFragmentManager().popBackStack();
+        }
       /*  else if (fabCreateMenu.isExpanded()) {
             fabCreateMenu.collapse();
         } */
-        else if (mCategory == 0 && mIsPermissionGranted) {
-            if (!isDualPaneInFocus) {
-
-                if (navigationLevelSinglePane != 0) {
-                    navigationLevelSinglePane--;
-                }
-
-            } else {
-                if (navigationLevelDualPane != 0) {
-                    navigationLevelDualPane--;
-                }
-            }
-
-            if (!isDualPaneInFocus) {
-                if (singlePaneCount == 1) {
-                    super.onBackPressed();
-
-                } else {
-                    // Changing the current dir  to 1 up on back press
-                    mCurrentDir = new File(mCurrentDir).getParent();
-                    Log.d(TAG, "onBackPressed--mCurrentDir=" + mCurrentDir);
-                    int childCount = navDirectory.getChildCount();
-                    Log.d(TAG, "onBackPressed--Navbuttons count=" + childCount);
-                    navDirectory.removeViewAt(childCount - 1); // Remove view
-                    navDirectory.removeViewAt(childCount - 2); // Remove > symbol
-                    scrollNavigation.postDelayed(new Runnable() {
-                        public void run() {
-                            HorizontalScrollView hv = (HorizontalScrollView) findViewById(R.id
-                                    .scrollNavigation);
-                            hv.fullScroll(HorizontalScrollView.FOCUS_LEFT);
-                        }
-                    }, 100L);
-//                    if (singlePaneCount == 2) {
-//                        Fragment fragment = singlePaneFragments.get(singlePaneCount - 1);
-//                        getSupportFragmentManager().beginTransaction().remove(fragment).commit();
-//                    }
-//                    else {
-                    Fragment fragment = singlePaneFragments.get(singlePaneCount - 2);
-//                    replaceFragment(fragment, isDualPaneInFocus);
-//                    }
-                    singlePaneFragments.remove(singlePaneCount - 1);  // Removing the last fragment
-
-                }
-
-            } else {
-                if (dualPaneCount == 1) {
-                    super.onBackPressed();
-                } else {
-                    mCurrentDirDualPane = new File(mCurrentDirDualPane).getParent();
-                    Log.d(TAG, "onBackPressed--mCurrentDirDual=" + mCurrentDirDualPane);
-                    int childCount = navDirectoryDualPane.getChildCount();
-                    Log.d(TAG, "onBackPressed--Navbuttonsdualpane childCount=" + childCount);
-                    navDirectoryDualPane.removeViewAt(childCount - 1); // Remove view
-                    navDirectoryDualPane.removeViewAt(childCount - 2); // Remove > symbol
-                    scrollNavigationDualPane.postDelayed(new Runnable() {
-                        public void run() {
-                            HorizontalScrollView hv = (HorizontalScrollView) findViewById(R.id
-                                    .scrollNavigationDualPane);
-                            hv.fullScroll(HorizontalScrollView.FOCUS_LEFT);
-                        }
-                    }, 100L);
-                    Fragment fragment = dualPaneFragments.get(dualPaneCount - 2);
-//                    replaceFragment(fragment, isDualPaneInFocus);
-                    dualPaneFragments.remove(dualPaneCount - 1);  // Removing the last fragment
-
-                }
-            }
-        } else {
+         else {
             super.onBackPressed();
         }
 

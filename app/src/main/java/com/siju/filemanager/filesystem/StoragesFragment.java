@@ -18,6 +18,7 @@ import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -70,7 +71,7 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
     public static final String ACTION_DUAL_PANEL = "ACTION_DUAL_PANEL";
     public static final String ACTION_VIEW_MODE = "view_mode";
 
-    private String mCurrentDir ;
+    private String mCurrentDir = getInternalStorage().getAbsolutePath();
     private String mCurrentDirDualPane = getInternalStorage().getAbsolutePath();
     public String STORAGE_ROOT, STORAGE_INTERNAL, STORAGE_EXTERNAL, DOWNLOADS, IMAGES, VIDEO,
             MUSIC, DOCS, SETTINGS,
@@ -140,6 +141,7 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
     private boolean mIsDualPaneEnabledSettings = true;
     private boolean mIsPasteItemVisible;
     private boolean mIsFabOpen;
+    private boolean mFromHomeScreen;
 
     private View root;
 
@@ -158,29 +160,132 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
         setHasOptionsMenu(true);
         initializeViews();
         initListeners();
+        initConstants();
         checkScreenOrientation();
 
         if (getArguments() != null) {
             getArguments().getInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
             String path = getArguments().getString(FileConstants.KEY_PATH);
+            mFromHomeScreen = getArguments().getBoolean(FileConstants.KEY_HOME);
 
             int groupPos = getArguments().getInt(BaseActivity.ACTION_GROUP_POS, -1);
             int childPos = getArguments().getInt(BaseActivity.ACTION_CHILD_POS, -1);
-            if (groupPos != -1 && childPos != -1) {
+     /*       if (groupPos != -1 && childPos != -1) {
                 displaySelectedGroup(groupPos, childPos, path);
 
-            }
+            }*/
+            setNavDirectory();
+            initialFragmentSetup(path, FileConstants.CATEGORY.FILES.getValue());
         }
-//        setNavDirectory();
 
 
     }
 
+
     private void initializeViews() {
 
-        mToolbar = (Toolbar) root.findViewById(R.id.toolbar);
+        root.setFocusableInTouchMode(true);
+        root.requestFocus();
+        root.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
+                if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
+                    if (keyCode == KeyEvent.KEYCODE_BACK) {
+                        int singlePaneCount = singlePaneFragments.size();
+                        int dualPaneCount = dualPaneFragments.size();
+                        Logger.log(TAG, "onBackPressed--SINGLEPANELFRAG count=" + singlePaneCount);
+                        Logger.log(TAG, "onBackPressed--DUALPANELFRAG count=" + dualPaneCount);
+                        Logger.log(TAG, "onBackPressed--isDualPaneInFocus=" + isDualPaneInFocus);
+                        if (mCategory == 0) {
+                            if (!isDualPaneInFocus) {
+
+                                if (navigationLevelSinglePane != 0) {
+                                    navigationLevelSinglePane--;
+                                }
+
+                            } else {
+                                if (navigationLevelDualPane != 0) {
+                                    navigationLevelDualPane--;
+                                }
+                            }
+
+                            if (!isDualPaneInFocus) {
+
+                                if (singlePaneCount == 1) {
+                                    if (mFromHomeScreen) {
+                                       getActivity().onBackPressed();
+                                    } else {
+                                        getActivity().finish();
+
+                                    }
+                                } else {
+                                    // Changing the current dir  to 1 up on back press
+                                    mCurrentDir = new File(mCurrentDir).getParent();
+                                    Log.d(TAG, "onBackPressed--mCurrentDir=" + mCurrentDir);
+                                    int childCount = navDirectory.getChildCount();
+                                    Log.d(TAG, "onBackPressed--Navbuttons count=" + childCount);
+                                    navDirectory.removeViewAt(childCount - 1); // Remove view
+                                    navDirectory.removeViewAt(childCount - 2); // Remove > symbol
+                                    scrollNavigation.postDelayed(new Runnable() {
+                                        public void run() {
+                                            HorizontalScrollView hv = (HorizontalScrollView) root
+                                                    .findViewById(R.id
+                                                            .scrollNavigation);
+                                            hv.fullScroll(HorizontalScrollView.FOCUS_LEFT);
+                                        }
+                                    }, 100L);
+                                    Fragment fragment = singlePaneFragments.get(singlePaneCount -
+                                            2);
+                                    replaceFragment(fragment, isDualPaneInFocus);
+                                    singlePaneFragments.remove(singlePaneCount - 1);  // Removing
+                                    // the last fragment
+
+                                }
+
+                            } else {
+                                if (dualPaneCount == 1) {
+                                    getActivity().finish();
+
+//                                    getActivity().getSupportFragmentManager().popBackStack();
+                                } else {
+                                    mCurrentDirDualPane = new File(mCurrentDirDualPane).getParent();
+                                    Log.d(TAG, "onBackPressed--mCurrentDirDual=" +
+                                            mCurrentDirDualPane);
+                                    int childCount = navDirectoryDualPane.getChildCount();
+                                    Log.d(TAG, "onBackPressed--Navbuttonsdualpane childCount=" +
+                                            childCount);
+                                    navDirectoryDualPane.removeViewAt(childCount - 1); // Remove
+                                    // view
+                                    navDirectoryDualPane.removeViewAt(childCount - 2); // Remove
+                                    // > symbol
+                                    scrollNavigationDualPane.postDelayed(new Runnable() {
+                                        public void run() {
+                                            HorizontalScrollView hv = (HorizontalScrollView) root
+                                                    .findViewById(R.id
+                                                            .scrollNavigationDualPane);
+                                            hv.fullScroll(HorizontalScrollView.FOCUS_LEFT);
+                                        }
+                                    }, 100L);
+                                    Fragment fragment = dualPaneFragments.get(dualPaneCount - 2);
+                                    replaceFragment(fragment, isDualPaneInFocus);
+                                    dualPaneFragments.remove(dualPaneCount - 1);  // Removing the
+                                    // last fragment
+
+                                }
+                            }
+                        }
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+
+     /*   mToolbar = (Toolbar) root.findViewById(R.id.toolbar);
 
         ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);*/
 //        mMainLayout = (ConstraintLayout)root. findViewById(R.id.content_base);
         mBottomToolbar = (Toolbar) root.findViewById(R.id.toolbar_bottom);
         mNavigationLayout = (LinearLayout) root.findViewById(R.id.layoutNavigate);
@@ -271,6 +376,19 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
         fabCreateFileDual.setOnClickListener(this);
         fabCreateFolderDual.setOnClickListener(this);
 
+    }
+
+    private void initConstants() {
+        STORAGE_ROOT = getResources().getString(R.string.nav_menu_root);
+        STORAGE_INTERNAL = getResources().getString(R.string.nav_menu_internal_storage);
+        STORAGE_EXTERNAL = getResources().getString(R.string.nav_menu_ext_storage);
+        DOWNLOADS = getResources().getString(R.string.downloads);
+        MUSIC = getResources().getString(R.string.nav_menu_music);
+        VIDEO = getResources().getString(R.string.nav_menu_video);
+        DOCS = getResources().getString(R.string.nav_menu_docs);
+        IMAGES = getResources().getString(R.string.nav_menu_image);
+        SETTINGS = getResources().getString(R.string.action_settings);
+        RATE = getResources().getString(R.string.rate_us);
     }
 
     /**
@@ -716,7 +834,7 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
                     if (mCurrentDir == null) {
                         mCurrentDir = mStartingDir;
                         singlePaneFragments.clear();
-                        setNavDirectory();
+//                        setNavDirectory();
                         mCategory = FileConstants.CATEGORY.FILES.getValue();
                         displayInitialFragment(mCurrentDir, mCategory);
                     } else if (!mCurrentDir.equals(mStartingDir)) {

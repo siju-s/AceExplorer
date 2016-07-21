@@ -92,6 +92,26 @@ public class FileConstants {
         }
     }
 
+    public enum HOME_CATEGORY {
+        IMAGE(0),
+        AUDIO(1),
+        VIDEO(2),
+        DOCS(3),
+        DOWNLOADS(4),
+        ADD(5);
+
+        private int value;
+
+        private HOME_CATEGORY(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+
+            return value;
+        }
+    }
+
     public enum DOC_TYPES {
         PDF(0),
         TXT(1),

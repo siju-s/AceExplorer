@@ -18,6 +18,7 @@
 
     <CheckBoxPreference
         android:key="prefHomeScreen"
+        android:defaultValue="true"
         android:layout="@layout/prefs_checkbox"
         android:title="@string/pref_title_homescreen"/>
 
