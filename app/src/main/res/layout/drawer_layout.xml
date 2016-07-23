@@ -8,7 +8,7 @@
     tools:openDrawer="start">
 
     <include
-        layout="@layout/navigation_top"
+        layout="@layout/storages_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

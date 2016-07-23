@@ -1,109 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fitsSystemWindows="true"
-                android:orientation="vertical"
-                android:layout_marginTop="?attr/actionBarSize"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                tools:context="com.siju.filemanager.BaseActivity">
 
-<!--    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:theme="?attr/actionBarStyle"
-            app:popupTheme="@style/AppTheme.PopupOverlay"/>
+            android:layout_height="match_parent"
+            android:background="@color/cardview_background_color">
 
-    </android.support.design.widget.AppBarLayout>-->
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-    <android.support.v7.widget.CardView
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/cardLibrary"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/card_margin"
-        card_view:cardCornerRadius="4dp">
-
-        <LinearLayout
-            android:id="@+id/layoutLibrary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textLibrary"
+        <!--    <android.support.design.widget.AppBarLayout
+                android:id="@+id/appBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/activity_horizontal_margin"
-                android:text="@string/nav_header_collections"
-                android:textAllCaps="true"
-                android:textSize="18sp"
-                android:textStyle="bold"/>
+                android:theme="@style/AppTheme.AppBarOverlay">
 
-            <View
-                android:id="@+id/viewDummy"
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_below="@id/textLibrary"
-                android:background="@color/colorPrimaryDark"/>
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:theme="?attr/actionBarStyle"
+                    app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerViewLibrary"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="10dp"/>
+            </android.support.design.widget.AppBarLayout>-->
 
+        <!--<android.support.design.widget.CoordinatorLayout-->
+        <!--android:id="@+id/main_content"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:fitsSystemWindows="true"-->
+        <!--tools:context=".BaseActivity">-->
 
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
+        <!--<include-->
+        <!--android:id="@+id/toolbar"-->
+        <!--layout="@layout/toolbar_main"-->
+        <!--/>-->
 
-    <android.support.v7.widget.CardView
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/cardStorage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="@dimen/card_margin"
-        card_view:cardCornerRadius="4dp">
-
-        <LinearLayout
-            android:id="@+id/layoutStorages"
+        <!--</android.support.design.widget.CoordinatorLayout>-->
+        <android.support.v7.widget.CardView
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/cardLibrary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_margin="@dimen/card_margin"
+            card_view:cardCornerRadius="4dp">
 
-            <TextView
-                android:id="@+id/textStoragePlaceHolder"
+            <LinearLayout
+                android:id="@+id/layoutLibrary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/activity_horizontal_margin"
-                android:text="@string/nav_header_storages"
-                android:textAllCaps="true"
-                android:textSize="18sp"
-                android:textStyle="bold"/>
+                android:orientation="vertical">
 
-            <View
-                android:id="@+id/viewDummy2"
+                <TextView
+                    android:id="@+id/textLibrary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/activity_horizontal_margin"
+                    android:text="@string/nav_header_collections"
+                    android:textAllCaps="true"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+
+                <View
+                    android:id="@+id/viewDummy"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_below="@id/textLibrary"
+                    android:background="@color/colorPrimaryDark"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerViewLibrary"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="10dp"/>
+
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/cardStorage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/cardLibrary"
+            android:layout_margin="@dimen/card_margin"
+            card_view:cardCornerRadius="4dp">
+
+            <LinearLayout
+                android:id="@+id/layoutStorages"
                 android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:background="@color/colorPrimaryDark"/>
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerViewStorages"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="@dimen/activity_horizontal_margin"/>
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
+                <TextView
+                    android:id="@+id/textStoragePlaceHolder"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/activity_horizontal_margin"
+                    android:text="@string/nav_header_storages"
+                    android:textAllCaps="true"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
 
-</RelativeLayout>
+                <View
+                    android:id="@+id/viewDummy2"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@color/colorPrimaryDark"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerViewStorages"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/activity_horizontal_margin"/>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+    </RelativeLayout>
+</ScrollView>

@@ -11,7 +11,7 @@
     <color name="whiteOverlay">#F3F3F3</color>
     <color name="whiteOverlayDual">#80F3F3F3</color>
     <color name="hidden">#e5c0e3</color>
-
+    <color name="cardview_background_color">#f2f2f2</color>
     <color name="fabButtonText">#727272</color>
 
     <color name="color_light_bg">#e6ebed</color>

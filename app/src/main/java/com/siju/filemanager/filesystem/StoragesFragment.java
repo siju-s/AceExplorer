@@ -10,8 +10,6 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -26,29 +24,24 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.siju.filemanager.BaseActivity;
-import com.siju.filemanager.ExpandableListAdapter;
 import com.siju.filemanager.R;
 import com.siju.filemanager.common.Logger;
 import com.siju.filemanager.common.SharedPreferenceWrapper;
 import com.siju.filemanager.filesystem.model.FavInfo;
 import com.siju.filemanager.filesystem.model.FileInfo;
 import com.siju.filemanager.filesystem.utils.FileUtils;
-import com.siju.filemanager.model.SectionGroup;
 import com.siju.filemanager.model.SectionItems;
 
 import java.io.File;
@@ -149,7 +142,7 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        root = inflater.inflate(R.layout.navigation_top, container, false);
+        root = inflater.inflate(R.layout.storages_fragment, container, false);
         return root;
 
     }
@@ -158,6 +151,7 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
+
         initializeViews();
         initListeners();
         initConstants();
@@ -213,10 +207,9 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
 
                                 if (singlePaneCount == 1) {
                                     if (mFromHomeScreen) {
-                                       getActivity().onBackPressed();
+                                        getActivity().onBackPressed();
                                     } else {
                                         getActivity().finish();
-
                                     }
                                 } else {
                                     // Changing the current dir  to 1 up on back press
@@ -236,6 +229,7 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
                                     }, 100L);
                                     Fragment fragment = singlePaneFragments.get(singlePaneCount -
                                             2);
+
                                     replaceFragment(fragment, isDualPaneInFocus);
                                     singlePaneFragments.remove(singlePaneCount - 1);  // Removing
                                     // the last fragment
@@ -281,12 +275,28 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
             }
         });
 
-     /*   mToolbar = (Toolbar) root.findViewById(R.id.toolbar);
-
-        ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
+        mToolbar = (Toolbar) root.findViewById(R.id.toolbar1);
+//        ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
+        ((BaseActivity) getActivity()).toggleToolbarVisibility(true, mToolbar);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);*/
-//        mMainLayout = (ConstraintLayout)root. findViewById(R.id.content_base);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        ((BaseActivity) getActivity()).toggleToolbarVisibility(true, mToolbar);
+
+        mToolbar.setNavigationIcon(R.drawable.ic_menu_white);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((BaseActivity) getActivity()).toggleDrawer(true);
+            }
+        });
+
+
+//        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R
+// .drawable.ic_menu_white);
+
+        mMainLayout = (ConstraintLayout) root.findViewById(R.id.content_base);
         mBottomToolbar = (Toolbar) root.findViewById(R.id.toolbar_bottom);
         mNavigationLayout = (LinearLayout) root.findViewById(R.id.layoutNavigate);
         fabCreateMenu = (FloatingActionsMenu) root.findViewById(R.id.fabCreate);
@@ -389,6 +399,13 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
         IMAGES = getResources().getString(R.string.nav_menu_image);
         SETTINGS = getResources().getString(R.string.action_settings);
         RATE = getResources().getString(R.string.rate_us);
+    }
+
+    @Override
+    public void onDestroy() {
+        ((BaseActivity) getActivity()).toggleToolbarVisibility(false, null);
+
+        super.onDestroy();
     }
 
     /**
@@ -755,7 +772,7 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
         if (intent.getAction() != null) {
             final String action = intent.getAction();
             Fragment targetFragment;
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
             isDualPaneInFocus = intent.getBooleanExtra(ACTION_DUAL_PANEL, false);
             mCategory = intent.getIntExtra(FileConstants.KEY_CATEGORY, FileConstants.CATEGORY
                     .FILES.getValue());
@@ -973,7 +990,8 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
         if (mIsDualModeEnabled) {
             isDualPaneInFocus = true;
             toggleDualPaneVisibility(true);
-            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+            FragmentTransaction ft = getChildFragmentManager()
+                    .beginTransaction();//getActivity().getSupportFragmentManager().beginTransaction();
 //            String internalStoragePath = getInternalStorage().getAbsolutePath();
 /*            Bundle args = new Bundle();
             args.putString(FileConstants.KEY_PATH, internalStoragePath);
@@ -996,8 +1014,10 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
         args.putBoolean(FileConstants.KEY_DUAL_MODE, false);
         fileListFragment.setArguments(args);
         singlePaneFragments.add(fileListFragment);
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frame_container,
-                fileListFragment, directory).commitAllowingStateLoss();
+        FragmentTransaction fragmentTransaction = getChildFragmentManager()
+                .beginTransaction();
+       fragmentTransaction.replace(R.id.frame_container,
+                fileListFragment, directory).commit();
 
 
 //        ft.addToBackStack(null);
@@ -1028,7 +1048,7 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
             args.putBoolean(FileConstants.KEY_FOCUS_DUAL, false);
             fragmentTransaction.replace(R.id.frame_container, fileListFragment, path);
         }
-        fragmentTransaction.commitAllowingStateLoss();
+        fragmentTransaction.commit();
 
     }
 

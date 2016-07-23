@@ -200,8 +200,6 @@ public class FileListFragment extends Fragment implements LoaderManager
 
         Log.d("TAG", "on onActivityCreated--Fragment" + mFilePath);
         Log.d("TAG", "View mode=" + mViewMode);
-        Logger.log("TAG", "mLastDualPaneDir=" + recyclerViewFileList.getTag(R.id.TAG_DUAL) + "mLastSinglePaneDir=" + recyclerViewFileList.getTag(R.id.TAG_SINGLE));
-
 
         fileListAdapter = new FileListAdapter(FileListFragment.this, getContext(), fileInfoList,
                 mCategory, mViewMode);

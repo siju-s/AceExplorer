@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 
 import com.siju.filemanager.BaseActivity;
 import com.siju.filemanager.R;
+import com.siju.filemanager.common.Logger;
 import com.siju.filemanager.filesystem.model.HomeLibraryInfo;
 import com.siju.filemanager.filesystem.model.HomeStoragesInfo;
 import com.siju.filemanager.filesystem.utils.FileUtils;
@@ -45,8 +46,8 @@ public class HomeScreenFragment extends Fragment {
     private LinearLayoutManager llmStorage;
     private GridLayoutManager gridLayoutManagerLibrary;
 
-    private ArrayList<HomeLibraryInfo> homeLibraryInfoArrayList = new ArrayList<>();
-    private ArrayList<HomeStoragesInfo> homeStoragesInfoArrayList = new ArrayList<>();
+    private ArrayList<HomeLibraryInfo> homeLibraryInfoArrayList ;
+    private ArrayList<HomeStoragesInfo> homeStoragesInfoArrayList ;
     public String STORAGE_INTERNAL, STORAGE_EXTERNAL;
 
 
@@ -65,7 +66,8 @@ public class HomeScreenFragment extends Fragment {
         setHasOptionsMenu(true);
         initializeViews();
         initConstants();
-
+        homeLibraryInfoArrayList = new ArrayList<>();
+        homeStoragesInfoArrayList = new ArrayList<>();
 
         for (int i = 0; i < mResourceIds.length; i++) {
             homeLibraryInfoArrayList.add(new HomeLibraryInfo(mCategoryIds[i], mLabels[i],
@@ -75,6 +77,8 @@ public class HomeScreenFragment extends Fragment {
         homeLibraryAdapter = new HomeLibraryAdapter(getActivity(), homeLibraryInfoArrayList);
         homeStoragesAdapter = new HomeStoragesAdapter(getActivity(), homeStoragesInfoArrayList);
         initListeners();
+        Logger.log("TAG", "Homescreen--Librarylist=" + homeLibraryInfoArrayList.size() +
+                "storage=" + homeStoragesInfoArrayList.size());
 
         recyclerViewLibrary.setAdapter(homeLibraryAdapter);
         recyclerViewStorages.setAdapter(homeStoragesAdapter);
@@ -83,8 +87,7 @@ public class HomeScreenFragment extends Fragment {
     }
 
     private void initializeViews() {
-/*        mToolbar = (Toolbar) root.findViewById(R.id.toolbar);
-
+/*          mToolbar = (Toolbar) root.findViewById(R.id.toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -179,7 +182,7 @@ public class HomeScreenFragment extends Fragment {
 
         long spaceLeft = getSpaceLeft(internalSD);
         long totalSpace = getTotalSpace(internalSD);
-        int usedProgress = (int) (((float)spaceLeft / totalSpace) * 100);
+        int usedProgress = (int) (((float) spaceLeft / totalSpace) * 100);
         int remainingProgress = 100 - usedProgress;
         String spaceText = storageSpace(internalSD);
 

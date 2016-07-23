@@ -187,6 +187,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private boolean mIsFabOpen;
     private boolean mIsHomeScreenEnabled;
     private FrameLayout mFrameHomeScreen;
+    private  ActionBarDrawerToggle toggle;
 
 
     @Override
@@ -395,15 +396,21 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
     private void initViews() {
         mFrameHomeScreen = (FrameLayout) findViewById(R.id.frame_home);
-
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
+//        mToolbar.setPadding(0, getStatusBarHeight(), 0, 0);
+//        mToolbar.setNavigationIcon(R.drawable.ic_menu_white);
+
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mToolbar.setTitle(R.string.app_name);
         mMainLayout = (ConstraintLayout) findViewById(R.id.content_base);
         mBottomToolbar = (Toolbar) findViewById(R.id.toolbar_bottom);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         relativeLayoutDrawerPane = (RelativeLayout) findViewById(R.id.drawerPane);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, mToolbar, R.string.navigation_drawer_open, R.string
                 .navigation_drawer_close);
         drawerLayout.setDrawerListener(toggle);
@@ -412,6 +419,44 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         expandableListView = (ExpandableListView) findViewById(R.id.expand_list_drawer);
 
 
+    }
+
+    public void toggleToolbarVisibility(boolean isVisible,Toolbar toolbar) {
+        if (isVisible) {
+            mToolbar.setVisibility(View.GONE);
+/*            toggle = new ActionBarDrawerToggle(
+                    this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string
+                    .navigation_drawer_close);
+//            toggle.setHomeAsUpIndicator(R.drawable.ic_menu_white);
+            toggle.setDrawerIndicatorEnabled(false);*/
+//            toggle.syncState();
+            setSupportActionBar(toolbar);
+/*            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);*/
+//             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_white);
+        }
+        else {
+            mToolbar.setVisibility(View.VISIBLE);
+            setSupportActionBar(mToolbar);
+/*            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);*/
+//            toggle.syncState();
+
+       /*     toggle = new ActionBarDrawerToggle(
+                    this, drawerLayout, mToolbar, R.string.navigation_drawer_open, R.string
+                    .navigation_drawer_close);
+*/
+        }
+    }
+
+    public void toggleDrawer(boolean value) {
+        if (value) {
+            drawerLayout.openDrawer(GravityCompat.START);
+        }
+        else {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
     }
 
     private void initListeners() {
@@ -1494,7 +1539,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
     public void startActionMode() {
 
-        fabCreateMenu.setVisibility(View.GONE);
+fabCreateMenu.setVisibility(View.GONE);
         mBottomToolbar.setVisibility(View.VISIBLE);
         mBottomToolbar.startActionMode(new ActionModeCallback());
 //        mBottomToolbar.inflateMenu(R.menu.action_mode_bottom);
@@ -2217,45 +2262,6 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     }
 
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-       /* Log.d("TAG", "On config" + newConfig.orientation);
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE &&
-                mIsDualPaneEnabledSettings) {
-            // For Files category only, show dual pane
-            if (mCategory == FileConstants.CATEGORY.FILES.getValue()) {
-                isDualPaneInFocus = true;
-                mIsDualModeEnabled = true;
-                toggleDualPaneVisibility(true);
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                String internalStoragePath = getInternalStorage().getAbsolutePath();
-                Bundle args = new Bundle();
-                args.putString(FileConstants.KEY_PATH, internalStoragePath);
-
-                args.putString(FileConstants.KEY_PATH_OTHER, mCurrentDir);
-                args.putBoolean(FileConstants.KEY_FOCUS_DUAL, true);
-
-                args.putBoolean(FileConstants.KEY_DUAL_MODE, true);
-                setNavDirectory();
-                FileListDualFragment dualFragment = new FileListDualFragment();
-                dualPaneFragments.add(dualFragment);
-                dualFragment.setArguments(args);
-                ft.replace(R.id.frame_container_dual, dualFragment);
-//                mViewSeperator.setVisibility(View.VISIBLE);
-                ft.commitAllowingStateLoss();
-            }
-
-//            ft.addToBackStack(null);
-
-        } else {
-            isDualPaneInFocus = false;
-            mIsDualModeEnabled = false;
-            dualPaneFragments.clear();
-            toggleDualPaneVisibility(false);
-
-        }
-        super.onConfigurationChanged(newConfig);*/
-    }
 
 
     private void showDialog(final ArrayList<String> paths) {
