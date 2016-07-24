@@ -144,6 +144,8 @@
     <string name="pref_title_homescreen">Show HomeScreen</string>
     <string name="home_add">Add</string>
     <string name="home_docs">Docs</string>
-
+    <string name="compressed">Compressed</string>
+    <string name="apk">Apps</string>
+    <string name="pdf">PDF</string>
 
 </resources>

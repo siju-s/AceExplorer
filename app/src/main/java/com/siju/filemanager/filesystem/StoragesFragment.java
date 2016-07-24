@@ -135,8 +135,10 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
     private boolean mIsPasteItemVisible;
     private boolean mIsFabOpen;
     private boolean mFromHomeScreen;
+    private ArrayList<FileInfo> mLibraryList = new ArrayList<>();
 
     private View root;
+
 
     @Override
     public View onCreateView(
@@ -161,15 +163,23 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
             getArguments().getInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
             String path = getArguments().getString(FileConstants.KEY_PATH);
             mFromHomeScreen = getArguments().getBoolean(FileConstants.KEY_HOME);
-
+            mCategory = getArguments().getInt(FileConstants.KEY_CATEGORY, FileConstants.CATEGORY
+                    .FILES.getValue());
             int groupPos = getArguments().getInt(BaseActivity.ACTION_GROUP_POS, -1);
             int childPos = getArguments().getInt(BaseActivity.ACTION_CHILD_POS, -1);
      /*       if (groupPos != -1 && childPos != -1) {
                 displaySelectedGroup(groupPos, childPos, path);
 
             }*/
-            setNavDirectory();
-            initialFragmentSetup(path, FileConstants.CATEGORY.FILES.getValue());
+            if (mCategory == FileConstants.CATEGORY.FILES.getValue()) {
+                setNavDirectory();
+            } else {
+                mLibraryList = getArguments().getParcelableArrayList(FileConstants
+                        .KEY_LIB_SORTLIST);
+                mNavigationLayout.setVisibility(View.GONE);
+            }
+
+            initialFragmentSetup(path, mCategory);
         }
 
 
@@ -267,6 +277,8 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
 
                                 }
                             }
+                        } else {
+                            getActivity().onBackPressed();
                         }
                         return true;
                     }
@@ -1012,11 +1024,12 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
 
         FileListFragment fileListFragment = new FileListFragment();
         args.putBoolean(FileConstants.KEY_DUAL_MODE, false);
+        args.putParcelableArrayList(FileConstants.KEY_LIB_SORTLIST, mLibraryList);
         fileListFragment.setArguments(args);
         singlePaneFragments.add(fileListFragment);
         FragmentTransaction fragmentTransaction = getChildFragmentManager()
                 .beginTransaction();
-       fragmentTransaction.replace(R.id.frame_container,
+        fragmentTransaction.replace(R.id.frame_container,
                 fileListFragment, directory).commit();
 
 

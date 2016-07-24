@@ -17,6 +17,8 @@ public class FileConstants {
     public static final String KEY_HOME = "HOME";
     public static final String KEY_PATH_OTHER = "OTHER_PATH";
     public static final String KEY_FOCUS_DUAL = "DUAL_FOCUS";
+    public static final String KEY_LIB_SORTLIST = "LIB_LIST";
+
 
     public static final String KEY_FILENAME = "FILENAME";
     public static final String KEY_DUAL_MODE = "DUAL_MODE";
@@ -60,6 +62,12 @@ public class FileConstants {
     public static final String EXT_PPT = "ppt";
     public static final String EXT_PPTX = "pptx";
     public static final String EXT_ZIP = "zip";
+    public static final String EXT_TAR = "tar";
+    public static final String EXT_TGZ = "tgz";
+    public static final String EXT_RAR = "rar";
+
+
+
     public static final String EXT_IMG = "img";
 
     public static final String EXT_MP3 = "mp3";
@@ -68,6 +76,8 @@ public class FileConstants {
 
     public static final String EXT_MP4 = "mp4";
     public static final String EXT_FLV = "flv";
+
+    public static final String EXT_APK = "apk";
 
 
 
@@ -78,7 +88,14 @@ public class FileConstants {
         AUDIO(1),
         VIDEO(2),
         IMAGE(3),
-        DOCS(4);
+        DOCS(4),
+        DOWNLOADS(5),
+        ADD(6),
+        COMPRESSED(7),
+        FAVORITES(8),
+        PDF(9),
+        APPS(10),
+        LARGE_FILES(11);
 
         private int value;
 
@@ -92,7 +109,7 @@ public class FileConstants {
         }
     }
 
-    public enum HOME_CATEGORY {
+   /* public enum HOME_CATEGORY {
         IMAGE(0),
         AUDIO(1),
         VIDEO(2),
@@ -111,7 +128,7 @@ public class FileConstants {
             return value;
         }
     }
-
+*/
     public enum DOC_TYPES {
         PDF(0),
         TXT(1),

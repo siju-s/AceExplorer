@@ -1,10 +1,7 @@
 package com.siju.filemanager.filesystem;
 
 import android.content.Context;
-import android.net.Uri;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,7 +54,7 @@ public class HomeLibraryAdapter extends RecyclerView.Adapter<HomeLibraryAdapter
 
     public void updateAdapter(ArrayList<HomeLibraryInfo> homeLibraryInfos) {
         this.homeLibraryList = homeLibraryInfos;
-  //        Log.d("SIJU","updateAdapter"+homeLibraryList.size());
+        //        Log.d("SIJU","updateAdapter"+homeLibraryList.size());
 
         notifyDataSetChanged();
     }
@@ -87,11 +84,14 @@ public class HomeLibraryAdapter extends RecyclerView.Adapter<HomeLibraryAdapter
 
     @Override
     public void onBindViewHolder(LibraryViewHolder libraryViewHolder, int position) {
-        //change background color if list item is selected
-//        Log.d("TAG","OnBindviewholder Pos="+position);
-//        setViewByCategory(libraryViewHolder, position);
         libraryViewHolder.imageLibrary.setImageResource(homeLibraryList.get(position).getResourceId());
         libraryViewHolder.textLibraryName.setText(homeLibraryList.get(position).getCategoryName());
+        if (homeLibraryList.get(position).getCategoryId() == FileConstants.CATEGORY.ADD.getValue()) {
+            libraryViewHolder.textCount.setVisibility(View.GONE);
+        } else {
+            libraryViewHolder.textCount.setVisibility(View.VISIBLE);
+        }
+        libraryViewHolder.textCount.setText("" + homeLibraryList.get(position).getCount());
 
     }
 
@@ -137,8 +137,6 @@ public class HomeLibraryAdapter extends RecyclerView.Adapter<HomeLibraryAdapter
         }
 
     }*/
-
-
 
 
     class LibraryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

@@ -84,6 +84,7 @@
             android:theme="@style/AppTheme.SettingsTheme"
 
             />
+        <activity android:name=".filesystem.LibrarySortActivity"/>
     </application>
 
 </manifest>

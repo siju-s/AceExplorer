@@ -30,7 +30,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -40,11 +39,9 @@ import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.ContextMenu;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
@@ -67,21 +64,21 @@ import com.bumptech.glide.Glide;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.siju.filemanager.common.Logger;
-import com.siju.filemanager.filesystem.HomeScreenFragment;
-import com.siju.filemanager.filesystem.StoragesFragment;
-import com.siju.filemanager.filesystem.model.FavInfo;
+import com.siju.filemanager.common.SharedPreferenceWrapper;
 import com.siju.filemanager.filesystem.FileConstants;
-import com.siju.filemanager.filesystem.model.FileInfo;
 import com.siju.filemanager.filesystem.FileListAdapter;
 import com.siju.filemanager.filesystem.FileListDualFragment;
 import com.siju.filemanager.filesystem.FileListFragment;
+import com.siju.filemanager.filesystem.HomeScreenFragment;
+import com.siju.filemanager.filesystem.StoragesFragment;
+import com.siju.filemanager.filesystem.model.FavInfo;
+import com.siju.filemanager.filesystem.model.FileInfo;
 import com.siju.filemanager.filesystem.ui.DialogBrowseFragment;
+import com.siju.filemanager.filesystem.ui.EnhancedMenuInflater;
 import com.siju.filemanager.filesystem.utils.ExtractManager;
 import com.siju.filemanager.filesystem.utils.FileUtils;
-import com.siju.filemanager.common.SharedPreferenceWrapper;
 import com.siju.filemanager.model.SectionGroup;
 import com.siju.filemanager.model.SectionItems;
-import com.siju.filemanager.filesystem.ui.EnhancedMenuInflater;
 import com.siju.filemanager.settings.SettingsActivity;
 
 import java.io.File;
@@ -499,6 +496,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             Bundle args = new Bundle();
             args.putBoolean(FileConstants.KEY_HOME, true);
+            args.putBoolean(BaseActivity.PREFS_FIRST_RUN,mIsFirstRun);
 //          args.putInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
             HomeScreenFragment homeScreenFragment = new HomeScreenFragment();
             homeScreenFragment.setArguments(args);
@@ -1764,7 +1762,8 @@ fabCreateMenu.setVisibility(View.GONE);
 
         @SuppressLint("NewApi")
         @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        public boolean
+        onPrepareActionMode(ActionMode mode, Menu menu) {
             // Dont show Fav and Archive option for Non file mode
             if (mCategory != 0) {
                 mArchiveItem.setVisible(false);

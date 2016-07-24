@@ -1,10 +1,13 @@
 package com.siju.filemanager.filesystem.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Siju on 13-06-2016.
  */
 
-public class FileInfo {
+public class FileInfo implements Parcelable {
 
     private String fileName;
     private String filePath;
@@ -61,6 +64,30 @@ public class FileInfo {
         this.type = type;
         this.extension = extension;
     }
+
+    protected FileInfo(Parcel in) {
+        fileName = in.readString();
+        filePath = in.readString();
+        fileDate = in.readString();
+        noOfFilesOrSize = in.readString();
+        isDirectory = in.readByte() != 0;
+        extension = in.readString();
+        type = in.readInt();
+        id = in.readLong();
+        bucketId = in.readLong();
+    }
+
+    public static final Creator<FileInfo> CREATOR = new Creator<FileInfo>() {
+        @Override
+        public FileInfo createFromParcel(Parcel in) {
+            return new FileInfo(in);
+        }
+
+        @Override
+        public FileInfo[] newArray(int size) {
+            return new FileInfo[size];
+        }
+    };
 
     public long getBucketId() {
         return bucketId;
@@ -133,5 +160,23 @@ public class FileInfo {
 
     public void setDirectory(boolean directory) {
         isDirectory = directory;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(fileName);
+        parcel.writeString(filePath);
+        parcel.writeString(fileDate);
+        parcel.writeString(noOfFilesOrSize);
+        parcel.writeByte((byte) (isDirectory ? 1 : 0));
+        parcel.writeString(extension);
+        parcel.writeInt(type);
+        parcel.writeLong(id);
+        parcel.writeLong(bucketId);
     }
 }

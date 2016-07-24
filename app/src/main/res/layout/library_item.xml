@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp">
+                android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/imageLibrary"
         android:layout_width="@dimen/home_library_width"
         android:layout_height="@dimen/home_library_width"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/circle"
         android:scaleType="centerInside"
         android:src="@drawable/ic_library_images"/>
@@ -19,12 +20,12 @@
         android:layout_alignEnd="@+id/imageLibrary"
         android:layout_alignParentTop="true"
         android:layout_alignRight="@+id/imageLibrary"
+        android:layout_marginTop="1dp"
         android:background="@drawable/circle_count"
         android:gravity="center_horizontal|center_vertical"
-        android:minHeight="20dp"
-        android:minWidth="20dp"
-        android:padding="5dp"
-        android:text="4+"
+        android:minHeight="25dp"
+        android:minWidth="25dp"
+        android:text=""
         android:textColor="@color/white"
         android:textSize="11sp"/>
 
@@ -33,7 +34,8 @@
         android:layout_width="@dimen/home_library_width"
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageLibrary"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
         android:gravity="center"
         android:text="Images"
         />

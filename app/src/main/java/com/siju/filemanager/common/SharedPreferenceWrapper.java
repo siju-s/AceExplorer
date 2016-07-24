@@ -4,13 +4,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
-import com.siju.filemanager.filesystem.model.FavInfo;
 import com.siju.filemanager.filesystem.FileConstants;
+import com.siju.filemanager.filesystem.model.FavInfo;
+import com.siju.filemanager.filesystem.model.LibrarySortModel;
 import com.siju.filemanager.filesystem.utils.FileUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -21,6 +21,8 @@ public class SharedPreferenceWrapper {
 
     public static final String PREFS_NAME = "PREFS";
     public static final String FAVORITES = "Product_Favorite";
+    public static final String LIBRARIES = "Library";
+
     public static final String PREFS_VIEW_MODE = "view-mode";
 
     public SharedPreferenceWrapper() {
@@ -108,6 +110,37 @@ public class SharedPreferenceWrapper {
         return (ArrayList<FavInfo>) favorites;
     }
 
+    public void addLibrary(Context context, LibrarySortModel librarySortModel) {
+        List<LibrarySortModel> libraries = getLibraries(context);
+        if (libraries == null)
+            libraries = new ArrayList<>();
+        if (!libraries.contains(librarySortModel)) {
+            libraries.add(librarySortModel);
+            saveLibrary(context, libraries);
+        }
+    }
+
+
+    public ArrayList<LibrarySortModel> getLibraries(Context context) {
+        SharedPreferences settings;
+        List<LibrarySortModel> libraries;
+
+        settings = context.getSharedPreferences(PREFS_NAME,
+                Context.MODE_PRIVATE);
+        if (settings.contains(LIBRARIES)) {
+            String jsonFavorites = settings.getString(LIBRARIES, null);
+            Gson gson = new Gson();
+            LibrarySortModel[] libItems = gson.fromJson(jsonFavorites,
+                    LibrarySortModel[].class);
+
+            libraries = Arrays.asList(libItems);
+            libraries = new ArrayList<>(libraries);
+        } else
+            return null;
+
+        return (ArrayList<LibrarySortModel>) libraries;
+    }
+
     public void savePrefs(Context context, int viewMode) {
         SharedPreferences sharedPreferences;
         SharedPreferences.Editor editor;
@@ -117,6 +150,31 @@ public class SharedPreferenceWrapper {
         editor = sharedPreferences.edit();
         editor.putInt(PREFS_VIEW_MODE, viewMode);
         editor.apply();
+    }
+
+    public void saveLibrary(Context context, List<LibrarySortModel> librarySortModel) {
+        SharedPreferences settings;
+        SharedPreferences.Editor editor;
+
+        settings = context.getSharedPreferences(PREFS_NAME,
+                Context.MODE_PRIVATE);
+        editor = settings.edit();
+
+        Gson gson = new Gson();
+        String jsonFavorites = gson.toJson(librarySortModel);
+
+        editor.putString(LIBRARIES, jsonFavorites);
+
+        editor.apply();
+    }
+
+
+    public void removeLibrary(Context context, LibrarySortModel librarySortModel) {
+        ArrayList<LibrarySortModel> libraries = getLibraries(context);
+        if (libraries != null) {
+            libraries.remove(librarySortModel);
+            saveLibrary(context, libraries);
+        }
     }
 
     public int getViewMode(Context context) {

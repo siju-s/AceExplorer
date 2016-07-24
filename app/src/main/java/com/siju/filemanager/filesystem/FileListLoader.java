@@ -12,11 +12,8 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.siju.filemanager.R;
-import com.siju.filemanager.common.Logger;
 import com.siju.filemanager.filesystem.model.FileInfo;
 import com.siju.filemanager.filesystem.utils.FileUtils;
-import com.siju.filemanager.filesystem.utils.RootHelperWrapper;
-import com.siju.filemanager.settings.SettingsPreferenceFragment;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -42,7 +39,6 @@ import java.util.zip.ZipInputStream;
 
 import eu.chainfire.libsuperuser.Shell;
 
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.siju.filemanager.filesystem.utils.FileUtils.convertDate;
 
 /**
@@ -64,7 +60,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         mContext = context;
         mCategory = category;
         showHidden = PreferenceManager.getDefaultSharedPreferences(context).getBoolean
-                (FileConstants.PREFS_HIDDEN,false);
+                (FileConstants.PREFS_HIDDEN, false);
     }
 
     @Override
@@ -168,8 +164,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private void fetchDataByCategory() {
         switch (mCategory) {
             case 0:
+            case 5:
                 fetchFiles();
-//                testFetchFiles();
                 break;
             case 1:
                 fetchMusic();
@@ -181,8 +177,12 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 fetchImages();
                 break;
             case 4:
-                fetchDocuments();
+            case 7:
+            case 9:
+            case 10:
+                fetchByCategory(mCategory);
                 break;
+
         }
     }
 
@@ -190,12 +190,11 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         File file = new File(mPath);
         String fileExtension = mPath.substring(mPath.lastIndexOf(".") + 1);
         boolean isRootAccessGranted = false;
-        boolean isRoot= false;
+        boolean isRoot = false;
         if (file.canRead()) {
-            Log.d("TAG","Hell yeah");
-        }
-        else {
-            Log.d("TAG","Hell NOOOO");
+            Log.d("TAG", "Hell yeah");
+        } else {
+            Log.d("TAG", "Hell NOOOO");
 
         }
         if (!mPath.contains(FileUtils.getInternalStorage().getAbsolutePath())) {
@@ -207,9 +206,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                     RootHelperWrapper wrapper = new RootHelperWrapper();
                     wrapper.execute();
                 }*/
-            }
-
-            else if (FileUtils.getExternalStorage() != null && !mPath
+            } else if (FileUtils.getExternalStorage() != null && !mPath
                     .contains(FileUtils
                             .getExternalStorage().getAbsolutePath())) {
                 isRoot = true;
@@ -221,12 +218,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 }*/
             }
         }
-
-
-
-
-
-
 
 
         if (fileExtension.equalsIgnoreCase("zip")) {
@@ -269,8 +260,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                                         }
                                     });
                                     childFileListSize = nonHiddenList.length;
-                                }
-                                else {
+                                } else {
                                     childFileListSize = file1.list().length;
                                 }
                             }
@@ -360,9 +350,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                         }*/
                     }
                     return null;
-                }
-
-                else {
+                } else {
                     return null;
                 }
             } else {
@@ -378,7 +366,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         Uri uri = MediaStore.Files.getContentUri("external");
 
         String selection = MediaStore.Files.FileColumns.DATA + " =? ";
-        String [] selectionArgs =  new String[] {mPath};
+        String[] selectionArgs = new String[]{mPath};
 
 
         String sortOrder = MediaStore.Files.FileColumns.TITLE;
@@ -663,30 +651,62 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
      *
      * @return
      */
-    private ArrayList<FileInfo> fetchDocuments() {
+    private ArrayList<FileInfo> fetchByCategory(int category) {
         Uri uri = MediaStore.Files.getContentUri("external");
+        String where = null;
 
-        String doc = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_DOC);
-        String docx = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_DOCX);
-        String txt = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_TEXT);
-        String html = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_HTML);
-        String pdf = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_PDF);
-        String xls = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_XLS);
-        String xlxs = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_XLXS);
-        String ppt = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_PPT);
-        String pptx = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_PPTX);
+        switch (category) {
+            case 4:
+                String doc = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_DOC);
+                String docx = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_DOCX);
+                String txt = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_TEXT);
+                String html = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_HTML);
+                String pdf = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_PDF);
+                String xls = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_XLS);
+                String xlxs = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_XLXS);
+                String ppt = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_PPT);
+                String pptx = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_PPTX);
 
 
-        String where = MediaStore.Files.FileColumns.MIME_TYPE + " IN " + "("
-                + "'" + doc + "'" + ","
-                + "'" + docx + "'" + ","
-                + "'" + txt + "'" + ","
-                + "'" + html + "'" + ","
-                + "'" + pdf + "'" + ","
-                + "'" + xls + "'" + ","
-                + "'" + xlxs + "'" + ","
-                + "'" + ppt + "'" + ","
-                + "'" + pptx + "'" + " )";
+                where = MediaStore.Files.FileColumns.MIME_TYPE + " IN " + "("
+                        + "'" + doc + "'" + ","
+                        + "'" + docx + "'" + ","
+                        + "'" + txt + "'" + ","
+                        + "'" + html + "'" + ","
+                        + "'" + pdf + "'" + ","
+                        + "'" + xls + "'" + ","
+                        + "'" + xlxs + "'" + ","
+                        + "'" + ppt + "'" + ","
+                        + "'" + pptx + "'" + " )";
+                break;
+
+            case 7:
+                String zip = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_ZIP);
+                String tar = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_TAR);
+                String tgz = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_TGZ);
+                String rar = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_RAR);
+
+
+                where = MediaStore.Files.FileColumns.MIME_TYPE + " IN " + "("
+                        + "'" + zip + "'" + ","
+                        + "'" + tar + "'" + ","
+                        + "'" + tgz + "'" + ","
+                        + "'" + rar + "'" + ")";
+                break;
+
+            case 9:
+                String pdf1 = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants
+                        .EXT_PDF);
+                where = MediaStore.Files.FileColumns.MIME_TYPE + " = " + pdf1;
+                break;
+            case 10:
+                String apk = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants
+                        .EXT_APK);
+                where = MediaStore.Files.FileColumns.MIME_TYPE + " = " + apk;
+                break;
+
+
+        }
 
 
         String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
@@ -704,7 +724,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 long date1 = cursor.getLong(dateIndex);
                 long fileId = cursor.getLong(fileIdIndex);
                 String path = cursor.getString(pathIndex);
-                int type = FileConstants.CATEGORY.DOCS.getValue();
+                int type = mCategory;
                 String date = FileUtils.convertDate(date1 * 1000); // converting it to ms
                 String size = Formatter.formatFileSize(mContext, size1);
                 String extension = path.substring(path.lastIndexOf(".") + 1);

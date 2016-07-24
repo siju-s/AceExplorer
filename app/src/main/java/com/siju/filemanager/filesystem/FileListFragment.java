@@ -3,11 +3,9 @@ package com.siju.filemanager.filesystem;
 import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipDescription;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
@@ -16,31 +14,25 @@ import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.DragEvent;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -51,12 +43,8 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.siju.filemanager.BaseActivity;
 import com.siju.filemanager.R;
@@ -65,10 +53,7 @@ import com.siju.filemanager.common.SharedPreferenceWrapper;
 import com.siju.filemanager.filesystem.model.FileInfo;
 import com.siju.filemanager.filesystem.ui.CustomGridLayoutManager;
 import com.siju.filemanager.filesystem.ui.CustomLayoutManager;
-import com.siju.filemanager.filesystem.ui.DialogBrowseFragment;
 import com.siju.filemanager.filesystem.ui.DividerItemDecoration;
-import com.siju.filemanager.filesystem.ui.TextDrawable;
-import com.siju.filemanager.filesystem.utils.ExtractManager;
 import com.siju.filemanager.filesystem.utils.FileUtils;
 import com.siju.filemanager.filesystem.utils.PasteUtils;
 
@@ -76,23 +61,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static android.R.attr.action;
-import static android.R.attr.data;
-import static android.R.attr.width;
-import static android.R.attr.x;
-import static android.R.attr.y;
-import static android.R.id.list;
-import static android.content.ClipData.newPlainText;
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
-import static android.media.CamcorderProfile.get;
 import static com.siju.filemanager.BaseActivity.ACTION_VIEW_MODE;
-import static com.siju.filemanager.R.id.buttonCount;
-import static com.siju.filemanager.R.id.buttonExtract;
-import static com.siju.filemanager.R.id.buttonOk;
-import static com.siju.filemanager.R.id.radioGroupPath;
 import static com.siju.filemanager.R.id.textEmpty;
-import static com.siju.filemanager.R.id.textPathSelect;
-import static java.lang.System.currentTimeMillis;
 
 
 /**
@@ -142,7 +112,6 @@ public class FileListFragment extends Fragment implements LoaderManager
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
 
-
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
@@ -164,6 +133,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
         Bundle args = new Bundle();
         final String fileName;
+        ArrayList<FileInfo> list = new ArrayList<>();
 
         if (getArguments() != null) {
             if (getArguments().getString(FileConstants.KEY_PATH) != null) {
@@ -172,6 +142,13 @@ public class FileListFragment extends Fragment implements LoaderManager
 
             }
             mCategory = getArguments().getInt(FileConstants.KEY_CATEGORY, FileConstants.CATEGORY.FILES.getValue());
+            if (mCategory != FileConstants.CATEGORY.FILES.getValue()) {
+                list = getArguments().getParcelableArrayList(FileConstants
+                        .KEY_LIB_SORTLIST);
+                if (list != null)
+                Log.d("TAG", "Lib list =" + list.size());
+
+            }
 
             mIsZip = getArguments().getBoolean(FileConstants.KEY_ZIP, false);
             mIsDualMode = getArguments().getBoolean(FileConstants.KEY_DUAL_MODE, false);
@@ -179,12 +156,12 @@ public class FileListFragment extends Fragment implements LoaderManager
             if (mDualPaneInFocus) {
                 mLastDualPaneDir = mFilePath;
                 mLastSinglePaneDir = mFilePathOther;
-                Log.d("TAG", "on onActivityCreated dual focus Yes--singledir" + mLastSinglePaneDir+"dualDir="+mLastDualPaneDir);
+                Log.d("TAG", "on onActivityCreated dual focus Yes--singledir" + mLastSinglePaneDir + "dualDir=" + mLastDualPaneDir);
 
             } else {
                 mLastSinglePaneDir = mFilePath;
                 mLastDualPaneDir = mFilePathOther;
-                Log.d("TAG", "on onActivityCreated dual focus No--singledir" + mLastSinglePaneDir+"dualDir="+mLastDualPaneDir);
+                Log.d("TAG", "on onActivityCreated dual focus No--singledir" + mLastSinglePaneDir + "dualDir=" + mLastDualPaneDir);
             }
    /*         if (mIsDualMode) {
                 mLastDualPaneDir = mFilePath;
@@ -201,14 +178,34 @@ public class FileListFragment extends Fragment implements LoaderManager
         Log.d("TAG", "on onActivityCreated--Fragment" + mFilePath);
         Log.d("TAG", "View mode=" + mViewMode);
 
+
+        args.putString(FileConstants.KEY_PATH, mFilePath);
+
+        if (list == null) {
+            getLoaderManager().initLoader(LOADER_ID, args, this);
+        } else {
+            fileInfoList = new ArrayList<>();
+            fileInfoList.addAll(list);
+            recyclerViewFileList.setHasFixedSize(true);
+
+            if (mViewMode == FileConstants.KEY_LISTVIEW) {
+                llm = new CustomLayoutManager(getActivity());
+            } else {
+                llm = new CustomGridLayoutManager(getActivity(), getResources().getInteger(R
+                        .integer.grid_columns));
+
+            }
+            llm.setAutoMeasureEnabled(false);
+            recyclerViewFileList.setLayoutManager(llm);
+            recyclerViewFileList.setItemAnimator(new DefaultItemAnimator());
+            recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
+                    .VERTICAL));
+        }
+
         fileListAdapter = new FileListAdapter(FileListFragment.this, getContext(), fileInfoList,
                 mCategory, mViewMode);
         recyclerViewFileList.setAdapter(fileListAdapter);
 
-
-        args.putString(FileConstants.KEY_PATH, mFilePath);
-
-        getLoaderManager().initLoader(LOADER_ID, args, this);
 
         fileListAdapter.setOnItemClickListener(new FileListAdapter.OnItemClickListener() {
             @Override
@@ -267,8 +264,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
                 if (mStartDrag && event == MotionEvent.ACTION_UP) {
                     mStartDrag = false;
-                }
-                else if (mStartDrag && event == MotionEvent.ACTION_MOVE && mLongPressedTime != 0) {
+                } else if (mStartDrag && event == MotionEvent.ACTION_MOVE && mLongPressedTime != 0) {
                     long timeElapsed = System.currentTimeMillis() - mLongPressedTime;
 //                    Logger.log("TAG", "On item touch time Elapsed" + timeElapsed);
 
@@ -307,8 +303,8 @@ public class FileListFragment extends Fragment implements LoaderManager
         //ViewParent viewParent = recyclerViewFileList.getParent().getParent();
         recyclerViewFileList.setOnDragListener(new myDragEventListener());
         viewDummy = root.findViewById(R.id.viewDummy);
-        mSwipeRefreshLayout = (SwipeRefreshLayout)root.findViewById(R.id.swipeRefreshLayout);
-         int colorResIds [] = {R.color.colorPrimaryDark,R.color.colorPrimary,R.color.colorPrimaryDark};
+        mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipeRefreshLayout);
+        int colorResIds[] = {R.color.colorPrimaryDark, R.color.colorPrimary, R.color.colorPrimaryDark};
         mSwipeRefreshLayout.setColorSchemeResources(colorResIds);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -794,16 +790,16 @@ public class FileListFragment extends Fragment implements LoaderManager
                     View top1 = recyclerViewFileList.findChildViewUnder(event.getX(), event.getY());
                     int position1 = recyclerViewFileList.getChildAdapterPosition(top1);
 //                    Object localState = event.getLocalState();
-                    ArrayList<String> dragPaths = (ArrayList<String>)event.getLocalState();
+                    ArrayList<String> dragPaths = (ArrayList<String>) event.getLocalState();
 
 
                     Logger.log("TAG", "DRAG END new pos=" + position1);
 //                    Logger.log("TAG", "DRAG END Local state=" + localState);
                     Logger.log("TAG", "DRAG END Local state=" + dragPaths);
 
-                    Logger.log("TAG", "DRAG END result="+event.getResult());
-                    Logger.log("TAG", "DRAG END mCurrentDirSingle="+mLastSinglePaneDir);
-                    Logger.log("TAG", "DRAG END mCurrentDirDual="+mLastDualPaneDir);
+                    Logger.log("TAG", "DRAG END result=" + event.getResult());
+                    Logger.log("TAG", "DRAG END mCurrentDirSingle=" + mLastSinglePaneDir);
+                    Logger.log("TAG", "DRAG END mCurrentDirDual=" + mLastDualPaneDir);
 
 
                     Log.d("TAG", "DRag end");
@@ -813,7 +809,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                         ViewParent parent1 = v.getParent().getParent();
 
                         if (((View) parent1).getId() == R.id.frame_container_dual) {
-                            Logger.log("TAG", "DRAG END parent dual ="+true);
+                            Logger.log("TAG", "DRAG END parent dual =" + true);
                             FileListDualFragment dualPaneFragment = (FileListDualFragment)
                                     getFragmentManager()
                                             .findFragmentById(R
@@ -826,9 +822,8 @@ public class FileListFragment extends Fragment implements LoaderManager
                                 showDragDialog(dragPaths, mLastDualPaneDir);
 //                                }
                             }
-                        }
-                        else {
-                            Logger.log("TAG", "DRAG END parent dual ="+false);
+                        } else {
+                            Logger.log("TAG", "DRAG END parent dual =" + false);
                             FileListFragment singlePaneFragment = (FileListFragment)
                                     getFragmentManager()
                                             .findFragmentById(R
