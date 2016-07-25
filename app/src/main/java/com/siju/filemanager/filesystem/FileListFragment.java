@@ -110,6 +110,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private boolean mDualPaneInFocus;
     private View viewDummy;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private StoragesFragment.ActionModeCommunicator mActionModeCallback;
 
 
     @Override
@@ -124,6 +125,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        mActionModeCallback = (StoragesFragment.ActionModeCommunicator) getActivity();
         setHasOptionsMenu(true);
         initializeViews();
         mIsLandscapeMode = getResources().getConfiguration().orientation == Configuration
@@ -146,7 +148,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                 list = getArguments().getParcelableArrayList(FileConstants
                         .KEY_LIB_SORTLIST);
                 if (list != null)
-                Log.d("TAG", "Lib list =" + list.size());
+                    Log.d("TAG", "Lib list =" + list.size());
 
             }
 
@@ -181,7 +183,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
         args.putString(FileConstants.KEY_PATH, mFilePath);
 
-        if (list == null) {
+        if (list == null || list.size() == 0) {
             getLoaderManager().initLoader(LOADER_ID, args, this);
         } else {
             fileInfoList = new ArrayList<>();
@@ -381,9 +383,11 @@ public class FileListFragment extends Fragment implements LoaderManager
         boolean hasCheckedItems = fileListAdapter.getSelectedCount() > 0;
         ActionMode actionMode = ((BaseActivity) getActivity()).getActionMode();
         if (hasCheckedItems && actionMode == null) {
-            // there are some selected items, start the actionMode
-            ((BaseActivity) getActivity()).startActionMode();
             toggleDummyView(true);
+            // there are some selected items, start the actionMode
+            mActionModeCallback.startActionModeOperations();
+
+
             if (FileListFragment.this instanceof FileListDualFragment) {
                 mIsDualActionModeActive = true;
             } else {
@@ -393,13 +397,14 @@ public class FileListFragment extends Fragment implements LoaderManager
         } else if (!hasCheckedItems && actionMode != null) {
             // there no selected items, finish the actionMode
             toggleDummyView(false);
+            mActionModeCallback.endActionMode();
             actionMode.finish();
         }
         if (((BaseActivity) getActivity()).getActionMode() != null) {
             SparseBooleanArray checkedItemPos = fileListAdapter.getSelectedItemPositions();
             ((BaseActivity) getActivity()).setSelectedItemPos(checkedItemPos);
-            ((BaseActivity) getActivity()).getActionMode().setTitle(String.valueOf(fileListAdapter.getSelectedCount()
-            ) + " selected");
+            ((BaseActivity) getActivity()).setSelectedCount(String.valueOf(fileListAdapter
+                    .getSelectedCount()) + " selected");
         }
     }
 
@@ -412,7 +417,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         SparseBooleanArray checkedItemPos = fileListAdapter.getSelectedItemPositions();
         ((BaseActivity) getActivity()).setSelectedItemPos(checkedItemPos);
 
-        ((BaseActivity) getActivity()).getActionMode().setTitle(String.valueOf(fileListAdapter.getSelectedCount()
+        ((BaseActivity) getActivity()).setSelectedCount(String.valueOf(fileListAdapter.getSelectedCount()
         ) + " selected");
         fileListAdapter.notifyDataSetChanged();
 
@@ -1047,4 +1052,6 @@ public class FileListFragment extends Fragment implements LoaderManager
         super.onDestroy();
 
     }
+
+
 }

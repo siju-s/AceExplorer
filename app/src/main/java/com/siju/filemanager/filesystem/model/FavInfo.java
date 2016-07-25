@@ -8,6 +8,8 @@ public class FavInfo {
     private String fileName;
     private String filePath;
 
+
+
     public String getFileName() {
         return fileName;
     }
@@ -37,4 +39,6 @@ public class FavInfo {
         FavInfo o = (FavInfo) obj;
         return o.filePath.equalsIgnoreCase(this.filePath);
     }
+
+
 }

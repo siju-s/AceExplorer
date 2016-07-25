@@ -8,9 +8,8 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.siju.filemanager.BaseActivity;
 import com.siju.filemanager.R;
-import com.siju.filemanager.filesystem.FileListFragment;
+import com.siju.filemanager.filesystem.StoragesFragment;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -34,8 +33,8 @@ public class ExtractManager {
     private ProgressDialog progressDialog;
     private Context mContext;
 
-    public ExtractManager(Activity activity) {
-        this.mActivity = activity;
+    public ExtractManager(Fragment fragment) {
+        this.mFragment = fragment;
     }
 
     public void extract(File f, String destinationPath,String currentFileName) {
@@ -136,7 +135,7 @@ public class ExtractManager {
             } else if (result == success) {
                 Toast.makeText(mActivity, R.string.msg_extract_success, Toast.LENGTH_SHORT).show();
             }
-            ((BaseActivity) mActivity).refreshFileList();
+            ((StoragesFragment) mFragment).refreshFileList();
         }
     }
 }

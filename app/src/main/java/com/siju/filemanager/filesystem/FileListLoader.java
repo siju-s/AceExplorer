@@ -12,6 +12,8 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.siju.filemanager.R;
+import com.siju.filemanager.common.SharedPreferenceWrapper;
+import com.siju.filemanager.filesystem.model.FavInfo;
 import com.siju.filemanager.filesystem.model.FileInfo;
 import com.siju.filemanager.filesystem.utils.FileUtils;
 
@@ -182,6 +184,10 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             case 10:
                 fetchByCategory(mCategory);
                 break;
+            case 8:
+                fetchFavorites();
+                break;
+
 
         }
     }
@@ -192,9 +198,9 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         boolean isRootAccessGranted = false;
         boolean isRoot = false;
         if (file.canRead()) {
-            Log.d("TAG", "Hell yeah");
+            Log.d("TAG", "yeah");
         } else {
-            Log.d("TAG", "Hell NOOOO");
+            Log.d("TAG", " NOOOO");
 
         }
         if (!mPath.contains(FileUtils.getInternalStorage().getAbsolutePath())) {
@@ -277,6 +283,27 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                             noOfFilesOrSize = Formatter.formatFileSize(mContext, size);
                             extension = filePath.substring(filePath.lastIndexOf(".") + 1);
                             type = checkMimeType(filePath);
+/*                            if (extension.equals("zip")) {
+                                String[] list = file1.list();
+                                ZipFile zipFile = null;
+                                try {
+                                    zipFile = new ZipFile(file1);
+                                    Enumeration entries = zipFile.entries();
+                                    while (entries.hasMoreElements()) {
+                                        final ZipEntry entry = (ZipEntry) entries.nextElement();
+                                        InputStream stream = zipFile.getInputStream(entry);
+                                       Logger.log("TAG","File: %s Size %d Modified on %TD %n"+ entry
+                                                .getName()+
+                                               entry.getSize());
+                                   *//*     extractEntry(entry, file.getInputStream
+                                                (entry));*//*
+                                    }
+
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }*/
                         }
                         long date = file1.lastModified();
                         String fileModifiedDate = convertDate(date);
@@ -359,6 +386,47 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         }
 
 
+    }
+
+    private ArrayList<FileInfo> fetchFavorites() {
+        SharedPreferenceWrapper wrapper = new SharedPreferenceWrapper();
+        ArrayList<FavInfo> favList = wrapper.getFavorites(mContext);
+        for (FavInfo favInfo : favList) {
+            String path = favInfo.getFilePath();
+            File file = new File(path);
+            String fileName = file.getName();
+            String noOfFilesOrSize;
+            int childFileListSize = 0;
+
+            if (file.list() != null) {
+                if (!showHidden) {
+                    File[] nonHiddenList = file.listFiles(new FilenameFilter() {
+                        @Override
+                        public boolean accept(File file, String name) {
+                            return (!name.startsWith("."));
+                        }
+                    });
+                    childFileListSize = nonHiddenList.length;
+                } else {
+                    childFileListSize = file.list().length;
+                }
+            }
+
+            if (childFileListSize == 0) {
+                noOfFilesOrSize = mContext.getResources().getString(R.string.empty);
+            } else {
+                noOfFilesOrSize = mContext.getResources().getQuantityString(R.plurals.number_of_files,
+                        childFileListSize, childFileListSize);
+            }
+            long date = file.lastModified();
+            String fileModifiedDate = convertDate(date);
+
+
+            FileInfo fileInfo = new FileInfo(fileName, path, fileModifiedDate, noOfFilesOrSize,
+                    true, null, FileConstants.CATEGORY.FAVORITES.getValue());
+            fileInfoList.add(fileInfo);
+        }
+        return fileInfoList;
     }
 
 
@@ -654,6 +722,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private ArrayList<FileInfo> fetchByCategory(int category) {
         Uri uri = MediaStore.Files.getContentUri("external");
         String where = null;
+        String[] selectionArgs = new String[0];
+
 
         switch (category) {
             case 4:
@@ -697,20 +767,37 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             case 9:
                 String pdf1 = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants
                         .EXT_PDF);
-                where = MediaStore.Files.FileColumns.MIME_TYPE + " = " + pdf1;
+//                where = MediaStore.Files.FileColumns.MIME_TYPE + " = '" + pdf1 + "'";
+                where = MediaStore.Files.FileColumns.MIME_TYPE + " =?" ;
+                selectionArgs = new String[]{ pdf1 };
+
                 break;
             case 10:
                 String apk = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants
                         .EXT_APK);
-                where = MediaStore.Files.FileColumns.MIME_TYPE + " = " + apk;
+//                where = MediaStore.Files.FileColumns.MIME_TYPE + " = '" + apk + "'";
+                where = MediaStore.Files.FileColumns.MIME_TYPE + " =?" ;
+                selectionArgs = new String[]{ apk };
                 break;
-
-
+            case 11:
+                long size = 104857600; // 100 MB
+                where = MediaStore.Files.FileColumns.SIZE + " > " + size;
+                break;
         }
+        Log.d("Loader","Category id=="+category+" where=="+where);
 
-
+        Cursor cursor;
         String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
-        Cursor cursor = mContext.getContentResolver().query(uri, null, where, null, sortOrder);
+        if (category == 9 || category == 10) {
+/*            Uri newUri = Uri.parse("content://external/apk");
+            cursor = mContext.getContentResolver().query(newUri, null, null, null,
+                    null);*/
+            cursor = mContext.getContentResolver().query(uri, null, where, selectionArgs,
+                    sortOrder);
+        }
+        else {
+            cursor = mContext.getContentResolver().query(uri, null, where, null, sortOrder);
+        }
         if (cursor != null && cursor.moveToFirst()) {
             do {
 //                int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.TITLE);

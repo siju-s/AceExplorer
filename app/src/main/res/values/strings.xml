@@ -147,5 +147,7 @@
     <string name="compressed">Compressed</string>
     <string name="apk">Apps</string>
     <string name="pdf">PDF</string>
+    <string name="library_large">Large files</string>
+
 
 </resources>

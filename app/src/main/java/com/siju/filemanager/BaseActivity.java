@@ -1,22 +1,17 @@
 package com.siju.filemanager;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -31,38 +26,23 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.format.Formatter;
-import android.text.style.ImageSpan;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.ContextMenu;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
-import android.widget.HorizontalScrollView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.siju.filemanager.common.Logger;
 import com.siju.filemanager.common.SharedPreferenceWrapper;
 import com.siju.filemanager.filesystem.FileConstants;
@@ -73,9 +53,6 @@ import com.siju.filemanager.filesystem.HomeScreenFragment;
 import com.siju.filemanager.filesystem.StoragesFragment;
 import com.siju.filemanager.filesystem.model.FavInfo;
 import com.siju.filemanager.filesystem.model.FileInfo;
-import com.siju.filemanager.filesystem.ui.DialogBrowseFragment;
-import com.siju.filemanager.filesystem.ui.EnhancedMenuInflater;
-import com.siju.filemanager.filesystem.utils.ExtractManager;
 import com.siju.filemanager.filesystem.utils.FileUtils;
 import com.siju.filemanager.model.SectionGroup;
 import com.siju.filemanager.model.SectionItems;
@@ -90,9 +67,9 @@ import java.util.List;
 import static com.siju.filemanager.filesystem.utils.FileUtils.getInternalStorage;
 
 
-public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener,
-        View.OnClickListener, DialogBrowseFragment.SelectedPathListener,
-        SharedPreferences.OnSharedPreferenceChangeListener {
+public class BaseActivity extends AppCompatActivity implements
+        SharedPreferences.OnSharedPreferenceChangeListener,
+        StoragesFragment.ActionModeCommunicator {
 
     private final String TAG = this.getClass().getSimpleName();
     ExpandableListAdapter expandableListAdapter;
@@ -117,24 +94,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     public String STORAGE_ROOT, STORAGE_INTERNAL, STORAGE_EXTERNAL, DOWNLOADS, IMAGES, VIDEO,
             MUSIC, DOCS, SETTINGS,
             RATE;
-    private boolean mIsDualModeEnabled;
-    private LinearLayout navDirectory;
-    private String mStartingDir = getInternalStorage().getAbsolutePath();
-    private HorizontalScrollView scrollNavigation, scrollNavigationDualPane;
-    private int navigationLevelSinglePane = 0;
-    private int navigationLevelDualPane = 0;
-    private String mStartingDirDualPane = getInternalStorage().getAbsolutePath();
-    private LinearLayout navDirectoryDualPane;
-    // Returns true if user is currently navigating in Dual Panel fragment
-    private boolean isDualPaneInFocus;
-    private List<Fragment> singlePaneFragments = new ArrayList<>();
-    private List<Fragment> dualPaneFragments = new ArrayList<>();
-    private boolean isCurrentDirRoot;
-    private Toolbar mBottomToolbar;
-    private ActionMode mActionMode;
-    private FileListAdapter fileListAdapter;
     private SparseBooleanArray mSelectedItemPositions = new SparseBooleanArray();
-    MenuItem mPasteItem, mRenameItem, mInfoItem, mArchiveItem, mFavItem, mExtractItem, mHideItem;
     private static final int PASTE_OPERATION = 1;
     private static final int DELETE_OPERATION = 2;
     private static final int ARCHIVE_OPERATION = 3;
@@ -150,12 +110,6 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private int tempConflictCounter = 0;
     private Dialog mPasteConflictDialog;
 
-    private FloatingActionsMenu fabCreateMenu;
-    private FloatingActionButton fabCreateFolder;
-    private FloatingActionButton fabCreateFile;
-    private FloatingActionsMenu fabCreateMenuDual;
-    private FloatingActionButton fabCreateFolderDual;
-    private FloatingActionButton fabCreateFileDual;
     private ArrayList<SectionItems> favouritesGroupChild = new ArrayList<>();
     public static final String KEY_FAV = "KEY_FAVOURITES";
     private SharedPreferenceWrapper sharedPreferenceWrapper;
@@ -163,7 +117,6 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private ArrayList<FavInfo> savedFavourites = new ArrayList<>();
     private View mViewSeperator;
     private int mCategory = FileConstants.CATEGORY.FILES.getValue();
-    private LinearLayout mNavigationLayout;
     private ConstraintLayout mMainLayout;
     private static final int MY_PERMISSIONS_REQUEST = 1;
     private static final int SETTINGS_REQUEST = 200;
@@ -173,7 +126,6 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private Toolbar mToolbar;
     private int mViewMode = FileConstants.KEY_LISTVIEW;
     private boolean mIsFavGroup;
-    private FrameLayout frameLayoutFabDual;
     private String mSelectedPath;
     private TextView textPathSelect;
     private final int MENU_FAVOURITES = 1;
@@ -181,10 +133,9 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     public static final String PREFS_FIRST_RUN = "first_app_run";
     private boolean mIsDualPaneEnabledSettings = true;
     private boolean mIsPasteItemVisible;
-    private boolean mIsFabOpen;
     private boolean mIsHomeScreenEnabled;
     private FrameLayout mFrameHomeScreen;
-    private  ActionBarDrawerToggle toggle;
+    private ActionBarDrawerToggle toggle;
 
 
     @Override
@@ -196,7 +147,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         getSavedFavourites();
         initConstants();
         initViews();
-        checkScreenOrientation();
+//        checkScreenOrientation();
         initListeners();
         Logger.log("TAG", "on create--Activity");
         // If MarshMallow ask for permission
@@ -229,19 +180,12 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         sharedPreference.registerOnSharedPreferenceChangeListener(this);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-    }
 
     private void setUpInitialData() {
         prepareListData();
         setListAdapter();
-//        setNavDirectory();
         setUpPreferences();
-        initialScreenSetup();
-//        initialFragmentSetup(mCurrentDir, FileConstants.CATEGORY.FILES.getValue());
+        initialScreenSetup(mIsHomeScreenEnabled);
     }
 
     private void setUpPreferences() {
@@ -373,22 +317,22 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         RATE = getResources().getString(R.string.rate_us);
     }
 
-    /**
+/*    *//**
      * Checks if orientation is landscape when app is run 1st time to enable Dual Panel
-     */
+     *//*
     private void checkScreenOrientation() {
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE
                 && mIsDualPaneEnabledSettings) {
             mIsDualModeEnabled = true;
-       /*     mViewSeperator.setVisibility(View.VISIBLE);
-            frameLayoutFabDual.setVisibility(View.VISIBLE);*/
+       *//*     mViewSeperator.setVisibility(View.VISIBLE);
+            frameLayoutFabDual.setVisibility(View.VISIBLE);*//*
         }
-       /* else {
+       *//* else {
             mIsDualModeEnabled = false;
             mViewSeperator.setVisibility(View.GONE);
             frameLayoutFabDual.setVisibility(View.GONE);
-        }*/
-    }
+        }*//*
+    }*/
 
 
     private void initViews() {
@@ -403,7 +347,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
         mToolbar.setTitle(R.string.app_name);
         mMainLayout = (ConstraintLayout) findViewById(R.id.content_base);
-        mBottomToolbar = (Toolbar) findViewById(R.id.toolbar_bottom);
+//        mBottomToolbar = (Toolbar) findViewById(R.id.toolbar_bottom);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         relativeLayoutDrawerPane = (RelativeLayout) findViewById(R.id.drawerPane);
@@ -418,7 +362,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
     }
 
-    public void toggleToolbarVisibility(boolean isVisible,Toolbar toolbar) {
+    public void toggleToolbarVisibility(boolean isVisible, Toolbar toolbar) {
         if (isVisible) {
             mToolbar.setVisibility(View.GONE);
 /*            toggle = new ActionBarDrawerToggle(
@@ -432,8 +376,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);*/
 //             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_white);
-        }
-        else {
+        } else {
             mToolbar.setVisibility(View.VISIBLE);
             setSupportActionBar(mToolbar);
 /*            getSupportActionBar().setHomeButtonEnabled(true);
@@ -450,8 +393,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     public void toggleDrawer(boolean value) {
         if (value) {
             drawerLayout.openDrawer(GravityCompat.START);
-        }
-        else {
+        } else {
             drawerLayout.closeDrawer(GravityCompat.START);
         }
     }
@@ -490,13 +432,13 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         initializeOthersGroup();
     }
 
-    private void initialScreenSetup() {
-        if (mIsHomeScreenEnabled) {
+    public void initialScreenSetup(boolean isHomeScreenEnabled) {
+        if (isHomeScreenEnabled) {
             // Fragment fragment = null;
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             Bundle args = new Bundle();
             args.putBoolean(FileConstants.KEY_HOME, true);
-            args.putBoolean(BaseActivity.PREFS_FIRST_RUN,mIsFirstRun);
+            args.putBoolean(BaseActivity.PREFS_FIRST_RUN, mIsFirstRun);
 //          args.putInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
             HomeScreenFragment homeScreenFragment = new HomeScreenFragment();
             homeScreenFragment.setArguments(args);
@@ -507,7 +449,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             Bundle args = new Bundle();
             args.putBoolean(FileConstants.KEY_HOME, false);
-            args.putString(FileConstants.KEY_PATH,mCurrentDir);
+            args.putString(FileConstants.KEY_PATH, mCurrentDir);
             args.putInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
             args.putInt(BaseActivity.ACTION_GROUP_POS, 0); // Storage Group
             args.putInt(BaseActivity.ACTION_CHILD_POS, 1); // Internal Storage child
@@ -520,7 +462,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         }
     }
 
-    private void createStoragesFragment(int groupPos, int childPos,String path) {
+    private void createStoragesFragment(int groupPos, int childPos, String path) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Bundle args = new Bundle();
         args.putBoolean(FileConstants.KEY_HOME, false);
@@ -653,9 +595,9 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                 String path = totalGroup.get(groupPos).getmChildItems().get(childPos)
                         .getPath();
                 if (storagesFragment != null) {
-                    storagesFragment.displaySelectedGroup(groupPos, childPos,path);
+                    storagesFragment.displaySelectedGroup(groupPos, childPos, path);
                 } else {
-                    createStoragesFragment(groupPos, childPos,path);
+                    createStoragesFragment(groupPos, childPos, path);
                 }
                 drawerLayout.closeDrawer(relativeLayoutDrawerPane);
                 break;
@@ -1136,10 +1078,6 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         int count = fragmentManager.getBackStackEntryCount();
         Logger.log(TAG, "Onbackpress--TOTAL FRAGMENTS count=" + count);
 
-
-        int singlePaneCount = singlePaneFragments.size();
-        int dualPaneCount = dualPaneFragments.size();
-
 /*        Logger.log(TAG, "onBackPressed--SINGLEPANELFRAG count=" + singlePaneCount);
         Logger.log(TAG, "onBackPressed--DUALPANELFRAG count=" + dualPaneCount);
         Logger.log(TAG, "onBackPressed--isDualPaneInFocus=" + isDualPaneInFocus);*/
@@ -1156,7 +1094,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
       /*  else if (fabCreateMenu.isExpanded()) {
             fabCreateMenu.collapse();
         } */
-         else {
+        else {
             super.onBackPressed();
         }
 
@@ -1230,7 +1168,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         return super.onPrepareOptionsMenu(menu);
     }*/
 
-    @Override
+ /*   @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_paste:
@@ -1255,7 +1193,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     @Override
     protected void onDestroy() {
@@ -1360,6 +1298,7 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     }
 
 
+/*
     @Override
     public void onClick(final View view) {
         switch (view.getId()) {
@@ -1414,10 +1353,12 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                         String fileName = rename.getText().toString() + "";
 
                         int result;
-                        /**
-                         * In landscape mode, FabCreateFile is on Dual Pane side and
-                         * FabCreateFileDual on Single pane
-                         */
+                        */
+/**
+ * In landscape mode, FabCreateFile is on Dual Pane side and
+ * FabCreateFileDual on Single pane
+ *//*
+
                         if (view.getId() == R.id.fabCreateFile || view.getId() == R.id
                                 .fabCreateFileDual) {
                             if (view.getId() == R.id.fabCreateFile) {
@@ -1492,22 +1433,23 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 //                break;
         }
     }
+*/
 
-    private String setDialogTitle(int id) {
-        String title = "";
-        switch (id) {
-            case R.id.fabCreateFile:
-                title = getString(R.string.new_file);
-                break;
-            case R.id.fabCreateFolder:
-                title = getString(R.string.new_folder);
-                break;
-            case R.id.action_rename:
-                title = getString(R.string.action_rename);
-        }
-        return title;
-
-    }
+//    private String setDialogTitle(int id) {
+//        String title = "";
+//        switch (id) {
+//            case R.id.fabCreateFile:
+//                title = getString(R.string.new_file);
+//                break;
+//            case R.id.fabCreateFolder:
+//                title = getString(R.string.new_folder);
+//                break;
+//            case R.id.action_rename:
+//                title = getString(R.string.action_rename);
+//        }
+//        return title;
+//
+//    }
 
     /**
      * Shows another alert dialog when user clicks on any button Skip,Keep or Replace
@@ -1532,52 +1474,107 @@ public class BaseActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
 
     public void setFileList(ArrayList<FileInfo> list) {
-        mFileList = list;
+        StoragesFragment storagesFragment = (StoragesFragment) getSupportFragmentManager().findFragmentById(R.id
+                .frame_home);
+        if (storagesFragment != null) {
+            storagesFragment.setFileList(list);
+        }
     }
 
-    public void startActionMode() {
+/*    public void startActionMode() {
 
-fabCreateMenu.setVisibility(View.GONE);
+//fabCreateMenu.setVisibility(View.GONE);
         mBottomToolbar.setVisibility(View.VISIBLE);
         mBottomToolbar.startActionMode(new ActionModeCallback());
 //        mBottomToolbar.inflateMenu(R.menu.action_mode_bottom);
         mBottomToolbar.getMenu().clear();
         EnhancedMenuInflater.inflate(getMenuInflater(), mBottomToolbar.getMenu(), true, mCategory);
         mBottomToolbar.setOnMenuItemClickListener(this);
+    }*/
+
+    @Override
+    public void startActionModeOperations() {
+        StoragesFragment storagesFragment = (StoragesFragment) getSupportFragmentManager().findFragmentById(R.id
+                .frame_home);
+        if (storagesFragment != null) {
+            storagesFragment.toggleFabVisibility(true);
+            storagesFragment.setupBottomToolbar();
+        }
+    }
+
+    @Override
+    public void endActionMode() {
+        StoragesFragment storagesFragment = (StoragesFragment) getSupportFragmentManager().findFragmentById(R.id
+                .frame_home);
+        if (storagesFragment != null) {
+            storagesFragment.toggleFabVisibility(false);
+        }
     }
 
     public void togglePasteVisibility(boolean isVisible) {
+        StoragesFragment storagesFragment = (StoragesFragment) getSupportFragmentManager().findFragmentById(R.id
+                .frame_home);
+        if (storagesFragment != null) {
+            storagesFragment.togglePasteVisibility(isVisible);
+        }
+    }
+
+/*    public void togglePasteVisibility(boolean isVisible) {
         mPasteItem.setVisible(isVisible);
         mIsPasteItemVisible = isVisible;
+    }*/
+
+    public void updateAdapter(SectionItems favItem) {
+        if (!favouritesGroupChild.contains(favItem)) {
+            favouritesGroupChild.add(favItem);
+            expandableListAdapter.notifyDataSetChanged();
+        }
+
     }
 
 
     public ActionMode getActionMode() {
-        return mActionMode;
+        StoragesFragment storagesFragment = (StoragesFragment) getSupportFragmentManager().findFragmentById(R.id
+                .frame_home);
+        if (storagesFragment != null) {
+            return storagesFragment.getActionMode();
+        }
+        return null;
     }
 
-    public void setFileListAdapter(FileListAdapter adapter) {
-        fileListAdapter = adapter;
-    }
-
-    public void setSelectedItemPos(SparseBooleanArray selectedItemPos) {
-        mSelectedItemPositions = selectedItemPos;
-        if (selectedItemPos.size() > 1) {
-            mRenameItem.setVisible(false);
-            mInfoItem.setVisible(false);
-
-        } else {
-            mRenameItem.setVisible(true);
-            mInfoItem.setVisible(true);
+    public void setSelectedCount(String title) {
+        StoragesFragment storagesFragment = (StoragesFragment) getSupportFragmentManager().findFragmentById(R.id
+                .frame_home);
+        if (storagesFragment != null) {
+            storagesFragment.setActionModeTitle(title);
         }
     }
 
+    public void setFileListAdapter(FileListAdapter adapter) {
+        StoragesFragment storagesFragment = (StoragesFragment) getSupportFragmentManager().findFragmentById(R.id
+                .frame_home);
+        if (storagesFragment != null) {
+            storagesFragment.setFileListAdapter(adapter);
+        }
+    }
+
+    public void setSelectedItemPos(SparseBooleanArray selectedItemPos) {
+        StoragesFragment storagesFragment = (StoragesFragment) getSupportFragmentManager().findFragmentById(R.id
+                .frame_home);
+        if (storagesFragment != null) {
+            storagesFragment.setSelectedItemPos(selectedItemPos);
+        }
+    }
+
+   /* */
+
     /**
      * Toolbar menu item click listener
+     * <p/>
+     * //     * @param item
      *
-     * @param item
      * @return
-     */
+     *//*
     @Override
     public boolean onMenuItemClick(MenuItem item) {
 
@@ -1648,20 +1645,19 @@ fabCreateMenu.setVisibility(View.GONE);
                 break;
         }
         return false;
-    }
-
+    }*/
     private void showMessage(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
-    @Override
+/*    @Override
     public void getSelectedPath(String path) {
         mSelectedPath = path;
         if (textPathSelect != null) {
             textPathSelect.setText(mSelectedPath);
         }
 
-    }
+    }*/
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -1679,6 +1675,45 @@ fabCreateMenu.setVisibility(View.GONE);
             if (dualPaneFragment != null) {
                 dualPaneFragment.refreshList();
             }
+        }
+        else if (key.equals(FileConstants.PREFS_HOMESCREEN)) {
+            boolean mFromHomeScreen = sharedPreferences.getBoolean(FileConstants
+                    .PREFS_HOMESCREEN, true);
+            Fragment fragment =  getSupportFragmentManager()
+                    .findFragmentById(R
+                            .id.frame_home);
+            if (!mFromHomeScreen) {
+
+                if (fragment instanceof HomeScreenFragment) {
+                    getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    Bundle args = new Bundle();
+                    args.putBoolean(FileConstants.KEY_HOME, false);
+                    args.putString(FileConstants.KEY_PATH, FileUtils.getInternalStorage().getAbsolutePath());
+                    args.putInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
+                    args.putInt(BaseActivity.ACTION_GROUP_POS, 0);
+                    args.putInt(BaseActivity.ACTION_CHILD_POS, 1);
+
+//          args.putInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
+                    StoragesFragment storagesFragment = new StoragesFragment();
+                    storagesFragment.setArguments(args);
+                    ft.replace(R.id.frame_home, storagesFragment);
+//                    ft.addToBackStack(null);
+                    ft.commitAllowingStateLoss();
+
+                }
+                else {
+                    ((StoragesFragment)fragment).removeHomeScreen(true);
+                }
+
+
+            }
+            else {
+                ((StoragesFragment)fragment).setHomeScreenEnabled(true);
+
+            }
+
         }
        /* else if (key.equals(FileConstants.PREFS_DUAL_PANE)) {
             mIsDualPaneEnabledSettings = sharedPreferences.getBoolean(FileConstants
@@ -1710,9 +1745,11 @@ fabCreateMenu.setVisibility(View.GONE);
     }
 
 
+   /* */
+
     /**
      * Triggered on long press click on item
-     */
+     *//*
     private final class ActionModeCallback implements ActionMode.Callback {
 
 
@@ -1799,8 +1836,8 @@ fabCreateMenu.setVisibility(View.GONE);
                                         .ic_unhide_white), 0, 1,
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                         mHideItem.setTitle(hideBuilder);
-                     /*   mHideItem.setTitle(getString(R.string.unhide));
-                        mHideItem.setIcon(R.drawable.ic_unhide_white);*/
+                     *//*   mHideItem.setTitle(getString(R.string.unhide));
+                        mHideItem.setIcon(R.drawable.ic_unhide_white);*//*
                     } else {
                         SpannableStringBuilder hideBuilder = new SpannableStringBuilder(" " + "  " +
                                 "" + getString(R.string
@@ -1810,8 +1847,8 @@ fabCreateMenu.setVisibility(View.GONE);
                                         .ic_hide_white), 0, 1,
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                         mHideItem.setTitle(hideBuilder);
-                /*        mHideItem.setTitle(getString(R.string.hide));
-                        mHideItem.setIcon(R.drawable.ic_hide_white);*/
+                *//*        mHideItem.setTitle(getString(R.string.hide));
+                        mHideItem.setIcon(R.drawable.ic_hide_white);*//*
                     }
                 }
             }
@@ -1996,14 +2033,14 @@ fabCreateMenu.setVisibility(View.GONE);
 
             mActionMode = null;
             mBottomToolbar.setVisibility(View.GONE);
-            // FAB should be visible only for Files Category
+  *//*          // FAB should be visible only for Files Category
             if (mCategory == 0) {
                 fabCreateMenu.setVisibility(View.VISIBLE);
-            }
+            }*//*
         }
-    }
+    }*/
 
-    private void hideUnHideFiles(ArrayList<FileInfo> fileInfo) {
+   /* private void hideUnHideFiles(ArrayList<FileInfo> fileInfo) {
         for (int i = 0; i < fileInfo.size(); i++) {
             String fileName = fileInfo.get(i).getFileName();
             String renamedName;
@@ -2106,8 +2143,7 @@ fabCreateMenu.setVisibility(View.GONE);
         }
 
 
-    }
-
+    }*/
     private void resetFavouritesGroup() {
 
         for (int i = favouritesGroupChild.size() - 1; i > 0; i--) {
@@ -2121,7 +2157,7 @@ fabCreateMenu.setVisibility(View.GONE);
 
     }
 
-    private void updateMediaStore(long id, String renamedFilePath) {
+   /* private void updateMediaStore(long id, String renamedFilePath) {
         ContentValues values = new ContentValues();
         switch (mCategory) {
             case 1:
@@ -2261,8 +2297,6 @@ fabCreateMenu.setVisibility(View.GONE);
     }
 
 
-
-
     private void showDialog(final ArrayList<String> paths) {
         final Dialog deleteDialog = new Dialog(this);
         deleteDialog.setContentView(R.layout.dialog_delete);
@@ -2297,7 +2331,7 @@ fabCreateMenu.setVisibility(View.GONE);
         });
         deleteDialog.show();
 
-    }
+    }*/
 
     public void clearSelectedPos() {
         if (mSelectedItemPositions != null && mSelectedItemPositions.size() != 0) {
@@ -2473,7 +2507,7 @@ fabCreateMenu.setVisibility(View.GONE);
                     if (mSelectedItemPositions != null && mSelectedItemPositions.size() != 0) {
                         mSelectedItemPositions.clear();
                     }
-                    togglePasteVisibility(false);
+//                    togglePasteVisibility(false);
                     if (mPathActionMap != null) {
                         if (mPathActionMap.size() != filesCopied) {
 
@@ -2545,7 +2579,7 @@ fabCreateMenu.setVisibility(View.GONE);
     }
 
 
-    private class BgOperationsTask extends AsyncTask<ArrayList<String>, Void, Integer> {
+  /*  private class BgOperationsTask extends AsyncTask<ArrayList<String>, Void, Integer> {
 
         private String fileName;
         private String filePath;
@@ -2648,13 +2682,14 @@ fabCreateMenu.setVisibility(View.GONE);
 
     public void refreshFileList() {
         FileListFragment fileListFragment = (FileListFragment) getSupportFragmentManager()
-                .findFragmentById(R.id
+                .findFragmentById(R.idonsh
                         .frame_container);
         if (fileListFragment != null) {
             fileListFragment.refreshList();
         }
 
 
-    }
+    }*/
+
 }
 
