@@ -317,7 +317,9 @@ public class BaseActivity extends AppCompatActivity implements
         RATE = getResources().getString(R.string.rate_us);
     }
 
-/*    *//**
+/*    */
+
+    /**
      * Checks if orientation is landscape when app is run 1st time to enable Dual Panel
      *//*
     private void checkScreenOrientation() {
@@ -333,8 +335,6 @@ public class BaseActivity extends AppCompatActivity implements
             frameLayoutFabDual.setVisibility(View.GONE);
         }*//*
     }*/
-
-
     private void initViews() {
         mFrameHomeScreen = (FrameLayout) findViewById(R.id.frame_home);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -458,7 +458,8 @@ public class BaseActivity extends AppCompatActivity implements
             storagesFragment.setArguments(args);
             ft.replace(R.id.frame_home, storagesFragment);
 //            ft.addToBackStack(mCurrentDir);
-            ft.commitAllowingStateLoss();
+//            ft.commitAllowingStateLoss();
+            ft.commit();
         }
     }
 
@@ -1675,44 +1676,44 @@ public class BaseActivity extends AppCompatActivity implements
             if (dualPaneFragment != null) {
                 dualPaneFragment.refreshList();
             }
-        }
-        else if (key.equals(FileConstants.PREFS_HOMESCREEN)) {
-            boolean mFromHomeScreen = sharedPreferences.getBoolean(FileConstants
+        } else if (key.equals(FileConstants.PREFS_HOMESCREEN)) {
+            boolean isHomeScreenEnabled = sharedPreferences.getBoolean(FileConstants
                     .PREFS_HOMESCREEN, true);
-            Fragment fragment =  getSupportFragmentManager()
-                    .findFragmentById(R
-                            .id.frame_home);
-            if (!mFromHomeScreen) {
+            if (isHomeScreenEnabled != mIsHomeScreenEnabled) {
+                mIsHomeScreenEnabled = isHomeScreenEnabled;
+                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.frame_home);
+                Log.d(TAG,"OnPrefschanged==fragment="+fragment);
+                if (!isHomeScreenEnabled) {
 
-                if (fragment instanceof HomeScreenFragment) {
-                    getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+                    if (fragment instanceof HomeScreenFragment) {
+//                        getSupportFragmentManager().beginTransaction().remove(fragment).commit();
 
-                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                    Bundle args = new Bundle();
-                    args.putBoolean(FileConstants.KEY_HOME, false);
-                    args.putString(FileConstants.KEY_PATH, FileUtils.getInternalStorage().getAbsolutePath());
-                    args.putInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
-                    args.putInt(BaseActivity.ACTION_GROUP_POS, 0);
-                    args.putInt(BaseActivity.ACTION_CHILD_POS, 1);
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                        Bundle args = new Bundle();
+                        args.putBoolean(FileConstants.KEY_HOME, false);
+                        args.putString(FileConstants.KEY_PATH, FileUtils.getInternalStorage().getAbsolutePath());
+                        args.putInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
+                        args.putInt(BaseActivity.ACTION_GROUP_POS, 0);
+                        args.putInt(BaseActivity.ACTION_CHILD_POS, 1);
 
 //          args.putInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
-                    StoragesFragment storagesFragment = new StoragesFragment();
-                    storagesFragment.setArguments(args);
-                    ft.replace(R.id.frame_home, storagesFragment);
+                        StoragesFragment storagesFragment = new StoragesFragment();
+                        storagesFragment.setArguments(args);
+                        ft.replace(R.id.frame_home, storagesFragment);
 //                    ft.addToBackStack(null);
-                    ft.commitAllowingStateLoss();
+                        ft.commitAllowingStateLoss();
+
+                    } else {
+                        ((StoragesFragment) fragment).removeHomeScreen(true);
+                    }
+
+
+                } else {
+                    ((StoragesFragment) fragment).setHomeScreenEnabled(true);
 
                 }
-                else {
-                    ((StoragesFragment)fragment).removeHomeScreen(true);
-                }
-
-
             }
-            else {
-                ((StoragesFragment)fragment).setHomeScreenEnabled(true);
 
-            }
 
         }
        /* else if (key.equals(FileConstants.PREFS_DUAL_PANE)) {

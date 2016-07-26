@@ -12,14 +12,15 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.siju.filemanager.R;
+import com.siju.filemanager.common.Logger;
 import com.siju.filemanager.common.SharedPreferenceWrapper;
 import com.siju.filemanager.filesystem.model.FavInfo;
 import com.siju.filemanager.filesystem.model.FileInfo;
+import com.siju.filemanager.filesystem.model.ZipModel;
 import com.siju.filemanager.filesystem.utils.FileUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 
 import eu.chainfire.libsuperuser.Shell;
 
@@ -178,10 +178,14 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             case 3:
                 fetchImages();
                 break;
+            case 10:
+                Logger.log("SIJU","apk category");
+                fetchApk();
+                break;
             case 4:
             case 7:
             case 9:
-            case 10:
+            case 11:
                 fetchByCategory(mCategory);
                 break;
             case 8:
@@ -228,8 +232,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
         if (fileExtension.equalsIgnoreCase("zip")) {
 //            fileInfoList = fetchZipContent();
-            HashMap<String, List<String>> contents = retrieveListing(file);
-            fileInfoList = getZipFilesFromMap(contents);
+//            HashMap<String, List<String>> contents = retrieveListing(file);
+            ArrayList<ZipModel> models = getZipContents("",file.getAbsolutePath());
             return fileInfoList;
         } else {
             if (file.exists()) {
@@ -388,6 +392,61 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
     }
 
+    private ArrayList<FileInfo> fetchApk() {
+        // exclude media files, they would be here also.
+        String where = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                + MediaStore.Files.FileColumns.MEDIA_TYPE_NONE;
+//                selectionArgs = new String[]{ apk };
+//                String test = "/storage/emulated/0/Apps";
+        String [] selectionArgs = null;
+        Uri uri = MediaStore.Files.getContentUri("external");
+        long startTime = System.currentTimeMillis();
+        Logger.log("SIJU","Starting time="+startTime/1000);
+
+//        String sortOrder = MediaStore.Files.FileColumns.N + " DESC";
+        Cursor cursor = mContext.getContentResolver().query(uri, null, where, null,
+                null);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+//                int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.TITLE);
+                int sizeIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.SIZE);
+                int dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_MODIFIED);
+                int fileIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID);
+                int pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA);
+//                int mimeTypeIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MIME_TYPE);
+                String path = cursor.getString(pathIndex);
+//                String fileName = cursor.getString(titleIndex);
+
+                if (path.endsWith(".apk")) {
+//                    Log.d("TAG", "path=" + path);
+                    long size1 = cursor.getLong(sizeIndex);
+                    long date1 = cursor.getLong(dateIndex);
+                    long fileId = cursor.getLong(fileIdIndex);
+
+//                    String mimeType = cursor.getString(mimeTypeIndex);
+                    int type = mCategory;
+                    String date = FileUtils.convertDate(date1 * 1000); // converting it to ms
+                    String size = Formatter.formatFileSize(mContext, size1);
+                    String extension = path.substring(path.lastIndexOf(".") + 1);
+                    String fileName = path.substring(path.lastIndexOf("/") + 1, path.length());
+                    String[] tokens = fileName.split("\\.(?=[^\\.]+$)");
+                    fileName = tokens[0];
+//                String extension = tokens[1];
+                    String nameWithExt = fileName + "." + extension;
+                    fileInfoList.add(new FileInfo(fileId, nameWithExt, path, date, size, type, extension));
+                }
+
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        long endTime = System.currentTimeMillis();
+        long timetaken = (endTime-startTime)/1000;
+        Logger.log("SIJU","End time="+endTime+"Time taken="+ timetaken);
+
+        return fileInfoList;
+
+    }
+
     private ArrayList<FileInfo> fetchFavorites() {
         SharedPreferenceWrapper wrapper = new SharedPreferenceWrapper();
         ArrayList<FavInfo> favList = wrapper.getFavorites(mContext);
@@ -523,48 +582,77 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         return null;
     }
 
-    public HashMap<String, List<String>> retrieveListing(File zipFile) {
-        HashMap<String, List<String>> contents = new HashMap<>();
+    public ArrayList<ZipModel> getZipContents(String dir,String zipPath) {
+        ZipFile zipfile = null;
+        ArrayList<ZipModel> zipModel = new ArrayList<>();
+        ArrayList<ZipModel> elements = new ArrayList<>();
         try {
-            FileInputStream fin = new FileInputStream(zipFile);
-            ZipInputStream zin = new ZipInputStream(fin);
-            ZipEntry ze = null;
-            while ((ze = zin.getNextEntry()) != null) {
-                if (ze.isDirectory()) {
-                    String directory = ze.getName();
-                    if (!contents.containsKey(directory)) {
-                        contents.put(directory, new ArrayList<String>());
-                    }
-                } else {
-                    String file = ze.getName();
-                    int pos = file.lastIndexOf("/");
-                    if (pos != -1) {
-                        String directory = file.substring(0, pos + 1);
-                        String fileName = file.substring(pos + 1);
-                        if (!contents.containsKey(directory)) {
-                            contents.put(directory, new ArrayList<String>());
-                            List<String> fileNames = contents.get(directory);
-                            fileNames.add(fileName);
-                        } else {
-                            List<String> fileNames = contents.get(directory);
-                            fileNames.add(fileName);
+//            int i = 0;
+            zipfile = new ZipFile(zipPath);
+            for (Enumeration e = zipfile.entries(); e.hasMoreElements(); ) {
+                ZipEntry entry = (ZipEntry) e.nextElement();
+              zipModel.add(new ZipModel(entry, entry.getTime(), entry.getSize(), entry
+                        .isDirectory()));
+            }
+            ArrayList<String> strings = new ArrayList<String>();
+            for (ZipModel entry : zipModel) {
+
+//                i++;
+                String s = entry.getName().toString();
+                //  System.out.println(s);
+                File file = new File(entry.getName());
+                if (dir == null || dir.trim().length() == 0) {
+                    String y = entry.getName();
+                    if (y.startsWith("/"))
+                        y = y.substring(1, y.length());
+                    if (file.getParent() == null || file.getParent().length() == 0 || file.getParent().equals("/")) {
+                        if (!strings.contains(y)) {
+                            elements.add(new ZipModel(new ZipEntry(y), entry.getTime(), entry.getSize(),
+                                    entry.isDirectory()));
+                            strings.add(y);
                         }
                     } else {
-                        if (!contents.containsKey("root")) {
-                            contents.put("root", new ArrayList<String>());
+                        String path = y.substring(0, y.indexOf("/") + 1);
+                        if (!strings.contains(path)) {
+                            ZipModel zipObj = new ZipModel(new ZipEntry(path), entry.getTime(), entry
+                                    .getSize(), true);
+                            strings.add(path);
+                            elements.add(zipObj);
                         }
-                        List<String> fileNames = contents.get("root");
-                        fileNames.add(file);
-                    }
-                }
-                zin.closeEntry();
-            }
 
-            zin.close();
-        } catch (Exception e) {
+                    }
+                } else {
+                    String y = entry.getName();
+                    if (entry.getName().startsWith("/"))
+                        y = y.substring(1, y.length());
+
+                    if (file.getParent() != null && (file.getParent().equals(dir) || file.getParent().equals("/" + dir))) {
+                        if (!strings.contains(y)) {
+                            elements.add(new ZipModel(new ZipEntry(y), entry.getTime(), entry.getSize(), entry.isDirectory()));
+                            strings.add(y);
+                        }
+                    } else {
+                        if (y.startsWith(dir + "/") && y.length() > dir.length() + 1) {
+                            String path1 = y.substring(dir.length() + 1, y.length());
+
+                            int index = dir.length() + 1 + path1.indexOf("/");
+                            String path = y.substring(0, index + 1);
+                            if (!strings.contains(path)) {
+                                ZipModel zipObj = new ZipModel(new ZipEntry(y.substring(0, index + 1)), entry.getTime(), entry.getSize(), true);
+                                strings.add(path);
+                                //System.out.println(path);
+                                elements.add(zipObj);
+                            }
+                        }
+                    }
+
+                }
+            }
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        return contents;
+        return elements;
+
     }
 
     private ArrayList<FileInfo> getZipFilesFromMap(HashMap<String, List<String>> contents) {
@@ -768,34 +856,42 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 String pdf1 = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants
                         .EXT_PDF);
 //                where = MediaStore.Files.FileColumns.MIME_TYPE + " = '" + pdf1 + "'";
-                where = MediaStore.Files.FileColumns.MIME_TYPE + " =?" ;
-                selectionArgs = new String[]{ pdf1 };
+                where = MediaStore.Files.FileColumns.MIME_TYPE + " =?";
+                selectionArgs = new String[]{pdf1};
 
                 break;
-            case 10:
+/*            case 10:
                 String apk = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants
                         .EXT_APK);
 //                where = MediaStore.Files.FileColumns.MIME_TYPE + " = '" + apk + "'";
-                where = MediaStore.Files.FileColumns.MIME_TYPE + " =?" ;
-                selectionArgs = new String[]{ apk };
-                break;
+//                where = MediaStore.Files.FileColumns.MIME_TYPE + " =?" ;
+//                where = MediaStore.Files.FileColumns.DATA + " LIKE ?";
+                // exclude media files, they would be here also.
+                where = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                        + MediaStore.Files.FileColumns.MEDIA_TYPE_NONE;
+//                selectionArgs = new String[]{ apk };
+//                String test = "/storage/emulated/0/Apps";
+                selectionArgs = null;
+//                selectionArgs = new String[]{"%/storage/emulated/0/Apps%"};
+
+                break;*/
             case 11:
                 long size = 104857600; // 100 MB
-                where = MediaStore.Files.FileColumns.SIZE + " > " + size;
+                where = MediaStore.Files.FileColumns.SIZE + " >?";
+                selectionArgs = new String[]{String.valueOf(size)};
                 break;
         }
-        Log.d("Loader","Category id=="+category+" where=="+where);
+//        Log.d("Loader","Category id=="+category+" where=="+where);
 
         Cursor cursor;
         String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
-        if (category == 9 || category == 10) {
+        if (category == 9 || category == 11) {
 /*            Uri newUri = Uri.parse("content://external/apk");
             cursor = mContext.getContentResolver().query(newUri, null, null, null,
                     null);*/
             cursor = mContext.getContentResolver().query(uri, null, where, selectionArgs,
                     sortOrder);
-        }
-        else {
+        } else {
             cursor = mContext.getContentResolver().query(uri, null, where, null, sortOrder);
         }
         if (cursor != null && cursor.moveToFirst()) {
@@ -805,12 +901,14 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 int dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_MODIFIED);
                 int fileIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID);
                 int pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA);
+                int mimeTypeIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MIME_TYPE);
 
 //                String fileName = cursor.getString(titleIndex);
                 long size1 = cursor.getLong(sizeIndex);
                 long date1 = cursor.getLong(dateIndex);
                 long fileId = cursor.getLong(fileIdIndex);
                 String path = cursor.getString(pathIndex);
+                String mimeType = cursor.getString(mimeTypeIndex);
                 int type = mCategory;
                 String date = FileUtils.convertDate(date1 * 1000); // converting it to ms
                 String size = Formatter.formatFileSize(mContext, size1);
@@ -820,7 +918,12 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 fileName = tokens[0];
 //                String extension = tokens[1];
                 String nameWithExt = fileName + "." + extension;
-                fileInfoList.add(new FileInfo(fileId, nameWithExt, path, date, size, type, extension));
+                if (category == FileConstants.CATEGORY.APPS.getValue() && path.endsWith(".apk")) {
+                    Log.d("TAG", "Category=" + mCategory + " path=" + path + "Mime type=" + mimeType);
+                    fileInfoList.add(new FileInfo(fileId, nameWithExt, path, date, size, type, extension));
+                } else {
+                    fileInfoList.add(new FileInfo(fileId, nameWithExt, path, date, size, type, extension));
+                }
 
             } while (cursor.moveToNext());
             cursor.close();

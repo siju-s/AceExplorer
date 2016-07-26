@@ -154,6 +154,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     }
 
     private void getSavedLibraries() {
+        savedLibraries = new ArrayList<>();
         savedLibraries = sharedPreferenceWrapper.getLibraries(getActivity());
 
     }
@@ -225,32 +226,20 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     private void initConstants() {
         mResourceIds = new int[]{R.drawable.ic_library_images, R.drawable.ic_library_music,
                 R.drawable.ic_library_videos, R.drawable.ic_library_docs,
-                R.drawable.ic_library_downloads, R.drawable.ic_library_add,
-                R.drawable.ic_library_compressed, R.drawable.ic_library_favorite,
-                R.drawable.ic_library_pdf, R.drawable.ic_library_app, R.drawable.ic_library_large};
+                R.drawable.ic_library_downloads, R.drawable.ic_library_add};
         mLabels = new String[]{getActivity().getString(R.string
                 .nav_menu_image), getActivity().getString(R.string
                 .nav_menu_music), getActivity().getString(R.string
                 .nav_menu_video), getActivity().getString(R.string
                 .home_docs), getActivity().getString(R.string
                 .downloads), getActivity().getString(R.string
-                .home_add), getActivity().getString(R.string
-                .compressed), getActivity().getString(R.string
-                .nav_header_favourites), getActivity().getString(R.string
-                .pdf), getActivity().getString(R.string
-                .apk), getActivity().getString(R.string
-                .library_large)};
+                .home_add)};
         mCategoryIds = new int[]{FileConstants.CATEGORY.IMAGE.getValue(),
                 FileConstants.CATEGORY.AUDIO.getValue(),
                 FileConstants.CATEGORY.VIDEO.getValue(),
                 FileConstants.CATEGORY.DOCS.getValue(),
                 FileConstants.CATEGORY.DOWNLOADS.getValue(),
-                FileConstants.CATEGORY.ADD.getValue(),
-                FileConstants.CATEGORY.COMPRESSED.getValue(),
-                FileConstants.CATEGORY.FAVORITES.getValue(),
-                FileConstants.CATEGORY.PDF.getValue(),
-                FileConstants.CATEGORY.APPS.getValue(),
-                FileConstants.CATEGORY.LARGE_FILES.getValue()};
+                FileConstants.CATEGORY.ADD.getValue()};
         STORAGE_INTERNAL = getResources().getString(R.string.nav_menu_internal_storage);
         STORAGE_EXTERNAL = getResources().getString(R.string.nav_menu_ext_storage);
     }
