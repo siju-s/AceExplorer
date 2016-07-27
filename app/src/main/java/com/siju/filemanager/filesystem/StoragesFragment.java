@@ -211,6 +211,19 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
 
     }
 
+    @Override
+    public void onPause() {
+        Log.d(TAG,"onPause=");
+
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        Log.d(TAG,"onResume=");
+        super.onResume();
+    }
+
     public void setHomeScreenEnabled(boolean value) {
         mIsHomePageAdded = value;
     }
@@ -258,6 +271,9 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
                                         getActivity().onBackPressed();
                                         getActivity().finish();
                                     } else if (mFromHomeScreen) {
+                                        getActivity().getSupportFragmentManager()
+                                                .beginTransaction().remove(StoragesFragment.this)
+                                                .commit();
                                         getActivity().onBackPressed();
                                     } else {
                                         getActivity().finish();
@@ -474,7 +490,7 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onDestroy() {
         ((BaseActivity) getActivity()).toggleToolbarVisibility(false, null);
-
+        Logger.log(TAG,"On Destroy");
         super.onDestroy();
     }
 

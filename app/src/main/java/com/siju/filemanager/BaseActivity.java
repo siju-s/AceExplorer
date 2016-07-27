@@ -134,6 +134,7 @@ public class BaseActivity extends AppCompatActivity implements
     private boolean mIsDualPaneEnabledSettings = true;
     private boolean mIsPasteItemVisible;
     private boolean mIsHomeScreenEnabled;
+    private boolean mIsHomePageAdded;
     private FrameLayout mFrameHomeScreen;
     private ActionBarDrawerToggle toggle;
 
@@ -358,6 +359,12 @@ public class BaseActivity extends AppCompatActivity implements
         toggle.syncState();
         // get the listview
         expandableListView = (ExpandableListView) findViewById(R.id.expand_list_drawer);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toggleDrawer(true);
+            }
+        });
 
 
     }
@@ -456,7 +463,7 @@ public class BaseActivity extends AppCompatActivity implements
 //          args.putInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
             StoragesFragment storagesFragment = new StoragesFragment();
             storagesFragment.setArguments(args);
-            ft.replace(R.id.frame_home, storagesFragment);
+            ft.replace(R.id.frame_home, storagesFragment, mCurrentDir);
 //            ft.addToBackStack(mCurrentDir);
 //            ft.commitAllowingStateLoss();
             ft.commit();
@@ -1077,7 +1084,7 @@ public class BaseActivity extends AppCompatActivity implements
     public void onBackPressed() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         int count = fragmentManager.getBackStackEntryCount();
-        Logger.log(TAG, "Onbackpress--TOTAL FRAGMENTS count=" + count);
+//        Logger.log(TAG, "Onbackpress--TOTAL FRAGMENTS count=" + count);
 
 /*        Logger.log(TAG, "onBackPressed--SINGLEPANELFRAG count=" + singlePaneCount);
         Logger.log(TAG, "onBackPressed--DUALPANELFRAG count=" + dualPaneCount);
@@ -1090,37 +1097,16 @@ public class BaseActivity extends AppCompatActivity implements
             drawer.closeDrawer(GravityCompat.START);
         }
         if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
+            Logger.log(TAG, "Onbackpress--backstack count=" + 1);
             getSupportFragmentManager().popBackStack();
         }
       /*  else if (fabCreateMenu.isExpanded()) {
             fabCreateMenu.collapse();
         } */
         else {
+            Logger.log(TAG, "Onbackpress--ELSE=");
             super.onBackPressed();
         }
-
-
-//        if (count == 1) {
-//            finish();
-//        } else {
-//            int childCount = navDirectory.getChildCount();
-//            Log.d("TAG", "Onbackpress--childCount count=" + childCount);
-//            navDirectory.removeViewAt(childCount - 1); // Remove view
-//            navDirectory.removeViewAt(childCount - 2); // Remove > symbol
-//            scrollNavigation.postDelayed(new Runnable() {
-//                public void run() {
-//                    HorizontalScrollView hv = (HorizontalScrollView) findViewById(R.id
-// .scrollNavigation);
-//                    hv.fullScroll(HorizontalScrollView.FOCUS_LEFT);
-//                }
-//            }, 100L);
-//            super.onBackPressed();
-//        }
-
-        /*else {
-            super.onBackPressed();
-
-        }*/
     }
 
 /*    private void replaceFragment(Fragment fragment, boolean isDualPane) {
@@ -1571,7 +1557,7 @@ public class BaseActivity extends AppCompatActivity implements
 
     /**
      * Toolbar menu item click listener
-     * <p/>
+     * <p>
      * //     * @param item
      *
      * @return
@@ -1651,14 +1637,44 @@ public class BaseActivity extends AppCompatActivity implements
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
-/*    @Override
-    public void getSelectedPath(String path) {
-        mSelectedPath = path;
-        if (textPathSelect != null) {
-            textPathSelect.setText(mSelectedPath);
-        }
+    /*    @Override
+        public void getSelectedPath(String path) {
+            mSelectedPath = path;
+            if (textPathSelect != null) {
+                textPathSelect.setText(mSelectedPath);
+            }
 
-    }*/
+        }*/
+    private boolean mIsHomeSettingToggled;
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        Log.d(TAG, "onPostResume" + mIsHomeSettingToggled);
+        if (mIsHomeSettingToggled) {
+
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            Bundle args = new Bundle();
+            args.putBoolean(FileConstants.KEY_HOME, false);
+            args.putString(FileConstants.KEY_PATH, FileUtils.getInternalStorage().getAbsolutePath());
+            args.putInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
+            args.putInt(BaseActivity.ACTION_GROUP_POS, 0);
+            args.putInt(BaseActivity.ACTION_CHILD_POS, 1);
+
+//          args.putInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
+            StoragesFragment storagesFragment = new StoragesFragment();
+            storagesFragment.setArguments(args);
+            ft.replace(R.id.frame_home, storagesFragment);
+//                    ft.addToBackStack(null);
+//                        ft.commitAllowingStateLoss();
+            ft.commit();
+            mIsHomeSettingToggled = false;
+        } else if (mIsHomePageAdded) {
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.frame_home);
+            ((StoragesFragment) fragment).setHomeScreenEnabled(true);
+            mIsHomePageAdded = false;
+        }
+    }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -1681,14 +1697,21 @@ public class BaseActivity extends AppCompatActivity implements
                     .PREFS_HOMESCREEN, true);
             if (isHomeScreenEnabled != mIsHomeScreenEnabled) {
                 mIsHomeScreenEnabled = isHomeScreenEnabled;
+                Log.d(TAG, "OnPrefschanged " +
+                        "CALLED==getSupportFragmentManager=" + getSupportFragmentManager());
                 Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.frame_home);
-                Log.d(TAG,"OnPrefschanged==fragment="+fragment);
+                Fragment fragment1 = getSupportFragmentManager().findFragmentByTag(mCurrentDir);
+
+                Log.d(TAG, "OnPrefschanged ==fragment=" + fragment);
+                Log.d(TAG, "OnPrefschanged==fragment by tag=" + fragment1);
+
                 if (!isHomeScreenEnabled) {
 
                     if (fragment instanceof HomeScreenFragment) {
 //                        getSupportFragmentManager().beginTransaction().remove(fragment).commit();
 
-                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                        mIsHomeSettingToggled = true;
+/*                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                         Bundle args = new Bundle();
                         args.putBoolean(FileConstants.KEY_HOME, false);
                         args.putString(FileConstants.KEY_PATH, FileUtils.getInternalStorage().getAbsolutePath());
@@ -1701,7 +1724,8 @@ public class BaseActivity extends AppCompatActivity implements
                         storagesFragment.setArguments(args);
                         ft.replace(R.id.frame_home, storagesFragment);
 //                    ft.addToBackStack(null);
-                        ft.commitAllowingStateLoss();
+//                        ft.commitAllowingStateLoss();
+                        ft.commit();*/
 
                     } else {
                         ((StoragesFragment) fragment).removeHomeScreen(true);
@@ -1709,7 +1733,7 @@ public class BaseActivity extends AppCompatActivity implements
 
 
                 } else {
-                    ((StoragesFragment) fragment).setHomeScreenEnabled(true);
+                    mIsHomePageAdded = true;
 
                 }
             }

@@ -31,11 +31,10 @@ import java.io.PrintWriter;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -150,6 +149,22 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
     };
 
+    Comparator<? super FileInfo> comparatorByNameZip = new Comparator<FileInfo>() {
+
+        public int compare(FileInfo file1, FileInfo file2) {
+            // sort folders first
+            if ((file1.isDirectory()) && (!file2.isDirectory()))
+                return -1;
+            if ((!file1.isDirectory()) && (file2.isDirectory()))
+                return 1;
+
+            // here both are folders or both are files : sort alpha
+            return file1.getFileName().toLowerCase()
+                    .compareTo(file2.getFileName().toLowerCase());
+        }
+
+    };
+
     //    private Comparator<? super String> getSortMode(int sortmode) {
 //
 //        switch (sortmode) {
@@ -179,7 +194,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 fetchImages();
                 break;
             case 10:
-                Logger.log("SIJU","apk category");
+                Logger.log("SIJU", "apk category");
                 fetchApk();
                 break;
             case 4:
@@ -233,7 +248,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         if (fileExtension.equalsIgnoreCase("zip")) {
 //            fileInfoList = fetchZipContent();
 //            HashMap<String, List<String>> contents = retrieveListing(file);
-            ArrayList<ZipModel> models = getZipContents("",file.getAbsolutePath());
+            getZipContents("", file.getAbsolutePath());
             return fileInfoList;
         } else {
             if (file.exists()) {
@@ -398,10 +413,10 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 + MediaStore.Files.FileColumns.MEDIA_TYPE_NONE;
 //                selectionArgs = new String[]{ apk };
 //                String test = "/storage/emulated/0/Apps";
-        String [] selectionArgs = null;
+        String[] selectionArgs = null;
         Uri uri = MediaStore.Files.getContentUri("external");
         long startTime = System.currentTimeMillis();
-        Logger.log("SIJU","Starting time="+startTime/1000);
+        Logger.log("SIJU", "Starting time=" + startTime / 1000);
 
 //        String sortOrder = MediaStore.Files.FileColumns.N + " DESC";
         Cursor cursor = mContext.getContentResolver().query(uri, null, where, null,
@@ -440,8 +455,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             cursor.close();
         }
         long endTime = System.currentTimeMillis();
-        long timetaken = (endTime-startTime)/1000;
-        Logger.log("SIJU","End time="+endTime+"Time taken="+ timetaken);
+        long timetaken = (endTime - startTime) / 1000;
+        Logger.log("SIJU", "End time=" + endTime + "Time taken=" + timetaken);
 
         return fileInfoList;
 
@@ -582,23 +597,23 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         return null;
     }
 
-    public ArrayList<ZipModel> getZipContents(String dir,String zipPath) {
+    public ArrayList<FileInfo> getZipContents(String dir, String zipPath) {
         ZipFile zipfile = null;
-        ArrayList<ZipModel> zipModel = new ArrayList<>();
+        ArrayList<ZipModel> totalZipList = new ArrayList<>();
         ArrayList<ZipModel> elements = new ArrayList<>();
         try {
 //            int i = 0;
             zipfile = new ZipFile(zipPath);
             for (Enumeration e = zipfile.entries(); e.hasMoreElements(); ) {
                 ZipEntry entry = (ZipEntry) e.nextElement();
-              zipModel.add(new ZipModel(entry, entry.getTime(), entry.getSize(), entry
+                totalZipList.add(new ZipModel(entry, entry.getTime(), entry.getSize(), entry
                         .isDirectory()));
             }
             ArrayList<String> strings = new ArrayList<String>();
-            for (ZipModel entry : zipModel) {
+            for (ZipModel entry : totalZipList) {
 
 //                i++;
-                String s = entry.getName().toString();
+                String s = entry.getName();
                 //  System.out.println(s);
                 File file = new File(entry.getName());
                 if (dir == null || dir.trim().length() == 0) {
@@ -651,31 +666,34 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return elements;
 
-    }
+        for (ZipModel model : elements) {
+            String name = model.getName();
+            boolean isDirectory = model.isDirectory();
+            long size = model.getSize();
+            int type = FileConstants.CATEGORY.COMPRESSED.getValue();
+            long date = model.getTime();
+            String noOfFilesOrSize = Formatter.formatFileSize(mContext,size);
+            String fileModifiedDate = FileUtils.convertDate(date);
+            String extension;
+            if (isDirectory) {
+                name = name.substring(0, name.length() - 1);
+                extension = null;
 
-    private ArrayList<FileInfo> getZipFilesFromMap(HashMap<String, List<String>> contents) {
-        for (Map.Entry<String, List<String>> entry : contents.entrySet()) {
-            int type = 0;
-            String directory = entry.getKey();
-            List<String> values = entry.getValue();
-            // do something with key and/or tab
-            String filePath = mPath + "/" + directory;
-            String noOfFilesOrSize;
-            if (values.size() == 0) {
-                noOfFilesOrSize = mContext.getResources().getString(R.string.empty);
             } else {
-                noOfFilesOrSize = mContext.getResources().getQuantityString(R.plurals.number_of_files,
-                        values.size(), values.size());
+                extension = name.substring(name.lastIndexOf(".") + 1, name.length());
             }
+            String path = zipPath + "/" + name;
 
-            boolean isDirectory = true;
-            String date = null;
-            fileInfoList.add(new FileInfo(directory, filePath, null, noOfFilesOrSize, isDirectory, null, type));
+            FileInfo fileInfo = new FileInfo(name, path, fileModifiedDate, noOfFilesOrSize,
+                    isDirectory, extension, type);
+            fileInfoList.add(fileInfo);
         }
+        Collections.sort(fileInfoList, comparatorByNameZip);
         return fileInfoList;
+
     }
+
 
     private ArrayList<FileInfo> fetchMusic() {
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
