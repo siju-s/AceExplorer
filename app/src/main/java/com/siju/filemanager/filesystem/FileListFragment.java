@@ -111,6 +111,8 @@ public class FileListFragment extends Fragment implements LoaderManager
     private View viewDummy;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private StoragesFragment.ActionModeCommunicator mActionModeCallback;
+    private String mZipParentPath;
+    private int mZipLevelDual;
 
 
     @Override
@@ -172,8 +174,6 @@ public class FileListFragment extends Fragment implements LoaderManager
                 mLastSinglePaneDir = mFilePath;
 
             }*/
-            //recyclerViewFileList.setTag(R.id.TAG_DUAL, mLastDualPaneDir);
-            //recyclerViewFileList.setTag(R.id.TAG_SINGLE, mLastSinglePaneDir);
         }
         mViewMode = preference.getViewMode(getActivity());
 
@@ -321,7 +321,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             case 0:
                 // For file, open external apps based on Mime Type
                 if (!fileInfoList.get(position).isDirectory()) {
-                    String extension = fileInfoList.get(position).getExtension().toLowerCase();
+                    String extension = fileInfoList.get(position).getExtension();
                     if (extension.equalsIgnoreCase("zip")) {
 //                        showZipFileOptions(fileInfoList.get(position).getFilePath(),mFilePath);
                         String path = fileInfoList.get(position).getFilePath();
@@ -352,7 +352,8 @@ public class FileListFragment extends Fragment implements LoaderManager
                     String path = fileInfoList.get(position).getFilePath();
                     bundle.putString(FileConstants.KEY_PATH, path);
                     bundle.putInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
-                    Intent intent = new Intent(getActivity(), BaseActivity.class);
+                    getLoaderManager().restartLoader(LOADER_ID, bundle, this);
+                /*    Intent intent = new Intent(getActivity(), BaseActivity.class);
                     if (FileListFragment.this instanceof FileListDualFragment) {
                         intent.setAction(BaseActivity.ACTION_DUAL_VIEW_FOLDER_LIST);
                         intent.putExtra(BaseActivity.ACTION_DUAL_PANEL, true);
@@ -361,8 +362,9 @@ public class FileListFragment extends Fragment implements LoaderManager
                         intent.putExtra(BaseActivity.ACTION_DUAL_PANEL, false);
                     }
 
+
                     intent.putExtras(bundle);
-                    startActivity(intent);
+                    startActivity(intent);*/
                 }
                 break;
             case 1:

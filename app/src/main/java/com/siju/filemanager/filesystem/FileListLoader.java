@@ -54,6 +54,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private boolean showHidden;
     private int mCategory;
     private List<String> mZipRootFiles;
+    private String mZipPath;
 
     public FileListLoader(Context context, String path, int category) {
         super(context);
@@ -63,6 +64,18 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         showHidden = PreferenceManager.getDefaultSharedPreferences(context).getBoolean
                 (FileConstants.PREFS_HIDDEN, false);
     }
+
+    public FileListLoader(Context context, String path, int category,String zipPath) {
+        super(context);
+        mPath = path;
+        mContext = context;
+        mCategory = category;
+        showHidden = PreferenceManager.getDefaultSharedPreferences(context).getBoolean
+                (FileConstants.PREFS_HIDDEN, false);
+        mZipPath = zipPath;
+    }
+
+
 
     @Override
     protected void onStartLoading() {
