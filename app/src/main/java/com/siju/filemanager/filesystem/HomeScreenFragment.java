@@ -1,5 +1,6 @@
 package com.siju.filemanager.filesystem;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -81,7 +82,14 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     private ArrayList<FileInfo> mAppsList = new ArrayList<>();
     private ArrayList<FileInfo> mLargeFilesList = new ArrayList<>();
     private ArrayList<FavInfo> mFavList = new ArrayList<>();
+    private BaseActivity mBaseActivity;
+    private boolean mIsDualModeEnabled;
 
+    @Override
+    public void onAttach(Context context) {
+        mBaseActivity = (BaseActivity)context;
+        super.onAttach(context);
+    }
 
     @Override
     public View onCreateView(
@@ -182,9 +190,9 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                             args.putParcelableArrayList(FileConstants.KEY_LIB_SORTLIST, list);
                         }
                     }
-                    StoragesFragment storagesFragment = new StoragesFragment();
-                    storagesFragment.setArguments(args);
-                    ft.replace(R.id.frame_home, storagesFragment);
+                    FileListFragment fileListFragment = new FileListFragment();
+                    fileListFragment.setArguments(args);
+                    ft.replace(R.id.main_container, fileListFragment);
                     ft.addToBackStack(null);
                     ft.commitAllowingStateLoss();
                 } else {
@@ -202,6 +210,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                         .beginTransaction();
                 Bundle args = new Bundle();
                 args.putBoolean(FileConstants.KEY_HOME, true);
+
                 if (position == 0) {
                     args.putString(FileConstants.KEY_PATH, FileUtils.getInternalStorage()
                             .getAbsolutePath());
@@ -214,11 +223,16 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                     args.putInt(BaseActivity.ACTION_GROUP_POS, 0); // Storage Group
                     args.putInt(BaseActivity.ACTION_CHILD_POS, 2); // External Storage child
                 }
-                StoragesFragment storagesFragment = new StoragesFragment();
-                storagesFragment.setArguments(args);
-                ft.replace(R.id.frame_home, storagesFragment);
+
+                FileListFragment fileListFragment = new FileListFragment();
+                fileListFragment.setArguments(args);
+                ft.replace(R.id.main_container, fileListFragment);
                 ft.addToBackStack(null);
                 ft.commitAllowingStateLoss();
+                if (mIsDualModeEnabled) {
+                    mBaseActivity.toggleDualPaneVisibility(true);
+                    mBaseActivity.createDualFragment();
+                }
             }
         });
     }
@@ -274,6 +288,10 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         }
 
 
+    }
+
+    public void setDualModeEnabled(boolean isDualModeEnabled) {
+        mIsDualModeEnabled = isDualModeEnabled;
     }
 
     private void initLoaders(int categoryId) {

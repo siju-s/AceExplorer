@@ -1,8 +1,10 @@
 package com.siju.filemanager.filesystem;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipDescription;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -43,6 +45,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -54,12 +57,14 @@ import com.siju.filemanager.filesystem.model.FileInfo;
 import com.siju.filemanager.filesystem.ui.CustomGridLayoutManager;
 import com.siju.filemanager.filesystem.ui.CustomLayoutManager;
 import com.siju.filemanager.filesystem.ui.DividerItemDecoration;
+import com.siju.filemanager.filesystem.ui.EnhancedMenuInflater;
 import com.siju.filemanager.filesystem.utils.FileUtils;
 import com.siju.filemanager.filesystem.utils.PasteUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 import static com.siju.filemanager.BaseActivity.ACTION_VIEW_MODE;
 import static com.siju.filemanager.R.id.textEmpty;
@@ -71,12 +76,15 @@ import static com.siju.filemanager.R.id.textEmpty;
 
 public class FileListFragment extends Fragment implements LoaderManager
         .LoaderCallbacks<ArrayList<FileInfo>>,
-        SearchView.OnQueryTextListener {
+        SearchView.OnQueryTextListener,
+        Toolbar.OnMenuItemClickListener {
 
     //    private ListView fileList;
     private RecyclerView recyclerViewFileList;
     private View root;
     private final int LOADER_ID = 1000;
+    private final int LOADER_ID_DUAL = 2000;
+
     private FileListAdapter fileListAdapter;
     private ArrayList<FileInfo> fileInfoList;
     private boolean mIsDualMode;
@@ -92,7 +100,6 @@ public class FileListFragment extends Fragment implements LoaderManager
     private boolean mIsDualActionModeActive;
     private boolean mIsLandscapeMode;
     private boolean mIsDualModeEnabledSettings;
-    private Toolbar mToolbar;
     private MenuItem mSearchItem;
     private SearchView mSearchView;
     private boolean mStartDrag;
@@ -113,6 +120,33 @@ public class FileListFragment extends Fragment implements LoaderManager
     private StoragesFragment.ActionModeCommunicator mActionModeCallback;
     private String mZipParentPath;
     private int mZipLevelDual;
+    private BaseActivity mBaseActivity;
+    private boolean isDualPaneInFocus;
+    private Toolbar mBottomToolbar;
+    private ActionMode mActionMode;
+    private SparseBooleanArray mSelectedItemPositions = new SparseBooleanArray();
+    MenuItem mPasteItem, mRenameItem, mInfoItem, mArchiveItem, mFavItem, mExtractItem, mHideItem;
+    private static final int PASTE_OPERATION = 1;
+    private static final int DELETE_OPERATION = 2;
+    private static final int ARCHIVE_OPERATION = 3;
+    private static final int DECRYPT_OPERATION = 4;
+
+    private boolean mIsMoveOperation = false;
+    private ArrayList<FileInfo> mFileList;
+    private HashMap<String, Integer> mPathActionMap = new HashMap<>();
+    private int mPasteAction = FileUtils.ACTION_NONE;
+    private boolean isPasteConflictDialogShown;
+    private String mSourceFilePath = null;
+    private ArrayList<String> tempSourceFile = new ArrayList<>();
+    private int tempConflictCounter = 0;
+    private Dialog mPasteConflictDialog;
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mBaseActivity = (BaseActivity) context;
+    }
 
 
     @Override
@@ -127,7 +161,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mActionModeCallback = (StoragesFragment.ActionModeCommunicator) getActivity();
+//        mActionModeCallback = (StoragesFragment.ActionModeCommunicator) getActivity();
         setHasOptionsMenu(true);
         initializeViews();
         mIsLandscapeMode = getResources().getConfiguration().orientation == Configuration
@@ -151,7 +185,10 @@ public class FileListFragment extends Fragment implements LoaderManager
                         .KEY_LIB_SORTLIST);
                 if (list != null)
                     Log.d("TAG", "Lib list =" + list.size());
+                mBaseActivity.toggleViews(true);
 
+            } else {
+                mBaseActivity.toggleViews(false);
             }
 
             mIsZip = getArguments().getBoolean(FileConstants.KEY_ZIP, false);
@@ -184,6 +221,14 @@ public class FileListFragment extends Fragment implements LoaderManager
         args.putString(FileConstants.KEY_PATH, mFilePath);
 
         if (list == null || list.size() == 0) {
+            if (FileListFragment.this instanceof FileListDualFragment) {
+                isDualPaneInFocus = true;
+            } else {
+                isDualPaneInFocus = false;
+            }
+            if (mCategory == FileConstants.CATEGORY.FILES.getValue()) {
+                mBaseActivity.setNavDirectory(mFilePath, isDualPaneInFocus);
+            }
             getLoaderManager().initLoader(LOADER_ID, args, this);
         } else {
             fileInfoList = new ArrayList<>();
@@ -213,7 +258,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             @Override
             public void onItemClick(View view, int position) {
 
-                if (((BaseActivity) getActivity()).getActionMode() != null) {
+                if (getActionMode() != null) {
                     if (mIsDualActionModeActive) {
                         if (FileListFragment.this instanceof FileListDualFragment) {
                             itemClickActionMode(position, false);
@@ -239,7 +284,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                 itemClickActionMode(position, true);
                 mLongPressedTime = System.currentTimeMillis();
 
-                if (((BaseActivity) getActivity()).getActionMode() != null && fileListAdapter
+                if (getActionMode() != null && fileListAdapter
                         .getSelectedCount() >= 1) {
 //                    mDragPaths = new ArrayList<String>();
                     String path = fileInfoList.get(position).getFilePath();
@@ -314,6 +359,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                 refreshList();
             }
         });
+        mBottomToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar_bottom);
     }
 
     private void handleCategoryItemClick(int position) {
@@ -352,6 +398,14 @@ public class FileListFragment extends Fragment implements LoaderManager
                     String path = fileInfoList.get(position).getFilePath();
                     bundle.putString(FileConstants.KEY_PATH, path);
                     bundle.putInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
+
+                    if (FileListFragment.this instanceof FileListDualFragment) {
+                        isDualPaneInFocus = true;
+                    } else {
+                        isDualPaneInFocus = false;
+                    }
+                    mBaseActivity.setCurrentDir(path, isDualPaneInFocus);
+                    mBaseActivity.setNavDirectory(path, isDualPaneInFocus);
                     getLoaderManager().restartLoader(LOADER_ID, bundle, this);
                 /*    Intent intent = new Intent(getActivity(), BaseActivity.class);
                     if (FileListFragment.this instanceof FileListDualFragment) {
@@ -383,30 +437,40 @@ public class FileListFragment extends Fragment implements LoaderManager
     private void itemClickActionMode(int position, boolean isLongPress) {
         fileListAdapter.toggleSelection(position, isLongPress);
         boolean hasCheckedItems = fileListAdapter.getSelectedCount() > 0;
-        ActionMode actionMode = ((BaseActivity) getActivity()).getActionMode();
+        ActionMode actionMode = getActionMode();
         if (hasCheckedItems && actionMode == null) {
-            toggleDummyView(true);
             // there are some selected items, start the actionMode
-            mActionModeCallback.startActionModeOperations();
-
+            startActionMode();
 
             if (FileListFragment.this instanceof FileListDualFragment) {
                 mIsDualActionModeActive = true;
             } else {
                 mIsDualActionModeActive = false;
             }
-            ((BaseActivity) getActivity()).setFileList(fileInfoList);
+//            ((BaseActivity) getActivity()).setFileList(fileInfoList);
         } else if (!hasCheckedItems && actionMode != null) {
             // there no selected items, finish the actionMode
-            toggleDummyView(false);
-            mActionModeCallback.endActionMode();
+
+//            mActionModeCallback.endActionMode();
             actionMode.finish();
         }
-        if (((BaseActivity) getActivity()).getActionMode() != null) {
+        if (getActionMode() != null) {
             SparseBooleanArray checkedItemPos = fileListAdapter.getSelectedItemPositions();
-            ((BaseActivity) getActivity()).setSelectedItemPos(checkedItemPos);
-            ((BaseActivity) getActivity()).setSelectedCount(String.valueOf(fileListAdapter
+            setSelectedItemPos(checkedItemPos);
+            mActionMode.setTitle(String.valueOf(fileListAdapter
                     .getSelectedCount()) + " selected");
+        }
+    }
+
+    public void setSelectedItemPos(SparseBooleanArray selectedItemPos) {
+        mSelectedItemPositions = selectedItemPos;
+        if (selectedItemPos.size() > 1) {
+            mRenameItem.setVisible(false);
+            mInfoItem.setVisible(false);
+
+        } else {
+            mRenameItem.setVisible(true);
+            mInfoItem.setVisible(true);
         }
     }
 
@@ -417,9 +481,9 @@ public class FileListFragment extends Fragment implements LoaderManager
             fileListAdapter.toggleSelectAll(i, selectAll);
         }
         SparseBooleanArray checkedItemPos = fileListAdapter.getSelectedItemPositions();
-        ((BaseActivity) getActivity()).setSelectedItemPos(checkedItemPos);
+        setSelectedItemPos(checkedItemPos);
 
-        ((BaseActivity) getActivity()).setSelectedCount(String.valueOf(fileListAdapter.getSelectedCount()
+        mActionMode.setTitle(String.valueOf(fileListAdapter.getSelectedCount()
         ) + " selected");
         fileListAdapter.notifyDataSetChanged();
 
@@ -444,11 +508,31 @@ public class FileListFragment extends Fragment implements LoaderManager
         getLoaderManager().restartLoader(LOADER_ID, args, this);
     }
 
+    public void setCategory(int category) {
+        mCategory = category;
+    }
+
+
+    public void reloadList(boolean isDualPaneClicked, String path) {
+        mFilePath = path;
+        Bundle args = new Bundle();
+        args.putString(FileConstants.KEY_PATH, mFilePath);
+     /*   if (isDualPaneClicked) {
+            getLoaderManager().restartLoader(LOADER_ID_DUAL, args, this);
+        } else {
+            getLoaderManager().restartLoader(LOADER_ID, args, this);
+
+        }*/
+        getLoaderManager().restartLoader(LOADER_ID, args, this);
+
+    }
+
 
     @Override
     public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
         fileInfoList = new ArrayList<>();
         String path = args.getString(FileConstants.KEY_PATH);
+        mSwipeRefreshLayout.setRefreshing(true);
         return new FileListLoader(getContext(), path, mCategory);
     }
 
@@ -460,9 +544,11 @@ public class FileListFragment extends Fragment implements LoaderManager
             Log.d("TAG", "on onLoadFinished--" + data.size());
             // Stop refresh animation
             mSwipeRefreshLayout.setRefreshing(false);
+            fileInfoList = data;
+            fileListAdapter.setCategory(mCategory);
+            fileListAdapter.updateAdapter(fileInfoList);
+
             if (!data.isEmpty()) {
-                fileInfoList = data;
-                fileListAdapter.updateAdapter(fileInfoList);
                 recyclerViewFileList.setHasFixedSize(true);
 
                 if (mViewMode == FileConstants.KEY_LISTVIEW) {
@@ -481,7 +567,8 @@ public class FileListFragment extends Fragment implements LoaderManager
                 ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(callback);
                 mItemTouchHelper.attachToRecyclerView(recyclerViewFileList);*/
 
-                ((BaseActivity) getActivity()).setFileListAdapter(fileListAdapter);
+//                ((BaseActivity) getActivity()).setFileListAdapter(fileListAdapter);
+
 
                 if (mTextEmpty.getVisibility() == View.VISIBLE) {
                     mTextEmpty.setVisibility(View.GONE);
@@ -496,6 +583,327 @@ public class FileListFragment extends Fragment implements LoaderManager
     @Override
     public void onLoaderReset(Loader<ArrayList<FileInfo>> loader) {
 
+    }
+
+    public void startActionMode() {
+
+//        fabCreateMenu.setVisibility(View.GONE);
+        toggleDummyView(true);
+        mBaseActivity.toggleFab(true);
+        mBottomToolbar.setVisibility(View.VISIBLE);
+        mBottomToolbar.startActionMode(new ActionModeCallback());
+        mBottomToolbar.inflateMenu(R.menu.action_mode_bottom);
+        mBottomToolbar.getMenu().clear();
+        EnhancedMenuInflater.inflate(getActivity().getMenuInflater(), mBottomToolbar.getMenu(),
+                true,
+                mCategory);
+        mBottomToolbar.setOnMenuItemClickListener(this);
+    }
+
+    public ActionMode getActionMode() {
+        return mActionMode;
+    }
+
+    /**
+     * Toolbar menu item click listener
+     *
+     * @param item
+     * @return
+     */
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_cut:
+                if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+//                    showMessage(mSelectedItemPositions.size() + " " + getString(R.string.msg_cut_copy));
+                    mIsMoveOperation = true;
+//                    togglePasteVisibility(true);
+                    getActivity().supportInvalidateOptionsMenu();
+                    mActionMode.finish();
+
+                }
+                break;
+            case R.id.action_copy:
+                if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+                    mIsMoveOperation = false;
+                /*    showMessage(mSelectedItemPositions.size() + " " + getString(R.string.msg_cut_copy));
+                    togglePasteVisibility(true);*/
+                    getActivity().supportInvalidateOptionsMenu();
+                    mActionMode.finish();
+                }
+                break;
+            case R.id.action_delete:
+                if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+                    ArrayList<String> filesToDelete = new ArrayList<>();
+                    for (int i = 0; i < mSelectedItemPositions.size(); i++) {
+                        String path = mFileList.get(mSelectedItemPositions.keyAt(i)).getFilePath();
+                        filesToDelete.add(path);
+                    }
+//                    showDialog(filesToDelete);
+                    mActionMode.finish();
+                }
+                break;
+            case R.id.action_share:
+                if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+                    ArrayList<FileInfo> filesToShare = new ArrayList<>();
+                    for (int i = 0; i < mSelectedItemPositions.size(); i++) {
+                        FileInfo info = mFileList.get(mSelectedItemPositions.keyAt(i));
+                        if (!info.isDirectory()) {
+                            filesToShare.add(info);
+                        }
+                    }
+                    FileUtils.shareFiles(getActivity(), filesToShare, mCategory);
+                    mActionMode.finish();
+                }
+                break;
+
+            case R.id.action_select_all:
+                if (mSelectedItemPositions != null) {
+                    FileListFragment singlePaneFragment = null;
+                    if (mSelectedItemPositions.size() < fileListAdapter.getItemCount()) {
+
+                        if (singlePaneFragment != null) {
+                            singlePaneFragment.toggleSelectAll(true);
+                        }
+                    } else {
+                        if (singlePaneFragment != null) {
+                            singlePaneFragment.toggleSelectAll(false);
+                        }
+                    }
+                }
+                break;
+        }
+        return false;
+    }
+
+
+    /**
+     * Triggered on long press click on item
+     */
+    private final class ActionModeCallback implements ActionMode.Callback {
+
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mActionMode = mode;
+            MenuInflater inflater = mActionMode.getMenuInflater();
+            inflater.inflate(R.menu.action_mode, menu);
+            mRenameItem = menu.findItem(R.id.action_rename);
+            mInfoItem = menu.findItem(R.id.action_info);
+            mArchiveItem = menu.findItem(R.id.action_archive);
+            mFavItem = menu.findItem(R.id.action_fav);
+            mExtractItem = menu.findItem(R.id.action_extract);
+            mHideItem = menu.findItem(R.id.action_hide);
+
+            return true;
+        }
+
+        @SuppressLint("NewApi")
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            // Dont show Fav and Archive option for Non file mode
+            if (mCategory != 0) {
+                mArchiveItem.setVisible(false);
+                mFavItem.setVisible(false);
+                mHideItem.setVisible(false);
+            }
+            if (mSelectedItemPositions.size() > 1) {
+                mRenameItem.setVisible(false);
+                mInfoItem.setVisible(false);
+                mFavItem.setVisible(false);
+
+            } else {
+                mRenameItem.setVisible(true);
+                mInfoItem.setVisible(true);
+                if (mSelectedItemPositions.size() == 1) {
+                    boolean isDirectory = mFileList.get(mSelectedItemPositions.keyAt(0))
+                            .isDirectory();
+                    String extension = mFileList.get(mSelectedItemPositions.keyAt(0))
+                            .getExtension();
+                    if (extension != null && extension.equalsIgnoreCase("zip")) {
+                        mExtractItem.setVisible(true);
+                    }
+                    if (!isDirectory) {
+                        mFavItem.setVisible(false);
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.action_rename:
+                    if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+                        final String filePath = mFileList.get(mSelectedItemPositions.keyAt(0)).getFilePath();
+//                        String fileName = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.length());
+                        String fileName = mFileList.get(mSelectedItemPositions.keyAt(0)).getFileName();
+
+                        final long id = mFileList.get(mSelectedItemPositions.keyAt(0)).getId();
+//                        String extension = null;
+                        String extension = mFileList.get(mSelectedItemPositions.keyAt(0)).getExtension();
+                        boolean file = false;
+                        if (new File(filePath).isFile()) {
+                            String[] tokens = fileName.split("\\.(?=[^\\.]+$)");
+                            fileName = tokens[0];
+//                            extension = tokens[1];
+                            file = true;
+                        }
+                        final boolean isFile = file;
+                        final String ext = extension;
+
+                        final Dialog dialog = new Dialog(
+                                getActivity());
+//                dialog.requestWindowFeature(Window.FEATURE_LEFT_ICON);
+                        dialog.setContentView(R.layout.dialog_rename);
+                        dialog.setCancelable(true);
+                        // end of dialog declaration
+
+                        // define the contents of edit dialog
+                        final EditText rename = (EditText) dialog
+                                .findViewById(R.id.editRename);
+
+                        rename.setText(fileName);
+                        rename.setFocusable(true);
+                        // dialog save button to save the edited item
+                        Button saveButton = (Button) dialog
+                                .findViewById(R.id.buttonRename);
+                        // for updating the list item
+                        saveButton.setOnClickListener(new View.OnClickListener() {
+
+                            public void onClick(View v) {
+                                final CharSequence name = rename.getText();
+                                if (name.length() == 0) {
+                                    rename.setError(getResources().getString(R.string.msg_error_valid_name));
+                                    return;
+                                }
+/*                                FileListFragment singlePaneFragment = (FileListFragment) getSupportFragmentManager()
+                                        .findFragmentById(R
+                                                .id.frame_container);
+                                String renamedName;
+                                if (isFile) {
+                                    renamedName = rename.getText().toString() + "." + ext;
+                                } else {
+                                    renamedName = rename.getText().toString();
+                                }
+//                                if (mCategory == 0) {
+                                int result = FileUtils.renameTarget(filePath, renamedName);
+                                String temp = filePath.substring(0, filePath.lastIndexOf("/"));
+                                String newFileName = temp + "/" + renamedName;
+//                                }
+//                            else {
+//                                    renamedName = rename.getText().toString();
+                                //For mediastore, we just need title and not extension
+                                if (mCategory != 0) {
+                                    updateMediaStore(id, newFileName);
+                                }
+//                                }
+
+                                if (singlePaneFragment != null) {
+                                    singlePaneFragment.refreshList();
+                                }*/
+                                dialog.dismiss();
+
+                            }
+                        });
+
+                        // cancel button declaration
+                        Button cancelButton = (Button) dialog
+                                .findViewById(R.id.buttonCancel);
+                        cancelButton.setOnClickListener(new View.OnClickListener() {
+
+                            public void onClick(View v) {
+                                dialog.dismiss();
+
+                            }
+                        });
+
+                        dialog.show();
+                    }
+
+                    mActionMode.finish();
+                    return true;
+
+                case R.id.action_info:
+              /*      if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+                        FileInfo fileInfo = mFileList.get(mSelectedItemPositions.keyAt(0));
+                        showDialog(fileInfo);
+
+                    }*/
+                    mActionMode.finish();
+                    return true;
+                case R.id.action_archive:
+                 /*   if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+                        FileInfo fileInfo = mFileList.get(mSelectedItemPositions.keyAt(0));
+                        int result = FileUtils.createZipFile(fileInfo.getFilePath());
+                        FileListFragment singlePaneFragment = (FileListFragment) getSupportFragmentManager()
+                                .findFragmentById(R
+                                        .id.frame_container);
+                        if (result == 0) {
+                            showMessage(getString(R.string.msg_zip_success));
+                            if (singlePaneFragment != null) {
+                                singlePaneFragment.refreshList();
+                            }
+
+                        } else {
+                            showMessage(getString(R.string.msg_zip_failure));
+                        }
+                    }*/
+                    mActionMode.finish();
+                    return true;
+                case R.id.action_fav:
+       /*             if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+                        for (int i = 0; i < mSelectedItemPositions.size(); i++) {
+                            FileInfo info = mFileList.get(mSelectedItemPositions.keyAt(i));
+                            updateFavouritesGroup(info);
+                        }
+                        showMessage(getString(R.string.msg_added_to_fav));
+                    }*/
+                    mActionMode.finish();
+                    return true;
+
+                case R.id.action_extract:
+              /*      if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+                        FileInfo fileInfo = mFileList.get(mSelectedItemPositions.keyAt(0));
+                        String currentFile = fileInfo.getFilePath();
+                        showExtractOptions(currentFile, mCurrentDir);
+                    }*/
+
+                    mActionMode.finish();
+                    return true;
+
+                case R.id.action_hide:
+                    if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+                        ArrayList<FileInfo> infoList = new ArrayList<>();
+                        for (int i = 0; i < mSelectedItemPositions.size(); i++) {
+                            infoList.add(mFileList.get(mSelectedItemPositions.keyAt(i)));
+                        }
+//                        hideFiles(infoList);
+                    }
+                    mActionMode.finish();
+                    return true;
+                default:
+                    return false;
+            }
+
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            clearSelection();
+            toggleDummyView(false);
+
+            mActionMode = null;
+            mBottomToolbar.setVisibility(View.GONE);
+            // FAB should be visible only for Files Category
+            if (mCategory == 0) {
+                mBaseActivity.toggleFab(false);
+//                fabCreateMenu.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
 
@@ -635,7 +1043,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 //                        isPasteConflictDialogShown = false;
 
                 }
-                ((BaseActivity) getActivity()).getActionMode().finish();
+                mActionMode.finish();
 
 /*
                 FileUtils.copyToDirectory(getActivity(), sourcePath, destinationDir,
@@ -834,7 +1242,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                             FileListFragment singlePaneFragment = (FileListFragment)
                                     getFragmentManager()
                                             .findFragmentById(R
-                                                    .id.frame_container);
+                                                    .id.main_container);
                             Logger.log("TAG", "DRAG END single dir=" + mLastSinglePaneDir);
 
 //                            Logger.log("TAG", "Source=" + mDragPaths.get(0) + "Dest=" + mLastDualPaneDir);

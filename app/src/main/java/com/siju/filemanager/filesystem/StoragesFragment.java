@@ -32,7 +32,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -49,8 +48,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.siju.filemanager.BaseActivity;
 import com.siju.filemanager.R;
 import com.siju.filemanager.common.Logger;
@@ -70,9 +67,7 @@ import java.util.List;
 
 import static com.siju.filemanager.filesystem.utils.FileUtils.getInternalStorage;
 
-/**
- * Created by SIJU on 20-07-2016.
- */
+
 public class StoragesFragment extends Fragment implements View.OnClickListener,
         SharedPreferences.OnSharedPreferenceChangeListener,
         Toolbar.OnMenuItemClickListener,
@@ -123,12 +118,6 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
     private int tempConflictCounter = 0;
     private Dialog mPasteConflictDialog;
 
-    private FloatingActionsMenu fabCreateMenu;
-    private FloatingActionButton fabCreateFolder;
-    private FloatingActionButton fabCreateFile;
-    private FloatingActionsMenu fabCreateMenuDual;
-    private FloatingActionButton fabCreateFolderDual;
-    private FloatingActionButton fabCreateFileDual;
     private ArrayList<SectionItems> favouritesGroupChild = new ArrayList<>();
     public static final String KEY_FAV = "KEY_FAVOURITES";
     private SharedPreferenceWrapper sharedPreferenceWrapper;
@@ -163,6 +152,9 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
 
 
     private View root;
+    private BaseActivity mBaseActivity;
+
+
 
 
     @Override
@@ -180,7 +172,6 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
         setHasOptionsMenu(true);
 
         initializeViews();
-        initListeners();
         initConstants();
         checkScreenOrientation();
 
@@ -192,10 +183,11 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
                     .FILES.getValue());
             int groupPos = getArguments().getInt(BaseActivity.ACTION_GROUP_POS, -1);
             int childPos = getArguments().getInt(BaseActivity.ACTION_CHILD_POS, -1);
-     /*       if (groupPos != -1 && childPos != -1) {
+       if (groupPos != -1 && childPos != -1) {
                 displaySelectedGroup(groupPos, childPos, path);
 
-            }*/
+            }
+
             if (mCategory == FileConstants.CATEGORY.FILES.getValue()) {
                 setNavDirectory();
             } else {
@@ -223,6 +215,7 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
         Log.d(TAG,"onResume=");
         super.onResume();
     }
+
 
     public void setHomeScreenEnabled(boolean value) {
         mIsHomePageAdded = value;
@@ -361,7 +354,7 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
             }
         });
 
-        mToolbar = (Toolbar) root.findViewById(R.id.toolbar1);
+        mToolbar = (Toolbar) root.findViewById(R.id.toolbar);
 //        ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
         ((BaseActivity) getActivity()).toggleToolbarVisibility(true, mToolbar);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
@@ -385,76 +378,6 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
         mMainLayout = (ConstraintLayout) root.findViewById(R.id.content_base);
         mBottomToolbar = (Toolbar) root.findViewById(R.id.toolbar_bottom);
         mNavigationLayout = (LinearLayout) root.findViewById(R.id.layoutNavigate);
-        fabCreateMenu = (FloatingActionsMenu) root.findViewById(R.id.fabCreate);
-        fabCreateFolder = (FloatingActionButton) root.findViewById(R.id.fabCreateFolder);
-        fabCreateFile = (FloatingActionButton) root.findViewById(R.id.fabCreateFile);
-        final FrameLayout frameLayout = (FrameLayout) root.findViewById(R.id.frameLayoutFab);
-        frameLayout.getBackground().setAlpha(0);
-
-        fabCreateMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu
-                .OnFloatingActionsMenuUpdateListener() {
-
-
-            @Override
-            public void onMenuExpanded() {
-                if (fabCreateMenuDual != null) {
-                    fabCreateMenuDual.setAlpha(0.10f);
-                    fabCreateMenuDual.setEnabled(false);
-
-                }
-                frameLayout.getBackground().setAlpha(240);
-                frameLayout.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-
-                        fabCreateMenu.collapse();
-                        return true;
-                    }
-                });
-            }
-
-            @Override
-            public void onMenuCollapsed() {
-                frameLayout.getBackground().setAlpha(0);
-                if (fabCreateMenuDual != null) {
-                    fabCreateMenuDual.setAlpha(1.0f);
-                    fabCreateMenuDual.setEnabled(true);
-                }
-                frameLayout.setOnTouchListener(null);
-            }
-        });
-
-
-        fabCreateMenuDual = (FloatingActionsMenu) root.findViewById(R.id.fabCreateDual);
-        fabCreateFolderDual = (FloatingActionButton) root.findViewById(R.id.fabCreateFolderDual);
-        fabCreateFileDual = (FloatingActionButton) root.findViewById(R.id.fabCreateFileDual);
-
-        frameLayoutFabDual = (FrameLayout) root.findViewById(R.id.frameLayoutFabDual);
-        frameLayoutFabDual.getBackground().setAlpha(0);
-
-
-        fabCreateMenuDual.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu
-                .OnFloatingActionsMenuUpdateListener() {
-
-
-            @Override
-            public void onMenuExpanded() {
-                frameLayoutFabDual.getBackground().setAlpha(240);
-                frameLayoutFabDual.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        fabCreateMenuDual.collapse();
-                        return true;
-                    }
-                });
-            }
-
-            @Override
-            public void onMenuCollapsed() {
-                frameLayoutFabDual.getBackground().setAlpha(0);
-                frameLayoutFabDual.setOnTouchListener(null);
-            }
-        });
 
 
         navDirectory = (LinearLayout) root.findViewById(R.id.navButtons);
@@ -466,13 +389,7 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
 
     }
 
-    private void initListeners() {
-        fabCreateFile.setOnClickListener(this);
-        fabCreateFolder.setOnClickListener(this);
-        fabCreateFileDual.setOnClickListener(this);
-        fabCreateFolderDual.setOnClickListener(this);
 
-    }
 
     private void initConstants() {
         STORAGE_ROOT = getResources().getString(R.string.nav_menu_root);
@@ -494,22 +411,22 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
         super.onDestroy();
     }
 
-    /**
-     * Checks if orientation is landscape when app is run 1st time to enable Dual Panel
-     */
+
     private void checkScreenOrientation() {
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE
                 && mIsDualPaneEnabledSettings) {
             mIsDualModeEnabled = true;
             isDualPaneInFocus = true;
-       /*     mViewSeperator.setVisibility(View.VISIBLE);
-            frameLayoutFabDual.setVisibility(View.VISIBLE);*/
+     mViewSeperator.setVisibility(View.VISIBLE);
+            frameLayoutFabDual.setVisibility(View.VISIBLE);
+
         }
-       /* else {
+ else {
             mIsDualModeEnabled = false;
             mViewSeperator.setVisibility(View.GONE);
             frameLayoutFabDual.setVisibility(View.GONE);
-        }*/
+        }
+
     }
 
     private void setNavDirectory() {
@@ -544,10 +461,6 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
                         continue;
                     }
                 }
-                /*Count check so that ROOT is added only once in Navigation
-                  Handles the scenario :
-                  1. When Fav item is a root child and if we click on any folder in that fav item
-                     multiple ROOT blocks are not added to Navigation view*/
                 if (isCurrentDirRoot && count == 0) {
                     setNavDir("/", "/");
                 }
@@ -709,11 +622,11 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
 
             case R.id.fabCreateFileDual:
             case R.id.fabCreateFolderDual:
-                fabCreateMenuDual.collapse();
+//                fabCreateMenuDual.collapse();
             case R.id.fabCreateFile:
             case R.id.fabCreateFolder:
                 if (view.getId() == R.id.fabCreateFolder || view.getId() == R.id.fabCreateFile) {
-                    fabCreateMenu.collapse();
+//                    fabCreateMenu.collapse();
                 }
 
                 final Dialog dialog = new Dialog(
@@ -749,7 +662,7 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
                         FileListFragment singlePaneFragment = (FileListFragment)
                                 getActivity().getSupportFragmentManager()
                                         .findFragmentById(R
-                                                .id.frame_container);
+                                                .id.main_container);
                         FileListFragment dualPaneFragment = (FileListDualFragment)
                                 getActivity().getSupportFragmentManager()
                                         .findFragmentById(R
@@ -757,10 +670,11 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
                         String fileName = rename.getText().toString() + "";
 
                         int result;
-                        /**
-                         * In landscape mode, FabCreateFile is on Dual Pane side and
-                         * FabCreateFileDual on Single pane
-                         */
+//*
+//                         * In landscape mode, FabCreateFile is on Dual Pane side and
+//                         * FabCreateFileDual on Single pane
+
+
                         if (view.getId() == R.id.fabCreateFile || view.getId() == R.id
                                 .fabCreateFileDual) {
                             if (view.getId() == R.id.fabCreateFile) {
@@ -888,7 +802,7 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
 
 
             if (action.equals(ACTION_VIEW_FOLDER_LIST)) {
-                transaction.replace(R.id.frame_container, targetFragment, mCurrentDir);
+                transaction.replace(R.id.main_container, targetFragment, mCurrentDir);
             } else if (action.equals(ACTION_DUAL_VIEW_FOLDER_LIST)) {
                 transaction.replace(R.id.frame_container_dual, targetFragment, mCurrentDirDualPane);
             }
@@ -923,7 +837,7 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
                 mNavigationLayout.setVisibility(View.VISIBLE);
                 toggleDualPaneVisibility(true);
                 isCurrentDirRoot = false;
-                fabCreateMenu.setVisibility(View.VISIBLE);
+//                fabCreateMenu.setVisibility(View.VISIBLE);
 
                 if (groupPos == 1) {
                     mIsFavGroup = true;
@@ -997,7 +911,7 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
                 mNavigationLayout.setVisibility(View.GONE);
                 toggleDualPaneVisibility(false);
                 mCurrentDir = null;
-                fabCreateMenu.setVisibility(View.GONE);
+//                fabCreateMenu.setVisibility(View.GONE);
 
                 switch (childPos) {
                     // When Audio item is clicked
@@ -1050,7 +964,7 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
         } else {
             FileListFragment fileListFragment = new FileListFragment();
             fileListFragment.setArguments(args);
-            ft.replace(R.id.frame_container, fileListFragment, directory);
+            ft.replace(R.id.main_container, fileListFragment, directory);
             singlePaneFragments.add(fileListFragment);
         }
 
@@ -1060,9 +974,6 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
     }
 
 
-    /**
-     * Called when app opened 1st time
-     */
     private void initialFragmentSetup(String directory, int category) {
         // update the main content by replacing fragments
         // Fragment fragment = null;
@@ -1079,13 +990,15 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
             FragmentTransaction ft = getChildFragmentManager()
                     .beginTransaction();//getActivity().getSupportFragmentManager().beginTransaction();
 //            String internalStoragePath = getInternalStorage().getAbsolutePath();
-/*            Bundle args = new Bundle();
-            args.putString(FileConstants.KEY_PATH, internalStoragePath);
-            args.putBoolean(FileConstants.KEY_DUAL_MODE, true);*/
+            Bundle args1 = new Bundle();
+            args1.putString(FileConstants.KEY_PATH, null);
+            args1.putBoolean(FileConstants.KEY_DUAL_MODE, true);
+
 //            setNavDirectory();
-/*            FileListDualFragment dualFragment = new FileListDualFragment();
+            FileListDualFragment dualFragment = new FileListDualFragment();
             dualPaneFragments.add(dualFragment);
-            dualFragment.setArguments(args);*/
+            dualFragment.setArguments(args);
+
 //            ft.replace(R.id.frame_container_dual, dualFragment);
             args.putBoolean(FileConstants.KEY_DUAL_MODE, true);
             FileListDualFragment fileListDualFragment = new FileListDualFragment();
@@ -1108,7 +1021,7 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
         singlePaneFragments.add(fileListFragment);
         FragmentTransaction fragmentTransaction = getChildFragmentManager()
                 .beginTransaction();
-        fragmentTransaction.replace(R.id.frame_container,
+        fragmentTransaction.replace(R.id.main_container,
                 fileListFragment, directory).commit();
 
 
@@ -1138,18 +1051,19 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
             fileListFragment.setArguments(fragment.getArguments());
             args.putString(FileConstants.KEY_PATH_OTHER, mCurrentDirDualPane);
             args.putBoolean(FileConstants.KEY_FOCUS_DUAL, false);
-            fragmentTransaction.replace(R.id.frame_container, fileListFragment, path);
+            fragmentTransaction.replace(R.id.main_container, fileListFragment, path);
         }
         fragmentTransaction.commit();
 
     }
 
+//
+//*
+//     * Dual pane mode to be shown only for File Category
+//     *
+//     * @param isFilesCategory
 
-    /**
-     * Dual pane mode to be shown only for File Category
-     *
-     * @param isFilesCategory
-     */
+
     private void toggleDualPaneVisibility(boolean isFilesCategory) {
         if (isFilesCategory) {
             if (mIsDualModeEnabled) {
@@ -1171,11 +1085,7 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
 
     }
 
-    /**
-     * Create base fragment when Fav item is clicked
-     *
-     * @param dir
-     */
+
     private void createFragmentForFavGroup(String dir) {
 
         if (!isDualPaneInFocus) {
@@ -1214,13 +1124,14 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
         mPasteItem.setVisible(mIsPasteItemVisible);
         super.onPrepareOptionsMenu(menu);
     }
-
+/*
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_paste:
-//           /*     pasteOperationCleanUp();
-           /*     if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+//
+//     pasteOperationCleanUp();
+     if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
                     for (int i = 0; i < mSelectedItemPositions.size(); i++) {
                         checkIfFileExists(mFileList.get(mSelectedItemPositions.keyAt(i))
                                 .getFilePath(), new File
@@ -1235,12 +1146,13 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
 
 
                 }
-                break;*/
+                break;
+
 
 
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -1315,6 +1227,7 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
         }
     }
 
+/*
     public void toggleFabVisibility(boolean flag) {
         if (flag) {
             fabCreateMenu.setVisibility(View.GONE);
@@ -1325,19 +1238,10 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
             }
         }
     }
+*/
 
 
-    public void setSelectedItemPos(SparseBooleanArray selectedItemPos) {
-        mSelectedItemPositions = selectedItemPos;
-        if (selectedItemPos.size() > 1) {
-            mRenameItem.setVisible(false);
-            mInfoItem.setVisible(false);
 
-        } else {
-            mRenameItem.setVisible(true);
-            mInfoItem.setVisible(true);
-        }
-    }
 
     public void setupBottomToolbar() {
         mBottomToolbar.setVisibility(View.VISIBLE);
@@ -1359,12 +1263,15 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
         mIsPasteItemVisible = isVisible;
     }
 
-    /**
+/*
+*
      * Toolbar menu item click listener
      *
      * @param item
      * @return
-     */
+*/
+
+
     @Override
     public boolean onMenuItemClick(MenuItem item) {
 
@@ -1420,7 +1327,7 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
                     FileListFragment singlePaneFragment = (FileListFragment)
                             getChildFragmentManager()
                                     .findFragmentById(R
-                                            .id.frame_container);
+                                            .id.main_container);
                     if (mSelectedItemPositions.size() < fileListAdapter.getItemCount()) {
 
                         if (singlePaneFragment != null) {
@@ -1457,10 +1364,11 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
     public void setFileListAdapter(FileListAdapter adapter) {
         fileListAdapter = adapter;
     }
+/*
+*
+     * Triggered on long press click on item*//**/
 
-    /**
-     * Triggered on long press click on item
-     */
+
     private final class ActionModeCallback implements ActionMode.Callback {
 
 
@@ -1546,8 +1454,9 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
                                         .ic_unhide_white), 0, 1,
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                         mHideItem.setTitle(hideBuilder);
-                     /*   mHideItem.setTitle(getString(R.string.unhide));
-                        mHideItem.setIcon(R.drawable.ic_unhide_white);*/
+   mHideItem.setTitle(getString(R.string.unhide));
+                        mHideItem.setIcon(R.drawable.ic_unhide_white);
+
                     } else {
                         SpannableStringBuilder hideBuilder = new SpannableStringBuilder(" " + "  " +
                                 "" + getString(R.string
@@ -1557,8 +1466,9 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
                                         .ic_hide_white), 0, 1,
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                         mHideItem.setTitle(hideBuilder);
-                /*        mHideItem.setTitle(getString(R.string.hide));
-                        mHideItem.setIcon(R.drawable.ic_hide_white);*/
+        mHideItem.setTitle(getString(R.string.hide));
+                        mHideItem.setIcon(R.drawable.ic_hide_white);
+
                     }
                 }
             }
@@ -1621,7 +1531,7 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
                                 FileListFragment singlePaneFragment = (FileListFragment)
                                         getChildFragmentManager()
                                                 .findFragmentById(R
-                                                        .id.frame_container);
+                                                        .id.main_container);
                                 String renamedName;
                                 if (isFile) {
                                     renamedName = rename.getText().toString() + "." + ext;
@@ -1681,7 +1591,7 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
                         FileListFragment singlePaneFragment = (FileListFragment)
                                 getChildFragmentManager()
                                         .findFragmentById(R
-                                                .id.frame_container);
+                                                .id.main_container);
                         if (result == 0) {
                             showMessage(getString(R.string.msg_zip_success));
                             if (singlePaneFragment != null) {
@@ -1735,7 +1645,7 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
         public void onDestroyActionMode(ActionMode mode) {
             FileListFragment fileListFragment = (FileListFragment) getChildFragmentManager()
                     .findFragmentById(R.id
-                            .frame_container);
+                            .main_container);
             if (fileListFragment != null) {
                 fileListFragment.clearSelection();
                 fileListFragment.toggleDummyView(false);
@@ -1743,10 +1653,11 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
 
             mActionMode = null;
             mBottomToolbar.setVisibility(View.GONE);
-  /*          // FAB should be visible only for Files Category
+          // FAB should be visible only for Files Category
             if (mCategory == 0) {
-                fabCreateMenu.setVisibility(View.VISIBLE);
-            }*/
+//                fabCreateMenu.setVisibility(View.VISIBLE);
+            }
+
         }
     }
 
@@ -1764,7 +1675,7 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
         }
         FileListFragment singlePaneFragment = (FileListFragment) getChildFragmentManager()
                 .findFragmentById(R
-                        .id.frame_container);
+                        .id.main_container);
         if (singlePaneFragment != null) {
             singlePaneFragment.refreshList();
         }
@@ -2070,7 +1981,7 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
         protected void onPostExecute(Integer filesDel) {
             FileListFragment singlePaneFragment = (FileListFragment) getChildFragmentManager()
                     .findFragmentById(R
-                            .id.frame_container);
+                            .id.main_container);
             FileListDualFragment dualPaneFragment = (FileListDualFragment)
                     getChildFragmentManager()
                             .findFragmentById(R
@@ -2132,7 +2043,7 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
     public void refreshFileList() {
         FileListFragment fileListFragment = (FileListFragment) getChildFragmentManager()
                 .findFragmentById(R.id
-                        .frame_container);
+                        .main_container);
         if (fileListFragment != null) {
             fileListFragment.refreshList();
         }
@@ -2140,20 +2051,20 @@ public class StoragesFragment extends Fragment implements View.OnClickListener,
 
     }
 
-/*
-    @Override
-    public void startActionMode() {
-        fabCreateMenu.setVisibility(View.GONE);
-    }
+//    @Override
+//    public void startActionMode() {
+//        fabCreateMenu.setVisibility(View.GONE);
+//    }
+//
+//    @Override
+//    public void endActionMode() {
+//        // FAB should be visible only for Files Category
+//        if (mCategory == 0) {
+//            fabCreateMenu.setVisibility(View.VISIBLE);
+//        }
+//    }
 
-    @Override
-    public void endActionMode() {
-        // FAB should be visible only for Files Category
-        if (mCategory == 0) {
-            fabCreateMenu.setVisibility(View.VISIBLE);
-        }
-    }
-*/
+
 
     public interface CreateFileListFragment {
         void createFragmentForIntent(Intent intent);

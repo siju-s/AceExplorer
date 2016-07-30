@@ -1,14 +1,11 @@
 package com.siju.filemanager.filesystem.ui;
 
-import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -19,9 +16,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.siju.filemanager.BaseActivity;
 import com.siju.filemanager.R;
-import com.siju.filemanager.common.Logger;
 import com.siju.filemanager.filesystem.FileConstants;
 import com.siju.filemanager.filesystem.FileListAdapter;
 import com.siju.filemanager.filesystem.FileListLoader;
@@ -30,8 +25,6 @@ import com.siju.filemanager.filesystem.utils.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-
-import static android.media.CamcorderProfile.get;
 
 /**
  * Created by SIJU on 04-07-2016.
@@ -157,7 +150,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
                 recyclerViewFileList.setItemAnimator(new DefaultItemAnimator());
                 recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
                         .VERTICAL));
-                ((BaseActivity) getActivity()).setFileListAdapter(fileListAdapter);
+//                ((BaseActivity) getActivity()).setFileListAdapter(fileListAdapter);
             } else {
                 TextView textEmpty = (TextView) getActivity().findViewById(R.id.textEmpty);
                 textEmpty.setVisibility(View.VISIBLE);

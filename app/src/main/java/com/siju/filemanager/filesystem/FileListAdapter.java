@@ -2,25 +2,19 @@ package com.siju.filemanager.filesystem;
 
 import android.content.ContentUris;
 import android.content.Context;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -89,6 +83,10 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 //        Log.d("SIJU","updateAdapter"+fileInfoArrayList.size());
 
         notifyDataSetChanged();
+    }
+
+    public void setCategory(int category) {
+        mCategory = category;
     }
 
     public interface OnItemClickListener {

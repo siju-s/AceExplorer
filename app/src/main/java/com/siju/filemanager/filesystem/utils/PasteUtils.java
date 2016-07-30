@@ -343,7 +343,7 @@ public class PasteUtils {
             FileListFragment singlePaneFragment = (FileListFragment) mFragment
                     .getFragmentManager()
                     .findFragmentById(R
-                            .id.frame_container);
+                            .id.main_container);
 
             FileListDualFragment dualPaneFragment = (FileListDualFragment) mFragment
                     .getFragmentManager()
