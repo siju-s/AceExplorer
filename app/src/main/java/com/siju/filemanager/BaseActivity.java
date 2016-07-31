@@ -2012,7 +2012,13 @@ public class BaseActivity extends AppCompatActivity implements
                     removeFragmentFromBackStack();
                 }
             } else {
-                if (!mStartingDir.equals(mCurrentDir) && mCategory == FileConstants.CATEGORY
+
+                if (((FileListFragment) fragment).getIsZipMode()) {
+                    if (((FileListFragment) fragment).checkZipMode()) {
+                        ((FileListFragment) fragment).reloadList(false, mCurrentDir);
+                        setNavDirectory(mCurrentDir, false);
+                    }
+                } else if (!mStartingDir.equals(mCurrentDir) && mCategory == FileConstants.CATEGORY
                         .FILES.getValue()) {
         /*            if (mPrevCategory == FileConstants.CATEGORY.FILES.getValue()) {
 

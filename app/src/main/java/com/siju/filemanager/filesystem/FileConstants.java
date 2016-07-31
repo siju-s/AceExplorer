@@ -95,7 +95,8 @@ public class FileConstants {
         FAVORITES(8),
         PDF(9),
         APPS(10),
-        LARGE_FILES(11);
+        LARGE_FILES(11),
+        ZIP_VIEWER(12);
 
         private int value;
 

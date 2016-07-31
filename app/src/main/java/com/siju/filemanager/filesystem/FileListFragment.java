@@ -54,6 +54,7 @@ import com.siju.filemanager.R;
 import com.siju.filemanager.common.Logger;
 import com.siju.filemanager.common.SharedPreferenceWrapper;
 import com.siju.filemanager.filesystem.model.FileInfo;
+import com.siju.filemanager.filesystem.model.ZipModel;
 import com.siju.filemanager.filesystem.ui.CustomGridLayoutManager;
 import com.siju.filemanager.filesystem.ui.CustomLayoutManager;
 import com.siju.filemanager.filesystem.ui.DividerItemDecoration;
@@ -140,6 +141,10 @@ public class FileListFragment extends Fragment implements LoaderManager
     private ArrayList<String> tempSourceFile = new ArrayList<>();
     private int tempConflictCounter = 0;
     private Dialog mPasteConflictDialog;
+    private String mCurrentZipDir;
+    public ArrayList<ZipModel> totalZipList = new ArrayList<>();
+    public ArrayList<ZipModel> zipChildren = new ArrayList<>();
+    private boolean mInParentZip = true;
 
 
     @Override
@@ -376,16 +381,21 @@ public class FileListFragment extends Fragment implements LoaderManager
                         bundle.putInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
                         bundle.putBoolean(FileConstants.KEY_ZIP, true);
                         Intent intent = new Intent(getActivity(), BaseActivity.class);
-                        if (FileListFragment.this instanceof FileListDualFragment) {
+       /*                 if (FileListFragment.this instanceof FileListDualFragment) {
                             intent.setAction(BaseActivity.ACTION_DUAL_VIEW_FOLDER_LIST);
                             intent.putExtra(BaseActivity.ACTION_DUAL_PANEL, true);
                         } else {
                             intent.setAction(BaseActivity.ACTION_VIEW_FOLDER_LIST);
                             intent.putExtra(BaseActivity.ACTION_DUAL_PANEL, false);
-                        }
-
+                        }*/
+                        mIsZip = true;
+                        mInParentZip = true;
+                        mCurrentZipDir = null;
+                        mZipParentPath = path;
+                        reloadList(true, path);
+/*
                         intent.putExtras(bundle);
-                        startActivity(intent);
+                        startActivity(intent);*/
 
 
                     } else {
@@ -394,19 +404,28 @@ public class FileListFragment extends Fragment implements LoaderManager
                     }
 
                 } else {
-                    Bundle bundle = new Bundle();
-                    String path = fileInfoList.get(position).getFilePath();
-                    bundle.putString(FileConstants.KEY_PATH, path);
-                    bundle.putInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
-
-                    if (FileListFragment.this instanceof FileListDualFragment) {
-                        isDualPaneInFocus = true;
+                    if (mIsZip) {
+                        String name = zipChildren.get(position).getName();
+                        mInParentZip = false;
+                        mCurrentZipDir = name.substring(0, name.length() - 1);
+                        reloadList(true, mZipParentPath);
                     } else {
-                        isDualPaneInFocus = false;
+                        Bundle bundle = new Bundle();
+                        String path = fileInfoList.get(position).getFilePath();
+                        bundle.putString(FileConstants.KEY_PATH, path);
+                        bundle.putInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
+
+                        if (FileListFragment.this instanceof FileListDualFragment) {
+                            isDualPaneInFocus = true;
+                        } else {
+                            isDualPaneInFocus = false;
+                        }
+                        mBaseActivity.setCurrentDir(path, isDualPaneInFocus);
+                        mBaseActivity.setNavDirectory(path, isDualPaneInFocus);
+                        getLoaderManager().restartLoader(LOADER_ID, bundle, this);
                     }
-                    mBaseActivity.setCurrentDir(path, isDualPaneInFocus);
-                    mBaseActivity.setNavDirectory(path, isDualPaneInFocus);
-                    getLoaderManager().restartLoader(LOADER_ID, bundle, this);
+
+
                 /*    Intent intent = new Intent(getActivity(), BaseActivity.class);
                     if (FileListFragment.this instanceof FileListDualFragment) {
                         intent.setAction(BaseActivity.ACTION_DUAL_VIEW_FOLDER_LIST);
@@ -514,9 +533,12 @@ public class FileListFragment extends Fragment implements LoaderManager
 
 
     public void reloadList(boolean isDualPaneClicked, String path) {
+//        if (!mIsZip) {
         mFilePath = path;
+//        }
         Bundle args = new Bundle();
         args.putString(FileConstants.KEY_PATH, mFilePath);
+        args.putBoolean(FileConstants.KEY_ZIP, mIsZip);
      /*   if (isDualPaneClicked) {
             getLoaderManager().restartLoader(LOADER_ID_DUAL, args, this);
         } else {
@@ -527,13 +549,37 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     }
 
+    public boolean getIsZipMode() {
+        return mIsZip;
+    }
+
+    public boolean checkZipMode() {
+        if (mCurrentZipDir == null || mCurrentZipDir.length() == 0) {
+            mIsZip = false;
+            mZipParentPath = null;
+            mInParentZip = true;
+            return true;
+        } else {
+            mCurrentZipDir = new File(mCurrentZipDir).getParent();
+            reloadList(true, mZipParentPath);
+            return false;
+        }
+    }
+
 
     @Override
     public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
         fileInfoList = new ArrayList<>();
         String path = args.getString(FileConstants.KEY_PATH);
         mSwipeRefreshLayout.setRefreshing(true);
-        return new FileListLoader(getContext(), path, mCategory);
+        if (mIsZip) {
+
+            return new FileListLoader(this, path, FileConstants.CATEGORY.ZIP_VIEWER.getValue(),
+                    mCurrentZipDir, isDualPaneInFocus, mInParentZip);
+        } else {
+            return new FileListLoader(getContext(), path, mCategory);
+
+        }
     }
 
     @Override
@@ -563,13 +609,6 @@ public class FileListFragment extends Fragment implements LoaderManager
                 recyclerViewFileList.setItemAnimator(new DefaultItemAnimator());
                 recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
                         .VERTICAL));
-         /*       ItemTouchHelper.Callback callback = new SimpleItemTouchHelper();
-                ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(callback);
-                mItemTouchHelper.attachToRecyclerView(recyclerViewFileList);*/
-
-//                ((BaseActivity) getActivity()).setFileListAdapter(fileListAdapter);
-
-
                 if (mTextEmpty.getVisibility() == View.VISIBLE) {
                     mTextEmpty.setVisibility(View.GONE);
                 }

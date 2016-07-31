@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.text.format.Formatter;
 import android.util.Log;
@@ -37,6 +38,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import eu.chainfire.libsuperuser.Shell;
 
@@ -55,6 +57,9 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private int mCategory;
     private List<String> mZipRootFiles;
     private String mZipPath;
+    private boolean mIsDualPaneInFocus;
+    private Fragment mFragment;
+    private boolean mInParentZip;
 
     public FileListLoader(Context context, String path, int category) {
         super(context);
@@ -65,16 +70,21 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 (FileConstants.PREFS_HIDDEN, false);
     }
 
-    public FileListLoader(Context context, String path, int category,String zipPath) {
-        super(context);
+    public FileListLoader(Fragment fragment, String path, int category, String zipPath, boolean
+            isDualPaneInFocus, boolean isParentZip) {
+//        Context context = fragment.getContext();
+        super(fragment.getContext());
         mPath = path;
+        Context context = fragment.getContext();
+        mFragment = fragment;
         mContext = context;
         mCategory = category;
         showHidden = PreferenceManager.getDefaultSharedPreferences(context).getBoolean
                 (FileConstants.PREFS_HIDDEN, false);
         mZipPath = zipPath;
+        mIsDualPaneInFocus = isDualPaneInFocus;
+        mInParentZip = isParentZip;
     }
-
 
 
     @Override
@@ -216,6 +226,9 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             case 11:
                 fetchByCategory(mCategory);
                 break;
+            case 12:
+                getZipContents(mZipPath, mPath);
+                break;
             case 8:
                 fetchFavorites();
                 break;
@@ -259,8 +272,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
 
         if (fileExtension.equalsIgnoreCase("zip")) {
-//            fileInfoList = fetchZipContent();
-//            HashMap<String, List<String>> contents = retrieveListing(file);
             getZipContents("", file.getAbsolutePath());
             return fileInfoList;
         } else {
@@ -610,24 +621,52 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         return null;
     }
 
+    /**
+     * @param dir     Child path names. First time it will be null
+     * @param zipPath Original zip path with.zip extension
+     * @return
+     */
     public ArrayList<FileInfo> getZipContents(String dir, String zipPath) {
         ZipFile zipfile = null;
         ArrayList<ZipModel> totalZipList = new ArrayList<>();
         ArrayList<ZipModel> elements = new ArrayList<>();
+        if (mIsDualPaneInFocus) {
+            totalZipList = ((FileListDualFragment) mFragment).totalZipList;
+        } else {
+            totalZipList = ((FileListFragment) mFragment).totalZipList;
+        }
         try {
-//            int i = 0;
-            zipfile = new ZipFile(zipPath);
-            for (Enumeration e = zipfile.entries(); e.hasMoreElements(); ) {
-                ZipEntry entry = (ZipEntry) e.nextElement();
-                totalZipList.add(new ZipModel(entry, entry.getTime(), entry.getSize(), entry
-                        .isDirectory()));
+            if (totalZipList.size() == 0) {
+                if (new File(zipPath).canRead()) {
+                    zipfile = new ZipFile(zipPath);
+                    for (Enumeration e = zipfile.entries(); e.hasMoreElements(); ) {
+                        ZipEntry entry = (ZipEntry) e.nextElement();
+                        totalZipList.add(new ZipModel(entry, entry.getTime(), entry.getSize(), entry
+                                .isDirectory()));
+                    }
+                } else {
+                    ZipEntry zipEntry;
+                    Uri uri = Uri.parse(zipPath);
+                    ZipInputStream zipfile1 = new ZipInputStream(mContext.getContentResolver()
+                            .openInputStream(uri));
+                    while ((zipEntry = zipfile1.getNextEntry()) != null) {
+                        totalZipList.add(new ZipModel(zipEntry, zipEntry.getTime(), zipEntry.getSize(), zipEntry
+                                .isDirectory()));
+                    }
+                }
+                if (mIsDualPaneInFocus) {
+                    ((FileListDualFragment) mFragment).totalZipList = totalZipList;
+                } else {
+                    ((FileListFragment) mFragment).totalZipList = totalZipList;
+                }
             }
-            ArrayList<String> strings = new ArrayList<String>();
+
+            ArrayList<String> strings = new ArrayList<>();
             for (ZipModel entry : totalZipList) {
 
 //                i++;
                 String s = entry.getName();
-                //  System.out.println(s);
+
                 File file = new File(entry.getName());
                 if (dir == null || dir.trim().length() == 0) {
                     String y = entry.getName();
@@ -651,6 +690,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                     }
                 } else {
                     String y = entry.getName();
+                    System.out.println("ZIP ITEM==" + y);
                     if (entry.getName().startsWith("/"))
                         y = y.substring(1, y.length());
 
@@ -680,20 +720,32 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             e.printStackTrace();
         }
 
+        if (mIsDualPaneInFocus) {
+            ((FileListDualFragment) mFragment).zipChildren = elements;
+        } else {
+            ((FileListFragment) mFragment).zipChildren = elements;
+        }
         for (ZipModel model : elements) {
             String name = model.getName();
+
             boolean isDirectory = model.isDirectory();
+        /*    if (isDirectory) {
+                name = name.substring(name.lastIndexOf("/") + 1);
+            }*/
             long size = model.getSize();
             int type = FileConstants.CATEGORY.COMPRESSED.getValue();
             long date = model.getTime();
-            String noOfFilesOrSize = Formatter.formatFileSize(mContext,size);
+            String noOfFilesOrSize = Formatter.formatFileSize(mContext, size);
             String fileModifiedDate = FileUtils.convertDate(date);
             String extension;
             if (isDirectory) {
                 name = name.substring(0, name.length() - 1);
+                if (!mInParentZip) {
+                    name = name.substring(name.lastIndexOf("/") + 1);
+                }
                 extension = null;
-
             } else {
+                name = name.substring(name.lastIndexOf("/") + 1);
                 extension = name.substring(name.lastIndexOf(".") + 1, name.length());
             }
             String path = zipPath + "/" + name;
