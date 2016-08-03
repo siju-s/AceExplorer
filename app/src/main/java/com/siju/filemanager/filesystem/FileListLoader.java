@@ -19,6 +19,7 @@ import com.siju.filemanager.filesystem.model.FavInfo;
 import com.siju.filemanager.filesystem.model.FileInfo;
 import com.siju.filemanager.filesystem.model.ZipModel;
 import com.siju.filemanager.filesystem.utils.FileUtils;
+import com.stericson.RootTools.RootTools;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -248,6 +249,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             Log.d("TAG", " NOOOO");
 
         }
+
+
         if (!mPath.contains(FileUtils.getInternalStorage().getAbsolutePath())) {
             if (FileUtils.getExternalStorage() == null) {
                 isRoot = true;
@@ -270,62 +273,64 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             }
         }
 
+        if (file.canRead()) {
 
-        if (fileExtension.equalsIgnoreCase("zip")) {
-            getZipContents("", file.getAbsolutePath());
-            return fileInfoList;
-        } else {
-            if (file.exists()) {
-                File[] listFiles = file.listFiles();
 
-                if (listFiles != null) {
-                    Arrays.sort(listFiles, comparatorByName);
-                    for (File file1 : listFiles) {
-                        boolean isDirectory = false;
-                        String fileName = file1.getName();
-                        String filePath = file1.getAbsolutePath();
-                        String noOfFilesOrSize = null;
-                        String extension = null;
-                        int type = 0;
+            if (fileExtension.equalsIgnoreCase("zip")) {
+                getZipContents("", file.getAbsolutePath());
+                return fileInfoList;
+            } else {
+                if (file.exists()) {
+                    File[] listFiles = file.listFiles();
 
-                        // Dont show hidden files by default
-                        if (file1.getName().startsWith(".") && !showHidden) {
-                            continue;
-                        }
-                        if (file1.isDirectory()) {
+                    if (listFiles != null) {
+                        Arrays.sort(listFiles, comparatorByName);
+                        for (File file1 : listFiles) {
+                            boolean isDirectory = false;
+                            String fileName = file1.getName();
+                            String filePath = file1.getAbsolutePath();
+                            String noOfFilesOrSize = null;
+                            String extension = null;
+                            int type = 0;
 
-                            isDirectory = true;
-                            int childFileListSize = 0;
+                            // Dont show hidden files by default
+                            if (file1.getName().startsWith(".") && !showHidden) {
+                                continue;
+                            }
+                            if (file1.isDirectory()) {
+
+                                isDirectory = true;
+                                int childFileListSize = 0;
 //                        if (file1.list() == null) {
 //                            noOfFilesOrSize = getPermissionOfFile(file1);
 //                        }
 //                        else {
-                            if (file1.list() != null) {
-                                if (!showHidden) {
-                                    File[] nonHiddenList = file1.listFiles(new FilenameFilter() {
-                                        @Override
-                                        public boolean accept(File file, String name) {
-                                            return (!name.startsWith("."));
-                                        }
-                                    });
-                                    childFileListSize = nonHiddenList.length;
-                                } else {
-                                    childFileListSize = file1.list().length;
+                                if (file1.list() != null) {
+                                    if (!showHidden) {
+                                        File[] nonHiddenList = file1.listFiles(new FilenameFilter() {
+                                            @Override
+                                            public boolean accept(File file, String name) {
+                                                return (!name.startsWith("."));
+                                            }
+                                        });
+                                        childFileListSize = nonHiddenList.length;
+                                    } else {
+                                        childFileListSize = file1.list().length;
+                                    }
                                 }
-                            }
 
-                            if (childFileListSize == 0) {
-                                noOfFilesOrSize = mContext.getResources().getString(R.string.empty);
-                            } else {
-                                noOfFilesOrSize = mContext.getResources().getQuantityString(R.plurals.number_of_files,
-                                        childFileListSize, childFileListSize);
-                            }
+                                if (childFileListSize == 0) {
+                                    noOfFilesOrSize = mContext.getResources().getString(R.string.empty);
+                                } else {
+                                    noOfFilesOrSize = mContext.getResources().getQuantityString(R.plurals.number_of_files,
+                                            childFileListSize, childFileListSize);
+                                }
 //                        }
-                        } else {
-                            long size = file1.length();
-                            noOfFilesOrSize = Formatter.formatFileSize(mContext, size);
-                            extension = filePath.substring(filePath.lastIndexOf(".") + 1);
-                            type = checkMimeType(filePath);
+                            } else {
+                                long size = file1.length();
+                                noOfFilesOrSize = Formatter.formatFileSize(mContext, size);
+                                extension = filePath.substring(filePath.lastIndexOf(".") + 1);
+                                type = checkMimeType(filePath);
 /*                            if (extension.equals("zip")) {
                                 String[] list = file1.list();
                                 ZipFile zipFile = null;
@@ -347,58 +352,58 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                                 }
 
                             }*/
+                            }
+                            long date = file1.lastModified();
+                            String fileModifiedDate = convertDate(date);
+
+
+                            FileInfo fileInfo = new FileInfo(fileName, filePath, fileModifiedDate, noOfFilesOrSize,
+                                    isDirectory, extension, type);
+                            fileInfoList.add(fileInfo);
+
+
                         }
-                        long date = file1.lastModified();
-                        String fileModifiedDate = convertDate(date);
+                        return fileInfoList;
 
+                    } else if (isRoot) {
+                        boolean suAvailable = Shell.SU.available();
+                        if (suAvailable) {
 
-                        FileInfo fileInfo = new FileInfo(fileName, filePath, fileModifiedDate, noOfFilesOrSize,
-                                isDirectory, extension, type);
-                        fileInfoList.add(fileInfo);
-
-
-                    }
-                    return fileInfoList;
-
-                } else if (isRoot) {
-                    boolean suAvailable = Shell.SU.available();
-                    if (suAvailable) {
-
-                        try {
-                            String line;
-                            Process process = Runtime.getRuntime().exec("su");
-                            OutputStream stdin = process.getOutputStream();
-                            InputStream stderr = process.getErrorStream();
-                            InputStream stdout = process.getInputStream();
+                            try {
+                                String line;
+                                Process process = Runtime.getRuntime().exec("su");
+                                OutputStream stdin = process.getOutputStream();
+                                InputStream stderr = process.getErrorStream();
+                                InputStream stdout = process.getInputStream();
 
                            /* byte [] b = new byte[12];
                              b = "ls -lF\n";*/
-                            String command = "ls -lF\n";
-                            byte[] utf8Bytes = command.getBytes("UTF8");
+                                String command = "ls -lF\n";
+                                byte[] utf8Bytes = command.getBytes("UTF8");
 
-                            stdin.write(utf8Bytes);
-                            stdin.write("exit\n".getBytes("UTF-8"));
-                            stdin.flush();
+                                stdin.write(utf8Bytes);
+                                stdin.write("exit\n".getBytes("UTF-8"));
+                                stdin.flush();
 
-                            stdin.close();
-                            BufferedReader br =
-                                    new BufferedReader(new InputStreamReader(stdout));
-                            while ((line = br.readLine()) != null) {
-                                Log.d("[Output]", line);
+                                stdin.close();
+                                BufferedReader br =
+                                        new BufferedReader(new InputStreamReader(stdout));
+                                while ((line = br.readLine()) != null) {
+                                    Log.d("[Output]", line);
+                                }
+                                br.close();
+                                br =
+                                        new BufferedReader(new InputStreamReader(stderr));
+                                while ((line = br.readLine()) != null) {
+                                    Log.e("[Error]", line);
+                                }
+                                br.close();
+
+                                process.waitFor();
+                                process.destroy();
+
+                            } catch (Exception ex) {
                             }
-                            br.close();
-                            br =
-                                    new BufferedReader(new InputStreamReader(stderr));
-                            while ((line = br.readLine()) != null) {
-                                Log.e("[Error]", line);
-                            }
-                            br.close();
-
-                            process.waitFor();
-                            process.destroy();
-
-                        } catch (Exception ex) {
-                        }
 
                       /*  String [] commands = new String[1];
                         commands[0] = "ls -pl " + file;
@@ -418,15 +423,24 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
 
                         }*/
+                        }
+                        return null;
+                    } else {
+                        return null;
                     }
-                    return null;
                 } else {
                     return null;
                 }
-            } else {
-                return null;
             }
+
         }
+        else {
+            boolean rootAvailable  = RootTools.isRootAvailable();
+            fileInfoList = com.siju.filemanager.helper.RootHelper.getFilesList(mContext,mPath,
+                    rootAvailable,
+                    showHidden);
+        }
+        return fileInfoList;
 
 
     }

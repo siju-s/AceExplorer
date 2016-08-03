@@ -9,7 +9,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.siju.filemanager.R;
-import com.siju.filemanager.filesystem.StoragesFragment;
+import com.siju.filemanager.filesystem.FileListFragment;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -135,7 +135,7 @@ public class ExtractManager {
             } else if (result == success) {
                 Toast.makeText(mActivity, R.string.msg_extract_success, Toast.LENGTH_SHORT).show();
             }
-            ((StoragesFragment) mFragment).refreshFileList();
+            ((FileListFragment) mFragment).refreshList();
         }
     }
 }

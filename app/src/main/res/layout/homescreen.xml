@@ -12,39 +12,10 @@
                     xmlns:tools="http://schemas.android.com/tools"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
                     android:fitsSystemWindows="true"
                     android:orientation="vertical"
                     app:layout_scrollFlags="scroll|enterAlways">
 
-        <!--    <android.support.design.widget.AppBarLayout
-                android:id="@+id/appBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:theme="@style/AppTheme.AppBarOverlay">
-
-                <android.support.v7.widget.Toolbar
-                    android:id="@+id/toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    android:theme="?attr/actionBarStyle"
-                    app:popupTheme="@style/AppTheme.PopupOverlay"/>
-
-            </android.support.design.widget.AppBarLayout>-->
-
-        <!--<android.support.design.widget.CoordinatorLayout-->
-        <!--android:id="@+id/main_content"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:fitsSystemWindows="true"-->
-        <!--tools:context=".BaseActivity">-->
-
-        <!--<include-->
-        <!--android:id="@+id/toolbar"-->
-        <!--layout="@layout/toolbar_main"-->
-        <!--/>-->
-
-        <!--</android.support.design.widget.CoordinatorLayout>-->
         <android.support.v7.widget.CardView
             xmlns:card_view="http://schemas.android.com/apk/res-auto"
             android:id="@+id/cardLibrary"
@@ -63,7 +34,8 @@
                     android:id="@+id/textLibrary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/activity_horizontal_margin"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
                     android:text="@string/nav_header_collections"
                     android:textAllCaps="true"
                     android:textSize="18sp"
@@ -73,16 +45,14 @@
                     android:id="@+id/viewDummy"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:layout_below="@id/textLibrary"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="2dp"
                     android:background="@color/colorPrimaryDark"/>
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recyclerViewLibrary"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="10dp"/>
-
-
+                    android:layout_height="match_parent"/>
             </LinearLayout>
         </android.support.v7.widget.CardView>
 
@@ -105,7 +75,8 @@
                     android:id="@+id/textStoragePlaceHolder"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/activity_horizontal_margin"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
                     android:text="@string/nav_header_storages"
                     android:textAllCaps="true"
                     android:textSize="18sp"
@@ -115,13 +86,15 @@
                     android:id="@+id/viewDummy2"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="2dp"
                     android:background="@color/colorPrimaryDark"/>
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recyclerViewStorages"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginBottom="@dimen/activity_horizontal_margin"/>
+                    />
             </LinearLayout>
         </android.support.v7.widget.CardView>
 

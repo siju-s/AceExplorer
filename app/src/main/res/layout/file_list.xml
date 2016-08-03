@@ -4,6 +4,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
+
                 >
 
     <TextView
@@ -26,13 +27,14 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_above="@id/viewDummy">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerViewFileList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/viewDummy"/>
+            />
 
     </android.support.v4.widget.SwipeRefreshLayout>
 </RelativeLayout>

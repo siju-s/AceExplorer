@@ -2,20 +2,17 @@ package com.siju.filemanager;
 
 import android.Manifest;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -27,7 +24,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.format.Formatter;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ContextMenu;
@@ -44,7 +40,6 @@ import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,7 +52,6 @@ import com.siju.filemanager.filesystem.FileConstants;
 import com.siju.filemanager.filesystem.FileListDualFragment;
 import com.siju.filemanager.filesystem.FileListFragment;
 import com.siju.filemanager.filesystem.HomeScreenFragment;
-import com.siju.filemanager.filesystem.StoragesFragment;
 import com.siju.filemanager.filesystem.model.FavInfo;
 import com.siju.filemanager.filesystem.model.FileInfo;
 import com.siju.filemanager.filesystem.utils.FileUtils;
@@ -76,7 +70,6 @@ import static com.siju.filemanager.filesystem.utils.FileUtils.getInternalStorage
 
 public class BaseActivity extends AppCompatActivity implements
         SharedPreferences.OnSharedPreferenceChangeListener,
-//        StoragesFragment.ActionModeCommunicator,
         View.OnClickListener {
 
     private final String TAG = this.getClass().getSimpleName();
@@ -125,7 +118,7 @@ public class BaseActivity extends AppCompatActivity implements
     private ArrayList<FavInfo> savedFavourites = new ArrayList<>();
     private View mViewSeperator;
     private int mCategory = FileConstants.CATEGORY.FILES.getValue();
-    private ConstraintLayout mMainLayout;
+    private CoordinatorLayout mMainLayout;
     private static final int MY_PERMISSIONS_REQUEST = 1;
     private static final int SETTINGS_REQUEST = 200;
     private static final int PREFS_REQUEST = 1000;
@@ -168,12 +161,13 @@ public class BaseActivity extends AppCompatActivity implements
     private FileListDualFragment mFileListDualFragment;
     private boolean mIsDualModeEnabled;
     private int mPrevCategory;
+    private boolean mIsFromHomePage;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.drawer_layout_default);
+        setContentView(R.layout.main_content);
 
         checkPreferences();
         getSavedFavourites();
@@ -238,11 +232,11 @@ public class BaseActivity extends AppCompatActivity implements
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager
                 .PERMISSION_GRANTED) {
-//            fabCreateMenu.setVisibility(View.GONE);
+            fabCreateMenu.setVisibility(View.GONE);
             requestPermission();
         } else {
             mIsPermissionGranted = true;
-//            fabCreateMenu.setVisibility(View.VISIBLE);
+            fabCreateMenu.setVisibility(View.VISIBLE);
             setUpInitialData();
         }
 
@@ -269,11 +263,11 @@ public class BaseActivity extends AppCompatActivity implements
                     // Permission granted
                     Log.d("TAG", "Permission granted");
                     mIsPermissionGranted = true;
-//                    fabCreateMenu.setVisibility(View.VISIBLE);
+                    fabCreateMenu.setVisibility(View.VISIBLE);
                     setUpInitialData();
                 } else {
                     showRationale();
-//                    fabCreateMenu.setVisibility(View.GONE);
+                    fabCreateMenu.setVisibility(View.GONE);
                 }
         }
     }
@@ -335,6 +329,14 @@ public class BaseActivity extends AppCompatActivity implements
         savedFavourites = sharedPreferenceWrapper.getFavorites(this);
     }
 
+    public void updateFavourites(String name, String path) {
+        SectionItems favItem = new SectionItems(name, path, R.drawable.ic_fav_folder, path);
+        if (!favouritesGroupChild.contains(favItem)) {
+            favouritesGroupChild.add(favItem);
+            expandableListAdapter.notifyDataSetChanged();
+        }
+    }
+
 
     private void initConstants() {
         STORAGE_ROOT = getResources().getString(R.string.nav_menu_root);
@@ -383,7 +385,7 @@ public class BaseActivity extends AppCompatActivity implements
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mToolbar.setTitle(R.string.app_name);
-        mMainLayout = (ConstraintLayout) findViewById(R.id.content_base);
+        mMainLayout = (CoordinatorLayout) findViewById(R.id.main_content);
         mBottomToolbar = (Toolbar) findViewById(R.id.toolbar_bottom);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -483,127 +485,7 @@ public class BaseActivity extends AppCompatActivity implements
 
     }
 
-    /*private void setNavDirectory() {
-        String[] parts;
 
-        if (!isDualPaneInFocus) {
-            parts = mCurrentDir.split("/");
-            navDirectory.removeAllViews();
-            navigationLevelSinglePane = 0;
-        } else {
-            parts = mCurrentDirDualPane.split("/");
-            navDirectoryDualPane.removeAllViews();
-            navigationLevelDualPane = 0;
-        }
-            try {
-
-//                buttons.setMinimumHeight(pathbar.getHeight());
-                Drawable arrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_holo_dark);
-                Bundle b = getPaths(text, this);
-                ArrayList<String> names = b.getStringArrayList("names");
-                ArrayList<String> rnames = new ArrayList<String>();
-
-                for (int i = names.size() - 1; i >= 0; i--) {
-                    rnames.add(names.get(i));
-                }
-
-                ArrayList<String> paths = b.getStringArrayList("paths");
-                final ArrayList<String> rpaths = new ArrayList<String>();
-
-                for (int i = paths.size() - 1; i >= 0; i--) {
-                    rpaths.add(paths.get(i));
-                }
-*//*                View view = new View(this);
-                LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
-                        toolbar.getContentInsetLeft(), LinearLayout.LayoutParams.WRAP_CONTENT);
-                view.setLayoutParams(params1);
-                buttons.addView(view);*//*
-                for (int i = 0; i < parts.length; i++) {
-                    final int k = i;
-                    ImageView v = new ImageView(this);
-                    v.setImageDrawable(arrow);
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    params.gravity = Gravity.CENTER_VERTICAL;
-                    v.setLayoutParams(params);
-                    final int index = i;
-                    if (rpaths.get(i).equals("/")) {
-                        ImageButton ib = new ImageButton(this);
-                        ib.setImageDrawable(icons.getRootDrawable());
-                        ib.setBackgroundColor(Color.parseColor("#00ffffff"));
-                        ib.setOnClickListener(new View.OnClickListener() {
-
-                            public void onClick(View p1) {
-                                main.loadlist(("/"), false, main.openMode);
-
-                            }
-                        });
-                        ib.setLayoutParams(params);
-                        buttons.addView(ib);
-                        if (names.size() - i != 1)
-                            buttons.addView(v);
-                    } else if (isStorage(rpaths.get(i))) {
-                        ImageButton ib = new ImageButton(this);
-                        ib.setImageDrawable(icons.getSdDrawable());
-                        ib.setBackgroundColor(Color.parseColor("#00ffffff"));
-                        ib.setOnClickListener(new View.OnClickListener() {
-
-                            public void onClick(View p1) {
-                                main.loadlist((rpaths.get(k)), false, main.openMode);
-                            }
-                        });
-                        ib.setLayoutParams(params);
-                        buttons.addView(ib);
-                        if (names.size() - i != 1)
-                            buttons.addView(v);
-                    } else {
-                        Button button = new Button(this);
-                        button.setText(rnames.get(index));
-                        button.setTextColor(getResources().getColor(android.R.color.white));
-                        button.setTextSize(13);
-                        button.setLayoutParams(params);
-                        button.setBackgroundResource(0);
-                        button.setOnClickListener(new Button.OnClickListener() {
-
-                            public void onClick(View p1) {
-                                main.loadlist((rpaths.get(k)), false, main.openMode);
-                                main.loadlist((rpaths.get(k)), false, main.openMode);
-
-                            }
-                        });
-                        button.setOnLongClickListener(new View.OnLongClickListener() {
-                            @Override
-                            public boolean onLongClick(View view) {
-
-                                File file1 = new File(rpaths.get(index));
-                                copyToClipboard(MainActivity.this, file1.getPath());
-                                Toast.makeText(MainActivity.this, getResources().getString(R.string.pathcopied), Toast.LENGTH_SHORT).show();
-                                return false;
-                            }
-                        });
-
-                        buttons.addView(button);
-                        if (names.size() - i != 1)
-                            buttons.addView(v);
-                    }
-                }
-
-                scroll.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        sendScroll(scroll);
-                        sendScroll(scroll1);
-                    }
-                });
-
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.out.println("button view not available");
-            }
-
-    }
-*/
     public void setNavDirectory(String path, boolean isDualPane) {
         String[] parts;
         parts = path.split("/");
@@ -934,6 +816,10 @@ public class BaseActivity extends AppCompatActivity implements
         }
     }
 
+    private void showMessage(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+
     private String setDialogTitle(int id) {
         String title = "";
         switch (id) {
@@ -955,6 +841,12 @@ public class BaseActivity extends AppCompatActivity implements
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
         if (mPrevCategory != mCategory) {
             mPrevCategory = mCategory;
+        }
+        if (fragment instanceof HomeScreenFragment) {
+            mIsFromHomePage = true;
+        }
+        else {
+            mIsFromHomePage = false;
         }
         switch (groupPos) {
             case 0:
@@ -1288,22 +1180,6 @@ public class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    private void createStoragesFragment(int groupPos, int childPos, String path) {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        Bundle args = new Bundle();
-        args.putBoolean(FileConstants.KEY_HOME, false);
-        args.putString(FileConstants.KEY_PATH, path);
-        args.putInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
-        args.putInt(BaseActivity.ACTION_GROUP_POS, groupPos);
-        args.putInt(BaseActivity.ACTION_CHILD_POS, childPos);
-
-//          args.putInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
-        StoragesFragment storagesFragment = new StoragesFragment();
-        storagesFragment.setArguments(args);
-        ft.replace(R.id.main_container, storagesFragment);
-        ft.addToBackStack(null);
-        ft.commitAllowingStateLoss();
-    }
 
     private void initializeStorageGroup() {
         ArrayList<SectionItems> storageGroupChild = new ArrayList<>();
@@ -1391,7 +1267,7 @@ public class BaseActivity extends AppCompatActivity implements
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if (intent != null && !intent.getAction().equals(ACTION_MAIN)) {
+/*        if (intent != null && !intent.getAction().equals(ACTION_MAIN)) {
             Log.d(TAG, "On onNewIntent");
             StoragesFragment storagesFragment = (StoragesFragment)
                     getSupportFragmentManager()
@@ -1400,7 +1276,7 @@ public class BaseActivity extends AppCompatActivity implements
             if (storagesFragment != null) {
                 storagesFragment.createFragmentForIntent(intent);
             }
-        }
+        }*/
 
 //            boolean intentHandled = createFragmentForIntent(intent);
     }
@@ -1991,6 +1867,11 @@ public class BaseActivity extends AppCompatActivity implements
             drawer.closeDrawer(GravityCompat.START);
         } else if (fabCreateMenu.isExpanded()) {
             fabCreateMenu.collapse();
+        } else if (mIsHomePageRemoved) {
+            super.onBackPressed();
+        } else if (mIsHomePageAdded) {
+            initialScreenSetup(true);
+            mIsHomePageAdded = false;
         } else if (fragment instanceof FileListFragment) {
             if (isDualPaneInFocus) {
                 if (!mStartingDirDualPane.equals(mCurrentDirDualPane) || mPrevCategory !=
@@ -2051,10 +1932,17 @@ public class BaseActivity extends AppCompatActivity implements
         }
     }
 
+    public void setCurrentCategory(int category) {
+        mCategory = category;
+    }
+    public void setIsFromHomePage (boolean isFromHomePage) {
+        mIsFromHomePage = isFromHomePage;
+    }
+
     private void removeFragmentFromBackStack() {
         setTitleForCategory(FileConstants.CATEGORY.FILES.getValue());
         int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
-        if (backStackCount == 1) {
+        if (!mIsFromHomePage) {
             if (mCategory != FileConstants.CATEGORY
                     .FILES.getValue()) {
                 mCategory = FileConstants.CATEGORY
@@ -2073,83 +1961,11 @@ public class BaseActivity extends AppCompatActivity implements
             mFrameDualPane.setVisibility(View.GONE);
             mViewSeperator.setVisibility(View.GONE);
         } else {
+            toggleViews(true);
             super.onBackPressed();
         }
 
     }
-
-/*    private void replaceFragment(Fragment fragment, boolean isDualPane) {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-//        Logger.log("TAG","Fragment tag ="+fragment.getTag());
-        String path = fragment.getArguments().getString(FileConstants.KEY_PATH);
-
-        Bundle args = fragment.getArguments();
-
-        Logger.log("TAG", "Fragment bundle =" + path);
-
-        if (isDualPane) {
-            FileListDualFragment dualFragment = new FileListDualFragment();
-            dualFragment.setArguments(fragment.getArguments());
-            args.putString(FileConstants.KEY_PATH_OTHER, mCurrentDir);
-            args.putBoolean(FileConstants.KEY_FOCUS_DUAL, true);
-            fragmentTransaction.replace(R.id.frame_container_dual, dualFragment, path);
-        } else {
-            FileListFragment fileListFragment = new FileListFragment();
-            fileListFragment.setArguments(fragment.getArguments());
-            args.putString(FileConstants.KEY_PATH_OTHER, mCurrentDirDualPane);
-            args.putBoolean(FileConstants.KEY_FOCUS_DUAL, false);
-            fragmentTransaction.replace(R.id.frame_container, fileListFragment, path);
-        }
-        fragmentTransaction.commitAllowingStateLoss();
-
-    }*/
-
-
- /*   @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        Log.d(TAG,"On Create options Activity="+mIsPasteItemVisible);
-        getMenuInflater().inflate(R.menu.base, menu);
-        mPasteItem = menu.findItem(R.id.action_paste);
-        mPasteItem.setVisible(mIsPasteItemVisible);
-        return true;
-    }*/
-
-/*    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        Log.d(TAG, "On Create options Activity=" + mIsPasteItemVisible);
-        getMenuInflater().inflate(R.menu.base, menu);
-        mPasteItem = menu.findItem(R.id.action_paste);
-        mPasteItem.setVisible(mIsPasteItemVisible);
-        return super.onPrepareOptionsMenu(menu);
-    }*/
-
- /*   @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_paste:
-                pasteOperationCleanUp();
-                if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
-                    for (int i = 0; i < mSelectedItemPositions.size(); i++) {
-                        checkIfFileExists(mFileList.get(mSelectedItemPositions.keyAt(i))
-                                .getFilePath(), new File
-                                (mCurrentDir));
-                    }
-                    if (!isPasteConflictDialogShown) {
-                        callAsyncTask();
-                    } else {
-                        showDialog(tempSourceFile.get(0));
-                        isPasteConflictDialogShown = false;
-                    }
-
-
-                }
-                break;
-
-
-        }
-        return super.onOptionsItemSelected(item);
-    }*/
 
     @Override
     protected void onDestroy() {
@@ -2158,327 +1974,8 @@ public class BaseActivity extends AppCompatActivity implements
         super.onDestroy();
     }
 
-    private void callAsyncTask() {
-        new BackGroundOperationsTask(PASTE_OPERATION).execute(mPathActionMap);
-    }
-
-    private void pasteOperationCleanUp() {
-        mPathActionMap.clear();
-        isPasteConflictDialogShown = false;
-        tempConflictCounter = 0;
-        tempSourceFile = new ArrayList<>();
-    }
-
-    public void checkIfFileExists(String sourceFilePath, File destinationDir) {
-        String[] destinationDirList = destinationDir.list();
-        String fileName = sourceFilePath.substring(sourceFilePath.lastIndexOf("/") + 1,
-                sourceFilePath.length());
-        mSourceFilePath = sourceFilePath;
-        // If source file is directory,compare source & destination directory names
-
-        // If source file is file,compare source file name & destination directory children names
-        for (int i = 0; i < destinationDirList.length; i++) {
-            if (fileName.equals(destinationDirList[i])) {
-                isPasteConflictDialogShown = true;
-                tempSourceFile.add(sourceFilePath);
-                break;
-            } else {
-                mPasteAction = FileUtils.ACTION_NONE;
-                mPathActionMap.put(sourceFilePath, mPasteAction);
-            }
-        }
 
 
-        Logger.log("TAG", "SOURCE==" + sourceFilePath + "isPasteConflictDialogShown==" +
-                isPasteConflictDialogShown);
-
-    }
-
-    private void showDialog(final String sourceFilePath) {
-        Context mContext = BaseActivity.this;
-        mPasteConflictDialog = new Dialog(mContext);
-        mPasteConflictDialog.setContentView(R.layout.dialog_paste_conflict);
-//        mPasteConflictDialog.setTitle(getResources().getString(R.string
-// .dialog_title_paste_conflict));
-        mPasteConflictDialog.setCancelable(false);
-        ImageView icon = (ImageView) mPasteConflictDialog.findViewById(R.id.imageFileIcon);
-        TextView textFileName = (TextView) mPasteConflictDialog.findViewById(R.id.textFileName);
-        TextView textFileDate = (TextView) mPasteConflictDialog.findViewById(R.id.textFileDate);
-        TextView textFileSize = (TextView) mPasteConflictDialog.findViewById(R.id.textFileSize);
-        Button buttonReplace = (Button) mPasteConflictDialog.findViewById(R.id.buttonReplace);
-        Button buttonSkip = (Button) mPasteConflictDialog.findViewById(R.id.buttonSkip);
-        Button buttonKeep = (Button) mPasteConflictDialog.findViewById(R.id.buttonKeepBoth);
-        if (new File(sourceFilePath).isDirectory()) {
-            buttonKeep.setVisibility(View.GONE);
-        }
-        String fileName = sourceFilePath.substring(sourceFilePath.lastIndexOf("/") + 1,
-                sourceFilePath.length());
-
-        textFileName.setText(fileName);
-        File sourceFile = new File(sourceFilePath);
-        long date = sourceFile.lastModified();
-        String fileModifiedDate = FileUtils.convertDate(date);
-        long size = sourceFile.length();
-        String fileSize = Formatter.formatFileSize(mContext, size);
-        textFileDate.setText(fileModifiedDate);
-        textFileSize.setText(fileSize);
-        Drawable drawable = FileUtils.getAppIcon(mContext, sourceFilePath);
-        if (drawable != null) {
-            icon.setImageDrawable(drawable);
-        }
-        mPasteConflictDialog.show();
-//        buttonReplace.setOnClickListener(this);
-//        buttonSkip.setOnClickListener(this);
-//        buttonKeep.setOnClickListener(this);
-        buttonReplace.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkIfPasteConflictFinished(FileUtils.ACTION_REPLACE);
-            }
-        });
-
-        buttonSkip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkIfPasteConflictFinished(FileUtils.ACTION_SKIP);
-            }
-        });
-
-        buttonKeep.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkIfPasteConflictFinished(FileUtils.ACTION_KEEP);
-            }
-        });
-
-    }
-
-
-/*
-    @Override
-    public void onClick(final View view) {
-        switch (view.getId()) {
-
-            case R.id.fabCreateFileDual:
-            case R.id.fabCreateFolderDual:
-                fabCreateMenuDual.collapse();
-            case R.id.fabCreateFile:
-            case R.id.fabCreateFolder:
-                if (view.getId() == R.id.fabCreateFolder || view.getId() == R.id.fabCreateFile) {
-                    fabCreateMenu.collapse();
-                }
-
-                final Dialog dialog = new Dialog(
-                        BaseActivity.this);
-//                dialog.requestWindowFeature(Window.FEATURE_LEFT_ICON);
-                dialog.setContentView(R.layout.dialog_rename);
-                dialog.setCancelable(true);
-                // end of dialog declaration
-                String title = setDialogTitle(view.getId());
-                TextView dialogTitle = (TextView) dialog.findViewById(R.id.textDialogTitle);
-                dialogTitle.setText(title);
-
-
-                // define the contents of edit dialog
-                final EditText rename = (EditText) dialog
-                        .findViewById(R.id.editRename);
-
-                rename.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
-
-                // dialog save button to save the edited item
-                Button saveButton = (Button) dialog
-                        .findViewById(R.id.buttonRename);
-                // for updating the list item
-                saveButton.setOnClickListener(new View.OnClickListener() {
-
-                    public void onClick(View v) {
-                        final CharSequence name = rename.getText();
-                        if (name.length() == 0) {
-                            rename.setError(getResources().getString(R.string
-                                    .msg_error_valid_name));
-                            return;
-                        }
-                        FileListFragment singlePaneFragment = (FileListFragment)
-                                getSupportFragmentManager()
-                                        .findFragmentById(R
-                                                .id.frame_container);
-                        FileListFragment dualPaneFragment = (FileListDualFragment)
-                                getSupportFragmentManager()
-                                        .findFragmentById(R
-                                                .id.frame_container_dual);
-                        String fileName = rename.getText().toString() + "";
-
-                        int result;
-                        */
-/**
- * In landscape mode, FabCreateFile is on Dual Pane side and
- * FabCreateFileDual on Single pane
- *//*
-
-                        if (view.getId() == R.id.fabCreateFile || view.getId() == R.id
-                                .fabCreateFileDual) {
-                            if (view.getId() == R.id.fabCreateFile) {
-                                if (mIsDualModeEnabled) {
-                                    result = FileUtils.createFile(mCurrentDirDualPane, fileName +
-                                            ".txt");
-                                } else {
-                                    result = FileUtils.createFile(mCurrentDir, fileName + ".txt");
-                                }
-
-                            } else {
-                                result = FileUtils.createFile(mCurrentDir, fileName + ".txt");
-                            }
-                            if (result == 0) {
-                                showMessage(getString(R.string.msg_file_create_success));
-                            } else {
-                                showMessage(getString(R.string.msg_file_create_failure));
-                            }
-                        } else {
-                            if (view.getId() == R.id.fabCreateFolder) {
-                                if (mIsDualModeEnabled) {
-                                    result = FileUtils.createDir(mCurrentDirDualPane, fileName);
-                                } else {
-                                    result = FileUtils.createDir(mCurrentDir, fileName);
-                                }
-
-                            } else {
-                                result = FileUtils.createDir(mCurrentDir, fileName);
-                            }
-
-                            if (result == 0) {
-                                showMessage(getString(R.string.msg_folder_create_success));
-                            } else {
-                                showMessage(getString(R.string.msg_folder_create_failure));
-                            }
-                        }
-
-                        if (singlePaneFragment != null) {
-                            singlePaneFragment.refreshList();
-                        }
-                        if (dualPaneFragment != null) {
-                            dualPaneFragment.refreshList();
-                        }
-                        dialog.dismiss();
-
-                    }
-                });
-
-                // cancel button declaration
-                Button cancelButton = (Button) dialog
-                        .findViewById(R.id.buttonCancel);
-                cancelButton.setOnClickListener(new View.OnClickListener() {
-
-                    public void onClick(View v) {
-                        dialog.dismiss();
-
-                    }
-                });
-
-                dialog.show();
-                break;
-
-
-//            case R.id.buttonReplace:
-//                checkIfPasteConflictFinished(FileUtils.ACTION_REPLACE);
-//                break;
-//            case R.id.buttonSkip:
-//                checkIfPasteConflictFinished(FileUtils.ACTION_SKIP);
-//                break;
-//            case R.id.buttonKeepBoth:
-//                checkIfPasteConflictFinished(FileUtils.ACTION_KEEP);
-//                break;
-        }
-    }
-*/
-
-//    private String setDialogTitle(int id) {
-//        String title = "";
-//        switch (id) {
-//            case R.id.fabCreateFile:
-//                title = getString(R.string.new_file);
-//                break;
-//            case R.id.fabCreateFolder:
-//                title = getString(R.string.new_folder);
-//                break;
-//            case R.id.action_rename:
-//                title = getString(R.string.action_rename);
-//        }
-//        return title;
-//
-//    }
-
-    /**
-     * Shows another alert dialog when user clicks on any button Skip,Keep or Replace
-     *
-     * @param action Button action -->
-     *               {@link FileUtils#ACTION_REPLACE,FileUtils#ACTION_SKIP,FileUtils#ACTION_KEEP}
-     *               Calls Async task to do the copy operation once user resolves all conflicts
-     */
-    private void checkIfPasteConflictFinished(int action) {
-        mPasteConflictDialog.dismiss();
-        int count = ++tempConflictCounter;
-        mPasteAction = action;
-        mPathActionMap.put(mSourceFilePath, mPasteAction);
-        Logger.log("TAG", "tempConflictCounter==" + tempConflictCounter + "tempSize==" +
-                tempSourceFile.size());
-        if (count < tempSourceFile.size()) {
-            showDialog(tempSourceFile.get(count));
-        } else {
-            callAsyncTask();
-        }
-    }
-
-
-    public void setFileList(ArrayList<FileInfo> list) {
-        StoragesFragment storagesFragment = (StoragesFragment) getSupportFragmentManager().findFragmentById(R.id
-                .main_container);
-        if (storagesFragment != null) {
-            storagesFragment.setFileList(list);
-        }
-    }
-
-/*    public void startActionMode() {
-
-//fabCreateMenu.setVisibility(View.GONE);
-        mBottomToolbar.setVisibility(View.VISIBLE);
-        mBottomToolbar.startActionMode(new ActionModeCallback());
-//        mBottomToolbar.inflateMenu(R.menu.action_mode_bottom);
-        mBottomToolbar.getMenu().clear();
-        EnhancedMenuInflater.inflate(getMenuInflater(), mBottomToolbar.getMenu(), true, mCategory);
-        mBottomToolbar.setOnMenuItemClickListener(this);
-    }*/
-
-//    @Override
-//    public void startActionModeOperations() {
-//        StoragesFragment storagesFragment = (StoragesFragment) getSupportFragmentManager().findFragmentById(R.id
-//                .frame_container);
-//        if (storagesFragment != null) {
-//            storagesFragment.toggleFabVisibility(true);
-//            storagesFragment.setupBottomToolbar();
-//        }
-//    }
-
-//    @Override
-//    public void endActionMode() {
-//        StoragesFragment storagesFragment = (StoragesFragment) getSupportFragmentManager().findFragmentById(R.id
-//                .frame_container);
-//        if (storagesFragment != null) {
-//            storagesFragment.toggleFabVisibility(false);
-//        }
-//    }
-
-    public void togglePasteVisibility(boolean isVisible) {
-        StoragesFragment storagesFragment = (StoragesFragment) getSupportFragmentManager().findFragmentById(R.id
-                .main_container);
-        if (storagesFragment != null) {
-            storagesFragment.togglePasteVisibility(isVisible);
-        }
-    }
-
-/*    public void togglePasteVisibility(boolean isVisible) {
-        mPasteItem.setVisible(isVisible);
-        mIsPasteItemVisible = isVisible;
-    }*/
 
     public void updateAdapter(SectionItems favItem) {
         if (!favouritesGroupChild.contains(favItem)) {
@@ -2506,132 +2003,8 @@ public class BaseActivity extends AppCompatActivity implements
     }
 
 
-/*    public ActionMode getActionMode() {
-        StoragesFragment storagesFragment = (StoragesFragment) getSupportFragmentManager().findFragmentById(R.id
-                .frame_container);
-        if (storagesFragment != null) {
-            return storagesFragment.getActionMode();
-        }
-        return null;
-    }
-
-    public void setSelectedCount(String title) {
-        StoragesFragment storagesFragment = (StoragesFragment) getSupportFragmentManager().findFragmentById(R.id
-                .frame_container);
-        if (storagesFragment != null) {
-            storagesFragment.setActionModeTitle(title);
-        }
-    }*/
-
-/*    public void setFileListAdapter(FileListAdapter adapter) {
-        StoragesFragment storagesFragment = (StoragesFragment) getSupportFragmentManager().findFragmentById(R.id
-                .frame_container);
-        if (storagesFragment != null) {
-            storagesFragment.setFileListAdapter(adapter);
-        }
-    }*/
-/*
-    public void setSelectedItemPos(SparseBooleanArray selectedItemPos) {
-        StoragesFragment storagesFragment = (StoragesFragment) getSupportFragmentManager().findFragmentById(R.id
-                .frame_container);
-        if (storagesFragment != null) {
-            storagesFragment.setSelectedItemPos(selectedItemPos);
-        }
-    }*/
-
-   /* */
-
-    /**
-     * Toolbar menu item click listener
-     * <p>
-     * //     * @param item
-     *
-     * @return
-     *//*
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.action_cut:
-                if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
-                    showMessage(mSelectedItemPositions.size() + " " + getString(R.string
-                            .msg_cut_copy));
-                    mIsMoveOperation = true;
-                    togglePasteVisibility(true);
-                    supportInvalidateOptionsMenu();
-                    mActionMode.finish();
-
-                }
-                break;
-            case R.id.action_copy:
-                if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
-                    mIsMoveOperation = false;
-                    showMessage(mSelectedItemPositions.size() + " " + getString(R.string
-                            .msg_cut_copy));
-                    togglePasteVisibility(true);
-                    supportInvalidateOptionsMenu();
-                    mActionMode.finish();
-                }
-                break;
-            case R.id.action_delete:
-                if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
-                    ArrayList<String> filesToDelete = new ArrayList<>();
-                    for (int i = 0; i < mSelectedItemPositions.size(); i++) {
-                        String path = mFileList.get(mSelectedItemPositions.keyAt(i)).getFilePath();
-                        filesToDelete.add(path);
-                    }
-                    showDialog(filesToDelete);
-                    mActionMode.finish();
-                }
-                break;
-            case R.id.action_share:
-                if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
-                    ArrayList<FileInfo> filesToShare = new ArrayList<>();
-                    for (int i = 0; i < mSelectedItemPositions.size(); i++) {
-                        FileInfo info = mFileList.get(mSelectedItemPositions.keyAt(i));
-                        if (!info.isDirectory()) {
-                            filesToShare.add(info);
-                        }
-                    }
-                    FileUtils.shareFiles(this, filesToShare, mCategory);
-                    mActionMode.finish();
-                }
-                break;
-
-            case R.id.action_select_all:
-                if (mSelectedItemPositions != null) {
-                    FileListFragment singlePaneFragment = (FileListFragment)
-                            getSupportFragmentManager()
-                                    .findFragmentById(R
-                                            .id.frame_container);
-                    if (mSelectedItemPositions.size() < fileListAdapter.getItemCount()) {
-
-                        if (singlePaneFragment != null) {
-                            singlePaneFragment.toggleSelectAll(true);
-                        }
-                    } else {
-                        if (singlePaneFragment != null) {
-                            singlePaneFragment.toggleSelectAll(false);
-                        }
-                    }
-                }
-                break;
-        }
-        return false;
-    }*/
-    private void showMessage(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-    }
-
-    /*    @Override
-        public void getSelectedPath(String path) {
-            mSelectedPath = path;
-            if (textPathSelect != null) {
-                textPathSelect.setText(mSelectedPath);
-            }
-
-        }*/
     private boolean mIsHomeSettingToggled;
+    private boolean mIsHomePageRemoved;
 
     @Override
     protected void onPostResume() {
@@ -2648,17 +2021,13 @@ public class BaseActivity extends AppCompatActivity implements
             args.putInt(BaseActivity.ACTION_CHILD_POS, 1);
 
 //          args.putInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
-            StoragesFragment storagesFragment = new StoragesFragment();
-            storagesFragment.setArguments(args);
-            ft.replace(R.id.main_container, storagesFragment);
+            FileListFragment fileListFragment = new FileListFragment();
+            fileListFragment.setArguments(args);
+            ft.replace(R.id.main_container, fileListFragment);
 //                    ft.addToBackStack(null);
 //                        ft.commitAllowingStateLoss();
             ft.commit();
             mIsHomeSettingToggled = false;
-        } else if (mIsHomePageAdded) {
-            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
-            ((StoragesFragment) fragment).setHomeScreenEnabled(true);
-            mIsHomePageAdded = false;
         }
     }
 
@@ -2686,10 +2055,8 @@ public class BaseActivity extends AppCompatActivity implements
                 Log.d(TAG, "OnPrefschanged " +
                         "CALLED==getSupportFragmentManager=" + getSupportFragmentManager());
                 Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
-                Fragment fragment1 = getSupportFragmentManager().findFragmentByTag(mCurrentDir);
 
                 Log.d(TAG, "OnPrefschanged ==fragment=" + fragment);
-                Log.d(TAG, "OnPrefschanged==fragment by tag=" + fragment1);
 
                 if (!isHomeScreenEnabled) {
 
@@ -2714,447 +2081,21 @@ public class BaseActivity extends AppCompatActivity implements
                         ft.commit();*/
 
                     } else {
-                        ((StoragesFragment) fragment).removeHomeScreen(true);
+                        mIsHomePageRemoved = true;
                     }
 
 
                 } else {
                     mIsHomePageAdded = true;
+                    mIsHomePageRemoved = false;
 
                 }
             }
 
 
-        }
-       /* else if (key.equals(FileConstants.PREFS_DUAL_PANE)) {
-            mIsDualPaneEnabledSettings = sharedPreferences.getBoolean(FileConstants
-                    .PREFS_DUAL_PANE, true);
-//            isDualPaneInFocus = false;
-
-            if (!mIsDualPaneEnabledSettings) {
-                toggleDualPaneVisibility(false);
-            } else {
-                if (mCategory == FileConstants.CATEGORY.FILES.getValue() && mIsDualModeEnabled) {
-                    isDualPaneInFocus = true;
-                    toggleDualPaneVisibility(true);
-                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                    String internalStoragePath = getInternalStorage().getAbsolutePath();
-                    Bundle args = new Bundle();
-                    args.putString(FileConstants.KEY_PATH, internalStoragePath);
-                    args.putBoolean(FileConstants.KEY_DUAL_MODE, true);
-                    setNavDirectory();
-                    FileListDualFragment dualFragment = new FileListDualFragment();
-                    dualPaneFragments.add(dualFragment);
-                    dualFragment.setArguments(args);
-                    ft.replace(R.id.frame_container_dual, dualFragment);
-//                mViewSeperator.setVisibility(View.VISIBLE);
-                    ft.commitAllowingStateLoss();
-                }
-            }
-
-        }*/
-    }
-
-
-   /* */
-
-    /**
-     * Triggered on long press click on item
-     *//*
-    private final class ActionModeCallback implements ActionMode.Callback {
-
-
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            mActionMode = mode;
-            MenuInflater inflater = mActionMode.getMenuInflater();
-            inflater.inflate(R.menu.action_mode, menu);
-
-            mRenameItem = menu.findItem(R.id.action_rename);
-            mInfoItem = menu.findItem(R.id.action_info);
-            mArchiveItem = menu.findItem(R.id.action_archive);
-            mFavItem = menu.findItem(R.id.action_fav);
-            mExtractItem = menu.findItem(R.id.action_extract);
-            mHideItem = menu.findItem(R.id.action_hide);
-            setupMenu(menu);
-
-            return true;
-        }
-
-        private void setupMenu(Menu menu) {
-            MenuItem item = menu.findItem(R.id.action_archive);
-            SpannableStringBuilder builder = new SpannableStringBuilder(" " + "  " + getString(R
-                    .string
-                    .action_archive));
-            // replace "*" with icon
-            builder.setSpan(new ImageSpan(BaseActivity.this, R.drawable.ic_archive_white), 0, 1,
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            mArchiveItem.setTitle(builder);
-
-            SpannableStringBuilder favBuilder = new SpannableStringBuilder(" " + "  " + getString
-                    (R.string
-                            .add_fav));
-            // replace "*" with icon
-            favBuilder.setSpan(new ImageSpan(BaseActivity.this, R.drawable.ic_favorite_white), 0, 1,
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            mFavItem.setTitle(favBuilder);
-
-            SpannableStringBuilder hideBuilder = new SpannableStringBuilder(" " + "  " +
-                    getString(R.string
-                            .hide));
-            // replace "*" with icon
-            hideBuilder.setSpan(new ImageSpan(BaseActivity.this, R.drawable.ic_hide_white), 0, 1,
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            mHideItem.setTitle(hideBuilder);
-        }
-
-        @SuppressLint("NewApi")
-        @Override
-        public boolean
-        onPrepareActionMode(ActionMode mode, Menu menu) {
-            // Dont show Fav and Archive option for Non file mode
-            if (mCategory != 0) {
-                mArchiveItem.setVisible(false);
-                mFavItem.setVisible(false);
-                mHideItem.setVisible(false);
-            }
-            if (mSelectedItemPositions.size() > 1) {
-                mRenameItem.setVisible(false);
-                mInfoItem.setVisible(false);
-                mFavItem.setVisible(false);
-
-            } else {
-                mRenameItem.setVisible(true);
-                mInfoItem.setVisible(true);
-                if (mSelectedItemPositions.size() == 1) {
-                    boolean isDirectory = mFileList.get(mSelectedItemPositions.keyAt(0))
-                            .isDirectory();
-                    String extension = mFileList.get(mSelectedItemPositions.keyAt(0))
-                            .getExtension();
-                    if (extension != null && extension.equalsIgnoreCase("zip")) {
-                        mExtractItem.setVisible(true);
-                    }
-                    if (!isDirectory) {
-                        mFavItem.setVisible(false);
-                    }
-                    String fileName = mFileList.get(mSelectedItemPositions.keyAt(0)).getFileName();
-                    if (fileName.startsWith(".")) {
-                        SpannableStringBuilder hideBuilder = new SpannableStringBuilder(" " + "  " +
-                                "" + getString(R.string
-                                .unhide));
-                        // replace "*" with icon
-                        hideBuilder.setSpan(new ImageSpan(BaseActivity.this, R.drawable
-                                        .ic_unhide_white), 0, 1,
-                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        mHideItem.setTitle(hideBuilder);
-                     *//*   mHideItem.setTitle(getString(R.string.unhide));
-                        mHideItem.setIcon(R.drawable.ic_unhide_white);*//*
-                    } else {
-                        SpannableStringBuilder hideBuilder = new SpannableStringBuilder(" " + "  " +
-                                "" + getString(R.string
-                                .hide));
-                        // replace "*" with icon
-                        hideBuilder.setSpan(new ImageSpan(BaseActivity.this, R.drawable
-                                        .ic_hide_white), 0, 1,
-                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        mHideItem.setTitle(hideBuilder);
-                *//*        mHideItem.setTitle(getString(R.string.hide));
-                        mHideItem.setIcon(R.drawable.ic_hide_white);*//*
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.action_rename:
-                    if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
-                        final String filePath = mFileList.get(mSelectedItemPositions.keyAt(0))
-                                .getFilePath();
-//                        String fileName = filePath.substring(filePath.lastIndexOf("/") + 1,
-// filePath.length());
-                        String fileName = mFileList.get(mSelectedItemPositions.keyAt(0))
-                                .getFileName();
-
-                        final long id = mFileList.get(mSelectedItemPositions.keyAt(0)).getId();
-//                        String extension = null;
-                        String extension = mFileList.get(mSelectedItemPositions.keyAt(0))
-                                .getExtension();
-                        boolean file = false;
-                        if (new File(filePath).isFile()) {
-                            String[] tokens = fileName.split("\\.(?=[^\\.]+$)");
-                            fileName = tokens[0];
-//                            extension = tokens[1];
-                            file = true;
-                        }
-                        final boolean isFile = file;
-                        final String ext = extension;
-
-                        final Dialog dialog = new Dialog(
-                                BaseActivity.this);
-//                dialog.requestWindowFeature(Window.FEATURE_LEFT_ICON);
-                        dialog.setContentView(R.layout.dialog_rename);
-                        dialog.setCancelable(true);
-                        // end of dialog declaration
-
-                        // define the contents of edit dialog
-                        final EditText rename = (EditText) dialog
-                                .findViewById(R.id.editRename);
-
-                        rename.setText(fileName);
-                        rename.setFocusable(true);
-                        // dialog save button to save the edited item
-                        Button saveButton = (Button) dialog
-                                .findViewById(R.id.buttonRename);
-                        // for updating the list item
-                        saveButton.setOnClickListener(new View.OnClickListener() {
-
-                            public void onClick(View v) {
-                                final CharSequence name = rename.getText();
-                                if (name.length() == 0) {
-                                    rename.setError(getResources().getString(R.string
-                                            .msg_error_valid_name));
-                                    return;
-                                }
-                                FileListFragment singlePaneFragment = (FileListFragment)
-                                        getSupportFragmentManager()
-                                                .findFragmentById(R
-                                                        .id.frame_container);
-                                String renamedName;
-                                if (isFile) {
-                                    renamedName = rename.getText().toString() + "." + ext;
-                                } else {
-                                    renamedName = rename.getText().toString();
-                                }
-//                                if (mCategory == 0) {
-                                int result = FileUtils.renameTarget(filePath, renamedName);
-                                String temp = filePath.substring(0, filePath.lastIndexOf("/"));
-                                String newFileName = temp + "/" + renamedName;
-//                                }
-//                            else {
-//                                    renamedName = rename.getText().toString();
-                                //For mediastore, we just need title and not extension
-                                if (mCategory != 0) {
-                                    updateMediaStore(id, newFileName);
-                                }
-//                                }
-
-                                if (singlePaneFragment != null) {
-                                    singlePaneFragment.refreshList();
-                                }
-                                dialog.dismiss();
-
-                            }
-                        });
-
-                        // cancel button declaration
-                        Button cancelButton = (Button) dialog
-                                .findViewById(R.id.buttonCancel);
-                        cancelButton.setOnClickListener(new View.OnClickListener() {
-
-                            public void onClick(View v) {
-                                dialog.dismiss();
-
-                            }
-                        });
-
-                        dialog.show();
-                    }
-
-                    mActionMode.finish();
-                    return true;
-
-                case R.id.action_info:
-                    if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
-                        FileInfo fileInfo = mFileList.get(mSelectedItemPositions.keyAt(0));
-                        showDialog(fileInfo);
-
-                    }
-                    mActionMode.finish();
-                    return true;
-                case R.id.action_archive:
-                    if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
-                        FileInfo fileInfo = mFileList.get(mSelectedItemPositions.keyAt(0));
-                        int result = FileUtils.createZipFile(fileInfo.getFilePath());
-                        FileListFragment singlePaneFragment = (FileListFragment)
-                                getSupportFragmentManager()
-                                        .findFragmentById(R
-                                                .id.frame_container);
-                        if (result == 0) {
-                            showMessage(getString(R.string.msg_zip_success));
-                            if (singlePaneFragment != null) {
-                                singlePaneFragment.refreshList();
-                            }
-
-                        } else {
-                            showMessage(getString(R.string.msg_zip_failure));
-                        }
-                    }
-                    mActionMode.finish();
-                    return true;
-                case R.id.action_fav:
-                    if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
-                        for (int i = 0; i < mSelectedItemPositions.size(); i++) {
-                            FileInfo info = mFileList.get(mSelectedItemPositions.keyAt(i));
-                            updateFavouritesGroup(info);
-                        }
-                        showMessage(getString(R.string.msg_added_to_fav));
-                    }
-                    mActionMode.finish();
-                    return true;
-
-                case R.id.action_extract:
-                    if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
-                        FileInfo fileInfo = mFileList.get(mSelectedItemPositions.keyAt(0));
-                        String currentFile = fileInfo.getFilePath();
-                        showExtractOptions(currentFile, mCurrentDir);
-                    }
-
-                    mActionMode.finish();
-                    return true;
-
-                case R.id.action_hide:
-                    if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
-                        ArrayList<FileInfo> infoList = new ArrayList<>();
-                        for (int i = 0; i < mSelectedItemPositions.size(); i++) {
-                            infoList.add(mFileList.get(mSelectedItemPositions.keyAt(i)));
-                        }
-                        hideUnHideFiles(infoList);
-                    }
-                    mActionMode.finish();
-                    return true;
-                default:
-                    return false;
-            }
-
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            FileListFragment fileListFragment = (FileListFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id
-                            .frame_container);
-            if (fileListFragment != null) {
-                fileListFragment.clearSelection();
-                fileListFragment.toggleDummyView(false);
-            }
-
-            mActionMode = null;
-            mBottomToolbar.setVisibility(View.GONE);
-  *//*          // FAB should be visible only for Files Category
-            if (mCategory == 0) {
-                fabCreateMenu.setVisibility(View.VISIBLE);
-            }*//*
-        }
-    }*/
-
-   /* private void hideUnHideFiles(ArrayList<FileInfo> fileInfo) {
-        for (int i = 0; i < fileInfo.size(); i++) {
-            String fileName = fileInfo.get(i).getFileName();
-            String renamedName;
-            if (fileName.startsWith(".")) {
-                renamedName = fileName.substring(1);
-            } else {
-                renamedName = "." + fileName;
-            }
-
-            int result = FileUtils.renameTarget(fileInfo.get(i).getFilePath(), renamedName);
-        }
-        FileListFragment singlePaneFragment = (FileListFragment) getSupportFragmentManager()
-                .findFragmentById(R
-                        .id.frame_container);
-        if (singlePaneFragment != null) {
-            singlePaneFragment.refreshList();
         }
     }
 
-    private void showExtractOptions(final String currentFilePath, final String currentDir) {
-
-        final File currentFile = new File(currentFilePath);
-        final String currentFileName = currentFilePath.substring(currentFilePath.lastIndexOf("/")
-                + 1, currentFilePath.lastIndexOf("."));
-        final Dialog dialog = new Dialog(
-                BaseActivity.this);
-        dialog.setContentView(R.layout.dialog_extract);
-        dialog.setCancelable(true);
-        mSelectedPath = null;
-
-        final RadioButton radioButtonSpecify = (RadioButton) dialog.findViewById(R.id
-                .radioButtonSpecifyPath);
-        textPathSelect = (TextView) dialog.findViewById(R.id.textPathSelect);
-        RadioGroup radioGroupPath = (RadioGroup) dialog.findViewById(R.id.radioGroupPath);
-        Button buttonExtract = (Button) dialog.findViewById(R.id.buttonExtract);
-        Button buttonCancel = (Button) dialog.findViewById(R.id.buttonCancel);
-        EditText editFileName = (EditText) dialog.findViewById(R.id.editFileName);
-        editFileName.setText(currentFileName);
-
-        dialog.show();
-        radioGroupPath.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
-                if (checkedId == R.id.radioButtonCurrentPath) {
-                    textPathSelect.setVisibility(View.GONE);
-                } else {
-                    textPathSelect.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-
-        textPathSelect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FragmentManager fm = getSupportFragmentManager();
-                DialogBrowseFragment dialogFragment = new DialogBrowseFragment();
-                dialogFragment.show(fm, "Browse Fragment");
-            }
-        });
-
-        buttonExtract.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (radioButtonSpecify.isChecked()) {
-                    new ExtractManager(BaseActivity.this)
-                            .extract(currentFile, mSelectedPath, currentFileName);
-                } else {
-                    new ExtractManager(BaseActivity.this)
-                            .extract(currentFile, currentDir, currentFileName);
-                }
-                dialog.dismiss();
-
-
-            }
-        });
-
-        buttonCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-
-
-    }
-
-    private void updateFavouritesGroup(FileInfo info) {
-
-        String name = info.getFileName();
-        String path = info.getFilePath();
-        FavInfo favInfo = new FavInfo();
-        favInfo.setFileName(name);
-        favInfo.setFilePath(path);
-
-        sharedPreferenceWrapper.addFavorite(this, favInfo);
-        SectionItems favItem = new SectionItems(name, path, R.drawable.ic_fav_folder, path);
-        if (!favouritesGroupChild.contains(favItem)) {
-            favouritesGroupChild.add(favItem);
-            expandableListAdapter.notifyDataSetChanged();
-        }
-
-
-    }*/
     private void resetFavouritesGroup() {
 
         for (int i = favouritesGroupChild.size() - 1; i > 0; i--) {
@@ -3167,540 +2108,5 @@ public class BaseActivity extends AppCompatActivity implements
         expandableListAdapter.notifyDataSetChanged();
 
     }
-
-   /* private void updateMediaStore(long id, String renamedFilePath) {
-        ContentValues values = new ContentValues();
-        switch (mCategory) {
-            case 1:
-                Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-//                newUri = Uri.withAppendedPath(musicUri, "" + id);
-//                values.put(MediaStore.Audio.Media.TITLE, title);
-                values.put(MediaStore.Audio.Media.DATA, renamedFilePath);
-                String audioId = "" + id;
-                getContentResolver().update(musicUri, values, MediaStore.Audio.Media._ID
-                        + "= ?", new String[]{audioId});
-                break;
-
-            case 2:
-                Uri videoUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-//                newUri = Uri.withAppendedPath(musicUri, "" + id);
-
-//                values.put(MediaStore.Video.Media.TITLE, title);
-                values.put(MediaStore.Video.Media.DATA, renamedFilePath);
-                String videoId = "" + id;
-                getContentResolver().update(videoUri, values, MediaStore.Video.Media._ID
-                        + "= ?", new String[]{videoId});
-                break;
-
-            case 3:
-                Uri imageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-//                newUri = Uri.withAppendedPath(musicUri, "" + id);
-//                values.put(MediaStore.Images.Media.TITLE, title);
-
-                values.put(MediaStore.Images.Media.DATA, renamedFilePath);
-                String imageId = "" + id;
-                getContentResolver().update(imageUri, values, MediaStore.Images.Media._ID
-                        + "= ?", new String[]{imageId});
-                break;
-
-            case 4:
-                Uri filesUri = MediaStore.Files.getContentUri("external");
-                values.put(MediaStore.Files.FileColumns.DATA, renamedFilePath);
-                String fileId = "" + id;
-                getContentResolver().update(filesUri, values, MediaStore.Files.FileColumns._ID
-                        + "= ?", new String[]{fileId});
-                break;
-
-            default:
-                break;
-        }
-    }
-
-
-    private void showDialog(FileInfo fileInfo) {
-        final Dialog dialog = new Dialog(
-                BaseActivity.this);
-        dialog.setContentView(R.layout.dialog_file_properties);
-        dialog.setCancelable(true);
-        ImageView imageFileIcon = (ImageView) dialog.findViewById(R.id.imageFileIcon);
-        TextView textFileName = (TextView) dialog.findViewById(R.id.textFileName);
-        ImageButton imageButtonClose = (ImageButton) dialog.findViewById(R.id.imageButtonClose);
-        TextView textPath = (TextView) dialog.findViewById(R.id.textPath);
-        TextView textFileSize = (TextView) dialog.findViewById(R.id.textFileSize);
-        TextView textDateModified = (TextView) dialog.findViewById(R.id.textDateModified);
-        TextView textHidden = (TextView) dialog.findViewById(R.id.textHidden);
-        TextView textReadable = (TextView) dialog.findViewById(R.id.textReadable);
-        TextView textWriteable = (TextView) dialog.findViewById(R.id.textWriteable);
-        TextView textHiddenPlaceHolder = (TextView) dialog.findViewById(R.id.textHiddenPlaceHolder);
-        TextView textReadablePlaceHolder = (TextView) dialog.findViewById(R.id
-                .textReadablePlaceHolder);
-        TextView textWriteablePlaceHolder = (TextView) dialog.findViewById(R.id
-                .textWriteablePlaceHolder);
-        TextView textMD5 = (TextView) dialog.findViewById(R.id.textMD5);
-        TextView textMD5Placeholder = (TextView) dialog.findViewById(R.id.textMD5PlaceHolder);
-
-        String path = fileInfo.getFilePath();
-        String fileName = fileInfo.getFileName();
-        String dateModified = fileInfo.getFileDate();
-        String fileNoOrSize = fileInfo.getNoOfFilesOrSize();
-        boolean isReadable = new File(path).canRead();
-        boolean isWriteable = new File(path).canWrite();
-        boolean isHidden = new File(path).isHidden();
-
-        textFileName.setText(fileName);
-        textPath.setText(path);
-        textFileSize.setText(fileNoOrSize);
-        textDateModified.setText(dateModified);
-
-        if (mCategory != 0) {
-            textMD5.setVisibility(View.GONE);
-            textMD5Placeholder.setVisibility(View.GONE);
-            textReadablePlaceHolder.setVisibility(View.GONE);
-            textWriteablePlaceHolder.setVisibility(View.GONE);
-            textHiddenPlaceHolder.setVisibility(View.GONE);
-            textReadable.setVisibility(View.GONE);
-            textWriteable.setVisibility(View.GONE);
-            textHidden.setVisibility(View.GONE);
-        } else {
-            textReadable.setText(isReadable ? getString(R.string.yes) : getString(R.string.no));
-            textWriteable.setText(isWriteable ? getString(R.string.yes) : getString(R.string.no));
-            textHidden.setText(isHidden ? getString(R.string.yes) : getString(R.string.no));
-        }
-
-
-        dialog.show();
-
-        imageButtonClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-        if (new File(path).isDirectory()) {
-            textMD5.setVisibility(View.GONE);
-            textMD5Placeholder.setVisibility(View.GONE);
-            Drawable apkIcon = FileUtils.getAppIconForFolder(this, fileName);
-            if (apkIcon != null) {
-                imageFileIcon.setImageDrawable(apkIcon);
-            } else {
-                imageFileIcon.setImageResource(R.drawable.ic_folder);
-            }
-        } else {
-            if (mCategory == 0) {
-                String md5 = FileUtils.getFastHash(path);
-                textMD5.setText(md5);
-            }
-
-            if (fileInfo.getType() == FileConstants.CATEGORY.IMAGE.getValue() ||
-                    fileInfo.getType() == FileConstants.CATEGORY.VIDEO.getValue()) {
-                Uri imageUri = Uri.fromFile(new File(path));
-                Glide.with(this).load(imageUri).centerCrop()
-                        .crossFade(2)
-                        .into(imageFileIcon);
-            } else if (fileInfo.getExtension().equals(FileConstants.APK_EXTENSION)) {
-                Drawable apkIcon = FileUtils.getAppIcon(this, path);
-                imageFileIcon.setImageDrawable(apkIcon);
-            } else {
-                imageFileIcon.setImageResource(R.drawable.ic_doc_white);
-            }
-        }
-    }
-
-
-    private void showDialog(final ArrayList<String> paths) {
-        final Dialog deleteDialog = new Dialog(this);
-        deleteDialog.setContentView(R.layout.dialog_delete);
-        deleteDialog.setCancelable(false);
-        TextView textFileName = (TextView) deleteDialog.findViewById(R.id.textFileNames);
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < paths.size(); i++) {
-            String path = paths.get(i);
-            stringBuilder.append(path);
-            stringBuilder.append("\n\n");
-            if (i == 9 && paths.size() > 10) {
-                int rem = paths.size() - 10;
-                stringBuilder.append("+" + rem + " " + getString(R.string.more));
-                break;
-            }
-        }
-        textFileName.setText(stringBuilder.toString());
-        Button buttonOk = (Button) deleteDialog.findViewById(R.id.buttonOk);
-        Button buttonCancel = (Button) deleteDialog.findViewById(R.id.buttonCancel);
-        buttonCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteDialog.dismiss();
-            }
-        });
-        buttonOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new BgOperationsTask(DELETE_OPERATION).execute(paths);
-                deleteDialog.dismiss();
-            }
-        });
-        deleteDialog.show();
-
-    }*/
-
-    public void clearSelectedPos() {
-        if (mSelectedItemPositions != null && mSelectedItemPositions.size() != 0) {
-            mSelectedItemPositions.clear();
-        }
-    }
-
-    public class BackGroundOperationsTask extends AsyncTask<HashMap<String, Integer>, Integer,
-            Void> {
-
-        private String fileName;
-        private String filePath;
-        private int copyStatus = -1;
-        //        private ProgressDialog progressDialog;
-        private Dialog progressDialog;
-        private Dialog deleteDialog;
-        private int operation;
-        private int currentFile = 0;
-        private int filesCopied;
-        private boolean isActionCancelled;
-        TextView textFileName;
-        TextView textFileSource;
-        TextView textFileDest;
-        TextView textFilesLeft;
-        TextView textProgressPercent;
-        ProgressBar pasteProgress;
-        Progress progress;
-        private int totalFiles;
-        private String sourcePath;
-
-
-        private BackGroundOperationsTask(int operation) {
-            this.operation = operation;
-            progress = new Progress(this);
-            sourcePath = mSourceFilePath;
-
-        }
-
-        @Override
-        protected void onPreExecute() {
-            Context mContext = BaseActivity.this;
-            switch (operation) {
-
-                case PASTE_OPERATION:
-                    showProgressDialog();
-                    break;
-
-            }
-
-        }
-
-        private void showProgressDialog() {
-            Context mContext = BaseActivity.this;
-            switch (operation) {
-                case PASTE_OPERATION:
-                    progressDialog = new Dialog(mContext);
-                    progressDialog.setContentView(R.layout.dialog_progress_paste);
-                    progressDialog.setCancelable(false);
-                    TextView textTitle = (TextView) progressDialog.findViewById(R.id
-                            .textDialogTitle);
-                    if (mIsMoveOperation) {
-                        textTitle.setText(mContext.getString(R.string.msg_cut));
-                    } else {
-                        textTitle.setText(mContext.getString(R.string.msg_copy));
-                    }
-
-                    textFileName = (TextView) progressDialog.findViewById(R.id.textFileName);
-                    textFileSource = (TextView) progressDialog.findViewById(R.id.textFileFromPath);
-                    textFileDest = (TextView) progressDialog.findViewById(R.id.textFileToPath);
-                    textFilesLeft = (TextView) progressDialog.findViewById(R.id.textFilesLeft);
-                    textProgressPercent = (TextView) progressDialog.findViewById(R.id
-                            .textProgressPercent);
-                    pasteProgress = (ProgressBar) progressDialog.findViewById(R.id
-                            .progressBarPaste);
-                    Button buttonBackground = (Button) progressDialog.findViewById(R.id.buttonBg);
-
-                    String fileName = mSourceFilePath.substring(mSourceFilePath.lastIndexOf("/")
-                            + 1, mSourceFilePath
-                            .length());
-                    textFileName.setText(fileName);
-                    textFileSource.setText(mSourceFilePath);
-                    textFileDest.setText(mCurrentDir);
-                    progressDialog.show();
-                    buttonBackground.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            progressDialog.dismiss();
-                        }
-                    });
-                    break;
-                case DELETE_OPERATION:
-                    deleteDialog = new Dialog(mContext);
-                    deleteDialog.setContentView(R.layout.dialog_delete);
-                    deleteDialog.setCancelable(false);
-                    textFileName = (TextView) deleteDialog.findViewById(R.id.textFileNames);
-                    break;
-
-            }
-
-
-        }
-
-        @Override
-        protected Void doInBackground(HashMap<String, Integer>... params) {
-
-            HashMap<String, Integer> pathActions = params[0];
-//            android.os.Debug.waitForDebugger();
-            switch (operation) {
-
-                case PASTE_OPERATION:
-                    totalFiles = pathActions.size();
-                    if (pathActions.size() > 0) {
-                        currentFile = 0;
-                        for (String key : pathActions.keySet()) {
-                            int action = pathActions.get(key);
-                            String sourcePath = key;
-                            System.out.println("key : " + key);
-                            System.out.println("value : " + pathActions.get(key));
-                            if (action == FileUtils.ACTION_CANCEL) {
-                                isActionCancelled = true;
-                            } else {
-
-                                currentFile++;
-                                System.out.println("currentFile BG : " + currentFile);
-
-                                /*copyStatus = FileUtils.copyToDirectory(BaseActivity.this,
-                                sourcePath, mCurrentDir,
-                                        mIsMoveOperation, action, progress);*/
-                                System.out.println("copyStatus : " + copyStatus);
-
-                                if (copyStatus == 0) {
-                                    filesCopied++;
-                                }
-
-                            }
-
-
-                        }
-                    }
-                    break;
-
-            }
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            textFilesLeft.setText(currentFile + "/" + totalFiles);
-            int progress = values[0];
-            textProgressPercent.setText(progress + "%");
-            pasteProgress.setProgress(progress);
-
-            if (progress == 100 && currentFile == totalFiles) {
-//                    System.out.println("progress ELSE: " + progress + "currentFile:" +
-// currentFile);
-                progressDialog.dismiss();
-            }
-
-
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            FileListFragment singlePaneFragment = (FileListFragment) getSupportFragmentManager()
-                    .findFragmentById(R
-                            .id.main_container);
-
-            switch (operation) {
-
-                case PASTE_OPERATION:
-
-                    if (mSelectedItemPositions != null && mSelectedItemPositions.size() != 0) {
-                        mSelectedItemPositions.clear();
-                    }
-//                    togglePasteVisibility(false);
-                    if (mPathActionMap != null) {
-                        if (mPathActionMap.size() != filesCopied) {
-
-                            if (isActionCancelled) {
-                                showMessage(getString(R.string.msg_operation_cancel));
-                            }
-                            if (mIsMoveOperation) {
-                                showMessage(getString(R.string.msg_move_failure));
-                            } else {
-                                showMessage(getString(R.string.msg_copy_failure));
-                            }
-
-                        }
-                    }
-
-                    if (filesCopied != 0) {
-                        // Refresh the list after cut/copy operation
-                        if (singlePaneFragment != null) {
-                            singlePaneFragment.refreshList();
-                        }
-                        if (mIsMoveOperation) {
-                            showMessage(getResources().getQuantityString(R.plurals
-                                            .number_of_files, filesCopied,
-                                    filesCopied) + " " +
-                                    getString(R.string.msg_move_success));
-
-                        } else {
-                            showMessage(getResources().getQuantityString(R.plurals
-                                            .number_of_files, filesCopied,
-                                    filesCopied) + " " +
-                                    getString(R.string.msg_copy_success));
-                        }
-
-                    }
-                    mIsMoveOperation = false;
-                    progressDialog.dismiss();
-                    filesCopied = 0;
-                    break;
-
-                case DELETE_OPERATION:
-
-                    if (mSelectedItemPositions != null && mSelectedItemPositions.size() != 0) {
-
-                        mSelectedItemPositions.clear();
-
-                    }
-//                    Toast.makeText(FilebrowserULTRAActivity.this,
-//                            " Delete successfull !", Toast.LENGTH_SHORT).show();
-//                    refreshList();
-                    progressDialog.dismiss();
-
-                    break;
-            }
-        }
-
-        public class Progress {
-            private BackGroundOperationsTask task;
-
-            public Progress(BackGroundOperationsTask task) {
-                this.task = task;
-            }
-
-            public void publish(int val) {
-                task.publishProgress(val);
-            }
-        }
-
-
-    }
-
-
-  /*  private class BgOperationsTask extends AsyncTask<ArrayList<String>, Void, Integer> {
-
-        private String fileName;
-        private String filePath;
-        private int copyStatus = -1;
-        //        private ProgressDialog progressDialog;
-        private Dialog progressDialog;
-        private Dialog deleteDialog;
-        private int operation;
-        private int currentFile = 0;
-        private int filesCopied;
-        private boolean isActionCancelled;
-        TextView textFileName;
-        private int totalFiles;
-        private String sourcePath;
-
-
-        private BgOperationsTask(int operation) {
-            this.operation = operation;
-            sourcePath = mSourceFilePath;
-
-        }
-
-        @Override
-        protected Integer doInBackground(ArrayList<String>... params) {
-            int deletedCount = 0;
-            ArrayList<String> paths = params[0];
-            totalFiles = paths.size();
-            for (int i = 0; i < totalFiles; i++) {
-                int result = FileUtils.deleteTarget(paths.get(i));
-                if (result == 0) {
-                    deletedCount++;
-                    refreshList(paths.get(i));
-                }
-            }
-            return deletedCount;
-        }
-
-        @Override
-        protected void onPostExecute(Integer filesDel) {
-            FileListFragment singlePaneFragment = (FileListFragment) getSupportFragmentManager()
-                    .findFragmentById(R
-                            .id.frame_container);
-            FileListDualFragment dualPaneFragment = (FileListDualFragment)
-                    getSupportFragmentManager()
-                            .findFragmentById(R
-                                    .id.frame_container_dual);
-            int deletedFiles = filesDel;
-            switch (operation) {
-
-                case DELETE_OPERATION:
-                    if (mSelectedItemPositions != null && mSelectedItemPositions.size() != 0) {
-                        mSelectedItemPositions.clear();
-                    }
-
-                    if (deletedFiles != 0) {
-                        showMessage(getResources().getQuantityString(R.plurals.number_of_files,
-                                deletedFiles,
-                                deletedFiles) + " " +
-                                getString(R.string.msg_delete_success));
-                        if (singlePaneFragment != null) {
-                            singlePaneFragment.refreshList();
-                        }
-                        if (dualPaneFragment != null) {
-                            dualPaneFragment.refreshList();
-                        }
-                    }
-
-                    if (totalFiles != deletedFiles) {
-                        showMessage(getString(R.string.msg_delete_failure));
-                    }
-                    break;
-
-            }
-        }
-
-    }
-
-    private void refreshList(String path) {
-        ContentResolver contentResolver = getContentResolver();
-        switch (mCategory) {
-
-            case 1:
-                contentResolver.delete(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                        MediaStore.Audio.AudioColumns.DATA + "=?", new String[]{path});
-                break;
-            case 2:
-                contentResolver.delete(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-                        MediaStore.Video.VideoColumns.DATA + "=?", new String[]{path});
-                break;
-            case 3:
-                contentResolver.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                        MediaStore.Images.ImageColumns.DATA + "=?", new String[]{path});
-                break;
-            case 4:
-                contentResolver.delete(MediaStore.Files.getContentUri("external"),
-                        MediaStore.Files.FileColumns.DATA + "=?", new String[]{path});
-                break;
-        }
-    }
-
-    public void refreshFileList() {
-        FileListFragment fileListFragment = (FileListFragment) getSupportFragmentManager()
-                .findFragmentById(R.idonsh
-                        .frame_container);
-        if (fileListFragment != null) {
-            fileListFragment.refreshList();
-        }
-
-
-    }*/
-
 }
 

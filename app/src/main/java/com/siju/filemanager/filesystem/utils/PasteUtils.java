@@ -14,7 +14,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.siju.filemanager.BaseActivity;
 import com.siju.filemanager.R;
 import com.siju.filemanager.common.Logger;
 import com.siju.filemanager.filesystem.FileListDualFragment;
@@ -355,8 +354,8 @@ public class PasteUtils {
                 case PASTE_OPERATION:
 
                     if (!mIsDrag) {
-                        ((BaseActivity) mActivity).clearSelectedPos();
-                        ((BaseActivity) mActivity).togglePasteVisibility(false);
+                        ((FileListFragment) mFragment).clearSelectedPos();
+                        ((FileListFragment) mFragment).togglePasteVisibility(false);
                     }
 
 

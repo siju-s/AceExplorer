@@ -1,6 +1,7 @@
 package com.siju.filemanager.filesystem.utils;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -9,12 +10,12 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
-import com.siju.filemanager.BaseActivity;
 import com.siju.filemanager.R;
 import com.siju.filemanager.common.Logger;
 import com.siju.filemanager.filesystem.model.FileInfo;
@@ -540,6 +541,55 @@ public class FileUtils {
         } catch (ParseException e) {
             e.printStackTrace();
             return -1;
+        }
+    }
+
+    public static  void updateMediaStore(Context context,int category,long id, String
+            renamedFilePath) {
+        ContentValues values = new ContentValues();
+        switch (category) {
+            case 1:
+                Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+//                newUri = Uri.withAppendedPath(musicUri, "" + id);
+//                values.put(MediaStore.Audio.Media.TITLE, title);
+                values.put(MediaStore.Audio.Media.DATA, renamedFilePath);
+                String audioId = "" + id;
+                context.getContentResolver().update(musicUri, values, MediaStore.Audio.Media._ID
+                        + "= ?", new String[]{audioId});
+                break;
+
+            case 2:
+                Uri videoUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+//                newUri = Uri.withAppendedPath(musicUri, "" + id);
+
+//                values.put(MediaStore.Video.Media.TITLE, title);
+                values.put(MediaStore.Video.Media.DATA, renamedFilePath);
+                String videoId = "" + id;
+                context.getContentResolver().update(videoUri, values, MediaStore.Video.Media._ID
+                        + "= ?", new String[]{videoId});
+                break;
+
+            case 3:
+                Uri imageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+//                newUri = Uri.withAppendedPath(musicUri, "" + id);
+//                values.put(MediaStore.Images.Media.TITLE, title);
+
+                values.put(MediaStore.Images.Media.DATA, renamedFilePath);
+                String imageId = "" + id;
+                context.getContentResolver().update(imageUri, values, MediaStore.Images.Media._ID
+                        + "= ?", new String[]{imageId});
+                break;
+
+            case 4:
+                Uri filesUri = MediaStore.Files.getContentUri("external");
+                values.put(MediaStore.Files.FileColumns.DATA, renamedFilePath);
+                String fileId = "" + id;
+                context.getContentResolver().update(filesUri, values, MediaStore.Files.FileColumns._ID
+                        + "= ?", new String[]{fileId});
+                break;
+
+            default:
+                break;
         }
     }
 

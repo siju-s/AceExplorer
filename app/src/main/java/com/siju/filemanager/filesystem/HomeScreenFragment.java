@@ -190,6 +190,8 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                             args.putParcelableArrayList(FileConstants.KEY_LIB_SORTLIST, list);
                         }
                     }
+                    mBaseActivity.setCurrentCategory(categoryId);
+                    mBaseActivity.setIsFromHomePage(true);
                     FileListFragment fileListFragment = new FileListFragment();
                     fileListFragment.setArguments(args);
                     ft.replace(R.id.main_container, fileListFragment);
@@ -229,6 +231,9 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                 ft.replace(R.id.main_container, fileListFragment);
                 ft.addToBackStack(null);
                 ft.commitAllowingStateLoss();
+                mBaseActivity.setCurrentCategory(FileConstants.CATEGORY.FILES.getValue());
+                mBaseActivity.setIsFromHomePage(true);
+
                 if (mIsDualModeEnabled) {
                     mBaseActivity.toggleDualPaneVisibility(true);
                     mBaseActivity.createDualFragment();
