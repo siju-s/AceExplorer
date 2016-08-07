@@ -1,6 +1,7 @@
 package com.siju.filemanager.filesystem.utils;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +14,11 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.format.Formatter;
 import android.util.Log;
+import android.view.View;
 import android.webkit.MimeTypeMap;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.siju.filemanager.R;
@@ -272,19 +277,95 @@ public class FileUtils {
 
         Intent intent = new Intent();
         intent.setAction(android.content.Intent.ACTION_VIEW);
-        // To lowercase used since MKV doesnt get recognised
+        // To lowercase used since capital extensions like MKV doesn't get recognised
         String ext = extension.toLowerCase();
         String mimeType = getSingleton().getMimeTypeFromExtension(ext);
         Logger.log("TAG", "uri==" + uri + "MIME=" + mimeType);
         intent.setDataAndType(uri, mimeType);
         PackageManager packageManager = context.getPackageManager();
-        if (intent.resolveActivity(packageManager) != null) {
+
+        if (mimeType != null) {
+            if (intent.resolveActivity(packageManager) != null) {
 //            Intent chooser = Intent.createChooser(intent, context.getString(R.string.msg_open_file));
-            context.startActivity(intent);
+                context.startActivity(intent);
+            } else {
+                showMessage(context, context.getString(R.string.msg_error_not_supported));
+            }
         } else {
-            showMessage(context, context.getString(R.string.msg_error_not_supported));
+            openWith(uri, context);
         }
 
+    }
+
+    private static void openWith(final Uri uri, final Context context) {
+        final Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.dialog_openas);
+        dialog.setTitle(context.getString(R.string.open_as));
+        String[] items = new String[]{context.getString(R.string.text), context.getString(R.string.image),
+                context.getString(R.string.video), context.getString(R.string.audio),
+                context.getString(R.string.other)};
+
+        ListView listView = (ListView) dialog.findViewById(R.id.listOpenAs);
+        ArrayAdapter<String> itemsAdapter =
+                new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, items);
+        listView.setAdapter(itemsAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Intent intent = new Intent();
+                intent.setAction(android.content.Intent.ACTION_VIEW);
+                switch (position) {
+                    case 0:
+                        intent.setDataAndType(uri, "text/*");
+                        break;
+                    case 1:
+                        intent.setDataAndType(uri, "image/*");
+                        break;
+                    case 2:
+                        intent.setDataAndType(uri, "video/*");
+                        break;
+                    case 3:
+                        intent.setDataAndType(uri, "audio/*");
+                        break;
+          /*          case 4:
+                        intent = new Intent(c, DbViewer.class);
+                        intent.putExtra("path", f.getPath());
+                        break;*/
+                    case 4:
+                        intent.setDataAndType(uri, "*/*");
+                        break;
+                }
+                PackageManager packageManager = context.getPackageManager();
+                if (intent.resolveActivity(packageManager) != null) {
+//            Intent chooser = Intent.createChooser(intent, context.getString(R.string.msg_open_file));
+                    context.startActivity(intent);
+                } else {
+                    showMessage(context, context.getString(R.string.msg_error_not_supported));
+                }
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
+    /**
+     * Validates file name at the time of creation
+     * special reserved characters shall not be allowed in the file names
+     *
+     * @param file  the file which needs to be validated
+     * @return boolean if the file name is valid or invalid
+     */
+    public static boolean validateFileName(File file) {
+
+        StringBuilder builder = new StringBuilder(file.getPath());
+        String newName = builder.substring(builder.lastIndexOf("/") + 1, builder.length());
+
+        if (newName.contains("/") ||
+                newName.length() == 0) {
+            return false;
+        }
+        return true;
     }
 
     private static void showMessage(Context context, String msg) {
@@ -544,7 +625,7 @@ public class FileUtils {
         }
     }
 
-    public static  void updateMediaStore(Context context,int category,long id, String
+    public static void updateMediaStore(Context context, int category, long id, String
             renamedFilePath) {
         ContentValues values = new ContentValues();
         switch (category) {
@@ -800,7 +881,11 @@ public class FileUtils {
         if (path.charAt(len - 1) != '/')
             path += "/";
 
-        if (new File(path + name).mkdir())
+        File newFolder = new File(path + name);
+        if (newFolder.exists()) {
+            return -2;
+        }
+        if (newFolder.mkdir())
             return 0;
 
         return -1;
@@ -816,8 +901,12 @@ public class FileUtils {
         if (path.charAt(len - 1) != '/')
             path += "/";
 
+        File newFile = new File(path + name);
+        if (newFile.exists())
+            return -2;
+
         try {
-            if (new File(path + name).createNewFile())
+            if (newFile.createNewFile())
                 return 0;
         } catch (IOException e) {
             // TODO Auto-generated catch block

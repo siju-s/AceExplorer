@@ -6,6 +6,7 @@ import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -29,6 +30,7 @@ import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -36,6 +38,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ImageSpan;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
@@ -48,6 +51,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -80,7 +84,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import static com.siju.filemanager.BaseActivity.ACTION_VIEW_MODE;
+import static com.siju.filemanager.R.id.recyclerViewFileList;
 import static com.siju.filemanager.R.id.textEmpty;
 
 
@@ -94,6 +98,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         Toolbar.OnMenuItemClickListener,
         DialogBrowseFragment.SelectedPathListener {
 
+    private final String TAG = this.getClass().getSimpleName();
     //    private ListView fileList;
     private RecyclerView recyclerViewFileList;
     private View root;
@@ -110,7 +115,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private int mViewMode = FileConstants.KEY_LISTVIEW;
     private String mPath;
     private boolean mIsZip;
-    private SharedPreferenceWrapper preference;
+    private SharedPreferenceWrapper sharedPreferenceWrapper;
     private TextView mTextEmpty;
     private boolean mIsDualActionModeActive;
     private boolean mIsLandscapeMode;
@@ -161,6 +166,13 @@ public class FileListFragment extends Fragment implements LoaderManager
     private boolean mIsFavGroup;
     private String mSelectedPath;
     private TextView textPathSelect;
+    private HashMap<String, Bundle> scrollPosition = new HashMap<>();
+    private boolean mIsDataRefreshed;
+    private int mGridColumns;
+    private SharedPreferences mPreferences;
+    private DisplayMetrics displayMetrics;
+    private int mOldWidth;
+    private int mCurrentOrientation;
 
 
     @Override
@@ -184,10 +196,13 @@ public class FileListFragment extends Fragment implements LoaderManager
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
         initializeViews();
+        mCurrentOrientation = getResources().getConfiguration().orientation;
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mIsLandscapeMode = getResources().getConfiguration().orientation == Configuration
                 .ORIENTATION_LANDSCAPE;
-        mIsDualModeEnabledSettings = PreferenceManager.getDefaultSharedPreferences(getActivity())
+        mIsDualModeEnabledSettings = mPreferences
                 .getBoolean(FileConstants.PREFS_DUAL_PANE, false);
+        mGridColumns = mPreferences.getInt(FileConstants.KEY_GRID_COLUMNS, 0);
 
         Bundle args = new Bundle();
         final String fileName;
@@ -232,18 +247,14 @@ public class FileListFragment extends Fragment implements LoaderManager
 
             }*/
         }
-        mViewMode = preference.getViewMode(getActivity());
+        mViewMode = sharedPreferenceWrapper.getViewMode(getActivity());
 
         Log.d("TAG", "on onActivityCreated--Fragment" + mFilePath);
         Log.d("TAG", "View mode=" + mViewMode);
         args.putString(FileConstants.KEY_PATH, mFilePath);
 
         if (list == null || list.size() == 0) {
-            if (FileListFragment.this instanceof FileListDualFragment) {
-                isDualPaneInFocus = true;
-            } else {
-                isDualPaneInFocus = false;
-            }
+            isDualPaneInFocus = FileListFragment.this instanceof FileListDualFragment;
             if (mCategory == FileConstants.CATEGORY.FILES.getValue()) {
                 mBaseActivity.setNavDirectory(mFilePath, isDualPaneInFocus);
             }
@@ -270,55 +281,16 @@ public class FileListFragment extends Fragment implements LoaderManager
         fileListAdapter = new FileListAdapter(FileListFragment.this, getContext(), fileInfoList,
                 mCategory, mViewMode);
         recyclerViewFileList.setAdapter(fileListAdapter);
+        initializeListeners();
 
-
-        fileListAdapter.setOnItemClickListener(new FileListAdapter.OnItemClickListener() {
+        recyclerViewFileList.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
-            public void onItemClick(View view, int position) {
-
-                if (getActionMode() != null) {
-                    if (mIsDualActionModeActive) {
-                        if (FileListFragment.this instanceof FileListDualFragment) {
-                            itemClickActionMode(position, false);
-                        } else {
-                            handleCategoryItemClick(position);
-                        }
-                    } else {
-                        if (FileListFragment.this instanceof FileListDualFragment) {
-                            handleCategoryItemClick(position);
-                        } else {
-                            itemClickActionMode(position, false);
-                        }
-                    }
-                } else {
-                    handleCategoryItemClick(position);
-                }
-            }
-        });
-        fileListAdapter.setOnItemLongClickListener(new FileListAdapter.OnItemLongClickListener() {
-            @Override
-            public void onItemLongClick(View view, int position) {
-                Logger.log("TAG", "On long click" + mStartDrag);
-                itemClickActionMode(position, true);
-                mLongPressedTime = System.currentTimeMillis();
-
-                if (getActionMode() != null && fileListAdapter
-                        .getSelectedCount() >= 1) {
-//                    mDragPaths = new ArrayList<String>();
-                    String path = fileInfoList.get(position).getFilePath();
-
-                    if (!mDragPaths.contains(path)) {
-                        mDragPaths.add(path);
-                    }
-                    mItemView = view;
-
-                    mStartDrag = true;
-
-                    mDragInitialPos = position;
-                } else {
-                    Logger.log("TAG", "On long click ELSE");
-
-                }
+            public void onGlobalLayout() {
+                recyclerViewFileList.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                int width  = recyclerViewFileList.getWidth(); //height is ready
+                mOldWidth = width;
+                Logger.log(TAG,"Width inside observer="+width);
+//                refreshSpan();
             }
         });
 
@@ -364,7 +336,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private void initializeViews() {
         recyclerViewFileList = (RecyclerView) root.findViewById(R.id.recyclerViewFileList);
         mTextEmpty = (TextView) root.findViewById(textEmpty);
-        preference = new SharedPreferenceWrapper();
+        sharedPreferenceWrapper = new SharedPreferenceWrapper();
         recyclerViewFileList.setOnDragListener(new myDragEventListener());
         viewDummy = root.findViewById(R.id.viewDummy);
         mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipeRefreshLayout);
@@ -377,6 +349,58 @@ public class FileListFragment extends Fragment implements LoaderManager
             }
         });
         mBottomToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar_bottom);
+    }
+
+    private void initializeListeners() {
+        fileListAdapter.setOnItemClickListener(new FileListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Logger.log("TAG", "On item click");
+                if (getActionMode() != null) {
+                    if (mIsDualActionModeActive) {
+                        if (FileListFragment.this instanceof FileListDualFragment) {
+                            itemClickActionMode(position, false);
+                        } else {
+                            handleCategoryItemClick(position);
+                        }
+                    } else {
+                        if (FileListFragment.this instanceof FileListDualFragment) {
+                            handleCategoryItemClick(position);
+                        } else {
+                            itemClickActionMode(position, false);
+                        }
+                    }
+                } else {
+                    handleCategoryItemClick(position);
+                }
+            }
+        });
+        fileListAdapter.setOnItemLongClickListener(new FileListAdapter.OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(View view, int position) {
+                Logger.log("TAG", "On long click" + mStartDrag);
+                itemClickActionMode(position, true);
+                mLongPressedTime = System.currentTimeMillis();
+
+                if (getActionMode() != null && fileListAdapter
+                        .getSelectedCount() >= 1) {
+//                    mDragPaths = new ArrayList<String>();
+                    String path = fileInfoList.get(position).getFilePath();
+
+                    if (!mDragPaths.contains(path)) {
+                        mDragPaths.add(path);
+                    }
+                    mItemView = view;
+
+                    mStartDrag = true;
+
+                    mDragInitialPos = position;
+                } else {
+                    Logger.log("TAG", "On long click ELSE");
+
+                }
+            }
+        });
     }
 
     private void handleCategoryItemClick(int position) {
@@ -421,19 +445,17 @@ public class FileListFragment extends Fragment implements LoaderManager
                         mCurrentZipDir = name.substring(0, name.length() - 1);
                         reloadList(true, mZipParentPath);
                     } else {
+                        computeScroll();
                         Bundle bundle = new Bundle();
-                        String path = fileInfoList.get(position).getFilePath();
-                        bundle.putString(FileConstants.KEY_PATH, path);
+                        String path = mFilePath = fileInfoList.get(position).getFilePath();
+                        bundle.putString(FileConstants.KEY_PATH, mFilePath);
                         bundle.putInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
 
-                        if (FileListFragment.this instanceof FileListDualFragment) {
-                            isDualPaneInFocus = true;
-                        } else {
-                            isDualPaneInFocus = false;
-                        }
+                        isDualPaneInFocus = FileListFragment.this instanceof FileListDualFragment;
                         mBaseActivity.setCurrentDir(path, isDualPaneInFocus);
                         mBaseActivity.setNavDirectory(path, isDualPaneInFocus);
-                        getLoaderManager().restartLoader(LOADER_ID, bundle, this);
+                        reloadList(true, mFilePath);
+//                        getLoaderManager().restartLoader(LOADER_ID, bundle, this);
                     }
 
 
@@ -472,11 +494,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             // there are some selected items, start the actionMode
             startActionMode();
 
-            if (FileListFragment.this instanceof FileListDualFragment) {
-                mIsDualActionModeActive = true;
-            } else {
-                mIsDualActionModeActive = false;
-            }
+            mIsDualActionModeActive = FileListFragment.this instanceof FileListDualFragment;
 //            ((BaseActivity) getActivity()).setFileList(fileInfoList);
         } else if (!hasCheckedItems && actionMode != null) {
             // there no selected items, finish the actionMode
@@ -490,6 +508,22 @@ public class FileListFragment extends Fragment implements LoaderManager
             mActionMode.setTitle(String.valueOf(fileListAdapter
                     .getSelectedCount()) + " selected");
         }
+    }
+
+    public void computeScroll() {
+        View vi = recyclerViewFileList.getChildAt(0);
+        int top = (vi == null) ? 0 : vi.getTop();
+        int index;
+        if (mViewMode == FileConstants.KEY_LISTVIEW) {
+
+            index = ((LinearLayoutManager) llm).findFirstVisibleItemPosition();
+        } else {
+            index = ((GridLayoutManager) llm).findFirstVisibleItemPosition();
+        }
+        Bundle b = new Bundle();
+        b.putInt("index", index);
+        b.putInt("top", top);
+        scrollPosition.put(mFilePath, b);
     }
 
     public void setSelectedItemPos(SparseBooleanArray selectedItemPos) {
@@ -556,6 +590,9 @@ public class FileListFragment extends Fragment implements LoaderManager
             getLoaderManager().restartLoader(LOADER_ID, args, this);
 
         }*/
+//        fileInfoList = new ArrayList<>();
+        mIsDataRefreshed = true;
+
         getLoaderManager().restartLoader(LOADER_ID, args, this);
 
     }
@@ -581,10 +618,12 @@ public class FileListFragment extends Fragment implements LoaderManager
     @Override
     public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
         fileInfoList = new ArrayList<>();
+        if (fileListAdapter != null) {
+            fileListAdapter.clearList();
+        }
         String path = args.getString(FileConstants.KEY_PATH);
         mSwipeRefreshLayout.setRefreshing(true);
         if (mIsZip) {
-
             return new FileListLoader(this, path, FileConstants.CATEGORY.ZIP_VIEWER.getValue(),
                     mCurrentZipDir, isDualPaneInFocus, mInParentZip);
         } else {
@@ -605,21 +644,34 @@ public class FileListFragment extends Fragment implements LoaderManager
             fileListAdapter.setCategory(mCategory);
             fileListAdapter.updateAdapter(fileInfoList);
 
+
             if (!data.isEmpty()) {
                 recyclerViewFileList.setHasFixedSize(true);
 
-                if (mViewMode == FileConstants.KEY_LISTVIEW) {
-                    llm = new CustomLayoutManager(getActivity());
-                } else {
-                    llm = new CustomGridLayoutManager(getActivity(), getResources().getInteger(R
-                            .integer.grid_columns));
 
+                if (!mIsDataRefreshed) {
+                    if (mViewMode == FileConstants.KEY_LISTVIEW) {
+                        llm = new CustomLayoutManager(getActivity());
+                    } else {
+                        findNoOfGridColumns();
+                        llm = new CustomGridLayoutManager(getActivity(), mGridColumns);
+                    }
+                    llm.setAutoMeasureEnabled(false);
+                    recyclerViewFileList.setLayoutManager(llm);
+                    recyclerViewFileList.setItemAnimator(new DefaultItemAnimator());
+                    recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
+                            .VERTICAL));
+                } else {
+                    if (scrollPosition.containsKey(mFilePath)) {
+                        Bundle b = scrollPosition.get(mFilePath);
+                        if (mViewMode == FileConstants.KEY_LISTVIEW)
+                            ((LinearLayoutManager) llm).scrollToPositionWithOffset(b.getInt("index"), b.getInt("top"));
+                        else
+                            ((GridLayoutManager) llm).scrollToPositionWithOffset(b.getInt("index"), b.getInt("top"));
+                        recyclerViewFileList.stopScroll();
+                    }
+                    mIsDataRefreshed = false;
                 }
-                llm.setAutoMeasureEnabled(false);
-                recyclerViewFileList.setLayoutManager(llm);
-                recyclerViewFileList.setItemAnimator(new DefaultItemAnimator());
-                recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
-                        .VERTICAL));
                 if (mTextEmpty.getVisibility() == View.VISIBLE) {
                     mTextEmpty.setVisibility(View.GONE);
                 }
@@ -1709,14 +1761,14 @@ public class FileListFragment extends Fragment implements LoaderManager
             case R.id.action_view_list:
                 if (mViewMode != FileConstants.KEY_LISTVIEW) {
                     mViewMode = FileConstants.KEY_LISTVIEW;
-                    preference.savePrefs(getActivity(), mViewMode);
+                    sharedPreferenceWrapper.savePrefs(getActivity(), mViewMode);
                     switchView();
                 }
                 break;
             case R.id.action_view_grid:
                 if (mViewMode != FileConstants.KEY_GRIDVIEW) {
                     mViewMode = FileConstants.KEY_GRIDVIEW;
-                    preference.savePrefs(getActivity(), mViewMode);
+                    sharedPreferenceWrapper.savePrefs(getActivity(), mViewMode);
                     switchView();
                 }
                 break;
@@ -1764,22 +1816,72 @@ public class FileListFragment extends Fragment implements LoaderManager
     }
 
     private void switchView() {
-        Bundle bundle = new Bundle();
+/*        Bundle bundle = new Bundle();
         bundle.putString(FileConstants.KEY_PATH, mFilePath);
         Intent intent = new Intent(getActivity(), BaseActivity.class);
+        intent.setAction(BaseActivity.ACTION_DUAL_VIEW_FOLDER_LIST);
+        intent.putExtra(ACTION_VIEW_MODE, mViewMode);
+        intent.putExtra(FileConstants.KEY_CATEGORY, mCategory);
         if (FileListFragment.this instanceof FileListDualFragment) {
-            intent.setAction(BaseActivity.ACTION_DUAL_VIEW_FOLDER_LIST);
             intent.putExtra(BaseActivity.ACTION_DUAL_PANEL, true);
-
         } else {
-            intent.setAction(BaseActivity.ACTION_VIEW_FOLDER_LIST);
             intent.putExtra(BaseActivity.ACTION_DUAL_PANEL, false);
-            intent.putExtra(ACTION_VIEW_MODE, mViewMode);
-            intent.putExtra(FileConstants.KEY_CATEGORY, mCategory);
         }
 
         intent.putExtras(bundle);
-        startActivity(intent);
+        startActivity(intent);*/
+
+        findNoOfGridColumns();
+        fileListAdapter = null;
+
+        if (mViewMode == FileConstants.KEY_LISTVIEW) {
+            llm = new CustomLayoutManager(getActivity());
+        } else {
+            if (mGridColumns == 0 || mGridColumns == -1) {
+                mGridColumns = getResources().getInteger(R
+                        .integer.grid_columns);
+            }
+            llm = new CustomGridLayoutManager(getActivity(), mGridColumns);
+        }
+        llm.setAutoMeasureEnabled(false);
+        recyclerViewFileList.setLayoutManager(llm);
+        fileListAdapter = new FileListAdapter(FileListFragment.this, getContext(), fileInfoList,
+                mCategory, mViewMode);
+        recyclerViewFileList.setAdapter(fileListAdapter);
+        initializeListeners();
+
+    }
+
+    public int dpToPx(int dp) {
+        if (displayMetrics == null) displayMetrics = getResources().getDisplayMetrics();
+        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        return px;
+    }
+
+    private void findNoOfGridColumns() {
+        int width = recyclerViewFileList.getMeasuredWidth();
+        Logger.log(TAG, "findNoOfGridColumns--width=" + width);
+        int dptopx = dpToPx(100);
+        mGridColumns = width / dptopx;
+        Logger.log(TAG, "findNoOfGridColumns--Grid cols=" + mGridColumns);
+        if (mIsLandscapeMode && mIsDualModeEnabledSettings && !mIsDataRefreshed) {
+            Fragment fragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.main_container);
+            ((FileListFragment)fragment).refreshSpan();
+
+        }
+    }
+
+    public void refreshSpan() {
+        if (mViewMode == FileConstants.KEY_GRIDVIEW) {
+            findNoOfGridColumns();
+            Logger.log(TAG, "refreshSpan--llm=" + llm);
+            if (llm != null) {
+//                ((CustomGridLayoutManager) llm).setSpanCount(mGridColumns);
+//                recyclerViewFileList.setHasFixedSize(true);
+                llm = new CustomGridLayoutManager(getActivity(), mGridColumns);
+                recyclerViewFileList.setLayoutManager(llm);
+            }
+        }
     }
 
     private void sortFiles(ArrayList<FileInfo> files, int sortMode) {
@@ -1822,7 +1924,8 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     @Override
     public void onDestroyView() {
-
+        mPreferences.edit().putInt(FileConstants.KEY_GRID_COLUMNS, mGridColumns).apply();
+        sharedPreferenceWrapper.savePrefs(getActivity(), mViewMode);
         super.onDestroyView();
     }
 
@@ -1892,5 +1995,30 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     }
 
+    @Override
+    public void onConfigurationChanged(final Configuration newConfig) {
+        mCurrentOrientation = newConfig.orientation;
+        super.onConfigurationChanged(newConfig);
+        Logger.log(TAG,"onConfigurationChanged "+newConfig.orientation);
+        if (mCurrentOrientation == Configuration.ORIENTATION_PORTRAIT) {
+            refreshSpan();
+        }
+/*        final View view = getActivity().findViewById(R.id.recyclerViewFileList);
+        final ViewTreeObserver viewTreeObserver = view.getViewTreeObserver();
+        viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
 
+                int width  = view.getMeasuredWidth();
+                Logger.log(TAG,"Width observer="+width+"old width="+mOldWidth);
+                if (width != mOldWidth) {
+                    viewTreeObserver.removeOnGlobalLayoutListener(this);
+                    refreshSpan();
+                }
+
+            }
+        });*/
+
+
+    }
 }

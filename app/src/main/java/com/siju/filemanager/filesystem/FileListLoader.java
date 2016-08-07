@@ -435,9 +435,9 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
         }
         else {
-            boolean rootAvailable  = RootTools.isRootAvailable();
+//            boolean rootAvailable  = RootTools.isRootAvailable();
             fileInfoList = com.siju.filemanager.helper.RootHelper.getFilesList(mContext,mPath,
-                    rootAvailable,
+                    true,
                     showHidden);
         }
         return fileInfoList;

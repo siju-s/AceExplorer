@@ -18,6 +18,8 @@ public class FileConstants {
     public static final String KEY_PATH_OTHER = "OTHER_PATH";
     public static final String KEY_FOCUS_DUAL = "DUAL_FOCUS";
     public static final String KEY_LIB_SORTLIST = "LIB_LIST";
+    public static final String KEY_GRID_COLUMNS = "grid_columns";
+
 
 
     public static final String KEY_FILENAME = "FILENAME";

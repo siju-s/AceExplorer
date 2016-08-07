@@ -148,6 +148,13 @@
     <string name="apk">Apps</string>
     <string name="pdf">PDF</string>
     <string name="library_large">Large files</string>
+    <string name="open_as">Open As</string>
+    <string name="text">Text</string>
+    <string name="image">Image</string>
+    <string name="audio">Audio</string>
+    <string name="video">Video</string>
+    <string name="other">Other</string>
+    <string name="file_exists">File already exists</string>
 
 
 </resources>

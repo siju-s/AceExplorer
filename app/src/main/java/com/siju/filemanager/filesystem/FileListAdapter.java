@@ -18,7 +18,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.signature.MediaStoreSignature;
 import com.siju.filemanager.R;
+import com.siju.filemanager.common.Logger;
 import com.siju.filemanager.filesystem.model.FileInfo;
 import com.siju.filemanager.filesystem.utils.FileUtils;
 
@@ -83,6 +85,14 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 //        Log.d("SIJU","updateAdapter"+fileInfoArrayList.size());
 
         notifyDataSetChanged();
+    }
+
+
+    public void clearList() {
+        if (!fileInfoArrayList.isEmpty()) {
+            fileInfoArrayList.clear();
+            fileInfoArrayListCopy.clear();
+        }
     }
 
     public void setCategory(int category) {
@@ -234,10 +244,11 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
             case 1:
                 Uri uri = ContentUris.withAppendedId(mAudioUri, fileInfoArrayList.get(position)
                         .getBucketId());
-                Glide.with(mContext).loadFromMediaStore(uri).centerCrop()
+                Glide.with(mContext).load(uri).centerCrop()
                         .placeholder(R.drawable.ic_music)
                         .crossFade(2)
                         .into(fileListViewHolder.imageIcon);
+
                 break;
 
             case 2:
@@ -529,6 +540,8 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
         @Override
         public void onClick(View v) {
+            Logger.log("TAG",""+ mItemClickListener);
+
             if (mItemClickListener != null) {
                 mItemClickListener.onItemClick(v, getAdapterPosition());
             }
