@@ -170,20 +170,25 @@ public class BaseActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_content);
 
-        checkPreferences();
-        getSavedFavourites();
         initConstants();
         initViews();
 //        checkScreenOrientation();
-        initListeners();
+
         Logger.log("TAG", "on create--Activity");
         // If MarshMallow ask for permission
         if (useRunTimePermissions()) {
             checkPermissions();
         } else {
             mIsPermissionGranted = true;
+            setup();
             setUpInitialData();
         }
+    }
+
+    private void setup() {
+        checkPreferences();
+        getSavedFavourites();
+        initListeners();
     }
 
  /*   @Override
@@ -212,6 +217,7 @@ public class BaseActivity extends AppCompatActivity implements
         prepareListData();
         setListAdapter();
         setUpPreferences();
+        checkScreenOrientation();
         initialScreenSetup(mIsHomeScreenEnabled);
     }
 
@@ -238,6 +244,7 @@ public class BaseActivity extends AppCompatActivity implements
         } else {
             mIsPermissionGranted = true;
             fabCreateMenu.setVisibility(View.VISIBLE);
+            setup();
             setUpInitialData();
         }
 
@@ -265,6 +272,7 @@ public class BaseActivity extends AppCompatActivity implements
                     Log.d("TAG", "Permission granted");
                     mIsPermissionGranted = true;
                     fabCreateMenu.setVisibility(View.VISIBLE);
+                    setup();
                     setUpInitialData();
                 } else {
                     showRationale();
@@ -406,12 +414,12 @@ public class BaseActivity extends AppCompatActivity implements
         toggle.syncState();
         // get the listview
         expandableListView = (ExpandableListView) findViewById(R.id.expand_list_drawer);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+    /*    mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 toggleDrawer(true);
             }
-        });
+        });*/
         fabCreateMenu = (FloatingActionsMenu) findViewById(R.id.fabCreate);
         fabCreateFolder = (FloatingActionButton) findViewById(R.id.fabCreateFolder);
         fabCreateFile = (FloatingActionButton) findViewById(R.id.fabCreateFile);
@@ -686,11 +694,28 @@ public class BaseActivity extends AppCompatActivity implements
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE
                 && mIsDualPaneEnabledSettings) {
             mIsDualModeEnabled = true;
-            isDualPaneInFocus = true;
+//                 showDualPane();
        /*     mViewSeperator.setVisibility(View.VISIBLE);
             frameLayoutFabDual.setVisibility(View.VISIBLE);*/
         }
 
+    }
+
+    /**
+     * Show dual pane in Landscape mode
+     */
+    private void showDualPane() {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
+        mIsDualModeEnabled = true;
+        isDualPaneInFocus = true;
+        if (fragment instanceof HomeScreenFragment) {
+            ((HomeScreenFragment) fragment).setDualModeEnabled(true);
+        }
+        // For Files category only, show dual pane
+        else if (mCategory == FileConstants.CATEGORY.FILES.getValue()) {
+            toggleDualPaneVisibility(true);
+            createDualFragment();
+        }
     }
 
     @Override
@@ -733,22 +758,17 @@ public class BaseActivity extends AppCompatActivity implements
                         final CharSequence name = rename.getText();
                         String fileName = rename.getText().toString();
                         boolean isDir = false;
-                        if (fileName.length() == 0) {
+                        if (!FileUtils.validateFileName(fileName)) {
                             rename.setError(getResources().getString(R.string
                                     .msg_error_valid_name));
                             return;
                         }
+                        fileName = fileName.trim();
                         if (view.getId() == R.id.fabCreateFolder ||
                                 view.getId() == R.id.fabCreateFolderDual) {
                             isDir = true;
                         } else {
                             fileName = fileName + ".txt";
-                        }
-
-                        if (!FileUtils.validateFileName(new File(fileName))) {
-                            rename.setError(getResources().getString(R.string
-                                    .msg_error_valid_name));
-                            return;
                         }
                         FileListFragment singlePaneFragment = (FileListFragment)
                                 getSupportFragmentManager()
@@ -1097,34 +1117,6 @@ public class BaseActivity extends AppCompatActivity implements
     }
 
 
-    public void toggleToolbarVisibility(boolean isVisible, Toolbar toolbar) {
-        if (isVisible) {
-            mToolbar.setVisibility(View.GONE);
-/*            toggle = new ActionBarDrawerToggle(
-                    this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string
-                    .navigation_drawer_close);
-//            toggle.setHomeAsUpIndicator(R.drawable.ic_menu_white);
-            toggle.setDrawerIndicatorEnabled(false);*/
-//            toggle.syncState();
-            setSupportActionBar(toolbar);
-/*            getSupportActionBar().setHomeButtonEnabled(true);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);*/
-//             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_white);
-        } else {
-            mToolbar.setVisibility(View.VISIBLE);
-            setSupportActionBar(mToolbar);
-/*            getSupportActionBar().setHomeButtonEnabled(true);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);*/
-//            toggle.syncState();
-
-       /*     toggle = new ActionBarDrawerToggle(
-                    this, drawerLayout, mToolbar, R.string.navigation_drawer_open, R.string
-                    .navigation_drawer_close);
-*/
-        }
-    }
-
     public void toggleDrawer(boolean value) {
         if (value) {
             drawerLayout.openDrawer(GravityCompat.START);
@@ -1179,6 +1171,8 @@ public class BaseActivity extends AppCompatActivity implements
             Bundle args = new Bundle();
             args.putBoolean(FileConstants.KEY_HOME, true);
             args.putBoolean(BaseActivity.PREFS_FIRST_RUN, mIsFirstRun);
+            args.putBoolean(FileConstants.PREFS_DUAL_ENABLED, mIsDualModeEnabled);
+
 //          args.putInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
             HomeScreenFragment homeScreenFragment = new HomeScreenFragment();
             homeScreenFragment.setArguments(args);
@@ -1208,6 +1202,10 @@ public class BaseActivity extends AppCompatActivity implements
 //            ft.addToBackStack(mCurrentDir);
 //            ft.commitAllowingStateLoss();
             ft.commit();
+            if (mIsDualModeEnabled) {
+                toggleDualPaneVisibility(true);
+                createDualFragment();
+            }
         }
     }
 
@@ -1427,7 +1425,7 @@ public class BaseActivity extends AppCompatActivity implements
 
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
 
-            if (mIsDualPaneEnabledSettings) {
+  /*          if (mIsDualPaneEnabledSettings) {
                 mIsDualModeEnabled = true;
                 isDualPaneInFocus = true;
                 if (fragment instanceof HomeScreenFragment) {
@@ -1440,7 +1438,8 @@ public class BaseActivity extends AppCompatActivity implements
                     createDualFragment();
 
                 }
-            }
+            }*/
+            showDualPane();
 
 
 //            ft.addToBackStack(null);
@@ -1991,7 +1990,9 @@ public class BaseActivity extends AppCompatActivity implements
 
     private void removeFragmentFromBackStack() {
         setTitleForCategory(FileConstants.CATEGORY.FILES.getValue());
-        int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
+//        int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
+//        FileListDualFragment fileListDualFragment = (FileListDualFragment) getSupportFragmentManager().
+//                findFragmentById(R.id.frame_container_dual);
         if (!mIsFromHomePage) {
             if (mCategory != FileConstants.CATEGORY
                     .FILES.getValue()) {
@@ -2007,11 +2008,17 @@ public class BaseActivity extends AppCompatActivity implements
             } else {
                 getSupportFragmentManager().popBackStack();
                 toggleViews(true);
+                if(mIsDualModeEnabled && mIsDualPaneEnabledSettings) {
+                    toggleDualPaneVisibility(false);
+                }
             }
             mFrameDualPane.setVisibility(View.GONE);
             mViewSeperator.setVisibility(View.GONE);
         } else {
             toggleViews(true);
+            if(mIsDualModeEnabled && mIsDualPaneEnabledSettings) {
+                toggleDualPaneVisibility(false);
+            }
             super.onBackPressed();
         }
 

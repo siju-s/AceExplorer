@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.siju.filemanager.R;
 import com.siju.filemanager.common.Logger;
+import com.siju.filemanager.filesystem.FileConstants;
 import com.siju.filemanager.filesystem.model.FileInfo;
 
 import java.io.BufferedInputStream;
@@ -257,7 +258,7 @@ public class FileUtils {
         }
 
         // If move operation
-        if (isMove) {
+        if (isMove && action != FileUtils.ACTION_REPLACE) {
             // delete the original file
             sourceFile.delete();
         }
@@ -353,14 +354,14 @@ public class FileUtils {
      * Validates file name at the time of creation
      * special reserved characters shall not be allowed in the file names
      *
-     * @param file  the file which needs to be validated
+     * @param name  the file which needs to be validated
      * @return boolean if the file name is valid or invalid
      */
-    public static boolean validateFileName(File file) {
+    public static boolean validateFileName(String name) {
 
-        StringBuilder builder = new StringBuilder(file.getPath());
-        String newName = builder.substring(builder.lastIndexOf("/") + 1, builder.length());
-
+       /* StringBuilder builder = new StringBuilder(file.getPath());
+        String newName = builder.substring(builder.lastIndexOf("/") + 1, builder.length());*/
+         String newName = name.trim();
         if (newName.contains("/") ||
                 newName.length() == 0) {
             return false;

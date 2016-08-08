@@ -49,8 +49,8 @@ public class SharedPreferenceWrapper {
     public void addFavorite(Context context, FavInfo favInfo) {
         List<FavInfo> favorites = getFavorites(context);
         if (favorites == null)
-            favorites = new ArrayList<FavInfo>();
-        if (favorites.contains(favInfo)) {
+            favorites = new ArrayList<>();
+        if (!favorites.contains(favInfo)) {
             favorites.add(favInfo);
             saveFavorites(context, favorites);
         }
@@ -135,6 +135,8 @@ public class SharedPreferenceWrapper {
 
             libraries = Arrays.asList(libItems);
             libraries = new ArrayList<>(libraries);
+            Logger.log("SIJU","getLibraries="+jsonFavorites);
+
         } else
             return null;
 
@@ -162,7 +164,7 @@ public class SharedPreferenceWrapper {
 
         Gson gson = new Gson();
         String jsonFavorites = gson.toJson(librarySortModel);
-
+        Logger.log("SIJU","Save library="+jsonFavorites);
         editor.putString(LIBRARIES, jsonFavorites);
 
         editor.apply();

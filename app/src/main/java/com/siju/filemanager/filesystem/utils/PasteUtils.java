@@ -54,6 +54,7 @@ public class PasteUtils {
         pasteOperationCleanUp();
     }
 
+/*
     PasteUtils(Activity activity, Context context, Fragment fragment, String currentDir, boolean
             isDrag) {
         mContext = context;
@@ -64,6 +65,7 @@ public class PasteUtils {
         pasteOperationCleanUp();
 
     }
+*/
 
 
     public void pasteOperationCleanUp() {

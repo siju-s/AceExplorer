@@ -105,6 +105,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
         mIsFirstRun = getArguments().getBoolean(BaseActivity.PREFS_FIRST_RUN, false);
+        mIsDualModeEnabled = getArguments().getBoolean(FileConstants.PREFS_DUAL_ENABLED, false);
         Log.d(TAG, "First run==" + mIsFirstRun);
 //        savedLibraries = new ArrayList<>();
         homeLibraryInfoArrayList = new ArrayList<>();
@@ -115,17 +116,8 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         initConstants();
         initializeLibraries();
         setupLoaders();
-
-
-
-
-/*
-        for (int i = 0; i < mResourceIds.length; i++) {
-            homeLibraryInfoArrayList.add(new HomeLibraryInfo(mCategoryIds[i], mLabels[i],
-                    mResourceIds[i], 0));
-        }*/
-
         initializeStorageGroup();
+
         homeLibraryAdapter = new HomeLibraryAdapter(getActivity(), homeLibraryInfoArrayList);
         homeStoragesAdapter = new HomeStoragesAdapter(getActivity(), homeStoragesInfoArrayList);
         initListeners();

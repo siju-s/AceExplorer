@@ -8,6 +8,8 @@ public class FileConstants {
 
     public static final String PREFS_HIDDEN = "prefHidden";
     public static final String PREFS_DUAL_PANE = "prefDualPane";
+    public static final String PREFS_DUAL_ENABLED = "prefDualEnabled";
+
     public static final String PREFS_HOMESCREEN = "prefHomeScreen";
 
     public static final String PREFS_RESET = "prefsReset";
@@ -102,7 +104,7 @@ public class FileConstants {
 
         private int value;
 
-        private CATEGORY(int value) {
+        CATEGORY(int value) {
             this.value = value;
         }
 
