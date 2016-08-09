@@ -16,9 +16,16 @@
         <item name="windowNoTitle">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="windowActionModeOverlay">true</item>
-        <item name="actionModeBackground">@color/colorPrimary</item>
-        <item name="android:actionModeBackground">@color/colorPrimary</item>
+    <!--    <item name="actionModeStyle">@style/Widget.ActionMode</item>
+        <item name="android:actionModeStyle">@style/Widget.ActionMode</item>-->
+
+                <item name="actionModeBackground">@color/colorPrimary</item>
+                <item name="android:actionModeBackground">@color/colorPrimary</item>
 
     </style>
+
+<!--    <style name="Widget.ActionMode" parent="@style/Widget.AppCompat.ActionMode">
+        <item name="android:background">@color/colorPrimary</item>
+    </style>-->
 
 </resources>

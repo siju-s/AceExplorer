@@ -80,7 +80,8 @@
                 app:contentInsetLeft="72dp"
                 app:contentInsetStart="72dp"
                 app:popupTheme="@style/AppTheme.PopupOverlay"
-                app:theme="@style/Theme.AppCompat.Light.DarkActionBar"
+                app:titleTextAppearance="@style/ToolbarTitle"
+                app:theme="@style/AppTheme.AppBarOverlay"
                 />
 
 

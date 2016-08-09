@@ -20,6 +20,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -286,7 +287,13 @@ public class FileListFragment extends Fragment implements LoaderManager
         recyclerViewFileList.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                recyclerViewFileList.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+                    recyclerViewFileList.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+                else {
+                    recyclerViewFileList.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                }
+
                 int width = recyclerViewFileList.getWidth(); //height is ready
                 mOldWidth = width;
                 Logger.log(TAG, "Width inside observer=" + width);
@@ -845,7 +852,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             mFavItem = menu.findItem(R.id.action_fav);
             mExtractItem = menu.findItem(R.id.action_extract);
             mHideItem = menu.findItem(R.id.action_hide);
-            setupMenu(menu);
+            setupMenu();
 
             return true;
         }
@@ -888,9 +895,6 @@ public class FileListFragment extends Fragment implements LoaderManager
                                         .ic_unhide_white), 0, 1,
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                         mHideItem.setTitle(hideBuilder);
-                        mHideItem.setTitle(getString(R.string.unhide));
-                        mHideItem.setIcon(R.drawable.ic_unhide_white);
-
                     } else {
                         SpannableStringBuilder hideBuilder = new SpannableStringBuilder(" " + "  " +
                                 "" + getString(R.string
@@ -900,9 +904,6 @@ public class FileListFragment extends Fragment implements LoaderManager
                                         .ic_hide_white), 0, 1,
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                         mHideItem.setTitle(hideBuilder);
-                        mHideItem.setTitle(getString(R.string.hide));
-                        mHideItem.setIcon(R.drawable.ic_hide_white);
-
                     }
                 }
             }
@@ -910,8 +911,8 @@ public class FileListFragment extends Fragment implements LoaderManager
             return false;
         }
 
-        private void setupMenu(Menu menu) {
-            MenuItem item = menu.findItem(R.id.action_archive);
+        private void setupMenu() {
+//            MenuItem item = menu.findItem(R.id.action_archive);
             SpannableStringBuilder builder = new SpannableStringBuilder(" " + "  " + getString(R
                     .string
                     .action_archive));
@@ -1925,8 +1926,13 @@ public class FileListFragment extends Fragment implements LoaderManager
         super.onDestroyView();
     }
 
-    private void refreshMediaStore(String path) {
-        getActivity().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(new File(path))));
+    private int refreshMediaStore(String path) {
+        int count = 0;
+        Uri deletedUri = FileUtils.getContentUriForDelete(getActivity(), path, mCategory);
+        if (deletedUri != null) {
+            count = getActivity().getContentResolver().delete(deletedUri, null, null);
+        }
+        return count;
     }
 
     private class BgOperationsTask extends AsyncTask<ArrayList<String>, Void, Integer> {
@@ -1961,8 +1967,9 @@ public class FileListFragment extends Fragment implements LoaderManager
                 int result = FileUtils.deleteTarget(paths.get(i));
                 if (result == 0) {
                     deletedCount++;
-                    if (mCategory == FileConstants.CATEGORY.DOCS.getValue()) {
-                             refreshMediaStore(paths.get(i));
+                    if (mCategory != FileConstants.CATEGORY.FILES.getValue() ||
+                            mCategory != FileConstants.CATEGORY.DOWNLOADS.getValue()) {
+                        refreshMediaStore(paths.get(i));
                     }
                 }
             }
@@ -1984,7 +1991,6 @@ public class FileListFragment extends Fragment implements LoaderManager
                                 deletedFiles,
                                 deletedFiles) + " " +
                                 getString(R.string.msg_delete_success));
-
                         refreshList();
                     }
 

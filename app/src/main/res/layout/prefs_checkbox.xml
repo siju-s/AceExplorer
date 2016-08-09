@@ -9,7 +9,6 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
         android:layout_weight="1">
 
         <TextView
@@ -40,11 +39,12 @@
     <CheckBox
         android:id="@android:id/checkbox"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:clickable="false"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:button="@drawable/selector_checkbox"
         />
 
 </LinearLayout>

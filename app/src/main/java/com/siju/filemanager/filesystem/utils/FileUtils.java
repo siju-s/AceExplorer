@@ -8,9 +8,11 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.text.format.Formatter;
 import android.util.Log;
@@ -354,14 +356,14 @@ public class FileUtils {
      * Validates file name at the time of creation
      * special reserved characters shall not be allowed in the file names
      *
-     * @param name  the file which needs to be validated
+     * @param name the file which needs to be validated
      * @return boolean if the file name is valid or invalid
      */
     public static boolean validateFileName(String name) {
 
        /* StringBuilder builder = new StringBuilder(file.getPath());
         String newName = builder.substring(builder.lastIndexOf("/") + 1, builder.length());*/
-         String newName = name.trim();
+        String newName = name.trim();
         if (newName.contains("/") ||
                 newName.length() == 0) {
             return false;
@@ -956,6 +958,49 @@ public class FileUtils {
                     return 0;
         }
         return -1;
+    }
+
+    public static Uri getContentUriForDelete(Context context, String filePath, int category) {
+        Uri uri = null;
+        switch (category) {
+            case 1:
+                uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                break;
+            case 2:
+                uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+                break;
+            case 3:
+                uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                break;
+            case 4:
+            case 7:
+            case 9:
+            case 11:
+                uri = MediaStore.Files.getContentUri("external");                ;
+                break;
+
+        }
+        File audioFile = new File(filePath);
+        Cursor cursor = context.getContentResolver().query(
+                uri, null,
+                MediaStore.MediaColumns.DATA + "=? ", new String[]{filePath}, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+
+                int id = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
+//                Uri baseUri = Uri.parse("content://media/external/audio/media");
+                cursor.close();
+                return Uri.withAppendedPath(uri, "" + id);
+            }
+            cursor.close();
+        }
+/*        if (audioFile.exists()) {
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.MediaColumns.DATA, filePath);
+            return context.getContentResolver().insert(
+                    MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, values);
+        }*/
+        return null;
     }
 
 

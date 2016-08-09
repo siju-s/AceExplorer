@@ -87,7 +87,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
 
     @Override
     public void onAttach(Context context) {
-        mBaseActivity = (BaseActivity)context;
+        mBaseActivity = (BaseActivity) context;
         super.onAttach(context);
     }
 
@@ -204,16 +204,17 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                         .beginTransaction();
                 Bundle args = new Bundle();
                 args.putBoolean(FileConstants.KEY_HOME, true);
+                String currentDir;
 
                 if (position == 0) {
-                    args.putString(FileConstants.KEY_PATH, FileUtils.getInternalStorage()
-                            .getAbsolutePath());
+                    currentDir = FileUtils.getInternalStorage().getAbsolutePath();
+                    args.putString(FileConstants.KEY_PATH, currentDir);
                     args.putInt(BaseActivity.ACTION_GROUP_POS, 0); // Storage Group
                     args.putInt(BaseActivity.ACTION_CHILD_POS, 1); // Internal Storage child
 
                 } else {
-                    args.putString(FileConstants.KEY_PATH, FileUtils.getExternalStorage()
-                            .getAbsolutePath());
+                    currentDir = FileUtils.getExternalStorage().getAbsolutePath();
+                    args.putString(FileConstants.KEY_PATH, currentDir);
                     args.putInt(BaseActivity.ACTION_GROUP_POS, 0); // Storage Group
                     args.putInt(BaseActivity.ACTION_CHILD_POS, 2); // External Storage child
                 }
@@ -224,6 +225,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                 ft.addToBackStack(null);
                 ft.commitAllowingStateLoss();
                 mBaseActivity.setCurrentCategory(FileConstants.CATEGORY.FILES.getValue());
+                mBaseActivity.setCurrentDir(currentDir, mIsDualModeEnabled);
                 mBaseActivity.setIsFromHomePage(true);
 
                 if (mIsDualModeEnabled) {
@@ -457,7 +459,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     @Override
     public void onLoadFinished(Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
         if (data != null) {
-            Log.d(TAG, "on onLoadFinished--" + loader.getId());
+//            Log.d(TAG, "on onLoadFinished--" + loader.getId());
             for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
                 if (loader.getId() == homeLibraryInfoArrayList.get(i).getCategoryId()) {
                     homeLibraryInfoArrayList.get(i).setCount(data.size());
