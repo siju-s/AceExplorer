@@ -163,6 +163,8 @@ public class BaseActivity extends AppCompatActivity implements
     private boolean mIsDualModeEnabled;
     private int mPrevCategory;
     private boolean mIsFromHomePage;
+    private int mCurrentTheme = FileConstants.THEME_LIGHT;
+    private int mNavButtonDimensions;
 
 
     @Override
@@ -189,6 +191,8 @@ public class BaseActivity extends AppCompatActivity implements
         checkPreferences();
         getSavedFavourites();
         initListeners();
+        if (mCurrentTheme != FileConstants.THEME_LIGHT)
+            setApplicationTheme(false);
     }
 
  /*   @Override
@@ -199,17 +203,18 @@ public class BaseActivity extends AppCompatActivity implements
     }*/
 
     private void checkPreferences() {
-        SharedPreferences sharedPreference = PreferenceManager.getDefaultSharedPreferences(this);
-        if (sharedPreference.getBoolean(PREFS_FIRST_RUN, true)) {
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if (mSharedPreferences.getBoolean(PREFS_FIRST_RUN, true)) {
             // If app is first run
             mIsFirstRun = true;
-            sharedPreference.edit().putBoolean(PREFS_FIRST_RUN, false).apply();
+            mSharedPreferences.edit().putBoolean(PREFS_FIRST_RUN, false).apply();
         }
-        mIsHomeScreenEnabled = sharedPreference.getBoolean(FileConstants.PREFS_HOMESCREEN,
+        mIsHomeScreenEnabled = mSharedPreferences.getBoolean(FileConstants.PREFS_HOMESCREEN,
                 true);
-        mIsDualPaneEnabledSettings = sharedPreference.getBoolean(FileConstants.PREFS_DUAL_PANE,
+        mIsDualPaneEnabledSettings = mSharedPreferences.getBoolean(FileConstants.PREFS_DUAL_PANE,
                 true);
-        sharedPreference.registerOnSharedPreferenceChangeListener(this);
+        mCurrentTheme = mSharedPreferences.getInt(FileConstants.CURRENT_THEME, 0);
+        mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
 
@@ -358,6 +363,7 @@ public class BaseActivity extends AppCompatActivity implements
         IMAGES = getResources().getString(R.string.nav_menu_image);
         SETTINGS = getResources().getString(R.string.action_settings);
         RATE = getResources().getString(R.string.rate_us);
+        mNavButtonDimensions = (int)getResources().getDimension(R.dimen.nav_button_width);
     }
 
 /*    */
@@ -619,18 +625,39 @@ public class BaseActivity extends AppCompatActivity implements
                                  final FileListDualFragment fileListDualFragment) {
         int WRAP_CONTENT = LinearLayout.LayoutParams.WRAP_CONTENT;
         final Button button = new Button(this);
-        button.setLayoutParams(new LinearLayout.LayoutParams(WRAP_CONTENT,
-                WRAP_CONTENT));
-        button.setText(text);
-        if (Build.VERSION.SDK_INT < 23) {
-            button.setTextAppearance(this, R.style.NavigationButton);
-        } else {
-            button.setTextAppearance(R.style.NavigationButton);
-        }
-        button.setBackgroundResource(
-                android.R.color.transparent);
 
-        Log.d("TAG", "Button tag DUAL=" + navDirectoryDualPane);
+        if (text.equals(STORAGE_INTERNAL)) {
+            button.setLayoutParams(new LinearLayout.LayoutParams(mNavButtonDimensions,
+                    mNavButtonDimensions));
+            button.setGravity(Gravity.CENTER_VERTICAL);
+            button.setBackgroundResource(R.drawable.ic_storage_white_nav);
+        }
+        else  if (text.equals(STORAGE_EXTERNAL)) {
+            button.setLayoutParams(new LinearLayout.LayoutParams(mNavButtonDimensions,
+                    mNavButtonDimensions));
+            button.setBackgroundResource(R.drawable.ic_ext_nav);
+        }
+        else if (text.equals(STORAGE_ROOT)) {
+            button.setLayoutParams(new LinearLayout.LayoutParams(mNavButtonDimensions,
+                    mNavButtonDimensions));
+            button.setBackgroundResource(R.drawable.ic_root_white_nav);
+        }
+        else {
+            button.setLayoutParams(new LinearLayout.LayoutParams(WRAP_CONTENT,
+                    WRAP_CONTENT));
+            button.setText(text);
+            button.setBackgroundResource(
+                    android.R.color.transparent);
+            if (Build.VERSION.SDK_INT < 23) {
+                button.setTextAppearance(this, R.style.NavigationButton);
+            } else {
+                button.setTextAppearance(R.style.NavigationButton);
+            }
+        }
+
+
+
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1592,6 +1619,28 @@ public class BaseActivity extends AppCompatActivity implements
         }
     }
 
+    private void setToolBarTheme(int toolBarColor, int statusBarColor) {
+        this.mToolbar.setBackgroundColor(toolBarColor);
+        if (Build.VERSION.SDK_INT >= 21) {
+            getWindow().setStatusBarColor(statusBarColor);
+        }
+    }
+
+    private void setApplicationTheme(boolean themeLight) {
+        if (themeLight) {
+            setToolBarTheme(ContextCompat.getColor(this, R.color.colorPrimary),
+                    ContextCompat.getColor(this, R.color.color_light_status_bar));
+            mMainLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.color_light_bg));
+
+        } else {
+            setToolBarTheme(ContextCompat.getColor(this, R.color.color_dark_bg),
+                    ContextCompat.getColor(this, R.color.color_dark_status_bar));
+            mMainLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.color_dark_bg));
+
+        }
+
+    }
+
     public void setCurrentCategory(int category) {
         mCategory = category;
     }
@@ -1603,7 +1652,7 @@ public class BaseActivity extends AppCompatActivity implements
     private void removeFragmentFromBackStack() {
         setTitleForCategory(FileConstants.CATEGORY.FILES.getValue());
         int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
-        Logger.log(TAG,"On backpress--Backstack=="+backStackCount+"fromhome="+mIsFromHomePage);
+        Logger.log(TAG, "On backpress--Backstack==" + backStackCount + "fromhome=" + mIsFromHomePage);
 //        FileListDualFragment fileListDualFragment = (FileListDualFragment) getSupportFragmentManager().
 //                findFragmentById(R.id.frame_container_dual);
         if (!mIsFromHomePage) {
@@ -1643,6 +1692,7 @@ public class BaseActivity extends AppCompatActivity implements
     protected void onDestroy() {
 //        sharedPreferenceWrapper.savePrefs(this, mViewMode);
         unregisterForContextMenu(expandableListView);
+        mSharedPreferences.edit().putInt(FileConstants.CURRENT_THEME, mCurrentTheme).apply();
         super.onDestroy();
     }
 
@@ -1795,6 +1845,16 @@ public class BaseActivity extends AppCompatActivity implements
                 }
 
                 break;
+
+            case FileConstants.PREFS_THEME:
+                String value = sharedPreferences.getString(FileConstants.PREFS_THEME, "");
+                if (!value.isEmpty()) {
+                    int theme = Integer.valueOf(value);
+                    mCurrentTheme = theme;
+                    boolean isLightTheme = theme == 0;
+                    setApplicationTheme(isLightTheme);
+                }
+//
         }
     }
 

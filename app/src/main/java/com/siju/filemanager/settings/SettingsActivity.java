@@ -2,6 +2,7 @@ package com.siju.filemanager.settings;
 
 
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.support.design.widget.AppBarLayout;
@@ -14,9 +15,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.siju.filemanager.R;
+import com.siju.filemanager.filesystem.FileConstants;
 
-import static com.siju.filemanager.settings.SettingsPreferenceFragment.THEME_DARK;
-import static com.siju.filemanager.settings.SettingsPreferenceFragment.THEME_LIGHT;
+import java.io.File;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -31,8 +32,9 @@ import static com.siju.filemanager.settings.SettingsPreferenceFragment.THEME_LIG
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
-    private int mIsTheme = THEME_LIGHT; // Default is Light
+    private int mIsTheme = FileConstants.THEME_LIGHT; // Default is Light
     private RelativeLayout mRelativeLayoutSettings;
+    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,10 +65,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         bar = (AppBarLayout) LayoutInflater.from(this).inflate(R.layout.toolbar, root,
                 false);
         root.addView(bar, 0); // insert at top
-        Toolbar toolbar = (Toolbar) bar.getChildAt(0);
+        mToolbar = (Toolbar) bar.getChildAt(0);
 
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setSupportActionBar(mToolbar);
 
 
         ActionBar actionBar = getSupportActionBar();
@@ -83,19 +85,47 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     void setApplicationTheme(int theme) {
         if (mIsTheme != theme) {
             mIsTheme = theme;
-            if (theme == THEME_LIGHT) {
+            if (theme == FileConstants.THEME_LIGHT) {
         /*        getListView().setBackgroundColor(ContextCompat.getColor(this, R.color
                         .color_light_bg));*/
+                mToolbar.setBackgroundColor(ContextCompat.getColor(this,R.color.colorPrimary));
                 mRelativeLayoutSettings.setBackgroundColor(ContextCompat.getColor(this, R.color
                         .color_light_bg));
-            } else if (theme == THEME_DARK) {
+                if (Build.VERSION.SDK_INT >= 21) {
+                    getWindow().setStatusBarColor(ContextCompat.getColor(this,R.color.color_light_status_bar));
+
+                }
+            } else if (theme == FileConstants.THEME_DARK) {
          /*       getListView().setBackgroundColor(ContextCompat.getColor(this, R.color
                         .color_dark_bg));*/
+                mToolbar.setBackgroundColor(ContextCompat.getColor(this,R.color.color_dark_bg));
                 mRelativeLayoutSettings.setBackgroundColor(ContextCompat.getColor(this, R.color.color_dark_bg));
+                if (Build.VERSION.SDK_INT >= 21) {
+                    getWindow().setStatusBarColor(ContextCompat.getColor(this,R.color.color_dark_status_bar));
 
+                }
             }
         }
     }
+
+/*
+    private void setApplicationTheme(boolean themeLight) {
+        if (themeLight) {
+            this.mToolbar.setBackgroundColor(getResources().getColor(R.color.color_lt_background));
+            this.mRelativeLayoutSettings.setBackgroundColor(getResources().getColor(R.color.color_lt_background_motiv));
+            if (VERSION.SDK_INT >= 21) {
+                getWindow().setStatusBarColor(getResources().getColor(R.color.color_lt_status_bar));
+                return;
+            }
+            return;
+        }
+        this.mToolbar.setBackgroundColor(getResources().getColor(R.color.color_dk_background));
+        this.mRelativeLayoutSettings.setBackgroundColor(getResources().getColor(R.color.color_dk_background_motiv));
+        if (VERSION.SDK_INT >= 21) {
+            getWindow().setStatusBarColor(getResources().getColor(R.color.color_dk_status_bar));
+        }
+    }
+*/
 
 /*    @Override
     public boolean onOptionsItemSelected(MenuItem item) {

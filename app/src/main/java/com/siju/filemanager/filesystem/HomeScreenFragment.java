@@ -28,6 +28,7 @@ import com.siju.filemanager.filesystem.model.FileInfo;
 import com.siju.filemanager.filesystem.model.HomeLibraryInfo;
 import com.siju.filemanager.filesystem.model.HomeStoragesInfo;
 import com.siju.filemanager.filesystem.model.LibrarySortModel;
+import com.siju.filemanager.filesystem.ui.DividerItemDecoration;
 import com.siju.filemanager.filesystem.utils.FileUtils;
 
 import java.io.File;
@@ -149,6 +150,8 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
 
         recyclerViewStorages.setLayoutManager(llmStorage);
         recyclerViewStorages.setItemAnimator(new DefaultItemAnimator());
+        recyclerViewStorages.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
+                .VERTICAL));
         sharedPreferenceWrapper = new SharedPreferenceWrapper();
 
     }
@@ -399,22 +402,22 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
 
         long spaceLeft = getSpaceLeft(internalSD);
         long totalSpace = getTotalSpace(internalSD);
-        int usedProgress = (int) (((float) spaceLeft / totalSpace) * 100);
-        int remainingProgress = 100 - usedProgress;
+        int leftProgress = (int) (((float) spaceLeft / totalSpace) * 100);
+        int usedSpaceProgress = 100 - leftProgress;
         String spaceText = storageSpace(internalSD);
 
         homeStoragesInfoArrayList.add(new HomeStoragesInfo(STORAGE_INTERNAL, R.drawable
                 .ic_storage_white,
-                remainingProgress, spaceText));
+                usedSpaceProgress, spaceText));
         if (extSD != null) {
             spaceLeft = getSpaceLeft(extSD);
             totalSpace = getTotalSpace(extSD);
-            usedProgress = (int) ((spaceLeft / totalSpace) * 100);
-            remainingProgress = 100 - usedProgress;
+            leftProgress = (int) (((float) spaceLeft / totalSpace) * 100);
+            usedSpaceProgress = 100 - leftProgress;
             spaceText = storageSpace(extSD);
             homeStoragesInfoArrayList.add(new HomeStoragesInfo(STORAGE_EXTERNAL, R.drawable
                     .ic_ext_white,
-                    remainingProgress, spaceText));
+                    usedSpaceProgress, spaceText));
         }
 
     }

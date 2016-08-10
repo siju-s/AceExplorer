@@ -141,9 +141,13 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         return resultLine;
     }
 
-    private int checkMimeType(String path) {
-        String mimeType = URLConnection.guessContentTypeFromName(path);
+    private int checkMimeType(String path,String extension) {
+//        String mimeType = URLConnection.guessContentTypeFromName(path);
+
         int value = 0;
+        if (extension == null) return value;
+            String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+
         if (mimeType != null) {
             if (mimeType.indexOf("image") == 0) {
                 value = FileConstants.CATEGORY.IMAGE.getValue();
@@ -330,7 +334,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                                 long size = file1.length();
                                 noOfFilesOrSize = Formatter.formatFileSize(mContext, size);
                                 extension = filePath.substring(filePath.lastIndexOf(".") + 1);
-                                type = checkMimeType(filePath);
+
+                                type = checkMimeType(filePath,extension);
 /*                            if (extension.equals("zip")) {
                                 String[] list = file1.list();
                                 ZipFile zipFile = null;

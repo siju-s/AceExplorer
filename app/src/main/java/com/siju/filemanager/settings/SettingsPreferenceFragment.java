@@ -31,8 +31,6 @@ import com.siju.filemanager.utils.LocaleHelper;
 
 import java.util.Locale;
 
-import static com.siju.filemanager.filesystem.FileConstants.PREFS_RESET;
-import static com.siju.filemanager.filesystem.FileConstants.PREFS_THEME;
 import static com.siju.filemanager.utils.LocaleHelper.getLanguage;
 
 
@@ -50,8 +48,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
     ListPreference themePreference;
 
     Preference updatePreference;
-    public static final int THEME_LIGHT = 0;
-    public static final int THEME_DARK = 1;
+
 
 
     @Override
@@ -62,7 +59,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         setHasOptionsMenu(true);
 
 //        langPreference = (ListPreference) findPreference(PREFS_LANGUAGE);
-        themePreference = (ListPreference) findPreference(PREFS_THEME);
+        themePreference = (ListPreference) findPreference(FileConstants.PREFS_THEME);
 
         updatePreference = findPreference(PREFS_UPDATE);
 
@@ -83,7 +80,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 Intent data = new Intent();
-                data.putExtra(PREFS_RESET, true);
+                data.putExtra(FileConstants.PREFS_RESET, true);
                 Toast.makeText(getActivity(), getString(R.string.msg_fav_reset), Toast
                         .LENGTH_LONG).show();
                 getActivity().setResult(Activity.RESULT_OK, data);
@@ -166,7 +163,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
                     LocaleHelper.setLocale(getActivity(), stringValue);
                     getActivity().recreate();
                 }*/
-                if (listPreference.getKey().equals(PREFS_THEME)) {
+                if (listPreference.getKey().equals(FileConstants.PREFS_THEME)) {
                     int theme = Integer.valueOf(stringValue);
 
                     ((SettingsActivity) getActivity()).setApplicationTheme(theme);

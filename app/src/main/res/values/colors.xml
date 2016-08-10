@@ -16,6 +16,26 @@
 
     <color name="color_light_bg">#e6ebed</color>
     <color name="color_dark_bg">#161b1e</color>
+    <color name="color_dark_status_bar">#000000</color>
+    <color name="color_light_status_bar">#800080</color>
     <color name="text_settings_list">#5d6a77</color>
+    <color name="text_light">#000000</color>
+    <color name="text_dark">#ffffff</color>
+
+    <!-- Colors for library items in Homescreen -->
+
+    <color name="audio_bg">#35465c</color>
+    <color name="video_bg">#74489d</color>
+    <color name="image_bg">#613854</color>
+    <color name="docs_bg">#1e91d0</color>
+    <color name="downloads_bg">#3266cc</color>
+    <color name="add_bg">#1a0967</color>
+    <color name="compressed_bg">#00a3b6</color>
+    <color name="fav_bg">#a70048</color>
+    <color name="pdf_bg">#bf3c4e</color>
+    <color name="apps_bg">#006600</color>
+    <color name="large_files_bg">#cd0067</color>
+
+
 
 </resources>

@@ -53,7 +53,8 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     private int draggedPos = -1;
 
 
-    public FileListAdapter(Fragment fragment, Context mContext, ArrayList<FileInfo>
+
+     FileListAdapter(Fragment fragment, Context mContext, ArrayList<FileInfo>
             fileInfoArrayList, int
                                    category, int viewMode) {
         this.mFragment = fragment;
@@ -159,6 +160,22 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
     }
 
+   /* public  void setApplicationTheme(boolean themeLight) {
+        if (themeLight) {
+           textFileName.setTextColor(ContextCompat.getColor(mContext,R.color.text_dark));
+            textFileModifiedDate.setTextColor(ContextCompat.getColor(mContext,R.color.text_dark));
+            textFileName.setTextColor(ContextCompat.getColor(mContext,R.color.text_dark));
+
+
+        } else {
+            setToolBarTheme(ContextCompat.getColor(this, R.color.color_dark_bg),
+                    ContextCompat.getColor(this, R.color.color_dark_status_bar));
+            mMainLayout.setBackgroundColor(ContextCompat.getColor(this,R.color.color_dark_bg));
+
+        }
+
+    }*/
+
 
     @Override
     public int getItemCount() {
@@ -214,6 +231,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
                 } else {
                     int type = fileInfoArrayList.get(position).getType();
+                    fileListViewHolder.imageIcon.setImageDrawable(null);
                     // If Image or Video file, load thumbnail
                     if (type == FileConstants.CATEGORY.IMAGE.getValue() ||
                             type == FileConstants.CATEGORY.VIDEO.getValue()) {
@@ -520,13 +538,14 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
     class FileListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
             View.OnLongClickListener {
-        ImageView imageIcon;
-        ImageView imageThumbIcon;
         TextView textFileName;
         TextView textFileModifiedDate;
         TextView textNoOfFileOrSize;
+        ImageView imageIcon;
+        ImageView imageThumbIcon;
 
-        public FileListViewHolder(View itemView) {
+
+        FileListViewHolder(View itemView) {
             super(itemView);
             textFileName = (TextView) itemView
                     .findViewById(R.id.textFolderName);

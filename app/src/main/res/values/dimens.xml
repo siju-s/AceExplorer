@@ -32,6 +32,9 @@
     <dimen name="drag_shadow_font">20sp</dimen>
     <dimen name="home_library_width">75dp</dimen>
     <dimen name="card_margin">5dp</dimen>
+    <dimen name="homescreen_storage_margin">16dp</dimen>
+    <dimen name="nav_button_width">25dp</dimen>
+
 
 
 

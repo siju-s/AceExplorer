@@ -44,7 +44,8 @@
         android:focusableInTouchMode="false"
         android:clickable="false"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:button="@drawable/selector_checkbox"
+        android:theme="@style/checkBoxStyle"
+
         />
 
 </LinearLayout>

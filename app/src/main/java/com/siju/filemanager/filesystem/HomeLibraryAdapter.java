@@ -1,6 +1,8 @@
 package com.siju.filemanager.filesystem;
 
 import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -92,6 +94,7 @@ public class HomeLibraryAdapter extends RecyclerView.Adapter<HomeLibraryAdapter
             libraryViewHolder.textCount.setVisibility(View.VISIBLE);
         }
         libraryViewHolder.textCount.setText("" + homeLibraryList.get(position).getCount());
+        changeColor(libraryViewHolder.imageLibrary,homeLibraryList.get(position).getCategoryId());
 
     }
 
@@ -102,6 +105,50 @@ public class HomeLibraryAdapter extends RecyclerView.Adapter<HomeLibraryAdapter
             return 0;
         } else {
             return homeLibraryList.size();
+        }
+    }
+
+
+    private void changeColor(View itemView, int category) {
+        switch (category) {
+            case 1:
+                ((GradientDrawable)itemView.getBackground()).setColor(ContextCompat.getColor(mContext,R.color.audio_bg));
+                break;
+            case 2:
+                ((GradientDrawable)itemView.getBackground()).setColor(ContextCompat.getColor(mContext,R.color.video_bg));
+                break;
+            case 3:
+                ((GradientDrawable)itemView.getBackground()).setColor(ContextCompat.getColor(mContext,R.color.image_bg));
+                break;
+            case 4:
+                ((GradientDrawable)itemView.getBackground()).setColor(ContextCompat.getColor(mContext,R.color.docs_bg));
+                break;
+            case 5:
+                ((GradientDrawable)itemView.getBackground()).setColor(ContextCompat.getColor(mContext,R.color.downloads_bg));
+                break;
+            case 6:
+                ((GradientDrawable)itemView.getBackground()).setColor(ContextCompat.getColor(mContext,R.color.add_bg));
+                break;
+            case 7:
+                ((GradientDrawable)itemView.getBackground()).setColor(ContextCompat.getColor(mContext,R.color.compressed_bg));
+                break;
+            case 8:
+                ((GradientDrawable)itemView.getBackground()).setColor(ContextCompat.getColor(mContext,R.color.fav_bg));
+                break;
+            case 9:
+                ((GradientDrawable)itemView.getBackground()).setColor(ContextCompat.getColor(mContext,R.color.pdf_bg));
+                break;
+            case 10:
+                ((GradientDrawable)itemView.getBackground()).setColor(ContextCompat.getColor(mContext,R.color.apps_bg));
+                break;
+            case 11:
+                ((GradientDrawable)itemView.getBackground()).setColor(ContextCompat.getColor(mContext,R.color.large_files_bg));
+                break;
+
+            default:
+                ((GradientDrawable)itemView.getBackground()).setColor(ContextCompat.getColor(mContext,R.color.colorPrimary));
+
+
         }
     }
 
@@ -144,7 +191,7 @@ public class HomeLibraryAdapter extends RecyclerView.Adapter<HomeLibraryAdapter
         TextView textCount;
         TextView textLibraryName;
 
-        public LibraryViewHolder(View itemView) {
+         LibraryViewHolder(View itemView) {
             super(itemView);
             textLibraryName = (TextView) itemView
                     .findViewById(R.id.text);
