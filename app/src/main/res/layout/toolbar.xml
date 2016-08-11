@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:background="?colorPrimary"
         android:minHeight="?actionBarSize"
-        app:titleTextColor="@color/text_settings_list"
+        app:titleTextColor="@color/white"
         app:theme="@style/ToolbarTheme"
         app:titleTextAppearance="@style/ToolbarTitle"
         app:navigationContentDescription="@string/abc_action_bar_up_description"

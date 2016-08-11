@@ -3,10 +3,11 @@ package com.siju.filemanager.filesystem.ui;
 import android.content.Context;
 import android.graphics.PointF;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+
+import com.siju.filemanager.common.Logger;
 
 /**
  * Created by SIJU on 15-07-2016.
@@ -15,11 +16,18 @@ import android.util.DisplayMetrics;
 public class CustomGridLayoutManager extends GridLayoutManager {
     private static final float MILLISECONDS_PER_INCH = 500f;
     private Context mContext;
+    private int minItemWidth;
 
-    public CustomGridLayoutManager(Context context,int spanCount) {
+/*    public CustomGridLayoutManager(Context context,int spanCount) {
         super(context,spanCount);
         mContext = context;
+    }*/
+
+    public CustomGridLayoutManager(Context context, int minItemWidth) {
+        super(context, 1);
+        this.minItemWidth = minItemWidth;
     }
+
 
     @Override
     public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state,
@@ -40,6 +48,22 @@ public class CustomGridLayoutManager extends GridLayoutManager {
         };
         smoothScroller.setTargetPosition(position);
         startSmoothScroll(smoothScroller);
+    }
+
+    @Override
+    public void onLayoutChildren(RecyclerView.Recycler recycler,
+                                 RecyclerView.State state) {
+        updateSpanCount();
+        super.onLayoutChildren(recycler, state);
+    }
+
+    private void updateSpanCount() {
+        int spanCount = getWidth() / minItemWidth;
+        if (spanCount < 1) {
+            spanCount = 1;
+        }
+        Logger.log("SIJU","Min width="+minItemWidth+"width="+getWidth()+"Spancount="+spanCount);
+        this.setSpanCount(spanCount);
     }
 
 

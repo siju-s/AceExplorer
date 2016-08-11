@@ -85,7 +85,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import static com.siju.filemanager.R.id.recyclerViewFileList;
 import static com.siju.filemanager.R.id.textEmpty;
 
 
@@ -170,6 +169,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private HashMap<String, Bundle> scrollPosition = new HashMap<>();
     private boolean mIsDataRefreshed;
     private int mGridColumns;
+    private int mGridItemWidth;
     private SharedPreferences mPreferences;
     private DisplayMetrics displayMetrics;
     private int mOldWidth;
@@ -289,8 +289,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             public void onGlobalLayout() {
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
                     recyclerViewFileList.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                }
-                else {
+                } else {
                     recyclerViewFileList.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 }
 
@@ -672,7 +671,8 @@ public class FileListFragment extends Fragment implements LoaderManager
                         llm = new CustomLayoutManager(getActivity());
                     } else {
                         findNoOfGridColumns();
-                        llm = new CustomGridLayoutManager(getActivity(), mGridColumns);
+                        mGridItemWidth = dpToPx(100);
+                        llm = new CustomGridLayoutManager(getActivity(), mGridItemWidth);
                     }
                     llm.setAutoMeasureEnabled(false);
                     recyclerViewFileList.setLayoutManager(llm);
@@ -1047,11 +1047,20 @@ public class FileListFragment extends Fragment implements LoaderManager
                     return true;
                 case R.id.action_fav:
                     if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+                        int count = 0;
                         for (int i = 0; i < mSelectedItemPositions.size(); i++) {
                             FileInfo info = fileInfoList.get(mSelectedItemPositions.keyAt(i));
-                            updateFavouritesGroup(info);
+                            // Fav option meant only for directories
+                            if (info.isDirectory()) {
+                                updateFavouritesGroup(info);
+                                count++;
+                            }
+
                         }
+                        if (count > 0)
                         showMessage(getString(R.string.msg_added_to_fav));
+
+
                     }
                     mActionMode.finish();
                     return true;
@@ -1828,18 +1837,23 @@ public class FileListFragment extends Fragment implements LoaderManager
         intent.putExtras(bundle);
         startActivity(intent);*/
 
-        findNoOfGridColumns();
+//        findNoOfGridColumns();
         fileListAdapter = null;
+        recyclerViewFileList.setHasFixedSize(true);
 
         if (mViewMode == FileConstants.KEY_LISTVIEW) {
             llm = new CustomLayoutManager(getActivity());
         } else {
-            if (mGridColumns == 0 || mGridColumns == -1) {
+            mGridItemWidth = dpToPx(100);
+        /*    if (mGridColumns == 0 || mGridColumns == -1) {
                 mGridColumns = getResources().getInteger(R
                         .integer.grid_columns);
-            }
-            llm = new CustomGridLayoutManager(getActivity(), mGridColumns);
+            }*/
+//            llm = new CustomGridLayoutManager(getActivity(), mGridColumns);
+            llm = new CustomGridLayoutManager(getActivity(), mGridItemWidth);
+
         }
+
         llm.setAutoMeasureEnabled(false);
         recyclerViewFileList.setLayoutManager(llm);
         fileListAdapter = new FileListAdapter(FileListFragment.this, getContext(), fileInfoList,
@@ -1858,8 +1872,10 @@ public class FileListFragment extends Fragment implements LoaderManager
     private void findNoOfGridColumns() {
         int width = recyclerViewFileList.getMeasuredWidth();
         Logger.log(TAG, "findNoOfGridColumns--width=" + width);
-        int dptopx = dpToPx(100);
-        mGridColumns = width / dptopx;
+        mGridItemWidth = dpToPx(100);
+
+
+//        mGridColumns = width / dptopx;
         Logger.log(TAG, "findNoOfGridColumns--Grid cols=" + mGridColumns);
         if (mIsLandscapeMode && mIsDualModeEnabledSettings && !mIsDataRefreshed) {
             Fragment fragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.main_container);
@@ -1870,12 +1886,15 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     public void refreshSpan() {
         if (mViewMode == FileConstants.KEY_GRIDVIEW) {
-            findNoOfGridColumns();
+            if (mGridItemWidth == 0) {
+                mGridItemWidth = dpToPx(100);
+            }
+//            findNoOfGridColumns();
             Logger.log(TAG, "refreshSpan--llm=" + llm);
             if (llm != null) {
 //                ((CustomGridLayoutManager) llm).setSpanCount(mGridColumns);
 //                recyclerViewFileList.setHasFixedSize(true);
-                llm = new CustomGridLayoutManager(getActivity(), mGridColumns);
+                llm = new CustomGridLayoutManager(getActivity(), mGridItemWidth);
                 recyclerViewFileList.setLayoutManager(llm);
             }
         }

@@ -34,8 +34,8 @@
     <dimen name="card_margin">5dp</dimen>
     <dimen name="homescreen_storage_margin">16dp</dimen>
     <dimen name="nav_button_width">25dp</dimen>
-
-
+    <dimen name="nav_arrow_margin">10dp</dimen>
+    <dimen name="nav_button_min_width">30dp</dimen>
 
 
 

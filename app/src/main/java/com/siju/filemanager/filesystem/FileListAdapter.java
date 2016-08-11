@@ -18,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.signature.MediaStoreSignature;
 import com.siju.filemanager.R;
 import com.siju.filemanager.common.Logger;
 import com.siju.filemanager.filesystem.model.FileInfo;
@@ -247,12 +246,11 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
                     } else {
 
                         String extension = fileInfoArrayList.get(position).getExtension();
-                        extension = extension.toLowerCase();
-                        if (extension.equals(FileConstants.APK_EXTENSION)) {
-                            Drawable apkIcon = FileUtils.getAppIcon(mContext, filePath);
-                            fileListViewHolder.imageIcon.setImageDrawable(apkIcon);
-                        } else {
-                            changeFileIcon(fileListViewHolder, extension);
+                        if (extension != null) {
+                            changeFileIcon(fileListViewHolder,extension.toLowerCase(),filePath);
+                        }
+                        else {
+                            fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_doc_white);
                         }
 
                     }
@@ -294,15 +292,20 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
             case 4: // For docs group
                 String extension = fileInfoArrayList.get(position).getExtension();
                 extension = extension.toLowerCase();
-                changeFileIcon(fileListViewHolder, extension);
+                changeFileIcon(fileListViewHolder, extension,null);
                 break;
 
         }
 
     }
 
-    private void changeFileIcon(FileListViewHolder fileListViewHolder, String extension) {
+    private void changeFileIcon(FileListViewHolder fileListViewHolder, String extension,String
+            path) {
         switch (extension) {
+            case FileConstants.APK_EXTENSION:
+                Drawable apkIcon = FileUtils.getAppIcon(mContext,path);
+                fileListViewHolder.imageIcon.setImageDrawable(apkIcon);
+                break;
             case FileConstants.EXT_DOC:
             case FileConstants.EXT_DOCX:
                 fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_doc);

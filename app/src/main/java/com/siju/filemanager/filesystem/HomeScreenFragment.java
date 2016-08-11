@@ -329,8 +329,9 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                             libraryName, resourceId,
                             0));
                 }
-                addToLibrary();
+
             }
+            addToLibrary();
         }
     }
 

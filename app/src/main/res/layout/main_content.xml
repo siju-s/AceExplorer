@@ -112,14 +112,14 @@
                             android:id="@+id/navButtons"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
                             android:orientation="horizontal">
 
-                            <!--      <Button
+                     <!--             <Button
                                       android:layout_width="wrap_content"
                                       android:layout_height="match_parent"
                                       android:text="SIJU"
-                                      android:textColor="@android:color/black"/>
-      -->
+                                      android:textColor="@android:color/black"/>-->
                         </LinearLayout>
                     </FrameLayout>
 

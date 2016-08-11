@@ -2,10 +2,12 @@ package com.siju.filemanager;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,6 +26,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ContextMenu;
@@ -31,7 +34,6 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -165,6 +167,7 @@ public class BaseActivity extends AppCompatActivity implements
     private boolean mIsFromHomePage;
     private int mCurrentTheme = FileConstants.THEME_LIGHT;
     private int mNavButtonDimensions;
+    private int mButtonMinWidth;
 
 
     @Override
@@ -363,7 +366,8 @@ public class BaseActivity extends AppCompatActivity implements
         IMAGES = getResources().getString(R.string.nav_menu_image);
         SETTINGS = getResources().getString(R.string.action_settings);
         RATE = getResources().getString(R.string.rate_us);
-        mNavButtonDimensions = (int)getResources().getDimension(R.dimen.nav_button_width);
+        mNavButtonDimensions = (int) getResources().getDimension(R.dimen.nav_button_width);
+        mButtonMinWidth = (int) getResources().getDimension(R.dimen.nav_button_min_width);
     }
 
 /*    */
@@ -589,9 +593,13 @@ public class BaseActivity extends AppCompatActivity implements
             createNavButton(STORAGE_EXTERNAL, dir, mFileListFragment, mFileListDualFragment);
         } else {
             ImageView navArrow = new ImageView(this);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(MATCH_PARENT,
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(WRAP_CONTENT,
                     WRAP_CONTENT);
             layoutParams.gravity = Gravity.CENTER;
+
+/*            int leftMargin = (int) getResources().getDimension(R.dimen.nav_arrow_margin);
+            layoutParams.setMargins(leftMargin, 0, leftMargin, 0);*/
+
             layoutParams.weight = 1.0f;
             navArrow.setLayoutParams(layoutParams);
             navArrow.setBackgroundResource(R.drawable.ic_more_white);
@@ -627,24 +635,19 @@ public class BaseActivity extends AppCompatActivity implements
         final Button button = new Button(this);
 
         if (text.equals(STORAGE_INTERNAL)) {
-            button.setLayoutParams(new LinearLayout.LayoutParams(mNavButtonDimensions,
-                    mNavButtonDimensions));
-            button.setGravity(Gravity.CENTER_VERTICAL);
+            setNavigationImages(button);
             button.setBackgroundResource(R.drawable.ic_storage_white_nav);
-        }
-        else  if (text.equals(STORAGE_EXTERNAL)) {
-            button.setLayoutParams(new LinearLayout.LayoutParams(mNavButtonDimensions,
-                    mNavButtonDimensions));
+        } else if (text.equals(STORAGE_EXTERNAL)) {
+            setNavigationImages(button);
             button.setBackgroundResource(R.drawable.ic_ext_nav);
-        }
-        else if (text.equals(STORAGE_ROOT)) {
-            button.setLayoutParams(new LinearLayout.LayoutParams(mNavButtonDimensions,
-                    mNavButtonDimensions));
+        } else if (text.equals(STORAGE_ROOT)) {
+            setNavigationImages(button);
             button.setBackgroundResource(R.drawable.ic_root_white_nav);
-        }
-        else {
+        } else {
+
             button.setLayoutParams(new LinearLayout.LayoutParams(WRAP_CONTENT,
                     WRAP_CONTENT));
+//            button.setMinimumWidth(mButtonMinWidth);
             button.setText(text);
             button.setBackgroundResource(
                     android.R.color.transparent);
@@ -654,9 +657,6 @@ public class BaseActivity extends AppCompatActivity implements
                 button.setTextAppearance(R.style.NavigationButton);
             }
         }
-
-
-
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -685,24 +685,14 @@ public class BaseActivity extends AppCompatActivity implements
                 if (!isDualPaneButtonClicked) {
                     if (!mCurrentDir.equals(dir)) {
                         mCurrentDir = dir;
-
                         fileListFragment.reloadList(false, mCurrentDir);
                         setNavDirectory(mCurrentDir, isDualPaneButtonClicked);
-                /*        for (int i = navDirectory.getChildCount(); i > level; i--) {
-                            navDirectory.removeViewAt(i - 1);
-                        }*/
-
                     }
                 } else {
                     if (!mCurrentDirDualPane.equals(dir)) {
                         mCurrentDirDualPane = dir;
                         fileListDualFragment.reloadList(true, mCurrentDirDualPane);
                         setNavDirectory(mCurrentDirDualPane, isDualPaneButtonClicked);
-//
-//                        for (int i = navDirectoryDualPane.getChildCount(); i > level; i--) {
-//                            navDirectoryDualPane.removeViewAt(i - 1);
-//                        }
-
                     }
                 }
             }
@@ -713,6 +703,21 @@ public class BaseActivity extends AppCompatActivity implements
             navDirectoryDualPane.addView(button);
         }
     }
+
+    private void setNavigationImages(Button button) {
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(mNavButtonDimensions, mNavButtonDimensions);
+        params.weight = 1.0f;
+        params.gravity = Gravity.CENTER_VERTICAL;
+        button.setLayoutParams(params);
+    }
+
+    public float convertDpToPixel(float dp, Context context){
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float px = dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        return px;
+    }
+
 
     /**
      * Checks if orientation is landscape when app is run 1st time to enable Dual Panel
@@ -1541,6 +1546,7 @@ public class BaseActivity extends AppCompatActivity implements
         Fragment dualFragment = getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
 
         Logger.log(TAG, "Onbackpress--fragment=" + fragment);
+        Logger.log(TAG, "Onbackpress--fab exp=" + fabCreateMenu.isExpanded()+"fabDUAL exp="+fabCreateMenuDual.isExpanded());
 
         mIsFavGroup = false;
 
@@ -1549,7 +1555,10 @@ public class BaseActivity extends AppCompatActivity implements
             drawer.closeDrawer(GravityCompat.START);
         } else if (fabCreateMenu.isExpanded()) {
             fabCreateMenu.collapse();
-        } else if (mIsHomePageRemoved) {
+        } else if (fabCreateMenuDual.isExpanded()) {
+            fabCreateMenuDual.collapse();
+        }
+        else if (mIsHomePageRemoved) {
             super.onBackPressed();
         } else if (mIsHomePageAdded) {
             initialScreenSetup(true);
