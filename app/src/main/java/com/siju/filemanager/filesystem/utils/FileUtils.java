@@ -1,7 +1,9 @@
 package com.siju.filemanager.filesystem.utils;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -11,9 +13,14 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.provider.DocumentFile;
+import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.view.View;
@@ -25,7 +32,6 @@ import android.widget.Toast;
 
 import com.siju.filemanager.R;
 import com.siju.filemanager.common.Logger;
-import com.siju.filemanager.filesystem.FileConstants;
 import com.siju.filemanager.filesystem.model.FileInfo;
 
 import java.io.BufferedInputStream;
@@ -35,6 +41,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -43,10 +50,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -113,6 +123,14 @@ public class FileUtils {
     }
 
 
+    /**
+     * External memory card locations
+     * 1. /storage/sdcard1
+     * 2. /storage/MicroSD
+     * 3. /mnt/extSdCard
+     *
+     * @return
+     */
     public static File getExternalStorage() {
 
         File internalStorage = getInternalStorage();
@@ -128,6 +146,10 @@ public class FileUtils {
                 if (extSD1.exists()) {
                     return extSD1;
                 } else {
+                    File extSD2 = new File("/mnt/extSdCard");
+                    if (extSD2.exists()) {
+                        return extSD2;
+                    }
                     return null;
                 }
             }
@@ -135,6 +157,131 @@ public class FileUtils {
             return null;
         }
 
+    }
+
+    final static Pattern DIR_SEPARATOR = Pattern.compile("/");
+
+    public static List<String> getStorageDirectories(Context context, boolean permissionGranted) {
+        // Final set of paths
+        final ArrayList<String> rv = new ArrayList<>();
+        // Primary physical SD-CARD (not emulated)
+        final String rawExternalStorage = System.getenv("EXTERNAL_STORAGE");
+        // All Secondary SD-CARDs (all exclude primary) separated by ":"
+        final String rawSecondaryStoragesStr = System.getenv("SECONDARY_STORAGE");
+        // Primary emulated SD-CARD
+        final String rawEmulatedStorageTarget = System.getenv("EMULATED_STORAGE_TARGET");
+        if (TextUtils.isEmpty(rawEmulatedStorageTarget)) {
+            // Device has physical external storage; use plain paths.
+            if (TextUtils.isEmpty(rawExternalStorage)) {
+                // EXTERNAL_STORAGE undefined; falling back to default.
+                rv.add("/storage/sdcard0");
+            } else {
+                rv.add(rawExternalStorage);
+            }
+        } else {
+            // Device has emulated storage; external storage paths should have
+            // userId burned into them.
+            final String rawUserId;
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                rawUserId = "";
+            } else {
+                final String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+                final String[] folders = DIR_SEPARATOR.split(path);
+                final String lastFolder = folders[folders.length - 1];
+                boolean isDigit = false;
+                try {
+                    Integer.valueOf(lastFolder);
+                    isDigit = true;
+                } catch (NumberFormatException ignored) {
+                }
+                rawUserId = isDigit ? lastFolder : "";
+            }
+            // /storage/emulated/0[1,2,...]
+            if (TextUtils.isEmpty(rawUserId)) {
+                rv.add(rawEmulatedStorageTarget);
+            } else {
+                rv.add(rawEmulatedStorageTarget + File.separator + rawUserId);
+            }
+        }
+        // Add all secondary storages
+        if (!TextUtils.isEmpty(rawSecondaryStoragesStr)) {
+            // All Secondary SD-CARDs splited into array
+            final String[] rawSecondaryStorages = rawSecondaryStoragesStr.split(File.pathSeparator);
+            Collections.addAll(rv, rawSecondaryStorages);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && permissionGranted)
+            rv.clear();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            String strings[] = getExtSdCardPathsForActivity(context);
+            for (String s : strings) {
+                File f = new File(s);
+                if (!rv.contains(s) && canListFiles(f))
+                    rv.add(s);
+            }
+        }
+
+        File usb = getUsbDrive();
+        if (usb != null && !rv.contains(usb.getPath())) rv.add(usb.getPath());
+        return rv;
+    }
+
+
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    public static String[] getExtSdCardPathsForActivity(Context context) {
+        List<String> paths = new ArrayList<String>();
+        for (File file : context.getExternalFilesDirs("external")) {
+            if (file != null) {
+                int index = file.getAbsolutePath().lastIndexOf("/Android/data");
+                if (index < 0) {
+                    Log.w("AmazeFileUtils", "Unexpected external file dir: " + file.getAbsolutePath());
+                } else {
+                    String path = file.getAbsolutePath().substring(0, index);
+                    try {
+                        path = new File(path).getCanonicalPath();
+                    } catch (IOException e) {
+                        // Keep non-canonical path.
+                    }
+                    paths.add(path);
+                }
+            }
+        }
+        if (paths.isEmpty()) paths.add("/storage/sdcard1");
+        return paths.toArray(new String[0]);
+    }
+
+
+    public static boolean canListFiles(File f) {
+        try {
+            if (f.canRead() && f.isDirectory())
+                return true;
+            else
+                return false;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+
+    public static File getUsbDrive() {
+        File parent;
+        parent = new File("/storage");
+
+        try {
+            for (File f : parent.listFiles()) {
+                if (f.exists() && f.getName().toLowerCase().contains("usb") && f.canExecute()) {
+                    return f;
+                }
+            }
+        } catch (Exception e) {
+        }
+        parent = new File("/mnt/sdcard/usbStorage");
+        if (parent.exists() && parent.canExecute())
+            return (parent);
+        parent = new File("/mnt/sdcard/usb_storage");
+        if (parent.exists() && parent.canExecute())
+            return parent;
+
+        return null;
     }
 
 
@@ -400,6 +547,39 @@ public class FileUtils {
     }
 
 
+    public static ArrayList<FileInfo> sortFiles(ArrayList<FileInfo> files, int sortMode) {
+
+        switch (sortMode) {
+            case 0:
+                Collections.sort(files, FileUtils.comparatorByName);
+                break;
+            case 1:
+                Collections.sort(files, FileUtils.comparatorByNameDesc);
+                break;
+            case 2:
+                Collections.sort(files, FileUtils.comparatorByType);
+                break;
+            case 3:
+                Collections.sort(files, FileUtils.comparatorByTypeDesc);
+                break;
+            case 4:
+                Collections.sort(files, FileUtils.comparatorBySize);
+                break;
+            case 5:
+                Collections.sort(files, FileUtils.comparatorBySizeDesc);
+                break;
+            case 6:
+                Collections.sort(files, FileUtils.comparatorByDate);
+                break;
+            case 7:
+                Collections.sort(files, FileUtils.comparatorByDateDesc);
+                break;
+
+        }
+        return files;
+    }
+
+
     private final static Comparator<? super String> type = new Comparator<String>() {
 
         public int compare(String arg0, String arg1) {
@@ -628,6 +808,21 @@ public class FileUtils {
         }
     }
 
+    public static long getFolderSize(File directory) {
+        long length = 0;
+        try {
+            for (File file : directory.listFiles()) {
+
+                if (file.isFile())
+                    length += file.length();
+                else
+                    length += getFolderSize(file);
+            }
+        } catch (Exception e) {
+        }
+        return length;
+    }
+
     public static void updateMediaStore(Context context, int category, long id, String
             renamedFilePath) {
         ContentValues values = new ContentValues();
@@ -782,6 +977,213 @@ public class FileUtils {
             e.printStackTrace();
         }
     }
+
+
+    public static OutputStream getOutputStream(@NonNull final File target, Context context, long s) throws Exception {
+
+        OutputStream outStream = null;
+        try {
+            // First try the normal way
+            if (isWritable(target)) {
+                // standard way
+                outStream = new FileOutputStream(target);
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    // Storage Access Framework
+                    DocumentFile targetDocument = getDocumentFile(target, false, context);
+                    outStream =
+                            context.getContentResolver().openOutputStream(targetDocument.getUri());
+                } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+                    // Workaround for Kitkat ext SD card
+                    return getOutputStream(context, target.getPath());
+                }
+
+
+            }
+        } catch (Exception e) {
+            Log.e("AmazeFileUtils",
+                    "Error when copying file from " + target.getAbsolutePath(), e);
+        }
+        return outStream;
+    }
+
+
+    /**
+     * Check is a file is writable. Detects write issues on external SD card.
+     *
+     * @param file The file
+     * @return true if the file is writable.
+     */
+    public static final boolean isWritable(final File file) {
+        if (file == null)
+            return false;
+        boolean isExisting = file.exists();
+
+        try {
+            FileOutputStream output = new FileOutputStream(file, true);
+            try {
+                output.close();
+            } catch (IOException e) {
+                // do nothing.
+            }
+        } catch (FileNotFoundException e) {
+            return false;
+        }
+        boolean result = file.canWrite();
+
+        // Ensure that file is not created during this process.
+        if (!isExisting) {
+            file.delete();
+        }
+
+        return result;
+    }
+
+
+    /**
+     * Get a DocumentFile corresponding to the given file (for writing on ExtSdCard on Android 5). If the file is not
+     * existing, it is created.
+     *
+     * @param file        The file.
+     * @param isDirectory flag indicating if the file should be a directory.
+     * @return The DocumentFile
+     */
+    public static DocumentFile getDocumentFile(final File file, final boolean isDirectory, Context context) {
+        String baseFolder = getExtSdCardFolder(file, context);
+        boolean originalDirectory = false;
+        if (baseFolder == null) {
+            return null;
+        }
+
+        String relativePath = null;
+        try {
+            String fullPath = file.getCanonicalPath();
+            if (!baseFolder.equals(fullPath))
+                relativePath = fullPath.substring(baseFolder.length() + 1);
+            else originalDirectory = true;
+        } catch (IOException e) {
+            return null;
+        } catch (Exception f) {
+            originalDirectory = true;
+            //continue
+        }
+        String as = PreferenceManager.getDefaultSharedPreferences(context).getString("URI", null);
+
+        Uri treeUri = null;
+        if (as != null) treeUri = Uri.parse(as);
+        if (treeUri == null) {
+            return null;
+        }
+
+        // start with root of SD card and then parse through document tree.
+        DocumentFile document = DocumentFile.fromTreeUri(context, treeUri);
+        if (originalDirectory) return document;
+        String[] parts = relativePath.split("\\/");
+        for (int i = 0; i < parts.length; i++) {
+            DocumentFile nextDocument = document.findFile(parts[i]);
+
+            if (nextDocument == null) {
+                if ((i < parts.length - 1) || isDirectory) {
+                    nextDocument = document.createDirectory(parts[i]);
+                } else {
+                    nextDocument = document.createFile("image", parts[i]);
+                }
+            }
+            document = nextDocument;
+        }
+
+        return document;
+    }
+
+    public static OutputStream getOutputStream(Context context, String str) {
+        OutputStream outputStream = null;
+        Uri fileUri = getUriFromFile(str, context);
+        if (fileUri != null) {
+            try {
+                outputStream = context.getContentResolver().openOutputStream(fileUri);
+            } catch (Throwable th) {
+            }
+        }
+        return outputStream;
+    }
+
+    public static Uri getUriFromFile(final String path, Context context) {
+        ContentResolver resolver = context.getContentResolver();
+
+        Cursor filecursor = resolver.query(MediaStore.Files.getContentUri("external"),
+                new String[]{BaseColumns._ID}, MediaStore.MediaColumns.DATA + " = ?",
+                new String[]{path}, MediaStore.MediaColumns.DATE_ADDED + " desc");
+
+        if (filecursor != null) {
+            filecursor.moveToFirst();
+            if (filecursor.isAfterLast()) {
+                filecursor.close();
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.MediaColumns.DATA, path);
+                return resolver.insert(MediaStore.Files.getContentUri("external"), values);
+            } else {
+                int imageId = filecursor.getInt(filecursor.getColumnIndex(BaseColumns._ID));
+                Uri uri = MediaStore.Files.getContentUri("external").buildUpon().appendPath(
+                        Integer.toString(imageId)).build();
+                filecursor.close();
+                return uri;
+            }
+        }
+        return null;
+
+    }
+
+
+    /**
+     * Determine the main folder of the external SD card containing the given file.
+     *
+     * @param file the file.
+     * @return The main folder of the external SD card containing this file, if the file is on an SD card. Otherwise,
+     * null is returned.
+     */
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    public static String getExtSdCardFolder(final File file, Context context) {
+        String[] extSdPaths = getExtSdCardPaths(context);
+        try {
+            for (int i = 0; i < extSdPaths.length; i++) {
+                if (file.getCanonicalPath().startsWith(extSdPaths[i])) {
+                    return extSdPaths[i];
+                }
+            }
+        } catch (IOException e) {
+            return null;
+        }
+        return null;
+    }
+
+    /**
+     * Get a list of external SD card paths. (Kitkat or higher.)
+     *
+     * @return A list of external SD card paths.
+     */
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    public static String[] getExtSdCardPaths(Context context) {
+        List<String> paths = new ArrayList<String>();
+        for (File file : context.getExternalFilesDirs("external")) {
+            if (file != null && !file.equals(context.getExternalFilesDir("external"))) {
+                int index = file.getAbsolutePath().lastIndexOf("/Android/data");
+                if (index < 0) {
+                    Log.w("AmazeFileUtils", "Unexpected external file dir: " + file.getAbsolutePath());
+                } else {
+                    String path = file.getAbsolutePath().substring(0, index);
+                    try {
+                        path = new File(path).getCanonicalPath();
+                    } catch (IOException e) {
+                        // Keep non-canonical path.
+                    }
+                    paths.add(path);
+                }
+            }
+        }
+        if (paths.isEmpty()) paths.add("/storage/sdcard1");
+        return paths.toArray(new String[0]);
+    }
+
 
     /**
      * @param path
@@ -976,7 +1378,8 @@ public class FileUtils {
             case 7:
             case 9:
             case 11:
-                uri = MediaStore.Files.getContentUri("external");                ;
+                uri = MediaStore.Files.getContentUri("external");
+                ;
                 break;
 
         }

@@ -72,7 +72,7 @@ public class SharedPreferenceWrapper {
     public void resetFavourites(Context context) {
         ArrayList<FavInfo> favorites = getFavorites(context);
         if (favorites != null) {
-            for (int i = favorites.size() - 1; i > 0; i--) {
+            for (int i = favorites.size() - 1; i >= 0; i--) {
                 if (!favorites.get(i).getFilePath().equalsIgnoreCase(FileUtils
                         .getDownloadsDirectory().getAbsolutePath())) {
                     Logger.log("TAG", "Fav path=" + favorites.get(i).getFilePath());
@@ -118,6 +118,8 @@ public class SharedPreferenceWrapper {
             libraries.add(librarySortModel);
             saveLibrary(context, libraries);
         }
+        Logger.log("SIJU","addLibrary="+libraries.size());
+
     }
 
 

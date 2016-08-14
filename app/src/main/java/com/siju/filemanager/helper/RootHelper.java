@@ -7,8 +7,8 @@ import android.util.Log;
 import com.siju.filemanager.filesystem.FileConstants;
 import com.siju.filemanager.filesystem.model.BaseFile;
 import com.siju.filemanager.filesystem.model.FileInfo;
-import com.stericson.RootShell.execution.Command;
 import com.stericson.RootTools.RootTools;
+import com.stericson.RootTools.execution.Command;
 
 import java.io.File;
 import java.text.ParsePosition;
@@ -122,8 +122,10 @@ public class RootHelper {
                                 } else {
                                     size = null;
                                 }
-                                fileInfoArrayList.add(new FileInfo(name, path1, convertDate(array
-                                        .getDate()), size, isDirectory, null, FileConstants.CATEGORY
+                                fileInfoArrayList.add(new FileInfo(name, path1,
+                                        convertDate(array.getDate()),
+                                        size, isDirectory, null,
+                                        FileConstants.CATEGORY
                                         .FILES.getValue()));
                             }
                         } catch (Exception e) {

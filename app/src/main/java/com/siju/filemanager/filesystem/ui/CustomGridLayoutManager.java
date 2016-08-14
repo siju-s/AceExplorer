@@ -7,13 +7,12 @@ import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 
-import com.siju.filemanager.common.Logger;
-
 /**
  * Created by SIJU on 15-07-2016.
  */
 
 public class CustomGridLayoutManager extends GridLayoutManager {
+    private final String TAG = this.getClass().getSimpleName();
     private static final float MILLISECONDS_PER_INCH = 500f;
     private Context mContext;
     private int minItemWidth;
@@ -62,7 +61,7 @@ public class CustomGridLayoutManager extends GridLayoutManager {
         if (spanCount < 1) {
             spanCount = 1;
         }
-        Logger.log("SIJU","Min width="+minItemWidth+"width="+getWidth()+"Spancount="+spanCount);
+//        Logger.log(TAG,"Min width="+minItemWidth+"width="+getWidth()+"Spancount="+spanCount);
         this.setSpanCount(spanCount);
     }
 

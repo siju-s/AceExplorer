@@ -18,6 +18,7 @@ public class FileInfo implements Parcelable {
     private int type;
     private long id = -1;
     private long bucketId = -1;
+    private String mimeType;
 
     public FileInfo(String fileName, String filePath, String fileDate, String noOfFilesOrSize, boolean isDirectory,
                     String extension, int type) {
@@ -31,7 +32,7 @@ public class FileInfo implements Parcelable {
     }
 
     public FileInfo(long id, String fileName, String filePath, String fileDate, String noOfFilesOrSize, int type,
-                    String extension) {
+                    String extension,String mimeType) {
         this.id = id;
         this.fileName = fileName;
         this.filePath = filePath;
@@ -39,6 +40,7 @@ public class FileInfo implements Parcelable {
         this.noOfFilesOrSize = noOfFilesOrSize;
         this.type = type;
         this.extension = extension;
+        this.mimeType = mimeType;
     }
 
     /**
@@ -65,6 +67,8 @@ public class FileInfo implements Parcelable {
         this.extension = extension;
     }
 
+
+
     protected FileInfo(Parcel in) {
         fileName = in.readString();
         filePath = in.readString();
@@ -75,6 +79,7 @@ public class FileInfo implements Parcelable {
         type = in.readInt();
         id = in.readLong();
         bucketId = in.readLong();
+        mimeType = in.readString();
     }
 
     public static final Creator<FileInfo> CREATOR = new Creator<FileInfo>() {
@@ -154,6 +159,14 @@ public class FileInfo implements Parcelable {
         this.noOfFilesOrSize = noOfFilesOrSize;
     }
 
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
+
     public boolean isDirectory() {
         return isDirectory;
     }
@@ -178,5 +191,7 @@ public class FileInfo implements Parcelable {
         parcel.writeInt(type);
         parcel.writeLong(id);
         parcel.writeLong(bucketId);
+        parcel.writeString(mimeType);
+
     }
 }

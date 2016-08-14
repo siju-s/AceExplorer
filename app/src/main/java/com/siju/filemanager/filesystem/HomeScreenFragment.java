@@ -2,7 +2,10 @@ package com.siju.filemanager.filesystem;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -14,6 +17,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +32,7 @@ import com.siju.filemanager.filesystem.model.FileInfo;
 import com.siju.filemanager.filesystem.model.HomeLibraryInfo;
 import com.siju.filemanager.filesystem.model.HomeStoragesInfo;
 import com.siju.filemanager.filesystem.model.LibrarySortModel;
+import com.siju.filemanager.filesystem.ui.CustomGridLayoutManager;
 import com.siju.filemanager.filesystem.ui.DividerItemDecoration;
 import com.siju.filemanager.filesystem.utils.FileUtils;
 
@@ -85,7 +90,13 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     private ArrayList<FavInfo> mFavList = new ArrayList<>();
     private BaseActivity mBaseActivity;
     private boolean mIsDualModeEnabled;
+    private SharedPreferences mSharedPreferences;
 
+    private int mGridColumns;
+    private int mGridItemWidth;
+    private int mCurrentOrientation;
+
+    private DisplayMetrics displayMetrics;
     @Override
     public void onAttach(Context context) {
         mBaseActivity = (BaseActivity) context;
@@ -105,13 +116,16 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
-        mIsFirstRun = getArguments().getBoolean(BaseActivity.PREFS_FIRST_RUN, false);
+        /*mIsFirstRun = PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean
+                (BaseActivity.PREFS_FIRST_RUN, false);*/
+//        mIsFirstRun = getArguments().getBoolean(BaseActivity.PREFS_FIRST_RUN, false);
+        mCurrentOrientation = getResources().getConfiguration().orientation;
         mIsDualModeEnabled = getArguments().getBoolean(FileConstants.PREFS_DUAL_ENABLED, false);
-        Log.d(TAG, "First run==" + mIsFirstRun);
 //        savedLibraries = new ArrayList<>();
         homeLibraryInfoArrayList = new ArrayList<>();
         homeStoragesInfoArrayList = new ArrayList<>();
         tempLibraryInfoArrayList = new ArrayList<>();
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         initializeViews();
         initConstants();
@@ -122,13 +136,27 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         homeLibraryAdapter = new HomeLibraryAdapter(getActivity(), homeLibraryInfoArrayList);
         homeStoragesAdapter = new HomeStoragesAdapter(getActivity(), homeStoragesInfoArrayList);
         initListeners();
-        Logger.log("TAG", "Homescreen--Librarylist=" + homeLibraryInfoArrayList.size() +
-                "storage=" + homeStoragesInfoArrayList.size());
+       /* Logger.log("TAG", "Homescreen--Librarylist=" + homeLibraryInfoArrayList.size() +
+                "storage=" + homeStoragesInfoArrayList.size());*/
 
         recyclerViewLibrary.setAdapter(homeLibraryAdapter);
         recyclerViewStorages.setAdapter(homeStoragesAdapter);
 
 
+    }
+
+    private void setGridColumns() {
+        if (mGridItemWidth == 0) {
+            mGridItemWidth = dpToPx(100);
+        }
+        gridLayoutManagerLibrary = new CustomGridLayoutManager(getActivity(), mGridItemWidth);
+        recyclerViewLibrary.setLayoutManager(gridLayoutManagerLibrary);
+    }
+
+    public int dpToPx(int dp) {
+        if (displayMetrics == null) displayMetrics = getResources().getDisplayMetrics();
+        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        return px;
     }
 
     private void initializeViews() {
@@ -142,9 +170,9 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         recyclerViewLibrary.setHasFixedSize(true);
         recyclerViewStorages.setHasFixedSize(true);
         llmStorage = new LinearLayoutManager(getActivity());
-        gridLayoutManagerLibrary = new GridLayoutManager(getActivity(), 3);
+        setGridColumns();
+//        gridLayoutManagerLibrary = new GridLayoutManager(getActivity(), 3);
 
-        recyclerViewLibrary.setLayoutManager(gridLayoutManagerLibrary);
 
         recyclerViewLibrary.setItemAnimator(new DefaultItemAnimator());
 
@@ -301,6 +329,9 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     }
 
     private void initializeLibraries() {
+        mIsFirstRun = mSharedPreferences.getBoolean
+                (BaseActivity.PREFS_FIRST_RUN, true);
+        Log.d(TAG, "First run==" + mIsFirstRun);
         if (mIsFirstRun) {
             savedLibraries = new ArrayList<>();
             for (int i = 0; i < mResourceIds.length; i++) {
@@ -315,7 +346,8 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                     sharedPreferenceWrapper.addLibrary(getActivity(), model);
                 }
             }
-
+            mIsFirstRun = false;
+            mSharedPreferences.edit().putBoolean(BaseActivity.PREFS_FIRST_RUN, false).apply();
         } else {
             getSavedLibraries();
             if (savedLibraries != null && savedLibraries.size() > 0) {
@@ -440,7 +472,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
 
     @Override
     public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
-        Log.d(TAG, "on onCreateLoader--" + id);
+//        Log.d(TAG, "on onCreateLoader--" + id);
         switch (id) {
             case 1:
             case 2:
@@ -469,30 +501,39 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                     homeLibraryInfoArrayList.get(i).setCount(data.size());
                     switch (homeLibraryInfoArrayList.get(i).getCategoryId()) {
                         case 1:
+                            mMusicList.clear();
                             mMusicList.addAll(data);
                             break;
                         case 2:
+                            mVideosList.clear();
                             mVideosList.addAll(data);
                             break;
                         case 3:
+                            mImagesList.clear();
                             mImagesList.addAll(data);
                             break;
                         case 4:
+                            mDocsList.clear();
                             mDocsList.addAll(data);
                             break;
                         case 5:
+                            mDownloadsList.clear();
                             mDownloadsList.addAll(data);
                             break;
                         case 7:
+                            mCompressedList.clear();
                             mCompressedList.addAll(data);
                             break;
                         case 9:
+                            mPdfList.clear();
                             mPdfList.addAll(data);
                             break;
                         case 10:
+                            mAppsList.clear();
                             mAppsList.addAll(data);
                             break;
                         case 11:
+                            mLargeFilesList.clear();
                             mLargeFilesList.addAll(data);
                             break;
                     }
@@ -547,5 +588,17 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         }
         super.onActivityResult(requestCode, resultCode, data);
 
+    }
+
+    @Override
+    public void onConfigurationChanged(final Configuration newConfig) {
+
+        super.onConfigurationChanged(newConfig);
+
+        Logger.log(TAG, "onConfigurationChanged " + newConfig.orientation);
+        if (mCurrentOrientation != newConfig.orientation) {
+            mCurrentOrientation = newConfig.orientation;
+            setGridColumns();
+        }
     }
 }

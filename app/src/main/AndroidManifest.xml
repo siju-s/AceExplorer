@@ -86,6 +86,7 @@
 
             />
         <activity android:name=".filesystem.LibrarySortActivity"/>
+        <service android:name=".filesystem.task.CreateZipTask"/>
     </application>
 
 </manifest>

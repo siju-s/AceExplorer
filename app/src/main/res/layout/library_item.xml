@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:padding="5dp">
 
     <ImageView
         android:id="@+id/imageLibrary"
         android:layout_width="@dimen/home_library_width"
         android:layout_height="@dimen/home_library_width"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="@dimen/drawer_item_margin"
         android:layout_marginTop="@dimen/card_margin"
         android:background="@drawable/circle"
         android:scaleType="centerInside"
@@ -35,7 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageLibrary"
         android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="@dimen/drawer_item_margin"
         android:gravity="center"
         android:text="Images"
         />

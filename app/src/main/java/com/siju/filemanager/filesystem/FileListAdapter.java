@@ -83,7 +83,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         this.fileInfoArrayList = fileInfos;
         fileInfoArrayListCopy.addAll(fileInfos);
 //        Log.d("SIJU","updateAdapter"+fileInfoArrayList.size());
-
+        Logger.log(this.getClass().getSimpleName(),"adapter size="+fileInfos.size());
         notifyDataSetChanged();
     }
 

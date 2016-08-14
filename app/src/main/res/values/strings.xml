@@ -155,6 +155,10 @@
     <string name="video">Video</string>
     <string name="other">Other</string>
     <string name="file_exists">File already exists</string>
+    <string name="enter_zip">Enter zip name</string>
+    <string name="create_zip">Create</string>
+    <string name="zip_progress_title">Creating zip</string>
+
 
 
 </resources>

@@ -2,10 +2,12 @@ package com.siju.filemanager.filesystem;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -18,9 +20,9 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -52,7 +54,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -71,6 +72,7 @@ import com.siju.filemanager.common.SharedPreferenceWrapper;
 import com.siju.filemanager.filesystem.model.FavInfo;
 import com.siju.filemanager.filesystem.model.FileInfo;
 import com.siju.filemanager.filesystem.model.ZipModel;
+import com.siju.filemanager.filesystem.task.CreateZipTask;
 import com.siju.filemanager.filesystem.ui.CustomGridLayoutManager;
 import com.siju.filemanager.filesystem.ui.CustomLayoutManager;
 import com.siju.filemanager.filesystem.ui.DialogBrowseFragment;
@@ -82,7 +84,6 @@ import com.siju.filemanager.filesystem.utils.PasteUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
 import static com.siju.filemanager.R.id.textEmpty;
@@ -106,7 +107,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private final int LOADER_ID_DUAL = 2000;
 
     private FileListAdapter fileListAdapter;
-    private ArrayList<FileInfo> fileInfoList;
+    public ArrayList<FileInfo> fileInfoList;
     private boolean mIsDualMode;
     private String mFilePath;
     private String mFilePathOther;
@@ -174,7 +175,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private DisplayMetrics displayMetrics;
     private int mOldWidth;
     private int mCurrentOrientation;
-
+    private ArrayList<FileInfo> mCopiedData = new ArrayList<>();
 
     @Override
     public void onAttach(Context context) {
@@ -284,22 +285,6 @@ public class FileListFragment extends Fragment implements LoaderManager
         recyclerViewFileList.setAdapter(fileListAdapter);
         initializeListeners();
 
-        recyclerViewFileList.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-                    recyclerViewFileList.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                } else {
-                    recyclerViewFileList.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                }
-
-                int width = recyclerViewFileList.getWidth(); //height is ready
-                mOldWidth = width;
-                Logger.log(TAG, "Width inside observer=" + width);
-//                refreshSpan();
-            }
-        });
-
         recyclerViewFileList.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -338,6 +323,19 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     }
 
+    @Override
+    public void onResume() {
+
+        super.onResume();
+        getActivity().registerReceiver(mReloadListReceiver, new IntentFilter("reload_list"));
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().unregisterReceiver(mReloadListReceiver);
+    }
 
     private void initializeViews() {
         recyclerViewFileList = (RecyclerView) root.findViewById(R.id.recyclerViewFileList);
@@ -471,7 +469,18 @@ public class FileListFragment extends Fragment implements LoaderManager
                             mBaseActivity.setCurrentCategory(mCategory);
 //                            mBaseActivity.setNavDirectory(mFilePath,isDualPaneInFocus);
                         }
+//                        if (mFilePath.equals("/data")) {
+//                            LoadList loadList = new LoadList(getActivity(),FileListFragment
+//                                    .this,mFilePath,
+//                                    mCategory);
+//                            loadList.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,null);
+//
+//
+//                        }
+//                        else {
                         reloadList(true, mFilePath);
+
+//                        }
 
 //                        getLoaderManager().restartLoader(LOADER_ID, bundle, this);
                     }
@@ -501,6 +510,24 @@ public class FileListFragment extends Fragment implements LoaderManager
                 break;
 
         }
+    }
+
+
+    private BroadcastReceiver mReloadListReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            reloadList(true,mFilePath);
+        }
+    };
+
+
+    public void update(ArrayList<FileInfo> list) {
+        fileInfoList.clear();
+        mSwipeRefreshLayout.setRefreshing(false);
+        fileListAdapter.setCategory(mCategory);
+        fileInfoList.addAll(list);
+        fileListAdapter.updateAdapter(list);
     }
 
 
@@ -740,6 +767,8 @@ public class FileListFragment extends Fragment implements LoaderManager
             case R.id.action_cut:
                 if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
                     showMessage(mSelectedItemPositions.size() + " " + getString(R.string.msg_cut_copy));
+                    mCopiedData.clear();
+                    mCopiedData.addAll(fileInfoList);
                     mIsMoveOperation = true;
                     togglePasteVisibility(true);
                     getActivity().supportInvalidateOptionsMenu();
@@ -751,6 +780,8 @@ public class FileListFragment extends Fragment implements LoaderManager
                 if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
                     mIsMoveOperation = false;
                     showMessage(mSelectedItemPositions.size() + " " + getString(R.string.msg_cut_copy));
+                    mCopiedData.clear();
+                    mCopiedData.addAll(fileInfoList);
                     togglePasteVisibility(true);
                     getActivity().supportInvalidateOptionsMenu();
                     mActionMode.finish();
@@ -758,10 +789,10 @@ public class FileListFragment extends Fragment implements LoaderManager
                 break;
             case R.id.action_delete:
                 if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
-                    ArrayList<String> filesToDelete = new ArrayList<>();
+                    ArrayList<FileInfo> filesToDelete = new ArrayList<>();
                     for (int i = 0; i < mSelectedItemPositions.size(); i++) {
-                        String path = fileInfoList.get(mSelectedItemPositions.keyAt(i)).getFilePath();
-                        filesToDelete.add(path);
+                        FileInfo info = fileInfoList.get(mSelectedItemPositions.keyAt(i));
+                        filesToDelete.add(info);
                     }
                     showDialog(filesToDelete);
                     mActionMode.finish();
@@ -797,20 +828,20 @@ public class FileListFragment extends Fragment implements LoaderManager
     }
 
     /**
-     * @param paths Paths to delete
+     * @param fileInfo Paths to delete
      */
-    private void showDialog(final ArrayList<String> paths) {
+    private void showDialog(final ArrayList<FileInfo> fileInfo) {
         final Dialog deleteDialog = new Dialog(getActivity());
         deleteDialog.setContentView(R.layout.dialog_delete);
         deleteDialog.setCancelable(false);
         TextView textFileName = (TextView) deleteDialog.findViewById(R.id.textFileNames);
         StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < paths.size(); i++) {
-            String path = paths.get(i);
+        for (int i = 0; i < fileInfo.size(); i++) {
+            String path = fileInfo.get(i).getFilePath();
             stringBuilder.append(path);
             stringBuilder.append("\n\n");
-            if (i == 9 && paths.size() > 10) {
-                int rem = paths.size() - 10;
+            if (i == 9 && fileInfo.size() > 10) {
+                int rem = fileInfo.size() - 10;
                 stringBuilder.append("+" + rem + " " + getString(R.string.more));
                 break;
             }
@@ -827,13 +858,63 @@ public class FileListFragment extends Fragment implements LoaderManager
         buttonOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new BgOperationsTask(DELETE_OPERATION).execute(paths);
+                new BgOperationsTask(DELETE_OPERATION).execute(fileInfo);
                 deleteDialog.dismiss();
             }
         });
         deleteDialog.show();
 
     }
+
+    private void showCompressDialog(final String currentDir, final ArrayList<FileInfo> paths) {
+        final Dialog dialog = new Dialog(getActivity());
+        dialog.setContentView(R.layout.dialog_rename);
+        dialog.setCancelable(true);
+        final EditText rename = (EditText) dialog
+                .findViewById(R.id.editRename);
+        final String ext = ".zip";
+
+        rename.setHint(getResources().getString(R.string.enter_zip));
+        rename.setFocusable(true);
+        // dialog save button to save the edited item
+        Button saveButton = (Button) dialog
+                .findViewById(R.id.buttonRename);
+        saveButton.setText(getResources().getString(R.string.create_zip));
+        // for updating the list item
+        saveButton.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                final String name = rename.getText().toString();
+                if (name.trim().length() == 0) {
+                    rename.setError(getResources().getString(R.string.msg_error_valid_name));
+                    return;
+                }
+
+                String newFilePath = currentDir + "/" + name + ext;
+
+                Intent zipIntent = new Intent(getActivity(), CreateZipTask.class);
+                zipIntent.putExtra("name", newFilePath);
+                zipIntent.putParcelableArrayListExtra("files", paths);
+                getActivity().startService(zipIntent);
+                dialog.dismiss();
+
+            }
+        });
+
+        // cancel button declaration
+        Button cancelButton = (Button) dialog
+                .findViewById(R.id.buttonCancel);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                dialog.dismiss();
+
+            }
+        });
+
+        dialog.show();
+    }
+
 
     /**
      * Triggered on long press click on item
@@ -1034,14 +1115,21 @@ public class FileListFragment extends Fragment implements LoaderManager
                     return true;
                 case R.id.action_archive:
                     if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
-                        FileInfo fileInfo = fileInfoList.get(mSelectedItemPositions.keyAt(0));
-                        int result = FileUtils.createZipFile(fileInfo.getFilePath());
+//                        FileInfo fileInfo = fileInfoList.get(mSelectedItemPositions.keyAt(0));
+                        ArrayList<FileInfo> paths = new ArrayList<>();
+                        for (int i = 0; i < mSelectedItemPositions.size(); i++) {
+                            FileInfo info = fileInfoList.get(mSelectedItemPositions.keyAt(i));
+                            paths.add(info);
+                        }
+                        showCompressDialog(mFilePath, paths);
+                        /*int result = FileUtils.createZipFile(fileInfo.getFilePath());
                         if (result == 0) {
                             showMessage(getString(R.string.msg_zip_success));
                             refreshList();
                         } else {
                             showMessage(getString(R.string.msg_zip_failure));
                         }
+                    }*/
                     }
                     mActionMode.finish();
                     return true;
@@ -1058,7 +1146,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
                         }
                         if (count > 0)
-                        showMessage(getString(R.string.msg_added_to_fav));
+                            showMessage(getString(R.string.msg_added_to_fav));
 
 
                     }
@@ -1745,8 +1833,10 @@ public class FileListFragment extends Fragment implements LoaderManager
                     mPasteUtils.setMoveOperation(mIsMoveOperation);
 
                     boolean isPasteConflict = false;
+                    String firstPath = mCopiedData.get(mSelectedItemPositions.keyAt(0))
+                            .getFilePath();
                     for (int i = 0; i < mSelectedItemPositions.size(); i++) {
-                        String path = fileInfoList.get(mSelectedItemPositions.keyAt(i))
+                        String path = mCopiedData.get(mSelectedItemPositions.keyAt(i))
                                 .getFilePath();
                         isPasteConflict = mPasteUtils.checkIfFileExists(path, new File
                                 (mFilePath));
@@ -1755,8 +1845,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                     if (!isPasteConflict) {
                         mPasteUtils.callAsyncTask();
                     } else {
-                        mPasteUtils.showDialog(fileInfoList.get(mSelectedItemPositions.keyAt(0))
-                                .getFilePath());
+                        mPasteUtils.showDialog(firstPath);
 //                        isPasteConflictDialogShown = false;
 
                     }
@@ -1780,41 +1869,41 @@ public class FileListFragment extends Fragment implements LoaderManager
                 break;
 
             case R.id.action_sort_name_asc:
-                sortFiles(fileInfoList, FileConstants.KEY_SORT_NAME);
+                fileInfoList = FileUtils.sortFiles(fileInfoList, FileConstants.KEY_SORT_NAME);
                 fileListAdapter.notifyDataSetChanged();
                 break;
             case R.id.action_sort_name_desc:
-                sortFiles(fileInfoList, FileConstants.KEY_SORT_NAME_DESC);
+                fileInfoList = FileUtils.sortFiles(fileInfoList, FileConstants.KEY_SORT_NAME_DESC);
                 fileListAdapter.notifyDataSetChanged();
                 break;
 
             case R.id.action_sort_type_asc:
-                sortFiles(fileInfoList, FileConstants.KEY_SORT_TYPE);
+                fileInfoList = FileUtils.sortFiles(fileInfoList, FileConstants.KEY_SORT_TYPE);
                 fileListAdapter.notifyDataSetChanged();
                 break;
 
             case R.id.action_sort_type_desc:
-                sortFiles(fileInfoList, FileConstants.KEY_SORT_TYPE_DESC);
+                fileInfoList = FileUtils.sortFiles(fileInfoList, FileConstants.KEY_SORT_TYPE_DESC);
                 fileListAdapter.notifyDataSetChanged();
                 break;
 
             case R.id.action_sort_size_asc:
-                sortFiles(fileInfoList, FileConstants.KEY_SORT_SIZE);
+                fileInfoList = FileUtils.sortFiles(fileInfoList, FileConstants.KEY_SORT_SIZE);
                 fileListAdapter.notifyDataSetChanged();
 
                 break;
 
             case R.id.action_sort_size_desc:
-                sortFiles(fileInfoList, FileConstants.KEY_SORT_SIZE_DESC);
+                fileInfoList = FileUtils.sortFiles(fileInfoList, FileConstants.KEY_SORT_SIZE_DESC);
                 fileListAdapter.notifyDataSetChanged();
 
                 break;
             case R.id.action_sort_date_asc:
-                sortFiles(fileInfoList, FileConstants.KEY_SORT_DATE);
+                fileInfoList = FileUtils.sortFiles(fileInfoList, FileConstants.KEY_SORT_DATE);
                 fileListAdapter.notifyDataSetChanged();
                 break;
             case R.id.action_sort_date_desc:
-                sortFiles(fileInfoList, FileConstants.KEY_SORT_DATE_DESC);
+                fileInfoList = FileUtils.sortFiles(fileInfoList, FileConstants.KEY_SORT_DATE_DESC);
                 fileListAdapter.notifyDataSetChanged();
                 break;
         }
@@ -1900,36 +1989,6 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
     }
 
-    private void sortFiles(ArrayList<FileInfo> files, int sortMode) {
-
-        switch (sortMode) {
-            case 0:
-                Collections.sort(files, FileUtils.comparatorByName);
-                break;
-            case 1:
-                Collections.sort(files, FileUtils.comparatorByNameDesc);
-                break;
-            case 2:
-                Collections.sort(files, FileUtils.comparatorByType);
-                break;
-            case 3:
-                Collections.sort(files, FileUtils.comparatorByTypeDesc);
-                break;
-            case 4:
-                Collections.sort(files, FileUtils.comparatorBySize);
-                break;
-            case 5:
-                Collections.sort(files, FileUtils.comparatorBySizeDesc);
-                break;
-            case 6:
-                Collections.sort(files, FileUtils.comparatorByDate);
-                break;
-            case 7:
-                Collections.sort(files, FileUtils.comparatorByDateDesc);
-                break;
-
-        }
-    }
 
     @Override
     public void onDestroy() {
@@ -1954,7 +2013,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         return count;
     }
 
-    private class BgOperationsTask extends AsyncTask<ArrayList<String>, Void, Integer> {
+    private class BgOperationsTask extends AsyncTask<ArrayList<FileInfo>, Void, Integer> {
 
         private String fileName;
         private String filePath;
@@ -1969,6 +2028,10 @@ public class FileListFragment extends Fragment implements LoaderManager
         TextView textFileName;
         private int totalFiles;
         private String sourcePath;
+        ArrayList<String> paths = new ArrayList<>();
+        ArrayList<FileInfo> deletedFilesList = new ArrayList<>();
+
+        ArrayList<String> mimeTypes = new ArrayList<>();
 
 
         private BgOperationsTask(int operation) {
@@ -1978,20 +2041,44 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
 
         @Override
-        protected Integer doInBackground(ArrayList<String>... params) {
+        protected Integer doInBackground(ArrayList<FileInfo>... params) {
             int deletedCount = 0;
-            ArrayList<String> paths = params[0];
-            totalFiles = paths.size();
+            ArrayList<FileInfo> fileInfo = params[0];
+
+
+            totalFiles = fileInfo.size();
+
             for (int i = 0; i < totalFiles; i++) {
-                int result = FileUtils.deleteTarget(paths.get(i));
+                String path = fileInfo.get(i).getFilePath();
+                int result = FileUtils.deleteTarget(path);
                 if (result == 0) {
+                    paths.add(path);
+                    mimeTypes.add(fileInfo.get(i).getMimeType());
+                    deletedFilesList.add(fileInfo.get(i));
                     deletedCount++;
-                    if (mCategory != FileConstants.CATEGORY.FILES.getValue() ||
-                            mCategory != FileConstants.CATEGORY.DOWNLOADS.getValue()) {
-                        refreshMediaStore(paths.get(i));
-                    }
+
+
                 }
             }
+            if (mCategory != FileConstants.CATEGORY.FILES.getValue() ||
+                    mCategory != FileConstants.CATEGORY.DOWNLOADS.getValue()) {
+                String[] pathArray = new String[paths.size()];
+                paths.toArray(pathArray);
+
+                String[] mimeArray = new String[mimeTypes.size()];
+                mimeTypes.toArray(mimeArray);
+
+                MediaScannerConnection.scanFile(getActivity(), pathArray, mimeArray, new MediaScannerConnection.OnScanCompletedListener() {
+
+                    @Override
+                    public void onScanCompleted(String path, Uri uri) {
+                        Log.d(TAG, "Scan completed=" + path + "uri=" + uri);
+                    }
+                });
+
+//                        refreshMediaStore(paths.get(i));
+            }
+
             return deletedCount;
         }
 
@@ -2001,16 +2088,21 @@ public class FileListFragment extends Fragment implements LoaderManager
             switch (operation) {
 
                 case DELETE_OPERATION:
-                    if (mSelectedItemPositions != null && mSelectedItemPositions.size() != 0) {
-                        mSelectedItemPositions.clear();
-                    }
+
 
                     if (deletedFiles != 0) {
                         showMessage(getResources().getQuantityString(R.plurals.number_of_files,
                                 deletedFiles,
                                 deletedFiles) + " " +
                                 getString(R.string.msg_delete_success));
-                        refreshList();
+
+                        fileInfoList.remove(deletedFilesList);
+                        fileListAdapter.updateAdapter(fileInfoList);
+//                        refreshList();
+                    }
+
+                    if (mSelectedItemPositions != null && mSelectedItemPositions.size() != 0) {
+                        mSelectedItemPositions.clear();
                     }
 
                     if (totalFiles != deletedFiles) {
