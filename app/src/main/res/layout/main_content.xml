@@ -266,7 +266,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="1">
 
-                <com.siju.filemanager.ui.SplitToolbar
+                <com.siju.acexplorer.ui.SplitToolbar
                     android:id="@+id/toolbar_bottom"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
