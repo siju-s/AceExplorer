@@ -20,6 +20,38 @@ import java.util.Date;
  * Created by Siju on 03-08-2016.
  */
 public class RootHelper {
+
+    public static String runAndWait(String cmd, boolean root) {
+
+        Command c = new Command(0, cmd) {
+            @Override
+            public void commandOutput(int i, String s) {
+
+            }
+
+            @Override
+            public void commandTerminated(int i, String s) {
+
+            }
+
+            @Override
+            public void commandCompleted(int i, int i2) {
+
+            }
+        };
+        try {
+            RootTools.getShell(root).add(c);
+        } catch (Exception e) {
+            return null;
+        }
+
+        if (!waitForCommand(c, -1)) {
+            return null;
+        }
+
+        return c.toString();
+    }
+
     public static ArrayList<String> runAndWait1(String cmd, final boolean root) {
         final ArrayList<String> output = new ArrayList<String>();
         Command cc = new Command(1, cmd) {

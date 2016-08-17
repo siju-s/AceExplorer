@@ -294,7 +294,7 @@ public class CreateZipTask extends Service {
         private void compressFile(int id, File file, String path) throws IOException, NullPointerException {
 
             if (!file.isDirectory()) {
-                byte[] buf = new byte[20480];
+                byte[] buf = new byte[2048];
                 int len;
                 BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
                 zos.putNextEntry(new ZipEntry(path + "/" + file.getName()));

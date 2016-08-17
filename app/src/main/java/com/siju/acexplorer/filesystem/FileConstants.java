@@ -15,8 +15,17 @@ public class FileConstants {
     public static final String PREFS_RESET = "prefsReset";
     public static final String PREFS_THEME = "prefThemes";
     public static final String CURRENT_THEME = "theme";
+    public static final String ROOT_ACCESS = "root";
     public static final int THEME_LIGHT = 0;
     public static final int THEME_DARK = 1;
+
+    public static final int FOLDER_CREATE = 1;
+    public static final int FILE_CREATE = 2;
+    public static final int RENAME = 3;
+    public static final int MOVE = 4;
+    public static final int COPY = 5;
+    public static final int DELETE = 6;
+
 
 
     public static final String KEY_PATH = "PATH";

@@ -39,7 +39,7 @@
             android:layout_margin="15dp"
             android:layout_toRightOf="@+id/imageFileIcon"
             android:ellipsize="end"
-            android:maxLines="1"
+            android:maxLines="3"
             android:textStyle="bold"/>
 
         <ImageButton

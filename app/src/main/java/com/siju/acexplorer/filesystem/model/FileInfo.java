@@ -82,6 +82,14 @@ public class FileInfo implements Parcelable {
         mimeType = in.readString();
     }
 
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (obj == this) return true;
+        if (!(obj instanceof FileInfo)) return false;
+        FileInfo o = (FileInfo) obj;
+        return o.filePath.equals(this.filePath);
+    }
+
     public static final Creator<FileInfo> CREATOR = new Creator<FileInfo>() {
         @Override
         public FileInfo createFromParcel(Parcel in) {

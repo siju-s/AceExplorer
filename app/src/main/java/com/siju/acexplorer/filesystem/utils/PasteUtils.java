@@ -44,6 +44,7 @@ public class PasteUtils {
     private String mCurrentDir;
     private boolean mIsDrag;
     private Activity mActivity;
+    private boolean mShowReplaceButton;
 
 
     public PasteUtils(Context context, Fragment fragment, String currentDir, boolean isDrag) {
@@ -111,8 +112,9 @@ public class PasteUtils {
 
     }
 
-    public void showDialog(final String sourceFilePath) {
 
+    public void showDialog(final String sourceFilePath,boolean showReplaceButton) {
+        mShowReplaceButton = showReplaceButton;
         mPasteConflictDialog = new Dialog(mContext);
         mPasteConflictDialog.setContentView(R.layout.dialog_paste_conflict);
 //        mPasteConflictDialog.setTitle(getResources().getString(R.string.dialog_title_paste_conflict));
@@ -122,6 +124,9 @@ public class PasteUtils {
         TextView textFileDate = (TextView) mPasteConflictDialog.findViewById(R.id.textFileDate);
         TextView textFileSize = (TextView) mPasteConflictDialog.findViewById(R.id.textFileSize);
         Button buttonReplace = (Button) mPasteConflictDialog.findViewById(R.id.buttonReplace);
+        if (!showReplaceButton) {
+            buttonReplace.setVisibility(View.GONE);
+        }
         Button buttonSkip = (Button) mPasteConflictDialog.findViewById(R.id.buttonSkip);
         Button buttonKeep = (Button) mPasteConflictDialog.findViewById(R.id.buttonKeepBoth);
         if (new File(sourceFilePath).isDirectory()) {
@@ -181,7 +186,7 @@ public class PasteUtils {
         mPathActionMap.put(mSourceFilePath, mPasteAction);
         Logger.log("TAG", "tempConflictCounter==" + tempConflictCounter + "tempSize==" + tempSourceFile.size());
         if (count < tempSourceFile.size()) {
-            showDialog(tempSourceFile.get(count));
+            showDialog(tempSourceFile.get(count),mShowReplaceButton);
         } else {
             callAsyncTask();
         }
@@ -270,13 +275,6 @@ public class PasteUtils {
                         }
                     });
                     break;
-              /*  case DELETE_OPERATION:
-                    deleteDialog = new Dialog(mContext);
-                    deleteDialog.setContentView(R.layout.dialog_delete);
-                    deleteDialog.setCancelable(false);
-                    textFileName = (TextView) deleteDialog.findViewById(R.id.textFileNames);
-                    break;*/
-
             }
 
 

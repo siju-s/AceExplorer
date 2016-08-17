@@ -158,7 +158,10 @@
     <string name="enter_zip">Enter zip name</string>
     <string name="create_zip">Create</string>
     <string name="zip_progress_title">Creating zip</string>
-
+    <string name="needsaccess">Write Access Required</string>
+    <string name="needsaccesssummary">Please choose the root directory of \t</string>
+    <string name="needsaccesssummary1">\tto grant write access to operate </string>
+    <string name="error">Error</string>
 
 
 </resources>

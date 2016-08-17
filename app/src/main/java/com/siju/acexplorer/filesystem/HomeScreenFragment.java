@@ -254,14 +254,16 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                 ft.addToBackStack(null);
                 ft.commitAllowingStateLoss();
                 mBaseActivity.setCurrentCategory(FileConstants.CATEGORY.FILES.getValue());
-                mBaseActivity.setDir(currentDir, mIsDualModeEnabled);
+                mBaseActivity.setDir(currentDir, false);
                 mBaseActivity.addToBackStack(currentDir,FileConstants.CATEGORY.FILES.getValue());
-
                 mBaseActivity.setIsFromHomePage(true);
 
                 if (mIsDualModeEnabled) {
                     mBaseActivity.toggleDualPaneVisibility(true);
                     mBaseActivity.createDualFragment();
+                    mBaseActivity.setCurrentCategory(FileConstants.CATEGORY.FILES.getValue());
+                    mBaseActivity.setDir(currentDir, true);
+                    mBaseActivity.addToBackStack(currentDir,FileConstants.CATEGORY.FILES.getValue());
                 }
             }
         });

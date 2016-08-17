@@ -229,6 +229,9 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
                     }
 
                 } else {
+                    fileListViewHolder.imageThumbIcon.setVisibility(View.GONE);
+                    fileListViewHolder.imageThumbIcon.setImageDrawable(null);
+
                     int type = fileInfoArrayList.get(position).getType();
                     fileListViewHolder.imageIcon.setImageDrawable(null);
                     // If Image or Video file, load thumbnail

@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -33,6 +34,8 @@ import android.widget.Toast;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.model.FileInfo;
+import com.siju.acexplorer.helper.RootHelper;
+import com.stericson.RootTools.RootTools;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -72,18 +75,102 @@ import static android.webkit.MimeTypeMap.getSingleton;
 
 public class FileUtils {
 
+    private static final String TAG = "FileUtils";
     private static String mCurrentDirectory;
     public static final boolean isDebug = true;
     private static final int BUFFER = 2048; //2 KB
     private static FileComparator comparator = new FileComparator();
     private static int fileCount = 0;
-    static final String TAG = "FileUtils";
     private static Activity activity;
     public static final int ACTION_NONE = 0;
     public static final int ACTION_REPLACE = 1;
     public static final int ACTION_SKIP = 2;
     public static final int ACTION_KEEP = 3;
     public static final int ACTION_CANCEL = 4;
+
+
+    private static final HashMap<String, String> MIME_TYPES = new HashMap<String, String>();
+
+
+    static {
+
+
+		/*
+         * ================= MIME TYPES ====================
+		 */
+        MIME_TYPES.put("asm", "text/x-asm");
+        MIME_TYPES.put("def", "text/plain");
+        MIME_TYPES.put("in", "text/plain");
+        MIME_TYPES.put("rc", "text/plain");
+        MIME_TYPES.put("list", "text/plain");
+        MIME_TYPES.put("log", "text/plain");
+        MIME_TYPES.put("pl", "text/plain");
+        MIME_TYPES.put("prop", "text/plain");
+        MIME_TYPES.put("properties", "text/plain");
+        MIME_TYPES.put("rc", "text/plain");
+
+        MIME_TYPES.put("epub", "application/epub+zip");
+        MIME_TYPES.put("ibooks", "application/x-ibooks+zip");
+
+        MIME_TYPES.put("ifb", "text/calendar");
+        MIME_TYPES.put("eml", "message/rfc822");
+        MIME_TYPES.put("msg", "application/vnd.ms-outlook");
+
+        MIME_TYPES.put("ace", "application/x-ace-compressed");
+        MIME_TYPES.put("bz", "application/x-bzip");
+        MIME_TYPES.put("bz2", "application/x-bzip2");
+        MIME_TYPES.put("cab", "application/vnd.ms-cab-compressed");
+        MIME_TYPES.put("gz", "application/x-gzip");
+        MIME_TYPES.put("lrf", "application/octet-stream");
+        MIME_TYPES.put("jar", "application/java-archive");
+        MIME_TYPES.put("xz", "application/x-xz");
+        MIME_TYPES.put("Z", "application/x-compress");
+
+        MIME_TYPES.put("bat", "application/x-msdownload");
+        MIME_TYPES.put("ksh", "text/plain");
+        MIME_TYPES.put("sh", "application/x-sh");
+
+        MIME_TYPES.put("db", "application/octet-stream");
+        MIME_TYPES.put("db3", "application/octet-stream");
+
+        MIME_TYPES.put("otf", "application/x-font-otf");
+        MIME_TYPES.put("ttf", "application/x-font-ttf");
+        MIME_TYPES.put("psf", "application/x-font-linux-psf");
+
+        MIME_TYPES.put("cgm", "image/cgm");
+        MIME_TYPES.put("btif", "image/prs.btif");
+        MIME_TYPES.put("dwg", "image/vnd.dwg");
+        MIME_TYPES.put("dxf", "image/vnd.dxf");
+        MIME_TYPES.put("fbs", "image/vnd.fastbidsheet");
+        MIME_TYPES.put("fpx", "image/vnd.fpx");
+        MIME_TYPES.put("fst", "image/vnd.fst");
+        MIME_TYPES.put("mdi", "image/vnd.ms-mdi");
+        MIME_TYPES.put("npx", "image/vnd.net-fpx");
+        MIME_TYPES.put("xif", "image/vnd.xiff");
+        MIME_TYPES.put("pct", "image/x-pict");
+        MIME_TYPES.put("pic", "image/x-pict");
+
+        MIME_TYPES.put("adp", "audio/adpcm");
+        MIME_TYPES.put("au", "audio/basic");
+        MIME_TYPES.put("snd", "audio/basic");
+        MIME_TYPES.put("m2a", "audio/mpeg");
+        MIME_TYPES.put("m3a", "audio/mpeg");
+        MIME_TYPES.put("oga", "audio/ogg");
+        MIME_TYPES.put("spx", "audio/ogg");
+        MIME_TYPES.put("aac", "audio/x-aac");
+        MIME_TYPES.put("mka", "audio/x-matroska");
+
+        MIME_TYPES.put("jpgv", "video/jpeg");
+        MIME_TYPES.put("jpgm", "video/jpm");
+        MIME_TYPES.put("jpm", "video/jpm");
+        MIME_TYPES.put("mj2", "video/mj2");
+        MIME_TYPES.put("mjp2", "video/mj2");
+        MIME_TYPES.put("mpa", "video/mpeg");
+        MIME_TYPES.put("ogv", "video/ogg");
+        MIME_TYPES.put("flv", "video/x-flv");
+        MIME_TYPES.put("mkv", "video/x-matroska");
+
+    }
 
 
     public static File getRootDirectory() {
@@ -292,9 +379,10 @@ public class FileUtils {
     }
 
 
-    public FileUtils(Activity activity) {
+  /*  public FileUtils(Activity activity) {
         this.activity = activity;
     }
+*/
 
     /**
      * @param source      the file to be copied
@@ -305,7 +393,7 @@ public class FileUtils {
     public static int copyToDirectory(Context context, String source, String destination, boolean isMoveOperation, int
             action, PasteUtils.BackGroundOperationsTask.Progress progress) {
         PasteUtils.BackGroundOperationsTask.Progress progressBg = progress;
-        Logger.log("TAG", "ACTION==" + action);
+        Logger.log(TAG, "ACTION==" + action + " Move=" + isMoveOperation);
         File sourceFile = new File(source);
         File destinationDir = new File(destination);
         byte[] data = new byte[BUFFER];
@@ -324,13 +412,13 @@ public class FileUtils {
             if (sourceFile.isFile() && destinationDir.isDirectory()) {
                 String fileNameWithoutExt = file_name.substring(0, file_name.lastIndexOf("."));
                 long size = sourceFile.length();
-                Logger.log("TAG", "fileNameWithoutExt==" + fileNameWithoutExt);
+                Logger.log(TAG, "fileNameWithoutExt==" + fileNameWithoutExt);
                 if (fileAction == ACTION_SKIP) {
                     return -1;
                 } else if (fileAction == ACTION_KEEP) {
                     String extension = file_name.substring(file_name.lastIndexOf("."), file_name.length());
                     String newName = destination + fileNameWithoutExt + "(2)" + extension;
-                    Logger.log("TAG", "newName==" + newName);
+                    Logger.log(TAG, "newName==" + newName);
                     newFile = new File(newName);
                 } else if (fileAction == ACTION_REPLACE) {
                     String destinationDirFile = destinationDir + "/" + file_name;
@@ -424,13 +512,14 @@ public class FileUtils {
     public static void viewFile(Context context, String path, String extension) {
 
         Uri uri = Uri.fromFile(new File(path));
+        String realPath = getRealPathFromURI(context, uri);
 
         Intent intent = new Intent();
         intent.setAction(android.content.Intent.ACTION_VIEW);
         // To lowercase used since capital extensions like MKV doesn't get recognised
         String ext = extension.toLowerCase();
         String mimeType = getSingleton().getMimeTypeFromExtension(ext);
-        Logger.log("TAG", "uri==" + uri + "MIME=" + mimeType);
+        Logger.log(TAG, "real path=" + realPath + " uri==" + uri + "MIME=" + mimeType);
         intent.setDataAndType(uri, mimeType);
         PackageManager packageManager = context.getPackageManager();
 
@@ -445,6 +534,33 @@ public class FileUtils {
             openWith(uri, context);
         }
 
+    }
+
+    public static void viewZipFile(Context context, String path) {
+        ZipFile zipfile = null;
+        try {
+            zipfile = new ZipFile(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+//        unzipEntry(zipfile, entry, destinationPath);
+
+    }
+
+    public static String getRealPathFromURI(Context context, Uri contentUri) {
+        String[] proj = {MediaStore.Images.Media.DATA};
+        Cursor cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
+
+        if (cursor == null)
+            return null;
+
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+
+        cursor.moveToFirst();
+        String path = cursor.getString(column_index);
+        cursor.close();
+        return path;
     }
 
     private static void openWith(final Uri uri, final Context context) {
@@ -511,11 +627,8 @@ public class FileUtils {
        /* StringBuilder builder = new StringBuilder(file.getPath());
         String newName = builder.substring(builder.lastIndexOf("/") + 1, builder.length());*/
         String newName = name.trim();
-        if (newName.contains("/") ||
-                newName.length() == 0) {
-            return false;
-        }
-        return true;
+        return !(newName.contains("/") ||
+                newName.length() == 0);
     }
 
     private static void showMessage(Context context, String msg) {
@@ -1272,11 +1385,362 @@ public class FileUtils {
             return -1;
     }
 
+    public interface ErrorCallBack {
+        void exists(File file);
+
+        void launchSAF(File file);
+
+        /*  void launchSAF(HFile file,HFile file1);*/
+        void done(File file, boolean b);
+    }
+
+    public static void mkdir(final File file, final Context context, final boolean isRoot, @NonNull
+    final ErrorCallBack errorCallBack) {
+        if (file == null || errorCallBack == null) return;
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+
+                if (file.exists()) errorCallBack.exists(file);
+
+//                if (file.isLocal() || isRoot) {
+                int mode = checkFolder(new File(file.getParent()), context);
+                if (mode == 2) {
+                    errorCallBack.launchSAF(file);
+                    return null;
+                }
+                if (mode == 1 || mode == 0)
+                    mkdir(file, context);
+                // Try the root way
+                if (!file.exists() && isRoot) {
+//                        file.setMode(HFile.ROOT_MODE);
+                    if (file.exists()) errorCallBack.exists(file);
+                    boolean remount = false;
+                    try {
+                        String res;
+                        if (!("rw".equals(res = RootTools.getMountedAs(file.getParent()))))
+                            remount = true;
+                        if (remount)
+                            RootTools.remount(file.getParent(), "rw");
+                        RootHelper.runAndWait("mkdir \"" + file.getPath() + "\"", true);
+                        if (remount) {
+                            if (res == null || res.length() == 0) res = "ro";
+                            RootTools.remount(file.getParent(), res);
+                        }
+                    } catch (Exception e) {
+                        Logger.log(TAG, file.getPath());
+                    }
+                    errorCallBack.done(file, file.exists());
+                    return null;
+                }
+                errorCallBack.done(file, file.exists());
+                return null;
+//                }
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+    }
+
+    public static void mkfile(final File file, final Context context, final boolean isRoot, @NonNull
+    final ErrorCallBack errorCallBack) {
+        if (file == null || errorCallBack == null) return;
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+
+                if (file.exists()) errorCallBack.exists(file);
+
+//                if (file.isLocal() || isRoot) {
+                int mode = checkFolder(new File(file.getParent()), context);
+                if (mode == 2) {
+                    errorCallBack.launchSAF(file);
+                    return null;
+                }
+                if (mode == 1 || mode == 0)
+                    try {
+                        mkfile(file, context);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                // Try the root way
+                if (!file.exists() && isRoot) {
+//                    file.setMode(HFile.ROOT_MODE);
+                    if (file.exists()) errorCallBack.exists(file);
+                    boolean remount = false;
+                    try {
+                        String res;
+                        if (!("rw".equals(res = RootTools.getMountedAs(file.getParent()))))
+                            remount = true;
+                        if (remount)
+                            RootTools.remount(file.getParent(), "rw");
+                        RootHelper.runAndWait("touch \"" + file.getPath() + "\"", true);
+                        if (remount) {
+                            if (res == null || res.length() == 0) res = "ro";
+                            RootTools.remount(file.getParent(), res);
+                        }
+                    } catch (Exception e) {
+                        Logger.log(TAG, file.getPath());
+                    }
+                    errorCallBack.done(file, file.exists());
+                    return null;
+                }
+                errorCallBack.done(file, file.exists());
+                return null;
+//                }
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+    }
+
+
+    public static boolean mkfile(final File file, Context context) throws IOException {
+        if (file == null)
+            return false;
+        if (file.exists()) {
+            // nothing to create.
+            return !file.isDirectory();
+        }
+
+        // Try the normal way
+        try {
+            if (file.createNewFile()) {
+                return true;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        boolean b = true;
+        // Try with Storage Access Framework.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && isOnExtSdCard(file, context)) {
+            DocumentFile document = getDocumentFile(file.getParentFile(), true, context);
+            // getDocumentFile implicitly creates the directory.
+            try {
+                b = document.createFile(getMimeType(file), file.getName()) != null;
+                return b;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+            try {
+                return MediaStoreHack.mkfile(context, file);
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public static String getMimeType(File file) {
+        if (file.isDirectory()) {
+            return null;
+        }
+
+        String type = "*/*";
+        final String extension = getExtension(file.getName());
+
+        if (extension != null && !extension.isEmpty()) {
+            final String extensionLowerCase = extension.toLowerCase(Locale
+                    .getDefault());
+            final MimeTypeMap mime = MimeTypeMap.getSingleton();
+            type = mime.getMimeTypeFromExtension(extensionLowerCase);
+            if (type == null) {
+                type = MIME_TYPES.get(extensionLowerCase);
+            }
+        }
+        if (type == null) type = "*/*";
+        return type;
+    }
+
+
+    /**
+     * Create a folder. The folder may even be on external SD card for Kitkat.
+     *
+     * @param file The folder to be created.
+     * @return True if creation was successful.
+     */
+    public static boolean mkdir(final File file, Context context) {
+        if (file == null)
+            return false;
+        if (file.exists()) {
+            // nothing to create.
+            return file.isDirectory();
+        }
+
+        // Try the normal way
+        if (file.mkdirs()) {
+            return true;
+        }
+
+        // Try with Storage Access Framework.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && isOnExtSdCard(file, context)) {
+            DocumentFile document = getDocumentFile(file, true, context);
+            // getDocumentFile implicitly creates the directory.
+            return document != null && document.exists();
+        }
+
+        // Try the Kitkat workaround.
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+            try {
+                return MediaStoreHack.mkdir(context, file);
+            } catch (IOException e) {
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+
+    public static int checkFolder(final File folder, Context context) {
+        boolean lol = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP, ext = isOnExtSdCard(folder, context);
+        if (lol && ext) {
+            if (!folder.exists() || !folder.isDirectory()) {
+                return 0;
+            }
+
+            // On Android 5, trigger storage access framework.
+            if (!isWritableNormalOrSaf(folder, context)) {
+                return 2;
+            }
+            return 1;
+        } else if (Build.VERSION.SDK_INT == 19 && isOnExtSdCard(folder, context)) {
+            // Assume that Kitkat workaround works
+            return 1;
+        } else if (isWritable(new File(folder, "DummyFile"))) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Check for a directory if it is possible to create files within this directory, either via normal writing or via
+     * Storage Access Framework.
+     *
+     * @param folder The directory
+     * @return true if it is possible to write in this directory.
+     */
+    public static final boolean isWritableNormalOrSaf(final File folder, Context c) {
+        // Verify that this is a directory.
+        if (folder == null)
+            return false;
+        if (!folder.exists() || !folder.isDirectory()) {
+            return false;
+        }
+
+        // Find a non-existing file in this directory.
+        int i = 0;
+        File file;
+        do {
+            String fileName = "AugendiagnoseDummyFile" + (++i);
+            file = new File(folder, fileName);
+        }
+        while (file.exists());
+
+        // First check regular writability
+        if (isWritable(file)) {
+            return true;
+        }
+
+        // Next check SAF writability.
+        DocumentFile document = getDocumentFile(file, false, c);
+
+        if (document == null) {
+            return false;
+        }
+
+        // This should have created the file - otherwise something is wrong with access URL.
+        boolean result = document.canWrite() && file.exists();
+
+        // Ensure that the dummy file is not remaining.
+        deleteFile(file, c);
+        return result;
+    }
+
+    /**
+     * Delete a file. May be even on external SD card.
+     *
+     * @param file the file to be deleted.
+     * @return True if successfully deleted.
+     */
+    public static final boolean deleteFile(@NonNull final File file, Context context) {
+        // First try the normal deletion.
+        if (file == null) return true;
+        boolean fileDelete = deleteFilesInFolder(file, context);
+        if (file.delete() || fileDelete)
+            return true;
+
+        // Try with Storage Access Framework.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && isOnExtSdCard(file, context)) {
+
+            DocumentFile document = getDocumentFile(file, false, context);
+            return document.delete();
+        }
+
+        // Try the Kitkat workaround.
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+            ContentResolver resolver = context.getContentResolver();
+
+            try {
+                Uri uri = getUriFromFile(file.getAbsolutePath(), context);
+                resolver.delete(uri, null, null);
+                return !file.exists();
+            } catch (Exception e) {
+                Log.e("AmazeFileUtils", "Error when deleting file " + file.getAbsolutePath(), e);
+                return false;
+            }
+        }
+
+        return !file.exists();
+    }
+
+
+    /**
+     * Delete all files in a folder.
+     *
+     * @param folder the folder
+     * @return true if successful.
+     */
+    public static final boolean deleteFilesInFolder(final File folder, Context context) {
+        boolean totalSuccess = true;
+        if (folder == null)
+            return false;
+        if (folder.isDirectory()) {
+            for (File child : folder.listFiles()) {
+                deleteFilesInFolder(child, context);
+            }
+
+            if (!folder.delete())
+                totalSuccess = false;
+        } else {
+
+            if (!folder.delete())
+                totalSuccess = false;
+        }
+        return totalSuccess;
+    }
+
+
+    /**
+     * Determine if a file is on external sd card. (Kitkat or higher.)
+     *
+     * @param file The file.
+     * @return true if on external sd card.
+     */
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    public static boolean isOnExtSdCard(final File file, Context c) {
+        return getExtSdCardFolder(file, c) != null;
+    }
+
+
     /**
      * @param path
      * @param name
      * @return
-     */
+     *//*
     public static int createDir(String path, String name) {
         int len = path.length();
 
@@ -1323,6 +1787,7 @@ public class FileUtils {
 
 
     }
+*/
 
     /**
      * The full path name of the file to delete.
