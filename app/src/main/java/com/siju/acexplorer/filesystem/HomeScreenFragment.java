@@ -261,8 +261,8 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                 if (mIsDualModeEnabled) {
                     mBaseActivity.toggleDualPaneVisibility(true);
                     mBaseActivity.createDualFragment();
-                    mBaseActivity.setCurrentCategory(FileConstants.CATEGORY.FILES.getValue());
                     mBaseActivity.setDir(currentDir, true);
+                    mBaseActivity.setCurrentCategory(FileConstants.CATEGORY.FILES.getValue());
                     mBaseActivity.addToBackStack(currentDir,FileConstants.CATEGORY.FILES.getValue());
                 }
             }

@@ -291,21 +291,8 @@
             android:id="@+id/header"
             android:layout_width="match_parent"
             android:layout_height="130dp"
-            android:background="@drawable/ic_drawer_bg">
+            android:background="@drawable/ic_drawer_bg"/>
 
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="@dimen/drawer_item_margin"
-                android:layout_marginLeft="@dimen/drawer_item_margin"
-                android:layout_marginStart="@dimen/drawer_item_margin"
-                android:text="@string/app_name"
-                android:textColor="#ffffff"
-                android:textSize="18sp"
-                android:textStyle="bold"/>
-        </RelativeLayout>
 
         <ExpandableListView
             android:id="@+id/expand_list_drawer"

@@ -604,8 +604,9 @@ public class BaseActivity extends AppCompatActivity implements
             mCurrentDir = path;
         } else {
 //            parts = mCurrentDirDualPane.split("/");
-            mCurrentDirDualPane = path;
             navDirectoryDualPane.removeAllViews();
+            mCurrentDirDualPane = path;
+
         }
 
         FileListFragment fileListFragment = (FileListFragment) getSupportFragmentManager().findFragmentById(R.id
@@ -645,9 +646,17 @@ public class BaseActivity extends AppCompatActivity implements
                   Handles the scenario :
                   1. When Fav item is a root child and if we click on any folder in that fav item
                      multiple ROOT blocks are not added to Navigation view*/
-                if (isCurrentDirRoot && count == 0) {
-                    setNavDir("/", "/");
+                if (!isDualPaneInFocus) {
+                    if (isCurrentDirRoot && count == 0) {
+                        setNavDir("/", "/");
+                    }
                 }
+                else {
+                    if (isCurrentDualDirRoot && count == 0) {
+                        setNavDir("/", "/");
+                    }
+                }
+
                 count++;
                 setNavDir(dir, parts[i]);
             }
@@ -804,7 +813,8 @@ public class BaseActivity extends AppCompatActivity implements
         if (mCurrentOrientation == Configuration.ORIENTATION_LANDSCAPE
                 && mIsDualPaneEnabledSettings) {
 
-            showDualPane();
+            mIsDualModeEnabled = true;
+//            showDualPane();
 //                 showDualPane();
        /*     mViewSeperator.setVisibility(View.VISIBLE);
             frameLayoutFabDual.setVisibility(View.VISIBLE);*/
@@ -1420,6 +1430,16 @@ public class BaseActivity extends AppCompatActivity implements
             }
             addToBackStack(mCurrentDirDualPane, mCategoryDual);
         }
+
+        if (fragment instanceof HomeScreenFragment) {
+            if (mIsDualModeEnabled) {
+                toggleDualPaneVisibility(true);
+                createDualFragment();
+                setDir(FileUtils.getInternalStorage().getAbsolutePath(), true);
+                setCurrentCategory(FileConstants.CATEGORY.FILES.getValue());
+                addToBackStack(path, FileConstants.CATEGORY.FILES.getValue());
+            }
+        }
     }
 
     private void openCategoryItem(String path, int category) {
@@ -1563,7 +1583,7 @@ public class BaseActivity extends AppCompatActivity implements
                 fileListDualFragment.setArguments(args);
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.frame_container_dual, fileListDualFragment, directory);
-                ft.commitAllowingStateLoss();
+                fragmentTransaction.commitAllowingStateLoss();
             }
         } else {
             ((FileListFragment) fragment).setCategory(category);
@@ -1599,15 +1619,6 @@ public class BaseActivity extends AppCompatActivity implements
             }
         }
         drawerLayout.closeDrawer(relativeLayoutDrawerPane);
-    }
-
-
-    public void toggleDrawer(boolean value) {
-        if (value) {
-            drawerLayout.openDrawer(GravityCompat.START);
-        } else {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        }
     }
 
     private void initListeners() {
@@ -1962,7 +1973,7 @@ public class BaseActivity extends AppCompatActivity implements
             mCurrentOrientation = newConfig.orientation;
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
 
-            if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE && mIsDualPaneEnabledSettings) {
                 showDualPane();
             } else {
                 mIsDualModeEnabled = false;
@@ -2053,7 +2064,6 @@ public class BaseActivity extends AppCompatActivity implements
         } else {
             // Remove HomeScreen Frag & Exit App
             Logger.log(TAG, "Onbackpress--ELSE=");
-//            getSupportFragmentManager().popBackStack();
             mCurrentDir = null;
             mStartingDir = null;
             mStartingDirDualPane = null;
@@ -2229,6 +2239,7 @@ public class BaseActivity extends AppCompatActivity implements
         mCurrentDirDualPane = null;
         mStartingDir = null;
         mStartingDirDualPane = null;
+        isDualPaneInFocus = false;
         mFrameDualPane.setVisibility(View.GONE);
         mViewSeperator.setVisibility(View.GONE);
         super.onBackPressed();
