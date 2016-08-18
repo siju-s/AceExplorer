@@ -13,7 +13,6 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -46,6 +45,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
+import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.Collator;
@@ -1385,112 +1385,9 @@ public class FileUtils {
             return -1;
     }
 
-    public interface ErrorCallBack {
-        void exists(File file);
 
-        void launchSAF(File file);
 
-        /*  void launchSAF(HFile file,HFile file1);*/
-        void done(File file, boolean b);
-    }
 
-    public static void mkdir(final File file, final Context context, final boolean isRoot, @NonNull
-    final ErrorCallBack errorCallBack) {
-        if (file == null || errorCallBack == null) return;
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-
-                if (file.exists()) errorCallBack.exists(file);
-
-//                if (file.isLocal() || isRoot) {
-                int mode = checkFolder(new File(file.getParent()), context);
-                if (mode == 2) {
-                    errorCallBack.launchSAF(file);
-                    return null;
-                }
-                if (mode == 1 || mode == 0)
-                    mkdir(file, context);
-                // Try the root way
-                if (!file.exists() && isRoot) {
-//                        file.setMode(HFile.ROOT_MODE);
-                    if (file.exists()) errorCallBack.exists(file);
-                    boolean remount = false;
-                    try {
-                        String res;
-                        if (!("rw".equals(res = RootTools.getMountedAs(file.getParent()))))
-                            remount = true;
-                        if (remount)
-                            RootTools.remount(file.getParent(), "rw");
-                        RootHelper.runAndWait("mkdir \"" + file.getPath() + "\"", true);
-                        if (remount) {
-                            if (res == null || res.length() == 0) res = "ro";
-                            RootTools.remount(file.getParent(), res);
-                        }
-                    } catch (Exception e) {
-                        Logger.log(TAG, file.getPath());
-                    }
-                    errorCallBack.done(file, file.exists());
-                    return null;
-                }
-                errorCallBack.done(file, file.exists());
-                return null;
-//                }
-            }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-    }
-
-    public static void mkfile(final File file, final Context context, final boolean isRoot, @NonNull
-    final ErrorCallBack errorCallBack) {
-        if (file == null || errorCallBack == null) return;
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-
-                if (file.exists()) errorCallBack.exists(file);
-
-//                if (file.isLocal() || isRoot) {
-                int mode = checkFolder(new File(file.getParent()), context);
-                if (mode == 2) {
-                    errorCallBack.launchSAF(file);
-                    return null;
-                }
-                if (mode == 1 || mode == 0)
-                    try {
-                        mkfile(file, context);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                // Try the root way
-                if (!file.exists() && isRoot) {
-//                    file.setMode(HFile.ROOT_MODE);
-                    if (file.exists()) errorCallBack.exists(file);
-                    boolean remount = false;
-                    try {
-                        String res;
-                        if (!("rw".equals(res = RootTools.getMountedAs(file.getParent()))))
-                            remount = true;
-                        if (remount)
-                            RootTools.remount(file.getParent(), "rw");
-                        RootHelper.runAndWait("touch \"" + file.getPath() + "\"", true);
-                        if (remount) {
-                            if (res == null || res.length() == 0) res = "ro";
-                            RootTools.remount(file.getParent(), res);
-                        }
-                    } catch (Exception e) {
-                        Logger.log(TAG, file.getPath());
-                    }
-                    errorCallBack.done(file, file.exists());
-                    return null;
-                }
-                errorCallBack.done(file, file.exists());
-                return null;
-//                }
-            }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-    }
 
 
     public static boolean mkfile(final File file, Context context) throws IOException {
@@ -1529,6 +1426,180 @@ public class FileUtils {
             } catch (Exception e) {
                 return false;
             }
+        }
+        return false;
+    }
+
+
+
+    static void renameRoot(File a, String v) throws Exception {
+        boolean remount = false;
+        String newname = a.getParent() + "/" + v;
+        String res;
+        if (!("rw".equals(res = RootTools.getMountedAs(a.getParent()))))
+            remount = true;
+        if (remount)
+            RootTools.remount(a.getParent(), "rw");
+        RootHelper.runAndWait("mv \"" + a.getPath() + "\" \"" + newname + "\"", true);
+        if (remount) {
+            if (res == null || res.length() == 0) res = "ro";
+            RootTools.remount(a.getParent(), res);
+        }
+    }
+
+    /**
+     * Rename a folder. In case of extSdCard in Kitkat, the old folder stays in place, but files are moved.
+     *
+     * @param source
+     *            The source folder.
+     * @param target
+     *            The target folder.
+     * @return true if the renaming was successful.
+     */
+    public static final boolean renameFolder(@NonNull final File source,@NonNull final File target,Context context) {
+        // First try the normal rename.
+        if (rename(source, target.getName(), false)) {
+            return true;
+        }
+        if (target.exists()) {
+            return false;
+        }
+
+        // Try the Storage Access Framework if it is just a rename within the same parent folder.
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP
+                && source.getParent().equals(target.getParent()) && isOnExtSdCard(source, context)) {
+            DocumentFile document = getDocumentFile(source, true,context);
+            if (document.renameTo(target.getName())) {
+                return true;
+            }
+        }
+
+        // Try the manual way, moving files individually.
+        if (!mkdir(target,context)) {
+            return false;
+        }
+
+        File[] sourceFiles = source.listFiles();
+
+        if (sourceFiles == null) {
+            return true;
+        }
+
+        for (File sourceFile : sourceFiles) {
+            String fileName = sourceFile.getName();
+            File targetFile = new File(target, fileName);
+            if (!copyFile(sourceFile, targetFile,context)) {
+                // stop on first error
+                return false;
+            }
+        }
+        // Only after successfully copying all files, delete files on source folder.
+        for (File sourceFile : sourceFiles) {
+            if (!deleteFile(sourceFile,context)) {
+                // stop on first error
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    /**
+     * Copy a file. The target file may even be on external SD card for Kitkat.
+     *
+     * @param source
+     *            The source file
+     * @param target
+     *            The target file
+     * @return true if the copying was successful.
+     */
+    @SuppressWarnings("null")
+    public static boolean copyFile(final File source, final File target,Context context) {
+        FileInputStream inStream = null;
+        OutputStream outStream = null;
+        FileChannel inChannel = null;
+        FileChannel outChannel = null;
+        try {
+            inStream = new FileInputStream(source);
+
+            // First try the normal way
+            if (isWritable(target)) {
+                // standard way
+                outStream = new FileOutputStream(target);
+                inChannel = inStream.getChannel();
+                outChannel = ((FileOutputStream) outStream).getChannel();
+                inChannel.transferTo(0, inChannel.size(), outChannel);
+            }
+            else {
+                if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
+                    // Storage Access Framework
+                    DocumentFile targetDocument = getDocumentFile(target, false,context);
+                    outStream =
+                            context.getContentResolver().openOutputStream(targetDocument.getUri());
+                }
+                else if (Build.VERSION.SDK_INT==Build.VERSION_CODES.KITKAT) {
+                    // Workaround for Kitkat ext SD card
+                    Uri uri = MediaStoreHack.getUriFromFile(target.getAbsolutePath(),context);
+                    outStream = context.getContentResolver().openOutputStream(uri);
+                }
+                else {
+                    return false;
+                }
+
+                if (outStream != null) {
+                    // Both for SAF and for Kitkat, write to output stream.
+                    byte[] buffer = new byte[16384]; // MAGIC_NUMBER
+                    int bytesRead;
+                    while ((bytesRead = inStream.read(buffer)) != -1) {
+                        outStream.write(buffer, 0, bytesRead);
+                    }
+                }
+
+            }
+        }
+        catch (Exception e) {
+            Log.e("AmazeFileUtils",
+                    "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
+            return false;
+        }
+        finally {
+            try {
+                inStream.close();
+            }
+            catch (Exception e) {
+                // ignore exception
+            }
+            try {
+                outStream.close();
+            }
+            catch (Exception e) {
+                // ignore exception
+            }
+            try {
+                inChannel.close();
+            }
+            catch (Exception e) {
+                // ignore exception
+            }
+            try {
+                outChannel.close();
+            }
+            catch (Exception e) {
+                // ignore exception
+            }
+        }
+        return true;
+    }
+
+    public static boolean rename(File f, String name,boolean root) {
+        String newname = f.getParent() + "/" + name;
+        if(f.getParentFile().canWrite()){
+            return f.renameTo(new File(newname));}
+        else if(root) {
+            RootTools.remount(f.getPath(),"rw");
+            RootHelper.runAndWait("mv " + f.getPath() + " " + newname, true);
+            RootTools.remount(f.getPath(),"ro");
+            return true;
         }
         return false;
     }
@@ -1788,6 +1859,8 @@ public class FileUtils {
 
     }
 */
+
+
 
     /**
      * The full path name of the file to delete.

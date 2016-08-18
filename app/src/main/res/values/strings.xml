@@ -162,6 +162,8 @@
     <string name="needsaccesssummary">Please choose the root directory of \t</string>
     <string name="needsaccesssummary1">\tto grant write access to operate </string>
     <string name="error">Error</string>
+    <string name="msg_operation_failed">Operation failed</string>
+
 
 
 </resources>

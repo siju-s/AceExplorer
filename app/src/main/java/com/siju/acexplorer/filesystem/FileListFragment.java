@@ -79,8 +79,11 @@ import com.siju.acexplorer.filesystem.ui.DialogBrowseFragment;
 import com.siju.acexplorer.filesystem.ui.DividerItemDecoration;
 import com.siju.acexplorer.filesystem.ui.EnhancedMenuInflater;
 import com.siju.acexplorer.filesystem.utils.ExtractManager;
+import com.siju.acexplorer.filesystem.utils.FileOperations;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.utils.PasteUtils;
+import com.siju.acexplorer.helper.RootHelper;
+import com.stericson.RootTools.RootTools;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -177,6 +180,9 @@ public class FileListFragment extends Fragment implements LoaderManager
     private int mOldWidth;
     private int mCurrentOrientation;
     private ArrayList<FileInfo> mCopiedData = new ArrayList<>();
+    private String mOldFilePath, mNewFilePath;
+    private boolean mIsRootMode = true;
+
 
     @Override
     public void onAttach(Context context) {
@@ -1028,84 +1034,9 @@ public class FileListFragment extends Fragment implements LoaderManager
                 case R.id.action_rename:
                     if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
                         final String filePath = fileInfoList.get(mSelectedItemPositions.keyAt(0)).getFilePath();
-//                        String fileName = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.length());
-                        String fileName = fileInfoList.get(mSelectedItemPositions.keyAt(0)).getFileName();
-
-                        final long id = fileInfoList.get(mSelectedItemPositions.keyAt(0)).getId();
-//                        String extension = null;
-                        String extension = fileInfoList.get(mSelectedItemPositions.keyAt(0)).getExtension();
-                        boolean file = false;
-                        if (new File(filePath).isFile()) {
-                            String[] tokens = fileName.split("\\.(?=[^\\.]+$)");
-                            fileName = tokens[0];
-//                            extension = tokens[1];
-                            file = true;
-                        }
-                        final boolean isFile = file;
-                        final String ext = extension;
-
-                        final Dialog dialog = new Dialog(
-                                getActivity());
-//                dialog.requestWindowFeature(Window.FEATURE_LEFT_ICON);
-                        dialog.setContentView(R.layout.dialog_rename);
-                        dialog.setCancelable(true);
-
-                        final EditText rename = (EditText) dialog
-                                .findViewById(R.id.editRename);
-
-                        rename.setText(fileName);
-                        rename.setFocusable(true);
-                        // dialog save button to save the edited item
-                        Button saveButton = (Button) dialog
-                                .findViewById(R.id.buttonRename);
-                        // for updating the list item
-                        saveButton.setOnClickListener(new View.OnClickListener() {
-
-                            public void onClick(View v) {
-                                final CharSequence name = rename.getText();
-                                if (name.length() == 0) {
-                                    rename.setError(getResources().getString(R.string.msg_error_valid_name));
-                                    return;
-                                }
-                                String renamedName;
-                                if (isFile) {
-                                    renamedName = rename.getText().toString() + "." + ext;
-                                } else {
-                                    renamedName = rename.getText().toString();
-                                }
-                                if (mCategory == 0) {
-                                    int result = FileUtils.renameTarget(filePath, renamedName);
-                                    String temp = filePath.substring(0, filePath.lastIndexOf("/"));
-                                    String newFileName = temp + "/" + renamedName;
-                                } else {
-                                    renamedName = rename.getText().toString();
-                                    //For mediastore, we just need title and not extension
-                                    if (mCategory != 0) {
-                                        FileUtils.updateMediaStore(getActivity(), mCategory, id,
-                                                renamedName);
-                                    }
-                                }
-                                refreshList();
-                                dialog.dismiss();
-
-                            }
-                        });
-
-                        // cancel button declaration
-                        Button cancelButton = (Button) dialog
-                                .findViewById(R.id.buttonCancel);
-                        cancelButton.setOnClickListener(new View.OnClickListener() {
-
-                            public void onClick(View v) {
-                                dialog.dismiss();
-
-                            }
-                        });
-
-                        dialog.show();
+                        long id = fileInfoList.get(mSelectedItemPositions.keyAt(0)).getId();
+                        renameDialog(filePath, id);
                     }
-
-                    mActionMode.finish();
                     return true;
 
                 case R.id.action_info:
@@ -1197,6 +1128,142 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
     }
 
+    private void renameDialog(final String oldFilePath, final long id) {
+
+
+        String fileName = oldFilePath.substring(oldFilePath.lastIndexOf("/") + 1, oldFilePath.length());
+        boolean file = false;
+        String extension = null;
+        if (new File(oldFilePath).isFile()) {
+            String[] tokens = fileName.split("\\.(?=[^\\.]+$)");
+            fileName = tokens[0];
+            extension = tokens[1];
+            file = true;
+        }
+        final boolean isFile = file;
+        final String ext = extension;
+
+        final Dialog dialog = new Dialog(
+                getActivity());
+        dialog.setContentView(R.layout.dialog_rename);
+        dialog.setCancelable(true);
+
+        final EditText rename = (EditText) dialog
+                .findViewById(R.id.editRename);
+
+        rename.setText(fileName);
+        rename.setFocusable(true);
+        // dialog save button to save the edited item
+        Button saveButton = (Button) dialog
+                .findViewById(R.id.buttonRename);
+        // for updating the list item
+        saveButton.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                final CharSequence name = rename.getText();
+                if (name.length() == 0) {
+                    rename.setError(getResources().getString(R.string.msg_error_valid_name));
+                    return;
+                }
+                String renamedName;
+                if (isFile) {
+                    renamedName = rename.getText().toString() + "." + ext;
+                } else {
+                    renamedName = rename.getText().toString();
+                }
+                File newFile = new File(mFilePath + "/" + renamedName);
+                File oldFile = new File(oldFilePath);
+                renameFile(oldFile, newFile);
+                if (mCategory != 0) {
+                    FileUtils.updateMediaStore(getActivity(), mCategory, id,
+                            renamedName);
+                }
+/*                if (mCategory == 0) {
+
+              *//*      int result = FileUtils.renameTarget(filePath, renamedName);
+                    String temp = filePath.substring(0, filePath.lastIndexOf("/"));
+                    String newFileName = temp + "/" + renamedName;*//*
+                } else {
+                    renamedName = rename.getText().toString();
+                    //For mediastore, we just need title and not extension
+
+                }
+                refreshList();*/
+                dialog.dismiss();
+
+            }
+        });
+
+        // cancel button declaration
+        Button cancelButton = (Button) dialog
+                .findViewById(R.id.buttonCancel);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                dialog.dismiss();
+
+            }
+        });
+
+        dialog.show();
+
+
+        mActionMode.finish();
+    }
+
+    public void renameFile(final File oldFile, final File newFile) {
+        /*final Toast toast=Toast.makeText(ma.getActivity(), R.string.creatingfolder, Toast.LENGTH_LONG);
+        toast.show();*/
+        FileOperations.rename(oldFile, newFile, mIsRootMode, getActivity(), new FileOperations
+                .ErrorCallBack() {
+            @Override
+            public void exists(final File file1) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showMessage(getString(R.string.file_exists));
+
+                    }
+                });
+            }
+
+            @Override
+            public void launchSAF(final File file) {
+
+            }
+
+            @Override
+            public void launchSAF(final File oldFile, final File newFile) {
+//                if (toast != null) toast.cancel();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mOldFilePath = oldFile.getAbsolutePath();
+                        mNewFilePath = newFile.getAbsolutePath();
+                        mBaseActivity.guideDialogForLEXA(mOldFilePath);
+                    }
+                });
+
+            }
+
+
+            @Override
+            public void done(File hFile, final boolean success) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (success) {
+                            refreshList();
+                        } else
+                            Toast.makeText(getActivity(), R.string.msg_operation_failed,
+                                    Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+    }
+
+
     private void hideUnHideFiles(ArrayList<FileInfo> fileInfo) {
         for (int i = 0; i < fileInfo.size(); i++) {
             String fileName = fileInfo.get(i).getFileName();
@@ -1211,6 +1278,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
         refreshList();
     }
+
 
     private void showExtractOptions(final String currentFilePath, final String currentDir) {
 
@@ -1530,7 +1598,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                             (destinationDir));
                     pasteConflictList.add(isPasteConflict);
                 }
-                Logger.log(TAG,"Paste conflict list="+pasteConflictList);
+                Logger.log(TAG, "Paste conflict list=" + pasteConflictList);
 
 
                 if (!pasteConflictList.contains(true)) {
@@ -1690,7 +1758,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                     }
 
                     boolean value = destinationDir.equals(sourceParent);
-                    Logger.log(TAG, "Source parent=" +sourceParent+" "+value);
+                    Logger.log(TAG, "Source parent=" + sourceParent + " " + value);
 
 
                     if (!destinationDir.equals(sourceParent)) {
@@ -1709,7 +1777,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 //                        List<Boolean> pasteConflictList = new ArrayList<>();
 
                         for (int i = 0; i < paths.size(); i++) {
-                             mPasteUtils.checkIfFileExists(paths.get(i), new File
+                            mPasteUtils.checkIfFileExists(paths.get(i), new File
                                     (destinationDir));
 //                            pasteConflictList.add(isPasteConflict);
 
@@ -1879,7 +1947,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                                 (mFilePath));
                         pasteConflictList.add(isPasteConflict);
                     }
-                    Logger.log(TAG,"Paste conflict list="+pasteConflictList);
+                    Logger.log(TAG, "Paste conflict list=" + pasteConflictList);
 
                     if (!pasteConflictList.contains(true)) {
                         mPasteUtils.callAsyncTask();
@@ -2056,6 +2124,14 @@ public class FileListFragment extends Fragment implements LoaderManager
         return count;
     }
 
+    private boolean checkIfFileCategory(int category) {
+        return category == FileConstants.CATEGORY.FILES.getValue() ||
+                category == FileConstants.CATEGORY.COMPRESSED.getValue() ||
+                category == FileConstants.CATEGORY.DOWNLOADS.getValue() ||
+                category == FileConstants.CATEGORY.FAVORITES.getValue() ||
+                category == FileConstants.CATEGORY.LARGE_FILES.getValue();
+    }
+
     private class BgOperationsTask extends AsyncTask<ArrayList<FileInfo>, Void, Integer> {
 
         private String fileName;
@@ -2093,18 +2169,28 @@ public class FileListFragment extends Fragment implements LoaderManager
 
             for (int i = 0; i < totalFiles; i++) {
                 String path = fileInfo.get(i).getFilePath();
-                int result = FileUtils.deleteTarget(path);
-                if (result == 0) {
+//                int result = FileUtils.deleteTarget(path);
+                boolean isDeleted = FileUtils.deleteFile(new File(path), getActivity());
+
+                if (!isDeleted) {
+                    if (mIsRootMode) {
+                        RootTools.remount(new File(path).getParent(), "rw");
+                        String s = RootHelper.runAndWait("rm -r \"" + path + "\"", true);
+                        RootTools.remount(new File(path).getParent(), "ro");
+                        paths.add(path);
+                        mimeTypes.add(fileInfo.get(i).getMimeType());
+                        deletedFilesList.add(fileInfo.get(i));
+                        deletedCount++;
+                    }
+
+                } else {
                     paths.add(path);
                     mimeTypes.add(fileInfo.get(i).getMimeType());
                     deletedFilesList.add(fileInfo.get(i));
                     deletedCount++;
-
-
                 }
             }
-            if (mCategory != FileConstants.CATEGORY.FILES.getValue() ||
-                    mCategory != FileConstants.CATEGORY.DOWNLOADS.getValue()) {
+            if (!checkIfFileCategory(mCategory)) {
                 String[] pathArray = new String[paths.size()];
                 paths.toArray(pathArray);
 
@@ -2138,7 +2224,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                                 deletedFiles) + " " +
                                 getString(R.string.msg_delete_success));
 
-                        for (int i=0;i< deletedFilesList.size();i++) {
+                        for (int i = 0; i < deletedFilesList.size(); i++) {
                             fileInfoList.remove(deletedFilesList.get(i));
                         }
 

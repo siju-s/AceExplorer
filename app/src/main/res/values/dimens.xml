@@ -37,6 +37,9 @@
     <dimen name="nav_arrow_margin">10dp</dimen>
     <dimen name="nav_button_min_width">30dp</dimen>
 
+    <integer name="homescreen_columns">3</integer>
+
+
 
 
 </resources>

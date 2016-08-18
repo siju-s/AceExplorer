@@ -32,8 +32,8 @@ import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.model.HomeLibraryInfo;
 import com.siju.acexplorer.filesystem.model.HomeStoragesInfo;
 import com.siju.acexplorer.filesystem.model.LibrarySortModel;
-import com.siju.acexplorer.filesystem.ui.CustomGridLayoutManager;
 import com.siju.acexplorer.filesystem.ui.DividerItemDecoration;
+import com.siju.acexplorer.filesystem.ui.HomeScreenGridLayoutManager;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 
 import java.io.File;
@@ -97,6 +97,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
 
     private DisplayMetrics displayMetrics;
 
+
     @Override
     public void onAttach(Context context) {
         mBaseActivity = (BaseActivity) context;
@@ -119,6 +120,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         /*mIsFirstRun = PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean
                 (BaseActivity.PREFS_FIRST_RUN, false);*/
 //        mIsFirstRun = getArguments().getBoolean(BaseActivity.PREFS_FIRST_RUN, false);
+
         mCurrentOrientation = getResources().getConfiguration().orientation;
         mIsDualModeEnabled = getArguments().getBoolean(FileConstants.PREFS_DUAL_ENABLED, false);
 //        savedLibraries = new ArrayList<>();
@@ -146,10 +148,12 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     }
 
     private void setGridColumns() {
-        if (mGridItemWidth == 0) {
+       /* if (mGridItemWidth == 0) {
             mGridItemWidth = dpToPx(100);
-        }
-        gridLayoutManagerLibrary = new CustomGridLayoutManager(getActivity(), mGridItemWidth);
+        }*/
+        mGridColumns = getResources().getInteger(R.integer.homescreen_columns);
+//        Logger.log(TAG,"Grid columns="+mGridColumns);
+        gridLayoutManagerLibrary = new HomeScreenGridLayoutManager(getActivity(), mGridColumns);
         recyclerViewLibrary.setLayoutManager(gridLayoutManagerLibrary);
     }
 
@@ -160,22 +164,13 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     }
 
     private void initializeViews() {
-/*          mToolbar = (Toolbar) root.findViewById(R.id.toolbar);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
-        mToolbar.setTitle(getString(R.string.app_name));*/
         recyclerViewLibrary = (RecyclerView) root.findViewById(R.id.recyclerViewLibrary);
         recyclerViewStorages = (RecyclerView) root.findViewById(R.id.recyclerViewStorages);
         recyclerViewLibrary.setHasFixedSize(true);
         recyclerViewStorages.setHasFixedSize(true);
         llmStorage = new LinearLayoutManager(getActivity());
         setGridColumns();
-//        gridLayoutManagerLibrary = new GridLayoutManager(getActivity(), 3);
-
-
         recyclerViewLibrary.setItemAnimator(new DefaultItemAnimator());
-
         recyclerViewStorages.setLayoutManager(llmStorage);
         recyclerViewStorages.setItemAnimator(new DefaultItemAnimator());
         recyclerViewStorages.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager

@@ -62,6 +62,7 @@ import com.siju.acexplorer.filesystem.HomeScreenFragment;
 import com.siju.acexplorer.filesystem.model.BackStackModel;
 import com.siju.acexplorer.filesystem.model.FavInfo;
 import com.siju.acexplorer.filesystem.model.FileInfo;
+import com.siju.acexplorer.filesystem.utils.FileOperations;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.helper.RootHelper;
 import com.siju.acexplorer.model.SectionGroup;
@@ -243,7 +244,7 @@ public class BaseActivity extends AppCompatActivity implements
         mIsDualPaneEnabledSettings = mSharedPreferences.getBoolean(FileConstants.PREFS_DUAL_PANE,
                 true);
         mCurrentTheme = mSharedPreferences.getInt(FileConstants.CURRENT_THEME, 0);
-        mIsRootMode = mSharedPreferences.getBoolean(FileConstants.ROOT_ACCESS, false);
+        mIsRootMode = mSharedPreferences.getBoolean(FileConstants.ROOT_ACCESS, true);
         mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
@@ -650,8 +651,7 @@ public class BaseActivity extends AppCompatActivity implements
                     if (isCurrentDirRoot && count == 0) {
                         setNavDir("/", "/");
                     }
-                }
-                else {
+                } else {
                     if (isCurrentDualDirRoot && count == 0) {
                         setNavDir("/", "/");
                     }
@@ -966,7 +966,7 @@ public class BaseActivity extends AppCompatActivity implements
     public void mkDir(final View view, final File file) {
         /*final Toast toast=Toast.makeText(ma.getActivity(), R.string.creatingfolder, Toast.LENGTH_LONG);
         toast.show();*/
-        FileUtils.mkdir(file, this, mIsRootMode, new FileUtils.ErrorCallBack() {
+        FileOperations.mkdir(file, this, mIsRootMode, new FileOperations.ErrorCallBack() {
             @Override
             public void exists(final File file1) {
                 runOnUiThread(new Runnable() {
@@ -983,6 +983,22 @@ public class BaseActivity extends AppCompatActivity implements
 
             @Override
             public void launchSAF(final File file) {
+//                if (toast != null) toast.cancel();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                /*        mainActivity.oppathe = path.getPath();
+                        mainActivity.operation = DataUtils.NEW_FOLDER;*/
+                        mFabView = view;
+                        mCreatePath = file.getAbsolutePath();
+                        guideDialogForLEXA(mCreatePath);
+                    }
+                });
+
+            }
+
+            @Override
+            public void launchSAF(final File oldFile,final File newFile) {
 //                if (toast != null) toast.cancel();
                 runOnUiThread(new Runnable() {
                     @Override
@@ -1026,7 +1042,7 @@ public class BaseActivity extends AppCompatActivity implements
                             }
 
                         } else
-                            Toast.makeText(BaseActivity.this, R.string.msg_folder_create_failure,
+                            Toast.makeText(BaseActivity.this, R.string.msg_operation_failed,
                                     Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -1120,7 +1136,7 @@ public class BaseActivity extends AppCompatActivity implements
     public void mkFile(final View view, final File file) {
         /*final Toast toast=Toast.makeText(ma.getActivity(), R.string.creatingfolder, Toast.LENGTH_LONG);
         toast.show();*/
-        FileUtils.mkfile(file, this, mIsRootMode, new FileUtils.ErrorCallBack() {
+        FileOperations.mkfile(file, this, mIsRootMode, new FileOperations.ErrorCallBack() {
             @Override
             public void exists(final File file1) {
                 runOnUiThread(new Runnable() {
@@ -1148,6 +1164,11 @@ public class BaseActivity extends AppCompatActivity implements
                         guideDialogForLEXA(mCreatePath);
                     }
                 });
+
+            }
+
+            @Override
+            public void launchSAF(File oldFile, File newFile) {
 
             }
 
@@ -1180,7 +1201,7 @@ public class BaseActivity extends AppCompatActivity implements
                             }
 
                         } else
-                            Toast.makeText(BaseActivity.this, R.string.msg_folder_create_failure,
+                            Toast.makeText(BaseActivity.this, R.string.msg_operation_failed,
                                     Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -1303,63 +1324,14 @@ public class BaseActivity extends AppCompatActivity implements
 
                     if (mCurrentDir == null || !mCurrentDir.equals(path)) {
                         actionOnDrawerItemClick(path, groupPos);
-                      /*  mCurrentDir = path;
-                        initializeStartingDirectory();
-                        checkIfFavIsRootDir(groupPos);
-                        mCategory = FileConstants.CATEGORY.FILES.getValue();
-                        displayInitialFragment(mCurrentDir, mCategory);
-                        if (fragment instanceof FileListFragment) {
-                            setNavDirectory(mCurrentDir, isDualPaneInFocus);
-                        }
-                        addToBackStack(mCurrentDir, mCategory);*/
                     }
-                    /*else if (!mCurrentDir.equals(path)) {
-                        actionOnDrawerItemClick(path, groupPos);
 
-                     *//*   mCurrentDir = path;
-                        initializeStartingDirectory();
-
-                        // For Favourites
-                        checkIfFavIsRootDir(groupPos);
-                        mCategory = FileConstants.CATEGORY.FILES.getValue();
-                        addToBackStack(mCurrentDir, mCategory);
-                        displayInitialFragment(mCurrentDir, mCategory);
-                        if (fragment instanceof FileListFragment) {
-                            setNavDirectory(mCurrentDir, isDualPaneInFocus);
-                        }*//*
-                    }*/
 
                 } else {
                     if (mCurrentDirDualPane == null || !mCurrentDirDualPane.equals(path)) {
                         actionOnDrawerItemClick(path, groupPos);
                     }
-                        /*mCurrentDirDualPane = path;
-                        mCategory = FileConstants.CATEGORY.FILES.getValue();
-                        displayInitialFragment(mCurrentDirDualPane, mCategory);
-                    } else if (!mCurrentDirDualPane.equals(path)) {
-                        mCurrentDirDualPane = mStartingDirDualPane;
-//                        dualPaneFragments.clear();
-                        // For Favourites
-                        if (groupPos == 1) {
-                            if (mCurrentDirDualPane.contains(getInternalStorage().getAbsolutePath
-                                    ())) {
-                                mStartingDirDualPane = getInternalStorage().getAbsolutePath();
-                            } else if (FileUtils.getExternalStorage() != null && mCurrentDirDualPane
-                                    .contains(FileUtils
-                                            .getExternalStorage().getAbsolutePath())) {
-                                mStartingDirDualPane = getInternalStorage().getAbsolutePath();
-                            } else {
-                                isCurrentDirRoot = true;
-                                mStartingDirDualPane = "/";
-                            }
-                        }
-//                        setNavDirectory(mCurrentDirDualPane, isDualPaneInFocus);
-                        mCategory = FileConstants.CATEGORY.FILES.getValue();
-                        displayInitialFragment(mCurrentDirDualPane, mCategory);
-                    }
-                    if (fragment instanceof FileListFragment) {
-                        setNavDirectory(mCurrentDirDualPane, isDualPaneInFocus);
-                    }*/
+
                 }
                 break;
             // When Library category item is clicked
