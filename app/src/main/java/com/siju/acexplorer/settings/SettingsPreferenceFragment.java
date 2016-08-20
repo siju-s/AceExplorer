@@ -7,6 +7,7 @@ package com.siju.acexplorer.settings;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -31,7 +32,7 @@ import java.util.Locale;
 
 public class SettingsPreferenceFragment extends PreferenceFragment {
 
-
+    private final String TAG = this.getClass().getSimpleName();
     private final String PREFS_PRO = "prefsPro";
     private final String PREFS_VERSION = "prefsVersion";
     private final String PREFS_UPDATE = "prefsUpdate";
@@ -41,9 +42,9 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
     private String currentLanguage;
     //    ListPreference langPreference;
     ListPreference themePreference;
-
+    private SharedPreferences mPrefs;
     Preference updatePreference;
-
+    private Intent mSendIntent;
 
 
     @Override
@@ -52,6 +53,8 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         addPreferencesFromResource(R.xml.pref_settings);
         PreferenceManager.setDefaultValues(getActivity(), R.xml.pref_settings, false);
         setHasOptionsMenu(true);
+        mSendIntent = new Intent();
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
 //        langPreference = (ListPreference) findPreference(PREFS_LANGUAGE);
         themePreference = (ListPreference) findPreference(FileConstants.PREFS_THEME);
@@ -101,6 +104,20 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         initializeListeners();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPrefs.registerOnSharedPreferenceChangeListener(mListener);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mPrefs.unregisterOnSharedPreferenceChangeListener(mListener);
+
+    }
+
+
     private void initializeListeners() {
         updatePreference
                 .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -110,21 +127,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
                         Intent intent = new Intent(Intent.ACTION_VIEW);
                         // Try Google play
                         intent.setData(Uri
-                                .parse("market://details?id=com.siju.musicalmojo.free"));
-    /*                        if (!MyStartActivity(intent)) {
-                                // Market (Google play) app seems not installed,
-                                // let's try to open a webbrowser
-                                intent.setData(Uri
-                                        .parse("https://play.google.com/store/apps/details?id=com
-                                        .siju.musicalmojo.free"));
-                                if (!MyStartActivity(intent)) {
-                                    // Well if this also fails, we have run out of
-                                    // options, inform the user.
-                                    Toast.makeText(getActivity(),
-                                            getString(R.string.errorMarket),
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            }*/
+                                .parse("market://details?id=" + getActivity().getPackageName()));
                         return true;
                     }
                 });
@@ -137,41 +140,41 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
      */
     private Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new
             Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object value) {
-            String stringValue = value.toString();
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object value) {
+                    String stringValue = value.toString();
 
-            if (preference instanceof ListPreference) {
-                // For list preferences, look up the correct display value in
-                // the preference's 'entries' list.
-                ListPreference listPreference = (ListPreference) preference;
-                int index = listPreference.findIndexOfValue(stringValue);
+                    if (preference instanceof ListPreference) {
+                        // For list preferences, look up the correct display value in
+                        // the preference's 'entries' list.
+                        ListPreference listPreference = (ListPreference) preference;
+                        int index = listPreference.findIndexOfValue(stringValue);
 
-                // Set the summary to reflect the new value.
-                preference.setSummary(
-                        index >= 0
-                                ? listPreference.getEntries()[index]
-                                : null);
+                        // Set the summary to reflect the new value.
+                        preference.setSummary(
+                                index >= 0
+                                        ? listPreference.getEntries()[index]
+                                        : null);
 
          /*       if (listPreference.getKey().equals(PREFS_LANGUAGE)) {
 
                     LocaleHelper.setLocale(getActivity(), stringValue);
                     getActivity().recreate();
                 }*/
-                if (listPreference.getKey().equals(FileConstants.PREFS_THEME)) {
-                    int theme = Integer.valueOf(stringValue);
+                        if (listPreference.getKey().equals(FileConstants.PREFS_THEME)) {
+                            int theme = Integer.valueOf(stringValue);
 
-                    ((SettingsActivity) getActivity()).setApplicationTheme(theme);
+                            ((SettingsActivity) getActivity()).setApplicationTheme(theme);
+                        }
+
+                    } else {
+                        // For all other preferences, set the summary to the value's
+                        // simple string representation.
+                        preference.setSummary(stringValue);
+                    }
+                    return true;
                 }
-
-            } else {
-                // For all other preferences, set the summary to the value's
-                // simple string representation.
-                preference.setSummary(stringValue);
-            }
-            return true;
-        }
-    };
+            };
 
 
     /**
@@ -235,4 +238,29 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
+
+    SharedPreferences.OnSharedPreferenceChangeListener mListener =
+            new SharedPreferences.OnSharedPreferenceChangeListener() {
+                public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+                    switch (key) {
+                        case FileConstants.PREFS_HOMESCREEN:
+                            boolean isHomeScreenEnabled = prefs.getBoolean(FileConstants
+                                    .PREFS_HOMESCREEN, true);
+                            Logger.log(TAG,"Homescreen="+isHomeScreenEnabled);
+//                            mSendIntent.putExtra(FileConstants.PREFS_HOMESCREEN, isHomeScreenEnabled);
+                            getActivity().setResult(Activity.RESULT_OK, mSendIntent);
+                            break;
+
+                        case FileConstants.PREFS_DUAL_PANE:
+                            boolean isDualPaneEnabledSettings = mPrefs.getBoolean(FileConstants
+                                    .PREFS_DUAL_PANE, true);
+                            Logger.log(TAG,"Dualpane="+isDualPaneEnabledSettings);
+//                            mSendIntent.putExtra(FileConstants.PREFS_DUAL_PANE, isDualPaneEnabledSettings);
+                            getActivity().setResult(Activity.RESULT_OK, mSendIntent);
+                            break;
+                    }
+                }
+            };
 }

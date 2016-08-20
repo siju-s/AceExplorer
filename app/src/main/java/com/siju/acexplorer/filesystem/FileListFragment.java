@@ -172,6 +172,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private String mSelectedPath;
     private TextView textPathSelect;
     private HashMap<String, Bundle> scrollPosition = new HashMap<>();
+    private HashMap<String, Bundle> scrollPositionDualPane = new HashMap<>();
     private boolean mIsDataRefreshed;
     private int mGridColumns;
     private int mGridItemWidth;
@@ -182,6 +183,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private ArrayList<FileInfo> mCopiedData = new ArrayList<>();
     private String mOldFilePath, mNewFilePath;
     private boolean mIsRootMode = true;
+    private int mRenamedPosition = -1;
 
 
     @Override
@@ -430,23 +432,11 @@ public class FileListFragment extends Fragment implements LoaderManager
                         bundle.putString(FileConstants.KEY_PATH, path);
                         bundle.putInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
                         bundle.putBoolean(FileConstants.KEY_ZIP, true);
-                        Intent intent = new Intent(getActivity(), BaseActivity.class);
-       /*                 if (FileListFragment.this instanceof FileListDualFragment) {
-                            intent.setAction(BaseActivity.ACTION_DUAL_VIEW_FOLDER_LIST);
-                            intent.putExtra(BaseActivity.ACTION_DUAL_PANEL, true);
-                        } else {
-                            intent.setAction(BaseActivity.ACTION_VIEW_FOLDER_LIST);
-                            intent.putExtra(BaseActivity.ACTION_DUAL_PANEL, false);
-                        }*/
                         mIsZip = true;
                         mInParentZip = true;
                         mCurrentZipDir = null;
                         mZipParentPath = path;
                         reloadList(true, path);
-/*
-                        intent.putExtras(bundle);
-                        startActivity(intent);*/
-
 
                     } else {
                         FileUtils.viewFile(getActivity(), fileInfoList.get(position).getFilePath(), fileInfoList.get
@@ -644,7 +634,6 @@ public class FileListFragment extends Fragment implements LoaderManager
         }*/
 //        fileInfoList = new ArrayList<>();
         mIsDataRefreshed = true;
-
         getLoaderManager().restartLoader(LOADER_ID, args, this);
 
     }
@@ -881,8 +870,14 @@ public class FileListFragment extends Fragment implements LoaderManager
         final EditText rename = (EditText) dialog
                 .findViewById(R.id.editRename);
         final String ext = ".zip";
+        String fileName = paths.get(0).getFileName();
+        String filePath = paths.get(0).getFilePath();
+        String zipName = fileName;
+        if (!(new File(filePath).isDirectory())) {
+            zipName = fileName.substring(0, fileName.lastIndexOf(".") - 1);
+        }
 
-        rename.setHint(getResources().getString(R.string.enter_zip));
+        rename.setText(zipName);
         rename.setFocusable(true);
         // dialog save button to save the edited item
         Button saveButton = (Button) dialog
@@ -1033,9 +1028,12 @@ public class FileListFragment extends Fragment implements LoaderManager
             switch (item.getItemId()) {
                 case R.id.action_rename:
                     if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
-                        final String filePath = fileInfoList.get(mSelectedItemPositions.keyAt(0)).getFilePath();
-                        long id = fileInfoList.get(mSelectedItemPositions.keyAt(0)).getId();
-                        renameDialog(filePath, id);
+                        final String oldFilePath = fileInfoList.get(mSelectedItemPositions.keyAt(0)
+                        ).getFilePath();
+                        int renamedPosition= mSelectedItemPositions.keyAt(0);
+                        String newFilePath = new File(oldFilePath).getParent();
+                        renameDialog(oldFilePath,
+                                newFilePath, renamedPosition);
                     }
                     return true;
 
@@ -1055,14 +1053,6 @@ public class FileListFragment extends Fragment implements LoaderManager
                             paths.add(info);
                         }
                         showCompressDialog(mFilePath, paths);
-                        /*int result = FileUtils.createZipFile(fileInfo.getFilePath());
-                        if (result == 0) {
-                            showMessage(getString(R.string.msg_zip_success));
-                            refreshList();
-                        } else {
-                            showMessage(getString(R.string.msg_zip_failure));
-                        }
-                    }*/
                     }
                     mActionMode.finish();
                     return true;
@@ -1128,9 +1118,8 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
     }
 
-    private void renameDialog(final String oldFilePath, final long id) {
-
-
+    private void renameDialog(final String oldFilePath, final String newFilePath, final int
+            position) {
         String fileName = oldFilePath.substring(oldFilePath.lastIndexOf("/") + 1, oldFilePath.length());
         boolean file = false;
         String extension = null;
@@ -1171,13 +1160,10 @@ public class FileListFragment extends Fragment implements LoaderManager
                 } else {
                     renamedName = rename.getText().toString();
                 }
-                File newFile = new File(mFilePath + "/" + renamedName);
+                File newFile = new File(newFilePath + "/" + renamedName);
                 File oldFile = new File(oldFilePath);
-                renameFile(oldFile, newFile);
-                if (mCategory != 0) {
-                    FileUtils.updateMediaStore(getActivity(), mCategory, id,
-                            renamedName);
-                }
+                renameFile(oldFile, newFile,position);
+
 /*                if (mCategory == 0) {
 
               *//*      int result = FileUtils.renameTarget(filePath, renamedName);
@@ -1211,9 +1197,10 @@ public class FileListFragment extends Fragment implements LoaderManager
         mActionMode.finish();
     }
 
-    public void renameFile(final File oldFile, final File newFile) {
+    public void renameFile(final File oldFile, final File newFile,final int position) {
         /*final Toast toast=Toast.makeText(ma.getActivity(), R.string.creatingfolder, Toast.LENGTH_LONG);
         toast.show();*/
+        Logger.log(TAG, "Rename--oldFile=" + oldFile + " new file=" + newFile);
         FileOperations.rename(oldFile, newFile, mIsRootMode, getActivity(), new FileOperations
                 .ErrorCallBack() {
             @Override
@@ -1238,6 +1225,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        mRenamedPosition = position;
                         mOldFilePath = oldFile.getAbsolutePath();
                         mNewFilePath = newFile.getAbsolutePath();
                         mBaseActivity.guideDialogForLEXA(mOldFilePath);
@@ -1248,12 +1236,18 @@ public class FileListFragment extends Fragment implements LoaderManager
 
 
             @Override
-            public void done(File hFile, final boolean success) {
+            public void done(final File file, final boolean success) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (success) {
-                            refreshList();
+                            if (!FileUtils.checkIfFileCategory(mCategory)) {
+                                FileUtils.removeMedia(getActivity(), oldFile, mCategory);
+                                FileUtils.scanFile(getActivity(), file.getAbsolutePath());
+                            }
+                            fileInfoList.get(position).setFilePath(file.getAbsolutePath());
+                            fileInfoList.get(position).setFileName(file.getName());
+                            fileListAdapter.updateAdapter(fileInfoList);
                         } else
                             Toast.makeText(getActivity(), R.string.msg_operation_failed,
                                     Toast.LENGTH_SHORT).show();
@@ -1261,6 +1255,13 @@ public class FileListFragment extends Fragment implements LoaderManager
                 });
             }
         });
+    }
+
+    public void renameCallBack() {
+        renameFile(new File(mOldFilePath), new File(mNewFilePath),mRenamedPosition);
+        mOldFilePath = null;
+        mNewFilePath = null;
+        mRenamedPosition = -1;
     }
 
 
@@ -1880,12 +1881,10 @@ public class FileListFragment extends Fragment implements LoaderManager
     }
 
     private void setupSearchView() {
-//        mSearchView.setIconifiedByDefault(true);
         // Disable full screen keyboard in landscape
         mSearchView.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
+        mSearchView.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         mSearchView.setOnQueryTextListener(this);
-//        mSearchView.setSubmitButtonEnabled(true);
-//        mSearchView.setQueryHint("Search Here");
     }
 
     @Override
@@ -1928,6 +1927,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        int sortMode = 0;
         switch (item.getItemId()) {
 
             case R.id.action_paste:
@@ -1980,64 +1980,66 @@ public class FileListFragment extends Fragment implements LoaderManager
                 break;
 
             case R.id.action_sort_name_asc:
-                fileInfoList = FileUtils.sortFiles(fileInfoList, FileConstants.KEY_SORT_NAME);
+                sortMode = FileConstants.KEY_SORT_NAME;
+                fileInfoList = FileUtils.sortFiles(fileInfoList, sortMode);
+                persistSortMode(sortMode);
                 fileListAdapter.notifyDataSetChanged();
                 break;
             case R.id.action_sort_name_desc:
-                fileInfoList = FileUtils.sortFiles(fileInfoList, FileConstants.KEY_SORT_NAME_DESC);
+                sortMode = FileConstants.KEY_SORT_NAME_DESC;
+                fileInfoList = FileUtils.sortFiles(fileInfoList, sortMode);
+                persistSortMode(sortMode);
                 fileListAdapter.notifyDataSetChanged();
                 break;
 
             case R.id.action_sort_type_asc:
-                fileInfoList = FileUtils.sortFiles(fileInfoList, FileConstants.KEY_SORT_TYPE);
+                sortMode = FileConstants.KEY_SORT_TYPE;
+                fileInfoList = FileUtils.sortFiles(fileInfoList, sortMode);
+                persistSortMode(sortMode);
                 fileListAdapter.notifyDataSetChanged();
                 break;
 
             case R.id.action_sort_type_desc:
-                fileInfoList = FileUtils.sortFiles(fileInfoList, FileConstants.KEY_SORT_TYPE_DESC);
+                sortMode = FileConstants.KEY_SORT_TYPE_DESC;
+                fileInfoList = FileUtils.sortFiles(fileInfoList, sortMode);
+                persistSortMode(sortMode);
                 fileListAdapter.notifyDataSetChanged();
                 break;
 
             case R.id.action_sort_size_asc:
-                fileInfoList = FileUtils.sortFiles(fileInfoList, FileConstants.KEY_SORT_SIZE);
+                sortMode = FileConstants.KEY_SORT_SIZE;
+                fileInfoList = FileUtils.sortFiles(fileInfoList, sortMode);
+                persistSortMode(sortMode);
                 fileListAdapter.notifyDataSetChanged();
-
                 break;
 
             case R.id.action_sort_size_desc:
-                fileInfoList = FileUtils.sortFiles(fileInfoList, FileConstants.KEY_SORT_SIZE_DESC);
+                sortMode = FileConstants.KEY_SORT_SIZE_DESC;
+                fileInfoList = FileUtils.sortFiles(fileInfoList, sortMode);
+                persistSortMode(sortMode);
                 fileListAdapter.notifyDataSetChanged();
-
                 break;
             case R.id.action_sort_date_asc:
-                fileInfoList = FileUtils.sortFiles(fileInfoList, FileConstants.KEY_SORT_DATE);
+                sortMode = FileConstants.KEY_SORT_DATE;
+                fileInfoList = FileUtils.sortFiles(fileInfoList, sortMode);
+                persistSortMode(sortMode);
                 fileListAdapter.notifyDataSetChanged();
                 break;
             case R.id.action_sort_date_desc:
-                fileInfoList = FileUtils.sortFiles(fileInfoList, FileConstants.KEY_SORT_DATE_DESC);
+                sortMode = FileConstants.KEY_SORT_DATE_DESC;
+                fileInfoList = FileUtils.sortFiles(fileInfoList, sortMode);
+                persistSortMode(sortMode);
                 fileListAdapter.notifyDataSetChanged();
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private void persistSortMode(int sortMode) {
+        mPreferences.edit().putInt(FileConstants.KEY_SORT_MODE, sortMode).apply();
+    }
+
     private void switchView() {
-/*        Bundle bundle = new Bundle();
-        bundle.putString(FileConstants.KEY_PATH, mFilePath);
-        Intent intent = new Intent(getActivity(), BaseActivity.class);
-        intent.setAction(BaseActivity.ACTION_DUAL_VIEW_FOLDER_LIST);
-        intent.putExtra(ACTION_VIEW_MODE, mViewMode);
-        intent.putExtra(FileConstants.KEY_CATEGORY, mCategory);
-        if (FileListFragment.this instanceof FileListDualFragment) {
-            intent.putExtra(BaseActivity.ACTION_DUAL_PANEL, true);
-        } else {
-            intent.putExtra(BaseActivity.ACTION_DUAL_PANEL, false);
-        }
-
-        intent.putExtras(bundle);
-        startActivity(intent);*/
-
-//        findNoOfGridColumns();
         fileListAdapter = null;
         recyclerViewFileList.setHasFixedSize(true);
 

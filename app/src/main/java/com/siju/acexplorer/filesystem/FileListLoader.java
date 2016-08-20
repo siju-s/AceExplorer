@@ -28,7 +28,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
@@ -56,6 +55,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private boolean mIsDualPaneInFocus;
     private Fragment mFragment;
     private boolean mInParentZip;
+    private int mSortMode;
 
     public FileListLoader(Context context, String path, int category) {
         super(context);
@@ -64,6 +64,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         mCategory = category;
         showHidden = PreferenceManager.getDefaultSharedPreferences(context).getBoolean
                 (FileConstants.PREFS_HIDDEN, false);
+        mSortMode = PreferenceManager.getDefaultSharedPreferences(context).getInt(
+                FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
     }
 
     public FileListLoader(Fragment fragment, String path, int category, String zipPath, boolean
@@ -80,6 +82,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         mZipPath = zipPath;
         mIsDualPaneInFocus = isDualPaneInFocus;
         mInParentZip = isParentZip;
+        mSortMode = PreferenceManager.getDefaultSharedPreferences(context).getInt(
+                FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
     }
 
 
@@ -136,12 +140,12 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         return resultLine;
     }
 
-    private int checkMimeType(String path,String extension) {
+    private int checkMimeType(String path, String extension) {
 //        String mimeType = URLConnection.guessContentTypeFromName(path);
 
         int value = 0;
         if (extension == null) return value;
-            String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
 
         if (mimeType != null) {
             if (mimeType.indexOf("image") == 0) {
@@ -228,15 +232,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private ArrayList<FileInfo> fetchFiles() {
         File file = new File(mPath);
         String fileExtension = mPath.substring(mPath.lastIndexOf(".") + 1);
-/*        if (file.canRead()) {
-            Log.d(TAG, "yeah");
-        } else {
-            Log.d(TAG, " NOOOO");
-
-        }*/
 
         if (file.canRead()) {
-
 
             if (fileExtension.equalsIgnoreCase("zip")) {
                 getZipContents("", file.getAbsolutePath());
@@ -246,7 +243,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                     File[] listFiles = file.listFiles();
 
                     if (listFiles != null) {
-                        Arrays.sort(listFiles, comparatorByName);
+//                        Arrays.sort(listFiles, comparatorByName);
                         for (File file1 : listFiles) {
                             boolean isDirectory = false;
                             String fileName = file1.getName();
@@ -292,28 +289,28 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                                 long size = file1.length();
                                 noOfFilesOrSize = Formatter.formatFileSize(mContext, size);
                                 extension = filePath.substring(filePath.lastIndexOf(".") + 1);
-                                type = checkMimeType(filePath,extension);
+                                type = checkMimeType(filePath, extension);
                             }
                             long date = file1.lastModified();
                             String fileModifiedDate = convertDate(date);
-
 
                             FileInfo fileInfo = new FileInfo(fileName, filePath, fileModifiedDate, noOfFilesOrSize,
                                     isDirectory, extension, type);
                             fileInfoList.add(fileInfo);
                         }
+                        fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
                         return fileInfoList;
                     }
                 } else {
                     return null;
                 }
             }
-        }        else {
+        } else {
 //            boolean rootAvailable  = RootTools.isRootAvailable();
-            fileInfoList = com.siju.acexplorer.helper.RootHelper.getFilesList(mContext,mPath,
+            fileInfoList = com.siju.acexplorer.helper.RootHelper.getFilesList(mContext, mPath,
                     true,
                     showHidden);
-            fileInfoList = FileUtils.sortFiles(fileInfoList, FileConstants.KEY_SORT_NAME);
+            fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
         }
         return fileInfoList;
 
@@ -362,11 +359,12 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 //                String extension = tokens[1];
                     String nameWithExt = fileName + "." + extension;
                     fileInfoList.add(new FileInfo(fileId, nameWithExt, path, date, size, type,
-                            extension,mimeType));
+                            extension, mimeType));
                 }
 
             } while (cursor.moveToNext());
             cursor.close();
+            fileInfoList = FileUtils.sortFiles(fileInfoList,mSortMode);
         }
         long endTime = System.currentTimeMillis();
         long timetaken = (endTime - startTime) / 1000;
@@ -414,6 +412,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                     true, null, FileConstants.CATEGORY.FAVORITES.getValue());
             fileInfoList.add(fileInfo);
         }
+        fileInfoList = FileUtils.sortFiles(fileInfoList,mSortMode);
         return fileInfoList;
     }
 
@@ -561,8 +560,9 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         StringBuilder where = new StringBuilder();
         where.append(MediaStore.Audio.Media.TITLE + " != ''");
         where.append(" AND " + MediaStore.Audio.Media.IS_MUSIC + "=1");
-        String sortOrder = MediaStore.Audio.Media.DATE_MODIFIED + " DESC";
-        Cursor cursor = mContext.getContentResolver().query(uri, null, where.toString(), null, sortOrder);
+//        String sortOrder = MediaStore.Audio.Media.DATE_MODIFIED + " DESC";
+        Cursor cursor = mContext.getContentResolver().query(uri, null, where.toString(), null,
+                null);
         if (cursor != null && cursor.moveToFirst()) {
             do {
 //                int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE);
@@ -592,6 +592,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
             } while (cursor.moveToNext());
             cursor.close();
+            fileInfoList = FileUtils.sortFiles(fileInfoList,mSortMode);
         } else {
             return null;
         }
@@ -600,8 +601,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
     private ArrayList<FileInfo> fetchImages() {
         Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        String sortOrder = MediaStore.Images.Media.DATE_MODIFIED + " DESC";
-        Cursor cursor = mContext.getContentResolver().query(uri, null, null, null, sortOrder);
+//        String sortOrder = MediaStore.Images.Media.DATE_MODIFIED + " DESC";
+        Cursor cursor = mContext.getContentResolver().query(uri, null, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.TITLE);
@@ -629,6 +630,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
             } while (cursor.moveToNext());
             cursor.close();
+            fileInfoList = FileUtils.sortFiles(fileInfoList,mSortMode);
         } else {
             return null;
         }
@@ -643,7 +645,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private ArrayList<FileInfo> fetchVideos() {
         Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
         String sortOrder = MediaStore.Video.Media.DATE_MODIFIED + " DESC";
-        Cursor cursor = mContext.getContentResolver().query(uri, null, null, null, sortOrder);
+        Cursor cursor = mContext.getContentResolver().query(uri, null, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
             do {
 //                int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.TITLE);
@@ -673,6 +675,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
             } while (cursor.moveToNext());
             cursor.close();
+            fileInfoList = FileUtils.sortFiles(fileInfoList,mSortMode);
         } else {
             return null;
         }
@@ -739,21 +742,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 selectionArgs = new String[]{pdf1};
 
                 break;
-/*            case 10:
-                String apk = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants
-                        .EXT_APK);
-//                where = MediaStore.Files.FileColumns.MIME_TYPE + " = '" + apk + "'";
-//                where = MediaStore.Files.FileColumns.MIME_TYPE + " =?" ;
-//                where = MediaStore.Files.FileColumns.DATA + " LIKE ?";
-                // exclude media files, they would be here also.
-                where = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
-                        + MediaStore.Files.FileColumns.MEDIA_TYPE_NONE;
-//                selectionArgs = new String[]{ apk };
-//                String test = "/storage/emulated/0/Apps";
-                selectionArgs = null;
-//                selectionArgs = new String[]{"%/storage/emulated/0/Apps%"};
-
-                break;*/
             case 11:
                 long size = 104857600; // 100 MB
                 where = MediaStore.Files.FileColumns.SIZE + " >?";
@@ -763,15 +751,15 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 //        Log.d("Loader","Category id=="+category+" where=="+where);
 
         Cursor cursor;
-        String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
+//        String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
         if (category == 9 || category == 11) {
 /*            Uri newUri = Uri.parse("content://external/apk");
             cursor = mContext.getContentResolver().query(newUri, null, null, null,
                     null);*/
             cursor = mContext.getContentResolver().query(uri, null, where, selectionArgs,
-                    sortOrder);
+                    null);
         } else {
-            cursor = mContext.getContentResolver().query(uri, null, where, null, sortOrder);
+            cursor = mContext.getContentResolver().query(uri, null, where, null, null);
         }
         if (cursor != null && cursor.moveToFirst()) {
             do {
@@ -799,8 +787,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 String nameWithExt = fileName + "." + extension;
 //                if (category == FileConstants.CATEGORY.APPS.getValue() && path.endsWith(".apk")) {
 //                    Log.d(TAG, "Category=" + mCategory + " path=" + path + "Mime type=" + mimeType);
-                    fileInfoList.add(new FileInfo(fileId, nameWithExt, path, date, size, type,
-                            extension,mimeType));
+                fileInfoList.add(new FileInfo(fileId, nameWithExt, path, date, size, type,
+                        extension, mimeType));
 //                } /*else {
                  /*   fileInfoList.add(new FileInfo(fileId, nameWithExt, path, date, size, type,
                             extension,mimeType));*/
@@ -808,6 +796,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
             } while (cursor.moveToNext());
             cursor.close();
+            fileInfoList = FileUtils.sortFiles(fileInfoList,mSortMode);
         } else {
             return null;
         }

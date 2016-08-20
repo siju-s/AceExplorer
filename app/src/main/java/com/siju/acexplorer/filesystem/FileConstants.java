@@ -47,6 +47,7 @@ public class FileConstants {
 
 
 
+    public static final String KEY_SORT_MODE = "sort_mode";
     public static final int KEY_SORT_NAME = 0;
     public static final int KEY_SORT_NAME_DESC = 1;
 

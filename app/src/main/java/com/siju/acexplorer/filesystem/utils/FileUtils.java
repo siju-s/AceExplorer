@@ -12,6 +12,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -32,6 +33,7 @@ import android.widget.Toast;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
+import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.helper.RootHelper;
 import com.stericson.RootTools.RootTools;
@@ -985,6 +987,44 @@ public class FileUtils {
         }
     }
 
+    public static boolean checkIfFileCategory(int category) {
+        return category == FileConstants.CATEGORY.FILES.getValue() ||
+                category == FileConstants.CATEGORY.COMPRESSED.getValue() ||
+                category == FileConstants.CATEGORY.DOWNLOADS.getValue() ||
+                category == FileConstants.CATEGORY.FAVORITES.getValue() ||
+                category == FileConstants.CATEGORY.LARGE_FILES.getValue();
+    }
+
+    public static void removeMedia(Context context,File file,int category) {
+        ContentResolver resolver = context.getContentResolver();
+        String path = file.getAbsolutePath();
+        switch (category) {
+            case 1:
+                Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                 resolver.delete(musicUri, MediaStore.Audio.Media.DATA +"=?",new String[]{path});
+                break;
+
+            case 2:
+                Uri videoUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+                resolver.delete(videoUri, MediaStore.Video.Media.DATA +"=?",new String[]{path});
+                break;
+
+            case 3:
+                Uri imageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                resolver.delete(imageUri, MediaStore.Images.Media.DATA +"=?",new String[]{path});
+                break;
+
+            case 4:
+                Uri filesUri = MediaStore.Files.getContentUri("external");
+                resolver.delete(filesUri, MediaStore.Files.FileColumns.DATA +"=?",new String[]{path});
+                break;
+            default:
+                break;
+        }
+    }
+
+
+
     public static long getSize(File file) {
 
         long size = 0;
@@ -1766,6 +1806,17 @@ public class FileUtils {
         }
 
         return !file.exists();
+    }
+
+    public static void scanFile(Context context,String path) {
+        MediaScannerConnection.scanFile(context,
+                new String[] { path }, null,
+                new MediaScannerConnection.OnScanCompletedListener() {
+                    public void onScanCompleted(String path, Uri uri) {
+                        Log.i(TAG, "Scanned " + path + ":");
+                        Log.i(TAG, "-> uri=" + uri);
+                    }
+                });
     }
 
 

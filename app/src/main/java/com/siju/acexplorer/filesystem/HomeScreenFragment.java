@@ -157,11 +157,6 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         recyclerViewLibrary.setLayoutManager(gridLayoutManagerLibrary);
     }
 
-    public int dpToPx(int dp) {
-        if (displayMetrics == null) displayMetrics = getResources().getDisplayMetrics();
-        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        return px;
-    }
 
     private void initializeViews() {
         recyclerViewLibrary = (RecyclerView) root.findViewById(R.id.recyclerViewLibrary);
