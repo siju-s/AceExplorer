@@ -6,46 +6,14 @@
               android:padding="2dp">
 
     <TextView
-        android:id="@+id/textDialogTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:gravity="center"
-        android:text="@string/needsaccess"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:textStyle="bold"/>
-
-    <TextView
         android:id="@+id/description"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"/>
+
     <ImageView
         android:id="@+id/icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
-
-
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <Button
-            android:id="@+id/buttonCancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/dialog_cancel"/>
-
-
-        <Button
-            android:id="@+id/buttonRename"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/msg_open_file"/>
-    </LinearLayout>
 
 
 </LinearLayout>

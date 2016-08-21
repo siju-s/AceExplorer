@@ -113,7 +113,7 @@ public class PasteUtils {
     }
 
 
-    public void showDialog(final String sourceFilePath,boolean showReplaceButton) {
+    public void showDialog(final String sourceFilePath, boolean showReplaceButton) {
         mShowReplaceButton = showReplaceButton;
         mPasteConflictDialog = new Dialog(mContext);
         mPasteConflictDialog.setContentView(R.layout.dialog_paste_conflict);
@@ -186,7 +186,7 @@ public class PasteUtils {
         mPathActionMap.put(mSourceFilePath, mPasteAction);
         Logger.log("TAG", "tempConflictCounter==" + tempConflictCounter + "tempSize==" + tempSourceFile.size());
         if (count < tempSourceFile.size()) {
-            showDialog(tempSourceFile.get(count),mShowReplaceButton);
+            showDialog(tempSourceFile.get(count), mShowReplaceButton);
         } else {
             callAsyncTask();
         }

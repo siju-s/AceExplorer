@@ -4,14 +4,12 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.content.res.Resources;
+import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -29,7 +27,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ContextMenu;
@@ -44,12 +41,15 @@ import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.kobakei.ratethisapp.RateThisApp;
@@ -64,12 +64,14 @@ import com.siju.acexplorer.filesystem.model.FavInfo;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.utils.FileOperations;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
-import com.siju.acexplorer.helper.RootHelper;
 import com.siju.acexplorer.model.SectionGroup;
 import com.siju.acexplorer.model.SectionItems;
 import com.siju.acexplorer.settings.SettingsActivity;
+import com.siju.acexplorer.utils.DialogUtils;
+import com.stericson.RootTools.RootTools;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -406,15 +408,15 @@ public class BaseActivity extends AppCompatActivity implements
                     new MoveFiles((oparrayList), ((Main) getFragment().getTab()), ((Main) getFragment().getTab()).getActivity(), 0).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, path);
                     break;*/
                 case FileConstants.FOLDER_CREATE://mkdir
-                    mkDir(mFabView, new File(mCreatePath));
+                    mkDir(new File(mCreatePath));
                     break;
                 case FileConstants.RENAME:
-                    FileListFragment fragment = (FileListFragment)getSupportFragmentManager()
+                    FileListFragment fragment = (FileListFragment) getSupportFragmentManager()
                             .findFragmentById(R.id.main_container);
                     fragment.renameCallBack();
                     break;
                 case FileConstants.FILE_CREATE:
-                    mkFile(mFabView, new File(mCreatePath));
+                    mkFile(new File(mCreatePath));
                     break;
               /*  case DataUtils.EXTRACT:
                     mainActivityHelper.extractFile(new File(oppathe));
@@ -606,7 +608,6 @@ public class BaseActivity extends AppCompatActivity implements
             navDirectory.removeAllViews();
             mCurrentDir = path;
         } else {
-//            parts = mCurrentDirDualPane.split("/");
             navDirectoryDualPane.removeAllViews();
             mCurrentDirDualPane = path;
 
@@ -623,6 +624,39 @@ public class BaseActivity extends AppCompatActivity implements
 
 
         String dir = "";
+
+
+        if (mIsHomeScreenEnabled) {
+            ImageButton imageButton = new ImageButton(this);
+            imageButton.setImageResource(R.drawable.ic_home_white);
+            imageButton.setBackgroundColor(Color.parseColor("#00ffffff"));
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            params.gravity = Gravity.CENTER_VERTICAL;
+            imageButton.setLayoutParams(params);
+            imageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    removeFragmentFromBackStack();
+                }
+            });
+            if (!isDualPaneInFocus) {
+                navDirectory.addView(imageButton);
+            } else {
+                navDirectoryDualPane.addView(imageButton);
+            }
+            ImageView navArrow = new ImageView(this);
+            params.leftMargin = 15;
+            params.rightMargin = 20;
+            params.gravity = Gravity.CENTER_VERTICAL;
+            navArrow.setImageResource(R.drawable.ic_arrow_nav);
+            navArrow.setLayoutParams(params);
+            if (!isDualPaneInFocus) {
+                navDirectory.addView(navArrow);
+            } else {
+                navDirectoryDualPane.addView(navArrow);
+            }
+        }
         // If root dir , parts will be 0
         if (parts.length == 0) {
             isCurrentDirRoot = true;
@@ -670,8 +704,6 @@ public class BaseActivity extends AppCompatActivity implements
 
 
         int WRAP_CONTENT = LinearLayout.LayoutParams.WRAP_CONTENT;
-        int MATCH_PARENT = LinearLayout.LayoutParams.MATCH_PARENT;
-
         if (dir.equals(getInternalStorage().getAbsolutePath())) {
             isCurrentDirRoot = false;
             createNavButton(STORAGE_INTERNAL, dir, mFileListFragment, mFileListDualFragment);
@@ -684,14 +716,11 @@ public class BaseActivity extends AppCompatActivity implements
             ImageView navArrow = new ImageView(this);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(WRAP_CONTENT,
                     WRAP_CONTENT);
-            layoutParams.gravity = Gravity.CENTER;
-
-/*            int leftMargin = (int) getResources().getDimension(R.dimen.nav_arrow_margin);
-            layoutParams.setMargins(leftMargin, 0, leftMargin, 0);*/
-
-            layoutParams.weight = 1.0f;
+            layoutParams.leftMargin = 20;
+            layoutParams.gravity = Gravity.CENTER_VERTICAL;
+            navArrow.setImageResource(R.drawable.ic_arrow_nav);
             navArrow.setLayoutParams(layoutParams);
-            navArrow.setBackgroundResource(R.drawable.ic_more_white);
+
             if (!isDualPaneInFocus) {
                 navDirectory.addView(navArrow);
             } else {
@@ -720,92 +749,111 @@ public class BaseActivity extends AppCompatActivity implements
 
     private void createNavButton(String text, final String dir, final FileListFragment fileListFragment,
                                  final FileListDualFragment fileListDualFragment) {
-        int WRAP_CONTENT = LinearLayout.LayoutParams.WRAP_CONTENT;
-        final Button button = new Button(this);
 
-        if (text.equals(STORAGE_INTERNAL)) {
-            setNavigationImages(button);
-            button.setBackgroundResource(R.drawable.ic_storage_white_nav);
-        } else if (text.equals(STORAGE_EXTERNAL)) {
-            setNavigationImages(button);
-            button.setBackgroundResource(R.drawable.ic_ext_nav);
-        } else if (text.equals(STORAGE_ROOT)) {
-            setNavigationImages(button);
-            button.setBackgroundResource(R.drawable.ic_root_white_nav);
-        } else {
-            button.setLayoutParams(new LinearLayout.LayoutParams(WRAP_CONTENT,
-                    WRAP_CONTENT));
-//            button.setMinimumWidth(mButtonMinWidth);
-            button.setText(text);
-            button.setBackgroundResource(
-                    android.R.color.transparent);
-            if (Build.VERSION.SDK_INT < 23) {
-                button.setTextAppearance(this, R.style.NavigationButton);
-            } else {
-                button.setTextAppearance(R.style.NavigationButton);
-            }
-        }
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                int level = (int) view.getTag();
-//                String path  = (String) view.getTag();
-
-//                if (!mCurrentDir.equals(path) && getSupportFragmentManager().findFragmentByTag
-// (path) == null) {
-//                    mCurrentDir = path;
-//                    displayInitialFragment(path); // TODO Handle root case by passing /
-//                }
-//                Log.d(TAG, "Button tag click=" + level);
-                Log.d(TAG, "Dir=" + dir);
-
-                boolean isDualPaneButtonClicked;
-                LinearLayout parent = (LinearLayout) button.getParent();
-                if (parent.getId() == navDirectory.getId()) {
-                    isDualPaneButtonClicked = false;
-                    Log.d(TAG, "Singlepane" + isDualPaneButtonClicked);
-                } else {
-                    isDualPaneButtonClicked = true;
-                    Log.d(TAG, "Singlepane" + isDualPaneButtonClicked);
-                }
-
-                if (!isDualPaneButtonClicked) {
-                    if (!mCurrentDir.equals(dir)) {
-                        mCurrentDir = dir;
-                        fileListFragment.reloadList(false, mCurrentDir);
-                        setNavDirectory(mCurrentDir, isDualPaneButtonClicked);
-                    }
-                } else {
-                    if (!mCurrentDirDualPane.equals(dir)) {
-                        mCurrentDirDualPane = dir;
-                        fileListDualFragment.reloadList(true, mCurrentDirDualPane);
-                        setNavDirectory(mCurrentDirDualPane, isDualPaneButtonClicked);
-                    }
-                }
-            }
-        });
-        if (!isDualPaneInFocus) {
-            navDirectory.addView(button);
-        } else {
-            navDirectoryDualPane.addView(button);
-        }
-    }
-
-    private void setNavigationImages(Button button) {
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(mNavButtonDimensions, mNavButtonDimensions);
-        params.weight = 1.0f;
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params.gravity = Gravity.CENTER_VERTICAL;
-        button.setLayoutParams(params);
+
+        if (text.equals(STORAGE_INTERNAL) || text.equals(STORAGE_EXTERNAL) ||
+                text.equals(STORAGE_ROOT)) {
+            ImageButton imageButton = new ImageButton(this);
+            if (text.equals(STORAGE_INTERNAL)) {
+                imageButton.setImageResource(R.drawable.ic_storage_white_nav);
+            } else if (text.equals(STORAGE_EXTERNAL)) {
+                imageButton.setImageResource(R.drawable.ic_ext_nav);
+            } else {
+                imageButton.setImageResource(R.drawable.ic_root_white_nav);
+            }
+//            imageButton.setBackgroundResource(0);
+            imageButton.setBackgroundColor(Color.parseColor("#00ffffff"));
+            imageButton.setLayoutParams(params);
+            imageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    navButtonOnClick(view, dir, fileListFragment, fileListDualFragment);
+                }
+            });
+            if (!isDualPaneInFocus) {
+                navDirectory.addView(imageButton);
+            } else {
+                navDirectoryDualPane.addView(imageButton);
+            }
+
+        } else {
+            final TextView textView = new TextView(this);
+            textView.setText(text);
+            textView.setAllCaps(true);
+            textView.setTextColor(ContextCompat.getColor(this, R.color.navButtons));
+            textView.setTextSize(15);
+            params.leftMargin = 20;
+            textView.setLayoutParams(params);
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    navButtonOnClick(view, dir, fileListFragment, fileListDualFragment);
+                }
+            });
+            if (!isDualPaneInFocus) {
+                navDirectory.addView(textView);
+            } else {
+                navDirectoryDualPane.addView(textView);
+            }
+        }
+
+
     }
 
-    public float convertDpToPixel(float dp, Context context) {
-        Resources resources = context.getResources();
-        DisplayMetrics metrics = resources.getDisplayMetrics();
-        float px = dp * ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
-        return px;
-    }
+    private void navButtonOnClick(View view, final String dir, final FileListFragment fileListFragment, final
+    FileListDualFragment fileListDualFragment) {
+        Log.d(TAG, "Dir=" + dir);
 
+        boolean isDualPaneButtonClicked;
+        LinearLayout parent = (LinearLayout) view.getParent();
+        if (parent.getId() == navDirectory.getId()) {
+            isDualPaneButtonClicked = false;
+            Log.d(TAG, "Singlepane" + isDualPaneButtonClicked);
+        } else {
+            isDualPaneButtonClicked = true;
+            Log.d(TAG, "Singlepane" + isDualPaneButtonClicked);
+        }
+
+        if (!isDualPaneButtonClicked) {
+            if (!mCurrentDir.equals(dir)) {
+                mCurrentDir = dir;
+                int position = 0;
+                for (int i = 0; i < mBackStackList.size(); i++) {
+                    if (mCurrentDir.equals(mBackStackList.get(i).getFilePath())) {
+                        position = i;
+                        break;
+                    }
+                }
+                for (int j = mBackStackList.size() - 1; j > position; j--) {
+                    mBackStackList.remove(j);
+                }
+
+                fileListFragment.reloadList(false, mCurrentDir);
+                setNavDirectory(mCurrentDir, isDualPaneButtonClicked);
+            }
+        } else {
+            if (!mCurrentDirDualPane.equals(dir)) {
+                mCurrentDirDualPane = dir;
+                int position = 0;
+                for (int i = 0; i < mBackStackListDual.size(); i++) {
+                    if (mCurrentDir.equals(mBackStackListDual.get(i).getFilePath())) {
+                        position = i;
+                        break;
+                    }
+                }
+                for (int j = mBackStackListDual.size() - 1; j > position; j--) {
+                    mBackStackListDual.remove(j);
+                }
+
+                fileListDualFragment.reloadList(true, mCurrentDirDualPane);
+                setNavDirectory(mCurrentDirDualPane, isDualPaneButtonClicked);
+            }
+        }
+
+    }
 
     /**
      * Checks if orientation is landscape when app is run 1st time to enable Dual Panel
@@ -860,10 +908,10 @@ public class BaseActivity extends AppCompatActivity implements
                 if (view.getId() == R.id.fabCreateFolder || view.getId() == R.id
                         .fabCreateFolderDual) {
                     mOperation = FileConstants.FOLDER_CREATE;
-                    mkDir(view);
+                    createDirDialog();
                 } else {
                     mOperation = FileConstants.FILE_CREATE;
-                    mkFile(view);
+                    createFileDialog();
                 }
                 break;
 
@@ -881,90 +929,44 @@ public class BaseActivity extends AppCompatActivity implements
     }
 
 
-    public void mkDir(final View view) {
+    public void createDirDialog() {
 
-        final Dialog dialog = new Dialog(
-                this);
-//                dialog.requestWindowFeature(Window.FEATURE_LEFT_ICON);
-        dialog.setContentView(R.layout.dialog_rename);
-        dialog.setCancelable(true);
-        // end of dialog declaration
-        String title = setDialogTitle(view.getId());
-        TextView dialogTitle = (TextView) dialog.findViewById(R.id.textDialogTitle);
-        dialogTitle.setText(title);
+        String title = getString(R.string.new_folder);
+        String texts[] = new String[]{getString(R.string.enter_name), "", title, getString(R.string.create), "",
+                getString(R.string.dialog_cancel)};
+        final MaterialDialog materialDialog = new DialogUtils().showEditDialog(this, texts);
 
-
-        // define the contents of edit dialog
-        final EditText rename = (EditText) dialog
-                .findViewById(R.id.editRename);
-
-        rename.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
-
-        // dialog save button to save the edited item
-        Button saveButton = (Button) dialog
-                .findViewById(R.id.buttonRename);
-        // for updating the list item
-        saveButton.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-                final CharSequence name = rename.getText();
-                String fileName = rename.getText().toString();
-                boolean isDir = false;
+        materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String fileName = materialDialog.getInputEditText().getText().toString();
                 if (!FileUtils.validateFileName(fileName)) {
-                    rename.setError(getResources().getString(R.string
+                    materialDialog.getInputEditText().setError(getResources().getString(R.string
                             .msg_error_valid_name));
                     return;
                 }
                 fileName = fileName.trim();
-                if (view.getId() == R.id.fabCreateFolder ||
-                        view.getId() == R.id.fabCreateFolderDual) {
-                    isDir = true;
-                } else {
-                    fileName = fileName + ".txt";
-                }
-
                 if (isDualPaneInFocus) {
                     fileName = mCurrentDirDualPane + "/" + fileName;
                 } else {
                     fileName = mCurrentDir + "/" + fileName;
                 }
-
-
-                /**
-                 * In landscape mode, FabCreateFile is on Dual Pane side and
-                 * FabCreateFileDual on Single pane
-                 */
-                if (view.getId() == R.id.fabCreateFolder || view.getId() == R.id
-                        .fabCreateFolderDual) {
-
-                    mkDir(view, new File(fileName));
-                    dialog.dismiss();
-
-                }
-                /*else {
-                    mkFile(view, new File(fileName));
-                    dialog.dismiss();
-                }*/
-
+                mkDir(new File(fileName));
+                materialDialog.dismiss();
             }
         });
 
-        // cancel button declaration
-        Button cancelButton = (Button) dialog
-                .findViewById(R.id.buttonCancel);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-                dialog.dismiss();
-
+        materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                materialDialog.dismiss();
             }
         });
 
-        dialog.show();
-
+        materialDialog.show();
     }
 
-    public void mkDir(final View view, final File file) {
+    public void mkDir(final File file) {
         /*final Toast toast=Toast.makeText(ma.getActivity(), R.string.creatingfolder, Toast.LENGTH_LONG);
         toast.show();*/
         FileOperations.mkdir(file, this, mIsRootMode, new FileOperations.ErrorCallBack() {
@@ -976,7 +978,7 @@ public class BaseActivity extends AppCompatActivity implements
 //                        if (toast != null) toast.cancel();
                         showMessage(getString(R.string.file_exists));
 //                        if (ma != null && ma.getActivity() != null)
-                        mkDir(view);
+                        createDirDialog();
 
                     }
                 });
@@ -990,7 +992,7 @@ public class BaseActivity extends AppCompatActivity implements
                     public void run() {
                 /*        mainActivity.oppathe = path.getPath();
                         mainActivity.operation = DataUtils.NEW_FOLDER;*/
-                        mFabView = view;
+//                        mFabView = view;
                         mCreatePath = file.getAbsolutePath();
                         guideDialogForLEXA(mCreatePath);
                     }
@@ -1006,7 +1008,7 @@ public class BaseActivity extends AppCompatActivity implements
                     public void run() {
                 /*        mainActivity.oppathe = path.getPath();
                         mainActivity.operation = DataUtils.NEW_FOLDER;*/
-                        mFabView = view;
+//                        mFabView = view;
                         mCreatePath = file.getAbsolutePath();
                         guideDialogForLEXA(mCreatePath);
                     }
@@ -1052,89 +1054,47 @@ public class BaseActivity extends AppCompatActivity implements
     }
 
 
-    public void mkFile(final View view) {
+    public void createFileDialog() {
 
-        final Dialog dialog = new Dialog(
-                this);
-//                dialog.requestWindowFeature(Window.FEATURE_LEFT_ICON);
-        dialog.setContentView(R.layout.dialog_rename);
-        dialog.setCancelable(true);
-        // end of dialog declaration
-        String title = setDialogTitle(view.getId());
-        TextView dialogTitle = (TextView) dialog.findViewById(R.id.textDialogTitle);
-        dialogTitle.setText(title);
+        String title = getString(R.string.new_file);
+        String texts[] = new String[]{getString(R.string.enter_name), "", title, getString(R.string.create), "",
+                getString(R.string.dialog_cancel)};
+        final MaterialDialog materialDialog = new DialogUtils().showEditDialog(this, texts);
 
-
-        // define the contents of edit dialog
-        final EditText rename = (EditText) dialog
-                .findViewById(R.id.editRename);
-
-        rename.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
-
-        // dialog save button to save the edited item
-        Button saveButton = (Button) dialog
-                .findViewById(R.id.buttonRename);
-        // for updating the list item
-        saveButton.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-                final CharSequence name = rename.getText();
-                String fileName = rename.getText().toString();
-                boolean isDir = false;
+        materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String fileName = materialDialog.getInputEditText().getText().toString();
                 if (!FileUtils.validateFileName(fileName)) {
-                    rename.setError(getResources().getString(R.string
+                    materialDialog.getInputEditText().setError(getResources().getString(R.string
                             .msg_error_valid_name));
                     return;
                 }
+
                 fileName = fileName.trim();
-                if (view.getId() == R.id.fabCreateFolder ||
-                        view.getId() == R.id.fabCreateFolderDual) {
-                    isDir = true;
-                } else {
-                    fileName = fileName + ".txt";
-                }
-
-
+                fileName = fileName + ".txt";
                 if (isDualPaneInFocus) {
                     fileName = mCurrentDirDualPane + "/" + fileName;
                 } else {
                     fileName = mCurrentDir + "/" + fileName;
                 }
-                /**
-                 * In landscape mode, FabCreateFile is on Dual Pane side and
-                 * FabCreateFileDual on Single pane
-                 */
-                if (view.getId() == R.id.fabCreateFolder || view.getId() == R.id
-                        .fabCreateFolderDual) {
-
-                    mkFile(view, new File(fileName));
-                    dialog.dismiss();
-
-                } else {
-                    mkFile(view, new File(fileName));
-                    dialog.dismiss();
-                }
-
+                mkFile(new File(fileName));
+                materialDialog.dismiss();
             }
         });
 
-        // cancel button declaration
-        Button cancelButton = (Button) dialog
-                .findViewById(R.id.buttonCancel);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-                dialog.dismiss();
-
+        materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                materialDialog.dismiss();
             }
         });
 
-        dialog.show();
-
+        materialDialog.show();
     }
 
 
-    public void mkFile(final View view, final File file) {
+    public void mkFile(final File file) {
         /*final Toast toast=Toast.makeText(ma.getActivity(), R.string.creatingfolder, Toast.LENGTH_LONG);
         toast.show();*/
         FileOperations.mkfile(file, this, mIsRootMode, new FileOperations.ErrorCallBack() {
@@ -1146,7 +1106,7 @@ public class BaseActivity extends AppCompatActivity implements
 //                        if (toast != null) toast.cancel();
                         showMessage(getString(R.string.file_exists));
 //                        if (ma != null && ma.getActivity() != null)
-                        mkFile(view);
+                        createFileDialog();
 
                     }
                 });
@@ -1160,7 +1120,7 @@ public class BaseActivity extends AppCompatActivity implements
                     public void run() {
                 /*        mainActivity.oppathe = path.getPath();
                         mainActivity.operation = DataUtils.NEW_FOLDER;*/
-                        mFabView = view;
+//                        mFabView = view;
                         mCreatePath = file.getAbsolutePath();
                         guideDialogForLEXA(mCreatePath);
                     }
@@ -1214,41 +1174,31 @@ public class BaseActivity extends AppCompatActivity implements
 
     public void guideDialogForLEXA(String path) {
 
-        final Dialog dialog = new Dialog(
-                this);
-//                dialog.requestWindowFeature(Window.FEATURE_LEFT_ICON);
-        dialog.setContentView(R.layout.dialog_saf);
-        dialog.setCancelable(true);
-        // end of dialog declaration
-//        String title = setDialogTitle(view.getId());
-/*        TextView dialogTitle = (TextView) dialog.findViewById(R.id.textDialogTitle);
-        dialogTitle.setText(title);*/
-        TextView textView = (TextView) dialog.findViewById(R.id.description);
-        ((ImageView) dialog.findViewById(R.id.icon)).setImageResource(R.drawable.sd_operate_step);
+        String title = getString(R.string.needsaccess);
+        String texts[] = new String[]{title, getString(R.string.open), "", getString(R.string.dialog_cancel)};
+        final MaterialDialog materialDialog = new DialogUtils().showCustomDialog(this, R.layout.dialog_saf, texts);
+        View view = materialDialog.getCustomView();
+        TextView textView = (TextView) view.findViewById(R.id.description);
+        ((ImageView) view.findViewById(R.id.icon)).setImageResource(R.drawable.sd_operate_step);
+        textView.setText(getString(R.string.needs_access_summary, path));
 
-        textView.setText(getString(R.string.needsaccesssummary) + path +
-                getString(R.string.needsaccesssummary1));
-
-        Button buttonOpen = (Button) dialog.findViewById(R.id.buttonRename);
-        Button buttonCancel = (Button) dialog.findViewById(R.id.buttonCancel);
-
-        buttonOpen.setOnClickListener(new View.OnClickListener() {
+        materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 triggerStorageAccessFramework();
-                dialog.dismiss();
-
+                materialDialog.dismiss();
             }
         });
-        buttonCancel.setOnClickListener(new View.OnClickListener() {
+
+        materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(BaseActivity.this, R.string.error, Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
+                materialDialog.dismiss();
             }
         });
 
-        dialog.show();
+        materialDialog.show();
     }
 
 
@@ -2215,6 +2165,8 @@ public class BaseActivity extends AppCompatActivity implements
         int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
         Logger.log(TAG, "RemoveFragmentFromBackStack --backstack==" + backStackCount +
                 "home_enabled=" + mIsHomeScreenEnabled);
+        mBackStackList.clear();
+        mBackStackListDual.clear();
         cleanUpFileScreen();
         super.onBackPressed();
     }
@@ -2238,6 +2190,13 @@ public class BaseActivity extends AppCompatActivity implements
     protected void onDestroy() {
         unregisterForContextMenu(expandableListView);
         mSharedPreferences.edit().putInt(FileConstants.CURRENT_THEME, mCurrentTheme).apply();
+        if (mIsRootMode) {
+            try {
+                RootTools.closeAllShells();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         super.onDestroy();
     }
 
@@ -2364,6 +2323,18 @@ public class BaseActivity extends AppCompatActivity implements
                 if (fragment instanceof HomeScreenFragment) {
                     mIsHomeSettingToggled = true;
                 } else {
+                    Logger.log(TAG, "Nav directory count=" + navDirectory.getChildCount());
+                    /* This duplicate statement is intentional as after removing 0th element i.e Home,
+                       the arrow becomes the 0th element. So,we need to remove that also
+                    */
+                    navDirectory.removeViewAt(0);
+                    navDirectory.removeViewAt(0);
+
+                    if (navDirectoryDualPane != null && navDirectoryDualPane.getChildCount() > 2) {
+                        navDirectoryDualPane.removeViewAt(0);
+                        navDirectoryDualPane.removeViewAt(0);
+                    }
+
                     // Set a flag so that it can be removed on backPress
                     mIsHomePageRemoved = true;
                     mIsHomePageAdded = false;

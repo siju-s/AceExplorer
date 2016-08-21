@@ -38,6 +38,7 @@
     <dimen name="nav_button_min_width">30dp</dimen>
 
     <integer name="homescreen_columns">3</integer>
+    <dimen name="padding_5">5dp</dimen>
 
 
 

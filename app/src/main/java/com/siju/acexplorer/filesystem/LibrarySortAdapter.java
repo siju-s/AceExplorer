@@ -76,7 +76,6 @@ public class LibrarySortAdapter extends RecyclerView.Adapter<LibrarySortAdapter.
     @Override
     public void onBindViewHolder(final LibrarySortViewHolder librarySortViewHolder, final int position) {
         //change background color if list item is selected
-        Log.d("TAG","OnBindviewholder Pos="+position);
         final LibrarySortModel model = totalLibraries.get(position);
 
         librarySortViewHolder.textLibrary.setText(model.getLibraryName());

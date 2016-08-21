@@ -50,7 +50,7 @@
     <string name="dialog_title_paste_conflict">File exists</string>
     <string name="msg_operation_cancel">Operation cancelled</string>
     <string name="dialog_from_placeholder">From</string>
-    <string name="dialog_to_placeholder">To</string>
+    <string name="dialog_to_placeholder">To: %1$s</string>
     <string name="button_paste_progress">Background</string>
     <string name="dialog_delete_title">Are you sure you want to delete the following files?</string>
     <string name="msg_ok">Ok</string>
@@ -70,7 +70,7 @@
     <string name="properties">Properties</string>
     <string name="msg_zip_success">Zip file created successfully</string>
     <string name="msg_zip_failure">Zip operation failed</string>
-    <string name="new_folder">New Folder</string>
+    <string name="new_folder">New folder</string>
     <string name="new_file">New file</string>
     <string name="msg_file_create_success">File created successfully</string>
     <string name="msg_file_create_failure">Unable to create new file</string>
@@ -103,7 +103,7 @@
     <string name="sort_date_desc">Date (Newest)</string>
     <string name="extract_here">Extract here</string>
     <string name="extract_to">Extract to</string>
-    <string name="open_zip">Open</string>
+    <string name="open">Open</string>
     <string name="dialog_title_options">Options</string>
     <string name="extracting">Extracting..</string>
     <string name="msg_extract_success">Successfully extracted files</string>
@@ -156,13 +156,20 @@
     <string name="other">Other</string>
     <string name="file_exists">File already exists</string>
     <string name="enter_zip">Enter zip name</string>
-    <string name="create_zip">Create</string>
+    <string name="create">Create</string>
     <string name="zip_progress_title">Creating zip</string>
     <string name="needsaccess">Write Access Required</string>
-    <string name="needsaccesssummary">Please choose the root directory of \t</string>
-    <string name="needsaccesssummary1">\tto grant write access to operate </string>
+    <string name="needs_access_summary">Please choose the root directory of %1$s to grant write access to operate</string>
     <string name="error">Error</string>
     <string name="msg_operation_failed">Operation failed</string>
+    <string name="selected">selected</string>
+    <string name="enter_name">Enter name</string>
+    <string name="grant_access">Grant access</string>
+    <string name="storage_low">Insufficient space</string>
+    <string name="paste_conflict_remember">Remember</string>
+    <string name="copying">Copying files</string>
+    <string name="moving">Moving files</string>
+
 
 
 

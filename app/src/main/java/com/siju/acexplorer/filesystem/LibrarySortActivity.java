@@ -43,10 +43,6 @@ public class LibrarySortActivity extends AppCompatActivity implements OnStartDra
 
         sharedPreferenceWrapper = new SharedPreferenceWrapper();
         initConstants();
-        for (int i = 0; i < mResourceIds.length; i++) {
-            totalLibraries.add(new LibrarySortModel(mCategoryIds[i], mLabels[i],
-                    false));
-        }
         initializeLibraries();
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -107,14 +103,20 @@ public class LibrarySortActivity extends AppCompatActivity implements OnStartDra
 
     private void initializeLibraries() {
         savedLibraries = sharedPreferenceWrapper.getLibraries(this);
-        for (int i = 0; i < totalLibraries.size(); i++) {
-
+        if (savedLibraries != null) {
             for (int j = 0; j < savedLibraries.size(); j++) {
-                if (savedLibraries.get(j).getCategoryId() == totalLibraries.get(i).getCategoryId()) {
-                    totalLibraries.get(i).setChecked(true);
-                }
+                totalLibraries.add(new LibrarySortModel(savedLibraries.get(j).getCategoryId(),
+                        savedLibraries.get(j).getLibraryName(), true));
             }
+        }
 
+        for (int i = 0; i < mResourceIds.length; i++) {
+            LibrarySortModel model = new LibrarySortModel(mCategoryIds[i], mLabels[i],
+                    true);
+            if (!totalLibraries.contains(model)) {
+                model.setChecked(false);
+                totalLibraries.add(model);
+            }
         }
     }
 

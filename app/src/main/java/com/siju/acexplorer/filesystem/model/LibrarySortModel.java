@@ -21,6 +21,14 @@ public class LibrarySortModel implements Parcelable{
 
     }
 
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (obj == this) return true;
+        if (!(obj instanceof LibrarySortModel)) return false;
+        LibrarySortModel o = (LibrarySortModel) obj;
+        return o.categoryId == this.categoryId;
+    }
+
 
     protected LibrarySortModel(Parcel in) {
         categoryId = in.readInt();

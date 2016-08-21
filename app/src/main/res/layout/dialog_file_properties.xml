@@ -1,193 +1,204 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/dialog_file_info"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/scrollView"
-            android:layout_width="@dimen/dialog_file_info"
-            android:layout_height="wrap_content"
-            android:fillViewport="true">
-
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/textDialogTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            android:padding="10dp"
-            android:text="@string/properties"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textStyle="bold"/>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/padding_5">
 
         <ImageView
             android:id="@+id/imageFileIcon"
             android:layout_width="@dimen/dialog_image"
             android:layout_height="@dimen/dialog_image"
-            android:layout_below="@id/textDialogTitle"
-            android:layout_margin="10dp"
-            android:paddingRight="5dp"
             android:src="@drawable/ic_folder"/>
 
         <TextView
             android:id="@+id/textFileName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/textDialogTitle"
-            android:layout_margin="15dp"
-            android:layout_toRightOf="@+id/imageFileIcon"
             android:ellipsize="end"
             android:maxLines="3"
+            android:textSize="15sp"
+            android:layout_marginLeft="@dimen/padding_5"
+            android:layout_gravity="center_vertical"
+            android:padding="@dimen/padding_5"
             android:textStyle="bold"/>
 
-        <ImageButton
-            android:id="@+id/imageButtonClose"
-            android:layout_width="wrap_content"
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="@dimen/dialog_file_info"
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
+
+        <TableLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:background="@null"
-            android:paddingTop="10dp"
-            android:layout_marginRight="5dp"
-            android:src="@drawable/ic_close_white"
-            />
+            android:padding="@dimen/padding_5"
+            android:shrinkColumns="2">
 
+            <TableRow>
 
-        <TextView
-            android:id="@+id/textPathPlaceHolder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/imageFileIcon"
-            android:layout_margin="10dp"
-            android:text="@string/path"
-            android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/textPathPlaceHolder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:gravity="end"
+                    android:padding="@dimen/padding_5"
 
-        <TextView
-            android:id="@+id/textPath"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/imageFileIcon"
-            android:layout_margin="10dp"
-            android:layout_toRightOf="@+id/textPathPlaceHolder"
-            />
+                    android:text="@string/path"
+                    android:textStyle="bold"/>
 
-        <TextView
-            android:id="@+id/textSizePlaceHolder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/textPath"
-            android:layout_margin="10dp"
-            android:text="@string/size"
-            android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/textPath"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:padding="@dimen/padding_5"
+                    />
+            </TableRow>
 
-        <TextView
-            android:id="@+id/textFileSize"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/textPath"
-            android:layout_margin="10dp"
-            android:layout_toRightOf="@+id/textSizePlaceHolder"
-            />
+            <TableRow>
 
-        <TextView
-            android:id="@+id/textDatePlaceHolder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/textSizePlaceHolder"
-            android:layout_margin="10dp"
-            android:text="@string/date_modified"
-            android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/textSizePlaceHolder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:gravity="end"
 
-        <TextView
-            android:id="@+id/textDateModified"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/textSizePlaceHolder"
-            android:layout_margin="10dp"
-            android:layout_toRightOf="@+id/textDatePlaceHolder"
-            />
+                    android:padding="@dimen/padding_5"
+                    android:text="@string/size"
+                    android:textStyle="bold"/>
 
-        <TextView
-            android:id="@+id/textHiddenPlaceHolder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/textDatePlaceHolder"
-            android:layout_margin="10dp"
-            android:text="@string/hidden"
-            android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/textFileSize"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:padding="@dimen/padding_5"
+                    />
 
-        <TextView
-            android:id="@+id/textHidden"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/textDatePlaceHolder"
-            android:layout_margin="10dp"
-            android:layout_toRightOf="@+id/textHiddenPlaceHolder"
-            />
+            </TableRow>
 
-        <TextView
-            android:id="@+id/textReadablePlaceHolder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/textHiddenPlaceHolder"
-            android:layout_margin="10dp"
-            android:text="@string/readable"
-            android:textStyle="bold"/>
+            <TableRow>
 
-        <TextView
-            android:id="@+id/textReadable"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/textHiddenPlaceHolder"
-            android:layout_margin="10dp"
-            android:layout_toRightOf="@+id/textReadablePlaceHolder"
-            />
+                <TextView
+                    android:id="@+id/textDatePlaceHolder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:gravity="end"
+                    android:padding="@dimen/padding_5"
 
+                    android:text="@string/date_modified"
+                    android:textStyle="bold"/>
 
-        <TextView
-            android:id="@+id/textWriteablePlaceHolder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/textReadablePlaceHolder"
-            android:layout_margin="10dp"
-            android:text="@string/writeable"
-            android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/textDateModified"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:padding="@dimen/padding_5"
+                    />
 
-        <TextView
-            android:id="@+id/textWriteable"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/textReadablePlaceHolder"
-            android:layout_margin="10dp"
-            android:layout_toRightOf="@+id/textWriteablePlaceHolder"
-            />
+            </TableRow>
 
-        <TextView
-            android:id="@+id/textMD5PlaceHolder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/textWriteablePlaceHolder"
-            android:layout_margin="10dp"
-            android:text="@string/md5"
-            android:textStyle="bold"/>
+            <TableRow>
 
-        <TextView
-            android:id="@+id/textMD5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/textWriteablePlaceHolder"
-            android:layout_margin="10dp"
-            android:layout_toRightOf="@+id/textMD5PlaceHolder"
-            />
+                <TextView
+                    android:id="@+id/textHiddenPlaceHolder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:gravity="end"
+                    android:padding="@dimen/padding_5"
+                    android:text="@string/hidden"
+                    android:textStyle="bold"/>
 
-    </RelativeLayout>
+                <TextView
+                    android:id="@+id/textHidden"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:padding="@dimen/padding_5"
+                    />
 
-</ScrollView>
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:id="@+id/textReadablePlaceHolder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:gravity="end"
+                    android:padding="@dimen/padding_5"
+                    android:text="@string/readable"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/textReadable"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:padding="@dimen/padding_5"
+                    />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:id="@+id/textWriteablePlaceHolder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:gravity="end"
+                    android:padding="@dimen/padding_5"
+                    android:text="@string/writeable"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/textWriteable"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:padding="@dimen/padding_5"
+                    />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:id="@+id/textMD5PlaceHolder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:gravity="end"
+                    android:padding="@dimen/padding_5"
+
+                    android:text="@string/md5"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/textMD5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:padding="@dimen/padding_5"
+                    />
+            </TableRow>
+
+        </TableLayout>
+
+    </ScrollView>
+</LinearLayout>

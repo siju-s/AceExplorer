@@ -158,7 +158,7 @@ public class RootHelper {
                                         convertDate(array.getDate()),
                                         size, isDirectory, null,
                                         FileConstants.CATEGORY
-                                        .FILES.getValue()));
+                                                .FILES.getValue()));
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -173,6 +173,20 @@ public class RootHelper {
         }
         return null;
 
+    }
+
+    public static boolean fileExists(Context context, String path) {
+        File f = new File(path);
+        String p = f.getParent();
+        if (p != null && p.length() > 0) {
+            ArrayList<FileInfo> ls = getFilesList(context, p, true, true);
+            for (FileInfo strings : ls) {
+                if (strings.getFilePath() != null && strings.getFilePath().equals(path)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public static String convertDate(long dateInMs) {

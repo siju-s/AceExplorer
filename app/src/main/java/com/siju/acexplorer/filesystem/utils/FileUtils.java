@@ -47,6 +47,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
+import java.net.MalformedURLException;
 import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -995,34 +996,33 @@ public class FileUtils {
                 category == FileConstants.CATEGORY.LARGE_FILES.getValue();
     }
 
-    public static void removeMedia(Context context,File file,int category) {
+    public static void removeMedia(Context context, File file, int category) {
         ContentResolver resolver = context.getContentResolver();
         String path = file.getAbsolutePath();
         switch (category) {
             case 1:
                 Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-                 resolver.delete(musicUri, MediaStore.Audio.Media.DATA +"=?",new String[]{path});
+                resolver.delete(musicUri, MediaStore.Audio.Media.DATA + "=?", new String[]{path});
                 break;
 
             case 2:
                 Uri videoUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-                resolver.delete(videoUri, MediaStore.Video.Media.DATA +"=?",new String[]{path});
+                resolver.delete(videoUri, MediaStore.Video.Media.DATA + "=?", new String[]{path});
                 break;
 
             case 3:
                 Uri imageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                resolver.delete(imageUri, MediaStore.Images.Media.DATA +"=?",new String[]{path});
+                resolver.delete(imageUri, MediaStore.Images.Media.DATA + "=?", new String[]{path});
                 break;
 
             case 4:
                 Uri filesUri = MediaStore.Files.getContentUri("external");
-                resolver.delete(filesUri, MediaStore.Files.FileColumns.DATA +"=?",new String[]{path});
+                resolver.delete(filesUri, MediaStore.Files.FileColumns.DATA + "=?", new String[]{path});
                 break;
             default:
                 break;
         }
     }
-
 
 
     public static long getSize(File file) {
@@ -1426,10 +1426,6 @@ public class FileUtils {
     }
 
 
-
-
-
-
     public static boolean mkfile(final File file, Context context) throws IOException {
         if (file == null)
             return false;
@@ -1471,7 +1467,6 @@ public class FileUtils {
     }
 
 
-
     static void renameRoot(File a, String v) throws Exception {
         boolean remount = false;
         String newname = a.getParent() + "/" + v;
@@ -1490,13 +1485,11 @@ public class FileUtils {
     /**
      * Rename a folder. In case of extSdCard in Kitkat, the old folder stays in place, but files are moved.
      *
-     * @param source
-     *            The source folder.
-     * @param target
-     *            The target folder.
+     * @param source The source folder.
+     * @param target The target folder.
      * @return true if the renaming was successful.
      */
-    public static final boolean renameFolder(@NonNull final File source,@NonNull final File target,Context context) {
+    public static final boolean renameFolder(@NonNull final File source, @NonNull final File target, Context context) {
         // First try the normal rename.
         if (rename(source, target.getName(), false)) {
             return true;
@@ -1506,16 +1499,16 @@ public class FileUtils {
         }
 
         // Try the Storage Access Framework if it is just a rename within the same parent folder.
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
                 && source.getParent().equals(target.getParent()) && isOnExtSdCard(source, context)) {
-            DocumentFile document = getDocumentFile(source, true,context);
+            DocumentFile document = getDocumentFile(source, true, context);
             if (document.renameTo(target.getName())) {
                 return true;
             }
         }
 
         // Try the manual way, moving files individually.
-        if (!mkdir(target,context)) {
+        if (!mkdir(target, context)) {
             return false;
         }
 
@@ -1528,14 +1521,14 @@ public class FileUtils {
         for (File sourceFile : sourceFiles) {
             String fileName = sourceFile.getName();
             File targetFile = new File(target, fileName);
-            if (!copyFile(sourceFile, targetFile,context)) {
+            if (!copyFile(sourceFile, targetFile, context)) {
                 // stop on first error
                 return false;
             }
         }
         // Only after successfully copying all files, delete files on source folder.
         for (File sourceFile : sourceFiles) {
-            if (!deleteFile(sourceFile,context)) {
+            if (!deleteFile(sourceFile, context)) {
                 // stop on first error
                 return false;
             }
@@ -1547,14 +1540,12 @@ public class FileUtils {
     /**
      * Copy a file. The target file may even be on external SD card for Kitkat.
      *
-     * @param source
-     *            The source file
-     * @param target
-     *            The target file
+     * @param source The source file
+     * @param target The target file
      * @return true if the copying was successful.
      */
     @SuppressWarnings("null")
-    public static boolean copyFile(final File source, final File target,Context context) {
+    public static boolean copyFile(final File source, final File target, Context context) {
         FileInputStream inStream = null;
         OutputStream outStream = null;
         FileChannel inChannel = null;
@@ -1569,20 +1560,17 @@ public class FileUtils {
                 inChannel = inStream.getChannel();
                 outChannel = ((FileOutputStream) outStream).getChannel();
                 inChannel.transferTo(0, inChannel.size(), outChannel);
-            }
-            else {
-                if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     // Storage Access Framework
-                    DocumentFile targetDocument = getDocumentFile(target, false,context);
+                    DocumentFile targetDocument = getDocumentFile(target, false, context);
                     outStream =
                             context.getContentResolver().openOutputStream(targetDocument.getUri());
-                }
-                else if (Build.VERSION.SDK_INT==Build.VERSION_CODES.KITKAT) {
+                } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
                     // Workaround for Kitkat ext SD card
-                    Uri uri = MediaStoreHack.getUriFromFile(target.getAbsolutePath(),context);
+                    Uri uri = MediaStoreHack.getUriFromFile(target.getAbsolutePath(), context);
                     outStream = context.getContentResolver().openOutputStream(uri);
-                }
-                else {
+                } else {
                     return false;
                 }
 
@@ -1596,49 +1584,43 @@ public class FileUtils {
                 }
 
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Log.e("AmazeFileUtils",
                     "Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
             return false;
-        }
-        finally {
+        } finally {
             try {
                 inStream.close();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 // ignore exception
             }
             try {
                 outStream.close();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 // ignore exception
             }
             try {
                 inChannel.close();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 // ignore exception
             }
             try {
                 outChannel.close();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 // ignore exception
             }
         }
         return true;
     }
 
-    public static boolean rename(File f, String name,boolean root) {
+    public static boolean rename(File f, String name, boolean root) {
         String newname = f.getParent() + "/" + name;
-        if(f.getParentFile().canWrite()){
-            return f.renameTo(new File(newname));}
-        else if(root) {
-            RootTools.remount(f.getPath(),"rw");
+        if (f.getParentFile().canWrite()) {
+            return f.renameTo(new File(newname));
+        } else if (root) {
+            RootTools.remount(f.getPath(), "rw");
             RootHelper.runAndWait("mv " + f.getPath() + " " + newname, true);
-            RootTools.remount(f.getPath(),"ro");
+            RootTools.remount(f.getPath(), "ro");
             return true;
         }
         return false;
@@ -1808,9 +1790,9 @@ public class FileUtils {
         return !file.exists();
     }
 
-    public static void scanFile(Context context,String path) {
+    public static void scanFile(Context context, String path) {
         MediaScannerConnection.scanFile(context,
-                new String[] { path }, null,
+                new String[]{path}, null,
                 new MediaScannerConnection.OnScanCompletedListener() {
                     public void onScanCompleted(String path, Uri uri) {
                         Log.i(TAG, "Scanned " + path + ":");
@@ -1910,8 +1892,26 @@ public class FileUtils {
 
     }
 */
+    public static boolean delete(Context context, boolean rootmode, String path) {
+        boolean b = deleteFile(new File(path), context);
+        if (!b && rootmode) {
+            String parent = new File(path).getParent();
+            RootTools.remount(parent, "rw");
+            String s = RootHelper.runAndWait("rm -r \"" + path + "\"", true);
+            RootTools.remount(parent, "ro");
+        }
 
 
+        return !exists(context,path);
+    }
+
+    public static boolean exists(Context context, String path) {
+        boolean exists = false;
+//         if(isLocal())
+        exists = new File(path).exists();
+//        else if(isRoot())return RootHelper.fileExists(context,path);
+        return exists;
+    }
 
     /**
      * The full path name of the file to delete.
