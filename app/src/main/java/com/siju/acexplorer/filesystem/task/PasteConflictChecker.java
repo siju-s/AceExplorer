@@ -2,17 +2,23 @@ package com.siju.acexplorer.filesystem.task;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
+import android.text.format.Formatter;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
+import com.siju.acexplorer.helper.RootHelper;
 import com.siju.acexplorer.utils.DialogUtils;
 
 import java.io.File;
@@ -24,7 +30,7 @@ import java.util.ArrayList;
 public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String, ArrayList<FileInfo>> {
     Boolean move;
     ArrayList<FileInfo> mFiles;
-    ArrayList<FileInfo> mConflictFiles;
+    ArrayList<FileInfo> mConflictFiles = new ArrayList<>();
     int counter = 0;
     Context mContext;
     boolean rootmode = false;
@@ -52,18 +58,19 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
         Toast.makeText(mContext, message[0], Toast.LENGTH_LONG).show();
     }
 
+    @SafeVarargs
     @Override
     // Actual download method, run in the task thread
-    protected ArrayList<FileInfo> doInBackground(ArrayList<FileInfo>... params) {
+    protected final ArrayList<FileInfo> doInBackground(ArrayList<FileInfo>... params) {
+
 
         mFiles = params[0];
         long totalBytes = 0;
 
-        for (int i = 0; i < params[0].size(); i++) {
+        for (int i = 0; i < mFiles.size(); i++) {
             FileInfo f1 = mFiles.get(i);
 
             if (f1.isDirectory()) {
-
                 totalBytes = totalBytes + FileUtils.getFolderSize(new File(f1.getFilePath()));
             } else {
                 totalBytes = totalBytes + new File(f1.getFilePath()).length();
@@ -73,7 +80,7 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
         File f = new File(mCurrentDir);
         if (f.getUsableSpace() >= totalBytes) {
 
-            ArrayList<FileInfo> listFiles = com.siju.acexplorer.helper.RootHelper.getFilesList(mContext, mCurrentDir,
+            ArrayList<FileInfo> listFiles = RootHelper.getFilesList(mContext, mCurrentDir,
                     rootmode, true);
 
             for (FileInfo fileInfo : listFiles) {
@@ -90,6 +97,7 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
 
     public void showDialog() {
 
+        Logger.log("TAG", "Counter=" + counter + " confllict size=" + mConflictFiles.size());
         if (counter == mConflictFiles.size() || mConflictFiles.size() == 0) {
 
             if (mFiles != null && mFiles.size() != 0) {
@@ -111,11 +119,11 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
                     } else {
 
                         new MoveFiles(mContext, mFragment, mFiles, mIsDualPane).executeOnExecutor
-                                (AsyncTask
-                                        .THREAD_POOL_EXECUTOR, mCurrentDir);
+                                (AsyncTask.THREAD_POOL_EXECUTOR, mCurrentDir);
                     }
                 }
             } else {
+
                 Toast.makeText(mContext, mContext.getString(R.string.msg_move_failure), Toast.LENGTH_SHORT).show();
             }
         } else {
@@ -123,10 +131,37 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
             String texts[] = new String[]{mContext.getString(R.string.dialog_title_paste_conflict),
                     mContext.getString(R.string.dialog_skip), mContext.getString(R.string.dialog_keep_both), mContext.getString(R
                     .string.dialog_replace)};
-            MaterialDialog materialDialog = new DialogUtils().showCustomDialog(mContext, R.layout.dialog_paste_conflict,
+            final MaterialDialog materialDialog = new DialogUtils().showCustomDialog(mContext, R.layout.dialog_paste_conflict,
                     texts);
 
             final CheckBox checkBox = (CheckBox) materialDialog.findViewById(R.id.checkBox);
+            ImageView icon = (ImageView) materialDialog.findViewById(R.id.imageFileIcon);
+            TextView textFileName = (TextView) materialDialog.findViewById(R.id.textFileName);
+            TextView textFileDate = (TextView) materialDialog.findViewById(R.id.textFileDate);
+            TextView textFileSize = (TextView) materialDialog.findViewById(R.id.textFileSize);
+            /*String fileName = mFiles.get(counter).getFilePath().substring(sourceFilePath.lastIndexOf("/") + 1,
+                    sourceFilePath
+                    .length());*/
+
+            String fileName = mConflictFiles.get(counter).getFileName();
+            textFileName.setText(fileName);
+            File sourceFile = new File(mConflictFiles.get(counter).getFilePath());
+            long date = sourceFile.lastModified();
+            String fileModifiedDate = FileUtils.convertDate(date);
+            long size = sourceFile.length();
+            String fileSize = Formatter.formatFileSize(mContext, size);
+            textFileDate.setText(fileModifiedDate);
+            textFileSize.setText(fileSize);
+            Drawable drawable = FileUtils.getAppIcon(mContext, mConflictFiles.get(counter).getFilePath());
+            if (drawable != null) {
+                icon.setImageDrawable(drawable);
+            }
+
+            if (new File(mConflictFiles.get(counter).getFilePath()).isDirectory()) {
+                materialDialog.getActionButton(DialogAction.NEUTRAL).setEnabled(false);
+            }
+
+
            /* final MaterialDialog.Builder x = new MaterialDialog.Builder(mContext);
             LayoutInflater layoutInflater = (LayoutInflater) mainActivity.getSystemService(mainActivity.LAYOUT_INFLATER_SERVICE);
             View view = layoutInflater.inflate(R.layout.copy_dialog, null);
@@ -163,6 +198,8 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
                             }
                             counter = mConflictFiles.size();
                         }
+
+                        materialDialog.dismiss();
                         showDialog();
                     }
                 }
@@ -172,14 +209,12 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
                 @Override
                 public void onClick(View view) {
                     if (counter < mConflictFiles.size()) {
-
                         if (!checkBox.isChecked()) {
-
                             counter++;
                         } else {
-
                             counter = mConflictFiles.size();
                         }
+                        materialDialog.dismiss();
                         showDialog();
                     }
                 }

@@ -72,6 +72,7 @@ import com.siju.acexplorer.filesystem.model.FavInfo;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.model.ZipModel;
 import com.siju.acexplorer.filesystem.task.CreateZipTask;
+import com.siju.acexplorer.filesystem.task.PasteConflictChecker;
 import com.siju.acexplorer.filesystem.ui.CustomGridLayoutManager;
 import com.siju.acexplorer.filesystem.ui.CustomLayoutManager;
 import com.siju.acexplorer.filesystem.ui.DialogBrowseFragment;
@@ -80,7 +81,6 @@ import com.siju.acexplorer.filesystem.ui.EnhancedMenuInflater;
 import com.siju.acexplorer.filesystem.utils.ExtractManager;
 import com.siju.acexplorer.filesystem.utils.FileOperations;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
-import com.siju.acexplorer.filesystem.utils.PasteUtils;
 import com.siju.acexplorer.helper.RootHelper;
 import com.siju.acexplorer.utils.DialogUtils;
 import com.stericson.RootTools.RootTools;
@@ -88,7 +88,6 @@ import com.stericson.RootTools.RootTools;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import static com.siju.acexplorer.R.id.textEmpty;
 
@@ -134,7 +133,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private View mItemView;
     private int mDragInitialPos = -1;
     private ArrayList<String> mDragPaths = new ArrayList<>();
-    private PasteUtils mPasteUtils;
+    //    private PasteUtils mPasteUtils;
     //    private RecyclerView.LayoutManager llm;
     private RecyclerView.LayoutManager llm;
     private String mLastDualPaneDir;
@@ -786,7 +785,10 @@ public class FileListFragment extends Fragment implements LoaderManager
                 if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
                     showMessage(mSelectedItemPositions.size() + " " + getString(R.string.msg_cut_copy));
                     mCopiedData.clear();
-                    mCopiedData.addAll(fileInfoList);
+                    for (int i = 0; i < mSelectedItemPositions.size(); i++) {
+                        mCopiedData.add(fileInfoList.get(mSelectedItemPositions.keyAt(i)));
+                    }
+//                    mCopiedData.addAll(fileInfoList);
                     mIsMoveOperation = true;
                     togglePasteVisibility(true);
                     getActivity().supportInvalidateOptionsMenu();
@@ -799,7 +801,10 @@ public class FileListFragment extends Fragment implements LoaderManager
                     mIsMoveOperation = false;
                     showMessage(mSelectedItemPositions.size() + " " + getString(R.string.msg_cut_copy));
                     mCopiedData.clear();
-                    mCopiedData.addAll(fileInfoList);
+                    for (int i = 0; i < mSelectedItemPositions.size(); i++) {
+                        mCopiedData.add(fileInfoList.get(mSelectedItemPositions.keyAt(i)));
+                    }
+//                    mCopiedData.addAll(fileInfoList);
                     togglePasteVisibility(true);
                     getActivity().supportInvalidateOptionsMenu();
                     mActionMode.finish();
@@ -1550,7 +1555,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         final MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
         String items[] = new String[]{getString(R.string.action_copy), getString(R.string.move)};
         builder.title(getString(R.string.drag));
-        builder.content(getString(R.string.dialog_to_placeholder,destinationDir));
+        builder.content(getString(R.string.dialog_to_placeholder, destinationDir));
         builder.positiveText(getString(R.string.msg_ok));
         builder.positiveColor(ContextCompat.getColor(getActivity(), R.color.colorPrimary));
         builder.items(items);
@@ -1559,7 +1564,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         builder.itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
             @Override
             public boolean onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
-                final boolean isMoveOperation = position == 1;
+              /*  final boolean isMoveOperation = position == 1;
                 mPasteUtils = new PasteUtils(getActivity(), FileListFragment.this, destinationDir,
                         true);
                 mPasteUtils.setMoveOperation(isMoveOperation);
@@ -1579,7 +1584,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                     mPasteUtils.callAsyncTask();
                 } else {
                     mPasteUtils.showDialog(sourcePaths.get(0), true);
-                }
+                }*/
 //                materialDialog.dismiss();
                 mActionMode.finish();
                 return true;
@@ -1732,22 +1737,22 @@ public class FileListFragment extends Fragment implements LoaderManager
                         showDragDialog(paths, destinationDir);
                     } else {
                         final boolean isMoveOperation = false;
-                        mPasteUtils = new PasteUtils(getActivity(), FileListFragment.this, destinationDir,
-                                true);
-                        mPasteUtils.setMoveOperation(isMoveOperation);
+//                        mPasteUtils = new PasteUtils(getActivity(), FileListFragment.this, destinationDir,
+//                                true);
+//                        mPasteUtils.setMoveOperation(isMoveOperation);
                         boolean isPasteConflict = false;
 //                        List<Boolean> pasteConflictList = new ArrayList<>();
 
                         for (int i = 0; i < paths.size(); i++) {
-                            mPasteUtils.checkIfFileExists(paths.get(i), new File
-                                    (destinationDir));
+//                            mPasteUtils.checkIfFileExists(paths.get(i), new File
+//                                    (destinationDir));
 //                            pasteConflictList.add(isPasteConflict);
 
                         }
 //                        Logger.log(TAG,"Paste conflict list="+pasteConflictList);
 
                         Logger.log(TAG, "Source=" + paths.get(0) + "Dest=" + destinationDir);
-                        mPasteUtils.showDialog(paths.get(0), false);
+//                        mPasteUtils.showDialog(paths.get(0), false);
                         mActionMode.finish();
 
                     }
@@ -1892,12 +1897,33 @@ public class FileListFragment extends Fragment implements LoaderManager
         switch (item.getItemId()) {
 
             case R.id.action_paste:
-                if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
-                    mPasteUtils = new PasteUtils(getActivity(), FileListFragment.this, mFilePath,
-                            false);
-                    mPasteUtils.setMoveOperation(mIsMoveOperation);
+                if (mCopiedData != null && mCopiedData.size() > 0) {
 
-                    boolean isPasteConflict = false;
+                    PasteConflictChecker conflictChecker = new PasteConflictChecker(getActivity(), FileListFragment
+                            .this, mFilePath,
+                            false, mIsRootMode, mIsMoveOperation, checkIfDualFragment());
+                   /* mPasteUtils = new PasteUtils(getActivity(), FileListFragment.this, mFilePath,
+                            false);
+                    mPasteUtils.setMoveOperation(mIsMoveOperation);*/
+//                    ArrayList<FileInfo> fileInfo = new ArrayList<>();
+                   /* for (int i = 0; i < mSelectedItemPositions.size(); i++) {
+                        String path = mCopiedData.get(mSelectedItemPositions.keyAt(i))
+                                .getFilePath();
+                     *//*   isPasteConflict = mPasteUtils.checkIfFileExists(path, new File
+                                (mFilePath));*//*
+                        fileInfo.add(m);
+                    }*/
+                    ArrayList<FileInfo> info = new ArrayList<>();
+                    info.addAll(mCopiedData);
+                    conflictChecker.execute(info);
+                    clearSelectedPos();
+                    mCopiedData.clear();
+                    togglePasteVisibility(false);
+
+
+                }
+
+                  /*  boolean isPasteConflict = false;
                     String firstPath = mCopiedData.get(mSelectedItemPositions.keyAt(0))
                             .getFilePath();
                     List<Boolean> pasteConflictList = new ArrayList<>();
@@ -1921,7 +1947,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 //                        isPasteConflictDialogShown = false;
 
                     }
-                }
+                }*/
                 break;
 
 
@@ -2219,26 +2245,6 @@ public class FileListFragment extends Fragment implements LoaderManager
             mCurrentOrientation = newConfig.orientation;
             refreshSpan();
         }
-
-    /*    if (mCurrentOrientation == Configuration.ORIENTATION_PORTRAIT) {
-
-        }*/
-/*        final View view = getActivity().findViewById(R.id.recyclerViewFileList);
-        final ViewTreeObserver viewTreeObserver = view.getViewTreeObserver();
-        viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-
-                int width  = view.getMeasuredWidth();
-                Logger.log(TAG,"Width observer="+width+"old width="+mOldWidth);
-                if (width != mOldWidth) {
-                    viewTreeObserver.removeOnGlobalLayoutListener(this);
-                    refreshSpan();
-                }
-
-            }
-        });*/
-
 
     }
 }

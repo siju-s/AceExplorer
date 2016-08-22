@@ -35,6 +35,7 @@ import android.util.Log;
 
 import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.model.BaseFile;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.model.ZipProgressModel;
@@ -237,8 +238,8 @@ public class CopyService extends Service {
                 if (FileUtils.checkFolder((new File(currentDir)), mContext) == 1) {
                     getTotalBytes(files);
                     for (int i = 0; i < files.size(); i++) {
-                        FileInfo f1 = files.get(i);
-                        Log.e("Copy", "basefile\t" + f1.getFilePath());
+                        FileInfo sourceFile = files.get(i);
+                        Log.e("Copy", "basefile\t" + sourceFile.getFilePath());
                         try {
 
                             if (hash.get(id)) {
@@ -246,9 +247,11 @@ public class CopyService extends Service {
                                     copyRoot(files.get(i).getFilePath(), files.get(i).getFileName(), currentDir, move);
                                     continue;
                                 }
-                                FileInfo destination = files.get(i);
-                                destination.setFilePath(currentDir + "/" + files.get(i).getFileName());
-                                copyFiles(f1, destination, id, move);
+                                FileInfo destFile = new FileInfo(sourceFile.getFileName(), sourceFile.getFilePath(),
+                                        sourceFile.getFileDate(), sourceFile.getNoOfFilesOrSize(), sourceFile.isDirectory(),
+                                        sourceFile.getExtension(), sourceFile.getType());
+                                destFile.setFilePath(currentDir + "/" + files.get(i).getFileName());
+                                copyFiles(sourceFile, destFile, id, move);
                             } else {
                                 break;
                             }
@@ -318,7 +321,10 @@ public class CopyService extends Service {
                             true);
                     for (FileInfo file : filePaths) {
 //                        HFile destFile = new HFile(targetFile.getMode(), targetFile.getPath(), file.getName(), file.isDirectory());
-                        FileInfo destFile = file;
+
+                        FileInfo destFile = new FileInfo(sourceFile.getFileName(), sourceFile.getFilePath(),
+                                sourceFile.getFileDate(), sourceFile.getNoOfFilesOrSize(), sourceFile.isDirectory(),
+                                sourceFile.getExtension(), sourceFile.getType());
                         destFile.setFilePath(targetFile.getFilePath() + "/" + file.getFileName());
                         copyFiles(file, destFile, id, move);
                     }
@@ -328,6 +334,7 @@ public class CopyService extends Service {
                     if (!hash.get(id)) return;
                     long size = new File(sourceFile.getFilePath()).length();
 
+                    Logger.log("TAG", "Source file=" + sourceFile.getFilePath());
                     BufferedOutputStream out = new BufferedOutputStream(
                             new FileOutputStream(targetFile.getFilePath()));
                     BufferedInputStream in = new BufferedInputStream(
@@ -374,13 +381,14 @@ public class CopyService extends Service {
             void copy(BufferedInputStream in, BufferedOutputStream out, long size, int id, String name,
                       boolean move) throws IOException {
                 long fileBytes = 0l;
-                byte[] buffer = new byte[1024 * 60];
+                final int buffer = 2048; //2 KB
+                byte[] data = new byte[2048];
                 int length;
                 //copy the file content in bytes
-                while ((length = in.read(buffer)) > 0) {
+                while ((length = in.read(data, 0, buffer)) != -1) {
                     boolean b = hash.get(id);
                     if (b) {
-                        out.write(buffer, 0, length);
+                        out.write(data, 0, length);
                         copiedBytes += length;
                         fileBytes += length;
                         long time1 = System.nanoTime() / 500000000;
@@ -430,7 +438,7 @@ public class CopyService extends Service {
             mBuilder.setContentTitle(getString(title));
             mBuilder.setContentText(new File(fileName).getName() + " " + FileUtils.formatSize(this, done) + "/" + FileUtils
                     .formatSize(this, total));
-            int id1 = Integer.parseInt("456" + id);
+            int id1 = NOTIFICATION_ID + id;
             mNotifyManager.notify(id1, mBuilder.build());
             if (p1 == 100 || total == 0) {
                 mBuilder.setContentTitle("Copy completed");
@@ -460,7 +468,7 @@ public class CopyService extends Service {
                 if (b) progressListener.refresh();
             }
 
-        } else publishCompletedResult(id, Integer.parseInt("456" + id));
+        } else publishCompletedResult(id, NOTIFICATION_ID + id);
     }
 
     public void publishCompletedResult(int id, int id1) {

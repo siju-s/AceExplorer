@@ -15,9 +15,7 @@ import java.io.InputStream;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 
-/**
- * Created by arpitkh996 on 25-01-2016.
- */
+
 public class FileVerifier extends Thread {
     ArrayList<FileBundle> arrayList = new ArrayList<>();
     private Context mContext;

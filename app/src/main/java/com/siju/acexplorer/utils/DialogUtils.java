@@ -47,6 +47,7 @@ public class DialogUtils {
         builder.positiveText(texts[1]);
         builder.positiveColor(ContextCompat.getColor(context, R.color.colorPrimary));
         builder.neutralText(texts[2]);
+        builder.neutralColor(ContextCompat.getColor(context, R.color.colorPrimary));
         if (texts[3] != (null)) {
             builder.negativeText(texts[3]);
             builder.negativeColor(ContextCompat.getColor(context, R.color.colorPrimary));

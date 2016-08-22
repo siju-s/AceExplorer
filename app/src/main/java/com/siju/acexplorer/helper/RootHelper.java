@@ -3,7 +3,9 @@ package com.siju.acexplorer.helper;
 import android.content.Context;
 import android.text.format.Formatter;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 
+import com.siju.acexplorer.R;
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.BaseFile;
 import com.siju.acexplorer.filesystem.model.FileInfo;
@@ -11,6 +13,7 @@ import com.stericson.RootTools.RootTools;
 import com.stericson.RootTools.execution.Command;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -122,57 +125,137 @@ public class RootHelper {
                                                    boolean
                                                            showHidden) {
         ArrayList<FileInfo> fileInfoArrayList = new ArrayList<>();
-        String p = " ";
-        int mode = 0;
-        if (showHidden) p = "a ";
-        ArrayList<BaseFile> a = new ArrayList<>();
-        ArrayList<String> ls = new ArrayList<>();
-        if (root) {
-//            if (!path.startsWith("/storage") && !path.startsWith("/sdcard")) {
-            String cpath = getCommandLineString(path);
-            ls = runAndWait1("ls -l" + p + cpath, root);
-            if (ls != null) {
-                for (int i = 0; i < ls.size(); i++) {
-                    String file = ls.get(i);
-                    if (!file.contains("Permission denied"))
-                        try {
-                            BaseFile array = parseName(file);
-                            if (array != null) {
-                                String name = array.getPath();
-                                String path1 = path + "/" + array.getPath();
-//                                    array.setName(array.getPath());
-//                                    array.setPath();
-                                boolean isDirectory;
-                                if (array.getLink().trim().length() > 0) {
-                                    isDirectory = isDirectory(array.getLink(), root, 0);
-//                                        array.setDirectory(isdirectory);
-                                } else isDirectory = isDirectory(array);
-                                long size1 = array.getSize();
-                                String size;
-                                if (size1 != -1) {
-                                    size = Formatter.formatFileSize(context, array.getSize());
-                                } else {
-                                    size = null;
-                                }
-                                fileInfoArrayList.add(new FileInfo(name, path1,
-                                        convertDate(array.getDate()),
-                                        size, isDirectory, null,
-                                        FileConstants.CATEGORY
-                                                .FILES.getValue()));
+        File file = new File(path);
+        if (file.canRead()) {
+            File[] listFiles = file.listFiles();
+
+            if (listFiles != null) {
+                for (File file1 : listFiles) {
+                    boolean isDirectory = false;
+                    String fileName = file1.getName();
+                    String filePath = file1.getAbsolutePath();
+                    String noOfFilesOrSize = null;
+                    String extension = null;
+                    int type = 0;
+
+                    // Dont show hidden files by default
+                    if (file1.getName().startsWith(".") && !showHidden) {
+                        continue;
+                    }
+                    if (file1.isDirectory()) {
+
+                        isDirectory = true;
+                        int childFileListSize = 0;
+//                        if (file1.list() == null) {
+//                            noOfFilesOrSize = getPermissionOfFile(file1);
+//                        }
+//                        else {
+                        if (file1.list() != null) {
+                            if (!showHidden) {
+                                File[] nonHiddenList = file1.listFiles(new FilenameFilter() {
+                                    @Override
+                                    public boolean accept(File file, String name) {
+                                        return (!name.startsWith("."));
+                                    }
+                                });
+                                childFileListSize = nonHiddenList.length;
+                            } else {
+                                childFileListSize = file1.list().length;
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
                         }
 
-                }
-                return fileInfoArrayList;
+                        if (childFileListSize == 0) {
+                            noOfFilesOrSize = context.getResources().getString(R.string.empty);
+                        } else {
+                            noOfFilesOrSize = context.getResources().getQuantityString(R.plurals.number_of_files,
+                                    childFileListSize, childFileListSize);
+                        }
+//                        }
+                    } else {
+                        long size = file1.length();
+                        noOfFilesOrSize = Formatter.formatFileSize(context, size);
+                        extension = filePath.substring(filePath.lastIndexOf(".") + 1);
+                        type = checkMimeType(filePath, extension);
+                    }
+                    long date = file1.lastModified();
+                    String fileModifiedDate = convertDate(date);
 
+                    FileInfo fileInfo = new FileInfo(fileName, filePath, fileModifiedDate, noOfFilesOrSize,
+                            isDirectory, extension, type);
+                    fileInfoArrayList.add(fileInfo);
+                }
+            }
+        } else {
+            String p = " ";
+            int mode = 0;
+            if (showHidden) p = "a ";
+            ArrayList<BaseFile> a = new ArrayList<>();
+            ArrayList<String> ls = new ArrayList<>();
+            if (root) {
+//            if (!path.startsWith("/storage") && !path.startsWith("/sdcard")) {
+                String cpath = getCommandLineString(path);
+                ls = runAndWait1("ls -l" + p + cpath, root);
+                if (ls != null) {
+                    for (int i = 0; i < ls.size(); i++) {
+                        String file1 = ls.get(i);
+                        if (!file1.contains("Permission denied"))
+                            try {
+                                BaseFile array = parseName(file1);
+                                if (array != null) {
+                                    String name = array.getPath();
+                                    String path1 = path + "/" + array.getPath();
+//                                    array.setName(array.getPath());
+//                                    array.setPath();
+                                    boolean isDirectory;
+                                    if (array.getLink().trim().length() > 0) {
+                                        isDirectory = isDirectory(array.getLink(), root, 0);
+//                                        array.setDirectory(isdirectory);
+                                    } else isDirectory = isDirectory(array);
+                                    long size1 = array.getSize();
+                                    String size;
+                                    if (size1 != -1) {
+                                        size = Formatter.formatFileSize(context, array.getSize());
+                                    } else {
+                                        size = null;
+                                    }
+                                    fileInfoArrayList.add(new FileInfo(name, path1,
+                                            convertDate(array.getDate()),
+                                            size, isDirectory, null,
+                                            FileConstants.CATEGORY
+                                                    .FILES.getValue()));
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                    }
+                }
             }
 //            }
 
         }
-        return null;
+        return fileInfoArrayList;
 
+    }
+
+    private static int checkMimeType(String path, String extension) {
+//        String mimeType = URLConnection.guessContentTypeFromName(path);
+
+        int value = 0;
+        if (extension == null) return value;
+        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+
+        if (mimeType != null) {
+            if (mimeType.indexOf("image") == 0) {
+                value = FileConstants.CATEGORY.IMAGE.getValue();
+            } else if (mimeType.indexOf("video") == 0) {
+                value = FileConstants.CATEGORY.VIDEO.getValue();
+            } else if (mimeType.indexOf("audio") == 0) {
+                value = FileConstants.CATEGORY.AUDIO.getValue();
+            }
+        }
+//        Logger.log(TAG, "Mime type=" + value);
+        return value;
     }
 
     public static boolean fileExists(Context context, String path) {

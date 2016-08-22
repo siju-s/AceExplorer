@@ -1,3 +1,4 @@
+/*
 package com.siju.acexplorer.filesystem.utils;
 
 import android.app.Activity;
@@ -24,9 +25,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+*/
 /**
  * Created by SIJU on 14-07-2016.
- */
+ *//*
+
 
 public class PasteUtils {
     private Context mContext;
@@ -55,6 +58,7 @@ public class PasteUtils {
         pasteOperationCleanUp();
     }
 
+*/
 /*
     PasteUtils(Activity activity, Context context, Fragment fragment, String currentDir, boolean
             isDrag) {
@@ -66,7 +70,8 @@ public class PasteUtils {
         pasteOperationCleanUp();
 
     }
-*/
+*//*
+
 
 
     public void pasteOperationCleanUp() {
@@ -173,12 +178,14 @@ public class PasteUtils {
 
     }
 
-    /**
+    */
+/**
      * Shows another alert dialog when user clicks on any button Skip,Keep or Replace
      *
      * @param action Button action --> {@link FileUtils#ACTION_REPLACE,FileUtils#ACTION_SKIP,FileUtils#ACTION_KEEP}
      *               Calls Async task to do the copy operation once user resolves all conflicts
-     */
+     *//*
+
     private void checkIfPasteConflictFinished(int action) {
         mPasteConflictDialog.dismiss();
         int count = ++tempConflictCounter;
@@ -402,6 +409,7 @@ public class PasteUtils {
                     filesCopied = 0;
                     break;
 
+*/
 /*                case DELETE_OPERATION:
 
                     if (mSelectedItemPositions != null && mSelectedItemPositions.size() != 0) {
@@ -414,7 +422,8 @@ public class PasteUtils {
 //                    refreshList();
                     progressDialog.dismiss();
 
-                    break;*/
+                    break;*//*
+
             }
         }
 
@@ -439,3 +448,4 @@ public class PasteUtils {
 
 
 }
+*/

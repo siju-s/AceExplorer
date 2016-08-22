@@ -87,6 +87,7 @@
             />
         <activity android:name="com.siju.acexplorer.filesystem.LibrarySortActivity"/>
         <service android:name="com.siju.acexplorer.filesystem.task.CreateZipTask"/>
+        <service android:name=".filesystem.task.CopyService"/>
     </application>
 
 </manifest>

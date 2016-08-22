@@ -140,25 +140,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         return resultLine;
     }
 
-    private int checkMimeType(String path, String extension) {
-//        String mimeType = URLConnection.guessContentTypeFromName(path);
 
-        int value = 0;
-        if (extension == null) return value;
-        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-
-        if (mimeType != null) {
-            if (mimeType.indexOf("image") == 0) {
-                value = FileConstants.CATEGORY.IMAGE.getValue();
-            } else if (mimeType.indexOf("video") == 0) {
-                value = FileConstants.CATEGORY.VIDEO.getValue();
-            } else if (mimeType.indexOf("audio") == 0) {
-                value = FileConstants.CATEGORY.AUDIO.getValue();
-            }
-        }
-//        Logger.log(TAG, "Mime type=" + value);
-        return value;
-    }
 
     Comparator<? super File> comparatorByName = new Comparator<File>() {
 
@@ -239,71 +221,9 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 getZipContents("", file.getAbsolutePath());
                 return fileInfoList;
             } else {
-                if (file.exists()) {
-                    File[] listFiles = file.listFiles();
-
-                    if (listFiles != null) {
-//                        Arrays.sort(listFiles, comparatorByName);
-                        for (File file1 : listFiles) {
-                            boolean isDirectory = false;
-                            String fileName = file1.getName();
-                            String filePath = file1.getAbsolutePath();
-                            String noOfFilesOrSize = null;
-                            String extension = null;
-                            int type = 0;
-
-                            // Dont show hidden files by default
-                            if (file1.getName().startsWith(".") && !showHidden) {
-                                continue;
-                            }
-                            if (file1.isDirectory()) {
-
-                                isDirectory = true;
-                                int childFileListSize = 0;
-//                        if (file1.list() == null) {
-//                            noOfFilesOrSize = getPermissionOfFile(file1);
-//                        }
-//                        else {
-                                if (file1.list() != null) {
-                                    if (!showHidden) {
-                                        File[] nonHiddenList = file1.listFiles(new FilenameFilter() {
-                                            @Override
-                                            public boolean accept(File file, String name) {
-                                                return (!name.startsWith("."));
-                                            }
-                                        });
-                                        childFileListSize = nonHiddenList.length;
-                                    } else {
-                                        childFileListSize = file1.list().length;
-                                    }
-                                }
-
-                                if (childFileListSize == 0) {
-                                    noOfFilesOrSize = mContext.getResources().getString(R.string.empty);
-                                } else {
-                                    noOfFilesOrSize = mContext.getResources().getQuantityString(R.plurals.number_of_files,
-                                            childFileListSize, childFileListSize);
-                                }
-//                        }
-                            } else {
-                                long size = file1.length();
-                                noOfFilesOrSize = Formatter.formatFileSize(mContext, size);
-                                extension = filePath.substring(filePath.lastIndexOf(".") + 1);
-                                type = checkMimeType(filePath, extension);
-                            }
-                            long date = file1.lastModified();
-                            String fileModifiedDate = convertDate(date);
-
-                            FileInfo fileInfo = new FileInfo(fileName, filePath, fileModifiedDate, noOfFilesOrSize,
-                                    isDirectory, extension, type);
-                            fileInfoList.add(fileInfo);
-                        }
-                        fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
-                        return fileInfoList;
-                    }
-                } else {
-                    return null;
-                }
+                fileInfoList = com.siju.acexplorer.helper.RootHelper.getFilesList(mContext, mPath,
+                        true, showHidden);
+                fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
             }
         } else {
 //            boolean rootAvailable  = RootTools.isRootAvailable();
@@ -364,7 +284,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
             } while (cursor.moveToNext());
             cursor.close();
-            fileInfoList = FileUtils.sortFiles(fileInfoList,mSortMode);
+            fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
         }
         long endTime = System.currentTimeMillis();
         long timetaken = (endTime - startTime) / 1000;
@@ -412,7 +332,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                     true, null, FileConstants.CATEGORY.FAVORITES.getValue());
             fileInfoList.add(fileInfo);
         }
-        fileInfoList = FileUtils.sortFiles(fileInfoList,mSortMode);
+        fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
         return fileInfoList;
     }
 
@@ -592,7 +512,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
             } while (cursor.moveToNext());
             cursor.close();
-            fileInfoList = FileUtils.sortFiles(fileInfoList,mSortMode);
+            fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
         } else {
             return null;
         }
@@ -630,7 +550,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
             } while (cursor.moveToNext());
             cursor.close();
-            fileInfoList = FileUtils.sortFiles(fileInfoList,mSortMode);
+            fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
         } else {
             return null;
         }
@@ -675,7 +595,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
             } while (cursor.moveToNext());
             cursor.close();
-            fileInfoList = FileUtils.sortFiles(fileInfoList,mSortMode);
+            fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
         } else {
             return null;
         }
@@ -796,7 +716,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
             } while (cursor.moveToNext());
             cursor.close();
-            fileInfoList = FileUtils.sortFiles(fileInfoList,mSortMode);
+            fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
         } else {
             return null;
         }

@@ -392,7 +392,7 @@ public class FileUtils {
      * @param destination the directory to move the file to
      * @return
      */
-
+/*
     public static int copyToDirectory(Context context, String source, String destination, boolean isMoveOperation, int
             action, PasteUtils.BackGroundOperationsTask.Progress progress) {
         PasteUtils.BackGroundOperationsTask.Progress progressBg = progress;
@@ -503,7 +503,7 @@ public class FileUtils {
             sourceFile.delete();
         }
         return 0;
-    }
+    }*/
 
     /**
      * View the file in external apps based on Mime Type

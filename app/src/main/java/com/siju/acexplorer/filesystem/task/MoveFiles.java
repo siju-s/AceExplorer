@@ -58,7 +58,7 @@ public class MoveFiles extends AsyncTask<String, Void, Integer> {
         for (FileInfo f : files) {
             File file = new File(mCurrentDir + "/" + f.getFileName());
             File file1 = new File(f.getFilePath());
-            if (!file1.renameTo(file)) {
+            if (file1.renameTo(file)) {
                 filesMoved++;
             }
         }
