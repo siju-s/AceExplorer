@@ -52,10 +52,9 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     private int draggedPos = -1;
 
 
-
-     FileListAdapter(Fragment fragment, Context mContext, ArrayList<FileInfo>
+    FileListAdapter(Fragment fragment, Context mContext, ArrayList<FileInfo>
             fileInfoArrayList, int
-                                   category, int viewMode) {
+                            category, int viewMode) {
         this.mFragment = fragment;
         this.mContext = mContext;
         this.fileInfoArrayList = fileInfoArrayList;
@@ -213,6 +212,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
             case 0: // For file group
             case 5:
             case 7:
+            case 8:
             case 9:
             case 10:
             case 11:
@@ -250,9 +250,8 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
                         String extension = fileInfoArrayList.get(position).getExtension();
                         if (extension != null) {
-                            changeFileIcon(fileListViewHolder,extension.toLowerCase(),filePath);
-                        }
-                        else {
+                            changeFileIcon(fileListViewHolder, extension.toLowerCase(), filePath);
+                        } else {
                             fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_doc_white);
                         }
 
@@ -261,8 +260,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
                 }
                 if (fileName.startsWith(".")) {
                     fileListViewHolder.imageIcon.setColorFilter(Color.argb(200, 255, 255, 255));
-                }
-                else {
+                } else {
                     fileListViewHolder.imageIcon.clearColorFilter();
 
                 }
@@ -295,18 +293,18 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
             case 4: // For docs group
                 String extension = fileInfoArrayList.get(position).getExtension();
                 extension = extension.toLowerCase();
-                changeFileIcon(fileListViewHolder, extension,null);
+                changeFileIcon(fileListViewHolder, extension, null);
                 break;
 
         }
 
     }
 
-    private void changeFileIcon(FileListViewHolder fileListViewHolder, String extension,String
+    private void changeFileIcon(FileListViewHolder fileListViewHolder, String extension, String
             path) {
         switch (extension) {
             case FileConstants.APK_EXTENSION:
-                Drawable apkIcon = FileUtils.getAppIcon(mContext,path);
+                Drawable apkIcon = FileUtils.getAppIcon(mContext, path);
                 fileListViewHolder.imageIcon.setImageDrawable(apkIcon);
                 break;
             case FileConstants.EXT_DOC:
@@ -573,7 +571,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
         @Override
         public void onClick(View v) {
-            Logger.log("TAG",""+ mItemClickListener);
+            Logger.log("TAG", "" + mItemClickListener);
 
             if (mItemClickListener != null) {
                 mItemClickListener.onItemClick(v, getAdapterPosition());

@@ -82,6 +82,21 @@ public class FileInfo implements Parcelable {
         mimeType = in.readString();
     }
 
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(fileName);
+        parcel.writeString(filePath);
+        parcel.writeString(fileDate);
+        parcel.writeString(noOfFilesOrSize);
+        parcel.writeByte((byte) (isDirectory ? 1 : 0));
+        parcel.writeString(extension);
+        parcel.writeInt(type);
+        parcel.writeLong(id);
+        parcel.writeLong(bucketId);
+        parcel.writeString(mimeType);
+
+    }
+
     public boolean equals(Object obj) {
         if (obj == null) return false;
         if (obj == this) return true;
@@ -188,18 +203,5 @@ public class FileInfo implements Parcelable {
         return 0;
     }
 
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(fileName);
-        parcel.writeString(filePath);
-        parcel.writeString(fileDate);
-        parcel.writeString(noOfFilesOrSize);
-        parcel.writeByte((byte) (isDirectory ? 1 : 0));
-        parcel.writeString(extension);
-        parcel.writeInt(type);
-        parcel.writeLong(id);
-        parcel.writeLong(bucketId);
-        parcel.writeString(mimeType);
 
-    }
 }

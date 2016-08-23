@@ -31,11 +31,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.helper.RootHelper;
+import com.siju.acexplorer.utils.DialogUtils;
 import com.stericson.RootTools.RootTools;
 
 import java.io.BufferedInputStream;
@@ -567,20 +569,20 @@ public class FileUtils {
     }
 
     private static void openWith(final Uri uri, final Context context) {
-        final Dialog dialog = new Dialog(context);
-        dialog.setContentView(R.layout.dialog_openas);
-        dialog.setTitle(context.getString(R.string.open_as));
-        String[] items = new String[]{context.getString(R.string.text), context.getString(R.string.image),
-                context.getString(R.string.video), context.getString(R.string.audio),
-                context.getString(R.string.other)};
 
-        ListView listView = (ListView) dialog.findViewById(R.id.listOpenAs);
-        ArrayAdapter<String> itemsAdapter =
-                new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, items);
-        listView.setAdapter(itemsAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        String texts[] = new String[]{context.getString(R.string.open_as), null, null, null};
+        ArrayList<String> items = new ArrayList<>();
+        items.add(context.getString(R.string.text));
+        items.add(context.getString(R.string.image));
+        items.add(context.getString(R.string.audio));
+        items.add(context.getString(R.string.other));
+        items.add(context.getString(R.string.text));
+
+        final MaterialDialog materialDialog = new DialogUtils().showListDialog(context, texts, items);
+
+        materialDialog.getBuilder().itemsCallback(new MaterialDialog.ListCallback() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+            public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
                 Intent intent = new Intent();
                 intent.setAction(android.content.Intent.ACTION_VIEW);
                 switch (position) {
@@ -606,6 +608,54 @@ public class FileUtils {
                 }
                 PackageManager packageManager = context.getPackageManager();
                 if (intent.resolveActivity(packageManager) != null) {
+                    context.startActivity(intent);
+                } else {
+                    showMessage(context, context.getString(R.string.msg_error_not_supported));
+                }
+                materialDialog.dismiss();
+            }
+        });
+        materialDialog.show();
+    }
+       /* final Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.dialog_openas);
+        dialog.setTitle(context.getString(R.string.open_as));
+        String[] items = new String[]{context.getString(R.string.text), context.getString(R.string.image),
+                context.getString(R.string.video), context.getString(R.string.audio),
+                context.getString(R.string.other)};
+
+        ListView listView = (ListView) dialog.findViewById(R.id.listOpenAs);
+        ArrayAdapter<String> itemsAdapter =
+                new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, items);
+        listView.setAdapter(itemsAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Intent intent = new Intent();
+                intent.setAction(android.content.Intent.ACTION_VIEW);
+                switch (position) {
+                    case 0:
+                        intent.setDataAndType(uri, "text*//*");
+                        break;
+                    case 1:
+                        intent.setDataAndType(uri, "image*//*");
+                        break;
+                    case 2:
+                        intent.setDataAndType(uri, "video*//*");
+                        break;
+                    case 3:
+                        intent.setDataAndType(uri, "audio*//*");
+                        break;
+          *//*          case 4:
+                        intent = new Intent(c, DbViewer.class);
+                        intent.putExtra("path", f.getPath());
+                        break;*//*
+                    case 4:
+                        intent.setDataAndType(uri, "**///*");
+//                        break;
+//                }
+               /* PackageManager packageManager = context.getPackageManager();
+                if (intent.resolveActivity(packageManager) != null) {
 //            Intent chooser = Intent.createChooser(intent, context.getString(R.string.msg_open_file));
                     context.startActivity(intent);
                 } else {
@@ -613,10 +663,9 @@ public class FileUtils {
                 }
                 dialog.dismiss();
             }
-        });
+        });*//*
+*/
 
-        dialog.show();
-    }
 
     /**
      * Validates file name at the time of creation
@@ -994,6 +1043,12 @@ public class FileUtils {
                 category == FileConstants.CATEGORY.DOWNLOADS.getValue() ||
                 category == FileConstants.CATEGORY.FAVORITES.getValue() ||
                 category == FileConstants.CATEGORY.LARGE_FILES.getValue();
+    }
+
+    public static boolean checkIfLibraryCategory(int category) {
+        return category == FileConstants.CATEGORY.IMAGE.getValue() ||
+                category == FileConstants.CATEGORY.VIDEO.getValue() ||
+                category == FileConstants.CATEGORY.AUDIO.getValue() ;
     }
 
     public static void removeMedia(Context context, File file, int category) {
@@ -1902,7 +1957,7 @@ public class FileUtils {
         }
 
 
-        return !exists(context,path);
+        return !exists(context, path);
     }
 
     public static boolean exists(Context context, String path) {

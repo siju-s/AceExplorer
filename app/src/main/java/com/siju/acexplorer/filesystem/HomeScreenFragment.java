@@ -192,10 +192,11 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                     Bundle args = new Bundle();
                     args.putBoolean(FileConstants.KEY_HOME, true);
                     args.putInt(FileConstants.KEY_CATEGORY, categoryId);
+                    String path = null;
                     if (homeLibraryInfoArrayList.get(position).getCategoryId() == FileConstants
                             .CATEGORY.DOWNLOADS.getValue()) {
-                        args.putString(FileConstants.KEY_PATH, FileUtils.getDownloadsDirectory()
-                                .getAbsolutePath());
+                        path = FileUtils.getDownloadsDirectory().getAbsolutePath();
+                        args.putString(FileConstants.KEY_PATH, path);
                     }
                     if (categoryId != FileConstants.CATEGORY.FAVORITES.getValue()) {
                         ArrayList<FileInfo> list = getListForCategory(categoryId);
@@ -203,9 +204,12 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                             args.putParcelableArrayList(FileConstants.KEY_LIB_SORTLIST, list);
                         }
                     }
+                    /*if (!FileUtils.checkIfLibraryCategory(categoryId)) {
+                        categoryId = FileConstants.CATEGORY.GENERIC_LIST.getValue();
+                    }*/
                     mBaseActivity.setCurrentCategory(categoryId);
                     mBaseActivity.setIsFromHomePage(true);
-                    mBaseActivity.addToBackStack(null,categoryId);
+                    mBaseActivity.addToBackStack(path, categoryId);
 
                     FileListFragment fileListFragment = new FileListFragment();
                     fileListFragment.setArguments(args);
@@ -245,15 +249,15 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                 ft.commitAllowingStateLoss();
                 mBaseActivity.setCurrentCategory(FileConstants.CATEGORY.FILES.getValue());
                 mBaseActivity.setDir(currentDir, false);
-                mBaseActivity.addToBackStack(currentDir,FileConstants.CATEGORY.FILES.getValue());
-                mBaseActivity.setIsFromHomePage(true);
+                mBaseActivity.addToBackStack(currentDir, FileConstants.CATEGORY.FILES.getValue());
+//                mBaseActivity.setIsFromHomePage(true);
 
                 if (mIsDualModeEnabled) {
                     mBaseActivity.toggleDualPaneVisibility(true);
                     mBaseActivity.createDualFragment();
                     mBaseActivity.setDir(currentDir, true);
                     mBaseActivity.setCurrentCategory(FileConstants.CATEGORY.FILES.getValue());
-                    mBaseActivity.addToBackStack(currentDir,FileConstants.CATEGORY.FILES.getValue());
+                    mBaseActivity.addToBackStack(currentDir, FileConstants.CATEGORY.FILES.getValue());
                 }
             }
         });
@@ -451,7 +455,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                 int usedSpaceProgress = 100 - leftProgress;
                 String spaceText = storageSpace(file, spaceLeft, totalSpace);
                 homeStoragesInfoArrayList.add(new HomeStoragesInfo(name, icon,
-                        usedSpaceProgress, spaceText,path));
+                        usedSpaceProgress, spaceText, path));
             }
 
         }
@@ -481,8 +485,8 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
 
     private String storageSpace(File file, long spaceLeft, long totalSpace) {
         String freePlaceholder = " " + getResources().getString(R.string.msg_free) + " ";
-        return FileUtils.formatSize(getActivity(),spaceLeft) + freePlaceholder +
-                FileUtils.formatSize(getActivity(),totalSpace);
+        return FileUtils.formatSize(getActivity(), spaceLeft) + freePlaceholder +
+                FileUtils.formatSize(getActivity(), totalSpace);
     }
 
     @Override

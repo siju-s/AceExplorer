@@ -114,7 +114,8 @@ public class FileConstants {
         PDF(9),
         APPS(10),
         LARGE_FILES(11),
-        ZIP_VIEWER(12);
+        ZIP_VIEWER(12),
+        GENERIC_LIST(13);
 
         private int value;
 

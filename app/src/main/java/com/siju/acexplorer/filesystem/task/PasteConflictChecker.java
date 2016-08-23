@@ -162,25 +162,6 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
             }
 
 
-           /* final MaterialDialog.Builder x = new MaterialDialog.Builder(mContext);
-            LayoutInflater layoutInflater = (LayoutInflater) mainActivity.getSystemService(mainActivity.LAYOUT_INFLATER_SERVICE);
-            View view = layoutInflater.inflate(R.layout.copy_dialog, null);
-            x.customView(view, true);*/
-            // textView
-          /*  TextView textView = (TextView) view.findViewById(R.id.textView);
-            textView.setText(utils.getString(con, R.string.fileexist) + "\n" + a.get(counter).getName());*/
-            // checkBox
-/*
-            utils.setTint(checkBox, Color.parseColor(BaseActivity.accentSkin));
-            if (mainActivity.theme1 == 1) x.theme(Theme.DARK);
-            x.title(utils.getString(con, R.string.paste));
-            x.positiveText(R.string.skip);
-            x.negativeText(R.string.overwrite);
-            x.neutralText(R.string.cancel);
-            x.positiveColor(Color.parseColor(BaseActivity.accentSkin));
-            x.negativeColor(Color.parseColor(BaseActivity.accentSkin));
-            x.neutralColor(Color.parseColor(BaseActivity.accentSkin));*/
-
             materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

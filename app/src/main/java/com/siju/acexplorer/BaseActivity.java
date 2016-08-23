@@ -34,10 +34,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
@@ -628,7 +625,7 @@ public class BaseActivity extends AppCompatActivity implements
 
         if (mIsHomeScreenEnabled) {
             ImageButton imageButton = new ImageButton(this);
-            imageButton.setImageResource(R.drawable.ic_home_white);
+            imageButton.setImageResource(R.drawable.ic_home_white_nav);
             imageButton.setBackgroundColor(Color.parseColor("#00ffffff"));
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -1248,7 +1245,7 @@ public class BaseActivity extends AppCompatActivity implements
     public void displaySelectedGroup(int groupPos, int childPos, String path) {
 
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
-        mIsFromHomePage = fragment instanceof HomeScreenFragment;
+//        mIsFromHomePage = fragment instanceof HomeScreenFragment;
 
         switch (groupPos) {
             case 0:
@@ -1416,7 +1413,7 @@ public class BaseActivity extends AppCompatActivity implements
 
     }
 
-    private void initializeStartingDirectory() {
+    public void initializeStartingDirectory() {
         if (!isDualPaneInFocus) {
             if (mCurrentDir.contains(FileUtils.getInternalStorage().getAbsolutePath())) {
                 mStartingDir = FileUtils.getInternalStorage().getAbsolutePath();
@@ -2014,10 +2011,21 @@ public class BaseActivity extends AppCompatActivity implements
     private void backOperation(Fragment fragment) {
         Fragment dualFragment = getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
         if (isDualPaneInFocus) {
-            if (((FileListDualFragment) dualFragment).getIsZipMode()) {
+            if (((FileListDualFragment) dualFragment).isZipMode()) {
+
                 if (((FileListDualFragment) dualFragment).checkZipMode()) {
+                    int newSize = mBackStackListDual.size() - 1;
+
+                    mBackStackListDual.remove(newSize);
+                    mCurrentDirDualPane = mBackStackListDual.get(newSize - 1).getFilePath();
+                    mCategoryDual = mBackStackListDual.get(newSize - 1).getCategory();
                     ((FileListDualFragment) dualFragment).reloadList(false, mCurrentDirDualPane);
-                    setNavDirectory(mCurrentDirDualPane, false);
+                    if (!mIsFromHomePage) {
+                        setNavDirectory(mCurrentDirDualPane, false);
+                    }
+                    else {
+                        toggleNavBarFab(true);
+                    }
                 }
             } else if (mStartingDirDualPane == null) {
                 removeFragmentFromBackStack();
@@ -2032,10 +2040,20 @@ public class BaseActivity extends AppCompatActivity implements
                 removeFragmentFromBackStack();
             }
         } else {
-            if (((FileListFragment) fragment).getIsZipMode()) {
+            if (((FileListFragment) fragment).isZipMode()) {
                 if (((FileListFragment) fragment).checkZipMode()) {
+                    int newSize = mBackStackList.size() - 1;
+
+                    mBackStackList.remove(newSize);
+                    mCurrentDir = mBackStackList.get(newSize - 1).getFilePath();
+                    mCategory = mBackStackList.get(newSize - 1).getCategory();
                     ((FileListFragment) fragment).reloadList(false, mCurrentDir);
-                    setNavDirectory(mCurrentDir, false);
+                    if (!mIsFromHomePage) {
+                        setNavDirectory(mCurrentDir, false);
+                    }
+                    else {
+                        toggleNavBarFab(true);
+                    }
                 }
             } else if (mStartingDir == null) {
                 removeFragmentFromBackStack();
@@ -2044,8 +2062,12 @@ public class BaseActivity extends AppCompatActivity implements
                     ((FileListFragment) fragment).setCategory(mCategory);
                     ((FileListFragment) fragment).reloadList(false, mCurrentDir);
                 } else {
-                    ((FileListDualFragment) dualFragment).setCategory(mCategoryDual);
-                    ((FileListDualFragment) dualFragment).reloadList(true, mCurrentDirDualPane);
+                    if (mCategoryDual == FileConstants.CATEGORY.GENERIC_LIST.getValue()) {
+                        super.onBackPressed();
+                    } else {
+                        ((FileListDualFragment) dualFragment).setCategory(mCategoryDual);
+                        ((FileListDualFragment) dualFragment).reloadList(true, mCurrentDirDualPane);
+                    }
                 }
                 setTitleForCategory(mCategory);
                 if (mCategory == FileConstants.CATEGORY.FILES.getValue()) {
@@ -2080,6 +2102,7 @@ public class BaseActivity extends AppCompatActivity implements
                 mCurrentDir = mBackStackList.get(0).getFilePath();
                 mCategory = mBackStackList.get(0).getCategory();
                 Logger.log(TAG, "checkIfBackStackExists--Path=" + mCurrentDir + "  Category=" + mCategory);
+                mIsFromHomePage = false;
                 mBackStackList.clear();
             } else {
                 mCurrentDirDualPane = mBackStackListDual.get(0).getFilePath();
@@ -2095,9 +2118,8 @@ public class BaseActivity extends AppCompatActivity implements
                 mBackStackList.remove(newSize);
                 mCurrentDir = mBackStackList.get(newSize - 1).getFilePath();
                 mCategory = mBackStackList.get(newSize - 1).getCategory();
-                if (FileUtils.checkIfFileCategory(mCategory)) {
+                if (FileUtils.checkIfFileCategory(mCategory) && !mIsFromHomePage) {
                     initializeStartingDirectory();
-
                 } else {
                     toggleNavBarFab(true);
                 }
