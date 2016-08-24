@@ -828,6 +828,10 @@ public class BaseActivity extends AppCompatActivity implements
                     mBackStackList.remove(j);
                 }
 
+               /* if (fileListFragment.isZipMode()) {
+                    fileListFragment.clearZipMode();
+                    fileListFragment.setCategory(FileConstants.CATEGORY.FILES.getValue());
+                }*/
                 fileListFragment.reloadList(false, mCurrentDir);
                 setNavDirectory(mCurrentDir, isDualPaneButtonClicked);
             }
@@ -866,6 +870,8 @@ public class BaseActivity extends AppCompatActivity implements
        /*     mViewSeperator.setVisibility(View.VISIBLE);
             frameLayoutFabDual.setVisibility(View.VISIBLE);*/
         }
+
+
 
     }
 
@@ -1382,6 +1388,8 @@ public class BaseActivity extends AppCompatActivity implements
         if (!isDualPaneInFocus) {
             mBackStackList.add(new BackStackModel(path, category));
             Logger.log(TAG, "Back stack--size=" + mBackStackList.size() + " Path=" + path + "Category=" + category);
+//            Logger.log(TAG, "Back stack--contents=" + mBackStackList);
+
         } else {
             mBackStackListDual.add(new BackStackModel(path, category));
             Logger.log(TAG, "Back stack DUAL--size=" + mBackStackList.size() + " Path=" + path +
@@ -1810,11 +1818,14 @@ public class BaseActivity extends AppCompatActivity implements
                     case 1: // Settings
                         startActivityForResult(new Intent(this, SettingsActivity.class),
                                 PREFS_REQUEST);
+                        expandableListView.setSelection(0);
                         drawerLayout.closeDrawer(relativeLayoutDrawerPane);
                         break;
                 }
 
         }
+
+
 
     }
 
@@ -2384,6 +2395,7 @@ public class BaseActivity extends AppCompatActivity implements
                 if (fragment instanceof HomeScreenFragment) {
                     ((HomeScreenFragment) fragment).setDualModeEnabled(false);
                 }
+                mIsDualModeEnabled = false;
                 mShowDualPane = false;
             } else {
                 checkScreenOrientation();

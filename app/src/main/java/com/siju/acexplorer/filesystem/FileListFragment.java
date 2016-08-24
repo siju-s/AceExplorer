@@ -183,6 +183,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private String mOldFilePath, mNewFilePath;
     private boolean mIsRootMode = true;
     private int mRenamedPosition = -1;
+    private boolean mIsSwipeRefreshed;
 
 
     @Override
@@ -357,6 +358,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                mIsSwipeRefreshed = true;
                 refreshList();
             }
         });
@@ -525,6 +527,10 @@ public class FileListFragment extends Fragment implements LoaderManager
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            computeScroll();
+            String path = intent.getStringExtra(FileConstants.KEY_PATH);
+            Logger.log(TAG, "New zip PAth=" + path);
+            FileUtils.scanFile(getActivity(), path);
             reloadList(true, mFilePath);
         }
     };
@@ -647,15 +653,24 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     }
 
+    public void setCateggory(int category) {
+        mCategory = category;
+    }
+
     public boolean isZipMode() {
         return mIsZip;
     }
 
+    public void clearZipMode() {
+        mIsZip = false;
+        mZipParentPath = null;
+        mInParentZip = true;
+        mCurrentZipDir = null;
+    }
+
     public boolean checkZipMode() {
         if (mCurrentZipDir == null || mCurrentZipDir.length() == 0) {
-            mIsZip = false;
-            mZipParentPath = null;
-            mInParentZip = true;
+            clearZipMode();
             return true;
         } else {
             mCurrentZipDir = new File(mCurrentZipDir).getParent();
@@ -684,6 +699,11 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     @Override
     public void onLoadFinished(Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
+        if (mIsSwipeRefreshed) {
+            mSwipeRefreshLayout.setRefreshing(false);
+            mIsSwipeRefreshed = false;
+        }
+
 //        Log.d(TAG, "on onLoadFinished--" + data.size());
         if (data != null) {
 
@@ -1578,28 +1598,6 @@ public class FileListFragment extends Fragment implements LoaderManager
                 info.addAll(sourcePaths);
                 conflictChecker.execute(info);
                 clearSelectedPos();
-               /*  final boolean isMoveOperation = position == 1;
-                mPasteUtils = new PasteUtils(getActivity(), FileListFragment.this, destinationDir,
-                        true);
-                mPasteUtils.setMoveOperation(isMoveOperation);
-
-                boolean isPasteConflict = false;
-                List<Boolean> pasteConflictList = new ArrayList<>();
-
-                for (int i = 0; i < sourcePaths.size(); i++) {
-                    isPasteConflict = mPasteUtils.checkIfFileExists(sourcePaths.get(i), new File
-                            (destinationDir));
-                    pasteConflictList.add(isPasteConflict);
-                }
-                Logger.log(TAG, "Paste conflict list=" + pasteConflictList);
-
-
-                if (!pasteConflictList.contains(true)) {
-                    mPasteUtils.callAsyncTask();
-                } else {
-                    mPasteUtils.showDialog(sourcePaths.get(0), true);
-                }*/
-//                materialDialog.dismiss();
                 mActionMode.finish();
                 return true;
             }
@@ -1966,7 +1964,11 @@ public class FileListFragment extends Fragment implements LoaderManager
                 }
                 break;
 
-            case R.id.action_sort_name_asc:
+            case R.id.action_sort:
+                showSortDialog();
+                break;
+
+           /* case R.id.action_sort_name_asc:
                 sortMode = FileConstants.KEY_SORT_NAME;
                 fileInfoList = FileUtils.sortFiles(fileInfoList, sortMode);
                 persistSortMode(sortMode);
@@ -2017,13 +2019,44 @@ public class FileListFragment extends Fragment implements LoaderManager
                 fileInfoList = FileUtils.sortFiles(fileInfoList, sortMode);
                 persistSortMode(sortMode);
                 fileListAdapter.notifyDataSetChanged();
-                break;
+                break;*/
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private void showSortDialog() {
+        final MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
+        String items[] = new String[]{getString(R.string.sort_name), getString(R.string.sort_name_desc),
+                getString(R.string.sort_type),getString(R.string.sort_type_desc),
+                getString(R.string.sort_size), getString(R.string.sort_size_desc),
+                getString(R.string.sort_date), getString(R.string.sort_date_desc)};
+        builder.title(getString(R.string.action_sort));
+        builder.positiveText(getString(R.string.dialog_cancel));
+        builder.positiveColor(ContextCompat.getColor(getActivity(), R.color.colorPrimary));
+        builder.items(items);
+
+        builder.alwaysCallSingleChoiceCallback();
+        builder.itemsCallbackSingleChoice(getSortMode(), new MaterialDialog.ListCallbackSingleChoice() {
+            @Override
+            public boolean onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
+                fileInfoList = FileUtils.sortFiles(fileInfoList, position);
+                persistSortMode(position);
+                fileListAdapter.notifyDataSetChanged();
+                dialog.dismiss();
+                return true;
+            }
+        });
+
+        final MaterialDialog materialDialog = builder.build();
+        materialDialog.show();
+    }
+
     private void persistSortMode(int sortMode) {
         mPreferences.edit().putInt(FileConstants.KEY_SORT_MODE, sortMode).apply();
+    }
+
+    private int getSortMode() {
+        return  mPreferences.getInt(FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
     }
 
     private void switchView() {

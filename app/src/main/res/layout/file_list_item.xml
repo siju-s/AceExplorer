@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="5dp">
+                android:id="@+id/container_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp">
 
 
     <ImageView
@@ -15,7 +16,7 @@
         android:layout_marginLeft="@dimen/drawer_item_margin"
         android:layout_marginRight="@dimen/drawer_item_margin"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_folder_white" />
+        android:src="@drawable/ic_folder_white"/>
 
 
     <TextView
@@ -26,7 +27,7 @@
         android:layout_marginTop="12dp"
         android:layout_toRightOf="@+id/imageIcon"
         android:textColor="@color/text_settings_list"
-        android:textSize="14sp" />
+        android:textSize="14sp"/>
 
     <!-- This will be no of files for directory & size for file -->
     <TextView
@@ -40,7 +41,7 @@
 
         android:textAppearance="?attr/textAppearanceListItemSmall"
         android:textColor="@color/text_settings_list"
-        android:textSize="12sp" />
+        android:textSize="12sp"/>
 
     <TextView
         android:id="@+id/textDate"
@@ -54,7 +55,7 @@
         android:layout_marginTop="12dp"
         android:text="12 june"
         android:textColor="@color/text_settings_list"
-        android:textSize="12sp" />
+        android:textSize="12sp"/>
 
     <ImageView
         android:id="@+id/imageThumbIcon"
@@ -64,6 +65,6 @@
         android:layout_alignRight="@+id/imageIcon"
         android:layout_alignTop="@+id/textSecondLine"
         android:scaleType="centerCrop"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
 </RelativeLayout>

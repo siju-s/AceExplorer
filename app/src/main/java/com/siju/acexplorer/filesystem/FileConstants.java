@@ -76,7 +76,8 @@ public class FileConstants {
     public static final String EXT_DOC = "doc";
     public static final String EXT_DOCX = "docx";
     public static final String EXT_XLS = "xls";
-    public static final String EXT_XLXS = "xlxs";
+    public static final String EXT_XLXS = "xlsx";
+    public static final String EXT_CSV = "csv";
     public static final String EXT_PPT = "ppt";
     public static final String EXT_PPTX = "pptx";
     public static final String EXT_ZIP = "zip";

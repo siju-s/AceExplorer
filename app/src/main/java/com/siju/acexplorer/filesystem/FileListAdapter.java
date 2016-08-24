@@ -14,7 +14,10 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -37,6 +40,8 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     private ArrayList<FileInfo> fileInfoArrayList;
     private SparseBooleanArray mSelectedItemsIds;
     private SparseBooleanArray mDraggedItemsIds;
+    private SparseBooleanArray mAnimatedPos = new SparseBooleanArray();
+
 
     private ArrayList<FileInfo> mSelectedFileList;
     OnItemClickListener mItemClickListener;
@@ -50,6 +55,10 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     private ArrayList<FileInfo> fileInfoArrayListCopy = new ArrayList<>();
     private Fragment mFragment;
     private int draggedPos = -1;
+    private int mAnimation;
+    int offset=0;
+    public boolean stoppedAnimation;
+    Animation localAnimation;
 
 
     FileListAdapter(Fragment fragment, Context mContext, ArrayList<FileInfo>
@@ -63,6 +72,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         mSelectedFileList = new ArrayList<>();
         mCategory = category;
         this.mViewMode = viewMode;
+        mAnimation = R.anim.fade_in_top;
     }
 
     public FileListAdapter(Context mContext, ArrayList<FileInfo>
@@ -76,6 +86,8 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         mSelectedFileList = new ArrayList<>();
         mCategory = category;
         this.mViewMode = viewMode;
+        mAnimation = R.anim.fade_in_top;
+
     }
 
     public void updateAdapter(ArrayList<FileInfo> fileInfos) {
@@ -84,6 +96,8 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 //        Log.d("SIJU","updateAdapter"+fileInfoArrayList.size());
 //        Logger.log(this.getClass().getSimpleName(),"adapter size="+fileInfos.size());
         notifyDataSetChanged();
+        stoppedAnimation = false;
+        mAnimatedPos = new SparseBooleanArray();
     }
 
 
@@ -123,6 +137,18 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     }
 
     @Override
+    public void onViewDetachedFromWindow(FileListViewHolder holder) {
+        holder.container.clearAnimation();
+        super.onViewDetachedFromWindow(holder);
+    }
+
+    @Override
+    public boolean onFailedToRecycleView(FileListViewHolder holder) {
+        holder.container.clearAnimation();
+        return super.onFailedToRecycleView(holder);
+    }
+
+    @Override
     public FileListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
         if (mViewMode == FileConstants.KEY_LISTVIEW) {
@@ -141,6 +167,14 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         //change background color if list item is selected
 //        Log.d("TAG","OnBindviewholder Pos="+position);
 
+//        setAnimation(fileListViewHolder.container, position);
+
+     /*   if (!mAnimatedPos.get(position))
+        {
+            animate(fileListViewHolder);
+            mAnimatedPos.put(position, true);
+        }*/
+
         int color = ContextCompat.getColor(mContext, R.color.actionModeItemSelected);
 
         fileListViewHolder.itemView.setBackgroundColor(mSelectedItemsIds.get(position) ? color :
@@ -157,6 +191,26 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         setViewByCategory(fileListViewHolder, position);
 
     }
+
+    void animate(FileListViewHolder fileListViewHolder){
+        fileListViewHolder.container.clearAnimation();
+        localAnimation = AnimationUtils.loadAnimation(mContext,mAnimation);
+        localAnimation.setStartOffset(this.offset);
+        fileListViewHolder.container.startAnimation(localAnimation);
+        this.offset+=30;
+    }
+
+    int lastPosition;
+/*    private void setAnimation(View viewToAnimate, int position)
+    {
+        // If the bound view wasn't previously displayed on screen, it's animated
+        if (position > lastPosition)
+        {
+            Animation animation = AnimationUtils.loadAnimation(mContext, android.R.anim.slide_in_left);
+            viewToAnimate.startAnimation(animation);
+            lastPosition = position;
+        }
+    }*/
 
    /* public  void setApplicationTheme(boolean themeLight) {
         if (themeLight) {
@@ -209,6 +263,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         fileListViewHolder.textNoOfFileOrSize.setText(fileNoOrSize);
 
         switch (mCategory) {
+
             case 0: // For file group
             case 5:
             case 7:
@@ -234,27 +289,22 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
                     int type = fileInfoArrayList.get(position).getType();
                     fileListViewHolder.imageIcon.setImageDrawable(null);
+
                     // If Image or Video file, load thumbnail
-                    if (type == FileConstants.CATEGORY.IMAGE.getValue() ||
-                            type == FileConstants.CATEGORY.VIDEO.getValue()) {
-
-                        Uri imageUri = Uri.fromFile(new File(filePath));
-                        Glide.with(mContext).load(imageUri).centerCrop()
-                                .crossFade(2)
-                                .into(fileListViewHolder.imageIcon);
-
+                    if (type == FileConstants.CATEGORY.IMAGE.getValue()) {
+                        displayImageThumb(fileListViewHolder, filePath);
+                    } else if (type == FileConstants.CATEGORY.VIDEO.getValue()) {
+                        displayVideoThumb(fileListViewHolder, filePath);
                     } else if (type == FileConstants.CATEGORY.AUDIO.getValue()) {
                         displayAudioAlbumArt(fileListViewHolder, fileInfoArrayList.get(position)
                                 .getFilePath());
                     } else {
-
                         String extension = fileInfoArrayList.get(position).getExtension();
                         if (extension != null) {
                             changeFileIcon(fileListViewHolder, extension.toLowerCase(), filePath);
                         } else {
                             fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_doc_white);
                         }
-
                     }
 
                 }
@@ -276,19 +326,11 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
                 break;
 
             case 2:
-                // For videos group
-                Uri videoUri = Uri.fromFile(new File(filePath));
-                Glide.with(mContext).load(videoUri).centerCrop()
-                        .placeholder(R.drawable.ic_movie)
-                        .crossFade(2)
-                        .into(fileListViewHolder.imageIcon);
+                displayVideoThumb(fileListViewHolder, filePath);
                 break;
 
             case 3: // For images group
-                Uri imageUri = Uri.fromFile(new File(filePath));
-                Glide.with(mContext).load(imageUri).centerCrop()
-                        .crossFade(2)
-                        .into(fileListViewHolder.imageIcon);
+                displayImageThumb(fileListViewHolder, filePath);
                 break;
             case 4: // For docs group
                 String extension = fileInfoArrayList.get(position).getExtension();
@@ -298,6 +340,23 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
         }
 
+    }
+
+    private void displayVideoThumb(FileListViewHolder fileListViewHolder, String path) {
+        // For videos group
+        Uri videoUri = Uri.fromFile(new File(path));
+        Glide.with(mContext).load(videoUri).centerCrop()
+                .placeholder(R.drawable.ic_movie)
+                .crossFade(2)
+                .into(fileListViewHolder.imageIcon);
+    }
+
+    private void displayImageThumb(FileListViewHolder fileListViewHolder, String path) {
+        Uri imageUri = Uri.fromFile(new File(path));
+        Glide.with(mContext).load(imageUri).centerCrop()
+                .crossFade(2)
+                .placeholder(R.drawable.ic_photo_white)
+                .into(fileListViewHolder.imageIcon);
     }
 
     private void changeFileIcon(FileListViewHolder fileListViewHolder, String extension, String
@@ -313,6 +372,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
                 break;
             case FileConstants.EXT_XLS:
             case FileConstants.EXT_XLXS:
+            case FileConstants.EXT_CSV:
                 fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_xls);
                 break;
             case FileConstants.EXT_PPT:
@@ -547,10 +607,12 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         TextView textNoOfFileOrSize;
         ImageView imageIcon;
         ImageView imageThumbIcon;
+        RelativeLayout container;
 
 
         FileListViewHolder(View itemView) {
             super(itemView);
+            container = (RelativeLayout) itemView.findViewById(R.id.container_list);
             textFileName = (TextView) itemView
                     .findViewById(R.id.textFolderName);
             imageIcon = (ImageView) itemView.findViewById(R.id.imageIcon);
@@ -568,6 +630,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 //            itemView.setOnTouchListener(this);
 
         }
+
 
         @Override
         public void onClick(View v) {

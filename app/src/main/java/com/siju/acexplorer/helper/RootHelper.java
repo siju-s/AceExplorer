@@ -243,6 +243,7 @@ public class RootHelper {
 
         int value = 0;
         if (extension == null) return value;
+        extension = extension.toLowerCase(); // necessary
         String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
 
         if (mimeType != null) {

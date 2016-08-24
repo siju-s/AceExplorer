@@ -44,7 +44,7 @@
         android:title="@string/action_sort"
         app:showAsAction="never">
 
-        <menu>
+      <!--  <menu>
             <item
                 android:id="@+id/action_sort_name_asc"
                 android:title="@string/sort_name"
@@ -81,7 +81,7 @@
                 android:id="@+id/action_sort_date_desc"
                 android:title="@string/sort_date_desc"
                 app:showAsAction="never"/>
-        </menu>
+        </menu>-->
     </item>
 
 </menu>

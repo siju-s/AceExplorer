@@ -17,6 +17,7 @@ import android.text.format.Formatter;
 
 import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.model.ZipProgressModel;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
@@ -68,7 +69,6 @@ public class CreateZipTask extends Service {
             try {
                 c.createNewFile();
             } catch (IOException e) {
-
                 e.printStackTrace();
             }
         }
@@ -152,6 +152,7 @@ public class CreateZipTask extends Service {
 
             // Broadcast result to FileListFragment
             Intent intent = new Intent("reload_list");
+            intent.putExtra(FileConstants.KEY_PATH,name);
             sendBroadcast(intent);
         }
 
