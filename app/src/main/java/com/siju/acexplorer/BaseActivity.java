@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -41,7 +42,6 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,6 +59,7 @@ import com.siju.acexplorer.filesystem.HomeScreenFragment;
 import com.siju.acexplorer.filesystem.model.BackStackModel;
 import com.siju.acexplorer.filesystem.model.FavInfo;
 import com.siju.acexplorer.filesystem.model.FileInfo;
+import com.siju.acexplorer.filesystem.ui.CustomScrimInsetsFrameLayout;
 import com.siju.acexplorer.filesystem.utils.FileOperations;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.model.SectionGroup;
@@ -97,7 +98,7 @@ public class BaseActivity extends AppCompatActivity implements
 
 
     private DrawerLayout drawerLayout;
-    private RelativeLayout relativeLayoutDrawerPane;
+    private CustomScrimInsetsFrameLayout relativeLayoutDrawerPane;
     private String mCurrentDir;
     private String mCurrentDirDualPane = getInternalStorage().getAbsolutePath();
     public String STORAGE_ROOT, STORAGE_INTERNAL, STORAGE_EXTERNAL, DOWNLOADS, IMAGES, VIDEO,
@@ -133,6 +134,7 @@ public class BaseActivity extends AppCompatActivity implements
     private static final int PREFS_REQUEST = 1000;
 
     private boolean mIsPermissionGranted;
+    private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private Toolbar mToolbar;
     private int mViewMode = FileConstants.KEY_LISTVIEW;
     private boolean mIsFavGroup;
@@ -189,7 +191,7 @@ public class BaseActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_content);
+        setContentView(R.layout.activity_main);
 
         initConstants();
         initViews();
@@ -256,6 +258,16 @@ public class BaseActivity extends AppCompatActivity implements
         setUpPreferences();
         checkScreenOrientation();
         initialScreenSetup(mIsHomeScreenEnabled);
+    }
+
+    // A method to find height of the status bar
+    public int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 
     private void setUpPreferences() {
@@ -482,9 +494,12 @@ public class BaseActivity extends AppCompatActivity implements
     private void initViews() {
         mFrameHomeScreen = (FrameLayout) findViewById(R.id.main_container);
         mFrameDualPane = (FrameLayout) findViewById(R.id.frame_container_dual);
+//        mCollapsingToolbarLayout = (CollapsingToolbarLayout)findViewById(R.id.collapsing_toolbar);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
+        // Set the padding to match the Status Bar height
+//        mToolbar.setPadding(0, getStatusBarHeight(), 0, 0);
         mNavigationLayout = (LinearLayout) findViewById(R.id.layoutNavigate);
 
 //        mToolbar.setPadding(0, getStatusBarHeight(), 0, 0);
@@ -493,12 +508,14 @@ public class BaseActivity extends AppCompatActivity implements
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+//        mCollapsingToolbarLayout.setTitle(getString(R.string.app_name));
+
         mToolbar.setTitle(R.string.app_name);
         mMainLayout = (CoordinatorLayout) findViewById(R.id.main_content);
         mBottomToolbar = (Toolbar) findViewById(R.id.toolbar_bottom);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        relativeLayoutDrawerPane = (RelativeLayout) findViewById(R.id.drawerPane);
+        relativeLayoutDrawerPane = (CustomScrimInsetsFrameLayout) findViewById(R.id.drawerPane);
         toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, mToolbar, R.string.navigation_drawer_open, R.string
                 .navigation_drawer_close);
@@ -506,6 +523,8 @@ public class BaseActivity extends AppCompatActivity implements
         toggle.syncState();
         // get the listview
         expandableListView = (ExpandableListView) findViewById(R.id.expand_list_drawer);
+        View list_header = getLayoutInflater().inflate(R.layout.drawerlist_header, null);
+        expandableListView.addHeaderView(list_header);
     /*    mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

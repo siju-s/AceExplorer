@@ -44,8 +44,8 @@
                     android:id="@+id/viewDummy"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:layout_marginTop="2dp"
                     android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
                     android:background="@color/colorPrimaryDark"/>
 
                 <android.support.v7.widget.RecyclerView
@@ -85,8 +85,8 @@
                     android:id="@+id/viewDummy2"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:layout_marginTop="2dp"
                     android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
                     android:background="@color/colorPrimaryDark"/>
 
                 <android.support.v7.widget.RecyclerView

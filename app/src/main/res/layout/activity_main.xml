@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                        xmlns:app="http://schemas.android.com/apk/res-auto"
+                                        xmlns:tools="http://schemas.android.com/tools"
+                                        android:id="@+id/drawer_layout"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:fitsSystemWindows="true"
+                                        tools:openDrawer="start">
+
+    <include
+        layout="@layout/appbar_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+
+
+    <com.siju.acexplorer.filesystem.ui.CustomScrimInsetsFrameLayout
+        android:id="@+id/drawerPane"
+        android:layout_width="wrap_content"
+        android:orientation="vertical"
+        android:elevation="8dp"
+        app:insetForeground="#4000"
+        android:fitsSystemWindows="true"
+        android:layout_height="match_parent"
+        android:layout_gravity="start">
+
+        <ExpandableListView
+            android:id="@+id/expand_list_drawer"
+            android:layout_width="@dimen/drawer_width"
+            android:fitsSystemWindows="true"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="@color/navDrawerBg"
+            android:divider="@null"
+            android:groupIndicator="@null"
+            android:scrollbars="none"/>
+
+    </com.siju.acexplorer.filesystem.ui.CustomScrimInsetsFrameLayout>
+</android.support.v4.widget.DrawerLayout>
