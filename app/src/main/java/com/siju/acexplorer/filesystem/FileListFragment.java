@@ -72,13 +72,13 @@ import com.siju.acexplorer.filesystem.model.FavInfo;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.model.ZipModel;
 import com.siju.acexplorer.filesystem.task.CreateZipTask;
+import com.siju.acexplorer.filesystem.task.ExtractService;
 import com.siju.acexplorer.filesystem.task.PasteConflictChecker;
 import com.siju.acexplorer.filesystem.ui.CustomGridLayoutManager;
 import com.siju.acexplorer.filesystem.ui.CustomLayoutManager;
 import com.siju.acexplorer.filesystem.ui.DialogBrowseFragment;
 import com.siju.acexplorer.filesystem.ui.DividerItemDecoration;
 import com.siju.acexplorer.filesystem.ui.EnhancedMenuInflater;
-import com.siju.acexplorer.filesystem.utils.ExtractManager;
 import com.siju.acexplorer.filesystem.utils.FileOperations;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.helper.RootHelper;
@@ -169,7 +169,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private boolean mIsPasteItemVisible;
     private boolean mIsFavGroup;
     private String mSelectedPath;
-    private TextView textPathSelect;
+    private Button buttonPathSelect;
     private HashMap<String, Bundle> scrollPosition = new HashMap<>();
     private HashMap<String, Bundle> scrollPositionDualPane = new HashMap<>();
     private boolean mIsDataRefreshed;
@@ -180,6 +180,8 @@ public class FileListFragment extends Fragment implements LoaderManager
     private int mOldWidth;
     private int mCurrentOrientation;
     private ArrayList<FileInfo> mCopiedData = new ArrayList<>();
+    private ArrayList<FileInfo> mFiles = new ArrayList<>();
+
     private String mOldFilePath, mNewFilePath;
     private boolean mIsRootMode = true;
     private int mRenamedPosition = -1;
@@ -936,10 +938,13 @@ public class FileListFragment extends Fragment implements LoaderManager
                     return;
                 }
                 String newFilePath = currentDir + "/" + fileName + ext;
+                compressFile(new File(newFilePath), paths);
+/*
                 Intent zipIntent = new Intent(getActivity(), CreateZipTask.class);
                 zipIntent.putExtra("name", newFilePath);
                 zipIntent.putParcelableArrayListExtra("files", paths);
                 getActivity().startService(zipIntent);
+*/
                 materialDialog.dismiss();
             }
         });
@@ -954,6 +959,34 @@ public class FileListFragment extends Fragment implements LoaderManager
         materialDialog.show();
     }
 
+    public void extractFile(File currentFile, File file) {
+        int mode = FileUtils.checkFolder(file.getParentFile(), getActivity());
+        if (mode == 2) {
+            mOldFilePath = currentFile.getAbsolutePath();
+            mNewFilePath = file.getAbsolutePath();
+            mBaseActivity.guideDialogForLEXA(file.getAbsolutePath());
+        } else if (mode == 1) {
+            Intent intent = new Intent(getActivity(), ExtractService.class);
+            intent.putExtra("zip", currentFile.getPath());
+            intent.putExtra("new_path", file.getAbsolutePath());
+            getActivity().startService(intent);
+        } else Toast.makeText(getActivity(), R.string.msg_operation_failed, Toast.LENGTH_SHORT).show();
+    }
+
+    public void compressFile(File newFile, ArrayList<FileInfo> files) {
+        int mode = FileUtils.checkFolder(newFile.getParentFile(), getActivity());
+        if (mode == 2) {
+            mNewFilePath = newFile.getAbsolutePath();
+            mFiles.addAll(files);
+            mBaseActivity.guideDialogForLEXA(mNewFilePath);
+        } else if (mode == 1) {
+            Intent zipIntent = new Intent(getActivity(), CreateZipTask.class);
+            zipIntent.putExtra("name", newFile.getAbsolutePath());
+            zipIntent.putParcelableArrayListExtra("files", files);
+            getActivity().startService(zipIntent);
+
+        } else Toast.makeText(getActivity(), R.string.msg_operation_failed, Toast.LENGTH_SHORT).show();
+    }
 
     /**
      * Triggered on long press click on item
@@ -997,9 +1030,9 @@ public class FileListFragment extends Fragment implements LoaderManager
                 if (mSelectedItemPositions.size() == 1) {
                     boolean isDirectory = fileInfoList.get(mSelectedItemPositions.keyAt(0))
                             .isDirectory();
-                    String extension = fileInfoList.get(mSelectedItemPositions.keyAt(0))
-                            .getExtension();
-                    if (extension != null && extension.equalsIgnoreCase("zip")) {
+                    String filePath = fileInfoList.get(mSelectedItemPositions.keyAt(0))
+                            .getFilePath();
+                    if (filePath != null && FileUtils.isFileCompressed(filePath)) {
                         mExtractItem.setVisible(true);
                     }
                     if (!isDirectory) {
@@ -1273,6 +1306,24 @@ public class FileListFragment extends Fragment implements LoaderManager
         mRenamedPosition = -1;
     }
 
+    public void extractCallBack() {
+        Intent intent = new Intent(getActivity(), ExtractService.class);
+        intent.putExtra("zip", mNewFilePath);
+        intent.putExtra("new_path", mOldFilePath);
+        getActivity().startService(intent);
+        mNewFilePath = null;
+        mOldFilePath = null;
+    }
+
+    public void compressCallBack() {
+        Intent zipIntent = new Intent(getActivity(), CreateZipTask.class);
+        zipIntent.putExtra("name", mNewFilePath);
+        zipIntent.putParcelableArrayListExtra("files", mFiles);
+        getActivity().startService(zipIntent);
+        mNewFilePath = null;
+        mFiles = new ArrayList<>();
+    }
+
 
     private void hideUnHideFiles(ArrayList<FileInfo> fileInfo) {
         for (int i = 0; i < fileInfo.size(); i++) {
@@ -1293,65 +1344,77 @@ public class FileListFragment extends Fragment implements LoaderManager
     private void showExtractOptions(final String currentFilePath, final String currentDir) {
 
         final File currentFile = new File(currentFilePath);
+        mSelectedPath = null;
         final String currentFileName = currentFilePath.substring(currentFilePath.lastIndexOf("/")
                 + 1, currentFilePath.lastIndexOf("."));
-        final Dialog dialog = new Dialog(getActivity());
-        dialog.setContentView(R.layout.dialog_extract);
-        dialog.setCancelable(true);
-        mSelectedPath = null;
+       /* String texts[] = new String[]{getString(R.string.enter_file_name), currentFileName,
+                getString(R.string.extract), getString(R.string.extract),
+                getString(R.string.dialog_cancel)};*/
+        String texts[] = new String[]{getString(R.string.extract), getString(R.string.extract),
+                "", getString(R.string.dialog_cancel)};
+        final MaterialDialog materialDialog = new DialogUtils().showCustomDialog(getActivity(),
+                R.layout.dialog_extract, texts);
 
-        final RadioButton radioButtonSpecify = (RadioButton) dialog.findViewById(R.id
+        final RadioButton radioButtonSpecify = (RadioButton) materialDialog.findViewById(R.id
                 .radioButtonSpecifyPath);
-        textPathSelect = (TextView) dialog.findViewById(R.id.textPathSelect);
-        RadioGroup radioGroupPath = (RadioGroup) dialog.findViewById(R.id.radioGroupPath);
-        Button buttonExtract = (Button) dialog.findViewById(R.id.buttonExtract);
-        Button buttonCancel = (Button) dialog.findViewById(R.id.buttonCancel);
-        EditText editFileName = (EditText) dialog.findViewById(R.id.editFileName);
+        buttonPathSelect = (Button) materialDialog.findViewById(R.id.buttonPathSelect);
+        RadioGroup radioGroupPath = (RadioGroup) materialDialog.findViewById(R.id.radioGroupPath);
+        final EditText editFileName = (EditText) materialDialog.findViewById(R.id.editFileName);
         editFileName.setText(currentFileName);
-
-        dialog.show();
+        materialDialog.show();
         radioGroupPath.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
                 if (checkedId == R.id.radioButtonCurrentPath) {
-                    textPathSelect.setVisibility(View.GONE);
+                    buttonPathSelect.setVisibility(View.GONE);
                 } else {
-                    textPathSelect.setVisibility(View.VISIBLE);
+                    buttonPathSelect.setVisibility(View.VISIBLE);
                 }
             }
         });
 
-        textPathSelect.setOnClickListener(new View.OnClickListener() {
+        buttonPathSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 DialogBrowseFragment dialogFragment = new DialogBrowseFragment();
                 dialogFragment.show(getFragmentManager(), "Browse Fragment");
             }
         });
 
-        buttonExtract.setOnClickListener(new View.OnClickListener() {
+        materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (radioButtonSpecify.isChecked()) {
-                    new ExtractManager(FileListFragment.this)
-                            .extract(currentFile, mSelectedPath, currentFileName);
-                } else {
-                    new ExtractManager(FileListFragment.this)
-                            .extract(currentFile, currentDir, currentFileName);
+                String fileName = editFileName.getText().toString();
+                if (!FileUtils.validateFileName(fileName)) {
+                    editFileName.setError(getResources().getString(R.string
+                            .msg_error_valid_name));
+                    return;
                 }
-                dialog.dismiss();
-
-
+                if (radioButtonSpecify.isChecked()) {
+                    File newFile = new File(mSelectedPath + "/" + currentFileName);
+                    File currentFile = new File(currentFilePath);
+                    extractFile(currentFile, newFile);
+                   /* new ExtractManager(FileListFragment.this)
+                            .extract(currentFile, mSelectedPath, currentFileName);*/
+                } else {
+                    File newFile = new File(currentDir + "/" + currentFileName);
+                    File currentFile = new File(currentFilePath);
+                    extractFile(currentFile, newFile);
+                   /* new ExtractManager(FileListFragment.this)
+                            .extract(currentFile, currentDir, currentFileName);*/
+                }
+                materialDialog.dismiss();
             }
         });
 
-        buttonCancel.setOnClickListener(new View.OnClickListener() {
+        materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dialog.dismiss();
+                materialDialog.dismiss();
             }
         });
+
+        materialDialog.show();
 
 
     }
@@ -1359,10 +1422,9 @@ public class FileListFragment extends Fragment implements LoaderManager
     @Override
     public void getSelectedPath(String path) {
         mSelectedPath = path;
-        if (textPathSelect != null) {
-            textPathSelect.setText(mSelectedPath);
+        if (buttonPathSelect != null) {
+            buttonPathSelect.setText(mSelectedPath);
         }
-
     }
 
 
@@ -1967,59 +2029,6 @@ public class FileListFragment extends Fragment implements LoaderManager
             case R.id.action_sort:
                 showSortDialog();
                 break;
-
-           /* case R.id.action_sort_name_asc:
-                sortMode = FileConstants.KEY_SORT_NAME;
-                fileInfoList = FileUtils.sortFiles(fileInfoList, sortMode);
-                persistSortMode(sortMode);
-                fileListAdapter.notifyDataSetChanged();
-                break;
-            case R.id.action_sort_name_desc:
-                sortMode = FileConstants.KEY_SORT_NAME_DESC;
-                fileInfoList = FileUtils.sortFiles(fileInfoList, sortMode);
-                persistSortMode(sortMode);
-                fileListAdapter.notifyDataSetChanged();
-                break;
-
-            case R.id.action_sort_type_asc:
-                sortMode = FileConstants.KEY_SORT_TYPE;
-                fileInfoList = FileUtils.sortFiles(fileInfoList, sortMode);
-                persistSortMode(sortMode);
-                fileListAdapter.notifyDataSetChanged();
-                break;
-
-            case R.id.action_sort_type_desc:
-                sortMode = FileConstants.KEY_SORT_TYPE_DESC;
-                fileInfoList = FileUtils.sortFiles(fileInfoList, sortMode);
-                persistSortMode(sortMode);
-                fileListAdapter.notifyDataSetChanged();
-                break;
-
-            case R.id.action_sort_size_asc:
-                sortMode = FileConstants.KEY_SORT_SIZE;
-                fileInfoList = FileUtils.sortFiles(fileInfoList, sortMode);
-                persistSortMode(sortMode);
-                fileListAdapter.notifyDataSetChanged();
-                break;
-
-            case R.id.action_sort_size_desc:
-                sortMode = FileConstants.KEY_SORT_SIZE_DESC;
-                fileInfoList = FileUtils.sortFiles(fileInfoList, sortMode);
-                persistSortMode(sortMode);
-                fileListAdapter.notifyDataSetChanged();
-                break;
-            case R.id.action_sort_date_asc:
-                sortMode = FileConstants.KEY_SORT_DATE;
-                fileInfoList = FileUtils.sortFiles(fileInfoList, sortMode);
-                persistSortMode(sortMode);
-                fileListAdapter.notifyDataSetChanged();
-                break;
-            case R.id.action_sort_date_desc:
-                sortMode = FileConstants.KEY_SORT_DATE_DESC;
-                fileInfoList = FileUtils.sortFiles(fileInfoList, sortMode);
-                persistSortMode(sortMode);
-                fileListAdapter.notifyDataSetChanged();
-                break;*/
         }
         return super.onOptionsItemSelected(item);
     }
@@ -2027,7 +2036,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private void showSortDialog() {
         final MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
         String items[] = new String[]{getString(R.string.sort_name), getString(R.string.sort_name_desc),
-                getString(R.string.sort_type),getString(R.string.sort_type_desc),
+                getString(R.string.sort_type), getString(R.string.sort_type_desc),
                 getString(R.string.sort_size), getString(R.string.sort_size_desc),
                 getString(R.string.sort_date), getString(R.string.sort_date_desc)};
         builder.title(getString(R.string.action_sort));
@@ -2056,7 +2065,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     }
 
     private int getSortMode() {
-        return  mPreferences.getInt(FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
+        return mPreferences.getInt(FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
     }
 
     private void switchView() {
@@ -2146,14 +2155,6 @@ public class FileListFragment extends Fragment implements LoaderManager
         return count;
     }
 
-    private boolean checkIfFileCategory(int category) {
-        return category == FileConstants.CATEGORY.FILES.getValue() ||
-                category == FileConstants.CATEGORY.COMPRESSED.getValue() ||
-                category == FileConstants.CATEGORY.DOWNLOADS.getValue() ||
-                category == FileConstants.CATEGORY.FAVORITES.getValue() ||
-                category == FileConstants.CATEGORY.LARGE_FILES.getValue();
-    }
-
     private class BgOperationsTask extends AsyncTask<ArrayList<FileInfo>, Void, Integer> {
 
         private String fileName;
@@ -2212,7 +2213,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                     deletedCount++;
                 }
             }
-            if (!checkIfFileCategory(mCategory)) {
+            if (!FileUtils.checkIfFileCategory(mCategory)) {
                 String[] pathArray = new String[paths.size()];
                 paths.toArray(pathArray);
 

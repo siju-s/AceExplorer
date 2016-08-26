@@ -398,6 +398,9 @@ public class BaseActivity extends AppCompatActivity implements
                 return;
             }
 
+            FileListFragment fragment = (FileListFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.main_container);
+
             // After confirmation, update stored value of folder.
             // Persist access permissions.
             final int takeFlags = intent.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -420,19 +423,18 @@ public class BaseActivity extends AppCompatActivity implements
                     mkDir(new File(mCreatePath));
                     break;
                 case FileConstants.RENAME:
-                    FileListFragment fragment = (FileListFragment) getSupportFragmentManager()
-                            .findFragmentById(R.id.main_container);
                     fragment.renameCallBack();
                     break;
                 case FileConstants.FILE_CREATE:
                     mkFile(new File(mCreatePath));
                     break;
-              /*  case DataUtils.EXTRACT:
-                    mainActivityHelper.extractFile(new File(oppathe));
+                case FileConstants.EXTRACT:
+                    fragment.extractCallBack();
                     break;
 
-                case DataUtils.COMPRESS:
-                    mainActivityHelper.compressFiles(new File(oppathe), oparrayList);*/
+                case FileConstants.COMPRESS:
+                    fragment.compressCallBack();
+//                    fr.compressFiles(new File(oppathe), oparrayList);
             }
             mOperation = -1;
             mFabView = null;

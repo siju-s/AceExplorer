@@ -25,6 +25,10 @@ public class FileConstants {
     public static final int MOVE = 4;
     public static final int COPY = 5;
     public static final int DELETE = 6;
+    public static final int COMPRESS = 7;
+    public static final int EXTRACT = 8;
+
+
 
 
 
