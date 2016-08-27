@@ -71,7 +71,7 @@ public class DialogUtils {
         return builder.build();
     }
 
-    public MaterialDialog showRadioListDialog(final Context context, String[] texts, ArrayList<String> items) {
+    public MaterialDialog showDialog(final Context context, String[] texts) {
         MaterialDialog.Builder builder = new MaterialDialog.Builder(context);
   /*      if(m.theme1==1)
             a.theme(Theme.DARK);*/
@@ -79,11 +79,13 @@ public class DialogUtils {
         builder.positiveText(texts[1]);
         builder.positiveColor(ContextCompat.getColor(context, R.color.colorPrimary));
         builder.neutralText(texts[2]);
-        builder.items(items);
+        builder.neutralColor(ContextCompat.getColor(context, R.color.colorPrimary));
         if (texts[3] != (null)) {
             builder.negativeText(texts[3]);
             builder.negativeColor(ContextCompat.getColor(context, R.color.colorPrimary));
         }
+        builder.content(texts[4]);
+
         return builder.build();
     }
 

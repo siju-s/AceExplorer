@@ -25,8 +25,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 
-import com.siju.acexplorer.filesystem.FileListDualFragment;
-import com.siju.acexplorer.filesystem.FileListFragment;
+import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 
 import java.io.File;
@@ -40,13 +39,10 @@ public class MoveFiles extends AsyncTask<String, Void, Integer> {
     private Fragment mFragment;
     private boolean mIsDualPane;
 
-    public MoveFiles(Context context, Fragment fragment, ArrayList<FileInfo> files,
-                     boolean isDualPane) {
+    public MoveFiles(Context context,ArrayList<FileInfo> files) {
         this.context = context;
         this.files = files;
-        mFragment = fragment;
-        mIsDualPane = isDualPane;
-    }
+     }
 
     @Override
     protected Integer doInBackground(String... strings) {
@@ -76,12 +72,9 @@ public class MoveFiles extends AsyncTask<String, Void, Integer> {
             intent.putExtra("MODE", mode);
             context.startService(intent);
         } else {
-            if (mIsDualPane) {
-                ((FileListDualFragment) mFragment).refreshList();
-            } else {
-                ((FileListFragment) mFragment).refreshList();
-            }
-
+            Intent intent = new Intent("refresh");
+            intent.putExtra(FileConstants.OPERATION, FileConstants.MOVE);
+            context.sendBroadcast(intent);
         }
 /*        if (b) {
 

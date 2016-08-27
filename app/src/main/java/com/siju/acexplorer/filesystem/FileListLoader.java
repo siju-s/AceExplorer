@@ -142,22 +142,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
 
 
-    Comparator<? super File> comparatorByName = new Comparator<File>() {
-
-        public int compare(File file1, File file2) {
-            // sort folders first
-            if ((file1.isDirectory()) && (!file2.isDirectory()))
-                return -1;
-            if ((!file1.isDirectory()) && (file2.isDirectory()))
-                return 1;
-
-            // here both are folders or both are files : sort alpha
-            return file1.getName().toLowerCase()
-                    .compareTo(file2.getName().toLowerCase());
-        }
-
-    };
-
     Comparator<? super FileInfo> comparatorByNameZip = new Comparator<FileInfo>() {
 
         public int compare(FileInfo file1, FileInfo file2) {
@@ -170,6 +154,22 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             // here both are folders or both are files : sort alpha
             return file1.getFileName().toLowerCase()
                     .compareTo(file2.getFileName().toLowerCase());
+        }
+
+    };
+
+    Comparator<? super ZipModel> comparatorByNameZip1 = new Comparator<ZipModel>() {
+
+        public int compare(ZipModel file1, ZipModel file2) {
+            // sort folders first
+            if ((file1.isDirectory()) && (!file2.isDirectory()))
+                return -1;
+            if ((!file1.isDirectory()) && (file2.isDirectory()))
+                return 1;
+
+            // here both are folders or both are files : sort alpha
+            return file1.getName().toLowerCase()
+                    .compareTo(file2.getName().toLowerCase());
         }
 
     };
@@ -338,10 +338,10 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
     /**
      * @param dir     Child path names. First time it will be null
-     * @param zipPath Original zip path with.zip extension
+     * @param parentZipPath Original zip path with.zip extension
      * @return
      */
-    public ArrayList<FileInfo> getZipContents(String dir, String zipPath) {
+    public ArrayList<FileInfo> getZipContents(String dir, String parentZipPath) {
         ZipFile zipfile = null;
         ArrayList<ZipModel> totalZipList = new ArrayList<>();
         ArrayList<ZipModel> elements = new ArrayList<>();
@@ -352,8 +352,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         }
         try {
             if (totalZipList.size() == 0) {
-                if (new File(zipPath).canRead()) {
-                    zipfile = new ZipFile(zipPath);
+                if (new File(parentZipPath).canRead()) {
+                    zipfile = new ZipFile(parentZipPath);
                     for (Enumeration e = zipfile.entries(); e.hasMoreElements(); ) {
                         ZipEntry entry = (ZipEntry) e.nextElement();
                         totalZipList.add(new ZipModel(entry, entry.getTime(), entry.getSize(), entry
@@ -361,7 +361,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                     }
                 } else {
                     ZipEntry zipEntry;
-                    Uri uri = Uri.parse(zipPath);
+                    Uri uri = Uri.parse(parentZipPath);
                     ZipInputStream zipfile1 = new ZipInputStream(mContext.getContentResolver()
                             .openInputStream(uri));
                     while ((zipEntry = zipfile1.getNextEntry()) != null) {
@@ -435,6 +435,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             e.printStackTrace();
         }
 
+        Collections.sort(elements, comparatorByNameZip1);
+
         if (mIsDualPaneInFocus) {
             ((FileListDualFragment) mFragment).zipChildren = elements;
         } else {
@@ -463,7 +465,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 name = name.substring(name.lastIndexOf("/") + 1);
                 extension = name.substring(name.lastIndexOf(".") + 1, name.length());
             }
-            String path = zipPath + "/" + name;
+            String path = parentZipPath + "/" + name;
 
             FileInfo fileInfo = new FileInfo(name, path, fileModifiedDate, noOfFilesOrSize,
                     isDirectory, extension, type);

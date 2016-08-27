@@ -235,7 +235,7 @@ public class CopyService extends Service {
             }
 
             public void execute(int id, final ArrayList<FileInfo> files, final String currentDir, final boolean move) {
-                if (FileUtils.checkFolder((new File(currentDir)), mContext) == 1) {
+                if (new FileUtils().checkFolder(currentDir,mContext) == 1) {
                     getTotalBytes(files);
                     for (int i = 0; i < files.size(); i++) {
                         FileInfo sourceFile = files.get(i);

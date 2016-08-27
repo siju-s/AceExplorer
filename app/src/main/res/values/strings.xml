@@ -169,8 +169,10 @@
     <string name="paste_conflict_remember">Remember</string>
     <string name="copying">Copying files</string>
     <string name="moving">Moving files</string>
-
-
+    <string name="package_installer">Package Installer</string>
+    <string name="view">View</string>
+    <string name="install">Install</string>
+    <string name="package_installer_content">Which action would you like to do?</string>
 
 
 </resources>

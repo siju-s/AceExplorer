@@ -38,7 +38,7 @@ public class FileOperations {
                 if (file.exists()) errorCallBack.exists(file);
 
 //                if (file.isLocal() || isRoot) {
-                int mode = FileUtils.checkFolder(new File(file.getParent()), context);
+                int mode = new FileUtils().checkFolder(file.getParent(), context);
                 if (mode == 2) {
                     errorCallBack.launchSAF(file);
                     return null;
@@ -85,7 +85,7 @@ public class FileOperations {
                 if (file.exists()) errorCallBack.exists(file);
 
 //                if (file.isLocal() || isRoot) {
-                int mode = FileUtils.checkFolder(new File(file.getParent()), context);
+                int mode = new FileUtils().checkFolder(file.getParent(), context);
                 if (mode == 2) {
                     errorCallBack.launchSAF(file);
                     return null;
@@ -136,7 +136,7 @@ public class FileOperations {
                     return null;
                 }
 
-                int mode = FileUtils.checkFolder(oldFile.getParentFile(), context);
+                int mode = new FileUtils().checkFolder(oldFile.getParentFile().getAbsolutePath(), context);
                 if (mode == 2) {
                     errorCallBack.launchSAF(oldFile, newFile);
                 } else if (mode == 1 || mode == 0) {

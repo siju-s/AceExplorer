@@ -2,7 +2,6 @@ package com.siju.acexplorer.filesystem.utils;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -20,21 +19,23 @@ import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.provider.DocumentFile;
 import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
+import com.siju.acexplorer.filesystem.FileListDualFragment;
+import com.siju.acexplorer.filesystem.FileListFragment;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.helper.RootHelper;
 import com.siju.acexplorer.utils.DialogUtils;
@@ -49,7 +50,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
-import java.net.MalformedURLException;
 import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -510,12 +510,13 @@ public class FileUtils {
     /**
      * View the file in external apps based on Mime Type
      *
-     * @param context
+     * @param fragment
      * @param path
      * @param extension
      */
-    public static void viewFile(Context context, String path, String extension) {
+    public static void viewFile(Fragment fragment, String path, String extension) {
 
+        Context context = fragment.getContext();
         Uri uri = Uri.fromFile(new File(path));
         String realPath = getRealPathFromURI(context, uri);
 
@@ -523,35 +524,29 @@ public class FileUtils {
         intent.setAction(android.content.Intent.ACTION_VIEW);
         // To lowercase used since capital extensions like MKV doesn't get recognised
         String ext = extension.toLowerCase();
-        String mimeType = getSingleton().getMimeTypeFromExtension(ext);
-        Logger.log(TAG, "real path=" + realPath + " uri==" + uri + "MIME=" + mimeType);
-        intent.setDataAndType(uri, mimeType);
-        PackageManager packageManager = context.getPackageManager();
 
-        if (mimeType != null) {
-            if (intent.resolveActivity(packageManager) != null) {
-//            Intent chooser = Intent.createChooser(intent, context.getString(R.string.msg_open_file));
-                context.startActivity(intent);
-            } else {
-                showMessage(context, context.getString(R.string.msg_error_not_supported));
-            }
+        if (ext.equals("apk")) {
+            showApkDialog(fragment, path, ext);
         } else {
-            openWith(uri, context);
+            String mimeType = getSingleton().getMimeTypeFromExtension(ext);
+            Logger.log(TAG, "real path=" + realPath + " uri==" + uri + "MIME=" + mimeType);
+            intent.setDataAndType(uri, mimeType);
+            PackageManager packageManager = context.getPackageManager();
+
+            if (mimeType != null) {
+                if (intent.resolveActivity(packageManager) != null) {
+//            Intent chooser = Intent.createChooser(intent, context.getString(R.string.msg_open_file));
+                    context.startActivity(intent);
+                } else {
+                    showMessage(context, context.getString(R.string.msg_error_not_supported));
+                }
+            } else {
+                openWith(uri, context);
+            }
         }
 
     }
 
-    public static void viewZipFile(Context context, String path) {
-        ZipFile zipfile = null;
-        try {
-            zipfile = new ZipFile(path);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-//        unzipEntry(zipfile, entry, destinationPath);
-
-    }
 
     public static String getRealPathFromURI(Context context, Uri contentUri) {
         String[] proj = {MediaStore.Images.Media.DATA};
@@ -683,7 +678,7 @@ public class FileUtils {
                 newName.length() == 0);
     }
 
-    private static void showMessage(Context context, String msg) {
+    public static void showMessage(Context context, String msg) {
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
     }
 
@@ -1048,7 +1043,7 @@ public class FileUtils {
     public static boolean checkIfLibraryCategory(int category) {
         return category == FileConstants.CATEGORY.IMAGE.getValue() ||
                 category == FileConstants.CATEGORY.VIDEO.getValue() ||
-                category == FileConstants.CATEGORY.AUDIO.getValue() ;
+                category == FileConstants.CATEGORY.AUDIO.getValue();
     }
 
     public static void removeMedia(Context context, File file, int category) {
@@ -1703,6 +1698,32 @@ public class FileUtils {
     }
 
 
+    public int checkFolder(final String f, Context context) {
+        if (f == null) return 0;
+        if (f.startsWith("smb://")) return 1;
+        File folder = new File(f);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && isOnExtSdCard(folder, context)) {
+            if (!folder.exists() || !folder.isDirectory()) {
+                return 0;
+            }
+
+            // On Android 5, trigger storage access framework.
+            if (isWritableNormalOrSaf(folder, context)) {
+                return 1;
+
+            }
+        } else if (Build.VERSION.SDK_INT == 19 && isOnExtSdCard(folder, context)) {
+            // Assume that Kitkat workaround works
+            return 1;
+        } else if (isWritable(new File(folder, "DummyFile"))) {
+            return 1;
+        } else {
+            return 0;
+        }
+        return 0;
+    }
+
+
     /**
      * Create a folder. The folder may even be on external SD card for Kitkat.
      *
@@ -1741,28 +1762,221 @@ public class FileUtils {
         return false;
     }
 
+    /**
+     * @param fileInfo Paths to delete
+     */
+    public void showDeleteDialog(final BaseActivity activity, final ArrayList<FileInfo> fileInfo) {
+        String title = activity.getString(R.string.dialog_delete_title);
+        String texts[] = new String[]{title, activity.getString(R.string.msg_ok), "", activity.getString(R.string
+                .dialog_cancel)};
 
-    public static int checkFolder(final File folder, Context context) {
-        boolean lol = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP, ext = isOnExtSdCard(folder, context);
-        if (lol && ext) {
-            if (!folder.exists() || !folder.isDirectory()) {
-                return 0;
+        ArrayList<String> items = new ArrayList<>();
+        for (int i = 0; i < fileInfo.size(); i++) {
+            String path = fileInfo.get(i).getFilePath();
+            items.add(path);
+            if (i == 9 && fileInfo.size() > 10) {
+                int rem = fileInfo.size() - 10;
+                items.add("+" + rem + " " + activity.getString(R.string.more));
+                break;
             }
-
-            // On Android 5, trigger storage access framework.
-            if (!isWritableNormalOrSaf(folder, context)) {
-                return 2;
-            }
-            return 1;
-        } else if (Build.VERSION.SDK_INT == 19 && isOnExtSdCard(folder, context)) {
-            // Assume that Kitkat workaround works
-            return 1;
-        } else if (isWritable(new File(folder, "DummyFile"))) {
-            return 1;
-        } else {
-            return 0;
         }
+        final MaterialDialog materialDialog = new DialogUtils().showListDialog(activity, texts, items);
+
+
+        materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                activity.mFileOpsHelper.deleteFiles(fileInfo);
+//                new BgOperationsTask(DELETE_OPERATION).execute(fileInfo);
+                materialDialog.dismiss();
+            }
+        });
+
+        materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                materialDialog.dismiss();
+            }
+        });
+
+        materialDialog.show();
     }
+
+
+    public void createFileDialog(final BaseActivity activity, final boolean isRootMode, final String path) {
+
+        String title = activity.getString(R.string.new_file);
+        String texts[] = new String[]{activity.getString(R.string.enter_name), "", title, activity.getString(R.string
+                .create),
+                "",
+                activity.getString(R.string.dialog_cancel)};
+        final MaterialDialog materialDialog = new DialogUtils().showEditDialog(activity, texts);
+
+        materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String fileName = materialDialog.getInputEditText().getText().toString();
+                if (!FileUtils.validateFileName(fileName)) {
+                    materialDialog.getInputEditText().setError(activity.getResources().getString(R.string
+                            .msg_error_valid_name));
+                    return;
+                }
+
+                fileName = fileName.trim();
+                fileName = fileName + ".txt";
+                fileName = path + "/" + fileName;
+                activity.mFileOpsHelper.mkFile(isRootMode, new File(fileName));
+                materialDialog.dismiss();
+            }
+        });
+
+        materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                materialDialog.dismiss();
+            }
+        });
+
+        materialDialog.show();
+    }
+
+    public void createDirDialog(final BaseActivity activity, final boolean isRootMode, final String path) {
+
+        String title = activity.getString(R.string.new_folder);
+        String texts[] = new String[]{activity.getString(R.string.enter_name), "", title, activity.getString(R.string
+                .create),
+                "",
+                activity.getString(R.string.dialog_cancel)};
+        final MaterialDialog materialDialog = new DialogUtils().showEditDialog(activity, texts);
+
+
+        materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String fileName = materialDialog.getInputEditText().getText().toString();
+                if (!FileUtils.validateFileName(fileName)) {
+                    materialDialog.getInputEditText().setError(activity.getResources().getString(R.string
+                            .msg_error_valid_name));
+                    return;
+                }
+
+                fileName = fileName.trim();
+                fileName = path + "/" + fileName;
+                activity.mFileOpsHelper.mkDir(isRootMode, new File(fileName));
+                materialDialog.dismiss();
+            }
+        });
+
+        materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                materialDialog.dismiss();
+            }
+        });
+
+        materialDialog.show();
+    }
+
+    private static void showApkDialog(final Fragment fragment, final String path, final String extension) {
+        final Context context = fragment.getContext();
+
+        String texts[] = new String[]{context.getString(R.string.package_installer), context.getString(R.string
+                .install), context.getString(R.string.dialog_cancel), context.getString(R.string.view),
+                context.getString(R.string.package_installer_content)};
+
+        final MaterialDialog materialDialog = new DialogUtils().showDialog(context, texts);
+
+
+        materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri uri = Uri.fromFile(new File(path));
+                Intent intent = new Intent();
+                intent.setAction(android.content.Intent.ACTION_VIEW);
+
+                String mimeType = getSingleton().getMimeTypeFromExtension(extension);
+
+                intent.setDataAndType(uri, mimeType);
+                PackageManager packageManager = context.getPackageManager();
+
+                if (mimeType != null) {
+                    if (intent.resolveActivity(packageManager) != null) {
+//            Intent chooser = Intent.createChooser(intent, context.getString(R.string.msg_open_file));
+                        context.startActivity(intent);
+                    } else {
+                        showMessage(context, context.getString(R.string.msg_error_not_supported));
+                    }
+                } else {
+                    openWith(uri, context);
+                }
+                materialDialog.dismiss();
+
+            }
+        });
+
+        materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (fragment instanceof FileListDualFragment)
+                    ((FileListDualFragment) fragment).openCompressedFile(path);
+                else
+                    ((FileListFragment) fragment).openCompressedFile(path);
+
+                materialDialog.dismiss();
+            }
+        });
+
+        materialDialog.show();
+
+    }
+
+
+    public void showCompressDialog(final BaseActivity activity, final String currentDir, final ArrayList<FileInfo>
+            paths) {
+
+        final String ext = ".zip";
+        String fileName = paths.get(0).getFileName();
+        String filePath = paths.get(0).getFilePath();
+        String zipName = fileName;
+        if (!(new File(filePath).isDirectory())) {
+            zipName = fileName.substring(0, fileName.lastIndexOf(".") - 1);
+        }
+        String title = activity.getString(R.string.create);
+        String texts[] = new String[]{"", zipName, title, title, "",
+                activity.getString(R.string.dialog_cancel)};
+        final MaterialDialog materialDialog = new DialogUtils().showEditDialog(activity, texts);
+
+        materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String fileName = materialDialog.getInputEditText().getText().toString();
+                if (!FileUtils.validateFileName(fileName)) {
+                    materialDialog.getInputEditText().setError(activity.getResources().getString(R.string
+                            .msg_error_valid_name));
+                    return;
+                }
+                String newFilePath = currentDir + "/" + fileName + ext;
+                activity.mFileOpsHelper.compressFile(new File(newFilePath), paths);
+/*
+                Intent zipIntent = new Intent(getActivity(), CreateZipTask.class);
+                zipIntent.putExtra("name", newFilePath);
+                zipIntent.putParcelableArrayListExtra("files", paths);
+                getActivity().startService(zipIntent);
+*/
+                materialDialog.dismiss();
+            }
+        });
+
+        materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                materialDialog.dismiss();
+            }
+        });
+
+        materialDialog.show();
+    }
+
 
     /**
      * Check for a directory if it is possible to create files within this directory, either via normal writing or via
@@ -1857,7 +2071,7 @@ public class FileUtils {
     }
 
     public static boolean isFileCompressed(String filePath) {
-        return  filePath.toLowerCase().endsWith("zip") ||
+        return filePath.toLowerCase().endsWith("zip") ||
                 filePath.toLowerCase().endsWith("apk") ||
                 filePath.toLowerCase().endsWith("jar") ||
                 filePath.toLowerCase().endsWith("tar") ||
@@ -1904,8 +2118,7 @@ public class FileUtils {
 
 
     /**
-     * @param path
-     * @param name
+     * @param path //     * @param name
      * @return
      *//*
     public static int createDir(String path, String name) {

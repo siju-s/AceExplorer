@@ -1,6 +1,5 @@
 package com.siju.acexplorer.filesystem.task;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -14,8 +13,10 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
+import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.helper.RootHelper;
@@ -32,7 +33,7 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
     ArrayList<FileInfo> mFiles;
     ArrayList<FileInfo> mConflictFiles = new ArrayList<>();
     int counter = 0;
-    Context mContext;
+    //    Context mContext;
     boolean rootmode = false;
     int openMode = 0;
     private Fragment mFragment;
@@ -40,11 +41,12 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
     private boolean mIsDrag;
     private boolean mIsMoveOperation = false;
     private boolean mIsDualPane;
+    private BaseActivity mActivity;
 
 
-    public PasteConflictChecker(Context context, Fragment fragment, String currentDir, boolean isDrag, boolean
+    public PasteConflictChecker(BaseActivity context, Fragment fragment, String currentDir, boolean isDrag, boolean
             rootMode, boolean isMoveOperation, boolean isDualPane) {
-        mContext = context;
+        mActivity = context;
         mFragment = fragment;
         mCurrentDir = currentDir;
         mIsDrag = isDrag;
@@ -55,7 +57,7 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
 
     @Override
     public void onProgressUpdate(String... message) {
-        Toast.makeText(mContext, message[0], Toast.LENGTH_LONG).show();
+        Toast.makeText(mActivity, message[0], Toast.LENGTH_LONG).show();
     }
 
     @SafeVarargs
@@ -80,7 +82,7 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
         File f = new File(mCurrentDir);
         if (f.getUsableSpace() >= totalBytes) {
 
-            ArrayList<FileInfo> listFiles = RootHelper.getFilesList(mContext, mCurrentDir,
+            ArrayList<FileInfo> listFiles = RootHelper.getFilesList(mActivity, mCurrentDir,
                     rootmode, true);
 
             for (FileInfo fileInfo : listFiles) {
@@ -90,7 +92,7 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
                     }
                 }
             }
-        } else publishProgress(mContext.getString(R.string.storage_low));
+        } else publishProgress(mActivity.getString(R.string.storage_low));
 
         return mConflictFiles;
     }
@@ -102,8 +104,11 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
 
             if (mFiles != null && mFiles.size() != 0) {
 
-                int mode = FileUtils.checkFolder(new File(mCurrentDir), mContext);
+                int mode = mActivity.mFileOpsHelper.checkFolder(mActivity, new File(mCurrentDir));
                 if (mode == 2) {
+                    mActivity.mFiles = mFiles;
+                    mActivity.mOperation = mIsMoveOperation ? FileConstants.MOVE : FileConstants.COPY;
+                    mActivity.mNewFilePath = mCurrentDir;
                   /*  mainActivity.oparrayList = (ab);
                     mainActivity.operation = move ? FileConstants.MOVE : FileConstants.COPY;
                     mainActivity.oppathe = path;*/
@@ -111,27 +116,26 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
 
                     if (!mIsMoveOperation) {
 
-                        Intent intent = new Intent(mContext, CopyService.class);
+                        Intent intent = new Intent(mActivity, CopyService.class);
                         intent.putParcelableArrayListExtra("FILE_PATHS", mFiles);
                         intent.putExtra("COPY_DIRECTORY", mCurrentDir);
                         intent.putExtra("MODE", openMode);
-                        mContext.startService(intent);
+                        mActivity.startService(intent);
                     } else {
-
-                        new MoveFiles(mContext, mFragment, mFiles, mIsDualPane).executeOnExecutor
+                        new MoveFiles(mActivity, mFiles).executeOnExecutor
                                 (AsyncTask.THREAD_POOL_EXECUTOR, mCurrentDir);
                     }
                 }
             } else {
 
-                Toast.makeText(mContext, mContext.getString(R.string.msg_move_failure), Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivity, mActivity.getString(R.string.msg_move_failure), Toast.LENGTH_SHORT).show();
             }
         } else {
 
-            String texts[] = new String[]{mContext.getString(R.string.dialog_title_paste_conflict),
-                    mContext.getString(R.string.dialog_skip), mContext.getString(R.string.dialog_keep_both), mContext.getString(R
+            String texts[] = new String[]{mActivity.getString(R.string.dialog_title_paste_conflict),
+                    mActivity.getString(R.string.dialog_skip), mActivity.getString(R.string.dialog_keep_both), mActivity.getString(R
                     .string.dialog_replace)};
-            final MaterialDialog materialDialog = new DialogUtils().showCustomDialog(mContext, R.layout.dialog_paste_conflict,
+            final MaterialDialog materialDialog = new DialogUtils().showCustomDialog(mActivity, R.layout.dialog_paste_conflict,
                     texts);
 
             final CheckBox checkBox = (CheckBox) materialDialog.findViewById(R.id.checkBox);
@@ -149,10 +153,10 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
             long date = sourceFile.lastModified();
             String fileModifiedDate = FileUtils.convertDate(date);
             long size = sourceFile.length();
-            String fileSize = Formatter.formatFileSize(mContext, size);
+            String fileSize = Formatter.formatFileSize(mActivity, size);
             textFileDate.setText(fileModifiedDate);
             textFileSize.setText(fileSize);
-            Drawable drawable = FileUtils.getAppIcon(mContext, mConflictFiles.get(counter).getFilePath());
+            Drawable drawable = FileUtils.getAppIcon(mActivity, mConflictFiles.get(counter).getFilePath());
             if (drawable != null) {
                 icon.setImageDrawable(drawable);
             }
