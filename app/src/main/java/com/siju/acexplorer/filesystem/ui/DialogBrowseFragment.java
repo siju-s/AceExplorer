@@ -1,6 +1,7 @@
 package com.siju.acexplorer.filesystem.ui;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
@@ -43,6 +44,8 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
     private Button mButtonOk;
     private Button mButtonCancel;
     private String mCurrentPath;
+    private boolean mShowHidden;
+    private int mSortMode;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,6 +60,10 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
         initializeViews();
         mCurrentPath = FileUtils.getInternalStorage().getAbsolutePath();
         mTextCurrentPath.setText(mCurrentPath);
+        mShowHidden = PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean
+                (FileConstants.PREFS_HIDDEN, false);
+        mSortMode = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt(
+                FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
         fileListAdapter = new FileListAdapter(getContext(), fileInfoList, 0, 0);
         recyclerViewFileList.setAdapter(fileListAdapter);
         getLoaderManager().initLoader(LOADER_ID, null, this);
@@ -131,7 +138,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
         } else {
             path = FileUtils.getInternalStorage().getAbsolutePath();
         }
-        return new FileListLoader(getContext(), path, 0);
+        return new FileListLoader(getContext(), path, 0, mShowHidden, mSortMode);
     }
 
     @Override

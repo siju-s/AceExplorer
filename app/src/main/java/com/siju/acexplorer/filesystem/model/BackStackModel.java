@@ -28,4 +28,12 @@ public class BackStackModel {
     public void setCategory(int category) {
         this.category = category;
     }
+
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (obj == this) return true;
+        if (!(obj instanceof BackStackModel)) return false;
+        BackStackModel o = (BackStackModel) obj;
+        return o.filePath.equals(this.filePath);
+    }
 }

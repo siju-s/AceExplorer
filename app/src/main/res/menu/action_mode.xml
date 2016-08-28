@@ -16,6 +16,14 @@
         app:showAsAction="ifRoom"/>
 
     <item
+        android:id="@+id/action_permissions"
+        android:icon="@drawable/ic_info_white"
+        android:title="@string/permissions"
+        android:visible="false"
+        app:showAsAction="ifRoom"/>
+
+
+    <item
         android:id="@+id/action_archive"
         android:icon="@drawable/ic_archive_white"
         android:title="@string/action_archive"

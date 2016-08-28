@@ -9,7 +9,6 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.text.format.Formatter;
-import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.siju.acexplorer.R;
@@ -19,14 +18,11 @@ import com.siju.acexplorer.filesystem.model.FavInfo;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.model.ZipModel;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
+import com.siju.acexplorer.helper.RootHelper;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -57,15 +53,14 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private boolean mInParentZip;
     private int mSortMode;
 
-    public FileListLoader(Context context, String path, int category) {
+    public FileListLoader(Context context, String path, int category, boolean showHidden, int sortMode) {
         super(context);
         mPath = path;
         mContext = context;
         mCategory = category;
-        showHidden = PreferenceManager.getDefaultSharedPreferences(context).getBoolean
-                (FileConstants.PREFS_HIDDEN, false);
-        mSortMode = PreferenceManager.getDefaultSharedPreferences(context).getInt(
-                FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
+        this.showHidden = showHidden;
+        mSortMode = sortMode;
+
     }
 
     public FileListLoader(Fragment fragment, String path, int category, String zipPath, boolean
@@ -105,42 +100,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         return fileInfoList;
 
     }
-
-    private boolean checkIfRootDir(File file) {
-        if (!file.getAbsolutePath().contains(FileUtils.getInternalStorage().getAbsolutePath())) {
-            return true;
-        }
-        return false;
-    }
-
-    private String getPermissionOfFile(File file) {
-        ProcessBuilder processBuilder = new ProcessBuilder("ls", "-l").directory(new File(file.getParent()));// TODO
-        // CHECK IF THE FILE IS SD CARD PARENT IS NULL
-        Log.d(TAG, "dir:-" + processBuilder.directory());
-        Process process = null;
-        try {
-            process = processBuilder.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        PrintWriter out = new PrintWriter(new OutputStreamWriter(process.getOutputStream()));
-        BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        out.flush();
-        String resultLine = null;
-        try {
-            resultLine = in.readLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (resultLine != null) {
-            resultLine = resultLine.substring(1, 9);
-        }
-        Log.d(TAG, "Result==" + resultLine);
-        return resultLine;
-    }
-
-
 
     Comparator<? super FileInfo> comparatorByNameZip = new Comparator<FileInfo>() {
 
@@ -221,7 +180,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 getZipContents("", file.getAbsolutePath());
                 return fileInfoList;
             } else {
-                fileInfoList = com.siju.acexplorer.helper.RootHelper.getFilesList(mContext, mPath,
+                fileInfoList = RootHelper.getFilesList(mContext, mPath,
                         true, showHidden);
                 fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
             }
@@ -329,7 +288,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
 
             FileInfo fileInfo = new FileInfo(fileName, path, fileModifiedDate, noOfFilesOrSize,
-                    true, null, FileConstants.CATEGORY.FAVORITES.getValue());
+                    true, null, FileConstants.CATEGORY.FAVORITES.getValue(), RootHelper.parseFilePermission(new File
+                    (path)));
             fileInfoList.add(fileInfo);
         }
         fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
@@ -337,7 +297,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     }
 
     /**
-     * @param dir     Child path names. First time it will be null
+     * @param dir           Child path names. First time it will be null
      * @param parentZipPath Original zip path with.zip extension
      * @return
      */
@@ -468,7 +428,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             String path = parentZipPath + "/" + name;
 
             FileInfo fileInfo = new FileInfo(name, path, fileModifiedDate, noOfFilesOrSize,
-                    isDirectory, extension, type);
+                    isDirectory, extension, type,RootHelper.parseFilePermission(new File(path)));
             fileInfoList.add(fileInfo);
         }
         Collections.sort(fileInfoList, comparatorByNameZip);
@@ -479,11 +439,13 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
     private ArrayList<FileInfo> fetchMusic() {
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        StringBuilder where = new StringBuilder();
-        where.append(MediaStore.Audio.Media.TITLE + " != ''");
-        where.append(" AND " + MediaStore.Audio.Media.IS_MUSIC + "=1");
-//        String sortOrder = MediaStore.Audio.Media.DATE_MODIFIED + " DESC";
-        Cursor cursor = mContext.getContentResolver().query(uri, null, where.toString(), null,
+        String[] projection = new String[]{MediaStore.Audio.Media._ID, MediaStore.Audio.Media.ALBUM_ID,
+                MediaStore.Audio.Media.DATE_MODIFIED, MediaStore.Audio.Media.SIZE,
+                MediaStore.Audio.Media.DATA};
+        String where = (MediaStore.Audio.Media.TITLE + " != ''") +
+                " AND " + MediaStore.Audio.Media.IS_MUSIC + "=1";
+        //        String sortOrder = MediaStore.Audio.Media.DATE_MODIFIED + " DESC";
+        Cursor cursor = mContext.getContentResolver().query(uri, projection, where, null,
                 null);
         if (cursor != null && cursor.moveToFirst()) {
             do {

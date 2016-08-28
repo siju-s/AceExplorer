@@ -64,7 +64,7 @@
     <string name="readable">Readable:</string>
     <string name="writeable">Writeable:</string>
     <string name="md5">MD5:</string>
-    <string name="permissions">Permissions:</string>
+    <string name="permissions">Permissions</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="properties">Properties</string>
@@ -161,6 +161,7 @@
     <string name="needsaccess">Write Access Required</string>
     <string name="needs_access_summary">Please choose the root directory of %1$s to grant write access to operate</string>
     <string name="error">Error</string>
+    <string name="completed">Completed</string>
     <string name="msg_operation_failed">Operation failed</string>
     <string name="selected">selected</string>
     <string name="enter_name">Enter name</string>

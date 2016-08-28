@@ -1762,6 +1762,61 @@ public class FileUtils {
         return false;
     }
 
+
+    public  static final int READ = 4;
+    public  static final int WRITE = 2;
+    public static final int EXECUTE = 1;
+
+    public static ArrayList<Boolean[]> parse(String permLine) {
+        ArrayList<Boolean[]> arrayList=new ArrayList<Boolean[]>();
+        Boolean[] read=new Boolean[]{false,false,false};
+        Boolean[] write=new Boolean[]{false,false,false};
+        Boolean[] execute=new Boolean[]{false,false,false};
+        int owner = 0;
+        if (permLine.charAt(1) == 'r') {
+            owner += READ;
+            read[0]=true;
+        }
+        if (permLine.charAt(2) == 'w') {
+            owner += WRITE;
+            write[0]=true;
+        }
+        if (permLine.charAt(3) == 'x') {
+            owner += EXECUTE;
+            execute[0]=true;
+        }
+        int group = 0;
+        if (permLine.charAt(4) == 'r') {
+            group += READ;
+            read[1]=true;
+        }
+        if (permLine.charAt(5) == 'w') {
+            group += WRITE;
+            write[1]=true;
+        }
+        if (permLine.charAt(6) == 'x') {
+            group += EXECUTE;
+            execute[1]=true;
+        }
+        int world = 0;
+        if (permLine.charAt(7) == 'r') {
+            world += READ;
+            read[2]=true;
+        }
+        if (permLine.charAt(8) == 'w') {
+            world += WRITE;
+            write[2]=true;
+        }
+        if (permLine.charAt(9) == 'x') {
+            world += EXECUTE;
+            execute[2]=true;
+        }
+        arrayList.add(read);
+        arrayList.add(write);
+        arrayList.add(execute);
+        return arrayList;
+    }
+
     /**
      * @param fileInfo Paths to delete
      */

@@ -856,7 +856,7 @@ public class BaseActivity extends AppCompatActivity implements
                     mBackStackList.remove(newSize);
                     mCurrentDir = mBackStackList.get(newSize - 1).getFilePath();
                     mCategory = mBackStackList.get(newSize - 1).getCategory();
-                    fileListFragment.reloadList(false, mCurrentDir);
+                    fileListFragment.reloadList(true, mCurrentDir);
                     if (!mIsFromHomePage) {
                         setNavDirectory(mCurrentDir, false);
                     } else {
@@ -881,7 +881,7 @@ public class BaseActivity extends AppCompatActivity implements
                     fileListFragment.clearZipMode();
                     fileListFragment.setCategory(FileConstants.CATEGORY.FILES.getValue());
                 }*/
-                    fileListFragment.reloadList(false, mCurrentDir);
+                    fileListFragment.reloadList(true, mCurrentDir);
                     setNavDirectory(mCurrentDir, isDualPaneButtonClicked);
                 }
             }
@@ -893,7 +893,7 @@ public class BaseActivity extends AppCompatActivity implements
                     mBackStackListDual.remove(newSize);
                     mCurrentDirDualPane = mBackStackListDual.get(newSize - 1).getFilePath();
                     mCategoryDual = mBackStackListDual.get(newSize - 1).getCategory();
-                    fileListFragment.reloadList(false, mCurrentDirDualPane);
+                    fileListFragment.reloadList(true, mCurrentDirDualPane);
                     if (!mIsFromHomePage) {
                         setNavDirectory(mCurrentDirDualPane, false);
                     } else {
@@ -1309,7 +1309,12 @@ public class BaseActivity extends AppCompatActivity implements
             }
         } else {
             ((FileListFragment) fragment).setCategory(category);
-            ((FileListFragment) fragment).reloadList(isDualPaneInFocus, directory);
+            if (((FileListFragment) fragment).isZipMode()) {
+                BackStackModel model = ((FileListFragment) fragment).clearZipMode();
+                mBackStackList.remove(model);
+            }
+
+            ((FileListFragment) fragment).reloadList(false, directory);
 /*
             FileListFragment fileListFragment = new FileListFragment();
 
@@ -1336,7 +1341,12 @@ public class BaseActivity extends AppCompatActivity implements
                     ft.commitAllowingStateLoss();
                 } else {
                     dualFragment.setCategory(category);
-                    dualFragment.reloadList(isDualPaneInFocus, directory);
+                    if (dualFragment.isZipMode()) {
+                        BackStackModel model = dualFragment.clearZipMode();
+                        mBackStackListDual.remove(model);
+                    }
+
+                    dualFragment.reloadList(false, directory);
                 }
             }
         }
@@ -1822,7 +1832,7 @@ public class BaseActivity extends AppCompatActivity implements
                     mBackStackListDual.remove(newSize);
                     mCurrentDirDualPane = mBackStackListDual.get(newSize - 1).getFilePath();
                     mCategoryDual = mBackStackListDual.get(newSize - 1).getCategory();
-                    ((FileListDualFragment) dualFragment).reloadList(false, mCurrentDirDualPane);
+                    ((FileListDualFragment) dualFragment).reloadList(true, mCurrentDirDualPane);
                     if (!mIsFromHomePage) {
                         setNavDirectory(mCurrentDirDualPane, false);
                     } else {
@@ -1833,7 +1843,7 @@ public class BaseActivity extends AppCompatActivity implements
                 removeFragmentFromBackStack();
             } else if (checkIfBackStackExists()) {
                 ((FileListDualFragment) dualFragment).setCategory(mCategoryDual);
-                ((FileListDualFragment) dualFragment).reloadList(false, mCurrentDirDualPane);
+                ((FileListDualFragment) dualFragment).reloadList(true, mCurrentDirDualPane);
                 if (mCategoryDual == FileConstants.CATEGORY.FILES.getValue()) {
                     setNavDirectory(mCurrentDirDualPane, false);
                 }
@@ -1849,7 +1859,7 @@ public class BaseActivity extends AppCompatActivity implements
                     mBackStackList.remove(newSize);
                     mCurrentDir = mBackStackList.get(newSize - 1).getFilePath();
                     mCategory = mBackStackList.get(newSize - 1).getCategory();
-                    ((FileListFragment) fragment).reloadList(false, mCurrentDir);
+                    ((FileListFragment) fragment).reloadList(true, mCurrentDir);
                     if (!mIsFromHomePage) {
                         setNavDirectory(mCurrentDir, false);
                     } else {
@@ -1861,7 +1871,7 @@ public class BaseActivity extends AppCompatActivity implements
             } else if (checkIfBackStackExists()) {
                 if (!isDualPaneInFocus) {
                     ((FileListFragment) fragment).setCategory(mCategory);
-                    ((FileListFragment) fragment).reloadList(false, mCurrentDir);
+                    ((FileListFragment) fragment).reloadList(true, mCurrentDir);
                 } else {
                     if (mCategoryDual == FileConstants.CATEGORY.GENERIC_LIST.getValue()) {
                         super.onBackPressed();

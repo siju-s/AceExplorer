@@ -19,9 +19,10 @@ public class FileInfo implements Parcelable {
     private long id = -1;
     private long bucketId = -1;
     private String mimeType;
+    private String permissions;
 
     public FileInfo(String fileName, String filePath, String fileDate, String noOfFilesOrSize, boolean isDirectory,
-                    String extension, int type) {
+                    String extension, int type,String permissions) {
         this.fileName = fileName;
         this.filePath = filePath;
         this.fileDate = fileDate;
@@ -29,6 +30,7 @@ public class FileInfo implements Parcelable {
         this.isDirectory = isDirectory;
         this.extension = extension;
         this.type = type;
+        this.permissions = permissions;
     }
 
     public FileInfo(long id, String fileName, String filePath, String fileDate, String noOfFilesOrSize, int type,
@@ -80,6 +82,7 @@ public class FileInfo implements Parcelable {
         id = in.readLong();
         bucketId = in.readLong();
         mimeType = in.readString();
+        permissions = in.readString();
     }
 
     @Override
@@ -94,6 +97,7 @@ public class FileInfo implements Parcelable {
         parcel.writeLong(id);
         parcel.writeLong(bucketId);
         parcel.writeString(mimeType);
+        parcel.writeString(permissions);
 
     }
 
@@ -196,6 +200,14 @@ public class FileInfo implements Parcelable {
 
     public void setDirectory(boolean directory) {
         isDirectory = directory;
+    }
+
+    public String getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(String permissions) {
+        this.permissions = permissions;
     }
 
     @Override

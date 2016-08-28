@@ -96,6 +96,8 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     private int mCurrentOrientation;
 
     private DisplayMetrics displayMetrics;
+    private boolean mShowHidden;
+    private int mSortMode;
 
 
     @Override
@@ -128,6 +130,10 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         homeStoragesInfoArrayList = new ArrayList<>();
         tempLibraryInfoArrayList = new ArrayList<>();
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        mShowHidden = PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean
+                (FileConstants.PREFS_HIDDEN, false);
+        mSortMode = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt(
+                FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
 
         initializeViews();
         initConstants();
@@ -501,10 +507,10 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             case 9:
             case 10:
             case 11:
-                return new FileListLoader(getContext(), null, id);
+                return new FileListLoader(getContext(), null, id, mShowHidden, mSortMode);
             case 5:
                 String path = FileUtils.getDownloadsDirectory().getAbsolutePath();
-                return new FileListLoader(getContext(), path, id);
+                return new FileListLoader(getContext(), path, id, mShowHidden, mSortMode);
 
         }
         return null;

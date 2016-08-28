@@ -6,9 +6,13 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -41,6 +45,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     private SparseBooleanArray mSelectedItemsIds;
     private SparseBooleanArray mDraggedItemsIds;
     private SparseBooleanArray mAnimatedPos = new SparseBooleanArray();
+    public boolean mStopAnimation;
 
 
     private ArrayList<FileInfo> mSelectedFileList;
@@ -56,8 +61,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     private Fragment mFragment;
     private int draggedPos = -1;
     private int mAnimation;
-    int offset=0;
-    public boolean stoppedAnimation;
+    int offset = 0;
     Animation localAnimation;
 
 
@@ -95,15 +99,21 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         fileInfoArrayListCopy.addAll(fileInfos);
 //        Log.d("SIJU","updateAdapter"+fileInfoArrayList.size());
 //        Logger.log(this.getClass().getSimpleName(),"adapter size="+fileInfos.size());
+        offset=0;
+        mStopAnimation = false;
         notifyDataSetChanged();
-        stoppedAnimation = false;
-        mAnimatedPos = new SparseBooleanArray();
+        for (int i = 0; i < fileInfos.size(); i++) {
+            mAnimatedPos.put(i, false);
+        }
+        Log.d("SIJU", "updateAdapter--animated pos size=" + mAnimatedPos.size());
+
+//        mAnimatedPos = new SparseBooleanArray();
     }
 
 
     public void clearList() {
         if (!fileInfoArrayList.isEmpty()) {
-            fileInfoArrayList.clear();
+//            fileInfoArrayList.clear();
             fileInfoArrayListCopy.clear();
         }
     }
@@ -138,8 +148,8 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
     @Override
     public void onViewDetachedFromWindow(FileListViewHolder holder) {
-        holder.container.clearAnimation();
         super.onViewDetachedFromWindow(holder);
+        holder.container.clearAnimation();
     }
 
     @Override
@@ -168,12 +178,38 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 //        Log.d("TAG","OnBindviewholder Pos="+position);
 
 //        setAnimation(fileListViewHolder.container, position);
+//        Log.d("SIJU", "onBindViewHolder--pos=" + position + " stop anim=" + this.mStopAnimation);
 
-     /*   if (!mAnimatedPos.get(position))
+        if (!mStopAnimation && !mAnimatedPos.get(position))
         {
             animate(fileListViewHolder);
             mAnimatedPos.put(position, true);
+        }
+       /* String filePath = fileInfoArrayList.get(position).getFilePath();
+        boolean isDirectory = fileInfoArrayList.get(position).isDirectory();
+        int childFileListSize;
+        String noOfFilesOrSize;
+        if (isDirectory && new File(filePath).list() != null) {
+            if (false) {
+                File[] nonHiddenList = new File(filePath).listFiles(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File file, String name) {
+                        return (!file.isHidden());
+                    }
+                });
+                childFileListSize = nonHiddenList.length;
+            } else {
+                childFileListSize = new File(filePath).list().length;
+            }
+            if (childFileListSize == 0) {
+                noOfFilesOrSize = mContext.getResources().getString(R.string.empty);
+            } else {
+                noOfFilesOrSize = mContext.getResources().getQuantityString(R.plurals.number_of_files,
+                        childFileListSize, childFileListSize);
+            }
+            fileInfoArrayList.get(position).setNoOfFilesOrSize(noOfFilesOrSize);
         }*/
+
 
         int color = ContextCompat.getColor(mContext, R.color.actionModeItemSelected);
 
@@ -192,16 +228,71 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
     }
 
-    void animate(FileListViewHolder fileListViewHolder){
+
+    private class ThreadLoader extends Thread {
+
+        String filePath;
+        int position;
+
+        ThreadLoader(String path, int position) {
+            this.filePath = path;
+            this.position = position;
+        }
+
+
+        @Override
+        public void run() {
+            if (new File(filePath).list() != null) {
+                            /*if (!showHidden) {
+                                File[] nonHiddenList = new File(filePath).listFiles(new FilenameFilter() {
+                                    @Override
+                                    public boolean accept(File file, String name) {
+                                        return (!file.isHidden());
+                                    }
+                                });
+                                childFileListSize = nonHiddenList.length;
+                            }
+                            else {
+*/
+                int childFileListSize = new File(filePath).list().length;
+                threadMsg(childFileListSize, position);
+//                            }
+            }
+        }
+    }
+
+    private void threadMsg(int count, int position) {
+
+        if (position != -1) {
+            Message msgObj = mHandler.obtainMessage();
+            Bundle b = new Bundle();
+            b.putInt("count", count);
+            b.putInt("pos", position);
+
+            msgObj.setData(b);
+            mHandler.sendMessage(msgObj);
+        }
+    }
+
+
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            int count = msg.getData().getInt("count");
+            int pos = msg.getData().getInt("pos");
+        }
+    };
+
+    void animate(FileListViewHolder fileListViewHolder) {
         fileListViewHolder.container.clearAnimation();
-        localAnimation = AnimationUtils.loadAnimation(mContext,mAnimation);
+        localAnimation = AnimationUtils.loadAnimation(mContext, mAnimation);
         localAnimation.setStartOffset(this.offset);
         fileListViewHolder.container.startAnimation(localAnimation);
-        this.offset+=30;
+        this.offset += 30;
     }
 
     int lastPosition;
-/*    private void setAnimation(View viewToAnimate, int position)
+  /*  private void setAnimation(View viewToAnimate, int position)
     {
         // If the bound view wasn't previously displayed on screen, it's animated
         if (position > lastPosition)
@@ -210,8 +301,8 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
             viewToAnimate.startAnimation(animation);
             lastPosition = position;
         }
-    }*/
-
+    }
+*/
    /* public  void setApplicationTheme(boolean themeLight) {
         if (themeLight) {
            textFileName.setTextColor(ContextCompat.getColor(mContext,R.color.text_dark));

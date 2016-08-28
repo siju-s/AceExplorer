@@ -13,7 +13,6 @@ import com.stericson.RootTools.RootTools;
 import com.stericson.RootTools.execution.Command;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -121,49 +120,69 @@ public class RootHelper {
 
     private static final String UNIX_ESCAPE_EXPRESSION = "(\\(|\\)|\\[|\\]|\\s|\'|\"|`|\\{|\\}|&|\\\\|\\?)";
 
+
+    public static String parseFilePermission(File f) {
+        String per = "";
+        if (f.canRead()) {
+            per = per + "r";
+        }
+        if (f.canWrite()) {
+            per = per + "w";
+        }
+        if (f.canExecute()) {
+            per = per + "x";
+        }
+        return per;
+    }
+
     public static ArrayList<FileInfo> getFilesList(Context context, String path, boolean root,
                                                    boolean
                                                            showHidden) {
         ArrayList<FileInfo> fileInfoArrayList = new ArrayList<>();
         File file = new File(path);
-        if (file.canRead()) {
-            File[] listFiles = file.listFiles();
+        if (file.canRead() && (path.startsWith("/storage") || path.startsWith("/sdcard"))) {
+            String[] listFiles = file.list();
 
             if (listFiles != null) {
-                for (File file1 : listFiles) {
+                for (String name : listFiles) {
+                    String filePath = path + File.separator + name;
                     boolean isDirectory = false;
-                    String fileName = file1.getName();
-                    String filePath = file1.getAbsolutePath();
                     String noOfFilesOrSize = null;
                     String extension = null;
                     int type = 0;
 
                     // Dont show hidden files by default
-                    if (file1.getName().startsWith(".") && !showHidden) {
+                    if (new File(filePath).isHidden() && !showHidden) {
                         continue;
                     }
-                    if (file1.isDirectory()) {
+                    if (new File(filePath).isDirectory()) {
 
                         isDirectory = true;
                         int childFileListSize = 0;
-//                        if (file1.list() == null) {
-//                            noOfFilesOrSize = getPermissionOfFile(file1);
+//                        if (filePath.list() == null) {
+//                            noOfFilesOrSize = getPermissionOfFile(filePath);
 //                        }
 //                        else {
-                        if (file1.list() != null) {
-                            if (!showHidden) {
-                                File[] nonHiddenList = file1.listFiles(new FilenameFilter() {
+
+
+                        String[] list = new File(filePath).list();
+                        if (list != null) {
+                            childFileListSize = list.length;
+
+
+                          /*  if (!showHidden) {
+                                File[] nonHiddenList = new File(filePath).listFiles(new FilenameFilter() {
                                     @Override
                                     public boolean accept(File file, String name) {
-                                        return (!name.startsWith("."));
+                                        return (!file.isHidden());
                                     }
                                 });
                                 childFileListSize = nonHiddenList.length;
                             } else {
-                                childFileListSize = file1.list().length;
-                            }
+                                childFileListSize = new File(filePath).list().length;
+                            }*/
                         }
-
+                        // Saves us 200 ms by avoiding filtering of hidden files
                         if (childFileListSize == 0) {
                             noOfFilesOrSize = context.getResources().getString(R.string.empty);
                         } else {
@@ -172,16 +191,16 @@ public class RootHelper {
                         }
 //                        }
                     } else {
-                        long size = file1.length();
+                        long size = file.length();
                         noOfFilesOrSize = Formatter.formatFileSize(context, size);
                         extension = filePath.substring(filePath.lastIndexOf(".") + 1);
                         type = checkMimeType(filePath, extension);
                     }
-                    long date = file1.lastModified();
+                    long date = new File(filePath).lastModified();
                     String fileModifiedDate = convertDate(date);
 
-                    FileInfo fileInfo = new FileInfo(fileName, filePath, fileModifiedDate, noOfFilesOrSize,
-                            isDirectory, extension, type);
+                    FileInfo fileInfo = new FileInfo(name, filePath, fileModifiedDate, noOfFilesOrSize,
+                            isDirectory, extension, type, parseFilePermission(new File(filePath)));
                     fileInfoArrayList.add(fileInfo);
                 }
             }
@@ -222,7 +241,7 @@ public class RootHelper {
                                             convertDate(array.getDate()),
                                             size, isDirectory, null,
                                             FileConstants.CATEGORY
-                                                    .FILES.getValue()));
+                                                    .FILES.getValue(), array.getPermisson()));
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();

@@ -249,7 +249,7 @@ public class CopyService extends Service {
                                 }
                                 FileInfo destFile = new FileInfo(sourceFile.getFileName(), sourceFile.getFilePath(),
                                         sourceFile.getFileDate(), sourceFile.getNoOfFilesOrSize(), sourceFile.isDirectory(),
-                                        sourceFile.getExtension(), sourceFile.getType());
+                                        sourceFile.getExtension(), sourceFile.getType(),sourceFile.getPermissions());
                                 destFile.setFilePath(currentDir + "/" + files.get(i).getFileName());
                                 copyFiles(sourceFile, destFile, id, move);
                             } else {
@@ -324,7 +324,7 @@ public class CopyService extends Service {
 
                         FileInfo destFile = new FileInfo(sourceFile.getFileName(), sourceFile.getFilePath(),
                                 sourceFile.getFileDate(), sourceFile.getNoOfFilesOrSize(), sourceFile.isDirectory(),
-                                sourceFile.getExtension(), sourceFile.getType());
+                                sourceFile.getExtension(), sourceFile.getType(),sourceFile.getPermissions());
                         destFile.setFilePath(targetFile.getFilePath() + "/" + file.getFileName());
                         copyFiles(file, destFile, id, move);
                     }
