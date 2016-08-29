@@ -141,46 +141,27 @@ public class RootHelper {
         ArrayList<FileInfo> fileInfoArrayList = new ArrayList<>();
         File file = new File(path);
         if (file.canRead() && (path.startsWith("/storage") || path.startsWith("/sdcard"))) {
-            String[] listFiles = file.list();
+            File[] listFiles = file.listFiles();
 
             if (listFiles != null) {
-                for (String name : listFiles) {
-                    String filePath = path + File.separator + name;
+                for (File file1 : listFiles) {
+                    String filePath = file1.getAbsolutePath();
                     boolean isDirectory = false;
                     String noOfFilesOrSize = null;
                     String extension = null;
                     int type = 0;
 
                     // Dont show hidden files by default
-                    if (new File(filePath).isHidden() && !showHidden) {
+                    if (file1.isHidden() && !showHidden) {
                         continue;
                     }
-                    if (new File(filePath).isDirectory()) {
+                    if (file1.isDirectory()) {
 
                         isDirectory = true;
                         int childFileListSize = 0;
-//                        if (filePath.list() == null) {
-//                            noOfFilesOrSize = getPermissionOfFile(filePath);
-//                        }
-//                        else {
-
-
-                        String[] list = new File(filePath).list();
+                        String[] list = file1.list();
                         if (list != null) {
                             childFileListSize = list.length;
-
-
-                          /*  if (!showHidden) {
-                                File[] nonHiddenList = new File(filePath).listFiles(new FilenameFilter() {
-                                    @Override
-                                    public boolean accept(File file, String name) {
-                                        return (!file.isHidden());
-                                    }
-                                });
-                                childFileListSize = nonHiddenList.length;
-                            } else {
-                                childFileListSize = new File(filePath).list().length;
-                            }*/
                         }
                         // Saves us 200 ms by avoiding filtering of hidden files
                         if (childFileListSize == 0) {
@@ -191,16 +172,16 @@ public class RootHelper {
                         }
 //                        }
                     } else {
-                        long size = file.length();
+                        long size = file1.length();
                         noOfFilesOrSize = Formatter.formatFileSize(context, size);
                         extension = filePath.substring(filePath.lastIndexOf(".") + 1);
                         type = checkMimeType(filePath, extension);
                     }
-                    long date = new File(filePath).lastModified();
+                    long date = file1.lastModified();
                     String fileModifiedDate = convertDate(date);
 
-                    FileInfo fileInfo = new FileInfo(name, filePath, fileModifiedDate, noOfFilesOrSize,
-                            isDirectory, extension, type, parseFilePermission(new File(filePath)));
+                    FileInfo fileInfo = new FileInfo(file1.getName(), filePath, fileModifiedDate, noOfFilesOrSize,
+                            isDirectory, extension, type, parseFilePermission(file1));
                     fileInfoArrayList.add(fileInfo);
                 }
             }

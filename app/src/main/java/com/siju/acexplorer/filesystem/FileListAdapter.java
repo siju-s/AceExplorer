@@ -403,7 +403,6 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
                     fileListViewHolder.imageIcon.setColorFilter(Color.argb(200, 255, 255, 255));
                 } else {
                     fileListViewHolder.imageIcon.clearColorFilter();
-
                 }
                 break;
             case 1:

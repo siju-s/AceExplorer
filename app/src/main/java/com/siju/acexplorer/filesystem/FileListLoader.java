@@ -11,6 +11,8 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.text.format.Formatter;
 import android.webkit.MimeTypeMap;
 
+import com.github.junrar.Archive;
+import com.github.junrar.rarfile.FileHeader;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.common.SharedPreferenceWrapper;
@@ -26,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -160,7 +163,10 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 fetchByCategory(mCategory);
                 break;
             case 12:
-                getZipContents(mZipPath, mPath);
+                if (mPath.endsWith("rar"))
+                    getRarContents(mZipPath, mPath);
+                else
+                    getZipContents(mZipPath, mPath);
                 break;
             case 8:
                 fetchFavorites();
@@ -179,6 +185,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             if (fileExtension.equalsIgnoreCase("zip")) {
                 getZipContents("", file.getAbsolutePath());
                 return fileInfoList;
+            } else if (fileExtension.equalsIgnoreCase("rar")) {
+                getRarContents("", file.getAbsolutePath());
             } else {
                 fileInfoList = RootHelper.getFilesList(mContext, mPath,
                         true, showHidden);
@@ -428,7 +436,84 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             String path = parentZipPath + "/" + name;
 
             FileInfo fileInfo = new FileInfo(name, path, fileModifiedDate, noOfFilesOrSize,
-                    isDirectory, extension, type,RootHelper.parseFilePermission(new File(path)));
+                    isDirectory, extension, type, RootHelper.parseFilePermission(new File(path)));
+            fileInfoList.add(fileInfo);
+        }
+        Collections.sort(fileInfoList, comparatorByNameZip);
+        return fileInfoList;
+
+    }
+
+    private ArrayList<FileInfo> getRarContents(String dir, String parentZipPath) {
+        ArrayList<FileHeader> elements = new ArrayList<FileHeader>();
+        try {
+            Archive zipfile = new Archive(new File(parentZipPath));
+            ArrayList<FileHeader> totalRarList;
+            if (mIsDualPaneInFocus) {
+                ((FileListDualFragment) mFragment).mArchive = zipfile;
+                totalRarList = ((FileListDualFragment) mFragment).totalRarList;
+            } else {
+                ((FileListFragment) mFragment).mArchive = zipfile;
+                totalRarList = ((FileListFragment) mFragment).totalRarList;
+
+            }
+
+            if (totalRarList.size() == 0) {
+
+                FileHeader fh = zipfile.nextFileHeader();
+                while (fh != null) {
+                    totalRarList.add(fh);
+                    fh = zipfile.nextFileHeader();
+                }
+            }
+            if (dir == null || dir.trim().length() == 0 || dir.equals("")) {
+
+                for (FileHeader header : totalRarList) {
+                    String name = header.getFileNameString();
+
+                    if (!name.contains("\\")) {
+                        elements.add(header);
+
+                    }
+                }
+            } else {
+                for (FileHeader header : totalRarList) {
+                    String name = header.getFileNameString();
+                    if (name.substring(0, name.lastIndexOf("\\")).equals(dir)) {
+                        elements.add(header);
+                    }
+                }
+            }
+        } catch (Exception e) {
+        }
+
+        for (FileHeader fileHeader : elements) {
+            String name = fileHeader.getFileNameString();
+
+            boolean isDirectory = fileHeader.isDirectory();
+        /*    if (isDirectory) {
+                name = name.substring(name.lastIndexOf("/") + 1);
+            }*/
+            long size = fileHeader.getPackSize();
+            int type = FileConstants.CATEGORY.COMPRESSED.getValue();
+            Date date = fileHeader.getMTime();
+            String noOfFilesOrSize = Formatter.formatFileSize(mContext, size);
+            String fileModifiedDate = FileUtils.convertDate(date);
+            String extension;
+            if (isDirectory) {
+                name = name.substring(0, name.length() - 1);
+                if (!mInParentZip) {
+                    name = name.substring(name.lastIndexOf("/") + 1);
+                }
+                extension = null;
+            } else {
+                name = name.substring(name.lastIndexOf("/") + 1);
+                extension = name.substring(name.lastIndexOf(".") + 1, name.length());
+            }
+            String path = parentZipPath + "/" + name;
+
+            FileInfo fileInfo = new FileInfo(name, path, fileModifiedDate, noOfFilesOrSize,
+                    isDirectory, extension, type, RootHelper.parseFilePermission(new File(path)));
             fileInfoList.add(fileInfo);
         }
         Collections.sort(fileInfoList, comparatorByNameZip);

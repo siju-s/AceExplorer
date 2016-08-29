@@ -11,6 +11,20 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    dexOptions{
+        maxProcessCount 2
+        javaMaxHeapSize "6g"
+    }
+    packagingOptions {
+        exclude 'proguard-project.txt'
+        exclude 'project.properties'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/DEPENDENCIES.txt'
+        exclude 'META-INF/DEPENDENCIES'
+    }
     buildTypes {
         debug {
             minifyEnabled false
@@ -25,9 +39,9 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:24.1.1'
-    compile 'com.android.support:recyclerview-v7:24.1.1'
-    compile 'com.android.support:design:24.1.1'
+    compile 'com.android.support:appcompat-v7:24.2.0'
+    compile 'com.android.support:recyclerview-v7:24.2.0'
+    compile 'com.android.support:design:24.2.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha3'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.getbase:floatingactionbutton:1.10.1'
@@ -37,7 +51,8 @@ dependencies {
     testCompile 'junit:junit:4.12'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
     androidTestCompile 'com.android.support.test:runner:0.5'
-    androidTestCompile 'com.android.support:support-annotations:24.1.1'
-    compile 'com.android.support:cardview-v7:24.1.1'
+    androidTestCompile 'com.android.support:support-annotations:24.2.0'
+    compile 'com.android.support:cardview-v7:24.2.0'
     compile 'com.afollestad.material-dialogs:core:0.9.0.1'
+    compile 'com.github.junrar:junrar:0.7'
 }

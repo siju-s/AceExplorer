@@ -64,6 +64,8 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
+import com.github.junrar.Archive;
+import com.github.junrar.rarfile.FileHeader;
 import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
@@ -163,6 +165,9 @@ public class FileListFragment extends Fragment implements LoaderManager
     private String mCurrentZipDir;
     public ArrayList<ZipModel> totalZipList = new ArrayList<>();
     public ArrayList<ZipModel> zipChildren = new ArrayList<>();
+    public Archive mArchive;
+    public ArrayList<FileHeader> totalRarList = new ArrayList<>();
+    public ArrayList<FileHeader> rarChildren = new ArrayList<>();
     private boolean mInParentZip = true;
     private int mParentZipCategory;
     private boolean mIsPasteItemVisible;
@@ -477,21 +482,27 @@ public class FileListFragment extends Fragment implements LoaderManager
 
                 // For file, open external apps based on Mime Type
                 if (!fileInfoList.get(position).isDirectory()) {
+                    String filePath = fileInfoList.get(position).getFilePath();
                     String extension = fileInfoList.get(position).getExtension();
-                    if (extension.equalsIgnoreCase("zip")) {
-                        openCompressedFile(fileInfoList.get(position).getFilePath());
-
+                    if (isFileZipViewable(filePath)) {
+                        openCompressedFile(filePath);
                     } else {
-                        FileUtils.viewFile(FileListFragment.this, fileInfoList.get(position).getFilePath(), fileInfoList
-                                .get(position).getExtension());
+                        FileUtils.viewFile(FileListFragment.this, filePath, extension);
                     }
 
                 } else {
                     computeScroll();
                     if (mIsZip) {
-                        String name = zipChildren.get(position).getName();
+                        if (mZipParentPath.endsWith("zip")) {
+                            mCurrentZipDir = zipChildren.get(position).getName();
+                        }
+                        else {
+                            String name = rarChildren.get(position).getFileNameString();
+                            mCurrentZipDir = name.substring(0, name.length() - 1);
+
+                        }
+
                         mInParentZip = false;
-                        mCurrentZipDir = name.substring(0, name.length() - 1);
                         reloadList(false, mZipParentPath);
                         isDualPaneInFocus = checkIfDualFragment();
                         String newPath = mZipParentPath + "/" + mCurrentZipDir;
@@ -518,13 +529,6 @@ public class FileListFragment extends Fragment implements LoaderManager
                         }
                         mBaseActivity.setNavDirectory(path, isDualPaneInFocus);
                         mBaseActivity.addToBackStack(path, mCategory);
-//                        if (mFilePath.equals("/data")) {
-//                            LoadList loadList = new LoadList(getActivity(),FileListFragment
-//                                    .this,mFilePath,
-//                                    mCategory);
-//                            loadList.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,null);
-//
-
                     }
 
 
@@ -541,6 +545,12 @@ public class FileListFragment extends Fragment implements LoaderManager
                 break;
 
         }
+    }
+
+    public boolean isFileZipViewable(String filePath) {
+        return filePath.toLowerCase().endsWith("zip") ||
+                filePath.toLowerCase().endsWith("jar") ||
+                filePath.toLowerCase().endsWith("rar");
     }
 
 
