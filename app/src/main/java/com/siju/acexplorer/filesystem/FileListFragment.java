@@ -229,7 +229,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                 (FileConstants.PREFS_HIDDEN, false);
         mSortMode = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt(
                 FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
-
+       Logger.log(TAG,"package name="+getActivity().getPackageName());
         Bundle args = new Bundle();
         final String fileName;
         ArrayList<FileInfo> list = new ArrayList<>();
@@ -564,6 +564,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                 String path = intent.getStringExtra(FileConstants.KEY_PATH);
                 Logger.log(TAG, "New zip PAth=" + path);
                 FileUtils.scanFile(getActivity(), path);
+                mIsBackPressed = true;
                 reloadList(true, mFilePath);
             } else if (action.equals("refresh")) {
 
@@ -572,7 +573,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                 switch (operation) {
                     case FileConstants.DELETE:
                         ArrayList<FileInfo> deletedFilesList = intent.getParcelableArrayListExtra("deleted_files");
-                        if (!FileUtils.checkIfFileCategory(mCategory)) {
+//                        if (!FileUtils.checkIfFileCategory(mCategory)) {
 
                             String[] pathArray = new String[deletedFilesList.size()];
                             ArrayList<String> paths = new ArrayList<>();
@@ -594,10 +595,16 @@ public class FileListFragment extends Fragment implements LoaderManager
                             });
 
 //                        refreshMediaStore(paths.get(i));
-                        }
+//                        }
+
+                        computeScroll();
+                        mIsBackPressed = true;
+                        Uri uri = FileUtils.getUriForCategory(getActivity(),mCategory);
+                        getContext().getContentResolver().notifyChange(uri,null);
                         for (int i = 0; i < deletedFilesList.size(); i++) {
                             fileInfoList.remove(deletedFilesList.get(i));
                         }
+
                         fileListAdapter.updateAdapter(fileInfoList);
 
                         break;
@@ -819,6 +826,10 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
     }
 
+    public void setBackPressed(boolean flag) {
+        mIsBackPressed = flag;
+    }
+
 
     @Override
     public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
@@ -839,6 +850,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     @Override
     public void onLoadFinished(Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
+//        computeScroll();
         if (mIsSwipeRefreshed) {
             mSwipeRefreshLayout.setRefreshing(false);
             mIsSwipeRefreshed = false;
@@ -861,8 +873,8 @@ public class FileListFragment extends Fragment implements LoaderManager
                 recyclerViewFileList.setHasFixedSize(true);
 
 
-                if (!mIsDataRefreshed) {
-                    /*if (mViewMode == FileConstants.KEY_LISTVIEW) {
+             /*   if (!mIsDataRefreshed) {
+                    *//*if (mViewMode == FileConstants.KEY_LISTVIEW) {
                         llm = new CustomLayoutManager(getActivity());
                     } else {
                         findNoOfGridColumns();
@@ -873,8 +885,8 @@ public class FileListFragment extends Fragment implements LoaderManager
                     recyclerViewFileList.setLayoutManager(llm);
                     recyclerViewFileList.setItemAnimator(new DefaultItemAnimator());
                     recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
-                            .VERTICAL));*/
-                } else {
+                            .VERTICAL));*//*
+                } else {*/
                     if (mIsBackPressed) {
                         if (checkIfDualFragment()) {
                             if (scrollPositionDualPane.containsKey(mFilePath)) {
@@ -901,7 +913,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                         mIsBackPressed = false;
                     }
                     recyclerViewFileList.stopScroll();
-                }
+//                }
 
                 if (mTextEmpty.getVisibility() == View.VISIBLE) {
                     mTextEmpty.setVisibility(View.GONE);
@@ -1166,6 +1178,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                             FileInfo info = fileInfoList.get(mSelectedItemPositions.keyAt(i));
                             paths.add(info);
                         }
+                        setBackPressed(true);
                         mFileUtils.showCompressDialog(mBaseActivity, mFilePath, paths);
                     }
                     mActionMode.finish();
@@ -1461,6 +1474,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                    /* new ExtractManager(FileListFragment.this)
                             .extract(currentFile, currentDir, currentFileName);*/
                 }
+                setBackPressed(true);
                 materialDialog.dismiss();
             }
         });

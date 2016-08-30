@@ -3,6 +3,8 @@
           package="com.siju.acexplorer">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <!--<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>-->
+
 
     <application
         android:allowBackup="true"
@@ -25,58 +27,13 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
 
-                <data android:scheme="file"/>
-                <data android:host="*"/>
                 <data android:mimeType="application/vnd.android.package-archive"/>
-                <data android:mimeType="application/miui-mtz"/>
                 <data android:mimeType="application/java-archive"/>
-                <data android:mimeType="application/gzip"/>
-                <data android:mimeType="gzip/document"/>
-                <data android:mimeType="application/x-bzip"/>
-                <data android:mimeType="application/gzipped"/>
-                <data android:mimeType="application/x-gunzip"/>
-                <data android:mimeType="application/x-gzip-compressed"/>
-                <data android:mimeType="application/gzip-compressed"/>
-                <data android:mimeType="application/x-compressed"/>
-                <data android:mimeType="application/x-compress"/>
-                <data android:mimeType="application/x-winzip"/>
-                <data android:mimeType="multipart/x-zip"/>
                 <data android:mimeType="application/zip"/>
                 <data android:mimeType="application/rar"/>
                 <data android:mimeType="application/x-rar-compressed"/>
-                <data android:mimeType="application/x-gtar"/>
-                <data android:mimeType="application/x-tar"/>
-                <data android:mimeType="application/x-bz2"/>
-                <data android:mimeType="application/x-bzip2"/>
-                <data android:mimeType="application/x-gzip"/>
-                <data android:mimeType="application/x-gzip"/>
-                <data android:mimeType="application/x-7z-compressed"/>
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
+               </intent-filter>
 
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="sj.intent.explore"/>
-
-                <data android:scheme="smb"/>
-                <data android:scheme="bt"/>
-                <data android:scheme="http"/>
-                <data android:scheme="https"/>
-                <data android:scheme="ftp"/>
-                <data android:scheme="sftp"/>
-                <data android:host="*"/>
-                <data android:pathPattern=".*\.zip"/>
-                <data android:pathPattern=".*\.zip.*"/>
-                <data android:pathPattern=".*\..*\.zip.*"/>
-                <data android:pathPattern=".*\..*\..*\.zip.*"/>
-                <data android:pathPattern=".*\..*\..*\..*\.zip.*"/>
-                <data android:pathPattern=".*\..*\..*\..*\..*\.zip.*"/>
-                <data android:pathPattern=".*\..*\..*\..*\..*\..*\.zip.*"/>
-                <data android:pathPattern=".*\..*\..*\..*\..*\..*\..*\.zip.*"/>
-                <data android:pathPattern=".*\..*\..*\..*\..*\..*\..*\..*\.zip.*"/>
-                <data android:pathPattern=".*\..*\..*\..*\..*\..*\..*\..*\..*\.zip.*"/>
-            </intent-filter>
         </activity>
 
         <activity
@@ -86,10 +43,21 @@
             android:theme="@style/AppTheme.SettingsTheme"
 
             />
-        <activity android:name="com.siju.acexplorer.filesystem.LibrarySortActivity"/>
+        <activity android:name="com.siju.acexplorer.filesystem.LibrarySortActivity"
+                  android:theme="@style/AppTheme.NoActionBar"/>
         <service android:name="com.siju.acexplorer.filesystem.task.CreateZipTask"/>
         <service android:name=".filesystem.task.CopyService"/>
         <service android:name=".filesystem.task.ExtractService"/>
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.siju.acexplorer.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
     </application>
 
 </manifest>

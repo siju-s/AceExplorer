@@ -1,14 +1,22 @@
 package com.siju.acexplorer.filesystem;
 
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
+import android.os.FileObserver;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.text.format.Formatter;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.github.junrar.Archive;
@@ -55,11 +63,20 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private Fragment mFragment;
     private boolean mInParentZip;
     private int mSortMode;
+    private static final int FILE_OBSERVER_MASK = FileObserver.CREATE
+            | FileObserver.DELETE | FileObserver.DELETE_SELF
+            | FileObserver.MOVED_FROM | FileObserver.MOVED_TO
+            | FileObserver.MODIFY | FileObserver.MOVE_SELF;
+
+    private FileObserver mFileObserver;
+    private MediaContentObserver mMediaContentObserver;
+    private MountUnmountReceiver mMountUnmountReceiver;
+
 
     public FileListLoader(Context context, String path, int category, boolean showHidden, int sortMode) {
         super(context);
         mPath = path;
-        mContext = context;
+        mContext = getContext();
         mCategory = category;
         this.showHidden = showHidden;
         mSortMode = sortMode;
@@ -89,9 +106,69 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     protected void onStartLoading() {
         if (fileInfoList != null) {
             deliverResult(fileInfoList);
-        } else {
-            forceLoad();
         }
+
+
+        if (mMediaContentObserver == null) {
+            mMediaContentObserver = new MediaContentObserver(new Handler());
+            mContext.getContentResolver().registerContentObserver(MediaStore.Files.getContentUri("external"), true,
+                    mMediaContentObserver);
+        }
+
+        if (mMountUnmountReceiver == null) {
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction("android.intent.action.MEDIA_UNMOUNTED");
+            intentFilter.addAction("android.intent.action.MEDIA_MOUNTED");
+            intentFilter.addDataScheme("file");
+            getContext().registerReceiver(mMountUnmountReceiver, intentFilter);
+        }
+       /* if (mFileObserver == null) {
+            String observedPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+            mFileObserver = new FileObserver(observedPath, FILE_OBSERVER_MASK) {
+                @Override
+                public void onEvent(int event, String path) {
+                    Log.d("FileObserver","path="+path+" event=="+event+" category="+mCategory);
+                    if (path == null) return;
+                    onContentChanged();
+                }
+            };
+        }
+        mFileObserver.startWatching();*/
+        if (takeContentChanged() || fileInfoList == null)
+            forceLoad();
+    }
+
+    @Override
+    protected void onStopLoading() {
+        cancelLoad();
+    }
+
+    @Override
+    protected void onReset() {
+        onStopLoading();
+
+        if (fileInfoList != null) {
+            onReleaseResources();
+            fileInfoList = null;
+        }
+    }
+
+    protected void onReleaseResources() {
+
+        /*if (mFileObserver != null) {
+            mFileObserver.stopWatching();
+            mFileObserver = null;
+
+        }*/
+
+        if (mMediaContentObserver != null) {
+            getContext().getContentResolver().unregisterContentObserver(mMediaContentObserver);
+        }
+        if (mMountUnmountReceiver != null) {
+            getContext().unregisterReceiver(mMountUnmountReceiver);
+        }
+
+
     }
 
     @Override
@@ -521,6 +598,12 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
     }
 
+   /* private ArrayList<FileInfo> getTarContents(String dir, String parentZipPath) {
+
+        TarArchiveEntry entry = new TarArchiveEntry(new File(parentZipPath));
+
+    }*/
+
 
     private ArrayList<FileInfo> fetchMusic() {
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
@@ -772,5 +855,67 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         return fileInfoList;
     }
 
+    class MediaContentObserver extends ContentObserver {
 
+        /**
+         * Creates a content observer.
+         *
+         * @param handler The handler to run {@link #onChange} on, or null if none.
+         */
+        public MediaContentObserver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            this.onChange(selfChange, null);
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+
+            Logger.log(TAG,"uri change=="+uri);
+            onContentChanged();
+            // do s.th.
+            // depending on the handler you might be on the UI
+            // thread, so be cautious!
+
+        }
+    }
+
+    public class MountUnmountReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("VolumeStateObserver", "onReceive " + intent.getAction());
+//        this.mDataObserver.c.c();
+            String str = null;
+            Object parcelableExtra = intent.getParcelableExtra("storage_volume");
+      /*  if (parcelableExtra != null) {
+            str = bz.b(parcelableExtra);
+            if (str == null) {
+                Log.d("VolumeStateObserver", "onReceive path is null");
+            }
+        }*/
+            Bundle bundle;
+            if (intent.getAction().equals("android.intent.action.MEDIA_MOUNTED")) {
+//                this.mDataObserver.setChanged();
+                bundle = new Bundle();
+                bundle.putString("KEY_EVENT", "android.intent.action.MEDIA_MOUNTED");
+                bundle.putString("KEY_PATH", str);
+                onContentChanged();
+//                this.mDataObserver.notifyObservers(bundle);
+            } else if (intent.getAction().equals("android.intent.action.MEDIA_UNMOUNTED")) {
+//                this.mDataObserver.setChanged();
+                bundle = new Bundle();
+                bundle.putString("KEY_EVENT", "android.intent.action.MEDIA_UNMOUNTED");
+                bundle.putString("KEY_PATH", str);
+                onContentChanged();
+
+//                this.mDataObserver.notifyObservers(bundle);
+            }
+
+        }
+
+    }
 }

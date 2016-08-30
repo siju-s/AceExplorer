@@ -6,7 +6,7 @@ import android.util.Log;
  * Created by Siju on 16-06-2016.
  */
 
-public class Logger {
+public class Logger  {
 
     public static void log(String tag,String msg)
     {

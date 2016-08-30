@@ -20,17 +20,24 @@ import android.support.v4.app.NotificationCompat;
 import android.text.format.Formatter;
 import android.util.Log;
 
+import com.github.junrar.Archive;
+import com.github.junrar.rarfile.FileHeader;
 import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.filesystem.model.ZipProgressModel;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -245,7 +252,7 @@ public class ExtractService extends Service {
             }
         }
 
-       /* private void unzipRAREntry(int id, String a, Archive zipfile, FileHeader entry, String outputDir)
+        private void unzipRAREntry(int id, String a, Archive zipfile, FileHeader entry, String outputDir)
                 throws Exception {
             String name = entry.getFileNameString();
             name = name.replaceAll("\\\\", "/");
@@ -301,7 +308,7 @@ public class ExtractService extends Service {
             //	Log.i("Amaze", "Extracting: " + entry);
 
             BufferedOutputStream outputStream = new BufferedOutputStream(
-                    FileUtil.getOutputStream(outputFile, cd, entry.getRealSize()));
+                    FileUtils.getOutputStream(outputFile, getBaseContext(), entry.getRealSize()));
             try {
                 int len;
                 byte buf[] = new byte[20480];
@@ -325,7 +332,7 @@ public class ExtractService extends Service {
                 outputStream.close();
 
             }
-        }*/
+        }
 
         public boolean extract(int id, File archive, String destinationPath, ArrayList<String> x) {
             int i = 0;
@@ -415,10 +422,10 @@ public class ExtractService extends Service {
 
         }
 
-       /* public boolean extractTar(int id, File archive, String destinationPath) {
+        public boolean extractTar(int id, File archive, String destinationPath) {
             int i = 0;
             try {
-                ArrayList<TarArchiveEntry> archiveEntries = new ArrayList<TarArchiveEntry>();
+                ArrayList<TarArchiveEntry> archiveEntries = new ArrayList<>();
                 TarArchiveInputStream inputStream;
                 if (archive.getName().endsWith(".tar"))
                     inputStream = new TarArchiveInputStream(new BufferedInputStream(new FileInputStream(archive)));
@@ -449,13 +456,13 @@ public class ExtractService extends Service {
 
                 inputStream.close();
 
-                Intent intent = new Intent("loadlist");
+                Intent intent = new Intent("reload_list");
                 sendBroadcast(intent);
                 publishResults(archive.getName(), 100, id, totalbytes, copiedbytes, true);
                 return true;
             } catch (Exception e) {
                 Log.e("amaze", "Error while extracting file " + archive, e);
-                Intent intent = new Intent("loadlist");
+                Intent intent = new Intent("reload_list");
                 sendBroadcast(intent);
                 publishResults(archive.getName(), 100, id, totalbytes, copiedbytes, true);
                 return false;
@@ -466,7 +473,7 @@ public class ExtractService extends Service {
         public boolean extractRar(int id, File archive, String destinationPath) {
             int i = 0;
             try {
-                ArrayList<FileHeader> arrayList = new ArrayList<FileHeader>();
+                ArrayList<FileHeader> arrayList = new ArrayList<>();
                 Archive zipfile = new Archive(archive);
                 FileHeader fh = zipfile.nextFileHeader();
                 publishResults(archive.getName(), 0, id, totalbytes, copiedbytes, false);
@@ -491,18 +498,18 @@ public class ExtractService extends Service {
 
                     }
                 }
-                Intent intent = new Intent("loadlist");
+                Intent intent = new Intent("reload_list");
                 sendBroadcast(intent);
                 calculateProgress(archive.getName(), id, true, copiedbytes, totalbytes);
                 return true;
             } catch (Exception e) {
                 Log.e("amaze", "Error while extracting file " + archive, e);
-                Intent intent = new Intent("loadlist");
+                Intent intent = new Intent("reload_list");
                 sendBroadcast(intent);
                 calculateProgress(archive.getName(), id, true, copiedbytes, totalbytes);
                 return false;
             }
-        }*/
+        }
 
         protected Integer doInBackground(Bundle... p1) {
             String file = p1[0].getString("file");
@@ -527,10 +534,9 @@ public class ExtractService extends Service {
             } else if (f.getName().toLowerCase().endsWith(".zip") || f.getName().toLowerCase().endsWith(".jar") || f.getName().toLowerCase().endsWith(".apk"))
                 extract(p1[0].getInt("id"), f, path);
             else if (f.getName().toLowerCase().endsWith(".rar"))
-                Log.d("TAG","RAR");
-//                extractRar(p1[0].getInt("id"), f, path);
+                extractRar(p1[0].getInt("id"), f, path);
             else if (f.getName().toLowerCase().endsWith(".tar") || f.getName().toLowerCase().endsWith(".tar.gz"))
-//                extractTar(p1[0].getInt("id"), f, path);
+                extractTar(p1[0].getInt("id"), f, path);
                 Log.d("TAG","TAR");
 
             Log.i("Amaze", "Almost Completed");

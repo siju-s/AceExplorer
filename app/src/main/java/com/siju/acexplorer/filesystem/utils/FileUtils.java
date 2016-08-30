@@ -20,6 +20,7 @@ import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.support.v4.provider.DocumentFile;
 import android.text.TextUtils;
 import android.text.format.Formatter;
@@ -525,8 +526,8 @@ public class FileUtils {
     public static void viewFile(Fragment fragment, String path, String extension) {
 
         Context context = fragment.getContext();
-        Uri uri = Uri.fromFile(new File(path));
-        String realPath = getRealPathFromURI(context, uri);
+        Uri uri = createContentUriApi24(false, fragment.getContext(), path);
+//        String realPath = getRealPathFromURI(context, uri);
 
         Intent intent = new Intent();
         intent.setAction(android.content.Intent.ACTION_VIEW);
@@ -537,8 +538,9 @@ public class FileUtils {
             showApkDialog(fragment, path, ext);
         } else {
             String mimeType = getSingleton().getMimeTypeFromExtension(ext);
-            Logger.log(TAG, "real path=" + realPath + " uri==" + uri + "MIME=" + mimeType);
+            Logger.log(TAG, " uri==" + uri + "MIME=" + mimeType);
             intent.setDataAndType(uri, mimeType);
+//            intent.setData(uri);
             PackageManager packageManager = context.getPackageManager();
 
             if (mimeType != null) {
@@ -555,8 +557,21 @@ public class FileUtils {
 
     }
 
+    private static Uri createContentUriApi24(boolean useApi24, Context context, String path) {
 
-    public static String getRealPathFromURI(Context context, Uri contentUri) {
+        if (useApi24 && Build.VERSION.SDK_INT >= 24) {
+            String authority = "com.siju.acexplorer.fileprovider";//fragment.getContext().getPackageName() + "
+//                    .provider";
+            return FileProvider.getUriForFile(context,
+                    authority, new File(path));
+        } else {
+            return Uri.fromFile(new File(path));
+        }
+
+    }
+
+
+    /*public static String getRealPathFromURI(Context context, Uri contentUri) {
         String[] proj = {MediaStore.Images.Media.DATA};
         Cursor cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
 
@@ -569,7 +584,7 @@ public class FileUtils {
         String path = cursor.getString(column_index);
         cursor.close();
         return path;
-    }
+    }*/
 
     private static void openWith(final Uri uri, final Context context) {
 
@@ -1046,6 +1061,29 @@ public class FileUtils {
                 category == FileConstants.CATEGORY.DOWNLOADS.getValue() ||
                 category == FileConstants.CATEGORY.FAVORITES.getValue() ||
                 category == FileConstants.CATEGORY.LARGE_FILES.getValue();
+    }
+
+    public static Uri getUriForCategory(Context context, int category) {
+        switch (category) {
+            case 0:
+            case 4:
+            case 5:
+            case 7:
+            case 9:
+            case 10:
+            case 11:
+                return MediaStore.Files.getContentUri("external");
+            case 1:
+                return MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+            case 2:
+                return MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+            case 3:
+                return MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+
+
+        }
+        return MediaStore.Files.getContentUri("external");
+
     }
 
     public static boolean checkIfLibraryCategory(int category) {
@@ -1953,13 +1991,13 @@ public class FileUtils {
         materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri uri = Uri.fromFile(new File(path));
+                Uri uri = createContentUriApi24(false, fragment.getContext(), path);
                 Intent intent = new Intent();
-                intent.setAction(android.content.Intent.ACTION_VIEW);
+                intent.setAction(Intent.ACTION_INSTALL_PACKAGE);
 
                 String mimeType = getSingleton().getMimeTypeFromExtension(extension);
-
-                intent.setDataAndType(uri, mimeType);
+                intent.setData(uri);
+//                intent.setDataAndType(uri, mimeType);
                 PackageManager packageManager = context.getPackageManager();
 
                 if (mimeType != null) {
@@ -2138,7 +2176,8 @@ public class FileUtils {
                 filePath.toLowerCase().endsWith("apk") ||
                 filePath.toLowerCase().endsWith("jar") ||
                 filePath.toLowerCase().endsWith("tar") ||
-                filePath.toLowerCase().endsWith("tar.gz");
+                filePath.toLowerCase().endsWith("tar.gz") ||
+                filePath.toLowerCase().endsWith("rar");
     }
 
    /* public static boolean isFileZipViewable(String filePath) {

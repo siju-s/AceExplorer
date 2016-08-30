@@ -39,12 +39,14 @@ import com.siju.acexplorer.filesystem.utils.FileUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Created by SIJU on 20-07-2016.
  */
 public class HomeScreenFragment extends Fragment implements LoaderManager
-        .LoaderCallbacks<ArrayList<FileInfo>> {
+        .LoaderCallbacks<ArrayList<FileInfo>>, Observer {
 
     View root;
     private Toolbar mToolbar;
@@ -465,20 +467,6 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             }
 
         }
-/*
-
-
-        if (extSD != null) {
-            spaceLeft = getSpaceLeft(extSD);
-            totalSpace = getTotalSpace(extSD);
-            leftProgress = (int) (((float) spaceLeft / totalSpace) * 100);
-            usedSpaceProgress = 100 - leftProgress;
-            spaceText = storageSpace(extSD);
-            homeStoragesInfoArrayList.add(new HomeStoragesInfo(STORAGE_EXTERNAL, R.drawable
-                    .ic_ext_white,
-                    usedSpaceProgress, spaceText));
-        }*/
-
     }
 
     private long getSpaceLeft(File file) {
@@ -497,7 +485,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
 
     @Override
     public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
-//        Log.d(TAG, "on onCreateLoader--" + id);
+        Log.d(TAG, "on onCreateLoader--" + id);
         switch (id) {
             case 1:
             case 2:
@@ -520,7 +508,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     @Override
     public void onLoadFinished(Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
         if (data != null) {
-//            Log.d(TAG, "on onLoadFinished--" + loader.getId());
+            Log.d(TAG, "on onLoadFinished--" + loader.getId());
             for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
                 if (loader.getId() == homeLibraryInfoArrayList.get(i).getCategoryId()) {
                     homeLibraryInfoArrayList.get(i).setCount(data.size());
@@ -626,4 +614,19 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             setGridColumns();
         }
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+    @Override
+    public void update(Observable observable, Object data) {
+        if (getActivity() != null) {
+
+        }
+    }
+
+
+
 }

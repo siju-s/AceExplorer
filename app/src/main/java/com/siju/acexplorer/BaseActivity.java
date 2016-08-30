@@ -195,16 +195,18 @@ public class BaseActivity extends AppCompatActivity implements
     public int mRenamedPosition;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Logger.log(TAG, "onCreate");
 
         initConstants();
         initViews();
 //        checkScreenOrientation();
 
-        Logger.log(TAG, "onCreate");
+
         mFileOpsHelper = new FileOpsHelper(this);
 
         // If MarshMallow ask for permission
@@ -235,6 +237,7 @@ public class BaseActivity extends AppCompatActivity implements
         initListeners();
         if (mCurrentTheme != FileConstants.THEME_LIGHT)
             setApplicationTheme(false);
+
     }
 
  /*   @Override
@@ -312,6 +315,7 @@ public class BaseActivity extends AppCompatActivity implements
      * Brings up the Permission Dialog
      */
     private void requestPermission() {
+        Log.d(TAG, "Permission dialog");
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
                         .WRITE_EXTERNAL_STORAGE},
                 MY_PERMISSIONS_REQUEST);
@@ -655,13 +659,26 @@ public class BaseActivity extends AppCompatActivity implements
 
 
         if (mIsHomeScreenEnabled) {
+
             ImageButton imageButton = new ImageButton(this);
-            imageButton.setImageResource(R.drawable.ic_home_white_nav);
+            imageButton.setImageResource(R.drawable.ic_home_white);
             imageButton.setBackgroundColor(Color.parseColor("#00ffffff"));
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             params.gravity = Gravity.CENTER_VERTICAL;
+
+
             imageButton.setLayoutParams(params);
+/*            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+            ImageView home = new ImageView(this);
+            home.setScaleType(ImageView.ScaleType.FIT_XY);
+            params.leftMargin = 15;
+            params.rightMargin = 20;
+            params.gravity = Gravity.CENTER_VERTICAL;
+            home.setImageResource(R.drawable.ic_home_white);
+            home.setLayoutParams(params);*/
             imageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -978,11 +995,18 @@ public class BaseActivity extends AppCompatActivity implements
                     mOperation = FileConstants.FOLDER_CREATE;
                     String path = isDualPaneInFocus ? mCurrentDirDualPane : mCurrentDir;
                     new FileUtils().createDirDialog(this,mIsRootMode,path);
+
 //                    createDirDialog();
                 } else {
                     mOperation = FileConstants.FILE_CREATE;
                     String path = isDualPaneInFocus ? mCurrentDirDualPane : mCurrentDir;
                     new FileUtils().createFileDialog(this,mIsRootMode,path);
+                }
+                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
+                ((FileListFragment)fragment).setBackPressed(true);
+                if (isDualPaneInFocus) {
+                    Fragment dualFragment = getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
+                    ((FileListDualFragment)dualFragment).setBackPressed(true);
                 }
                 break;
 
@@ -2022,6 +2046,7 @@ public class BaseActivity extends AppCompatActivity implements
     @Override
     protected void onDestroy() {
         unregisterForContextMenu(expandableListView);
+
         mSharedPreferences.edit().putInt(FileConstants.CURRENT_THEME, mCurrentTheme).apply();
         if (mIsRootMode) {
             try {
@@ -2219,5 +2244,7 @@ public class BaseActivity extends AppCompatActivity implements
         expandableListAdapter.notifyDataSetChanged();
 
     }
+
+
 }
 
