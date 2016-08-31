@@ -28,13 +28,13 @@
         android:layout_height="match_parent"
         android:layout_above="@id/viewDummy">
 
-        <android.support.v7.widget.RecyclerView
+        <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
             android:id="@+id/recyclerViewFileList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="@null"
-            android:scrollbars="none"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:fastScrollThumbColor="@color/colorPrimary"
+            app:fastScrollTrackColor="@android:color/transparent"
             />
 
     </android.support.v4.widget.SwipeRefreshLayout>

@@ -21,6 +21,7 @@
     <dimen name="drawer_item_text_margin">18dp</dimen>
 
     <dimen name="folder_icon">55dp</dimen>
+    <dimen name="divider_margin_list">65dp</dimen>
     <dimen name="folder_thumb_icon">20dp</dimen>
 
 

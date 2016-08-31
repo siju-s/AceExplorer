@@ -13,8 +13,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.siju.acexplorer.R;
+import com.siju.acexplorer.common.Logger;
+
 /**
- * Created by Lincoln on 30/10/15.
+ *
  */
 public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
@@ -27,7 +30,6 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     public static final int VERTICAL_LIST = LinearLayoutManager.VERTICAL;
 
     private Drawable mDivider;
-
     private int mOrientation;
     int leftMargin;
 
@@ -36,8 +38,12 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
         mDivider = a.getDrawable(0);
         a.recycle();
         setOrientation(orientation);
-        leftMargin=(int)(55*(context.getResources().getDisplayMetrics().densityDpi/160f));
-    }
+        leftMargin=  context.getResources().getDimensionPixelSize(R.dimen.divider_margin_list);
+        Logger.log("TAG","left margin="+leftMargin+ " orientation="+orientation);
+//        int)(55*(context.getResources().getDisplayMetrics
+//                ().densityDpi/160f));
+//
+ }
 
     public void setOrientation(int orientation) {
         if (orientation != HORIZONTAL_LIST && orientation != VERTICAL_LIST) {
@@ -50,9 +56,10 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
         if (mOrientation == VERTICAL_LIST) {
             drawVertical(c, parent);
-        } else {
-            drawHorizontal(c, parent);
         }
+       /* else {
+            drawHorizontal(c, parent);
+        }*/
     }
 
     public void drawVertical(Canvas c, RecyclerView parent) {

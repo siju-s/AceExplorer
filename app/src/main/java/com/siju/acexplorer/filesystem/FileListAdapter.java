@@ -112,7 +112,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
 
     public void clearList() {
-        if (!fileInfoArrayList.isEmpty()) {
+        if (fileInfoArrayList != null && !fileInfoArrayList.isEmpty()) {
 //            fileInfoArrayList.clear();
             fileInfoArrayListCopy.clear();
         }
