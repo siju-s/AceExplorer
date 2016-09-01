@@ -99,7 +99,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         fileInfoArrayListCopy.addAll(fileInfos);
 //        Log.d("SIJU","updateAdapter"+fileInfoArrayList.size());
 //        Logger.log(this.getClass().getSimpleName(),"adapter size="+fileInfos.size());
-        offset=0;
+        offset = 0;
         mStopAnimation = false;
         notifyDataSetChanged();
         for (int i = 0; i < fileInfos.size(); i++) {
@@ -180,8 +180,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 //        setAnimation(fileListViewHolder.container, position);
 //        Log.d("SIJU", "onBindViewHolder--pos=" + position + " stop anim=" + this.mStopAnimation);
 
-        if (!mStopAnimation && !mAnimatedPos.get(position))
-        {
+        if (!mStopAnimation && !mAnimatedPos.get(position)) {
             animate(fileListViewHolder);
             mAnimatedPos.put(position, true);
         }
@@ -493,18 +492,22 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         Uri audioUri = Uri.fromFile(new File(path));
 
         MediaMetadataRetriever myRetriever = new MediaMetadataRetriever();
-        myRetriever.setDataSource(mContext, audioUri);
-
         byte[] artwork;
+        try {
+            myRetriever.setDataSource(mContext, audioUri);
+            artwork = myRetriever.getEmbeddedPicture();
+            Glide.with(mContext).load(artwork).centerCrop()
+                    .placeholder(R.drawable.ic_music)
+                    .crossFade(2)
+                    .into(fileListViewHolder.imageIcon);
+        }
+        catch (IllegalArgumentException exception) {
+            fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_music);
+        }
 
-
-        artwork = myRetriever.getEmbeddedPicture();
-        Glide.with(mContext).load(artwork).centerCrop()
-                .placeholder(R.drawable.ic_music)
-                .crossFade(2)
-                .into(fileListViewHolder.imageIcon);
-
-
+        if (myRetriever != null) {
+            myRetriever.release();
+        }
 
 
        /* if (artwork != null) {

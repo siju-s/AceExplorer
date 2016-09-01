@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
+    project.archivesBaseName = "Ace"
     defaultConfig {
         applicationId "com.siju.acexplorer"
         minSdkVersion 15
@@ -33,6 +34,11 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+           /* applicationVariants.all { variant ->
+                variant.outputs.each{ output ->
+                    output.outputFile = new File(output.outputFile.parent,output.outputFile.name.replace(".apk","-" + build8 + ".apk" ))
+                }
+            }*/
         }
     }
 }

@@ -186,6 +186,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private boolean mShowHidden;
     private int mSortMode;
     private boolean mIsBackPressed;
+    private DividerItemDecoration mDividerItemDecoration;
 
 
     @Override
@@ -260,22 +261,24 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
         mViewMode = sharedPreferenceWrapper.getViewMode(getActivity());
 
-        Log.d(TAG, "on onActivityCreated--Fragment" + mFilePath);
+        Log.d(TAG, "on onActivityCreated--Path" + mFilePath);
         Log.d(TAG, "View mode=" + mViewMode);
         args.putString(FileConstants.KEY_PATH, mFilePath);
         recyclerViewFileList.setHasFixedSize(true);
 
         if (mViewMode == FileConstants.KEY_LISTVIEW) {
             llm = new CustomLayoutManager(getActivity());
-            recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
-                    .VERTICAL));
+            mDividerItemDecoration = new DividerItemDecoration(getActivity(), LinearLayoutManager
+                    .VERTICAL);
+            recyclerViewFileList.addItemDecoration(mDividerItemDecoration);
 
         } else {
             refreshSpan();
       /*      llm = new CustomGridLayoutManager(getActivity(), getResources().getInteger(R
                     .integer.grid_columns));*/
-            recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
-                    .HORIZONTAL));
+            mDividerItemDecoration = new DividerItemDecoration(getActivity(), LinearLayoutManager
+                    .HORIZONTAL);
+            recyclerViewFileList.addItemDecoration(mDividerItemDecoration);
         }
 //            llm.setAutoMeasureEnabled(false);
         recyclerViewFileList.setLayoutManager(llm);
@@ -293,6 +296,8 @@ public class FileListFragment extends Fragment implements LoaderManager
         } else {
             fileInfoList = new ArrayList<>();
             fileInfoList.addAll(list);
+            fileListAdapter.setCategory(mCategory);
+            fileListAdapter.updateAdapter(fileInfoList);
            /* recyclerViewFileList.setHasFixedSize(true);
 
             if (mViewMode == FileConstants.KEY_LISTVIEW) {
@@ -316,6 +321,8 @@ public class FileListFragment extends Fragment implements LoaderManager
         recyclerViewFileList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                Logger.log(TAG, "onScrollStateChanged"+mStopAnim);
+
                 if (newState == RecyclerView.SCROLL_STATE_DRAGGING ||
                         newState == RecyclerView.SCROLL_STATE_SETTLING) {
                     if (fileListAdapter != null && mStopAnim) {
@@ -329,6 +336,8 @@ public class FileListFragment extends Fragment implements LoaderManager
         recyclerViewFileList.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
+                Logger.log(TAG, "On touch listener"+mStopAnim);
+
                 int event = motionEvent.getActionMasked();
 
                 if (fileListAdapter != null && mStopAnim) {
@@ -2092,17 +2101,14 @@ public class FileListFragment extends Fragment implements LoaderManager
 
         if (mViewMode == FileConstants.KEY_LISTVIEW) {
             llm = new CustomLayoutManager(getActivity());
-            recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
-                    .VERTICAL));
+
         } else {
             mGridItemWidth = dpToPx(100);
             llm = new CustomGridLayoutManager(getActivity(), mGridItemWidth);
-            recyclerViewFileList.removeItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
-                    .VERTICAL));
-            recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
-                    .HORIZONTAL));
+
 
         }
+        mStopAnim = true;
 
 //        llm.setAutoMeasureEnabled(false);
         recyclerViewFileList.setLayoutManager(llm);
@@ -2110,6 +2116,23 @@ public class FileListFragment extends Fragment implements LoaderManager
                 mCategory, mViewMode);
 
         recyclerViewFileList.setAdapter(fileListAdapter);
+        if (mViewMode == FileConstants.KEY_LISTVIEW) {
+            recyclerViewFileList.removeItemDecoration(mDividerItemDecoration);
+            mDividerItemDecoration.setOrientation(LinearLayoutManager.VERTICAL);
+            recyclerViewFileList.addItemDecoration(mDividerItemDecoration);
+          /*  recyclerViewFileList.removeItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
+                    .HORIZONTAL));*/
+        }
+        else {
+//            recyclerViewFileList.removeItemDecoration(mDividerItemDecoration);
+            mDividerItemDecoration.setOrientation(LinearLayoutManager.HORIZONTAL);
+            recyclerViewFileList.addItemDecoration(mDividerItemDecoration);
+           /* recyclerViewFileList.removeItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
+                    .VERTICAL));
+            recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
+                    .HORIZONTAL));*/
+        }
+
         initializeListeners();
 
     }
