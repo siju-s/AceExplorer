@@ -2,7 +2,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,15 +14,6 @@
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
 
-      <!--  <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/collapsing_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-
-            app:contentScrim="?attr/colorPrimary"
-            app:expandedTitleMarginEnd="64dp"
-            app:expandedTitleMarginStart="48dp" >-->
 
         <android.support.v7.widget.Toolbar
             xmlns:android="http://schemas.android.com/apk/res/android"
@@ -31,11 +21,11 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-             android:background="?attr/colorPrimary"
+            android:background="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:titleTextAppearance="@style/ToolbarTitle"
             />
-        <!--</android.support.design.widget.CollapsingToolbarLayout>-->
 
 
         <LinearLayout
@@ -65,15 +55,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
-                        android:orientation="horizontal"
-                         >
+                        android:orientation="horizontal"/>
 
-                        <!--             <Button
-                                         android:layout_width="wrap_content"
-                                         android:layout_height="match_parent"
-                                         android:text="SIJU"
-                                         android:textColor="@android:color/black"/>-->
-                    </LinearLayout>
                 </FrameLayout>
 
             </HorizontalScrollView>
@@ -97,13 +80,8 @@
                         android:id="@+id/navButtonsDualPane"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"/>
 
-                        <!--<Button-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="match_parent"-->
-                        <!--android:text="SIJU2222" />-->
-                    </LinearLayout>
                 </FrameLayout>
 
             </HorizontalScrollView>
@@ -111,25 +89,9 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <!--        <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">-->
+
 
     <include layout="@layout/content_main"/>
-
-
-    <!--    <FrameLayout
-            android:id="@+id/frame_home"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>-->
-
-    <!--        <include
-                layout="@layout/toolbar_main"/>-->
-
-
-    <!--</LinearLayout>-->
 
 
     <FrameLayout

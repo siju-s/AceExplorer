@@ -9,7 +9,6 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
@@ -26,7 +25,7 @@ public class CustomScrimInsetsFrameLayout extends FrameLayout {
 
     private Rect mInsets;
     private Rect mTempRect = new Rect();
-    private OnInsetsCallback mOnInsetsCallback;
+//    private OnInsetsCallback mOnInsetsCallback;
 
     public CustomScrimInsetsFrameLayout(Context context) {
         super(context);
@@ -55,7 +54,12 @@ public class CustomScrimInsetsFrameLayout extends FrameLayout {
         setWillNotDraw(true);
     }
 
-    @Override
+    /*@Override
+    protected boolean fitSystemWindows(Rect insets) {
+        return super.fitSystemWindows(insets);
+    }*/
+
+    /* @Override
     protected boolean fitSystemWindows(Rect insets) {
         mInsets = new Rect(insets);
         setWillNotDraw(mInsetForeground == null);
@@ -64,7 +68,7 @@ public class CustomScrimInsetsFrameLayout extends FrameLayout {
             mOnInsetsCallback.onInsetsChanged(insets);
         }
         return true; // consume insets
-    }
+    }*/
 
     @Override
     public void draw(Canvas canvas) {
@@ -116,17 +120,17 @@ public class CustomScrimInsetsFrameLayout extends FrameLayout {
         }
     }
 
-    /**
+/*    *//**
      * Allows the calling container to specify a callback for custom processing when insets change (i.e. when
      * {@link #fitSystemWindows(Rect)} is called. This is useful for setting padding on UI elements based on
      * UI chrome insets (e.g. a Google Map or a ListView). When using with ListView or GridView, remember to set
      * clipToPadding to false.
-     */
+     *//*
     public void setOnInsetsCallback(OnInsetsCallback onInsetsCallback) {
         mOnInsetsCallback = onInsetsCallback;
     }
 
     public static interface OnInsetsCallback {
         public void onInsetsChanged(Rect insets);
-    }
+    }*/
 }

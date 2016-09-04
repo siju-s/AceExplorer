@@ -5,6 +5,7 @@ package com.siju.acexplorer.settings;
  */
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,11 +17,19 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
-
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
+import android.support.design.widget.AppBarLayout;
+import android.support.v4.content.IntentCompat;
+import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewParent;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.siju.acexplorer.R;
@@ -34,7 +43,6 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
 
     private final String TAG = this.getClass().getSimpleName();
     private final String PREFS_PRO = "prefsPro";
-    private final String PREFS_VERSION = "prefsVersion";
     private final String PREFS_UPDATE = "prefsUpdate";
     public static final String PREFS_LANGUAGE = "prefLanguage";
 
@@ -45,23 +53,34 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
     private SharedPreferences mPrefs;
     Preference updatePreference;
     private Intent mSendIntent;
+    private final String PREFS_VERSION = "prefsVersion";
+    private int mIsTheme; // Default is Light
+
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_settings);
-        PreferenceManager.setDefaultValues(getActivity(), R.xml.pref_settings, false);
         setHasOptionsMenu(true);
         mSendIntent = new Intent();
         mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
 //        langPreference = (ListPreference) findPreference(PREFS_LANGUAGE);
         themePreference = (ListPreference) findPreference(FileConstants.PREFS_THEME);
+        mIsTheme = mPrefs.getInt(FileConstants.CURRENT_THEME, FileConstants.THEME_LIGHT);
 
         updatePreference = findPreference(PREFS_UPDATE);
 
+
         Preference version = findPreference(PREFS_VERSION);
+        try {
+            version.setSummary(getActivity().getPackageManager()
+                    .getPackageInfo(getActivity().getPackageName(), 0).versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
 
         CheckBoxPreference preference = (CheckBoxPreference) findPreference("prefDualPane");
         preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -86,12 +105,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
             }
         });
 
-        try {
-            version.setSummary(getActivity().getPackageManager()
-                    .getPackageInfo(getActivity().getPackageName(), 0).versionName);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
+
 //        String value = LocaleHelper.getLanguage(getActivity());
 //        langPreference.setValue(value);
 
@@ -115,6 +129,42 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         super.onPause();
         mPrefs.unregisterOnSharedPreferenceChangeListener(mListener);
 
+    }
+
+    @Override
+    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
+        super.onPreferenceTreeClick(preferenceScreen, preference);
+        Log.d(this.getClass().getSimpleName(), "On prefernce tree-" + preference);
+
+        // If the user has clicked on a preference screen, set up the screen
+        if (preference instanceof PreferenceScreen) {
+            setupActionBar((PreferenceScreen) preference);
+
+        }
+
+        return false;
+    }
+
+    public void setupActionBar(PreferenceScreen preferenceScreen) {
+        final Dialog dialog = preferenceScreen.getDialog();
+        AppBarLayout bar;
+        ViewParent view1 = dialog.findViewById(android.R.id.list).getParent();
+        ViewParent view2 = view1.getParent();
+        Log.d(this.getClass().getSimpleName(), "On prefernce tree-" + view1 + " view2=" + view2);
+
+        LinearLayout root = (LinearLayout) dialog.findViewById(android.R.id.list).getParent().getParent();
+        bar = (AppBarLayout) LayoutInflater.from(getActivity()).inflate(R.layout.toolbar, root,
+                false);
+        root.addView(bar, 0);
+        Toolbar toolbar = (Toolbar) bar.getChildAt(0);
+        toolbar.setTitle(preferenceScreen.getTitle());
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
     }
 
 
@@ -143,6 +193,8 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object value) {
                     String stringValue = value.toString();
+                    Log.d("TAG","On prefs chnage");
+
 
                     if (preference instanceof ListPreference) {
                         // For list preferences, look up the correct display value in
@@ -160,11 +212,19 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
 
                     LocaleHelper.setLocale(getActivity(), stringValue);
                     getActivity().recreate();
+
+
                 }*/
+
                         if (listPreference.getKey().equals(FileConstants.PREFS_THEME)) {
                             int theme = Integer.valueOf(stringValue);
+                            mPrefs.edit().putInt(FileConstants.CURRENT_THEME,theme).apply();
+                            Logger.log("TAG","Current theme="+mIsTheme+" new theme="+theme);
+                            if (mIsTheme != theme) {
+                                restartApp();
+                            }
 
-                            ((SettingsActivity) getActivity()).setApplicationTheme(theme);
+//                            ((SettingsActivity) getActivity()).setApplicationTheme(theme);
                         }
 
                     } else {
@@ -196,6 +256,22 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
                 PreferenceManager
                         .getDefaultSharedPreferences(preference.getContext())
                         .getString(preference.getKey(), ""));
+    }
+
+
+    private void restartApp() {
+        Activity activity = getActivity();
+        if (activity == null)
+            return;
+        final int enter_anim = android.R.anim.fade_in;
+        final int exit_anim = android.R.anim.fade_out;
+        activity.overridePendingTransition(enter_anim, exit_anim);
+        activity.finish();
+        activity.overridePendingTransition(enter_anim, exit_anim);
+        final Intent intent = getActivity().getIntent();
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+        activity.startActivity(intent);
+
     }
 
     /**
@@ -240,7 +316,6 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
     }
 
 
-
     SharedPreferences.OnSharedPreferenceChangeListener mListener =
             new SharedPreferences.OnSharedPreferenceChangeListener() {
                 public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
@@ -248,7 +323,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
                         case FileConstants.PREFS_HOMESCREEN:
                             boolean isHomeScreenEnabled = prefs.getBoolean(FileConstants
                                     .PREFS_HOMESCREEN, true);
-                            Logger.log(TAG,"Homescreen="+isHomeScreenEnabled);
+                            Logger.log(TAG, "Homescreen=" + isHomeScreenEnabled);
 //                            mSendIntent.putExtra(FileConstants.PREFS_HOMESCREEN, isHomeScreenEnabled);
                             getActivity().setResult(Activity.RESULT_OK, mSendIntent);
                             break;
@@ -256,11 +331,18 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
                         case FileConstants.PREFS_DUAL_PANE:
                             boolean isDualPaneEnabledSettings = mPrefs.getBoolean(FileConstants
                                     .PREFS_DUAL_PANE, true);
-                            Logger.log(TAG,"Dualpane="+isDualPaneEnabledSettings);
+                            Logger.log(TAG, "Dualpane=" + isDualPaneEnabledSettings);
 //                            mSendIntent.putExtra(FileConstants.PREFS_DUAL_PANE, isDualPaneEnabledSettings);
                             getActivity().setResult(Activity.RESULT_OK, mSendIntent);
                             break;
                     }
                 }
             };
+
+    /**
+     * This fragment shows general preferences only. It is used when the
+     * activity is showing a two-pane settings UI.
+     */
+
+
 }

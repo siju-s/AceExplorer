@@ -93,16 +93,36 @@
         <item name="android:textColorPrimary">#ffffffff</item>
     </style>
 
-    <style name="BlackTheme">
-        <item name="colorPrimary">#000000</item>
-        <item name="android:background">#000000</item>
-        <item name="android:textColor">#FFFFFF</item>
+    <style name="Theme.Transparent" parent="@style/Theme.AppCompat.Light.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <!--<item name="android:windowIsTranslucent">true</item>-->
+        <!--<item name="android:windowBackground">@android:color/transparent</item>-->
+        <!--&lt;!&ndash;<item name="android:windowContentOverlay">@null</item>&ndash;&gt;-->
+        <!--<item name="android:windowNoTitle">true</item>-->
+        <!--&lt;!&ndash;<item name="android:windowIsFloating">true</item>&ndash;&gt;-->
+        <!--<item name="android:backgroundDimEnabled">false</item>-->
     </style>
 
-    <style name="LightTheme">
+    <style name="BlackTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">#000000</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:background">#000000</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textColorPrimary">#ffffff</item>
+        <item name="android:textColorSecondary">#ffffff</item>
+
+
+    </style>
+
+    <style name="LightTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="android:background">#ffffff</item>
-        <item name="android:textColor">#000000</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorSecondary">@color/colorAccent</item>
+        <item name="colorControlNormal">#ffffffff</item>
+        <item name="android:listDivider">@null</item>
+        <item name="android:textColorPrimary">#000000</item>
     </style>
 
     <style name="checkBoxStyle" parent="Base.Theme.AppCompat">

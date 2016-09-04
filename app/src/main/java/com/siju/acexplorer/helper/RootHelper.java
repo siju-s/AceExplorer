@@ -6,6 +6,7 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.BaseFile;
 import com.siju.acexplorer.filesystem.model.FileInfo;
@@ -203,7 +204,18 @@ public class RootHelper {
                                 BaseFile array = parseName(file1);
                                 if (array != null) {
                                     String name = array.getPath();
-                                    String path1 = path + "/" + array.getPath();
+                                    String path1;
+
+
+                                    if (!path.equals("/")) {
+                                        path1 = path + "/" + name;
+                                    }
+                                    else {
+                                        path1 = "/" + name;
+                                    }
+                                    Logger.log("RootHelper","Path=="+path);
+
+                                    Logger.log("RootHelper","path1=="+path1);
 //                                    array.setName(array.getPath());
 //                                    array.setPath();
                                     boolean isDirectory;

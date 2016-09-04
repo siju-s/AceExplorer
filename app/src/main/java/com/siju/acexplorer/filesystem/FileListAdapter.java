@@ -63,6 +63,8 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     private int mAnimation;
     int offset = 0;
     Animation localAnimation;
+    private boolean mIsAnimNeeded = true;
+
 
 
     FileListAdapter(Fragment fragment, Context mContext, ArrayList<FileInfo>
@@ -100,15 +102,21 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 //        Log.d("SIJU","updateAdapter"+fileInfoArrayList.size());
 //        Logger.log(this.getClass().getSimpleName(),"adapter size="+fileInfos.size());
         offset = 0;
-        mStopAnimation = false;
+        mStopAnimation = !mIsAnimNeeded;
         notifyDataSetChanged();
         for (int i = 0; i < fileInfos.size(); i++) {
             mAnimatedPos.put(i, false);
         }
-        Log.d("SIJU", "updateAdapter--animated pos size=" + mAnimatedPos.size());
+        Log.d("SIJU", "updateAdapter--animated=" + mStopAnimation);
 
 //        mAnimatedPos = new SparseBooleanArray();
     }
+
+    public void setStopAnimation(boolean flag) {
+        mIsAnimNeeded = !flag;
+    }
+
+
 
 
     public void clearList() {

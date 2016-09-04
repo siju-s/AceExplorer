@@ -2089,6 +2089,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     private void persistSortMode(int sortMode) {
         mPreferences.edit().putInt(FileConstants.KEY_SORT_MODE, sortMode).apply();
+        mSortMode = sortMode;
     }
 
     private int getSortMode() {

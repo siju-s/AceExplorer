@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -63,6 +64,7 @@ import com.siju.acexplorer.filesystem.task.CopyService;
 import com.siju.acexplorer.filesystem.task.DeleteTask;
 import com.siju.acexplorer.filesystem.task.MoveFiles;
 import com.siju.acexplorer.filesystem.ui.CustomScrimInsetsFrameLayout;
+import com.siju.acexplorer.filesystem.ui.DialogBrowseFragment;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.model.SectionGroup;
 import com.siju.acexplorer.model.SectionItems;
@@ -193,7 +195,7 @@ public class BaseActivity extends AppCompatActivity implements
     public ArrayList<FileInfo> mFiles = new ArrayList<>();
     public FileOpsHelper mFileOpsHelper;
     public int mRenamedPosition;
-
+    private boolean mRingtonePickerIntent;
 
 
     @Override
@@ -208,6 +210,12 @@ public class BaseActivity extends AppCompatActivity implements
 
 
         mFileOpsHelper = new FileOpsHelper(this);
+
+        Intent intent = getIntent();
+        if (intent != null && intent.getAction() != null && intent.getAction().equals(RingtoneManager
+                .ACTION_RINGTONE_PICKER)) {
+            mRingtonePickerIntent = true;
+        }
 
         // If MarshMallow ask for permission
         if (useRunTimePermissions()) {
@@ -269,7 +277,22 @@ public class BaseActivity extends AppCompatActivity implements
         setListAdapter();
         setUpPreferences();
         checkScreenOrientation();
-        initialScreenSetup(mIsHomeScreenEnabled);
+        if (!mRingtonePickerIntent) {
+            initialScreenSetup(mIsHomeScreenEnabled);
+        } else {
+             showRingtonePickerDialog();
+        }
+    }
+
+    private void showRingtonePickerDialog() {
+
+        DialogBrowseFragment dialogFragment = new DialogBrowseFragment();
+        Bundle args = new Bundle();
+        args.putBoolean("ringtone_picker",true);
+        dialogFragment.setArguments(args);
+        dialogFragment.show(getSupportFragmentManager(), "Browse Fragment");
+
+
     }
 
     // A method to find height of the status bar
@@ -432,7 +455,7 @@ public class BaseActivity extends AppCompatActivity implements
                     new MoveFiles(this, mFiles).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mNewFilePath);
                     break;
                 case FileConstants.FOLDER_CREATE://mkdir
-                    mFileOpsHelper.mkDir(mIsRootMode,new File(mCreatePath));
+                    mFileOpsHelper.mkDir(mIsRootMode, new File(mCreatePath));
                     break;
                 case FileConstants.RENAME:
                     mFileOpsHelper.renameFile(mIsRootMode, new File(mOldFilePath), new File(mNewFilePath),
@@ -440,7 +463,7 @@ public class BaseActivity extends AppCompatActivity implements
 //                    fragment.renameCallBack();
                     break;
                 case FileConstants.FILE_CREATE:
-                    mFileOpsHelper.mkFile(mIsRootMode,new File(mCreatePath));
+                    mFileOpsHelper.mkFile(mIsRootMode, new File(mCreatePath));
                     break;
                 case FileConstants.EXTRACT:
                     mFileOpsHelper.extractFile(new File(mOldFilePath), new File(mNewFilePath));
@@ -535,7 +558,7 @@ public class BaseActivity extends AppCompatActivity implements
         toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, mToolbar, R.string.navigation_drawer_open, R.string
                 .navigation_drawer_close);
-        drawerLayout.setDrawerListener(toggle);
+        drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         // get the listview
         expandableListView = (ExpandableListView) findViewById(R.id.expand_list_drawer);
@@ -642,7 +665,6 @@ public class BaseActivity extends AppCompatActivity implements
         } else {
             navDirectoryDualPane.removeAllViews();
             mCurrentDirDualPane = path;
-
         }
 
         FileListFragment fileListFragment = (FileListFragment) getSupportFragmentManager().findFragmentById(R.id
@@ -831,13 +853,13 @@ public class BaseActivity extends AppCompatActivity implements
             textView.setTextColor(ContextCompat.getColor(this, R.color.navButtons));
             textView.setTextSize(15);
             params.leftMargin = 20;
-            textView.setPadding(0,0,35,0);
+            textView.setPadding(0, 0, 35, 0);
 //            params.rightMargin = 20;
             textView.setLayoutParams(params);
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Logger.log(TAG,"nav button onclick--dir="+dir);
+                    Logger.log(TAG, "nav button onclick--dir=" + dir);
                     navButtonOnClick(view, dir, fileListFragment, fileListDualFragment);
                 }
             });
@@ -994,19 +1016,19 @@ public class BaseActivity extends AppCompatActivity implements
                         .fabCreateFolderDual) {
                     mOperation = FileConstants.FOLDER_CREATE;
                     String path = isDualPaneInFocus ? mCurrentDirDualPane : mCurrentDir;
-                    new FileUtils().createDirDialog(this,mIsRootMode,path);
+                    new FileUtils().createDirDialog(this, mIsRootMode, path);
 
 //                    createDirDialog();
                 } else {
                     mOperation = FileConstants.FILE_CREATE;
                     String path = isDualPaneInFocus ? mCurrentDirDualPane : mCurrentDir;
-                    new FileUtils().createFileDialog(this,mIsRootMode,path);
+                    new FileUtils().createFileDialog(this, mIsRootMode, path);
                 }
                 Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
-                ((FileListFragment)fragment).setBackPressed(true);
+                ((FileListFragment) fragment).setBackPressed(true);
                 if (isDualPaneInFocus) {
                     Fragment dualFragment = getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
-                    ((FileListDualFragment)dualFragment).setBackPressed(true);
+                    ((FileListDualFragment) dualFragment).setBackPressed(true);
                 }
                 break;
 
@@ -1022,11 +1044,6 @@ public class BaseActivity extends AppCompatActivity implements
 //                break;
         }
     }
-
-
-
-
-
 
 
     private void showMessage(String msg) {
@@ -1583,6 +1600,11 @@ public class BaseActivity extends AppCompatActivity implements
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        if (intent != null && intent.getAction() != null && intent.getAction().equals(RingtoneManager
+                .ACTION_RINGTONE_PICKER)) {
+//            mRingtonePickerIntent = true;
+            showRingtonePickerDialog();
+        }
 /*        if (intent != null && !intent.getAction().equals(ACTION_MAIN)) {
             Log.d(TAG, "On onNewIntent");
             StoragesFragment storagesFragment = (StoragesFragment)
@@ -1664,28 +1686,30 @@ public class BaseActivity extends AppCompatActivity implements
                                     ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
 
-        ExpandableListView.ExpandableListContextMenuInfo info =
-                (ExpandableListView.ExpandableListContextMenuInfo) menuInfo;
+        if (menuInfo instanceof ExpandableListView.ExpandableListContextMenuInfo) {
+            ExpandableListView.ExpandableListContextMenuInfo info =
+                    (ExpandableListView.ExpandableListContextMenuInfo) menuInfo;
 
-        int type =
-                ExpandableListView.getPackedPositionType(info.packedPosition);
+            int type =
+                    ExpandableListView.getPackedPositionType(info.packedPosition);
 
-        int group =
-                ExpandableListView.getPackedPositionGroup(info.packedPosition);
+            int group =
+                    ExpandableListView.getPackedPositionGroup(info.packedPosition);
 
-        int child =
-                ExpandableListView.getPackedPositionChild(info.packedPosition);
+            int child =
+                    ExpandableListView.getPackedPositionChild(info.packedPosition);
 
-        // Only for Favorites
-        if (group == 1) {
-            // Only create a context menu for child items
-            if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-                // Array created earlier when we built the expandable list
+            // Only for Favorites
+            if (group == 1) {
+                // Only create a context menu for child items
+                if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+                    // Array created earlier when we built the expandable list
 //                String page = [group][child];
 
 //                menu.setHeaderTitle(page);
 
-                menu.add(0, MENU_FAVOURITES, 0, getString(R.string.delete_fav));
+                    menu.add(0, MENU_FAVOURITES, 0, getString(R.string.delete_fav));
+                }
             }
         }
     }

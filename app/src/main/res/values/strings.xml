@@ -133,7 +133,9 @@
     <string name="pref_title_version">Version</string>
 
 
-    <string name="prefs_summary_dev">Developer : Siju</string>
+    <string name="prefs_summary_dev">Developer</string>
+    <string name="dev_name" translatable="false">Siju</string>
+
     <string name="hide">Hide</string>
     <string name="unhide">Unhide</string>
     <string name="more">more</string>
@@ -174,6 +176,7 @@
     <string name="view">View</string>
     <string name="install">Install</string>
     <string name="package_installer_content">Which action would you like to do?</string>
+    <string name="open_source_license">Open source licenses</string>
 
 
 </resources>

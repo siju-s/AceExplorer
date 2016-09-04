@@ -4,6 +4,7 @@ package com.siju.acexplorer.settings;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -20,7 +21,7 @@ import com.siju.acexplorer.filesystem.FileConstants;
  * handset devices, settings are presented as a single list. On tablets,
  * settings are split by category, with category headers shown to the left of
  * the list of settings.
- * <p>
+ * <p/>
  * See <a href="http://developer.android.com/design/patterns/settings.html">
  * Android Design: Settings</a> for design guidelines and the <a
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
@@ -34,8 +35,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        checkTheme();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pref_holder);
+        PreferenceManager.setDefaultValues(this, R.xml.pref_settings, false);
         mRelativeLayoutSettings = (RelativeLayout) findViewById(R.id.relativeLayoutSettings);
 //        setupActionBar();
         // Display the fragment as the main content.
@@ -52,10 +55,34 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
     }
 
+    private void checkTheme() {
+      int theme = PreferenceManager.getDefaultSharedPreferences(this)
+                .getInt(FileConstants.CURRENT_THEME, FileConstants.THEME_LIGHT);
+
+//        int  stringValue = PreferenceManager.getDefaultSharedPreferences(this).getInt(FileConstants.PREFS_THEME, 0);
+
+
+            if (theme == FileConstants.THEME_DARK)
+                setTheme(R.style.BlackTheme);
+
+
+
+
+//        setTheme(R.style.LightTheme);
+
+
+
+    }
+
+    @Override
+    protected boolean isValidFragment(String fragmentName) {
+        return true;
+    }
+
     /**
      * Set up the {@link android.app.ActionBar}, if the API is available.
      */
-    private void setupActionBar() {
+    public void setupActionBar() {
         AppBarLayout bar;
         LinearLayout root = (LinearLayout) findViewById(android.R.id.list).getParent().getParent().getParent();
         bar = (AppBarLayout) LayoutInflater.from(this).inflate(R.layout.toolbar, root,
@@ -84,20 +111,20 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             if (theme == FileConstants.THEME_LIGHT) {
         /*        getListView().setBackgroundColor(ContextCompat.getColor(this, R.color
                         .color_light_bg));*/
-                mToolbar.setBackgroundColor(ContextCompat.getColor(this,R.color.colorPrimary));
+                mToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
                 mRelativeLayoutSettings.setBackgroundColor(ContextCompat.getColor(this, R.color
                         .color_light_bg));
                 if (Build.VERSION.SDK_INT >= 21) {
-                    getWindow().setStatusBarColor(ContextCompat.getColor(this,R.color.color_light_status_bar));
+                    getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.color_light_status_bar));
 
                 }
             } else if (theme == FileConstants.THEME_DARK) {
          /*       getListView().setBackgroundColor(ContextCompat.getColor(this, R.color
                         .color_dark_bg));*/
-                mToolbar.setBackgroundColor(ContextCompat.getColor(this,R.color.color_dark_bg));
+                mToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.color_dark_bg));
                 mRelativeLayoutSettings.setBackgroundColor(ContextCompat.getColor(this, R.color.color_dark_bg));
                 if (Build.VERSION.SDK_INT >= 21) {
-                    getWindow().setStatusBarColor(ContextCompat.getColor(this,R.color.color_dark_status_bar));
+                    getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.color_dark_status_bar));
 
                 }
             }

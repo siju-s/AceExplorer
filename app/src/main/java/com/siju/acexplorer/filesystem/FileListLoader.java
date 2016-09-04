@@ -272,8 +272,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         } else {
 //            boolean rootAvailable  = RootTools.isRootAvailable();
             fileInfoList = com.siju.acexplorer.helper.RootHelper.getFilesList(mContext, mPath,
-                    true,
-                    showHidden);
+                    true,showHidden);
             fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
         }
         return fileInfoList;
