@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
@@ -21,7 +22,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.support.design.widget.AppBarLayout;
-import android.support.v4.content.IntentCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -55,7 +56,6 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
     private Intent mSendIntent;
     private final String PREFS_VERSION = "prefsVersion";
     private int mIsTheme; // Default is Light
-
 
 
     @Override
@@ -150,14 +150,30 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         AppBarLayout bar;
         ViewParent view1 = dialog.findViewById(android.R.id.list).getParent();
         ViewParent view2 = view1.getParent();
-        Log.d(this.getClass().getSimpleName(), "On prefernce tree-" + view1 + " view2=" + view2);
-
-        LinearLayout root = (LinearLayout) dialog.findViewById(android.R.id.list).getParent().getParent();
+        Log.d(this.getClass().getSimpleName(), "On prefernce tree-" + view1 + " view2=" + view2+ " view3="+view2.getParent());
+        LinearLayout root;
+        if (Build.VERSION.SDK_INT >= 24) {
+            root = (LinearLayout) dialog.findViewById(android.R.id.list).getParent().getParent();
+        }
+        else {
+            root = (LinearLayout) dialog.findViewById(android.R.id.list).getParent();
+        }
         bar = (AppBarLayout) LayoutInflater.from(getActivity()).inflate(R.layout.toolbar, root,
                 false);
         root.addView(bar, 0);
         Toolbar toolbar = (Toolbar) bar.getChildAt(0);
         toolbar.setTitle(preferenceScreen.getTitle());
+
+
+        if (mIsTheme == FileConstants.THEME_DARK) {
+            toolbar.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_colorPrimary));
+
+            if (Build.VERSION.SDK_INT >= 21) {
+                getActivity().getWindow().setStatusBarColor(ContextCompat.getColor(getActivity(), R.color
+                        .dark_colorPrimaryDark));
+
+            }
+        }
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -193,7 +209,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object value) {
                     String stringValue = value.toString();
-                    Log.d("TAG","On prefs chnage");
+                    Log.d("TAG", "On prefs chnage");
 
 
                     if (preference instanceof ListPreference) {
@@ -218,10 +234,12 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
 
                         if (listPreference.getKey().equals(FileConstants.PREFS_THEME)) {
                             int theme = Integer.valueOf(stringValue);
-                            mPrefs.edit().putInt(FileConstants.CURRENT_THEME,theme).apply();
-                            Logger.log("TAG","Current theme="+mIsTheme+" new theme="+theme);
+                            mPrefs.edit().putInt(FileConstants.CURRENT_THEME, theme).apply();
+                            Logger.log("TAG", "Current theme=" + mIsTheme + " new theme=" + theme);
                             if (mIsTheme != theme) {
+                                getActivity().setResult(Activity.RESULT_OK, mSendIntent);
                                 restartApp();
+
                             }
 
 //                            ((SettingsActivity) getActivity()).setApplicationTheme(theme);
@@ -268,9 +286,9 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         activity.overridePendingTransition(enter_anim, exit_anim);
         activity.finish();
         activity.overridePendingTransition(enter_anim, exit_anim);
-        final Intent intent = getActivity().getIntent();
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
-        activity.startActivity(intent);
+        /*final Intent intent = getActivity().getIntent();
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);*/
+        activity.startActivity(activity.getIntent());
 
     }
 

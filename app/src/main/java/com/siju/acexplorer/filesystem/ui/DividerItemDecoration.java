@@ -32,11 +32,18 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     private int mOrientation;
     int leftMargin;
 
-    public DividerItemDecoration(Context context, int orientation) {
+    public DividerItemDecoration(Context context, int orientation,boolean isDarkTheme) {
 /*        final TypedArray a = context.obtainStyledAttributes(ATTRS);
         mDivider = a.getDrawable(0);
         a.recycle();*/
-        mDivider = ContextCompat.getDrawable(context,R.drawable.divider_line);
+        if (isDarkTheme) {
+            mDivider = ContextCompat.getDrawable(context,R.drawable.divider_line_dark);
+
+        }
+        else {
+            mDivider = ContextCompat.getDrawable(context,R.drawable.divider_line);
+        }
+
         setOrientation(orientation);
         leftMargin = context.getResources().getDimensionPixelSize(R.dimen.divider_margin_list);
 //        int)(55*(context.getResources().getDisplayMetrics

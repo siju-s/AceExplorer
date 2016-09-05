@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -47,6 +46,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.flurry.android.FlurryAgent;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.kobakei.ratethisapp.RateThisApp;
@@ -64,11 +64,11 @@ import com.siju.acexplorer.filesystem.task.CopyService;
 import com.siju.acexplorer.filesystem.task.DeleteTask;
 import com.siju.acexplorer.filesystem.task.MoveFiles;
 import com.siju.acexplorer.filesystem.ui.CustomScrimInsetsFrameLayout;
-import com.siju.acexplorer.filesystem.ui.DialogBrowseFragment;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.model.SectionGroup;
 import com.siju.acexplorer.model.SectionItems;
 import com.siju.acexplorer.settings.SettingsActivity;
+import com.siju.acexplorer.utils.FlurryUtils;
 import com.stericson.RootTools.RootTools;
 
 import java.io.File;
@@ -200,6 +200,7 @@ public class BaseActivity extends AppCompatActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        checkTheme();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Logger.log(TAG, "onCreate");
@@ -210,12 +211,6 @@ public class BaseActivity extends AppCompatActivity implements
 
 
         mFileOpsHelper = new FileOpsHelper(this);
-
-        Intent intent = getIntent();
-        if (intent != null && intent.getAction() != null && intent.getAction().equals(RingtoneManager
-                .ACTION_RINGTONE_PICKER)) {
-            mRingtonePickerIntent = true;
-        }
 
         // If MarshMallow ask for permission
         if (useRunTimePermissions()) {
@@ -228,6 +223,15 @@ public class BaseActivity extends AppCompatActivity implements
         }
     }
 
+    private void checkTheme() {
+        mCurrentTheme = PreferenceManager.getDefaultSharedPreferences(this)
+                .getInt(FileConstants.CURRENT_THEME, FileConstants.THEME_LIGHT);
+
+        if (mCurrentTheme == FileConstants.THEME_DARK) {
+            setTheme(R.style.Dark_AppTheme_NoActionBar);
+        }
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -236,16 +240,19 @@ public class BaseActivity extends AppCompatActivity implements
         RateThisApp.onStart(this);
         // If the criteria is satisfied, "Rate this app" dialog will be shown
         RateThisApp.showRateDialogIfNeeded(this);
+        FlurryAgent.onStartSession(this, "NBH7DY8FPN4MFXJ274QP");
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        FlurryAgent.onEndSession(this);
+    }
 
     private void setup() {
         checkPreferences();
         getSavedFavourites();
         initListeners();
-        if (mCurrentTheme != FileConstants.THEME_LIGHT)
-            setApplicationTheme(false);
-
     }
 
  /*   @Override
@@ -267,7 +274,7 @@ public class BaseActivity extends AppCompatActivity implements
         mShowHidden = mSharedPreferences.getBoolean(FileConstants.PREFS_HIDDEN, false);
         mIsDualPaneEnabledSettings = mSharedPreferences.getBoolean(FileConstants.PREFS_DUAL_PANE,
                 true);
-        mCurrentTheme = mSharedPreferences.getInt(FileConstants.CURRENT_THEME, 0);
+        mCurrentTheme = mSharedPreferences.getInt(FileConstants.CURRENT_THEME, FileConstants.THEME_LIGHT);
         mIsRootMode = mSharedPreferences.getBoolean(FileConstants.ROOT_ACCESS, true);
     }
 
@@ -277,14 +284,11 @@ public class BaseActivity extends AppCompatActivity implements
         setListAdapter();
         setUpPreferences();
         checkScreenOrientation();
-        if (!mRingtonePickerIntent) {
-            initialScreenSetup(mIsHomeScreenEnabled);
-        } else {
-             showRingtonePickerDialog();
-        }
+        initialScreenSetup(mIsHomeScreenEnabled);
+
     }
 
-    private void showRingtonePickerDialog() {
+/*    private void showRingtonePickerDialog() {
 
         DialogBrowseFragment dialogFragment = new DialogBrowseFragment();
         Bundle args = new Bundle();
@@ -293,7 +297,7 @@ public class BaseActivity extends AppCompatActivity implements
         dialogFragment.show(getSupportFragmentManager(), "Browse Fragment");
 
 
-    }
+    }*/
 
     // A method to find height of the status bar
     public int getStatusBarHeight() {
@@ -404,6 +408,7 @@ public class BaseActivity extends AppCompatActivity implements
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         // Called when user returns from the settings screen
         if (requestCode == PREFS_REQUEST) {
+            Logger.log(TAG, "OnActivityResult=" + resultCode);
             if (resultCode == RESULT_OK) {
                 if (intent.getBooleanExtra(FileConstants.PREFS_RESET, false)) {
                     resetFavouritesGroup();
@@ -564,16 +569,31 @@ public class BaseActivity extends AppCompatActivity implements
         expandableListView = (ExpandableListView) findViewById(R.id.expand_list_drawer);
         View list_header = getLayoutInflater().inflate(R.layout.drawerlist_header, null);
         expandableListView.addHeaderView(list_header);
-    /*    mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggleDrawer(true);
-            }
-        });*/
+
+
         fabCreateMenu = (FloatingActionsMenu) findViewById(R.id.fabCreate);
         fabCreateFolder = (FloatingActionButton) findViewById(R.id.fabCreateFolder);
         fabCreateFile = (FloatingActionButton) findViewById(R.id.fabCreateFile);
         frameLayoutFab = (FrameLayout) findViewById(R.id.frameLayoutFab);
+
+        fabCreateMenuDual = (FloatingActionsMenu) findViewById(R.id.fabCreateDual);
+        fabCreateFolderDual = (FloatingActionButton) findViewById(R.id.fabCreateFolderDual);
+        fabCreateFileDual = (FloatingActionButton) findViewById(R.id.fabCreateFileDual);
+
+
+        frameLayoutFabDual = (FrameLayout) findViewById(R.id.frameLayoutFabDual);
+        frameLayoutFabDual.getBackground().setAlpha(0);
+
+
+        if (mCurrentTheme == FileConstants.THEME_DARK) {
+            expandableListView.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_colorPrimary));
+            mNavigationLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_colorPrimary));
+            mBottomToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_colorPrimary));
+            mToolbar.setPopupTheme(R.style.Dark_AppTheme_PopupOverlay);
+            frameLayoutFab.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_overlay));
+            frameLayoutFabDual.setBackgroundColor(ContextCompat.getColor(this, R.color.darkOverlayDual));
+            mMainLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_colorPrimary));
+        }
         frameLayoutFab.getBackground().setAlpha(0);
 
         fabCreateMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu
@@ -608,15 +628,6 @@ public class BaseActivity extends AppCompatActivity implements
                 frameLayoutFab.setOnTouchListener(null);
             }
         });
-
-
-        fabCreateMenuDual = (FloatingActionsMenu) findViewById(R.id.fabCreateDual);
-        fabCreateFolderDual = (FloatingActionButton) findViewById(R.id.fabCreateFolderDual);
-        fabCreateFileDual = (FloatingActionButton) findViewById(R.id.fabCreateFileDual);
-
-
-        frameLayoutFabDual = (FrameLayout) findViewById(R.id.frameLayoutFabDual);
-        frameLayoutFabDual.getBackground().setAlpha(0);
 
 
         fabCreateMenuDual.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu
@@ -1432,6 +1443,7 @@ public class BaseActivity extends AppCompatActivity implements
     }
 
     public void initialScreenSetup(boolean isHomeScreenEnabled) {
+        FlurryAgent.logEvent(FlurryUtils.HOME_ENABLED, isHomeScreenEnabled);
         if (isHomeScreenEnabled) {
             // Fragment fragment = null;
             toggleNavBarFab(true);
@@ -1492,13 +1504,9 @@ public class BaseActivity extends AppCompatActivity implements
         ArrayList<SectionItems> storageGroupChild = new ArrayList<>();
         File systemDir = FileUtils.getRootDirectory();
         File rootDir = systemDir.getParentFile();
-      /*  File internalSD = getI
-      pnternalStorage();
-        File extSD = FileUtils.getExternalStorage();*/
+
         storageGroupChild.add(new SectionItems(STORAGE_ROOT, storageSpace(systemDir), R.drawable
-                .ic_root_white,
-                FileUtils
-                        .getAbsolutePath(rootDir)));
+                .ic_root_white, FileUtils.getAbsolutePath(rootDir)));
 
         for (String path : storagePaths) {
             File file = new File(path);
@@ -1524,14 +1532,6 @@ public class BaseActivity extends AppCompatActivity implements
             }
 
         }
- /*       storageGroupChild.add(new SectionItems(STORAGE_INTERNAL, storageSpace(internalSD), R
-                .drawable
-                .ic_phone_white, FileUtils.getAbsolutePath(internalSD)));
-        if (extSD != null) {
-            storageGroupChild.add(new SectionItems(STORAGE_EXTERNAL, storageSpace(extSD), R
-                    .drawable.ic_ext_white,
-                    FileUtils.getAbsolutePath(extSD)));
-        }*/
         totalGroup.add(new SectionGroup(mListHeader.get(0), storageGroupChild));
     }
 
@@ -1600,11 +1600,11 @@ public class BaseActivity extends AppCompatActivity implements
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if (intent != null && intent.getAction() != null && intent.getAction().equals(RingtoneManager
+      /*  if (intent != null && intent.getAction() != null && intent.getAction().equals(RingtoneManager
                 .ACTION_RINGTONE_PICKER)) {
 //            mRingtonePickerIntent = true;
             showRingtonePickerDialog();
-        }
+        }*/
 /*        if (intent != null && !intent.getAction().equals(ACTION_MAIN)) {
             Log.d(TAG, "On onNewIntent");
             StoragesFragment storagesFragment = (StoragesFragment)
@@ -1662,6 +1662,7 @@ public class BaseActivity extends AppCompatActivity implements
                         } else {
                             startActivity(intent);
                         }
+                        FlurryAgent.logEvent("Rateus");
                         drawerLayout.closeDrawer(relativeLayoutDrawerPane);
                         break;
                     case 1: // Settings
@@ -1707,6 +1708,7 @@ public class BaseActivity extends AppCompatActivity implements
 //                String page = [group][child];
 
 //                menu.setHeaderTitle(page);
+                    FlurryAgent.logEvent("Fav context menu");
 
                     menu.add(0, MENU_FAVOURITES, 0, getString(R.string.delete_fav));
                 }
@@ -1873,6 +1875,7 @@ public class BaseActivity extends AppCompatActivity implements
         Fragment dualFragment = getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
         if (isDualPaneInFocus) {
             if (((FileListDualFragment) dualFragment).isZipMode()) {
+                FlurryAgent.logEvent("Zipmode-backOperation --dualpane=",isDualPaneInFocus);
 
                 if (((FileListDualFragment) dualFragment).checkZipMode()) {
                     int newSize = mBackStackListDual.size() - 1;
@@ -1901,6 +1904,7 @@ public class BaseActivity extends AppCompatActivity implements
             }
         } else {
             if (((FileListFragment) fragment).isZipMode()) {
+                FlurryAgent.logEvent("Zipmode-backOperation --dualpane=",isDualPaneInFocus);
                 if (((FileListFragment) fragment).checkZipMode()) {
                     int newSize = mBackStackList.size() - 1;
 
@@ -2019,9 +2023,9 @@ public class BaseActivity extends AppCompatActivity implements
             mMainLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.color_light_bg));
 
         } else {
-            setToolBarTheme(ContextCompat.getColor(this, R.color.color_dark_bg),
-                    ContextCompat.getColor(this, R.color.color_dark_status_bar));
-            mMainLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.color_dark_bg));
+            setToolBarTheme(ContextCompat.getColor(this, R.color.dark_colorPrimary),
+                    ContextCompat.getColor(this, R.color.dark_colorPrimaryDark));
+            mMainLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_colorPrimary));
 
         }
 
@@ -2049,6 +2053,7 @@ public class BaseActivity extends AppCompatActivity implements
         mBackStackList.clear();
         mBackStackListDual.clear();
         cleanUpFileScreen();
+        FlurryAgent.logEvent("removeFragmentFromBackStack--backstackcount="+backStackCount);
         super.onBackPressed();
     }
 
@@ -2070,7 +2075,6 @@ public class BaseActivity extends AppCompatActivity implements
     @Override
     protected void onDestroy() {
         unregisterForContextMenu(expandableListView);
-
         mSharedPreferences.edit().putInt(FileConstants.CURRENT_THEME, mCurrentTheme).apply();
         if (mIsRootMode) {
             try {
@@ -2082,14 +2086,6 @@ public class BaseActivity extends AppCompatActivity implements
         super.onDestroy();
     }
 
-
-    public void updateAdapter(SectionItems favItem) {
-        if (!favouritesGroupChild.contains(favItem)) {
-            favouritesGroupChild.add(favItem);
-            expandableListAdapter.notifyDataSetChanged();
-        }
-
-    }
 
     public void toggleFab(boolean isActionMode) {
         if (isActionMode) {
@@ -2155,6 +2151,20 @@ public class BaseActivity extends AppCompatActivity implements
         }
     }
 
+    private void restartApp() {
+        Activity activity = this;
+
+        final int enter_anim = android.R.anim.fade_in;
+        final int exit_anim = android.R.anim.fade_out;
+        activity.overridePendingTransition(enter_anim, exit_anim);
+        activity.finish();
+        activity.overridePendingTransition(enter_anim, exit_anim);
+        /*final Intent intent = getActivity().getIntent();
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);*/
+        activity.startActivity(activity.getIntent());
+
+    }
+
 
     /**
      * Called on return from Settings screen
@@ -2167,7 +2177,8 @@ public class BaseActivity extends AppCompatActivity implements
             if (theme != mCurrentTheme) {
                 mCurrentTheme = theme;
                 boolean isLightTheme = theme == 0;
-                setApplicationTheme(isLightTheme);
+                restartApp();
+//                setApplicationTheme(isLightTheme);
             }
         }
 
@@ -2175,6 +2186,7 @@ public class BaseActivity extends AppCompatActivity implements
 
         if (showHidden != mShowHidden) {
             mShowHidden = showHidden;
+            FlurryAgent.logEvent("HiddenToggled");
             Log.d(TAG, "OnPrefschanged PREFS_HIDDEN" + mShowHidden);
             FileListFragment singlePaneFragment = (FileListFragment) getSupportFragmentManager()
                     .findFragmentById(R
@@ -2195,6 +2207,8 @@ public class BaseActivity extends AppCompatActivity implements
                 .PREFS_HOMESCREEN, true);
 
         if (isHomeScreenEnabled != mIsHomeScreenEnabled) {
+            FlurryAgent.logEvent("Homescreen-Setting enabled",isHomeScreenEnabled);
+
             mIsHomeScreenEnabled = isHomeScreenEnabled;
             Log.d(TAG, "OnPrefschanged PREFS_HOMESCREEN" + mIsHomeScreenEnabled);
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
@@ -2234,6 +2248,7 @@ public class BaseActivity extends AppCompatActivity implements
                 .PREFS_DUAL_PANE, true);
         if (isDualPaneEnabledSettings != mIsDualPaneEnabledSettings) {
             mIsDualPaneEnabledSettings = isDualPaneEnabledSettings;
+            FlurryAgent.logEvent("Dualpane-Setting enabled",isDualPaneEnabledSettings);
 
             Log.d(TAG, "OnPrefschanged PREFS_DUAL_PANE" + mIsDualPaneEnabledSettings);
 
@@ -2264,6 +2279,7 @@ public class BaseActivity extends AppCompatActivity implements
                 favouritesGroupChild.remove(i);
             }
         }
+        FlurryAgent.logEvent("Fav resetted");
         sharedPreferenceWrapper.resetFavourites(this);
         expandableListAdapter.notifyDataSetChanged();
 

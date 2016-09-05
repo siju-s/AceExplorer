@@ -21,7 +21,34 @@
     <color name="text_settings_list">#5d6a77</color>
     <color name="text_light">#000000</color>
     <color name="text_dark">#ffffff</color>
-<!--    <color name="divider_light"></color>-->
+
+
+
+    <!-- Light Theme -->
+    <color name="light_text">#000000</color>
+
+
+
+
+    <!-- Dark Theme -->
+    <color name="dark_text">#ffffff</color>
+    <color name="dark_home_bg">#595959</color>
+    <color name="dark_colorPrimary">#262626</color>
+    <color name="dark_colorPrimaryDark">#000000</color>
+    <color name="dark_colorAccent">#FF4081</color>
+    <color name="dark_navDrawerBg">#ffffff</color>
+    <color name="dark_actionModeItemSelected">#33ffffff</color>
+    <color name="dark_divider">#80262626</color>
+    <color name="dark_overlay">#595959</color>
+    <color name="darkOverlayDual">#80595959</color>
+
+
+
+
+
+
+
+    <!--    <color name="divider_light"></color>-->
 
     <!-- Colors for library items in Homescreen -->
 

@@ -20,7 +20,7 @@
             android:fontFamily="sans-serif"
             android:gravity="center_vertical"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/text_settings_list"
+
             />
 
         <TextView
@@ -33,7 +33,7 @@
             android:gravity="center_vertical"
             android:maxLines="2"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/text_settings_list"/>
+           />
 
     </RelativeLayout>
 

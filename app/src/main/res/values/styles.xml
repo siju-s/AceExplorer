@@ -24,6 +24,29 @@
         <item name="android:actionModeBackground">@color/colorPrimary</item>
     </style>
 
+
+    <style name="Dark_AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/dark_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/dark_colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="Dark_AppTheme_NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/dark_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/dark_colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeBackground">@color/dark_colorPrimary</item>
+        <item name="android:actionModeBackground">@color/dark_colorPrimary</item>
+        <!--<item name="android:background">#000000</item>-->
+        <item name="android:textColor">@color/dark_text</item>
+        <item name="android:textColorPrimary">@color/dark_text</item>
+        <item name="android:textColorSecondary">@color/dark_text</item>
+    </style>
+
     <style name="ToolbarTitle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">20sp</item>
     </style>
@@ -44,6 +67,8 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
+    <style name="Dark_AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark"/>
 
     <style name="NavigationButton">
         <item name="android:layout_height">match_parent</item>
@@ -84,7 +109,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:textColorSecondary">@color/colorAccent</item>
+        <item name="android:textColorSecondary">#000000</item>
         <item name="colorControlNormal">#ffffffff</item>
         <item name="android:listDivider">@null</item>
     </style>
@@ -103,26 +128,46 @@
         <!--<item name="android:backgroundDimEnabled">false</item>-->
     </style>
 
-    <style name="BlackTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">#000000</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    <style name="Settings.BlackTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/dark_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/dark_colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:background">#000000</item>
-        <item name="android:textColor">#FFFFFF</item>
-        <item name="android:textColorPrimary">#ffffff</item>
-        <item name="android:textColorSecondary">#ffffff</item>
-
+        <item name="android:background">@color/dark_colorPrimary</item>
+        <item name="android:textColor">@color/dark_text</item>
+        <item name="android:textColorPrimary">@color/dark_text</item>
+        <item name="android:textColorSecondary">@color/dark_text</item>
+        <item name="android:listDivider">@null</item>
+        <item name="android:textColorAlertDialogListItem">@color/white</item>
 
     </style>
 
-    <style name="LightTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Settings.LightTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:textColorSecondary">@color/colorAccent</item>
-        <item name="colorControlNormal">#ffffffff</item>
+        <item name="android:textColorSecondary">@color/light_text</item>
+        <!--<item name="colorControlNormal">#ffffffff</item>-->
+        <!--<item name="android:background">@color/colorPrimary</item>-->
         <item name="android:listDivider">@null</item>
         <item name="android:textColorPrimary">#000000</item>
+        <!--<item name="android:textColorAlertDialogListItem">@color/dark_colorPrimary</item>-->
+        <!--<item name="android:alertDialogTheme">@style/DialogTheme</item>-->
+        <!--<item name="android:radioButtonStyle">@style/MRadioButton.Purple</item>-->
+
+    </style>
+    
+    <style name="DialogTheme" parent="AlertDialog.AppCompat">
+
+    </style>
+
+    <style name="MRadioButton.Purple" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlHighlight">@color/colorPrimary</item>
+        <item name="android:colorPressedHighlight">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorControlActivated">@color/colorPrimary</item>
+        <item name="colorControlNormal">@color/dark_colorPrimary</item>
     </style>
 
     <style name="checkBoxStyle" parent="Base.Theme.AppCompat">

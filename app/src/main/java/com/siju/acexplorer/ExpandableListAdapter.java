@@ -13,6 +13,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 import com.siju.acexplorer.model.SectionGroup;
 import com.siju.acexplorer.model.SectionItems;
 
@@ -25,6 +26,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     // child data in format of header title, child title
 //    private HashMap<String, List<String>> _listDataChild;
     private ArrayList<SectionGroup> groups;
+    private boolean mIsDarkTheme;
 
 //    public ExpandableListAdapter(Context context, List<String> listDataHeader,
 //                                 HashMap<String, List<String>> listChildData) {
@@ -36,6 +38,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public ExpandableListAdapter(Context context, ArrayList<SectionGroup> groups) {
         this.mContext = context;
         this.groups = groups;
+        mIsDarkTheme = ThemeUtils.isDarkTheme(context);
     }
 
     @Override
@@ -135,9 +138,19 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         }
 
         if (isExpanded) {
-            holder.imageArrow.setImageResource(R.drawable.ic_expand_less_black);
+            if (mIsDarkTheme) {
+                holder.imageArrow.setImageResource(R.drawable.ic_expand_less_white);
+            }
+            else {
+                holder.imageArrow.setImageResource(R.drawable.ic_expand_less_black);
+            }
         } else {
-            holder.imageArrow.setImageResource(R.drawable.ic_expand_more_black);
+            if (mIsDarkTheme) {
+                holder.imageArrow.setImageResource(R.drawable.ic_expand_more_white);
+            }
+            else {
+                holder.imageArrow.setImageResource(R.drawable.ic_expand_more_black);
+            }
         }
         holder.textHeader.setTypeface(null, Typeface.BOLD);
         holder.textHeader.setText(group.getmHeader());

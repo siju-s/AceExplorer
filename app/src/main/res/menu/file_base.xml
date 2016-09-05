@@ -21,10 +21,10 @@
 
     <item
         android:id="@+id/action_view"
-        android:title="@string/action_view"
-        app:showAsAction="never">
+        app:showAsAction="never"
+        android:title="@string/action_view_list">
 
-        <menu>
+      <!--  <menu>
             <item
                 android:id="@+id/action_view_list"
                 android:title="@string/action_view_list"
@@ -35,7 +35,7 @@
                 android:title="@string/action_view_grid"
                 app:showAsAction="never"/>
 
-        </menu>
+        </menu>-->
     </item>
 
 

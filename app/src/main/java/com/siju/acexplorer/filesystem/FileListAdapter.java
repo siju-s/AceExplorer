@@ -29,6 +29,7 @@ import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
+import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -64,12 +65,12 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     int offset = 0;
     Animation localAnimation;
     private boolean mIsAnimNeeded = true;
-
+    private int mCurrentTheme;
+    private boolean mIsThemeDark;
 
 
     FileListAdapter(Fragment fragment, Context mContext, ArrayList<FileInfo>
-            fileInfoArrayList, int
-                            category, int viewMode) {
+            fileInfoArrayList, int category, int viewMode) {
         this.mFragment = fragment;
         this.mContext = mContext;
         this.fileInfoArrayList = fileInfoArrayList;
@@ -79,11 +80,12 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         mCategory = category;
         this.mViewMode = viewMode;
         mAnimation = R.anim.fade_in_top;
+        mIsThemeDark = ThemeUtils.isDarkTheme(mContext);
+
     }
 
     public FileListAdapter(Context mContext, ArrayList<FileInfo>
-            fileInfoArrayList, int
-                                   category, int viewMode) {
+            fileInfoArrayList, int category, int viewMode) {
 
         this.mContext = mContext;
         this.fileInfoArrayList = fileInfoArrayList;
@@ -93,6 +95,12 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         mCategory = category;
         this.mViewMode = viewMode;
         mAnimation = R.anim.fade_in_top;
+        mIsThemeDark = ThemeUtils.isDarkTheme(mContext);
+       /* mCurrentTheme = PreferenceManager.getDefaultSharedPreferences(mContext)
+                .getInt(FileConstants.CURRENT_THEME, FileConstants.THEME_LIGHT);
+        if (mCurrentTheme == FileConstants.THEME_DARK) {
+            mIsThemeDark = true;
+        }*/
 
     }
 
@@ -115,8 +123,6 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     public void setStopAnimation(boolean flag) {
         mIsAnimNeeded = !flag;
     }
-
-
 
 
     public void clearList() {
@@ -218,7 +224,15 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         }*/
 
 
-        int color = ContextCompat.getColor(mContext, R.color.actionModeItemSelected);
+        int color;
+//        Log.d("TAG","OnBindviewholder mIsThemeDark="+mIsThemeDark);
+        if (mIsThemeDark) {
+            color = ContextCompat.getColor(mContext, R.color.dark_actionModeItemSelected);
+
+        }
+        else {
+            color = ContextCompat.getColor(mContext, R.color.actionModeItemSelected);
+        }
 
         fileListViewHolder.itemView.setBackgroundColor(mSelectedItemsIds.get(position) ? color :
                 Color.TRANSPARENT);
@@ -508,8 +522,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
                     .placeholder(R.drawable.ic_music)
                     .crossFade(2)
                     .into(fileListViewHolder.imageIcon);
-        }
-        catch (IllegalArgumentException exception) {
+        } catch (IllegalArgumentException exception) {
             fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_music);
         }
 

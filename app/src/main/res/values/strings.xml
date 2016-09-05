@@ -87,8 +87,8 @@
     <string name="action_sort">Sort</string>
     <string name="action_view">View</string>
 
-    <string name="action_view_list">List</string>
-    <string name="action_view_grid">Grid</string>
+    <string name="action_view_list">List view</string>
+    <string name="action_view_grid">Grid view</string>
 
     <string name="sort_name">Name (A-Z)</string>
     <string name="sort_name_desc">Name (Z-A)</string>

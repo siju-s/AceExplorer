@@ -25,7 +25,6 @@
 
     <item
         android:id="@+id/action_archive"
-        android:icon="@drawable/ic_archive_white"
         android:title="@string/action_archive"
         app:showAsAction="never"/>
 
@@ -37,13 +36,11 @@
 
     <item
         android:id="@+id/action_fav"
-        android:icon="@drawable/ic_favorite_white"
         android:title="@string/add_fav"
         app:showAsAction="never"/>
 
     <item
         android:id="@+id/action_hide"
         android:title="@string/hide"
-        android:icon="@drawable/ic_hide_white"
         app:showAsAction="never"/>
 </menu>

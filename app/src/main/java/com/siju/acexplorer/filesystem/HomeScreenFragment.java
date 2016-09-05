@@ -10,8 +10,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -35,6 +38,7 @@ import com.siju.acexplorer.filesystem.model.LibrarySortModel;
 import com.siju.acexplorer.filesystem.ui.DividerItemDecoration;
 import com.siju.acexplorer.filesystem.ui.HomeScreenGridLayoutManager;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
+import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -167,6 +171,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
 
 
     private void initializeViews() {
+        boolean isDarkTheme = ThemeUtils.isDarkTheme(getActivity());
         recyclerViewLibrary = (RecyclerView) root.findViewById(R.id.recyclerViewLibrary);
         recyclerViewStorages = (RecyclerView) root.findViewById(R.id.recyclerViewStorages);
         recyclerViewLibrary.setHasFixedSize(true);
@@ -177,10 +182,25 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         recyclerViewStorages.setLayoutManager(llmStorage);
         recyclerViewStorages.setItemAnimator(new DefaultItemAnimator());
         recyclerViewStorages.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
-                .VERTICAL));
+                .VERTICAL, isDarkTheme));
         sharedPreferenceWrapper = new SharedPreferenceWrapper();
 
+        CardView cardLibrary = (CardView) root.findViewById(R.id.cardLibrary);
+        CardView cardStorage = (CardView) root.findViewById(R.id.cardStorage);
+        NestedScrollView nestedScrollViewHome = (NestedScrollView) root.findViewById(R.id.scrollLayoutHome);
+
+        if (isDarkTheme) {
+            cardLibrary.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_colorPrimary));
+            cardStorage.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_colorPrimary));
+            nestedScrollViewHome.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_home_bg));
+
+        }
+
+
     }
+
+
+
 
     private void getSavedLibraries() {
         savedLibraries = new ArrayList<>();
@@ -626,7 +646,6 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
 
         }
     }
-
 
 
 }

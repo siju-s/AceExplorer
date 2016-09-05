@@ -29,6 +29,7 @@ import com.siju.acexplorer.filesystem.FileListLoader;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.utils.MediaStoreHack;
+import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ import java.util.ArrayList;
 
 public class DialogBrowseFragment extends DialogFragment implements LoaderManager.LoaderCallbacks<ArrayList<FileInfo>> {
 
+    private final String TAG = this.getClass().getSimpleName();
     private RecyclerView recyclerViewFileList;
     private View root;
     private final int LOADER_ID = 1000;
@@ -53,6 +55,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
     private boolean mShowHidden;
     private int mSortMode;
     private boolean mIsRingtonePicker;
+    private boolean mIsDarkTheme;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -71,12 +74,13 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
+        mIsDarkTheme = ThemeUtils.isDarkTheme(getActivity());
 
         initializeViews();
 
         if (getArguments() != null && getArguments().getBoolean("ringtone_picker")) {
-             mButtonOk.setVisibility(View.GONE);
-             mIsRingtonePicker = true;
+            mButtonOk.setVisibility(View.GONE);
+            mIsRingtonePicker = true;
         }
         mCurrentPath = FileUtils.getInternalStorage().getAbsolutePath();
         mTextCurrentPath.setText(mCurrentPath);
@@ -96,8 +100,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
                     mCurrentPath = file.getAbsolutePath();
                     mTextCurrentPath.setText(mCurrentPath);
                     refreshList(mCurrentPath);
-                }
-                else {
+                } else {
                     if (mIsRingtonePicker) {
                         Intent intent = new Intent();
                         Uri mediaStoreUri = MediaStoreHack.getUriFromFile(file.getPath(), getActivity());
@@ -131,7 +134,6 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
         });
 
 
-
         mImageButtonBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -142,7 +144,6 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
                 }
             }
         });
-
 
 
     }
@@ -200,7 +201,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
                 recyclerViewFileList.setLayoutManager(llm);
                 recyclerViewFileList.setItemAnimator(new DefaultItemAnimator());
                 recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
-                        .VERTICAL));
+                        .VERTICAL, mIsDarkTheme));
 //                ((BaseActivity) getActivity()).setFileListAdapter(fileListAdapter);
             } else {
                 TextView textEmpty = (TextView) getActivity().findViewById(R.id.textEmpty);

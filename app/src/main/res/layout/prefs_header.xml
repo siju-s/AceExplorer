@@ -20,7 +20,6 @@
             android:fontFamily="sans-serif"
             android:gravity="center_vertical"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/text_settings_list"
             />
 
 

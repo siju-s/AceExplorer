@@ -40,8 +40,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         setContentView(R.layout.pref_holder);
         PreferenceManager.setDefaultValues(this, R.xml.pref_settings, false);
         mRelativeLayoutSettings = (RelativeLayout) findViewById(R.id.relativeLayoutSettings);
-//        setupActionBar();
-        // Display the fragment as the main content.
         setupActionBar();
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsPreferenceFragment())
@@ -61,15 +59,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
 //        int  stringValue = PreferenceManager.getDefaultSharedPreferences(this).getInt(FileConstants.PREFS_THEME, 0);
 
-
-            if (theme == FileConstants.THEME_DARK)
-                setTheme(R.style.BlackTheme);
-
-
-
-
-//        setTheme(R.style.LightTheme);
-
+            if (theme == FileConstants.THEME_DARK) {
+                setTheme(R.style.Settings_BlackTheme);
+                mIsTheme = FileConstants.THEME_DARK;
+            }
 
 
     }
@@ -89,6 +82,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 false);
         root.addView(bar, 0); // insert at top
         mToolbar = (Toolbar) bar.getChildAt(0);
+
+        if (mIsTheme == FileConstants.THEME_DARK) {
+            mToolbar.setBackgroundColor(ContextCompat.getColor(this,R.color.dark_colorPrimary));
+
+            if (Build.VERSION.SDK_INT >= 21) {
+                getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.dark_colorPrimaryDark));
+
+            }
+        }
 
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
