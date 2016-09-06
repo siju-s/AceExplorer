@@ -25,14 +25,14 @@
     </style>
 
 
-    <style name="Dark_AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+   <!-- <style name="Dark_AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        &lt;!&ndash; Customize your theme here. &ndash;&gt;
         <item name="colorPrimary">@color/dark_colorPrimary</item>
         <item name="colorPrimaryDark">@color/dark_colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-    </style>
+    </style>-->
 
-    <style name="Dark_AppTheme_NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Dark_AppTheme_NoActionBar" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/dark_colorPrimary</item>
         <item name="colorPrimaryDark">@color/dark_colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>

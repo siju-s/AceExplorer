@@ -582,7 +582,6 @@ public class BaseActivity extends AppCompatActivity implements
 
 
         frameLayoutFabDual = (FrameLayout) findViewById(R.id.frameLayoutFabDual);
-        frameLayoutFabDual.getBackground().setAlpha(0);
 
 
         if (mCurrentTheme == FileConstants.THEME_DARK) {
@@ -591,9 +590,10 @@ public class BaseActivity extends AppCompatActivity implements
             mBottomToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_colorPrimary));
             mToolbar.setPopupTheme(R.style.Dark_AppTheme_PopupOverlay);
             frameLayoutFab.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_overlay));
-            frameLayoutFabDual.setBackgroundColor(ContextCompat.getColor(this, R.color.darkOverlayDual));
+            frameLayoutFabDual.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_overlay));
             mMainLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_colorPrimary));
         }
+        frameLayoutFabDual.getBackground().setAlpha(0);
         frameLayoutFab.getBackground().setAlpha(0);
 
         fabCreateMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu

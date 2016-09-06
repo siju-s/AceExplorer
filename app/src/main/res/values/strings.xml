@@ -179,4 +179,29 @@
     <string name="open_source_license">Open source licenses</string>
 
 
+    <string name="title_activity_welcome">Home Screen</string>
+    <string name="next">NEXT</string>
+    <string name="skip">SKIP</string>
+    <string name="start">GOT IT</string>
+
+    <string name="slide_1_title">Choose Library</string>
+    <string name="slide_1_desc">All of your media library organized right at the homescreen.</string>
+
+    <string name="slide_2_title">Dual Pane</string>
+    <string name="slide_2_desc">Dual Pane in Landscape mode.Toggle in Settings.</string>
+
+    <string name="slide_3_title">Drag and Drop</string>
+    <string name="slide_3_desc">Drag files from one folder to another!</string>
+
+    <string name="slide_4_title">Themes</string>
+    <string name="slide_4_desc">Light or Dark way!Your choice.</string>
+
+
+
+
+
+    <!--<string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>-->
+    <!--<string name="play_again">Play Again</string>-->
+
+
 </resources>
