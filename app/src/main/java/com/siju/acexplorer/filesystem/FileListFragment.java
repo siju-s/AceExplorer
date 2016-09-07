@@ -897,7 +897,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
             FlurryAgent.logEvent(TAG + " OnLoadFinished="+data.size());
 
-            Log.d("TEST", "on onLoadFinished--" + data.size());
+            Log.d(TAG, "on onLoadFinished--" + data.size());
             // Stop refresh animation
 //            mSwipeRefreshLayout.setRefreshing(false);
             mStopAnim = true;

@@ -184,17 +184,17 @@
     <string name="skip">SKIP</string>
     <string name="start">GOT IT</string>
 
-    <string name="slide_1_title">Choose Library</string>
-    <string name="slide_1_desc">All of your media library organized right at the homescreen.</string>
+    <string name="slide_1_title">Organized Library</string>
+    <string name="slide_1_desc">One click to media library from the homescreen.</string>
 
     <string name="slide_2_title">Dual Pane</string>
-    <string name="slide_2_desc">Dual Pane in Landscape mode.Toggle in Settings.</string>
+    <string name="slide_2_desc">Dual Pane in Landscape mode. Toggle in Settings.</string>
 
     <string name="slide_3_title">Drag and Drop</string>
     <string name="slide_3_desc">Drag files from one folder to another!</string>
 
     <string name="slide_4_title">Themes</string>
-    <string name="slide_4_desc">Light or Dark way!Your choice.</string>
+    <string name="slide_4_desc">Dark or Light way! Your choice.</string>
 
 
 

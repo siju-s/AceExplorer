@@ -70,7 +70,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             | FileObserver.MODIFY | FileObserver.MOVE_SELF;
 
     private FileObserver mFileObserver;
-    private MediaContentObserver mMediaContentObserver;
+//    private MediaContentObserver mMediaContentObserver;
     private MountUnmountReceiver mMountUnmountReceiver;
 
 
@@ -114,11 +114,11 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         }
 
 
-        if (mMediaContentObserver == null) {
+      /*  if (mMediaContentObserver == null) {
             mMediaContentObserver = new MediaContentObserver(new Handler());
             mContext.getContentResolver().registerContentObserver(MediaStore.Files.getContentUri("external"), true,
                     mMediaContentObserver);
-        }
+        }*/
 
         if (mMountUnmountReceiver == null) {
             IntentFilter intentFilter = new IntentFilter();
@@ -166,9 +166,9 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
         }*/
 
-        if (mMediaContentObserver != null) {
+       /* if (mMediaContentObserver != null) {
             getContext().getContentResolver().unregisterContentObserver(mMediaContentObserver);
-        }
+        }*/
         if (mMountUnmountReceiver != null) {
             getContext().unregisterReceiver(mMountUnmountReceiver);
         }
