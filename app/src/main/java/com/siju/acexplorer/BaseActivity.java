@@ -1008,6 +1008,7 @@ public class BaseActivity extends AppCompatActivity implements
             mIsDualModeEnabled = true;
             isDualPaneInFocus = true;
             toggleDualPaneVisibility(true);
+            ((FileListFragment)fragment).refreshSpan();
             currentScreenSetup(FileUtils.getInternalStorage().getAbsolutePath(), FileConstants
                     .CATEGORY.FILES.getValue(), isDualPaneInFocus);
             createDualFragment();
@@ -1798,6 +1799,7 @@ public class BaseActivity extends AppCompatActivity implements
             mViewSeperator.setVisibility(View.GONE);
             scrollNavigationDualPane.setVisibility(View.GONE);
             isDualPaneInFocus = false;
+            mBackStackListDual.clear();
         }
 
     }
@@ -2265,6 +2267,10 @@ public class BaseActivity extends AppCompatActivity implements
                 if (fragment instanceof HomeScreenFragment) {
                     ((HomeScreenFragment) fragment).setDualModeEnabled(false);
                 }
+                else {
+                    ((FileListFragment)fragment).refreshSpan(); // For changing the no of columns in non-dual mode
+                }
+
                 mIsDualModeEnabled = false;
                 mShowDualPane = false;
             } else {

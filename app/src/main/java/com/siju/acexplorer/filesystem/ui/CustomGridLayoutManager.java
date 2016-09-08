@@ -16,15 +16,17 @@ public class CustomGridLayoutManager extends GridLayoutManager {
     private static final float MILLISECONDS_PER_INCH = 500f;
     private Context mContext;
     private int minItemWidth;
+    private int mSpanCount;
 
 /*    public CustomGridLayoutManager(Context context,int spanCount) {
         super(context,spanCount);
         mContext = context;
     }*/
 
-    public CustomGridLayoutManager(Context context, int minItemWidth) {
-        super(context, 1);
-        this.minItemWidth = minItemWidth;
+    public CustomGridLayoutManager(Context context, int spanCount) {
+        super(context, spanCount);
+        mSpanCount = spanCount;
+//        this.minItemWidth = minItemWidth;
     }
 
 
@@ -52,7 +54,9 @@ public class CustomGridLayoutManager extends GridLayoutManager {
     @Override
     public void onLayoutChildren(RecyclerView.Recycler recycler,
                                  RecyclerView.State state) {
-        updateSpanCount();
+//        updateSpanCount();
+//        Logger.log("SIJU","LM width="+getWidth()/mSpanCount);
+
         super.onLayoutChildren(recycler, state);
     }
 

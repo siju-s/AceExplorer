@@ -92,8 +92,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static com.siju.acexplorer.R.id.textEmpty;
-
 
 /**
  * Created by Siju on 13-06-2016.
@@ -235,7 +233,6 @@ public class FileListFragment extends Fragment implements LoaderManager
             mCurrentTheme = FileConstants.THEME_LIGHT;
         }
 
-        Logger.log(TAG, "package name=" + getActivity().getPackageName());
         Bundle args = new Bundle();
         final String fileName;
         ArrayList<FileInfo> list = new ArrayList<>();
@@ -314,21 +311,6 @@ public class FileListFragment extends Fragment implements LoaderManager
             fileInfoList.addAll(list);
             fileListAdapter.setCategory(mCategory);
             fileListAdapter.updateAdapter(fileInfoList);
-           /* recyclerViewFileList.setHasFixedSize(true);
-
-            if (mViewMode == FileConstants.KEY_LISTVIEW) {
-                llm = new CustomLayoutManager(getActivity());
-            } else {
-                llm = new CustomGridLayoutManager(getActivity(), getResources().getInteger(R
-                        .integer.grid_columns));
-
-            }
-//            llm.setAutoMeasureEnabled(false);
-            recyclerViewFileList.setLayoutManager(llm);
-            recyclerViewFileList.setItemAnimator(new DefaultItemAnimator());
-            recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
-                    .VERTICAL));
-*/
         }
 
 
@@ -408,7 +390,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     private void initializeViews() {
         recyclerViewFileList = (FastScrollRecyclerView) root.findViewById(R.id.recyclerViewFileList);
-        mTextEmpty = (TextView) root.findViewById(textEmpty);
+        mTextEmpty = (TextView) root.findViewById(R.id.textEmpty);
         sharedPreferenceWrapper = new SharedPreferenceWrapper();
         recyclerViewFileList.setOnDragListener(new myDragEventListener());
         viewDummy = root.findViewById(R.id.viewDummy);
@@ -2210,19 +2192,19 @@ public class FileListFragment extends Fragment implements LoaderManager
 
         if (mViewMode == FileConstants.KEY_LISTVIEW) {
             llm = new CustomLayoutManager(getActivity());
+            recyclerViewFileList.setLayoutManager(llm);
             FlurryUtils.logOperation(TAG,"switchView","Listview");
 
-
         } else {
-            mGridItemWidth = dpToPx(100);
-            llm = new CustomGridLayoutManager(getActivity(), mGridItemWidth);
+           /* mGridItemWidth = dpToPx(100);
+            llm = new CustomGridLayoutManager(getActivity(), mGridItemWidth);*/
+            refreshSpan();
             FlurryUtils.logOperation(TAG,"switchView","Gridview");
         }
 
         mStopAnim = true;
 
 //        llm.setAutoMeasureEnabled(false);
-        recyclerViewFileList.setLayoutManager(llm);
         fileListAdapter = new FileListAdapter(FileListFragment.this, getContext(), fileInfoList,
                 mCategory, mViewMode);
 
@@ -2256,15 +2238,28 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     public void refreshSpan() {
         if (mViewMode == FileConstants.KEY_GRIDVIEW) {
-            if (mGridItemWidth == 0) {
-                mGridItemWidth = dpToPx(100);
+            mIsDualModeEnabledSettings = mPreferences
+                    .getBoolean(FileConstants.PREFS_DUAL_PANE, false);
+            if (mCurrentOrientation == Configuration.ORIENTATION_PORTRAIT || !mIsDualModeEnabledSettings) {
+                mGridColumns = getResources().getInteger(R.integer.grid_columns);
             }
+            else {
+                mGridColumns = getResources().getInteger(R.integer.grid_columns_dual);
+            }
+
+            Log.d(TAG,"Refresh span--columns="+mGridColumns);
+
+
+
+          /*  if (mGridItemWidth == 0) {
+                mGridItemWidth = dpToPx(100);
+            }*/
 //            findNoOfGridColumns();
-            Logger.log(TAG, "refreshSpan--llm=" + llm);
+//            Logger.log(TAG, "refreshSpan--llm=" + llm);
 //            if (llm != null) {
 //                ((CustomGridLayoutManager) llm).setSpanCount(mGridColumns);
 //                recyclerViewFileList.setHasFixedSize(true);
-            llm = new CustomGridLayoutManager(getActivity(), mGridItemWidth);
+            llm = new CustomGridLayoutManager(getActivity(), mGridColumns);
             recyclerViewFileList.setLayoutManager(llm);
 //            }
         }
