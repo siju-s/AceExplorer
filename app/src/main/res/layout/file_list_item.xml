@@ -4,8 +4,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="5dp"
+                android:paddingRight="16dp"
+                android:paddingEnd="16dp"
                 android:paddingTop="5dp">
-
 
 
     <ImageView
@@ -18,7 +19,7 @@
         android:layout_marginLeft="@dimen/file_list_margin"
         android:layout_marginRight="@dimen/file_list_margin"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_folder_white"/>
+        android:src="@drawable/ic_music"/>
 
 
     <TextView

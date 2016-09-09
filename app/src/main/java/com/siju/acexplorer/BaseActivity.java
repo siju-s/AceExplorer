@@ -230,6 +230,9 @@ public class BaseActivity extends AppCompatActivity implements
         if (mCurrentTheme == FileConstants.THEME_DARK) {
             setTheme(R.style.Dark_AppTheme_NoActionBar);
         }
+        else {
+            setTheme(R.style.AppTheme_NoActionBar);
+        }
     }
 
     @Override

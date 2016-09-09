@@ -1,13 +1,13 @@
 <resources>
 
-<!--    &lt;!&ndash; Base application theme. &ndash;&gt;
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        &lt;!&ndash; Customize your theme here. &ndash;&gt;
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <!--    &lt;!&ndash; Base application theme. &ndash;&gt;
+        <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+            &lt;!&ndash; Customize your theme here. &ndash;&gt;
+            <item name="colorPrimary">@color/colorPrimary</item>
+            <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+            <item name="colorAccent">@color/colorAccent</item>
 
-    </style>-->
+        </style>-->
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
@@ -24,13 +24,18 @@
         <item name="android:actionModeBackground">@color/colorPrimary</item>
     </style>
 
+    <style name="WelcomScreen" parent="Theme.AppCompat.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
 
-   <!-- <style name="Dark_AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        &lt;!&ndash; Customize your theme here. &ndash;&gt;
-        <item name="colorPrimary">@color/dark_colorPrimary</item>
-        <item name="colorPrimaryDark">@color/dark_colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>-->
+
+    <!-- <style name="Dark_AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+         &lt;!&ndash; Customize your theme here. &ndash;&gt;
+         <item name="colorPrimary">@color/dark_colorPrimary</item>
+         <item name="colorPrimaryDark">@color/dark_colorPrimaryDark</item>
+         <item name="colorAccent">@color/colorAccent</item>
+     </style>-->
 
     <style name="Dark_AppTheme_NoActionBar" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/dark_colorPrimary</item>
@@ -155,7 +160,7 @@
         <!--<item name="android:radioButtonStyle">@style/MRadioButton.Purple</item>-->
 
     </style>
-    
+
     <style name="DialogTheme" parent="AlertDialog.AppCompat">
 
     </style>
