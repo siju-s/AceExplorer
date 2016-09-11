@@ -2,20 +2,20 @@ package com.siju.acexplorer.filesystem;
 
 import android.content.ContentUris;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -52,7 +52,6 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     private ArrayList<FileInfo> mSelectedFileList;
     OnItemClickListener mItemClickListener;
     OnItemLongClickListener mOnItemLongClickListener;
-    OnItemTouchListener mOnItemTouchListener;
 
     private int mCategory;
     private Uri mAudioUri = Uri.parse("content://media/external/audio/albumart");
@@ -144,9 +143,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         void onItemLongClick(View view, int position);
     }
 
-    public interface OnItemTouchListener {
-        boolean onItemTouch(View view, int position, MotionEvent event);
-    }
+
 
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
         this.mItemClickListener = mItemClickListener;
@@ -156,9 +153,6 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         this.mOnItemLongClickListener = mItemClickListener;
     }
 
-    public void setOnItemTouchListener(final OnItemTouchListener mItemTouchListener) {
-        this.mOnItemTouchListener = mItemTouchListener;
-    }
 
     @Override
     public void onViewDetachedFromWindow(FileListViewHolder holder) {
@@ -182,8 +176,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_grid_item,
                     parent, false);
         }
-        FileListViewHolder tvh = new FileListViewHolder(view);
-        return tvh;
+        return new FileListViewHolder(view);
     }
 
     @Override
@@ -464,7 +457,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
     private void displayImageThumb(FileListViewHolder fileListViewHolder, String path) {
         Uri imageUri = Uri.fromFile(new File(path));
-        Glide.with(mContext).load(imageUri).centerCrop()
+        Glide.with(mContext).load(imageUri).fitCenter()
                 .crossFade(2)
                 .placeholder(R.drawable.ic_photo_white)
                 .into(fileListViewHolder.imageIcon);
@@ -511,8 +504,34 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     private void displayAudioAlbumArt(FileListViewHolder fileListViewHolder, String path) {
 //        Uri uri = ContentUris.withAppendedId(mAudioUri, fileInfoArrayList.get(position)
 // .getBucketId());
-        Uri audioUri = Uri.fromFile(new File(path));
+//        Uri audioUri = Uri.fromFile(new File(path));
 
+        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        String[] projection = new String[]{MediaStore.Audio.Media.ALBUM_ID};
+        String selection = MediaStore.Audio.Media.DATA + " = ?";
+        String[] selectionArgs = new String[]{path};
+
+        //        String sortOrder = MediaStore.Audio.Media.DATE_MODIFIED + " DESC";
+        Cursor cursor = mContext.getContentResolver().query(uri, projection, selection, selectionArgs,
+                null);
+
+
+        if (cursor != null && cursor.moveToFirst()) {
+
+            int albumIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID);
+            long albumId = cursor.getLong(albumIdIndex);
+
+//            Logger.log("Adapter","displayAudioAlbumArt="+albumId);
+            Uri newUri = ContentUris.withAppendedId(mAudioUri, albumId);
+            Glide.with(mContext).loadFromMediaStore(newUri).centerCrop()
+                    .placeholder(R.drawable.ic_music)
+//                    .crossFade(2)
+                    .into(fileListViewHolder.imageIcon);
+
+            cursor.close();
+        }
+
+/*
         MediaMetadataRetriever myRetriever = new MediaMetadataRetriever();
         byte[] artwork;
         try {
@@ -528,7 +547,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
         if (myRetriever != null) {
             myRetriever.release();
-        }
+        }*/
 
 
        /* if (artwork != null) {

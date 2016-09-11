@@ -328,7 +328,7 @@ public class FileUtils {
             if (file != null) {
                 int index = file.getAbsolutePath().lastIndexOf("/Android/data");
                 if (index < 0) {
-                    Log.w("AmazeFileUtils", "Unexpected external file dir: " + file.getAbsolutePath());
+                    Log.w("FileUtils", "Unexpected external file dir: " + file.getAbsolutePath());
                 } else {
                     String path = file.getAbsolutePath().substring(0, index);
                     try {

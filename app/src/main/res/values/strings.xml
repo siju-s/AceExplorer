@@ -179,6 +179,12 @@
     <string name="open_source_license">Open source licenses</string>
 
 
+    <string name="need_permission">Needs permission</string>
+    <string name="storage_access">Ace Explorer needs storage permission to access the files on device</string>
+    <string name="permission_setting_hint">Tap Settings -> Permissions and then turn Storage on.</string>
+    <string name="exit">Exit</string>
+
+
     <string name="title_activity_welcome">Home Screen</string>
     <string name="next">NEXT</string>
     <string name="skip">SKIP</string>
@@ -187,8 +193,8 @@
     <string name="slide_1_title">Organized Library</string>
     <string name="slide_1_desc">One click to media library from the homescreen.</string>
 
-    <string name="slide_2_title">Dual Pane</string>
-    <string name="slide_2_desc">Dual Pane in Landscape mode. Toggle in Settings.</string>
+    <string name="slide_2_title">Navigation</string>
+    <string name="slide_2_desc">Easy navigation from any screen.</string>
 
     <string name="slide_3_title">Drag and Drop</string>
     <string name="slide_3_desc">Drag files from one folder to another!</string>

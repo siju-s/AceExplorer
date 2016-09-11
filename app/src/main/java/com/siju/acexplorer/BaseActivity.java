@@ -19,6 +19,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.SwipeDismissBehavior;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -36,6 +37,8 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
@@ -196,6 +199,8 @@ public class BaseActivity extends AppCompatActivity implements
     public FileOpsHelper mFileOpsHelper;
     public int mRenamedPosition;
     private boolean mRingtonePickerIntent;
+    private boolean mPermissionDialogShown;
+    private Snackbar mSnackbar;
 
 
     @Override
@@ -207,19 +212,33 @@ public class BaseActivity extends AppCompatActivity implements
 
         initConstants();
         initViews();
-//        checkScreenOrientation();
 
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        // Remove previous fragments (case of the app was restarted after changed permission on android 6 and higher)
+        List<Fragment> fragmentList = fragmentManager.getFragments();
+        if (fragmentList != null) {
+            for (Fragment fragment : fragmentList) {
+                if (fragment != null) {
+                    Logger.log(TAG, "onCreate--Fragment="+fragment);
+                    fragmentManager.beginTransaction().remove(fragment).commit();
+                }
+            }
+        }
 
         mFileOpsHelper = new FileOpsHelper(this);
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
 
         // If MarshMallow ask for permission
         if (useRunTimePermissions()) {
             checkPermissions();
-        } else {
+            Logger.log(TAG, "onCreate --useRuntimepermiss");
+        }
+        else {
             mIsPermissionGranted = true;
             setup();
             setUpInitialData();
-
         }
     }
 
@@ -247,6 +266,31 @@ public class BaseActivity extends AppCompatActivity implements
     }
 
     @Override
+    protected void onResume() {
+
+       /* if (useRunTimePermissions()) {
+            checkPermissions();
+        }*/
+        Logger.log(TAG, "oNResume--snackbar"+mSnackbar+ " " + hasPermission());
+
+        /**
+         * This handles the scenario when snackbar is shown and user presses home and grants access to app and
+         * returns to app. In that case,setup the data and dismiss the snackbar.
+         */
+
+        if (mSnackbar != null && mSnackbar.isShown()) {
+            if (hasPermission()) {
+                mSnackbar.dismiss();
+                mIsPermissionGranted = true;
+                setup();
+                setUpInitialData();
+            }
+        }
+
+        super.onResume();
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         FlurryAgent.onEndSession(this);
@@ -266,7 +310,6 @@ public class BaseActivity extends AppCompatActivity implements
     }*/
 
     private void checkPreferences() {
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         if (mSharedPreferences.getBoolean(PREFS_FIRST_RUN, true)) {
             // If app is first run
             mIsFirstRun = true;
@@ -327,12 +370,12 @@ public class BaseActivity extends AppCompatActivity implements
      * Called for the 1st time when app is launched to check permissions
      */
     private void checkPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager
-                .PERMISSION_GRANTED) {
+        if (!hasPermission()) {
             fabCreateMenu.setVisibility(View.GONE);
             requestPermission();
         } else {
+            Log.d(TAG, "checkPermissions ELSE");
+
             mIsPermissionGranted = true;
             fabCreateMenu.setVisibility(View.VISIBLE);
             setup();
@@ -341,14 +384,18 @@ public class BaseActivity extends AppCompatActivity implements
 
     }
 
+    private boolean hasPermission() {
+        return  ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                PackageManager.PERMISSION_GRANTED ;
+    }
+
     /**
      * Brings up the Permission Dialog
      */
     private void requestPermission() {
         Log.d(TAG, "Permission dialog");
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
-                        .WRITE_EXTERNAL_STORAGE},
-                MY_PERMISSIONS_REQUEST);
+                        .WRITE_EXTERNAL_STORAGE},MY_PERMISSIONS_REQUEST);
     }
 
     @Override
@@ -377,9 +424,11 @@ public class BaseActivity extends AppCompatActivity implements
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission
                 .WRITE_EXTERNAL_STORAGE)) {
             // Shows after user denied permission
-            Snackbar.make(mMainLayout, getString(R.string.permission_deny), Snackbar
-                    .LENGTH_INDEFINITE)
-                    .setAction(getString(R.string.action_grant), new View.OnClickListener() {
+            mSnackbar = Snackbar.make(mMainLayout, getString(R.string.permission_deny), Snackbar
+                    .LENGTH_INDEFINITE);
+
+
+            mSnackbar.setAction(getString(R.string.action_grant), new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             requestPermission();
@@ -388,9 +437,9 @@ public class BaseActivity extends AppCompatActivity implements
                     .show();
         } else {
             // Shows after user denied permission and checked Do Not Ask Again checkbox
-            Snackbar.make(mMainLayout, getString(R.string.permission_request), Snackbar
-                    .LENGTH_INDEFINITE)
-                    .setAction(getString(R.string.action_settings), new View.OnClickListener() {
+            mSnackbar = Snackbar.make(mMainLayout, getString(R.string.permission_request), Snackbar
+                    .LENGTH_INDEFINITE);
+            mSnackbar.setAction(getString(R.string.action_settings), new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
 //                                requestPermission();
@@ -404,6 +453,32 @@ public class BaseActivity extends AppCompatActivity implements
                     .show();
         }
 
+        final Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) mSnackbar.getView();
+        layout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver
+                .OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                ViewGroup.LayoutParams lp = layout.getLayoutParams();
+                if (lp instanceof CoordinatorLayout.LayoutParams) {
+                    ((CoordinatorLayout.LayoutParams) lp).setBehavior(new DisableSwipeBehavior());
+                    layout.setLayoutParams(lp);
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    layout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                } else {
+                    //noinspection deprecation
+                    layout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                }
+            }
+        });
+
+    }
+
+    public class DisableSwipeBehavior extends SwipeDismissBehavior<Snackbar.SnackbarLayout> {
+        @Override
+        public boolean canSwipeDismissView(@NonNull View view) {
+            return false;
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -420,7 +495,22 @@ public class BaseActivity extends AppCompatActivity implements
                 onSharedPrefsChanged();
 
             }
-        } else if (requestCode == 3) {
+        } else if (requestCode == SETTINGS_REQUEST) {
+            // User clicked the Setting button and we have permissions,setup the data
+            if (hasPermission()) {
+                mIsPermissionGranted = true;
+//                fabCreateMenu.setVisibility(View.VISIBLE);
+                setup();
+                setUpInitialData();
+            }
+            else {
+                // User clicked the Setting button and we don't permissions,show snackbar again
+                showRationale();
+            }
+        }
+
+
+        else if (requestCode == 3) {
             String p = mSharedPreferences.getString("URI", null);
             Uri oldUri = null;
 //            if (p != null) oldUri = Uri.parse(p);
@@ -2085,6 +2175,8 @@ public class BaseActivity extends AppCompatActivity implements
 
     @Override
     protected void onDestroy() {
+        Logger.log(TAG,"onDestroy");
+
         unregisterForContextMenu(expandableListView);
         mSharedPreferences.edit().putInt(FileConstants.CURRENT_THEME, mCurrentTheme).apply();
         if (mIsRootMode) {

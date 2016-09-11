@@ -19,5 +19,7 @@ public class AceApplication extends Application {
         Fabric.with(this, new Crashlytics());
         FlurryAgent.setLogEnabled(true);
         FlurryAgent.init(this, "NBH7DY8FPN4MFXJ274QP");
+
+        Factory.setInstance(this);
     }
 }

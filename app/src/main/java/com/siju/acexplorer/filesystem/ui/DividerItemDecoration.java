@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.common.Logger;
 
 /**
  *
@@ -64,7 +65,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
         if (mOrientation == VERTICAL_LIST) {
             drawVertical(c, parent);
         } else {
-            drawVertical(c, parent);
+//            drawVertical(c, parent);
             drawHorizontal(c, parent);
         }
     }
@@ -78,9 +79,10 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
         }
 
         final int right = parent.getWidth() - parent.getPaddingRight();
-//        Logger.log("TAG", "drawVertical");
 
         final int childCount = parent.getChildCount();
+//        Logger.log("TAG", "drawVertical"+childCount);
+
         for (int i = 0; i < childCount - 1; i++) {
             final View child = parent.getChildAt(i);
             final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child
@@ -95,10 +97,10 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     public void drawHorizontal(Canvas c, RecyclerView parent) {
         final int top = parent.getPaddingTop();
         final int bottom = parent.getHeight() - parent.getPaddingBottom();
-//        Logger.log("TAG", "drawHorizontal");
 
 
         final int childCount = parent.getChildCount();
+
         for (int i = 0; i < childCount - 1; i++) {
             final View child = parent.getChildAt(i);
             final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child
@@ -106,7 +108,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
             final int left = child.getRight() + params.rightMargin;
             final int right = left + mDivider.getIntrinsicHeight();
             mDivider.setBounds(left, top, right, bottom);
-//            Logger.log("TAG","drawHorizontal --left="+left+" right-"+right+" top="+top+ " bottom="+bottom);
+//            Logger.log("TAG","drawHorizontal --left="+left+" right-"+right);
 
             mDivider.draw(c);
         }

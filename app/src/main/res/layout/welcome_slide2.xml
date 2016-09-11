@@ -11,10 +11,10 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <ImageView
+        <pl.droidsonroids.gif.GifImageView
             android:layout_width="@dimen/img_width_height"
             android:layout_height="@dimen/img_width_height"
-            android:src="@drawable/ic_welcome2_dual" />
+            android:src="@drawable/drawer" />
 
         <TextView
             android:layout_width="wrap_content"

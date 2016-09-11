@@ -25,6 +25,13 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".PermissionCheckActivity"
+            android:theme="@style/WelcomScreen">
+        </activity>
+
+
         <activity
             android:name="com.siju.acexplorer.BaseActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"

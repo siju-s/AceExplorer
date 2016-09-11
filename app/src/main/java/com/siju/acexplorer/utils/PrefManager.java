@@ -3,9 +3,7 @@ package com.siju.acexplorer.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-/**
- * Created by Lincoln on 05/05/16.
- */
+
 public class PrefManager {
     SharedPreferences pref;
     SharedPreferences.Editor editor;
@@ -17,7 +15,7 @@ public class PrefManager {
     // Shared preferences file name
     private static final String PREF_NAME = "ace_prefs";
 
-    private static final String IS_FIRST_TIME_LAUNCH = "IsFirstTimeLaunch11"; //TODO change it later
+    private static final String IS_FIRST_TIME_LAUNCH = "IsFirstTimeLaunch17"; //TODO change it later
 
     public PrefManager(Context context) {
         this._context = context;

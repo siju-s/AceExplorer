@@ -125,38 +125,44 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
-        /*mIsFirstRun = PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean
-                (BaseActivity.PREFS_FIRST_RUN, false);*/
-//        mIsFirstRun = getArguments().getBoolean(BaseActivity.PREFS_FIRST_RUN, false);
+                Logger.log(TAG,"onActivityCreated"+savedInstanceState);
 
-        mCurrentOrientation = getResources().getConfiguration().orientation;
-        mIsDualModeEnabled = getArguments().getBoolean(FileConstants.PREFS_DUAL_ENABLED, false);
+        // If permission revoked when app is running,OS tries to recreate fragments with its saved instance.Avoid that.
+        if (savedInstanceState == null) {
+            mCurrentOrientation = getResources().getConfiguration().orientation;
+            mIsDualModeEnabled = getArguments().getBoolean(FileConstants.PREFS_DUAL_ENABLED, false);
 //        savedLibraries = new ArrayList<>();
-        homeLibraryInfoArrayList = new ArrayList<>();
-        homeStoragesInfoArrayList = new ArrayList<>();
-        tempLibraryInfoArrayList = new ArrayList<>();
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        mShowHidden = PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean
-                (FileConstants.PREFS_HIDDEN, false);
-        mSortMode = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt(
-                FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
+            homeLibraryInfoArrayList = new ArrayList<>();
+            homeStoragesInfoArrayList = new ArrayList<>();
+            tempLibraryInfoArrayList = new ArrayList<>();
+            mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            mShowHidden = PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean
+                    (FileConstants.PREFS_HIDDEN, false);
+            mSortMode = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt(
+                    FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
 
-        initializeViews();
-        initConstants();
-        initializeLibraries();
-        setupLoaders();
-        initializeStorageGroup();
+            initializeViews();
+            initConstants();
+            initializeLibraries();
+            setupLoaders();
+            initializeStorageGroup();
 
-        homeLibraryAdapter = new HomeLibraryAdapter(getActivity(), homeLibraryInfoArrayList);
-        homeStoragesAdapter = new HomeStoragesAdapter(getActivity(), homeStoragesInfoArrayList);
-        initListeners();
+            homeLibraryAdapter = new HomeLibraryAdapter(getActivity(), homeLibraryInfoArrayList);
+            homeStoragesAdapter = new HomeStoragesAdapter(getActivity(), homeStoragesInfoArrayList);
+            initListeners();
        /* Logger.log("TAG", "Homescreen--Librarylist=" + homeLibraryInfoArrayList.size() +
                 "storage=" + homeStoragesInfoArrayList.size());*/
 
-        recyclerViewLibrary.setAdapter(homeLibraryAdapter);
-        recyclerViewStorages.setAdapter(homeStoragesAdapter);
+            recyclerViewLibrary.setAdapter(homeLibraryAdapter);
+            recyclerViewStorages.setAdapter(homeStoragesAdapter);
+        }
 
+    }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        Logger.log(TAG,"onSaveInstanceState");
+        super.onSaveInstanceState(outState);
     }
 
     private void setGridColumns() {
@@ -196,10 +202,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
 
         }
 
-
     }
-
-
 
 
     private void getSavedLibraries() {
@@ -636,7 +639,15 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     }
 
     @Override
+    public void onPause() {
+        Logger.log(TAG,"onPause"+getActivity().isFinishing());
+
+        super.onPause();
+    }
+
+    @Override
     public void onDestroyView() {
+        Logger.log(TAG,"onDestroyView");
         super.onDestroyView();
     }
 

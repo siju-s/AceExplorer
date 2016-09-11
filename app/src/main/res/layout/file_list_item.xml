@@ -18,7 +18,7 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/file_list_margin"
         android:layout_marginRight="@dimen/file_list_margin"
-        android:scaleType="centerCrop"
+        android:scaleType="centerInside"
         android:src="@drawable/ic_music"/>
 
 
