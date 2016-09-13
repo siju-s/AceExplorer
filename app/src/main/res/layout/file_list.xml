@@ -28,7 +28,7 @@
         android:layout_height="match_parent"
         android:layout_above="@id/viewDummy">
 
-        <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
+ <!--       <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
             android:id="@+id/recyclerViewFileList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -39,7 +39,23 @@
             app:fastScrollPopupTextColor="@android:color/primary_text_dark"
             app:fastScrollPopupTextSize="56sp"
             app:fastScrollThumbColor="@color/colorPrimary"
-            />
+            />-->
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerViewFileList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+
+        <com.futuremind.recyclerviewfastscroll.FastScroller
+            android:id="@+id/fastscroll"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"/>
+
 
     </android.support.v4.widget.SwipeRefreshLayout>
+
+
 </RelativeLayout>

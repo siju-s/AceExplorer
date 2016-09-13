@@ -1,6 +1,7 @@
 package com.siju.acexplorer;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
@@ -29,6 +30,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.drawable.DrawerArrowDrawable;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -49,7 +51,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.flurry.android.FlurryAgent;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.kobakei.ratethisapp.RateThisApp;
@@ -71,7 +72,6 @@ import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.model.SectionGroup;
 import com.siju.acexplorer.model.SectionItems;
 import com.siju.acexplorer.settings.SettingsActivity;
-import com.siju.acexplorer.utils.FlurryUtils;
 import com.stericson.RootTools.RootTools;
 
 import java.io.File;
@@ -142,6 +142,7 @@ public class BaseActivity extends AppCompatActivity implements
     private boolean mIsPermissionGranted;
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private Toolbar mToolbar;
+    private    DrawerArrowDrawable mArrowDrawable;
     private int mViewMode = FileConstants.KEY_LISTVIEW;
     private boolean mIsFavGroup;
     private String mSelectedPath;
@@ -262,7 +263,6 @@ public class BaseActivity extends AppCompatActivity implements
         RateThisApp.onStart(this);
         // If the criteria is satisfied, "Rate this app" dialog will be shown
         RateThisApp.showRateDialogIfNeeded(this);
-        FlurryAgent.onStartSession(this, "NBH7DY8FPN4MFXJ274QP");
     }
 
     @Override
@@ -293,7 +293,6 @@ public class BaseActivity extends AppCompatActivity implements
     @Override
     protected void onStop() {
         super.onStop();
-        FlurryAgent.onEndSession(this);
     }
 
     private void setup() {
@@ -653,9 +652,24 @@ public class BaseActivity extends AppCompatActivity implements
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         relativeLayoutDrawerPane = (CustomScrimInsetsFrameLayout) findViewById(R.id.drawerPane);
+
         toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, mToolbar, R.string.navigation_drawer_open, R.string
-                .navigation_drawer_close);
+                .navigation_drawer_close) {
+
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                super.onDrawerSlide(drawerView, 0);
+            }
+        };
+
+        mArrowDrawable = new DrawerArrowDrawable(this);
+//        drawerArrow.setColor(myColor);
+
+        mToolbar.setNavigationIcon(mArrowDrawable);
+
+
+
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         // get the listview
@@ -979,6 +993,10 @@ public class BaseActivity extends AppCompatActivity implements
 
 
     }
+
+  public void updateDrawerIcon(boolean actionMode) {
+      ObjectAnimator.ofFloat(mArrowDrawable, "progress", actionMode ? 1 :0).start();
+  }
 
     private void navButtonOnClick(View view, final String dir, final FileListFragment fileListFragment, final
     FileListDualFragment fileListDualFragment) {
@@ -1543,7 +1561,6 @@ public class BaseActivity extends AppCompatActivity implements
     }
 
     public void initialScreenSetup(boolean isHomeScreenEnabled) {
-        FlurryAgent.logEvent(FlurryUtils.HOME_ENABLED, isHomeScreenEnabled);
         if (isHomeScreenEnabled) {
             // Fragment fragment = null;
             toggleNavBarFab(true);
@@ -1762,7 +1779,6 @@ public class BaseActivity extends AppCompatActivity implements
                         } else {
                             startActivity(intent);
                         }
-                        FlurryAgent.logEvent("Rateus");
                         drawerLayout.closeDrawer(relativeLayoutDrawerPane);
                         break;
                     case 1: // Settings
@@ -1808,7 +1824,6 @@ public class BaseActivity extends AppCompatActivity implements
 //                String page = [group][child];
 
 //                menu.setHeaderTitle(page);
-                    FlurryAgent.logEvent("Fav context menu");
 
                     menu.add(0, MENU_FAVOURITES, 0, getString(R.string.delete_fav));
                 }
@@ -1976,7 +1991,6 @@ public class BaseActivity extends AppCompatActivity implements
         Fragment dualFragment = getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
         if (isDualPaneInFocus) {
             if (((FileListDualFragment) dualFragment).isZipMode()) {
-                FlurryAgent.logEvent("Zipmode-backOperation --dualpane=",isDualPaneInFocus);
 
                 if (((FileListDualFragment) dualFragment).checkZipMode()) {
                     int newSize = mBackStackListDual.size() - 1;
@@ -2005,7 +2019,7 @@ public class BaseActivity extends AppCompatActivity implements
             }
         } else {
             if (((FileListFragment) fragment).isZipMode()) {
-                FlurryAgent.logEvent("Zipmode-backOperation --dualpane=",isDualPaneInFocus);
+
                 if (((FileListFragment) fragment).checkZipMode()) {
                     int newSize = mBackStackList.size() - 1;
 
@@ -2154,7 +2168,6 @@ public class BaseActivity extends AppCompatActivity implements
         mBackStackList.clear();
         mBackStackListDual.clear();
         cleanUpFileScreen();
-        FlurryAgent.logEvent("removeFragmentFromBackStack--backstackcount="+backStackCount);
         super.onBackPressed();
     }
 
@@ -2289,7 +2302,6 @@ public class BaseActivity extends AppCompatActivity implements
 
         if (showHidden != mShowHidden) {
             mShowHidden = showHidden;
-            FlurryAgent.logEvent("HiddenToggled");
             Log.d(TAG, "OnPrefschanged PREFS_HIDDEN" + mShowHidden);
             FileListFragment singlePaneFragment = (FileListFragment) getSupportFragmentManager()
                     .findFragmentById(R
@@ -2310,7 +2322,6 @@ public class BaseActivity extends AppCompatActivity implements
                 .PREFS_HOMESCREEN, true);
 
         if (isHomeScreenEnabled != mIsHomeScreenEnabled) {
-            FlurryAgent.logEvent("Homescreen-Setting enabled",isHomeScreenEnabled);
 
             mIsHomeScreenEnabled = isHomeScreenEnabled;
             Log.d(TAG, "OnPrefschanged PREFS_HOMESCREEN" + mIsHomeScreenEnabled);
@@ -2351,7 +2362,6 @@ public class BaseActivity extends AppCompatActivity implements
                 .PREFS_DUAL_PANE, true);
         if (isDualPaneEnabledSettings != mIsDualPaneEnabledSettings) {
             mIsDualPaneEnabledSettings = isDualPaneEnabledSettings;
-            FlurryAgent.logEvent("Dualpane-Setting enabled",isDualPaneEnabledSettings);
 
             Log.d(TAG, "OnPrefschanged PREFS_DUAL_PANE" + mIsDualPaneEnabledSettings);
 
@@ -2386,7 +2396,6 @@ public class BaseActivity extends AppCompatActivity implements
                 favouritesGroupChild.remove(i);
             }
         }
-        FlurryAgent.logEvent("Fav resetted");
         sharedPreferenceWrapper.resetFavourites(this);
         expandableListAdapter.notifyDataSetChanged();
 

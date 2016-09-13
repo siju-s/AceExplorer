@@ -55,6 +55,7 @@ public class HomeLibraryAdapter extends RecyclerView.Adapter<HomeLibraryAdapter
     }
 
     public void updateAdapter(ArrayList<HomeLibraryInfo> homeLibraryInfos) {
+        homeLibraryList = new ArrayList<>();
         this.homeLibraryList = homeLibraryInfos;
         //        Log.d("SIJU","updateAdapter"+homeLibraryList.size());
 

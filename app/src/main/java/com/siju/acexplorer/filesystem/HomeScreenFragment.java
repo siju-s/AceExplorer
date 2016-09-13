@@ -166,9 +166,6 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     }
 
     private void setGridColumns() {
-       /* if (mGridItemWidth == 0) {
-            mGridItemWidth = dpToPx(100);
-        }*/
         mGridColumns = getResources().getInteger(R.integer.homescreen_columns);
 //        Logger.log(TAG,"Grid columns="+mGridColumns);
         gridLayoutManagerLibrary = new HomeScreenGridLayoutManager(getActivity(), mGridColumns);

@@ -31,7 +31,6 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.flurry.android.FlurryAgent;
 import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
@@ -534,7 +533,6 @@ public class FileUtils {
         Intent intent = new Intent();
         intent.setAction(android.content.Intent.ACTION_VIEW);
         // To lowercase used since capital extensions like MKV doesn't get recognised
-        FlurryAgent.logEvent(TAG + " viewFile-path="+path +" Extension="+extension);
         if (extension == null) {
             openWith(uri, context);
             return;

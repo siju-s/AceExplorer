@@ -19,7 +19,6 @@ import android.text.format.Formatter;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
-import com.flurry.android.FlurryAgent;
 import com.github.junrar.Archive;
 import com.github.junrar.rarfile.FileHeader;
 import com.siju.acexplorer.R;
@@ -81,7 +80,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         mCategory = category;
         this.showHidden = showHidden;
         mSortMode = sortMode;
-        FlurryAgent.logEvent(TAG + "Path="+path+"Category="+category);
 
 
     }
@@ -102,8 +100,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         mInParentZip = isParentZip;
         mSortMode = PreferenceManager.getDefaultSharedPreferences(context).getInt(
                 FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
-        FlurryAgent.logEvent(TAG + "Zipped" + "Path="+path+"Category="+category);
-
     }
 
 

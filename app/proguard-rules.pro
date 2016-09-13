@@ -35,8 +35,8 @@
 -keepattributes SourceFile,LineNumberTable
 -keep class com.crashlytics.** { *; }
 -dontwarn com.crashlytics.**
--keep class com.flurry.** { *; }
--dontwarn com.flurry.**
+#-keep class com.flurry.** { *; }
+#-dontwarn com.flurry.**
 -keep public class com.google.vending.licensing.ILicensingService
 -keep public class com.android.vending.licensing.ILicensingService
 

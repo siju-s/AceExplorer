@@ -6,6 +6,8 @@ import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.siju.acexplorer.common.Logger;
+
 /**
  * Created by Siju on 10-09-2016.
  */
@@ -21,9 +23,9 @@ public class GridItemDecoration extends RecyclerView.ItemDecoration {
      *
      * @param horizontalDivider A divider {@code Drawable} to be drawn on the
      *                          rows of the grid of the RecyclerView
-     * @param verticalDivider A divider {@code Drawable} to be drawn on the
-     *                        columns of the grid of the RecyclerView
-     * @param numColumns The number of columns in the grid of the RecyclerView
+     * @param verticalDivider   A divider {@code Drawable} to be drawn on the
+     *                          columns of the grid of the RecyclerView
+     * @param numColumns        The number of columns in the grid of the RecyclerView
      */
     public GridItemDecoration(Drawable horizontalDivider, Drawable verticalDivider, int numColumns) {
         mHorizontalDivider = horizontalDivider;
@@ -36,7 +38,7 @@ public class GridItemDecoration extends RecyclerView.ItemDecoration {
      *
      * @param canvas The {@link Canvas} onto which dividers will be drawn
      * @param parent The RecyclerView onto which dividers are being added
-     * @param state The current RecyclerView.State of the RecyclerView
+     * @param state  The current RecyclerView.State of the RecyclerView
      */
     @Override
     public void onDraw(Canvas canvas, RecyclerView parent, RecyclerView.State state) {
@@ -50,9 +52,9 @@ public class GridItemDecoration extends RecyclerView.ItemDecoration {
      * RecyclerView.
      *
      * @param outRect The {@link Rect} of offsets to be added around the child view
-     * @param view The child view to be decorated with an offset
-     * @param parent The RecyclerView onto which dividers are being added
-     * @param state The current RecyclerView.State of the RecyclerView
+     * @param view    The child view to be decorated with an offset
+     * @param parent  The RecyclerView onto which dividers are being added
+     * @param state   The current RecyclerView.State of the RecyclerView
      */
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
@@ -80,8 +82,14 @@ public class GridItemDecoration extends RecyclerView.ItemDecoration {
         int childCount = parent.getChildCount();
         int rowCount = childCount / mNumColumns;
         int lastRowChildCount = childCount % mNumColumns;
+        int newChildCount;
+        if (childCount < mNumColumns) {
+            newChildCount = childCount;
+        } else {
+            newChildCount = mNumColumns;
+        }
 
-        for (int i = 1; i < mNumColumns; i++) {
+        for (int i = 1; i < newChildCount; i++) {
             int lastRowChildIndex;
             if (i < lastRowChildCount) {
                 lastRowChildIndex = i + (rowCount * mNumColumns);
@@ -90,12 +98,11 @@ public class GridItemDecoration extends RecyclerView.ItemDecoration {
             }
 
 
-
             View firstRowChild = parent.getChildAt(i);
             View lastRowChild = parent.getChildAt(lastRowChildIndex);
 
-       /*     Logger.log("TAG","firstRowChild="+firstRowChild+ "item="+i);
-            Logger.log("TAG","lastRowChild="+lastRowChild+ "item="+lastRowChildIndex);*/
+            Logger.log("TAG", "firstRowChild=" + firstRowChild + "item=" + i);
+            Logger.log("TAG", "lastRowChild=" + lastRowChild + "item=" + lastRowChildIndex);
 
             int dividerTop = firstRowChild.getTop();
             int dividerRight = firstRowChild.getLeft();
@@ -122,7 +129,7 @@ public class GridItemDecoration extends RecyclerView.ItemDecoration {
  /*           if (i == rowCount) {
                 rightmostChildIndex = parent.getChildCount() - 1;
             } else {*/
-                rightmostChildIndex = (i * mNumColumns) + mNumColumns - 1;
+            rightmostChildIndex = (i * mNumColumns) + mNumColumns - 1;
 //            }
 
 

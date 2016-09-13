@@ -22,7 +22,6 @@ import com.siju.acexplorer.filesystem.task.ExtractService;
 import com.siju.acexplorer.filesystem.utils.FileOperations;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.utils.DialogUtils;
-import com.siju.acexplorer.utils.FlurryUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -51,7 +50,6 @@ public class FileOpsHelper {
                     public void run() {
 //                        if (toast != null) toast.cancel();
                         FileUtils.showMessage(mActivity, mActivity.getString(R.string.file_exists));
-                        FlurryUtils.logOperation(TAG,"Exists","Create folder");
 
 //                        if (ma != null && ma.getActivity() != null)
                         new FileUtils().createDirDialog(mActivity, rootMode, file.getAbsolutePath());
@@ -69,7 +67,6 @@ public class FileOpsHelper {
                         mActivity.mNewFilePath = file.getAbsolutePath();
                         mActivity.mOperation = FileConstants.FILE_CREATE;
                         guideDialogForLEXA(mActivity.mNewFilePath);
-                        FlurryUtils.logOperation(TAG,"launchSAF","Create folder");
 
                     }
                 });
@@ -93,7 +90,6 @@ public class FileOpsHelper {
                             intent.putExtra(FileConstants.OPERATION, FileConstants.FOLDER_CREATE);
                             mActivity.sendBroadcast(intent);
                             FileUtils.scanFile(mActivity, file.getAbsolutePath());
-                            FlurryUtils.logOperation(TAG,"Success","Create folder");
 
                         } else
                             Toast.makeText(mActivity, R.string.msg_operation_failed,
@@ -117,7 +113,6 @@ public class FileOpsHelper {
                     public void run() {
 //                        if (toast != null) toast.cancel();
                         FileUtils.showMessage(mActivity, mActivity.getString(R.string.file_exists));
-                        FlurryUtils.logOperation(TAG,"File exists","Create file");
 
 //                        if (ma != null && ma.getActivity() != null)
                         new FileUtils().createFileDialog(mActivity, rootMode, file.getAbsolutePath());
@@ -134,7 +129,6 @@ public class FileOpsHelper {
                     public void run() {
                         mActivity.mNewFilePath = file.getAbsolutePath();
                         mActivity.mOperation = FileConstants.FILE_CREATE;
-                        FlurryUtils.logOperation(TAG,"launchSAF","Create file");
 
                         guideDialogForLEXA(mActivity.mNewFilePath);
                     }
@@ -159,7 +153,6 @@ public class FileOpsHelper {
                             intent.putExtra(FileConstants.OPERATION, FileConstants.FILE_CREATE);
                             mActivity.sendBroadcast(intent);
                             FileUtils.scanFile(mActivity, file.getAbsolutePath());
-                            FlurryUtils.logOperation(TAG,"Success","Create file");
 
                         } else
                             Toast.makeText(mActivity, R.string.msg_operation_failed,
@@ -184,9 +177,6 @@ public class FileOpsHelper {
                     @Override
                     public void run() {
                         FileUtils.showMessage(mActivity, mActivity.getString(R.string.file_exists));
-                        FlurryUtils.logOperation(TAG,"File exists","RENAME");
-
-
                     }
                 });
             }
@@ -207,7 +197,6 @@ public class FileOpsHelper {
                         mActivity.mNewFilePath = newFile.getAbsolutePath();
                         mActivity.mOperation = FileConstants.RENAME;
                         mActivity.mFileOpsHelper.guideDialogForLEXA(mActivity.mNewFilePath);
-                        FlurryUtils.logOperation(TAG,"Launch SAF","RENAME");
 
                     }
                 });
@@ -227,7 +216,6 @@ public class FileOpsHelper {
                             intent.putExtra("old_file", oldFile.getAbsolutePath());
                             intent.putExtra("new_file", file.getAbsolutePath());
                             mActivity.sendBroadcast(intent);
-                            FlurryUtils.logOperation(TAG,"Success","RENAME");
 
                         } else
                             Toast.makeText(mActivity, R.string.msg_operation_failed,
