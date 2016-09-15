@@ -380,16 +380,17 @@ public class FileUtils {
 
 
     public static String convertDate(long dateInMs) {
-        SimpleDateFormat df2 = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
-        String dateText = df2.format(dateInMs);
-        return dateText;
+        SimpleDateFormat df2 = new SimpleDateFormat("MMM dd, yyyy hh:mm a",Locale.getDefault());
+        return df2.format(dateInMs);
     }
 
     public static String convertDate(Date date) {
-        SimpleDateFormat df2 = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
+        SimpleDateFormat df2 = new SimpleDateFormat("MMM dd, yyyy hh:mm a",Locale.getDefault());
         String dateText = df2.format(date);
         return dateText;
     }
+
+
 
 
 

@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -125,7 +127,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
-                Logger.log(TAG,"onActivityCreated"+savedInstanceState);
+        Logger.log(TAG, "onActivityCreated" + savedInstanceState);
 
         // If permission revoked when app is running,OS tries to recreate fragments with its saved instance.Avoid that.
         if (savedInstanceState == null) {
@@ -161,7 +163,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        Logger.log(TAG,"onSaveInstanceState");
+        Logger.log(TAG, "onSaveInstanceState");
         super.onSaveInstanceState(outState);
     }
 
@@ -196,7 +198,6 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             cardLibrary.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_colorPrimary));
             cardStorage.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_colorPrimary));
             nestedScrollViewHome.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_home_bg));
-
         }
 
     }
@@ -318,16 +319,6 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             int categoryId = savedLibraries.get(i).getCategoryId();
             initLoaders(categoryId);
         }
-/*        getLoaderManager().initLoader(LOADER_ID_IMAGES, null, this);
-        getLoaderManager().initLoader(LOADER_ID_VIDEOS, null, this);
-        getLoaderManager().initLoader(LOADER_ID_AUDIO, null, this);
-        getLoaderManager().initLoader(LOADER_ID_DOCS, null, this);
-        getLoaderManager().initLoader(LOADER_ID_DOWNLOADS, null, this);*/
-     /*   getLoaderManager().initLoader(LOADER_ID_COMPRESSED, null, this);
-        getLoaderManager().initLoader(LOADER_ID_PDF, null, this);
-        getLoaderManager().initLoader(LOADER_ID_APPS, null, this);
-        getLoaderManager().initLoader(LOADER_ID_LARGE, null, this);*/
-
 
         mFavList = sharedPreferenceWrapper.getFavorites(getActivity());
         if (mFavList != null && mFavList.size() != 0) {
@@ -338,10 +329,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                     break;
                 }
             }
-
         }
-
-
     }
 
     public void setDualModeEnabled(boolean isDualModeEnabled) {
@@ -503,6 +491,28 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                 FileUtils.formatSize(getActivity(), totalSpace);
     }
 
+    public void updateCount(int categoryId,int count) {
+        Log.d(TAG, "updateCount--categoryId=" +categoryId+ " count="+count);
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
+            if (categoryId == homeLibraryInfoArrayList.get(i).getCategoryId()) {
+                homeLibraryInfoArrayList.get(i).setCount(count);
+//                homeLibraryAdapter.notifyItemChanged(i);
+                //updateAdapter(homeLibraryInfoArrayList);
+                final int pos = i;
+                final Runnable r = new Runnable() {
+                    public void run() {
+                        homeLibraryAdapter.notifyItemChanged(pos);
+                    }
+                };
+
+                handler.post(r);
+                break;
+            }
+        }
+    }
+
     @Override
     public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
         Log.d(TAG, "on onCreateLoader--" + id);
@@ -515,10 +525,10 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             case 9:
             case 10:
             case 11:
-                return new FileListLoader(getContext(), null, id, mShowHidden, mSortMode);
+                return new FileListLoader(this,getContext(), null, id, mShowHidden, mSortMode);
             case 5:
                 String path = FileUtils.getDownloadsDirectory().getAbsolutePath();
-                return new FileListLoader(getContext(), path, id, mShowHidden, mSortMode);
+                return new FileListLoader(this,getContext(), path, id, mShowHidden, mSortMode);
 
         }
         return null;
@@ -637,14 +647,14 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
 
     @Override
     public void onPause() {
-        Logger.log(TAG,"onPause"+getActivity().isFinishing());
+        Logger.log(TAG, "onPause" + getActivity().isFinishing());
 
         super.onPause();
     }
 
     @Override
     public void onDestroyView() {
-        Logger.log(TAG,"onDestroyView");
+        Logger.log(TAG, "onDestroyView");
         super.onDestroyView();
     }
 

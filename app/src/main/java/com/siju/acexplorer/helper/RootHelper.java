@@ -1,11 +1,9 @@
 package com.siju.acexplorer.helper;
 
 import android.content.Context;
-import android.text.format.Formatter;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
-import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.BaseFile;
@@ -141,6 +139,7 @@ public class RootHelper {
                                                            showHidden) {
         ArrayList<FileInfo> fileInfoArrayList = new ArrayList<>();
         File file = new File(path);
+        Logger.log("RootHelper", "Starting time FILES=");
         if (file.canRead() && (path.startsWith("/storage") || path.startsWith("/sdcard"))) {
             File[] listFiles = file.listFiles();
 
@@ -148,7 +147,8 @@ public class RootHelper {
                 for (File file1 : listFiles) {
                     String filePath = file1.getAbsolutePath();
                     boolean isDirectory = false;
-                    String noOfFilesOrSize = null;
+//                    String noOfFilesOrSize = null;
+                    long size;
                     String extension = null;
                     int type = 0;
 
@@ -165,26 +165,29 @@ public class RootHelper {
                             childFileListSize = list.length;
                         }
                         // Saves us 200 ms by avoiding filtering of hidden files
-                        if (childFileListSize == 0) {
+                      /*  if (childFileListSize == 0) {
                             noOfFilesOrSize = context.getResources().getString(R.string.empty);
                         } else {
                             noOfFilesOrSize = context.getResources().getQuantityString(R.plurals.number_of_files,
                                     childFileListSize, childFileListSize);
-                        }
+                        }*/
+                        size = childFileListSize;
 //                        }
                     } else {
-                        long size = file1.length();
-                        noOfFilesOrSize = Formatter.formatFileSize(context, size);
+                        size = file1.length();
+//                        noOfFilesOrSize = Formatter.formatFileSize(context, size);
                         extension = filePath.substring(filePath.lastIndexOf(".") + 1);
                         type = checkMimeType(filePath, extension);
                     }
                     long date = file1.lastModified();
-                    String fileModifiedDate = convertDate(date);
+//                    String fileModifiedDate = convertDate(date);
 
-                    FileInfo fileInfo = new FileInfo(file1.getName(), filePath, fileModifiedDate, noOfFilesOrSize,
+                    FileInfo fileInfo = new FileInfo(file1.getName(), filePath, date, size,
                             isDirectory, extension, type, parseFilePermission(file1));
                     fileInfoArrayList.add(fileInfo);
                 }
+                Logger.log("RootHelper", "END time FILES=");
+
             }
         } else {
             String p = " ";
@@ -225,21 +228,20 @@ public class RootHelper {
                                     } else isDirectory = isDirectory(array);
                                     long size1 = array.getSize();
                                     String size;
-                                    if (size1 != -1) {
+                          /*          if (size1 != -1) {
                                         size = Formatter.formatFileSize(context, array.getSize());
                                     } else {
                                         size = null;
-                                    }
+                                    }*/
                                     fileInfoArrayList.add(new FileInfo(name, path1,
-                                            convertDate(array.getDate()),
-                                            size, isDirectory, null,
+                                            array.getDate(),
+                                            size1, isDirectory, null,
                                             FileConstants.CATEGORY
                                                     .FILES.getValue(), array.getPermisson()));
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-
                     }
                 }
             }

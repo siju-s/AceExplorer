@@ -20,8 +20,10 @@ public class FileInfo implements Parcelable {
     private long bucketId = -1;
     private String mimeType;
     private String permissions;
+    private long date;
+    private long size;
 
-    public FileInfo(String fileName, String filePath, String fileDate, String noOfFilesOrSize, boolean isDirectory,
+/*    public FileInfo(String fileName, String filePath, String fileDate, String noOfFilesOrSize, boolean isDirectory,
                     String extension, int type,String permissions) {
         this.fileName = fileName;
         this.filePath = filePath;
@@ -31,15 +33,41 @@ public class FileInfo implements Parcelable {
         this.extension = extension;
         this.type = type;
         this.permissions = permissions;
+    }*/
+
+    public FileInfo(String fileName, String filePath, long fileDate, long noOfFilesOrSize, boolean isDirectory,
+                    String extension, int type,String permissions) {
+        this.fileName = fileName;
+        this.filePath = filePath;
+        this.date = fileDate;
+        this.size = noOfFilesOrSize;
+        this.isDirectory = isDirectory;
+        this.extension = extension;
+        this.type = type;
+        this.permissions = permissions;
     }
 
-    public FileInfo(long id, String fileName, String filePath, String fileDate, String noOfFilesOrSize, int type,
+/*    public FileInfo(long id, String fileName, String filePath, String fileDate, String noOfFilesOrSize, int type,
                     String extension,String mimeType) {
         this.id = id;
         this.fileName = fileName;
         this.filePath = filePath;
         this.fileDate = fileDate;
         this.noOfFilesOrSize = noOfFilesOrSize;
+        this.type = type;
+        this.extension = extension;
+        this.mimeType = mimeType;
+    }*/
+
+
+    // Used for apk
+    public FileInfo(long id, String fileName, String filePath, long fileDate, long size, int type,
+                    String extension,String mimeType) {
+        this.id = id;
+        this.fileName = fileName;
+        this.filePath = filePath;
+        this.date = fileDate;
+        this.size = size;
         this.type = type;
         this.extension = extension;
         this.mimeType = mimeType;
@@ -68,6 +96,20 @@ public class FileInfo implements Parcelable {
         this.type = type;
         this.extension = extension;
     }
+
+    public FileInfo(long id, long bucketId, String fileName, String filePath, long fileDate, long size,
+                    int type,
+                    String extension) {
+        this.id = id;
+        this.bucketId = bucketId;
+        this.fileName = fileName;
+        this.filePath = filePath;
+        this.date = fileDate;
+        this.size = size;
+        this.type = type;
+        this.extension = extension;
+    }
+
 
 
 
@@ -171,6 +213,22 @@ public class FileInfo implements Parcelable {
 
     public String getFileDate() {
         return fileDate;
+    }
+
+    public void setDate(long date) {
+        this.date = date;
+    }
+
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
+
+    public long getDate() {
+        return date;
     }
 
     public void setFileDate(String fileDate) {

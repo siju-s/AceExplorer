@@ -72,10 +72,6 @@ public class FileConstants {
     public static final int KEY_GRIDVIEW = 1;
 
 
-
-
-
-
     /********** DOCUMENT EXTENSIONS**************/
     public static final String EXT_TEXT = "txt";
     public static final String EXT_HTML = "html";

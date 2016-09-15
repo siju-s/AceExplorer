@@ -2303,14 +2303,13 @@ public class BaseActivity extends AppCompatActivity implements
         if (showHidden != mShowHidden) {
             mShowHidden = showHidden;
             Log.d(TAG, "OnPrefschanged PREFS_HIDDEN" + mShowHidden);
-            FileListFragment singlePaneFragment = (FileListFragment) getSupportFragmentManager()
-                    .findFragmentById(R
-                            .id.main_container);
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
+
             FileListFragment dualPaneFragment = (FileListDualFragment) getSupportFragmentManager()
                     .findFragmentById(R
                             .id.frame_container_dual);
-            if (singlePaneFragment != null) {
-                singlePaneFragment.refreshList();
+            if (fragment instanceof FileListFragment) {
+                ((FileListFragment)fragment).refreshList();
             }
             if (dualPaneFragment != null) {
                 dualPaneFragment.refreshList();

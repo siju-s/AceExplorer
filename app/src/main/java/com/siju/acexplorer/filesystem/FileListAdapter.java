@@ -13,6 +13,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.Formatter;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -356,10 +357,25 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     private void setViewByCategory(FileListViewHolder fileListViewHolder, int position) {
 
         String fileName = fileInfoArrayList.get(position).getFileName();
-        String fileDate = fileInfoArrayList.get(position).getFileDate();
+        String fileDate =   FileUtils.convertDate(fileInfoArrayList.get(position).getDate() * 1000);
         boolean isDirectory = fileInfoArrayList.get(position).isDirectory();
-        String fileNoOrSize = fileInfoArrayList.get(position).getNoOfFilesOrSize();
+        String fileNoOrSize;
+        if (isDirectory) {
+            int childFileListSize = (int)fileInfoArrayList.get(position).getSize();
+            if (childFileListSize == 0) {
+                fileNoOrSize = mContext.getResources().getString(R.string.empty);
+            } else {
+                fileNoOrSize =  mContext.getResources().getQuantityString(R.plurals.number_of_files,
+                        childFileListSize, childFileListSize);
+            }
+        }
+        else {
+            fileNoOrSize = Formatter.formatFileSize(mContext, fileInfoArrayList.get(position)
+                    .getSize());
+        }
+
         String filePath = fileInfoArrayList.get(position).getFilePath();
+
 
         fileListViewHolder.textFileName.setText(fileName);
         if (mViewMode == FileConstants.KEY_LISTVIEW) {
@@ -506,6 +522,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 // .getBucketId());
 //        Uri audioUri = Uri.fromFile(new File(path));
 
+        fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_music);
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         String[] projection = new String[]{MediaStore.Audio.Media.ALBUM_ID};
         String selection = MediaStore.Audio.Media.DATA + " = ?";
@@ -517,6 +534,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
 
         if (cursor != null && cursor.moveToFirst()) {
+
 
             int albumIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID);
             long albumId = cursor.getLong(albumIdIndex);
@@ -530,6 +548,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
             cursor.close();
         }
+
 
 /*
         MediaMetadataRetriever myRetriever = new MediaMetadataRetriever();

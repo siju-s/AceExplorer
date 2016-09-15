@@ -62,6 +62,17 @@ public class HomeLibraryAdapter extends RecyclerView.Adapter<HomeLibraryAdapter
         notifyDataSetChanged();
     }
 
+    public void updateCount(int category,int count) {
+
+        //        Log.d("SIJU","updateAdapter"+homeLibraryList.size());
+
+        switch (category) {
+
+        }
+
+        notifyDataSetChanged();
+    }
+
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
     }
@@ -81,8 +92,7 @@ public class HomeLibraryAdapter extends RecyclerView.Adapter<HomeLibraryAdapter
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.library_item,
                 parent, false);
 
-        LibraryViewHolder tvh = new LibraryViewHolder(view);
-        return tvh;
+        return new LibraryViewHolder(view);
     }
 
     @Override
@@ -96,7 +106,6 @@ public class HomeLibraryAdapter extends RecyclerView.Adapter<HomeLibraryAdapter
         }
         libraryViewHolder.textCount.setText("" + homeLibraryList.get(position).getCount());
         changeColor(libraryViewHolder.imageLibrary,homeLibraryList.get(position).getCategoryId());
-
     }
 
 

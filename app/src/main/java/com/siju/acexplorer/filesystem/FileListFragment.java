@@ -871,6 +871,10 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
     }
 
+    public void showRefreshBar(boolean flag) {
+        mSwipeRefreshLayout.setRefreshing(flag);
+    }
+
     public void setBackPressed(boolean flag) {
         mIsBackPressed = flag;
     }
@@ -889,8 +893,9 @@ public class FileListFragment extends Fragment implements LoaderManager
             return new FileListLoader(this, path, FileConstants.CATEGORY.ZIP_VIEWER.getValue(),
                     mCurrentZipDir, isDualPaneInFocus, mInParentZip);
         } else {
-            return new FileListLoader(getContext(), path, mCategory, mShowHidden, mSortMode);
+            return new FileListLoader(this,getContext(), path, mCategory, mShowHidden, mSortMode);
         }
+
     }
 
     @Override
@@ -900,6 +905,8 @@ public class FileListFragment extends Fragment implements LoaderManager
             mSwipeRefreshLayout.setRefreshing(false);
             mIsSwipeRefreshed = false;
         }
+//        mSwipeRefreshLayout.setRefreshing(false);
+
 
 //        Log.d(TAG, "on onLoadFinished--" + data.size());
         if (data != null) {

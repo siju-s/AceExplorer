@@ -15,13 +15,11 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
-import android.text.format.Formatter;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.github.junrar.Archive;
 import com.github.junrar.rarfile.FileHeader;
-import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.common.SharedPreferenceWrapper;
 import com.siju.acexplorer.filesystem.model.FavInfo;
@@ -42,8 +40,6 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
-
-import static com.siju.acexplorer.filesystem.utils.FileUtils.convertDate;
 
 /**
  * Created by Siju on 13-06-2016.
@@ -69,17 +65,19 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             | FileObserver.MODIFY | FileObserver.MOVE_SELF;
 
     private FileObserver mFileObserver;
-//    private MediaContentObserver mMediaContentObserver;
+    //    private MediaContentObserver mMediaContentObserver;
     private MountUnmountReceiver mMountUnmountReceiver;
 
 
-    public FileListLoader(Context context, String path, int category, boolean showHidden, int sortMode) {
+    public FileListLoader(Fragment fragment, Context context, String path, int category, boolean showHidden, int
+            sortMode) {
         super(context);
         mPath = path;
         mContext = getContext();
         mCategory = category;
         this.showHidden = showHidden;
         mSortMode = sortMode;
+        mFragment = fragment;
 
 
     }
@@ -154,6 +152,10 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         }
     }
 
+    private boolean isHomeFragment() {
+        return mFragment instanceof HomeScreenFragment;
+    }
+
     protected void onReleaseResources() {
 
         /*if (mFileObserver != null) {
@@ -179,7 +181,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         fileInfoList = new ArrayList<>();
         fetchDataByCategory();
         return fileInfoList;
-
     }
 
     Comparator<? super FileInfo> comparatorByNameZip = new Comparator<FileInfo>() {
@@ -273,7 +274,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         } else {
 //            boolean rootAvailable  = RootTools.isRootAvailable();
             fileInfoList = RootHelper.getFilesList(mContext, mPath,
-                    true,showHidden);
+                    true, showHidden);
             fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
         }
         return fileInfoList;
@@ -283,51 +284,66 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
     private ArrayList<FileInfo> fetchApk() {
         // exclude media files, they would be here also.
-        String where = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
-                + MediaStore.Files.FileColumns.MEDIA_TYPE_NONE;
-//                selectionArgs = new String[]{ apk };
+       /* String where = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                + MediaStore.Files.FileColumns.MEDIA_TYPE_NONE;*/
+        String where = MediaStore.Files.FileColumns.DATA + " LIKE ?";
+        String filter = ".apk";
+        String[] selectionArgs = new String[]{"%" + filter};
 //                String test = "/storage/emulated/0/Apps";
-        String[] selectionArgs = null;
+//        String[] selectionArgs = null;
         Uri uri = MediaStore.Files.getContentUri("external");
         long startTime = System.currentTimeMillis();
         Logger.log(this.getClass().getSimpleName(), "Starting time=" + startTime / 1000);
 
 //        String sortOrder = MediaStore.Files.FileColumns.N + " DESC";
-        Cursor cursor = mContext.getContentResolver().query(uri, null, where, null,
+        Cursor cursor = mContext.getContentResolver().query(uri, null, where, selectionArgs,
                 null);
         if (cursor != null && cursor.moveToFirst()) {
+
+            if (isHomeFragment()) {
+                setCountForCategory(mCategory, cursor.getCount());
+            }
+
             do {
-//                int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.TITLE);
+                int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.TITLE);
                 int sizeIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.SIZE);
                 int dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_MODIFIED);
                 int fileIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID);
                 int pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA);
                 int mimeTypeIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MIME_TYPE);
                 String path = cursor.getString(pathIndex);
-//                String fileName = cursor.getString(titleIndex);
+                String fileName = cursor.getString(titleIndex);
 
-                if (path.endsWith(".apk")) {
+//                if (path.endsWith(".apk")) {
 //                    Log.d(TAG, "path=" + path);
-                    long size1 = cursor.getLong(sizeIndex);
-                    long date1 = cursor.getLong(dateIndex);
-                    long fileId = cursor.getLong(fileIdIndex);
+                long size1 = cursor.getLong(sizeIndex);
+                long date1 = cursor.getLong(dateIndex);
+                long fileId = cursor.getLong(fileIdIndex);
 
-                    String mimeType = cursor.getString(mimeTypeIndex);
-                    int type = mCategory;
-                    String date = FileUtils.convertDate(date1 * 1000); // converting it to ms
-                    String size = Formatter.formatFileSize(mContext, size1);
-                    String extension = path.substring(path.lastIndexOf(".") + 1);
-                    String fileName = path.substring(path.lastIndexOf("/") + 1, path.length());
-                    String[] tokens = fileName.split("\\.(?=[^\\.]+$)");
-                    fileName = tokens[0];
-//                String extension = tokens[1];
-                    String nameWithExt = fileName + "." + extension;
-                    fileInfoList.add(new FileInfo(fileId, nameWithExt, path, date, size, type,
-                            extension, mimeType));
-                }
+                String mimeType = cursor.getString(mimeTypeIndex);
+//                    Log.d(TAG, "mimeType=" + mimeType);
+
+                int type = mCategory;
+/*                String date = FileUtils.convertDate(date1 * 1000); // converting it to ms
+                String size = Formatter.formatFileSize(mContext, size1);*/
+/*                String extension = path.substring(path.lastIndexOf(".") + 1);
+                String fileName = path.substring(path.lastIndexOf("/") + 1, path.length());
+                String[] tokens = fileName.split("\\.(?=[^\\.]+$)");
+                fileName = tokens[0];
+//                String extension = tokens[1];*/
+
+                String extension = path.substring(path.lastIndexOf(".") + 1);
+                String nameWithExt = fileName + "." + extension;
+
+                fileInfoList.add(new FileInfo(fileId, nameWithExt, path, date1, size1, type,
+                        extension, mimeType));
+//                }
 
             } while (cursor.moveToNext());
             cursor.close();
+
+            Logger.log(this.getClass().getSimpleName(), "Apk list size=" + fileInfoList.size());
+
             fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
         }
         long endTime = System.currentTimeMillis();
@@ -346,7 +362,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             File file = new File(path);
             String fileName = file.getName();
             String noOfFilesOrSize;
-            int childFileListSize = 0;
+            long childFileListSize = 0;
 
             if (file.list() != null) {
                 if (!showHidden) {
@@ -362,17 +378,17 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 }
             }
 
-            if (childFileListSize == 0) {
+      /*      if (childFileListSize == 0) {
                 noOfFilesOrSize = mContext.getResources().getString(R.string.empty);
             } else {
                 noOfFilesOrSize = mContext.getResources().getQuantityString(R.plurals.number_of_files,
                         childFileListSize, childFileListSize);
-            }
+            }*/
             long date = file.lastModified();
-            String fileModifiedDate = convertDate(date);
+//            String fileModifiedDate = convertDate(date);
 
 
-            FileInfo fileInfo = new FileInfo(fileName, path, fileModifiedDate, noOfFilesOrSize,
+            FileInfo fileInfo = new FileInfo(fileName, path, date, childFileListSize,
                     true, null, FileConstants.CATEGORY.FAVORITES.getValue(), RootHelper.parseFilePermission(new File
                     (path)));
             fileInfoList.add(fileInfo);
@@ -497,8 +513,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             long size = model.getSize();
             int type = FileConstants.CATEGORY.COMPRESSED.getValue();
             long date = model.getTime();
-            String noOfFilesOrSize = Formatter.formatFileSize(mContext, size);
-            String fileModifiedDate = FileUtils.convertDate(date);
+       /*     String noOfFilesOrSize = Formatter.formatFileSize(mContext, size);
+            String fileModifiedDate = FileUtils.convertDate(date);*/
             String extension;
             if (isDirectory) {
                 name = name.substring(0, name.length() - 1);
@@ -512,7 +528,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             }
             String path = parentZipPath + "/" + name;
 
-            FileInfo fileInfo = new FileInfo(name, path, fileModifiedDate, noOfFilesOrSize,
+            FileInfo fileInfo = new FileInfo(name, path, date, size,
                     isDirectory, extension, type, RootHelper.parseFilePermission(new File(path)));
             fileInfoList.add(fileInfo);
         }
@@ -574,8 +590,9 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             long size = fileHeader.getPackSize();
             int type = FileConstants.CATEGORY.COMPRESSED.getValue();
             Date date = fileHeader.getMTime();
-            String noOfFilesOrSize = Formatter.formatFileSize(mContext, size);
-            String fileModifiedDate = FileUtils.convertDate(date);
+            long date1 = date.getTime();
+//            String noOfFilesOrSize = Formatter.formatFileSize(mContext, size);
+//            String fileModifiedDate = FileUtils.convertDate(date);
             String extension;
             if (isDirectory) {
                 name = name.substring(0, name.length() - 1);
@@ -589,7 +606,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             }
             String path = parentZipPath + "/" + name;
 
-            FileInfo fileInfo = new FileInfo(name, path, fileModifiedDate, noOfFilesOrSize,
+            FileInfo fileInfo = new FileInfo(name, path, date1, size,
                     isDirectory, extension, type, RootHelper.parseFilePermission(new File(path)));
             fileInfoList.add(fileInfo);
         }
@@ -607,7 +624,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
     private ArrayList<FileInfo> fetchMusic() {
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        String[] projection = new String[]{MediaStore.Audio.Media._ID, MediaStore.Audio.Media.ALBUM_ID,
+        String[] projection = new String[]{MediaStore.Audio.Media.TITLE,MediaStore.Audio.Media._ID, MediaStore.Audio
+                .Media.ALBUM_ID,
                 MediaStore.Audio.Media.DATE_MODIFIED, MediaStore.Audio.Media.SIZE,
                 MediaStore.Audio.Media.DATA};
         String where = (MediaStore.Audio.Media.TITLE + " != ''") +
@@ -616,15 +634,19 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         Cursor cursor = mContext.getContentResolver().query(uri, projection, where, null,
                 null);
         if (cursor != null && cursor.moveToFirst()) {
+            if (isHomeFragment()) {
+                setCountForCategory(mCategory, cursor.getCount());
+            }
             do {
-//                int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE);
+
+                int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE);
                 int sizeIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE);
                 int dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATE_MODIFIED);
                 int audioIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID);
                 int albumIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID);
                 int pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
 
-//                String fileName = cursor.getString(titleIndex);
+                String fileName = cursor.getString(titleIndex);
 
                 long size1 = cursor.getLong(sizeIndex);
                 long date1 = cursor.getLong(dateIndex);
@@ -632,15 +654,18 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 long audioId = cursor.getLong(audioIdIndex);
                 long albumId = cursor.getLong(albumIdIndex);
                 int type = FileConstants.CATEGORY.AUDIO.getValue();
-                String date = FileUtils.convertDate(date1 * 1000); // converting it to ms
-                String size = Formatter.formatFileSize(mContext, size1);
+  /*              String date = FileUtils.convertDate(date1 * 1000); // converting it to ms
+                String size = Formatter.formatFileSize(mContext, size1);*/
 //                String extension = path.substring(path.lastIndexOf(".") + 1);
-                String fileName = path.substring(path.lastIndexOf("/") + 1, path.length());
+/*                String fileName = path.substring(path.lastIndexOf("/") + 1, path.length());
                 String[] tokens = fileName.split("\\.(?=[^\\.]+$)");
                 fileName = tokens[0];
                 String extension = tokens[1];
+                String nameWithExt = fileName + "." + extension;*/
+
+                String extension = path.substring(path.lastIndexOf(".") + 1);
                 String nameWithExt = fileName + "." + extension;
-                fileInfoList.add(new FileInfo(audioId, albumId, nameWithExt, path, date, size, type, extension));
+                fileInfoList.add(new FileInfo(audioId, albumId, nameWithExt, path, date1, size1, type, extension));
 
             } while (cursor.moveToNext());
             cursor.close();
@@ -654,9 +679,18 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private ArrayList<FileInfo> fetchImages() {
         Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 //        String sortOrder = MediaStore.Images.Media.DATE_MODIFIED + " DESC";
+        long startTime = System.currentTimeMillis();
+        Logger.log(this.getClass().getSimpleName(), "Starting time IMAGES=" + startTime / 1000);
         Cursor cursor = mContext.getContentResolver().query(uri, null, null, null, null);
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
+/*        long endTime1 = System.currentTimeMillis();
+        long timetaken1 = (endTime1 - startTime) / 1000;
+        Logger.log(this.getClass().getSimpleName(), "End time IMAGES QUERY=" + endTime1 + "Time taken=" + timetaken1);*/
+
+        if (cursor != null) {
+            if (isHomeFragment()) {
+                setCountForCategory(mCategory, cursor.getCount());
+            }
+            while (cursor.moveToNext()) {
                 int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.TITLE);
                 int sizeIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE);
                 int dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED);
@@ -664,29 +698,33 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 int bucketIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID);
                 int pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
 
-//                String fileName = cursor.getString(titleIndex);
+                String fileName = cursor.getString(titleIndex);
                 long size1 = cursor.getLong(sizeIndex);
                 long date1 = cursor.getLong(dateIndex);
                 long imageId = cursor.getLong(imageIdIndex);
                 long bucketId = cursor.getLong(bucketIdIndex);
                 String path = cursor.getString(pathIndex);
                 int type = FileConstants.CATEGORY.IMAGE.getValue();
-                String date = FileUtils.convertDate(date1 * 1000); // converting it to ms
-                String size = Formatter.formatFileSize(mContext, size1);
-                String fileName = path.substring(path.lastIndexOf("/") + 1, path.length());
-                String[] tokens = fileName.split("\\.(?=[^\\.]+$)");
+//                String date = FileUtils.convertDate(date1 * 1000); // converting it to ms
+//                String size = Formatter.formatFileSize(mContext, size1);
+//                String fileName = path.substring(path.lastIndexOf("/") + 1, path.length());
+/*                String[] tokens = fileName.split("\\.(?=[^\\.]+$)");
                 fileName = tokens[0];
                 String extension = tokens[1];
+                String nameWithExt = fileName + "." + extension;*/
+                String extension = path.substring(path.lastIndexOf(".") + 1);
                 String nameWithExt = fileName + "." + extension;
-                fileInfoList.add(new FileInfo(imageId, bucketId, nameWithExt, path, date, size, type, extension));
-
-            } while (cursor.moveToNext());
+                fileInfoList.add(new FileInfo(imageId, bucketId, nameWithExt, path, date1, size1, type, extension));
+            }
             cursor.close();
-            fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
-        } else {
-            return null;
+            long endTime = System.currentTimeMillis();
+            float timetaken = (float) ((endTime - startTime) / 1000);
+            Logger.log(this.getClass().getSimpleName(), "Size = " + fileInfoList.size() + "END Time Taken" + timetaken);
+            if (fileInfoList.size() != 0) {
+                return fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
+            }
         }
-        return fileInfoList;
+        return null;
     }
 
     /**
@@ -696,18 +734,22 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
      */
     private ArrayList<FileInfo> fetchVideos() {
         Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-        String sortOrder = MediaStore.Video.Media.DATE_MODIFIED + " DESC";
+//        String sortOrder = MediaStore.Video.Media.DATE_MODIFIED + " DESC";
         Cursor cursor = mContext.getContentResolver().query(uri, null, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
+            if (isHomeFragment()) {
+                setCountForCategory(mCategory, cursor.getCount());
+            }
             do {
-//                int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.TITLE);
+
+                int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.TITLE);
                 int sizeIndex = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE);
                 int dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_MODIFIED);
                 int videoIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID);
                 int bucketIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.BUCKET_ID);
                 int pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA);
 
-//                String fileName = cursor.getString(titleIndex);
+                String fileName = cursor.getString(titleIndex);
                 long size1 = cursor.getLong(sizeIndex);
                 long date1 = cursor.getLong(dateIndex);
                 long videoId = cursor.getLong(videoIdIndex);
@@ -715,16 +757,19 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
                 String path = cursor.getString(pathIndex);
                 int type = FileConstants.CATEGORY.VIDEO.getValue();
-                String date = FileUtils.convertDate(date1 * 1000); // converting it to ms
-                String size = Formatter.formatFileSize(mContext, size1);
-                String extension = path.substring(path.lastIndexOf(".") + 1);
+//                String date = FileUtils.convertDate(date1 * 1000); // converting it to ms
+//                String size = Formatter.formatFileSize(mContext, size1);
+               /* String extension = path.substring(path.lastIndexOf(".") + 1);
                 String fileName = path.substring(path.lastIndexOf("/") + 1, path.length());
                 String[] tokens = fileName.split("\\.(?=[^\\.]+$)");
                 fileName = tokens[0];
 //                String extension = tokens[1];
-                String nameWithExt = fileName + "." + extension;
-                fileInfoList.add(new FileInfo(videoId, bucketId, nameWithExt, path, date, size, type, extension));
+                String nameWithExt = fileName + "." + extension;*/
 
+                String extension = path.substring(path.lastIndexOf(".") + 1);
+                String nameWithExt = fileName + "." + extension;
+//                fileInfoList.add(new FileInfo(videoId, bucketId, nameWithExt, path, date, size, type, extension));
+                fileInfoList.add(new FileInfo(videoId, bucketId, nameWithExt, path, date1, size1, type, extension));
             } while (cursor.moveToNext());
             cursor.close();
             fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
@@ -814,32 +859,36 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             cursor = mContext.getContentResolver().query(uri, null, where, null, null);
         }
         if (cursor != null && cursor.moveToFirst()) {
+            if (isHomeFragment()) {
+                setCountForCategory(category, cursor.getCount());
+            }
             do {
-//                int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.TITLE);
+                int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.TITLE);
                 int sizeIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.SIZE);
                 int dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_MODIFIED);
                 int fileIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID);
                 int pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA);
                 int mimeTypeIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MIME_TYPE);
 
-//                String fileName = cursor.getString(titleIndex);
+                String fileName = cursor.getString(titleIndex);
                 long size1 = cursor.getLong(sizeIndex);
                 long date1 = cursor.getLong(dateIndex);
                 long fileId = cursor.getLong(fileIdIndex);
                 String path = cursor.getString(pathIndex);
                 String mimeType = cursor.getString(mimeTypeIndex);
-                int type = mCategory;
-                String date = FileUtils.convertDate(date1 * 1000); // converting it to ms
-                String size = Formatter.formatFileSize(mContext, size1);
+                int type = getTypeForMime(mimeType);
+
+//                String date = FileUtils.convertDate(date1 * 1000); // converting it to ms
+//                String size = Formatter.formatFileSize(mContext, size1);
                 String extension = path.substring(path.lastIndexOf(".") + 1);
-                String fileName = path.substring(path.lastIndexOf("/") + 1, path.length());
+              /*  String fileName = path.substring(path.lastIndexOf("/") + 1, path.length());
                 String[] tokens = fileName.split("\\.(?=[^\\.]+$)");
                 fileName = tokens[0];
-//                String extension = tokens[1];
+//                String extension = tokens[1];*/
                 String nameWithExt = fileName + "." + extension;
 //                if (category == FileConstants.CATEGORY.APPS.getValue() && path.endsWith(".apk")) {
 //                    Log.d(TAG, "Category=" + mCategory + " path=" + path + "Mime type=" + mimeType);
-                fileInfoList.add(new FileInfo(fileId, nameWithExt, path, date, size, type,
+                fileInfoList.add(new FileInfo(fileId, nameWithExt, path, date1, size1, type,
                         extension, mimeType));
 //                } /*else {
                  /*   fileInfoList.add(new FileInfo(fileId, nameWithExt, path, date, size, type,
@@ -853,6 +902,23 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             return null;
         }
         return fileInfoList;
+    }
+
+    private void setCountForCategory(int category, int count) {
+        ((HomeScreenFragment) mFragment).updateCount(category, count);
+    }
+
+    private int getTypeForMime(String mimeType) {
+        if (mimeType == null) return mCategory;
+        if (mimeType.startsWith("image")) {
+            return FileConstants.CATEGORY.IMAGE.getValue();
+        } else if (mimeType.startsWith("audio")) {
+            return FileConstants.CATEGORY.AUDIO.getValue();
+        } else if (mimeType.startsWith("video")) {
+            return FileConstants.CATEGORY.VIDEO.getValue();
+        }
+        return mCategory;
+
     }
 
     class MediaContentObserver extends ContentObserver {
@@ -874,7 +940,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         @Override
         public void onChange(boolean selfChange, Uri uri) {
 
-            Logger.log(TAG,"uri change=="+uri);
+            Logger.log(TAG, "uri change==" + uri);
             onContentChanged();
             // do s.th.
             // depending on the handler you might be on the UI

@@ -4,8 +4,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="5dp"
-                android:paddingRight="16dp"
                 android:paddingEnd="16dp"
+                android:paddingLeft="@dimen/file_list_margin"
+                android:paddingRight="16dp"
+                android:paddingStart="@dimen/file_list_margin"
                 android:paddingTop="5dp">
 
 
@@ -13,12 +15,8 @@
         android:id="@+id/imageIcon"
         android:layout_width="@dimen/folder_icon"
         android:layout_height="@dimen/folder_icon"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/file_list_margin"
-        android:layout_marginRight="@dimen/file_list_margin"
-        android:scaleType="centerInside"
+        android:scaleType="centerCrop"
         android:src="@drawable/ic_music"/>
 
 
@@ -28,6 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="12dp"
+        android:layout_marginLeft="5dp"
         android:layout_toRightOf="@+id/imageIcon"
         android:textSize="14sp"/>
 
@@ -38,6 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/textFolderName"
         android:layout_marginTop="10dp"
+        android:layout_marginLeft="5dp"
         android:layout_toRightOf="@+id/imageIcon"
         android:text="Second line"
         android:textAppearance="?attr/textAppearanceListItemSmall"

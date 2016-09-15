@@ -182,7 +182,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
         } else {
             path = FileUtils.getInternalStorage().getAbsolutePath();
         }
-        return new FileListLoader(getContext(), path, 0, mShowHidden, mSortMode);
+        return new FileListLoader(this,getContext(), path, 0, mShowHidden, mSortMode);
     }
 
     @Override
