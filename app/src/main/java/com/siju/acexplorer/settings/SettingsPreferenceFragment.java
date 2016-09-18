@@ -66,6 +66,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         mSendIntent = new Intent();
         mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
+
 //        langPreference = (ListPreference) findPreference(PREFS_LANGUAGE);
         themePreference = (ListPreference) findPreference(FileConstants.PREFS_THEME);
         mIsTheme = mPrefs.getInt(FileConstants.CURRENT_THEME, FileConstants.THEME_LIGHT);
@@ -83,14 +84,27 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
 
 
         CheckBoxPreference preference = (CheckBoxPreference) findPreference("prefDualPane");
+
+
         preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
                 String value = o.toString();
                 Logger.log("Settings", "Dualpane=" + value);
+                getActivity().setResult(Activity.RESULT_OK, null);
                 return true;
             }
         });
+
+        CheckBoxPreference hiddenPreference = (CheckBoxPreference) findPreference("prefHidden");
+        hiddenPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                getActivity().setResult(Activity.RESULT_OK, null);
+                return true;
+            }
+        });
+
 
         Preference resetPreference = findPreference(FileConstants.PREFS_RESET);
         resetPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

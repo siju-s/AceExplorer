@@ -2,5 +2,5 @@
 <resources>
     <integer name="homescreen_columns">4</integer>
     <integer name="grid_columns">4</integer>
-
+    <bool name="isTablet">true</bool>
 </resources>

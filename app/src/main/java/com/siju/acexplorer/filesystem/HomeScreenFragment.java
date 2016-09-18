@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -106,6 +104,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     private DisplayMetrics displayMetrics;
     private boolean mShowHidden;
     private int mSortMode;
+    private FileUtils mFileUtils;
 
 
     @Override
@@ -132,17 +131,17 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         // If permission revoked when app is running,OS tries to recreate fragments with its saved instance.Avoid that.
         if (savedInstanceState == null) {
             mCurrentOrientation = getResources().getConfiguration().orientation;
-            mIsDualModeEnabled = getArguments().getBoolean(FileConstants.PREFS_DUAL_ENABLED, false);
+            mIsDualModeEnabled = getArguments().getBoolean(FileConstants.KEY_DUAL_ENABLED, false);
 //        savedLibraries = new ArrayList<>();
             homeLibraryInfoArrayList = new ArrayList<>();
             homeStoragesInfoArrayList = new ArrayList<>();
             tempLibraryInfoArrayList = new ArrayList<>();
             mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            mShowHidden = PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean
+/*            mShowHidden = PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean
                     (FileConstants.PREFS_HIDDEN, false);
             mSortMode = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt(
-                    FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
-
+                    FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);*/
+            mFileUtils = new FileUtils();
             initializeViews();
             initConstants();
             initializeLibraries();
@@ -227,12 +226,12 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                         path = FileUtils.getDownloadsDirectory().getAbsolutePath();
                         args.putString(FileConstants.KEY_PATH, path);
                     }
-                    if (categoryId != FileConstants.CATEGORY.FAVORITES.getValue()) {
+                   /* if (categoryId != FileConstants.CATEGORY.FAVORITES.getValue()) {
                         ArrayList<FileInfo> list = getListForCategory(categoryId);
                         if (list != null && list.size() != 0) {
                             args.putParcelableArrayList(FileConstants.KEY_LIB_SORTLIST, list);
                         }
-                    }
+                    }*/
                     /*if (!FileUtils.checkIfLibraryCategory(categoryId)) {
                         categoryId = FileConstants.CATEGORY.GENERIC_LIST.getValue();
                     }*/
@@ -321,7 +320,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         }
 
         mFavList = sharedPreferenceWrapper.getFavorites(getActivity());
-        if (mFavList != null && mFavList.size() != 0) {
+            if (mFavList != null && mFavList.size() != 0) {
             for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
                 if (homeLibraryInfoArrayList.get(i).getCategoryId() == FileConstants.CATEGORY
                         .FAVORITES.getValue()) {
@@ -337,7 +336,15 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     }
 
     private void initLoaders(int categoryId) {
-        getLoaderManager().initLoader(categoryId, null, this);
+//        if (mFileUtils.isFileSorted()) {
+//            Logger.log(TAG,"File sorted="+true);
+//            getLoaderManager().restartLoader(categoryId, null, this);
+//            mFileUtils.setFileSorted(false);
+//        }
+//        else {
+//            Logger.log(TAG,"File sorted="+false);
+            getLoaderManager().initLoader(categoryId, null, this);
+//        }
     }
 
     private void initializeLibraries() {
@@ -491,7 +498,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                 FileUtils.formatSize(getActivity(), totalSpace);
     }
 
-    public void updateCount(int categoryId,int count) {
+  /*  public void updateCount(int categoryId,int count) {
         Log.d(TAG, "updateCount--categoryId=" +categoryId+ " count="+count);
         Handler handler = new Handler(Looper.getMainLooper());
 
@@ -511,7 +518,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                 break;
             }
         }
-    }
+    }*/
 
     @Override
     public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
@@ -525,10 +532,10 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             case 9:
             case 10:
             case 11:
-                return new FileListLoader(this,getContext(), null, id, mShowHidden, mSortMode);
+                return new FileListLoader(this,getContext(), null, id);
             case 5:
                 String path = FileUtils.getDownloadsDirectory().getAbsolutePath();
-                return new FileListLoader(this,getContext(), path, id, mShowHidden, mSortMode);
+                return new FileListLoader(this,getContext(), path, id);
 
         }
         return null;
@@ -538,11 +545,15 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     @Override
     public void onLoadFinished(Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
         if (data != null) {
-            Log.d(TAG, "on onLoadFinished--" + loader.getId());
-            for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
-                if (loader.getId() == homeLibraryInfoArrayList.get(i).getCategoryId()) {
-                    homeLibraryInfoArrayList.get(i).setCount(data.size());
-                    switch (homeLibraryInfoArrayList.get(i).getCategoryId()) {
+            Log.d(TAG, "on onLoadFinished--" + loader.getId() + "Size="+data.get(0).getCount());
+
+/*            mSortMode = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt(
+                    FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
+            Log.d(TAG, "on onLoadFinished--sort mode" + mSortMode);*/
+                for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
+                if (data.get(0).getCategoryId() == homeLibraryInfoArrayList.get(i).getCategoryId()) {
+                    homeLibraryInfoArrayList.get(i).setCount(data.get(0).getCount());
+                  /*  switch (homeLibraryInfoArrayList.get(i).getCategoryId()) {
                         case 1:
                             mMusicList.clear();
                             mMusicList.addAll(data);
@@ -579,8 +590,8 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                             mLargeFilesList.clear();
                             mLargeFilesList.addAll(data);
                             break;
-                    }
-                    break;
+                    }*/
+//                    break;
                 }
             }
             homeLibraryAdapter.updateAdapter(homeLibraryInfoArrayList);
@@ -589,6 +600,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
 
     @Override
     public void onLoaderReset(Loader<ArrayList<FileInfo>> loader) {
+        Log.d(TAG, "onLoaderReset--" + loader.getId());
 
     }
 
@@ -621,12 +633,14 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                             count));
 
                 }
+                setupLoaders();
                 addToLibrary();
                 homeLibraryAdapter.updateAdapter(homeLibraryInfoArrayList);
 
                 tempLibraryInfoArrayList = new ArrayList<>();
                 tempLibraryInfoArrayList.addAll(homeLibraryInfoArrayList);
                 sharedPreferenceWrapper.saveLibrary(getActivity(), savedLibraries);
+
             }
         }
         super.onActivityResult(requestCode, resultCode, data);

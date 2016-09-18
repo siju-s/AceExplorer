@@ -28,7 +28,6 @@
         android:title="@string/pref_title_show_hidden"/>
 
     <CheckBoxPreference
-        android:defaultValue="true"
         android:key="prefDualPane"
         android:layout="@layout/prefs_checkbox"
         android:title="@string/pref_title_disable_dual"/>

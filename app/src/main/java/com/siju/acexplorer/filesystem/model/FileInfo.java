@@ -22,6 +22,8 @@ public class FileInfo implements Parcelable {
     private String permissions;
     private long date;
     private long size;
+    private int categoryId;
+    private int count;
 
 /*    public FileInfo(String fileName, String filePath, String fileDate, String noOfFilesOrSize, boolean isDirectory,
                     String extension, int type,String permissions) {
@@ -110,6 +112,11 @@ public class FileInfo implements Parcelable {
         this.extension = extension;
     }
 
+    public FileInfo(int categoryId,int count) {
+       this.categoryId = categoryId;
+        this.count = count;
+    }
+
 
 
 
@@ -151,6 +158,8 @@ public class FileInfo implements Parcelable {
         return o.filePath.equals(this.filePath);
     }
 
+
+
     public static final Creator<FileInfo> CREATOR = new Creator<FileInfo>() {
         @Override
         public FileInfo createFromParcel(Parcel in) {
@@ -162,6 +171,22 @@ public class FileInfo implements Parcelable {
             return new FileInfo[size];
         }
     };
+
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
 
     public long getBucketId() {
         return bucketId;

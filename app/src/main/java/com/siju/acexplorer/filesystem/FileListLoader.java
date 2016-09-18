@@ -51,7 +51,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private ArrayList<FileInfo> fileInfoList;
     private String mPath;
     private Context mContext;
-    private boolean showHidden;
+    private boolean mShowHidden;
     private int mCategory;
     private List<String> mZipRootFiles;
     private String mZipPath;
@@ -69,30 +69,32 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private MountUnmountReceiver mMountUnmountReceiver;
 
 
-    public FileListLoader(Fragment fragment, Context context, String path, int category, boolean showHidden, int
-            sortMode) {
+    public FileListLoader(Fragment fragment, Context context, String path, int category) {
         super(context);
         mPath = path;
         mContext = getContext();
         mCategory = category;
-        this.showHidden = showHidden;
-        mSortMode = sortMode;
+        mShowHidden = PreferenceManager.getDefaultSharedPreferences(context).getBoolean
+                (FileConstants.PREFS_HIDDEN, false);
+        mSortMode = PreferenceManager.getDefaultSharedPreferences(context).getInt(
+                FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
         mFragment = fragment;
-
-
     }
 
     public FileListLoader(Fragment fragment, String path, int category, String zipPath, boolean
             isDualPaneInFocus, boolean isParentZip) {
 //        Context context = fragment.getContext();
         super(fragment.getContext());
+        Logger.log(TAG, "Zip" + "dir=" + zipPath);
         mPath = path;
         Context context = fragment.getContext();
         mFragment = fragment;
         mContext = context;
         mCategory = category;
-        showHidden = PreferenceManager.getDefaultSharedPreferences(context).getBoolean
+        mShowHidden = PreferenceManager.getDefaultSharedPreferences(context).getBoolean
                 (FileConstants.PREFS_HIDDEN, false);
+        if (zipPath != null && zipPath.endsWith("/"))
+            zipPath = zipPath.substring(0, zipPath.length() - 1);
         mZipPath = zipPath;
         mIsDualPaneInFocus = isDualPaneInFocus;
         mInParentZip = isParentZip;
@@ -138,6 +140,32 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     }
 
     @Override
+    public void deliverResult(ArrayList<FileInfo> data) {
+        if (isReset()) {
+            // The Loader has been reset; ignore the result and invalidate the data.
+            onReleaseResources();
+            return;
+        }
+
+        // Hold a reference to the old data so it doesn't get garbage collected.
+        // We must protect it until the new data has been delivered.
+        ArrayList<FileInfo> oldData = fileInfoList;
+        fileInfoList = data;
+
+        if (isStarted()) {
+            // If the Loader is in a started state, deliver the results to the
+            // client. The superclass method does this for us.
+            super.deliverResult(data);
+        }
+
+        // Invalidate the old data as we don't need it any more.
+        if (oldData != null && oldData != data) {
+            onReleaseResources();
+        }
+        super.deliverResult(data);
+    }
+
+    @Override
     protected void onStopLoading() {
         cancelLoad();
     }
@@ -150,6 +178,15 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             onReleaseResources();
             fileInfoList = null;
         }
+        if (mMountUnmountReceiver != null) {
+            getContext().unregisterReceiver(mMountUnmountReceiver);
+        }
+    }
+
+    @Override
+    public void onCanceled(ArrayList<FileInfo> data) {
+        super.onCanceled(data);
+        onReleaseResources();
     }
 
     private boolean isHomeFragment() {
@@ -167,9 +204,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
        /* if (mMediaContentObserver != null) {
             getContext().getContentResolver().unregisterContentObserver(mMediaContentObserver);
         }*/
-        if (mMountUnmountReceiver != null) {
-            getContext().unregisterReceiver(mMountUnmountReceiver);
-        }
 
 
     }
@@ -268,13 +302,13 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 getRarContents("", file.getAbsolutePath());
             } else {
                 fileInfoList = RootHelper.getFilesList(mContext, mPath,
-                        true, showHidden);
+                        true, mShowHidden);
                 fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
             }
         } else {
 //            boolean rootAvailable  = RootTools.isRootAvailable();
             fileInfoList = RootHelper.getFilesList(mContext, mPath,
-                    true, showHidden);
+                    true, mShowHidden);
             fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
         }
         return fileInfoList;
@@ -301,7 +335,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         if (cursor != null && cursor.moveToFirst()) {
 
             if (isHomeFragment()) {
-                setCountForCategory(mCategory, cursor.getCount());
+                fileInfoList.add(new FileInfo(mCategory, cursor.getCount()));
+                return fileInfoList;
             }
 
             do {
@@ -365,7 +400,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             long childFileListSize = 0;
 
             if (file.list() != null) {
-                if (!showHidden) {
+                if (!mShowHidden) {
                     File[] nonHiddenList = file.listFiles(new FilenameFilter() {
                         @Override
                         public boolean accept(File file, String name) {
@@ -403,7 +438,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
      * @return
      */
     public ArrayList<FileInfo> getZipContents(String dir, String parentZipPath) {
-        ZipFile zipfile = null;
+        ZipFile zipfile;
         ArrayList<ZipModel> totalZipList = new ArrayList<>();
         ArrayList<ZipModel> elements = new ArrayList<>();
         if (mIsDualPaneInFocus) {
@@ -438,6 +473,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             }
 
             ArrayList<String> strings = new ArrayList<>();
+            int noOfFiles = 0;
             for (ZipModel entry : totalZipList) {
 
 //                i++;
@@ -446,9 +482,12 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 File file = new File(entry.getName());
                 if (dir == null || dir.trim().length() == 0) {
                     String y = entry.getName();
+                    System.out.println("entry name==" + y);
+
                     if (y.startsWith("/"))
                         y = y.substring(1, y.length());
                     if (file.getParent() == null || file.getParent().length() == 0 || file.getParent().equals("/")) {
+                        System.out.println("entry if isdir==" + entry.isDirectory() + "y=" + y);
                         if (!strings.contains(y)) {
                             elements.add(new ZipModel(new ZipEntry(y), entry.getTime(), entry.getSize(),
                                     entry.isDirectory()));
@@ -456,18 +495,22 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                         }
                     } else {
                         String path = y.substring(0, y.indexOf("/") + 1);
+                        System.out.println("entry else path==" + path);
+                        ZipModel zipObj;
                         if (!strings.contains(path)) {
-                            ZipModel zipObj = new ZipModel(new ZipEntry(path), entry.getTime(), entry
+
+                            zipObj = new ZipModel(new ZipEntry(path), entry.getTime(), entry
                                     .getSize(), true);
                             strings.add(path);
                             elements.add(zipObj);
                         }
 
+
                     }
                 } else {
                     String y = entry.getName();
-                    System.out.println("ZIP ITEM==" + y);
-                    if (entry.getName().startsWith("/"))
+                    System.out.println("ZIP ITEM==" + y + "dir=" + dir);
+                    if (y.startsWith("/"))
                         y = y.substring(1, y.length());
 
                     if (file.getParent() != null && (file.getParent().equals(dir) || file.getParent().equals("/" + dir))) {
@@ -478,9 +521,12 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                     } else {
                         if (y.startsWith(dir + "/") && y.length() > dir.length() + 1) {
                             String path1 = y.substring(dir.length() + 1, y.length());
+                            System.out.println("path1==" + path1);
 
                             int index = dir.length() + 1 + path1.indexOf("/");
                             String path = y.substring(0, index + 1);
+                            System.out.println("path==" + path);
+
                             if (!strings.contains(path)) {
                                 ZipModel zipObj = new ZipModel(new ZipEntry(y.substring(0, index + 1)), entry.getTime(), entry.getSize(), true);
                                 strings.add(path);
@@ -507,10 +553,25 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             String name = model.getName();
 
             boolean isDirectory = model.isDirectory();
-        /*    if (isDirectory) {
-                name = name.substring(name.lastIndexOf("/") + 1);
-            }*/
-            long size = model.getSize();
+            long size;
+            if (isDirectory) {
+                int count = 0;
+
+//                name = name.substring(name.lastIndexOf("/") + 1);
+                for (ZipModel zipmodel : totalZipList) {
+                    String modelName = zipmodel.getEntry().getName();
+                    if (modelName.startsWith("/"))
+                        modelName = modelName.substring(1, modelName.length());
+                    System.out.println("Dir true--modelname" + modelName + " name=" + name);
+
+                    if (modelName.startsWith(name)) {
+                        count++;
+                    }
+                }
+                size = count;
+            } else {
+                size = model.getSize();
+            }
             int type = FileConstants.CATEGORY.COMPRESSED.getValue();
             long date = model.getTime();
        /*     String noOfFilesOrSize = Formatter.formatFileSize(mContext, size);
@@ -624,7 +685,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
     private ArrayList<FileInfo> fetchMusic() {
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        String[] projection = new String[]{MediaStore.Audio.Media.TITLE,MediaStore.Audio.Media._ID, MediaStore.Audio
+        String[] projection = new String[]{MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media._ID, MediaStore.Audio
                 .Media.ALBUM_ID,
                 MediaStore.Audio.Media.DATE_MODIFIED, MediaStore.Audio.Media.SIZE,
                 MediaStore.Audio.Media.DATA};
@@ -635,7 +696,9 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 null);
         if (cursor != null && cursor.moveToFirst()) {
             if (isHomeFragment()) {
-                setCountForCategory(mCategory, cursor.getCount());
+//                setCountForCategory(mCategory, cursor.getCount());
+                fileInfoList.add(new FileInfo(mCategory, cursor.getCount()));
+                return fileInfoList;
             }
             do {
 
@@ -688,7 +751,9 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
         if (cursor != null) {
             if (isHomeFragment()) {
-                setCountForCategory(mCategory, cursor.getCount());
+//                setCountForCategory(mCategory, cursor.getCount());
+                fileInfoList.add(new FileInfo(mCategory, cursor.getCount()));
+                return fileInfoList;
             }
             while (cursor.moveToNext()) {
                 int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.TITLE);
@@ -738,7 +803,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         Cursor cursor = mContext.getContentResolver().query(uri, null, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
             if (isHomeFragment()) {
-                setCountForCategory(mCategory, cursor.getCount());
+                fileInfoList.add(new FileInfo(mCategory, cursor.getCount()));
+                return fileInfoList;
             }
             do {
 
@@ -860,7 +926,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         }
         if (cursor != null && cursor.moveToFirst()) {
             if (isHomeFragment()) {
-                setCountForCategory(category, cursor.getCount());
+                fileInfoList.add(new FileInfo(mCategory, cursor.getCount()));
+                return fileInfoList;
             }
             do {
                 int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.TITLE);
@@ -904,10 +971,10 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         return fileInfoList;
     }
 
-    private void setCountForCategory(int category, int count) {
+    /*private void setCountForCategory(int category, int count) {
         ((HomeScreenFragment) mFragment).updateCount(category, count);
     }
-
+*/
     private int getTypeForMime(String mimeType) {
         if (mimeType == null) return mCategory;
         if (mimeType.startsWith("image")) {

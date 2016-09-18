@@ -72,6 +72,8 @@ import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.model.SectionGroup;
 import com.siju.acexplorer.model.SectionItems;
 import com.siju.acexplorer.settings.SettingsActivity;
+import com.siju.acexplorer.utils.PermissionUtils;
+import com.siju.acexplorer.utils.Utils;
 import com.stericson.RootTools.RootTools;
 
 import java.io.File;
@@ -202,6 +204,7 @@ public class BaseActivity extends AppCompatActivity implements
     private boolean mRingtonePickerIntent;
     private boolean mPermissionDialogShown;
     private Snackbar mSnackbar;
+    private boolean mIsTablet;
 
 
     @Override
@@ -209,6 +212,7 @@ public class BaseActivity extends AppCompatActivity implements
         checkTheme();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        PreferenceManager.setDefaultValues(this, R.xml.pref_settings, false);
         Logger.log(TAG, "onCreate");
 
         initConstants();
@@ -232,7 +236,7 @@ public class BaseActivity extends AppCompatActivity implements
 
 
         // If MarshMallow ask for permission
-        if (useRunTimePermissions()) {
+        if (PermissionUtils.isAtLeastM()) {
             checkPermissions();
             Logger.log(TAG, "onCreate --useRuntimepermiss");
         }
@@ -279,7 +283,7 @@ public class BaseActivity extends AppCompatActivity implements
          */
 
         if (mSnackbar != null && mSnackbar.isShown()) {
-            if (hasPermission()) {
+            if (PermissionUtils.hasRequiredPermissions()) {
                 mSnackbar.dismiss();
                 mIsPermissionGranted = true;
                 setup();
@@ -314,11 +318,16 @@ public class BaseActivity extends AppCompatActivity implements
             mIsFirstRun = true;
             mSharedPreferences.edit().putInt(FileConstants.KEY_SORT_MODE, FileConstants
                     .KEY_SORT_NAME).apply();
+            mIsTablet = Utils.isTablet(this);
+            if (mIsTablet) {
+                Logger.log(TAG, "Istab");
+                mSharedPreferences.edit().putBoolean(FileConstants.PREFS_DUAL_PANE, true).apply();
+            }
         }
         mIsHomeScreenEnabled = mSharedPreferences.getBoolean(FileConstants.PREFS_HOMESCREEN, true);
         mShowHidden = mSharedPreferences.getBoolean(FileConstants.PREFS_HIDDEN, false);
         mIsDualPaneEnabledSettings = mSharedPreferences.getBoolean(FileConstants.PREFS_DUAL_PANE,
-                true);
+                mIsTablet);
         mCurrentTheme = mSharedPreferences.getInt(FileConstants.CURRENT_THEME, FileConstants.THEME_LIGHT);
         mIsRootMode = mSharedPreferences.getBoolean(FileConstants.ROOT_ACCESS, true);
     }
@@ -330,19 +339,7 @@ public class BaseActivity extends AppCompatActivity implements
         setUpPreferences();
         checkScreenOrientation();
         initialScreenSetup(mIsHomeScreenEnabled);
-
     }
-
-/*    private void showRingtonePickerDialog() {
-
-        DialogBrowseFragment dialogFragment = new DialogBrowseFragment();
-        Bundle args = new Bundle();
-        args.putBoolean("ringtone_picker",true);
-        dialogFragment.setArguments(args);
-        dialogFragment.show(getSupportFragmentManager(), "Browse Fragment");
-
-
-    }*/
 
     // A method to find height of the status bar
     public int getStatusBarHeight() {
@@ -361,15 +358,12 @@ public class BaseActivity extends AppCompatActivity implements
     /*********************************************************
      * PERMISSION CALLS
      ********************************************************/
-    private boolean useRunTimePermissions() {
-        return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M);
-    }
 
     /**
      * Called for the 1st time when app is launched to check permissions
      */
     private void checkPermissions() {
-        if (!hasPermission()) {
+        if (!PermissionUtils.hasRequiredPermissions()) {
             fabCreateMenu.setVisibility(View.GONE);
             requestPermission();
         } else {
@@ -404,8 +398,7 @@ public class BaseActivity extends AppCompatActivity implements
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST:
 
-                if (grantResults.length > 0 && grantResults[0] == PackageManager
-                        .PERMISSION_GRANTED) {
+                if (PermissionUtils.hasRequiredPermissions()) {
                     // Permission granted
                     Log.d(TAG, "Permission granted");
                     mIsPermissionGranted = true;
@@ -487,7 +480,7 @@ public class BaseActivity extends AppCompatActivity implements
         if (requestCode == PREFS_REQUEST) {
             Logger.log(TAG, "OnActivityResult=" + resultCode);
             if (resultCode == RESULT_OK) {
-                if (intent.getBooleanExtra(FileConstants.PREFS_RESET, false)) {
+                if (intent != null && intent.getBooleanExtra(FileConstants.PREFS_RESET, false)) {
                     resetFavouritesGroup();
                     expandableListView.smoothScrollToPosition(0);
                 }
@@ -1569,7 +1562,7 @@ public class BaseActivity extends AppCompatActivity implements
             Bundle args = new Bundle();
             args.putBoolean(FileConstants.KEY_HOME, true);
             args.putBoolean(BaseActivity.PREFS_FIRST_RUN, mIsFirstRun);
-            args.putBoolean(FileConstants.PREFS_DUAL_ENABLED, mIsDualModeEnabled);
+            args.putBoolean(FileConstants.KEY_DUAL_ENABLED, mIsDualModeEnabled);
             HomeScreenFragment homeScreenFragment = new HomeScreenFragment();
             homeScreenFragment.setArguments(args);
 //            ft.setCustomAnimations(R.anim.slide_in_left,R.anim.slide_out_right);

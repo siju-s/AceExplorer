@@ -20,6 +20,7 @@ import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.provider.DocumentFile;
 import android.text.TextUtils;
@@ -380,12 +381,12 @@ public class FileUtils {
 
 
     public static String convertDate(long dateInMs) {
-        SimpleDateFormat df2 = new SimpleDateFormat("MMM dd, yyyy hh:mm a",Locale.getDefault());
+        SimpleDateFormat df2 = new SimpleDateFormat("MMM dd, yyyy hh:mm a", Locale.getDefault());
         return df2.format(dateInMs);
     }
 
     public static String convertDate(Date date) {
-        SimpleDateFormat df2 = new SimpleDateFormat("MMM dd, yyyy hh:mm a",Locale.getDefault());
+        SimpleDateFormat df2 = new SimpleDateFormat("MMM dd, yyyy hh:mm a", Locale.getDefault());
         String dateText = df2.format(date);
         return dateText;
     }
@@ -714,7 +715,7 @@ public class FileUtils {
     public static void shareFiles(Context context, ArrayList<FileInfo> fileInfo, int category) {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND_MULTIPLE);
-        if (category == 0) {
+        if (checkIfFileCategory(category)) {
             intent.setType("*/*");
         } else {
             String extension = fileInfo.get(0).getExtension();
@@ -2483,6 +2484,7 @@ public class FileUtils {
         try {
             PackageInfo packageInfo = context.getPackageManager().getPackageArchiveInfo(filePath, PackageManager
                     .GET_ACTIVITIES);
+            if (packageInfo == null) return ContextCompat.getDrawable(context, R.drawable.ic_apk_green);
             ApplicationInfo appInfo = packageInfo.applicationInfo;
             appInfo.sourceDir = filePath;
             appInfo.publicSourceDir = filePath;
@@ -2490,9 +2492,22 @@ public class FileUtils {
             icon = appInfo.loadIcon(context.getPackageManager());
             return icon;
         } catch (Exception e) {
+            e.printStackTrace();
+            return ContextCompat.getDrawable(context, R.drawable.ic_apk_green);
 
-            return null;
         }
+    }
+
+    boolean  mIsSorted;
+
+    public void setFileSorted(boolean isSorted) {
+        mIsSorted = isSorted;
+        Logger.log(TAG,"File sorted="+isSorted);
+    }
+
+    public boolean isFileSorted() {
+        Logger.log(TAG,"isFileSortedd="+mIsSorted);
+        return  mIsSorted;
     }
 
 

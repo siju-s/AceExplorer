@@ -3,10 +3,13 @@ package com.siju.acexplorer;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 
+import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.ui.DialogBrowseFragment;
 
 
@@ -28,12 +31,25 @@ public class TransparentActivity extends AppCompatActivity {
     private void showRingtonePickerDialog() {
 
         DialogBrowseFragment dialogFragment = new DialogBrowseFragment();
+        dialogFragment.setStyle(DialogFragment.STYLE_NORMAL,checkTheme());
         Bundle args = new Bundle();
         args.putBoolean("ringtone_picker", true);
         dialogFragment.setArguments(args);
         dialogFragment.show(getSupportFragmentManager(), "Browse Fragment");
 
 
+    }
+
+    private int  checkTheme() {
+        int mCurrentTheme = PreferenceManager.getDefaultSharedPreferences(this)
+                .getInt(FileConstants.CURRENT_THEME, FileConstants.THEME_LIGHT);
+
+        if (mCurrentTheme == FileConstants.THEME_DARK) {
+            return R.style.Dark_AppTheme_NoActionBar;
+        }
+        else {
+            return R.style.AppTheme_NoActionBar;
+        }
     }
 
     @Override

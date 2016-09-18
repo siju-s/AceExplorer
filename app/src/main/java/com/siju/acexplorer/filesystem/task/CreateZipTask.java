@@ -152,7 +152,7 @@ public class CreateZipTask extends Service {
 
             // Broadcast result to FileListFragment
             Intent intent = new Intent("reload_list");
-            intent.putExtra(FileConstants.KEY_PATH,name);
+            intent.putExtra(FileConstants.KEY_PATH, name);
             sendBroadcast(intent);
         }
 
@@ -167,6 +167,7 @@ public class CreateZipTask extends Service {
     }
 
     private void publishResults(int id, String fileName, int i, boolean b, long done, long total) {
+
         if (hash.get(id)) {
             mBuilder.setProgress(100, i, false);
             mBuilder.setOngoing(true);
@@ -328,7 +329,6 @@ public class CreateZipTask extends Service {
 
     @Override
     public IBinder onBind(Intent arg0) {
-        // TODO Auto-generated method stub
         return mBinder;
     }
 

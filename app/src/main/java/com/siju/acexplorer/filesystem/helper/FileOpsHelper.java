@@ -258,7 +258,6 @@ public class FileOpsHelper {
             mActivity.mNewFilePath = newFile.getAbsolutePath();
             mActivity.mFiles = files;
             mActivity.mOperation = FileConstants.COMPRESS;
-
         } else if (mode == 1) {
             Intent zipIntent = new Intent(mActivity, CreateZipTask.class);
             zipIntent.putExtra("name", newFile.getAbsolutePath());

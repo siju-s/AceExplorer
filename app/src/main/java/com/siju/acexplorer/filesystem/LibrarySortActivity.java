@@ -2,6 +2,7 @@ package com.siju.acexplorer.filesystem;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -34,10 +35,13 @@ public class LibrarySortActivity extends AppCompatActivity implements OnStartDra
     private String mLabels[];
     private int mCategoryIds[];
     private Toolbar mToolbar;
+    private int mCurrentTheme;
+
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        checkTheme();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.library_sort);
 
@@ -68,6 +72,18 @@ public class LibrarySortActivity extends AppCompatActivity implements OnStartDra
             }
         });*/
 
+    }
+
+    private void checkTheme() {
+        mCurrentTheme = PreferenceManager.getDefaultSharedPreferences(this)
+                .getInt(FileConstants.CURRENT_THEME, FileConstants.THEME_LIGHT);
+
+        if (mCurrentTheme == FileConstants.THEME_DARK) {
+            setTheme(R.style.Dark_AppTheme_NoActionBar);
+        }
+        else {
+            setTheme(R.style.AppTheme_NoActionBar);
+        }
     }
 
     private void initConstants() {

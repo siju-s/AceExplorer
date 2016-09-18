@@ -21,6 +21,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
@@ -28,6 +29,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -99,8 +101,7 @@ import java.util.HashMap;
 public class FileListFragment extends Fragment implements LoaderManager
         .LoaderCallbacks<ArrayList<FileInfo>>,
         SearchView.OnQueryTextListener,
-        Toolbar.OnMenuItemClickListener,
-        DialogBrowseFragment.SelectedPathListener {
+        Toolbar.OnMenuItemClickListener {
 
     private final String TAG = this.getClass().getSimpleName();
     //    private ListView fileList;
@@ -193,6 +194,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private boolean mIsDarkTheme;
     private boolean mInstanceStateExists;
 //    private FastScroller mFastScroller;
+    private final int DIALOG_FRAGMENT = 5000;
 
 
 
@@ -393,6 +395,20 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch(requestCode) {
+            case DIALOG_FRAGMENT:
+                if (resultCode == AppCompatActivity.RESULT_OK) {
+                    mSelectedPath = data.getStringExtra("PATH");
+                     if (buttonPathSelect != null) {
+                        buttonPathSelect.setText(mSelectedPath);
+                    }
+                }
+
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
     private void addItemDecoration() {
 
         if (mViewMode == FileConstants.KEY_LISTVIEW) {
@@ -490,6 +506,8 @@ public class FileListFragment extends Fragment implements LoaderManager
         });
     }
 
+
+
     public void openCompressedFile(String path) {
 
         mIsZip = true;
@@ -514,6 +532,8 @@ public class FileListFragment extends Fragment implements LoaderManager
 
 
     private void handleCategoryItemClick(int position) {
+        if (position >= fileInfoList.size()) return;
+
         switch (mCategory) {
             case 0:
             case 5:
@@ -779,6 +799,8 @@ public class FileListFragment extends Fragment implements LoaderManager
         mIsDataRefreshed = true;
         Bundle args = new Bundle();
         args.putString(FileConstants.KEY_PATH, mFilePath);
+       /* mShowHidden = PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean
+                (FileConstants.PREFS_HIDDEN, false);*/
         getLoaderManager().restartLoader(LOADER_ID, args, this);
     }
 
@@ -888,12 +910,12 @@ public class FileListFragment extends Fragment implements LoaderManager
             fileListAdapter.clearList();
         }
         String path = args.getString(FileConstants.KEY_PATH);
-//        mSwipeRefreshLayout.setRefreshing(true);
+        mSwipeRefreshLayout.setRefreshing(true);
         if (mIsZip) {
             return new FileListLoader(this, path, FileConstants.CATEGORY.ZIP_VIEWER.getValue(),
                     mCurrentZipDir, isDualPaneInFocus, mInParentZip);
         } else {
-            return new FileListLoader(this,getContext(), path, mCategory, mShowHidden, mSortMode);
+            return new FileListLoader(this,getContext(), path, mCategory);
         }
 
     }
@@ -905,7 +927,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             mSwipeRefreshLayout.setRefreshing(false);
             mIsSwipeRefreshed = false;
         }
-//        mSwipeRefreshLayout.setRefreshing(false);
+        mSwipeRefreshLayout.setRefreshing(false);
 
 
 //        Log.d(TAG, "on onLoadFinished--" + data.size());
@@ -1526,7 +1548,6 @@ public class FileListFragment extends Fragment implements LoaderManager
         RadioGroup radioGroupPath = (RadioGroup) materialDialog.findViewById(R.id.radioGroupPath);
         final EditText editFileName = (EditText) materialDialog.findViewById(R.id.editFileName);
         editFileName.setText(currentFileName);
-        materialDialog.show();
         radioGroupPath.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
@@ -1542,6 +1563,8 @@ public class FileListFragment extends Fragment implements LoaderManager
             @Override
             public void onClick(View view) {
                 DialogBrowseFragment dialogFragment = new DialogBrowseFragment();
+                dialogFragment.setTargetFragment(FileListFragment.this,DIALOG_FRAGMENT);
+                dialogFragment.setStyle(DialogFragment.STYLE_NORMAL,checkTheme());
                 dialogFragment.show(getFragmentManager(), "Browse Fragment");
             }
         });
@@ -1585,13 +1608,18 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     }
 
-    @Override
-    public void getSelectedPath(String path) {
-        mSelectedPath = path;
-        if (buttonPathSelect != null) {
-            buttonPathSelect.setText(mSelectedPath);
+    private int  checkTheme() {
+        mCurrentTheme = PreferenceManager.getDefaultSharedPreferences(getActivity())
+                .getInt(FileConstants.CURRENT_THEME, FileConstants.THEME_LIGHT);
+
+        if (mCurrentTheme == FileConstants.THEME_DARK) {
+           return R.style.Dark_AppTheme_NoActionBar;
+        }
+        else {
+            return R.style.AppTheme_NoActionBar;
         }
     }
+
 
 
     private void updateFavouritesGroup(FileInfo info) {
@@ -2178,9 +2206,12 @@ public class FileListFragment extends Fragment implements LoaderManager
         builder.itemsCallbackSingleChoice(getSortMode(), new MaterialDialog.ListCallbackSingleChoice() {
             @Override
             public boolean onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
-                fileInfoList = FileUtils.sortFiles(fileInfoList, position);
+                //TODO sorting should happen in background thread else ANR
+                new FileUtils().setFileSorted(true);
+//                fileInfoList = FileUtils.sortFiles(fileInfoList, position);
                 persistSortMode(position);
-                fileListAdapter.notifyDataSetChanged();
+                refreshList();
+//                fileListAdapter.notifyDataSetChanged();
                 dialog.dismiss();
                 return true;
             }
