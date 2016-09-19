@@ -441,6 +441,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipeRefreshLayout);
         int colorResIds[] = {R.color.colorPrimaryDark, R.color.colorPrimary, R.color.colorPrimaryDark};
         mSwipeRefreshLayout.setColorSchemeResources(colorResIds);
+        mSwipeRefreshLayout.setDistanceToTriggerSync(500);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -487,6 +488,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                     if (getActionMode() != null && fileListAdapter
                             .getSelectedCount() >= 1) {
 //                    mDragPaths = new ArrayList<String>();
+                        mSwipeRefreshLayout.setEnabled(false);
                         FileInfo fileInfo = fileInfoList.get(position);
 
                         if (!mDragPaths.contains(fileInfo)) {
@@ -1361,6 +1363,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             mActionMode = null;
             mBottomToolbar.setVisibility(View.GONE);
             mSelectedItemPositions.clear();
+            mSwipeRefreshLayout.setEnabled(true);
             // FAB should be visible only for Files Category
             if (mCategory == 0) {
                 mBaseActivity.toggleFab(false);

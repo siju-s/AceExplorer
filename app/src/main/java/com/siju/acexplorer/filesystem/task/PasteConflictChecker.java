@@ -17,6 +17,7 @@ import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
+import com.siju.acexplorer.filesystem.model.CopyData;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.helper.RootHelper;
@@ -97,11 +98,13 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
         return mConflictFiles;
     }
 
+    ArrayList<CopyData> mCopyData = new ArrayList<>();
+
     public void showDialog() {
 
         Logger.log("TAG", "Counter=" + counter + " confllict size=" + mConflictFiles.size());
         if (counter == mConflictFiles.size() || mConflictFiles.size() == 0) {
-
+            mCopyData.clear();
             if (mFiles != null && mFiles.size() != 0) {
 
                 int mode = mActivity.mFileOpsHelper.checkFolder(mActivity, new File(mCurrentDir));
@@ -109,20 +112,18 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
                     mActivity.mFiles = mFiles;
                     mActivity.mOperation = mIsMoveOperation ? FileConstants.MOVE : FileConstants.COPY;
                     mActivity.mNewFilePath = mCurrentDir;
-                  /*  mainActivity.oparrayList = (ab);
-                    mainActivity.operation = move ? FileConstants.MOVE : FileConstants.COPY;
-                    mainActivity.oppathe = path;*/
                 } else if (mode == 1 || mode == 0) {
 
                     if (!mIsMoveOperation) {
 
                         Intent intent = new Intent(mActivity, CopyService.class);
                         intent.putParcelableArrayListExtra("FILE_PATHS", mFiles);
+                        intent.putParcelableArrayListExtra("ACTION",mCopyData);
                         intent.putExtra("COPY_DIRECTORY", mCurrentDir);
                         intent.putExtra("MODE", openMode);
                         mActivity.startService(intent);
                     } else {
-                        new MoveFiles(mActivity, mFiles).executeOnExecutor
+                        new MoveFiles(mActivity, mFiles,mCopyData).executeOnExecutor
                                 (AsyncTask.THREAD_POOL_EXECUTOR, mCurrentDir);
                     }
                 }
@@ -159,6 +160,14 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
             Drawable drawable = FileUtils.getAppIcon(mActivity, mConflictFiles.get(counter).getFilePath());
             if (drawable != null) {
                 icon.setImageDrawable(drawable);
+            }
+            if (sourceFile.getParent().equals(mCurrentDir)) {
+                if (mIsMoveOperation) {
+                    materialDialog.getActionButton(DialogAction.NEUTRAL).setEnabled(false);
+                    materialDialog.getActionButton(DialogAction.NEGATIVE).setEnabled(false);
+                } else {
+                    materialDialog.getActionButton(DialogAction.NEGATIVE).setEnabled(false);
+                }
             }
 
             if (new File(mConflictFiles.get(counter).getFilePath()).isDirectory()) {
@@ -204,6 +213,30 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
                     }
                 }
             });
+
+            materialDialog.getActionButton(DialogAction.NEUTRAL).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (counter < mConflictFiles.size()) {
+                        if (!checkBox.isChecked()) {
+                            mCopyData.add(new CopyData(mConflictFiles.get(counter).getFilePath(), FileUtils
+                                    .ACTION_KEEP));
+                            counter++;
+                        } else {
+                            for (int i = 0; i < mConflictFiles.size(); i++) {
+//                                if (!mCopyData.contains(mConflictFiles.get(i).getFilePath())) {
+                                    mCopyData.add(new CopyData(mConflictFiles.get(counter).getFilePath(), FileUtils
+                                            .ACTION_KEEP));
+//                                }
+                            }
+                            counter = mConflictFiles.size();
+                        }
+                        materialDialog.dismiss();
+                        showDialog();
+                    }
+                }
+            });
+
 
             materialDialog.show();
         /*    if (ab.get(0).getParent().equals(path)) {

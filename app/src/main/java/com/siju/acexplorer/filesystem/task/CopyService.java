@@ -76,6 +76,7 @@ public class CopyService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Bundle b = new Bundle();
         ArrayList<FileInfo> files = intent.getParcelableArrayListExtra("FILE_PATHS");
+
         String currentDir = intent.getStringExtra("COPY_DIRECTORY");
         int mode = intent.getIntExtra("MODE", 0);
         mNotifyManager =
@@ -138,8 +139,6 @@ public class CopyService extends Service {
             move = p1[0].getBoolean("move");
             copy = new Copy();
             copy.execute(id, files, currentDir, move);
-
-            // TODO: Implement this method
             return id;
         }
 
@@ -235,6 +234,8 @@ public class CopyService extends Service {
             }
 
             public void execute(int id, final ArrayList<FileInfo> files, final String currentDir, final boolean move) {
+                Logger.log("TAG", "execute"+files.size()+" mode=="+new FileUtils().checkFolder(currentDir,mContext));
+
                 if (new FileUtils().checkFolder(currentDir,mContext) == 1) {
                     getTotalBytes(files);
                     for (int i = 0; i < files.size(); i++) {

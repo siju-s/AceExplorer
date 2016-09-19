@@ -660,8 +660,10 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
     public void filter(String text) {
         if (text.isEmpty()) {
-            fileInfoArrayList.clear();
-            fileInfoArrayList.addAll(fileInfoArrayListCopy);
+            if (fileInfoArrayList != null) {
+                fileInfoArrayList.clear();
+                fileInfoArrayList.addAll(fileInfoArrayListCopy);
+            }
         } else {
             ArrayList<FileInfo> result = new ArrayList<>();
             text = text.toLowerCase();
