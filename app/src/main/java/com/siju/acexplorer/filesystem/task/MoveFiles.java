@@ -29,6 +29,7 @@ import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.CopyData;
 import com.siju.acexplorer.filesystem.model.FileInfo;
+import com.siju.acexplorer.filesystem.utils.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -57,7 +58,24 @@ public class MoveFiles extends AsyncTask<String, Void, Integer> {
         if (files.size() == 0) return 0;
 
         for (FileInfo f : files) {
-            File file = new File(mCurrentDir + "/" + f.getFileName());
+            int action = FileUtils.ACTION_NONE;
+
+            if (copyData != null) {
+                for (CopyData copyData1 : copyData) {
+                    if (copyData1.getFilePath().equals(f.getFilePath())) {
+                        action = copyData1.getAction();
+                        break;
+                    }
+                }
+            }
+            String fileName = f.getFileName();
+            String path = mCurrentDir + "/" + fileName;
+            if (action == FileUtils.ACTION_KEEP) {
+                String fileNameWithoutExt = fileName.substring(0, fileName.
+                        lastIndexOf("."));
+                path = mCurrentDir + "/" + fileNameWithoutExt + "(2)" + "." + f.getExtension();
+            }
+            File file = new File(path);
             File file1 = new File(f.getFilePath());
             if (file1.renameTo(file)) {
                 filesMoved++;

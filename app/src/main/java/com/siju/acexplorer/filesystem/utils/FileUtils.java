@@ -11,7 +11,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -2168,14 +2167,19 @@ public class FileUtils {
     }
 
     public static void scanFile(Context context, String path) {
-        MediaScannerConnection.scanFile(context,
+
+        Uri contentUri = Uri.fromFile(new File(path));
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        mediaScanIntent.setData(contentUri);
+        context.sendBroadcast(mediaScanIntent);
+/*        MediaScannerConnection.scanFile(context,
                 new String[]{path}, null,
                 new MediaScannerConnection.OnScanCompletedListener() {
                     public void onScanCompleted(String path, Uri uri) {
                         Log.i(TAG, "Scanned " + path + ":");
                         Log.i(TAG, "-> uri=" + uri);
                     }
-                });
+                });*/
     }
 
     public static boolean isFileCompressed(String filePath) {

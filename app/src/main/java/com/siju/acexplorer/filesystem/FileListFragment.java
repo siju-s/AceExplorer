@@ -520,7 +520,8 @@ public class FileListFragment extends Fragment implements LoaderManager
         mParentZipCategory = mCategory;
         isDualPaneInFocus = checkIfDualFragment();
         Logger.log(TAG, "Opencompressedfile--mCategory" + mCategory);
-        if (mCategory == FileConstants.CATEGORY.COMPRESSED.getValue()) {
+        if (mCategory == FileConstants.CATEGORY.COMPRESSED.getValue() ||
+                mCategory == FileConstants.CATEGORY.APPS.getValue()) {
 //                            mCategory = FileConstants.CATEGORY.FILES.getValue();
             mBaseActivity.toggleNavBarFab(false);
             mBaseActivity.setCurrentDir(path, isDualPaneInFocus);
@@ -541,8 +542,10 @@ public class FileListFragment extends Fragment implements LoaderManager
             case 5:
             case 7:
             case 8:
+            case 9:
+            case 10:
             case 11:
-                Log.d("TEST", "on handleCategoryItemClick--");
+                Logger.log(TAG, "on handleCategoryItemClick--");
 
                 // For file, open external apps based on Mime Type
                 if (!fileInfoList.get(position).isDirectory()) {
@@ -557,12 +560,11 @@ public class FileListFragment extends Fragment implements LoaderManager
                 } else {
                     computeScroll();
                     if (mIsZip) {
-                        if (mZipParentPath.endsWith("zip")) {
-                            mCurrentZipDir = zipChildren.get(position).getName();
-                        } else {
+                        if (mZipParentPath.endsWith("rar")) {
                             String name = rarChildren.get(position).getFileNameString();
                             mCurrentZipDir = name.substring(0, name.length() - 1);
-
+                        } else {
+                            mCurrentZipDir = zipChildren.get(position).getName();
                         }
 
                         mInParentZip = false;

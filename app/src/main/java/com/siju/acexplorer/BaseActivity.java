@@ -62,6 +62,7 @@ import com.siju.acexplorer.filesystem.FileListFragment;
 import com.siju.acexplorer.filesystem.HomeScreenFragment;
 import com.siju.acexplorer.filesystem.helper.FileOpsHelper;
 import com.siju.acexplorer.filesystem.model.BackStackModel;
+import com.siju.acexplorer.filesystem.model.CopyData;
 import com.siju.acexplorer.filesystem.model.FavInfo;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.task.CopyService;
@@ -199,6 +200,8 @@ public class BaseActivity extends AppCompatActivity implements
     public String mOldFilePath;
     public String mNewFilePath;
     public ArrayList<FileInfo> mFiles = new ArrayList<>();
+    public ArrayList<CopyData> mCopyData = new ArrayList<>();
+
     public FileOpsHelper mFileOpsHelper;
     public int mRenamedPosition;
     private boolean mRingtonePickerIntent;
@@ -542,7 +545,7 @@ public class BaseActivity extends AppCompatActivity implements
                     startService(intent1);
                     break;
                 case FileConstants.MOVE://moving
-                    new MoveFiles(this, mFiles).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mNewFilePath);
+                    new MoveFiles(this, mFiles,mCopyData).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mNewFilePath);
                     break;
                 case FileConstants.FOLDER_CREATE://mkdir
                     mFileOpsHelper.mkDir(mIsRootMode, new File(mCreatePath));

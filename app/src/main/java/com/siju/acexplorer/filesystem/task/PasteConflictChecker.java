@@ -104,13 +104,13 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
 
         Logger.log("TAG", "Counter=" + counter + " confllict size=" + mConflictFiles.size());
         if (counter == mConflictFiles.size() || mConflictFiles.size() == 0) {
-            mCopyData.clear();
             if (mFiles != null && mFiles.size() != 0) {
 
                 int mode = mActivity.mFileOpsHelper.checkFolder(mActivity, new File(mCurrentDir));
                 if (mode == 2) {
                     mActivity.mFiles = mFiles;
                     mActivity.mOperation = mIsMoveOperation ? FileConstants.MOVE : FileConstants.COPY;
+                    mActivity.mCopyData = mCopyData;
                     mActivity.mNewFilePath = mCurrentDir;
                 } else if (mode == 1 || mode == 0) {
 
@@ -139,6 +139,7 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
             final MaterialDialog materialDialog = new DialogUtils().showCustomDialog(mActivity, R.layout.dialog_paste_conflict,
                     texts);
 
+
             final CheckBox checkBox = (CheckBox) materialDialog.findViewById(R.id.checkBox);
             ImageView icon = (ImageView) materialDialog.findViewById(R.id.imageFileIcon);
             TextView textFileName = (TextView) materialDialog.findViewById(R.id.textFileName);
@@ -147,6 +148,8 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
             /*String fileName = mFiles.get(counter).getFilePath().substring(sourceFilePath.lastIndexOf("/") + 1,
                     sourceFilePath
                     .length());*/
+
+
 
             String fileName = mConflictFiles.get(counter).getFileName();
             textFileName.setText(fileName);
@@ -161,6 +164,8 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
             if (drawable != null) {
                 icon.setImageDrawable(drawable);
             }
+
+            // POSITIVE BUTTON ->SKIP   NEGATIVE ->REPLACE    NEUTRAL ->KEEP BOTH
             if (sourceFile.getParent().equals(mCurrentDir)) {
                 if (mIsMoveOperation) {
                     materialDialog.getActionButton(DialogAction.NEUTRAL).setEnabled(false);

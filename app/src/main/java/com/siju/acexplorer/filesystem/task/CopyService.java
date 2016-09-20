@@ -37,6 +37,7 @@ import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.model.BaseFile;
+import com.siju.acexplorer.filesystem.model.CopyData;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.model.ZipProgressModel;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
@@ -76,6 +77,7 @@ public class CopyService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Bundle b = new Bundle();
         ArrayList<FileInfo> files = intent.getParcelableArrayListExtra("FILE_PATHS");
+        ArrayList<CopyData> copyData = intent.getParcelableArrayListExtra("ACTION");
 
         String currentDir = intent.getStringExtra("COPY_DIRECTORY");
         int mode = intent.getIntExtra("MODE", 0);
@@ -98,6 +100,7 @@ public class CopyService extends Service {
         b.putString("current_dir", currentDir);
         b.putInt("MODE", mode);
         b.putParcelableArrayList("files", files);
+        b.putParcelableArrayList("action", copyData);
         hash.put(startId, true);
         ZipProgressModel progressModel = new ZipProgressModel();
         progressModel.setName(files.get(0).getFileName());
@@ -125,20 +128,24 @@ public class CopyService extends Service {
 
     public class DoInBackground extends AsyncTask<Bundle, Void, Integer> {
         ArrayList<FileInfo> files;
+        ArrayList<CopyData> copyData;
+
         boolean move;
         FileVerifier fileVerifier;
         Copy copy;
 
-        public DoInBackground() {
-        }
+        /*public DoInBackground() {
+        }*/
 
         protected Integer doInBackground(Bundle... p1) {
             String currentDir = p1[0].getString("current_dir");
             int id = p1[0].getInt("id");
             files = p1[0].getParcelableArrayList("files");
+            copyData = p1[0].getParcelableArrayList("action");
+
             move = p1[0].getBoolean("move");
             copy = new Copy();
-            copy.execute(id, files, currentDir, move);
+            copy.execute(id, files, currentDir, move, copyData);
             return id;
         }
 
@@ -233,10 +240,11 @@ public class CopyService extends Service {
                 return totalBytes;
             }
 
-            public void execute(int id, final ArrayList<FileInfo> files, final String currentDir, final boolean move) {
-                Logger.log("TAG", "execute"+files.size()+" mode=="+new FileUtils().checkFolder(currentDir,mContext));
+            public void execute(int id, final ArrayList<FileInfo> files, final String currentDir, final boolean move,
+                                ArrayList<CopyData> copyData) {
+                Logger.log("TAG", "execute" + files.size() + " mode==" + new FileUtils().checkFolder(currentDir, mContext));
 
-                if (new FileUtils().checkFolder(currentDir,mContext) == 1) {
+                if (new FileUtils().checkFolder(currentDir, mContext) == 1) {
                     getTotalBytes(files);
                     for (int i = 0; i < files.size(); i++) {
                         FileInfo sourceFile = files.get(i);
@@ -250,8 +258,25 @@ public class CopyService extends Service {
                                 }
                                 FileInfo destFile = new FileInfo(sourceFile.getFileName(), sourceFile.getFilePath(),
                                         sourceFile.getDate(), sourceFile.getSize(), sourceFile.isDirectory(),
-                                        sourceFile.getExtension(), sourceFile.getType(),sourceFile.getPermissions());
-                                destFile.setFilePath(currentDir + "/" + files.get(i).getFileName());
+                                        sourceFile.getExtension(), sourceFile.getType(), sourceFile.getPermissions());
+                                int action = FileUtils.ACTION_NONE;
+                                if (copyData != null) {
+                                    for (CopyData copyData1 : copyData) {
+                                        if (copyData1.getFilePath().equals(sourceFile.getFilePath())) {
+                                            action = copyData1.getAction();
+                                            break;
+                                        }
+                                    }
+                                }
+                                String fileName = files.get(i).getFileName();
+                                String path = currentDir + "/" + fileName;
+                                if (action == FileUtils.ACTION_KEEP) {
+                                    String fileNameWithoutExt = fileName.substring(0, fileName.
+                                           lastIndexOf("."));
+                                    path = currentDir + "/" + fileNameWithoutExt + "(2)" + "." + files.get(i)
+                                            .getExtension();
+                                }
+                                destFile.setFilePath(path);
                                 copyFiles(sourceFile, destFile, id, move);
                             } else {
                                 break;
@@ -325,7 +350,7 @@ public class CopyService extends Service {
 
                         FileInfo destFile = new FileInfo(sourceFile.getFileName(), sourceFile.getFilePath(),
                                 sourceFile.getDate(), sourceFile.getSize(), sourceFile.isDirectory(),
-                                sourceFile.getExtension(), sourceFile.getType(),sourceFile.getPermissions());
+                                sourceFile.getExtension(), sourceFile.getType(), sourceFile.getPermissions());
                         destFile.setFilePath(targetFile.getFilePath() + "/" + file.getFileName());
                         copyFiles(file, destFile, id, move);
                     }

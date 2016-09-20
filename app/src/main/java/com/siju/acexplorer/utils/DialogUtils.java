@@ -44,7 +44,9 @@ public class DialogUtils {
         int color = getCurrentThemePrimary(context);
 
         MaterialDialog.Builder builder = new MaterialDialog.Builder(context);
+
         builder.customView(resourceId, true);
+
         //        builder.widgetColor(ContextCompat.getColor(context,R.color.colorAccent));
   /*      if(m.theme1==1)
             a.theme(Theme.DARK);*/
@@ -67,7 +69,7 @@ public class DialogUtils {
 
     public int getCurrentThemePrimary(Context context) {
         TypedValue typedValue = new TypedValue();
-        context.getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true);
+        context.getTheme().resolveAttribute(R.attr.titleTextColor, typedValue, true);
         return typedValue.data;
     }
 
