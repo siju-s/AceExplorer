@@ -9,11 +9,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.database.ContentObserver;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -204,10 +206,11 @@ public class BaseActivity extends AppCompatActivity implements
 
     public FileOpsHelper mFileOpsHelper;
     public int mRenamedPosition;
-    private boolean mRingtonePickerIntent;
-    private boolean mPermissionDialogShown;
     private Snackbar mSnackbar;
     private boolean mIsTablet;
+    private ArrayList<Uri> mChangedUri = new ArrayList<>();
+    private HomeScreenFragment mHomeScreenFragment;
+
 
 
     @Override
@@ -248,6 +251,7 @@ public class BaseActivity extends AppCompatActivity implements
             setup();
             setUpInitialData();
         }
+//        registerReceivers();
     }
 
     private void checkTheme() {
@@ -261,6 +265,17 @@ public class BaseActivity extends AppCompatActivity implements
             setTheme(R.style.AppTheme_NoActionBar);
         }
     }
+
+/*    private void registerReceivers() {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_MEDIA_MOUNTED);
+        intent.setAction(Intent.ACTION_MEDIA_UNMOUNTED);
+
+
+    }*/
+
+
+
 
     @Override
     protected void onStart() {
@@ -295,6 +310,34 @@ public class BaseActivity extends AppCompatActivity implements
         }
 
         super.onResume();
+    }
+
+    /*private void registerObservers(Uri uri) {
+        // Uri will be null for fav category
+        if (uri != null)
+            getContentResolver().registerContentObserver(uri, true, observer);
+    }*/
+
+
+    class UriObserver extends ContentObserver {
+        UriObserver(Handler handler) {
+
+            super(handler);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            this.onChange(selfChange, null);
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            Logger.log(TAG, "Observer Onchange" + uri);
+        }
+    }
+
+    public ArrayList<Uri> getChangedUri() {
+        return mChangedUri;
     }
 
     @Override
@@ -1566,10 +1609,11 @@ public class BaseActivity extends AppCompatActivity implements
             args.putBoolean(FileConstants.KEY_HOME, true);
             args.putBoolean(BaseActivity.PREFS_FIRST_RUN, mIsFirstRun);
             args.putBoolean(FileConstants.KEY_DUAL_ENABLED, mIsDualModeEnabled);
-            HomeScreenFragment homeScreenFragment = new HomeScreenFragment();
-            homeScreenFragment.setArguments(args);
+            mHomeScreenFragment = new HomeScreenFragment();
+            mHomeScreenFragment.setArguments(args);
 //            ft.setCustomAnimations(R.anim.slide_in_left,R.anim.slide_out_right);
-            ft.replace(R.id.main_container, homeScreenFragment);
+            ft.replace(R.id.main_container, mHomeScreenFragment);
+            ft.addToBackStack(null);
             ft.commitAllowingStateLoss();
         } else {
 
@@ -1978,7 +2022,8 @@ public class BaseActivity extends AppCompatActivity implements
             mStartingDir = null;
             mStartingDirDualPane = null;
             mCurrentDirDualPane = null;
-            super.onBackPressed();
+            finish();
+//            super.onBackPressed();
         }
     }
 
@@ -2159,12 +2204,21 @@ public class BaseActivity extends AppCompatActivity implements
     private void removeFragmentFromBackStack() {
 
         int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
+
         Logger.log(TAG, "RemoveFragmentFromBackStack --backstack==" + backStackCount +
-                "home_enabled=" + mIsHomeScreenEnabled);
+                "home_enabled=" + mIsHomeScreenEnabled+ " frag="+fragment);
         mBackStackList.clear();
         mBackStackListDual.clear();
         cleanUpFileScreen();
-        super.onBackPressed();
+//        super.onBackPressed();
+        Logger.log(TAG, "RemoveFragmentFromBackStack--frag="+fragment);
+        FragmentTransaction ft = getSupportFragmentManager()
+                .beginTransaction();
+
+        ft.remove(fragment);
+        ft.show(mHomeScreenFragment);
+        ft.commitAllowingStateLoss();
     }
 
     private void cleanUpFileScreen() {

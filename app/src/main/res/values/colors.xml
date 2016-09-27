@@ -102,6 +102,8 @@
     <color name="apps_bg">#006600</color>
     <color name="large_files_bg">#cd0067</color>
 
+    <color name="fastScrollHandleColor">@color/accent_blue</color>
+    <!--<color name="fastScrollBarColor">@color/accent_blue</color>-->
 
 
 </resources>

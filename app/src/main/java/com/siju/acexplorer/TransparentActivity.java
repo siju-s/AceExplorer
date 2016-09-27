@@ -8,7 +8,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.ui.DialogBrowseFragment;
 
@@ -17,6 +16,9 @@ import com.siju.acexplorer.filesystem.ui.DialogBrowseFragment;
  * Created by Siju on 04-09-2016.
  */
 public class TransparentActivity extends AppCompatActivity {
+    private final String TAG = this.getClass().getSimpleName();
+    private DialogBrowseFragment dialogFragment;
+    private final String FRAGMENT_TAG = "Browse_Frag";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,15 +32,16 @@ public class TransparentActivity extends AppCompatActivity {
 
     private void showRingtonePickerDialog() {
 
-        DialogBrowseFragment dialogFragment = new DialogBrowseFragment();
+        dialogFragment = new DialogBrowseFragment();
         dialogFragment.setStyle(DialogFragment.STYLE_NORMAL,checkTheme());
         Bundle args = new Bundle();
         args.putBoolean("ringtone_picker", true);
         dialogFragment.setArguments(args);
-        dialogFragment.show(getSupportFragmentManager(), "Browse Fragment");
+        dialogFragment.show(getSupportFragmentManager(), FRAGMENT_TAG);
 
 
     }
+
 
     private int  checkTheme() {
         int mCurrentTheme = PreferenceManager.getDefaultSharedPreferences(this)
@@ -54,8 +57,8 @@ public class TransparentActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("TAG", "On activity result");
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "On activity result");
         finish();
     }
 }

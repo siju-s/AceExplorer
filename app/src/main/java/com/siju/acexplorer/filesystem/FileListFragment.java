@@ -65,7 +65,6 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
-import com.futuremind.recyclerviewfastscroll.FastScroller;
 import com.github.junrar.Archive;
 import com.github.junrar.rarfile.FileHeader;
 import com.siju.acexplorer.BaseActivity;
@@ -86,6 +85,7 @@ import com.siju.acexplorer.filesystem.ui.GridItemDecoration;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 import com.siju.acexplorer.utils.DialogUtils;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 import com.stericson.RootTools.RootTools;
 import com.stericson.RootTools.execution.Command;
 
@@ -105,9 +105,10 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     private final String TAG = this.getClass().getSimpleName();
     //    private ListView fileList;
-    private RecyclerView recyclerViewFileList;
-//    private FastScrollRecyclerView recyclerViewFileList;
-    private FastScroller mFastScroller;
+//    private RecyclerView recyclerViewFileList;
+    private FastScrollRecyclerView recyclerViewFileList;
+//    private FastScroller mFastScroller;
+//    private VerticalRecyclerViewFastScroller mFastScroller;
 
     private View root;
     private final int LOADER_ID = 1000;
@@ -390,6 +391,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     @Override
     public void onPause() {
         super.onPause();
+        Logger.log(TAG,"OnPause");
         if (!mInstanceStateExists) {
             getActivity().unregisterReceiver(mReloadListReceiver);
         }
@@ -430,10 +432,16 @@ public class FileListFragment extends Fragment implements LoaderManager
     }
 
     private void initializeViews() {
-        recyclerViewFileList = (RecyclerView) root.findViewById(R.id.recyclerViewFileList);
+        recyclerViewFileList = (FastScrollRecyclerView) root.findViewById(R.id.recyclerViewFileList);
 //        mFastScroller = (FastScroller) root.findViewById(R.id.fastscroll);
 //        mFastScroller.setPressedHandleColor(ContextCompat.getColor(getActivity(),R.color.accent_blue));
-        mFastScroller = (FastScroller) root.findViewById(R.id.fastscroll);
+        /*mFastScroller = (VerticalRecyclerViewFastScroller) root.findViewById(R.id.fast_scroller);
+        // Connect the recycler to the scroller (to let the scroller scroll the list)
+        mFastScroller.setRecyclerView(recyclerViewFileList);*/
+
+        // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
+//        recyclerViewFileList.addOnScrollListener(mFastScroller.getOnScrollListener());
+
         mTextEmpty = (TextView) root.findViewById(R.id.textEmpty);
         sharedPreferenceWrapper = new SharedPreferenceWrapper();
         recyclerViewFileList.setOnDragListener(new myDragEventListener());
@@ -495,7 +503,6 @@ public class FileListFragment extends Fragment implements LoaderManager
                             mDragPaths.add(fileInfo);
                         }
                         mItemView = view;
-
                         mStartDrag = true;
 
                         mDragInitialPos = position;
@@ -627,7 +634,9 @@ public class FileListFragment extends Fragment implements LoaderManager
                 computeScroll();
                 String path = intent.getStringExtra(FileConstants.KEY_PATH);
                 Logger.log(TAG, "New zip PAth=" + path);
-                FileUtils.scanFile(getActivity(), path);
+                if (path != null) {
+                    FileUtils.scanFile(getActivity(), path);
+                }
                 mIsBackPressed = true;
                 reloadList(true, mFilePath);
             } else if (action.equals("refresh")) {
@@ -2297,7 +2306,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     @Override
     public void onDestroy() {
-//        Log.d(TAG, "on onDestroy--Fragment");
+        Log.d(TAG, "on onDestroy");
         super.onDestroy();
 
     }

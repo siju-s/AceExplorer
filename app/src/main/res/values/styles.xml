@@ -57,6 +57,11 @@
     </style>
 
 
+    <style name="TransparentTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="windowNoTitle">true</item>
+    </style>
+
+
     <style name="AppThemeSettings" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>

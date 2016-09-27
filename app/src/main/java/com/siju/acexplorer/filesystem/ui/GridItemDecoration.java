@@ -6,8 +6,6 @@ import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.siju.acexplorer.common.Logger;
-
 /**
  * Created by Siju on 10-09-2016.
  */
@@ -101,8 +99,8 @@ public class GridItemDecoration extends RecyclerView.ItemDecoration {
             View firstRowChild = parent.getChildAt(i);
             View lastRowChild = parent.getChildAt(lastRowChildIndex);
 
-            Logger.log("TAG", "firstRowChild=" + firstRowChild + "item=" + i);
-            Logger.log("TAG", "lastRowChild=" + lastRowChild + "item=" + lastRowChildIndex);
+       /*     Logger.log("TAG", "firstRowChild=" + firstRowChild + "item=" + i);
+            Logger.log("TAG", "lastRowChild=" + lastRowChild + "item=" + lastRowChildIndex);*/
 
             int dividerTop = firstRowChild.getTop();
             int dividerRight = firstRowChild.getLeft();

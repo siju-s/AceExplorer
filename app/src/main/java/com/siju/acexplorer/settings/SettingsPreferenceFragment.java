@@ -112,7 +112,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
             public boolean onPreferenceClick(Preference preference) {
                 Intent data = new Intent();
                 data.putExtra(FileConstants.PREFS_RESET, true);
-                Toast.makeText(getActivity(), getString(R.string.msg_fav_reset), Toast
+                Toast.makeText(getActivity().getApplicationContext(), getString(R.string.msg_fav_reset), Toast
                         .LENGTH_LONG).show();
                 getActivity().setResult(Activity.RESULT_OK, data);
                 return false;

@@ -49,6 +49,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
     private final String TAG = this.getClass().getSimpleName();
     private ArrayList<FileInfo> fileInfoList;
+    private ArrayList<FileInfo> downloadList;
+
     private String mPath;
     private Context mContext;
     private boolean mShowHidden;
@@ -303,6 +305,12 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             } else {
                 fileInfoList = RootHelper.getFilesList(mContext, mPath,
                         true, mShowHidden);
+   /*             if (isHomeFragment()) {
+                    downloadList = new ArrayList<>();
+                    downloadList.add(new FileInfo()));
+                    Logger.log(TAG,"File list size="+fileInfoList.size()+" dwnld size="+downloadList.size());
+                    return downloadList;
+                }*/
                 fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
             }
         } else {
@@ -991,7 +999,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     class MediaContentObserver extends ContentObserver {
 
         /**
-         * Creates a content observer.
+         * Creates a content mUriObserver.
          *
          * @param handler The handler to run {@link #onChange} on, or null if none.
          */

@@ -16,8 +16,7 @@
         android:layout_width="@dimen/folder_icon"
         android:layout_height="@dimen/folder_icon"
         android:layout_centerVertical="true"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_music"/>
+        android:scaleType="centerCrop"/>
 
 
     <TextView

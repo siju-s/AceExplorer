@@ -400,7 +400,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
     private void displayImageThumb(FileListViewHolder fileListViewHolder, String path) {
         Uri imageUri = Uri.fromFile(new File(path));
-        Glide.with(mContext).load(imageUri).fitCenter()
+        Glide.with(mContext).load(imageUri).centerCrop()
                 .crossFade(2)
                 .placeholder(R.drawable.ic_photo_white)
                 .into(fileListViewHolder.imageIcon);

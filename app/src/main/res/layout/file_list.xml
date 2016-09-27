@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:recyclerviewfastscroller="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
@@ -20,7 +21,7 @@
         android:layout_height="?attr/actionBarSize"
         android:layout_alignParentBottom="true"
         android:background="@color/colorPrimary"
-        android:visibility="gone"/>
+        android:visibility="visible"/>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
@@ -28,34 +29,38 @@
         android:layout_height="match_parent"
         android:layout_above="@id/viewDummy">
 
- <!--       <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
+        <!--       <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
+                   android:id="@+id/recyclerViewFileList"
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   app:fastScrollAutoHide="true"
+                   app:fastScrollAutoHideDelay="1500"
+                   app:fastScrollPopupBackgroundSize="88dp"
+                   app:fastScrollPopupBgColor="@color/colorAccent"
+                   app:fastScrollPopupTextColor="@android:color/primary_text_dark"
+                   app:fastScrollPopupTextSize="56sp"
+                   app:fastScrollThumbColor="@color/colorPrimary"
+                   />-->
+
+        <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
             android:id="@+id/recyclerViewFileList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:fastScrollAutoHide="true"
-            app:fastScrollAutoHideDelay="1500"
-            app:fastScrollPopupBackgroundSize="88dp"
-            app:fastScrollPopupBgColor="@color/colorAccent"
-            app:fastScrollPopupTextColor="@android:color/primary_text_dark"
-            app:fastScrollPopupTextSize="56sp"
-            app:fastScrollThumbColor="@color/colorPrimary"
-            />-->
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerViewFileList"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-
-        <com.futuremind.recyclerviewfastscroll.FastScroller
-            android:id="@+id/fastscroll"
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"/>
+            app:fastScrollAutoHide="false"
+            app:fastScrollThumbColor="@color/colorAccent"
+            android:layout_above="@id/viewDummy"/>
 
 
     </android.support.v4.widget.SwipeRefreshLayout>
+
+
+    <!--<xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller-->
+        <!--android:id="@+id/fast_scroller"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--recyclerviewfastscroller:rfs_barColor="@android:color/transparent"-->
+        <!--/>-->
 
 
 </RelativeLayout>

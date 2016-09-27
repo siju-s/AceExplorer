@@ -14,6 +14,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,6 +30,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.FileListAdapter;
 import com.siju.acexplorer.filesystem.FileListLoader;
@@ -38,6 +40,7 @@ import com.siju.acexplorer.filesystem.utils.MediaStoreHack;
 import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 import com.siju.acexplorer.utils.DialogUtils;
 import com.siju.acexplorer.utils.PermissionUtils;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -49,7 +52,7 @@ import java.util.ArrayList;
 public class DialogBrowseFragment extends DialogFragment implements LoaderManager.LoaderCallbacks<ArrayList<FileInfo>> {
 
     private final String TAG = this.getClass().getSimpleName();
-    private RecyclerView recyclerViewFileList;
+    private FastScrollRecyclerView recyclerViewFileList;
     private View root;
     private final int LOADER_ID = 1000;
     private FileListAdapter fileListAdapter;
@@ -67,6 +70,10 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
     private static final int MY_PERMISSIONS_REQUEST = 1;
     private static final int SETTINGS_REQUEST = 200;
     MaterialDialog materialDialog;
+//    private VerticalRecyclerViewFastScroller mFastScroller;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
+
 
 
     @Override
@@ -135,8 +142,18 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
         mButtonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getActivity().setResult(AppCompatActivity.RESULT_OK, null);
-                getDialog().dismiss();
+                Logger.log(TAG,"cancel");
+//                Intent intent = new Intent();
+                getActivity().setResult(AppCompatActivity.RESULT_CANCELED, null);
+                if (mIsRingtonePicker)
+                    getActivity().finish();
+                else
+                    getDialog().dismiss();
+
+
+    /*            if (mIsRingtonePicker) {
+                    getActivity().finish();
+                }*/
             }
         });
 
@@ -157,9 +174,36 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
         } else {
             loadData();
         }
+        getDialog().setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                Logger.log(TAG,"Cancel");
+                getActivity().setResult(AppCompatActivity.RESULT_CANCELED, null);
+                if (mIsRingtonePicker)
+                    getActivity().finish();
+                else
+                    getDialog().dismiss();
+            }
+        });
 
 
     }
+
+
+
+
+
+ /*   @Override
+    public void onDismiss(DialogInterface dialog) {
+        getActivity().setResult(AppCompatActivity.RESULT_CANCELED, null);
+        if (mIsRingtonePicker)
+            getActivity().finish();
+        else
+            getDialog().dismiss();
+        Logger.log(TAG,"onDismiss");
+        super.onDismiss(dialog);
+
+    }*/
 
     private void loadData() {
         getLoaderManager().initLoader(LOADER_ID, null, this);
@@ -266,7 +310,16 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
     }
 
     private void initializeViews() {
-        recyclerViewFileList = (RecyclerView) root.findViewById(R.id.recyclerViewFileList);
+        recyclerViewFileList = (FastScrollRecyclerView) root.findViewById(R.id.recyclerViewFileList);
+    /*    mFastScroller = (VerticalRecyclerViewFastScroller) root.findViewById(R.id.fast_scroller);
+        mFastScroller.setRecyclerView(recyclerViewFileList);
+        recyclerViewFileList.addOnScrollListener(mFastScroller.getOnScrollListener());*/
+        recyclerViewFileList.setHasFixedSize(true);
+        RecyclerView.LayoutManager llm = new LinearLayoutManager(getActivity());
+        recyclerViewFileList.setLayoutManager(llm);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipeRefreshLayout);
+        mSwipeRefreshLayout.setEnabled(false);
+
         mImageButtonBack = (ImageButton) root.findViewById(R.id.imageButtonBack);
         mTextCurrentPath = (TextView) root.findViewById(R.id.textPath);
         mButtonOk = (Button) root.findViewById(R.id.buttonOk);
@@ -274,12 +327,15 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
 
     }
 
-    @Override
+ /*   @Override
     public void onCancel(DialogInterface dialog) {
         super.onCancel(dialog);
         getActivity().setResult(AppCompatActivity.RESULT_OK, null);
         getDialog().dismiss();
-    }
+   *//*     if (mIsRingtonePicker) {
+            getActivity().finish();
+        }*//*
+    }*/
 
     public void refreshList(String path) {
 
@@ -311,11 +367,6 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
                 fileInfoList = data;
                 fileListAdapter.setStopAnimation(true);
                 fileListAdapter.updateAdapter(fileInfoList);
-                recyclerViewFileList.setHasFixedSize(true);
-                RecyclerView.LayoutManager llm;
-                llm = new LinearLayoutManager(getActivity());
-                llm.setAutoMeasureEnabled(false);
-                recyclerViewFileList.setLayoutManager(llm);
                 recyclerViewFileList.setItemAnimator(new DefaultItemAnimator());
                 recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
                         .VERTICAL, mIsDarkTheme));

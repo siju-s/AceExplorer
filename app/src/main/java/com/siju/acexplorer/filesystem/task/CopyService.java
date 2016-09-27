@@ -150,7 +150,8 @@ public class CopyService extends Service {
         }
 
         @Override
-        public void onPostExecute(Integer b) {
+        public void
+        onPostExecute(Integer b) {
             publishResults("", 0, 0, b, 0, 0, true, move);
             if (fileVerifier != null && fileVerifier.isRunning()) {
                 while (fileVerifier.isRunning()) {
@@ -163,6 +164,7 @@ public class CopyService extends Service {
             }
             generateNotification(copy.failedFOps, move);
             Intent intent = new Intent("reload_list");
+//            intent.putExtra(FileConstants.KEY_PATH,files);
             sendBroadcast(intent);
             hash.put(b, false);
             boolean stop = true;
