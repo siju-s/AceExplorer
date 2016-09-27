@@ -21,7 +21,7 @@
         android:layout_height="?attr/actionBarSize"
         android:layout_alignParentBottom="true"
         android:background="@color/colorPrimary"
-        android:visibility="visible"/>
+        android:visibility="gone"/>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
@@ -42,16 +42,24 @@
                    app:fastScrollThumbColor="@color/colorPrimary"
                    />-->
 
-        <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
+        <com.siju.acexplorer.filesystem.helper.FastScrollRecyclerView
             android:id="@+id/recyclerViewFileList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:fastScrollAutoHide="false"
-            app:fastScrollThumbColor="@color/colorAccent"
+            app:fastScrollTrackColor="@android:color/transparent"
+            app:fastScrollThumbColor="@color/accent_blue"
             android:layout_above="@id/viewDummy"/>
 
 
     </android.support.v4.widget.SwipeRefreshLayout>
+
+<!--    <com.siju.acexplorer.filesystem.ui.FastScroller
+        android:id="@+id/fastscroll"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_height="match_parent"/>-->
 
 
     <!--<xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller-->

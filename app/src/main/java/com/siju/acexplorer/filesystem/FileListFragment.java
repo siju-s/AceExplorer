@@ -71,6 +71,7 @@ import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.common.SharedPreferenceWrapper;
+import com.siju.acexplorer.filesystem.helper.FastScrollRecyclerView;
 import com.siju.acexplorer.filesystem.model.BackStackModel;
 import com.siju.acexplorer.filesystem.model.FavInfo;
 import com.siju.acexplorer.filesystem.model.FileInfo;
@@ -85,7 +86,6 @@ import com.siju.acexplorer.filesystem.ui.GridItemDecoration;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 import com.siju.acexplorer.utils.DialogUtils;
-import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 import com.stericson.RootTools.RootTools;
 import com.stericson.RootTools.execution.Command;
 
@@ -105,8 +105,8 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     private final String TAG = this.getClass().getSimpleName();
     //    private ListView fileList;
-//    private RecyclerView recyclerViewFileList;
     private FastScrollRecyclerView recyclerViewFileList;
+//    private FastScrollRecyclerView recyclerViewFileList;
 //    private FastScroller mFastScroller;
 //    private VerticalRecyclerViewFastScroller mFastScroller;
 
@@ -433,6 +433,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     private void initializeViews() {
         recyclerViewFileList = (FastScrollRecyclerView) root.findViewById(R.id.recyclerViewFileList);
+
 //        mFastScroller = (FastScroller) root.findViewById(R.id.fastscroll);
 //        mFastScroller.setPressedHandleColor(ContextCompat.getColor(getActivity(),R.color.accent_blue));
         /*mFastScroller = (VerticalRecyclerViewFastScroller) root.findViewById(R.id.fast_scroller);
@@ -954,10 +955,11 @@ public class FileListFragment extends Fragment implements LoaderManager
             fileListAdapter.setCategory(mCategory);
             fileListAdapter.updateAdapter(fileInfoList);
             recyclerViewFileList.setAdapter(fileListAdapter);
-//            mFastScroller.setRecyclerView(recyclerViewFileList);
+
+//            mFastScroller.setRecyclerView(recyclerViewFileList,1);
             addItemDecoration();
 
-/*            mFastScroller.setRecyclerView(recyclerViewFileList, mViewMode == FileConstants.KEY_LISTVIEW ? 1 : mGridColumns);
+   /*         mFastScroller.setRecyclerView(recyclerViewFileList, mViewMode == FileConstants.KEY_LISTVIEW ? 1 : mGridColumns);
             mFastScroller.registerOnTouchListener(new FastScroller.onTouchListener() {
                 @Override
                 public void onTouch() {
