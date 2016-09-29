@@ -14,25 +14,22 @@
         android:layout_height="match_parent"/>
 
 
-
-    <com.siju.acexplorer.filesystem.ui.CustomScrimInsetsFrameLayout
+    <android.support.design.widget.NavigationView
         android:id="@+id/drawerPane"
         android:layout_width="wrap_content"
-        app:insetForeground="#4000"
-        android:fitsSystemWindows="true"
         android:layout_height="match_parent"
-        android:layout_gravity="start">
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true">
 
         <ExpandableListView
             android:id="@+id/expand_list_drawer"
             android:layout_width="@dimen/drawer_width"
-            android:fitsSystemWindows="true"
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:background="@color/navDrawerBg"
             android:divider="@null"
+            android:fitsSystemWindows="true"
             android:groupIndicator="@null"
             android:scrollbars="none"/>
-
-    </com.siju.acexplorer.filesystem.ui.CustomScrimInsetsFrameLayout>
+    </android.support.design.widget.NavigationView>
 </android.support.v4.widget.DrawerLayout>

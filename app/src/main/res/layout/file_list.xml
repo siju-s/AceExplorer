@@ -22,37 +22,38 @@
         android:layout_alignParentBottom="true"
         android:background="@color/colorPrimary"
         android:visibility="gone"/>
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:orientation="vertical"-->
+        <!--android:id="@+id/layoutTest">-->
+
+
+
+
+
+    <!--</LinearLayout>-->
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/viewDummy">
-
-        <!--       <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
-                   android:id="@+id/recyclerViewFileList"
-                   android:layout_width="match_parent"
-                   android:layout_height="match_parent"
-                   app:fastScrollAutoHide="true"
-                   app:fastScrollAutoHideDelay="1500"
-                   app:fastScrollPopupBackgroundSize="88dp"
-                   app:fastScrollPopupBgColor="@color/colorAccent"
-                   app:fastScrollPopupTextColor="@android:color/primary_text_dark"
-                   app:fastScrollPopupTextSize="56sp"
-                   app:fastScrollThumbColor="@color/colorPrimary"
-                   />-->
+        android:layout_above="@+id/viewDummy">
 
         <com.siju.acexplorer.filesystem.helper.FastScrollRecyclerView
             android:id="@+id/recyclerViewFileList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:fastScrollAutoHide="false"
+            app:fastScrollAutoHide="true"
             app:fastScrollTrackColor="@android:color/transparent"
             app:fastScrollThumbColor="@color/accent_blue"
-            android:layout_above="@id/viewDummy"/>
+            />
 
 
     </android.support.v4.widget.SwipeRefreshLayout>
+
+
+
 
 <!--    <com.siju.acexplorer.filesystem.ui.FastScroller
         android:id="@+id/fastscroll"
