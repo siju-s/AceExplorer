@@ -89,8 +89,6 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     private final String audioUri = "content://media/external/audio/media";
     private final String imageUri = "content://media/external/images/media";
     private final String videoUri = "content://media/external/videos/media";
-//    private final String filesUri = "content://media/external/images/media";
-
 
     @Override
     public void onAttach(Context context) {
@@ -439,10 +437,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
 
     private void initializeStorageGroup() {
 
-
-//        File internalSD = getInternalStorage();
         List<String> storagePaths = FileUtils.getStorageDirectories(getActivity(), true);
-//        File extSD = FileUtils.getExternalStorage();
         for (String path : storagePaths) {
             File file = new File(path);
             int icon;
@@ -489,28 +484,6 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                 FileUtils.formatSize(getActivity(), totalSpace);
     }
 
-  /*  public void updateCount(int categoryId,int count) {
-        Log.d(TAG, "updateCount--categoryId=" +categoryId+ " count="+count);
-        Handler handler = new Handler(Looper.getMainLooper());
-
-        for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
-            if (categoryId == homeLibraryInfoArrayList.get(i).getCategoryId()) {
-                homeLibraryInfoArrayList.get(i).setCount(count);
-//                homeLibraryAdapter.notifyItemChanged(i);
-                //updateAdapter(homeLibraryInfoArrayList);
-                final int pos = i;
-                final Runnable r = new Runnable() {
-                    public void run() {
-                        homeLibraryAdapter.notifyItemChanged(pos);
-                    }
-                };
-
-                handler.post(r);
-                break;
-            }
-        }
-    }*/
-
     @Override
     public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
         Log.d(TAG, "on onCreateLoader--" + id);
@@ -536,57 +509,17 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     @Override
     public void onLoadFinished(Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
         if (data != null) {
-            Log.d(TAG, "on onLoadFinished--" + loader.getId() + "Size=" + data.get(0).getCount());
 
-/*            mSortMode = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt(
-                    FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
-            Log.d(TAG, "on onLoadFinished--sort mode" + mSortMode);*/
-            for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
+            if (data.size() != 0) {
+                for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
 
-                if (data.get(0).getCategoryId() == homeLibraryInfoArrayList.get(i).getCategoryId()) {
-                    homeLibraryInfoArrayList.get(i).setCount(data.get(0).getCount());
-                  /*  switch (homeLibraryInfoArrayList.get(i).getCategoryId()) {
-                        case 1:
-                            mMusicList.clear();
-                            mMusicList.addAll(data);
-                            break;
-                        case 2:
-                            mVideosList.clear();
-                            mVideosList.addAll(data);
-                            break;
-                        case 3:
-                            mImagesList.clear();
-                            mImagesList.addAll(data);
-                            break;
-                        case 4:
-                            mDocsList.clear();
-                            mDocsList.addAll(data);
-                            break;
-                        case 5:
-                            mDownloadsList.clear();
-                            mDownloadsList.addAll(data);
-                            break;
-                        case 7:
-                            mCompressedList.clear();
-                            mCompressedList.addAll(data);
-                            break;
-                        case 9:
-                            mPdfList.clear();
-                            mPdfList.addAll(data);
-                            break;
-                        case 10:
-                            mAppsList.clear();
-                            mAppsList.addAll(data);
-                            break;
-                        case 11:
-                            mLargeFilesList.clear();
-                            mLargeFilesList.addAll(data);
-                            break;
-                    }*/
-//                    break;
-                } else if (loader.getId() == FileConstants.CATEGORY.DOWNLOADS.getValue() &&
-                        loader.getId() == homeLibraryInfoArrayList.get(i).getCategoryId()) {
-                    homeLibraryInfoArrayList.get(i).setCount(data.size());
+                    if (loader.getId() == FileConstants.CATEGORY.DOWNLOADS.getValue() ||
+                            loader.getId() == FileConstants.CATEGORY.FAVORITES.getValue() &&
+                                    loader.getId() == homeLibraryInfoArrayList.get(i).getCategoryId()) {
+                        homeLibraryInfoArrayList.get(i).setCount(data.size());
+                    } else if (data.get(0).getCategoryId() == homeLibraryInfoArrayList.get(i).getCategoryId()) {
+                        homeLibraryInfoArrayList.get(i).setCount(data.get(0).getCount());
+                    }
                 }
             }
             homeLibraryAdapter.updateAdapter(homeLibraryInfoArrayList);
@@ -595,13 +528,12 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
 
     @Override
     public void onLoaderReset(Loader<ArrayList<FileInfo>> loader) {
-//        Log.d(TAG, "onLoaderReset--" + loader.getId());
 
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("TAG", "OnActivityREsult==" + resultCode);
+       Logger.log(TAG, "OnActivityREsult==" + resultCode);
         if (requestCode == REQUEST_CODE && resultCode == AppCompatActivity.RESULT_OK) {
             savedLibraries = new ArrayList<>();
             savedLibraries = data.getParcelableArrayListExtra(FileConstants.KEY_LIB_SORTLIST);

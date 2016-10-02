@@ -1,10 +1,8 @@
 package com.siju.acexplorer.filesystem.task;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.widget.TextView;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.filesystem.FileConstants;
@@ -19,48 +17,34 @@ import java.util.ArrayList;
 /**
  * Created by Siju on 27-08-2016.
  */
-public class DeleteTask extends AsyncTask<ArrayList<FileInfo>, Void, Integer> {
+public class DeleteTask extends AsyncTask<Void, Void, Integer> {
 
-    private String fileName;
-    private String filePath;
-    private int copyStatus = -1;
-    //        private ProgressDialog progressDialog;
-    private Dialog progressDialog;
-    private Dialog deleteDialog;
-    private int operation;
-    private int currentFile = 0;
-    private int filesCopied;
-    private boolean isActionCancelled;
-    TextView textFileName;
     private int totalFiles;
-    private String sourcePath;
-    ArrayList<String> paths = new ArrayList<>();
-    ArrayList<FileInfo> deletedFilesList = new ArrayList<>();
-
-    ArrayList<String> mimeTypes = new ArrayList<>();
+    private ArrayList<String> paths = new ArrayList<>();
+    private ArrayList<FileInfo> deletedFilesList = new ArrayList<>();
+    private ArrayList<String> mimeTypes = new ArrayList<>();
     private Context mContext;
     private boolean mIsRootMode;
+    private ArrayList<FileInfo> fileList = new ArrayList<>();
 
 
-    public  DeleteTask(Context context, boolean rootMode) {
-        this.operation = operation;
+
+
+    public  DeleteTask(Context context, boolean rootMode,ArrayList<FileInfo> fileList) {
         mContext = context;
         mIsRootMode = rootMode;
-//        sourcePath = mSourceFilePath;
-
+        this.fileList = fileList;
     }
 
     @Override
-    protected Integer doInBackground(ArrayList<FileInfo>... params) {
+    protected Integer doInBackground(Void... params) {
         int deletedCount = 0;
-        ArrayList<FileInfo> fileInfo = params[0];
 
 
-        totalFiles = fileInfo.size();
+        totalFiles = fileList.size();
 
         for (int i = 0; i < totalFiles; i++) {
-            String path = fileInfo.get(i).getFilePath();
-//                int result = FileUtils.deleteTarget(path);
+            String path = fileList.get(i).getFilePath();
             boolean isDeleted = FileUtils.deleteFile(new File(path), mContext);
 
             if (!isDeleted) {
@@ -69,15 +53,15 @@ public class DeleteTask extends AsyncTask<ArrayList<FileInfo>, Void, Integer> {
                     String s = RootHelper.runAndWait("rm -r \"" + path + "\"", true);
                     RootTools.remount(new File(path).getParent(), "ro");
                     paths.add(path);
-                    mimeTypes.add(fileInfo.get(i).getMimeType());
-                    deletedFilesList.add(fileInfo.get(i));
+                    mimeTypes.add(fileList.get(i).getMimeType());
+                    deletedFilesList.add(fileList.get(i));
                     deletedCount++;
                 }
 
             } else {
                 paths.add(path);
-                mimeTypes.add(fileInfo.get(i).getMimeType());
-                deletedFilesList.add(fileInfo.get(i));
+                mimeTypes.add(fileList.get(i).getMimeType());
+                deletedFilesList.add(fileList.get(i));
                 deletedCount++;
             }
         }

@@ -1,14 +1,5 @@
 <resources>
 
-    <!--    &lt;!&ndash; Base application theme. &ndash;&gt;
-        <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-            &lt;!&ndash; Customize your theme here. &ndash;&gt;
-            <item name="colorPrimary">@color/colorPrimary</item>
-            <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-            <item name="colorAccent">@color/colorAccent</item>
-
-        </style>-->
-
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -96,6 +87,24 @@
     <style name="menu_labels_style">
         <item name="android:background">@drawable/fab_background</item>
         <item name="android:textColor">@color/fabButtonText</item>
+    </style>
+
+    <style name="MenuLabelsStyle">
+        <item name="android:background">@drawable/fab_background</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="MenuButtonsStyle">
+        <item name="fab_size">mini</item>
+        <!--<item name="fab_showAnimation">@anim/jump_from_down</item>-->
+        <!--<item name="fab_hideAnimation">@anim/jump_to_down</item>-->
+        <item name="fab_shadowColor">#444</item>
+        <item name="fab_colorNormal">@color/colorPrimary</item>
+        <item name="fab_colorPressed">@color/colorPrimary</item>
+        <item name="fab_colorRipple">@color/colorPrimary</item>
     </style>
 
     <style name="SettingsTheme.AppCompat" parent="Theme.AppCompat.Light.NoActionBar">

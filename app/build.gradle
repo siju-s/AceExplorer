@@ -30,7 +30,7 @@ android {
     }
     dexOptions {
         maxProcessCount 2
-        javaMaxHeapSize "6g"
+        javaMaxHeapSize "4g"
     }
     configurations {
         all*.exclude group: 'commons-logging', module: 'commons-logging'
@@ -72,6 +72,7 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha3'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.getbase:floatingactionbutton:1.10.1'
+    compile 'com.github.clans:fab:1.6.4'
     compile 'com.google.code.gson:gson:2.4'
     compile 'io.github.kobakei:ratethisapp:1.0.5'
     compile 'org.apache.commons:commons-compress:1.10'

@@ -234,7 +234,7 @@ public class FileOpsHelper {
             mActivity.mFiles = files;
             mActivity.mOperation = FileConstants.DELETE;
         } else if (mode == 1 || mode == 0)
-            new DeleteTask(mActivity, true).execute((files));
+            new DeleteTask(mActivity, true,files).execute();
     }
 
     public void extractFile(File currentFile, File file) {
@@ -300,7 +300,7 @@ public class FileOpsHelper {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void triggerStorageAccessFramework() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-        mActivity.startActivityForResult(intent, 3);
+        mActivity.startActivityForResult(intent, BaseActivity.SAF_REQUEST);
     }
 
 

@@ -9,11 +9,11 @@
 
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/appBar1"
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
 
         <android.support.v7.widget.Toolbar
@@ -25,8 +25,7 @@
             android:background="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:titleTextAppearance="@style/ToolbarTitle"
-            />
+            app:titleTextAppearance="@style/ToolbarTitle"/>
 
 
         <LinearLayout
@@ -34,7 +33,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="7dp"
-            android:background="@color/colorPrimary">
+            android:layout_marginStart="7dp"
+            android:background="@color/colorPrimary"
+            android:baselineAligned="false">
 
             <HorizontalScrollView
                 android:id="@+id/scrollNavigation"
@@ -48,6 +49,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="7dp"
+                    android:layout_marginStart="7dp"
                     android:background="@android:color/transparent">
 
                     <LinearLayout
@@ -69,11 +71,11 @@
                 android:scrollbars="none"
                 android:visibility="gone">
 
-
                 <FrameLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="7dp"
+                    android:layout_marginStart="7dp"
                     android:background="@android:color/transparent">
 
                     <LinearLayout
@@ -81,14 +83,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="horizontal"/>
-
                 </FrameLayout>
 
             </HorizontalScrollView>
         </LinearLayout>
 
     </android.support.design.widget.AppBarLayout>
-
 
 
     <include layout="@layout/content_main"/>
@@ -112,7 +112,10 @@
             fab:fab_addButtonPlusIconColor="@color/white"
             fab:fab_addButtonStrokeVisible="false"
             fab:fab_labelStyle="@style/menu_labels_style"
-            fab:fab_labelsPosition="left">
+            fab:fab_labelsPosition="left"
+            >
+
+
 
             <com.getbase.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fabCreateFile"
@@ -145,6 +148,8 @@
         android:layout_gravity="center_vertical|center_horizontal"
         android:background="@color/whiteOverlay"
         android:visibility="gone">
+
+
 
         <com.getbase.floatingactionbutton.FloatingActionsMenu
             android:id="@+id/fabCreateDual"

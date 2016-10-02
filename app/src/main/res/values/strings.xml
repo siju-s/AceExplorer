@@ -181,6 +181,7 @@
     <string name="storage_access">Ace Explorer needs storage permission to access the files on device</string>
     <string name="permission_setting_hint">Tap Settings -> Permissions and then turn Storage on.</string>
     <string name="exit">Exit</string>
+    <string name="access_denied_external">Write access to External SD not granted</string>
 
 
     <string name="title_activity_welcome">Home Screen</string>
