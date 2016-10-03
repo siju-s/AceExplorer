@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="@dimen/dialog_paste_conflict_width"
-              android:layout_height="wrap_content"
-              android:orientation="vertical">
-
+    android:layout_width="@dimen/dialog_paste_conflict_width"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
 
     <RelativeLayout
@@ -18,8 +17,9 @@
             android:layout_width="@dimen/dialog_image"
             android:layout_height="@dimen/dialog_image"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_doc_white"/>
+            android:src="@drawable/ic_doc_white" />
 
 
         <TextView
@@ -27,8 +27,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/imageFileIcon"
             android:layout_toRightOf="@+id/imageFileIcon"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textFileDate"
@@ -36,7 +38,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/textFileName"
             android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@+id/imageFileIcon"/>
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/imageFileIcon"
+            android:layout_toRightOf="@+id/imageFileIcon" />
 
         <TextView
             android:id="@+id/textFileSize"
@@ -44,17 +48,19 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/textFileDate"
             android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@+id/imageFileIcon"/>
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/imageFileIcon"
+            android:layout_toRightOf="@+id/imageFileIcon" />
 
 
     </RelativeLayout>
 
 
     <CheckBox
+        android:id="@+id/checkBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/paste_conflict_remember"
-        android:id="@+id/checkBox" />
+        android:text="@string/paste_conflict_remember" />
 
     <!--<LinearLayout
         android:layout_width="match_parent"

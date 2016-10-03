@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
     <TableRow
         android:layout_width="fill_parent"
@@ -11,25 +11,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:text=""/>
+            android:text="" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:text="Read"/>
+            android:text="@string/permission_read" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:text="Write"/>
+            android:text="@string/permission_write" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:text="Execute"/>
+            android:text="@string/permission_execute" />
 
     </TableRow>
 
@@ -40,29 +40,25 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Owner"
-            />
+            android:text="@string/permission_owner" />
 
         <CheckBox
             android:id="@+id/creadown"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
-            />
+            android:padding="5dp" />
 
         <CheckBox
             android:id="@+id/cwriteown"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
-            />
+            android:padding="5dp" />
 
         <CheckBox
             android:id="@+id/cexeown"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
-            />
+            android:padding="5dp" />
     </TableRow>
 
     <TableRow
@@ -72,22 +68,22 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Group"/>
+            android:text="@string/permission_group" />
 
         <CheckBox
             android:id="@+id/creadgroup"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
         <CheckBox
             android:id="@+id/cwritegroup"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
         <CheckBox
             android:id="@+id/cexegroup"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
     </TableRow>
 
     <TableRow
@@ -97,21 +93,21 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Other"/>
+            android:text="@string/other" />
 
         <CheckBox
             android:id="@+id/creadother"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
         <CheckBox
             android:id="@+id/cwriteother"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
         <CheckBox
             android:id="@+id/cexeother"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
     </TableRow>
 </TableLayout>

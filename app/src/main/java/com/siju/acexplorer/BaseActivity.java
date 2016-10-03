@@ -148,8 +148,6 @@ public class BaseActivity extends AppCompatActivity implements
     private boolean isCurrentDualDirRoot;
     private String mStartingDir;
     private String mStartingDirDualPane;
-    private FileListFragment mFileListFragment;
-    private FileListDualFragment mFileListDualFragment;
     private boolean mIsDualModeEnabled;
     private boolean mIsFromHomePage;
     private int mCurrentTheme = FileConstants.THEME_LIGHT;
@@ -809,14 +807,7 @@ public class BaseActivity extends AppCompatActivity implements
             mCurrentDirDualPane = path;
         }
 
-        FileListFragment fileListFragment = (FileListFragment) getSupportFragmentManager().findFragmentById(R.id
-                .main_container);
-        mFileListFragment = fileListFragment;
 
-        FileListDualFragment fileListDualFragment = (FileListDualFragment) getSupportFragmentManager()
-                .findFragmentById(R.id
-                        .frame_container_dual);
-        mFileListDualFragment = fileListDualFragment;
         String dir = "";
 
         if (mIsHomeScreenEnabled) {
@@ -827,7 +818,6 @@ public class BaseActivity extends AppCompatActivity implements
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             params.gravity = Gravity.CENTER_VERTICAL;
-
 
             imageButton.setLayoutParams(params);
             imageButton.setOnClickListener(new View.OnClickListener() {
@@ -905,12 +895,12 @@ public class BaseActivity extends AppCompatActivity implements
         int WRAP_CONTENT = LinearLayout.LayoutParams.WRAP_CONTENT;
         if (dir.equals(getInternalStorage().getAbsolutePath())) {
             isCurrentDirRoot = false;
-            createNavButton(STORAGE_INTERNAL, dir, mFileListFragment, mFileListDualFragment);
+            createNavButton(STORAGE_INTERNAL, dir);
         } else if (dir.equals(File.separator)) {
-            createNavButton(STORAGE_ROOT, dir, mFileListFragment, mFileListDualFragment);
+            createNavButton(STORAGE_ROOT, dir);
         } else if (mExternalSDPaths != null && mExternalSDPaths.contains(dir)) {
             isCurrentDirRoot = false;
-            createNavButton(STORAGE_EXTERNAL, dir, mFileListFragment, mFileListDualFragment);
+            createNavButton(STORAGE_EXTERNAL, dir);
         } else {
             ImageView navArrow = new ImageView(this);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(WRAP_CONTENT,
@@ -925,7 +915,7 @@ public class BaseActivity extends AppCompatActivity implements
             } else {
                 navDirectoryDualPane.addView(navArrow);
             }
-            createNavButton(parts, dir, mFileListFragment, mFileListDualFragment);
+            createNavButton(parts, dir);
             if (!isDualPaneInFocus) {
                 scrollNavigation.postDelayed(new Runnable() {
                     public void run() {
@@ -946,8 +936,7 @@ public class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    private void createNavButton(String text, final String dir, final FileListFragment fileListFragment,
-                                 final FileListDualFragment fileListDualFragment) {
+    private void createNavButton(String text, final String dir) {
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -963,13 +952,12 @@ public class BaseActivity extends AppCompatActivity implements
             } else {
                 imageButton.setImageResource(R.drawable.ic_root_white_nav);
             }
-//            imageButton.setBackgroundResource(0);
             imageButton.setBackgroundColor(Color.parseColor("#00ffffff"));
             imageButton.setLayoutParams(params);
             imageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    navButtonOnClick(view, dir, fileListFragment, fileListDualFragment);
+                    navButtonOnClick(view, dir);
                 }
             });
             if (!isDualPaneInFocus) {
@@ -986,13 +974,12 @@ public class BaseActivity extends AppCompatActivity implements
             textView.setTextSize(15);
             params.leftMargin = 20;
             textView.setPadding(0, 0, 35, 0);
-//            params.rightMargin = 20;
             textView.setLayoutParams(params);
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Logger.log(TAG, "nav button onclick--dir=" + dir);
-                    navButtonOnClick(view, dir, fileListFragment, fileListDualFragment);
+                    navButtonOnClick(view, dir);
                 }
             });
             if (!isDualPaneInFocus) {
@@ -1005,9 +992,14 @@ public class BaseActivity extends AppCompatActivity implements
 
     }
 
-    private void navButtonOnClick(View view, final String dir, final FileListFragment fileListFragment, final
-    FileListDualFragment fileListDualFragment) {
+    private void navButtonOnClick(View view, final String dir) {
         Logger.log(TAG, "Dir=" + dir);
+
+        FileListFragment fileListFragment = (FileListFragment) getSupportFragmentManager().findFragmentById(R.id
+                .main_container);
+
+        FileListDualFragment fileListDualFragment = (FileListDualFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.frame_container_dual);
 
         boolean isDualPaneButtonClicked;
         LinearLayout parent = (LinearLayout) view.getParent();

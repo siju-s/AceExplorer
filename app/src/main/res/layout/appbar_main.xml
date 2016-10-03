@@ -158,6 +158,7 @@
             android:layout_gravity="bottom|center_vertical|center_horizontal"
             android:layout_marginBottom="@dimen/fab_margin"
             android:layout_marginRight="@dimen/fab_margin_dual_right"
+            android:layout_marginEnd="@dimen/fab_margin_dual_right"
             android:layout_marginTop="@dimen/fab_margin"
             app:fab_addButtonSize="normal"
             fab:fab_addButtonColorNormal="@color/colorPrimary"

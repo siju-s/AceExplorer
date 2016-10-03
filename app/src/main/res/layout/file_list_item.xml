@@ -26,7 +26,9 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="12dp"
         android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
         android:layout_toRightOf="@+id/imageIcon"
+        android:layout_toEndOf="@+id/imageIcon"
         android:textSize="14sp"/>
 
     <!-- This will be no of files for directory & size for file -->
@@ -37,8 +39,9 @@
         android:layout_below="@+id/textFolderName"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
         android:layout_toRightOf="@+id/imageIcon"
-        android:text="Second line"
+        android:layout_toEndOf="@+id/imageIcon"
         android:textAppearance="?attr/textAppearanceListItemSmall"
         android:textSize="12sp"/>
 
@@ -52,7 +55,6 @@
         android:layout_marginEnd="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="12dp"
-        android:text="12 june"
         android:textSize="12sp"/>
 
     <ImageView

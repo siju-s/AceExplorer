@@ -12,7 +12,6 @@
         android:background="?colorPrimary"
         android:minHeight="?actionBarSize"
         android:theme="@style/ToolbarTheme"
-        app:navigationContentDescription="@string/abc_action_bar_up_description"
         app:navigationIcon="?homeAsUpIndicator"
         app:title="@string/action_settings"
         app:titleTextAppearance="@style/ToolbarTitle"

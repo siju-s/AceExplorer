@@ -80,8 +80,6 @@ dependencies {
 
     compile 'com.afollestad.material-dialogs:core:0.9.0.1'
     compile 'com.github.junrar:junrar:0.7'
-    compile 'com.google.android.gms:play-services-ads:9.4.0'
-    compile 'com.google.android.gms:play-services-location:9.4.0'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.1'
     compile 'com.futuremind.recyclerfastscroll:fastscroll:0.2.4'
     compile('com.crashlytics.sdk.android:crashlytics:2.6.2@aar') {

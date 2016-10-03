@@ -32,6 +32,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 
 import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
@@ -54,7 +55,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class CopyService extends Service {
-    HashMap<Integer, Boolean> hash = new HashMap<Integer, Boolean>();
+    SparseBooleanArray hash = new SparseBooleanArray();
     public HashMap<Integer, ZipProgressModel> hash1 = new HashMap<>();
     boolean rootmode;
     NotificationManager mNotifyManager;
@@ -168,8 +169,10 @@ public class CopyService extends Service {
             sendBroadcast(intent);
             hash.put(b, false);
             boolean stop = true;
-            for (int a : hash.keySet()) {
-                if (hash.get(a)) stop = false;
+            for (int i = 0; i < hash.size(); i++) {
+                int key = hash.keyAt(i);
+                // get the object by the key.
+                if (hash.get(key)) stop = false;
             }
             if (!stop)
                 stopSelf(b);
@@ -274,7 +277,7 @@ public class CopyService extends Service {
                                 String path = currentDir + "/" + fileName;
                                 if (action == FileUtils.ACTION_KEEP) {
                                     String fileNameWithoutExt = fileName.substring(0, fileName.
-                                           lastIndexOf("."));
+                                            lastIndexOf("."));
                                     path = currentDir + "/" + fileNameWithoutExt + "(2)" + "." + files.get(i)
                                             .getExtension();
                                 }

@@ -1514,17 +1514,17 @@ public class FileListFragment extends Fragment implements LoaderManager
                 Command com = new Command(1, command) {
                     @Override
                     public void commandOutput(int i, String s) {
-                        Toast.makeText(getActivity(), s, Toast.LENGTH_LONG);
+                        Toast.makeText(getActivity(), s, Toast.LENGTH_LONG).show();
                     }
 
                     @Override
                     public void commandTerminated(int i, String s) {
-                        Toast.makeText(getActivity(), s, Toast.LENGTH_LONG);
+                        Toast.makeText(getActivity(), s, Toast.LENGTH_LONG).show();
                     }
 
                     @Override
                     public void commandCompleted(int i, int i2) {
-                        Toast.makeText(getActivity(), getResources().getString(R.string.completed), Toast.LENGTH_LONG);
+                        Toast.makeText(getActivity(), getResources().getString(R.string.completed), Toast.LENGTH_LONG).show();
                     }
                 };
                 try {//

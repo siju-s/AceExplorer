@@ -53,7 +53,7 @@
     <string name="dialog_to_placeholder">To: %1$s</string>
     <string name="button_paste_progress">Background</string>
     <string name="dialog_delete_title">Are you sure you want to delete the following files?</string>
-    <string name="msg_ok">Ok</string>
+    <string name="msg_ok">OK</string>
     <string name="msg_save">Save</string>
     <string name="no_files">No files</string>
     <string name="msg_error_valid_name">Enter a valid name</string>
@@ -182,6 +182,13 @@
     <string name="permission_setting_hint">Tap Settings -> Permissions and then turn Storage on.</string>
     <string name="exit">Exit</string>
     <string name="access_denied_external">Write access to External SD not granted</string>
+    <string name="permission_read">Read</string>
+    <string name="permission_write">Write</string>
+    <string name="permission_execute">Execute</string>
+    <string name="permission_owner">Owner</string>
+    <string name="permission_group">Group</string>
+    <string name="permission_other">Other</string>
+
 
 
     <string name="title_activity_welcome">Home Screen</string>
@@ -200,5 +207,6 @@
 
     <string name="slide_4_title">Themes</string>
     <string name="slide_4_desc">Dark or Light way! Your choice.</string>
+    <string name="blank">%d</string>
 
 </resources>

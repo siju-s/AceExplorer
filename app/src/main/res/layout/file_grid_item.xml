@@ -24,7 +24,6 @@
         android:ellipsize="end"
         android:gravity="center"
         android:maxLines="4"
-        android:text="SIJU"
         android:textSize="14sp"/>
 
     <!-- This will be no of files for directory & size for file -->

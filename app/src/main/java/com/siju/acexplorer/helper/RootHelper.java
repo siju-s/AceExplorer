@@ -16,6 +16,7 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by Siju on 03-08-2016.
@@ -212,13 +213,12 @@ public class RootHelper {
 
                                     if (!path.equals("/")) {
                                         path1 = path + "/" + name;
-                                    }
-                                    else {
+                                    } else {
                                         path1 = "/" + name;
                                     }
-                                    Logger.log("RootHelper","Path=="+path);
+                                    Logger.log("RootHelper", "Path==" + path);
 
-                                    Logger.log("RootHelper","path1=="+path1);
+                                    Logger.log("RootHelper", "path1==" + path1);
 //                                    array.setName(array.getPath());
 //                                    array.setPath();
                                     boolean isDirectory;
@@ -287,13 +287,6 @@ public class RootHelper {
         return false;
     }
 
-    public static String convertDate(long dateInMs) {
-        SimpleDateFormat df2 = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
-        String dateText = df2.format(dateInMs);
-        return dateText;
-    }
-
-
     public static BaseFile parseName(String line) {
         boolean linked = false;
         String name = "", link = "", size = "-1", date = "";
@@ -327,7 +320,7 @@ public class RootHelper {
         long Size = (size == null || size.trim().length() == 0) ? -1 : Long.parseLong(size);
         if (date.trim().length() > 0) {
             ParsePosition pos = new ParsePosition(0);
-            SimpleDateFormat simpledateformat = new SimpleDateFormat("yyyy-MM-dd | HH:mm");
+            SimpleDateFormat simpledateformat = new SimpleDateFormat("yyyy-MM-dd | HH:mm", Locale.getDefault());
             Date stringDate = simpledateformat.parse(date, pos);
             BaseFile baseFile = new BaseFile(name, array[0], stringDate.getTime(), Size, true);
             baseFile.setLink(link);

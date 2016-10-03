@@ -58,8 +58,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public View getChildView(int groupPosition, final int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
 
-//        final String childFirstLineText = (String) getChild(groupPosition, childPosition);
-
         SectionItems child = (SectionItems) getChild(groupPosition, childPosition);
 
         View view = convertView;
@@ -67,7 +65,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         if (view == null) {
             LayoutInflater layoutInflater = (LayoutInflater) this.mContext
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = layoutInflater.inflate(R.layout.drawer_item, null);
+            view = layoutInflater.inflate(R.layout.drawer_item, parent,false);
             childViewHolder = new ChildViewHolder();
             childViewHolder.image = (ImageView) view.findViewById(R.id.image_drawer_item);
             childViewHolder.textFirstLine = (TextView) view.findViewById(R.id.textFirstLine);
