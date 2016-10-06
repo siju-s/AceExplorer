@@ -15,7 +15,7 @@ public class CopyData implements Parcelable {
         this.action = action;
     }
 
-    protected CopyData(Parcel in) {
+    private CopyData(Parcel in) {
         filePath = in.readString();
         action = in.readInt();
     }

@@ -19,7 +19,7 @@ import com.siju.acexplorer.model.SectionItems;
 
 import java.util.ArrayList;
 
-public class ExpandableListAdapter extends BaseExpandableListAdapter {
+class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     private Context mContext;
     //    private List<String> _listDataHeader; // header titles
@@ -65,7 +65,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         if (view == null) {
             LayoutInflater layoutInflater = (LayoutInflater) this.mContext
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = layoutInflater.inflate(R.layout.drawer_item, parent,false);
+            view = layoutInflater.inflate(R.layout.drawer_item, parent, false);
             childViewHolder = new ChildViewHolder();
             childViewHolder.image = (ImageView) view.findViewById(R.id.image_drawer_item);
             childViewHolder.textFirstLine = (TextView) view.findViewById(R.id.textFirstLine);
@@ -79,8 +79,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         childViewHolder.textFirstLine.setText(child.getmFirstLine());
         if (groupPosition == 0 || groupPosition == 1) {
             childViewHolder.textSecondLine.setText(child.getmSecondLine());
-        }
-        else {
+        } else {
             childViewHolder.textSecondLine.setText("");
         }
 //        Logger.log("TAG","GROUP=="+child.getmFirstLine()+ "2ndline="+child.getmSecondLine());
@@ -138,15 +137,13 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         if (isExpanded) {
             if (mIsDarkTheme) {
                 holder.imageArrow.setImageResource(R.drawable.ic_expand_less_white);
-            }
-            else {
+            } else {
                 holder.imageArrow.setImageResource(R.drawable.ic_expand_less_black);
             }
         } else {
             if (mIsDarkTheme) {
                 holder.imageArrow.setImageResource(R.drawable.ic_expand_more_white);
-            }
-            else {
+            } else {
                 holder.imageArrow.setImageResource(R.drawable.ic_expand_more_black);
             }
         }
@@ -175,6 +172,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     /**
      * To make Child clickable
+     *
      * @param groupPosition
      * @param childPosition
      * @return

@@ -242,7 +242,6 @@ public class FileListFragment extends Fragment implements LoaderManager
             }
 
             Bundle args = new Bundle();
-            final String fileName;
             ArrayList<FileInfo> list = new ArrayList<>();
 
             if (getArguments() != null) {
@@ -1108,7 +1107,6 @@ public class FileListFragment extends Fragment implements LoaderManager
 
             case R.id.action_select_all:
                 if (mSelectedItemPositions != null) {
-                    FileListFragment singlePaneFragment = null;
                     if (mSelectedItemPositions.size() < fileListAdapter.getItemCount()) {
                         toggleSelectAll(true);
                     } else {
@@ -1450,7 +1448,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                 renamedName = "." + fileName;
             }
 
-            int result = FileUtils.renameTarget(fileInfo.get(i).getFilePath(), renamedName);
+           FileUtils.renameTarget(fileInfo.get(i).getFilePath(), renamedName);
         }
         refreshList();
     }
@@ -1546,7 +1544,6 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     private void showExtractOptions(final String currentFilePath, final String currentDir) {
 
-        final File currentFile = new File(currentFilePath);
         mSelectedPath = null;
         final String currentFileName = currentFilePath.substring(currentFilePath.lastIndexOf("/")
                 + 1, currentFilePath.lastIndexOf("."));
@@ -2150,7 +2147,6 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int sortMode = 0;
         switch (item.getItemId()) {
 
             case R.id.action_paste:

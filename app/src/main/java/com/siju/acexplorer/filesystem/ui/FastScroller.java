@@ -26,8 +26,8 @@ public class FastScroller extends RelativeLayout {
     private ImageView handle;
     private RecyclerView recyclerView;
     private final ScrollListener scrollListener;
-    boolean manuallyChangingPosition = false;
-    int columns = 1;
+    private boolean manuallyChangingPosition = false;
+    private int columns = 1;
 
     class ScrollListener extends RecyclerView.OnScrollListener {
         private ScrollListener() {
@@ -86,7 +86,7 @@ public class FastScroller extends RelativeLayout {
 
     }
 
-    public static float getValueInRange(float min, float max, float value) {
+    private static float getValueInRange(float min, float max, float value) {
         float minimum = Math.max(min, value);
         return Math.min(minimum, max);
     }
@@ -98,14 +98,14 @@ public class FastScroller extends RelativeLayout {
         this.bar.setBackgroundDrawable(insetDrawable);
     }
 
-    int resolveColor(@NonNull Context context, @AttrRes int i) {
+    private int resolveColor(@NonNull Context context, @AttrRes int i) {
         TypedArray obtainStyledAttributes = context.obtainStyledAttributes(new int[]{i});
         int color = obtainStyledAttributes.getColor(0, 0);
         obtainStyledAttributes.recycle();
         return color;
     }
 
-    onTouchListener a;
+    private onTouchListener a;
 
     public boolean onTouchEvent(@NonNull MotionEvent motionEvent) {
         if (motionEvent.getAction() == 0 || motionEvent.getAction() == 2) {
@@ -158,7 +158,7 @@ public class FastScroller extends RelativeLayout {
 
     }
 
-    public static float getViewRawY(View view) {
+    private static float getViewRawY(View view) {
         int[] location = new int[2];
         location[0] = 0;
         location[1] = (int) view.getY();
@@ -174,7 +174,7 @@ public class FastScroller extends RelativeLayout {
         a = onTouchListener;
     }
 
-    public void setPressedHandleColor(int i) {
+    private void setPressedHandleColor(int i) {
         handle.setColorFilter(i);
         StateListDrawable stateListDrawable = new StateListDrawable();
         Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.fastscroller_handle_normal);
@@ -204,11 +204,11 @@ public class FastScroller extends RelativeLayout {
         });
     }
 
-    void updateHandlePosition() {
+    private void updateHandlePosition() {
         setHandlePosition1(computeHandlePosition());
     }
 
-    int vx1 = -1;
+    private int vx1 = -1;
 
     public void updateHandlePosition(int vx, int l) {
         if (vx != vx1) {

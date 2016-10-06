@@ -11,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.Formatter;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,36 +32,27 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Siju on 13-06-2016.
- */
 
 public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileListViewHolder> {
 
     private Context mContext;
     private ArrayList<FileInfo> fileInfoArrayList = new ArrayList<>();
     private SparseBooleanArray mSelectedItemsIds;
-    private SparseBooleanArray mDraggedItemsIds;
     private SparseBooleanArray mAnimatedPos = new SparseBooleanArray();
-    public boolean mStopAnimation;
+    boolean mStopAnimation;
 
-
-    private ArrayList<FileInfo> mSelectedFileList;
-    OnItemClickListener mItemClickListener;
-    OnItemLongClickListener mOnItemLongClickListener;
-
+    private OnItemClickListener mItemClickListener;
+    private OnItemLongClickListener mOnItemLongClickListener;
     private int mCategory;
     private Uri mAudioUri = Uri.parse("content://media/external/audio/albumart");
-    private Uri mImageUri = Uri.parse("content://media/external/images/albumart");
     private int mViewMode;
     private ArrayList<FileInfo> fileInfoArrayListCopy = new ArrayList<>();
     private Fragment mFragment;
     private int draggedPos = -1;
     private int mAnimation;
-    int offset = 0;
-    Animation localAnimation;
+    private int offset = 0;
+    private Animation localAnimation;
     private boolean mIsAnimNeeded = true;
-    private int mCurrentTheme;
     private boolean mIsThemeDark;
 
 
@@ -72,13 +62,10 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         this.mContext = mContext;
         this.fileInfoArrayList = fileInfoArrayList;
         mSelectedItemsIds = new SparseBooleanArray();
-        mDraggedItemsIds = new SparseBooleanArray();
-        mSelectedFileList = new ArrayList<>();
         mCategory = category;
         this.mViewMode = viewMode;
         mAnimation = R.anim.fade_in_top;
         mIsThemeDark = ThemeUtils.isDarkTheme(mContext);
-
     }
 
     public FileListAdapter(Context mContext, ArrayList<FileInfo>
@@ -87,34 +74,22 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         this.mContext = mContext;
         this.fileInfoArrayList = fileInfoArrayList;
         mSelectedItemsIds = new SparseBooleanArray();
-        mDraggedItemsIds = new SparseBooleanArray();
-        mSelectedFileList = new ArrayList<>();
         mCategory = category;
         this.mViewMode = viewMode;
         mAnimation = R.anim.fade_in_top;
         mIsThemeDark = ThemeUtils.isDarkTheme(mContext);
-       /* mCurrentTheme = PreferenceManager.getDefaultSharedPreferences(mContext)
-                .getInt(FileConstants.CURRENT_THEME, FileConstants.THEME_LIGHT);
-        if (mCurrentTheme == FileConstants.THEME_DARK) {
-            mIsThemeDark = true;
-        }*/
-
     }
 
     public void updateAdapter(ArrayList<FileInfo> fileInfos) {
         this.fileInfoArrayList = fileInfos;
         fileInfoArrayListCopy.addAll(fileInfos);
-//        Log.d("SIJU","updateAdapter"+fileInfoArrayList.size());
-//        Logger.log(this.getClass().getSimpleName(),"adapter size="+fileInfos.size());
         offset = 0;
         mStopAnimation = !mIsAnimNeeded;
         notifyDataSetChanged();
         for (int i = 0; i < fileInfos.size(); i++) {
             mAnimatedPos.put(i, false);
         }
-        Log.d("SIJU", "updateAdapter--animated=" + mStopAnimation);
-
-//        mAnimatedPos = new SparseBooleanArray();
+        Logger.log("SIJU", "updateAdapter--animated=" + mStopAnimation);
     }
 
     public void setStopAnimation(boolean flag) {
@@ -122,7 +97,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     }
 
 
-    public void clearList() {
+    void clearList() {
         if (fileInfoArrayList != null && !fileInfoArrayList.isEmpty()) {
 //            fileInfoArrayList.clear();
             fileInfoArrayListCopy.clear();
@@ -137,7 +112,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         void onItemClick(View view, int position);
     }
 
-    public interface OnItemLongClickListener {
+    interface OnItemLongClickListener {
         void onItemLongClick(View view, int position);
     }
 
@@ -146,7 +121,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         this.mItemClickListener = mItemClickListener;
     }
 
-    public void setOnItemLongClickListener(final OnItemLongClickListener mItemClickListener) {
+    void setOnItemLongClickListener(final OnItemLongClickListener mItemClickListener) {
         this.mOnItemLongClickListener = mItemClickListener;
     }
 
@@ -178,11 +153,6 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
     @Override
     public void onBindViewHolder(FileListViewHolder fileListViewHolder, int position) {
-        //change background color if list item is selected
-//        Log.d("TAG","OnBindviewholder Pos="+position);
-
-//        setAnimation(fileListViewHolder.container, position);
-//        Log.d("SIJU", "onBindViewHolder--pos=" + position + " stop anim=" + this.mStopAnimation);
 
         if (!mStopAnimation && !mAnimatedPos.get(position)) {
             animate(fileListViewHolder);
@@ -214,8 +184,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     }
 
 
-
-    void animate(FileListViewHolder fileListViewHolder) {
+    private void animate(FileListViewHolder fileListViewHolder) {
         fileListViewHolder.container.clearAnimation();
         localAnimation = AnimationUtils.loadAnimation(mContext, mAnimation);
         localAnimation.setStartOffset(this.offset);
@@ -223,7 +192,6 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         this.offset += 30;
     }
 
-    int lastPosition;
   /*  private void setAnimation(View viewToAnimate, int position)
     {
         // If the bound view wasn't previously displayed on screen, it's animated
@@ -475,61 +443,9 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 
             cursor.close();
         }
-
-
-/*
-        MediaMetadataRetriever myRetriever = new MediaMetadataRetriever();
-        byte[] artwork;
-        try {
-            myRetriever.setDataSource(mContext, audioUri);
-            artwork = myRetriever.getEmbeddedPicture();
-            Glide.with(mContext).load(artwork).centerCrop()
-                    .placeholder(R.drawable.ic_music)
-                    .crossFade(2)
-                    .into(fileListViewHolder.imageIcon);
-        } catch (IllegalArgumentException exception) {
-            fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_music);
-        }
-
-        if (myRetriever != null) {
-            myRetriever.release();
-        }*/
-
-
-       /* if (artwork != null) {
-            Bitmap bMap = BitmapFactory.decodeByteArray(artwork, 0, artwork.length);
-            fileListViewHolder.imageIcon.setImageBitmap(bMap);
-        } else {
-            fileListViewHolder.imageIcon.setImageBitmap(null);*/
-//        }
-
-
-
-       /* String projection[] = { MediaStore.Audio.Media.ALBUM_ID };
-        String selection = MediaStore.Audio.Media.DATA + " = ? ";
-        String selectionArgs[] = new String[]{path};
-
-        Cursor cursor = mContext.getContentResolver().query(mAudioUri, projection,
-                selection,
-                selectionArgs, null);
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                int albumIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID);
-                long albumId = cursor.getLong(albumIdIndex);
-                Uri uri = ContentUris.withAppendedId(mAudioUri, albumId);
-
-                Glide.with(mContext).loadFromMediaStore(uri)
-                        .centerCrop()
-                        .placeholder(R.drawable.ic_music)
-                        .crossFade(2)
-                        .into(fileListViewHolder.imageIcon);
-
-            } while (cursor.moveToNext());
-            cursor.close();
-        }*/
     }
 
-    public void toggleSelection(int position, boolean isLongPress) {
+    void toggleSelection(int position, boolean isLongPress) {
         if (isLongPress) {
             selectView(position, true);
         } else {
@@ -539,41 +455,27 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     }
 
 
-    public void toggleDragSelection(int position) {
-        selectDragView(position, !mDraggedItemsIds.get(position));
-    }
-
-
-    public void toggleSelectAll(int position, boolean selectAll) {
+    void toggleSelectAll(int position, boolean selectAll) {
         if (selectAll)
-            mSelectedItemsIds.put(position, selectAll);
+            mSelectedItemsIds.put(position, true);
         else
             mSelectedItemsIds = new SparseBooleanArray();
     }
 
-    public void clearSelection() {
+    void clearSelection() {
         mSelectedItemsIds = new SparseBooleanArray();
     }
 
-    public void removeSelection() {
+    void removeSelection() {
         mSelectedItemsIds = new SparseBooleanArray();
-        mSelectedFileList = new ArrayList<>();
-        notifyDataSetChanged();
-
-    }
-
-    public void removeDragSelection() {
-        mDraggedItemsIds = new SparseBooleanArray();
-//        mSelectedFileList = new ArrayList<>();
         notifyDataSetChanged();
 
     }
 
 
-    public void selectView(int position, boolean value) {
+    private void selectView(int position, boolean value) {
         if (value) {
             mSelectedItemsIds.put(position, true);
-//            mSelectedFileList.add(fileInfoArrayList.get(position));
         } else {
             mSelectedItemsIds.delete(position);
 
@@ -582,23 +484,11 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         notifyDataSetChanged();
     }
 
-    public void selectDragView(int position, boolean value) {
-        if (value) {
-            mDraggedItemsIds.put(position, true);
-//            mSelectedFileList.add(fileInfoArrayList.get(position));
-        } else {
-            mDraggedItemsIds.delete(position);
-
-        }
-
-        notifyDataSetChanged();
+    int getSelectedCount() {
+        return mSelectedItemsIds.size();
     }
 
-    public int getSelectedCount() {
-        return mSelectedItemsIds.size();// mSelectedCount;
-    }
-
-    public SparseBooleanArray getSelectedItemPositions() {
+    SparseBooleanArray getSelectedItemPositions() {
         return mSelectedItemsIds;
     }
 
@@ -607,18 +497,18 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         fileInfoArrayList = new ArrayList<>(models);
     }
 
-    public FileInfo removeItem(int position) {
+    private FileInfo removeItem(int position) {
         final FileInfo model = fileInfoArrayList.remove(position);
         notifyItemRemoved(position);
         return model;
     }
 
-    public void addItem(int position, FileInfo model) {
+    private void addItem(int position, FileInfo model) {
         fileInfoArrayList.add(position, model);
         notifyItemInserted(position);
     }
 
-    public void moveItem(int fromPosition, int toPosition) {
+    private void moveItem(int fromPosition, int toPosition) {
         final FileInfo model = fileInfoArrayList.remove(fromPosition);
         fileInfoArrayList.add(toPosition, model);
         notifyItemMoved(fromPosition, toPosition);
@@ -658,7 +548,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         }
     }
 
-    public void filter(String text) {
+    void filter(String text) {
         if (text.isEmpty()) {
             if (fileInfoArrayList != null) {
                 fileInfoArrayList.clear();
@@ -729,14 +619,6 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
             }
             return true;
         }
-
-  /*      @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (mOnItemTouchListener != null) {
-                mOnItemTouchListener.onItemTouch(view, getAdapterPosition(),motionEvent);
-            }
-            return true;
-        }*/
     }
 
 

@@ -4,16 +4,6 @@
               android:layout_height="wrap_content"
               android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textDialogTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:gravity="center"
-        android:text="@string/msg_copy"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/textFileName"
@@ -62,18 +52,6 @@
             android:paddingStart="10dp"
             android:textStyle="bold"/>
 
-        <ProgressBar
-            android:id="@+id/progressBarPaste"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/textFileToPath"
-            android:max="100"
-            android:layout_margin="10dp"
-            android:progressDrawable="@drawable/custom_progress"
-            android:progress="50"
-            />
-
         <TextView
             android:id="@+id/textFilesLeft"
             android:layout_width="match_parent"
@@ -94,14 +72,38 @@
             android:gravity="end"
             />
 
+        <ProgressBar
+            android:id="@+id/progressBarPaste"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progressDrawable="@drawable/custom_progress"
+            android:progress="50"
+            android:layout_marginBottom="20dp"
+            android:layout_below="@+id/textFileToPlaceHolder"
+            android:layout_alignLeft="@+id/textFilesLeft"
+            android:layout_alignStart="@+id/textFilesLeft" />
+
+        <Button
+            android:id="@+id/buttonBg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/progressBarPaste"
+            android:text="@string/button_paste_progress"/>
+
+        <Button
+            android:id="@+id/buttonCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/progressBarPaste"
+            android:text="@string/dialog_cancel"/>
+
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/buttonBg"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/button_paste_progress"/>
+
 
 
 </LinearLayout>

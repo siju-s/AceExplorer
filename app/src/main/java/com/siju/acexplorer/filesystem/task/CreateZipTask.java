@@ -36,12 +36,12 @@ import java.util.zip.ZipOutputStream;
 public class CreateZipTask extends Service {
 
     // Binder given to clients
-    HashMap<Integer, Boolean> hash = new HashMap<Integer, Boolean>();
-    public HashMap<Integer, ZipProgressModel> hash1 = new HashMap<>();
-    NotificationManager mNotifyManager;
-    NotificationCompat.Builder mBuilder;
-    String zpath;
-    Context c;
+    private HashMap<Integer, Boolean> hash = new HashMap<Integer, Boolean>();
+    private HashMap<Integer, ZipProgressModel> hash1 = new HashMap<>();
+    private NotificationManager mNotifyManager;
+    private NotificationCompat.Builder mBuilder;
+    private String zpath;
+    private Context c;
     private final int NOTIFICATION_ID = 1000;
 
     @SuppressWarnings("deprecation")
@@ -51,7 +51,7 @@ public class CreateZipTask extends Service {
         registerReceiver(receiver1, new IntentFilter("zipcancel"));
     }
 
-    boolean foreground = true;
+    private boolean foreground = true;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -102,7 +102,7 @@ public class CreateZipTask extends Service {
 
     private final IBinder mBinder = new LocalBinder();
 
-    public class LocalBinder extends Binder {
+    private class LocalBinder extends Binder {
         public CreateZipTask getService() {
             // Return this instance of LocalService so clients can call public methods
             return CreateZipTask.this;
@@ -113,7 +113,7 @@ public class CreateZipTask extends Service {
         this.progressListener = progressListener;
     }
 
-    ProgressListener progressListener;
+    private ProgressListener progressListener;
 
     public interface ProgressListener {
         void onUpdate(ZipProgressModel zipProgressModel);
@@ -158,7 +158,7 @@ public class CreateZipTask extends Service {
 
     }
 
-    public ArrayList<File> toFileArray(ArrayList<FileInfo> a) {
+    private ArrayList<File> toFileArray(ArrayList<FileInfo> a) {
         ArrayList<File> b = new ArrayList<>();
         for (int i = 0; i < a.size(); i++) {
             b.add(new File(a.get(i).getFilePath()));
@@ -203,7 +203,7 @@ public class CreateZipTask extends Service {
         }
     }
 
-    public void publishCompletedResult(int id1) {
+    private void publishCompletedResult(int id1) {
         try {
             mNotifyManager.cancel(id1);
         } catch (Exception e) {
@@ -241,7 +241,7 @@ public class CreateZipTask extends Service {
                     totalBytes = totalBytes + f1.length();
                 }
             }
-            OutputStream out = null;
+            OutputStream out;
             count = a.size();
             fileName = fileOut;
             File zipDirectory = new File(fileOut);

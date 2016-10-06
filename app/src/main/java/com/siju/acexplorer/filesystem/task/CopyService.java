@@ -55,13 +55,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class CopyService extends Service {
-    SparseBooleanArray hash = new SparseBooleanArray();
-    public HashMap<Integer, ZipProgressModel> hash1 = new HashMap<>();
-    boolean rootmode;
-    NotificationManager mNotifyManager;
-    NotificationCompat.Builder mBuilder;
-    Context mContext;
+    private SparseBooleanArray hash = new SparseBooleanArray();
+    private HashMap<Integer, ZipProgressModel> hash1 = new HashMap<>();
+    private boolean rootmode;
+    private NotificationManager mNotifyManager;
+    private NotificationCompat.Builder mBuilder;
+    private Context mContext;
     private final int NOTIFICATION_ID = 1000;
+    private CopyProgressUpdate copyProgressUpdate;
+
+    interface CopyProgressUpdate{
+        void updateProgress(int progress);
+    }
 
     @Override
     public void onCreate() {
@@ -72,7 +77,7 @@ public class CopyService extends Service {
     }
 
 
-    boolean foreground = true;
+    private boolean foreground = true;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -120,7 +125,7 @@ public class CopyService extends Service {
         return START_STICKY;
     }
 
-    ProgressListener progressListener;
+    private ProgressListener progressListener;
 
 
     public void onDestroy() {
@@ -225,7 +230,7 @@ public class CopyService extends Service {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        long totalBytes = 0l;
+                        long totalBytes = 0L;
                         try {
                             for (int i = 0; i < files.size(); i++) {
                                 FileInfo f1 = (files.get(i));
@@ -297,7 +302,6 @@ public class CopyService extends Service {
                     }
 
                 } else if (rootmode) {
-                    boolean m = true;
                     for (int i = 0; i < files.size(); i++) {
                         String path = files.get(i).getFilePath();
                         String name = files.get(i).getFileName();
@@ -308,7 +312,7 @@ public class CopyService extends Service {
                             failedFOps.add(files.get(i));
                         }
                     }
-                    if (move && m) {
+                    if (move) {
                         ArrayList<FileInfo> toDelete = new ArrayList<>();
                         for (FileInfo a : files) {
                             if (!failedFOps.contains(a))
@@ -411,7 +415,7 @@ public class CopyService extends Service {
 
             void copy(BufferedInputStream in, BufferedOutputStream out, long size, int id, String name,
                       boolean move) throws IOException {
-                long fileBytes = 0l;
+                long fileBytes = 0L;
                 final int buffer = 2048; //2 KB
                 byte[] data = new byte[2048];
                 int length;
@@ -440,7 +444,7 @@ public class CopyService extends Service {
     }
 
 
-    void generateNotification(ArrayList<FileInfo> failedOps, boolean move) {
+    private void generateNotification(ArrayList<FileInfo> failedOps, boolean move) {
         if (failedOps.size() == 0) return;
         mNotifyManager.cancelAll();
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
@@ -502,7 +506,7 @@ public class CopyService extends Service {
         } else publishCompletedResult(id, NOTIFICATION_ID + id);
     }
 
-    public void publishCompletedResult(int id, int id1) {
+    private void publishCompletedResult(int id, int id1) {
         try {
             mNotifyManager.cancel(id1);
         } catch (Exception e) {
@@ -511,7 +515,7 @@ public class CopyService extends Service {
     }
 
     //check if copy is successful
-    boolean checkFiles(FileInfo hFile1, FileInfo hFile2) {
+    private boolean checkFiles(FileInfo hFile1, FileInfo hFile2) {
         if (RootHelper.isDirectory(hFile1.getFilePath(), rootmode, 5)) {
             if (RootHelper.fileExists(mContext, hFile2.getFilePath())) return false;
             ArrayList<FileInfo> baseFiles = RootHelper.getFilesList(mContext, hFile1.getFilePath(), true, true);
@@ -548,15 +552,13 @@ public class CopyService extends Service {
                     break;
                 }
             }
-            if (baseFiles.get(index).getNoOfFilesOrSize() == baseFiles1.get(index1).getNoOfFilesOrSize())
-                return true;
-            else return false;
+            return baseFiles.get(index).getNoOfFilesOrSize().equalsIgnoreCase(baseFiles1.get(index1).getNoOfFilesOrSize());
         }
     }
 
     private final IBinder mBinder = new LocalBinder();
 
-    public class LocalBinder extends Binder {
+    private class LocalBinder extends Binder {
         public CopyService getService() {
             // Return this instance of LocalService so clients can call public methods
             return CopyService.this;

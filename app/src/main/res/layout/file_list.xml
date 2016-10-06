@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:recyclerviewfastscroller="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/textEmpty"
@@ -13,7 +12,7 @@
         android:gravity="center"
         android:text="@string/no_files"
         android:textSize="20sp"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <View
         android:id="@+id/viewDummy"
@@ -21,18 +20,7 @@
         android:layout_height="?attr/actionBarSize"
         android:layout_alignParentBottom="true"
         android:background="@color/colorPrimary"
-        android:visibility="gone"/>
-    <!--<LinearLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:orientation="vertical"-->
-        <!--android:id="@+id/layoutTest">-->
-
-
-
-
-
-    <!--</LinearLayout>-->
+        android:visibility="gone" />
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
@@ -45,31 +33,28 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:fastScrollAutoHide="true"
-            app:fastScrollTrackColor="@android:color/transparent"
             app:fastScrollThumbColor="@color/accent_blue"
-            />
+            app:fastScrollTrackColor="@android:color/transparent" />
 
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
 
-
-
-<!--    <com.siju.acexplorer.filesystem.ui.FastScroller
-        android:id="@+id/fastscroll"
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_height="match_parent"/>-->
+    <!--    <com.siju.acexplorer.filesystem.ui.FastScroller
+            android:id="@+id/fastscroll"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_height="match_parent"/>-->
 
 
     <!--<xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller-->
-        <!--android:id="@+id/fast_scroller"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--recyclerviewfastscroller:rfs_barColor="@android:color/transparent"-->
-        <!--/>-->
+    <!--android:id="@+id/fast_scroller"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_alignParentRight="true"-->
+    <!--recyclerviewfastscroller:rfs_barColor="@android:color/transparent"-->
+    <!--/>-->
 
 
 </RelativeLayout>

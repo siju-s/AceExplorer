@@ -237,7 +237,7 @@ public class RootHelper {
                                             array.getDate(),
                                             size1, isDirectory, null,
                                             FileConstants.CATEGORY
-                                                    .FILES.getValue(), array.getPermisson()));
+                                                    .FILES.getValue(), array.getPermission()));
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -357,8 +357,8 @@ public class RootHelper {
                 if (contains(s.split(" "), name)) {
                     try {
                         BaseFile path = parseName(s);
-                        if (path.getPermisson().trim().startsWith("d")) return true;
-                        else if (path.getPermisson().trim().startsWith("l")) {
+                        if (path.getPermission().trim().startsWith("d")) return true;
+                        else if (path.getPermission().trim().startsWith("l")) {
                             if (count > 5)
                                 return f.isDirectory();
                             else
@@ -375,12 +375,11 @@ public class RootHelper {
         return f.isDirectory();
     }
 
-    static boolean isDirectory(BaseFile path) {
-        if (path.getPermisson().startsWith("d")) return true;
-        else return new File(path.getPath()).isDirectory();
+    private static boolean isDirectory(BaseFile path) {
+        return path.getPermission().startsWith("d") || new File(path.getPath()).isDirectory();
     }
 
-    public static ArrayList<String> runAndWait1(String cmd, final boolean root, final long time) {
+    private static ArrayList<String> runAndWait1(String cmd, final boolean root, final long time) {
         final ArrayList<String> output = new ArrayList<String>();
         Command cc = new Command(1, cmd) {
             @Override
@@ -415,7 +414,7 @@ public class RootHelper {
         return output;
     }
 
-    static boolean contains(String[] a, String name) {
+    private static boolean contains(String[] a, String name) {
         for (String s : a) {
             Log.e("checking", s);
             if (s.equals(name)) return true;

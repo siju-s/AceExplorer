@@ -89,16 +89,15 @@ public class BaseActivity extends AppCompatActivity implements
     private ExpandableListView expandableListView;
     private String[] listDataHeader;
     private List<String> mListHeader;
-    private HashMap<String, List<String>> listDataChild;
     private ArrayList<SectionGroup> totalGroup;
-    public static final String ACTION_VIEW_MODE = "view_mode";
-    public static final String ACTION_GROUP_POS = "group_pos";
-    public static final String ACTION_CHILD_POS = "child_pos";
+    private final String ACTION_VIEW_MODE = "view_mode";
+    private final String ACTION_GROUP_POS = "group_pos";
+    private final String ACTION_CHILD_POS = "child_pos";
     private DrawerLayout drawerLayout;
     private NavigationView relativeLayoutDrawerPane;
     private String mCurrentDir;
     private String mCurrentDirDualPane = getInternalStorage().getAbsolutePath();
-    public String STORAGE_ROOT, STORAGE_INTERNAL, STORAGE_EXTERNAL, DOWNLOADS, IMAGES, VIDEO,
+    private String STORAGE_ROOT, STORAGE_INTERNAL, STORAGE_EXTERNAL, DOWNLOADS, IMAGES, VIDEO,
             MUSIC, DOCS, SETTINGS, RATE;
     private ArrayList<SectionItems> favouritesGroupChild = new ArrayList<>();
     private SharedPreferenceWrapper sharedPreferenceWrapper;
@@ -134,8 +133,6 @@ public class BaseActivity extends AppCompatActivity implements
     private FloatingActionsMenu fabCreateMenuDual;
     private FloatingActionButton fabCreateFolderDual;
     private FloatingActionButton fabCreateFileDual;
-
-
     private FrameLayout frameLayoutFab;
     private FrameLayout frameLayoutFabDual;
     private Toolbar mBottomToolbar;
@@ -165,13 +162,11 @@ public class BaseActivity extends AppCompatActivity implements
     public String mNewFilePath;
     public ArrayList<FileInfo> mFiles = new ArrayList<>();
     public ArrayList<CopyData> mCopyData = new ArrayList<>();
-
     public FileOpsHelper mFileOpsHelper;
     public int mRenamedPosition;
     private Snackbar mSnackbar;
     private boolean mIsTablet;
     private HomeScreenFragment mHomeScreenFragment;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -459,7 +454,7 @@ public class BaseActivity extends AppCompatActivity implements
 
     }
 
-    public class DisableSwipeBehavior extends SwipeDismissBehavior<Snackbar.SnackbarLayout> {
+    private class DisableSwipeBehavior extends SwipeDismissBehavior<Snackbar.SnackbarLayout> {
         @Override
         public boolean canSwipeDismissView(@NonNull View view) {
             return false;
@@ -520,7 +515,6 @@ public class BaseActivity extends AppCompatActivity implements
 
     private void prepareListData() {
 
-        listDataChild = new HashMap<>();
         listDataHeader = getResources().getStringArray(R.array.expand_headers);
         mListHeader = Arrays.asList(listDataHeader);
         totalGroup = new ArrayList<>();
@@ -637,7 +631,7 @@ public class BaseActivity extends AppCompatActivity implements
     }
 
 
-    public void initialScreenSetup(boolean isHomeScreenEnabled) {
+    private void initialScreenSetup(boolean isHomeScreenEnabled) {
         if (isHomeScreenEnabled) {
             toggleNavBarFab(true);
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -659,9 +653,9 @@ public class BaseActivity extends AppCompatActivity implements
             Bundle args = new Bundle();
             args.putBoolean(FileConstants.KEY_HOME, false);
             args.putString(FileConstants.KEY_PATH, mCurrentDir);
-            args.putInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
-            args.putInt(BaseActivity.ACTION_GROUP_POS, 0); // Storage Group
-            args.putInt(BaseActivity.ACTION_CHILD_POS, 1); // Internal Storage child
+            args.putInt(ACTION_VIEW_MODE, mViewMode);
+            args.putInt(ACTION_GROUP_POS, 0); // Storage Group
+            args.putInt(ACTION_CHILD_POS, 1); // Internal Storage child
             FileListFragment fileListFragment = new FileListFragment();
             fileListFragment.setArguments(args);
             ft.replace(R.id.main_container, fileListFragment, mCurrentDir);
@@ -1156,7 +1150,7 @@ public class BaseActivity extends AppCompatActivity implements
 
     }
 
-    public void displaySelectedGroup(int groupPos, int childPos, String path) {
+    private void displaySelectedGroup(int groupPos, int childPos, String path) {
 
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
 
@@ -1381,7 +1375,7 @@ public class BaseActivity extends AppCompatActivity implements
         Bundle args = new Bundle();
         args.putString(FileConstants.KEY_PATH, directory);
         args.putInt(FileConstants.KEY_CATEGORY, category);
-        args.putInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
+        args.putInt(ACTION_VIEW_MODE, mViewMode);
 
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
         if (fragment instanceof HomeScreenFragment) {
@@ -1479,24 +1473,7 @@ public class BaseActivity extends AppCompatActivity implements
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-      /*  if (intent != null && intent.getAction() != null && intent.getAction().equals(RingtoneManager
-                .ACTION_RINGTONE_PICKER)) {
-//            mRingtonePickerIntent = true;
-            showRingtonePickerDialog();
-        }*/
-/*        if (intent != null && !intent.getAction().equals(ACTION_MAIN)) {
-            Logger.log(TAG, "On onNewIntent");
-            StoragesFragment storagesFragment = (StoragesFragment)
-                    getSupportFragmentManager()
-                            .findFragmentById(R
-                                    .id.main_container);
-            if (storagesFragment != null) {
-                storagesFragment.createFragmentForIntent(intent);
-            }
-        }*/
-
-//            boolean intentHandled = createFragmentForIntent(intent);
-    }
+  }
 
     /**
      * Triggered on clicked on any Navigation drawer item group/child
@@ -1575,18 +1552,10 @@ public class BaseActivity extends AppCompatActivity implements
             int group =
                     ExpandableListView.getPackedPositionGroup(info.packedPosition);
 
-            int child =
-                    ExpandableListView.getPackedPositionChild(info.packedPosition);
-
             // Only for Favorites
             if (group == 1) {
                 // Only create a context menu for child items
                 if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-                    // Array created earlier when we built the expandable list
-//                String page = [group][child];
-
-//                menu.setHeaderTitle(page);
-
                     menu.add(0, MENU_FAVOURITES, 0, getString(R.string.delete_fav));
                 }
             }
@@ -2025,9 +1994,9 @@ public class BaseActivity extends AppCompatActivity implements
             Bundle args = new Bundle();
             args.putBoolean(FileConstants.KEY_HOME, false);
             args.putString(FileConstants.KEY_PATH, FileUtils.getInternalStorage().getAbsolutePath());
-            args.putInt(BaseActivity.ACTION_VIEW_MODE, mViewMode);
-            args.putInt(BaseActivity.ACTION_GROUP_POS, 0);
-            args.putInt(BaseActivity.ACTION_CHILD_POS, 1);
+            args.putInt(ACTION_VIEW_MODE, mViewMode);
+            args.putInt(ACTION_GROUP_POS, 0);
+            args.putInt(ACTION_CHILD_POS, 1);
             FileListFragment fileListFragment = new FileListFragment();
             fileListFragment.setArguments(args);
             ft.replace(R.id.main_container, fileListFragment);
@@ -2064,9 +2033,7 @@ public class BaseActivity extends AppCompatActivity implements
             int theme = Integer.valueOf(value);
             if (theme != mCurrentTheme) {
                 mCurrentTheme = theme;
-                boolean isLightTheme = theme == 0;
                 restartApp();
-//                setApplicationTheme(isLightTheme);
             }
         }
 

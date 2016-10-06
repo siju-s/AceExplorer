@@ -2,10 +2,14 @@ package com.siju.acexplorer.filesystem.utils;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -14,6 +18,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
@@ -27,6 +32,9 @@ import android.text.format.Formatter;
 import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -38,6 +46,8 @@ import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.FileListDualFragment;
 import com.siju.acexplorer.filesystem.FileListFragment;
 import com.siju.acexplorer.filesystem.model.FileInfo;
+import com.siju.acexplorer.filesystem.model.ZipProgressModel;
+import com.siju.acexplorer.filesystem.task.CopyService;
 import com.siju.acexplorer.helper.RootHelper;
 import com.siju.acexplorer.utils.DialogUtils;
 import com.stericson.RootTools.RootTools;
@@ -79,15 +89,13 @@ import static android.webkit.MimeTypeMap.getSingleton;
  * Created by Siju on 16-06-2016.
  */
 
-public class FileUtils {
+public class FileUtils implements CopyService.ProgressListener{
 
     private static final String TAG = "FileUtils";
     private static String mCurrentDirectory;
-    public static final boolean isDebug = true;
     private static final int BUFFER = 2048; //2 KB
     private static FileComparator comparator = new FileComparator();
     private static int fileCount = 0;
-    private static Activity activity;
     public static final int ACTION_NONE = 0;
     public static final int ACTION_REPLACE = 1;
     public static final int ACTION_SKIP = 2;
@@ -177,6 +185,90 @@ public class FileUtils {
         MIME_TYPES.put("mkv", "video/x-matroska");
 
     }
+
+    private ProgressBar progressBarPaste;
+    private  TextView textFileName,textFileFromPath,textFileToPath;
+
+    public void showCopyProgressDialog(final Context context, final Intent intent) {
+//        registerReceiver(context);
+        context.startService(intent);
+        String title = context.getString(R.string.action_copy);
+        String texts[] = new String[]{title, context.getString(R.string.button_paste_progress), "",
+                context.getString(R.string.dialog_cancel)};
+        final MaterialDialog materialDialog = new DialogUtils().showCustomDialog(context,
+                R.layout.dialog_progress_paste, texts);
+        View view = materialDialog.getCustomView();
+        TextView textFileName = (TextView) view.findViewById(R.id.textFileName);
+        TextView textFileFromPath = (TextView) view.findViewById(R.id.textFileFromPath);
+        TextView textFileToPath = (TextView) view.findViewById(R.id.textFileToPath);
+        progressBarPaste = (ProgressBar) view.findViewById(R.id.progressBarPaste);
+
+        ArrayList<FileInfo> copiedFileInfo = intent.getParcelableArrayListExtra("FILE_PATHS");
+        textFileFromPath.setText(copiedFileInfo.get(0).getFilePath());
+        textFileName.setText(copiedFileInfo.get(0).getFileName());
+
+        textFileToPath.setText(intent.getStringExtra("COPY_DIRECTORY"));
+
+        Button buttonBackground = (Button) view.findViewById(R.id.buttonBg);
+        buttonBackground.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                materialDialog.dismiss();
+            }
+        });
+        Button buttonCancel = (Button) view.findViewById(R.id.buttonCancel);
+        buttonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                context.stopService(intent);
+                materialDialog.dismiss();
+            }
+        });
+        materialDialog.show();
+    }
+
+    @Override
+    public void onUpdate(ZipProgressModel zipProgressModel) {
+          progressBarPaste.setProgress(zipProgressModel.getP1());
+    }
+
+    @Override
+    public void refresh() {
+
+    }
+
+    public static final String COPY_PROGRESS = "copy_progress_update";
+
+    private void registerReceiver(Context context) {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(COPY_PROGRESS);
+        context.registerReceiver(mCopyProgressReceiver, intentFilter);
+    }
+
+    private void unregisterReceiver(Context context) {
+        context.unregisterReceiver(mCopyProgressReceiver);
+    }
+
+    private BroadcastReceiver mCopyProgressReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+        }
+    };
+
+/*
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            CopyService.
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    }
+*/
 
 
     public static File getRootDirectory() {
@@ -772,8 +864,8 @@ public class FileUtils {
     private final static Comparator<? super String> type = new Comparator<String>() {
 
         public int compare(String arg0, String arg1) {
-            String ext = null;
-            String ext2 = null;
+            String ext;
+            String ext2;
             int ret;
             File file1 = new File(arg0);
             File file2 = new File(arg1);
@@ -1127,29 +1219,16 @@ public class FileUtils {
     }
 
 
-    public static long getSize(File file) {
+    private static long getSize(File file) {
 
         long size = 0;
-        long len = 0;
         if (file.isFile()) {
             size = file.length();
         } else if (file.isDirectory()) {
-//            size = org.apache.commons.io.FileUtils.sizeOfDirectory(file);
             File[] list = file.listFiles();
             if (list != null) {
                 size = list.length;
             }
-//
-//            for (int j = 0; j < len; j++) {
-//                if (list[j].isFile()) {
-//                    size = size + list[j].length();
-//                } else if (list[j].isDirectory()) {
-//                    size = size + getSize(list[j]);
-//
-//                }
-//
-//            }
-
         }
         return size;
     }
@@ -1215,7 +1294,7 @@ public class FileUtils {
                     }
                 }
 
-                int read = 0;
+                int read;
                 FileOutputStream out = new FileOutputStream(
                         zipDir + entry.getName());
                 while ((read = zipstream.read(data, 0, BUFFER)) != -1)
@@ -1544,7 +1623,7 @@ public class FileUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        boolean b = true;
+        boolean b;
         // Try with Storage Access Framework.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && isOnExtSdCard(file, context)) {
             DocumentFile document = getDocumentFile(file.getParentFile(), true, context);
@@ -2135,7 +2214,7 @@ public class FileUtils {
      * @param file the file to be deleted.
      * @return True if successfully deleted.
      */
-    public static final boolean deleteFile(@NonNull final File file, Context context) {
+    public static boolean deleteFile(@NonNull final File file, Context context) {
         // First try the normal deletion.
         if (file == null) return true;
         boolean fileDelete = deleteFilesInFolder(file, context);
@@ -2155,10 +2234,10 @@ public class FileUtils {
 
             try {
                 Uri uri = getUriFromFile(file.getAbsolutePath(), context);
-                resolver.delete(uri, null, null);
+                if (uri != null) resolver.delete(uri, null, null);
                 return !file.exists();
             } catch (Exception e) {
-                Log.e("AmazeFileUtils", "Error when deleting file " + file.getAbsolutePath(), e);
+                Logger.log(TAG, "Error when deleting file " + file.getAbsolutePath());
                 return false;
             }
         }
@@ -2292,7 +2371,7 @@ public class FileUtils {
         if (!b && rootmode) {
             String parent = new File(path).getParent();
             RootTools.remount(parent, "rw");
-            String s = RootHelper.runAndWait("rm -r \"" + path + "\"", true);
+            RootHelper.runAndWait("rm -r \"" + path + "\"", true);
             RootTools.remount(parent, "ro");
         }
 
@@ -2363,13 +2442,10 @@ public class FileUtils {
             case 9:
             case 11:
                 uri = MediaStore.Files.getContentUri("external");
-                ;
                 break;
 
         }
-        File audioFile = new File(filePath);
-        Cursor cursor = context.getContentResolver().query(
-                uri, null,
+        Cursor cursor = context.getContentResolver().query(uri, null,
                 MediaStore.MediaColumns.DATA + "=? ", new String[]{filePath}, null);
         if (cursor != null) {
             if (cursor.moveToFirst()) {
@@ -2389,47 +2465,6 @@ public class FileUtils {
         }*/
         return null;
     }
-
-
-    /**
-     * converts integer from wifi manager to an IP address.
-     *
-     * @param ip
-     * @return
-     */
-    public static String integerToIPAddress(int ip) {
-        String ascii_address = "";
-        int[] num = new int[4];
-
-        num[0] = (ip & 0xff000000) >> 24;
-        num[1] = (ip & 0x00ff0000) >> 16;
-        num[2] = (ip & 0x0000ff00) >> 8;
-        num[3] = ip & 0x000000ff;
-
-        ascii_address = num[0] + "." + num[1] + "." + num[2] + "." + num[3];
-
-        return ascii_address;
-    }
-
-    /**
-     * @param dir
-     * @param fileName
-     * @return
-     */
-    public static ArrayList<String> searchInDirectory(String dir, String fileName) {
-        ArrayList<String> names = new ArrayList<String>();
-        search_file(dir, fileName, names);
-
-        return names;
-    }
-
-    public static ArrayList<String> Ultrasearch(String dir, String fileName) {
-        ArrayList<String> names = new ArrayList<String>();
-        Ultrasearch_file(dir, fileName, names);
-
-        return names;
-    }
-
 
     /*
      *
@@ -2488,7 +2523,8 @@ public class FileUtils {
         try {
             PackageInfo packageInfo = context.getPackageManager().getPackageArchiveInfo(filePath, PackageManager
                     .GET_ACTIVITIES);
-            if (packageInfo == null) return ContextCompat.getDrawable(context, R.drawable.ic_apk_green);
+            if (packageInfo == null)
+                return ContextCompat.getDrawable(context, R.drawable.ic_apk_green);
             ApplicationInfo appInfo = packageInfo.applicationInfo;
             appInfo.sourceDir = filePath;
             appInfo.publicSourceDir = filePath;
@@ -2502,16 +2538,16 @@ public class FileUtils {
         }
     }
 
-    boolean  mIsSorted;
+    boolean mIsSorted;
 
     public void setFileSorted(boolean isSorted) {
         mIsSorted = isSorted;
-        Logger.log(TAG,"File sorted="+isSorted);
+        Logger.log(TAG, "File sorted=" + isSorted);
     }
 
     public boolean isFileSorted() {
-        Logger.log(TAG,"isFileSortedd="+mIsSorted);
-        return  mIsSorted;
+        Logger.log(TAG, "isFileSortedd=" + mIsSorted);
+        return mIsSorted;
     }
 
 
@@ -2524,45 +2560,6 @@ public class FileUtils {
             return null;
         }
 
-    }
-
-
-    /*
-     * (non-JavaDoc)
-     * I dont like this method, it needs to be rewritten. Its hacky in that
-     * if you are searching in the root dir (/) then it is not going to be treated
-     * as a recursive method so the user dosen't have to sit forever and wait.
-     *
-     * I will rewrite this ugly method.
-     *
-     * @param dir		directory to search in
-     * @param fileName	filename that is being searched for
-     * @param n			ArrayList to populate results
-     *
-     */
-    private static void search_file(String dir, String fileName, ArrayList<String> n) {
-        File root_dir = new File(dir);
-        String[] list = root_dir.list();
-
-        if (list != null && root_dir.canRead()) {
-            int len = list.length;
-
-            for (int i = 0; i < len; i++) {
-                File check = new File(dir + "/" + list[i]);
-                String name = check.getName();
-
-                if (check.isFile() && name.toLowerCase().
-                        contains(fileName.toLowerCase())) {
-                    n.add(check.getPath());
-                } else if (check.isDirectory()) {
-                    if (name.toLowerCase().contains(fileName.toLowerCase())) {
-                        n.add(check.getPath());
-
-                    } else if (check.canRead() && !dir.equals("/"))
-                        search_file(check.getAbsolutePath(), fileName, n);
-                }
-            }
-        }
     }
 
     public static int getFileCount(File file) {
@@ -2585,95 +2582,6 @@ public class FileUtils {
         }
     }
 
-
-    public static ArrayList<File> getDuplicates(File file) {
-        ArrayList<File> dupfiles = new ArrayList<File>();
-        HashMap<Long, ArrayList<String>> lists = new HashMap<Long, ArrayList<String>>();
-        Find(file.getAbsolutePath(), lists);
-        for (ArrayList<String> list : lists.values()) {
-
-            if (list.size() > 1) {
-
-                for (String filepath : list) {
-
-                    dupfiles.add(new File(filepath));
-
-                }
-
-            }
-        }
-        return dupfiles;
-
-    }
-
-    public static void Find(String dir, HashMap<Long, ArrayList<String>> lists) {
-        File root_dir = new File(dir);
-        String[] filelist = root_dir.list();
-
-        if (filelist != null && root_dir.canRead()) {
-            int len = filelist.length;
-
-            for (int i = 0; i < len; i++) {
-                File check = new File(dir + "/" + filelist[i]);
-
-                if (check.isFile()) {
-                    long length = check.length();
-                    ArrayList<String> list = lists.get(length);
-                    if (list == null) {
-                        list = new ArrayList<String>();
-                        lists.put(length, list);
-                    }
-                    list.add(check.getAbsolutePath());
-                } else if (check.isDirectory()) {
-                    Find(check.getAbsolutePath(), lists);
-                }
-            }
-        }
-    }
-
-    public boolean CompareSize(File file1, File file2) {
-        if (file1.length() == file2.length())
-            return true;
-        else
-            return false;
-
-    }
-
-    private static void Ultrasearch_file(String dir, String fileName, ArrayList<String> n) {
-        File root_dir = new File(dir);
-        String[] list = root_dir.list();
-
-        if (list != null && root_dir.canRead()) {
-            int len = list.length;
-
-            for (int i = 0; i < len; i++) {
-                File check = new File(dir + "/" + list[i]);
-                String name = check.getName();
-
-                if (check.isFile() && name.toLowerCase().
-                        contains(fileName.toLowerCase())) {
-                    n.add(check.getPath());
-                } else if (check.isDirectory() && !check.getName().startsWith(".")) {
-                    if (name.toLowerCase().contains(fileName.toLowerCase()))
-                        n.add(check.getPath());
-
-                }
-            }
-        }
-    }
-
-    /**
-     * Whether the URI is a local one.
-     *
-     * @param uri
-     * @return
-     */
-    public static boolean isLocal(String uri) {
-        if (uri != null && !uri.startsWith("http://")) {
-            return true;
-        }
-        return false;
-    }
 
     /**
      * Gets the extension of a file name, like ".png" or ".jpg".
@@ -2713,60 +2621,6 @@ public class FileUtils {
 //            }
 //        }
 
-    /**
-     * Convert File into Uri.
-     *
-     * @param file
-     * @return uri
-     */
-    public static Uri getUri(File file) {
-        if (file != null) {
-            return Uri.fromFile(file);
-        }
-        return null;
-    }
-
-    /**
-     * Convert Uri into File.
-     *
-     * @param uri
-     * @return file
-     */
-    public static File getFile(Uri uri) {
-        if (uri != null) {
-            String filepath = uri.getPath();
-            if (filepath != null) {
-                return new File(filepath);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Returns the path only (without file name).
-     *
-     * @param file
-     * @return
-     */
-    public static File getPathWithoutFilename(File file) {
-        if (file != null) {
-            if (file.isDirectory()) {
-                // no file to be split off. Return everything
-                return file;
-            } else {
-                String filename = file.getName();
-                String filepath = file.getAbsolutePath();
-
-                // Construct path without file name.
-                String pathwithoutname = filepath.substring(0, filepath.length() - filename.length());
-                if (pathwithoutname.endsWith("/")) {
-                    pathwithoutname = pathwithoutname.substring(0, pathwithoutname.length() - 1);
-                }
-                return new File(pathwithoutname);
-            }
-        }
-        return null;
-    }
 
     /**
      * Constructs a file from a path and file name.
@@ -2799,29 +2653,6 @@ public class FileUtils {
             return DateFormat.getDateFormat(context).format(new Date(dateTime));
         }*/
 
-
-    /**
-     * @param f - file which need be checked
-     * @return if is archive - returns true othewise
-     */
-    public static boolean checkIfZipArchive(File f) {
-        try {
-            new ZipFile(f);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-//        public static String getMD5(String filepath){
-//            try {
-//                return MD5.asHex(MD5.getHash(new File(filepath)));
-//            } catch (IOException e) {
-//                // TODO Auto-generated catch block
-//                e.printStackTrace();
-//                return null;
-//            }
-//        }
 
     public static String getFastHash(String filepath) {
         MessageDigest md;
@@ -2861,9 +2692,7 @@ public class FileUtils {
         return hash;
     }
 
-    public static void sortFile(String[] fileNames) {
-        Arrays.sort(fileNames, Collator.getInstance());
-    }
+
 
     private static class FileComparator implements Comparator<File> {
         private Collator c = Collator.getInstance();
@@ -2880,99 +2709,4 @@ public class FileUtils {
             return c.compare(f1.getName(), f2.getName());
         }
     }
-
-
-        /*public static Bitmap getBitmap(Context context, File imageFile, int size) {
-            if(!imageFile.exists() || imageFile.isDirectory()){
-                return BitmapFactory.decodeResource(context.getResources(), R.drawable.image);
-            }
-            InputStream photoStream = null;
-            Bitmap mBitmap = null;
-            try {
-                photoStream = new FileInputStream(imageFile);
-                BitmapFactory.Options opts = new BitmapFactory.Options();
-                opts.inJustDecodeBounds = true;
-                opts.inSampleSize = 1;
-
-                mBitmap = BitmapFactory.decodeStream(photoStream, null, opts);
-                if (opts.outWidth > opts.outHeight && opts.outWidth > size) {
-                    opts.inSampleSize = opts.outWidth / size;
-                } else if (opts.outWidth < opts.outHeight && opts.outHeight > size) {
-                    opts.inSampleSize = opts.outHeight / size;
-                }
-                if (opts.inSampleSize < 1) {
-                    opts.inSampleSize = 1;
-                }
-                opts.inJustDecodeBounds = false;
-                photoStream.close();
-                photoStream = new FileInputStream(imageFile);
-                mBitmap = BitmapFactory.decodeStream(photoStream, null, opts);
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                if (photoStream != null) {
-                    try {
-                        photoStream.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            if(mBitmap==null){
-                return BitmapFactory.decodeResource(context.getResources(), R.drawable.image);
-            }
-            return mBitmap;
-        }
-*/
-
-
-    public synchronized static void printDebug(String str) {
-        if (isDebug) {
-            System.out.println(str);
-        }
-    }
-
-      /*  public void getOnClick(String filepath){
-
-            final File file = new File(filepath);
-            final String ext = FileUtils.getExtension(filepath);
-
-            if (ext.equalsIgnoreCase(".pdf"))
-            {
-                Intent pdfIntent = new Intent();
-                pdfIntent.setAction(android.content.Intent.ACTION_VIEW);
-                pdfIntent.setDataAndType(Uri.fromFile(file), "application/pdf");
-                try{
-                    activity.startActivity(pdfIntent);
-                }catch (Exception e) {
-                    // TODO: handle exception
-                    final Intent intent = new Intent(activity, PDFViewer.class);
-                    intent.putExtra(PdfViewerActivity.EXTRA_PDFFILENAME, filepath);
-                    activity.startActivity(intent);
-
-                    //showMessage("couldn't find a PDF viewer");
-                }
-            }
-
-            else {
-                String mimeType = MimeTypes.getMimeType(file.getName());
-                Intent myIntent = new Intent();
-                myIntent.setAction(android.content.Intent.ACTION_VIEW);
-                myIntent.setDataAndType(Uri.fromFile(file), mimeType);
-                try {
-                    activity.startActivity(myIntent);
-                }catch (Exception e) {
-                    // TODO: handle exception
-                    Toast.makeText(activity, "No application to open  file",
-                            Toast.LENGTH_SHORT).show();
-                }
-
-
-
-            }
-
-        }
-*/
-
-
 }

@@ -3,9 +3,16 @@ package com.siju.acexplorer.filesystem.utils;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.helper.RootHelper;
+import com.siju.acexplorer.utils.DialogUtils;
 import com.stericson.RootTools.RootTools;
 
 import java.io.File;
@@ -30,7 +37,7 @@ public class FileOperations {
 
     public static void mkdir(final File file, final Context context, final boolean isRoot, @NonNull
     final ErrorCallBack errorCallBack) {
-        if (file == null || errorCallBack == null) return;
+        if (file == null) return;
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
@@ -77,7 +84,7 @@ public class FileOperations {
 
     public static void mkfile(final File file, final Context context, final boolean isRoot, @NonNull
     final ErrorCallBack errorCallBack) {
-        if (file == null || errorCallBack == null) return;
+        if (file == null) return;
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
@@ -140,7 +147,7 @@ public class FileOperations {
                 if (mode == 2) {
                     errorCallBack.launchSAF(oldFile, newFile);
                 } else if (mode == 1 || mode == 0) {
-                    boolean b = FileUtils.renameFolder(oldFile, newFile, context);
+                    FileUtils.renameFolder(oldFile, newFile, context);
                     boolean a = !oldFile.exists() && newFile.exists();
                     if (!a && rootMode) {
                         try {
@@ -160,4 +167,9 @@ public class FileOperations {
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
     }
+
+
+
+
+
 }

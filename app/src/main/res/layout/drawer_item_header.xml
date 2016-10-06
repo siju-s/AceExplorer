@@ -12,8 +12,6 @@
         android:layout_marginLeft="@dimen/drawer_item_margin"
         android:layout_marginStart="@dimen/drawer_item_margin"
         android:layout_marginTop="@dimen/drawer_item_margin"
-        android:layout_toLeftOf="@+id/imageExpand"
-        android:layout_toStartOf="@+id/imageExpand"
         android:textSize="14sp"
         android:textStyle="bold" />
 

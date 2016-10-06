@@ -441,7 +441,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         for (String path : storagePaths) {
             File file = new File(path);
             int icon;
-            String name, storageSpace;
+            String name;
             if ("/storage/emulated/legacy".equals(path) || "/storage/emulated/0".equals(path)) {
                 name = STORAGE_INTERNAL;
                 icon = R.drawable.ic_phone_white;

@@ -7,25 +7,25 @@ import android.os.Parcelable;
  * Created by arpitkh996 on 11-01-2016.
  */
 public class BaseFile implements Parcelable {
-    long date,size;
-    boolean isDirectory;
-    String permisson;
-    String name;
-    String path;
+    private long date, size;
+    private boolean isDirectory;
+    private String permission;
+    private String name;
+    private String path;
 
-    String link="";
+    private String link = "";
 /*    public BaseFile(String path) {
 //        super(0,path);
         this.path = path;
     }*/
 
-    public BaseFile(String path, String permisson, long date, long size, boolean isDirectory) {
+    public BaseFile(String path, String permission, long date, long size, boolean isDirectory) {
 //        super(0,path);
         this.date = date;
         this.size = size;
         this.isDirectory = isDirectory;
         this.path = path;
-        this.permisson = permisson;
+        this.permission = permission;
 
     }
 
@@ -38,8 +38,6 @@ public class BaseFile implements Parcelable {
     }
 
 
-
-
     public String getLink() {
         return link;
     }
@@ -47,6 +45,7 @@ public class BaseFile implements Parcelable {
     public void setLink(String link) {
         this.link = link;
     }
+
     public long getDate() {
         return date;
     }
@@ -76,16 +75,17 @@ public class BaseFile implements Parcelable {
     }
 
 
-    public String getPermisson() {
-        return permisson;
+    public String getPermission() {
+        return permission;
     }
 
-    public void setPermisson(String permisson) {
-        this.permisson = permisson;
+    public void setPermission(String permission) {
+        this.permission = permission;
     }
-    protected BaseFile(Parcel in) {
-        permisson = in.readString();
-        name=in.readString();
+
+    private BaseFile(Parcel in) {
+        permission = in.readString();
+        name = in.readString();
         date = in.readLong();
         size = in.readLong();
         isDirectory = in.readByte() != 0;
@@ -112,7 +112,7 @@ public class BaseFile implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(path);
-        dest.writeString(permisson);
+        dest.writeString(permission);
         dest.writeString(name);
         dest.writeLong(date);
         dest.writeLong(size);

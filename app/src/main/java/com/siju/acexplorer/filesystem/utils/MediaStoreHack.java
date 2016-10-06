@@ -113,6 +113,7 @@ public class MediaStoreHack {
         Cursor filecursor = resolver.query(MediaStore.Files.getContentUri("external"),
                 new String[]{BaseColumns._ID}, MediaStore.MediaColumns.DATA + " = ?",
                 new String[]{path}, MediaStore.MediaColumns.DATE_ADDED + " desc");
+        if (filecursor == null) return null;
         filecursor.moveToFirst();
 
         if (filecursor.isAfterLast()) {

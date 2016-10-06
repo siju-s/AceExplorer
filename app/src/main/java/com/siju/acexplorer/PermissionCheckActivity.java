@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -88,7 +89,7 @@ public class PermissionCheckActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(
-            final int requestCode, final String permissions[], final int[] grantResults) {
+            final int requestCode, @NonNull final String permissions[], @NonNull final int[] grantResults) {
         if (requestCode == REQUIRED_PERMISSIONS_REQUEST_CODE) {
             // We do not use grantResults as some of the granted permissions might have been
             // revoked while the permissions dialog box was being shown for the missing permissions.

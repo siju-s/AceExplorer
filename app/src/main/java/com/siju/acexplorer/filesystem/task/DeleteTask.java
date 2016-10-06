@@ -50,7 +50,7 @@ public class DeleteTask extends AsyncTask<Void, Void, Integer> {
             if (!isDeleted) {
                 if (mIsRootMode) {
                     RootTools.remount(new File(path).getParent(), "rw");
-                    String s = RootHelper.runAndWait("rm -r \"" + path + "\"", true);
+                    RootHelper.runAndWait("rm -r \"" + path + "\"", true);
                     RootTools.remount(new File(path).getParent(), "ro");
                     paths.add(path);
                     mimeTypes.add(fileList.get(i).getMimeType());

@@ -69,7 +69,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
     private boolean mIsDarkTheme;
     private static final int MY_PERMISSIONS_REQUEST = 1;
     private static final int SETTINGS_REQUEST = 200;
-    MaterialDialog materialDialog;
+    private MaterialDialog materialDialog;
 //    private VerticalRecyclerViewFastScroller mFastScroller;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -337,7 +337,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
         }*//*
     }*/
 
-    public void refreshList(String path) {
+    private void refreshList(String path) {
 
         Bundle args = new Bundle();
         args.putString(FileConstants.KEY_PATH, path);

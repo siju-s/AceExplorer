@@ -1,6 +1,7 @@
 package com.siju.acexplorer.utils;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 
@@ -21,7 +22,7 @@ public class DialogUtils {
         builder.input(texts[0], texts[1], false, new
                 MaterialDialog.InputCallback() {
                     @Override
-                    public void onInput(MaterialDialog materialDialog, CharSequence charSequence) {
+                    public void onInput(@NonNull MaterialDialog materialDialog, CharSequence charSequence) {
 
                     }
                 });

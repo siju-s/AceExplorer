@@ -34,7 +34,6 @@ public class BackStackModel {
         if (obj == this) return true;
         if (!(obj instanceof BackStackModel)) return false;
         BackStackModel o = (BackStackModel) obj;
-        if (o.filePath == null) return false;
-        return o.filePath.equals(this.filePath);
+        return o.filePath != null && o.filePath.equals(this.filePath);
     }
 }

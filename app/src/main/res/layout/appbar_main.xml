@@ -192,10 +192,10 @@
         </com.getbase.floatingactionbutton.FloatingActionsMenu>
     </FrameLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:orientation="vertical">-->
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -210,7 +210,7 @@
                 android:background="@color/colorPrimary"
                 android:visibility="gone"
                 app:popupTheme="@style/AppTheme.PopupOverlay"/>
-        </LinearLayout>
+        <!--</LinearLayout>-->
 
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

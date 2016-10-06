@@ -35,7 +35,6 @@
     <color name="dark_colorPrimary">#262626</color>
     <color name="dark_colorPrimaryDark">#000000</color>
     <color name="dark_colorAccent">#FF4081</color>
-    <color name="dark_navDrawerBg">#ffffff</color>
     <color name="dark_actionModeItemSelected">#33ffffff</color>
     <color name="dark_divider">#80262626</color>
     <color name="dark_overlay">#595959</color>

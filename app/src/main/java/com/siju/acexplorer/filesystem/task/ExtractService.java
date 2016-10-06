@@ -45,15 +45,15 @@ public class ExtractService extends Service {
     public final String EXTRACT_CONDITION = "EXTRACT_CONDITION";
 
 
-    Context c;
+    private Context c;
     // Binder given to clients
-    HashMap<Integer, Boolean> hash = new HashMap<Integer, Boolean>();
-    public HashMap<Integer, ZipProgressModel> hash1 = new HashMap<>();
-    NotificationManager mNotifyManager;
-    NotificationCompat.Builder mBuilder;
-    ArrayList<String> entries = new ArrayList<String>();
-    boolean eentries;
-    String epath;
+    private HashMap<Integer, Boolean> hash = new HashMap<Integer, Boolean>();
+    private HashMap<Integer, ZipProgressModel> hash1 = new HashMap<>();
+    private NotificationManager mNotifyManager;
+    private NotificationCompat.Builder mBuilder;
+    private ArrayList<String> entries = new ArrayList<String>();
+    private boolean eentries;
+    private String epath;
     private final int NOTIFICATION_ID = 1000;
 
     @Override
@@ -62,7 +62,7 @@ public class ExtractService extends Service {
         c = getApplicationContext();
     }
 
-    boolean foreground = true;
+    private boolean foreground = true;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -104,7 +104,7 @@ public class ExtractService extends Service {
 
     private final IBinder mBinder = new LocalBinder();
 
-    public class LocalBinder extends Binder {
+    private class LocalBinder extends Binder {
         public ExtractService getService() {
             // Return this instance of LocalService so clients can call public methods
             return ExtractService.this;
@@ -115,7 +115,7 @@ public class ExtractService extends Service {
         this.progressListener = progressListener;
     }
 
-    ProgressListener progressListener;
+    private ProgressListener progressListener;
 
     public interface ProgressListener {
         void onUpdate(ZipProgressModel zipProgressModel);
@@ -154,7 +154,7 @@ public class ExtractService extends Service {
         } else publishCompletedResult(fileName, NOTIFICATION_ID + id);
     }
 
-    public void publishCompletedResult(String a, int id1) {
+    private void publishCompletedResult(String a, int id1) {
         try {
             mNotifyManager.cancel(id1);
         } catch (Exception e) {
@@ -379,16 +379,13 @@ public class ExtractService extends Service {
 
         }
 
-        public boolean extract(int id, File archive, String destinationPath) {
-            int i = 0;
+        boolean extract(int id, File archive, String destinationPath) {
             try {
-                ArrayList<ZipEntry> arrayList = new ArrayList<ZipEntry>();
+                ArrayList<ZipEntry> arrayList = new ArrayList<>();
                 ZipFile zipfile = new ZipFile(archive);
                 calculateProgress(archive.getName(), id, false, copiedbytes, totalbytes);
                 for (Enumeration e = zipfile.entries(); e.hasMoreElements(); ) {
-                    //Log.i("Amaze", id + " " + hash.get(id));
                     if (hash.get(id)) {
-
                         ZipEntry entry = (ZipEntry) e.nextElement();
                         arrayList.add(entry);
                     } else {
@@ -413,7 +410,7 @@ public class ExtractService extends Service {
                 calculateProgress(archive.getName(), id, true, copiedbytes, totalbytes);
                 return true;
             } catch (Exception e) {
-                Log.e("amaze", "Error while extracting file " + archive, e);
+                Log.e(this.getClass().getSimpleName(), "Error while extracting file " + archive, e);
                 Intent intent = new Intent("reload_list");
                 sendBroadcast(intent);
                 publishResults(archive.getName(), 100, id, totalbytes, copiedbytes, true);
@@ -517,9 +514,8 @@ public class ExtractService extends Service {
 
 
             File f = new File(file);
-            String path = newFile;
 
-            Log.d("TAG","ZIp file="+file+ "new file="+path);
+            Log.d("TAG","ZIp file="+file+ "new file="+ newFile);
             /*if (epath.length() == 0) {
                 path = f.getParent() + "/" + f.getName().substring(0, f.getName().lastIndexOf("."));
             } else {
@@ -530,13 +526,13 @@ public class ExtractService extends Service {
                 }
             }*/
             if (eentries) {
-                extract(p1[0].getInt("id"), f, path, entries);
+                extract(p1[0].getInt("id"), f, newFile, entries);
             } else if (f.getName().toLowerCase().endsWith(".zip") || f.getName().toLowerCase().endsWith(".jar") || f.getName().toLowerCase().endsWith(".apk"))
-                extract(p1[0].getInt("id"), f, path);
+                extract(p1[0].getInt("id"), f, newFile);
             else if (f.getName().toLowerCase().endsWith(".rar"))
-                extractRar(p1[0].getInt("id"), f, path);
+                extractRar(p1[0].getInt("id"), f, newFile);
             else if (f.getName().toLowerCase().endsWith(".tar") || f.getName().toLowerCase().endsWith(".tar.gz"))
-                extractTar(p1[0].getInt("id"), f, path);
+                extractTar(p1[0].getInt("id"), f, newFile);
                 Log.d("TAG","TAR");
 
             Log.i("Amaze", "Almost Completed");

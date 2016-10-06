@@ -159,15 +159,11 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
      */
     protected int getAvailableScrollBarHeight() {
         int visibleHeight = getHeight() - mPaddingBottom;
-//        LinearLayoutManager layoutManager = ((LinearLayoutManager) getLayoutManager());
-        int padding = 0 ;
+/*        int padding = 0 ;
         if (mLastY > mDownY && !mScrollbar.isDragging())  {
             padding = mPaddingBottom;
-        }
-//        Log.d("TAG","Down Y="+mDownY+"last Y="+mLastY+ "dragging="+mScrollbar.isDragging());
-        int availableScrollBarHeight = visibleHeight - mScrollbar.getThumbHeight() ;
-        Log.d("TAG","availableScrollBarHeight="+availableScrollBarHeight);
-
+        }*/
+        int availableScrollBarHeight = visibleHeight - mScrollbar.getThumbHeight() - mPaddingBottom;
         return availableScrollBarHeight;
     }
 

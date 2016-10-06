@@ -325,7 +325,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             String path = favInfo.getFilePath();
             File file = new File(path);
             String fileName = file.getName();
-            String noOfFilesOrSize;
             long childFileListSize = 0;
 
             if (file.list() != null) {
@@ -400,11 +399,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             }
 
             ArrayList<String> strings = new ArrayList<>();
-            int noOfFiles = 0;
             for (ZipModel entry : totalZipList) {
-
-//                i++;
-                String s = entry.getName();
 
                 File file = new File(entry.getName());
                 if (dir == null || dir.trim().length() == 0) {
@@ -845,31 +840,15 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.i("VolumeStateObserver", "onReceive " + intent.getAction());
-//        this.mDataObserver.c.c();
-            String str = null;
-            Object parcelableExtra = intent.getParcelableExtra("storage_volume");
-      /*  if (parcelableExtra != null) {
-            str = bz.b(parcelableExtra);
-            if (str == null) {
-                Log.d("VolumeStateObserver", "onReceive path is null");
-            }
-        }*/
             Bundle bundle;
             if (intent.getAction().equals("android.intent.action.MEDIA_MOUNTED")) {
-//                this.mDataObserver.setChanged();
                 bundle = new Bundle();
                 bundle.putString("KEY_EVENT", "android.intent.action.MEDIA_MOUNTED");
-                bundle.putString("KEY_PATH", str);
                 onContentChanged();
-//                this.mDataObserver.notifyObservers(bundle);
             } else if (intent.getAction().equals("android.intent.action.MEDIA_UNMOUNTED")) {
-//                this.mDataObserver.setChanged();
                 bundle = new Bundle();
                 bundle.putString("KEY_EVENT", "android.intent.action.MEDIA_UNMOUNTED");
-                bundle.putString("KEY_PATH", str);
                 onContentChanged();
-
-//                this.mDataObserver.notifyObservers(bundle);
             }
 
         }
