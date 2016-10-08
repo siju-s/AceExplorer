@@ -161,6 +161,7 @@ public class BaseActivity extends AppCompatActivity implements
     public String mOldFilePath;
     public String mNewFilePath;
     public ArrayList<FileInfo> mFiles = new ArrayList<>();
+    public ArrayList<FileInfo> mTotalFiles = new ArrayList<>();
     public ArrayList<CopyData> mCopyData = new ArrayList<>();
     public FileOpsHelper mFileOpsHelper;
     public int mRenamedPosition;
@@ -740,9 +741,11 @@ public class BaseActivity extends AppCompatActivity implements
                             break;
                         case FileConstants.COPY:
                             Intent intent1 = new Intent(this, CopyService.class);
-                            intent1.putExtra("FILE_PATHS", mFiles);
+                            intent1.putParcelableArrayListExtra("FILE_PATHS", mFiles);
                             intent1.putExtra("COPY_DIRECTORY", mNewFilePath);
-                            startService(intent1);
+                            intent.putParcelableArrayListExtra("ACTION",mCopyData);
+                            intent1.putParcelableArrayListExtra("TOTAL_LIST",mTotalFiles);
+                            new FileUtils().showCopyProgressDialog(this,intent1);
                             break;
                         case FileConstants.MOVE:
                             new MoveFiles(this, mFiles, mCopyData).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mNewFilePath);

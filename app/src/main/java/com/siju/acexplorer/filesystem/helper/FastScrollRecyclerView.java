@@ -199,7 +199,7 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
         // padding)
         int scrollY = getPaddingTop() + yOffset + (scrollPosState.rowIndex * scrollPosState.rowHeight) - scrollPosState.rowTopOffset;
         int scrollBarY = (int) (((float) scrollY / availableScrollHeight) * availableScrollBarHeight);
-        Log.d("TAG","scrollY="+scrollY+" scrollbarY="+scrollBarY);
+//        Log.d("TAG","scrollY="+scrollY+" scrollbarY="+scrollBarY);
 
 
         // Calculate the position and size of the scroll bar

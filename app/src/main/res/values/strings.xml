@@ -50,7 +50,7 @@
     <string name="dialog_title_paste_conflict">File exists</string>
     <string name="msg_operation_cancel">Operation cancelled</string>
     <string name="dialog_from_placeholder">From</string>
-    <string name="dialog_to_placeholder">To: %1$s</string>
+    <string name="dialog_to_placeholder">To:</string>
     <string name="button_paste_progress">Background</string>
     <string name="dialog_delete_title">Are you sure you want to delete the following files?</string>
     <string name="msg_ok">OK</string>
@@ -207,6 +207,6 @@
 
     <string name="slide_4_title">Themes</string>
     <string name="slide_4_desc">Dark or Light way! Your choice.</string>
-    <string name="blank">%d</string>
+    <string name="blank" translatable="false">%d</string>
 
 </resources>

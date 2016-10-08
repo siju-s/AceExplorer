@@ -18,7 +18,10 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
@@ -89,7 +92,7 @@ import static android.webkit.MimeTypeMap.getSingleton;
  * Created by Siju on 16-06-2016.
  */
 
-public class FileUtils implements CopyService.ProgressListener{
+public class FileUtils implements CopyService.Progress {
 
     private static final String TAG = "FileUtils";
     private static String mCurrentDirectory;
@@ -187,55 +190,130 @@ public class FileUtils implements CopyService.ProgressListener{
     }
 
     private ProgressBar progressBarPaste;
-    private  TextView textFileName,textFileFromPath,textFileToPath;
+    private MaterialDialog progressDialog;
+    private int copiedFilesSize;
+    private TextView textFileName, textFileFromPath, textFileToPath, textFileCount, textProgress;
+    private ArrayList<FileInfo> copiedFileInfo;
+    private Context mContext;
+    private Intent mServiceIntent;
 
     public void showCopyProgressDialog(final Context context, final Intent intent) {
 //        registerReceiver(context);
-        context.startService(intent);
+        mContext = context;
+        mServiceIntent = intent;
+        context.bindService(mServiceIntent,mServiceConnection,Context.BIND_AUTO_CREATE);
+        context.startService(mServiceIntent);
         String title = context.getString(R.string.action_copy);
         String texts[] = new String[]{title, context.getString(R.string.button_paste_progress), "",
                 context.getString(R.string.dialog_cancel)};
-        final MaterialDialog materialDialog = new DialogUtils().showCustomDialog(context,
+        progressDialog = new DialogUtils().showCustomDialog(context,
                 R.layout.dialog_progress_paste, texts);
-        View view = materialDialog.getCustomView();
-        TextView textFileName = (TextView) view.findViewById(R.id.textFileName);
-        TextView textFileFromPath = (TextView) view.findViewById(R.id.textFileFromPath);
-        TextView textFileToPath = (TextView) view.findViewById(R.id.textFileToPath);
+        progressDialog.setCancelable(false);
+        View view = progressDialog.getCustomView();
+        textFileName = (TextView) view.findViewById(R.id.textFileName);
+        textFileFromPath = (TextView) view.findViewById(R.id.textFileFromPath);
+        textFileToPath = (TextView) view.findViewById(R.id.textFileToPath);
+        textFileCount = (TextView) view.findViewById(R.id.textFilesLeft);
+        textProgress = (TextView) view.findViewById(R.id.textProgressPercent);
+
         progressBarPaste = (ProgressBar) view.findViewById(R.id.progressBarPaste);
 
-        ArrayList<FileInfo> copiedFileInfo = intent.getParcelableArrayListExtra("FILE_PATHS");
+//        copiedFileInfo = intent.getParcelableArrayListExtra("FILE_PATHS");
+        copiedFileInfo = intent.getParcelableArrayListExtra("TOTAL_LIST");
+        copiedFilesSize = copiedFileInfo.size();
+        Logger.log("FileUtils", "Totalfiles=" + copiedFilesSize);
+
+
         textFileFromPath.setText(copiedFileInfo.get(0).getFilePath());
         textFileName.setText(copiedFileInfo.get(0).getFileName());
-
+//        copiedFilesSize = copiedFileInfo.size();
         textFileToPath.setText(intent.getStringExtra("COPY_DIRECTORY"));
+        textFileCount.setText("1/" + copiedFilesSize);
+        textProgress.setText("0%");
 
-        Button buttonBackground = (Button) view.findViewById(R.id.buttonBg);
-        buttonBackground.setOnClickListener(new View.OnClickListener() {
+        progressDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                materialDialog.dismiss();
+//                context.stopService(intent);
+//                unregisterReceiver(context);
+                progressDialog.dismiss();
             }
         });
-        Button buttonCancel = (Button) view.findViewById(R.id.buttonCancel);
-        buttonCancel.setOnClickListener(new View.OnClickListener() {
+
+        progressDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                context.stopService(intent);
-                materialDialog.dismiss();
+                stopCopyService();
+                progressDialog.dismiss();
             }
         });
-        materialDialog.show();
+
+        progressDialog.show();
     }
+
+    private void stopCopyService() {
+        mContext.unbindService(mServiceConnection);
+        mContext.stopService(mServiceIntent);
+    }
+
 
     @Override
-    public void onUpdate(ZipProgressModel zipProgressModel) {
-          progressBarPaste.setProgress(zipProgressModel.getP1());
+    public void onUpdate(Intent intent) {
+//        int progress = intent.getIntExtra("PROGRESS", 0);
+     /*   int copiedBytes = intent.getIntExtra("DONE", 0);
+        int totalBytes = intent.getIntExtra("TOTAL", 0);*/
+
+//        int count = intent.getIntExtra("COUNT", 1);
+//        Logger.log("FileUtils", "Progress=" + progress);
+
+        Message msg = handler.obtainMessage();
+/*        msg.arg1 = copiedBytes;
+        msg.arg2 = totalBytes;*/
+        msg.obj = intent;
+
+        handler.sendMessage(msg);
+
     }
 
-    @Override
-    public void refresh() {
+    // Define the Handler that receives messages from the thread and update the progress
+    private final Handler handler = new Handler(Looper.getMainLooper()) {
+        public void handleMessage(Message msg) {
+            Intent  intent = (Intent) msg.obj;
+            long copiedBytes = intent.getLongExtra("DONE", 0);
+            long totalBytes = intent.getLongExtra("TOTAL", 0);
+            Logger.log("FileUtils","total="+ copiedFileInfo.size());
 
-    }
+//            int progress = (int) ((copiedBytes / (float) totalBytes) * 100);
+            int progress =  intent.getIntExtra("PROGRESS", 0);
+            int totalProgress =  intent.getIntExtra("TOTAL_PROGRESS", 0);
+
+
+            progressBarPaste.setProgress(totalProgress);
+            textProgress.setText(totalProgress + "%");
+            if (progress == 100) {
+                int count = intent.getIntExtra("COUNT", 1);
+//                progress =  intent.getIntExtra("PROGRESS", 0);
+                Logger.log("FileUtils","COUNT="+ count);
+                if (count == copiedFilesSize || copiedBytes == totalBytes) {
+                    stopCopyService();
+                    progressDialog.dismiss();
+                } else {
+                    int newCount = count + 1;
+                    textFileFromPath.setText(copiedFileInfo.get(count).getFilePath());
+                    textFileName.setText(copiedFileInfo.get(count).getFileName());
+                    textFileCount.setText(newCount + "/" + copiedFilesSize);
+                }
+ /*               if (count == copiedFilesSize) {
+                    stopCopyService();
+                    progressDialog.dismiss();
+                } else {
+                    textFileFromPath.setText(copiedFileInfo.get(count).getFilePath());
+                    textFileName.setText(copiedFileInfo.get(count).getFileName());
+                    textFileCount.setText(++count + "/" + copiedFilesSize);
+                }*/
+            }
+        }
+    };
 
     public static final String COPY_PROGRESS = "copy_progress_update";
 
@@ -250,25 +328,34 @@ public class FileUtils implements CopyService.ProgressListener{
     }
 
     private BroadcastReceiver mCopyProgressReceiver = new BroadcastReceiver() {
+        private int mPrevCount = 0;
+
         @Override
         public void onReceive(Context context, Intent intent) {
+
+            if (intent.getAction() != null && intent.getAction().equals(COPY_PROGRESS)) {
+
+            }
 
         }
     };
 
-/*
+    private CopyService mService;
+
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            CopyService.
+            CopyService.LocalBinder binder = (CopyService.LocalBinder) service;
+            mService = binder.getService();
+            mService.registerProgressListener(FileUtils.this);
+
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-
+//              mService = null;
         }
-    }
-*/
+    };
 
 
     public static File getRootDirectory() {
@@ -2691,7 +2778,6 @@ public class FileUtils implements CopyService.ProgressListener{
 
         return hash;
     }
-
 
 
     private static class FileComparator implements Comparator<File> {

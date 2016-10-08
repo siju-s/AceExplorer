@@ -54,6 +54,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.siju.acexplorer.filesystem.utils.FileUtils.COPY_PROGRESS;
+
 public class CopyService extends Service {
     private SparseBooleanArray hash = new SparseBooleanArray();
     private HashMap<Integer, ZipProgressModel> hash1 = new HashMap<>();
@@ -64,7 +66,7 @@ public class CopyService extends Service {
     private final int NOTIFICATION_ID = 1000;
     private CopyProgressUpdate copyProgressUpdate;
 
-    interface CopyProgressUpdate{
+    interface CopyProgressUpdate {
         void updateProgress(int progress);
     }
 
@@ -140,8 +142,6 @@ public class CopyService extends Service {
         FileVerifier fileVerifier;
         Copy copy;
 
-        /*public DoInBackground() {
-        }*/
 
         protected Integer doInBackground(Bundle... p1) {
             String currentDir = p1[0].getString("current_dir");
@@ -156,18 +156,8 @@ public class CopyService extends Service {
         }
 
         @Override
-        public void
-        onPostExecute(Integer b) {
-            publishResults("", 0, 0, b, 0, 0, true, move);
-            if (fileVerifier != null && fileVerifier.isRunning()) {
-                while (fileVerifier.isRunning()) {
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
+        public void onPostExecute(Integer b) {
+            copy.publishResults("", 0, 0, b, 0, 0, true, move);
             generateNotification(copy.failedFOps, move);
             Intent intent = new Intent("reload_list");
 //            intent.putExtra(FileConstants.KEY_PATH,files);
@@ -192,6 +182,7 @@ public class CopyService extends Service {
             ArrayList<FileInfo> failedFOps;
             ArrayList<BaseFile> toDelete;
             boolean copy_successful;
+            int count = 0;
 
             public Copy() {
                 copy_successful = true;
@@ -401,6 +392,7 @@ public class CopyService extends Service {
                     @Override
                     protected Void doInBackground(Void... voids) {
                         p1 = (int) ((copiedBytes / (float) totalBytes) * 100);
+                        Logger.log("CopyService", "Copied=" + copiedBytes + " Totalbytes=" + totalBytes);
                         p2 = (int) ((fileBytes / (float) size) * 100);
                         if (calculatingTotalSize) p1 = 0;
                         return null;
@@ -412,6 +404,7 @@ public class CopyService extends Service {
                     }
                 }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
+
 
             void copy(BufferedInputStream in, BufferedOutputStream out, long size, int id, String name,
                       boolean move) throws IOException {
@@ -432,12 +425,91 @@ public class CopyService extends Service {
                             time = System.nanoTime() / 500000000;
                         }
 
+
+
                     } else {
                         break;
                     }
                 }
+
+                if (fileBytes == size) {
+                    count++;
+                    Logger.log("CopyService", "Completed " + name + " COUNT="+count);
+
+                    Intent intent = new Intent(COPY_PROGRESS);
+                    intent.putExtra("PROGRESS", 100);
+                    intent.putExtra("DONE", copiedBytes);
+                    intent.putExtra("TOTAL", totalBytes);
+                    intent.putExtra("COUNT", count);
+                    int p1 = (int) ((copiedBytes / (float) totalBytes) * 100);
+                    intent.putExtra("TOTAL_PROGRESS", p1);
+                    mProgressListener.onUpdate(intent);
+                }
                 in.close();
                 out.close();
+            }
+
+            private void publishResults(String fileName, int p1, int p2, int id, long total, long done, boolean b, boolean move) {
+                if (hash.get(id)) {
+                    //notification
+                    Logger.log("CopyService", "Total bytes=" + totalBytes + "Copied=" + copiedBytes);
+                    mBuilder.setProgress(100, p1, false);
+                    mBuilder.setOngoing(true);
+                    int title = R.string.copying;
+                    if (move) title = R.string.moving;
+                    mBuilder.setContentTitle(getString(title));
+                    mBuilder.setContentText(new File(fileName).getName() + " " + FileUtils.formatSize(mContext, done) + "/" + FileUtils
+                            .formatSize(mContext, total));
+                    int id1 = NOTIFICATION_ID + id;
+                    mNotifyManager.notify(id1, mBuilder.build());
+                    if (p1 == 100 || total == 0) {
+                        mBuilder.setContentTitle("Copy completed");
+                        if (move)
+                            mBuilder.setContentTitle("Move Completed");
+                        mBuilder.setContentText("");
+                        mBuilder.setProgress(0, 0, false);
+                        mBuilder.setOngoing(false);
+                        mBuilder.setAutoCancel(true);
+                        mNotifyManager.notify(id1, mBuilder.build());
+                        publishCompletedResult(id, id1);
+                    }
+                    //for processviewer
+                    ZipProgressModel progressModel = new ZipProgressModel();
+                    progressModel.setName(fileName);
+                    progressModel.setTotal(total);
+                    progressModel.setDone(done);
+                    progressModel.setId(id);
+                    progressModel.setP1(p1);
+                    progressModel.setP2(p2);
+                    progressModel.setMove(move);
+                    progressModel.setCompleted(b);
+                    hash1.put(id, progressModel);
+
+                    Intent intent = new Intent(COPY_PROGRESS);
+                    intent.putExtra("DONE", copiedBytes);
+                    intent.putExtra("TOTAL", totalBytes);
+
+                    intent.putExtra("TOTAL_PROGRESS", p1);
+
+
+//            intent.putExtra("TOTAL",total);
+                    mProgressListener.onUpdate(intent);
+//            sendBroadcast(intent);
+
+                    if (progressListener != null) {
+                        progressListener.onUpdate(progressModel);
+                        if (b) progressListener.refresh();
+                    }
+
+                } else publishCompletedResult(id, NOTIFICATION_ID + id);
+            }
+
+            private void publishCompletedResult(int id, int id1) {
+                try {
+                    mNotifyManager.cancel(id1);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
         }
@@ -463,56 +535,6 @@ public class CopyService extends Service {
         sendBroadcast(intent);
     }
 
-    private void publishResults(String fileName, int p1, int p2, int id, long total, long done, boolean b, boolean move) {
-        if (hash.get(id)) {
-            //notification
-            mBuilder.setProgress(100, p1, false);
-            mBuilder.setOngoing(true);
-            int title = R.string.copying;
-            if (move) title = R.string.moving;
-            mBuilder.setContentTitle(getString(title));
-            mBuilder.setContentText(new File(fileName).getName() + " " + FileUtils.formatSize(this, done) + "/" + FileUtils
-                    .formatSize(this, total));
-            int id1 = NOTIFICATION_ID + id;
-            mNotifyManager.notify(id1, mBuilder.build());
-            if (p1 == 100 || total == 0) {
-                mBuilder.setContentTitle("Copy completed");
-                if (move)
-                    mBuilder.setContentTitle("Move Completed");
-                mBuilder.setContentText("");
-                mBuilder.setProgress(0, 0, false);
-                mBuilder.setOngoing(false);
-                mBuilder.setAutoCancel(true);
-                mNotifyManager.notify(id1, mBuilder.build());
-                publishCompletedResult(id, id1);
-            }
-            //for processviewer
-            ZipProgressModel progressModel = new ZipProgressModel();
-            progressModel.setName(fileName);
-            progressModel.setTotal(total);
-            progressModel.setDone(done);
-            progressModel.setId(id);
-            progressModel.setP1(p1);
-            progressModel.setP2(p2);
-            progressModel.setMove(move);
-            progressModel.setCompleted(b);
-            hash1.put(id, progressModel);
-
-            if (progressListener != null) {
-                progressListener.onUpdate(progressModel);
-                if (b) progressListener.refresh();
-            }
-
-        } else publishCompletedResult(id, NOTIFICATION_ID + id);
-    }
-
-    private void publishCompletedResult(int id, int id1) {
-        try {
-            mNotifyManager.cancel(id1);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     //check if copy is successful
     private boolean checkFiles(FileInfo hFile1, FileInfo hFile2) {
@@ -558,7 +580,8 @@ public class CopyService extends Service {
 
     private final IBinder mBinder = new LocalBinder();
 
-    private class LocalBinder extends Binder {
+
+    public class LocalBinder extends Binder {
         public CopyService getService() {
             // Return this instance of LocalService so clients can call public methods
             return CopyService.this;
@@ -569,6 +592,18 @@ public class CopyService extends Service {
         void onUpdate(ZipProgressModel zipProgressModel);
 
         void refresh();
+    }
+
+    private Progress mProgressListener;
+
+    public interface Progress {
+        void onUpdate(Intent intent);
+
+    }
+
+
+    public void registerProgressListener(Progress progress) {
+        mProgressListener = progress;
     }
 
     private BroadcastReceiver receiver3 = new BroadcastReceiver() {

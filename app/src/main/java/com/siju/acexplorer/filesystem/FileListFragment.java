@@ -1028,8 +1028,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         mBottomToolbar.inflateMenu(R.menu.action_mode_bottom);
         mBottomToolbar.getMenu().clear();
         EnhancedMenuInflater.inflate(getActivity().getMenuInflater(), mBottomToolbar.getMenu(),
-                true,
-                mCategory);
+                true, mCategory);
         mBottomToolbar.setOnMenuItemClickListener(this);
 
     }
@@ -1870,6 +1869,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (mActionMode != null)
                 mActionMode.finish();
                 materialDialog.dismiss();
             }
