@@ -30,9 +30,9 @@
     <string name="action_delete">Töröl</string>
     <string name="action_share">Ossza meg</string>
     <string name="msg_cut_copy">fájl (ok) a vágólapra másolva</string>
-    <string name="msg_copy">A fájlok másolása ...</string>
-    <string name="msg_cut">Mozgó fájlokat ...</string>
-    <string name="msg_delete">A fájlok törlése ...</string>
+    <string name="msg_copy">A fájlok másolása &#8230;</string>
+    <string name="msg_cut">Mozgó fájlokat &#8230;</string>
+    <string name="msg_delete">A fájlok törlése &#8230;</string>
     <string name="msg_copy_success">sikeresen másolt</string>
     <string name="msg_move_success">sikeresen át</string>
     <string name="msg_delete_success">sikeresen törölve</string>

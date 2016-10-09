@@ -30,9 +30,9 @@
     <string name="action_delete">Radera</string>
     <string name="action_share">Dela med sig</string>
     <string name="msg_cut_copy">fil (er) kopieras till urklipp</string>
-    <string name="msg_copy">Kopiera filer ...</string>
-    <string name="msg_cut">Flytta filer ...</string>
-    <string name="msg_delete">Radera filer ...</string>
+    <string name="msg_copy">Kopiera filer &#8230;</string>
+    <string name="msg_cut">Flytta filer &#8230;</string>
+    <string name="msg_delete">Radera filer &#8230;</string>
     <string name="msg_copy_success">kopierats</string>
     <string name="msg_move_success">flyttades</string>
     <string name="msg_delete_success">raderats</string>

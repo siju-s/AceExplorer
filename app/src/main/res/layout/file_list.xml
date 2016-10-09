@@ -28,16 +28,17 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/viewDummy">
 
-        <com.siju.acexplorer.filesystem.helper.FastScrollRecyclerView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerViewFileList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:fastScrollAutoHide="true"
-            app:fastScrollThumbColor="@color/accent_blue"
-            app:fastScrollTrackColor="@android:color/transparent" />
+            android:scrollbars="none"
+           />
 
 
     </android.support.v4.widget.SwipeRefreshLayout>
+
+
 
 
     <!--    <com.siju.acexplorer.filesystem.ui.FastScroller
@@ -55,6 +56,13 @@
     <!--android:layout_alignParentRight="true"-->
     <!--recyclerviewfastscroller:rfs_barColor="@android:color/transparent"-->
     <!--/>-->
+
+    <com.siju.acexplorer.filesystem.ui.vertical.VerticalRecyclerViewFastScroller
+        android:id="@+id/fast_scroller"
+        android:layout_width="24dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+       />
 
 
 </RelativeLayout>

@@ -17,7 +17,6 @@
     <string name="msg_free">무료</string>
     <string name="empty">빈</string>
     <plurals name="number_of_files">
-        <item quantity="one">%d 파일</item>
         <item quantity="other">%d 파일</item>
     </plurals>
     <string name="downloads">다운로드</string>

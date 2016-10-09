@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.model.HomeLibraryInfo;
+import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 
 import java.util.ArrayList;
 
@@ -31,6 +32,8 @@ class HomeLibraryAdapter extends RecyclerView.Adapter<HomeLibraryAdapter
 
     private ArrayList<FileInfo> mSelectedFileList;
     OnItemClickListener mItemClickListener;
+    private boolean mIsThemeDark;
+
 
 
 /*    public HomeLibraryAdapter(Fragment fragment, Context mContext, ArrayList<FileInfo>
@@ -51,6 +54,7 @@ class HomeLibraryAdapter extends RecyclerView.Adapter<HomeLibraryAdapter
 
         this.mContext = mContext;
         this.homeLibraryList = homeLibraryInfos;
+        mIsThemeDark = ThemeUtils.isDarkTheme(mContext);
 
     }
 
@@ -109,45 +113,88 @@ class HomeLibraryAdapter extends RecyclerView.Adapter<HomeLibraryAdapter
 
 
     private void changeColor(View itemView, int category) {
-        switch (category) {
-            case 1:
-                ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.audio_bg));
-                break;
-            case 2:
-                ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.video_bg));
-                break;
-            case 3:
-                ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.image_bg));
-                break;
-            case 4:
-                ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.docs_bg));
-                break;
-            case 5:
-                ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.downloads_bg));
-                break;
-            case 6:
-                ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.add_bg));
-                break;
-            case 7:
-                ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.compressed_bg));
-                break;
-            case 8:
-                ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.fav_bg));
-                break;
-            case 9:
-                ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.pdf_bg));
-                break;
-            case 10:
-                ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.apps_bg));
-                break;
-            case 11:
-                ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.large_files_bg));
-                break;
+        if (mIsThemeDark) {
+            switch (category) {
+                    case 1:
+                        ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.audio_bg_dark));
+                        break;
+                    case 2:
+                        ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.video_bg_dark));
+                        break;
+                    case 3:
+                        ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.image_bg_dark));
+                        break;
+                    case 4:
+                        ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.docs_bg_dark));
+                        break;
+                    case 5:
+                        ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.downloads_bg_dark));
+                        break;
+                    case 6:
+                        ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.add_bg_dark));
+                        break;
+                    case 7:
+                        ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.compressed_bg_dark));
+                        break;
+                    case 8:
+                        ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.fav_bg_dark));
+                        break;
+                    case 9:
+                        ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.pdf_bg_dark));
+                        break;
+                    case 10:
+                        ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.apps_bg_dark));
+                        break;
+                    case 11:
+                        ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.large_files_bg_dark));
+                        break;
 
-            default:
-                ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
+                    default:
+                        ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
+
+                }
+        }
+        else {
+            switch (category) {
+                case 1:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.audio_bg));
+                    break;
+                case 2:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.video_bg));
+                    break;
+                case 3:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.image_bg));
+                    break;
+                case 4:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.docs_bg));
+                    break;
+                case 5:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.downloads_bg));
+                    break;
+                case 6:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.add_bg));
+                    break;
+                case 7:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.compressed_bg));
+                    break;
+                case 8:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.fav_bg));
+                    break;
+                case 9:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.pdf_bg));
+                    break;
+                case 10:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.apps_bg));
+                    break;
+                case 11:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.large_files_bg));
+                    break;
+
+                default:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
 
 
+            }
         }
     }
 
