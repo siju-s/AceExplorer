@@ -53,7 +53,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private boolean mInParentZip;
     private int mSortMode;
     private MountUnmountReceiver mMountUnmountReceiver;
-
+private boolean mIsRingtonePicker;
 
     public FileListLoader(Fragment fragment, Context context, String path, int category) {
         super(context);
@@ -85,6 +85,19 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         mInParentZip = isParentZip;
         mSortMode = PreferenceManager.getDefaultSharedPreferences(context).getInt(
                 FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
+    }
+
+    public FileListLoader(Fragment fragment, Context context, String path, int category,boolean isRingtonePicker) {
+        super(context);
+        mPath = path;
+        mContext = getContext();
+        mCategory = category;
+        mShowHidden = PreferenceManager.getDefaultSharedPreferences(context).getBoolean
+                (FileConstants.PREFS_HIDDEN, false);
+        mSortMode = PreferenceManager.getDefaultSharedPreferences(context).getInt(
+                FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
+        mFragment = fragment;
+        mIsRingtonePicker = isRingtonePicker;
     }
 
 
@@ -253,12 +266,12 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 getRarContents("", file.getAbsolutePath());
             } else {
                 fileInfoList = RootHelper.getFilesList(mContext, mPath,
-                        true, mShowHidden);
+                        true, mShowHidden,mIsRingtonePicker);
                 fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
             }
         } else {
             fileInfoList = RootHelper.getFilesList(mContext, mPath,
-                    true, mShowHidden);
+                    true, mShowHidden,mIsRingtonePicker);
             fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
         }
         return fileInfoList;

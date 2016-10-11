@@ -64,7 +64,7 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/action_settings"
             android:permission="android.permission.WRITE_SECURE_SETTINGS"
-            android:theme="@style/Settings.LightTheme">
+            >
             <intent-filter>
                 <action android:name="android.intent.action.APPLICATION_PREFERENCES"/>
                 <category android:name="android.intent.category.DEFAULT"/>

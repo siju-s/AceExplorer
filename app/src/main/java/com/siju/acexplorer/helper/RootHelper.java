@@ -8,6 +8,7 @@ import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.BaseFile;
 import com.siju.acexplorer.filesystem.model.FileInfo;
+import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.stericson.RootTools.RootTools;
 import com.stericson.RootTools.execution.Command;
 
@@ -136,8 +137,7 @@ public class RootHelper {
     }
 
     public static ArrayList<FileInfo> getFilesList(Context context, String path, boolean root,
-                                                   boolean
-                                                           showHidden) {
+                                                   boolean showHidden,boolean isRingtonePicker) {
         ArrayList<FileInfo> fileInfoArrayList = new ArrayList<>();
         File file = new File(path);
         Logger.log("RootHelper", "Starting time FILES=");
@@ -152,6 +152,8 @@ public class RootHelper {
                     long size;
                     String extension = null;
                     int type = 0;
+
+
 
                     // Dont show hidden files by default
                     if (file1.isHidden() && !showHidden) {
@@ -179,7 +181,11 @@ public class RootHelper {
 //                        noOfFilesOrSize = Formatter.formatFileSize(context, size);
                         extension = filePath.substring(filePath.lastIndexOf(".") + 1);
                         type = checkMimeType(filePath, extension);
+                        if (isRingtonePicker && !FileUtils.isFileMusic(filePath)) {
+                            continue;
+                        }
                     }
+
                     long date = file1.lastModified();
 //                    String fileModifiedDate = convertDate(date);
 
@@ -401,7 +407,7 @@ public class RootHelper {
         File f = new File(path);
         String p = f.getParent();
         if (p != null && p.length() > 0) {
-            ArrayList<FileInfo> ls = getFilesList(context, p, true, true);
+            ArrayList<FileInfo> ls = getFilesList(context, p, true, true,false);
             for (FileInfo strings : ls) {
                 if (strings.getFilePath() != null && strings.getFilePath().equals(path)) {
                     return true;

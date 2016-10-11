@@ -7,11 +7,14 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.ui.calculation.VerticalScrollBoundsProvider;
 import com.siju.acexplorer.filesystem.ui.calculation.position.VerticalScreenPositionCalculator;
 import com.siju.acexplorer.filesystem.ui.calculation.progress.TouchableScrollProgressCalculator;
 import com.siju.acexplorer.filesystem.ui.calculation.progress.VerticalLinearLayoutManagerScrollProgressCalculator;
 import com.siju.acexplorer.filesystem.ui.calculation.progress.VerticalScrollProgressCalculator;
+
+//import android.support.v4.view.
 
 /**
  * Widget used to fast-scroll a vertical {@link RecyclerView}.
@@ -52,13 +55,38 @@ public class VerticalRecyclerViewFastScroller extends com.siju.acexplorer.filesy
         if (mScreenPositionCalculator == null) {
             return;
         }
+//        Logger.log("TAG","Handle pos="+mScreenPositionCalculator.getYPositionFromScrollProgress(scrollProgress));
         mHandle.setY(mScreenPositionCalculator.getYPositionFromScrollProgress(scrollProgress));
     }
 
     protected void onCreateScrollProgressCalculator() {
+
+        float minScrollY = mBar.getY();
+        float maxScrollY = mBar.getY() +  mBar.getHeight() -  ((float) (mHandle.getHeight()));
+        Logger.log("TAG","Min scroll="+minScrollY+ " Max scroll="+maxScrollY);
+
         VerticalScrollBoundsProvider boundsProvider =
-                new VerticalScrollBoundsProvider(mBar.getY(), mBar.getY() + mBar.getHeight() - mHandle.getHeight());
+                new VerticalScrollBoundsProvider(minScrollY, maxScrollY);
         mScrollProgressCalculator = new VerticalLinearLayoutManagerScrollProgressCalculator(boundsProvider);
+
+
         mScreenPositionCalculator = new VerticalScreenPositionCalculator(boundsProvider);
     }
+
+
+/*    public void newOnCreateScrollProgressCalculator() {
+
+        float minScrollY = mBar.getY();
+        float maxScrollY = mBar.getY() + mBar.getHeight() - 162 - ((float) (mHandle.getHeight()));
+        Logger.log("TAG","Min scroll="+minScrollY+ " Max scroll="+maxScrollY);
+
+        VerticalScrollBoundsProvider boundsProvider =
+                new VerticalScrollBoundsProvider(minScrollY, maxScrollY);
+        mScrollProgressCalculator = new VerticalLinearLayoutManagerScrollProgressCalculator(boundsProvider);
+        mScreenPositionCalculator = new VerticalScreenPositionCalculator(boundsProvider);
+    }*/
+
+
+
+
 }

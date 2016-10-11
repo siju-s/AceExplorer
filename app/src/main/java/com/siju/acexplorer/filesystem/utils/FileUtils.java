@@ -1,7 +1,6 @@
 package com.siju.acexplorer.filesystem.utils;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -35,7 +34,6 @@ import android.text.format.Formatter;
 import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,7 +47,6 @@ import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.FileListDualFragment;
 import com.siju.acexplorer.filesystem.FileListFragment;
 import com.siju.acexplorer.filesystem.model.FileInfo;
-import com.siju.acexplorer.filesystem.model.ZipProgressModel;
 import com.siju.acexplorer.filesystem.task.CopyService;
 import com.siju.acexplorer.helper.RootHelper;
 import com.siju.acexplorer.utils.DialogUtils;
@@ -71,7 +68,6 @@ import java.text.Collator;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -81,7 +77,6 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
@@ -254,6 +249,10 @@ public class FileUtils implements CopyService.Progress {
     private void stopCopyService() {
         mContext.unbindService(mServiceConnection);
         mContext.stopService(mServiceIntent);
+    }
+
+    public static boolean isFileMusic(String path) {
+        return path.endsWith(".mp3") || path.endsWith(".amr") || path.endsWith(".wav");
     }
 
 

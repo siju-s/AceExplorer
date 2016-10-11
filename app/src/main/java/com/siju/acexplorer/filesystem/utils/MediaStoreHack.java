@@ -232,6 +232,27 @@ public class MediaStoreHack {
         if (file.exists()) {
             return file.isDirectory();
         }
+/*
+        ContentValues values;
+        Uri uri;
+        Uri filesUri =  MediaStore.Files.getContentUri("external");
+        Uri imagesUri  = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+
+        // Create a media database entry for the directory. This step will not actually cause the directory to be created.
+        values = new ContentValues();
+        values.put(MediaStore.Files.FileColumns.DATA, file.getAbsolutePath());
+        final ContentResolver contentResolver = context.getContentResolver();
+        contentResolver.insert(filesUri, values);
+
+        // Create an entry for a temporary image file within the created directory.
+        // This step actually causes the creation of the directory.
+        values = new ContentValues();
+        values.put(MediaStore.Files.FileColumns.DATA, file.getAbsolutePath() + "/temp.jpg");
+        uri = contentResolver.insert(imagesUri, values);
+
+        // Delete the temporary entry.
+        contentResolver.delete(uri, null, null);*/
+
         final File tmpFile = new File(file, ".MediaWriteTemp");
         final int albumId = getTemporaryAlbumId(context);
         if (albumId == 0) {
@@ -247,8 +268,13 @@ public class MediaStoreHack {
         }
         try {
             final ParcelFileDescriptor fd = contentResolver.openFileDescriptor(albumUri, "r");
+            if (fd != null)
             fd.close();
-        } finally {
+        }
+        catch (SecurityException e) { //TODO find solution to remove this
+            e.printStackTrace();
+        }
+        finally {
             delete(context, tmpFile);
         }
         return file.exists();

@@ -344,7 +344,7 @@ public class CopyService extends Service {
 //                    targetFile.setFileDate(sourceFile.lastModified());
                     if (!hash.get(id)) return;
                     ArrayList<FileInfo> filePaths = RootHelper.getFilesList(mContext, sourceFile.getFilePath(), false,
-                            true);
+                            true,false);
                     for (FileInfo file : filePaths) {
 //                        HFile destFile = new HFile(targetFile.getMode(), targetFile.getPath(), file.getName(), file.isDirectory());
 
@@ -540,7 +540,7 @@ public class CopyService extends Service {
     private boolean checkFiles(FileInfo hFile1, FileInfo hFile2) {
         if (RootHelper.isDirectory(hFile1.getFilePath(), rootmode, 5)) {
             if (RootHelper.fileExists(mContext, hFile2.getFilePath())) return false;
-            ArrayList<FileInfo> baseFiles = RootHelper.getFilesList(mContext, hFile1.getFilePath(), true, true);
+            ArrayList<FileInfo> baseFiles = RootHelper.getFilesList(mContext, hFile1.getFilePath(), true, true,false);
             if (baseFiles.size() > 0) {
                 boolean b = true;
                 for (FileInfo baseFile : baseFiles) {
@@ -554,7 +554,7 @@ public class CopyService extends Service {
             return RootHelper.fileExists(mContext, hFile2.getFilePath());
         } else {
             String parent = new File(hFile1.getFilePath()).getParent();
-            ArrayList<FileInfo> baseFiles = RootHelper.getFilesList(mContext, parent, true, true);
+            ArrayList<FileInfo> baseFiles = RootHelper.getFilesList(mContext, parent, true, true,false);
             int i = -1;
             int index = -1;
             for (FileInfo b : baseFiles) {
@@ -564,7 +564,7 @@ public class CopyService extends Service {
                     break;
                 }
             }
-            ArrayList<FileInfo> baseFiles1 = RootHelper.getFilesList(mContext, parent, true, true);
+            ArrayList<FileInfo> baseFiles1 = RootHelper.getFilesList(mContext, parent, true, true,false);
             int i1 = -1;
             int index1 = -1;
             for (FileInfo b : baseFiles1) {

@@ -1,6 +1,7 @@
 package com.siju.acexplorer.filesystem.ui;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.RingtoneManager;
@@ -35,15 +36,16 @@ import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.FileListAdapter;
 import com.siju.acexplorer.filesystem.FileListLoader;
 import com.siju.acexplorer.filesystem.model.FileInfo;
+import com.siju.acexplorer.filesystem.ui.vertical.VerticalRecyclerViewFastScroller;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.utils.MediaStoreHack;
 import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 import com.siju.acexplorer.utils.DialogUtils;
 import com.siju.acexplorer.utils.PermissionUtils;
-import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by SIJU on 04-07-2016.
@@ -52,7 +54,7 @@ import java.util.ArrayList;
 public class DialogBrowseFragment extends DialogFragment implements LoaderManager.LoaderCallbacks<ArrayList<FileInfo>> {
 
     private final String TAG = this.getClass().getSimpleName();
-    private FastScrollRecyclerView recyclerViewFileList;
+    private RecyclerView recyclerViewFileList;
     private View root;
     private final int LOADER_ID = 1000;
     private FileListAdapter fileListAdapter;
@@ -70,11 +72,33 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
     private static final int MY_PERMISSIONS_REQUEST = 1;
     private static final int SETTINGS_REQUEST = 200;
     private MaterialDialog materialDialog;
-//    private VerticalRecyclerViewFastScroller mFastScroller;
+    //    private VerticalRecyclerViewFastScroller mFastScroller;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private VerticalRecyclerViewFastScroller mFastScroller;
+    private boolean mIsBackPressed;
+    private LinearLayoutManager llm;
+    private HashMap<String, Bundle> scrollPosition = new HashMap<>();
+    private TextView mTextEmpty;
 
 
-
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        return new Dialog(getActivity(), getTheme()) {
+            @Override
+            public void onBackPressed() {
+                if (!checkIfRootDir())
+                    reloadData();
+                else {
+                    getActivity().setResult(AppCompatActivity.RESULT_CANCELED, null);
+                    if (mIsRingtonePicker)
+                        getActivity().finish();
+                    else
+                        getDialog().dismiss();
+                }
+            }
+        };
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -100,6 +124,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
                 (FileConstants.PREFS_HIDDEN, false);
         mSortMode = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt(
                 FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
+        recyclerViewFileList.setItemAnimator(new DefaultItemAnimator());
         fileListAdapter = new FileListAdapter(getContext(), fileInfoList, 0, 0);
         recyclerViewFileList.setAdapter(fileListAdapter);
 
@@ -107,8 +132,10 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
         fileListAdapter.setOnItemClickListener(new FileListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
+                mFastScroller.hide();
                 File file = new File(fileInfoList.get(position).getFilePath());
                 if (file.isDirectory()) {
+                    computeScroll();
                     mCurrentPath = file.getAbsolutePath();
                     mTextCurrentPath.setText(mCurrentPath);
                     refreshList(mCurrentPath);
@@ -142,7 +169,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
         mButtonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Logger.log(TAG,"cancel");
+                Logger.log(TAG, "cancel");
 //                Intent intent = new Intent();
                 getActivity().setResult(AppCompatActivity.RESULT_CANCELED, null);
                 if (mIsRingtonePicker)
@@ -162,6 +189,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
             @Override
             public void onClick(View view) {
                 if (!mCurrentPath.equalsIgnoreCase(FileUtils.getInternalStorage().getAbsolutePath())) {
+                    mIsBackPressed = true;
                     mCurrentPath = new File(mCurrentPath).getParent();
                     mTextCurrentPath.setText(mCurrentPath);
                     refreshList(mCurrentPath);
@@ -177,7 +205,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
         getDialog().setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
-                Logger.log(TAG,"Cancel");
+                Logger.log(TAG, "Cancel");
                 getActivity().setResult(AppCompatActivity.RESULT_CANCELED, null);
                 if (mIsRingtonePicker)
                     getActivity().finish();
@@ -189,7 +217,9 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
 
     }
 
-
+    public boolean checkIfRootDir() {
+        return mCurrentPath.equals(FileUtils.getInternalStorage().getAbsolutePath());
+    }
 
 
 
@@ -206,7 +236,8 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
     }*/
 
     private void loadData() {
-        getLoaderManager().initLoader(LOADER_ID, null, this);
+        Bundle args = new Bundle();
+        getLoaderManager().initLoader(LOADER_ID, args, this);
     }
 
     /**
@@ -310,16 +341,16 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
     }
 
     private void initializeViews() {
-        recyclerViewFileList = (FastScrollRecyclerView) root.findViewById(R.id.recyclerViewFileList);
-    /*    mFastScroller = (VerticalRecyclerViewFastScroller) root.findViewById(R.id.fast_scroller);
+        recyclerViewFileList = (RecyclerView) root.findViewById(R.id.recyclerViewFileList);
+        mFastScroller = (VerticalRecyclerViewFastScroller) root.findViewById(R.id.fast_scroller);
         mFastScroller.setRecyclerView(recyclerViewFileList);
-        recyclerViewFileList.addOnScrollListener(mFastScroller.getOnScrollListener());*/
+        recyclerViewFileList.addOnScrollListener(mFastScroller.getOnScrollListener());
         recyclerViewFileList.setHasFixedSize(true);
-        RecyclerView.LayoutManager llm = new LinearLayoutManager(getActivity());
+        llm = new LinearLayoutManager(getActivity());
         recyclerViewFileList.setLayoutManager(llm);
         mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipeRefreshLayout);
         mSwipeRefreshLayout.setEnabled(false);
-
+        mTextEmpty = (TextView) root.findViewById(R.id.textEmpty);
         mImageButtonBack = (ImageButton) root.findViewById(R.id.imageButtonBack);
         mTextCurrentPath = (TextView) root.findViewById(R.id.textPath);
         mButtonOk = (Button) root.findViewById(R.id.buttonOk);
@@ -338,16 +369,37 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
     }*/
 
     private void refreshList(String path) {
-
         Bundle args = new Bundle();
         args.putString(FileConstants.KEY_PATH, path);
         getLoaderManager().restartLoader(LOADER_ID, args, this);
+    }
+
+    public void reloadData() {
+        mFastScroller.hide();
+        mIsBackPressed = true;
+        mCurrentPath = new File(mCurrentPath).getParent();
+        mTextCurrentPath.setText(mCurrentPath);
+        refreshList(mCurrentPath);
+    }
+
+    public void computeScroll() {
+        View vi = recyclerViewFileList.getChildAt(0);
+        int top = (vi == null) ? 0 : vi.getTop();
+        int index = llm.findFirstVisibleItemPosition();
+
+        Bundle b = new Bundle();
+        b.putInt("index", index);
+        b.putInt("top", top);
+        scrollPosition.put(mFilePath, b);
     }
 
 
     @Override
     public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
         fileInfoList = new ArrayList<>();
+        if (fileListAdapter != null) {
+            fileListAdapter.clearList();
+        }
         String path;
         if (args != null) {
             path = args.getString(FileConstants.KEY_PATH, FileUtils.getInternalStorage()
@@ -355,25 +407,44 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
         } else {
             path = FileUtils.getInternalStorage().getAbsolutePath();
         }
-        return new FileListLoader(this, getContext(), path, FileConstants.CATEGORY.FILES.getValue());
+        return new FileListLoader(this, getContext(), path, FileConstants.CATEGORY.FILES.getValue(), mIsRingtonePicker);
     }
 
     @Override
     public void onLoadFinished(Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
-//        Log.d("TAG", "on onLoadFinished--" + data.size());
         if (data != null) {
             Log.d("TAG", "on onLoadFinished--" + data.size());
+
+//            mStopAnim = true;
+            fileInfoList = data;
+//            fileListAdapter.setCategory(mCategory);
+            fileListAdapter.setStopAnimation(true);
+            fileListAdapter.updateAdapter(fileInfoList);
+//            mFastScroller.setRecyclerView(recyclerViewFileList);
+            recyclerViewFileList.setAdapter(fileListAdapter);
+            recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
+                    .VERTICAL, mIsDarkTheme));
+/*            fileListAdapter.setCategory(mCategory);
+            fileListAdapter.updateAdapter(fileInfoList);
+            recyclerViewFileList.setAdapter(fileListAdapter);
+            addItemDecoration();*/
             if (!data.isEmpty()) {
-                fileInfoList = data;
-                fileListAdapter.setStopAnimation(true);
-                fileListAdapter.updateAdapter(fileInfoList);
-                recyclerViewFileList.setItemAnimator(new DefaultItemAnimator());
-                recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
-                        .VERTICAL, mIsDarkTheme));
-//                ((BaseActivity) getActivity()).setFileListAdapter(fileListAdapter);
+                if (mIsBackPressed) {
+                    Log.d("TEST", "on onLoadFinished scrollpos--" + scrollPosition.entrySet());
+
+                    if (scrollPosition.containsKey(mFilePath)) {
+                        Bundle b = scrollPosition.get(mFilePath);
+                        llm.scrollToPositionWithOffset(b.getInt("index"), b.getInt("top"));
+                    }
+                    mIsBackPressed = false;
+                }
+                recyclerViewFileList.stopScroll();
+                mTextEmpty.setVisibility(View.GONE);
+//                mFastScroller.setVisibility(View.VISIBLE);
             } else {
-                TextView textEmpty = (TextView) getActivity().findViewById(R.id.textEmpty);
-                textEmpty.setVisibility(View.VISIBLE);
+                mTextEmpty.setText(getString(R.string.no_music));
+                mTextEmpty.setVisibility(View.VISIBLE);
+//                mFastScroller.setVisibility(View.GONE);
             }
         }
 

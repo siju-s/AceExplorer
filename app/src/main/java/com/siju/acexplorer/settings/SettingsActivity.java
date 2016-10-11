@@ -63,6 +63,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 setTheme(R.style.Settings_BlackTheme);
                 mIsTheme = FileConstants.THEME_DARK;
             }
+        else {
+                setTheme(R.style.Settings_LightTheme);
+            }
 
 
     }

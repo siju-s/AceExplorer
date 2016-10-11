@@ -36,6 +36,8 @@ public class FileConstants {
 
 
     public static final String KEY_PATH = "PATH";
+    public static final String KEY_RINGTONE_PICKER = "ringtone_picker";
+
     public static final String KEY_HOME = "HOME";
     public static final String KEY_PATH_OTHER = "OTHER_PATH";
     public static final String KEY_FOCUS_DUAL = "DUAL_FOCUS";

@@ -208,5 +208,6 @@
     <string name="slide_4_title">Themes</string>
     <string name="slide_4_desc">Dark or Light way! Your choice.</string>
     <string name="blank" translatable="false">%d</string>
+    <string name="no_music"> No Music files</string>
 
 </resources>

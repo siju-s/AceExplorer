@@ -4,25 +4,54 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:minHeight="?android:attr/listPreferredItemHeight"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+android:id/title"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="@dimen/margin_16"
-        android:layout_marginStart="@dimen/margin_16"
-        android:gravity="center_vertical"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-
-        />
-
-    <TextView
-        android:id="@android:id/summary"
+    <!--<RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:maxLines="2"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:layout_height="wrap_content">
 
-</LinearLayout>
+        <TextView
+            android:id="@+android:id/title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:fontFamily="sans-serif"
+            android:gravity="center_vertical"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@android:id/summary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@android:id/title"
+            android:layout_below="@android:id/title"
+            android:fontFamily="sans-serif"
+            android:gravity="center_vertical"
+            android:maxLines="2"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    </RelativeLayout>-->
+<!--</LinearLayout>-->
+
+        <TextView
+            android:id="@android:id/title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/margin_16"
+            android:layout_marginStart="@dimen/margin_16"
+            android:gravity="center_vertical"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+
+            />
+
+        <TextView
+            android:id="@android:id/summary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_16"
+            android:layout_marginStart="@dimen/margin_16"
+            android:gravity="center_vertical"
+            android:maxLines="2"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    </LinearLayout>

@@ -147,18 +147,30 @@
         <!--<item name="android:backgroundDimEnabled">false</item>-->
     </style>
 
-    <style name="Settings.BlackTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Settings.BlackTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/dark_colorPrimary</item>
         <item name="colorPrimaryDark">@color/dark_colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:background">@color/dark_colorPrimary</item>
-        <item name="android:textColor">@color/dark_text</item>
+        <!--<item name="android:background">@color/dark_colorPrimary</item>-->
+        <!--<item name="android:textColor">@color/dark_text</item>-->
         <item name="android:textColorPrimary">@color/dark_text</item>
         <item name="android:textColorSecondary">@color/dark_text</item>
         <item name="android:listDivider">@null</item>
-        <item name="android:textColorAlertDialogListItem">@color/white</item>
+        <!--<item name="android:textColorAlertDialogListItem">@color/white</item>-->
+        <!--<item name="android:alertDialogTheme">@style/Theme.MyDialog</item>-->
 
     </style>
+
+<!--    <style name="Theme.MyDialog" parent="@style/Theme.AppCompat.Light.Dialog">
+        <item name="colorPrimary">@color/dark_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/dark_colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColor">@color/dark_text</item>
+        <item name="android:textColorPrimary">@color/dark_text</item>
+        <item name="android:textColorSecondary">@color/dark_text</item>
+        <item name="android:textColorAlertDialogListItem">@color/white</item>
+
+    </style>-->
 
     <style name="Settings.LightTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>

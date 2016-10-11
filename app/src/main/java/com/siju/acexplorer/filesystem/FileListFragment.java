@@ -107,16 +107,11 @@ public class FileListFragment extends Fragment implements LoaderManager
         Toolbar.OnMenuItemClickListener {
 
     private final String TAG = this.getClass().getSimpleName();
-    //    private ListView fileList;
     private RecyclerView recyclerViewFileList;
-//    private FastScrollRecyclerView recyclerViewFileList;
-//    private FastScroller mFastScroller;
-//    private VerticalRecyclerViewFastScroller mFastScroller;
     private VerticalRecyclerViewFastScroller mFastScroller;
 
     private View root;
     private final int LOADER_ID = 1000;
-    private final int LOADER_ID_DUAL = 2000;
 
     private FileListAdapter fileListAdapter;
     public ArrayList<FileInfo> fileInfoList;
@@ -321,7 +316,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             recyclerViewFileList.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
                 public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                Logger.log(TAG, "onScrollStateChanged" + mStopAnim);
+                Logger.log(TAG, "onScrollStateChanged" + newState);
 
                     if (newState == RecyclerView.SCROLL_STATE_DRAGGING ||
                             newState == RecyclerView.SCROLL_STATE_SETTLING) {
@@ -414,6 +409,21 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
+    public boolean isRecyclerScrollable() {
+//        LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerViewFileList.getLayoutManager();
+        if (llm == null || fileListAdapter == null) return false;
+
+         if (mViewMode == FileConstants.KEY_LISTVIEW) {
+             Logger.log(TAG,"visible pos="+((LinearLayoutManager)recyclerViewFileList.getLayoutManager()).findLastCompletelyVisibleItemPosition() + " count="+
+                     (fileListAdapter.getItemCount() - 1));
+             return ((CustomLayoutManager)llm).findLastCompletelyVisibleItemPosition() < fileListAdapter.getItemCount() - 1;
+         }
+        else {
+             return ((CustomGridLayoutManager)llm).findLastCompletelyVisibleItemPosition() < fileListAdapter.getItemCount() - 1;
+         }
+    }
+
     private void addItemDecoration() {
 
         if (mViewMode == FileConstants.KEY_LISTVIEW) {
@@ -437,6 +447,8 @@ public class FileListFragment extends Fragment implements LoaderManager
     private void initializeViews() {
         recyclerViewFileList = (RecyclerView) root.findViewById(R.id.recyclerViewFileList);
 
+
+
 //        mFastScroller = (FastScroller) root.findViewById(R.id.fastscroll);
 //        mFastScroller.setPressedHandleColor(ContextCompat.getColor(getActivity(),R.color.accent_blue));
         mFastScroller = (VerticalRecyclerViewFastScroller) root.findViewById(R.id.fast_scroller);
@@ -450,10 +462,6 @@ public class FileListFragment extends Fragment implements LoaderManager
         sharedPreferenceWrapper = new SharedPreferenceWrapper();
         recyclerViewFileList.setOnDragListener(new myDragEventListener());
         viewDummy = root.findViewById(R.id.viewDummy);
-/*        View coordinatorLayout = (View)getView().getParent().getParent();
-        CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams)coordinatorLayout.getLayoutParams() ;
-        ListScrollBehavior behavior = (ListScrollBehavior) lp.getBehavior();
-        behavior.setLayout(getView());*/
         mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipeRefreshLayout);
         int colorResIds[] = {R.color.colorPrimaryDark, R.color.colorPrimary, R.color.colorPrimaryDark};
         mSwipeRefreshLayout.setColorSchemeResources(colorResIds);
@@ -474,6 +482,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         fileListAdapter.setOnItemClickListener(new FileListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
+                mFastScroller.hide();
                 if (getActionMode() != null) {
                     if (mIsDualActionModeActive) {
                         if (checkIfDualFragment()) {
@@ -832,6 +841,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     public void reloadList(boolean isBackPressed, String path) {
 //        if (!mIsZip) {
+        mFastScroller.hide();
         mFilePath = path;
         mIsBackPressed = isBackPressed;
 //        }
@@ -941,6 +951,8 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     }
 
+
+
     @Override
     public void onLoadFinished(Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
 //        computeScroll();
@@ -961,21 +973,14 @@ public class FileListFragment extends Fragment implements LoaderManager
             fileInfoList = data;
             fileListAdapter.setCategory(mCategory);
             fileListAdapter.updateAdapter(fileInfoList);
-            recyclerViewFileList.setAdapter(fileListAdapter);
 
-//            mFastScroller.setRecyclerView(recyclerViewFileList,1);
+            recyclerViewFileList.setAdapter(fileListAdapter);
+//            mFastScroller.setRecyclerView(recyclerViewFileList);
+
+//            recyclerViewFileList.setLayoutManager(llm);
             addItemDecoration();
 
-   /*         mFastScroller.setRecyclerView(recyclerViewFileList, mViewMode == FileConstants.KEY_LISTVIEW ? 1 : mGridColumns);
-            mFastScroller.registerOnTouchListener(new FastScroller.onTouchListener() {
-                @Override
-                public void onTouch() {
-                    if (mStopAnim && fileListAdapter != null) {
-                        stopAnimation();
-                        mStopAnim = false;
-                    }
-                }
-            });*/
+
 
 
             if (!data.isEmpty()) {
@@ -1010,8 +1015,14 @@ public class FileListFragment extends Fragment implements LoaderManager
                 if (mTextEmpty.getVisibility() == View.VISIBLE) {
                     mTextEmpty.setVisibility(View.GONE);
                 }
+//                Logger.log(TAG,"Is scrollable="+isRecyclerScrollable());
+//                mFastScroller.setVisibility(View.VISIBLE);
+
+
             } else {
                 mTextEmpty.setVisibility(View.VISIBLE);
+//                mFastScroller.setVisibility(View.GONE);
+
             }
         }
 

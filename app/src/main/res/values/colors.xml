@@ -101,12 +101,12 @@
     <color name="large_files_bg">#cd0067</color>
 
     <!-- DARK THEME -->
-    <color name="audio_bg_dark">#808000</color>
-    <color name="video_bg_dark">#238E68</color>
+    <color name="audio_bg_dark">#db7093</color>
+    <color name="video_bg_dark">#ff9966</color>
     <color name="image_bg_dark">#B272A6</color>
     <color name="docs_bg_dark">#1e91d0</color>
     <color name="downloads_bg_dark">#3266cc</color>
-    <color name="add_bg_dark">#A78D84</color>
+    <color name="add_bg_dark">#ff9933</color>
     <color name="compressed_bg_dark">#00a3b6</color>
     <color name="fav_bg_dark">#a70048</color>
     <color name="pdf_bg_dark">#bf3c4e</color>

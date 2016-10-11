@@ -94,7 +94,7 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
         if (f.getUsableSpace() >= totalBytes) {
 
             ArrayList<FileInfo> listFiles = RootHelper.getFilesList(mActivity, mCurrentDir,
-                    rootmode, true);
+                    rootmode, true,false);
 
             for (FileInfo fileInfo : listFiles) {
                 for (FileInfo copiedFiles : mFiles) {

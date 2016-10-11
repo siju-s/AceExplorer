@@ -16,6 +16,10 @@ public abstract class VerticalScrollProgressCalculator implements TouchableScrol
         mScrollBoundsProvider = scrollBoundsProvider;
     }
 
+//    public abstract boolean shouldShowScroll();
+
+
+
     @Override
     public float calculateScrollProgress(MotionEvent event) {
         float y = event.getY();

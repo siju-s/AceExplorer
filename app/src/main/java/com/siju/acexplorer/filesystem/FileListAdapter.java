@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -33,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileListViewHolder> {
+public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
     private ArrayList<FileInfo> fileInfoArrayList = new ArrayList<>();
@@ -54,6 +55,8 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     private Animation localAnimation;
     private boolean mIsAnimNeeded = true;
     private boolean mIsThemeDark;
+    private static final int TYPE_ITEM = 1;
+    private static final int TYPE_FOOTER = 2;
 
 
     FileListAdapter(Fragment fragment, Context mContext, ArrayList<FileInfo>
@@ -97,7 +100,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     }
 
 
-    void clearList() {
+    public void clearList() {
         if (fileInfoArrayList != null && !fileInfoArrayList.isEmpty()) {
 //            fileInfoArrayList.clear();
             fileInfoArrayListCopy.clear();
@@ -126,21 +129,43 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
     }
 
 
-    @Override
+  /*  @Override
     public void onViewDetachedFromWindow(FileListViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
         holder.container.clearAnimation();
+    }*/
+
+    @Override
+    public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        if (holder instanceof FileListViewHolder) {
+            FileListViewHolder fileListViewHolder = (FileListViewHolder) holder;
+            fileListViewHolder.container.clearAnimation();
+        }
     }
 
     @Override
-    public boolean onFailedToRecycleView(FileListViewHolder holder) {
-        holder.container.clearAnimation();
+    public boolean onFailedToRecycleView(RecyclerView.ViewHolder holder) {
+        if (holder instanceof FileListViewHolder) {
+            FileListViewHolder fileListViewHolder = (FileListViewHolder) holder;
+            fileListViewHolder.container.clearAnimation();
+        }
         return super.onFailedToRecycleView(holder);
     }
 
+/*    @Override
+    public boolean onFailedToRecycleView(FileListViewHolder holder) {
+        holder.container.clearAnimation();
+        return super.onFailedToRecycleView(holder);
+    }*/
+
     @Override
-    public FileListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
+        if (viewType == TYPE_FOOTER) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_footer, parent, false);
+            return new FooterViewHolder(v);
+        }
         if (mViewMode == FileConstants.KEY_LISTVIEW) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_list_item,
                     parent, false);
@@ -148,39 +173,59 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_grid_item,
                     parent, false);
         }
+
         return new FileListViewHolder(view);
+
+
     }
 
     @Override
-    public void onBindViewHolder(FileListViewHolder fileListViewHolder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-        if (!mStopAnimation && !mAnimatedPos.get(position)) {
-            animate(fileListViewHolder);
-            mAnimatedPos.put(position, true);
-        }
+        if (holder instanceof FileListViewHolder) {
+            FileListViewHolder fileListViewHolder = (FileListViewHolder) holder;
 
-        int color;
-//        Log.d("TAG","OnBindviewholder mIsThemeDark="+mIsThemeDark);
-        if (mIsThemeDark) {
-            color = ContextCompat.getColor(mContext, R.color.dark_actionModeItemSelected);
-
-        } else {
-            color = ContextCompat.getColor(mContext, R.color.actionModeItemSelected);
-        }
-
-        fileListViewHolder.itemView.setBackgroundColor(mSelectedItemsIds.get(position) ? color :
-                Color.TRANSPARENT);
-
-        if (!mSelectedItemsIds.get(position)) {
-            if (position == draggedPos) {
-                fileListViewHolder.itemView.setBackgroundColor(color);
-            } else {
-                fileListViewHolder.itemView.setBackgroundColor(Color.TRANSPARENT);
+            if (!mStopAnimation && !mAnimatedPos.get(position)) {
+                animate(fileListViewHolder);
+                mAnimatedPos.put(position, true);
             }
+
+            int color;
+//        Log.d("TAG","OnBindviewholder mIsThemeDark="+mIsThemeDark);
+            if (mIsThemeDark) {
+                color = ContextCompat.getColor(mContext, R.color.dark_actionModeItemSelected);
+
+            } else {
+                color = ContextCompat.getColor(mContext, R.color.actionModeItemSelected);
+            }
+
+            fileListViewHolder.itemView.setBackgroundColor(mSelectedItemsIds.get(position) ? color :
+                    Color.TRANSPARENT);
+
+            if (!mSelectedItemsIds.get(position)) {
+                if (position == draggedPos) {
+                    fileListViewHolder.itemView.setBackgroundColor(color);
+                } else {
+                    fileListViewHolder.itemView.setBackgroundColor(Color.TRANSPARENT);
+                }
+            }
+
+            setViewByCategory(fileListViewHolder, position);
         }
 
-        setViewByCategory(fileListViewHolder, position);
+    }
 
+    @Override
+    public int getItemViewType(int position) {
+        Logger.log("TAG","Pos = " + position + " isFoooter ="+isPositionFooter(position));
+        if (isPositionFooter(position)) {
+            return TYPE_FOOTER;
+        }
+        return TYPE_ITEM;
+    }
+
+    private boolean isPositionFooter(int position) {
+        return position == fileInfoArrayList.size() ;
     }
 
 
@@ -225,7 +270,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
         if (fileInfoArrayList == null) {
             return 0;
         } else {
-            return fileInfoArrayList.size();
+            return fileInfoArrayList.size() + 1;
         }
     }
 
@@ -417,7 +462,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 // .getBucketId());
 //        Uri audioUri = Uri.fromFile(new File(path));
 
-        fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_music);
+        fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_music_default);
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         String[] projection = new String[]{MediaStore.Audio.Media.ALBUM_ID};
         String selection = MediaStore.Audio.Media.DATA + " = ?";
@@ -437,7 +482,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
 //            Logger.log("Adapter","displayAudioAlbumArt="+albumId);
             Uri newUri = ContentUris.withAppendedId(mAudioUri, albumId);
             Glide.with(mContext).loadFromMediaStore(newUri).centerCrop()
-                    .placeholder(R.drawable.ic_music)
+                    .placeholder(R.drawable.ic_music_default)
 //                    .crossFade(2)
                     .into(fileListViewHolder.imageIcon);
 
@@ -618,6 +663,15 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileLi
                 mOnItemLongClickListener.onItemLongClick(v, getAdapterPosition());
             }
             return true;
+        }
+    }
+
+    class FooterViewHolder extends RecyclerView.ViewHolder {
+        LinearLayout linearLayoutFooter;
+
+        public FooterViewHolder(View itemView) {
+            super(itemView);
+            this.linearLayoutFooter = (LinearLayout) itemView.findViewById(R.id.linearLayoutFooter);
         }
     }
 

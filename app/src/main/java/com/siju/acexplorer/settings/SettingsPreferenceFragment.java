@@ -6,7 +6,6 @@ package com.siju.acexplorer.settings;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -328,14 +327,6 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         editor.apply();*/
     }
 
-    private boolean MyStartActivity(Intent aIntent) {
-        try {
-            startActivity(aIntent);
-            return true;
-        } catch (ActivityNotFoundException e) {
-            return false;
-        }
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -370,11 +361,5 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
                     }
                 }
             };
-
-    /**
-     * This fragment shows general preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
-
 
 }

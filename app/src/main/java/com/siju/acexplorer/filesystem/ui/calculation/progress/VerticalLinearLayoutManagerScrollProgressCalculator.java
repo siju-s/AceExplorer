@@ -3,7 +3,6 @@ package com.siju.acexplorer.filesystem.ui.calculation.progress;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.View;
 
 import com.siju.acexplorer.filesystem.ui.calculation.VerticalScrollBoundsProvider;
@@ -23,14 +22,18 @@ public class VerticalLinearLayoutManagerScrollProgressCalculator extends Vertica
      */
     @Override
     public float calculateScrollProgress(RecyclerView recyclerView) {
+
+       /* int computeVerticalScrollExtent = recyclerView.computeVerticalScrollExtent();
+        return ((float) recyclerView.computeVerticalScrollOffset()) / ((float) (recyclerView.computeVerticalScrollRange() - computeVerticalScrollExtent));*/
         LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
         int lastFullyVisiblePosition = layoutManager.findLastCompletelyVisibleItemPosition();
+
 
         View visibleChild = recyclerView.getChildAt(0);
         if (visibleChild == null) {
             return 0;
         }
-        ViewHolder holder = recyclerView.getChildViewHolder(visibleChild);
+        RecyclerView.ViewHolder holder = recyclerView.getChildViewHolder(visibleChild);
         int itemHeight = holder.itemView.getHeight();
         int recyclerHeight = recyclerView.getHeight();
         int itemsInWindow = recyclerHeight / itemHeight;
@@ -41,6 +44,7 @@ public class VerticalLinearLayoutManagerScrollProgressCalculator extends Vertica
 
         int currentSection = lastFullyVisiblePosition - indexOfLastFullyVisibleItemInFirstSection;
 
-        return (float) currentSection / numScrollableSectionsInList;
+         return (float) currentSection / numScrollableSectionsInList;
     }
+
 }

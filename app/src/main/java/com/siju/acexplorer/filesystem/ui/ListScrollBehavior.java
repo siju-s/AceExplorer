@@ -52,24 +52,8 @@ public class ListScrollBehavior extends AppBarLayout.ScrollingViewBehavior {
         return totalScrollRange + dependency.getTop();
     }
 
-/*    public ListScrollBehavior() {
-    }
-
-    public ListScrollBehavior(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    @Override
-    public boolean onDependentViewChanged(CoordinatorLayout parent, View child, View dependency) {
-        boolean result = super.onDependentViewChanged(parent, child, dependency);
-        if (layout != null) {
-            layout.setPadding(layout.getPaddingLeft(), layout.getPaddingTop(), layout
-                    .getPaddingRight(), layout.getTop());
-        }
-        return result;
-    }
 
     public void setLayout(View layout) {
         this.layout = layout;
-    }*/
+    }
 }

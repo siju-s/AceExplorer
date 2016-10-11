@@ -7,8 +7,11 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.OnScrollListener;
 import android.util.AttributeSet;
@@ -18,21 +21,37 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.ui.calculation.progress.ScrollProgressCalculator;
 import com.siju.acexplorer.filesystem.ui.calculation.progress.TouchableScrollProgressCalculator;
+
+import java.lang.ref.WeakReference;
 
 /**
  * Defines a basic widget that will allow for fast scrolling a RecyclerView using the basic paradigm of
  * a handle and a bar.
- *
+ * <p>
  * TODO: More specifics and better support for effectively extending this base class
  */
 public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements RecyclerViewScroller {
 
+
+    /**
+     * Animation
+     **/
+    private static final int DURATION_FADE_IN = 150;
+    private static final int DURATION_FADE_OUT = 300;
+    private static final int FADE_TIMEOUT = 1500;
+    private HideShowScroller mHandler;
+
     private static final int[] STYLEABLE = R.styleable.AbsRecyclerViewFastScroller;
-    /** The long bar along which a handle travels */
+    /**
+     * The long bar along which a handle travels
+     */
     protected final View mBar;
-    /** The handle that signifies the user's progress in the list */
+    /**
+     * The handle that signifies the user's progress in the list
+     */
     protected final View mHandle;
 
     /* TODO:
@@ -40,10 +59,14 @@ public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements
      *      This could allow for some type checking on the section indicator wrt the adapter of the RecyclerView
     */
     private RecyclerView mRecyclerView;
+
+    protected FastScrollListener mFastScrollListener;
 //    private SectionIndicator mSectionIndicator;
 
-    /** If I had my druthers, AbsRecyclerViewFastScroller would implement this as an interface, but Android has made
-     * {@link OnScrollListener} an abstract class instead of an interface. Hmmm */
+    /**
+     * If I had my druthers, AbsRecyclerViewFastScroller would implement this as an interface, but Android has made
+     * {@link OnScrollListener} an abstract class instead of an interface. Hmmm
+     */
     protected OnScrollListener mOnScrollListener;
 
     public AbsRecyclerViewFastScroller(Context context) {
@@ -65,6 +88,9 @@ public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             inflater.inflate(layoutResource, this, true);
 
+            // Default to hiding the view so it can be shown on scroll and hidden again
+            setAlpha(0);
+
             mBar = findViewById(R.id.scroll_bar);
             mHandle = findViewById(R.id.scroll_handle);
 
@@ -78,9 +104,10 @@ public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements
         } finally {
             attributes.recycle();
         }
-
+        mHandler = new HideShowScroller(this);
         setOnTouchListener(new FastScrollerTouchListener(this));
     }
+
 
     private void applyCustomAttributesToView(View view, Drawable drawable, int color) {
         if (drawable != null) {
@@ -90,8 +117,31 @@ public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements
         }
     }
 
+    public interface FastScrollListener {
+        void notifyScrollState(boolean scrolling);
+    }
+
+    public void setFastScrollListener(FastScrollListener fastScrollListener) {
+        mFastScrollListener = fastScrollListener;
+    }
+
+    public void notifyScrollState(boolean scrolling) {
+        if (mFastScrollListener != null) {
+            mFastScrollListener.notifyScrollState(scrolling);
+        }
+        if (scrolling) {
+            // While scrolling, show forever.
+            show(0);
+        } else {
+            // Once scrolling stops, hide after a short time.
+            show(FADE_TIMEOUT);
+        }
+    }
+
+
     /**
      * Provides the ability to programmatically set the color of the fast scroller's handle
+     *
      * @param color for the handle to be
      */
     public void setHandleColor(int color) {
@@ -100,6 +150,7 @@ public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements
 
     /**
      * Provides the ability to programmatically set the background drawable of the fast scroller's handle
+     *
      * @param drawable for the handle's background
      */
     public void setHandleBackground(Drawable drawable) {
@@ -108,6 +159,7 @@ public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements
 
     /**
      * Provides the ability to programmatically set the color of the fast scroller's bar
+     *
      * @param color for the bar to be
      */
     public void setBarColor(int color) {
@@ -116,6 +168,7 @@ public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements
 
     /**
      * Provides the ability to programmatically set the background drawable of the fast scroller's bar
+     *
      * @param drawable for the bar's background
      */
     public void setBarBackground(Drawable drawable) {
@@ -146,10 +199,15 @@ public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements
         return mSectionIndicator;
     }*/
 
+    private RecyclerView.LayoutManager mLayoutManager;
+
     @Override
     public void scrollTo(float scrollProgress, boolean fromTouch) {
         int position = getPositionFromScrollProgress(scrollProgress);
+//        if (mLayoutManager == null) mLayoutManager =  mRecyclerView.getLayoutManager();
+//        mLayoutManager.scrollToPositionWithOffset(position,0);
         mRecyclerView.scrollToPosition(position);
+
 
 //        updateSectionIndicator(position, scrollProgress);
     }
@@ -170,28 +228,115 @@ public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements
         return (int) (mRecyclerView.getAdapter().getItemCount() * scrollProgress);
     }
 
+    private int firstVisibleInListview;
+    private boolean mIsScrollable;
+
+
     /**
      * Classes that extend AbsFastScroller must implement their own {@link OnScrollListener} to respond to scroll
      * events when the {@link #mRecyclerView} is scrolled NOT using the fast scroller.
+     *
      * @return an implementation for responding to scroll events from the {@link #mRecyclerView}
      */
     @NonNull
     public OnScrollListener getOnScrollListener() {
         if (mOnScrollListener == null) {
             mOnScrollListener = new OnScrollListener() {
+
+                boolean isScrolledDown;
+
                 @Override
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                     float scrollProgress = 0;
+
+
                     ScrollProgressCalculator scrollProgressCalculator = getScrollProgressCalculator();
                     if (scrollProgressCalculator != null) {
                         scrollProgress = scrollProgressCalculator.calculateScrollProgress(recyclerView);
                     }
                     moveHandleToPosition(scrollProgress);
+
+
+
+                 /*    if (dy > 0) {
+                          if (isScrolledDown) {
+                              isScrolledDown = false;
+                              float scrollProgress = 0;
+                              ScrollProgressCalculator scrollProgressCalculator = getScrollProgressCalculator();
+                              if (scrollProgressCalculator != null) {
+                                  scrollProgress = scrollProgressCalculator.calculateScrollProgress(recyclerView);
+                              }
+                              moveHandleToPosition(scrollProgress);
+
+                          }
+
+
+                        // Scrolling up
+                    } else {
+                         if (!isScrolledDown) {
+                             isScrolledDown = true;
+                         }
+
+                        // Scrolling down
+                    }*/
+/*
+
+                    LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+
+
+//                    if (view.getId() == lw.getId()) {
+                    final int currentFirstVisibleItem = layoutManager.findFirstVisibleItemPosition();
+                    if(currentFirstVisibleItem > firstVisibleInListview)
+                        Log.i("RecyclerView scrolled: ", "scroll up!");
+                    else
+                        Log.i("RecyclerView scrolled: ", "scroll down!");
+
+                    firstVisibleInListview = currentFirstVisibleItem;*/
+                }
+
+                @Override
+                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                    // TODO Auto-generated method stub
+//                    firstVisibleInListview = yourLayoutManager.findFirstVisibleItemPosition();
+
+
+                    // While dragging, always show the handle.
+                    if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+       /*                 if (!mIsScrollable) {
+                            Logger.log("TAG", "DONT Shw");
+                            AbsRecyclerViewFastScroller.this.setAlpha(0);
+                        } else {
+                            Logger.log("TAG", "Shw");
+                            show(0);
+                        }*/
+                        if (mIsScrollable)  show(0);
+
+                    }
+                    // Once dragging stops, show the handle only a little more, then fade out.
+                    else if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                        if (mIsScrollable)  show(FADE_TIMEOUT);
+                    }
+
+//                }
                 }
             };
         }
         return mOnScrollListener;
     }
+
+
+    public boolean isRecyclerScrollable() {
+        RecyclerView.LayoutManager layoutManager = mRecyclerView.getLayoutManager();
+//        LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerViewFileList.getLayoutManager();
+        if (layoutManager == null || layoutManager.getItemCount() == 1) return false;
+        boolean value = layoutManager.getItemCount() - 1 >
+                ((LinearLayoutManager) layoutManager).findLastCompletelyVisibleItemPosition();
+     /*   Logger.log("TAG", "Is scrollable=" + value + "Item count=" + (mRecyclerView.getLayoutManager().getItemCount() - 1) +
+                "visible pos=" + ((LinearLayoutManager) mRecyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition());*/
+        return value;
+
+    }
+
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
@@ -203,6 +348,14 @@ public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements
 
         // synchronize the handle position to the RecyclerView
         float scrollProgress = getScrollProgressCalculator().calculateScrollProgress(mRecyclerView);
+   /*     if (!ismShouldShowScroll()) {
+            setVisibility(GONE);
+        }
+        else setVisibility(VISIBLE);*/
+
+         mIsScrollable =  isRecyclerScrollable();
+        Logger.log("ABs","Is scrollable="+mIsScrollable);
+
         moveHandleToPosition(scrollProgress);
     }
 
@@ -213,6 +366,7 @@ public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements
 
     /**
      * Takes a touch event and determines how much scroll progress this translates into
+     *
      * @param event touch event received by the layout
      * @return scroll progress, or fraction by which list is scrolled [0 to 1]
      */
@@ -227,12 +381,14 @@ public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements
     /**
      * Define a layout resource for your implementation of AbsFastScroller
      * Currently must contain a handle view (R.id.scroll_handle) and a bar (R.id.scroll_bar)
+     *
      * @return a resource id corresponding to the chosen layout.
      */
     protected abstract int getLayoutResourceId();
 
     /**
      * Define a ScrollProgressCalculator for your implementation of AbsFastScroller
+     *
      * @return a chosen implementation of {@link ScrollProgressCalculator}
      */
     @Nullable
@@ -240,8 +396,51 @@ public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements
 
     /**
      * Moves the handle of the scroller by specific progress amount
+     *
      * @param scrollProgress fraction by which to move scroller [0 to 1]
      */
     public abstract void moveHandleToPosition(float scrollProgress);
+
+//    public abstract boolean ismShouldShowScroll () ;
+
+    private void show(int timeout) {
+        animate()
+                .alpha(1f)
+                .setDuration(DURATION_FADE_IN);
+
+        Message msg = mHandler.obtainMessage(1);
+        mHandler.removeMessages(1);
+        if (timeout != 0) {
+            mHandler.sendMessageDelayed(msg, timeout);
+        }
+    }
+
+    public void hide() {
+        animate()
+                .alpha(0f)
+                .setDuration(0);
+    }
+
+    static class HideShowScroller extends Handler {
+        private final WeakReference<AbsRecyclerViewFastScroller> weakReference;
+
+        HideShowScroller(AbsRecyclerViewFastScroller scroller) {
+            weakReference = new WeakReference<>(scroller);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 1:
+                    AbsRecyclerViewFastScroller scroller = weakReference.get();
+                    if (scroller == null) break;
+//                    scroller.hide();
+                    scroller.animate()
+                            .alpha(0f)
+                            .setDuration(DURATION_FADE_OUT);
+                    break;
+            }
+        }
+    }
 
 }

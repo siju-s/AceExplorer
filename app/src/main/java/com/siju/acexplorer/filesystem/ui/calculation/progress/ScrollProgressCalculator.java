@@ -14,4 +14,5 @@ public interface ScrollProgressCalculator {
      */
     public float calculateScrollProgress(RecyclerView recyclerView);
 
+
 }
