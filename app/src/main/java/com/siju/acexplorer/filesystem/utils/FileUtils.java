@@ -280,8 +280,14 @@ public class FileUtils implements CopyService.Progress {
             Intent  intent = (Intent) msg.obj;
             long copiedBytes = intent.getLongExtra("DONE", 0);
             long totalBytes = intent.getLongExtra("TOTAL", 0);
+            boolean isSuccess =   intent.getBooleanExtra(FileConstants.IS_OPERATION_SUCCESS,true);
             Logger.log("FileUtils","total="+ copiedFileInfo.size());
 
+            if (!isSuccess) {
+                stopCopyService();
+                progressDialog.dismiss();
+                return;
+            }
 //            int progress = (int) ((copiedBytes / (float) totalBytes) * 100);
             int progress =  intent.getIntExtra("PROGRESS", 0);
             int totalProgress =  intent.getIntExtra("TOTAL_PROGRESS", 0);
@@ -302,14 +308,6 @@ public class FileUtils implements CopyService.Progress {
                     textFileName.setText(copiedFileInfo.get(count).getFileName());
                     textFileCount.setText(newCount + "/" + copiedFilesSize);
                 }
- /*               if (count == copiedFilesSize) {
-                    stopCopyService();
-                    progressDialog.dismiss();
-                } else {
-                    textFileFromPath.setText(copiedFileInfo.get(count).getFilePath());
-                    textFileName.setText(copiedFileInfo.get(count).getFileName());
-                    textFileCount.setText(++count + "/" + copiedFilesSize);
-                }*/
             }
         }
     };
@@ -513,11 +511,17 @@ public class FileUtils implements CopyService.Progress {
                     } catch (IOException e) {
                         // Keep non-canonical path.
                     }
+                    if (!path.equals(Environment.getExternalStorageDirectory().getAbsolutePath()))
                     paths.add(path);
                 }
             }
         }
-        if (paths.isEmpty()) paths.add("/storage/sdcard1");
+        if (paths.isEmpty())  {
+            File file = new File ("/storage/sdcard1");
+            if (file.exists() && file.canExecute()) {
+                paths.add("/storage/sdcard1");
+            }
+        }
         return paths.toArray(new String[0]);
     }
 

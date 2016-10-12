@@ -23,13 +23,17 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.provider.MediaStore;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -37,6 +41,7 @@ import android.util.SparseBooleanArray;
 import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
+import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.BaseFile;
 import com.siju.acexplorer.filesystem.model.CopyData;
 import com.siju.acexplorer.filesystem.model.FileInfo;
@@ -51,6 +56,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -64,11 +70,8 @@ public class CopyService extends Service {
     private NotificationCompat.Builder mBuilder;
     private Context mContext;
     private final int NOTIFICATION_ID = 1000;
-    private CopyProgressUpdate copyProgressUpdate;
+    private boolean foreground = true;
 
-    interface CopyProgressUpdate {
-        void updateProgress(int progress);
-    }
 
     @Override
     public void onCreate() {
@@ -79,7 +82,6 @@ public class CopyService extends Service {
     }
 
 
-    private boolean foreground = true;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -158,10 +160,16 @@ public class CopyService extends Service {
         @Override
         public void onPostExecute(Integer b) {
             copy.publishResults("", 0, 0, b, 0, 0, true, move);
-            generateNotification(copy.failedFOps, move);
-            Intent intent = new Intent("reload_list");
+//            generateNotification(copy.failedFOps, move);
+            Intent intent = new Intent("refresh");
+            intent.putExtra(FileConstants.IS_OPERATION_SUCCESS,copy.copy_successful);
+            intent.putExtra(FileConstants.OPERATION, move ? FileConstants.MOVE : FileConstants.COPY);
+
 //            intent.putExtra(FileConstants.KEY_PATH,files);
             sendBroadcast(intent);
+            if (mProgressListener != null) {
+                mProgressListener.onUpdate(intent);
+            }
             hash.put(b, false);
             boolean stop = true;
             for (int i = 0; i < hash.size(); i++) {
@@ -184,34 +192,8 @@ public class CopyService extends Service {
             boolean copy_successful;
             int count = 0;
 
-            public Copy() {
+            Copy() {
                 copy_successful = true;
-                fileVerifier = new FileVerifier(mContext, rootmode, new FileVerifier.FileVerifierInterface() {
-                    @Override
-                    public void addFailedFile(FileInfo a) {
-                        failedFOps.add(a);
-                    }
-
-                    @Override
-                    public boolean contains(String path) {
-                        for (FileInfo fileInfo : failedFOps)
-                            if (fileInfo.getFilePath().equals(path)) return true;
-                        return false;
-                    }
-
-                    @Override
-                    public boolean containsDirectory(String path) {
-                        for (FileInfo fileInfo : failedFOps)
-                            if (fileInfo.getFilePath().contains(path))
-                                return true;
-                        return false;
-                    }
-
-                    @Override
-                    public void setCopySuccessful(boolean b) {
-                        copy_successful = b;
-                    }
-                });
                 failedFOps = new ArrayList<>();
                 toDelete = new ArrayList<>();
             }
@@ -241,8 +223,8 @@ public class CopyService extends Service {
                 return totalBytes;
             }
 
-            public void execute(int id, final ArrayList<FileInfo> files, final String currentDir, final boolean move,
-                                ArrayList<CopyData> copyData) {
+            void execute(int id, final ArrayList<FileInfo> files, final String currentDir, final boolean move,
+                         ArrayList<CopyData> copyData) {
                 Logger.log("TAG", "execute" + files.size() + " mode==" + new FileUtils().checkFolder(currentDir, mContext));
 
                 if (new FileUtils().checkFolder(currentDir, mContext) == 1) {
@@ -278,6 +260,8 @@ public class CopyService extends Service {
                                             .getExtension();
                                 }
                                 destFile.setFilePath(path);
+                                Logger.log("CopyService", "Execute-Dest file path=" + destFile.getFilePath());
+
                                 copyFiles(sourceFile, destFile, id, move);
                             } else {
                                 break;
@@ -360,9 +344,18 @@ public class CopyService extends Service {
                     if (!hash.get(id)) return;
                     long size = new File(sourceFile.getFilePath()).length();
 
-                    Logger.log("TAG", "Source file=" + sourceFile.getFilePath());
-                    BufferedOutputStream out = new BufferedOutputStream(
-                            new FileOutputStream(targetFile.getFilePath()));
+                    Logger.log("Copy", "target file=" + targetFile.getFilePath());
+                    BufferedOutputStream out = null;
+                    try {
+                         out = new BufferedOutputStream(
+                                new FileOutputStream(targetFile.getFilePath()));
+                    }
+                    catch (Exception e) {
+                         OutputStream stream = getWriteableStreamExtSD(new File(targetFile.getFilePath()));
+                        Logger.log("CopyService", "stream EXTSD=" + stream);
+                        if (stream != null)
+                        out = new BufferedOutputStream(stream);
+                    }
                     BufferedInputStream in = new BufferedInputStream(
                             new FileInputStream(sourceFile.getFilePath()));
                    /* InputStream in = new File(sourceFile.getFilePath()).getInputStream();
@@ -377,6 +370,42 @@ public class CopyService extends Service {
                     copy(in, out, size, id, sourceFile.getFileName(), move);
                     fileVerifier.add(new FileBundle(sourceFile, targetFile, move));
                 }
+            }
+
+            /**
+             * Returns an OutputStream to write to the file. The file will be truncated immediately.
+             */
+            OutputStream getWriteableStreamExtSD(File file)
+                    throws IOException {
+                if (file.exists() && file.isDirectory()) {
+                    throw new IOException("File exists and is a directory.");
+                }
+                Uri filesUri = MediaStore.Files.getContentUri("external");
+                Uri imagesUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                // Delete any existing entry from the media database.
+                // This may also delete the file (for media types), but that is irrelevant as it will be truncated momentarily in any case.
+                String where = MediaStore.MediaColumns.DATA + "=?";
+                String[] selectionArgs = new String[] { file.getAbsolutePath() };
+                ContentResolver contentResolver = getContentResolver();
+                contentResolver.delete(filesUri, where, selectionArgs);
+
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Files.FileColumns.DATA, file.getAbsolutePath());
+                Uri uri = contentResolver.insert(filesUri, values);
+
+                if (uri == null) {
+                    // Should not occur.
+                    throw new IOException("Internal error.");
+                }
+                OutputStream out = null;
+                 try {
+                     out = contentResolver.openOutputStream(uri);
+                 }
+                 catch (SecurityException exception) {
+                     exception.printStackTrace();
+                 }
+                
+                return out;
             }
 
             long time = System.nanoTime() / 500000000;
@@ -443,6 +472,7 @@ public class CopyService extends Service {
                     intent.putExtra("COUNT", count);
                     int p1 = (int) ((copiedBytes / (float) totalBytes) * 100);
                     intent.putExtra("TOTAL_PROGRESS", p1);
+                    if (mProgressListener != null)
                     mProgressListener.onUpdate(intent);
                 }
                 in.close();
@@ -488,13 +518,11 @@ public class CopyService extends Service {
                     Intent intent = new Intent(COPY_PROGRESS);
                     intent.putExtra("DONE", copiedBytes);
                     intent.putExtra("TOTAL", totalBytes);
-
                     intent.putExtra("TOTAL_PROGRESS", p1);
 
-
-//            intent.putExtra("TOTAL",total);
+                    if (mProgressListener != null)
                     mProgressListener.onUpdate(intent);
-//            sendBroadcast(intent);
+
 
                     if (progressListener != null) {
                         progressListener.onUpdate(progressModel);
@@ -514,27 +542,6 @@ public class CopyService extends Service {
 
         }
     }
-
-
-    private void generateNotification(ArrayList<FileInfo> failedOps, boolean move) {
-        if (failedOps.size() == 0) return;
-        mNotifyManager.cancelAll();
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext);
-        mBuilder.setContentTitle("Operation Unsuccessful");
-        mBuilder.setContentText("Some files weren't %s successfully".replace("%s", move ? "moved" : "copied"));
-        Intent intent = new Intent(this, BaseActivity.class);
-        intent.putExtra("failedOps", failedOps);
-        intent.putExtra("move", move);
-        PendingIntent pIntent = PendingIntent.getActivity(this, 101, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        mBuilder.setContentIntent(pIntent);
-        mBuilder.setSmallIcon(R.drawable.ic_copy_white);
-        mNotifyManager.notify(741, mBuilder.build());
-        intent = new Intent("general_communications");
-        intent.putExtra("failedOps", failedOps);
-        intent.putExtra("move", move);
-        sendBroadcast(intent);
-    }
-
 
     //check if copy is successful
     private boolean checkFiles(FileInfo hFile1, FileInfo hFile2) {

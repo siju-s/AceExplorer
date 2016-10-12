@@ -294,18 +294,20 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             fileDate = FileUtils.convertDate(fileInfoArrayList.get(position).getDate() * 1000);
         }
         boolean isDirectory = fileInfoArrayList.get(position).isDirectory();
-        String fileNoOrSize;
+        String fileNoOrSize = "";
         if (isDirectory) {
             int childFileListSize = (int) fileInfoArrayList.get(position).getSize();
             if (childFileListSize == 0) {
                 fileNoOrSize = mContext.getResources().getString(R.string.empty);
+            } else if (childFileListSize == -1) {
+                fileNoOrSize = "";
             } else {
                 fileNoOrSize = mContext.getResources().getQuantityString(R.plurals.number_of_files,
                         childFileListSize, childFileListSize);
             }
         } else {
-            fileNoOrSize = Formatter.formatFileSize(mContext, fileInfoArrayList.get(position)
-                    .getSize());
+            long size = fileInfoArrayList.get(position).getSize();
+            fileNoOrSize = Formatter.formatFileSize(mContext,size);
         }
 
         String filePath = fileInfoArrayList.get(position).getFilePath();
@@ -415,7 +417,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         Uri imageUri = Uri.fromFile(new File(path));
         Glide.with(mContext).load(imageUri).centerCrop()
                 .crossFade(2)
-                .placeholder(R.drawable.ic_photo_white)
+                .placeholder(R.drawable.ic_image_default)
                 .into(fileListViewHolder.imageIcon);
     }
 

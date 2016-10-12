@@ -31,6 +31,8 @@ public class FileConstants {
     public static final int COMPRESS = 7;
     public static final int EXTRACT = 8;
 
+    public static final String IS_OPERATION_SUCCESS = "IS_OPERATION_SUCCESS";
+
 
 
 

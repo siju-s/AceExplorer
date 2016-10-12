@@ -149,7 +149,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private int mZipLevelDual;
     private BaseActivity mBaseActivity;
     private boolean isDualPaneInFocus;
-    private Toolbar mBottomToolbar,mToolbar;
+    private Toolbar mBottomToolbar, mToolbar;
     private ActionMode mActionMode;
     private SparseBooleanArray mSelectedItemPositions = new SparseBooleanArray();
     MenuItem mPasteItem, mRenameItem, mInfoItem, mArchiveItem, mFavItem, mExtractItem, mHideItem, mPermissionItem;
@@ -193,9 +193,8 @@ public class FileListFragment extends Fragment implements LoaderManager
     private int mCurrentTheme;
     private boolean mIsDarkTheme;
     private boolean mInstanceStateExists;
-//    private FastScroller mFastScroller;
+    //    private FastScroller mFastScroller;
     private final int DIALOG_FRAGMENT = 5000;
-
 
 
     @Override
@@ -316,7 +315,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             recyclerViewFileList.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
                 public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                Logger.log(TAG, "onScrollStateChanged" + newState);
+                    Logger.log(TAG, "onScrollStateChanged" + newState);
 
                     if (newState == RecyclerView.SCROLL_STATE_DRAGGING ||
                             newState == RecyclerView.SCROLL_STATE_SETTLING) {
@@ -366,8 +365,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                 }
             });
 
-        }
-        else {
+        } else {
             mInstanceStateExists = true;
         }
 
@@ -389,7 +387,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     @Override
     public void onPause() {
         super.onPause();
-        Logger.log(TAG,"OnPause");
+        Logger.log(TAG, "OnPause");
         if (!mInstanceStateExists) {
             getActivity().unregisterReceiver(mReloadListReceiver);
         }
@@ -397,11 +395,11 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch(requestCode) {
+        switch (requestCode) {
             case DIALOG_FRAGMENT:
                 if (resultCode == AppCompatActivity.RESULT_OK) {
                     mSelectedPath = data.getStringExtra("PATH");
-                     if (buttonPathSelect != null) {
+                    if (buttonPathSelect != null) {
                         buttonPathSelect.setText(mSelectedPath);
                     }
                 }
@@ -414,14 +412,13 @@ public class FileListFragment extends Fragment implements LoaderManager
 //        LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerViewFileList.getLayoutManager();
         if (llm == null || fileListAdapter == null) return false;
 
-         if (mViewMode == FileConstants.KEY_LISTVIEW) {
-             Logger.log(TAG,"visible pos="+((LinearLayoutManager)recyclerViewFileList.getLayoutManager()).findLastCompletelyVisibleItemPosition() + " count="+
-                     (fileListAdapter.getItemCount() - 1));
-             return ((CustomLayoutManager)llm).findLastCompletelyVisibleItemPosition() < fileListAdapter.getItemCount() - 1;
-         }
-        else {
-             return ((CustomGridLayoutManager)llm).findLastCompletelyVisibleItemPosition() < fileListAdapter.getItemCount() - 1;
-         }
+        if (mViewMode == FileConstants.KEY_LISTVIEW) {
+            Logger.log(TAG, "visible pos=" + ((LinearLayoutManager) recyclerViewFileList.getLayoutManager()).findLastCompletelyVisibleItemPosition() + " count=" +
+                    (fileListAdapter.getItemCount() - 1));
+            return ((CustomLayoutManager) llm).findLastCompletelyVisibleItemPosition() < fileListAdapter.getItemCount() - 1;
+        } else {
+            return ((CustomGridLayoutManager) llm).findLastCompletelyVisibleItemPosition() < fileListAdapter.getItemCount() - 1;
+        }
     }
 
     private void addItemDecoration() {
@@ -446,7 +443,6 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     private void initializeViews() {
         recyclerViewFileList = (RecyclerView) root.findViewById(R.id.recyclerViewFileList);
-
 
 
 //        mFastScroller = (FastScroller) root.findViewById(R.id.fastscroll);
@@ -531,7 +527,6 @@ public class FileListFragment extends Fragment implements LoaderManager
             }
         });
     }
-
 
 
     public void openCompressedFile(String path) {
@@ -655,6 +650,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                     FileUtils.scanFile(getActivity(), path);
                 }
                 mIsBackPressed = true;
+
                 reloadList(true, mFilePath);
             } else if (action.equals("refresh")) {
 
@@ -718,7 +714,14 @@ public class FileListFragment extends Fragment implements LoaderManager
                     case FileConstants.MOVE:
                     case FileConstants.FOLDER_CREATE:
                     case FileConstants.FILE_CREATE:
-                        refreshList();
+                    case FileConstants.COPY:
+                        boolean isSuccess = intent.getBooleanExtra(FileConstants.IS_OPERATION_SUCCESS, true);
+                        if (!isSuccess) {
+                            Toast.makeText(getActivity(), getString(R.string.msg_operation_failed), Toast.LENGTH_LONG).show();
+                        }
+                        else {
+                            refreshList();
+                        }
                         break;
 
                 }
@@ -946,11 +949,10 @@ public class FileListFragment extends Fragment implements LoaderManager
             return new FileListLoader(this, path, FileConstants.CATEGORY.ZIP_VIEWER.getValue(),
                     mCurrentZipDir, isDualPaneInFocus, mInParentZip);
         } else {
-            return new FileListLoader(this,getContext(), path, mCategory);
+            return new FileListLoader(this, getContext(), path, mCategory);
         }
 
     }
-
 
 
     @Override
@@ -979,8 +981,6 @@ public class FileListFragment extends Fragment implements LoaderManager
 
 //            recyclerViewFileList.setLayoutManager(llm);
             addItemDecoration();
-
-
 
 
             if (!data.isEmpty()) {
@@ -1466,7 +1466,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                 renamedName = "." + fileName;
             }
 
-           FileUtils.renameTarget(fileInfo.get(i).getFilePath(), renamedName);
+            FileUtils.renameTarget(fileInfo.get(i).getFilePath(), renamedName);
         }
         refreshList();
     }
@@ -1594,8 +1594,8 @@ public class FileListFragment extends Fragment implements LoaderManager
             @Override
             public void onClick(View view) {
                 DialogBrowseFragment dialogFragment = new DialogBrowseFragment();
-                dialogFragment.setTargetFragment(FileListFragment.this,DIALOG_FRAGMENT);
-                dialogFragment.setStyle(DialogFragment.STYLE_NORMAL,checkTheme());
+                dialogFragment.setTargetFragment(FileListFragment.this, DIALOG_FRAGMENT);
+                dialogFragment.setStyle(DialogFragment.STYLE_NORMAL, checkTheme());
                 dialogFragment.show(getFragmentManager(), "Browse Fragment");
             }
         });
@@ -1639,18 +1639,16 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     }
 
-    private int  checkTheme() {
+    private int checkTheme() {
         mCurrentTheme = PreferenceManager.getDefaultSharedPreferences(getActivity())
                 .getInt(FileConstants.CURRENT_THEME, FileConstants.THEME_LIGHT);
 
         if (mCurrentTheme == FileConstants.THEME_DARK) {
-           return R.style.Dark_AppTheme_NoActionBar;
-        }
-        else {
+            return R.style.Dark_AppTheme_NoActionBar;
+        } else {
             return R.style.AppTheme_NoActionBar;
         }
     }
-
 
 
     private void updateFavouritesGroup(FileInfo info) {
@@ -1855,6 +1853,8 @@ public class FileListFragment extends Fragment implements LoaderManager
     private void showDragDialog(final ArrayList<FileInfo> sourcePaths, final String destinationDir) {
 
         int color = new DialogUtils().getCurrentThemePrimary(getActivity());
+        boolean canWrite = new File(destinationDir).canWrite();
+        Logger.log(TAG, "Can write=" + canWrite);
 
         final MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
         String items[] = new String[]{getString(R.string.action_copy), getString(R.string.move)};
@@ -1889,7 +1889,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             @Override
             public void onClick(View view) {
                 if (mActionMode != null)
-                mActionMode.finish();
+                    mActionMode.finish();
                 materialDialog.dismiss();
             }
         });

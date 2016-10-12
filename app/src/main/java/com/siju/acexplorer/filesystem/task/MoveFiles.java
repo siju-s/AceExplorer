@@ -89,8 +89,9 @@ public class MoveFiles extends AsyncTask<String, Void, Integer> {
     public void onPostExecute(Integer count) {
 
         if (files.size() != count) {
-            Logger.log("TAG", "File size"+files.size()+" moved=="+count);
+            boolean canWrite = new File(mCurrentDir).canWrite();
 
+            Logger.log("TAG", "File size"+files.size()+" moved=="+count + " Can write = "+canWrite);
             Intent intent = new Intent(context, CopyService.class);
             intent.putExtra("FILE_PATHS", files);
             intent.putExtra("COPY_DIRECTORY", mCurrentDir);
