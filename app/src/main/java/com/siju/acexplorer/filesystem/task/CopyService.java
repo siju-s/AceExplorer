@@ -141,7 +141,6 @@ public class CopyService extends Service {
         ArrayList<CopyData> copyData;
 
         boolean move;
-        FileVerifier fileVerifier;
         Copy copy;
 
 
@@ -339,7 +338,6 @@ public class CopyService extends Service {
                         copyFiles(file, destFile, id, move);
                     }
                     if (!hash.get(id)) return;
-                    fileVerifier.add(new FileBundle(sourceFile, targetFile, move));
                 } else {
                     if (!hash.get(id)) return;
                     long size = new File(sourceFile.getFilePath()).length();
@@ -368,7 +366,6 @@ public class CopyService extends Service {
                     }
                     if (!hash.get(id)) return;
                     copy(in, out, size, id, sourceFile.getFileName(), move);
-                    fileVerifier.add(new FileBundle(sourceFile, targetFile, move));
                 }
             }
 

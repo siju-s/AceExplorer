@@ -7,7 +7,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.ui.calculation.VerticalScrollBoundsProvider;
 import com.siju.acexplorer.filesystem.ui.calculation.position.VerticalScreenPositionCalculator;
 import com.siju.acexplorer.filesystem.ui.calculation.progress.TouchableScrollProgressCalculator;
@@ -63,7 +62,7 @@ public class VerticalRecyclerViewFastScroller extends com.siju.acexplorer.filesy
 
         float minScrollY = mBar.getY();
         float maxScrollY = mBar.getY() +  mBar.getHeight() -  ((float) (mHandle.getHeight()));
-        Logger.log("TAG","Min scroll="+minScrollY+ " Max scroll="+maxScrollY);
+//        Logger.log("TAG","Min scroll="+minScrollY+ " Max scroll="+maxScrollY);
 
         VerticalScrollBoundsProvider boundsProvider =
                 new VerticalScrollBoundsProvider(minScrollY, maxScrollY);

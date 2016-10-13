@@ -315,7 +315,6 @@ public class FileListFragment extends Fragment implements LoaderManager
             recyclerViewFileList.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
                 public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                    Logger.log(TAG, "onScrollStateChanged" + newState);
 
                     if (newState == RecyclerView.SCROLL_STATE_DRAGGING ||
                             newState == RecyclerView.SCROLL_STATE_SETTLING) {
@@ -570,6 +569,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                 if (!fileInfoList.get(position).isDirectory()) {
                     String filePath = fileInfoList.get(position).getFilePath();
                     String extension = fileInfoList.get(position).getExtension();
+
                     if (isFileZipViewable(filePath)) {
                         openCompressedFile(filePath);
                     } else {
@@ -596,7 +596,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                     } else {
 
                         String path = mFilePath = fileInfoList.get(position).getFilePath();
-                        reloadList(false, mFilePath);
+
                         isDualPaneInFocus = checkIfDualFragment();
                         mBaseActivity.setCurrentDir(path, isDualPaneInFocus);
 
@@ -608,9 +608,8 @@ public class FileListFragment extends Fragment implements LoaderManager
                             mBaseActivity.toggleNavBarFab(false);
                             mBaseActivity.setCurrentCategory(mCategory);
                             mBaseActivity.initializeStartingDirectory();
-
-//                            mBaseActivity.setNavDirectory(mFilePath,isDualPaneInFocus);
                         }
+                        reloadList(false, mFilePath);
                         mBaseActivity.setNavDirectory(path, isDualPaneInFocus);
                         mBaseActivity.addToBackStack(path, mCategory);
                     }
@@ -800,9 +799,11 @@ public class FileListFragment extends Fragment implements LoaderManager
     }
 
 
+    // 1 Extra for Footer since {#getItemCount has footer
+    // TODO Remove this 1 when if footer removed in future
     public void toggleSelectAll(boolean selectAll) {
         fileListAdapter.clearSelection();
-        for (int i = 0; i < fileListAdapter.getItemCount(); i++) {
+        for (int i = 0; i < fileListAdapter.getItemCount() - 1; i++) {
             fileListAdapter.toggleSelectAll(i, selectAll);
         }
         SparseBooleanArray checkedItemPos = fileListAdapter.getSelectedItemPositions();
@@ -938,13 +939,14 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     @Override
     public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
-        Logger.log(TAG, "onCreateLoader");
         fileInfoList = new ArrayList<>();
         if (fileListAdapter != null) {
             fileListAdapter.clearList();
         }
         String path = args.getString(FileConstants.KEY_PATH);
         mSwipeRefreshLayout.setRefreshing(true);
+        Logger.log(TAG, "onCreateLoader---path="+path+ "category="+mCategory);
+
         if (mIsZip) {
             return new FileListLoader(this, path, FileConstants.CATEGORY.ZIP_VIEWER.getValue(),
                     mCurrentZipDir, isDualPaneInFocus, mInParentZip);
@@ -1125,7 +1127,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
             case R.id.action_select_all:
                 if (mSelectedItemPositions != null) {
-                    if (mSelectedItemPositions.size() < fileListAdapter.getItemCount()) {
+                    if (mSelectedItemPositions.size() < fileListAdapter.getItemCount() - 1) {
                         toggleSelectAll(true);
                     } else {
                         toggleSelectAll(false);
@@ -1393,6 +1395,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             mBottomToolbar.setVisibility(View.GONE);
             mSelectedItemPositions.clear();
             mSwipeRefreshLayout.setEnabled(true);
+            mDragPaths.clear();
             // FAB should be visible only for Files Category
             if (mCategory == 0) {
                 mBaseActivity.toggleFab(false);
@@ -1857,7 +1860,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         Logger.log(TAG, "Can write=" + canWrite);
 
         final MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
-        String items[] = new String[]{getString(R.string.action_copy), getString(R.string.move)};
+        CharSequence items[] = new String[]{getString(R.string.action_copy), getString(R.string.move)};
         builder.title(getString(R.string.drag));
         builder.content(getString(R.string.dialog_to_placeholder, destinationDir));
         builder.positiveText(getString(R.string.msg_ok));
@@ -2181,8 +2184,6 @@ public class FileListFragment extends Fragment implements LoaderManager
                     clearSelectedPos();
                     mCopiedData.clear();
                     togglePasteVisibility(false);
-
-
                 }
                 break;
 
@@ -2237,12 +2238,9 @@ public class FileListFragment extends Fragment implements LoaderManager
         builder.itemsCallbackSingleChoice(getSortMode(), new MaterialDialog.ListCallbackSingleChoice() {
             @Override
             public boolean onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
-                //TODO sorting should happen in background thread else ANR
                 new FileUtils().setFileSorted(true);
-//                fileInfoList = FileUtils.sortFiles(fileInfoList, position);
                 persistSortMode(position);
                 refreshList();
-//                fileListAdapter.notifyDataSetChanged();
                 dialog.dismiss();
                 return true;
             }

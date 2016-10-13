@@ -217,7 +217,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemViewType(int position) {
-        Logger.log("TAG","Pos = " + position + " isFoooter ="+isPositionFooter(position));
         if (isPositionFooter(position)) {
             return TYPE_FOOTER;
         }

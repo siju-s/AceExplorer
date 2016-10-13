@@ -23,7 +23,7 @@ import com.siju.acexplorer.filesystem.task.DeleteTask;
 import com.siju.acexplorer.filesystem.task.ExtractService;
 import com.siju.acexplorer.filesystem.utils.FileOperations;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
-import com.siju.acexplorer.utils.DialogUtils;
+import com.siju.acexplorer.utils.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -236,7 +236,7 @@ public class FileOpsHelper {
             mActivity.mFiles = files;
             mActivity.mOperation = FileConstants.DELETE;
         } else if (mode == 1 || mode == 0)
-            new DeleteTask(mActivity, true,files).execute();
+            new DeleteTask(mActivity, true, files).execute();
     }
 
     public void extractFile(File currentFile, File file) {
@@ -299,10 +299,14 @@ public class FileOpsHelper {
     }
 
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+
     private void triggerStorageAccessFramework() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-        mActivity.startActivityForResult(intent, BaseActivity.SAF_REQUEST);
+        if (mActivity.getPackageManager().resolveActivity(intent, 0) != null) {
+            mActivity.startActivityForResult(intent, BaseActivity.SAF_REQUEST);
+        } else {
+            Toast.makeText(mActivity, mActivity.getString(R.string.msg_error_not_supported), Toast.LENGTH_LONG).show();
+        }
     }
 
 

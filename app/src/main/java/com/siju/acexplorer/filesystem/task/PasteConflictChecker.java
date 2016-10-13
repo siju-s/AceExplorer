@@ -26,17 +26,14 @@ import com.siju.acexplorer.utils.DialogUtils;
 import java.io.File;
 import java.util.ArrayList;
 
-/**
- * Created by Siju on 21-08-2016.
- */
+
 public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String, ArrayList<FileInfo>> {
-    Boolean move;
-    ArrayList<FileInfo> mFiles;
-    ArrayList<FileInfo> mConflictFiles = new ArrayList<>();
-    int counter = 0;
-    //    Context mContext;
-    boolean rootmode = false;
-    int openMode = 0;
+
+    private ArrayList<FileInfo> mFiles;
+    private ArrayList<FileInfo> mConflictFiles = new ArrayList<>();
+    private int counter = 0;
+    private boolean rootmode = false;
+    private int openMode = 0;
     private Fragment mFragment;
     private String mCurrentDir;
     private boolean mIsDrag;
@@ -44,7 +41,7 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
     private boolean mIsDualPane;
     private BaseActivity mActivity;
     private int totalFiles;
-    private ArrayList<FileInfo> mTotalFileList= new ArrayList<>();
+    private ArrayList<FileInfo> mTotalFileList;
 
 
     public PasteConflictChecker(BaseActivity context, Fragment fragment, String currentDir, boolean isDrag, boolean
@@ -70,6 +67,7 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
 
         mFiles = params[0];
         long totalBytes = 0;
+        mTotalFileList  = new ArrayList<>();
 
         for (int i = 0; i < mFiles.size(); i++) {
             FileInfo f1 = mFiles.get(i);
@@ -133,9 +131,8 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
                         intent.putExtra("COPY_DIRECTORY", mCurrentDir);
                         intent.putExtra("MODE", openMode);
                         intent.putParcelableArrayListExtra("TOTAL_LIST",mTotalFileList);
-
                         new FileUtils().showCopyProgressDialog(mActivity,intent);
-//                        mActivity.startService(intent);
+
                     } else {
                         new MoveFiles(mActivity, mFiles,mCopyData).executeOnExecutor
                                 (AsyncTask.THREAD_POOL_EXECUTOR, mCurrentDir);
@@ -143,7 +140,8 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
                 }
             } else {
 
-                Toast.makeText(mActivity, mActivity.getString(R.string.msg_move_failure), Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivity, mIsMoveOperation ? mActivity.getString(R.string.msg_move_failure) :
+                        mActivity.getString(R.string.msg_copy_failure), Toast.LENGTH_SHORT).show();
             }
         } else {
 

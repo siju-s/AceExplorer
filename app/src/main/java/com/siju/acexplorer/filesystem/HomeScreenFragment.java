@@ -513,8 +513,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             if (data.size() != 0) {
                 for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
 
-                    if (loader.getId() == FileConstants.CATEGORY.DOWNLOADS.getValue() ||
-                            loader.getId() == FileConstants.CATEGORY.FAVORITES.getValue() &&
+                    if (loader.getId() == FileConstants.CATEGORY.DOWNLOADS.getValue()    &&
                                     loader.getId() == homeLibraryInfoArrayList.get(i).getCategoryId()) {
                         homeLibraryInfoArrayList.get(i).setCount(data.size());
                     } else if (data.get(0).getCategoryId() == homeLibraryInfoArrayList.get(i).getCategoryId()) {

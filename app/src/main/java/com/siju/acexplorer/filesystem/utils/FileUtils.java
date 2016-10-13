@@ -50,6 +50,7 @@ import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.task.CopyService;
 import com.siju.acexplorer.helper.RootHelper;
 import com.siju.acexplorer.utils.DialogUtils;
+import com.siju.acexplorer.utils.Utils;
 import com.stericson.RootTools.RootTools;
 
 import java.io.BufferedInputStream;
@@ -511,8 +512,10 @@ public class FileUtils implements CopyService.Progress {
                     } catch (IOException e) {
                         // Keep non-canonical path.
                     }
-                    if (!path.equals(Environment.getExternalStorageDirectory().getAbsolutePath()))
-                    paths.add(path);
+//                    if (!path.equals(Environment.getExternalStorageDirectory().getAbsolutePath()))
+                    if (!paths.contains(path)) {
+                        paths.add(path);
+                    }
                 }
             }
         }
@@ -1713,9 +1716,11 @@ public class FileUtils implements CopyService.Progress {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        // Even after exception, In Kitkat file might have got created so return true
+        if (file.exists()) return true;
         boolean b;
         // Try with Storage Access Framework.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && isOnExtSdCard(file, context)) {
+        if (Utils.isAtleastLollipop() && isOnExtSdCard(file, context)) {
             DocumentFile document = getDocumentFile(file.getParentFile(), true, context);
             // getDocumentFile implicitly creates the directory.
             try {
@@ -1778,9 +1783,20 @@ public class FileUtils implements CopyService.Progress {
             }
         }
 
-        // Try the manual way, moving files individually.
-        if (!mkdir(target, context)) {
-            return false;
+        if (source.isFile()) {
+            try {
+                if (!mkfile(target, context)) {
+                    return false;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            // Try the manual way, moving files individually.
+            if (!mkdir(target, context)) {
+                return false;
+            }
         }
 
         File[] sourceFiles = source.listFiles();

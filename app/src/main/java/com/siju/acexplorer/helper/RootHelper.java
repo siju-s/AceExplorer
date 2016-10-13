@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
-import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.BaseFile;
 import com.siju.acexplorer.filesystem.model.FileInfo;
@@ -140,7 +139,7 @@ public class RootHelper {
                                                    boolean showHidden,boolean isRingtonePicker) {
         ArrayList<FileInfo> fileInfoArrayList = new ArrayList<>();
         File file = new File(path);
-        Logger.log("RootHelper", "Starting time FILES=");
+//        Logger.log("RootHelper", "Starting time FILES=");
         if (file.canRead() && (path.startsWith("/storage") || path.startsWith("/sdcard"))) {
             File[] listFiles = file.listFiles();
 
@@ -193,7 +192,7 @@ public class RootHelper {
                             isDirectory, extension, type, parseFilePermission(file1));
                     fileInfoArrayList.add(fileInfo);
                 }
-                Logger.log("RootHelper", "END time FILES=");
+//                Logger.log("RootHelper", "END time FILES=");
 
             }
         } else {
@@ -222,9 +221,9 @@ public class RootHelper {
                                     } else {
                                         path1 = "/" + name;
                                     }
-                                    Logger.log("RootHelper", "Path==" + path);
+//                                    Logger.log("RootHelper", "Path==" + path);
 
-                                    Logger.log("RootHelper", "path1==" + path1);
+//                                    Logger.log("RootHelper", "path1==" + path1);
 //                                    array.setName(array.getPath());
 //                                    array.setPath();
                                     boolean isDirectory;
@@ -265,7 +264,7 @@ public class RootHelper {
                                                            showHidden) {
 
         File file = new File(path);
-        Logger.log("RootHelper", "Starting time FILES=");
+//        Logger.log("RootHelper", "Starting time FILES=");
 
         if (file.canRead() && (path.startsWith("/storage") || path.startsWith("/sdcard"))) {
             File[] listFiles = file.listFiles();
@@ -313,7 +312,7 @@ public class RootHelper {
                     FileInfo fileInfo = new FileInfo(file1.getName(), filePath, date, size,
                             isDirectory, extension, type, parseFilePermission(file1));
                     fileInfoArrayList.add(fileInfo);
-                    Logger.log("RootHelper", "fileInfoArrayList element="+fileInfo.getFilePath());
+//                    Logger.log("RootHelper", "fileInfoArrayList element="+fileInfo.getFilePath());
 
                 }
 //                Logger.log("RootHelper", "END fileInfoArrayList size="+fileInfoArrayList.size());
@@ -345,9 +344,9 @@ public class RootHelper {
                                     } else {
                                         path1 = "/" + name;
                                     }
-                                    Logger.log("RootHelper", "Path==" + path);
+//                                    Logger.log("RootHelper", "Path==" + path);
 
-                                    Logger.log("RootHelper", "path1==" + path1);
+//                                    Logger.log("RootHelper", "path1==" + path1);
 //                                    array.setName(array.getPath());
 //                                    array.setPath();
                                     boolean isDirectory;

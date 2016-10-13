@@ -21,7 +21,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.ui.calculation.progress.ScrollProgressCalculator;
 import com.siju.acexplorer.filesystem.ui.calculation.progress.TouchableScrollProgressCalculator;
 
@@ -354,7 +353,7 @@ public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements
         else setVisibility(VISIBLE);*/
 
          mIsScrollable =  isRecyclerScrollable();
-        Logger.log("ABs","Is scrollable="+mIsScrollable);
+//        Logger.log("ABs","Is scrollable="+mIsScrollable);
 
         moveHandleToPosition(scrollProgress);
     }
