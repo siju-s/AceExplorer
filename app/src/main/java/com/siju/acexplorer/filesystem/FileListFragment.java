@@ -683,14 +683,14 @@ public class FileListFragment extends Fragment implements LoaderManager
 //                        refreshMediaStore(paths.get(i));
 //                        }
 
-                        computeScroll();
+//                        computeScroll();
                         mIsBackPressed = true;
                         Uri uri = FileUtils.getUriForCategory(getActivity(), mCategory);
                         getContext().getContentResolver().notifyChange(uri, null);
                         for (int i = 0; i < deletedFilesList.size(); i++) {
                             fileInfoList.remove(deletedFilesList.get(i));
                         }
-
+                        fileListAdapter.setStopAnimation(true);
                         fileListAdapter.updateAdapter(fileInfoList);
 
                         break;
@@ -703,10 +703,11 @@ public class FileListFragment extends Fragment implements LoaderManager
 
                         if (!FileUtils.checkIfFileCategory(mCategory)) {
                             FileUtils.removeMedia(getActivity(), new File(oldFile), mCategory);
-                            FileUtils.scanFile(getActivity(), newFile);
+                            FileUtils.scanFile(getActivity().getApplicationContext(), newFile);
                         }
                         fileInfoList.get(position).setFilePath(newFile);
                         fileInfoList.get(position).setFileName(new File(newFile).getName());
+                        fileListAdapter.setStopAnimation(true);
                         fileListAdapter.updateAdapter(fileInfoList);
                         break;
 
@@ -1298,8 +1299,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                         ).getFilePath();
                         int renamedPosition = mSelectedItemPositions.keyAt(0);
                         String newFilePath = new File(oldFilePath).getParent();
-                        renameDialog(oldFilePath,
-                                newFilePath, renamedPosition);
+                        renameDialog(oldFilePath,                                newFilePath, renamedPosition);
                     }
                     return true;
 
@@ -1442,7 +1442,6 @@ public class FileListFragment extends Fragment implements LoaderManager
                 File oldFile = new File(oldFilePath);
                 mBaseActivity.mFileOpsHelper.renameFile(mIsRootMode, oldFile, newFile,
                         position);
-//                renameFile(oldFile, newFile, position);
                 materialDialog.dismiss();
             }
         });

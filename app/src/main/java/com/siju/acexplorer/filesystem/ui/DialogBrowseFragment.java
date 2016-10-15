@@ -1,6 +1,7 @@
 package com.siju.acexplorer.filesystem.ui;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -46,6 +47,7 @@ import com.siju.acexplorer.utils.PermissionUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by SIJU on 04-07-2016.
@@ -59,6 +61,8 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
     private final int LOADER_ID = 1000;
     private FileListAdapter fileListAdapter;
     private ArrayList<FileInfo> fileInfoList;
+    private ArrayList<FileInfo> storagesInfoList;
+
     private String mFilePath;
     private ImageButton mImageButtonBack;
     private TextView mTextCurrentPath;
@@ -68,6 +72,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
     private boolean mShowHidden;
     private int mSortMode;
     private boolean mIsRingtonePicker;
+    private int mRingToneType;
     private boolean mIsDarkTheme;
     private static final int MY_PERMISSIONS_REQUEST = 1;
     private static final int SETTINGS_REQUEST = 200;
@@ -79,6 +84,8 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
     private LinearLayoutManager llm;
     private HashMap<String, Bundle> scrollPosition = new HashMap<>();
     private TextView mTextEmpty;
+    private List<String> mStoragesList = new ArrayList<>();
+    private boolean mInStoragesList;
 
 
     @NonNull
@@ -117,7 +124,10 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
         if (getArguments() != null && getArguments().getBoolean("ringtone_picker")) {
             mButtonOk.setVisibility(View.GONE);
             mIsRingtonePicker = true;
+            mRingToneType = getArguments().getInt("ringtone_type");
         }
+        loadStoragesList();
+
         mCurrentPath = FileUtils.getInternalStorage().getAbsolutePath();
         mTextCurrentPath.setText(mCurrentPath);
         mShowHidden = PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean
@@ -135,19 +145,33 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
                 mFastScroller.hide();
                 File file = new File(fileInfoList.get(position).getFilePath());
                 if (file.isDirectory()) {
+                    mInStoragesList = false;
                     computeScroll();
                     mCurrentPath = file.getAbsolutePath();
+                    mTextCurrentPath.setText(mCurrentPath);
+                    refreshList(mCurrentPath);
+                } else if (mInStoragesList) {
+                    mInStoragesList = false;
+                    File storagesFile = new File(fileInfoList.get(position).getFilePath());
+                    mCurrentPath = storagesFile.getAbsolutePath();
                     mTextCurrentPath.setText(mCurrentPath);
                     refreshList(mCurrentPath);
                 } else {
                     if (mIsRingtonePicker) {
                         Intent intent = new Intent();
-                        Uri mediaStoreUri = MediaStoreHack.getUriFromFile(file.getPath(), getActivity());
-                        System.out.println(mediaStoreUri.toString() + "\t" + FileUtils.getMimeType(file));
-                        intent.setDataAndType(mediaStoreUri, FileUtils.getMimeType(file));
-                        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI, mediaStoreUri);
-                        fileListAdapter.setStopAnimation(false);
-                        getActivity().setResult(AppCompatActivity.RESULT_OK, intent);
+                        Uri mediaStoreUri = MediaStoreHack.getCustomRingtoneUri(getActivity().getContentResolver(),
+                                file.getAbsolutePath(), mRingToneType);
+                        System.out.println(mediaStoreUri + "\t" + FileUtils.getMimeType(file) + "type=" + mRingToneType);
+
+                        if (mediaStoreUri != null) {
+                            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, mRingToneType);
+                            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI, mediaStoreUri);
+                            intent.setData(mediaStoreUri);
+                            fileListAdapter.setStopAnimation(false);
+                            getActivity().setResult(Activity.RESULT_OK, intent);
+                        } else {
+                            getActivity().setResult(Activity.RESULT_CANCELED, intent);
+                        }
                         getActivity().finish();
                     }
                 }
@@ -188,12 +212,24 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
         mImageButtonBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!mCurrentPath.equalsIgnoreCase(FileUtils.getInternalStorage().getAbsolutePath())) {
-                    mIsBackPressed = true;
+                mIsBackPressed = true;
+                if (mStoragesList.contains(mCurrentPath)) {
+                    if (!mInStoragesList) {
+                        mInStoragesList = true;
+                        mTextCurrentPath.setText("");
+                        fileInfoList = storagesInfoList;
+                        fileListAdapter.setStopAnimation(true);
+                        fileListAdapter.updateAdapter(fileInfoList);
+                        recyclerViewFileList.setAdapter(fileListAdapter);
+                    }
+                } else {
+                    mInStoragesList = false;
                     mCurrentPath = new File(mCurrentPath).getParent();
                     mTextCurrentPath.setText(mCurrentPath);
                     refreshList(mCurrentPath);
                 }
+
+
             }
         });
 
@@ -235,7 +271,35 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
 
     }*/
 
+    private void loadStoragesList() {
+        mStoragesList = FileUtils.getStorageDirectories(getActivity(), true);
+        storagesInfoList = new ArrayList<>();
+        String STORAGE_INTERNAL, STORAGE_EXTERNAL;
+        STORAGE_INTERNAL = getResources().getString(R.string.nav_menu_internal_storage);
+        STORAGE_EXTERNAL = getResources().getString(R.string.nav_menu_ext_storage);
+        for (String path : mStoragesList) {
+            File file = new File(path);
+            int icon;
+            String name;
+            if ("/storage/emulated/legacy".equals(path) || "/storage/emulated/0".equals(path)) {
+                name = STORAGE_INTERNAL;
+                icon = R.drawable.ic_phone_white;
+
+            } else if ("/storage/sdcard1".equals(path)) {
+                name = STORAGE_EXTERNAL;
+                icon = R.drawable.ic_ext_white;
+            } else {
+                name = file.getName();
+                icon = R.drawable.ic_ext_white;
+            }
+            if (!file.isDirectory() || file.canExecute()) {
+                storagesInfoList.add(new FileInfo(name, path, icon, FileConstants.CATEGORY.PICKER.getValue()));
+            }
+        }
+    }
+
     private void loadData() {
+
         Bundle args = new Bundle();
         getLoaderManager().initLoader(LOADER_ID, args, this);
     }
@@ -420,14 +484,9 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
 //            fileListAdapter.setCategory(mCategory);
             fileListAdapter.setStopAnimation(true);
             fileListAdapter.updateAdapter(fileInfoList);
-//            mFastScroller.setRecyclerView(recyclerViewFileList);
             recyclerViewFileList.setAdapter(fileListAdapter);
             recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
                     .VERTICAL, mIsDarkTheme));
-/*            fileListAdapter.setCategory(mCategory);
-            fileListAdapter.updateAdapter(fileInfoList);
-            recyclerViewFileList.setAdapter(fileListAdapter);
-            addItemDecoration();*/
             if (!data.isEmpty()) {
                 if (mIsBackPressed) {
                     Log.d("TEST", "on onLoadFinished scrollpos--" + scrollPosition.entrySet());

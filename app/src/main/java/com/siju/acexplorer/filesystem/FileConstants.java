@@ -123,7 +123,8 @@ public class FileConstants {
         APPS(10),
         LARGE_FILES(11),
         ZIP_VIEWER(12),
-        GENERIC_LIST(13);
+        GENERIC_LIST(13),
+        PICKER(14);
 
         private int value;
 

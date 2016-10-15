@@ -14,6 +14,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -519,12 +520,11 @@ public class FileUtils implements CopyService.Progress {
                 }
             }
         }
-        if (paths.isEmpty())  {
+
             File file = new File ("/storage/sdcard1");
             if (file.exists() && file.canExecute()) {
                 paths.add("/storage/sdcard1");
             }
-        }
         return paths.toArray(new String[0]);
     }
 
@@ -2353,18 +2353,18 @@ public class FileUtils implements CopyService.Progress {
 
     public static void scanFile(Context context, String path) {
 
-        Uri contentUri = Uri.fromFile(new File(path));
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+//        Uri contentUri = Uri.fromFile(new File(path));
+/*        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         mediaScanIntent.setData(contentUri);
-        context.sendBroadcast(mediaScanIntent);
-/*        MediaScannerConnection.scanFile(context,
+        context.sendBroadcast(mediaScanIntent);*/
+        MediaScannerConnection.scanFile(context,
                 new String[]{path}, null,
                 new MediaScannerConnection.OnScanCompletedListener() {
                     public void onScanCompleted(String path, Uri uri) {
                         Log.i(TAG, "Scanned " + path + ":");
                         Log.i(TAG, "-> uri=" + uri);
                     }
-                });*/
+                });
     }
 
     public static boolean isFileCompressed(String filePath) {
@@ -2703,7 +2703,7 @@ public class FileUtils implements CopyService.Progress {
 
         int dot = uri.lastIndexOf(".");
         if (dot >= 0) {
-            return uri.substring(dot);
+            return uri.substring(dot + 1);
         } else {
             // No extension.
             return "";

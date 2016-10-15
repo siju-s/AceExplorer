@@ -130,6 +130,61 @@ public class MediaStoreHack {
         }
     }
 
+    public static Uri getCustomRingtoneUri(ContentResolver contentResolver, String path, int type) {
+
+        String musicType = type == 1 ? "is_ringtone" : type == 2 ? "is_notification" : "is_alarm";
+        String uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI.toString();
+        Uri parse;
+        Cursor query = contentResolver.query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                new String[]{MediaStore.Audio.Media._ID, musicType}, "_data=?", new String[]{path}, null);
+        if (query != null) {
+            try {
+                if (query.getCount() != 0) {
+                    query.moveToFirst();
+                    int id = query.getInt(0);
+                    /** If ringtone/notification/alarm flag not there in custom uri, add it .
+                     * This part was necessary to make it work on Note 2 (4.4.2) */
+                    if (query.getInt(1) == 0 && type != 0) {
+                        ContentValues contentValues = new ContentValues();
+                        contentValues.put(musicType, true);
+                        contentResolver.update(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, contentValues, "_id=" + id, null);
+                    }
+                    parse = Uri.parse(uri + "/" + id);
+                    query.close();
+                    return parse;
+                }
+                else {
+                    return insertAudioIntoMediaStore(contentResolver,path,type);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+           return insertAudioIntoMediaStore(contentResolver,path,type);
+        }
+        return null;
+    }
+
+    public static Uri insertAudioIntoMediaStore(ContentResolver contentResolver, String path, int type) {
+        File file = new File(path);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MediaStore.Audio.Media.DATA, path);
+        contentValues.put(MediaStore.Audio.Media.TITLE, file.getName());
+        contentValues.put(MediaStore.Audio.Media.SIZE, file.length());
+        contentValues.put(MediaStore.Audio.Media.DATE_MODIFIED, file.lastModified());
+        contentValues.put("is_ringtone", type == 1);
+        contentValues.put("is_notification", type == 2);
+        contentValues.put("is_alarm", type == 4);
+        contentValues.put("is_music", true);
+        Uri uri = contentResolver.insert(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, contentValues);
+        return uri;
+    }
+
+
+
+
+
     /**
      * Returns an OutputStream to write to the file. The file will be truncated immediately.
      */
@@ -269,12 +324,10 @@ public class MediaStoreHack {
         try {
             final ParcelFileDescriptor fd = contentResolver.openFileDescriptor(albumUri, "r");
             if (fd != null)
-            fd.close();
-        }
-        catch (SecurityException e) { //TODO find solution to remove this
+                fd.close();
+        } catch (SecurityException e) { //TODO find solution to remove this
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             delete(context, tmpFile);
         }
         return file.exists();

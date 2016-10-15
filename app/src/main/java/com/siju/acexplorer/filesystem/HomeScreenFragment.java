@@ -69,7 +69,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     private ArrayList<HomeLibraryInfo> homeLibraryInfoArrayList;
     private ArrayList<HomeLibraryInfo> tempLibraryInfoArrayList;
     private ArrayList<HomeStoragesInfo> homeStoragesInfoArrayList;
-    public String STORAGE_INTERNAL, STORAGE_EXTERNAL;
+    public  String STORAGE_INTERNAL, STORAGE_EXTERNAL;
     private final String TAG = this.getClass().getSimpleName();
     private SharedPreferenceWrapper sharedPreferenceWrapper;
     private boolean mIsFirstRun;

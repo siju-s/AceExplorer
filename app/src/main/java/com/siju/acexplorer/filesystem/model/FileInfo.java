@@ -24,6 +24,7 @@ public class FileInfo implements Parcelable {
     private long size;
     private int categoryId;
     private int count;
+    private int icon;
 
 /*    public FileInfo(String fileName, String filePath, String fileDate, String noOfFilesOrSize, boolean isDirectory,
                     String extension, int type,String permissions) {
@@ -47,6 +48,13 @@ public class FileInfo implements Parcelable {
         this.extension = extension;
         this.type = type;
         this.permissions = permissions;
+    }
+
+    public FileInfo(String fileName, String filePath, int icon, int type) {
+        this.fileName = fileName;
+        this.filePath = filePath;
+        this.icon = icon;
+        this.type = type;
     }
 
 /*    public FileInfo(long id, String fileName, String filePath, String fileDate, String noOfFilesOrSize, int type,
@@ -120,6 +128,8 @@ public class FileInfo implements Parcelable {
 
 
 
+
+
     protected FileInfo(Parcel in) {
         fileName = in.readString();
         filePath = in.readString();
@@ -171,6 +181,14 @@ public class FileInfo implements Parcelable {
             return new FileInfo[size];
         }
     };
+
+    public int getIcon() {
+        return icon;
+    }
+
+    public void setIcon(int icon) {
+        this.icon = icon;
+    }
 
     public int getCategoryId() {
         return categoryId;

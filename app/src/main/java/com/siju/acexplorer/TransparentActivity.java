@@ -27,16 +27,17 @@ public class TransparentActivity extends AppCompatActivity {
         if (intent != null && intent.getAction() != null && intent.getAction().equals(RingtoneManager
                 .ACTION_RINGTONE_PICKER)) {
 //            mRingtonePickerIntent = true;
-            showRingtonePickerDialog();
+            showRingtonePickerDialog(intent);
         }
     }
 
-    private void showRingtonePickerDialog() {
+    private void showRingtonePickerDialog(Intent intent) {
 
         dialogFragment = new DialogBrowseFragment();
         dialogFragment.setStyle(DialogFragment.STYLE_NORMAL, checkTheme());
         Bundle args = new Bundle();
         args.putBoolean("ringtone_picker", true);
+        args.putInt("ringtone_type",intent.getIntExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, 0));
         dialogFragment.setArguments(args);
         dialogFragment.show(getSupportFragmentManager(), FRAGMENT_TAG);
     }

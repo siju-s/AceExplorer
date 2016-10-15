@@ -285,113 +285,121 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private void setViewByCategory(FileListViewHolder fileListViewHolder, int position) {
 
-        String fileName = fileInfoArrayList.get(position).getFileName();
-        String fileDate;
-        if (isDateNotInMs()) {
-            fileDate = FileUtils.convertDate(fileInfoArrayList.get(position).getDate());
-        } else {
-            fileDate = FileUtils.convertDate(fileInfoArrayList.get(position).getDate() * 1000);
+        if (fileInfoArrayList.get(position).getType() == FileConstants.CATEGORY.PICKER.getValue()) {
+            FileInfo fileInfo = fileInfoArrayList.get(position);
+            fileListViewHolder.imageIcon.setImageResource(fileInfo.getIcon());
+            fileListViewHolder.textFileName.setText(fileInfo.getFileName());
         }
-        boolean isDirectory = fileInfoArrayList.get(position).isDirectory();
-        String fileNoOrSize = "";
-        if (isDirectory) {
-            int childFileListSize = (int) fileInfoArrayList.get(position).getSize();
-            if (childFileListSize == 0) {
-                fileNoOrSize = mContext.getResources().getString(R.string.empty);
-            } else if (childFileListSize == -1) {
-                fileNoOrSize = "";
+        else {
+
+            String fileName = fileInfoArrayList.get(position).getFileName();
+            String fileDate;
+            if (isDateNotInMs()) {
+                fileDate = FileUtils.convertDate(fileInfoArrayList.get(position).getDate());
             } else {
-                fileNoOrSize = mContext.getResources().getQuantityString(R.plurals.number_of_files,
-                        childFileListSize, childFileListSize);
+                fileDate = FileUtils.convertDate(fileInfoArrayList.get(position).getDate() * 1000);
             }
-        } else {
-            long size = fileInfoArrayList.get(position).getSize();
-            fileNoOrSize = Formatter.formatFileSize(mContext,size);
-        }
+            boolean isDirectory = fileInfoArrayList.get(position).isDirectory();
+            String fileNoOrSize = "";
+            if (isDirectory) {
+                int childFileListSize = (int) fileInfoArrayList.get(position).getSize();
+                if (childFileListSize == 0) {
+                    fileNoOrSize = mContext.getResources().getString(R.string.empty);
+                } else if (childFileListSize == -1) {
+                    fileNoOrSize = "";
+                } else {
+                    fileNoOrSize = mContext.getResources().getQuantityString(R.plurals.number_of_files,
+                            childFileListSize, childFileListSize);
+                }
+            } else {
+                long size = fileInfoArrayList.get(position).getSize();
+                fileNoOrSize = Formatter.formatFileSize(mContext, size);
+            }
 
-        String filePath = fileInfoArrayList.get(position).getFilePath();
+            String filePath = fileInfoArrayList.get(position).getFilePath();
 
 
-        fileListViewHolder.textFileName.setText(fileName);
-        if (mViewMode == FileConstants.KEY_LISTVIEW) {
-            fileListViewHolder.textFileModifiedDate.setText(fileDate);
-        }
-        fileListViewHolder.textNoOfFileOrSize.setText(fileNoOrSize);
+            fileListViewHolder.textFileName.setText(fileName);
+            if (mViewMode == FileConstants.KEY_LISTVIEW) {
+                fileListViewHolder.textFileModifiedDate.setText(fileDate);
+            }
+            fileListViewHolder.textNoOfFileOrSize.setText(fileNoOrSize);
 
-        switch (mCategory) {
+            switch (mCategory) {
 
-            case 0: // For file group
-            case 5:
-            case 7:
-            case 8:
-            case 9:
-            case 10:
-            case 11:
-            case 12:
-                if (isDirectory) {
-                    fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_folder_white);
-                    Drawable apkIcon = FileUtils.getAppIconForFolder(mContext, fileName);
-                    if (apkIcon != null) {
-                        fileListViewHolder.imageThumbIcon.setVisibility(View.VISIBLE);
-                        fileListViewHolder.imageThumbIcon.setImageDrawable(apkIcon);
+                case 0: // For file group
+                case 5:
+                case 7:
+                case 8:
+                case 9:
+                case 10:
+                case 11:
+                case 12:
+                    if (isDirectory) {
+                        fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_folder_white);
+                        Drawable apkIcon = FileUtils.getAppIconForFolder(mContext, fileName);
+                        if (apkIcon != null) {
+                            fileListViewHolder.imageThumbIcon.setVisibility(View.VISIBLE);
+                            fileListViewHolder.imageThumbIcon.setImageDrawable(apkIcon);
+                        } else {
+                            fileListViewHolder.imageThumbIcon.setVisibility(View.GONE);
+                            fileListViewHolder.imageThumbIcon.setImageDrawable(null);
+                        }
+
                     } else {
                         fileListViewHolder.imageThumbIcon.setVisibility(View.GONE);
                         fileListViewHolder.imageThumbIcon.setImageDrawable(null);
-                    }
 
-                } else {
-                    fileListViewHolder.imageThumbIcon.setVisibility(View.GONE);
-                    fileListViewHolder.imageThumbIcon.setImageDrawable(null);
+                        int type = fileInfoArrayList.get(position).getType();
+                        fileListViewHolder.imageIcon.setImageDrawable(null);
 
-                    int type = fileInfoArrayList.get(position).getType();
-                    fileListViewHolder.imageIcon.setImageDrawable(null);
-
-                    // If Image or Video file, load thumbnail
-                    if (type == FileConstants.CATEGORY.IMAGE.getValue()) {
-                        displayImageThumb(fileListViewHolder, filePath);
-                    } else if (type == FileConstants.CATEGORY.VIDEO.getValue()) {
-                        displayVideoThumb(fileListViewHolder, filePath);
-                    } else if (type == FileConstants.CATEGORY.AUDIO.getValue()) {
-                        displayAudioAlbumArt(fileListViewHolder, fileInfoArrayList.get(position)
-                                .getFilePath());
-                    } else {
-                        String extension = fileInfoArrayList.get(position).getExtension();
-                        if (extension != null) {
-                            changeFileIcon(fileListViewHolder, extension.toLowerCase(), filePath);
+                        // If Image or Video file, load thumbnail
+                        if (type == FileConstants.CATEGORY.IMAGE.getValue()) {
+                            displayImageThumb(fileListViewHolder, filePath);
+                        } else if (type == FileConstants.CATEGORY.VIDEO.getValue()) {
+                            displayVideoThumb(fileListViewHolder, filePath);
+                        } else if (type == FileConstants.CATEGORY.AUDIO.getValue()) {
+                            displayAudioAlbumArt(fileListViewHolder, fileInfoArrayList.get(position)
+                                    .getFilePath());
                         } else {
-                            fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_doc_white);
+                            String extension = fileInfoArrayList.get(position).getExtension();
+                            if (extension != null) {
+                                changeFileIcon(fileListViewHolder, extension.toLowerCase(), filePath);
+                            } else {
+                                fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_doc_white);
+                            }
                         }
+
                     }
+                    if (fileName.startsWith(".")) {
+                        fileListViewHolder.imageIcon.setColorFilter(Color.argb(200, 255, 255, 255));
+                    } else {
+                        fileListViewHolder.imageIcon.clearColorFilter();
+                    }
+                    break;
+                case 1:
+                    Uri uri = ContentUris.withAppendedId(mAudioUri, fileInfoArrayList.get(position)
+                            .getBucketId());
+                    Glide.with(mContext).load(uri).centerCrop()
+                            .placeholder(R.drawable.ic_music_default)
+                            .crossFade(2)
+                            .into(fileListViewHolder.imageIcon);
+                    break;
 
-                }
-                if (fileName.startsWith(".")) {
-                    fileListViewHolder.imageIcon.setColorFilter(Color.argb(200, 255, 255, 255));
-                } else {
-                    fileListViewHolder.imageIcon.clearColorFilter();
-                }
-                break;
-            case 1:
-                Uri uri = ContentUris.withAppendedId(mAudioUri, fileInfoArrayList.get(position)
-                        .getBucketId());
-                Glide.with(mContext).load(uri).centerCrop()
-                        .placeholder(R.drawable.ic_music)
-                        .crossFade(2)
-                        .into(fileListViewHolder.imageIcon);
-                break;
+                case 2:
+                    displayVideoThumb(fileListViewHolder, filePath);
+                    break;
 
-            case 2:
-                displayVideoThumb(fileListViewHolder, filePath);
-                break;
+                case 3: // For images group
+                    displayImageThumb(fileListViewHolder, filePath);
+                    break;
+                case 4: // For docs group
+                    String extension = fileInfoArrayList.get(position).getExtension();
+                    extension = extension.toLowerCase();
+                    changeFileIcon(fileListViewHolder, extension, null);
+                    break;
 
-            case 3: // For images group
-                displayImageThumb(fileListViewHolder, filePath);
-                break;
-            case 4: // For docs group
-                String extension = fileInfoArrayList.get(position).getExtension();
-                extension = extension.toLowerCase();
-                changeFileIcon(fileListViewHolder, extension, null);
-                break;
-
+            }
         }
 
     }

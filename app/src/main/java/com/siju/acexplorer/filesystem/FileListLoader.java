@@ -53,7 +53,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private boolean mInParentZip;
     private int mSortMode;
     private MountUnmountReceiver mMountUnmountReceiver;
-private boolean mIsRingtonePicker;
+    private boolean mIsRingtonePicker;
 
     public FileListLoader(Fragment fragment, Context context, String path, int category) {
         super(context);
@@ -67,7 +67,7 @@ private boolean mIsRingtonePicker;
         mFragment = fragment;
     }
 
-     FileListLoader(Fragment fragment, String path, int category, String zipPath, boolean
+    FileListLoader(Fragment fragment, String path, int category, String zipPath, boolean
             isDualPaneInFocus, boolean isParentZip) {
         super(fragment.getContext());
         Logger.log(TAG, "Zip" + "dir=" + zipPath);
@@ -87,7 +87,7 @@ private boolean mIsRingtonePicker;
                 FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
     }
 
-    public FileListLoader(Fragment fragment, Context context, String path, int category,boolean isRingtonePicker) {
+    public FileListLoader(Fragment fragment, Context context, String path, int category, boolean isRingtonePicker) {
         super(context);
         mPath = path;
         mContext = getContext();
@@ -266,12 +266,12 @@ private boolean mIsRingtonePicker;
                 getRarContents("", file.getAbsolutePath());
             } else {
                 fileInfoList = RootHelper.getFilesList(mContext, mPath,
-                        true, mShowHidden,mIsRingtonePicker);
+                        true, mShowHidden, mIsRingtonePicker);
                 fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
             }
         } else {
             fileInfoList = RootHelper.getFilesList(mContext, mPath,
-                    true, mShowHidden,mIsRingtonePicker);
+                    true, mShowHidden, mIsRingtonePicker);
             fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
         }
         return fileInfoList;
@@ -610,7 +610,7 @@ private boolean mIsRingtonePicker;
                 MediaStore.Audio.Media.DATA};
         String where = (MediaStore.Audio.Media.TITLE + " != ''") +
                 " AND " + MediaStore.Audio.Media.IS_MUSIC + "=1";
-        Cursor cursor = mContext.getContentResolver().query(uri, projection, where, null,
+        Cursor cursor = mContext.getContentResolver().query(uri, projection, null, null,
                 null);
         if (cursor != null) {
             if (isHomeFragment()) {
@@ -619,23 +619,23 @@ private boolean mIsRingtonePicker;
             }
             while (cursor.moveToNext()) {
 
-                int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE);
+//                int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE);
                 int sizeIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE);
                 int dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATE_MODIFIED);
                 int audioIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID);
                 int albumIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID);
                 int pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
-                String fileName = cursor.getString(titleIndex);
+//                String fileName = cursor.getString(titleIndex);
                 long size1 = cursor.getLong(sizeIndex);
                 long date1 = cursor.getLong(dateIndex);
                 String path = cursor.getString(pathIndex);
                 long audioId = cursor.getLong(audioIdIndex);
                 long albumId = cursor.getLong(albumIdIndex);
                 int type = FileConstants.CATEGORY.AUDIO.getValue();
-                String extension = path.substring(path.lastIndexOf(".") + 1);
-                String nameWithExt = fileName + "." + extension;
-                fileInfoList.add(new FileInfo(audioId, albumId, nameWithExt, path, date1, size1, type, extension));
-
+                String fileName = path.substring(path.lastIndexOf("/") + 1, path.length());
+                String extension = fileName.substring(fileName.lastIndexOf(".") + 1 , fileName.length());
+                Log.d(TAG,"File name="+fileName+ "path="+path);
+                fileInfoList.add(new FileInfo(audioId, albumId, fileName, path, date1, size1, type, extension));
             }
             cursor.close();
             if (fileInfoList.size() != 0) {
