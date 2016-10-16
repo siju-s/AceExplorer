@@ -97,7 +97,7 @@ class HomeLibraryAdapter extends RecyclerView.Adapter<HomeLibraryAdapter
         } else {
             libraryViewHolder.textCount.setVisibility(View.VISIBLE);
         }
-        libraryViewHolder.textCount.setText(mContext.getString(R.string.blank, homeLibraryList.get(position).getCount()));
+        libraryViewHolder.textCount.setText(roundOffCount(homeLibraryList.get(position).getCount()));
         changeColor(libraryViewHolder.imageLibrary, homeLibraryList.get(position).getCategoryId());
     }
 
@@ -109,6 +109,17 @@ class HomeLibraryAdapter extends RecyclerView.Adapter<HomeLibraryAdapter
         } else {
             return homeLibraryList.size();
         }
+    }
+
+    private String roundOffCount(int count) {
+       String roundedCount;
+        if (count > 99999) {
+           roundedCount = 99999 + "+";
+       }
+        else {
+            roundedCount = "" +count;
+        }
+        return roundedCount;
     }
 
 

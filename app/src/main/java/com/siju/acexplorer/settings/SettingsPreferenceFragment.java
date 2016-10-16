@@ -35,6 +35,7 @@ import android.widget.Toast;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
+import com.siju.acexplorer.utils.LocaleHelper;
 
 import java.util.Locale;
 
@@ -47,8 +48,8 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
     public static final String PREFS_LANGUAGE = "prefLanguage";
 
     private Locale myLocale;
-    private String currentLanguage;
-    //    ListPreference langPreference;
+    private String mCurrentLanguage;
+    ListPreference langPreference;
     ListPreference themePreference;
     private SharedPreferences mPrefs;
     Preference updatePreference;
@@ -66,7 +67,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
 
-//        langPreference = (ListPreference) findPreference(PREFS_LANGUAGE);
+        langPreference = (ListPreference) findPreference(PREFS_LANGUAGE);
         themePreference = (ListPreference) findPreference(FileConstants.PREFS_THEME);
         mIsTheme = mPrefs.getInt(FileConstants.CURRENT_THEME, FileConstants.THEME_LIGHT);
 
@@ -119,14 +120,17 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         });
 
 
-//        String value = LocaleHelper.getLanguage(getActivity());
-//        langPreference.setValue(value);
+        String value = LocaleHelper.getLanguage(getActivity());
+        langPreference.setValue(value);
+        mCurrentLanguage = value;
+        Logger.log("Settings", "lang=" + mCurrentLanguage);
+
 
         // Bind the summaries of EditText/List/Dialog/Ringtone preferences
         // to their values. When their values change, their summaries are
         // updated to reflect the new value, per the Android Design
         // guidelines.
-//        bindPreferenceSummaryToValue(langPreference);
+        bindPreferenceSummaryToValue(langPreference);
         bindPreferenceSummaryToValue(themePreference);
         initializeListeners();
     }
@@ -163,12 +167,11 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         AppBarLayout bar;
         ViewParent view1 = dialog.findViewById(android.R.id.list).getParent();
         ViewParent view2 = view1.getParent();
-        Log.d(this.getClass().getSimpleName(), "On prefernce tree-" + view1 + " view2=" + view2+ " view3="+view2.getParent());
+        Log.d(this.getClass().getSimpleName(), "On prefernce tree-" + view1 + " view2=" + view2 + " view3=" + view2.getParent());
         LinearLayout root;
         if (Build.VERSION.SDK_INT >= 24) {
             root = (LinearLayout) dialog.findViewById(android.R.id.list).getParent().getParent();
-        }
-        else {
+        } else {
             root = (LinearLayout) dialog.findViewById(android.R.id.list).getParent();
         }
         bar = (AppBarLayout) LayoutInflater.from(getActivity()).inflate(R.layout.toolbar, root,
@@ -237,13 +240,15 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
                                         ? listPreference.getEntries()[index]
                                         : null);
 
-         /*       if (listPreference.getKey().equals(PREFS_LANGUAGE)) {
+                        if (listPreference.getKey().equals(PREFS_LANGUAGE)) {
+                            Logger.log("Settings", "sBindPreferenceSummaryToValueListener -lang=" + stringValue);
 
-                    LocaleHelper.setLocale(getActivity(), stringValue);
-                    getActivity().recreate();
-
-
-                }*/
+                            if (!stringValue.equals(mCurrentLanguage)) {
+                                LocaleHelper.setLocale(getActivity(), stringValue);
+                                getActivity().setResult(Activity.RESULT_OK, mSendIntent);
+                                restartApp();
+                            }
+                        }
 
                         if (listPreference.getKey().equals(FileConstants.PREFS_THEME)) {
                             int theme = Integer.valueOf(stringValue);

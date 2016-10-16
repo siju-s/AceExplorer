@@ -54,7 +54,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -317,7 +316,16 @@ public class CopyService extends Service {
                 if (sourceFile.isDirectory()) {
                     if (!hash.get(id)) return;
                     File destinationDir = new File(targetFile.getFilePath());
-                    if (!destinationDir.exists()) destinationDir.mkdir();
+                    if (!destinationDir.exists()) {
+                        int mode = new FileUtils().checkFolder(destinationDir.getParent(), mContext);
+                        //TODO Find way to show SAF dialog since in service its not possible.
+/*                        if (mode == 2) {
+
+                        }*/
+                        if (mode == 1 || mode == 0)
+                            FileUtils.mkdir(destinationDir, mContext);
+//                        destinationDir.mkdir();
+                    }
                     if (!destinationDir.exists()) {
                         Log.e("Copy", "cant make dir");
                         failedFOps.add(sourceFile);
@@ -345,14 +353,14 @@ public class CopyService extends Service {
                     Logger.log("Copy", "target file=" + targetFile.getFilePath());
                     BufferedOutputStream out = null;
                     try {
-                         out = new BufferedOutputStream(
-                                new FileOutputStream(targetFile.getFilePath()));
+                        File target = new File(targetFile.getFilePath());
+                        long size1 = target.length();
+                        OutputStream outputStream = FileUtils.getOutputStream(target,mContext,size1);
+                        if (outputStream != null)
+                         out = new BufferedOutputStream(outputStream);
                     }
                     catch (Exception e) {
-                         OutputStream stream = getWriteableStreamExtSD(new File(targetFile.getFilePath()));
-                        Logger.log("CopyService", "stream EXTSD=" + stream);
-                        if (stream != null)
-                        out = new BufferedOutputStream(stream);
+                        e.printStackTrace();
                     }
                     BufferedInputStream in = new BufferedInputStream(
                             new FileInputStream(sourceFile.getFilePath()));

@@ -42,6 +42,7 @@ import com.siju.acexplorer.filesystem.ui.DividerItemDecoration;
 import com.siju.acexplorer.filesystem.ui.HomeScreenGridLayoutManager;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.utils.ThemeUtils;
+import com.siju.acexplorer.utils.PermissionUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -89,6 +90,8 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     private final String audioUri = "content://media/external/audio/media";
     private final String imageUri = "content://media/external/images/media";
     private final String videoUri = "content://media/external/videos/media";
+    private boolean mIsPermissionGranted = true;
+
 
     @Override
     public void onAttach(Context context) {
@@ -119,6 +122,9 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             homeStoragesInfoArrayList = new ArrayList<>();
             tempLibraryInfoArrayList = new ArrayList<>();
             mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            if (PermissionUtils.isAtLeastM() && !PermissionUtils.hasRequiredPermissions()) {
+                mIsPermissionGranted = false;
+            }
 
             initializeViews();
             initConstants();
@@ -136,6 +142,11 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             recyclerViewStorages.setAdapter(homeStoragesAdapter);
         }
 
+    }
+
+    public void setPermissionGranted() {
+        mIsPermissionGranted = true;
+        setupLoaders();
     }
 
     private void registerObservers(Uri uri) {
@@ -300,19 +311,21 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
 
     private void setupLoaders() {
 
-        for (int i = 0; i < savedLibraries.size(); i++) {
-            int categoryId = savedLibraries.get(i).getCategoryId();
-            initLoaders(categoryId);
-            registerObservers(getUriForCategory(categoryId));
-        }
+        if (mIsPermissionGranted) {
+            for (int i = 0; i < savedLibraries.size(); i++) {
+                int categoryId = savedLibraries.get(i).getCategoryId();
+                initLoaders(categoryId);
+                registerObservers(getUriForCategory(categoryId));
+            }
 
-        mFavList = sharedPreferenceWrapper.getFavorites(getActivity());
-        if (mFavList != null && mFavList.size() != 0) {
-            for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
-                if (homeLibraryInfoArrayList.get(i).getCategoryId() == FileConstants.CATEGORY
-                        .FAVORITES.getValue()) {
-                    homeLibraryInfoArrayList.get(i).setCount(mFavList.size());
-                    break;
+            mFavList = sharedPreferenceWrapper.getFavorites(getActivity());
+            if (mFavList != null && mFavList.size() != 0) {
+                for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
+                    if (homeLibraryInfoArrayList.get(i).getCategoryId() == FileConstants.CATEGORY
+                            .FAVORITES.getValue()) {
+                        homeLibraryInfoArrayList.get(i).setCount(mFavList.size());
+                        break;
+                    }
                 }
             }
         }
@@ -323,7 +336,9 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     }
 
     private void initLoaders(int categoryId) {
-        getLoaderManager().initLoader(categoryId, null, this);
+        if (PermissionUtils.hasRequiredPermissions()) {
+            getLoaderManager().initLoader(categoryId, null, this);
+        }
     }
 
     private void restartLoaders(int categoryId) {
@@ -529,6 +544,8 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     public void onLoaderReset(Loader<ArrayList<FileInfo>> loader) {
 
     }
+
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

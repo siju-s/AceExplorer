@@ -3,6 +3,8 @@ package com.siju.acexplorer;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -17,7 +19,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.SwipeDismissBehavior;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -29,14 +30,14 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.drawable.DrawerArrowDrawable;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
@@ -67,6 +68,7 @@ import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.model.SectionGroup;
 import com.siju.acexplorer.model.SectionItems;
 import com.siju.acexplorer.settings.SettingsActivity;
+import com.siju.acexplorer.utils.LocaleHelper;
 import com.siju.acexplorer.utils.PermissionUtils;
 import com.siju.acexplorer.utils.Utils;
 import com.stericson.RootTools.RootTools;
@@ -76,6 +78,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import static com.siju.acexplorer.filesystem.utils.FileUtils.getInternalStorage;
 
@@ -165,12 +168,15 @@ public class BaseActivity extends AppCompatActivity implements
     public FileOpsHelper mFileOpsHelper;
     public int mRenamedPosition;
     private Snackbar mSnackbar;
+    private Dialog mPermissionDialog;
     private boolean mIsTablet;
     private HomeScreenFragment mHomeScreenFragment;
+    private String mCurrentLanguage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme();
+        setLanguage();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         PreferenceManager.setDefaultValues(this, R.xml.pref_settings, false);
@@ -183,15 +189,24 @@ public class BaseActivity extends AppCompatActivity implements
         if (PermissionUtils.isAtLeastM()) {
             checkPermissions();
             Logger.log(TAG, "onCreate : useRuntimepermission");
-        } else {
-            setup();
-            setUpInitialData();
         }
+        setup();
+        setUpInitialData();
+
     }
 
     private void setTheme() {
+        mCurrentLanguage = LocaleHelper.getLanguage(this);
+
+      if (!mCurrentLanguage.equals(Locale.getDefault().getLanguage())) {
+          LocaleHelper.setLocale(this,mCurrentLanguage);
+      }
+    }
+
+    private void setLanguage() {
         mCurrentTheme = PreferenceManager.getDefaultSharedPreferences(this)
                 .getInt(FileConstants.CURRENT_THEME, FileConstants.THEME_LIGHT);
+
 
         if (mCurrentTheme == FileConstants.THEME_DARK) {
             setTheme(R.style.Dark_AppTheme_NoActionBar);
@@ -199,6 +214,8 @@ public class BaseActivity extends AppCompatActivity implements
             setTheme(R.style.AppTheme_NoActionBar);
         }
     }
+
+
 
     private void initConstants() {
         STORAGE_ROOT = getResources().getString(R.string.nav_menu_root);
@@ -364,8 +381,8 @@ public class BaseActivity extends AppCompatActivity implements
         } else {
             Logger.log(TAG, "checkPermissions ELSE");
             fabCreateMenu.setVisibility(View.VISIBLE);
-            setup();
-            setUpInitialData();
+          /*  setup();
+            setUpInitialData();*/
         }
 
     }
@@ -384,12 +401,21 @@ public class BaseActivity extends AppCompatActivity implements
                 if (PermissionUtils.hasRequiredPermissions()) {
                     Logger.log(TAG, "Permission granted");
                     fabCreateMenu.setVisibility(View.VISIBLE);
-                    setup();
-                    setUpInitialData();
+                    setPermissionGranted();
+                    dismissRationaleDialog();
+          /*          setup();
+                    setUpInitialData();*/
                 } else {
                     showRationale();
                     fabCreateMenu.setVisibility(View.GONE);
                 }
+        }
+    }
+
+    private void setPermissionGranted() {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
+        if (mIsHomeScreenEnabled) {
+            ((HomeScreenFragment) fragment).setPermissionGranted();
         }
     }
 
@@ -408,59 +434,57 @@ public class BaseActivity extends AppCompatActivity implements
     }
 
     private void showRationale() {
+        Log.d(TAG, "showRationale");
 
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            // Shows after user denied permission
-            mSnackbar = Snackbar.make(mMainLayout, getString(R.string.permission_deny), Snackbar.LENGTH_INDEFINITE);
-            mSnackbar.setAction(getString(R.string.action_grant), new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    requestPermission();
+        final boolean showSettings;
+        Button buttonGrant;
+        TextView textViewPermissionHint;
+
+        showSettings = !ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (mPermissionDialog == null) {
+            mPermissionDialog = new Dialog(this, android.R.style.Theme_Light_NoTitleBar_Fullscreen);
+            mPermissionDialog.setContentView(R.layout.dialog_runtime_permissions);
+
+        }
+        mPermissionDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                Log.d(TAG, "Rationale dismiss");
+                if (!PermissionUtils.hasRequiredPermissions()) {
+                    mPermissionDialog.dismiss();
+                    finish();
                 }
-            }).show();
-
-        } else {
-            // Shows after user denied permission and checked Do Not Ask Again checkbox
-            mSnackbar = Snackbar.make(mMainLayout, getString(R.string.permission_request), Snackbar
-                    .LENGTH_INDEFINITE);
-            mSnackbar.setAction(getString(R.string.action_settings), new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            }
+        });
+        buttonGrant = (Button) mPermissionDialog.findViewById(R.id.buttonGrant);
+        textViewPermissionHint = (TextView) mPermissionDialog.findViewById(R.id.textPermissionHint);
+        if (showSettings) {
+            buttonGrant.setText(R.string.action_settings);
+            textViewPermissionHint.setVisibility(View.VISIBLE);
+        }
+        buttonGrant.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!showSettings) {
+                    requestPermission();
+                } else {
                     Intent intent = new Intent();
                     intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                     Uri uri = Uri.fromParts("package", getPackageName(), null);
                     intent.setData(uri);
                     startActivityForResult(intent, SETTINGS_REQUEST);
                 }
-            }).show();
-        }
-
-        final Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) mSnackbar.getView();
-        layout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                ViewGroup.LayoutParams lp = layout.getLayoutParams();
-                if (lp instanceof CoordinatorLayout.LayoutParams) {
-                    ((CoordinatorLayout.LayoutParams) lp).setBehavior(new DisableSwipeBehavior());
-                    layout.setLayoutParams(lp);
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    layout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                } else {
-                    layout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                }
             }
         });
 
+        mPermissionDialog.show();
     }
 
-    private class DisableSwipeBehavior extends SwipeDismissBehavior<Snackbar.SnackbarLayout> {
-        @Override
-        public boolean canSwipeDismissView(@NonNull View view) {
-            return false;
+    private void dismissRationaleDialog() {
+        if (mPermissionDialog != null && mPermissionDialog.isShowing()) {
+            mPermissionDialog.dismiss();
         }
     }
-
 
     private void checkPreferences() {
         if (mSharedPreferences.getBoolean(PREFS_FIRST_RUN, true)) {
@@ -680,18 +704,20 @@ public class BaseActivity extends AppCompatActivity implements
 
     @Override
     protected void onResume() {
-        Logger.log(TAG, "oNResume--snackbar" + mSnackbar + " " + PermissionUtils.hasRequiredPermissions());
+        Logger.log(TAG, "oNResume--mPermissionDialog" + mPermissionDialog + " " + PermissionUtils.hasRequiredPermissions());
 
         /**
          * This handles the scenario when snackbar is shown and user presses home and grants access to app and
          * returns to app. In that case,setup the data and dismiss the snackbar.
          */
 
-        if (mSnackbar != null && mSnackbar.isShown()) {
+        if (mPermissionDialog != null && mPermissionDialog.isShowing()) {
             if (PermissionUtils.hasRequiredPermissions()) {
-                mSnackbar.dismiss();
-                setup();
-                setUpInitialData();
+                mPermissionDialog.dismiss();
+                setPermissionGranted();
+//                mSnackbar.dismiss();
+         /*       setup();
+                setUpInitialData();*/
             }
         }
 
@@ -716,21 +742,28 @@ public class BaseActivity extends AppCompatActivity implements
             // User clicked the Setting button and we have permissions,setup the data
             if (PermissionUtils.hasRequiredPermissions()) {
 //                fabCreateMenu.setVisibility(View.VISIBLE);
-                setup();
-                setUpInitialData();
+                setPermissionGranted();
+           /*     setup();
+                setUpInitialData();*/
             } else {
                 // User clicked the Setting button and we don't permissions,show snackbar again
                 showRationale();
             }
         } else if (requestCode == SAF_REQUEST) {
+            String uriString = mSharedPreferences.getString("URI", null);
+
+            Uri oldUri = uriString != null ? Uri.parse(uriString) : null;
+            Uri treeUri = intent.getData();
+            Logger.log(TAG,"tree uri="+treeUri+ " old uri="+oldUri);
+
             if (resultCode == Activity.RESULT_OK) {
                 // Get Uri from Storage Access Framework.
-                Uri treeUri = intent.getData();
                 // Persist URI - this is required for verification of writability.
                 if (treeUri != null) {
                     mSharedPreferences.edit().putString("URI", treeUri.toString()).apply();
-                    int takeFlags = intent.getFlags();
-                    takeFlags &= (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    final int takeFlags = intent.getFlags()
+                            & (Intent.FLAG_GRANT_READ_URI_PERMISSION
+                            | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                     getContentResolver().takePersistableUriPermission(treeUri, takeFlags);
 
                     switch (mOperation) {
@@ -739,12 +772,12 @@ public class BaseActivity extends AppCompatActivity implements
                             mFiles = new ArrayList<>();
                             break;
                         case FileConstants.COPY:
-                            Intent intent1 = new Intent(this, CopyService.class);
+                            Intent intent1 = new Intent(this,CopyService.class);
                             intent1.putParcelableArrayListExtra("FILE_PATHS", mFiles);
                             intent1.putExtra("COPY_DIRECTORY", mNewFilePath);
-                            intent.putParcelableArrayListExtra("ACTION",mCopyData);
-                            intent1.putParcelableArrayListExtra("TOTAL_LIST",mTotalFiles);
-                            new FileUtils().showCopyProgressDialog(this,intent1);
+                            intent.putParcelableArrayListExtra("ACTION", mCopyData);
+                            intent1.putParcelableArrayListExtra("TOTAL_LIST", mTotalFiles);
+                            new FileUtils().showCopyProgressDialog(this, intent1);
                             break;
                         case FileConstants.MOVE:
                             new MoveFiles(this, mFiles, mCopyData).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mNewFilePath);
@@ -769,6 +802,10 @@ public class BaseActivity extends AppCompatActivity implements
             }
             // If not confirmed SAF, or if still not writable, then revert settings.
             else {
+
+                if (oldUri != null)
+                    mSharedPreferences.edit().putString("URI", oldUri.toString()).apply();
+
                 Toast.makeText(this, getString(R.string.access_denied_external), Toast.LENGTH_LONG).show();
                 return;
             }
@@ -1475,7 +1512,7 @@ public class BaseActivity extends AppCompatActivity implements
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-  }
+    }
 
     /**
      * Triggered on clicked on any Navigation drawer item group/child
@@ -2037,6 +2074,13 @@ public class BaseActivity extends AppCompatActivity implements
                 mCurrentTheme = theme;
                 restartApp();
             }
+        }
+
+        String language = mSharedPreferences.getString(LocaleHelper.SELECTED_LANGUAGE, Locale.getDefault().getLanguage());
+        if (!language.equals(mCurrentLanguage)) {
+            mCurrentLanguage = language;
+            LocaleHelper.setLocale(this, language);
+            restartApp();
         }
 
         boolean showHidden = mSharedPreferences.getBoolean(FileConstants.PREFS_HIDDEN, false);

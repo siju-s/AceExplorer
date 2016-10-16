@@ -258,19 +258,6 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
     }
 
 
-
- /*   @Override
-    public void onDismiss(DialogInterface dialog) {
-        getActivity().setResult(AppCompatActivity.RESULT_CANCELED, null);
-        if (mIsRingtonePicker)
-            getActivity().finish();
-        else
-            getDialog().dismiss();
-        Logger.log(TAG,"onDismiss");
-        super.onDismiss(dialog);
-
-    }*/
-
     private void loadStoragesList() {
         mStoragesList = FileUtils.getStorageDirectories(getActivity(), true);
         storagesInfoList = new ArrayList<>();

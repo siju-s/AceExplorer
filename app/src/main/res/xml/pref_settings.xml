@@ -37,6 +37,17 @@
         android:key="prefsReset"
         android:layout="@layout/prefs_settings_item"
         android:title="@string/pref_title_reset_fav"/>
+
+
+    <ListPreference
+        android:entries="@array/changeLanguage"
+        android:entryValues="@array/changeLanguageValues"
+        android:key="prefLanguage"
+        android:layout="@layout/prefs_settings_item"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_change_lang"/>
+
     <Preference
         android:id="@+id/preference"
         android:key="prefsUpdate"

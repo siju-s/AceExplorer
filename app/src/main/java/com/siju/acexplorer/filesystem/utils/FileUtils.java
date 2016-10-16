@@ -486,7 +486,7 @@ public class FileUtils implements CopyService.Progress {
             String strings[] = getExtSdCardPathsForActivity(context);
             for (String s : strings) {
                 File f = new File(s);
-                if (!rv.contains(s) && canListFiles(f))
+                if (!rv.contains(s))
                     rv.add(s);
             }
         }

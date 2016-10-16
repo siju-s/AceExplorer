@@ -101,9 +101,9 @@
     <color name="large_files_bg">#cd0067</color>
 
     <!-- DARK THEME -->
-    <color name="audio_bg_dark">#db7093</color>
-    <color name="video_bg_dark">#ff9966</color>
-    <color name="image_bg_dark">#B272A6</color>
+    <color name="audio_bg_dark">#35465c</color>
+    <color name="video_bg_dark">#74489d</color>
+    <color name="image_bg_dark">#613854</color>
     <color name="docs_bg_dark">#1e91d0</color>
     <color name="downloads_bg_dark">#3266cc</color>
     <color name="add_bg_dark">#ff9933</color>

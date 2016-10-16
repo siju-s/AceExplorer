@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dark_colorPrimary"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:id="@+id/textPermission"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imagePermissionRationale"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:text="@string/permission_request" />
+
+    <TextView
+        android:id="@+id/textPermissionHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textPermission"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/white"
+        android:text="@string/permission_setting_hint"
+        android:visibility="invisible" />
+
+
+    <Button
+        android:id="@+id/buttonGrant"
+        style="@style/Base.Widget.AppCompat.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textPermissionHint"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="@string/action_grant" />
+
+    <ImageView
+        android:id="@+id/imagePermissionRationale"
+        android:layout_width="400dp"
+        android:layout_height="400dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/permission_rationale_dark" />
+
+</RelativeLayout>
