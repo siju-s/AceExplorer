@@ -21,7 +21,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -39,6 +38,7 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.format.Formatter;
 import android.text.style.ImageSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -72,7 +72,6 @@ import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.common.SharedPreferenceWrapper;
-import com.siju.acexplorer.filesystem.helper.FastScrollRecyclerView;
 import com.siju.acexplorer.filesystem.model.BackStackModel;
 import com.siju.acexplorer.filesystem.model.FavInfo;
 import com.siju.acexplorer.filesystem.model.FileInfo;
@@ -84,7 +83,6 @@ import com.siju.acexplorer.filesystem.ui.DialogBrowseFragment;
 import com.siju.acexplorer.filesystem.ui.DividerItemDecoration;
 import com.siju.acexplorer.filesystem.ui.EnhancedMenuInflater;
 import com.siju.acexplorer.filesystem.ui.GridItemDecoration;
-import com.siju.acexplorer.filesystem.ui.ListScrollBehavior;
 import com.siju.acexplorer.filesystem.ui.vertical.VerticalRecyclerViewFastScroller;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.utils.ThemeUtils;
@@ -718,8 +716,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                         boolean isSuccess = intent.getBooleanExtra(FileConstants.IS_OPERATION_SUCCESS, true);
                         if (!isSuccess) {
                             Toast.makeText(getActivity(), getString(R.string.msg_operation_failed), Toast.LENGTH_LONG).show();
-                        }
-                        else {
+                        } else {
                             refreshList();
                         }
                         break;
@@ -946,7 +943,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
         String path = args.getString(FileConstants.KEY_PATH);
         mSwipeRefreshLayout.setRefreshing(true);
-        Logger.log(TAG, "onCreateLoader---path="+path+ "category="+mCategory);
+        Logger.log(TAG, "onCreateLoader---path=" + path + "category=" + mCategory);
 
         if (mIsZip) {
             return new FileListLoader(this, path, FileConstants.CATEGORY.ZIP_VIEWER.getValue(),
@@ -1299,7 +1296,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                         ).getFilePath();
                         int renamedPosition = mSelectedItemPositions.keyAt(0);
                         String newFilePath = new File(oldFilePath).getParent();
-                        renameDialog(oldFilePath,                                newFilePath, renamedPosition);
+                        renameDialog(oldFilePath, newFilePath, renamedPosition);
                     }
                     return true;
 
@@ -1642,8 +1639,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     }
 
     private int checkTheme() {
-        mCurrentTheme = PreferenceManager.getDefaultSharedPreferences(getActivity())
-                .getInt(FileConstants.CURRENT_THEME, FileConstants.THEME_LIGHT);
+        mCurrentTheme = ThemeUtils.getTheme(getActivity());
 
         if (mCurrentTheme == FileConstants.THEME_DARK) {
             return R.style.Dark_AppTheme_NoActionBar;
@@ -1695,8 +1691,28 @@ public class FileListFragment extends Fragment implements LoaderManager
 
         String path = fileInfo.getFilePath();
         String fileName = fileInfo.getFileName();
-        String dateModified = fileInfo.getFileDate();
-        String fileNoOrSize = fileInfo.getNoOfFilesOrSize();
+        String fileDate;
+        if (FileUtils.isDateNotInMs(mCategory)) {
+            fileDate = FileUtils.convertDate(fileInfo.getDate());
+        } else {
+            fileDate = FileUtils.convertDate(fileInfo.getDate() * 1000);
+        }
+        boolean isDirectory = fileInfo.isDirectory();
+        String fileNoOrSize = "";
+        if (isDirectory) {
+            int childFileListSize = (int) fileInfo.getSize();
+            if (childFileListSize == 0) {
+                fileNoOrSize = getResources().getString(R.string.empty);
+            } else if (childFileListSize == -1) {
+                fileNoOrSize = "";
+            } else {
+                fileNoOrSize = getResources().getQuantityString(R.plurals.number_of_files,
+                        childFileListSize, childFileListSize);
+            }
+        } else {
+            long size = fileInfo.getSize();
+            fileNoOrSize = Formatter.formatFileSize(getActivity(), size);
+        }
         boolean isReadable = new File(path).canRead();
         boolean isWriteable = new File(path).canWrite();
         boolean isHidden = new File(path).isHidden();
@@ -1704,7 +1720,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         textFileName.setText(fileName);
         textPath.setText(path);
         textFileSize.setText(fileNoOrSize);
-        textDateModified.setText(dateModified);
+        textDateModified.setText(fileDate);
 
         if (mCategory != 0) {
             textMD5.setVisibility(View.GONE);
@@ -1736,12 +1752,20 @@ public class FileListFragment extends Fragment implements LoaderManager
                 textMD5.setText(md5);
             }
 
-            if (fileInfo.getType() == FileConstants.CATEGORY.IMAGE.getValue() ||
-                    fileInfo.getType() == FileConstants.CATEGORY.VIDEO.getValue()) {
-                Uri imageUri = Uri.fromFile(new File(path));
-                Glide.with(this).load(imageUri).centerCrop()
+            if (fileInfo.getType() == FileConstants.CATEGORY.VIDEO.getValue()) {
+                Uri videoUri = Uri.fromFile(new File(path));
+                Glide.with(getActivity()).load(videoUri).centerCrop()
+                        .placeholder(R.drawable.ic_movie)
                         .crossFade(2)
                         .into(imageFileIcon);
+            } else if (fileInfo.getType() == FileConstants.CATEGORY.IMAGE.getValue()) {
+                Uri imageUri = Uri.fromFile(new File(path));
+                Glide.with(getActivity()).load(imageUri).centerCrop()
+                        .crossFade(2)
+                        .placeholder(R.drawable.ic_image_default)
+                        .into(imageFileIcon);
+            } else if (fileInfo.getType() == FileConstants.CATEGORY.AUDIO.getValue()) {
+                imageFileIcon.setImageResource(R.drawable.ic_music_default);
             } else if (fileInfo.getExtension().equals(FileConstants.APK_EXTENSION)) {
                 Drawable apkIcon = FileUtils.getAppIcon(getActivity(), path);
                 imageFileIcon.setImageDrawable(apkIcon);

@@ -513,7 +513,6 @@ public class FileUtils implements CopyService.Progress {
                     } catch (IOException e) {
                         // Keep non-canonical path.
                     }
-//                    if (!path.equals(Environment.getExternalStorageDirectory().getAbsolutePath()))
                     if (!paths.contains(path)) {
                         paths.add(path);
                     }
@@ -522,7 +521,7 @@ public class FileUtils implements CopyService.Progress {
         }
 
             File file = new File ("/storage/sdcard1");
-            if (file.exists() && file.canExecute()) {
+            if (file.exists() && file.canExecute() && !paths.contains(file.getAbsolutePath())) {
                 paths.add("/storage/sdcard1");
             }
         return paths.toArray(new String[0]);
@@ -575,9 +574,12 @@ public class FileUtils implements CopyService.Progress {
         return dateText;
     }
 
-
-
-
+    public static  boolean isDateNotInMs(int category) {
+        return category == FileConstants.CATEGORY.FILES.getValue() ||
+                category == FileConstants.CATEGORY.DOWNLOADS.getValue() ||
+                category == FileConstants.CATEGORY.FAVORITES.getValue() ||
+                category == FileConstants.CATEGORY.ZIP_VIEWER.getValue();
+    }
 
 
   /*  public FileUtils(Activity activity) {
@@ -1475,7 +1477,7 @@ public class FileUtils implements CopyService.Progress {
      * @param isDirectory flag indicating if the file should be a directory.
      * @return The DocumentFile
      */
-    public static DocumentFile getDocumentFile(final File file, final boolean isDirectory, Context context) {
+    private static DocumentFile getDocumentFile(final File file, final boolean isDirectory, Context context) {
         String baseFolder = getExtSdCardFolder(file, context);
         boolean originalDirectory = false;
         if (baseFolder == null) {
@@ -1494,7 +1496,7 @@ public class FileUtils implements CopyService.Progress {
             originalDirectory = true;
             //continue
         }
-        String as = PreferenceManager.getDefaultSharedPreferences(context).getString("URI", null);
+        String as = PreferenceManager.getDefaultSharedPreferences(context).getString(FileConstants.SAF_URI, null);
 
         Uri treeUri = null;
         if (as != null) treeUri = Uri.parse(as);
@@ -1570,7 +1572,7 @@ public class FileUtils implements CopyService.Progress {
      */
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public static String getExtSdCardFolder(final File file, Context context) {
-        String[] extSdPaths = getExtSdCardPaths(context);
+        String[] extSdPaths = getExtSdCardPathsForActivity(context);
         try {
             for (int i = 0; i < extSdPaths.length; i++) {
                 if (file.getCanonicalPath().startsWith(extSdPaths[i])) {
@@ -1584,39 +1586,8 @@ public class FileUtils implements CopyService.Progress {
     }
 
     /**
-     * Get a list of external SD card paths. (Kitkat or higher.)
-     *
-     * @return A list of external SD card paths.
-     */
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    public static String[] getExtSdCardPaths(Context context) {
-        List<String> paths = new ArrayList<String>();
-        for (File file : context.getExternalFilesDirs("external")) {
-            if (file != null && !file.equals(context.getExternalFilesDir("external"))) {
-                int index = file.getAbsolutePath().lastIndexOf("/Android/data");
-                if (index < 0) {
-                    Log.w("AmazeFileUtils", "Unexpected external file dir: " + file.getAbsolutePath());
-                } else {
-                    String path = file.getAbsolutePath().substring(0, index);
-                    try {
-                        path = new File(path).getCanonicalPath();
-                    } catch (IOException e) {
-                        // Keep non-canonical path.
-                    }
-                    paths.add(path);
-                }
-            }
-        }
-        if (paths.isEmpty()) paths.add("/storage/sdcard1");
-        return paths.toArray(new String[0]);
-    }
-
-
-    /**
      * @param path
      */
-
-
     public static int createZipFile(String path) {
 
         File dir = new File(path);
@@ -1765,7 +1736,7 @@ public class FileUtils implements CopyService.Progress {
      * @param target The target folder.
      * @return true if the renaming was successful.
      */
-    public static final boolean renameFolder(@NonNull final File source, @NonNull final File target, Context context) {
+    static boolean renameFolder(@NonNull final File source, @NonNull final File target, Context context) {
         // First try the normal rename.
         if (rename(source, target.getName(), false)) {
             return true;
@@ -1778,7 +1749,8 @@ public class FileUtils implements CopyService.Progress {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
                 && source.getParent().equals(target.getParent()) && isOnExtSdCard(source, context)) {
             DocumentFile document = getDocumentFile(source, true, context);
-            if (document.renameTo(target.getName())) {
+            Log.d(TAG," Document uri in rename="+document);
+            if (document != null && document.renameTo(target.getName())) {
                 return true;
             }
         }
@@ -1937,18 +1909,17 @@ public class FileUtils implements CopyService.Progress {
 
     public int checkFolder(final String f, Context context) {
         if (f == null) return 0;
-//        if (f.startsWith("smb://")) return 1;
         File folder = new File(f);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && isOnExtSdCard(folder, context)) {
             if (!folder.exists() || !folder.isDirectory()) {
                 return 0;
             }
 
-            // On Android 5, trigger storage access framework.
-            if (isWritableNormalOrSaf(folder, context)) {
-                return 1;
-
+            // On Android 5 and above, trigger storage access framework.
+            if (!isWritableNormalOrSaf(folder, context)) {
+                return 2;
             }
+            return 1;
         } else if (Build.VERSION.SDK_INT == 19 && isOnExtSdCard(folder, context)) {
             // Assume that Kitkat workaround works
             return 1;
@@ -1957,7 +1928,6 @@ public class FileUtils implements CopyService.Progress {
         } else {
             return 0;
         }
-        return 0;
     }
 
 

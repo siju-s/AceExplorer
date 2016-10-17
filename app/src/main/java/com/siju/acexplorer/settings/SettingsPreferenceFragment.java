@@ -35,6 +35,7 @@ import android.widget.Toast;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
+import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 import com.siju.acexplorer.utils.LocaleHelper;
 
 import java.util.Locale;
@@ -69,10 +70,8 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
 
         langPreference = (ListPreference) findPreference(PREFS_LANGUAGE);
         themePreference = (ListPreference) findPreference(FileConstants.PREFS_THEME);
-        mIsTheme = mPrefs.getInt(FileConstants.CURRENT_THEME, FileConstants.THEME_LIGHT);
-
+        mIsTheme =   ThemeUtils.getTheme(getActivity());
         updatePreference = findPreference(PREFS_UPDATE);
-
 
         Preference version = findPreference(PREFS_VERSION);
         try {

@@ -3,4 +3,6 @@
     <integer name="homescreen_columns">4</integer>
     <integer name="grid_columns">4</integer>
     <bool name="isTablet">true</bool>
+    <dimen name="drawer_width">320dp</dimen>
+
 </resources>

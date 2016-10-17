@@ -16,6 +16,8 @@ public class FileConstants {
     public static final String PREFS_THEME = "prefThemes";
     public static final String CURRENT_THEME = "theme";
     public static final String ROOT_ACCESS = "root";
+    public static final String SAF_URI = "saf_uri";
+
     public static final int THEME_LIGHT = 0;
     public static final int THEME_DARK = 1;
 

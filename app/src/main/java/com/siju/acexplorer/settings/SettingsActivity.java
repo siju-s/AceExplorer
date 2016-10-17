@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.filesystem.FileConstants;
+import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -29,7 +30,7 @@ import com.siju.acexplorer.filesystem.FileConstants;
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
-    private int mIsTheme = FileConstants.THEME_LIGHT; // Default is Light
+    private int mIsTheme = FileConstants.THEME_DARK; // Default is Dark
     private RelativeLayout mRelativeLayoutSettings;
     private Toolbar mToolbar;
 
@@ -54,18 +55,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
 
     private void checkTheme() {
-      int theme = PreferenceManager.getDefaultSharedPreferences(this)
-                .getInt(FileConstants.CURRENT_THEME, FileConstants.THEME_LIGHT);
+        int theme = ThemeUtils.getTheme(this);
 
-//        int  stringValue = PreferenceManager.getDefaultSharedPreferences(this).getInt(FileConstants.PREFS_THEME, 0);
-
-            if (theme == FileConstants.THEME_DARK) {
-                setTheme(R.style.Settings_BlackTheme);
-                mIsTheme = FileConstants.THEME_DARK;
-            }
-        else {
-                setTheme(R.style.Settings_LightTheme);
-            }
+        if (theme == FileConstants.THEME_DARK) {
+            setTheme(R.style.Settings_BlackTheme);
+            mIsTheme = FileConstants.THEME_DARK;
+        } else {
+            setTheme(R.style.Settings_LightTheme);
+        }
 
 
     }
@@ -87,7 +84,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         mToolbar = (Toolbar) bar.getChildAt(0);
 
         if (mIsTheme == FileConstants.THEME_DARK) {
-            mToolbar.setBackgroundColor(ContextCompat.getColor(this,R.color.dark_colorPrimary));
+            mToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_colorPrimary));
 
             if (Build.VERSION.SDK_INT >= 21) {
                 getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.dark_colorPrimaryDark));

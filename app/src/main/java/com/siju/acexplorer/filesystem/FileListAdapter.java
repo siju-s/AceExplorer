@@ -294,7 +294,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             String fileName = fileInfoArrayList.get(position).getFileName();
             String fileDate;
-            if (isDateNotInMs()) {
+            if (FileUtils.isDateNotInMs(mCategory)) {
                 fileDate = FileUtils.convertDate(fileInfoArrayList.get(position).getDate());
             } else {
                 fileDate = FileUtils.convertDate(fileInfoArrayList.get(position).getDate() * 1000);
@@ -404,12 +404,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     }
 
-    private boolean isDateNotInMs() {
-        return mCategory == FileConstants.CATEGORY.FILES.getValue() ||
-                mCategory == FileConstants.CATEGORY.DOWNLOADS.getValue() ||
-                mCategory == FileConstants.CATEGORY.FAVORITES.getValue() ||
-                mCategory == FileConstants.CATEGORY.ZIP_VIEWER.getValue();
-    }
+
 
     private void displayVideoThumb(FileListViewHolder fileListViewHolder, String path) {
         // For videos group

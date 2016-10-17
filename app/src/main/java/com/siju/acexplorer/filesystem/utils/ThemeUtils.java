@@ -11,13 +11,13 @@ import com.siju.acexplorer.filesystem.FileConstants;
 public class ThemeUtils {
 
     public static boolean isDarkTheme(Context context) {
-        int theme = PreferenceManager.getDefaultSharedPreferences(context)
-                .getInt(FileConstants.CURRENT_THEME, FileConstants.THEME_LIGHT);
 
-//        int  stringValue = PreferenceManager.getDefaultSharedPreferences(this).getInt(FileConstants.PREFS_THEME, 0);
-
+        int theme = getTheme(context);
         return theme == FileConstants.THEME_DARK;
+    }
 
-
+    public static int getTheme(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getInt(FileConstants.CURRENT_THEME, FileConstants.THEME_DARK);
     }
 }

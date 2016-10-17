@@ -3,10 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="5dp"
-    android:layout_marginEnd="@dimen/drawer_item_margin"
-    android:layout_marginRight="@dimen/drawer_item_margin"
-    android:layout_marginTop="5dp"
-    android:orientation="vertical">
+    android:paddingEnd="@dimen/drawer_item_margin"
+    android:paddingRight="@dimen/drawer_item_margin"
+    android:layout_marginTop="5dp">
 
     <ImageView
         android:id="@+id/image_drawer_item"
@@ -26,14 +25,13 @@
         android:layout_marginStart="@dimen/drawer_item_text_margin"
         android:layout_marginTop="12dp"
         android:layout_toRightOf="@+id/image_drawer_item"
-        android:text="Root"
         android:textSize="14sp" />
 
 
     <TextView
         android:id="@+id/textSecondLine"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/textFirstLine"
         android:layout_marginLeft="@dimen/drawer_item_text_margin"
         android:layout_marginStart="@dimen/drawer_item_text_margin"
@@ -41,7 +39,6 @@
         android:layout_toRightOf="@id/image_drawer_item"
         android:ellipsize="end"
         android:maxLines="1"
-        android:text="gdsagsg"
         android:textSize="12sp" />
 
 

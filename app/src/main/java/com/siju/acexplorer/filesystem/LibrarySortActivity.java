@@ -2,7 +2,6 @@ package com.siju.acexplorer.filesystem;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +16,7 @@ import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.SharedPreferenceWrapper;
 import com.siju.acexplorer.filesystem.helper.SimpleItemTouchHelperCallback;
 import com.siju.acexplorer.filesystem.model.LibrarySortModel;
+import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 
 import java.util.ArrayList;
 
@@ -75,8 +75,7 @@ public class LibrarySortActivity extends AppCompatActivity implements OnStartDra
     }
 
     private void checkTheme() {
-        mCurrentTheme = PreferenceManager.getDefaultSharedPreferences(this)
-                .getInt(FileConstants.CURRENT_THEME, FileConstants.THEME_LIGHT);
+        mCurrentTheme = ThemeUtils.getTheme(this);
 
         if (mCurrentTheme == FileConstants.THEME_DARK) {
             setTheme(R.style.Dark_AppTheme_NoActionBar);

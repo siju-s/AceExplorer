@@ -12,7 +12,7 @@
     <dimen name="file_list_margin">7dp</dimen>
 
 
-    <dimen name="drawer_width">304dp</dimen>
+    <dimen name="drawer_width">300dp</dimen>
     <dimen name="drawer_item_icon_width">50dp</dimen>
     <dimen name="drawer_item_margin">16dp</dimen>
     <dimen name="drawer_item_height">70dp</dimen>

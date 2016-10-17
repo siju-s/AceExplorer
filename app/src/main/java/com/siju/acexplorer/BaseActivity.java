@@ -4,8 +4,11 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -65,6 +68,7 @@ import com.siju.acexplorer.filesystem.task.CopyService;
 import com.siju.acexplorer.filesystem.task.DeleteTask;
 import com.siju.acexplorer.filesystem.task.MoveFiles;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
+import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 import com.siju.acexplorer.model.SectionGroup;
 import com.siju.acexplorer.model.SectionItems;
 import com.siju.acexplorer.settings.SettingsActivity;
@@ -173,6 +177,7 @@ public class BaseActivity extends AppCompatActivity implements
     private HomeScreenFragment mHomeScreenFragment;
     private String mCurrentLanguage;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme();
@@ -184,6 +189,7 @@ public class BaseActivity extends AppCompatActivity implements
 
         initConstants();
         initViews();
+        registerReceivers();
         removeFragmentsOnPermissionRevoked(savedInstanceState);
 
         if (PermissionUtils.isAtLeastM()) {
@@ -196,25 +202,23 @@ public class BaseActivity extends AppCompatActivity implements
     }
 
     private void setTheme() {
-        mCurrentLanguage = LocaleHelper.getLanguage(this);
-
-      if (!mCurrentLanguage.equals(Locale.getDefault().getLanguage())) {
-          LocaleHelper.setLocale(this,mCurrentLanguage);
-      }
-    }
-
-    private void setLanguage() {
-        mCurrentTheme = PreferenceManager.getDefaultSharedPreferences(this)
-                .getInt(FileConstants.CURRENT_THEME, FileConstants.THEME_LIGHT);
-
+        mCurrentTheme = ThemeUtils.getTheme(this);
 
         if (mCurrentTheme == FileConstants.THEME_DARK) {
             setTheme(R.style.Dark_AppTheme_NoActionBar);
         } else {
             setTheme(R.style.AppTheme_NoActionBar);
         }
+
     }
 
+    private void setLanguage() {
+        mCurrentLanguage = LocaleHelper.getLanguage(this);
+
+        if (!mCurrentLanguage.equals(Locale.getDefault().getLanguage())) {
+            LocaleHelper.setLocale(this, mCurrentLanguage);
+        }
+    }
 
 
     private void initConstants() {
@@ -339,6 +343,11 @@ public class BaseActivity extends AppCompatActivity implements
 
         mFileOpsHelper = new FileOpsHelper(this);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+    }
+
+    private void registerReceivers() {
+        IntentFilter filter = new IntentFilter(Intent.ACTION_LOCALE_CHANGED);
+        registerReceiver(mLocaleListener,filter);
     }
 
     private void removeFragmentsOnPermissionRevoked(Bundle savedInstance) {
@@ -502,7 +511,6 @@ public class BaseActivity extends AppCompatActivity implements
         mShowHidden = mSharedPreferences.getBoolean(FileConstants.PREFS_HIDDEN, false);
         mIsDualPaneEnabledSettings = mSharedPreferences.getBoolean(FileConstants.PREFS_DUAL_PANE,
                 mIsTablet);
-        mCurrentTheme = mSharedPreferences.getInt(FileConstants.CURRENT_THEME, FileConstants.THEME_LIGHT);
         mIsRootMode = mSharedPreferences.getBoolean(FileConstants.ROOT_ACCESS, true);
     }
 
@@ -691,6 +699,15 @@ public class BaseActivity extends AppCompatActivity implements
         }
     }
 
+    private BroadcastReceiver mLocaleListener = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent != null && intent.getAction().equals(Intent.ACTION_LOCALE_CHANGED)) {
+                restartApp();
+            }
+        }
+    };
+
 
     @Override
     protected void onStart() {
@@ -750,20 +767,19 @@ public class BaseActivity extends AppCompatActivity implements
                 showRationale();
             }
         } else if (requestCode == SAF_REQUEST) {
-            String uriString = mSharedPreferences.getString("URI", null);
+            String uriString = mSharedPreferences.getString(FileConstants.SAF_URI, null);
 
             Uri oldUri = uriString != null ? Uri.parse(uriString) : null;
             Uri treeUri = intent.getData();
-            Logger.log(TAG,"tree uri="+treeUri+ " old uri="+oldUri);
+            Log.d(TAG, "tree uri=" + treeUri + " old uri=" + oldUri);
 
             if (resultCode == Activity.RESULT_OK) {
                 // Get Uri from Storage Access Framework.
                 // Persist URI - this is required for verification of writability.
                 if (treeUri != null) {
-                    mSharedPreferences.edit().putString("URI", treeUri.toString()).apply();
-                    final int takeFlags = intent.getFlags()
-                            & (Intent.FLAG_GRANT_READ_URI_PERMISSION
-                            | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    mSharedPreferences.edit().putString(FileConstants.SAF_URI, treeUri.toString()).apply();
+                    int takeFlags = intent.getFlags();
+                    takeFlags &= (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                     getContentResolver().takePersistableUriPermission(treeUri, takeFlags);
 
                     switch (mOperation) {
@@ -772,7 +788,7 @@ public class BaseActivity extends AppCompatActivity implements
                             mFiles = new ArrayList<>();
                             break;
                         case FileConstants.COPY:
-                            Intent intent1 = new Intent(this,CopyService.class);
+                            Intent intent1 = new Intent(this, CopyService.class);
                             intent1.putParcelableArrayListExtra("FILE_PATHS", mFiles);
                             intent1.putExtra("COPY_DIRECTORY", mNewFilePath);
                             intent.putParcelableArrayListExtra("ACTION", mCopyData);
@@ -804,7 +820,7 @@ public class BaseActivity extends AppCompatActivity implements
             else {
 
                 if (oldUri != null)
-                    mSharedPreferences.edit().putString("URI", oldUri.toString()).apply();
+                    mSharedPreferences.edit().putString(FileConstants.SAF_URI, oldUri.toString()).apply();
 
                 Toast.makeText(this, getString(R.string.access_denied_external), Toast.LENGTH_LONG).show();
                 return;
@@ -1971,6 +1987,7 @@ public class BaseActivity extends AppCompatActivity implements
         Logger.log(TAG, "onDestroy");
 
         unregisterForContextMenu(expandableListView);
+        unregisterReceiver(mLocaleListener);
         mSharedPreferences.edit().putInt(FileConstants.CURRENT_THEME, mCurrentTheme).apply();
         if (mIsRootMode) {
             try {

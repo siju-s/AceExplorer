@@ -3,13 +3,13 @@ package com.siju.acexplorer;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.ui.DialogBrowseFragment;
+import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 
 
 /**
@@ -44,10 +44,9 @@ public class TransparentActivity extends AppCompatActivity {
 
 
     private int checkTheme() {
-        int mCurrentTheme = PreferenceManager.getDefaultSharedPreferences(this)
-                .getInt(FileConstants.CURRENT_THEME, FileConstants.THEME_LIGHT);
+        int theme = ThemeUtils.getTheme(this);
 
-        if (mCurrentTheme == FileConstants.THEME_DARK) {
+        if (theme == FileConstants.THEME_DARK) {
             return R.style.Dark_AppTheme_NoActionBar;
         } else {
             return R.style.AppTheme_NoActionBar;
