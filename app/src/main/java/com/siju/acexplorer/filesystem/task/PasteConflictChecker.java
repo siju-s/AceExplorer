@@ -42,6 +42,7 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
     private BaseActivity mActivity;
     private int totalFiles;
     private ArrayList<FileInfo> mTotalFileList;
+    private boolean mLowStorage;
 
 
     public PasteConflictChecker(BaseActivity context, Fragment fragment, String currentDir, boolean isDrag, boolean
@@ -73,12 +74,16 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
             FileInfo f1 = mFiles.get(i);
 
             if (f1.isDirectory()) {
-                File fileDir = new File(f1.getFilePath());
+
                 ArrayList<FileInfo> listFiles = new RootHelper().getFilesListRecursively(mActivity, f1.getFilePath(),
                         rootmode, true);
 
                 int childCount = listFiles.size();
-                mTotalFileList.addAll(listFiles);
+                if (childCount == 0) {
+                    mTotalFileList.add(f1);
+                } else {
+                    mTotalFileList.addAll(listFiles);
+                }
                 totalFiles += childCount;
                 totalBytes = totalBytes + FileUtils.getFolderSize(new File(f1.getFilePath()));
             } else {
@@ -101,14 +106,17 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
                     }
                 }
             }
-        } else publishProgress(mActivity.getString(R.string.storage_low));
+        } else  {
+            mLowStorage = true;
+            publishProgress(mActivity.getString(R.string.storage_low));
+        }
 
         return mConflictFiles;
     }
 
-    ArrayList<CopyData> mCopyData = new ArrayList<>();
+    private ArrayList<CopyData> mCopyData = new ArrayList<>();
 
-    public void showDialog() {
+    private void showDialog() {
 
         Logger.log("TAG", "Counter=" + counter + " conflict size=" + mConflictFiles.size());
         if (counter == mConflictFiles.size() || mConflictFiles.size() == 0) {
@@ -266,6 +274,7 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
     @Override
     protected void onPostExecute(ArrayList<FileInfo> strings) {
         super.onPostExecute(strings);
+        if (!mLowStorage)
         showDialog();
     }
 }

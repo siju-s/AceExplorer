@@ -532,6 +532,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                                     loader.getId() == homeLibraryInfoArrayList.get(i).getCategoryId()) {
                         homeLibraryInfoArrayList.get(i).setCount(data.size());
                     } else if (data.get(0).getCategoryId() == homeLibraryInfoArrayList.get(i).getCategoryId()) {
+                        Log.d(TAG, "on onLoadFinished--category=" + loader.getId() + "size="+data.get(0).getCount());
                         homeLibraryInfoArrayList.get(i).setCount(data.get(0).getCount());
                     }
                 }

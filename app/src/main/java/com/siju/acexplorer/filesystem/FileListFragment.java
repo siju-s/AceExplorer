@@ -346,16 +346,17 @@ public class FileListFragment extends Fragment implements LoaderManager
                             mLongPressedTime = 0;
                             mStartDrag = false;
                             mDragInitialPos = -1;
-                            Intent intent = new Intent();
                             Logger.log(TAG, "On touch drag path size=" + mDragPaths.size());
-
-                            intent.putParcelableArrayListExtra(FileConstants.KEY_PATH, mDragPaths);
-                            ClipData data = ClipData.newIntent("", intent);
-                            int count = fileListAdapter
-                                    .getSelectedCount();
-                            View.DragShadowBuilder shadowBuilder = new MyDragShadowBuilder(mItemView,
-                                    count);
-                            view.startDrag(data, shadowBuilder, mDragPaths, 0);
+                            if (mDragPaths.size() > 0) {
+                                Intent intent = new Intent();
+                                intent.putParcelableArrayListExtra(FileConstants.KEY_PATH, mDragPaths);
+                                ClipData data = ClipData.newIntent("", intent);
+                                int count = fileListAdapter
+                                        .getSelectedCount();
+                                View.DragShadowBuilder shadowBuilder = new MyDragShadowBuilder(mItemView,
+                                        count);
+                                view.startDrag(data, shadowBuilder, mDragPaths, 0);
+                            }
                         }
                     }
                     return false;
@@ -421,8 +422,13 @@ public class FileListFragment extends Fragment implements LoaderManager
     private void addItemDecoration() {
 
         if (mViewMode == FileConstants.KEY_LISTVIEW) {
-            mDividerItemDecoration = new DividerItemDecoration(getActivity(), LinearLayoutManager
-                    .VERTICAL, mIsDarkTheme);
+            if (mDividerItemDecoration == null) {
+                mDividerItemDecoration = new DividerItemDecoration(getActivity(), LinearLayoutManager
+                        .VERTICAL, mIsDarkTheme);
+            }
+            else {
+                recyclerViewFileList.removeItemDecoration(mDividerItemDecoration);
+            }
             recyclerViewFileList.addItemDecoration(mDividerItemDecoration);
         } else {
             Drawable divider;
@@ -431,9 +437,12 @@ public class FileListFragment extends Fragment implements LoaderManager
             } else {
                 divider = ContextCompat.getDrawable(getActivity(), R.drawable.divider_line);
             }
-            mGridItemDecoration = new GridItemDecoration(divider, divider, mGridColumns);
-/*            mDividerItemDecoration = new DividerItemDecoration(getActivity(), LinearLayoutManager
-                    .HORIZONTAL, mIsDarkTheme);*/
+            if (mGridItemDecoration == null) {
+                mGridItemDecoration = new GridItemDecoration(divider, divider, mGridColumns);
+            }
+            else {
+                recyclerViewFileList.removeItemDecoration(mGridItemDecoration);
+            }
             recyclerViewFileList.addItemDecoration(mGridItemDecoration);
         }
     }

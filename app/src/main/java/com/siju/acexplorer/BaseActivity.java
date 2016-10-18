@@ -347,7 +347,7 @@ public class BaseActivity extends AppCompatActivity implements
 
     private void registerReceivers() {
         IntentFilter filter = new IntentFilter(Intent.ACTION_LOCALE_CHANGED);
-        registerReceiver(mLocaleListener,filter);
+        registerReceiver(mLocaleListener, filter);
     }
 
     private void removeFragmentsOnPermissionRevoked(Bundle savedInstance) {
@@ -1803,6 +1803,9 @@ public class BaseActivity extends AppCompatActivity implements
 
             } else {
                 removeFragmentFromBackStack();
+                if (!mIsHomeScreenEnabled) {
+                    finish();
+                }
             }
         } else {
             if (((FileListFragment) fragment).isZipMode()) {
@@ -1846,6 +1849,9 @@ public class BaseActivity extends AppCompatActivity implements
 
             } else {
                 removeFragmentFromBackStack();
+                if (!mIsHomeScreenEnabled) {
+                    finish();
+                }
             }
         }
 
@@ -1963,8 +1969,11 @@ public class BaseActivity extends AppCompatActivity implements
                 .beginTransaction();
 
         ft.remove(fragment);
-        ft.show(mHomeScreenFragment);
+        if (mHomeScreenFragment != null) {
+            ft.show(mHomeScreenFragment);
+        }
         ft.commitAllowingStateLoss();
+
     }
 
     private void cleanUpFileScreen() {
@@ -2058,6 +2067,7 @@ public class BaseActivity extends AppCompatActivity implements
             ft.replace(R.id.main_container, fileListFragment);
             ft.commit();
             mIsHomeSettingToggled = false;
+            mIsHomePageRemoved = true;
         } else if (mShowDualPane) {
             showDualPane();
             mShowDualPane = false;
@@ -2135,17 +2145,16 @@ public class BaseActivity extends AppCompatActivity implements
                     mIsHomeSettingToggled = true;
                 } else {
                     Logger.log(TAG, "Nav directory count=" + navDirectory.getChildCount());
-                    /* This duplicate statement is intentional as after removing 0th element i.e Home,
-                       the arrow becomes the 0th element. So,we need to remove that also
-                    */
-                    navDirectory.removeViewAt(0);
-                    navDirectory.removeViewAt(0);
 
-                    if (navDirectoryDualPane != null && navDirectoryDualPane.getChildCount() > 2) {
-                        navDirectoryDualPane.removeViewAt(0);
-                        navDirectoryDualPane.removeViewAt(0);
+                    for (int i = 0; i < Math.min(navDirectory.getChildCount(), 2); i++) {
+                        navDirectory.removeViewAt(0);
                     }
 
+                    if (navDirectoryDualPane.getChildCount() > 0) {
+                        for (int i = 0; i < Math.min(navDirectoryDualPane.getChildCount(), 2); i++) {
+                            navDirectoryDualPane.removeViewAt(0);
+                        }
+                    }
                     // Set a flag so that it can be removed on backPress
                     mIsHomePageRemoved = true;
                     mIsHomePageAdded = false;

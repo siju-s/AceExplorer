@@ -802,10 +802,11 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         }
         if (cursor != null && cursor.moveToFirst()) {
             if (isHomeFragment()) {
+                fileInfoList.clear();
                 fileInfoList.add(new FileInfo(mCategory, cursor.getCount()));
                 return fileInfoList;
             }
-            while (cursor.moveToNext()) {
+             do {
                 int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.TITLE);
                 int sizeIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.SIZE);
                 int dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_MODIFIED);
@@ -826,7 +827,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 fileInfoList.add(new FileInfo(fileId, nameWithExt, path, date1, size1, type,
                         extension, mimeType));
 
-            }
+            } while (cursor.moveToNext());
             cursor.close();
             if (fileInfoList.size() != 0) {
                 return fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);

@@ -290,7 +290,7 @@ public class FileUtils implements CopyService.Progress {
                 progressDialog.dismiss();
                 return;
             }
-//            int progress = (int) ((copiedBytes / (float) totalBytes) * 100);
+
             int progress =  intent.getIntExtra("PROGRESS", 0);
             int totalProgress =  intent.getIntExtra("TOTAL_PROGRESS", 0);
 
@@ -1773,7 +1773,7 @@ public class FileUtils implements CopyService.Progress {
 
         File[] sourceFiles = source.listFiles();
 
-        if (sourceFiles == null) {
+        if (sourceFiles == null || sourceFiles.length == 0) {
             return true;
         }
 

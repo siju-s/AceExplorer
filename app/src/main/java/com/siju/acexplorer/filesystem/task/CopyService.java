@@ -23,17 +23,13 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.provider.MediaStore;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -79,7 +75,6 @@ public class CopyService extends Service {
         rootmode = Sp.getBoolean("rootmode", false);*/
         registerReceiver(receiver3, new IntentFilter("copycancel"));
     }
-
 
 
     @Override
@@ -160,7 +155,7 @@ public class CopyService extends Service {
             copy.publishResults("", 0, 0, b, 0, 0, true, move);
 //            generateNotification(copy.failedFOps, move);
             Intent intent = new Intent("refresh");
-            intent.putExtra(FileConstants.IS_OPERATION_SUCCESS,copy.copy_successful);
+            intent.putExtra(FileConstants.IS_OPERATION_SUCCESS, copy.copy_successful);
             intent.putExtra(FileConstants.OPERATION, move ? FileConstants.MOVE : FileConstants.COPY);
 
 //            intent.putExtra(FileConstants.KEY_PATH,files);
@@ -285,20 +280,21 @@ public class CopyService extends Service {
                             failedFOps.add(files.get(i));
                         }
                     }
-                    if (move) {
-                        ArrayList<FileInfo> toDelete = new ArrayList<>();
-                        for (FileInfo a : files) {
-                            if (!failedFOps.contains(a))
-                                toDelete.add(a);
-                        }
-
-//                        new DeleteTask(getContentResolver(), c).execute((toDelete));
-                    }
-
 
                 } else {
                     for (FileInfo f : files)
                         failedFOps.add(f);
+                }
+
+                if (move) {
+                    ArrayList<FileInfo> toDelete = new ArrayList<>();
+                    for (FileInfo a : files) {
+                        if (!failedFOps.contains(a))
+                            toDelete.add(a);
+                    }
+                    Logger.log("Copy", "todel" + toDelete.size());
+
+                    new DeleteTask(mContext, rootmode, files).execute();
                 }
             }
 
@@ -335,9 +331,8 @@ public class CopyService extends Service {
 //                    targetFile.setFileDate(sourceFile.lastModified());
                     if (!hash.get(id)) return;
                     ArrayList<FileInfo> filePaths = RootHelper.getFilesList(mContext, sourceFile.getFilePath(), false,
-                            true,false);
+                            true, false);
                     for (FileInfo file : filePaths) {
-//                        HFile destFile = new HFile(targetFile.getMode(), targetFile.getPath(), file.getName(), file.isDirectory());
 
                         FileInfo destFile = new FileInfo(sourceFile.getFileName(), sourceFile.getFilePath(),
                                 sourceFile.getDate(), sourceFile.getSize(), sourceFile.isDirectory(),
@@ -345,7 +340,15 @@ public class CopyService extends Service {
                         destFile.setFilePath(targetFile.getFilePath() + "/" + file.getFileName());
                         copyFiles(file, destFile, id, move);
                     }
-                    if (!hash.get(id)) return;
+                    if (filePaths.size() == 0) {
+                        Intent intent = new Intent(COPY_PROGRESS);
+                        intent.putExtra("PROGRESS", 100);
+                        intent.putExtra("DONE", 0);
+                        intent.putExtra("TOTAL", totalBytes);
+                        intent.putExtra("COUNT", 1);
+                        if (mProgressListener != null)
+                            mProgressListener.onUpdate(intent);
+                    }
                 } else {
                     if (!hash.get(id)) return;
                     long size = new File(sourceFile.getFilePath()).length();
@@ -355,17 +358,14 @@ public class CopyService extends Service {
                     try {
                         File target = new File(targetFile.getFilePath());
                         long size1 = target.length();
-                        OutputStream outputStream = FileUtils.getOutputStream(target,mContext,size1);
+                        OutputStream outputStream = FileUtils.getOutputStream(target, mContext, size1);
                         if (outputStream != null)
-                         out = new BufferedOutputStream(outputStream);
-                    }
-                    catch (Exception e) {
+                            out = new BufferedOutputStream(outputStream);
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                     BufferedInputStream in = new BufferedInputStream(
                             new FileInputStream(sourceFile.getFilePath()));
-                   /* InputStream in = new File(sourceFile.getFilePath()).getInputStream();
-                    OutputStream out = targetFile.getOutputStream(c);*/
                     if (in == null || out == null) {
                         Log.e("Copy", "streams null");
                         failedFOps.add(sourceFile);
@@ -377,41 +377,6 @@ public class CopyService extends Service {
                 }
             }
 
-            /**
-             * Returns an OutputStream to write to the file. The file will be truncated immediately.
-             */
-            OutputStream getWriteableStreamExtSD(File file)
-                    throws IOException {
-                if (file.exists() && file.isDirectory()) {
-                    throw new IOException("File exists and is a directory.");
-                }
-                Uri filesUri = MediaStore.Files.getContentUri("external");
-                Uri imagesUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                // Delete any existing entry from the media database.
-                // This may also delete the file (for media types), but that is irrelevant as it will be truncated momentarily in any case.
-                String where = MediaStore.MediaColumns.DATA + "=?";
-                String[] selectionArgs = new String[] { file.getAbsolutePath() };
-                ContentResolver contentResolver = getContentResolver();
-                contentResolver.delete(filesUri, where, selectionArgs);
-
-                ContentValues values = new ContentValues();
-                values.put(MediaStore.Files.FileColumns.DATA, file.getAbsolutePath());
-                Uri uri = contentResolver.insert(filesUri, values);
-
-                if (uri == null) {
-                    // Should not occur.
-                    throw new IOException("Internal error.");
-                }
-                OutputStream out = null;
-                 try {
-                     out = contentResolver.openOutputStream(uri);
-                 }
-                 catch (SecurityException exception) {
-                     exception.printStackTrace();
-                 }
-                
-                return out;
-            }
 
             long time = System.nanoTime() / 500000000;
             AsyncTask asyncTask;
@@ -460,15 +425,15 @@ public class CopyService extends Service {
                         }
 
 
-
                     } else {
                         break;
                     }
                 }
 
+
                 if (fileBytes == size) {
                     count++;
-                    Logger.log("CopyService", "Completed " + name + " COUNT="+count);
+                    Logger.log("CopyService", "Completed " + name + " COUNT=" + count);
 
                     Intent intent = new Intent(COPY_PROGRESS);
                     intent.putExtra("PROGRESS", 100);
@@ -478,7 +443,7 @@ public class CopyService extends Service {
                     int p1 = (int) ((copiedBytes / (float) totalBytes) * 100);
                     intent.putExtra("TOTAL_PROGRESS", p1);
                     if (mProgressListener != null)
-                    mProgressListener.onUpdate(intent);
+                        mProgressListener.onUpdate(intent);
                 }
                 in.close();
                 out.close();
@@ -526,13 +491,7 @@ public class CopyService extends Service {
                     intent.putExtra("TOTAL_PROGRESS", p1);
 
                     if (mProgressListener != null)
-                    mProgressListener.onUpdate(intent);
-
-
-                    if (progressListener != null) {
-                        progressListener.onUpdate(progressModel);
-                        if (b) progressListener.refresh();
-                    }
+                        mProgressListener.onUpdate(intent);
 
                 } else publishCompletedResult(id, NOTIFICATION_ID + id);
             }
@@ -552,7 +511,7 @@ public class CopyService extends Service {
     private boolean checkFiles(FileInfo hFile1, FileInfo hFile2) {
         if (RootHelper.isDirectory(hFile1.getFilePath(), rootmode, 5)) {
             if (RootHelper.fileExists(mContext, hFile2.getFilePath())) return false;
-            ArrayList<FileInfo> baseFiles = RootHelper.getFilesList(mContext, hFile1.getFilePath(), true, true,false);
+            ArrayList<FileInfo> baseFiles = RootHelper.getFilesList(mContext, hFile1.getFilePath(), true, true, false);
             if (baseFiles.size() > 0) {
                 boolean b = true;
                 for (FileInfo baseFile : baseFiles) {
@@ -566,7 +525,7 @@ public class CopyService extends Service {
             return RootHelper.fileExists(mContext, hFile2.getFilePath());
         } else {
             String parent = new File(hFile1.getFilePath()).getParent();
-            ArrayList<FileInfo> baseFiles = RootHelper.getFilesList(mContext, parent, true, true,false);
+            ArrayList<FileInfo> baseFiles = RootHelper.getFilesList(mContext, parent, true, true, false);
             int i = -1;
             int index = -1;
             for (FileInfo b : baseFiles) {
@@ -576,7 +535,7 @@ public class CopyService extends Service {
                     break;
                 }
             }
-            ArrayList<FileInfo> baseFiles1 = RootHelper.getFilesList(mContext, parent, true, true,false);
+            ArrayList<FileInfo> baseFiles1 = RootHelper.getFilesList(mContext, parent, true, true, false);
             int i1 = -1;
             int index1 = -1;
             for (FileInfo b : baseFiles1) {

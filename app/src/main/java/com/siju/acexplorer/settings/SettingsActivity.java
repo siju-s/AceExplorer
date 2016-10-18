@@ -30,7 +30,7 @@ import com.siju.acexplorer.filesystem.utils.ThemeUtils;
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
-    private int mIsTheme = FileConstants.THEME_DARK; // Default is Dark
+    private int mIsTheme; // Default is Dark
     private RelativeLayout mRelativeLayoutSettings;
     private Toolbar mToolbar;
 
@@ -48,12 +48,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
     }
 
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-
-    }
-
     private void checkTheme() {
         int theme = ThemeUtils.getTheme(this);
 
@@ -62,9 +56,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             mIsTheme = FileConstants.THEME_DARK;
         } else {
             setTheme(R.style.Settings_LightTheme);
+            mIsTheme = FileConstants.THEME_LIGHT;
         }
-
-
     }
 
     @Override
@@ -88,7 +81,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
             if (Build.VERSION.SDK_INT >= 21) {
                 getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.dark_colorPrimaryDark));
+            }
+        }
 
+        else {
+            mToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
+
+            if (Build.VERSION.SDK_INT >= 21) {
+                getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
             }
         }
 
