@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -52,10 +51,10 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private Fragment mFragment;
     private boolean mInParentZip;
     private int mSortMode;
-    private MountUnmountReceiver mMountUnmountReceiver;
     private boolean mIsRingtonePicker;
+    private MountUnmountReceiver mMountUnmountReceiver;
 
-    public FileListLoader(Fragment fragment, Context context, String path, int category) {
+    FileListLoader(Fragment fragment, Context context, String path, int category) {
         super(context);
         mPath = path;
         mContext = getContext();
@@ -108,11 +107,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         }
 
         if (mMountUnmountReceiver == null) {
-            IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction("android.intent.action.MEDIA_UNMOUNTED");
-            intentFilter.addAction("android.intent.action.MEDIA_MOUNTED");
-            intentFilter.addDataScheme("file");
-            getContext().registerReceiver(mMountUnmountReceiver, intentFilter);
+            mMountUnmountReceiver = new MountUnmountReceiver(this);
         }
         if (takeContentChanged() || fileInfoList == null)
             forceLoad();
@@ -159,6 +154,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         }
         if (mMountUnmountReceiver != null) {
             getContext().unregisterReceiver(mMountUnmountReceiver);
+            mMountUnmountReceiver = null;
         }
     }
 
@@ -175,10 +171,9 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private void onReleaseResources() {
     }
 
+
     @Override
     public ArrayList<FileInfo> loadInBackground() {
-//        android.os.Debug.waitForDebugger();
-
         fileInfoList = new ArrayList<>();
         fetchDataByCategory();
         return fileInfoList;
@@ -374,7 +369,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     /**
      * @param dir           Child path names. First time it will be null
      * @param parentZipPath Original zip path with.zip extension
-     * @return
+     * @return Zip contents
      */
     private ArrayList<FileInfo> getZipContents(String dir, String parentZipPath) {
         ZipFile zipfile;
@@ -526,7 +521,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     }
 
     private ArrayList<FileInfo> getRarContents(String dir, String parentZipPath) {
-        ArrayList<FileHeader> elements = new ArrayList<FileHeader>();
+        ArrayList<FileHeader> elements = new ArrayList<>();
         try {
             Archive zipfile = new Archive(new File(parentZipPath));
             ArrayList<FileHeader> totalRarList;
@@ -633,8 +628,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 long albumId = cursor.getLong(albumIdIndex);
                 int type = FileConstants.CATEGORY.AUDIO.getValue();
                 String fileName = path.substring(path.lastIndexOf("/") + 1, path.length());
-                String extension = fileName.substring(fileName.lastIndexOf(".") + 1 , fileName.length());
-                Log.d(TAG,"File name="+fileName+ "path="+path);
+                String extension = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
+                Log.d(TAG, "File name=" + fileName + "path=" + path);
                 fileInfoList.add(new FileInfo(audioId, albumId, fileName, path, date1, size1, type, extension));
             }
             cursor.close();
@@ -685,11 +680,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         return null;
     }
 
-    /**
-     * Fetch all videos
-     *
-     * @return
-     */
     private ArrayList<FileInfo> fetchVideos() {
         Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
         Cursor cursor = mContext.getContentResolver().query(uri, null, null, null, null);
@@ -730,9 +720,9 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
     /**
      * Fetch all the docs from device
-     * Formats as in {@link FileConstants}
+     * Formats as in {@link com.siju.acexplorer.filesystem.FileConstants.CATEGORY}
      *
-     * @return
+     * @return Files
      */
     private ArrayList<FileInfo> fetchByCategory(int category) {
         Uri uri = MediaStore.Files.getContentUri("external");
@@ -806,7 +796,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 fileInfoList.add(new FileInfo(mCategory, cursor.getCount()));
                 return fileInfoList;
             }
-             do {
+            do {
                 int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.TITLE);
                 int sizeIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.SIZE);
                 int dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_MODIFIED);
@@ -849,23 +839,22 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
     }
 
-    public class MountUnmountReceiver extends BroadcastReceiver {
+    public static class MountUnmountReceiver extends BroadcastReceiver {
+
+        final FileListLoader mLoader;
+
+        public MountUnmountReceiver(FileListLoader loader) {
+            mLoader = loader;
+            IntentFilter filter = new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
+            filter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
+            filter.addDataScheme("file");
+            mLoader.getContext().registerReceiver(this, filter);
+        }
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("VolumeStateObserver", "onReceive " + intent.getAction());
-            Bundle bundle;
-            if (intent.getAction().equals("android.intent.action.MEDIA_MOUNTED")) {
-                bundle = new Bundle();
-                bundle.putString("KEY_EVENT", "android.intent.action.MEDIA_MOUNTED");
-                onContentChanged();
-            } else if (intent.getAction().equals("android.intent.action.MEDIA_UNMOUNTED")) {
-                bundle = new Bundle();
-                bundle.putString("KEY_EVENT", "android.intent.action.MEDIA_UNMOUNTED");
-                onContentChanged();
-            }
+            mLoader.onContentChanged();
 
         }
-
     }
 }

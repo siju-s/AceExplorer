@@ -14,9 +14,6 @@ import com.stericson.RootTools.RootTools;
 import java.io.File;
 import java.util.ArrayList;
 
-/**
- * Created by Siju on 27-08-2016.
- */
 public class DeleteTask extends AsyncTask<Void, Void, Integer> {
 
     private int totalFiles;
@@ -26,8 +23,6 @@ public class DeleteTask extends AsyncTask<Void, Void, Integer> {
     private Context mContext;
     private boolean mIsRootMode;
     private ArrayList<FileInfo> fileList = new ArrayList<>();
-
-
 
 
     public  DeleteTask(Context context, boolean rootMode,ArrayList<FileInfo> fileList) {
