@@ -247,16 +247,17 @@ public class FileListFragment extends Fragment implements LoaderManager
 
                 }
                 mCategory = getArguments().getInt(FileConstants.KEY_CATEGORY, FileConstants.CATEGORY.FILES.getValue());
-                if (mCategory != FileConstants.CATEGORY.FILES.getValue()) {
+                if (FileUtils.checkIfLibraryCategory(mCategory)) {
                     list = getArguments().getParcelableArrayList(FileConstants
                             .KEY_LIB_SORTLIST);
                     if (list != null)
                         Log.d(TAG, "Lib list =" + list.size());
                     mBaseActivity.toggleNavBarFab(true);
-
+                    mBaseActivity.addHomeNavButton(false);
                 } else {
                     mBaseActivity.toggleNavBarFab(false);
                 }
+                mBaseActivity.toggleNavigationVisibility(true);
 
                 mIsZip = getArguments().getBoolean(FileConstants.KEY_ZIP, false);
                 mIsDualMode = getArguments().getBoolean(FileConstants.KEY_DUAL_MODE, false);
@@ -980,6 +981,9 @@ public class FileListFragment extends Fragment implements LoaderManager
             Log.d(TAG, "on onLoadFinished--" + data.size());
             // Stop refresh animation
 //            mSwipeRefreshLayout.setRefreshing(false);
+            if (FileUtils.checkIfLibraryCategory(mCategory)) {
+                mBaseActivity.addCountText(data.size());
+            }
             mStopAnim = true;
             fileInfoList = data;
             fileListAdapter.setCategory(mCategory);

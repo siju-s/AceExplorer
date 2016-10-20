@@ -666,6 +666,7 @@ public class BaseActivity extends AppCompatActivity implements
     private void initialScreenSetup(boolean isHomeScreenEnabled) {
         if (isHomeScreenEnabled) {
             toggleNavBarFab(true);
+            mNavigationLayout.setVisibility(View.GONE);
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             Bundle args = new Bundle();
             args.putBoolean(FileConstants.KEY_HOME, true);
@@ -843,24 +844,11 @@ public class BaseActivity extends AppCompatActivity implements
     }
 
 
-    public void setNavDirectory(String path, boolean isDualPane) {
-        String[] parts;
-        parts = path.split(File.separator);
-        isDualPaneInFocus = isDualPane;
-
-        if (!isDualPaneInFocus) {
-            navDirectory.removeAllViews();
-            mCurrentDir = path;
-        } else {
-            navDirectoryDualPane.removeAllViews();
-            mCurrentDirDualPane = path;
-        }
-
-
-        String dir = "";
-
+    public void addHomeNavButton(boolean isFilesCategory) {
         if (mIsHomeScreenEnabled) {
-
+            if (!isDualPaneInFocus) {
+                navDirectory.removeAllViews();
+            }
             ImageButton imageButton = new ImageButton(this);
             imageButton.setImageResource(R.drawable.ic_home_white);
             imageButton.setBackgroundColor(Color.parseColor("#00ffffff"));
@@ -880,18 +868,57 @@ public class BaseActivity extends AppCompatActivity implements
             } else {
                 navDirectoryDualPane.addView(imageButton);
             }
-            ImageView navArrow = new ImageView(this);
-            params.leftMargin = 15;
-            params.rightMargin = 20;
-            params.gravity = Gravity.CENTER_VERTICAL;
-            navArrow.setImageResource(R.drawable.ic_arrow_nav);
-            navArrow.setLayoutParams(params);
-            if (!isDualPaneInFocus) {
-                navDirectory.addView(navArrow);
-            } else {
-                navDirectoryDualPane.addView(navArrow);
+
+            if (isFilesCategory) {
+                ImageView navArrow = new ImageView(this);
+                params.leftMargin = 15;
+                params.rightMargin = 20;
+                params.gravity = Gravity.CENTER_VERTICAL;
+                navArrow.setImageResource(R.drawable.ic_arrow_nav);
+                navArrow.setLayoutParams(params);
+                if (!isDualPaneInFocus) {
+                    navDirectory.addView(navArrow);
+                } else {
+                    navDirectoryDualPane.addView(navArrow);
+                }
             }
         }
+    }
+
+    public void addCountText(int count) {
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+
+        final TextView textView = new TextView(this);
+        textView.setText(getResources().getQuantityString(R.plurals.number_of_files, count, count));
+        textView.setTextColor(ContextCompat.getColor(this, R.color.navButtons));
+        textView.setTextSize(17);
+        textView.setGravity(Gravity.CENTER);
+        int paddingRight = getResources().getDimensionPixelSize(R.dimen.padding_60);
+        textView.setPadding(0, 0, paddingRight, 0);
+        textView.setLayoutParams(params);
+        navDirectory.addView(textView);
+    }
+
+
+    public void setNavDirectory(String path, boolean isDualPane) {
+        String[] parts;
+        parts = path.split(File.separator);
+        isDualPaneInFocus = isDualPane;
+
+        if (!isDualPaneInFocus) {
+            navDirectory.removeAllViews();
+            mCurrentDir = path;
+        } else {
+            navDirectoryDualPane.removeAllViews();
+            mCurrentDirDualPane = path;
+        }
+
+
+        String dir = "";
+
+        addHomeNavButton(true);
+
         // If root dir , parts will be 0
         if (parts.length == 0) {
             isCurrentDirRoot = true;
@@ -1249,6 +1276,8 @@ public class BaseActivity extends AppCompatActivity implements
 
                 toggleNavBarFab(true);
                 toggleDualPaneVisibility(false);
+                toggleNavigationVisibility(true);
+                addHomeNavButton(false);
                 int category;
 
                 switch (childPos) {
@@ -1504,13 +1533,17 @@ public class BaseActivity extends AppCompatActivity implements
 
     public void toggleNavBarFab(boolean isHomeScreenEnabled) {
         if (isHomeScreenEnabled) {
-            mNavigationLayout.setVisibility(View.GONE);
+//            mNavigationLayout.setVisibility(View.GONE);
             frameLayoutFab.setVisibility(View.GONE);
             frameLayoutFabDual.setVisibility(View.GONE);
         } else {
-            mNavigationLayout.setVisibility(View.VISIBLE);
+//            mNavigationLayout.setVisibility(View.VISIBLE);
             frameLayoutFab.setVisibility(View.VISIBLE);
         }
+    }
+
+    public void toggleNavigationVisibility(boolean isVisible) {
+        mNavigationLayout.setVisibility(isVisible ? View.VISIBLE : View.GONE);
     }
 
     private void currentScreenSetup(String directory, int category, boolean isDualPane) {
@@ -1971,6 +2004,7 @@ public class BaseActivity extends AppCompatActivity implements
         ft.remove(fragment);
         if (mHomeScreenFragment != null) {
             ft.show(mHomeScreenFragment);
+            toggleNavigationVisibility(false);
         }
         ft.commitAllowingStateLoss();
 

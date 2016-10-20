@@ -1280,9 +1280,7 @@ public class FileUtils implements CopyService.Progress {
     }
 
     public static boolean checkIfLibraryCategory(int category) {
-        return category == FileConstants.CATEGORY.IMAGE.getValue() ||
-                category == FileConstants.CATEGORY.VIDEO.getValue() ||
-                category == FileConstants.CATEGORY.AUDIO.getValue();
+        return category != FileConstants.CATEGORY.FILES.getValue();
     }
 
     public static void removeMedia(Context context, File file, int category) {

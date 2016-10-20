@@ -61,6 +61,7 @@
     <dimen name="fastscroller_track_padding">3dp</dimen>
     <bool name="isTablet">false</bool>
     <dimen name="margin_16">16dp</dimen>
+    <dimen name="padding_60">60dp</dimen>
 
 
 </resources>

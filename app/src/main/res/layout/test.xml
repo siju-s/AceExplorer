@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/layoutNavigate"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/nav_dir_height"
+    android:layout_marginLeft="7dp"
+    android:layout_marginStart="7dp"
+    android:background="@color/colorPrimary"
+    android:orientation="horizontal"
+    android:baselineAligned="false"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <HorizontalScrollView
+        android:id="@+id/scrollNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:background="@color/accent_blue"
+        android:scrollbars="none">
+
+    <LinearLayout
+        android:id="@+id/navButtons"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@color/add_bg_dark"
+        android:orientation="horizontal">
+
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_home_white"
+        android:background="#00ffffff"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="150 files"
+        android:paddingRight="60dp"
+        android:gravity="center"
+        android:textColor="#ffffff"
+        android:id="@+id/textView" />
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+
+</LinearLayout>

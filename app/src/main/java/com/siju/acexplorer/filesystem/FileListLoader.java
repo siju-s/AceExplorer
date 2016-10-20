@@ -629,7 +629,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 int type = FileConstants.CATEGORY.AUDIO.getValue();
                 String fileName = path.substring(path.lastIndexOf("/") + 1, path.length());
                 String extension = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
-                Log.d(TAG, "File name=" + fileName + "path=" + path);
                 fileInfoList.add(new FileInfo(audioId, albumId, fileName, path, date1, size1, type, extension));
             }
             cursor.close();
