@@ -163,7 +163,6 @@ public class BaseActivity extends AppCompatActivity implements
     private boolean mIsRootMode;
     public int mOperation = -1;
     private View mFabView;
-    private String mCreatePath;
     public String mOldFilePath;
     public String mNewFilePath;
     public ArrayList<FileInfo> mFiles = new ArrayList<>();
@@ -771,10 +770,10 @@ public class BaseActivity extends AppCompatActivity implements
             String uriString = mSharedPreferences.getString(FileConstants.SAF_URI, null);
 
             Uri oldUri = uriString != null ? Uri.parse(uriString) : null;
-            Uri treeUri = intent.getData();
-            Log.d(TAG, "tree uri=" + treeUri + " old uri=" + oldUri);
 
             if (resultCode == Activity.RESULT_OK) {
+                Uri treeUri = intent.getData();
+                Log.d(TAG, "tree uri=" + treeUri + " old uri=" + oldUri);
                 // Get Uri from Storage Access Framework.
                 // Persist URI - this is required for verification of writability.
                 if (treeUri != null) {
@@ -800,14 +799,14 @@ public class BaseActivity extends AppCompatActivity implements
                             new MoveFiles(this, mFiles, mCopyData).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mNewFilePath);
                             break;
                         case FileConstants.FOLDER_CREATE:
-                            mFileOpsHelper.mkDir(mIsRootMode, new File(mCreatePath));
+                            mFileOpsHelper.mkDir(mIsRootMode, new File(mNewFilePath));
                             break;
                         case FileConstants.RENAME:
                             mFileOpsHelper.renameFile(mIsRootMode, new File(mOldFilePath), new File(mNewFilePath),
                                     mRenamedPosition);
                             break;
                         case FileConstants.FILE_CREATE:
-                            mFileOpsHelper.mkFile(mIsRootMode, new File(mCreatePath));
+                            mFileOpsHelper.mkFile(mIsRootMode, new File(mNewFilePath));
                             break;
                         case FileConstants.EXTRACT:
                             mFileOpsHelper.extractFile(new File(mOldFilePath), new File(mNewFilePath));
@@ -829,7 +828,7 @@ public class BaseActivity extends AppCompatActivity implements
 
             mOperation = -1;
             mFabView = null;
-            mCreatePath = null;
+            mNewFilePath = null;
         }
         super.onActivityResult(requestCode, resultCode, intent);
     }

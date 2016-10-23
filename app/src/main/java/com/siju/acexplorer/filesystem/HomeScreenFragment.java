@@ -23,7 +23,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,48 +47,31 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by SIJU on 20-07-2016.
- */
 public class HomeScreenFragment extends Fragment implements LoaderManager
         .LoaderCallbacks<ArrayList<FileInfo>> {
 
-    View root;
-    private Toolbar mToolbar;
+    private View root;
     private int mResourceIds[];
     private String mLabels[];
     private int mCategoryIds[];
-
     private RecyclerView recyclerViewLibrary;
     private RecyclerView recyclerViewStorages;
     private HomeLibraryAdapter homeLibraryAdapter;
     private HomeStoragesAdapter homeStoragesAdapter;
-    private LinearLayoutManager llmStorage;
-    private GridLayoutManager gridLayoutManagerLibrary;
-
     private ArrayList<HomeLibraryInfo> homeLibraryInfoArrayList;
     private ArrayList<HomeLibraryInfo> tempLibraryInfoArrayList;
     private ArrayList<HomeStoragesInfo> homeStoragesInfoArrayList;
-    public  String STORAGE_INTERNAL, STORAGE_EXTERNAL;
+    public String STORAGE_INTERNAL, STORAGE_EXTERNAL;
     private final String TAG = this.getClass().getSimpleName();
     private SharedPreferenceWrapper sharedPreferenceWrapper;
-    private boolean mIsFirstRun;
     private ArrayList<LibrarySortModel> savedLibraries = new ArrayList<>();
     private final int REQUEST_CODE = 1000;
-    private ArrayList<FavInfo> mFavList = new ArrayList<>();
     private BaseActivity mBaseActivity;
     private boolean mIsDualModeEnabled;
     private SharedPreferences mSharedPreferences;
-
-    private int mGridColumns;
-    private int mGridItemWidth;
     private int mCurrentOrientation;
-
-    Handler handler = new Handler();
-    UriObserver mUriObserver = new UriObserver(handler);
-    private final String audioUri = "content://media/external/audio/media";
-    private final String imageUri = "content://media/external/images/media";
-    private final String videoUri = "content://media/external/videos/media";
+    private Handler handler = new Handler();
+    private UriObserver mUriObserver = new UriObserver(handler);
     private boolean mIsPermissionGranted = true;
 
 
@@ -114,34 +96,26 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         setHasOptionsMenu(true);
         Logger.log(TAG, "onActivityCreated" + savedInstanceState);
 
-        // If permission revoked when app is running,OS tries to recreate fragments with its saved instance.Avoid that.
-        if (savedInstanceState == null) {
-            mCurrentOrientation = getResources().getConfiguration().orientation;
-            mIsDualModeEnabled = getArguments().getBoolean(FileConstants.KEY_DUAL_ENABLED, false);
-            homeLibraryInfoArrayList = new ArrayList<>();
-            homeStoragesInfoArrayList = new ArrayList<>();
-            tempLibraryInfoArrayList = new ArrayList<>();
-            mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            if (PermissionUtils.isAtLeastM() && !PermissionUtils.hasRequiredPermissions()) {
-                mIsPermissionGranted = false;
-            }
-
-            initializeViews();
-            initConstants();
-            initializeLibraries();
-            setupLoaders();
-            initializeStorageGroup();
-
-            homeLibraryAdapter = new HomeLibraryAdapter(getActivity(), homeLibraryInfoArrayList);
-            homeStoragesAdapter = new HomeStoragesAdapter(getActivity(), homeStoragesInfoArrayList);
-            initListeners();
-       /* Logger.log("TAG", "Homescreen--Librarylist=" + homeLibraryInfoArrayList.size() +
-                "storage=" + homeStoragesInfoArrayList.size());*/
-
-            recyclerViewLibrary.setAdapter(homeLibraryAdapter);
-            recyclerViewStorages.setAdapter(homeStoragesAdapter);
+        mCurrentOrientation = getResources().getConfiguration().orientation;
+        mIsDualModeEnabled = getArguments().getBoolean(FileConstants.KEY_DUAL_ENABLED, false);
+        homeLibraryInfoArrayList = new ArrayList<>();
+        homeStoragesInfoArrayList = new ArrayList<>();
+        tempLibraryInfoArrayList = new ArrayList<>();
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        if (PermissionUtils.isAtLeastM() && !PermissionUtils.hasRequiredPermissions()) {
+            mIsPermissionGranted = false;
         }
+        initializeViews();
+        initConstants();
+        initializeLibraries();
+        setupLoaders();
+        initializeStorageGroup();
 
+        homeLibraryAdapter = new HomeLibraryAdapter(getActivity(), homeLibraryInfoArrayList);
+        homeStoragesAdapter = new HomeStoragesAdapter(getActivity(), homeStoragesInfoArrayList);
+        recyclerViewLibrary.setAdapter(homeLibraryAdapter);
+        recyclerViewStorages.setAdapter(homeStoragesAdapter);
+        initListeners();
     }
 
     public void setPermissionGranted() {
@@ -162,9 +136,9 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     }
 
     private void setGridColumns() {
-        mGridColumns = getResources().getInteger(R.integer.homescreen_columns);
+        int mGridColumns = getResources().getInteger(R.integer.homescreen_columns);
 //        Logger.log(TAG,"Grid columns="+mGridColumns);
-        gridLayoutManagerLibrary = new HomeScreenGridLayoutManager(getActivity(), mGridColumns);
+        GridLayoutManager gridLayoutManagerLibrary = new HomeScreenGridLayoutManager(getActivity(), mGridColumns);
         recyclerViewLibrary.setLayoutManager(gridLayoutManagerLibrary);
     }
 
@@ -175,7 +149,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         recyclerViewStorages = (RecyclerView) root.findViewById(R.id.recyclerViewStorages);
         recyclerViewLibrary.setHasFixedSize(true);
         recyclerViewStorages.setHasFixedSize(true);
-        llmStorage = new LinearLayoutManager(getActivity());
+        LinearLayoutManager llmStorage = new LinearLayoutManager(getActivity());
         setGridColumns();
         recyclerViewLibrary.setItemAnimator(new DefaultItemAnimator());
         recyclerViewStorages.setLayoutManager(llmStorage);
@@ -193,7 +167,6 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             cardStorage.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_colorPrimary));
             nestedScrollViewHome.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_home_bg));
         }
-
     }
 
 
@@ -221,15 +194,6 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                         path = FileUtils.getDownloadsDirectory().getAbsolutePath();
                         args.putString(FileConstants.KEY_PATH, path);
                     }
-                   /* if (categoryId != FileConstants.CATEGORY.FAVORITES.getValue()) {
-                        ArrayList<FileInfo> list = getListForCategory(categoryId);
-                        if (list != null && list.size() != 0) {
-                            args.putParcelableArrayList(FileConstants.KEY_LIB_SORTLIST, list);
-                        }
-                    }*/
-                    /*if (!FileUtils.checkIfLibraryCategory(categoryId)) {
-                        categoryId = FileConstants.CATEGORY.GENERIC_LIST.getValue();
-                    }*/
                     mBaseActivity.setCurrentCategory(categoryId);
                     mBaseActivity.setIsFromHomePage(true);
                     mBaseActivity.addToBackStack(path, categoryId);
@@ -257,26 +221,14 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                 args.putBoolean(FileConstants.KEY_HOME, true);
                 String currentDir = homeStoragesInfoArrayList.get(position).getPath();
                 args.putString(FileConstants.KEY_PATH, currentDir);
-                /*if (position == 0) {
-                    args.putInt(BaseActivity.ACTION_GROUP_POS, 0); // Storage Group
-                    args.putInt(BaseActivity.ACTION_CHILD_POS, 1); // Internal Storage child
-
-                } else {
-                    args.putInt(BaseActivity.ACTION_GROUP_POS, 0); // Storage Group
-                    args.putInt(BaseActivity.ACTION_CHILD_POS, 2); // External Storage child
-                }*/
-
                 FileListFragment fileListFragment = new FileListFragment();
                 fileListFragment.setArguments(args);
-//                ft.replace(R.id.main_container, fileListFragment);
                 ft.add(R.id.main_container, fileListFragment);
                 ft.hide(HomeScreenFragment.this);
                 ft.commitAllowingStateLoss();
                 mBaseActivity.setCurrentCategory(FileConstants.CATEGORY.FILES.getValue());
                 mBaseActivity.setDir(currentDir, false);
                 mBaseActivity.addToBackStack(currentDir, FileConstants.CATEGORY.FILES.getValue());
-//                mBaseActivity.setIsFromHomePage(true);
-
                 if (mIsDualModeEnabled) {
                     mBaseActivity.toggleDualPaneVisibility(true);
                     mBaseActivity.createDualFragment();
@@ -318,7 +270,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                 registerObservers(getUriForCategory(categoryId));
             }
 
-            mFavList = sharedPreferenceWrapper.getFavorites(getActivity());
+            ArrayList<FavInfo> mFavList = sharedPreferenceWrapper.getFavorites(getActivity());
             if (mFavList != null && mFavList.size() != 0) {
                 for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
                     if (homeLibraryInfoArrayList.get(i).getCategoryId() == FileConstants.CATEGORY
@@ -346,7 +298,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     }
 
     private void initializeLibraries() {
-        mIsFirstRun = mSharedPreferences.getBoolean
+        boolean mIsFirstRun = mSharedPreferences.getBoolean
                 (BaseActivity.PREFS_FIRST_RUN, true);
         Log.d(TAG, "First run==" + mIsFirstRun);
         if (mIsFirstRun) {
@@ -363,7 +315,6 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                     sharedPreferenceWrapper.addLibrary(getActivity(), model);
                 }
             }
-            mIsFirstRun = false;
             mSharedPreferences.edit().putBoolean(BaseActivity.PREFS_FIRST_RUN, false).apply();
         } else {
             getSavedLibraries();
@@ -411,6 +362,9 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     }
 
     private int getCategoryForUri(Uri uri) {
+        final String audioUri = "content://media/external/audio/media";
+        final String imageUri = "content://media/external/images/media";
+        final String videoUri = "content://media/external/videos/media";
         if (uri.toString().contains(audioUri)) {
             return 1;
         } else if (uri.toString().contains(videoUri)) {
@@ -460,24 +414,19 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             if ("/storage/emulated/legacy".equals(path) || "/storage/emulated/0".equals(path)) {
                 name = STORAGE_INTERNAL;
                 icon = R.drawable.ic_phone_white;
-
             } else if ("/storage/sdcard1".equals(path)) {
                 name = STORAGE_EXTERNAL;
                 icon = R.drawable.ic_ext_white;
-//                mExternalSDPaths.add(path);
             } else {
                 name = file.getName();
                 icon = R.drawable.ic_ext_white;
-//                mExternalSDPaths.add(path);
             }
             if (!file.isDirectory() || file.canExecute()) {
-//                storage_count++;
-//                storageSpace = storageSpace(file);
                 long spaceLeft = getSpaceLeft(file);
                 long totalSpace = getTotalSpace(file);
                 int leftProgress = (int) (((float) spaceLeft / totalSpace) * 100);
                 int usedSpaceProgress = 100 - leftProgress;
-                String spaceText = storageSpace(file, spaceLeft, totalSpace);
+                String spaceText = storageSpace(spaceLeft, totalSpace);
                 homeStoragesInfoArrayList.add(new HomeStoragesInfo(name, icon,
                         usedSpaceProgress, spaceText, path));
             }
@@ -493,7 +442,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         return file.getTotalSpace();
     }
 
-    private String storageSpace(File file, long spaceLeft, long totalSpace) {
+    private String storageSpace(long spaceLeft, long totalSpace) {
         String freePlaceholder = " " + getResources().getString(R.string.msg_free) + " ";
         return FileUtils.formatSize(getActivity(), spaceLeft) + freePlaceholder +
                 FileUtils.formatSize(getActivity(), totalSpace);
@@ -528,11 +477,11 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             if (data.size() != 0) {
                 for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
 
-                    if (loader.getId() == FileConstants.CATEGORY.DOWNLOADS.getValue()    &&
-                                    loader.getId() == homeLibraryInfoArrayList.get(i).getCategoryId()) {
+                    if (loader.getId() == FileConstants.CATEGORY.DOWNLOADS.getValue() &&
+                            loader.getId() == homeLibraryInfoArrayList.get(i).getCategoryId()) {
                         homeLibraryInfoArrayList.get(i).setCount(data.size());
                     } else if (data.get(0).getCategoryId() == homeLibraryInfoArrayList.get(i).getCategoryId()) {
-                        Log.d(TAG, "on onLoadFinished--category=" + loader.getId() + "size="+data.get(0).getCount());
+                        Log.d(TAG, "on onLoadFinished--category=" + loader.getId() + "size=" + data.get(0).getCount());
                         homeLibraryInfoArrayList.get(i).setCount(data.get(0).getCount());
                     }
                 }
@@ -547,10 +496,9 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     }
 
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-       Logger.log(TAG, "OnActivityREsult==" + resultCode);
+        Logger.log(TAG, "OnActivityREsult==" + resultCode);
         if (requestCode == REQUEST_CODE && resultCode == AppCompatActivity.RESULT_OK) {
             savedLibraries = new ArrayList<>();
             savedLibraries = data.getParcelableArrayListExtra(FileConstants.KEY_LIB_SORTLIST);
@@ -618,8 +566,8 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     }
 
 
-
     class UriObserver extends ContentObserver {
+        private Uri mUri;
         UriObserver(Handler handler) {
 
             super(handler);
@@ -632,19 +580,22 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
-            int categoryId = getCategoryForUri(uri);
-            Logger.log(TAG, "Observer Onchange" + uri + " cat id=" + categoryId);
+            if (!uri.equals(mUri)) {
+                mUri = uri;
+                int categoryId = getCategoryForUri(uri);
+                Logger.log(TAG, "Observer Onchange" + uri + " cat id=" + categoryId);
 
-            if (categoryId == 4) {
-                for (int i = 0; i < savedLibraries.size(); i++) {
-                    int id = savedLibraries.get(i).getCategoryId();
-                    if (id != 1 && id != 2 && id != 3 && id != 8) {
-                        Logger.log(TAG, "Observer savedib cat id=" + id);
-                        restartLoaders(id);
+                if (categoryId == 4) {
+                    for (int i = 0; i < savedLibraries.size(); i++) {
+                        int id = savedLibraries.get(i).getCategoryId();
+                        if (id != 1 && id != 2 && id != 3 && id != 8) {
+                            Logger.log(TAG, "Observer savedib cat id=" + id);
+                            restartLoaders(id);
+                        }
                     }
+                } else {
+                    restartLoaders(categoryId);
                 }
-            } else {
-                restartLoaders(categoryId);
             }
         }
     }

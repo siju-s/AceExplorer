@@ -3,16 +3,9 @@ package com.siju.acexplorer.filesystem.utils;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.helper.RootHelper;
-import com.siju.acexplorer.utils.DialogUtils;
 import com.stericson.RootTools.RootTools;
 
 import java.io.File;
@@ -50,33 +43,33 @@ public class FileOperations {
                     errorCallBack.launchSAF(file);
                     return null;
                 }
-                if (mode == 1 || mode == 0)
-                    FileUtils.mkdir(file, context);
-                // Try the root way
-                if (!file.exists() && isRoot) {
+                else if (mode == 1 || mode == 0) {
+                       boolean result = FileUtils.mkdir(file, context);
+                    // Try the root way
+                    if (!result && isRoot) {
 //                        file.setMode(HFile.ROOT_MODE);
-                    if (file.exists()) errorCallBack.exists(file);
-                    boolean remount = false;
-                    try {
-                        String res;
-                        if (!("rw".equals(res = RootTools.getMountedAs(file.getParent()))))
-                            remount = true;
-                        if (remount)
-                            RootTools.remount(file.getParent(), "rw");
-                        RootHelper.runAndWait("mkdir \"" + file.getPath() + "\"", true);
-                        if (remount) {
-                            if (res == null || res.length() == 0) res = "ro";
-                            RootTools.remount(file.getParent(), res);
+                        if (file.exists()) errorCallBack.exists(file);
+                        boolean remount = false;
+                        try {
+                            String res;
+                            if (!("rw".equals(res = RootTools.getMountedAs(file.getParent()))))
+                                remount = true;
+                            if (remount)
+                                RootTools.remount(file.getParent(), "rw");
+                            RootHelper.runAndWait("mkdir \"" + file.getPath() + "\"", true);
+                            if (remount) {
+                                if (res == null || res.length() == 0) res = "ro";
+                                RootTools.remount(file.getParent(), res);
+                            }
+                        } catch (Exception e) {
+                            Logger.log(TAG, file.getPath());
                         }
-                    } catch (Exception e) {
-                        Logger.log(TAG, file.getPath());
+                       result = file.exists();
                     }
-                    errorCallBack.done(file, file.exists());
+                    errorCallBack.done(file, result);
                     return null;
                 }
-                errorCallBack.done(file, file.exists());
-                return null;
-//                }
+             return null;
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
@@ -97,38 +90,40 @@ public class FileOperations {
                     errorCallBack.launchSAF(file);
                     return null;
                 }
-                if (mode == 1 || mode == 0)
+                else if (mode == 1 || mode == 0) {
+                    boolean result = false;
                     try {
-                        FileUtils.mkfile(file, context);
+                        result = FileUtils.mkfile(file, context);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                // Try the root way
-                if (!file.exists() && isRoot) {
+                    // Try the root way
+                    if (!result && isRoot) {
 //                    file.setMode(HFile.ROOT_MODE);
-                    if (file.exists()) errorCallBack.exists(file);
-                    boolean remount = false;
-                    try {
-                        String res;
-                        if (!("rw".equals(res = RootTools.getMountedAs(file.getParent()))))
-                            remount = true;
-                        if (remount)
-                            RootTools.remount(file.getParent(), "rw");
-                        RootHelper.runAndWait("touch \"" + file.getPath() + "\"", true);
-                        if (remount) {
-                            if (res == null || res.length() == 0) res = "ro";
-                            RootTools.remount(file.getParent(), res);
+                        if (file.exists()) errorCallBack.exists(file);
+                        boolean remount = false;
+                        try {
+                            String res;
+                            if (!("rw".equals(res = RootTools.getMountedAs(file.getParent()))))
+                                remount = true;
+                            if (remount)
+                                RootTools.remount(file.getParent(), "rw");
+                            RootHelper.runAndWait("touch \"" + file.getPath() + "\"", true);
+                            if (remount) {
+                                if (res == null || res.length() == 0) res = "ro";
+                                RootTools.remount(file.getParent(), res);
+                            }
+                        } catch (Exception e) {
+                            Logger.log(TAG, file.getPath());
                         }
-                    } catch (Exception e) {
-                        Logger.log(TAG, file.getPath());
+                        result = file.exists();
                     }
-                    errorCallBack.done(file, file.exists());
+                    errorCallBack.done(file, result);
                     return null;
                 }
-                errorCallBack.done(file, file.exists());
                 return null;
-//                }
             }
+
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
     }
@@ -144,21 +139,27 @@ public class FileOperations {
                 }
 
                 int mode = new FileUtils().checkFolder(oldFile.getParentFile().getAbsolutePath(), context);
+                Logger.log(TAG, "Rename--mode=" + mode);
+
                 if (mode == 2) {
                     errorCallBack.launchSAF(oldFile, newFile);
                 } else if (mode == 1 || mode == 0) {
-                    FileUtils.renameFolder(oldFile, newFile, context);
+                    boolean result = FileUtils.renameFolder(oldFile, newFile, context);
                     boolean a = !oldFile.exists() && newFile.exists();
-                    if (!a && rootMode) {
-                        try {
-                            FileUtils.renameRoot(oldFile, newFile.getName());
-                        } catch (Exception e) {
-                            Logger.log(TAG, oldFile.getPath() + "\n" + newFile.getPath());
-                        }
+                    Logger.log(TAG, "Rename--filexists=" + a + "rootmode=" + rootMode + "result==" + result);
 
-                        a = !oldFile.exists() && newFile.exists();
+                    if (!result) {
+                        if (!a && rootMode) {
+                            try {
+                                FileUtils.renameRoot(oldFile, newFile.getName());
+                            } catch (Exception e) {
+                                Logger.log(TAG, oldFile.getPath() + "\n" + newFile.getPath());
+                            }
+
+                            result = !oldFile.exists() && newFile.exists();
+                        }
                     }
-                    errorCallBack.done(newFile, a);
+                    errorCallBack.done(newFile, result);
                     return null;
                 }
 
@@ -167,9 +168,6 @@ public class FileOperations {
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
     }
-
-
-
 
 
 }

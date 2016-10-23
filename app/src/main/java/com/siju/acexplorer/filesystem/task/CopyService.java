@@ -66,6 +66,7 @@ public class CopyService extends Service {
     private Context mContext;
     private final int NOTIFICATION_ID = 1000;
     private boolean foreground = true;
+    private ArrayList<String> filesToMediaIndex = new ArrayList<>();
 
 
     @Override
@@ -157,8 +158,7 @@ public class CopyService extends Service {
             Intent intent = new Intent("refresh");
             intent.putExtra(FileConstants.IS_OPERATION_SUCCESS, copy.copy_successful);
             intent.putExtra(FileConstants.OPERATION, move ? FileConstants.MOVE : FileConstants.COPY);
-
-//            intent.putExtra(FileConstants.KEY_PATH,files);
+            intent.putStringArrayListExtra(FileConstants.KEY_PATH,filesToMediaIndex);
             sendBroadcast(intent);
             if (mProgressListener != null) {
                 mProgressListener.onUpdate(intent);
@@ -288,13 +288,13 @@ public class CopyService extends Service {
 
                 if (move) {
                     ArrayList<FileInfo> toDelete = new ArrayList<>();
-                    for (FileInfo a : files) {
-                        if (!failedFOps.contains(a))
-                            toDelete.add(a);
+                    for (FileInfo fileInfo : files) {
+                        if (!failedFOps.contains(fileInfo))
+                            toDelete.add(fileInfo);
                     }
                     Logger.log("Copy", "todel" + toDelete.size());
 
-                    new DeleteTask(mContext, rootmode, files).execute();
+                    new DeleteTask(mContext, rootmode, toDelete,false).execute();
                 }
             }
 
@@ -373,7 +373,7 @@ public class CopyService extends Service {
                         return;
                     }
                     if (!hash.get(id)) return;
-                    copy(in, out, size, id, sourceFile.getFileName(), move);
+                    copy(in, out, size, id, sourceFile.getFileName(), move,targetFile.getFilePath());
                 }
             }
 
@@ -406,7 +406,7 @@ public class CopyService extends Service {
 
 
             void copy(BufferedInputStream in, BufferedOutputStream out, long size, int id, String name,
-                      boolean move) throws IOException {
+                      boolean move,String targetPath) throws IOException {
                 long fileBytes = 0L;
                 final int buffer = 2048; //2 KB
                 byte[] data = new byte[2048];
@@ -433,6 +433,9 @@ public class CopyService extends Service {
 
                 if (fileBytes == size) {
                     count++;
+                    if (FileUtils.isMediaScanningRequired(FileUtils.getMimeType(new File(targetPath)))) {
+                        filesToMediaIndex.add(targetPath);
+                    }
                     Logger.log("CopyService", "Completed " + name + " COUNT=" + count);
 
                     Intent intent = new Intent(COPY_PROGRESS);
@@ -442,8 +445,10 @@ public class CopyService extends Service {
                     intent.putExtra("COUNT", count);
                     int p1 = (int) ((copiedBytes / (float) totalBytes) * 100);
                     intent.putExtra("TOTAL_PROGRESS", p1);
+
                     if (mProgressListener != null)
                         mProgressListener.onUpdate(intent);
+
                 }
                 in.close();
                 out.close();

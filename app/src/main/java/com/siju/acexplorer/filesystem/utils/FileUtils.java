@@ -1283,7 +1283,14 @@ public class FileUtils implements CopyService.Progress {
         return category != FileConstants.CATEGORY.FILES.getValue();
     }
 
+    public static boolean isMediaScanningRequired(String mimeType) {
+        Logger.log(TAG,"Mime type="+mimeType);
+        return mimeType != null && (mimeType.startsWith("audio") ||
+                mimeType.startsWith("video") || mimeType.startsWith("image"));
+    }
+
     public static void removeMedia(Context context, File file, int category) {
+        Logger.log(TAG,"Type="+category);
         ContentResolver resolver = context.getContentResolver();
         String path = file.getAbsolutePath();
         switch (category) {
@@ -1492,7 +1499,6 @@ public class FileUtils implements CopyService.Progress {
             return null;
         } catch (Exception f) {
             originalDirectory = true;
-            //continue
         }
         String as = PreferenceManager.getDefaultSharedPreferences(context).getString(FileConstants.SAF_URI, null);
 
@@ -1693,7 +1699,9 @@ public class FileUtils implements CopyService.Progress {
             DocumentFile document = getDocumentFile(file.getParentFile(), true, context);
             // getDocumentFile implicitly creates the directory.
             try {
-                b = document.createFile(getMimeType(file), file.getName()) != null;
+                Logger.log(TAG, "mkfile--doc="+document);
+
+                b = document != null && document.createFile(getMimeType(file), file.getName()) != null;
                 return b;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -1744,9 +1752,11 @@ public class FileUtils implements CopyService.Progress {
         }
 
         // Try the Storage Access Framework if it is just a rename within the same parent folder.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+        if (Utils.isAtleastLollipop()
                 && source.getParent().equals(target.getParent()) && isOnExtSdCard(source, context)) {
+
             DocumentFile document = getDocumentFile(source, true, context);
+
             Log.d(TAG," Document uri in rename="+document);
             if (document != null && document.renameTo(target.getName())) {
                 return true;
@@ -1754,6 +1764,8 @@ public class FileUtils implements CopyService.Progress {
         }
 
         if (source.isFile()) {
+            Logger.log(TAG, "Rename--root=");
+
             try {
                 if (!mkfile(target, context)) {
                     return false;
@@ -1873,8 +1885,10 @@ public class FileUtils implements CopyService.Progress {
     public static boolean rename(File f, String name, boolean root) {
         String newname = f.getParent() + "/" + name;
         if (f.getParentFile().canWrite()) {
+            Logger.log(TAG, "Rename--canWrite="+true);
             return f.renameTo(new File(newname));
         } else if (root) {
+            Logger.log(TAG, "Rename--root=");
             RootTools.remount(f.getPath(), "rw");
             RootHelper.runAndWait("mv " + f.getPath() + " " + newname, true);
             RootTools.remount(f.getPath(), "ro");

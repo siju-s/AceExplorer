@@ -58,6 +58,8 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private static final int TYPE_ITEM = 1;
     private static final int TYPE_FOOTER = 2;
 
+    private String oldFilePath;
+
 
     FileListAdapter(Fragment fragment, Context mContext, ArrayList<FileInfo>
             fileInfoArrayList, int category, int viewMode) {
@@ -95,6 +97,11 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         Logger.log("SIJU", "updateAdapter--animated=" + mStopAnimation);
     }
 
+    public void setUpdateItems(String oldFile) {
+        oldFilePath = oldFile;
+//        updateItems = false;
+    }
+
     public void setStopAnimation(boolean flag) {
         mIsAnimNeeded = !flag;
     }
@@ -128,13 +135,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.mOnItemLongClickListener = mItemClickListener;
     }
 
-
-  /*  @Override
-    public void onViewDetachedFromWindow(FileListViewHolder holder) {
-        super.onViewDetachedFromWindow(holder);
-        holder.container.clearAnimation();
-    }*/
-
     @Override
     public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
@@ -153,11 +153,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return super.onFailedToRecycleView(holder);
     }
 
-/*    @Override
-    public boolean onFailedToRecycleView(FileListViewHolder holder) {
-        holder.container.clearAnimation();
-        return super.onFailedToRecycleView(holder);
-    }*/
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -224,7 +219,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     private boolean isPositionFooter(int position) {
-        return position == fileInfoArrayList.size() ;
+        return position == fileInfoArrayList.size();
     }
 
 
@@ -235,34 +230,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         fileListViewHolder.container.startAnimation(localAnimation);
         this.offset += 30;
     }
-
-  /*  private void setAnimation(View viewToAnimate, int position)
-    {
-        // If the bound view wasn't previously displayed on screen, it's animated
-        if (position > lastPosition)
-        {
-            Animation animation = AnimationUtils.loadAnimation(mContext, android.R.anim.slide_in_left);
-            viewToAnimate.startAnimation(animation);
-            lastPosition = position;
-        }
-    }
-*/
-   /* public  void setApplicationTheme(boolean themeLight) {
-        if (themeLight) {
-           textFileName.setTextColor(ContextCompat.getColor(mContext,R.color.text_dark));
-            textFileModifiedDate.setTextColor(ContextCompat.getColor(mContext,R.color.text_dark));
-            textFileName.setTextColor(ContextCompat.getColor(mContext,R.color.text_dark));
-
-
-        } else {
-            setToolBarTheme(ContextCompat.getColor(this, R.color.color_dark_bg),
-                    ContextCompat.getColor(this, R.color.color_dark_status_bar));
-            mMainLayout.setBackgroundColor(ContextCompat.getColor(this,R.color.color_dark_bg));
-
-        }
-
-    }*/
-
 
     @Override
     public int getItemCount() {
@@ -289,8 +256,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             FileInfo fileInfo = fileInfoArrayList.get(position);
             fileListViewHolder.imageIcon.setImageResource(fileInfo.getIcon());
             fileListViewHolder.textFileName.setText(fileInfo.getFileName());
-        }
-        else {
+        } else {
 
             String fileName = fileInfoArrayList.get(position).getFileName();
             String fileDate;
@@ -327,7 +293,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             switch (mCategory) {
 
-                case 0: // For file group
+                case 0:
                 case 5:
                 case 7:
                 case 8:
@@ -352,7 +318,8 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                         int type = fileInfoArrayList.get(position).getType();
                         fileListViewHolder.imageIcon.setImageDrawable(null);
-
+                        Logger.log("TAG", "Adpater path=" + filePath + "position=" + position);
+//                        if (updateItems) {
                         // If Image or Video file, load thumbnail
                         if (type == FileConstants.CATEGORY.IMAGE.getValue()) {
                             displayImageThumb(fileListViewHolder, filePath);
@@ -369,6 +336,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                 fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_doc_white);
                             }
                         }
+
 
                     }
                     if (fileName.startsWith(".")) {
@@ -403,7 +371,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
 
     }
-
 
 
     private void displayVideoThumb(FileListViewHolder fileListViewHolder, String path) {
@@ -462,35 +429,31 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     private void displayAudioAlbumArt(FileListViewHolder fileListViewHolder, String path) {
-//        Uri uri = ContentUris.withAppendedId(mAudioUri, fileInfoArrayList.get(position)
-// .getBucketId());
-//        Uri audioUri = Uri.fromFile(new File(path));
-
         fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_music_default);
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         String[] projection = new String[]{MediaStore.Audio.Media.ALBUM_ID};
         String selection = MediaStore.Audio.Media.DATA + " = ?";
         String[] selectionArgs = new String[]{path};
 
-        //        String sortOrder = MediaStore.Audio.Media.DATE_MODIFIED + " DESC";
         Cursor cursor = mContext.getContentResolver().query(uri, projection, selection, selectionArgs,
                 null);
 
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                int albumIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID);
+                long albumId = cursor.getLong(albumIdIndex);
 
-        if (cursor != null && cursor.moveToFirst()) {
-
-
-            int albumIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID);
-            long albumId = cursor.getLong(albumIdIndex);
-
-//            Logger.log("Adapter","displayAudioAlbumArt="+albumId);
-            Uri newUri = ContentUris.withAppendedId(mAudioUri, albumId);
-            Glide.with(mContext).loadFromMediaStore(newUri).centerCrop()
-                    .placeholder(R.drawable.ic_music_default)
+                Logger.log("Adapter", "displayAudioAlbumArt=" + albumId);
+                Uri newUri = ContentUris.withAppendedId(mAudioUri, albumId);
+                Glide.with(mContext).load(newUri).centerCrop()
+                        .placeholder(R.drawable.ic_music_default)
 //                    .crossFade(2)
-                    .into(fileListViewHolder.imageIcon);
-
+                        .into(fileListViewHolder.imageIcon);
+            }
             cursor.close();
+        }
+        else {
+            fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_music_default);
         }
     }
 

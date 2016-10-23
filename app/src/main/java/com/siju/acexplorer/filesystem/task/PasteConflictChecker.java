@@ -122,7 +122,7 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
         if (counter == mConflictFiles.size() || mConflictFiles.size() == 0) {
             if (mFiles != null && mFiles.size() != 0) {
 
-                int mode = mActivity.mFileOpsHelper.checkFolder(mActivity, new File(mCurrentDir));
+                int mode = mActivity.mFileOpsHelper.checkWriteAccessMode(mActivity, new File(mCurrentDir));
                 if (mode == 2) {
                     mActivity.mFiles = mFiles;
                     mActivity.mTotalFiles = mTotalFileList;

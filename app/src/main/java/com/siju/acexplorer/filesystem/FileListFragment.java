@@ -17,6 +17,7 @@ import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaScannerConnection;
+import android.media.MediaScannerConnection.OnScanCompletedListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -265,12 +266,14 @@ public class FileListFragment extends Fragment implements LoaderManager
                 if (mDualPaneInFocus) {
                     mLastDualPaneDir = mFilePath;
                     mLastSinglePaneDir = mFilePathOther;
-                    Log.d(TAG, "on onActivityCreated dual focus Yes--singledir" + mLastSinglePaneDir + "dualDir=" + mLastDualPaneDir);
+                    Log.d(TAG, "on onActivityCreated dual focus Yes--singledir" + mLastSinglePaneDir + "dualDir=" +
+                            mLastDualPaneDir);
 
                 } else {
                     mLastSinglePaneDir = mFilePath;
                     mLastDualPaneDir = mFilePathOther;
-                    Log.d(TAG, "on onActivityCreated dual focus No--singledir" + mLastSinglePaneDir + "dualDir=" + mLastDualPaneDir);
+                    Log.d(TAG, "on onActivityCreated dual focus No--singledir" + mLastSinglePaneDir + "dualDir=" +
+                            mLastDualPaneDir);
                 }
 
             }
@@ -376,8 +379,8 @@ public class FileListFragment extends Fragment implements LoaderManager
 
         super.onResume();
         if (!mInstanceStateExists) {
-            IntentFilter intentFilter = new IntentFilter("reload_list");
-            intentFilter.addAction("refresh");
+            IntentFilter intentFilter = new IntentFilter(FileConstants.RELOAD_LIST);
+            intentFilter.addAction(FileConstants.REFRESH);
             getActivity().registerReceiver(mReloadListReceiver, intentFilter);
         }
 
@@ -412,11 +415,14 @@ public class FileListFragment extends Fragment implements LoaderManager
         if (llm == null || fileListAdapter == null) return false;
 
         if (mViewMode == FileConstants.KEY_LISTVIEW) {
-            Logger.log(TAG, "visible pos=" + ((LinearLayoutManager) recyclerViewFileList.getLayoutManager()).findLastCompletelyVisibleItemPosition() + " count=" +
+            Logger.log(TAG, "visible pos=" + ((LinearLayoutManager) recyclerViewFileList.getLayoutManager())
+                    .findLastCompletelyVisibleItemPosition() + " count=" +
                     (fileListAdapter.getItemCount() - 1));
-            return ((CustomLayoutManager) llm).findLastCompletelyVisibleItemPosition() < fileListAdapter.getItemCount() - 1;
+            return ((CustomLayoutManager) llm).findLastCompletelyVisibleItemPosition() < fileListAdapter.getItemCount
+                    () - 1;
         } else {
-            return ((CustomGridLayoutManager) llm).findLastCompletelyVisibleItemPosition() < fileListAdapter.getItemCount() - 1;
+            return ((CustomGridLayoutManager) llm).findLastCompletelyVisibleItemPosition() < fileListAdapter
+                    .getItemCount() - 1;
         }
     }
 
@@ -426,8 +432,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             if (mDividerItemDecoration == null) {
                 mDividerItemDecoration = new DividerItemDecoration(getActivity(), LinearLayoutManager
                         .VERTICAL, mIsDarkTheme);
-            }
-            else {
+            } else {
                 recyclerViewFileList.removeItemDecoration(mDividerItemDecoration);
             }
             recyclerViewFileList.addItemDecoration(mDividerItemDecoration);
@@ -440,8 +445,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             }
             if (mGridItemDecoration == null) {
                 mGridItemDecoration = new GridItemDecoration(divider, divider, mGridColumns);
-            }
-            else {
+            } else {
                 recyclerViewFileList.removeItemDecoration(mGridItemDecoration);
             }
             recyclerViewFileList.addItemDecoration(mGridItemDecoration);
@@ -649,7 +653,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (action.equals("reload_list")) {
+            if (action.equals(FileConstants.RELOAD_LIST)) {
                 computeScroll();
                 String path = intent.getStringExtra(FileConstants.KEY_PATH);
                 Logger.log(TAG, "New zip PAth=" + path);
@@ -679,8 +683,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                             /*String[] mimeArray = new String[mimeTypes.size()];
                             mimeTypes.toArray(mimeArray);
 */
-                        MediaScannerConnection.scanFile(getActivity(), pathArray, null, new MediaScannerConnection
-                                .OnScanCompletedListener() {
+                        MediaScannerConnection.scanFile(getActivity(), pathArray, null, new OnScanCompletedListener() {
 
                             @Override
                             public void onScanCompleted(String path, Uri uri) {
@@ -705,18 +708,28 @@ public class FileListFragment extends Fragment implements LoaderManager
 
                     case FileConstants.RENAME:
 
-                        int position = intent.getIntExtra("position", -1);
+                        final int position = intent.getIntExtra("position", -1);
                         String oldFile = intent.getStringExtra("old_file");
                         String newFile = intent.getStringExtra("new_file");
 
-                        if (!FileUtils.checkIfFileCategory(mCategory)) {
-                            FileUtils.removeMedia(getActivity(), new File(oldFile), mCategory);
-                            FileUtils.scanFile(getActivity().getApplicationContext(), newFile);
-                        }
+//                        if (!FileUtils.checkIfFileCategory(mCategory)) {
+                        int type = fileInfoList.get(position).getType();
+                        FileUtils.removeMedia(getActivity(), new File(oldFile), type);
+                        FileUtils.scanFile(getActivity().getApplicationContext(), newFile);
+//                        }
                         fileInfoList.get(position).setFilePath(newFile);
                         fileInfoList.get(position).setFileName(new File(newFile).getName());
                         fileListAdapter.setStopAnimation(true);
-                        fileListAdapter.updateAdapter(fileInfoList);
+                        Logger.log(TAG, "Position changed=" + position);
+                        MediaScannerConnection.scanFile(getActivity().getApplicationContext(), new String[]{newFile},
+                                null, new
+                                        OnScanCompletedListener() {
+                                            @Override
+                                            public void onScanCompleted(String path, Uri uri) {
+                                                Log.d(TAG, "Scan completed=" + path + "uri=" + uri);
+                                                fileListAdapter.notifyItemChanged(position);
+                                            }
+                                        });
                         break;
 
                     case FileConstants.MOVE:
@@ -724,28 +737,26 @@ public class FileListFragment extends Fragment implements LoaderManager
                     case FileConstants.FILE_CREATE:
                     case FileConstants.COPY:
                         boolean isSuccess = intent.getBooleanExtra(FileConstants.IS_OPERATION_SUCCESS, true);
+                        ArrayList<String> copiedFiles = intent.getStringArrayListExtra(FileConstants.KEY_PATH);
+
+                        if (copiedFiles != null) {
+                            for (String path : copiedFiles) {
+                                FileUtils.scanFile(getActivity().getApplicationContext(), path);
+                            }
+                        }
+
                         if (!isSuccess) {
-                            Toast.makeText(getActivity(), getString(R.string.msg_operation_failed), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getActivity(), getString(R.string.msg_operation_failed), Toast
+                                    .LENGTH_LONG).show();
                         } else {
                             refreshList();
                         }
                         break;
 
                 }
-
-
             }
         }
     };
-
-
-   /* public void update(ArrayList<FileInfo> list) {
-        fileInfoList.clear();
-        mSwipeRefreshLayout.setRefreshing(false);
-        fileListAdapter.setCategory(mCategory);
-        fileInfoList.addAll(list);
-        fileListAdapter.updateAdapter(list);
-    }*/
 
 
     private void itemClickActionMode(int position, boolean isLongPress) {
@@ -1003,9 +1014,11 @@ public class FileListFragment extends Fragment implements LoaderManager
                         if (scrollPositionDualPane.containsKey(mFilePath)) {
                             Bundle b = scrollPositionDualPane.get(mFilePath);
                             if (mViewMode == FileConstants.KEY_LISTVIEW)
-                                ((LinearLayoutManager) llm).scrollToPositionWithOffset(b.getInt("index"), b.getInt("top"));
+                                ((LinearLayoutManager) llm).scrollToPositionWithOffset(b.getInt("index"), b.getInt
+                                        ("top"));
                             else
-                                ((GridLayoutManager) llm).scrollToPositionWithOffset(b.getInt("index"), b.getInt("top"));
+                                ((GridLayoutManager) llm).scrollToPositionWithOffset(b.getInt("index"), b.getInt
+                                        ("top"));
                             recyclerViewFileList.stopScroll();
                         }
                     } else {
@@ -1014,9 +1027,11 @@ public class FileListFragment extends Fragment implements LoaderManager
                         if (scrollPosition.containsKey(mFilePath)) {
                             Bundle b = scrollPosition.get(mFilePath);
                             if (mViewMode == FileConstants.KEY_LISTVIEW)
-                                ((LinearLayoutManager) llm).scrollToPositionWithOffset(b.getInt("index"), b.getInt("top"));
+                                ((LinearLayoutManager) llm).scrollToPositionWithOffset(b.getInt("index"), b.getInt
+                                        ("top"));
                             else
-                                ((GridLayoutManager) llm).scrollToPositionWithOffset(b.getInt("index"), b.getInt("top"));
+                                ((GridLayoutManager) llm).scrollToPositionWithOffset(b.getInt("index"), b.getInt
+                                        ("top"));
 
                         }
                     }
@@ -1099,7 +1114,8 @@ public class FileListFragment extends Fragment implements LoaderManager
 
                 if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
                     mIsMoveOperation = false;
-                    FileUtils.showMessage(getActivity(), mSelectedItemPositions.size() + " " + getString(R.string.msg_cut_copy));
+                    FileUtils.showMessage(getActivity(), mSelectedItemPositions.size() + " " + getString(R.string
+                            .msg_cut_copy));
                     mCopiedData.clear();
                     for (int i = 0; i < mSelectedItemPositions.size(); i++) {
                         mCopiedData.add(fileInfoList.get(mSelectedItemPositions.keyAt(i)));
@@ -1149,6 +1165,11 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
         return false;
     }
+
+/*    @Override
+    public void onScanCompleted(String path, Uri uri) {
+        Logger.log(TAG,"On scan completed--path="+path+"uri="+uri);
+    }*/
 
 
     /**
@@ -1552,7 +1573,8 @@ public class FileListFragment extends Fragment implements LoaderManager
 
                     @Override
                     public void commandCompleted(int i, int i2) {
-                        Toast.makeText(getActivity(), getResources().getString(R.string.completed), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), getResources().getString(R.string.completed), Toast
+                                .LENGTH_LONG).show();
                     }
                 };
                 try {//
@@ -2106,7 +2128,8 @@ public class FileListFragment extends Fragment implements LoaderManager
                             Logger.log(TAG, "DRAG END Dual dir=" + mLastDualPaneDir);
 
 //                            Logger.log(TAG, "Source=" + mDragPaths.get(0) + "Dest=" + mLastDualPaneDir);
-                            if (dualPaneFragment != null && new File(mLastDualPaneDir).list().length == 0 && dragPaths.size() != 0) {
+                            if (dualPaneFragment != null && new File(mLastDualPaneDir).list().length == 0 &&
+                                    dragPaths.size() != 0) {
 //                                if (!destinationDir.equals(paths.get(0))) {
                                 showDragDialog(dragPaths, mLastDualPaneDir);
 //                                }
@@ -2120,7 +2143,8 @@ public class FileListFragment extends Fragment implements LoaderManager
                             Logger.log(TAG, "DRAG END single dir=" + mLastSinglePaneDir);
 
 //                            Logger.log(TAG, "Source=" + mDragPaths.get(0) + "Dest=" + mLastDualPaneDir);
-                            if (singlePaneFragment != null && new File(mLastSinglePaneDir).list().length == 0 && dragPaths.size() != 0) {
+                            if (singlePaneFragment != null && new File(mLastSinglePaneDir).list().length == 0 &&
+                                    dragPaths.size() != 0) {
 //                                if (!destinationDir.equals(paths.get(0))) {
                                 showDragDialog(dragPaths, mLastSinglePaneDir);
 //                                }

@@ -24,6 +24,7 @@ import com.github.junrar.Archive;
 import com.github.junrar.rarfile.FileHeader;
 import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.ZipProgressModel;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 
@@ -365,13 +366,13 @@ public class ExtractService extends Service {
                 for (ZipEntry entry : entry1) {
                     unzipEntry(id, zipfile, entry, destinationPath);
                 }
-                Intent intent = new Intent("reload_list");
+                Intent intent = new Intent(FileConstants.RELOAD_LIST);
                 sendBroadcast(intent);
                 calculateProgress(archive.getName(), id, true, copiedbytes, totalbytes);
                 return true;
             } catch (Exception e) {
                 Log.e("amaze", "Error while extracting file " + archive, e);
-                Intent intent = new Intent("reload_list");
+                Intent intent = new Intent(FileConstants.RELOAD_LIST);
                 sendBroadcast(intent);
                 calculateProgress(archive.getName(), id, true, copiedbytes, totalbytes);
                 return false;
@@ -405,13 +406,13 @@ public class ExtractService extends Service {
 
                     }
                 }
-                Intent intent = new Intent("reload_list");
+                Intent intent = new Intent(FileConstants.RELOAD_LIST);
                 sendBroadcast(intent);
                 calculateProgress(archive.getName(), id, true, copiedbytes, totalbytes);
                 return true;
             } catch (Exception e) {
                 Log.e(this.getClass().getSimpleName(), "Error while extracting file " + archive, e);
-                Intent intent = new Intent("reload_list");
+                Intent intent = new Intent(FileConstants.RELOAD_LIST);
                 sendBroadcast(intent);
                 publishResults(archive.getName(), 100, id, totalbytes, copiedbytes, true);
                 return false;
@@ -453,13 +454,13 @@ public class ExtractService extends Service {
 
                 inputStream.close();
 
-                Intent intent = new Intent("reload_list");
+                Intent intent = new Intent(FileConstants.RELOAD_LIST);
                 sendBroadcast(intent);
                 publishResults(archive.getName(), 100, id, totalbytes, copiedbytes, true);
                 return true;
             } catch (Exception e) {
                 Log.e("amaze", "Error while extracting file " + archive, e);
-                Intent intent = new Intent("reload_list");
+                Intent intent = new Intent(FileConstants.RELOAD_LIST);
                 sendBroadcast(intent);
                 publishResults(archive.getName(), 100, id, totalbytes, copiedbytes, true);
                 return false;
@@ -495,13 +496,13 @@ public class ExtractService extends Service {
 
                     }
                 }
-                Intent intent = new Intent("reload_list");
+                Intent intent = new Intent(FileConstants.RELOAD_LIST);
                 sendBroadcast(intent);
                 calculateProgress(archive.getName(), id, true, copiedbytes, totalbytes);
                 return true;
             } catch (Exception e) {
                 Log.e("amaze", "Error while extracting file " + archive, e);
-                Intent intent = new Intent("reload_list");
+                Intent intent = new Intent(FileConstants.RELOAD_LIST);
                 sendBroadcast(intent);
                 calculateProgress(archive.getName(), id, true, copiedbytes, totalbytes);
                 return false;

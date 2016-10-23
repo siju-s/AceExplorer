@@ -151,7 +151,7 @@ public class CreateZipTask extends Service {
                 stopSelf(b);
 
             // Broadcast result to FileListFragment
-            Intent intent = new Intent("reload_list");
+            Intent intent = new Intent(FileConstants.RELOAD_LIST);
             intent.putExtra(FileConstants.KEY_PATH, name);
             sendBroadcast(intent);
         }

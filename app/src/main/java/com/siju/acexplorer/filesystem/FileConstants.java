@@ -34,6 +34,9 @@ public class FileConstants {
     public static final int EXTRACT = 8;
 
     public static final String IS_OPERATION_SUCCESS = "IS_OPERATION_SUCCESS";
+    public static final String RELOAD_LIST = "reload_list";
+    public static final String REFRESH = "refresh";
+
 
 
 
@@ -131,6 +134,23 @@ public class FileConstants {
         private int value;
 
         CATEGORY(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+
+            return value;
+        }
+    }
+
+    public enum WRITE_MODES {
+        ROOT(0),
+        INTERNAL(1),
+        EXTERNAL(2);
+
+        private int value;
+
+        WRITE_MODES(int value) {
             this.value = value;
         }
 

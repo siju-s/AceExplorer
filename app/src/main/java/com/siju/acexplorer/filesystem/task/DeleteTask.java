@@ -23,12 +23,22 @@ public class DeleteTask extends AsyncTask<Void, Void, Integer> {
     private Context mContext;
     private boolean mIsRootMode;
     private ArrayList<FileInfo> fileList = new ArrayList<>();
+    private boolean mShowToast = true;
 
 
     public  DeleteTask(Context context, boolean rootMode,ArrayList<FileInfo> fileList) {
         mContext = context;
         mIsRootMode = rootMode;
         this.fileList = fileList;
+
+    }
+
+    DeleteTask(Context context, boolean rootMode, ArrayList<FileInfo> fileList, boolean showToast) {
+        mContext = context;
+        mIsRootMode = rootMode;
+        this.fileList = fileList;
+        mShowToast = showToast;
+
     }
 
     @Override
@@ -72,15 +82,16 @@ public class DeleteTask extends AsyncTask<Void, Void, Integer> {
         intent.putExtra(FileConstants.OPERATION, FileConstants.DELETE);
         intent.putParcelableArrayListExtra("deleted_files", deletedFilesList);
         mContext.sendBroadcast(intent);
+         if (mShowToast) {
+             if (deletedFiles != 0) {
+                 FileUtils.showMessage(mContext, mContext.getResources().getQuantityString(R.plurals.number_of_files,
+                         deletedFiles, deletedFiles) + " " + mContext.getString(R.string.msg_delete_success));
+             }
 
-        if (deletedFiles != 0) {
-            FileUtils.showMessage(mContext, mContext.getResources().getQuantityString(R.plurals.number_of_files,
-                    deletedFiles, deletedFiles) + " " + mContext.getString(R.string.msg_delete_success));
-        }
-
-        if (totalFiles != deletedFiles) {
-            FileUtils.showMessage(mContext, mContext.getString(R.string.msg_delete_failure));
-        }
+             if (totalFiles != deletedFiles) {
+                 FileUtils.showMessage(mContext, mContext.getString(R.string.msg_delete_failure));
+             }
+         }
 
     }
 
