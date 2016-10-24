@@ -168,6 +168,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     }
 
     private void onReleaseResources() {
+        mContext = null;
     }
 
 
@@ -609,7 +610,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 MediaStore.Audio.Media.DATA};
         String where = (MediaStore.Audio.Media.TITLE + " != ''") +
                 " AND " + MediaStore.Audio.Media.IS_MUSIC + "=1";
-        Cursor cursor = mContext.getContentResolver().query(uri, projection, null, null,
+        Cursor cursor = getContext().getContentResolver().query(uri, projection, null, null,
                 null);
         if (cursor != null) {
             if (cursor.moveToFirst()) {
@@ -618,22 +619,22 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                     return fileInfoList;
                 }
                 do {
-//                int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE);
+                    int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE);
                     int sizeIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE);
                     int dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATE_MODIFIED);
                     int audioIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID);
                     int albumIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID);
                     int pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
-//                String fileName = cursor.getString(titleIndex);
+                    String fileName = cursor.getString(titleIndex);
                     long size1 = cursor.getLong(sizeIndex);
                     long date1 = cursor.getLong(dateIndex);
                     String path = cursor.getString(pathIndex);
                     long audioId = cursor.getLong(audioIdIndex);
                     long albumId = cursor.getLong(albumIdIndex);
                     int type = FileConstants.CATEGORY.AUDIO.getValue();
-                    String fileName = path.substring(path.lastIndexOf("/") + 1, path.length());
-                    String extension = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
-                    fileInfoList.add(new FileInfo(audioId, albumId, fileName, path, date1, size1, type, extension));
+                    String extension = path.substring(path.lastIndexOf(".") + 1);
+                    String nameWithExt = fileName + "." + extension;
+                    fileInfoList.add(new FileInfo(audioId, albumId, nameWithExt, path, date1, size1, type, extension));
                 } while (cursor.moveToNext());
             }
             cursor.close();

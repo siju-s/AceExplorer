@@ -1,22 +1,20 @@
 package com.siju.acexplorer.model;
 
-/**
- * Created by Siju on 12-06-2016.
- */
-
 public class SectionItems {
 
-    private String mFirstLine;
-    private String mSecondLine;
-    private int mImage;
+    private String firstLine;
+    private String secondLine;
+    private int progress;
+    private int icon;
     private String path;
 
 
-    public SectionItems(String mFirstLine, String mSecondLine, int mImage,String path) {
-        this.mFirstLine = mFirstLine;
-        this.mSecondLine = mSecondLine;
-        this.mImage = mImage;
+    public SectionItems(String firstLine, String secondLine, int icon, String path, int progress) {
+        this.firstLine = firstLine;
+        this.secondLine = secondLine;
+        this.icon = icon;
         this.path = path;
+        this.progress = progress;
     }
 
     public String getPath() {
@@ -27,27 +25,35 @@ public class SectionItems {
         this.path = path;
     }
 
-    public int getmImage() {
-        return mImage;
+    public int getIcon() {
+        return icon;
     }
 
-    public void setmImage(int mImage) {
-        this.mImage = mImage;
+    public void setIcon(int icon) {
+        this.icon = icon;
     }
 
-    public String getmFirstLine() {
-        return mFirstLine;
+    public String getFirstLine() {
+        return firstLine;
     }
 
-    public void setmFirstLine(String mFirstLine) {
-        this.mFirstLine = mFirstLine;
+    public void setFirstLine(String firstLine) {
+        this.firstLine = firstLine;
     }
 
-    public String getmSecondLine() {
-        return mSecondLine;
+    public String getSecondLine() {
+        return secondLine;
     }
 
-    public void setmSecondLine(String mSecondLine) {
-        this.mSecondLine = mSecondLine;
+    public void setSecondLine(String secondLine) {
+        this.secondLine = secondLine;
+    }
+
+    public int getProgress() {
+        return progress;
+    }
+
+    public void setProgress(int progress) {
+        this.progress = progress;
     }
 }

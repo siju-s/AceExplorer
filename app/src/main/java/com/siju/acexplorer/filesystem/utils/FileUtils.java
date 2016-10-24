@@ -92,9 +92,7 @@ import static android.webkit.MimeTypeMap.getSingleton;
 public class FileUtils implements CopyService.Progress {
 
     private static final String TAG = "FileUtils";
-    private static String mCurrentDirectory;
     private static final int BUFFER = 2048; //2 KB
-    private static FileComparator comparator = new FileComparator();
     private static int fileCount = 0;
     public static final int ACTION_NONE = 0;
     public static final int ACTION_REPLACE = 1;
@@ -198,7 +196,7 @@ public class FileUtils implements CopyService.Progress {
 //        registerReceiver(context);
         mContext = context;
         mServiceIntent = intent;
-        context.bindService(mServiceIntent,mServiceConnection,Context.BIND_AUTO_CREATE);
+        context.bindService(mServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
         context.startService(mServiceIntent);
         String title = context.getString(R.string.action_copy);
         String texts[] = new String[]{title, context.getString(R.string.button_paste_progress), "",
@@ -279,11 +277,11 @@ public class FileUtils implements CopyService.Progress {
     // Define the Handler that receives messages from the thread and update the progress
     private final Handler handler = new Handler(Looper.getMainLooper()) {
         public void handleMessage(Message msg) {
-            Intent  intent = (Intent) msg.obj;
+            Intent intent = (Intent) msg.obj;
             long copiedBytes = intent.getLongExtra("DONE", 0);
             long totalBytes = intent.getLongExtra("TOTAL", 0);
-            boolean isSuccess =   intent.getBooleanExtra(FileConstants.IS_OPERATION_SUCCESS,true);
-            Logger.log("FileUtils","total="+ copiedFileInfo.size());
+            boolean isSuccess = intent.getBooleanExtra(FileConstants.IS_OPERATION_SUCCESS, true);
+            Logger.log("FileUtils", "total=" + copiedFileInfo.size());
 
             if (!isSuccess) {
                 stopCopyService();
@@ -291,8 +289,8 @@ public class FileUtils implements CopyService.Progress {
                 return;
             }
 
-            int progress =  intent.getIntExtra("PROGRESS", 0);
-            int totalProgress =  intent.getIntExtra("TOTAL_PROGRESS", 0);
+            int progress = intent.getIntExtra("PROGRESS", 0);
+            int totalProgress = intent.getIntExtra("TOTAL_PROGRESS", 0);
 
 
             progressBarPaste.setProgress(totalProgress);
@@ -300,7 +298,7 @@ public class FileUtils implements CopyService.Progress {
             if (progress == 100) {
                 int count = intent.getIntExtra("COUNT", 1);
 //                progress =  intent.getIntExtra("PROGRESS", 0);
-                Logger.log("FileUtils","COUNT="+ count);
+                Logger.log("FileUtils", "COUNT=" + count);
                 if (count == copiedFilesSize || copiedBytes == totalBytes) {
                     stopCopyService();
                     progressDialog.dismiss();
@@ -376,23 +374,12 @@ public class FileUtils implements CopyService.Progress {
     }
 
     public static String getSpaceLeft(Context context, File path) {
-        String freeSpace = Formatter.formatFileSize(context, path.getFreeSpace());
-        return freeSpace;
+        return Formatter.formatFileSize(context, path.getFreeSpace());
     }
 
     public static String getTotalSpace(Context context, File path) {
-        String totalSpace = Formatter.formatFileSize(context, path.getTotalSpace());
-        return totalSpace;
+        return Formatter.formatFileSize(context, path.getTotalSpace());
     }
-
-    public static String getCurrentDirectory() {
-        return mCurrentDirectory;
-    }
-
-    public static void setCurrentDirectory(String path) {
-        mCurrentDirectory = path;
-    }
-
 
     /**
      * External memory card locations
@@ -434,7 +421,7 @@ public class FileUtils implements CopyService.Progress {
 
     public static List<String> getStorageDirectories(Context context, boolean permissionGranted) {
         // Final set of paths
-        final ArrayList<String> rv = new ArrayList<>();
+        final ArrayList<String> paths = new ArrayList<>();
         // Primary physical SD-CARD (not emulated)
         final String rawExternalStorage = System.getenv("EXTERNAL_STORAGE");
         // All Secondary SD-CARDs (all exclude primary) separated by ":"
@@ -445,9 +432,9 @@ public class FileUtils implements CopyService.Progress {
             // Device has physical external storage; use plain paths.
             if (TextUtils.isEmpty(rawExternalStorage)) {
                 // EXTERNAL_STORAGE undefined; falling back to default.
-                rv.add("/storage/sdcard0");
+                paths.add("/storage/sdcard0");
             } else {
-                rv.add(rawExternalStorage);
+                paths.add(rawExternalStorage);
             }
         } else {
             // Device has emulated storage; external storage paths should have
@@ -469,37 +456,35 @@ public class FileUtils implements CopyService.Progress {
             }
             // /storage/emulated/0[1,2,...]
             if (TextUtils.isEmpty(rawUserId)) {
-                rv.add(rawEmulatedStorageTarget);
+                paths.add(rawEmulatedStorageTarget);
             } else {
-                rv.add(rawEmulatedStorageTarget + File.separator + rawUserId);
+                paths.add(rawEmulatedStorageTarget + File.separator + rawUserId);
             }
         }
         // Add all secondary storages
         if (!TextUtils.isEmpty(rawSecondaryStoragesStr)) {
             // All Secondary SD-CARDs splited into array
             final String[] rawSecondaryStorages = rawSecondaryStoragesStr.split(File.pathSeparator);
-            Collections.addAll(rv, rawSecondaryStorages);
+            Collections.addAll(paths, rawSecondaryStorages);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && permissionGranted)
-            rv.clear();
+            paths.clear();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            String strings[] = getExtSdCardPathsForActivity(context);
-            for (String s : strings) {
-                File f = new File(s);
-                if (!rv.contains(s))
-                    rv.add(s);
+            String pathList[] = getExtSdCardPaths(context);
+            for (String path : pathList) {
+                if (!paths.contains(path))
+                    paths.add(path);
             }
         }
 
         File usb = getUsbDrive();
-        if (usb != null && !rv.contains(usb.getPath())) rv.add(usb.getPath());
-
-        return rv;
+        if (usb != null && !paths.contains(usb.getPath())) paths.add(usb.getPath());
+        return paths;
     }
 
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    private static String[] getExtSdCardPathsForActivity(Context context) {
+    private static String[] getExtSdCardPaths(Context context) {
         List<String> paths = new ArrayList<>();
         for (File file : context.getExternalFilesDirs("external")) {
             if (file != null) {
@@ -520,27 +505,15 @@ public class FileUtils implements CopyService.Progress {
             }
         }
 
-            File file = new File ("/storage/sdcard1");
-            if (file.exists() && file.canExecute() && !paths.contains(file.getAbsolutePath())) {
-                paths.add("/storage/sdcard1");
-            }
+        File file = new File("/storage/sdcard1");
+        if (file.exists() && file.canExecute() && !paths.contains(file.getAbsolutePath())) {
+            paths.add("/storage/sdcard1");
+        }
         return paths.toArray(new String[0]);
     }
 
 
-    public static boolean canListFiles(File f) {
-        try {
-            if (f.canRead() && f.isDirectory())
-                return true;
-            else
-                return false;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-
-    public static File getUsbDrive() {
+    private static File getUsbDrive() {
         File parent;
         parent = new File("/storage");
 
@@ -568,24 +541,13 @@ public class FileUtils implements CopyService.Progress {
         return df2.format(dateInMs);
     }
 
-    public static String convertDate(Date date) {
-        SimpleDateFormat df2 = new SimpleDateFormat("MMM dd, yyyy hh:mm a", Locale.getDefault());
-        String dateText = df2.format(date);
-        return dateText;
-    }
-
-    public static  boolean isDateNotInMs(int category) {
+    public static boolean isDateNotInMs(int category) {
         return category == FileConstants.CATEGORY.FILES.getValue() ||
                 category == FileConstants.CATEGORY.DOWNLOADS.getValue() ||
                 category == FileConstants.CATEGORY.FAVORITES.getValue() ||
                 category == FileConstants.CATEGORY.ZIP_VIEWER.getValue();
     }
 
-
-  /*  public FileUtils(Activity activity) {
-        this.activity = activity;
-    }
-*/
 
     /**
      * @param source      the file to be copied
@@ -1284,13 +1246,13 @@ public class FileUtils implements CopyService.Progress {
     }
 
     public static boolean isMediaScanningRequired(String mimeType) {
-        Logger.log(TAG,"Mime type="+mimeType);
+        Logger.log(TAG, "Mime type=" + mimeType);
         return mimeType != null && (mimeType.startsWith("audio") ||
                 mimeType.startsWith("video") || mimeType.startsWith("image"));
     }
 
     public static void removeMedia(Context context, File file, int category) {
-        Logger.log(TAG,"Type="+category);
+        Logger.log(TAG, "Type=" + category);
         ContentResolver resolver = context.getContentResolver();
         String path = file.getAbsolutePath();
         switch (category) {
@@ -1576,7 +1538,7 @@ public class FileUtils implements CopyService.Progress {
      */
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public static String getExtSdCardFolder(final File file, Context context) {
-        String[] extSdPaths = getExtSdCardPathsForActivity(context);
+        String[] extSdPaths = getExtSdCardPaths(context);
         try {
             for (int i = 0; i < extSdPaths.length; i++) {
                 if (file.getCanonicalPath().startsWith(extSdPaths[i])) {
@@ -1699,7 +1661,7 @@ public class FileUtils implements CopyService.Progress {
             DocumentFile document = getDocumentFile(file.getParentFile(), true, context);
             // getDocumentFile implicitly creates the directory.
             try {
-                Logger.log(TAG, "mkfile--doc="+document);
+                Logger.log(TAG, "mkfile--doc=" + document);
 
                 b = document != null && document.createFile(getMimeType(file), file.getName()) != null;
                 return b;
@@ -1757,7 +1719,7 @@ public class FileUtils implements CopyService.Progress {
 
             DocumentFile document = getDocumentFile(source, true, context);
 
-            Log.d(TAG," Document uri in rename="+document);
+            Log.d(TAG, " Document uri in rename=" + document);
             if (document != null && document.renameTo(target.getName())) {
                 return true;
             }
@@ -1773,8 +1735,7 @@ public class FileUtils implements CopyService.Progress {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        else {
+        } else {
             // Try the manual way, moving files individually.
             if (!mkdir(target, context)) {
                 return false;
@@ -1885,7 +1846,7 @@ public class FileUtils implements CopyService.Progress {
     public static boolean rename(File f, String name, boolean root) {
         String newname = f.getParent() + "/" + name;
         if (f.getParentFile().canWrite()) {
-            Logger.log(TAG, "Rename--canWrite="+true);
+            Logger.log(TAG, "Rename--canWrite=" + true);
             return f.renameTo(new File(newname));
         } else if (root) {
             Logger.log(TAG, "Rename--root=");
@@ -2349,6 +2310,11 @@ public class FileUtils implements CopyService.Progress {
                 });
     }
 
+
+    public static boolean checkAppForIntent(Context context, Intent intent) {
+        return context.getPackageManager().resolveActivity(intent, 0) == null;
+    }
+
     public static boolean isFileCompressed(String filePath) {
         return filePath.toLowerCase().endsWith("zip") ||
                 filePath.toLowerCase().endsWith("apk") ||
@@ -2633,11 +2599,6 @@ public class FileUtils implements CopyService.Progress {
         Logger.log(TAG, "File sorted=" + isSorted);
     }
 
-    public boolean isFileSorted() {
-        Logger.log(TAG, "isFileSortedd=" + mIsSorted);
-        return mIsSorted;
-    }
-
 
     public static Drawable getAppIconForFolder(Context context, String packageName) {
 
@@ -2649,27 +2610,6 @@ public class FileUtils implements CopyService.Progress {
         }
 
     }
-
-    public static int getFileCount(File file) {
-        fileCount = 0;
-        calculateFileCount(file);
-        return fileCount;
-    }
-
-    private static void calculateFileCount(File file) {
-        if (!file.isDirectory()) {
-            fileCount++;
-            return;
-        }
-        if (file.list() == null) {
-            return;
-        }
-        for (String fileName : file.list()) {
-            File f = new File(file.getAbsolutePath() + File.separator + fileName);
-            calculateFileCount(f);
-        }
-    }
-
 
     /**
      * Gets the extension of a file name, like ".png" or ".jpg".

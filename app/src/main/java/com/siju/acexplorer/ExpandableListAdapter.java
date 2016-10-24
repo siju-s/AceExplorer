@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.siju.acexplorer.filesystem.utils.ThemeUtils;
@@ -35,7 +36,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
 //        this._listDataChild = listChildData;
 //    }
 
-    public ExpandableListAdapter(Context context, ArrayList<SectionGroup> groups) {
+    ExpandableListAdapter(Context context, ArrayList<SectionGroup> groups) {
         this.mContext = context;
         this.groups = groups;
         mIsDarkTheme = ThemeUtils.isDarkTheme(context);
@@ -67,28 +68,30 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = layoutInflater.inflate(R.layout.drawer_item, parent, false);
             childViewHolder = new ChildViewHolder();
-            childViewHolder.image = (ImageView) view.findViewById(R.id.image_drawer_item);
+            childViewHolder.image = (ImageView) view.findViewById(R.id.imageDrawerItem);
             childViewHolder.textFirstLine = (TextView) view.findViewById(R.id.textFirstLine);
             childViewHolder.textSecondLine = (TextView) view.findViewById(R.id.textSecondLine);
+            childViewHolder.progressBar = (ProgressBar) view.findViewById(R.id.progressBarSD);
             view.setTag(childViewHolder);
         } else {
             childViewHolder = (ChildViewHolder) view.getTag();
         }
 
-        childViewHolder.image.setBackgroundResource(child.getmImage());
-        childViewHolder.textFirstLine.setText(child.getmFirstLine());
+        childViewHolder.image.setBackgroundResource(child.getIcon());
+        childViewHolder.textFirstLine.setText(child.getFirstLine());
+
         if (groupPosition == 0 || groupPosition == 1) {
-            childViewHolder.textSecondLine.setText(child.getmSecondLine());
+            if (groupPosition == 0) {
+                childViewHolder.progressBar.setVisibility(View.VISIBLE);
+                childViewHolder.progressBar.setProgress(child.getProgress());
+            } else {
+                childViewHolder.progressBar.setVisibility(View.GONE);
+            }
+            childViewHolder.textSecondLine.setText(child.getSecondLine());
         } else {
+            childViewHolder.progressBar.setVisibility(View.GONE);
             childViewHolder.textSecondLine.setText("");
         }
-//        Logger.log("TAG","GROUP=="+child.getmFirstLine()+ "2ndline="+child.getmSecondLine());
-//        else {
-//            RelativeLayout.LayoutParams layoutParams =
-//                    (RelativeLayout.LayoutParams) childViewHolder.textSecondLine.getLayoutParams();
-//            layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
-//            childViewHolder.textFirstLine.setLayoutParams(layoutParams);
-//        }
         return view;
     }
 
@@ -163,6 +166,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
         ImageView image;
         TextView textFirstLine;
         TextView textSecondLine;
+        ProgressBar progressBar;
     }
 
     @Override

@@ -8,7 +8,7 @@
     android:layout_marginTop="5dp">
 
     <ImageView
-        android:id="@+id/image_drawer_item"
+        android:id="@+id/imageDrawerItem"
         android:layout_width="@dimen/drawer_item_icon_width"
         android:layout_height="@dimen/drawer_item_icon_width"
         android:layout_alignParentLeft="true"
@@ -24,19 +24,34 @@
         android:layout_marginLeft="@dimen/drawer_item_text_margin"
         android:layout_marginStart="@dimen/drawer_item_text_margin"
         android:layout_marginTop="12dp"
-        android:layout_toRightOf="@+id/image_drawer_item"
+        android:layout_toRightOf="@+id/imageDrawerItem"
         android:textSize="14sp" />
+
+
+    <ProgressBar
+        android:id="@+id/progressBarSD"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textFirstLine"
+        android:layout_marginLeft="@dimen/margin_16"
+        android:layout_marginStart="@dimen/margin_16"
+        android:layout_toEndOf="@+id/imageDrawerItem"
+        android:layout_toRightOf="@+id/imageDrawerItem"
+        android:visibility="visible"
+        android:max="100" />
+
 
 
     <TextView
         android:id="@+id/textSecondLine"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textFirstLine"
         android:layout_marginLeft="@dimen/drawer_item_text_margin"
         android:layout_marginStart="@dimen/drawer_item_text_margin"
         android:layout_marginTop="10dp"
-        android:layout_toRightOf="@id/image_drawer_item"
+        android:layout_toRightOf="@id/imageDrawerItem"
+        android:layout_below="@id/progressBarSD"
         android:ellipsize="end"
         android:maxLines="1"
         android:textSize="12sp" />

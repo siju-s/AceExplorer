@@ -35,17 +35,16 @@ import com.siju.acexplorer.common.SharedPreferenceWrapper;
 import com.siju.acexplorer.filesystem.model.FavInfo;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.model.HomeLibraryInfo;
-import com.siju.acexplorer.filesystem.model.HomeStoragesInfo;
 import com.siju.acexplorer.filesystem.model.LibrarySortModel;
 import com.siju.acexplorer.filesystem.ui.DividerItemDecoration;
 import com.siju.acexplorer.filesystem.ui.HomeScreenGridLayoutManager;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.utils.ThemeUtils;
+import com.siju.acexplorer.model.SectionItems;
 import com.siju.acexplorer.utils.PermissionUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 public class HomeScreenFragment extends Fragment implements LoaderManager
         .LoaderCallbacks<ArrayList<FileInfo>> {
@@ -60,7 +59,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     private HomeStoragesAdapter homeStoragesAdapter;
     private ArrayList<HomeLibraryInfo> homeLibraryInfoArrayList;
     private ArrayList<HomeLibraryInfo> tempLibraryInfoArrayList;
-    private ArrayList<HomeStoragesInfo> homeStoragesInfoArrayList;
+    private ArrayList<SectionItems> homeStoragesInfoArrayList;
     public String STORAGE_INTERNAL, STORAGE_EXTERNAL;
     private final String TAG = this.getClass().getSimpleName();
     private SharedPreferenceWrapper sharedPreferenceWrapper;
@@ -108,13 +107,14 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         initializeViews();
         initConstants();
         initializeLibraries();
-        setupLoaders();
         initializeStorageGroup();
 
         homeLibraryAdapter = new HomeLibraryAdapter(getActivity(), homeLibraryInfoArrayList);
         homeStoragesAdapter = new HomeStoragesAdapter(getActivity(), homeStoragesInfoArrayList);
         recyclerViewLibrary.setAdapter(homeLibraryAdapter);
         recyclerViewStorages.setAdapter(homeStoragesAdapter);
+
+        setupLoaders();
         initListeners();
     }
 
@@ -405,47 +405,14 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     }
 
     private void initializeStorageGroup() {
-
-        List<String> storagePaths = FileUtils.getStorageDirectories(getActivity(), true);
-        for (String path : storagePaths) {
-            File file = new File(path);
-            int icon;
-            String name;
-            if ("/storage/emulated/legacy".equals(path) || "/storage/emulated/0".equals(path)) {
-                name = STORAGE_INTERNAL;
-                icon = R.drawable.ic_phone_white;
-            } else if ("/storage/sdcard1".equals(path)) {
-                name = STORAGE_EXTERNAL;
-                icon = R.drawable.ic_ext_white;
-            } else {
-                name = file.getName();
-                icon = R.drawable.ic_ext_white;
+        homeStoragesInfoArrayList = new ArrayList<>();
+        ArrayList<SectionItems> sectionItems = mBaseActivity.getStorageGroupList();
+        File rootDir = FileUtils.getRootDirectory().getParentFile();
+        for (SectionItems items : sectionItems) {
+            if (!items.getPath().equals(FileUtils.getAbsolutePath(rootDir))) {
+                homeStoragesInfoArrayList.add(items);
             }
-            if (!file.isDirectory() || file.canExecute()) {
-                long spaceLeft = getSpaceLeft(file);
-                long totalSpace = getTotalSpace(file);
-                int leftProgress = (int) (((float) spaceLeft / totalSpace) * 100);
-                int usedSpaceProgress = 100 - leftProgress;
-                String spaceText = storageSpace(spaceLeft, totalSpace);
-                homeStoragesInfoArrayList.add(new HomeStoragesInfo(name, icon,
-                        usedSpaceProgress, spaceText, path));
-            }
-
         }
-    }
-
-    private long getSpaceLeft(File file) {
-        return file.getFreeSpace();
-    }
-
-    private long getTotalSpace(File file) {
-        return file.getTotalSpace();
-    }
-
-    private String storageSpace(long spaceLeft, long totalSpace) {
-        String freePlaceholder = " " + getResources().getString(R.string.msg_free) + " ";
-        return FileUtils.formatSize(getActivity(), spaceLeft) + freePlaceholder +
-                FileUtils.formatSize(getActivity(), totalSpace);
     }
 
     @Override
