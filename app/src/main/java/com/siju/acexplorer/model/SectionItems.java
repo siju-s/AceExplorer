@@ -37,16 +37,8 @@ public class SectionItems {
         return firstLine;
     }
 
-    public void setFirstLine(String firstLine) {
-        this.firstLine = firstLine;
-    }
-
     public String getSecondLine() {
         return secondLine;
-    }
-
-    public void setSecondLine(String secondLine) {
-        this.secondLine = secondLine;
     }
 
     public int getProgress() {

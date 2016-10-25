@@ -46,7 +46,7 @@
     <string name="dialog_title_paste_conflict">lêer bestaan</string>
     <string name="msg_operation_cancel">operasie gekanselleer</string>
     <string name="dialog_from_placeholder">Van</string>
-    <string name="dialog_to_placeholder">aan:</string>
+    <string name="dialog_to_placeholder">aan</string>
     <string name="button_paste_progress">agtergrond</string>
     <string name="dialog_delete_title">Is jy seker jy wil die volgende lêers uitwis?</string>
     <string name="msg_ok">OK</string>

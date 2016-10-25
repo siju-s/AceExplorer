@@ -1,8 +1,5 @@
 package com.siju.acexplorer;
 
-/**
- * Created by Siju on 11-06-2016.
- */
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -23,18 +20,9 @@ import java.util.ArrayList;
 class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     private Context mContext;
-    //    private List<String> _listDataHeader; // header titles
-    // child data in format of header title, child title
-//    private HashMap<String, List<String>> _listDataChild;
     private ArrayList<SectionGroup> groups;
     private boolean mIsDarkTheme;
 
-//    public ExpandableListAdapter(Context context, List<String> listDataHeader,
-//                                 HashMap<String, List<String>> listChildData) {
-//        this._context = context;
-//        this._listDataHeader = listDataHeader;
-//        this._listDataChild = listChildData;
-//    }
 
     ExpandableListAdapter(Context context, ArrayList<SectionGroup> groups) {
         this.mContext = context;
@@ -46,8 +34,6 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
     public Object getChild(int groupPosition, int childPosition) {
         ArrayList<SectionItems> chList = groups.get(groupPosition).getmChildItems();
         return chList.get(childPosition);
-//        return this._listDataChild.get(this._listDataHeader.get(groupPosition))
-//                .get(childPosition);
     }
 
     @Override
@@ -97,8 +83,6 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-//        return this._listDataChild.get(this._listDataHeader.get(groupPosition))
-//                .size();
         ArrayList<SectionItems> chList = groups.get(groupPosition).getmChildItems();
         return chList.size();
     }
@@ -157,12 +141,12 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
 
-    static class GroupViewHolder {
+    private static class GroupViewHolder {
         TextView textHeader;
         ImageView imageArrow;
     }
 
-    static class ChildViewHolder {
+    private static class ChildViewHolder {
         ImageView image;
         TextView textFirstLine;
         TextView textSecondLine;
@@ -179,7 +163,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
      *
      * @param groupPosition
      * @param childPosition
-     * @return
+     * @return True to make child clickable
      */
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {

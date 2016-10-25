@@ -225,13 +225,6 @@ public class BaseActivity extends AppCompatActivity implements
         mNavigationLayout = (LinearLayout) findViewById(R.id.layoutNavigate);
         frameLayoutFab = (FrameLayout) findViewById(R.id.frameLayoutFab);
         frameLayoutFabDual = (FrameLayout) findViewById(R.id.frameLayoutFabDual);
-
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        checkPreferences();
-        checkScreenOrientation();
-        prepareListData();
-        initialScreenSetup(mIsHomeScreenEnabled);
-
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mToolbar.setTitle(R.string.app_name);
@@ -417,10 +410,10 @@ public class BaseActivity extends AppCompatActivity implements
     }
 
     private void setupInitialData() {
-/*        checkPreferences();
+        checkPreferences();
         checkScreenOrientation();
         prepareListData();
-        initialScreenSetup(mIsHomeScreenEnabled);*/
+        initialScreenSetup(mIsHomeScreenEnabled);
         getSavedFavourites();
         initializeGroups();
         initListeners();
@@ -482,6 +475,7 @@ public class BaseActivity extends AppCompatActivity implements
     }
 
     private void checkPreferences() {
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         if (mSharedPreferences.getBoolean(PREFS_FIRST_RUN, true)) {
             // If app is first run
             mIsFirstRun = true;
@@ -657,13 +651,6 @@ public class BaseActivity extends AppCompatActivity implements
         totalGroup.add(new SectionGroup(mListHeader.get(3), othersGroupChild));
     }
 
-
-    private String storageSpace(File file) {
-        String freePlaceholder = " " + getResources().getString(R.string.msg_free) + " ";
-        return FileUtils.getSpaceLeft(this, file) + freePlaceholder + FileUtils.getTotalSpace
-                (this, file);
-    }
-
     private void setListAdapter() {
         expandableListAdapter = new ExpandableListAdapter(this, totalGroup);
         expandableListView.setAdapter(expandableListAdapter);
@@ -686,7 +673,7 @@ public class BaseActivity extends AppCompatActivity implements
 
     private void initialScreenSetup(boolean isHomeScreenEnabled) {
         if (isHomeScreenEnabled) {
-            toggleNavBarFab(true);
+            hideFab();
             mNavigationLayout.setVisibility(View.GONE);
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             Bundle args = new Bundle();
@@ -701,7 +688,7 @@ public class BaseActivity extends AppCompatActivity implements
             Logger.log(TAG, "initialScreenSetup");
             ft.commitAllowingStateLoss();
         } else {
-            toggleNavBarFab(false);
+            showFab();
             // Initialising only if Home screen disabled
             currentScreenSetup(getInternalStorage().getAbsolutePath(), FileConstants.CATEGORY.FILES.getValue(), false);
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -1103,7 +1090,7 @@ public class BaseActivity extends AppCompatActivity implements
 
         if (!isDualPaneButtonClicked) {
             if (fileListFragment.isZipMode()) {
-                if (fileListFragment.navButtonBack(dir)) {
+                if (fileListFragment.isInZipMode(dir)) {
                     int newSize = mBackStackList.size() - 1;
 
                     mBackStackList.remove(newSize);
@@ -1113,7 +1100,7 @@ public class BaseActivity extends AppCompatActivity implements
                     if (!mIsFromHomePage) {
                         setNavDirectory(mCurrentDir, false);
                     } else {
-                        toggleNavBarFab(true);
+                        hideFab();
                     }
                 }
             } else {
@@ -1131,7 +1118,7 @@ public class BaseActivity extends AppCompatActivity implements
                     }
 
                /* if (fileListFragment.isZipMode()) {
-                    fileListFragment.clearZipMode();
+                    fileListFragment.endZipMode();
                     fileListFragment.setCategory(FileConstants.CATEGORY.FILES.getValue());
                 }*/
                     fileListFragment.reloadList(true, mCurrentDir);
@@ -1140,7 +1127,7 @@ public class BaseActivity extends AppCompatActivity implements
             }
         } else {
             if (fileListDualFragment.isZipMode()) {
-                if (fileListDualFragment.navButtonBack(dir)) {
+                if (fileListDualFragment.isInZipMode(dir)) {
                     int newSize = mBackStackListDual.size() - 1;
 
                     mBackStackListDual.remove(newSize);
@@ -1150,7 +1137,7 @@ public class BaseActivity extends AppCompatActivity implements
                     if (!mIsFromHomePage) {
                         setNavDirectory(mCurrentDirDualPane, false);
                     } else {
-                        toggleNavBarFab(true);
+                        hideFab();
                     }
                 }
             } else {
@@ -1221,10 +1208,10 @@ public class BaseActivity extends AppCompatActivity implements
                     new FileUtils().createFileDialog(this, mIsRootMode, path);
                 }
                 Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
-                ((FileListFragment) fragment).setBackPressed(true);
+                ((FileListFragment) fragment).setBackPressed();
                 if (isDualPaneInFocus) {
                     Fragment dualFragment = getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
-                    ((FileListDualFragment) dualFragment).setBackPressed(true);
+                    ((FileListDualFragment) dualFragment).setBackPressed();
                 }
                 break;
         }
@@ -1255,7 +1242,7 @@ public class BaseActivity extends AppCompatActivity implements
                 mToolbar.setTitle(getString(R.string.app_name));
                 if (fragment instanceof FileListFragment) {
 //                    mNavigationLayout.setVisibility(View.VISIBLE);
-                    toggleNavBarFab(false);
+                    showFab();
                     toggleDualPaneVisibility(true);
 //                    fabCreateMenu.setVisibility(View.VISIBLE);
                 }
@@ -1279,7 +1266,7 @@ public class BaseActivity extends AppCompatActivity implements
             // When Library category item is clicked
             case 2:
 
-                toggleNavBarFab(true);
+                hideFab();
                 toggleDualPaneVisibility(false);
                 toggleNavigationVisibility(true);
                 addHomeNavButton(false);
@@ -1474,7 +1461,7 @@ public class BaseActivity extends AppCompatActivity implements
             ft.addToBackStack(null);
             ft.commit();
 //            ft.commitAllowingStateLoss();
-            toggleNavBarFab(false);
+            showFab();
             boolean value = mCategory == FileConstants.CATEGORY.FILES.getValue();
             toggleDualPaneVisibility(value);
 
@@ -1515,7 +1502,7 @@ public class BaseActivity extends AppCompatActivity implements
                 } else {
                     dualFragment.setCategory(category);
                     if (dualFragment.isZipMode()) {
-                        BackStackModel model = dualFragment.clearZipMode();
+                        BackStackModel model = dualFragment.endZipMode();
                         mBackStackListDual.remove(model);
                     }
 
@@ -1524,7 +1511,7 @@ public class BaseActivity extends AppCompatActivity implements
             } else {
                 ((FileListFragment) fragment).setCategory(category);
                 if (((FileListFragment) fragment).isZipMode()) {
-                    BackStackModel model = ((FileListFragment) fragment).clearZipMode();
+                    BackStackModel model = ((FileListFragment) fragment).endZipMode();
                     mBackStackList.remove(model);
                 }
 
@@ -1535,15 +1522,13 @@ public class BaseActivity extends AppCompatActivity implements
     }
 
 
-    public void toggleNavBarFab(boolean isHomeScreenEnabled) {
-        if (isHomeScreenEnabled) {
-//            mNavigationLayout.setVisibility(View.GONE);
-            frameLayoutFab.setVisibility(View.GONE);
-            frameLayoutFabDual.setVisibility(View.GONE);
-        } else {
-//            mNavigationLayout.setVisibility(View.VISIBLE);
-            frameLayoutFab.setVisibility(View.VISIBLE);
-        }
+    public void showFab() {
+        frameLayoutFab.setVisibility(View.VISIBLE);
+    }
+
+    public void hideFab() {
+        frameLayoutFab.setVisibility(View.GONE);
+        frameLayoutFabDual.setVisibility(View.GONE);
     }
 
     public void toggleNavigationVisibility(boolean isVisible) {
@@ -1813,7 +1798,7 @@ public class BaseActivity extends AppCompatActivity implements
                     if (!mIsFromHomePage) {
                         setNavDirectory(mCurrentDirDualPane, false);
                     } else {
-                        toggleNavBarFab(true);
+                        hideFab();
                     }
                 }
             } else if (mStartingDirDualPane == null) {
@@ -1844,7 +1829,7 @@ public class BaseActivity extends AppCompatActivity implements
                     if (!mIsFromHomePage) {
                         setNavDirectory(mCurrentDir, false);
                     } else {
-                        toggleNavBarFab(true);
+                        hideFab();
                     }
                 }
             } else if (mStartingDir == null) {
@@ -1863,7 +1848,7 @@ public class BaseActivity extends AppCompatActivity implements
                 }
                 setTitleForCategory(mCategory);
                 if (mCategory == FileConstants.CATEGORY.FILES.getValue()) {
-                    toggleNavBarFab(false);
+                    showFab();
                     if (!isDualPaneInFocus)
                         setNavDirectory(mCurrentDir, isDualPaneInFocus);
                     else
@@ -1916,7 +1901,7 @@ public class BaseActivity extends AppCompatActivity implements
                 if (FileUtils.checkIfFileCategory(mCategory) && !mIsFromHomePage) {
                     initializeStartingDirectory();
                 } else {
-                    toggleNavBarFab(true);
+                    hideFab();
                 }
 
                 Logger.log(TAG, "checkIfBackStackExists--Path=" + mCurrentDir + "  Category=" + mCategory);
@@ -1928,7 +1913,7 @@ public class BaseActivity extends AppCompatActivity implements
                 if (FileUtils.checkIfFileCategory(mCategoryDual)) {
                     initializeStartingDirectory();
                 } else {
-                    toggleNavBarFab(true);
+                    hideFab();
                 }
                 Logger.log(TAG, "checkIfBackStackExists--DUAL Path=" + mCurrentDirDualPane + "  " +
                         "Category=" + mCategoryDual);
@@ -1981,7 +1966,7 @@ public class BaseActivity extends AppCompatActivity implements
     private void cleanUpFileScreen() {
         if (mIsHomeScreenEnabled) {
             setTitleForCategory(100); // Setting title to App name
-            toggleNavBarFab(true);
+            hideFab();
             mCurrentDir = null;
             mCurrentDirDualPane = null;
             mStartingDir = null;
@@ -2118,15 +2103,13 @@ public class BaseActivity extends AppCompatActivity implements
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
 
             FileListFragment dualPaneFragment = (FileListDualFragment) getSupportFragmentManager()
-                    .findFragmentById(R
-                            .id.frame_container_dual);
+                    .findFragmentById(R.id.frame_container_dual);
             if (fragment instanceof FileListFragment) {
                 ((FileListFragment) fragment).refreshList();
             }
             if (dualPaneFragment != null) {
                 dualPaneFragment.refreshList();
             }
-
         }
 
         boolean isHomeScreenEnabled = mSharedPreferences.getBoolean(FileConstants

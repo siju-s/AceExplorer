@@ -11,9 +11,6 @@ import com.stericson.RootTools.RootTools;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * Created by Siju on 18-08-2016.
- */
 public class FileOperations {
 
     private static final String TAG = "FileOperations";

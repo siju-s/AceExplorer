@@ -46,7 +46,7 @@
     <string name="dialog_title_paste_conflict">съществува файла</string>
     <string name="msg_operation_cancel">операция анулиране</string>
     <string name="dialog_from_placeholder">от</string>
-    <string name="dialog_to_placeholder">Да се:</string>
+    <string name="dialog_to_placeholder">Да се</string>
     <string name="button_paste_progress">Заден план</string>
     <string name="dialog_delete_title">Сигурни ли сте, че искате да изтриете следните файлове?</string>
     <string name="msg_ok">Добре</string>

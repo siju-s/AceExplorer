@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.Formatter;
@@ -41,37 +40,20 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private SparseBooleanArray mSelectedItemsIds;
     private SparseBooleanArray mAnimatedPos = new SparseBooleanArray();
     boolean mStopAnimation;
-
     private OnItemClickListener mItemClickListener;
     private OnItemLongClickListener mOnItemLongClickListener;
     private int mCategory;
     private Uri mAudioUri = Uri.parse("content://media/external/audio/albumart");
     private int mViewMode;
     private ArrayList<FileInfo> fileInfoArrayListCopy = new ArrayList<>();
-    private Fragment mFragment;
     private int draggedPos = -1;
     private int mAnimation;
     private int offset = 0;
-    private Animation localAnimation;
     private boolean mIsAnimNeeded = true;
     private boolean mIsThemeDark;
     private static final int TYPE_ITEM = 1;
     private static final int TYPE_FOOTER = 2;
 
-    private String oldFilePath;
-
-
-    FileListAdapter(Fragment fragment, Context mContext, ArrayList<FileInfo>
-            fileInfoArrayList, int category, int viewMode) {
-        this.mFragment = fragment;
-        this.mContext = mContext;
-        this.fileInfoArrayList = fileInfoArrayList;
-        mSelectedItemsIds = new SparseBooleanArray();
-        mCategory = category;
-        this.mViewMode = viewMode;
-        mAnimation = R.anim.fade_in_top;
-        mIsThemeDark = ThemeUtils.isDarkTheme(mContext);
-    }
 
     public FileListAdapter(Context mContext, ArrayList<FileInfo>
             fileInfoArrayList, int category, int viewMode) {
@@ -97,10 +79,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         Logger.log("SIJU", "updateAdapter--animated=" + mStopAnimation);
     }
 
-    public void setUpdateItems(String oldFile) {
-        oldFilePath = oldFile;
-//        updateItems = false;
-    }
 
     public void setStopAnimation(boolean flag) {
         mIsAnimNeeded = !flag;
@@ -109,7 +87,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public void clearList() {
         if (fileInfoArrayList != null && !fileInfoArrayList.isEmpty()) {
-//            fileInfoArrayList.clear();
             fileInfoArrayListCopy.clear();
         }
     }
@@ -225,7 +202,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private void animate(FileListViewHolder fileListViewHolder) {
         fileListViewHolder.container.clearAnimation();
-        localAnimation = AnimationUtils.loadAnimation(mContext, mAnimation);
+        Animation localAnimation = AnimationUtils.loadAnimation(mContext, mAnimation);
         localAnimation.setStartOffset(this.offset);
         fileListViewHolder.container.startAnimation(localAnimation);
         this.offset += 30;
@@ -266,7 +243,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 fileDate = FileUtils.convertDate(fileInfoArrayList.get(position).getDate() * 1000);
             }
             boolean isDirectory = fileInfoArrayList.get(position).isDirectory();
-            String fileNoOrSize = "";
+            String fileNoOrSize;
             if (isDirectory) {
                 int childFileListSize = (int) fileInfoArrayList.get(position).getSize();
                 if (childFileListSize == 0) {
@@ -509,56 +486,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         fileInfoArrayList = new ArrayList<>(models);
     }
 
-    private FileInfo removeItem(int position) {
-        final FileInfo model = fileInfoArrayList.remove(position);
-        notifyItemRemoved(position);
-        return model;
-    }
-
-    private void addItem(int position, FileInfo model) {
-        fileInfoArrayList.add(position, model);
-        notifyItemInserted(position);
-    }
-
-    private void moveItem(int fromPosition, int toPosition) {
-        final FileInfo model = fileInfoArrayList.remove(fromPosition);
-        fileInfoArrayList.add(toPosition, model);
-        notifyItemMoved(fromPosition, toPosition);
-    }
-
-    public void animateTo(List<FileInfo> models) {
-        applyAndAnimateRemovals(models);
-        applyAndAnimateAdditions(models);
-        applyAndAnimateMovedItems(models);
-    }
-
-    private void applyAndAnimateRemovals(List<FileInfo> newModels) {
-        for (int i = fileInfoArrayList.size() - 1; i >= 0; i--) {
-            final FileInfo model = fileInfoArrayList.get(i);
-            if (!newModels.contains(model)) {
-                removeItem(i);
-            }
-        }
-    }
-
-    private void applyAndAnimateAdditions(List<FileInfo> newModels) {
-        for (int i = 0, count = newModels.size(); i < count; i++) {
-            final FileInfo model = newModels.get(i);
-            if (!fileInfoArrayList.contains(model)) {
-                addItem(i, model);
-            }
-        }
-    }
-
-    private void applyAndAnimateMovedItems(List<FileInfo> newModels) {
-        for (int toPosition = newModels.size() - 1; toPosition >= 0; toPosition--) {
-            final FileInfo model = newModels.get(toPosition);
-            final int fromPosition = fileInfoArrayList.indexOf(model);
-            if (fromPosition >= 0 && fromPosition != toPosition) {
-                moveItem(fromPosition, toPosition);
-            }
-        }
-    }
 
     void filter(String text) {
         if (text.isEmpty()) {
@@ -583,7 +510,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
 
-    class FileListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
+    private class FileListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
             View.OnLongClickListener {
         TextView textFileName;
         TextView textFileModifiedDate;
@@ -606,12 +533,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
-/*            FileListFragment.myDragEventListener dragEventListener = ((FileListFragment)
-                    mFragment).new myDragEventListener();
-
-            itemView.setOnDragListener(dragEventListener);*/
-//            itemView.setOnTouchListener(this);
-
         }
 
 
@@ -633,10 +554,10 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    class FooterViewHolder extends RecyclerView.ViewHolder {
+    private class FooterViewHolder extends RecyclerView.ViewHolder {
         LinearLayout linearLayoutFooter;
 
-        public FooterViewHolder(View itemView) {
+        FooterViewHolder(View itemView) {
             super(itemView);
             this.linearLayoutFooter = (LinearLayout) itemView.findViewById(R.id.linearLayoutFooter);
         }

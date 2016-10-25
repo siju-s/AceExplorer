@@ -85,6 +85,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.homescreen, container, false);
+        Logger.log(TAG, "onCreateView" + savedInstanceState);
         return root;
 
     }
@@ -217,9 +218,9 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             public void onItemClick(View view, int position) {
                 FragmentTransaction ft = getActivity().getSupportFragmentManager()
                         .beginTransaction();
+                String currentDir = homeStoragesInfoArrayList.get(position).getPath();
                 Bundle args = new Bundle();
                 args.putBoolean(FileConstants.KEY_HOME, true);
-                String currentDir = homeStoragesInfoArrayList.get(position).getPath();
                 args.putString(FileConstants.KEY_PATH, currentDir);
                 FileListFragment fileListFragment = new FileListFragment();
                 fileListFragment.setArguments(args);
@@ -519,10 +520,9 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     }
 
     @Override
-    public void onPause() {
-        Logger.log(TAG, "onPause" + getActivity().isFinishing());
-
-        super.onPause();
+    public void onDetach() {
+        super.onDetach();
+        mBaseActivity = null;
     }
 
     @Override

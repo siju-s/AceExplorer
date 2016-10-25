@@ -33,14 +33,11 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
     private ArrayList<FileInfo> mConflictFiles = new ArrayList<>();
     private int counter = 0;
     private boolean rootmode = false;
-    private int openMode = 0;
     private Fragment mFragment;
     private String mCurrentDir;
-    private boolean mIsDrag;
     private boolean mIsMoveOperation = false;
     private boolean mIsDualPane;
     private BaseActivity mActivity;
-    private int totalFiles;
     private ArrayList<FileInfo> mTotalFileList;
     private boolean mLowStorage;
 
@@ -50,7 +47,6 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
         mActivity = context;
         mFragment = fragment;
         mCurrentDir = currentDir;
-        mIsDrag = isDrag;
         this.rootmode = rootMode;
         this.mIsMoveOperation = isMoveOperation;
         mIsDualPane = isDualPane;
@@ -84,12 +80,10 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
                 } else {
                     mTotalFileList.addAll(listFiles);
                 }
-                totalFiles += childCount;
                 totalBytes = totalBytes + FileUtils.getFolderSize(new File(f1.getFilePath()));
             } else {
                 totalBytes = totalBytes + new File(f1.getFilePath()).length();
                 mTotalFileList.add(f1);
-                totalFiles++;
             }
         }
 
@@ -137,6 +131,7 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
                         intent.putParcelableArrayListExtra("FILE_PATHS", mFiles);
                         intent.putParcelableArrayListExtra("ACTION",mCopyData);
                         intent.putExtra("COPY_DIRECTORY", mCurrentDir);
+                        int openMode = 0;
                         intent.putExtra("MODE", openMode);
                         intent.putParcelableArrayListExtra("TOTAL_LIST",mTotalFileList);
                         new FileUtils().showCopyProgressDialog(mActivity,intent);
@@ -165,12 +160,6 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
             TextView textFileName = (TextView) materialDialog.findViewById(R.id.textFileName);
             TextView textFileDate = (TextView) materialDialog.findViewById(R.id.textFileDate);
             TextView textFileSize = (TextView) materialDialog.findViewById(R.id.textFileSize);
-            /*String fileName = mFiles.get(counter).getFilePath().substring(sourceFilePath.lastIndexOf("/") + 1,
-                    sourceFilePath
-                    .length());*/
-
-
-
             String fileName = mConflictFiles.get(counter).getFileName();
             textFileName.setText(fileName);
             File sourceFile = new File(mConflictFiles.get(counter).getFilePath());
@@ -264,10 +253,6 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
 
 
             materialDialog.show();
-        /*    if (ab.get(0).getParent().equals(path)) {
-                View negative = y.getActionButton(DialogAction.NEGATIVE);
-                negative.setEnabled(false);
-            }*/
         }
     }
 

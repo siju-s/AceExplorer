@@ -5,9 +5,6 @@ import android.preference.PreferenceManager;
 
 import com.siju.acexplorer.filesystem.FileConstants;
 
-/**
- * Created by Siju on 05-09-2016.
- */
 public class ThemeUtils {
 
     public static boolean isDarkTheme(Context context) {

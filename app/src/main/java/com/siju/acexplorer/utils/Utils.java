@@ -17,4 +17,13 @@ public class Utils {
     public static boolean isAtleastLollipop() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
+
+    public static boolean isAtleastNougat() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
+    }
+
+    public static boolean isKitkat() {
+        return Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT;
+    }
+
 }
