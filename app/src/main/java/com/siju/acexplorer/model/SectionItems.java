@@ -17,6 +17,14 @@ public class SectionItems {
         this.progress = progress;
     }
 
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (obj == this) return true;
+        if (!(obj instanceof SectionItems)) return false;
+        SectionItems o = (SectionItems) obj;
+        return o.path.equals(this.path);
+    }
+
     public String getPath() {
         return path;
     }

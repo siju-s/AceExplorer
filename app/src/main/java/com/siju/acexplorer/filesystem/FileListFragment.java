@@ -868,9 +868,9 @@ public class FileListFragment extends Fragment implements LoaderManager
         if (data != null) {
 
             Log.d(TAG, "on onLoadFinished--" + data.size());
-            if (FileUtils.checkIfLibraryCategory(mCategory)) {
+/*            if (FileUtils.checkIfLibraryCategory(mCategory)) {
                 mBaseActivity.addCountText(data.size());
-            }
+            }*/
             mStopAnim = true;
             fileInfoList = data;
             fileListAdapter.setCategory(mCategory);
@@ -984,7 +984,12 @@ public class FileListFragment extends Fragment implements LoaderManager
                         FileInfo info = fileInfoList.get(mSelectedItemPositions.keyAt(i));
                         filesToDelete.add(info);
                     }
-                    mFileUtils.showDeleteDialog(mBaseActivity, filesToDelete);
+                    if (mCategory == FileConstants.CATEGORY.FAVORITES.getValue()) {
+                        removeFavorite(filesToDelete);
+                        Toast.makeText(getContext(), getString(R.string.fav_removed), Toast.LENGTH_SHORT).show();
+                    } else {
+                        mFileUtils.showDeleteDialog(mBaseActivity, filesToDelete);
+                    }
                     mActionMode.finish();
                 }
                 break;
@@ -1051,7 +1056,6 @@ public class FileListFragment extends Fragment implements LoaderManager
             if (mSelectedItemPositions.size() > 1) {
                 mRenameItem.setVisible(false);
                 mInfoItem.setVisible(false);
-                mFavItem.setVisible(false);
 
             } else {
                 mRenameItem.setVisible(true);
@@ -1074,33 +1078,35 @@ public class FileListFragment extends Fragment implements LoaderManager
                     if (!isDirectory) {
                         mFavItem.setVisible(false);
                     }
-                    String fileName = fileInfoList.get(mSelectedItemPositions.keyAt(0)).getFileName();
-                    if (fileName.startsWith(".")) {
-                        SpannableStringBuilder hideBuilder = new SpannableStringBuilder(" " + "  " +
-                                "" + getString(R.string
-                                .unhide));
-                        if (mIsDarkTheme) {
-                            hideBuilder.setSpan(new ImageSpan(getActivity(), R.drawable.ic_unhide_white), 0, 1,
-                                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        } else {
-                            hideBuilder.setSpan(new ImageSpan(getActivity(), R.drawable.ic_unhide_black), 0, 1,
-                                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        }
-                        mHideItem.setTitle(hideBuilder);
-                    } else {
-                        SpannableStringBuilder hideBuilder = new SpannableStringBuilder(" " + "  " +
-                                "" + getString(R.string
-                                .hide));
 
-                        if (mIsDarkTheme) {
-                            hideBuilder.setSpan(new ImageSpan(getActivity(), R.drawable.ic_hide_white), 0, 1,
-                                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        } else {
-                            hideBuilder.setSpan(new ImageSpan(getActivity(), R.drawable.ic_hide_black), 0, 1,
-                                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        }
-                        mHideItem.setTitle(hideBuilder);
+                }
+                String fileName = fileInfoList.get(mSelectedItemPositions.keyAt(0)).getFileName();
+
+                if (fileName.startsWith(".")) {
+                    SpannableStringBuilder hideBuilder = new SpannableStringBuilder(" " + "  " +
+                            "" + getString(R.string
+                            .unhide));
+                    if (mIsDarkTheme) {
+                        hideBuilder.setSpan(new ImageSpan(getActivity(), R.drawable.ic_unhide_white), 0, 1,
+                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    } else {
+                        hideBuilder.setSpan(new ImageSpan(getActivity(), R.drawable.ic_unhide_black), 0, 1,
+                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
+                    mHideItem.setTitle(hideBuilder);
+                } else {
+                    SpannableStringBuilder hideBuilder = new SpannableStringBuilder(" " + "  " +
+                            "" + getString(R.string
+                            .hide));
+
+                    if (mIsDarkTheme) {
+                        hideBuilder.setSpan(new ImageSpan(getActivity(), R.drawable.ic_hide_white), 0, 1,
+                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    } else {
+                        hideBuilder.setSpan(new ImageSpan(getActivity(), R.drawable.ic_hide_black), 0, 1,
+                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
+                    mHideItem.setTitle(hideBuilder);
                 }
             }
 
@@ -1182,16 +1188,22 @@ public class FileListFragment extends Fragment implements LoaderManager
 
                     if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
                         int count = 0;
+                        ArrayList<FileInfo> favList = new ArrayList<>();
                         for (int i = 0; i < mSelectedItemPositions.size(); i++) {
                             FileInfo info = fileInfoList.get(mSelectedItemPositions.keyAt(i));
                             // Fav option meant only for directories
                             if (info.isDirectory()) {
-                                updateFavouritesGroup(info);
+                                favList.add(info);
+//                                updateFavouritesGroup(info);
                                 count++;
                             }
                         }
-                        if (count > 0)
+
+
+                        if (count > 0) {
                             FileUtils.showMessage(getActivity(), getString(R.string.msg_added_to_fav));
+                            updateFavouritesGroup(favList);
+                        }
                     }
                     mActionMode.finish();
                     return true;
@@ -1278,6 +1290,8 @@ public class FileListFragment extends Fragment implements LoaderManager
                             .msg_error_valid_name));
                     return;
                 }
+
+
                 fileName = fileName.trim();
                 String renamedName = fileName;
                 if (isFile) {
@@ -1285,6 +1299,11 @@ public class FileListFragment extends Fragment implements LoaderManager
                 }
 
                 File newFile = new File(newFilePath + "/" + renamedName);
+                if (FileUtils.isFileExisting(mFilePath, newFile.getName())) {
+                    materialDialog.getInputEditText().setError(getResources().getString(R.string
+                            .dialog_title_paste_conflict));
+                    return;
+                }
                 File oldFile = new File(oldFilePath);
                 mBaseActivity.mFileOpsHelper.renameFile(mIsRootMode, oldFile, newFile,
                         position);
@@ -1491,16 +1510,38 @@ public class FileListFragment extends Fragment implements LoaderManager
     }
 
 
-    private void updateFavouritesGroup(FileInfo info) {
+    private void updateFavouritesGroup(ArrayList<FileInfo> fileInfoList) {
+        ArrayList<FavInfo> favInfoArrayList = new ArrayList<>();
+        for (int i = 0; i < fileInfoList.size(); i++) {
+            FileInfo info = fileInfoList.get(i);
+            String name = info.getFileName();
+            String path = info.getFilePath();
+            FavInfo favInfo = new FavInfo();
+            favInfo.setFileName(name);
+            favInfo.setFilePath(path);
+            SharedPreferenceWrapper sharedPreferenceWrapper = new SharedPreferenceWrapper();
+            sharedPreferenceWrapper.addFavorite(getActivity(), favInfo);
+            favInfoArrayList.add(favInfo);
+        }
 
-        String name = info.getFileName();
-        String path = info.getFilePath();
-        FavInfo favInfo = new FavInfo();
-        favInfo.setFileName(name);
-        favInfo.setFilePath(path);
-        SharedPreferenceWrapper sharedPreferenceWrapper = new SharedPreferenceWrapper();
-        sharedPreferenceWrapper.addFavorite(getActivity(), favInfo);
-        mBaseActivity.updateFavourites(name, path);
+        mBaseActivity.updateFavourites(favInfoArrayList);
+    }
+
+    private void removeFavorite(ArrayList<FileInfo> fileInfoList) {
+        ArrayList<FavInfo> favInfoArrayList = new ArrayList<>();
+        for (int i = 0; i < fileInfoList.size(); i++) {
+            FileInfo info = fileInfoList.get(i);
+            String name = info.getFileName();
+            String path = info.getFilePath();
+            FavInfo favInfo = new FavInfo();
+            favInfo.setFileName(name);
+            favInfo.setFilePath(path);
+            SharedPreferenceWrapper sharedPreferenceWrapper = new SharedPreferenceWrapper();
+            sharedPreferenceWrapper.removeFavorite(getActivity(), favInfo);
+            favInfoArrayList.add(favInfo);
+        }
+        refreshList();
+        mBaseActivity.removeFavourites(favInfoArrayList);
     }
 
 
@@ -1726,7 +1767,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         final MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
         CharSequence items[] = new String[]{getString(R.string.action_copy), getString(R.string.move)};
         builder.title(getString(R.string.drag));
-        builder.content(getString(R.string.dialog_to_placeholder) +  " " + destinationDir);
+        builder.content(getString(R.string.dialog_to_placeholder) + " " + destinationDir);
         builder.positiveText(getString(R.string.msg_ok));
         builder.positiveColor(color);
         builder.items(items);

@@ -529,9 +529,9 @@ public class BaseActivity extends AppCompatActivity implements
 
         String[] listDataHeader = getResources().getStringArray(R.array.expand_headers);
         mListHeader = Arrays.asList(listDataHeader);
-        Thread storageThread = new Thread(storageRunnable);
-        storageThread.start();
-//        initializeStorageGroup();
+/*        Thread storageThread = new Thread(storageRunnable);
+        storageThread.start();*/
+        initializeStorageGroup();
     }
 
     private Runnable storageRunnable = new Runnable() {
@@ -710,7 +710,7 @@ public class BaseActivity extends AppCompatActivity implements
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent != null && intent.getAction().equals(Intent.ACTION_LOCALE_CHANGED)) {
-                restartApp();
+                restartApp(true);
             }
         }
     };
@@ -842,12 +842,37 @@ public class BaseActivity extends AppCompatActivity implements
     }
 
 
-    public void updateFavourites(String name, String path) {
-        SectionItems favItem = new SectionItems(name, path, R.drawable.ic_fav_folder, path, 0);
-        if (!favouritesGroupChild.contains(favItem)) {
-            favouritesGroupChild.add(favItem);
-            expandableListAdapter.notifyDataSetChanged();
+    public void updateFavourites(ArrayList<FavInfo> favInfoArrayList) {
+        int count = 0;
+        for (int i = 0; i < favInfoArrayList.size(); i++) {
+            SectionItems favItem = new SectionItems(favInfoArrayList.get(i).getFileName(), favInfoArrayList.get(i)
+                    .getFilePath(), R.drawable.ic_fav_folder, favInfoArrayList.get(i).getFilePath(), 0);
+            if (!favouritesGroupChild.contains(favItem)) {
+                favouritesGroupChild.add(favItem);
+                count++;
+            }
         }
+        if (mIsHomeScreenEnabled && mHomeScreenFragment != null) {
+            mHomeScreenFragment.updateFavoritesCount(count);
+        }
+        expandableListAdapter.notifyDataSetChanged();
+
+    }
+
+    public void removeFavourites(ArrayList<FavInfo> favInfoArrayList) {
+        int count = 0;
+        for (int i = 0; i < favInfoArrayList.size(); i++) {
+            SectionItems favItem = new SectionItems(favInfoArrayList.get(i).getFileName(), favInfoArrayList.get(i)
+                    .getFilePath(), R.drawable.ic_fav_folder, favInfoArrayList.get(i).getFilePath(), 0);
+            if (favouritesGroupChild.contains(favItem)) {
+                favouritesGroupChild.remove(favItem);
+                count++;
+            }
+        }
+        if (mIsHomeScreenEnabled && mHomeScreenFragment != null) {
+            mHomeScreenFragment.removeFavorites(count);
+        }
+        expandableListAdapter.notifyDataSetChanged();
     }
 
 
@@ -876,35 +901,43 @@ public class BaseActivity extends AppCompatActivity implements
                 navDirectoryDualPane.addView(imageButton);
             }
 
-            if (isFilesCategory) {
-                ImageView navArrow = new ImageView(this);
-                params.leftMargin = 15;
-                params.rightMargin = 20;
-                params.gravity = Gravity.CENTER_VERTICAL;
-                navArrow.setImageResource(R.drawable.ic_arrow_nav);
-                navArrow.setLayoutParams(params);
-                if (!isDualPaneInFocus) {
-                    navDirectory.addView(navArrow);
-                } else {
-                    navDirectoryDualPane.addView(navArrow);
-                }
+            ImageView navArrow = new ImageView(this);
+            params.leftMargin = 15;
+            params.rightMargin = 20;
+            navArrow.setImageResource(R.drawable.ic_arrow_nav);
+            navArrow.setLayoutParams(params);
+            if (!isDualPaneInFocus) {
+                navDirectory.addView(navArrow);
+            } else {
+                navDirectoryDualPane.addView(navArrow);
             }
+            addTitleText(isFilesCategory);
+        } else {
+            addTitleText(isFilesCategory);
         }
+
     }
 
-    public void addCountText(int count) {
+    public void addTitleText(boolean isFilesCategory) {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.gravity = Gravity.CENTER_VERTICAL;
 
-        final TextView textView = new TextView(this);
-        textView.setText(getResources().getQuantityString(R.plurals.number_of_files, count, count));
-        textView.setTextColor(ContextCompat.getColor(this, R.color.navButtons));
-        textView.setTextSize(17);
-        textView.setGravity(Gravity.CENTER);
-        int paddingRight = getResources().getDimensionPixelSize(R.dimen.padding_60);
-        textView.setPadding(0, 0, paddingRight, 0);
-        textView.setLayoutParams(params);
-        navDirectory.addView(textView);
+        if (!isFilesCategory) {
+            String title = FileUtils.getTitleForCategory(this, mCategory);
+            final TextView textView = new TextView(this);
+            textView.setText(title);
+            textView.setTextColor(ContextCompat.getColor(this, R.color.navButtons));
+            textView.setTextSize(19);
+            int paddingRight = getResources().getDimensionPixelSize(R.dimen.padding_60);
+            textView.setPadding(0, 0, paddingRight, 0);
+            textView.setLayoutParams(params);
+            if (!isDualPaneInFocus) {
+                navDirectory.addView(textView);
+            } else {
+                navDirectoryDualPane.addView(textView);
+            }
+        }
     }
 
 
@@ -1269,7 +1302,6 @@ public class BaseActivity extends AppCompatActivity implements
                 hideFab();
                 toggleDualPaneVisibility(false);
                 toggleNavigationVisibility(true);
-                addHomeNavButton(false);
                 int category;
 
                 switch (childPos) {
@@ -1294,7 +1326,7 @@ public class BaseActivity extends AppCompatActivity implements
                         openCategoryItem(path, category);
                         break;
                 }
-                setTitleForCategory(mCategory);
+//                setTitleForCategory(mCategory);
                 break;
         }
     }
@@ -1650,6 +1682,9 @@ public class BaseActivity extends AppCompatActivity implements
                 favInfo.setFilePath(path);
                 favouritesGroupChild.remove(childPos);
                 sharedPreferenceWrapper.removeFavorite(this, favInfo);
+                if (mIsHomeScreenEnabled && mHomeScreenFragment != null) {
+                    mHomeScreenFragment.removeFavorites(1);
+                }
                 expandableListAdapter.notifyDataSetChanged();
                 return true;
 
@@ -2058,17 +2093,15 @@ public class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    private void restartApp() {
-        Activity activity = this;
+    private void restartApp(boolean isLocaleChanged) {
 
         final int enter_anim = android.R.anim.fade_in;
         final int exit_anim = android.R.anim.fade_out;
-        activity.overridePendingTransition(enter_anim, exit_anim);
-        activity.finish();
-        activity.overridePendingTransition(enter_anim, exit_anim);
-        /*final Intent intent = getActivity().getIntent();
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);*/
-        activity.startActivity(activity.getIntent());
+        overridePendingTransition(enter_anim, exit_anim);
+        finish();
+        overridePendingTransition(enter_anim, exit_anim);
+        if (!isLocaleChanged)
+            startActivity(getIntent());
 
     }
 
@@ -2083,7 +2116,7 @@ public class BaseActivity extends AppCompatActivity implements
             int theme = Integer.valueOf(value);
             if (theme != mCurrentTheme) {
                 mCurrentTheme = theme;
-                restartApp();
+                restartApp(false);
             }
         }
 
@@ -2092,7 +2125,7 @@ public class BaseActivity extends AppCompatActivity implements
         if (!language.equals(mCurrentLanguage)) {
             mCurrentLanguage = language;
             LocaleHelper.setLocale(this, language);
-            restartApp();
+            restartApp(false);
         }
 
         boolean showHidden = mSharedPreferences.getBoolean(FileConstants.PREFS_HIDDEN, false);

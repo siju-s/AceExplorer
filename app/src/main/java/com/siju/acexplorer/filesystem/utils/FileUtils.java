@@ -765,6 +765,7 @@ public class FileUtils implements CopyService.Progress {
                 newName.length() == 0);
     }
 
+
     public static void showMessage(Context context, String msg) {
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
     }
@@ -1074,8 +1075,8 @@ public class FileUtils implements CopyService.Progress {
                     // Storage Access Framework
                     DocumentFile targetDocument = getDocumentFile(target, false, context);
                     if (targetDocument != null)
-                    outStream =
-                            context.getContentResolver().openOutputStream(targetDocument.getUri());
+                        outStream =
+                                context.getContentResolver().openOutputStream(targetDocument.getUri());
                 } else if (Utils.isKitkat()) {
                     // Workaround for Kitkat ext SD card
                     return getOutputStream(context, target.getPath());
@@ -1420,13 +1421,13 @@ public class FileUtils implements CopyService.Progress {
                     // Storage Access Framework
                     DocumentFile targetDocument = getDocumentFile(target, false, context);
                     if (targetDocument != null)
-                    outStream =
-                            context.getContentResolver().openOutputStream(targetDocument.getUri());
+                        outStream =
+                                context.getContentResolver().openOutputStream(targetDocument.getUri());
                 } else if (Utils.isKitkat()) {
                     // Workaround for Kitkat ext SD card
                     Uri uri = MediaStoreHack.getUriFromFile(target.getAbsolutePath(), context);
                     if (uri != null)
-                    outStream = context.getContentResolver().openOutputStream(uri);
+                        outStream = context.getContentResolver().openOutputStream(uri);
                 } else {
                     return false;
                 }
@@ -1967,6 +1968,15 @@ public class FileUtils implements CopyService.Progress {
         return exists;
     }
 
+    public static boolean isFileExisting(String currentDir, String fileName) {
+        File file = new File(currentDir);
+        String[] list = file.list();
+        for (String aList : list) {
+            if (fileName.equals(aList)) return true;
+        }
+        return false;
+    }
+
     public static Drawable getAppIcon(Context context, String url) {
 
 
@@ -2058,5 +2068,32 @@ public class FileUtils implements CopyService.Progress {
 
 
         return hash;
+    }
+
+    public static String getTitleForCategory(Context context,int category) {
+        switch (category) {
+            case 1:
+                return context.getString(R.string.nav_menu_music);
+            case 2:
+                return context.getString(R.string.nav_menu_video);
+            case 3:
+                return context.getString(R.string.nav_menu_image);
+            case 4:
+                return context.getString(R.string.nav_menu_docs);
+            case 5:
+                return context.getString(R.string.downloads);
+            case 7:
+                return context.getString(R.string.compressed);
+            case 8:
+                return context.getString(R.string.nav_header_favourites);
+            case 9:
+                return context.getString(R.string.pdf);
+            case 10:
+                return context.getString(R.string.apk);
+            case 11:
+                return context.getString(R.string.library_large);
+
+        }
+        return context.getString(R.string.app_name);
     }
 }

@@ -336,6 +336,28 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         }
     }
 
+    public void updateFavoritesCount(int count) {
+        for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
+            if (homeLibraryInfoArrayList.get(i).getCategoryId() == FileConstants.CATEGORY.FAVORITES.getValue()) {
+                int count1 = homeLibraryInfoArrayList.get(i).getCount();
+                homeLibraryInfoArrayList.get(i).setCount(count1 + count);
+                homeLibraryAdapter.notifyItemChanged(i);
+                break;
+            }
+        }
+    }
+
+    public void removeFavorites(int count) {
+        for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
+            if (homeLibraryInfoArrayList.get(i).getCategoryId() == FileConstants.CATEGORY.FAVORITES.getValue()) {
+                int count1 = homeLibraryInfoArrayList.get(i).getCount();
+                homeLibraryInfoArrayList.get(i).setCount(count1 - count);
+                homeLibraryAdapter.notifyItemChanged(i);
+                break;
+            }
+        }
+    }
+
     private void addToLibrary() {
         homeLibraryInfoArrayList.add(new HomeLibraryInfo(FileConstants.CATEGORY.ADD.getValue(),
                 mLabels[5], getResourceIdForCategory(FileConstants.CATEGORY.ADD
@@ -535,6 +557,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
 
     class UriObserver extends ContentObserver {
         private Uri mUri;
+
         UriObserver(Handler handler) {
 
             super(handler);
