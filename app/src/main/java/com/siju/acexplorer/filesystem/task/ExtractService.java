@@ -1,9 +1,4 @@
 package com.siju.acexplorer.filesystem.task;
-
-/**
- * Created by Siju on 26-08-2016.
- */
-
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;

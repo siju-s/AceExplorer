@@ -39,6 +39,7 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="@dimen/margin_16"
             android:layout_marginStart="@dimen/margin_16"
+            android:layout_marginBottom="@dimen/padding_5"
             android:gravity="center_vertical"
             android:textAppearance="?android:attr/textAppearanceMedium"
 

@@ -66,6 +66,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.github.junrar.Archive;
+import com.github.junrar.exception.RarException;
 import com.github.junrar.rarfile.FileHeader;
 import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
@@ -75,6 +76,7 @@ import com.siju.acexplorer.filesystem.model.BackStackModel;
 import com.siju.acexplorer.filesystem.model.FavInfo;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.model.ZipModel;
+import com.siju.acexplorer.filesystem.task.ExtractZipEntry;
 import com.siju.acexplorer.filesystem.task.PasteConflictChecker;
 import com.siju.acexplorer.filesystem.ui.CustomGridLayoutManager;
 import com.siju.acexplorer.filesystem.ui.CustomLayoutManager;
@@ -91,8 +93,11 @@ import com.stericson.RootTools.RootTools;
 import com.stericson.RootTools.execution.Command;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 
 public class FileListFragment extends Fragment implements LoaderManager
@@ -162,6 +167,8 @@ public class FileListFragment extends Fragment implements LoaderManager
     private boolean mIsDarkTheme;
     private boolean mInstanceStateExists;
     private final int DIALOG_FRAGMENT = 5000;
+    private boolean clearCache;
+    private final String cacheTempDir = "temp_extract";
 
 
     @Override
@@ -453,7 +460,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
 
     public void openCompressedFile(String path) {
-
+        computeScroll();
         mIsZip = true;
         mInParentZip = true;
         mCurrentZipDir = null;
@@ -533,7 +540,51 @@ public class FileListFragment extends Fragment implements LoaderManager
                     if (isZipViewable(filePath)) {
                         openCompressedFile(filePath);
                     } else {
-                        FileUtils.viewFile(FileListFragment.this, filePath, extension);
+                        if (mIsZip) {
+                            clearCache = true;
+                            if (mZipParentPath.endsWith(".zip")) {
+                                String name = zipChildren.get(position).getName().substring(zipChildren.get(position)
+                                        .getName().lastIndexOf("/") + 1);
+
+                                ZipEntry zipEntry = zipChildren.get(position).getEntry();
+                                String cacheDirPath = createCacheDirExtract();
+                                Logger.log(TAG, "Extract temp path:" + cacheDirPath);
+
+                                if (cacheDirPath != null) {
+                                    try {
+                                        ZipFile zipFile = new ZipFile(mZipParentPath);
+                                        new ExtractZipEntry(zipFile, cacheDirPath,
+                                                FileListFragment.this, name, true, zipEntry)
+                                                .execute();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            } else if (mZipParentPath.endsWith(".rar")) {
+                                String name = rarChildren.get(position).getFileNameString();
+                                FileHeader fileHeader = rarChildren.get(position);
+                                String cacheDirPath = createCacheDirExtract();
+
+                                if (cacheDirPath != null) {
+
+                                    try {
+                                        Archive rarFile = new Archive(new File(mZipParentPath));
+                                        new ExtractZipEntry(rarFile, cacheDirPath,
+                                                FileListFragment.this, name, false, fileHeader)
+                                                .execute();
+
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    } catch (RarException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                }
+
+                            }
+                        } else {
+                            FileUtils.viewFile(FileListFragment.this, filePath, extension);
+                        }
                     }
                 }
                 break;
@@ -541,8 +592,9 @@ public class FileListFragment extends Fragment implements LoaderManager
             case 2:
             case 3:
             case 4:
-                FileUtils.viewFile(FileListFragment.this, fileInfoList.get(position).getFilePath(), fileInfoList.get
-                        (position).getExtension());
+                FileUtils.viewFile(FileListFragment.this, fileInfoList.get(position).getFilePath(),
+                        fileInfoList.get
+                                (position).getExtension());
                 break;
 
         }
@@ -552,6 +604,19 @@ public class FileListFragment extends Fragment implements LoaderManager
         return filePath.toLowerCase().endsWith("zip") ||
                 filePath.toLowerCase().endsWith("jar") ||
                 filePath.toLowerCase().endsWith("rar");
+    }
+
+    private String createCacheDirExtract() {
+        File file = new File(getActivity().getCacheDir(), cacheTempDir);
+
+        if (!file.exists()) {
+            boolean result = file.mkdir();
+            if (result)
+                return file.getAbsolutePath();
+        } else {
+            return file.getAbsolutePath();
+        }
+        return null;
     }
 
 
@@ -2180,7 +2245,23 @@ public class FileListFragment extends Fragment implements LoaderManager
             mPreferences.edit().putInt(FileConstants.KEY_GRID_COLUMNS, mGridColumns).apply();
             sharedPreferenceWrapper.savePrefs(getActivity(), mViewMode);
         }
+        if (clearCache) {
+            clearCache();
+            clearCache = false;
+        }
         super.onDestroyView();
+    }
+
+    private void clearCache() {
+        String path = createCacheDirExtract();
+        if (path != null) {
+            File[] files = new File(path).listFiles();
+
+            if (files != null) {
+                for (File file : files)
+                    file.delete();
+            }
+        }
     }
 
     @Override
