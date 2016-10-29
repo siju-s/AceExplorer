@@ -17,7 +17,7 @@ public class AceApplication extends Application {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().build());
             StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
                     .detectLeakedSqlLiteObjects()
-                    .detectLeakedClosableObjects()
+//                    .detectLeakedClosableObjects()
                     .penaltyLog()
                     .build());
         }

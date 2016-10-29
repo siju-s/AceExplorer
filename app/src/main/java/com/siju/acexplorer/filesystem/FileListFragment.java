@@ -547,14 +547,15 @@ public class FileListFragment extends Fragment implements LoaderManager
                                         .getName().lastIndexOf("/") + 1);
 
                                 ZipEntry zipEntry = zipChildren.get(position).getEntry();
+                                ZipEntry zipEntry1 = new ZipEntry("/" + zipEntry);
                                 String cacheDirPath = createCacheDirExtract();
-                                Logger.log(TAG, "Extract temp path:" + cacheDirPath);
+                                Logger.log(TAG, "Zip entry NEW:" + zipEntry1+" zip entry="+zipEntry);
 
                                 if (cacheDirPath != null) {
                                     try {
                                         ZipFile zipFile = new ZipFile(mZipParentPath);
                                         new ExtractZipEntry(zipFile, cacheDirPath,
-                                                FileListFragment.this, name, true, zipEntry)
+                                                FileListFragment.this, name, true, zipEntry1)
                                                 .execute();
                                     } catch (IOException e) {
                                         e.printStackTrace();
@@ -607,7 +608,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     }
 
     private String createCacheDirExtract() {
-        File file = new File(getActivity().getCacheDir(), cacheTempDir);
+        File file = new File(getActivity().getExternalCacheDir(), cacheTempDir);
 
         if (!file.exists()) {
             boolean result = file.mkdir();

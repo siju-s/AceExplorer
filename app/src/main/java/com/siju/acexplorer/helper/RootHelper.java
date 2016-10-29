@@ -18,9 +18,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-/**
- * Created by Siju on 03-08-2016.
- */
 public class RootHelper {
 
     public static String runAndWait(String cmd, boolean root) {

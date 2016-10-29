@@ -1,4 +1,5 @@
 package com.siju.acexplorer.filesystem.task;
+
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -19,6 +20,7 @@ import com.github.junrar.Archive;
 import com.github.junrar.rarfile.FileHeader;
 import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.ZipProgressModel;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
@@ -217,11 +219,13 @@ public class ExtractService extends Service {
             if (!outputFile.getParentFile().exists()) {
                 createDir(outputFile.getParentFile());
             }
-            //	Log.i("Amaze", "Extracting: " + entry);
+
             BufferedInputStream inputStream = new BufferedInputStream(
                     zipfile.getInputStream(entry));
             BufferedOutputStream outputStream = new BufferedOutputStream(
                     FileUtils.getOutputStream(outputFile, c, 0));
+            Logger.log("ExtractService", "zipfile=" + zipfile + " zipentry=" + entry + " stream=" + inputStream);
+
             try {
                 int len;
                 byte buf[] = new byte[20480];
@@ -260,7 +264,6 @@ public class ExtractService extends Service {
             if (!outputFile.getParentFile().exists()) {
                 createDir(outputFile.getParentFile());
             }
-            //	Log.i("Amaze", "Extracting: " + entry);
             BufferedInputStream inputStream = new BufferedInputStream(
                     zipfile.getInputStream(entry));
             BufferedOutputStream outputStream = new BufferedOutputStream(
@@ -290,7 +293,8 @@ public class ExtractService extends Service {
             }
         }
 
-        private void unzipTAREntry(int id, TarArchiveInputStream zipfile, TarArchiveEntry entry, String outputDir, String string)
+        private void unzipTAREntry(int id, TarArchiveInputStream zipfile, TarArchiveEntry entry, String outputDir,
+                                   String string)
                 throws Exception {
             String name = entry.getName();
             if (entry.isDirectory()) {
@@ -301,7 +305,6 @@ public class ExtractService extends Service {
             if (!outputFile.getParentFile().exists()) {
                 createDir(outputFile.getParentFile());
             }
-            //	Log.i("Amaze", "Extracting: " + entry);
 
             BufferedOutputStream outputStream = new BufferedOutputStream(
                     FileUtils.getOutputStream(outputFile, getBaseContext(), entry.getRealSize()));
@@ -366,7 +369,7 @@ public class ExtractService extends Service {
                 calculateProgress(archive.getName(), id, true, copiedbytes, totalbytes);
                 return true;
             } catch (Exception e) {
-                Log.e("amaze", "Error while extracting file " + archive, e);
+                Log.e("TAG", "Error while extracting file " + archive, e);
                 Intent intent = new Intent(FileConstants.RELOAD_LIST);
                 sendBroadcast(intent);
                 calculateProgress(archive.getName(), id, true, copiedbytes, totalbytes);
@@ -407,15 +410,13 @@ public class ExtractService extends Service {
                 return true;
             } catch (Exception e) {
                 Log.e(this.getClass().getSimpleName(), "Error while extracting file " + archive, e);
-                Intent intent = new Intent(FileConstants.RELOAD_LIST);
-                sendBroadcast(intent);
                 publishResults(archive.getName(), 100, id, totalbytes, copiedbytes, true);
                 return false;
             }
 
         }
 
-        public boolean extractTar(int id, File archive, String destinationPath) {
+        boolean extractTar(int id, File archive, String destinationPath) {
             int i = 0;
             try {
                 ArrayList<TarArchiveEntry> archiveEntries = new ArrayList<>();
@@ -454,7 +455,7 @@ public class ExtractService extends Service {
                 publishResults(archive.getName(), 100, id, totalbytes, copiedbytes, true);
                 return true;
             } catch (Exception e) {
-                Log.e("amaze", "Error while extracting file " + archive, e);
+                Log.e("TAG", "Error while extracting file " + archive, e);
                 Intent intent = new Intent(FileConstants.RELOAD_LIST);
                 sendBroadcast(intent);
                 publishResults(archive.getName(), 100, id, totalbytes, copiedbytes, true);
@@ -463,7 +464,7 @@ public class ExtractService extends Service {
 
         }
 
-        public boolean extractRar(int id, File archive, String destinationPath) {
+        boolean extractRar(int id, File archive, String destinationPath) {
             int i = 0;
             try {
                 ArrayList<FileHeader> arrayList = new ArrayList<>();
@@ -496,7 +497,7 @@ public class ExtractService extends Service {
                 calculateProgress(archive.getName(), id, true, copiedbytes, totalbytes);
                 return true;
             } catch (Exception e) {
-                Log.e("amaze", "Error while extracting file " + archive, e);
+                Log.e("TAG", "Error while extracting file " + archive, e);
                 Intent intent = new Intent(FileConstants.RELOAD_LIST);
                 sendBroadcast(intent);
                 calculateProgress(archive.getName(), id, true, copiedbytes, totalbytes);
@@ -511,7 +512,7 @@ public class ExtractService extends Service {
 
             File f = new File(file);
 
-            Log.d("TAG","ZIp file="+file+ "new file="+ newFile);
+            Log.d("TAG", "ZIp file=" + file + "new file=" + newFile);
             /*if (epath.length() == 0) {
                 path = f.getParent() + "/" + f.getName().substring(0, f.getName().lastIndexOf("."));
             } else {
@@ -523,16 +524,14 @@ public class ExtractService extends Service {
             }*/
             if (eentries) {
                 extract(p1[0].getInt("id"), f, newFile, entries);
-            } else if (f.getName().toLowerCase().endsWith(".zip") || f.getName().toLowerCase().endsWith(".jar") || f.getName().toLowerCase().endsWith(".apk"))
+            } else if (f.getName().toLowerCase().endsWith(".zip") || f.getName().toLowerCase().endsWith(".jar") || f
+                    .getName().toLowerCase().endsWith(".apk"))
                 extract(p1[0].getInt("id"), f, newFile);
             else if (f.getName().toLowerCase().endsWith(".rar"))
                 extractRar(p1[0].getInt("id"), f, newFile);
             else if (f.getName().toLowerCase().endsWith(".tar") || f.getName().toLowerCase().endsWith(".tar.gz"))
                 extractTar(p1[0].getInt("id"), f, newFile);
-                Log.d("TAG","TAR");
-
-            Log.i("Amaze", "Almost Completed");
-            // TODO: Implement this method
+            Log.d("TAG", "TAR");
             return p1[0].getInt("id");
         }
 
@@ -558,7 +557,7 @@ public class ExtractService extends Service {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("Amaze", "" + intent.getIntExtra("id", 1));
+            Log.i("TAG", "" + intent.getIntExtra("id", 1));
             hash.put(intent.getIntExtra("id", 1), false);
         }
     };

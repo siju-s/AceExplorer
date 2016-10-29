@@ -295,7 +295,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                         int type = fileInfoArrayList.get(position).getType();
                         fileListViewHolder.imageIcon.setImageDrawable(null);
-                        Logger.log("TAG", "Adpater path=" + filePath + "position=" + position);
+//                        Logger.log("TAG", "Adpater path=" + filePath + "position=" + position);
 //                        if (updateItems) {
                         // If Image or Video file, load thumbnail
                         if (type == FileConstants.CATEGORY.IMAGE.getValue()) {
