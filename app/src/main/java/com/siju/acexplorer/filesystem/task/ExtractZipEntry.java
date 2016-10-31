@@ -17,6 +17,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -34,7 +35,7 @@ public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
     public ExtractZipEntry(ZipFile zipFile, String outputDir, Fragment fragment, String fileName, boolean zip,
                            ZipEntry zipEntry) {
         this.zip = zip;
-        this.outputDir = outputDir ; //FileUtils.getInternalStorage().getAbsolutePath() + "/" + "Testing";
+        this.outputDir = outputDir;
         this.zipFile = zipFile;
         this.fragment = fragment;
         this.fileName = fileName;
@@ -80,13 +81,17 @@ public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
             throws IOException {
 
         output = new File(outputDir, fileName);
+        if (entry.isDirectory()) {
+            new File(outputDir, fileName).mkdir();
+            return;
+        }
         BufferedInputStream inputStream = new BufferedInputStream(
                 zipfile.getInputStream(entry));
+        InputStream inputStream1 = zipfile.getInputStream(entry);
         BufferedOutputStream outputStream = new BufferedOutputStream(
                 new FileOutputStream(output));
-        Logger.log("Extract", "zipfile=" + zipfile + " zipentry=" + entry + " stream=" + inputStream);
+        Logger.log("Extract", "zipfile=" + zipfile.getName() + " zipentry=" + entry + " stream=" + inputStream);
         Logger.log("Extract", "Bytes START=" + inputStream.available());
-
 
         try {
             int len;

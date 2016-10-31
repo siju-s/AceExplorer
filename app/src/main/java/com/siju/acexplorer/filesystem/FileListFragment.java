@@ -133,6 +133,8 @@ public class FileListFragment extends Fragment implements LoaderManager
     private View viewDummy;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private String mZipParentPath;
+    private String mChildZipPath;
+    private boolean inChildZip;
     private BaseActivity mBaseActivity;
     private boolean isDualPaneInFocus;
     private Toolbar mBottomToolbar;
@@ -169,6 +171,11 @@ public class FileListFragment extends Fragment implements LoaderManager
     private final int DIALOG_FRAGMENT = 5000;
     private boolean clearCache;
     private final String cacheTempDir = "temp_extract";
+    ZipEntry zipEntry = null;
+    private String zipEntryFileName;
+    Archive rar;
+    FileHeader header;
+    File output;
 
 
     @Override
@@ -461,10 +468,12 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     public void openCompressedFile(String path) {
         computeScroll();
+
         mIsZip = true;
         mInParentZip = true;
         mCurrentZipDir = null;
         mZipParentPath = path;
+        zipEntry = null;
         reloadList(false, path);
         mParentZipCategory = mCategory;
         isDualPaneInFocus = checkIfDualFragment();
@@ -497,22 +506,17 @@ public class FileListFragment extends Fragment implements LoaderManager
                 if (fileInfoList.get(position).isDirectory()) {
                     computeScroll();
                     if (mIsZip) {
-                        if (mZipParentPath.endsWith("rar")) {
-                            String name = rarChildren.get(position).getFileNameString();
-                            mCurrentZipDir = name.substring(0, name.length() - 1);
-                        } else {
-                            mCurrentZipDir = zipChildren.get(position).getName();
-                        }
-
-                        mInParentZip = false;
-                        reloadList(false, mZipParentPath);
-                        isDualPaneInFocus = checkIfDualFragment();
-                        String newPath = mZipParentPath + "/" + mCurrentZipDir;
-                        mBaseActivity.setCurrentDir(newPath, isDualPaneInFocus);
-                        mBaseActivity.setNavDirectory(newPath, isDualPaneInFocus);
-
+//                        zipEntry = null;
+//                        inChildZip = false;
+                        String name = zipChildren.get(position).getName();
+                        if (name.startsWith("/")) name = name.substring(1,name.length());
+                        String name1 = name.substring(0,name.length() - 1); // 2 so that / doesnt come
+                        zipEntry = zipChildren.get(position).getEntry();
+                        zipEntryFileName = name1;
+                        Logger.log(TAG,"handleCategoryItemClick--entry="+zipEntry+ " dir="+zipEntry.isDirectory()
+                                +"name="+zipEntryFileName);
+                        viewZipContents(position);
                     } else {
-
                         String path = mFilePath = fileInfoList.get(position).getFilePath();
 
                         isDualPaneInFocus = checkIfDualFragment();
@@ -537,7 +541,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                     String filePath = fileInfoList.get(position).getFilePath();
                     String extension = fileInfoList.get(position).getExtension();
 
-                    if (isZipViewable(filePath)) {
+                    if (!mIsZip && isZipViewable(filePath)) {
                         openCompressedFile(filePath);
                     } else {
                         if (mIsZip) {
@@ -547,13 +551,30 @@ public class FileListFragment extends Fragment implements LoaderManager
                                         .getName().lastIndexOf("/") + 1);
 
                                 ZipEntry zipEntry = zipChildren.get(position).getEntry();
-                                ZipEntry zipEntry1 = new ZipEntry("/" + zipEntry);
+                                ZipEntry zipEntry1 = new ZipEntry(zipEntry);
                                 String cacheDirPath = createCacheDirExtract();
-                                Logger.log(TAG, "Zip entry NEW:" + zipEntry1+" zip entry="+zipEntry);
+                                Logger.log(TAG, "Zip entry NEW:" + zipEntry1 + " zip entry=" + zipEntry);
 
                                 if (cacheDirPath != null) {
+                                    if (name.endsWith(".zip")) {
+                                        this.zipEntry = zipEntry1;
+                                        zipEntryFileName = name;
+                                        inChildZip = true;
+                                        viewZipContents(position);
+                                        mChildZipPath = cacheDirPath + "/" + name;
+                                        return;
+                                    }
+
+
                                     try {
-                                        ZipFile zipFile = new ZipFile(mZipParentPath);
+                                        ZipFile zipFile;
+                                        if (inChildZip) {
+                                            zipFile = new ZipFile(mChildZipPath);
+                                        }
+                                        else {
+                                            zipFile = new ZipFile(mZipParentPath);
+                                        }
+                                        zipEntry1 = zipEntry;
                                         new ExtractZipEntry(zipFile, cacheDirPath,
                                                 FileListFragment.this, name, true, zipEntry1)
                                                 .execute();
@@ -583,6 +604,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                                 }
 
                             }
+
                         } else {
                             FileUtils.viewFile(FileListFragment.this, filePath, extension);
                         }
@@ -605,6 +627,28 @@ public class FileListFragment extends Fragment implements LoaderManager
         return filePath.toLowerCase().endsWith("zip") ||
                 filePath.toLowerCase().endsWith("jar") ||
                 filePath.toLowerCase().endsWith("rar");
+    }
+
+    private void viewZipContents(int position) {
+        if (mZipParentPath.endsWith("rar")) {
+            String name = rarChildren.get(position).getFileNameString();
+            mCurrentZipDir = name.substring(0, name.length() - 1);
+        } else {
+            mCurrentZipDir = zipChildren.get(position).getName();
+        }
+
+        mInParentZip = false;
+        reloadList(false, mZipParentPath);
+        isDualPaneInFocus = checkIfDualFragment();
+        String newPath;
+        if (mCurrentZipDir.startsWith(File.separator)) {
+            newPath = mZipParentPath + mCurrentZipDir;
+        }
+        else {
+            newPath = mZipParentPath + File.separator + mCurrentZipDir;
+        }
+        mBaseActivity.setCurrentDir(newPath, isDualPaneInFocus);
+        mBaseActivity.setNavDirectory(newPath, isDualPaneInFocus);
     }
 
     private String createCacheDirExtract() {
@@ -830,6 +874,10 @@ public class FileListFragment extends Fragment implements LoaderManager
         refreshList();
     }
 
+/*    public void loadZipEntry() {
+        reloadList();
+    }*/
+
     public void stopAnimation() {
         if ((!fileListAdapter.mStopAnimation)) {
             for (int i = 0; i < recyclerViewFileList.getChildCount(); i++) {
@@ -848,6 +896,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     public BackStackModel endZipMode() {
 
         mIsZip = false;
+        inChildZip = false;
         mInParentZip = true;
         mCurrentZipDir = null;
         totalZipList.clear();
@@ -861,14 +910,24 @@ public class FileListFragment extends Fragment implements LoaderManager
             endZipMode();
             return true;
         } else {
+            inChildZip = false;
+            Logger.log(TAG,"checkZipMode--currentzipdir B4="+mCurrentZipDir);
             mCurrentZipDir = new File(mCurrentZipDir).getParent();
+            if (mCurrentZipDir.equals(File.separator)) {
+                mCurrentZipDir = null;
+            }
+            Logger.log(TAG,"checkZipMode--currentzipdir AFT="+mCurrentZipDir);
             reloadList(true, mZipParentPath);
             isDualPaneInFocus = checkIfDualFragment();
             String newPath;
-            if (mCurrentZipDir == null) {
+            if (mCurrentZipDir == null || mCurrentZipDir.equals(File.separator)) {
                 newPath = mZipParentPath;
             } else {
-                newPath = mZipParentPath + File.separator + mCurrentZipDir;
+                if (mCurrentZipDir.startsWith(File.separator)) {
+                    newPath = mZipParentPath + File.separator + mCurrentZipDir;
+                } else {
+                    newPath = mZipParentPath  + mCurrentZipDir;
+                }
             }
             mBaseActivity.setCurrentDir(newPath, isDualPaneInFocus);
             mBaseActivity.setNavDirectory(newPath, isDualPaneInFocus);
@@ -912,9 +971,18 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
         String path = args.getString(FileConstants.KEY_PATH);
         mSwipeRefreshLayout.setRefreshing(true);
-        Logger.log(TAG, "onCreateLoader---path=" + path + "category=" + mCategory);
+        Logger.log(TAG, "onCreateLoader---path=" + path + "category=" + mCategory + "zip entry="+zipEntry);
 
         if (mIsZip) {
+            if (inChildZip) {
+                if (zipEntry.isDirectory()) {
+                    return new FileListLoader(this, mChildZipPath, createCacheDirExtract(),
+                            zipEntryFileName, true, zipEntry);
+                }
+                else
+                return new FileListLoader(this, mZipParentPath, createCacheDirExtract(),
+                        zipEntryFileName, true, zipEntry);
+            }
             return new FileListLoader(this, path, FileConstants.CATEGORY.ZIP_VIEWER.getValue(),
                     mCurrentZipDir, isDualPaneInFocus, mInParentZip);
         } else {

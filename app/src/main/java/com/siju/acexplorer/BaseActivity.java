@@ -971,13 +971,13 @@ public class BaseActivity extends AppCompatActivity implements
 
 //                if (!isCurrentDirRoot) {
                 if (!isDualPaneInFocus) {
-                    Logger.log(TAG, "setNavDirectory--dir=" + dir + "  Starting dir=" + mStartingDir);
+//                    Logger.log(TAG, "setNavDirectory--dir=" + dir + "  Starting dir=" + mStartingDir);
 
                     if (!dir.contains(mStartingDir)) {
                         continue;
                     }
                 } else {
-                    Logger.log(TAG, "setNavDirectory--dir=" + dir + "  Starting DUAL dir=" + mStartingDirDualPane);
+//                    Logger.log(TAG, "setNavDirectory--dir=" + dir + "  Starting DUAL dir=" + mStartingDirDualPane);
 
                     if (!dir.contains(mStartingDirDualPane)) {
                         continue;
