@@ -924,7 +924,7 @@ public class BaseActivity extends AppCompatActivity implements
         params.gravity = Gravity.CENTER_VERTICAL;
 
         if (!isFilesCategory) {
-            String title = FileUtils.getTitleForCategory(this, mCategory);
+            String title = FileUtils.getTitleForCategory(this, mCategory).toUpperCase(Locale.getDefault());
             final TextView textView = new TextView(this);
             textView.setText(title);
             textView.setTextColor(ContextCompat.getColor(this, R.color.navButtons));
@@ -1545,6 +1545,15 @@ public class BaseActivity extends AppCompatActivity implements
                 if (((FileListFragment) fragment).isZipMode()) {
                     BackStackModel model = ((FileListFragment) fragment).endZipMode();
                     mBackStackList.remove(model);
+                }
+                if (FileUtils.checkIfLibraryCategory(category)) {
+                    if (isDualPaneInFocus) {
+                        navDirectoryDualPane.removeAllViews();
+                    }
+                    else {
+                        navDirectory.removeAllViews();
+                    }
+                    addHomeNavButton(false);
                 }
 
                 ((FileListFragment) fragment).reloadList(false, directory);

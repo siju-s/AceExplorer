@@ -7,9 +7,6 @@ import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 
-/**
- * Created by SIJU on 15-07-2016.
- */
 
 public class CustomLayoutManager extends LinearLayoutManager {
     private static final float MILLISECONDS_PER_INCH = 500f;

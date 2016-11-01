@@ -84,9 +84,9 @@ import com.siju.acexplorer.filesystem.ui.DialogBrowseFragment;
 import com.siju.acexplorer.filesystem.ui.DividerItemDecoration;
 import com.siju.acexplorer.filesystem.ui.EnhancedMenuInflater;
 import com.siju.acexplorer.filesystem.ui.GridItemDecoration;
-import com.siju.acexplorer.filesystem.ui.vertical.VerticalRecyclerViewFastScroller;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.utils.ThemeUtils;
+import com.siju.acexplorer.filesystem.views.FastScrollRecyclerView;
 import com.siju.acexplorer.utils.DialogUtils;
 import com.siju.acexplorer.utils.Utils;
 import com.stericson.RootTools.RootTools;
@@ -106,8 +106,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         Toolbar.OnMenuItemClickListener {
 
     private final String TAG = this.getClass().getSimpleName();
-    private RecyclerView recyclerViewFileList;
-    private VerticalRecyclerViewFastScroller mFastScroller;
+    private FastScrollRecyclerView recyclerViewFileList;
     private View root;
     private final int LOADER_ID = 1000;
     private FileListAdapter fileListAdapter;
@@ -329,17 +328,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     }
 
     private void initializeViews() {
-        recyclerViewFileList = (RecyclerView) root.findViewById(R.id.recyclerViewFileList);
-
-
-//        mFastScroller = (FastScroller) root.findViewById(R.id.fastscroll);
-//        mFastScroller.setPressedHandleColor(ContextCompat.getColor(getActivity(),R.color.accent_blue));
-        mFastScroller = (VerticalRecyclerViewFastScroller) root.findViewById(R.id.fast_scroller);
-        // Connect the recycler to the scroller (to let the scroller scroll the list)
-        mFastScroller.setRecyclerView(recyclerViewFileList);
-        // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
-        recyclerViewFileList.addOnScrollListener(mFastScroller.getOnScrollListener());
-
+        recyclerViewFileList = (FastScrollRecyclerView) root.findViewById(R.id.recyclerViewFileList);
         mTextEmpty = (TextView) root.findViewById(R.id.textEmpty);
         sharedPreferenceWrapper = new SharedPreferenceWrapper();
         recyclerViewFileList.setOnDragListener(new myDragEventListener());
@@ -363,7 +352,6 @@ public class FileListFragment extends Fragment implements LoaderManager
         fileListAdapter.setOnItemClickListener(new FileListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                mFastScroller.hide();
                 if (getActionMode() != null) {
                     if (mIsDualActionModeActive) {
                         if (checkIfDualFragment()) {
@@ -509,12 +497,12 @@ public class FileListFragment extends Fragment implements LoaderManager
 //                        zipEntry = null;
 //                        inChildZip = false;
                         String name = zipChildren.get(position).getName();
-                        if (name.startsWith("/")) name = name.substring(1,name.length());
-                        String name1 = name.substring(0,name.length() - 1); // 2 so that / doesnt come
+                        if (name.startsWith("/")) name = name.substring(1, name.length());
+                        String name1 = name.substring(0, name.length() - 1); // 2 so that / doesnt come
                         zipEntry = zipChildren.get(position).getEntry();
                         zipEntryFileName = name1;
-                        Logger.log(TAG,"handleCategoryItemClick--entry="+zipEntry+ " dir="+zipEntry.isDirectory()
-                                +"name="+zipEntryFileName);
+                        Logger.log(TAG, "handleCategoryItemClick--entry=" + zipEntry + " dir=" + zipEntry.isDirectory()
+                                + "name=" + zipEntryFileName);
                         viewZipContents(position);
                     } else {
                         String path = mFilePath = fileInfoList.get(position).getFilePath();
@@ -570,8 +558,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                                         ZipFile zipFile;
                                         if (inChildZip) {
                                             zipFile = new ZipFile(mChildZipPath);
-                                        }
-                                        else {
+                                        } else {
                                             zipFile = new ZipFile(mZipParentPath);
                                         }
                                         zipEntry1 = zipEntry;
@@ -643,8 +630,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         String newPath;
         if (mCurrentZipDir.startsWith(File.separator)) {
             newPath = mZipParentPath + mCurrentZipDir;
-        }
-        else {
+        } else {
             newPath = mZipParentPath + File.separator + mCurrentZipDir;
         }
         mBaseActivity.setCurrentDir(newPath, isDualPaneInFocus);
@@ -876,7 +862,6 @@ public class FileListFragment extends Fragment implements LoaderManager
 
 
     public void reloadList(boolean isBackPressed, String path) {
-        mFastScroller.hide();
         mFilePath = path;
         mIsBackPressed = isBackPressed;
         refreshList();
@@ -919,12 +904,12 @@ public class FileListFragment extends Fragment implements LoaderManager
             return true;
         } else {
             inChildZip = false;
-            Logger.log(TAG,"checkZipMode--currentzipdir B4="+mCurrentZipDir);
+            Logger.log(TAG, "checkZipMode--currentzipdir B4=" + mCurrentZipDir);
             mCurrentZipDir = new File(mCurrentZipDir).getParent();
             if (mCurrentZipDir.equals(File.separator)) {
                 mCurrentZipDir = null;
             }
-            Logger.log(TAG,"checkZipMode--currentzipdir AFT="+mCurrentZipDir);
+            Logger.log(TAG, "checkZipMode--currentzipdir AFT=" + mCurrentZipDir);
             reloadList(true, mZipParentPath);
             isDualPaneInFocus = checkIfDualFragment();
             String newPath;
@@ -934,7 +919,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                 if (mCurrentZipDir.startsWith(File.separator)) {
                     newPath = mZipParentPath + File.separator + mCurrentZipDir;
                 } else {
-                    newPath = mZipParentPath  + mCurrentZipDir;
+                    newPath = mZipParentPath + mCurrentZipDir;
                 }
             }
             mBaseActivity.setCurrentDir(newPath, isDualPaneInFocus);
@@ -979,17 +964,16 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
         String path = args.getString(FileConstants.KEY_PATH);
         mSwipeRefreshLayout.setRefreshing(true);
-        Logger.log(TAG, "onCreateLoader---path=" + path + "category=" + mCategory + "zip entry="+zipEntry);
+        Logger.log(TAG, "onCreateLoader---path=" + path + "category=" + mCategory + "zip entry=" + zipEntry);
 
         if (mIsZip) {
             if (inChildZip) {
                 if (zipEntry.isDirectory()) {
                     return new FileListLoader(this, mChildZipPath, createCacheDirExtract(),
                             zipEntryFileName, true, zipEntry);
-                }
-                else
-                return new FileListLoader(this, mZipParentPath, createCacheDirExtract(),
-                        zipEntryFileName, true, zipEntry);
+                } else
+                    return new FileListLoader(this, mZipParentPath, createCacheDirExtract(),
+                            zipEntryFileName, true, zipEntry);
             }
             return new FileListLoader(this, path, FileConstants.CATEGORY.ZIP_VIEWER.getValue(),
                     mCurrentZipDir, isDualPaneInFocus, mInParentZip);

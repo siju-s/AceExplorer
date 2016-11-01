@@ -20,7 +20,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,10 +36,10 @@ import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.FileListAdapter;
 import com.siju.acexplorer.filesystem.FileListLoader;
 import com.siju.acexplorer.filesystem.model.FileInfo;
-import com.siju.acexplorer.filesystem.ui.vertical.VerticalRecyclerViewFastScroller;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.utils.MediaStoreHack;
 import com.siju.acexplorer.filesystem.utils.ThemeUtils;
+import com.siju.acexplorer.filesystem.views.FastScrollRecyclerView;
 import com.siju.acexplorer.utils.DialogUtils;
 import com.siju.acexplorer.utils.PermissionUtils;
 
@@ -49,14 +48,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * Created by SIJU on 04-07-2016.
- */
+
 
 public class DialogBrowseFragment extends DialogFragment implements LoaderManager.LoaderCallbacks<ArrayList<FileInfo>> {
 
     private final String TAG = this.getClass().getSimpleName();
-    private RecyclerView recyclerViewFileList;
+    private FastScrollRecyclerView recyclerViewFileList;
     private View root;
     private final int LOADER_ID = 1000;
     private FileListAdapter fileListAdapter;
@@ -77,9 +74,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
     private static final int MY_PERMISSIONS_REQUEST = 1;
     private static final int SETTINGS_REQUEST = 200;
     private MaterialDialog materialDialog;
-    //    private VerticalRecyclerViewFastScroller mFastScroller;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private VerticalRecyclerViewFastScroller mFastScroller;
     private boolean mIsBackPressed;
     private LinearLayoutManager llm;
     private HashMap<String, Bundle> scrollPosition = new HashMap<>();
@@ -142,7 +137,6 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
         fileListAdapter.setOnItemClickListener(new FileListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                mFastScroller.hide();
                 File file = new File(fileInfoList.get(position).getFilePath());
                 if (file.isDirectory()) {
                     mInStoragesList = false;
@@ -392,10 +386,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
     }
 
     private void initializeViews() {
-        recyclerViewFileList = (RecyclerView) root.findViewById(R.id.recyclerViewFileList);
-        mFastScroller = (VerticalRecyclerViewFastScroller) root.findViewById(R.id.fast_scroller);
-        mFastScroller.setRecyclerView(recyclerViewFileList);
-        recyclerViewFileList.addOnScrollListener(mFastScroller.getOnScrollListener());
+        recyclerViewFileList = (FastScrollRecyclerView) root.findViewById(R.id.recyclerViewFileList);
         recyclerViewFileList.setHasFixedSize(true);
         llm = new LinearLayoutManager(getActivity());
         recyclerViewFileList.setLayoutManager(llm);
@@ -426,7 +417,6 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
     }
 
     public void reloadData() {
-        mFastScroller.hide();
         mIsBackPressed = true;
         mCurrentPath = new File(mCurrentPath).getParent();
         mTextCurrentPath.setText(mCurrentPath);
@@ -486,11 +476,9 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
                 }
                 recyclerViewFileList.stopScroll();
                 mTextEmpty.setVisibility(View.GONE);
-//                mFastScroller.setVisibility(View.VISIBLE);
             } else {
                 mTextEmpty.setText(getString(R.string.no_music));
                 mTextEmpty.setVisibility(View.VISIBLE);
-//                mFastScroller.setVisibility(View.GONE);
             }
         }
 
