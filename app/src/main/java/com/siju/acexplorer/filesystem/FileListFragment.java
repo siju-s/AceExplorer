@@ -170,7 +170,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private boolean mInstanceStateExists;
     private final int DIALOG_FRAGMENT = 5000;
     private boolean clearCache;
-    private final String cacheTempDir = "temp_extract";
+    private final String cacheTempDir = ".tmp";
     ZipEntry zipEntry = null;
     private String zipEntryFileName;
     Archive rar;
@@ -652,12 +652,20 @@ public class FileListFragment extends Fragment implements LoaderManager
     }
 
     private String createCacheDirExtract() {
-        File file = new File(getActivity().getExternalCacheDir(), cacheTempDir);
+        File file = new File(getActivity().getExternalCacheDir().getParent(), cacheTempDir);
 
         if (!file.exists()) {
             boolean result = file.mkdir();
-            if (result)
+            if (result) {
+                String nomedia = ".nomedia";
+                File noMedia = new File(file + File.separator + nomedia);
+                try {
+                    noMedia.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 return file.getAbsolutePath();
+            }
         } else {
             return file.getAbsolutePath();
         }
@@ -2296,7 +2304,8 @@ public class FileListFragment extends Fragment implements LoaderManager
         if (mViewMode == FileConstants.KEY_GRIDVIEW) {
             mIsDualModeEnabled = mPreferences
                     .getBoolean(FileConstants.PREFS_DUAL_PANE, false);
-            if (mCurrentOrientation == Configuration.ORIENTATION_PORTRAIT || !mIsDualModeEnabled) {
+            if (mCurrentOrientation == Configuration.ORIENTATION_PORTRAIT || !mIsDualModeEnabled || FileUtils
+                    .checkIfLibraryCategory(mCategory)) {
                 mGridColumns = getResources().getInteger(R.integer.grid_columns);
             } else {
                 mGridColumns = getResources().getInteger(R.integer.grid_columns_dual);

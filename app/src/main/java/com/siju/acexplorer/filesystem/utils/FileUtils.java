@@ -1785,6 +1785,12 @@ public class FileUtils implements CopyService.Progress {
                     return;
                 }
                 String newFilePath = currentDir + "/" + fileName + ext;
+
+                if (FileUtils.isFileExisting(currentDir, fileName + ext)) {
+                    materialDialog.getInputEditText().setError(activity.getResources().getString(R.string
+                            .dialog_title_paste_conflict));
+                    return;
+                }
                 activity.mFileOpsHelper.compressFile(new File(newFilePath), paths);
                 materialDialog.dismiss();
             }
@@ -2070,7 +2076,7 @@ public class FileUtils implements CopyService.Progress {
         return hash;
     }
 
-    public static String getTitleForCategory(Context context,int category) {
+    public static String getTitleForCategory(Context context, int category) {
         switch (category) {
             case 1:
                 return context.getString(R.string.nav_menu_music);

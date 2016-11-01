@@ -116,7 +116,7 @@ public class BaseActivity extends AppCompatActivity implements
     private final int MENU_FAVOURITES = 1;
     private boolean mIsFirstRun;
     public static final String PREFS_FIRST_RUN = "first_app_run";
-    private boolean mIsDualPaneEnabled = true;
+    private boolean mIsDualPaneEnabled;
     private boolean mShowDualPane;
     private boolean mIsHomeScreenEnabled;
     private boolean mShowHidden;
@@ -2185,7 +2185,7 @@ public class BaseActivity extends AppCompatActivity implements
         }
 
         boolean isDualPaneEnabledSettings = mSharedPreferences.getBoolean(FileConstants
-                .PREFS_DUAL_PANE, true);
+                .PREFS_DUAL_PANE, mIsTablet);
         if (isDualPaneEnabledSettings != mIsDualPaneEnabled) {
             mIsDualPaneEnabled = isDualPaneEnabledSettings;
 
