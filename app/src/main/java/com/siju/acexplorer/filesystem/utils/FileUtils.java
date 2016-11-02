@@ -257,7 +257,6 @@ public class FileUtils implements CopyService.Progress {
             long copiedBytes = intent.getLongExtra("DONE", 0);
             long totalBytes = intent.getLongExtra("TOTAL", 0);
             boolean isSuccess = intent.getBooleanExtra(FileConstants.IS_OPERATION_SUCCESS, true);
-            Logger.log("FileUtils", "total=" + copiedFileInfo.size());
 
             if (!isSuccess) {
                 stopCopyService();
@@ -267,11 +266,13 @@ public class FileUtils implements CopyService.Progress {
 
             int progress = intent.getIntExtra("PROGRESS", 0);
             int totalProgress = intent.getIntExtra("TOTAL_PROGRESS", 0);
+            Logger.log("FileUtils", "PROGRESS=" + progress+ " TOTAL PROGRESS="+totalProgress);
+            Logger.log("FileUtils", "Copied bytes=" + copiedBytes+ " TOTAL bytes="+totalBytes);
 
 
             progressBarPaste.setProgress(totalProgress);
             textProgress.setText(totalProgress + "%");
-            if (progress == 100) {
+            if (progress == 100 || totalBytes == copiedBytes) {
                 int count = intent.getIntExtra("COUNT", 1);
 //                progress =  intent.getIntExtra("PROGRESS", 0);
                 Logger.log("FileUtils", "COUNT=" + count);

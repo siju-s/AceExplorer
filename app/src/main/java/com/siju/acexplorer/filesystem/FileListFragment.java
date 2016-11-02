@@ -1378,7 +1378,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
             mActionMode = null;
             mBottomToolbar.setVisibility(View.GONE);
-            mSelectedItemPositions.clear();
+            mSelectedItemPositions = new SparseBooleanArray();
             mSwipeRefreshLayout.setEnabled(true);
             mDragPaths.clear();
             // FAB should be visible only for Files Category
@@ -1425,7 +1425,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                 }
 
                 File newFile = new File(newFilePath + "/" + renamedName);
-                if (FileUtils.isFileExisting(mFilePath, newFile.getName())) {
+                if (FileUtils.isFileExisting(newFilePath, newFile.getName())) {
                     materialDialog.getInputEditText().setError(getResources().getString(R.string
                             .dialog_title_paste_conflict));
                     return;

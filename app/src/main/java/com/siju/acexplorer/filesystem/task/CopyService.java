@@ -446,8 +446,10 @@ public class CopyService extends Service {
                     int p1 = (int) ((copiedBytes / (float) totalBytes) * 100);
                     intent.putExtra("TOTAL_PROGRESS", p1);
 
-                    if (mProgressListener != null)
+                    if (mProgressListener != null) {
                         mProgressListener.onUpdate(intent);
+                        if (copiedBytes == totalBytes) mProgressListener = null;
+                    }
 
                 }
                 in.close();
@@ -457,7 +459,7 @@ public class CopyService extends Service {
             private void publishResults(String fileName, int p1, int p2, int id, long total, long done, boolean b, boolean move) {
                 if (hash.get(id)) {
                     //notification
-                    Logger.log("CopyService", "Total bytes=" + totalBytes + "Copied=" + copiedBytes);
+                    Logger.log("CopyService", "Total bytes=" + totalBytes + "Copied=" + copiedBytes+"Progress = "+p1);
                     mBuilder.setProgress(100, p1, false);
                     mBuilder.setOngoing(true);
                     int title = R.string.copying;
@@ -467,7 +469,7 @@ public class CopyService extends Service {
                             .formatSize(mContext, total));
                     int id1 = NOTIFICATION_ID + id;
                     mNotifyManager.notify(id1, mBuilder.build());
-                    if (p1 == 100 || total == 0) {
+                    if (p1 == 100 || total == 0 || totalBytes == copiedBytes) {
                         mBuilder.setContentTitle("Copy completed");
                         if (move)
                             mBuilder.setContentTitle("Move Completed");

@@ -420,11 +420,10 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 int albumIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID);
                 long albumId = cursor.getLong(albumIdIndex);
 
-                Logger.log("Adapter", "displayAudioAlbumArt=" + albumId);
+//                Logger.log("Adapter", "displayAudioAlbumArt=" + albumId);
                 Uri newUri = ContentUris.withAppendedId(mAudioUri, albumId);
                 Glide.with(mContext).load(newUri).centerCrop()
                         .placeholder(R.drawable.ic_music_default)
-//                    .crossFade(2)
                         .into(fileListViewHolder.imageIcon);
             }
             cursor.close();

@@ -12,33 +12,45 @@ import com.siju.acexplorer.filesystem.ui.DialogBrowseFragment;
 import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 
 
-/**
- * Created by Siju on 04-09-2016.
- */
 public class TransparentActivity extends AppCompatActivity {
     private final String TAG = this.getClass().getSimpleName();
-    private DialogBrowseFragment dialogFragment;
-    private final String FRAGMENT_TAG = "Browse_Frag";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
-        if (intent != null && intent.getAction() != null && intent.getAction().equals(RingtoneManager
-                .ACTION_RINGTONE_PICKER)) {
-//            mRingtonePickerIntent = true;
-            showRingtonePickerDialog(intent);
+        handleIntent(intent);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        if (intent != null && intent.getAction() != null) {
+            switch (intent.getAction())  {
+                case RingtoneManager.ACTION_RINGTONE_PICKER:
+                    showPickerDialog(intent,true);
+                    break;
+                case Intent.ACTION_GET_CONTENT:
+                    showPickerDialog(intent,false);
+                    break;
+            }
         }
     }
 
-    private void showRingtonePickerDialog(Intent intent) {
+    private void showPickerDialog(Intent intent,boolean isRingtonePicker) {
 
-        dialogFragment = new DialogBrowseFragment();
+        DialogBrowseFragment dialogFragment = new DialogBrowseFragment();
         dialogFragment.setStyle(DialogFragment.STYLE_NORMAL, checkTheme());
         Bundle args = new Bundle();
-        args.putBoolean("ringtone_picker", true);
+        args.putBoolean("ringtone_picker", isRingtonePicker);
+        args.putBoolean("file_picker",!isRingtonePicker);
         args.putInt("ringtone_type",intent.getIntExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, 0));
         dialogFragment.setArguments(args);
+        String FRAGMENT_TAG = "Browse_Frag";
         dialogFragment.show(getSupportFragmentManager(), FRAGMENT_TAG);
     }
 
@@ -52,14 +64,6 @@ public class TransparentActivity extends AppCompatActivity {
             return R.style.AppTheme_NoActionBar;
         }
     }
-
-/*    @Override
-    public void onBackPressed() {
-        if (dialogFragment.checkIfRootDir())
-            super.onBackPressed();
-        else
-            dialogFragment.reloadData();
-    }*/
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

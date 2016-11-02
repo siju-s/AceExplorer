@@ -49,7 +49,6 @@ import java.util.HashMap;
 import java.util.List;
 
 
-
 public class DialogBrowseFragment extends DialogFragment implements LoaderManager.LoaderCallbacks<ArrayList<FileInfo>> {
 
     private final String TAG = this.getClass().getSimpleName();
@@ -69,6 +68,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
     private boolean mShowHidden;
     private int mSortMode;
     private boolean mIsRingtonePicker;
+    private boolean isFilePicker;
     private int mRingToneType;
     private boolean mIsDarkTheme;
     private static final int MY_PERMISSIONS_REQUEST = 1;
@@ -116,11 +116,17 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
         mIsDarkTheme = ThemeUtils.isDarkTheme(getActivity());
         initializeViews();
 
-        if (getArguments() != null && getArguments().getBoolean("ringtone_picker")) {
-            mButtonOk.setVisibility(View.GONE);
-            mIsRingtonePicker = true;
-            mRingToneType = getArguments().getInt("ringtone_type");
+        if (getArguments() != null) {
+            if (getArguments().getBoolean("ringtone_picker")) {
+                mButtonOk.setVisibility(View.GONE);
+                mIsRingtonePicker = true;
+                mRingToneType = getArguments().getInt("ringtone_type");
+            } else if (getArguments().getBoolean("file_picker")) {
+                mButtonOk.setVisibility(View.GONE);
+                isFilePicker = true;
+            }
         }
+
         loadStoragesList();
 
         mCurrentPath = FileUtils.getInternalStorage().getAbsolutePath();
@@ -155,7 +161,8 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
                         Intent intent = new Intent();
                         Uri mediaStoreUri = MediaStoreHack.getCustomRingtoneUri(getActivity().getContentResolver(),
                                 file.getAbsolutePath(), mRingToneType);
-                        System.out.println(mediaStoreUri + "\t" + FileUtils.getMimeType(file) + "type=" + mRingToneType);
+                        System.out.println(mediaStoreUri + "\t" + FileUtils.getMimeType(file) + "type=" +
+                                mRingToneType);
 
                         if (mediaStoreUri != null) {
                             intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, mRingToneType);
@@ -166,6 +173,11 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
                         } else {
                             getActivity().setResult(Activity.RESULT_CANCELED, intent);
                         }
+                        getActivity().finish();
+                    } else if (isFilePicker) {
+                        Intent intent = new Intent();
+                        intent.setData(Uri.fromFile(file));
+                        getActivity().setResult(Activity.RESULT_OK, intent);
                         getActivity().finish();
                     }
                 }
