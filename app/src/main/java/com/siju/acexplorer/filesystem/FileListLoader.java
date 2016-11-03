@@ -204,6 +204,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         }
     }
 
+
     @Override
     public void onCanceled(ArrayList<FileInfo> data) {
         super.onCanceled(data);

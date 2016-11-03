@@ -175,6 +175,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     Archive rar;
     FileHeader header;
     File output;
+    private boolean setRefreshSpan;
 
 
     @Override
@@ -671,7 +672,6 @@ public class FileListFragment extends Fragment implements LoaderManager
                 if (path != null) {
                     FileUtils.scanFile(getActivity(), path);
                 }
-                mIsBackPressed = true;
                 reloadList(true, mFilePath);
             } else if (action.equals("refresh")) {
 
@@ -690,9 +690,6 @@ public class FileListFragment extends Fragment implements LoaderManager
                         }
                         paths.toArray(pathArray);
 
-                            /*String[] mimeArray = new String[mimeTypes.size()];
-                            mimeTypes.toArray(mimeArray);
-*/
                         MediaScannerConnection.scanFile(getActivity(), pathArray, null, new OnScanCompletedListener() {
 
                             @Override
@@ -701,10 +698,6 @@ public class FileListFragment extends Fragment implements LoaderManager
                             }
                         });
 
-//                        refreshMediaStore(paths.get(i));
-//                        }
-
-//                        computeScroll();
                         mIsBackPressed = true;
                         Uri uri = FileUtils.getUriForCategory(mCategory);
                         getContext().getContentResolver().notifyChange(uri, null);
@@ -757,7 +750,8 @@ public class FileListFragment extends Fragment implements LoaderManager
                             Toast.makeText(getActivity(), getString(R.string.msg_operation_failed), Toast
                                     .LENGTH_LONG).show();
                         } else {
-                            refreshList();
+                            computeScroll();
+                            reloadList(true, mFilePath);
                         }
                         break;
 
@@ -858,6 +852,8 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     public void setCategory(int category) {
         mCategory = category;
+        setRefreshSpan = true;
+
     }
 
 
@@ -935,7 +931,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         } else if (path.equals(mZipParentPath)) {
             mInParentZip = true;
             mCurrentZipDir = null;
-            reloadList(true, null);
+            reloadList(true, mZipParentPath);
             mBaseActivity.setCurrentDir(mZipParentPath, isDualPaneInFocus);
             mBaseActivity.setNavDirectory(mZipParentPath, isDualPaneInFocus);
             return false;
@@ -1005,6 +1001,11 @@ public class FileListFragment extends Fragment implements LoaderManager
             addItemDecoration();
 
             if (!data.isEmpty()) {
+
+                if (setRefreshSpan) {
+                    refreshSpan();
+                    setRefreshSpan = false;
+                }
 
                 if (mIsBackPressed) {
                     if (checkIfDualFragment()) {
@@ -1349,10 +1350,13 @@ public class FileListFragment extends Fragment implements LoaderManager
 
                     if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
                         ArrayList<FileInfo> infoList = new ArrayList<>();
+                        ArrayList<Integer> pos = new ArrayList<>();
                         for (int i = 0; i < mSelectedItemPositions.size(); i++) {
                             infoList.add(fileInfoList.get(mSelectedItemPositions.keyAt(i)));
+                            pos.add(mSelectedItemPositions.keyAt(i));
+
                         }
-                        hideUnHideFiles(infoList);
+                        hideUnHideFiles(infoList,pos);
                     }
                     mActionMode.finish();
                     return true;
@@ -1449,7 +1453,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     }
 
 
-    private void hideUnHideFiles(ArrayList<FileInfo> fileInfo) {
+    private void hideUnHideFiles(ArrayList<FileInfo> fileInfo,ArrayList<Integer> pos) {
         for (int i = 0; i < fileInfo.size(); i++) {
             String fileName = fileInfo.get(i).getFileName();
             String renamedName;
@@ -1458,9 +1462,14 @@ public class FileListFragment extends Fragment implements LoaderManager
             } else {
                 renamedName = "." + fileName;
             }
-            FileUtils.renameTarget(fileInfo.get(i).getFilePath(), renamedName);
+            String path = fileInfo.get(i).getFilePath();
+            File oldFile = new File(path);
+            String temp = path.substring(0, path.lastIndexOf(File.separator));
+
+            File newFile = new File(temp + File.separator + renamedName);
+            mBaseActivity.mFileOpsHelper.renameFile(mIsRootMode, oldFile, newFile,
+                    pos.get(i));
         }
-        refreshList();
     }
 
 
@@ -2294,7 +2303,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             } else {
                 mGridColumns = getResources().getInteger(R.integer.grid_columns_dual);
             }
-            Log.d(TAG, "Refresh span--columns=" + mGridColumns);
+            Log.d(TAG, "Refresh span--columns=" + mGridColumns + "category="+mCategory+" dual mode="+mIsDualModeEnabled);
 
             llm = new CustomGridLayoutManager(getActivity(), mGridColumns);
             recyclerViewFileList.setLayoutManager(llm);

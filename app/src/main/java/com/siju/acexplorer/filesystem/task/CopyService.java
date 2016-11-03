@@ -22,10 +22,8 @@ package com.siju.acexplorer.filesystem.task;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
@@ -60,7 +58,7 @@ import static com.siju.acexplorer.filesystem.utils.FileUtils.COPY_PROGRESS;
 public class CopyService extends Service {
     private SparseBooleanArray hash = new SparseBooleanArray();
     private HashMap<Integer, ZipProgressModel> hash1 = new HashMap<>();
-    private boolean rootmode;
+    private boolean rootmode = true;
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
     private Context mContext;
@@ -72,9 +70,6 @@ public class CopyService extends Service {
     @Override
     public void onCreate() {
         mContext = getApplicationContext();
-/*        SharedPreferences Sp = PreferenceManager.getDefaultSharedPreferences(this);
-        rootmode = Sp.getBoolean("rootmode", false);*/
-        registerReceiver(receiver3, new IntentFilter("copycancel"));
     }
 
 
@@ -122,13 +117,6 @@ public class CopyService extends Service {
 
         // If we get killed, after returning from here, restart
         return START_STICKY;
-    }
-
-    private ProgressListener progressListener;
-
-
-    public void onDestroy() {
-        this.unregisterReceiver(receiver3);
     }
 
     public class DoInBackground extends AsyncTask<Bundle, Void, Integer> {
@@ -343,11 +331,13 @@ public class CopyService extends Service {
                     if (filePaths.size() == 0) {
                         Intent intent = new Intent(COPY_PROGRESS);
                         intent.putExtra("PROGRESS", 100);
-                        intent.putExtra("DONE", 0);
+                        intent.putExtra("DONE", 0L);
                         intent.putExtra("TOTAL", totalBytes);
                         intent.putExtra("COUNT", 1);
-                        if (mProgressListener != null)
+                        if (mProgressListener != null) {
                             mProgressListener.onUpdate(intent);
+                            if (totalBytes == 0) mProgressListener = null;
+                        }
                     }
                 } else {
                     if (!hash.get(id)) return;
@@ -500,6 +490,10 @@ public class CopyService extends Service {
                     if (mProgressListener != null)
                         mProgressListener.onUpdate(intent);
 
+                    if (copiedBytes == totalBytes) {
+                        mProgressListener = null;
+                    }
+
                 } else publishCompletedResult(id, NOTIFICATION_ID + id);
             }
 
@@ -566,12 +560,6 @@ public class CopyService extends Service {
         }
     }
 
-    public interface ProgressListener {
-        void onUpdate(ZipProgressModel zipProgressModel);
-
-        void refresh();
-    }
-
     private Progress mProgressListener;
 
     public interface Progress {
@@ -583,31 +571,6 @@ public class CopyService extends Service {
     public void registerProgressListener(Progress progress) {
         mProgressListener = progress;
     }
-
-    private BroadcastReceiver receiver3 = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //cancel operation
-            hash.put(intent.getIntExtra("id", 1), false);
-        }
-    };
-/*    //bind with processviewer
-    RegisterCallback registerCallback = new RegisterCallback.Stub() {
-        @Override
-        public void registerCallBack(ProgressListener p) throws RemoteException {
-            progressListener = p;
-        }
-
-        @Override
-        public List<DataPackage> getCurrent() throws RemoteException {
-            List<DataPackage> dataPackages = new ArrayList<>();
-            for (int i : hash1.keySet()) {
-                dataPackages.add(hash1.get(i));
-            }
-            return dataPackages;
-        }
-    };*/
 
     @Override
     public IBinder onBind(Intent arg0) {
