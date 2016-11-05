@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.ContentObserver;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Trace;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -18,15 +20,19 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 
 import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
@@ -36,7 +42,6 @@ import com.siju.acexplorer.filesystem.model.FavInfo;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.model.HomeLibraryInfo;
 import com.siju.acexplorer.filesystem.model.LibrarySortModel;
-import com.siju.acexplorer.filesystem.ui.DividerItemDecoration;
 import com.siju.acexplorer.filesystem.ui.HomeScreenGridLayoutManager;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.utils.ThemeUtils;
@@ -47,15 +52,15 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class HomeScreenFragment extends Fragment implements LoaderManager
-        .LoaderCallbacks<ArrayList<FileInfo>> {
+        .LoaderCallbacks<ArrayList<FileInfo>>, View.OnClickListener {
 
     private View root;
     private int mResourceIds[];
     private String mLabels[];
     private int mCategoryIds[];
-    private RecyclerView recyclerViewLibrary;
-    private RecyclerView recyclerViewStorages;
-    private HomeLibraryAdapter homeLibraryAdapter;
+    //    private RecyclerView recyclerViewLibrary;
+//    private RecyclerView recyclerViewStorages;
+    //    private HomeLibraryAdapter homeLibraryAdapter;
     private HomeStoragesAdapter homeStoragesAdapter;
     private ArrayList<HomeLibraryInfo> homeLibraryInfoArrayList;
     private ArrayList<HomeLibraryInfo> tempLibraryInfoArrayList;
@@ -72,6 +77,11 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     private Handler handler = new Handler();
     private UriObserver mUriObserver = new UriObserver(handler);
     private boolean mIsPermissionGranted = true;
+    private TableLayout libraryContainer;
+    private TableLayout storagesContainer;
+
+    private int mGridColumns;
+    private boolean mIsThemeDark;
 
 
     @Override
@@ -95,9 +105,11 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
         Logger.log(TAG, "onActivityCreated" + savedInstanceState);
+        Trace.beginSection("HomePage");
 
         mCurrentOrientation = getResources().getConfiguration().orientation;
         mIsDualModeEnabled = getArguments().getBoolean(FileConstants.KEY_DUAL_ENABLED, false);
+        mIsThemeDark = ThemeUtils.isDarkTheme(getContext());
         homeLibraryInfoArrayList = new ArrayList<>();
         homeStoragesInfoArrayList = new ArrayList<>();
         tempLibraryInfoArrayList = new ArrayList<>();
@@ -110,13 +122,13 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         initializeLibraries();
         initializeStorageGroup();
 
-        homeLibraryAdapter = new HomeLibraryAdapter(getActivity(), homeLibraryInfoArrayList);
-        homeStoragesAdapter = new HomeStoragesAdapter(getActivity(), homeStoragesInfoArrayList);
-        recyclerViewLibrary.setAdapter(homeLibraryAdapter);
-        recyclerViewStorages.setAdapter(homeStoragesAdapter);
+//        homeLibraryAdapter = new HomeLibraryAdapter(getActivity(), homeLibraryInfoArrayList);
+//        homeStoragesAdapter = new HomeStoragesAdapter(getActivity(), homeStoragesInfoArrayList);
+//        recyclerViewLibrary.setAdapter(homeLibraryAdapter);
+//        recyclerViewStorages.setAdapter(homeStoragesAdapter);
 
         setupLoaders();
-        initListeners();
+//        initListeners();
     }
 
     public void setPermissionGranted() {
@@ -137,35 +149,41 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     }
 
     private void setGridColumns() {
-        int mGridColumns = getResources().getInteger(R.integer.homescreen_columns);
+        mGridColumns = getResources().getInteger(R.integer.homescreen_columns);
 //        Logger.log(TAG,"Grid columns="+mGridColumns);
         GridLayoutManager gridLayoutManagerLibrary = new HomeScreenGridLayoutManager(getActivity(), mGridColumns);
-        recyclerViewLibrary.setLayoutManager(gridLayoutManagerLibrary);
+//        recyclerViewLibrary.setLayoutManager(gridLayoutManagerLibrary);
     }
 
 
     private void initializeViews() {
         boolean isDarkTheme = ThemeUtils.isDarkTheme(getActivity());
-        recyclerViewLibrary = (RecyclerView) root.findViewById(R.id.recyclerViewLibrary);
-        recyclerViewStorages = (RecyclerView) root.findViewById(R.id.recyclerViewStorages);
-        recyclerViewLibrary.setHasFixedSize(true);
-        recyclerViewStorages.setHasFixedSize(true);
+//        recyclerViewLibrary = (RecyclerView) root.findViewById(R.id.recyclerViewLibrary);
+//        recyclerViewStorages = (RecyclerView) root.findViewById(R.id.recyclerViewStorages);
+////        recyclerViewLibrary.setHasFixedSize(true);
+//        recyclerViewStorages.setHasFixedSize(true);
         LinearLayoutManager llmStorage = new LinearLayoutManager(getActivity());
         setGridColumns();
-        recyclerViewLibrary.setItemAnimator(new DefaultItemAnimator());
-        recyclerViewStorages.setLayoutManager(llmStorage);
-        recyclerViewStorages.setItemAnimator(new DefaultItemAnimator());
-        recyclerViewStorages.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
-                .VERTICAL, isDarkTheme));
+//        recyclerViewLibrary.setItemAnimator(new DefaultItemAnimator());
+//        recyclerViewStorages.setLayoutManager(llmStorage);
+//        recyclerViewStorages.setItemAnimator(new DefaultItemAnimator());
+//        recyclerViewStorages.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
+//                .VERTICAL, isDarkTheme));
         sharedPreferenceWrapper = new SharedPreferenceWrapper();
+        libraryContainer = (TableLayout) root.findViewById(R.id.libraryContainer);
+        storagesContainer = (TableLayout) root.findViewById(R.id.storagesContainer);
 
-        CardView cardLibrary = (CardView) root.findViewById(R.id.cardLibrary);
-        CardView cardStorage = (CardView) root.findViewById(R.id.cardStorage);
+        LinearLayout layoutLibrary = (LinearLayout) root.findViewById(R.id.layoutLibrary);
+        LinearLayout layoutStorages = (LinearLayout) root.findViewById(R.id.layoutStorages);
+
+
+//        CardView cardLibrary = (CardView) root.findViewById(R.id.cardLibrary);
+//        CardView cardStorage = (CardView) root.findViewById(R.id.cardStorage);
         NestedScrollView nestedScrollViewHome = (NestedScrollView) root.findViewById(R.id.scrollLayoutHome);
 
         if (isDarkTheme) {
-            cardLibrary.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_colorPrimary));
-            cardStorage.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_colorPrimary));
+            layoutLibrary.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_colorPrimary));
+            layoutStorages.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_colorPrimary));
             nestedScrollViewHome.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_home_bg));
         }
     }
@@ -178,7 +196,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     }
 
     private void initListeners() {
-        homeLibraryAdapter.setOnItemClickListener(new HomeLibraryAdapter.OnItemClickListener() {
+/*        homeLibraryAdapter.setOnItemClickListener(new HomeLibraryAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 int categoryId = homeLibraryInfoArrayList.get(position).getCategoryId();
@@ -211,34 +229,34 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                 }
 
             }
-        });
+        });*/
 
-        homeStoragesAdapter.setOnItemClickListener(new HomeStoragesAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                FragmentTransaction ft = getActivity().getSupportFragmentManager()
-                        .beginTransaction();
-                String currentDir = homeStoragesInfoArrayList.get(position).getPath();
-                Bundle args = new Bundle();
-                args.putBoolean(FileConstants.KEY_HOME, true);
-                args.putString(FileConstants.KEY_PATH, currentDir);
-                FileListFragment fileListFragment = new FileListFragment();
-                fileListFragment.setArguments(args);
-                ft.add(R.id.main_container, fileListFragment);
-                ft.hide(HomeScreenFragment.this);
-                ft.commitAllowingStateLoss();
-                mBaseActivity.setCurrentCategory(FileConstants.CATEGORY.FILES.getValue());
-                mBaseActivity.setDir(currentDir, false);
-                mBaseActivity.addToBackStack(currentDir, FileConstants.CATEGORY.FILES.getValue());
-                if (mIsDualModeEnabled) {
-                    mBaseActivity.toggleDualPaneVisibility(true);
-                    mBaseActivity.createDualFragment();
-                    mBaseActivity.setDir(currentDir, true);
-                    mBaseActivity.setCurrentCategory(FileConstants.CATEGORY.FILES.getValue());
-                    mBaseActivity.addToBackStack(currentDir, FileConstants.CATEGORY.FILES.getValue());
-                }
-            }
-        });
+//        homeStoragesAdapter.setOnItemClickListener(new HomeStoragesAdapter.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(View view, int position) {
+//                FragmentTransaction ft = getActivity().getSupportFragmentManager()
+//                        .beginTransaction();
+//                String currentDir = homeStoragesInfoArrayList.get(position).getPath();
+//                Bundle args = new Bundle();
+//                args.putBoolean(FileConstants.KEY_HOME, true);
+//                args.putString(FileConstants.KEY_PATH, currentDir);
+//                FileListFragment fileListFragment = new FileListFragment();
+//                fileListFragment.setArguments(args);
+//                ft.add(R.id.main_container, fileListFragment);
+//                ft.hide(HomeScreenFragment.this);
+//                ft.commitAllowingStateLoss();
+//                mBaseActivity.setCurrentCategory(FileConstants.CATEGORY.FILES.getValue());
+//                mBaseActivity.setDir(currentDir, false);
+//                mBaseActivity.addToBackStack(currentDir, FileConstants.CATEGORY.FILES.getValue());
+//                if (mIsDualModeEnabled) {
+//                    mBaseActivity.toggleDualPaneVisibility(true);
+//                    mBaseActivity.createDualFragment();
+//                    mBaseActivity.setDir(currentDir, true);
+//                    mBaseActivity.setCurrentCategory(FileConstants.CATEGORY.FILES.getValue());
+//                    mBaseActivity.addToBackStack(currentDir, FileConstants.CATEGORY.FILES.getValue());
+//                }
+//            }
+//        });
     }
 
     private void initConstants() {
@@ -282,6 +300,8 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                 }
             }
         }
+        inflateLibraryItem();
+
     }
 
     public void setDualModeEnabled(boolean isDualModeEnabled) {
@@ -299,8 +319,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     }
 
     private void initializeLibraries() {
-        boolean mIsFirstRun = mSharedPreferences.getBoolean
-                (BaseActivity.PREFS_FIRST_RUN, true);
+        boolean mIsFirstRun = mSharedPreferences.getBoolean(BaseActivity.PREFS_FIRST_RUN, true);
         Log.d(TAG, "First run==" + mIsFirstRun);
         if (mIsFirstRun) {
             savedLibraries = new ArrayList<>();
@@ -336,12 +355,198 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         }
     }
 
+    private void inflateLibraryItem() {
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+/*        libraryContainer.setColumnStretchable(0,true);
+        libraryContainer.setColumnStretchable(2,true);*/
+/*        TableRow.LayoutParams params = new TableRow.LayoutParams();
+        params.span = 3;*/
+        libraryContainer.removeAllViews();
+        TableRow tableRow = new TableRow(getActivity());
+//        int gridColumns = getResources().getInteger(R.integer.homescreen_columns);
+
+        int pos = 0;
+        for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
+
+            RelativeLayout libraryItemContainer = (RelativeLayout) inflater.inflate(R.layout.library_item, null);
+            ImageView imageLibrary = (ImageView) libraryItemContainer.findViewById(R.id.imageLibrary);
+            TextView textLibraryName = (TextView) libraryItemContainer.findViewById(R.id.textLibrary);
+            TextView textCount = (TextView) libraryItemContainer.findViewById(R.id.textCount);
+            imageLibrary.setImageResource(homeLibraryInfoArrayList.get(i).getResourceId());
+            textLibraryName.setText(homeLibraryInfoArrayList.get(i).getCategoryName());
+            if (homeLibraryInfoArrayList.get(i).getCategoryId() == FileConstants.CATEGORY.ADD.getValue()) {
+                textCount.setVisibility(View.GONE);
+            } else {
+                textCount.setVisibility(View.VISIBLE);
+            }
+            textCount.setText(roundOffCount(homeLibraryInfoArrayList.get(i).getCount()));
+            int j = i + 1;
+            if (j % mGridColumns == 0) {
+                tableRow.addView(libraryItemContainer);
+                libraryContainer.addView(tableRow);
+                tableRow = new TableRow(getActivity());
+                pos = 0;
+            } else {
+                tableRow.addView(libraryItemContainer);
+                pos++;
+            }
+            libraryItemContainer.setOnClickListener(this);
+            libraryItemContainer.setTag(homeLibraryInfoArrayList.get(i).getCategoryId());
+            changeColor(imageLibrary, homeLibraryInfoArrayList.get(i).getCategoryId());
+
+
+        }
+        if (pos != 0) {
+            libraryContainer.addView(tableRow);
+        }
+
+        Trace.endSection();
+
+    }
+
+
+    private void updateCount(int index, int count) {
+
+        TableRow tableRow = (TableRow) libraryContainer.getChildAt((index / mGridColumns));
+        int childIndex;
+        if (index < mGridColumns) {
+            childIndex = index;
+        } else {
+            childIndex = (index % mGridColumns);
+        }
+        RelativeLayout container = (RelativeLayout) tableRow.getChildAt(childIndex);
+        TextView textCount = (TextView) container.findViewById(R.id.textCount);
+        textCount.setText(roundOffCount(count));
+
+    }
+
+    private String roundOffCount(int count) {
+        String roundedCount;
+        if (count > 99999) {
+            roundedCount = 99999 + "+";
+        } else {
+            roundedCount = "" + count;
+        }
+        return roundedCount;
+    }
+
+    private void changeColor(View itemView, int category) {
+        if (mIsThemeDark) {
+            switch (category) {
+                case 1:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(getContext(), R.color
+                            .audio_bg_dark));
+                    break;
+                case 2:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(getContext(), R.color
+                            .video_bg_dark));
+                    break;
+                case 3:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(getContext(), R.color
+                            .image_bg_dark));
+                    break;
+                case 4:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(getContext(), R.color
+                            .docs_bg_dark));
+                    break;
+                case 5:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(getContext(), R.color
+                            .downloads_bg_dark));
+                    break;
+                case 6:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(getContext(), R.color
+                            .add_bg_dark));
+                    break;
+                case 7:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(getContext(), R.color
+                            .compressed_bg_dark));
+                    break;
+                case 8:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(getContext(), R.color
+                            .fav_bg_dark));
+                    break;
+                case 9:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(getContext(), R.color
+                            .pdf_bg_dark));
+                    break;
+                case 10:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(getContext(), R.color
+                            .apps_bg_dark));
+                    break;
+                case 11:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(getContext(), R.color
+                            .large_files_bg_dark));
+                    break;
+
+                default:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(getContext(), R.color
+                            .colorPrimary));
+
+            }
+        } else {
+            switch (category) {
+                case 1:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(getContext(), R.color
+                            .audio_bg));
+                    break;
+                case 2:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(getContext(), R.color
+                            .video_bg));
+                    break;
+                case 3:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(getContext(), R.color
+                            .image_bg));
+                    break;
+                case 4:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(getContext(), R.color
+                            .docs_bg));
+                    break;
+                case 5:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(getContext(), R.color
+                            .downloads_bg));
+                    break;
+                case 6:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(getContext(), R.color
+                            .add_bg));
+                    break;
+                case 7:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(getContext(), R.color
+                            .compressed_bg));
+                    break;
+                case 8:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(getContext(), R.color
+                            .fav_bg));
+                    break;
+                case 9:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(getContext(), R.color
+                            .pdf_bg));
+                    break;
+                case 10:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(getContext(), R.color
+                            .apps_bg));
+                    break;
+                case 11:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(getContext(), R.color
+                            .large_files_bg));
+                    break;
+
+                default:
+                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor(getContext(), R.color
+                            .colorPrimary));
+
+
+            }
+        }
+    }
+
+
     public void updateFavoritesCount(int count) {
         for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
             if (homeLibraryInfoArrayList.get(i).getCategoryId() == FileConstants.CATEGORY.FAVORITES.getValue()) {
                 int count1 = homeLibraryInfoArrayList.get(i).getCount();
                 homeLibraryInfoArrayList.get(i).setCount(count1 + count);
-                homeLibraryAdapter.notifyItemChanged(i);
+                updateCount(i, count1 + count);
+//                homeLibraryAdapter.notifyItemChanged(i);
                 break;
             }
         }
@@ -352,7 +557,8 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             if (homeLibraryInfoArrayList.get(i).getCategoryId() == FileConstants.CATEGORY.FAVORITES.getValue()) {
                 int count1 = homeLibraryInfoArrayList.get(i).getCount();
                 homeLibraryInfoArrayList.get(i).setCount(count1 - count);
-                homeLibraryAdapter.notifyItemChanged(i);
+                updateCount(i, count1 - count);
+//                homeLibraryAdapter.notifyItemChanged(i);
                 break;
             }
         }
@@ -436,6 +642,36 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                 homeStoragesInfoArrayList.add(items);
             }
         }
+        inflateStoragesItem();
+    }
+
+    private void inflateStoragesItem() {
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        storagesContainer.removeAllViews();
+
+        for (int i = 0; i < homeStoragesInfoArrayList.size(); i++) {
+//            TableRow tableRow = new TableRow(getActivity());
+
+            RelativeLayout storageItemContainer = (RelativeLayout) inflater.inflate(R.layout.storage_item, null);
+            ProgressBar progressBarSpace = (ProgressBar) storageItemContainer
+                    .findViewById(R.id.progressBarSD);
+            ImageView imageStorage = (ImageView) storageItemContainer.findViewById(R.id.imageStorage);
+            TextView textStorage = (TextView) storageItemContainer.findViewById(R.id.textStorage);
+            TextView textSpace = (TextView) storageItemContainer.findViewById(R.id.textSpace);
+
+            imageStorage.setImageResource(homeStoragesInfoArrayList.get(i).getIcon());
+            textStorage.setText(homeStoragesInfoArrayList.get(i).getFirstLine());
+            textSpace.setText(homeStoragesInfoArrayList.get(i).getSecondLine());
+            progressBarSpace.setProgress(homeStoragesInfoArrayList.get(i).getProgress());
+
+//            tableRow.addView(storageItemContainer);
+            storagesContainer.addView(storageItemContainer);
+            storageItemContainer.setOnClickListener(this);
+            storageItemContainer.setTag(homeStoragesInfoArrayList.get(i).getPath());
+
+        }
+
+
     }
 
     @Override
@@ -469,14 +705,18 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
 
                     if (loader.getId() == FileConstants.CATEGORY.DOWNLOADS.getValue() &&
                             loader.getId() == homeLibraryInfoArrayList.get(i).getCategoryId()) {
+
                         homeLibraryInfoArrayList.get(i).setCount(data.size());
+                        updateCount(i, data.size());
                     } else if (data.get(0).getCategoryId() == homeLibraryInfoArrayList.get(i).getCategoryId()) {
                         Log.d(TAG, "on onLoadFinished--category=" + loader.getId() + "size=" + data.get(0).getCount());
                         homeLibraryInfoArrayList.get(i).setCount(data.get(0).getCount());
+                        updateCount(i, data.get(0).getCount());
+
                     }
                 }
             }
-            homeLibraryAdapter.updateAdapter(homeLibraryInfoArrayList);
+//            homeLibraryAdapter.updateAdapter(homeLibraryInfoArrayList);
         }
     }
 
@@ -517,7 +757,8 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                 }
                 setupLoaders();
                 addToLibrary();
-                homeLibraryAdapter.updateAdapter(homeLibraryInfoArrayList);
+                inflateLibraryItem();
+//                homeLibraryAdapter.updateAdapter(homeLibraryInfoArrayList);
 
                 tempLibraryInfoArrayList = new ArrayList<>();
                 tempLibraryInfoArrayList.addAll(homeLibraryInfoArrayList);
@@ -538,6 +779,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         if (mCurrentOrientation != newConfig.orientation) {
             mCurrentOrientation = newConfig.orientation;
             setGridColumns();
+            inflateLibraryItem();
         }
     }
 
@@ -554,41 +796,99 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         super.onDestroyView();
     }
 
+    @Override
+    public void onClick(View view) {
+        if (view.getTag() instanceof Integer) {
 
-    class UriObserver extends ContentObserver {
-        private Uri mUri;
-
-        UriObserver(Handler handler) {
-
-            super(handler);
-        }
-
-        @Override
-        public void onChange(boolean selfChange) {
-            this.onChange(selfChange, null);
-        }
-
-        @Override
-        public void onChange(boolean selfChange, Uri uri) {
-            if (!uri.equals(mUri)) {
-                mUri = uri;
-                int categoryId = getCategoryForUri(uri);
-                Logger.log(TAG, "Observer Onchange" + uri + " cat id=" + categoryId);
-
-                if (categoryId == 4) {
-                    for (int i = 0; i < savedLibraries.size(); i++) {
-                        int id = savedLibraries.get(i).getCategoryId();
-                        if (id != 1 && id != 2 && id != 3 && id != 8) {
-                            Logger.log(TAG, "Observer savedib cat id=" + id);
-                            restartLoaders(id);
-                        }
-                    }
-                } else {
-                    restartLoaders(categoryId);
+            int categoryId = (int) view.getTag();
+            if (categoryId != FileConstants.CATEGORY.ADD.getValue()) {
+//                homeLibraryInfoArrayList.get(position).getCategoryName();
+                FragmentTransaction ft = getActivity().getSupportFragmentManager()
+                        .beginTransaction();
+                Bundle args = new Bundle();
+                args.putBoolean(FileConstants.KEY_HOME, true);
+                args.putInt(FileConstants.KEY_CATEGORY, categoryId);
+                String path = null;
+                if (categoryId == FileConstants
+                        .CATEGORY.DOWNLOADS.getValue()) {
+                    path = FileUtils.getDownloadsDirectory().getAbsolutePath();
+                    args.putString(FileConstants.KEY_PATH, path);
                 }
+                mBaseActivity.setCurrentCategory(categoryId);
+                mBaseActivity.setIsFromHomePage(true);
+                mBaseActivity.addToBackStack(path, categoryId);
+
+                FileListFragment fileListFragment = new FileListFragment();
+                fileListFragment.setArguments(args);
+                ft.add(R.id.main_container, fileListFragment);
+                ft.hide(HomeScreenFragment.this);
+                ft.addToBackStack(null);
+                ft.commitAllowingStateLoss();
+            } else {
+                Intent intent = new Intent(getActivity(), LibrarySortActivity.class);
+                startActivityForResult(intent, REQUEST_CODE);
+            }
+        } else {
+            FragmentTransaction ft = getActivity().getSupportFragmentManager()
+                    .beginTransaction();
+            String currentDir = (String) view.getTag();
+            Bundle args = new Bundle();
+            args.putBoolean(FileConstants.KEY_HOME, true);
+            args.putString(FileConstants.KEY_PATH, currentDir);
+            FileListFragment fileListFragment = new FileListFragment();
+            fileListFragment.setArguments(args);
+            ft.add(R.id.main_container, fileListFragment);
+            ft.hide(HomeScreenFragment.this);
+            ft.commitAllowingStateLoss();
+            mBaseActivity.setCurrentCategory(FileConstants.CATEGORY.FILES.getValue());
+            mBaseActivity.setDir(currentDir, false);
+            mBaseActivity.addToBackStack(currentDir, FileConstants.CATEGORY.FILES.getValue());
+            if (mIsDualModeEnabled) {
+                mBaseActivity.toggleDualPaneVisibility(true);
+                mBaseActivity.createDualFragment();
+                mBaseActivity.setDir(currentDir, true);
+                mBaseActivity.setCurrentCategory(FileConstants.CATEGORY.FILES.getValue());
+                mBaseActivity.addToBackStack(currentDir, FileConstants.CATEGORY.FILES.getValue());
             }
         }
     }
+
+
+
+class UriObserver extends ContentObserver {
+    private Uri mUri;
+
+    UriObserver(Handler handler) {
+
+        super(handler);
+    }
+
+    @Override
+    public void onChange(boolean selfChange) {
+        this.onChange(selfChange, null);
+    }
+
+    @Override
+    public void onChange(boolean selfChange, Uri uri) {
+        if (!uri.equals(mUri)) {
+            mUri = uri;
+            int categoryId = getCategoryForUri(uri);
+            Logger.log(TAG, "Observer Onchange" + uri + " cat id=" + categoryId);
+
+            if (categoryId == 4) {
+                for (int i = 0; i < savedLibraries.size(); i++) {
+                    int id = savedLibraries.get(i).getCategoryId();
+                    if (id != 1 && id != 2 && id != 3 && id != 8) {
+                        Logger.log(TAG, "Observer savedib cat id=" + id);
+                        restartLoaders(id);
+                    }
+                }
+            } else {
+                restartLoaders(categoryId);
+            }
+        }
+    }
+}
 
 
 }

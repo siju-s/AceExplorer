@@ -187,8 +187,6 @@ class HomeLibraryAdapter extends RecyclerView.Adapter<HomeLibraryAdapter
 
         LibraryViewHolder(View itemView) {
             super(itemView);
-            textLibraryName = (TextView) itemView
-                    .findViewById(R.id.text);
             imageLibrary = (ImageView) itemView.findViewById(R.id.imageLibrary);
             textLibraryName = (TextView) itemView.findViewById(R.id.textLibrary);
             textCount = (TextView) itemView.findViewById(R.id.textCount);

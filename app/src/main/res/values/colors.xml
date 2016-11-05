@@ -20,6 +20,7 @@
     <color name="text_settings_list">#5d6a77</color>
     <color name="text_light">#000000</color>
     <color name="text_dark">#ffffff</color>
+    <color name="cardview_background_color">#D3D3D3</color>
 
 
 

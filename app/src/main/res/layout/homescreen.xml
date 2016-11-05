@@ -5,7 +5,7 @@
                                             android:layout_width="match_parent"
                                             android:layout_height="match_parent"
                                             android:id="@+id/scrollLayoutHome"
-
+                                            android:background="@color/cardview_background_color"
                                             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -16,18 +16,23 @@
                     android:orientation="vertical"
                     app:layout_scrollFlags="scroll|enterAlways">
 
-        <android.support.v7.widget.CardView
-            xmlns:card_view="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/cardLibrary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/card_margin"
-            card_view:cardCornerRadius="4dp">
+        <!--<android.support.v7.widget.CardView-->
+            <!--xmlns:card_view="http://schemas.android.com/apk/res-auto"-->
+            <!--android:id="@+id/cardLibrary"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_margin="@dimen/card_margin"-->
+            <!--card_view:cardCornerRadius="4dp">-->
 
             <LinearLayout
                 android:id="@+id/layoutLibrary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/layer_card_background"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -48,27 +53,38 @@
                     android:layout_marginBottom="2dp"
                     android:layout_marginTop="2dp"
                     android:background="@color/colorPrimaryDark"/>
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recyclerViewLibrary"
+                
+                
+                <TableLayout
+                    android:id="@+id/libraryContainer"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
-            </LinearLayout>
-        </android.support.v7.widget.CardView>
+                    android:layout_height="wrap_content"/>
 
-        <android.support.v7.widget.CardView
-            xmlns:card_view="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/cardStorage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/cardLibrary"
-            android:layout_margin="@dimen/card_margin"
-            card_view:cardCornerRadius="4dp">
+                <!--<android.support.v7.widget.RecyclerView-->
+                    <!--android:id="@+id/recyclerViewLibrary"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"/>-->
+            </LinearLayout>
+        <!--</android.support.v7.widget.CardView>-->
+
+        <!--<android.support.v7.widget.CardView-->
+            <!--xmlns:card_view="http://schemas.android.com/apk/res-auto"-->
+            <!--android:id="@+id/cardStorage"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_margin="@dimen/card_margin"-->
+            <!--card_view:cardCornerRadius="4dp">-->
 
             <LinearLayout
                 android:id="@+id/layoutStorages"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/layoutLibrary"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:background="@drawable/layer_card_background"
                 android:orientation="vertical">
 
                 <TextView
@@ -90,13 +106,25 @@
                     android:layout_marginTop="2dp"
                     android:background="@color/colorPrimaryDark"/>
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recyclerViewStorages"
+                <TableLayout
+                    android:id="@+id/storagesContainer"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    />
+                    android:layout_height="wrap_content">
+
+                        <include layout="@layout/storage_item"/>
+                    <!--<include layout="@layout/storage_item"/>-->
+
+
+
+                </TableLayout>
+
+                <!--<android.support.v7.widget.RecyclerView-->
+                    <!--android:id="@+id/recyclerViewStorages"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--/>-->
             </LinearLayout>
-        </android.support.v7.widget.CardView>
+        <!--</android.support.v7.widget.CardView>-->
 
     </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>

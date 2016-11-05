@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Trace;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -51,7 +52,6 @@ import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.kobakei.ratethisapp.RateThisApp;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.common.SharedPreferenceWrapper;
 import com.siju.acexplorer.filesystem.FileConstants;
@@ -89,6 +89,21 @@ import static com.siju.acexplorer.filesystem.utils.FileUtils.getInternalStorage;
 public class BaseActivity extends AppCompatActivity implements
         View.OnClickListener {
 
+    public static final String PREFS_FIRST_RUN = "first_app_run";
+    private static final int PERMISSIONS_REQUEST = 1;
+    private static final int SETTINGS_REQUEST = 200;
+    private static final int PREFS_REQUEST = 1000;
+    public static final int SAF_REQUEST = 3000;
+
+    public int mOperation = -1;
+    public String mOldFilePath;
+    public String mNewFilePath;
+    public ArrayList<FileInfo> mFiles = new ArrayList<>();
+    public ArrayList<FileInfo> mTotalFiles = new ArrayList<>();
+    public ArrayList<CopyData> mCopyData = new ArrayList<>();
+    public FileOpsHelper mFileOpsHelper;
+    public int mRenamedPosition;
+
     private final String TAG = this.getClass().getSimpleName();
     private ExpandableListAdapter expandableListAdapter;
     private ExpandableListView expandableListView;
@@ -108,14 +123,9 @@ public class BaseActivity extends AppCompatActivity implements
     private int mCategory = FileConstants.CATEGORY.FILES.getValue();
     private int mCategoryDual = FileConstants.CATEGORY.FILES.getValue();
     private CoordinatorLayout mMainLayout;
-    private static final int PERMISSIONS_REQUEST = 1;
-    private static final int SETTINGS_REQUEST = 200;
-    private static final int PREFS_REQUEST = 1000;
-    public static final int SAF_REQUEST = 3000;
     private Toolbar mToolbar;
     private final int MENU_FAVOURITES = 1;
     private boolean mIsFirstRun;
-    public static final String PREFS_FIRST_RUN = "first_app_run";
     private boolean mIsDualPaneEnabled;
     private boolean mShowDualPane;
     private boolean mIsHomeScreenEnabled;
@@ -150,14 +160,6 @@ public class BaseActivity extends AppCompatActivity implements
     private ArrayList<SectionItems> storageGroupChild = new ArrayList<>();
     private int mCurrentOrientation;
     private boolean mIsRootMode;
-    public int mOperation = -1;
-    public String mOldFilePath;
-    public String mNewFilePath;
-    public ArrayList<FileInfo> mFiles = new ArrayList<>();
-    public ArrayList<FileInfo> mTotalFiles = new ArrayList<>();
-    public ArrayList<CopyData> mCopyData = new ArrayList<>();
-    public FileOpsHelper mFileOpsHelper;
-    public int mRenamedPosition;
     private Dialog mPermissionDialog;
     private boolean mIsTablet;
     private HomeScreenFragment mHomeScreenFragment;
@@ -166,6 +168,7 @@ public class BaseActivity extends AppCompatActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Trace.beginSection("BaseActivity");
         setTheme();
         setLanguage();
         super.onCreate(savedInstanceState);
@@ -265,7 +268,6 @@ public class BaseActivity extends AppCompatActivity implements
         fabCreateFolderDual = (FloatingActionButton) findViewById(R.id.fabCreateFolderDual);
         fabCreateFileDual = (FloatingActionButton) findViewById(R.id.fabCreateFileDual);
 
-
         setViewTheme();
 
         frameLayoutFabDual.getBackground().setAlpha(0);
@@ -328,9 +330,15 @@ public class BaseActivity extends AppCompatActivity implements
 
     }
 
+    private void initFab() {
+
+    }
+
     private void registerReceivers() {
         IntentFilter filter = new IntentFilter(Intent.ACTION_LOCALE_CHANGED);
         registerReceiver(mLocaleListener, filter);
+        Trace.endSection();
+
     }
 
     private void removeFragmentsOnPermissionRevoked(Bundle savedInstance) {
@@ -719,11 +727,11 @@ public class BaseActivity extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-
+/*
         // Monitor launch times and interval from installation
         RateThisApp.onStart(this);
         // If the criteria is satisfied, "Rate this app" dialog will be shown
-        RateThisApp.showRateDialogIfNeeded(this);
+        RateThisApp.showRateDialogIfNeeded(this);*/
     }
 
     @Override
