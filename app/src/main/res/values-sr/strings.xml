@@ -18,6 +18,7 @@
     <string name="empty">празан</string>
     <plurals name="number_of_files">
         <item quantity="one">%d фајл</item>
+        <item quantity="few">%d фајл</item>
         <item quantity="other">%d фајлови</item>
     </plurals>
     <string name="downloads">преузимања</string>
@@ -30,11 +31,6 @@
     <string name="action_delete">избрисати</string>
     <string name="action_share">удео</string>
     <string name="msg_cut_copy">фајл (а) копиран у привремену меморију</string>
-    <string name="msg_copy">Копирање фајлова ...</string>
-    <string name="msg_cut">Померање фајлова ...</string>
-    <string name="msg_delete">Брисање фајлова ...</string>
-    <string name="msg_copy_success">успешно копиран</string>
-    <string name="msg_move_success">мовед суццессфулли</string>
     <string name="msg_delete_success">успешно обрисан</string>
     <string name="msg_copy_failure">Операција копирања није успела</string>
     <string name="msg_move_failure">Мове операција није успела</string>
@@ -44,13 +40,11 @@
     <string name="dialog_keep_both">Држи обе датотеке</string>
     <string name="dialog_cancel">отказати</string>
     <string name="dialog_title_paste_conflict">file екистс</string>
-    <string name="msg_operation_cancel">операција је прекинута</string>
     <string name="dialog_from_placeholder">од</string>
     <string name="dialog_to_placeholder">До:</string>
     <string name="button_paste_progress">позадина</string>
     <string name="dialog_delete_title">Да ли сте сигурни да желите да избришете следеће фајлове?</string>
     <string name="msg_ok">ок</string>
-    <string name="msg_save">саве</string>
     <string name="no_files">Но филес</string>
     <string name="msg_error_valid_name">Унесите важећи назив</string>
     <string name="path">патх:</string>
@@ -64,24 +58,15 @@
     <string name="yes">да</string>
     <string name="no">Не</string>
     <string name="properties">пропертиес</string>
-    <string name="msg_zip_success">Зип датотека успешно направљена</string>
-    <string name="msg_zip_failure">Зип операција није успела</string>
     <string name="new_folder">Нова фасцикла</string>
     <string name="new_file">Нови фајл</string>
-    <string name="msg_file_create_success">Филе створио успешно</string>
-    <string name="msg_file_create_failure">Није могуће направити нову слику</string>
-    <string name="msg_folder_create_success">Директоријум је направљен успешно</string>
-    <string name="msg_folder_create_failure">Није могуће направити нови фолдер</string>
     <string name="rate_us">Оцените нас</string>
     <string name="add_fav">Додај у омиљено</string>
     <string name="msg_added_to_fav">Додато у фаворите</string>
     <string name="msg_error_not_supported">Но апликација за руковање акцију</string>
-    <string name="msg_open_file">Отворен филе</string>
     <string name="permission_request">Потребна дозвола за складиштење да покаже све фајлове</string>
     <string name="action_grant">ГРАНТ</string>
-    <string name="permission_deny">Дозвола Дениед.Иоу не може да приступи складиштење.</string>
     <string name="action_sort">Врста</string>
-    <string name="action_view">Поглед</string>
     <string name="action_view_list">лист виев</string>
     <string name="action_view_grid">Поглед мрежа</string>
     <string name="sort_name">Име (А-З)</string>
@@ -92,14 +77,9 @@
     <string name="sort_size_desc">Величина (Већи)</string>
     <string name="sort_date">Датум (Старије)</string>
     <string name="sort_date_desc">Датум (Најновије)</string>
-    <string name="extract_here">ekstrakt овде</string>
     <string name="extract_to">Екстрактовати у</string>
     <string name="open">отворен</string>
-    <string name="dialog_title_options">Опције</string>
     <string name="extracting">Издвајање ..</string>
-    <string name="msg_extract_success">Успешно извршила фајлова</string>
-    <string name="msg_extract_failure">Грешка у вађење фајл</string>
-    <string name="dialog_title_extract_file">Отпакуј фајл</string>
     <string name="dialog_current_path">strujni</string>
     <string name="dialog_specify_path">Наведите путању</string>
     <string name="select_path">Избор путања</string>
@@ -109,7 +89,6 @@
     <string name="action_select_all">Изабери све</string>
     <string name="delete_fav">Обриши фаворите</string>
     <string name="action_search">Претраживање</string>
-    <string name="pref_category_general">ОПШТЕ</string>
     <string name="pref_title_theme">тема</string>
     <string name="pref_subs_light">светло</string>
     <string name="pref_subs_dark">мрак</string>
@@ -119,7 +98,6 @@
     <string name="pref_title_check_update">Провери ажурирања</string>
     <string name="pref_title_change_lang">Промени ЈЕЗИК</string>
     <string name="pref_title_upgrade">Унапреди се у професионалца</string>
-    <string name="pref_title_donate">поклонити</string>
     <string name="pref_title_about">О нама</string>
     <string name="pref_title_version">верзија</string>
     <string name="prefs_summary_dev">развијач</string>
@@ -140,10 +118,8 @@
     <string name="text">текст</string>
     <string name="image">Слика</string>
     <string name="audio">звучни</string>
-    <string name="video">видео</string>
     <string name="other">други</string>
     <string name="file_exists">Датотека већ постоји</string>
-    <string name="enter_zip">Унесите зип име</string>
     <string name="create">створити</string>
     <string name="zip_progress_title">kreiranje рар</string>
     <string name="needsaccess">Врите тражени приступ</string>
@@ -153,7 +129,6 @@
     <string name="msg_operation_failed">Операција неуспела</string>
     <string name="selected">одабран</string>
     <string name="enter_name">Унесите име</string>
-    <string name="grant_access">Одобри приступ</string>
     <string name="storage_low">довољно простора</string>
     <string name="paste_conflict_remember">Запамтити</string>
     <string name="copying">Копирање фајлова</string>
@@ -173,8 +148,6 @@
     <string name="permission_execute">извршити</string>
     <string name="permission_owner">Власник</string>
     <string name="permission_group">Група</string>
-    <string name="permission_other">други</string>
-    <string name="title_activity_welcome">Почетни екран</string>
     <string name="next">СЛЕДЕЋИ</string>
     <string name="skip">СКИП</string>
     <string name="start">РАЗУМЕМ</string>

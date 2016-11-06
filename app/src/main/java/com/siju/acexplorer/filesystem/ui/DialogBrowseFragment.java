@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -58,15 +57,11 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
     private FileListAdapter fileListAdapter;
     private ArrayList<FileInfo> fileInfoList;
     private ArrayList<FileInfo> storagesInfoList;
-
-    private String mFilePath;
     private ImageButton mImageButtonBack;
     private TextView mTextCurrentPath;
     private Button mButtonOk;
     private Button mButtonCancel;
     private String mCurrentPath;
-    private boolean mShowHidden;
-    private int mSortMode;
     private boolean mIsRingtonePicker;
     private boolean isFilePicker;
     private int mRingToneType;
@@ -74,10 +69,9 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
     private static final int MY_PERMISSIONS_REQUEST = 1;
     private static final int SETTINGS_REQUEST = 200;
     private MaterialDialog materialDialog;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
     private boolean mIsBackPressed;
     private LinearLayoutManager llm;
-    private HashMap<String, Bundle> scrollPosition = new HashMap<>();
+    private final HashMap<String, Bundle> scrollPosition = new HashMap<>();
     private TextView mTextEmpty;
     private List<String> mStoragesList = new ArrayList<>();
     private boolean mInStoragesList;
@@ -89,7 +83,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
         return new Dialog(getActivity(), getTheme()) {
             @Override
             public void onBackPressed() {
-                if (!checkIfRootDir())
+                if (checkIfRootDir())
                     reloadData();
                 else {
                     getActivity().setResult(AppCompatActivity.RESULT_CANCELED, null);
@@ -131,10 +125,6 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
 
         mCurrentPath = FileUtils.getInternalStorage().getAbsolutePath();
         mTextCurrentPath.setText(mCurrentPath);
-        mShowHidden = PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean
-                (FileConstants.PREFS_HIDDEN, false);
-        mSortMode = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt(
-                FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
         recyclerViewFileList.setItemAnimator(new DefaultItemAnimator());
         fileListAdapter = new FileListAdapter(getContext(), fileInfoList, 0, 0);
         recyclerViewFileList.setAdapter(fileListAdapter);
@@ -259,13 +249,13 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
 
     }
 
-    public boolean checkIfRootDir() {
-        return mCurrentPath.equals(FileUtils.getInternalStorage().getAbsolutePath());
+    private boolean checkIfRootDir() {
+        return !mCurrentPath.equals(FileUtils.getInternalStorage().getAbsolutePath());
     }
 
 
     private void loadStoragesList() {
-        mStoragesList = FileUtils.getStorageDirectories(getActivity(), true);
+        mStoragesList = FileUtils.getStorageDirectories(getActivity());
         storagesInfoList = new ArrayList<>();
         String STORAGE_INTERNAL, STORAGE_EXTERNAL;
         STORAGE_INTERNAL = getResources().getString(R.string.nav_menu_internal_storage);
@@ -402,7 +392,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
         recyclerViewFileList.setHasFixedSize(true);
         llm = new LinearLayoutManager(getActivity());
         recyclerViewFileList.setLayoutManager(llm);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipeRefreshLayout);
+        SwipeRefreshLayout mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipeRefreshLayout);
         mSwipeRefreshLayout.setEnabled(false);
         mTextEmpty = (TextView) root.findViewById(R.id.textEmpty);
         mImageButtonBack = (ImageButton) root.findViewById(R.id.imageButtonBack);
@@ -412,30 +402,20 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
 
     }
 
- /*   @Override
-    public void onCancel(DialogInterface dialog) {
-        super.onCancel(dialog);
-        getActivity().setResult(AppCompatActivity.RESULT_OK, null);
-        getDialog().dismiss();
-   *//*     if (mIsRingtonePicker) {
-            getActivity().finish();
-        }*//*
-    }*/
-
     private void refreshList(String path) {
         Bundle args = new Bundle();
         args.putString(FileConstants.KEY_PATH, path);
         getLoaderManager().restartLoader(LOADER_ID, args, this);
     }
 
-    public void reloadData() {
+    private void reloadData() {
         mIsBackPressed = true;
         mCurrentPath = new File(mCurrentPath).getParent();
         mTextCurrentPath.setText(mCurrentPath);
         refreshList(mCurrentPath);
     }
 
-    public void computeScroll() {
+    private void computeScroll() {
         View vi = recyclerViewFileList.getChildAt(0);
         int top = (vi == null) ? 0 : vi.getTop();
         int index = llm.findFirstVisibleItemPosition();
@@ -443,7 +423,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
         Bundle b = new Bundle();
         b.putInt("index", index);
         b.putInt("top", top);
-        scrollPosition.put(mFilePath, b);
+        scrollPosition.put(mCurrentPath, b);
     }
 
 
@@ -467,21 +447,17 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
     public void onLoadFinished(Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
         if (data != null) {
             Log.d("TAG", "on onLoadFinished--" + data.size());
-
-//            mStopAnim = true;
             fileInfoList = data;
-//            fileListAdapter.setCategory(mCategory);
             fileListAdapter.setStopAnimation(true);
             fileListAdapter.updateAdapter(fileInfoList);
             recyclerViewFileList.setAdapter(fileListAdapter);
-            recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
-                    .VERTICAL, mIsDarkTheme));
+            recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), mIsDarkTheme));
             if (!data.isEmpty()) {
                 if (mIsBackPressed) {
                     Log.d("TEST", "on onLoadFinished scrollpos--" + scrollPosition.entrySet());
 
-                    if (scrollPosition.containsKey(mFilePath)) {
-                        Bundle b = scrollPosition.get(mFilePath);
+                    if (scrollPosition.containsKey(mCurrentPath)) {
+                        Bundle b = scrollPosition.get(mCurrentPath);
                         llm.scrollToPositionWithOffset(b.getInt("index"), b.getInt("top"));
                     }
                     mIsBackPressed = false;

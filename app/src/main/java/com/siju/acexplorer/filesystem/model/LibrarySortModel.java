@@ -3,17 +3,14 @@ package com.siju.acexplorer.filesystem.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
- * Created by Siju on 24-07-2016.
- */
 public class LibrarySortModel implements Parcelable{
     private int categoryId;
     private String libraryName;
     private boolean isChecked;
 
-    public LibrarySortModel(int categoryId,String libraryName, boolean isChecked) {
+    public LibrarySortModel(int categoryId, String libraryName) {
         this.libraryName = libraryName;
-        this.isChecked = isChecked;
+        this.isChecked = true;
         this.categoryId = categoryId;
     }
 
@@ -30,7 +27,7 @@ public class LibrarySortModel implements Parcelable{
     }
 
 
-    protected LibrarySortModel(Parcel in) {
+    private LibrarySortModel(Parcel in) {
         categoryId = in.readInt();
         libraryName = in.readString();
         isChecked = in.readByte() != 0;

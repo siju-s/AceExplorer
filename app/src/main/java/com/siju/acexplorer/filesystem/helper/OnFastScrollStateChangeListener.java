@@ -1,6 +1,6 @@
 package com.siju.acexplorer.filesystem.helper;
 
-public interface OnFastScrollStateChangeListener {
+interface OnFastScrollStateChangeListener {
 
     /**
      * Called when fast scrolling begins
@@ -12,3 +12,4 @@ public interface OnFastScrollStateChangeListener {
      */
     void onFastScrollStop();
 }
+

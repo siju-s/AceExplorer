@@ -29,29 +29,29 @@ import android.text.TextUtils;
 import com.siju.acexplorer.filesystem.utils.Utils;
 
 
-public class FastScrollPopup {
+class FastScrollPopup {
 
-    private FastScrollRecyclerView mRecyclerView;
+    private final FastScrollRecyclerView mRecyclerView;
 
-    private Resources mRes;
+    private final Resources mRes;
 
     private int mBackgroundSize;
     private int mCornerRadius;
 
-    private Path mBackgroundPath = new Path();
-    private RectF mBackgroundRect = new RectF();
-    private Paint mBackgroundPaint;
+    private final Path mBackgroundPath = new Path();
+    private final RectF mBackgroundRect = new RectF();
+    private final Paint mBackgroundPaint;
 
-    private Rect mInvalidateRect = new Rect();
-    private Rect mTmpRect = new Rect();
+    private final Rect mInvalidateRect = new Rect();
+    private final Rect mTmpRect = new Rect();
 
     // The absolute bounds of the fast scroller bg
-    private Rect mBgBounds = new Rect();
+    private final Rect mBgBounds = new Rect();
 
     private String mSectionName;
 
-    private Paint mTextPaint;
-    private Rect mTextBounds = new Rect();
+    private final Paint mTextPaint;
+    private final Rect mTextBounds = new Rect();
 
     private float mAlpha = 1;
 
@@ -69,7 +69,7 @@ public class FastScrollPopup {
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setAlpha(0);
 
-        setTextSize(Utils.toScreenPixels(mRes, 56));
+        setTextSize(Utils.toScreenPixels(mRes));
         setBackgroundSize(Utils.toPixels(mRes, 88));
     }
 
@@ -198,7 +198,7 @@ public class FastScrollPopup {
         return mInvalidateRect;
     }
 
-    public boolean isVisible() {
+    private boolean isVisible() {
         return (mAlpha > 0f) && (!TextUtils.isEmpty(mSectionName));
     }
 }

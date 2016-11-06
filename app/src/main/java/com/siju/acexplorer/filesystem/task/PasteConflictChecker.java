@@ -3,7 +3,6 @@ package com.siju.acexplorer.filesystem.task;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.support.v4.app.Fragment;
 import android.text.format.Formatter;
 import android.view.View;
 import android.widget.CheckBox;
@@ -30,26 +29,22 @@ import java.util.ArrayList;
 public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String, ArrayList<FileInfo>> {
 
     private ArrayList<FileInfo> mFiles;
-    private ArrayList<FileInfo> mConflictFiles = new ArrayList<>();
+    private final ArrayList<FileInfo> mConflictFiles = new ArrayList<>();
     private int counter = 0;
     private boolean rootmode = false;
-    private Fragment mFragment;
-    private String mCurrentDir;
+    private final String mCurrentDir;
     private boolean mIsMoveOperation = false;
-    private boolean mIsDualPane;
-    private BaseActivity mActivity;
+    private final BaseActivity mActivity;
     private ArrayList<FileInfo> mTotalFileList;
     private boolean mLowStorage;
 
 
-    public PasteConflictChecker(BaseActivity context, Fragment fragment, String currentDir, boolean isDrag, boolean
-            rootMode, boolean isMoveOperation, boolean isDualPane) {
+    public PasteConflictChecker(BaseActivity context, String currentDir, boolean
+            rootMode, boolean isMoveOperation) {
         mActivity = context;
-        mFragment = fragment;
         mCurrentDir = currentDir;
         this.rootmode = rootMode;
         this.mIsMoveOperation = isMoveOperation;
-        mIsDualPane = isDualPane;
     }
 
     @Override
@@ -72,7 +67,7 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
             if (f1.isDirectory()) {
 
                 ArrayList<FileInfo> listFiles = new RootHelper().getFilesListRecursively(mActivity, f1.getFilePath(),
-                        rootmode, true);
+                        rootmode);
 
                 int childCount = listFiles.size();
                 if (childCount == 0) {
@@ -90,7 +85,7 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
         File f = new File(mCurrentDir);
         if (f.getUsableSpace() >= totalBytes) {
 
-            ArrayList<FileInfo> listFiles = RootHelper.getFilesList(mActivity, mCurrentDir,
+            ArrayList<FileInfo> listFiles = RootHelper.getFilesList(mCurrentDir,
                     rootmode, true,false);
 
             for (FileInfo fileInfo : listFiles) {
@@ -108,7 +103,7 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
         return mConflictFiles;
     }
 
-    private ArrayList<CopyData> mCopyData = new ArrayList<>();
+    private final ArrayList<CopyData> mCopyData = new ArrayList<>();
 
     private void showDialog() {
 
@@ -233,14 +228,12 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
                 public void onClick(View view) {
                     if (counter < mConflictFiles.size()) {
                         if (!checkBox.isChecked()) {
-                            mCopyData.add(new CopyData(mConflictFiles.get(counter).getFilePath(), FileUtils
-                                    .ACTION_KEEP));
+                            mCopyData.add(new CopyData(mConflictFiles.get(counter).getFilePath()));
                             counter++;
                         } else {
                             for (int i = 0; i < mConflictFiles.size(); i++) {
 //                                if (!mCopyData.contains(mConflictFiles.get(i).getFilePath())) {
-                                    mCopyData.add(new CopyData(mConflictFiles.get(counter).getFilePath(), FileUtils
-                                            .ACTION_KEEP));
+                                    mCopyData.add(new CopyData(mConflictFiles.get(counter).getFilePath()));
 //                                }
                             }
                             counter = mConflictFiles.size();

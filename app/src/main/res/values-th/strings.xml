@@ -17,7 +17,6 @@
     <string name="msg_free">ฟรี</string>
     <string name="empty">ว่างเปล่า</string>
     <plurals name="number_of_files">
-        <item quantity="one">%d ไฟล์</item>
         <item quantity="other">%d ไฟล์</item>
     </plurals>
     <string name="downloads">ดาวน์โหลด</string>
@@ -30,11 +29,6 @@
     <string name="action_delete">ลบ</string>
     <string name="action_share">หุ้น</string>
     <string name="msg_cut_copy">file (s) คัดลอกไปที่คลิปบอร์ด</string>
-    <string name="msg_copy">การคัดลอกไฟล์ ...</string>
-    <string name="msg_cut">ย้ายไฟล์ ...</string>
-    <string name="msg_delete">การลบไฟล์ ...</string>
-    <string name="msg_copy_success">คัดลอกสำเร็จ</string>
-    <string name="msg_move_success">ย้ายไปประสบความสำเร็จ</string>
     <string name="msg_delete_success">ลบเรียบร้อยแล้ว</string>
     <string name="msg_copy_failure">ดำเนินการคัดลอกล้มเหลว</string>
     <string name="msg_move_failure">ล้มเหลวในการดำเนินการย้าย</string>
@@ -44,13 +38,11 @@
     <string name="dialog_keep_both">เก็บไฟล์ทั้งสอง</string>
     <string name="dialog_cancel">ยกเลิก</string>
     <string name="dialog_title_paste_conflict">ไฟล์ที่มีอยู่</string>
-    <string name="msg_operation_cancel">ดำเนินการถูกยกเลิก</string>
     <string name="dialog_from_placeholder">จาก</string>
     <string name="dialog_to_placeholder">ไปที่:</string>
     <string name="button_paste_progress">พื้นหลัง</string>
     <string name="dialog_delete_title">คุณคุณแน่ใจหรือว่าต้องการลบไฟล์ต่อไปนี้?</string>
     <string name="msg_ok">ตกลง</string>
-    <string name="msg_save">ประหยัด</string>
     <string name="no_files">ไม่มีไฟล์</string>
     <string name="msg_error_valid_name">ใส่ชื่อที่ถูกต้อง</string>
     <string name="path">เส้นทาง:</string>
@@ -64,24 +56,15 @@
     <string name="yes">ใช่</string>
     <string name="no">ไม่</string>
     <string name="properties">คุณสมบัติ</string>
-    <string name="msg_zip_success">ไฟล์ซิปสร้างเสร็จเรียบร้อยแล้ว</string>
-    <string name="msg_zip_failure">การดำเนินการล้มเหลวไปรษณีย์</string>
     <string name="new_folder">แฟ้มใหม่</string>
     <string name="new_file">ไฟล์ใหม่</string>
-    <string name="msg_file_create_success">ไฟล์ที่สร้างเสร็จเรียบร้อยแล้ว</string>
-    <string name="msg_file_create_failure">ไม่สามารถสร้างไฟล์ใหม่</string>
-    <string name="msg_folder_create_success">โฟลเดอร์ที่สร้างเสร็จเรียบร้อยแล้ว</string>
-    <string name="msg_folder_create_failure">ไม่สามารถสร้างโฟลเดอร์ใหม่</string>
     <string name="rate_us">ให้คะแนนเรา</string>
     <string name="add_fav">เพิ่มในรายการโปรด</string>
     <string name="msg_added_to_fav">เพิ่มในคนที่ถูกใจ</string>
     <string name="msg_error_not_supported">ไม่มีแอปที่จะจัดการกับการกระทำ</string>
-    <string name="msg_open_file">เปิดไฟล์</string>
     <string name="permission_request">ต้องได้รับอนุญาตการจัดเก็บข้อมูลที่จะแสดงไฟล์ทั้งหมด</string>
     <string name="action_grant">GRANT</string>
-    <string name="permission_deny">ได้รับอนุญาต Denied.You ไม่สามารถเข้าถึงการจัดเก็บข้อมูล</string>
     <string name="action_sort">ประเภท</string>
-    <string name="action_view">ดู</string>
     <string name="action_view_list">มุมมองรายการ</string>
     <string name="action_view_grid">มุมมองตาราง</string>
     <string name="sort_name">ชื่อ (A-Z)</string>
@@ -92,14 +75,9 @@
     <string name="sort_size_desc">ขนาด (ใหญ่)</string>
     <string name="sort_date">วันที่ (เก่า)</string>
     <string name="sort_date_desc">วันที่ (ล่าสุด)</string>
-    <string name="extract_here">สารสกัดจากที่นี่</string>
     <string name="extract_to">สารสกัดจาก</string>
     <string name="open">เปิด</string>
-    <string name="dialog_title_options">ตัวเลือก</string>
     <string name="extracting">สกัด ..</string>
-    <string name="msg_extract_success">แฟ้มที่แยกประสบความสำเร็จ</string>
-    <string name="msg_extract_failure">ข้อผิดพลาดในการแยกไฟล์</string>
-    <string name="dialog_title_extract_file">สารสกัดจากไฟล์</string>
     <string name="dialog_current_path">เส้นทางปัจจุบัน</string>
     <string name="dialog_specify_path">ระบุเส้นทาง</string>
     <string name="select_path">เลือกเส้นทาง</string>
@@ -109,7 +87,6 @@
     <string name="action_select_all">เลือกทั้งหมด</string>
     <string name="delete_fav">ลบรายการโปรด</string>
     <string name="action_search">ค้นหา</string>
-    <string name="pref_category_general">ทั่วไป</string>
     <string name="pref_title_theme">กระทู้</string>
     <string name="pref_subs_light">เบา</string>
     <string name="pref_subs_dark">มืด</string>
@@ -119,7 +96,6 @@
     <string name="pref_title_check_update">ตรวจสอบสำหรับการอัพเดต</string>
     <string name="pref_title_change_lang">เปลี่ยนภาษา</string>
     <string name="pref_title_upgrade">อัพเกรดเป็น Pro</string>
-    <string name="pref_title_donate">บริจาค</string>
     <string name="pref_title_about">เกี่ยวกับเรา</string>
     <string name="pref_title_version">รุ่น</string>
     <string name="prefs_summary_dev">ผู้พัฒนา</string>
@@ -140,10 +116,8 @@
     <string name="text">ข้อความ</string>
     <string name="image">ภาพ</string>
     <string name="audio">เสียง</string>
-    <string name="video">วีดีโอ</string>
     <string name="other">อื่น ๆ</string>
     <string name="file_exists">ไฟล์ที่มีอยู่แล้ว</string>
-    <string name="enter_zip">ป้อนชื่อไปรษณีย์</string>
     <string name="create">สร้าง</string>
     <string name="zip_progress_title">สร้างไปรษณีย์</string>
     <string name="needsaccess">ต้องใช้การเข้าถึงการเขียน</string>
@@ -153,7 +127,6 @@
     <string name="msg_operation_failed">การดำเนินการล้มเหลว</string>
     <string name="selected">เลือก</string>
     <string name="enter_name">ใส่ชื่อ</string>
-    <string name="grant_access">ให้สิทธิ์การเข้าถึง</string>
     <string name="storage_low">เนื้อที่ไม่เพียงพอ</string>
     <string name="paste_conflict_remember">จำ</string>
     <string name="copying">คัดลอกไฟล์</string>
@@ -173,8 +146,6 @@
     <string name="permission_execute">ปฏิบัติ</string>
     <string name="permission_owner">เจ้าของ</string>
     <string name="permission_group">กลุ่ม</string>
-    <string name="permission_other">อื่น ๆ</string>
-    <string name="title_activity_welcome">หน้าจอหลัก</string>
     <string name="next">ต่อไป</string>
     <string name="skip">ข้าม</string>
     <string name="start">GOT IT</string>

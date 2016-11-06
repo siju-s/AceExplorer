@@ -71,40 +71,9 @@
 
     <style name="Dark_AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark"/>
 
-    <style name="NavigationButton">
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_gravity">center_vertical</item>
-        <!--<item name="android:gravity">center</item>-->
-        <item name="android:textSize">14sp</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/navButtons</item>
-        <item name="android:minWidth">@dimen/nav_button_min_width</item>
-
-    </style>
-
     <style name="menu_labels_style">
         <item name="android:background">@drawable/fab_background</item>
         <item name="android:textColor">@color/fabButtonText</item>
-    </style>
-
-    <style name="MenuLabelsStyle">
-        <item name="android:background">@drawable/fab_background</item>
-        <item name="android:textColor">#FFFFFF</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:maxLines">2</item>
-        <item name="android:ellipsize">end</item>
-    </style>
-
-    <style name="MenuButtonsStyle">
-        <item name="fab_size">mini</item>
-        <!--<item name="fab_showAnimation">@anim/jump_from_down</item>-->
-        <!--<item name="fab_hideAnimation">@anim/jump_to_down</item>-->
-        <item name="fab_shadowColor">#444</item>
-        <item name="fab_colorNormal">@color/colorPrimary</item>
-        <item name="fab_colorPressed">@color/colorPrimary</item>
-        <item name="fab_colorRipple">@color/colorPrimary</item>
     </style>
 
     <style name="SettingsTheme.AppCompat" parent="Theme.AppCompat.Light.NoActionBar">

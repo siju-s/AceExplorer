@@ -1,12 +1,9 @@
 package com.siju.acexplorer.filesystem.model;
 
-/**
- * Created by Siju on 15-08-2016.
- */
 public class BackStackModel {
 
-    private String filePath;
-    private int category;
+    private final String filePath;
+    private final int category;
 
     public BackStackModel(String filePath, int category) {
         this.filePath = filePath;
@@ -17,16 +14,8 @@ public class BackStackModel {
         return filePath;
     }
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
-
     public int getCategory() {
         return category;
-    }
-
-    public void setCategory(int category) {
-        this.category = category;
     }
 
     public boolean equals(Object obj) {

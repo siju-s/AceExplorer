@@ -18,8 +18,6 @@ package com.siju.acexplorer.filesystem.helper;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Typeface;
-import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,7 +31,7 @@ import android.view.View;
 
 public class FastScrollRecyclerView extends RecyclerView implements RecyclerView.OnItemTouchListener {
 
-    private FastScroller mScrollbar;
+    private final FastScroller mScrollbar;
     private int mPaddingBottom;
 
     /**
@@ -44,14 +42,14 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
      */
     public static class ScrollPositionState {
         // The index of the first visible row
-        public int rowIndex;
+        int rowIndex;
         // The offset of the first visible row
-        public int rowTopOffset;
+        int rowTopOffset;
         // The height of a given row (they are currently all the same height)
-        public int rowHeight;
+        int rowHeight;
     }
 
-    private ScrollPositionState mScrollPosState = new ScrollPositionState();
+    private final ScrollPositionState mScrollPosState = new ScrollPositionState();
 
     private int mDownX;
     private int mDownY;
@@ -144,27 +142,24 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
      * <p>
      * This assumes that all rows are the same height.
      *
-     * @param yOffset the offset from the top of the recycler view to start tracking.
      */
-    protected int getAvailableScrollHeight(int rowCount, int rowHeight, int yOffset) {
+    private int getAvailableScrollHeight(int rowCount, int rowHeight) {
         int visibleHeight = getHeight();
-        int scrollHeight = getPaddingTop() + yOffset + rowCount * rowHeight + getPaddingBottom();
-        int availableScrollHeight = scrollHeight - visibleHeight ;
-        return availableScrollHeight;
+        int scrollHeight = getPaddingTop() + rowCount * rowHeight + getPaddingBottom();
+        return scrollHeight - visibleHeight;
     }
 
     /**
      * Returns the available scroll bar height:
      * AvailableScrollBarHeight = Total height of the visible view - thumb height
      */
-    protected int getAvailableScrollBarHeight() {
+    private int getAvailableScrollBarHeight() {
         int visibleHeight = getHeight() ;
 /*        int padding = 0 ;
         if (mLastY > mDownY && !mScrollbar.isDragging())  {
             padding = mPaddingBottom;
         }*/
-        int availableScrollBarHeight = visibleHeight - mScrollbar.getThumbHeight() ;
-        return availableScrollBarHeight;
+        return visibleHeight - mScrollbar.getThumbHeight();
     }
 
     @Override
@@ -178,14 +173,12 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
      * Updates the scrollbar thumb offset to match the visible scroll of the recycler view.  It does
      * this by mapping the available scroll area of the recycler view to the available space for the
      * scroll bar.
-     *
-     * @param scrollPosState the current scroll position
+     *  @param scrollPosState the current scroll position
      * @param rowCount       the number of rows, used to calculate the total scroll height (assumes that
      *                       all rows are the same height)
-     * @param yOffset        the offset to start tracking in the recycler view (only used for all apps)
      */
-    protected void synchronizeScrollBarThumbOffsetToViewScroll(ScrollPositionState scrollPosState, int rowCount, int yOffset) {
-        int availableScrollHeight = getAvailableScrollHeight(rowCount, scrollPosState.rowHeight, yOffset);
+    private void synchronizeScrollBarThumbOffsetToViewScroll(ScrollPositionState scrollPosState, int rowCount) {
+        int availableScrollHeight = getAvailableScrollHeight(rowCount, scrollPosState.rowHeight);
         int availableScrollBarHeight = getAvailableScrollBarHeight();
 
         // Only show the scrollbar if there is height to be scrolled
@@ -197,7 +190,7 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
         // Calculate the current scroll position, the scrollY of the recycler view accounts for the
         // view padding, while the scrollBarY is drawn right up to the background padding (ignoring
         // padding)
-        int scrollY = getPaddingTop() + yOffset + (scrollPosState.rowIndex * scrollPosState.rowHeight) - scrollPosState.rowTopOffset;
+        int scrollY = getPaddingTop() + (scrollPosState.rowIndex * scrollPosState.rowHeight) - scrollPosState.rowTopOffset;
         int scrollBarY = (int) (((float) scrollY / availableScrollHeight) * availableScrollBarHeight);
 //        Log.d("TAG","scrollY="+scrollY+" scrollbarY="+scrollBarY);
 
@@ -234,7 +227,7 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
 
         float itemPos = itemCount * touchFraction;
 
-        int availableScrollHeight = getAvailableScrollHeight(rowCount, mScrollPosState.rowHeight, 0);
+        int availableScrollHeight = getAvailableScrollHeight(rowCount, mScrollPosState.rowHeight);
 
         //The exact position of our desired item
         int exactItemPos = (int) (availableScrollHeight * touchFraction);
@@ -259,7 +252,7 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
     /**
      * Updates the bounds for the scrollbar.
      */
-    public void onUpdateScrollbar() {
+    private void onUpdateScrollbar() {
 
         if (getAdapter() == null) {
             return;
@@ -283,7 +276,7 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
             return;
         }
 
-        synchronizeScrollBarThumbOffsetToViewScroll(mScrollPosState, rowCount, 0);
+        synchronizeScrollBarThumbOffsetToViewScroll(mScrollPosState, rowCount);
     }
 
     /**
@@ -311,41 +304,59 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
         stateOut.rowHeight = child.getHeight();
     }
 
-    public void setThumbColor(@ColorInt int color) {
-        mScrollbar.setThumbColor(color);
-    }
+// --Commented out by Inspection START (06-11-2016 11:23 PM):
+//    public void setThumbColor(@ColorInt int color) {
+//        mScrollbar.setThumbColor(color);
+//    }
+// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
 
-    public void setTrackColor(@ColorInt int color) {
-        mScrollbar.setTrackColor(color);
-    }
+// --Commented out by Inspection START (06-11-2016 11:23 PM):
+//    public void setTrackColor(@ColorInt int color) {
+//        mScrollbar.setTrackColor(color);
+//    }
+// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
 
-    public void setPopupBgColor(@ColorInt int color) {
-        mScrollbar.setPopupBgColor(color);
-    }
+// --Commented out by Inspection START (06-11-2016 11:23 PM):
+//    public void setPopupBgColor(@ColorInt int color) {
+//        mScrollbar.setPopupBgColor(color);
+//    }
+// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
 
-    public void setPopupTextColor(@ColorInt int color) {
-        mScrollbar.setPopupTextColor(color);
-    }
+// --Commented out by Inspection START (06-11-2016 11:23 PM):
+//    public void setPopupTextColor(@ColorInt int color) {
+//        mScrollbar.setPopupTextColor(color);
+//    }
+// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
 
-    public void setPopupTextSize(int textSize) {
-        mScrollbar.setPopupTextSize(textSize);
-    }
+// --Commented out by Inspection START (06-11-2016 11:23 PM):
+//    public void setPopupTextSize(int textSize) {
+//        mScrollbar.setPopupTextSize(textSize);
+//    }
+// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
 
-    public void setPopUpTypeface(Typeface typeface) {
-        mScrollbar.setPopupTypeface(typeface);
-    }
+// --Commented out by Inspection START (06-11-2016 11:23 PM):
+//    public void setPopUpTypeface(Typeface typeface) {
+//        mScrollbar.setPopupTypeface(typeface);
+//    }
+// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
 
-    public void setAutoHideDelay(int hideDelay) {
-        mScrollbar.setAutoHideDelay(hideDelay);
-    }
+// --Commented out by Inspection START (06-11-2016 11:23 PM):
+//    public void setAutoHideDelay(int hideDelay) {
+//        mScrollbar.setAutoHideDelay(hideDelay);
+//    }
+// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
 
-    public void setAutoHideEnabled(boolean autoHideEnabled) {
-        mScrollbar.setAutoHideEnabled(autoHideEnabled);
-    }
+// --Commented out by Inspection START (06-11-2016 11:23 PM):
+//    public void setAutoHideEnabled(boolean autoHideEnabled) {
+//        mScrollbar.setAutoHideEnabled(autoHideEnabled);
+//    }
+// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
 
-    public void setStateChangeListener(OnFastScrollStateChangeListener stateChangeListener) {
-        mStateChangeListener = stateChangeListener;
-    }
+// --Commented out by Inspection START (06-11-2016 11:23 PM):
+//    public void setStateChangeListener(OnFastScrollStateChangeListener stateChangeListener) {
+//        mStateChangeListener = stateChangeListener;
+//    }
+// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
 
     public interface SectionedAdapter {
         @NonNull

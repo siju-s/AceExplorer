@@ -3,16 +3,13 @@ package com.siju.acexplorer.filesystem.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
- * Created by Siju on 20-09-2016.
- */
 public class CopyData implements Parcelable {
-    private String filePath;
-    private int action;
+    private final String filePath;
+    private final int action;
 
-    public CopyData(String filePath, int action) {
+    public CopyData(String filePath) {
         this.filePath = filePath;
-        this.action = action;
+        this.action = com.siju.acexplorer.filesystem.utils.FileUtils.ACTION_KEEP;
     }
 
     private CopyData(Parcel in) {
@@ -36,7 +33,7 @@ public class CopyData implements Parcelable {
     public boolean equals(Object obj) {
         if (obj == null) return false;
         if (obj == this) return true;
-        if (!(obj instanceof FileInfo)) return false;
+        if (!(obj instanceof CopyData)) return false;
         CopyData o = (CopyData) obj;
         return o.filePath.equals(this.filePath);
     }
@@ -45,16 +42,8 @@ public class CopyData implements Parcelable {
         return filePath;
     }
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
-
     public int getAction() {
         return action;
-    }
-
-    public void setAction(int action) {
-        this.action = action;
     }
 
     @Override

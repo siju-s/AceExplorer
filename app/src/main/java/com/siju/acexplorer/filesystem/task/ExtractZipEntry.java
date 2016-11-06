@@ -17,24 +17,23 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
-    private String outputDir;
+    private final String outputDir;
     private ZipFile zipFile;
-    private Fragment fragment;
-    private String fileName;
-    boolean zip;
-    ZipEntry entry;
-    Archive rar;
-    FileHeader header;
-    File output;
+    private final Fragment fragment;
+    private final String fileName;
+    private final boolean zip;
+    private ZipEntry entry;
+    private Archive rar;
+    private FileHeader header;
+    private File output;
 
-    public ExtractZipEntry(ZipFile zipFile, String outputDir, Fragment fragment, String fileName, boolean zip,
+    public ExtractZipEntry(ZipFile zipFile, String outputDir, Fragment fragment, String fileName,
                            ZipEntry zipEntry) {
-        this.zip = zip;
+        this.zip = true;
         this.outputDir = outputDir;
         this.zipFile = zipFile;
         this.fragment = fragment;
@@ -42,9 +41,9 @@ public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
         this.entry = zipEntry;
     }
 
-    public ExtractZipEntry(Archive rar, String outputDir, Fragment fragment, String fileName, boolean zip,
+    public ExtractZipEntry(Archive rar, String outputDir, Fragment fragment, String fileName,
                            FileHeader fileHeader) {
-        this.zip = zip;
+        this.zip = false;
         this.outputDir = outputDir;
         this.rar = rar;
         this.fragment = fragment;
@@ -87,7 +86,6 @@ public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
         }
         BufferedInputStream inputStream = new BufferedInputStream(
                 zipfile.getInputStream(entry));
-        InputStream inputStream1 = zipfile.getInputStream(entry);
         BufferedOutputStream outputStream = new BufferedOutputStream(
                 new FileOutputStream(output));
         Logger.log("Extract", "zipfile=" + zipfile.getName() + " zipentry=" + entry + " stream=" + inputStream);
@@ -101,8 +99,18 @@ public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
                 outputStream.write(buf, 0, len);
             }
         } finally {
-            outputStream.close();
-            inputStream.close();
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                //closing quietly
+            }
+
+            try {
+                outputStream.close();
+            } catch (IOException e) {
+                //closing quietly
+            }
+
         }
     }
 

@@ -1,19 +1,20 @@
 package com.siju.acexplorer.filesystem.model;
 
-/**
- * Created by Siju on 14-08-2016.
- */
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class ZipProgressModel implements Parcelable {
-    int id,p1,p2;
-    long total,done;
-    boolean completed=false,move=false;
-    String name;
+    private int id;
+    private int p1;
+    private int p2;
+    private long total;
+    private long done;
+    private boolean completed=false;
+    private boolean move=false;
+    private String name;
 
-    protected ZipProgressModel(Parcel in) {
+    private ZipProgressModel(Parcel in) {
         id = in.readInt();
         p1 = in.readInt();
         p2 = in.readInt();
@@ -36,9 +37,11 @@ public class ZipProgressModel implements Parcelable {
         }
     };
 
-    public String getName() {
-        return name;
-    }
+// --Commented out by Inspection START (06-11-2016 11:08 PM):
+//    public String getName() {
+//        return name;
+//    }
+// --Commented out by Inspection STOP (06-11-2016 11:08 PM)
 
     public void setName(String name) {
         this.name = name;
@@ -46,57 +49,71 @@ public class ZipProgressModel implements Parcelable {
 
     public ZipProgressModel(){}
 
-    public int getId() {
-        return id;
-    }
+// --Commented out by Inspection START (06-11-2016 11:08 PM):
+//    public int getId() {
+//        return id;
+//    }
+// --Commented out by Inspection STOP (06-11-2016 11:08 PM)
 
     public void setId(int id) {
         this.id = id;
     }
 
-    public int getP2() {
-        return p2;
-    }
+// --Commented out by Inspection START (06-11-2016 11:08 PM):
+//    public int getP2() {
+//        return p2;
+//    }
+// --Commented out by Inspection STOP (06-11-2016 11:08 PM)
 
     public void setP2(int p2) {
         this.p2 = p2;
     }
 
-    public boolean isMove() {
-        return move;
-    }
+// --Commented out by Inspection START (06-11-2016 11:08 PM):
+//    public boolean isMove() {
+//        return move;
+//    }
+// --Commented out by Inspection STOP (06-11-2016 11:08 PM)
 
     public void setMove(boolean move) {
         this.move = move;
     }
 
-    public boolean isCompleted() {
-        return completed;
-    }
+// --Commented out by Inspection START (06-11-2016 11:08 PM):
+//    public boolean isCompleted() {
+//        return completed;
+//    }
+// --Commented out by Inspection STOP (06-11-2016 11:08 PM)
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
     }
 
-    public long getDone() {
-        return done;
-    }
+// --Commented out by Inspection START (06-11-2016 11:08 PM):
+//    public long getDone() {
+//        return done;
+//    }
+// --Commented out by Inspection STOP (06-11-2016 11:08 PM)
 
     public void setDone(long done) {
         this.done = done;
     }
 
-    public long getTotal() {
-        return total;
-    }
+// --Commented out by Inspection START (06-11-2016 11:08 PM):
+//    public long getTotal() {
+//        return total;
+//    }
+// --Commented out by Inspection STOP (06-11-2016 11:08 PM)
 
     public void setTotal(long total) {
         this.total = total;
     }
 
-    public int getP1() {
-        return p1;
-    }
+// --Commented out by Inspection START (06-11-2016 11:08 PM):
+//    public int getP1() {
+//        return p1;
+//    }
+// --Commented out by Inspection STOP (06-11-2016 11:08 PM)
 
     public void setP1(int p1) {
         this.p1 = p1;

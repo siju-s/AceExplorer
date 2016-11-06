@@ -4,10 +4,6 @@ import android.util.Log;
 
 import com.siju.acexplorer.BuildConfig;
 
-/**
- * Created by Siju on 16-06-2016.
- */
-
 public class Logger {
 
     /**

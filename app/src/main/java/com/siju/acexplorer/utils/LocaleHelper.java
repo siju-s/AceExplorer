@@ -1,32 +1,18 @@
 package com.siju.acexplorer.utils;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.Build;
 import android.preference.PreferenceManager;
 
 import java.util.Locale;
 
-/**
- * Created by SIJU on 06-07-2016.
- */
-
 public class LocaleHelper {
 
     public static final String SELECTED_LANGUAGE = "prefs_lang";
-
-    public static void onCreate(Context context) {
-        String lang = getPersistedData(context, Locale.getDefault().getLanguage());
-        if (!lang.equals(Locale.getDefault().getLanguage())) {
-            setLocale(context, lang);
-        }
-    }
-
-    public static void onCreate(Context context, String defaultLanguage) {
-        String lang = getPersistedData(context, defaultLanguage);
-        setLocale(context, lang);
-    }
 
     public static String getLanguage(Context context) {
         return getPersistedData(context, Locale.getDefault().getLanguage());
@@ -57,8 +43,29 @@ public class LocaleHelper {
         Resources resources = context.getResources();
 
         Configuration configuration = resources.getConfiguration();
-        configuration.locale = locale;
+/*        if (Utils.isAtleastNougat()) {
+            setSystemLocale(configuration, locale);
+            context.createConfigurationContext(configuration);
+        }else{
 
+
+        }*/
+        setSystemLocaleLegacy(configuration, locale);
+        //noinspection deprecation
         resources.updateConfiguration(configuration, resources.getDisplayMetrics());
+
     }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    private static void setSystemLocale(Configuration config, Locale locale){
+        config.setLocale(locale);
+    }
+
+    @SuppressWarnings("deprecation")
+    private static void setSystemLocaleLegacy(Configuration config, Locale locale){
+        config.locale = locale;
+    }
+
+
+
 }

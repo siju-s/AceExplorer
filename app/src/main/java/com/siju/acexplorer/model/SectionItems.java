@@ -2,11 +2,11 @@ package com.siju.acexplorer.model;
 
 public class SectionItems {
 
-    private String firstLine;
-    private String secondLine;
-    private int progress;
-    private int icon;
-    private String path;
+    private final String firstLine;
+    private final String secondLine;
+    private final int progress;
+    private final int icon;
+    private final String path;
 
 
     public SectionItems(String firstLine, String secondLine, int icon, String path, int progress) {
@@ -29,17 +29,21 @@ public class SectionItems {
         return path;
     }
 
-    public void setPath(String path) {
-        this.path = path;
-    }
+// --Commented out by Inspection START (06-11-2016 11:07 PM):
+//    public void setPath(String path) {
+//        this.path = path;
+//    }
+// --Commented out by Inspection STOP (06-11-2016 11:07 PM)
 
     public int getIcon() {
         return icon;
     }
 
-    public void setIcon(int icon) {
-        this.icon = icon;
-    }
+// --Commented out by Inspection START (06-11-2016 11:07 PM):
+//    public void setIcon(int icon) {
+//        this.icon = icon;
+//    }
+// --Commented out by Inspection STOP (06-11-2016 11:07 PM)
 
     public String getFirstLine() {
         return firstLine;
@@ -53,7 +57,9 @@ public class SectionItems {
         return progress;
     }
 
-    public void setProgress(int progress) {
-        this.progress = progress;
-    }
+// --Commented out by Inspection START (06-11-2016 11:07 PM):
+//    public void setProgress(int progress) {
+//        this.progress = progress;
+//    }
+// --Commented out by Inspection STOP (06-11-2016 11:07 PM)
 }

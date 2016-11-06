@@ -33,7 +33,6 @@
         android:title="@string/pref_title_disable_dual"/>
 
     <Preference
-        android:id="@+id/preference2"
         android:key="prefsReset"
         android:layout="@layout/prefs_settings_item"
         android:title="@string/pref_title_reset_fav"/>
@@ -49,12 +48,10 @@
         android:title="@string/pref_title_change_lang"/>
 
     <Preference
-        android:id="@+id/preference"
         android:key="prefsUpdate"
         android:layout="@layout/prefs_settings_item"
         android:title="@string/pref_title_check_update"/>
     <Preference
-        android:id="@+id/preference4"
         android:key="prefsPro"
         android:layout="@layout/prefs_settings_item"
         android:title="@string/pref_title_upgrade"/>

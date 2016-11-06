@@ -1,9 +1,5 @@
 package com.siju.acexplorer.filesystem.model;
 
-/**
- * Created by Siju on 27-06-2016.
- */
-
 public class FavInfo {
     private String fileName;
     private String filePath;

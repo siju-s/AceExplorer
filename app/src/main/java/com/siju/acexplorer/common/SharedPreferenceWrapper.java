@@ -13,24 +13,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by Siju on 27-06-2016.
- */
 
 public class SharedPreferenceWrapper {
 
-    public static final String PREFS_NAME = "PREFS";
-    public static final String FAVORITES = "Product_Favorite";
-    public static final String LIBRARIES = "Library";
+    private static final String PREFS_NAME = "PREFS";
+    private static final String FAVORITES = "Product_Favorite";
+    private static final String LIBRARIES = "Library";
 
-    public static final String PREFS_VIEW_MODE = "view-mode";
+    private static final String PREFS_VIEW_MODE = "view-mode";
 
     public SharedPreferenceWrapper() {
         super();
     }
 
     // This four methods are used for maintaining favorites.
-    public void saveFavorites(Context context, List<FavInfo> favorites) {
+    private void saveFavorites(Context context, List<FavInfo> favorites) {
         SharedPreferences settings;
         SharedPreferences.Editor editor;
 
@@ -103,7 +100,7 @@ public class SharedPreferenceWrapper {
                     FavInfo[].class);
 
             favorites = Arrays.asList(favoriteItems);
-            favorites = new ArrayList<FavInfo>(favorites);
+            favorites = new ArrayList<>(favorites);
         } else
             return null;
 
@@ -173,13 +170,15 @@ public class SharedPreferenceWrapper {
     }
 
 
-    public void removeLibrary(Context context, LibrarySortModel librarySortModel) {
-        ArrayList<LibrarySortModel> libraries = getLibraries(context);
-        if (libraries != null) {
-            libraries.remove(librarySortModel);
-            saveLibrary(context, libraries);
-        }
-    }
+// --Commented out by Inspection START (06-11-2016 11:08 PM):
+//    public void removeLibrary(Context context, LibrarySortModel librarySortModel) {
+//        ArrayList<LibrarySortModel> libraries = getLibraries(context);
+//        if (libraries != null) {
+//            libraries.remove(librarySortModel);
+//            saveLibrary(context, libraries);
+//        }
+//    }
+// --Commented out by Inspection STOP (06-11-2016 11:08 PM)
 
     public int getViewMode(Context context) {
         SharedPreferences sharedPreferences;

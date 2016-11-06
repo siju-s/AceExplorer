@@ -17,29 +17,23 @@ import java.util.ArrayList;
 public class DeleteTask extends AsyncTask<Void, Void, Integer> {
 
     private int totalFiles;
-    private ArrayList<String> paths = new ArrayList<>();
-    private ArrayList<FileInfo> deletedFilesList = new ArrayList<>();
-    private ArrayList<String> mimeTypes = new ArrayList<>();
-    private Context mContext;
-    private boolean mIsRootMode;
+    private final ArrayList<FileInfo> deletedFilesList = new ArrayList<>();
+    private final Context mContext;
+    private final boolean mIsRootMode;
     private ArrayList<FileInfo> fileList = new ArrayList<>();
     private boolean mShowToast = true;
 
 
-    public  DeleteTask(Context context, boolean rootMode,ArrayList<FileInfo> fileList) {
+    public DeleteTask(Context context, boolean rootMode, ArrayList<FileInfo> fileList) {
         mContext = context;
         mIsRootMode = rootMode;
         this.fileList = fileList;
-
     }
 
-    DeleteTask(Context context, boolean rootMode, ArrayList<FileInfo> fileList, boolean showToast) {
-        mContext = context;
-        mIsRootMode = rootMode;
-        this.fileList = fileList;
-        mShowToast = showToast;
-
+    void setmShowToast() {
+        mShowToast = false;
     }
+
 
     @Override
     protected Integer doInBackground(Void... params) {
@@ -57,15 +51,11 @@ public class DeleteTask extends AsyncTask<Void, Void, Integer> {
                     RootTools.remount(new File(path).getParent(), "rw");
                     RootHelper.runAndWait("rm -r \"" + path + "\"", true);
                     RootTools.remount(new File(path).getParent(), "ro");
-                    paths.add(path);
-                    mimeTypes.add(fileList.get(i).getMimeType());
                     deletedFilesList.add(fileList.get(i));
                     deletedCount++;
                 }
 
             } else {
-                paths.add(path);
-                mimeTypes.add(fileList.get(i).getMimeType());
                 deletedFilesList.add(fileList.get(i));
                 deletedCount++;
             }
@@ -82,16 +72,16 @@ public class DeleteTask extends AsyncTask<Void, Void, Integer> {
         intent.putExtra(FileConstants.OPERATION, FileConstants.DELETE);
         intent.putParcelableArrayListExtra("deleted_files", deletedFilesList);
         mContext.sendBroadcast(intent);
-         if (mShowToast) {
-             if (deletedFiles != 0) {
-                 FileUtils.showMessage(mContext, mContext.getResources().getQuantityString(R.plurals.number_of_files,
-                         deletedFiles, deletedFiles) + " " + mContext.getString(R.string.msg_delete_success));
-             }
+        if (mShowToast) {
+            if (deletedFiles != 0) {
+                FileUtils.showMessage(mContext, mContext.getResources().getQuantityString(R.plurals.number_of_files,
+                        deletedFiles, deletedFiles) + " " + mContext.getString(R.string.msg_delete_success));
+            }
 
-             if (totalFiles != deletedFiles) {
-                 FileUtils.showMessage(mContext, mContext.getString(R.string.msg_delete_failure));
-             }
-         }
+            if (totalFiles != deletedFiles) {
+                FileUtils.showMessage(mContext, mContext.getString(R.string.msg_delete_failure));
+            }
+        }
 
     }
 

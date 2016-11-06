@@ -52,6 +52,7 @@ import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.kobakei.ratethisapp.RateThisApp;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.common.SharedPreferenceWrapper;
 import com.siju.acexplorer.filesystem.FileConstants;
@@ -108,14 +109,14 @@ public class BaseActivity extends AppCompatActivity implements
     private ExpandableListAdapter expandableListAdapter;
     private ExpandableListView expandableListView;
     private List<String> mListHeader;
-    private ArrayList<SectionGroup> totalGroup = new ArrayList<>();
+    private final ArrayList<SectionGroup> totalGroup = new ArrayList<>();
     private DrawerLayout drawerLayout;
     private NavigationView relativeLayoutDrawerPane;
     private String mCurrentDir;
     private String mCurrentDirDualPane;
     private String STORAGE_ROOT, STORAGE_INTERNAL, STORAGE_EXTERNAL, DOWNLOADS, IMAGES, VIDEO,
             MUSIC, DOCS, SETTINGS, RATE;
-    private ArrayList<SectionItems> favouritesGroupChild = new ArrayList<>();
+    private final ArrayList<SectionItems> favouritesGroupChild = new ArrayList<>();
     private SharedPreferenceWrapper sharedPreferenceWrapper;
     private SharedPreferences mSharedPreferences;
     private ArrayList<FavInfo> savedFavourites = new ArrayList<>();
@@ -154,10 +155,10 @@ public class BaseActivity extends AppCompatActivity implements
     private boolean mIsDualModeEnabled;
     private boolean mIsFromHomePage;
     private int mCurrentTheme = FileConstants.THEME_LIGHT;
-    private ArrayList<String> mExternalSDPaths = new ArrayList<>();
-    private ArrayList<BackStackModel> mBackStackList = new ArrayList<>();
-    private ArrayList<BackStackModel> mBackStackListDual = new ArrayList<>();
-    private ArrayList<SectionItems> storageGroupChild = new ArrayList<>();
+    private final ArrayList<String> mExternalSDPaths = new ArrayList<>();
+    private final ArrayList<BackStackModel> mBackStackList = new ArrayList<>();
+    private final ArrayList<BackStackModel> mBackStackListDual = new ArrayList<>();
+    private final ArrayList<SectionItems> storageGroupChild = new ArrayList<>();
     private int mCurrentOrientation;
     private boolean mIsRootMode;
     private Dialog mPermissionDialog;
@@ -257,7 +258,7 @@ public class BaseActivity extends AppCompatActivity implements
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         expandableListView = (ExpandableListView) findViewById(R.id.expand_list_drawer);
-        View list_header = getLayoutInflater().inflate(R.layout.drawerlist_header, null);
+        View list_header = View.inflate(this,R.layout.drawerlist_header, null);
         expandableListView.addHeaderView(list_header);
 
         fabCreateMenu = (FloatingActionsMenu) findViewById(R.id.fabCreate);
@@ -327,10 +328,6 @@ public class BaseActivity extends AppCompatActivity implements
         });
 
         mFileOpsHelper = new FileOpsHelper(this);
-
-    }
-
-    private void initFab() {
 
     }
 
@@ -542,13 +539,13 @@ public class BaseActivity extends AppCompatActivity implements
         initializeStorageGroup();
     }
 
-    private Runnable storageRunnable = new Runnable() {
+/*    private Runnable storageRunnable = new Runnable() {
         @Override
         public void run() {
             android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
             initializeStorageGroup();
         }
-    };
+    };*/
 
     private void initializeGroups() {
         initializeFavouritesGroup();
@@ -558,7 +555,7 @@ public class BaseActivity extends AppCompatActivity implements
 
     private void initializeStorageGroup() {
         Logger.log(TAG, "initializeStorageGroup START");
-        List<String> storagePaths = FileUtils.getStorageDirectories(this, true);
+        List<String> storagePaths = FileUtils.getStorageDirectories(this);
 
         File systemDir = FileUtils.getRootDirectory();
         File rootDir = systemDir.getParentFile();
@@ -714,7 +711,7 @@ public class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    private BroadcastReceiver mLocaleListener = new BroadcastReceiver() {
+    private final BroadcastReceiver mLocaleListener = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent != null && intent.getAction().equals(Intent.ACTION_LOCALE_CHANGED)) {
@@ -727,11 +724,10 @@ public class BaseActivity extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-/*
         // Monitor launch times and interval from installation
         RateThisApp.onStart(this);
         // If the criteria is satisfied, "Rate this app" dialog will be shown
-        RateThisApp.showRateDialogIfNeeded(this);*/
+        RateThisApp.showRateDialogIfNeeded(this);
     }
 
     @Override
@@ -926,7 +922,7 @@ public class BaseActivity extends AppCompatActivity implements
 
     }
 
-    public void addTitleText(boolean isFilesCategory) {
+    private void addTitleText(boolean isFilesCategory) {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params.gravity = Gravity.CENTER_VERTICAL;
@@ -1034,7 +1030,7 @@ public class BaseActivity extends AppCompatActivity implements
             createNavButton(STORAGE_INTERNAL, dir);
         } else if (dir.equals(File.separator)) {
             createNavButton(STORAGE_ROOT, dir);
-        } else if (mExternalSDPaths != null && mExternalSDPaths.contains(dir)) {
+        } else if (mExternalSDPaths.contains(dir)) {
             if (isDualPaneInFocus)  {
                 isCurrentDualDirRoot = false;
             }
@@ -1421,14 +1417,14 @@ public class BaseActivity extends AppCompatActivity implements
         if (groupPos == 1) {
 
             if (!isDualPaneInFocus) {
-                if (!mCurrentDir.contains(getInternalStorage().getAbsolutePath()) &&
-                        (mExternalSDPaths != null && !mExternalSDPaths.contains(mCurrentDir))) {
+                if (!mCurrentDir.contains(getInternalStorage().getAbsolutePath()) && !mExternalSDPaths.contains
+                        (mCurrentDir)) {
                     isCurrentDirRoot = true;
                     mStartingDir = File.separator;
                 }
             } else {
-                if (!mCurrentDirDualPane.contains(getInternalStorage().getAbsolutePath()) &&
-                        (mExternalSDPaths != null && !mExternalSDPaths.contains(mCurrentDirDualPane))) {
+                if (!mCurrentDirDualPane.contains(getInternalStorage().getAbsolutePath()) && !mExternalSDPaths
+                        .contains(mCurrentDirDualPane)) {
                     isCurrentDualDirRoot = true;
                     mStartingDirDualPane = File.separator;
                 }
@@ -1441,7 +1437,7 @@ public class BaseActivity extends AppCompatActivity implements
             if (mCurrentDir.contains(FileUtils.getInternalStorage().getAbsolutePath())) {
                 mStartingDir = FileUtils.getInternalStorage().getAbsolutePath();
                 isCurrentDirRoot = false;
-            } else if (mExternalSDPaths != null && mExternalSDPaths.size() > 0) {
+            } else if (mExternalSDPaths.size() > 0) {
                 for (String path : mExternalSDPaths) {
                     if (mCurrentDir.contains(path)) {
                         mStartingDir = path;
@@ -1459,7 +1455,7 @@ public class BaseActivity extends AppCompatActivity implements
             if (mCurrentDirDualPane.contains(FileUtils.getInternalStorage().getAbsolutePath())) {
                 mStartingDirDualPane = FileUtils.getInternalStorage().getAbsolutePath();
                 isCurrentDualDirRoot = false;
-            } else if (mExternalSDPaths != null && mExternalSDPaths.size() > 0) {
+            } else if (mExternalSDPaths.size() > 0) {
                 for (String path : mExternalSDPaths) {
                     if (mCurrentDirDualPane.contains(path)) {
                         mStartingDirDualPane = path;
@@ -1603,16 +1599,6 @@ public class BaseActivity extends AppCompatActivity implements
         addToBackStack(directory, category);
     }
 
-
-    /**
-     * Called every time when a file item is clicked
-     *
-     * @param intent Contains path of the file whose children need to be shown
-     */
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-    }
 
     /**
      * Triggered on clicked on any Navigation drawer item group/child
@@ -1995,8 +1981,8 @@ public class BaseActivity extends AppCompatActivity implements
         else mCategoryDual = category;
     }
 
-    public void setIsFromHomePage(boolean isFromHomePage) {
-        mIsFromHomePage = isFromHomePage;
+    public void setIsFromHomePage() {
+        mIsFromHomePage = true;
     }
 
     /**

@@ -17,7 +17,6 @@
     <string name="msg_free">bebas dari</string>
     <string name="empty">Kosong</string>
     <plurals name="number_of_files">
-        <item quantity="one">%d mengajukan</item>
         <item quantity="other">%d arsip</item>
     </plurals>
     <string name="downloads">download</string>
@@ -30,11 +29,6 @@
     <string name="action_delete">Menghapus</string>
     <string name="action_share">Bagikan</string>
     <string name="msg_cut_copy">file (s) disalin ke clipboard</string>
-    <string name="msg_copy">Menyalin file ...</string>
-    <string name="msg_cut">Memindahkan file ...</string>
-    <string name="msg_delete">Menghapus file ...</string>
-    <string name="msg_copy_success">disalin berhasil</string>
-    <string name="msg_move_success">berhasil dipindahkan</string>
     <string name="msg_delete_success">berhasil dihapus</string>
     <string name="msg_copy_failure">Operasi copy gagal</string>
     <string name="msg_move_failure">Operasi bergerak gagal</string>
@@ -44,13 +38,11 @@
     <string name="dialog_keep_both">Menjaga kedua file</string>
     <string name="dialog_cancel">Membatalkan</string>
     <string name="dialog_title_paste_conflict">File ada</string>
-    <string name="msg_operation_cancel">operasi dibatalkan</string>
     <string name="dialog_from_placeholder">Dari</string>
     <string name="dialog_to_placeholder">Untuk:</string>
     <string name="button_paste_progress">Latar Belakang</string>
     <string name="dialog_delete_title">Apakah Anda yakin ingin menghapus file-file berikut?</string>
     <string name="msg_ok">baik</string>
-    <string name="msg_save">Menyimpan</string>
     <string name="no_files">Tidak ada data</string>
     <string name="msg_error_valid_name">Masukkan nama yang valid</string>
     <string name="path">path:</string>
@@ -64,24 +56,15 @@
     <string name="yes">iya nih</string>
     <string name="no">Tidak</string>
     <string name="properties">properti</string>
-    <string name="msg_zip_success">file zip berhasil dibuat</string>
-    <string name="msg_zip_failure">Operasi Zip gagal</string>
     <string name="new_folder">Folder baru</string>
     <string name="new_file">File baru</string>
-    <string name="msg_file_create_success">File yang dibuat berhasil</string>
-    <string name="msg_file_create_failure">Tidak dapat membuat file baru</string>
-    <string name="msg_folder_create_success">Folder berhasil dibuat</string>
-    <string name="msg_folder_create_failure">Tidak dapat membuat folder baru</string>
     <string name="rate_us">tingkat Kami</string>
     <string name="add_fav">Tambahkan ke Favorit</string>
     <string name="msg_added_to_fav">Ditambahkan ke Favorit</string>
     <string name="msg_error_not_supported">Tidak ada aplikasi untuk menangani tindakan</string>
-    <string name="msg_open_file">Buka file</string>
     <string name="permission_request">Perlu izin penyimpanan untuk menampilkan semua file</string>
     <string name="action_grant">HIBAH</string>
-    <string name="permission_deny">Izin Denied.You tidak dapat mengakses penyimpanan.</string>
     <string name="action_sort">Menyortir</string>
-    <string name="action_view">Melihat</string>
     <string name="action_view_list">tampilan daftar</string>
     <string name="action_view_grid">Tampilan bergaris</string>
     <string name="sort_name">Nama (A-Z)</string>
@@ -92,14 +75,9 @@
     <string name="sort_size_desc">Ukuran (Bigger)</string>
     <string name="sort_date">Tanggal (lama)</string>
     <string name="sort_date_desc">Tanggal (Terbaru)</string>
-    <string name="extract_here">Ekstrak di sini</string>
     <string name="extract_to">ekstrak ke</string>
     <string name="open">Buka</string>
-    <string name="dialog_title_options">Pilihan</string>
     <string name="extracting">Penggalian ..</string>
-    <string name="msg_extract_success">file berhasil diekstrak</string>
-    <string name="msg_extract_failure">Kesalahan dalam extracting file</string>
-    <string name="dialog_title_extract_file">ekstrak file</string>
     <string name="dialog_current_path">jalan saat ini</string>
     <string name="dialog_specify_path">Tentukan path</string>
     <string name="select_path">Pilih path</string>
@@ -109,7 +87,6 @@
     <string name="action_select_all">Pilih Semua</string>
     <string name="delete_fav">Hapus favorit</string>
     <string name="action_search">Pencarian</string>
-    <string name="pref_category_general">UMUM</string>
     <string name="pref_title_theme">Tema</string>
     <string name="pref_subs_light">Cahaya</string>
     <string name="pref_subs_dark">Gelap</string>
@@ -119,7 +96,6 @@
     <string name="pref_title_check_update">Periksa pembaruan</string>
     <string name="pref_title_change_lang">Ganti BAHASA</string>
     <string name="pref_title_upgrade">Upgrade ke yang lebih baik</string>
-    <string name="pref_title_donate">Menyumbangkan</string>
     <string name="pref_title_about">Tentang kami</string>
     <string name="pref_title_version">Versi</string>
     <string name="prefs_summary_dev">pembangun</string>
@@ -140,10 +116,8 @@
     <string name="text">Teks</string>
     <string name="image">Gambar</string>
     <string name="audio">Audio</string>
-    <string name="video">Video</string>
     <string name="other">Lain</string>
     <string name="file_exists">File sudah ada</string>
-    <string name="enter_zip">Masukkan nama zip</string>
     <string name="create">Membuat</string>
     <string name="zip_progress_title">membuat zip</string>
     <string name="needsaccess">Menulis Access Diperlukan</string>
@@ -153,7 +127,6 @@
     <string name="msg_operation_failed">Operasi gagal</string>
     <string name="selected">terpilih</string>
     <string name="enter_name">Masukkan nama</string>
-    <string name="grant_access">akses hibah</string>
     <string name="storage_low">Tidak cukup ruang</string>
     <string name="paste_conflict_remember">Ingat</string>
     <string name="copying">menyalin file</string>
@@ -173,8 +146,6 @@
     <string name="permission_execute">Menjalankan</string>
     <string name="permission_owner">Pemilik</string>
     <string name="permission_group">Kelompok</string>
-    <string name="permission_other">Lain</string>
-    <string name="title_activity_welcome">Tampilan depan</string>
     <string name="next">BERIKUTNYA</string>
     <string name="skip">MELEWATKAN</string>
     <string name="start">MENGERTI</string>

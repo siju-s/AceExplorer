@@ -51,7 +51,7 @@ public class MediaStoreHack {
      * Deletes the file. Returns true if the file has been successfully deleted or otherwise does
      * not exist. This operation is not recursive.
      */
-    public static boolean delete(final Context context, final File file) {
+    private static void delete(final Context context, final File file) {
         final String where = MediaStore.MediaColumns.DATA + "=?";
         final String[] selectionArgs = new String[]{
                 file.getAbsolutePath()
@@ -68,46 +68,26 @@ public class MediaStoreHack {
             // Delete the created entry, such that content provider will delete the file.
             contentResolver.delete(filesUri, where, selectionArgs);
         }
-        return !file.exists();
     }
 
     private static File getExternalFilesDir(final Context context) {
         return context.getExternalFilesDir(null);
     }
 
-    public static InputStream
-    getInputStream(final Context context, final File file, final long size) {
-        try {
-            final String where = MediaStore.MediaColumns.DATA + "=?";
-            final String[] selectionArgs = new String[]{
-                    file.getAbsolutePath()
-            };
-            final ContentResolver contentResolver = context.getContentResolver();
-            final Uri filesUri = MediaStore.Files.getContentUri("external");
-            contentResolver.delete(filesUri, where, selectionArgs);
-            final ContentValues values = new ContentValues();
-            values.put(MediaStore.MediaColumns.DATA, file.getAbsolutePath());
-            values.put(MediaStore.MediaColumns.SIZE, size);
-            final Uri uri = contentResolver.insert(filesUri, values);
-            return contentResolver.openInputStream(uri);
-        } catch (final Throwable t) {
-            return null;
-        }
-    }
 
-    public static OutputStream getOutputStream(Context context, String str) {
+    private static OutputStream getOutputStream(Context context, String str) {
         OutputStream outputStream = null;
         Uri fileUri = getUriFromFile(str, context);
         if (fileUri != null) {
             try {
                 outputStream = context.getContentResolver().openOutputStream(fileUri);
-            } catch (Throwable th) {
+            } catch (Throwable ignored) {
             }
         }
         return outputStream;
     }
 
-    public static Uri getUriFromFile(final String path, Context context) {
+    static Uri getUriFromFile(final String path, Context context) {
         ContentResolver resolver = context.getContentResolver();
 
         Cursor filecursor = resolver.query(MediaStore.Files.getContentUri("external"),
@@ -147,26 +127,25 @@ public class MediaStoreHack {
                     if (query.getInt(1) == 0 && type != 0) {
                         ContentValues contentValues = new ContentValues();
                         contentValues.put(musicType, true);
-                        contentResolver.update(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, contentValues, "_id=" + id, null);
+                        contentResolver.update(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, contentValues, "_id=" +
+                                id, null);
                     }
                     parse = Uri.parse(uri + "/" + id);
                     query.close();
                     return parse;
-                }
-                else {
-                    return insertAudioIntoMediaStore(contentResolver,path,type);
+                } else {
+                    return insertAudioIntoMediaStore(contentResolver, path, type);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-        else {
-           return insertAudioIntoMediaStore(contentResolver,path,type);
+        } else {
+            return insertAudioIntoMediaStore(contentResolver, path, type);
         }
         return null;
     }
 
-    public static Uri insertAudioIntoMediaStore(ContentResolver contentResolver, String path, int type) {
+    private static Uri insertAudioIntoMediaStore(ContentResolver contentResolver, String path, int type) {
         File file = new File(path);
         ContentValues contentValues = new ContentValues();
         contentValues.put(MediaStore.Audio.Media.DATA, path);
@@ -177,12 +156,8 @@ public class MediaStoreHack {
         contentValues.put("is_notification", type == 2);
         contentValues.put("is_alarm", type == 4);
         contentValues.put("is_music", true);
-        Uri uri = contentResolver.insert(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, contentValues);
-        return uri;
+        return contentResolver.insert(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, contentValues);
     }
-
-
-
 
 
     /**
@@ -207,7 +182,6 @@ public class MediaStoreHack {
         if (cursor == null || !cursor.moveToFirst()) {
             if (cursor != null) {
                 cursor.close();
-                cursor = null;
             }
             final ContentValues values = new ContentValues();
             values.put(MediaStore.MediaColumns.DATA, temporaryTrack.getAbsolutePath());
@@ -276,8 +250,17 @@ public class MediaStoreHack {
                     out.write(buffer, 0, bytesRead);
                 }
             } finally {
-                out.close();
-                in.close();
+                try {
+                    if (out != null) out.close();
+                } catch (IOException ignored) {
+
+                }
+                try {
+                    if (in != null) in.close();
+                } catch (IOException ignored) {
+
+                }
+
             }
         }
         return temporaryTrack;
@@ -293,7 +276,8 @@ public class MediaStoreHack {
         Uri filesUri =  MediaStore.Files.getContentUri("external");
         Uri imagesUri  = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
-        // Create a media database entry for the directory. This step will not actually cause the directory to be created.
+        // Create a media database entry for the directory. This step will not actually cause the directory to be
+        created.
         values = new ContentValues();
         values.put(MediaStore.Files.FileColumns.DATA, file.getAbsolutePath());
         final ContentResolver contentResolver = context.getContentResolver();
@@ -333,7 +317,7 @@ public class MediaStoreHack {
         return file.exists();
     }
 
-    public static boolean mkfile(final Context context, final File file) {
+    static boolean mkfile(final Context context, final File file) {
         final OutputStream outputStream = getOutputStream(context, file.getPath());
         if (outputStream == null) {
             return false;
@@ -341,7 +325,7 @@ public class MediaStoreHack {
         try {
             outputStream.close();
             return true;
-        } catch (final IOException e) {
+        } catch (final IOException ignored) {
         }
         return false;
     }

@@ -6,14 +6,11 @@ import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-/**
- * Created by Siju on 10-09-2016.
- */
 public class GridItemDecoration extends RecyclerView.ItemDecoration {
 
-    private Drawable mHorizontalDivider;
-    private Drawable mVerticalDivider;
-    private int mNumColumns;
+    private final Drawable mHorizontalDivider;
+    private final Drawable mVerticalDivider;
+    private final int mNumColumns;
 
     /**
      * Sole constructor. Takes in {@link Drawable} objects to be used as

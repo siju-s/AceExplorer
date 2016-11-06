@@ -45,26 +45,24 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private final String TAG = this.getClass().getSimpleName();
     private ArrayList<FileInfo> fileInfoList;
 
-    private String mPath;
+    private final String mPath;
     private Context mContext;
     private boolean mShowHidden;
-    private int mCategory;
+    private final int mCategory;
     private String mZipPath;
     private boolean mIsDualPaneInFocus;
-    private Fragment mFragment;
+    private final Fragment mFragment;
     private boolean mInParentZip;
     private int mSortMode;
     private boolean mIsRingtonePicker;
     private MountUnmountReceiver mMountUnmountReceiver;
     private String outputDir;
     private ZipFile zipFile;
-    private Fragment fragment;
     private String fileName;
-    boolean zip;
-    ZipEntry entry = null;
-    Archive rar;
-    FileHeader header;
-    File output;
+    private boolean zip;
+    private ZipEntry entry = null;
+    private Archive rar;
+    private FileHeader header;
 
     FileListLoader(Fragment fragment, Context context, String path, int category) {
         super(context);
@@ -111,10 +109,10 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         mIsRingtonePicker = isRingtonePicker;
     }
 
-    FileListLoader(Fragment fragment, String path, String outputDir, String fileName, boolean zip,
+    FileListLoader(Fragment fragment, String path, String outputDir, String fileName,
                    ZipEntry zipEntry) {
         super(fragment.getContext());
-        this.zip = zip;
+        this.zip = true;
         this.outputDir = outputDir;
         mCategory = FileConstants.CATEGORY.ZIP_VIEWER.getValue();
         Logger.log(TAG, "Zip PARENT=" + path + " ENTRY=" + zipEntry);
@@ -132,19 +130,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         this.fileName = fileName;
         this.entry = zipEntry;
     }
-
-    FileListLoader(Fragment fragment, Archive rar, String outputDir, String fileName, boolean zip,
-                   FileHeader fileHeader) {
-        super(fragment.getContext());
-
-        this.zip = zip;
-        this.outputDir = outputDir;
-        this.rar = rar;
-        mFragment = fragment;
-        this.fileName = fileName;
-        this.header = fileHeader;
-    }
-
 
     @Override
     protected void onStartLoading() {
@@ -233,9 +218,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             } else {
                 try {
                     unzipRAREntry(rar, header, outputDir);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (RarException e) {
+                } catch (IOException | RarException e) {
                     e.printStackTrace();
                 }
             }
@@ -246,7 +229,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         return fileInfoList;
     }
 
-    private Comparator<? super FileInfo> comparatorByNameZip = new Comparator<FileInfo>() {
+    private final Comparator<? super FileInfo> comparatorByNameZip = new Comparator<FileInfo>() {
 
         public int compare(FileInfo file1, FileInfo file2) {
             // sort folders first
@@ -262,7 +245,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
     };
 
-    private Comparator<? super ZipModel> comparatorByNameZip1 = new Comparator<ZipModel>() {
+    private final Comparator<? super ZipModel> comparatorByNameZip1 = new Comparator<ZipModel>() {
 
         public int compare(ZipModel file1, ZipModel file2) {
             // sort folders first
@@ -315,7 +298,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         }
     }
 
-    private ArrayList<FileInfo> fetchFiles() {
+    private void fetchFiles() {
         File file = new File(mPath);
         String fileExtension = mPath.substring(mPath.lastIndexOf(".") + 1);
 
@@ -323,25 +306,21 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
             if (fileExtension.equalsIgnoreCase("zip")) {
                 getZipContents("", file.getAbsolutePath());
-                return fileInfoList;
             } else if (fileExtension.equalsIgnoreCase("rar")) {
                 getRarContents("", file.getAbsolutePath());
             } else {
-                fileInfoList = RootHelper.getFilesList(mContext, mPath,
+                fileInfoList = RootHelper.getFilesList(mPath,
                         true, mShowHidden, mIsRingtonePicker);
                 fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
             }
         } else {
-            fileInfoList = RootHelper.getFilesList(mContext, mPath,
+            fileInfoList = RootHelper.getFilesList(mPath,
                     true, mShowHidden, mIsRingtonePicker);
             fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
         }
-        return fileInfoList;
-
-
     }
 
-    private ArrayList<FileInfo> fetchApk() {
+    private void fetchApk() {
 
         String where = MediaStore.Files.FileColumns.DATA + " LIKE ?";
         String filter = ".apk";
@@ -357,7 +336,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             if (cursor.moveToFirst()) {
                 if (isHomeFragment()) {
                     fileInfoList.add(new FileInfo(mCategory, cursor.getCount()));
-                    return fileInfoList;
+                    return;
                 }
                 do {
                     int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.TITLE);
@@ -387,14 +366,13 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
             Logger.log(this.getClass().getSimpleName(), "Apk list size=" + fileInfoList.size());
             if (fileInfoList.size() != 0) {
-                return fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
+                fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
             }
         }
-        return null;
 
     }
 
-    private ArrayList<FileInfo> fetchFavorites() {
+    private void fetchFavorites() {
         SharedPreferenceWrapper wrapper = new SharedPreferenceWrapper();
         ArrayList<FavInfo> favList = wrapper.getFavorites(mContext);
         for (FavInfo favInfo : favList) {
@@ -431,7 +409,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             fileInfoList.add(fileInfo);
         }
         fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
-        return fileInfoList;
     }
 
     /**
@@ -439,7 +416,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
      * @param parentZipPath Original zip path with.zip extension
      * @return Zip contents
      */
-    private ArrayList<FileInfo> getZipContents(String dir, String parentZipPath) {
+    private void getZipContents(String dir, String parentZipPath) {
         ZipFile zipfile;
         ArrayList<ZipModel> totalZipList;
         ArrayList<ZipModel> elements = new ArrayList<>();
@@ -600,11 +577,9 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             fileInfoList.add(fileInfo);
         }
         Collections.sort(fileInfoList, comparatorByNameZip);
-        return fileInfoList;
-
     }
 
-    private ArrayList<FileInfo> getRarContents(String dir, String parentZipPath) {
+    private void getRarContents(String dir, String parentZipPath) {
         ArrayList<FileHeader> elements = new ArrayList<>();
         try {
             Archive zipfile = new Archive(new File(parentZipPath));
@@ -643,7 +618,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         for (FileHeader fileHeader : elements) {
@@ -677,16 +652,12 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             fileInfoList.add(fileInfo);
         }
         Collections.sort(fileInfoList, comparatorByNameZip);
-        return fileInfoList;
     }
 
     private void unzipEntry(ZipFile zipfile, ZipEntry entry, String outputDir)
             throws IOException {
 
         File output = new File(outputDir, fileName);
-/*        if (entry.isDirectory()) {
-            new File(outputDir, fileName).mkdir();
-        }*/
         BufferedInputStream inputStream = new BufferedInputStream(
                 zipfile.getInputStream(entry));
         BufferedOutputStream outputStream = new BufferedOutputStream(
@@ -696,7 +667,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
         Logger.log("Extract", "Bytes START=" + inputStream.available());
 
-
         try {
             int len;
             byte buf[] = new byte[20480];
@@ -705,14 +675,20 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 outputStream.write(buf, 0, len);
             }
         } finally {
-            outputStream.close();
-            inputStream.close();
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                //closing quietly
+            }
+
+            try {
+                outputStream.close();
+            } catch (IOException e) {
+                //closing quietly
+            }
+
         }
-
-//        if (output.exists() && fileName.endsWith(".zip")) {
         getZipContents("", output.getAbsolutePath());
-//        }
-
     }
 
     private void unzipRAREntry(Archive zipfile, FileHeader header, String outputDir)
@@ -724,21 +700,20 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     }
 
 
-    private ArrayList<FileInfo> fetchMusic() {
+    private void fetchMusic() {
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        String[] projection = new String[]{MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media._ID, MediaStore.Audio
+        String[] projection = new String[]{MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media._ID, MediaStore
+                .Audio
                 .Media.ALBUM_ID,
                 MediaStore.Audio.Media.DATE_MODIFIED, MediaStore.Audio.Media.SIZE,
                 MediaStore.Audio.Media.DATA};
-        String where = (MediaStore.Audio.Media.TITLE + " != ''") +
-                " AND " + MediaStore.Audio.Media.IS_MUSIC + "=1";
         Cursor cursor = getContext().getContentResolver().query(uri, projection, null, null,
                 null);
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 if (isHomeFragment()) {
                     fileInfoList.add(new FileInfo(mCategory, cursor.getCount()));
-                    return fileInfoList;
+                    return;
                 }
                 do {
                     int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE);
@@ -756,18 +731,18 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                     int type = FileConstants.CATEGORY.AUDIO.getValue();
                     String extension = path.substring(path.lastIndexOf(".") + 1);
                     String nameWithExt = fileName + "." + extension;
-                    fileInfoList.add(new FileInfo(audioId, albumId, nameWithExt, path, date1, size1, type, extension));
+                    fileInfoList.add(new FileInfo(audioId, albumId, nameWithExt, path, date1, size1, type,
+                            extension));
                 } while (cursor.moveToNext());
             }
             cursor.close();
             if (fileInfoList.size() != 0) {
-                return fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
+                fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
             }
         }
-        return null;
     }
 
-    private ArrayList<FileInfo> fetchImages() {
+    private void fetchImages() {
         Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         long startTime = System.currentTimeMillis();
         Cursor cursor = getContext().getContentResolver().query(uri, null, null, null, null);
@@ -776,7 +751,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             if (cursor.moveToFirst()) {
                 if (isHomeFragment()) {
                     fileInfoList.add(new FileInfo(mCategory, cursor.getCount()));
-                    return fileInfoList;
+                    return;
                 }
                 do {
                     int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.TITLE);
@@ -795,28 +770,29 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                     int type = FileConstants.CATEGORY.IMAGE.getValue();
                     String extension = path.substring(path.lastIndexOf(".") + 1);
                     String nameWithExt = fileName + "." + extension;
-                    fileInfoList.add(new FileInfo(imageId, bucketId, nameWithExt, path, date1, size1, type, extension));
+                    fileInfoList.add(new FileInfo(imageId, bucketId, nameWithExt, path, date1, size1, type,
+                            extension));
                 } while (cursor.moveToNext());
             }
             cursor.close();
             long endTime = System.currentTimeMillis();
             float timetaken = (float) ((endTime - startTime) / 1000);
-            Logger.log(this.getClass().getSimpleName(), "Size = " + fileInfoList.size() + "END Time Taken" + timetaken);
+            Logger.log(this.getClass().getSimpleName(), "Size = " + fileInfoList.size() + "END Time Taken" +
+                    timetaken);
             if (fileInfoList.size() != 0) {
-                return fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
+                fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
             }
         }
-        return null;
     }
 
-    private ArrayList<FileInfo> fetchVideos() {
+    private void fetchVideos() {
         Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
         Cursor cursor = mContext.getContentResolver().query(uri, null, null, null, null);
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 if (isHomeFragment()) {
                     fileInfoList.add(new FileInfo(mCategory, cursor.getCount()));
-                    return fileInfoList;
+                    return;
                 }
                 do {
                     int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.TITLE);
@@ -836,15 +812,15 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                     int type = FileConstants.CATEGORY.VIDEO.getValue();
                     String extension = path.substring(path.lastIndexOf(".") + 1);
                     String nameWithExt = fileName + "." + extension;
-                    fileInfoList.add(new FileInfo(videoId, bucketId, nameWithExt, path, date1, size1, type, extension));
+                    fileInfoList.add(new FileInfo(videoId, bucketId, nameWithExt, path, date1, size1, type,
+                            extension));
                 } while (cursor.moveToNext());
             }
             cursor.close();
             if (fileInfoList.size() != 0) {
-                return fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
+                fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
             }
         }
-        return null;
     }
 
 
@@ -854,7 +830,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
      *
      * @return Files
      */
-    private ArrayList<FileInfo> fetchByCategory(int category) {
+    private void fetchByCategory(int category) {
         Uri uri = MediaStore.Files.getContentUri("external");
         String where = null;
         String[] selectionArgs = new String[0];
@@ -925,7 +901,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 if (isHomeFragment()) {
                     fileInfoList.clear();
                     fileInfoList.add(new FileInfo(mCategory, cursor.getCount()));
-                    return fileInfoList;
+                    return;
                 }
                 do {
                     int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.TITLE);
@@ -952,10 +928,9 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             }
             cursor.close();
             if (fileInfoList.size() != 0) {
-                return fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
+                fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
             }
         }
-        return null;
     }
 
     private int getTypeForMime(String mimeType) {

@@ -20,14 +20,11 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
     private static final int VERTICAL_LIST = LinearLayoutManager.VERTICAL;
 
-    private Drawable mDivider;
+    private final Drawable mDivider;
     private int mOrientation;
-    private int leftMargin;
+    private final int leftMargin;
 
-    public DividerItemDecoration(Context context, int orientation, boolean isDarkTheme) {
-/*        final TypedArray a = context.obtainStyledAttributes(ATTRS);
-        mDivider = a.getDrawable(0);
-        a.recycle();*/
+    public DividerItemDecoration(Context context, boolean isDarkTheme) {
         if (isDarkTheme) {
             mDivider = ContextCompat.getDrawable(context, R.drawable.divider_line_dark);
 
@@ -35,18 +32,15 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
             mDivider = ContextCompat.getDrawable(context, R.drawable.divider_line);
         }
 
-        setOrientation(orientation);
+        setOrientation();
         leftMargin = context.getResources().getDimensionPixelSize(R.dimen.divider_margin_list);
 //        int)(55*(context.getResources().getDisplayMetrics
 //                ().densityDpi/160f));
 //
     }
 
-    public void setOrientation(int orientation) {
-        if (orientation != HORIZONTAL_LIST && orientation != VERTICAL_LIST) {
-            throw new IllegalArgumentException("invalid orientation");
-        }
-        mOrientation = orientation;
+    public void setOrientation() {
+        mOrientation = LinearLayoutManager.VERTICAL;
     }
 
     @Override

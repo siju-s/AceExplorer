@@ -5,9 +5,6 @@ import android.os.Build;
 
 import com.siju.acexplorer.R;
 
-/**
- * Created by Siju on 17-09-2016.
- */
 public class Utils {
 
     public static  boolean isTablet(Context context) {
@@ -16,6 +13,10 @@ public class Utils {
 
     public static boolean isAtleastLollipop() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+    }
+
+    public static boolean isAtleastMarsh() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
     }
 
     public static boolean isAtleastNougat() {

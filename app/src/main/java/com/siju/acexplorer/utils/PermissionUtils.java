@@ -8,16 +8,12 @@ import com.siju.acexplorer.Factory;
 
 import java.util.Hashtable;
 
-/**
- * Created by Siju on 30-06-2016.
- */
-
 public class PermissionUtils {
-    private static String[] sRequiredPermissions = new String[] {
+    private static final String[] sRequiredPermissions = new String[] {
             // Required to read existing SMS threads
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
-    private static Hashtable<String, Integer> sPermissions = new Hashtable<String, Integer>();
+    private static final Hashtable<String, Integer> sPermissions = new Hashtable<>();
 
     public static String[] getRequiredPermissions() {
         return sRequiredPermissions;
@@ -25,12 +21,12 @@ public class PermissionUtils {
 
     /** Does the app have the minimum set of permissions required to operate. */
     public static boolean hasRequiredPermissions() {
-        return hasPermissions(sRequiredPermissions);
+        return hasPermissions();
     }
 
     /** Does the app have all the specified permissions */
-    public static boolean hasPermissions(final String[] permissions) {
-        for (final String permission : permissions) {
+    private static boolean hasPermissions() {
+        for (final String permission : PermissionUtils.sRequiredPermissions) {
             if (!hasPermission(permission)) {
                 return false;
             }
@@ -38,7 +34,7 @@ public class PermissionUtils {
         return true;
     }
 
-    public static boolean hasPermission(final String permission) {
+    private static boolean hasPermission(final String permission) {
         if (PermissionUtils.isAtLeastM()) {
             // It is safe to cache the PERMISSION_GRANTED result as the process gets killed if the
             // user revokes the permission setting. However, PERMISSION_DENIED should not be

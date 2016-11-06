@@ -1,9 +1,5 @@
 package com.siju.acexplorer.ui;
 
-/**
- * Created by Siju on 20-06-2016.
- */
-
 import android.content.Context;
 import android.support.v7.widget.ActionMenuView;
 import android.support.v7.widget.Toolbar;

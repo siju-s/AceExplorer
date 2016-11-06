@@ -10,11 +10,9 @@ import android.util.DisplayMetrics;
 
 public class CustomLayoutManager extends LinearLayoutManager {
     private static final float MILLISECONDS_PER_INCH = 500f;
-    private Context mContext;
 
     public CustomLayoutManager(Context context) {
         super(context);
-        mContext = context;
     }
 
     @Override
@@ -37,23 +35,4 @@ public class CustomLayoutManager extends LinearLayoutManager {
         smoothScroller.setTargetPosition(position);
         startSmoothScroll(smoothScroller);
     }
-
-
-/*    private class TopSnappedSmoothScroller extends LinearSmoothScroller {
-        public TopSnappedSmoothScroller(Context context) {
-            super(context);
-
-        }
-
-        @Override
-        public PointF computeScrollVectorForPosition(int targetPosition) {
-            return CustomLayoutManager.this
-                    .computeScrollVectorForPosition(targetPosition);
-        }
-
-        @Override
-        protected int getVerticalSnapPreference() {
-            return SNAP_TO_START;
-        }
-    }*/
 }

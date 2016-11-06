@@ -20,7 +20,7 @@ import java.util.Locale;
 
 public class RootHelper {
 
-    public static String runAndWait(String cmd, boolean root) {
+    public static void runAndWait(String cmd, boolean root) {
 
         Command c = new Command(0, cmd) {
             @Override
@@ -41,18 +41,15 @@ public class RootHelper {
         try {
             RootTools.getShell(root).add(c);
         } catch (Exception e) {
-            return null;
+            return;
         }
 
-        if (!waitForCommand(c, -1)) {
-            return null;
-        }
+        waitForCommand(c, -1);
 
-        return c.toString();
     }
 
-    public static ArrayList<String> runAndWait1(String cmd, final boolean root) {
-        final ArrayList<String> output = new ArrayList<String>();
+    private static ArrayList<String> runAndWait1(String cmd, final boolean root) {
+        final ArrayList<String> output = new ArrayList<>();
         Command cc = new Command(1, cmd) {
             @Override
             public void commandOutput(int i, String s) {
@@ -132,8 +129,8 @@ public class RootHelper {
         return per;
     }
 
-    public static ArrayList<FileInfo> getFilesList(Context context, String path, boolean root,
-                                                   boolean showHidden,boolean isRingtonePicker) {
+    public static ArrayList<FileInfo> getFilesList(String path, boolean root,
+                                                   boolean showHidden, boolean isRingtonePicker) {
         ArrayList<FileInfo> fileInfoArrayList = new ArrayList<>();
         File file = new File(path);
 //        Logger.log("RootHelper", "Starting time FILES=");
@@ -148,7 +145,6 @@ public class RootHelper {
                     long size;
                     String extension = null;
                     int type = 0;
-
 
 
                     // Dont show hidden files by default
@@ -176,7 +172,7 @@ public class RootHelper {
                         size = file1.length();
 //                        noOfFilesOrSize = Formatter.formatFileSize(context, size);
                         extension = filePath.substring(filePath.lastIndexOf(".") + 1);
-                        type = checkMimeType(filePath, extension);
+                        type = checkMimeType(extension);
                         if (isRingtonePicker && !FileUtils.isFileMusic(filePath)) {
                             continue;
                         }
@@ -194,10 +190,8 @@ public class RootHelper {
             }
         } else {
             String p = " ";
-            int mode = 0;
             if (showHidden) p = "a ";
-            ArrayList<BaseFile> a = new ArrayList<>();
-            ArrayList<String> ls = new ArrayList<>();
+            ArrayList<String> ls;
             if (root) {
 //            if (!path.startsWith("/storage") && !path.startsWith("/sdcard")) {
                 String cpath = getCommandLineString(path);
@@ -226,15 +220,8 @@ public class RootHelper {
                                     boolean isDirectory;
                                     if (array.getLink().trim().length() > 0) {
                                         isDirectory = isDirectory(array.getLink(), root, 0);
-//                                        array.setDirectory(isdirectory);
                                     } else isDirectory = isDirectory(array);
                                     long size1 = array.getSize();
-                                    String size;
-                          /*          if (size1 != -1) {
-                                        size = Formatter.formatFileSize(context, array.getSize());
-                                    } else {
-                                        size = null;
-                                    }*/
                                     fileInfoArrayList.add(new FileInfo(name, path1,
                                             array.getDate(),
                                             size1, isDirectory, null,
@@ -254,11 +241,9 @@ public class RootHelper {
 
     }
 
-    private ArrayList<FileInfo> fileInfoArrayList = new ArrayList<>();
+    private final ArrayList<FileInfo> fileInfoArrayList = new ArrayList<>();
 
-    public ArrayList<FileInfo> getFilesListRecursively(Context context, String path, boolean root,
-                                                   boolean
-                                                           showHidden) {
+    public ArrayList<FileInfo> getFilesListRecursively(Context context, String path, boolean root) {
 
         File file = new File(path);
 //        Logger.log("RootHelper", "Starting time FILES=");
@@ -275,10 +260,6 @@ public class RootHelper {
                     String extension = null;
                     int type = 0;
 
-                    // Dont show hidden files by default
-                    if (file1.isHidden() && !showHidden) {
-                        continue;
-                    }
                     if (file1.isDirectory()) {
 
                         isDirectory = true;
@@ -287,7 +268,7 @@ public class RootHelper {
                         if (list != null) {
                             childFileListSize = list.length;
                         }
-                        getFilesListRecursively(context,filePath,true,true);
+                        getFilesListRecursively(context, filePath, true);
                         // Saves us 200 ms by avoiding filtering of hidden files
                       /*  if (childFileListSize == 0) {
                             noOfFilesOrSize = context.getResources().getString(R.string.empty);
@@ -301,7 +282,7 @@ public class RootHelper {
                         size = file1.length();
 //                        noOfFilesOrSize = Formatter.formatFileSize(context, size);
                         extension = filePath.substring(filePath.lastIndexOf(".") + 1);
-                        type = checkMimeType(filePath, extension);
+                        type = checkMimeType(extension);
                     }
                     long date = file1.lastModified();
 //                    String fileModifiedDate = convertDate(date);
@@ -316,11 +297,9 @@ public class RootHelper {
 
             }
         } else {
-            String p = " ";
-            int mode = 0;
-            if (showHidden) p = "a ";
-            ArrayList<BaseFile> a = new ArrayList<>();
-            ArrayList<String> ls = new ArrayList<>();
+            String p;
+            p = "a ";
+            ArrayList<String> ls;
             if (root) {
 //            if (!path.startsWith("/storage") && !path.startsWith("/sdcard")) {
                 String cpath = getCommandLineString(path);
@@ -352,12 +331,6 @@ public class RootHelper {
 //                                        array.setDirectory(isdirectory);
                                     } else isDirectory = isDirectory(array);
                                     long size1 = array.getSize();
-                                    String size;
-                          /*          if (size1 != -1) {
-                                        size = Formatter.formatFileSize(context, array.getSize());
-                                    } else {
-                                        size = null;
-                                    }*/
                                     fileInfoArrayList.add(new FileInfo(name, path1,
                                             array.getDate(),
                                             size1, isDirectory, null,
@@ -378,7 +351,7 @@ public class RootHelper {
     }
 
 
-    private static int checkMimeType(String path, String extension) {
+    private static int checkMimeType(String extension) {
 //        String mimeType = URLConnection.guessContentTypeFromName(path);
 
         int value = 0;
@@ -395,15 +368,14 @@ public class RootHelper {
                 value = FileConstants.CATEGORY.AUDIO.getValue();
             }
         }
-//        Logger.log(TAG, "Mime type=" + value);
         return value;
     }
 
-    public static boolean fileExists(Context context, String path) {
+    public static boolean fileExists(String path) {
         File f = new File(path);
         String p = f.getParent();
         if (p != null && p.length() > 0) {
-            ArrayList<FileInfo> ls = getFilesList(context, p, true, true,false);
+            ArrayList<FileInfo> ls = getFilesList(p, true, true, false);
             for (FileInfo strings : ls) {
                 if (strings.getFilePath() != null && strings.getFilePath().equals(path)) {
                     return true;
@@ -413,13 +385,13 @@ public class RootHelper {
         return false;
     }
 
-    public static BaseFile parseName(String line) {
+    private static BaseFile parseName(String line) {
         boolean linked = false;
         String name = "", link = "", size = "-1", date = "";
         String[] array = line.split(" ");
         if (array.length < 6) return null;
-        for (int i = 0; i < array.length; i++) {
-            if (array[i].contains("->") && array[0].startsWith("l")) {
+        for (String anArray : array) {
+            if (anArray.contains("->") && array[0].startsWith("l")) {
                 linked = true;
             }
         }
@@ -448,25 +420,25 @@ public class RootHelper {
             ParsePosition pos = new ParsePosition(0);
             SimpleDateFormat simpledateformat = new SimpleDateFormat("yyyy-MM-dd | HH:mm", Locale.getDefault());
             Date stringDate = simpledateformat.parse(date, pos);
-            BaseFile baseFile = new BaseFile(name, array[0], stringDate.getTime(), Size, true);
+            BaseFile baseFile = new BaseFile(name, array[0], stringDate.getTime(), Size);
             baseFile.setLink(link);
             return baseFile;
         } else {
-            BaseFile baseFile = new BaseFile(name, array[0], new File("/").lastModified(), Size, true);
+            BaseFile baseFile = new BaseFile(name, array[0], new File("/").lastModified(), Size);
             baseFile.setLink(link);
             return baseFile;
         }
 
     }
 
-    public static int getLinkPosition(String[] array) {
+    private static int getLinkPosition(String[] array) {
         for (int i = 0; i < array.length; i++) {
             if (array[i].contains("->")) return i;
         }
         return 0;
     }
 
-    public static int getColonPosition(String[] array) {
+    private static int getColonPosition(String[] array) {
         for (int i = 0; i < array.length; i++) {
             if (array[i].contains(":")) return i;
         }
@@ -478,7 +450,7 @@ public class RootHelper {
         String name = f.getName();
         String p = f.getParent();
         if (p != null && p.length() > 1) {
-            ArrayList<String> ls = runAndWait1("ls -la " + p, root, 2000);
+            ArrayList<String> ls = runAndWait1("ls -la " + p, root);
             for (String s : ls) {
                 if (contains(s.split(" "), name)) {
                     try {
@@ -505,40 +477,6 @@ public class RootHelper {
         return path.getPermission().startsWith("d") || new File(path.getPath()).isDirectory();
     }
 
-    private static ArrayList<String> runAndWait1(String cmd, final boolean root, final long time) {
-        final ArrayList<String> output = new ArrayList<String>();
-        Command cc = new Command(1, cmd) {
-            @Override
-            public void commandOutput(int i, String s) {
-                output.add(s);
-            }
-
-            @Override
-            public void commandTerminated(int i, String s) {
-
-                System.out.println("error" + root + s + time);
-
-            }
-
-            @Override
-            public void commandCompleted(int i, int i2) {
-
-            }
-        };
-        try {
-            RootTools.getShell(root).add(cc);
-        } catch (Exception e) {
-            //       Logger.errorST("Exception when trying to run shell command", e);
-            e.printStackTrace();
-            return null;
-        }
-
-        if (!waitForCommand(cc, time)) {
-            return null;
-        }
-
-        return output;
-    }
 
     private static boolean contains(String[] a, String name) {
         for (String s : a) {

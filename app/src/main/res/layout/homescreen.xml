@@ -88,7 +88,6 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/textStoragePlaceHolder"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/margin_16"
@@ -99,7 +98,6 @@
                     android:textStyle="bold"/>
 
                 <View
-                    android:id="@+id/viewDummy2"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
                     android:layout_marginBottom="2dp"

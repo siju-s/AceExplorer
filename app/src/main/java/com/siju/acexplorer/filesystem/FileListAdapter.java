@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -30,27 +29,26 @@ import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private Context mContext;
+    private final Context mContext;
     private ArrayList<FileInfo> fileInfoArrayList = new ArrayList<>();
     private SparseBooleanArray mSelectedItemsIds;
-    private SparseBooleanArray mAnimatedPos = new SparseBooleanArray();
+    private final SparseBooleanArray mAnimatedPos = new SparseBooleanArray();
     boolean mStopAnimation;
     private OnItemClickListener mItemClickListener;
     private OnItemLongClickListener mOnItemLongClickListener;
     private int mCategory;
-    private Uri mAudioUri = Uri.parse("content://media/external/audio/albumart");
-    private int mViewMode;
-    private ArrayList<FileInfo> fileInfoArrayListCopy = new ArrayList<>();
+    private final Uri mAudioUri = Uri.parse("content://media/external/audio/albumart");
+    private final int mViewMode;
+    private final ArrayList<FileInfo> fileInfoArrayListCopy = new ArrayList<>();
     private int draggedPos = -1;
-    private int mAnimation;
+    private final int mAnimation;
     private int offset = 0;
     private boolean mIsAnimNeeded = true;
-    private boolean mIsThemeDark;
+    private final boolean mIsThemeDark;
     private static final int TYPE_ITEM = 1;
     private static final int TYPE_FOOTER = 2;
 
@@ -481,11 +479,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
 
-    public void setModel(List<FileInfo> models) {
-        fileInfoArrayList = new ArrayList<>(models);
-    }
-
-
     void filter(String text) {
         if (text.isEmpty()) {
             if (fileInfoArrayList != null) {
@@ -511,12 +504,12 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private class FileListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
             View.OnLongClickListener {
-        TextView textFileName;
+        final TextView textFileName;
         TextView textFileModifiedDate;
-        TextView textNoOfFileOrSize;
-        ImageView imageIcon;
-        ImageView imageThumbIcon;
-        RelativeLayout container;
+        final TextView textNoOfFileOrSize;
+        final ImageView imageIcon;
+        final ImageView imageThumbIcon;
+        final RelativeLayout container;
 
 
         FileListViewHolder(View itemView) {
@@ -554,11 +547,9 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     private class FooterViewHolder extends RecyclerView.ViewHolder {
-        LinearLayout linearLayoutFooter;
 
         FooterViewHolder(View itemView) {
             super(itemView);
-            this.linearLayoutFooter = (LinearLayout) itemView.findViewById(R.id.linearLayoutFooter);
         }
     }
 

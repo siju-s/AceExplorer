@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 
 
 public class PrefManager {
-    private SharedPreferences pref;
+    private final SharedPreferences pref;
 
     // Shared preferences file name
     private static final String PREF_NAME = "ace_prefs";
@@ -18,8 +18,8 @@ public class PrefManager {
 
     }
 
-    public void setFirstTimeLaunch(boolean isFirstTime) {
-        pref.edit().putBoolean(IS_FIRST_TIME_LAUNCH, isFirstTime).apply();
+    public void setFirstTimeLaunch() {
+        pref.edit().putBoolean(IS_FIRST_TIME_LAUNCH, false).apply();
     }
 
     public boolean isFirstTimeLaunch() {

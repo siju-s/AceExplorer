@@ -5,15 +5,13 @@ import android.os.Parcelable;
 
 import java.util.zip.ZipEntry;
 
-/**
- * Created by Siju on 27-07-2016.
- */
 public class ZipModel implements Parcelable {
 
-    boolean directory;
-    ZipEntry entry;
-    String name;
-    long date, size;
+    private final boolean directory;
+    private final ZipEntry entry;
+    private String name;
+    private long date;
+    private long size;
 
     public ZipModel(ZipEntry entry, long date, long size, boolean directory) {
         this.directory = directory;
@@ -69,16 +67,12 @@ public class ZipModel implements Parcelable {
                 }
             };
 
-    public ZipModel(Parcel im) {
+    private ZipModel(Parcel im) {
         name = im.readString();
         size = im.readLong();
         date = im.readLong();
         int i = im.readInt();
-        if (i == 0) {
-            directory = false;
-        } else {
-            directory = true;
-        }
+        directory = i != 0;
         entry = new ZipEntry(name);
     }
 

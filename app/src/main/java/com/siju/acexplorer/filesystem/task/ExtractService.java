@@ -3,10 +3,8 @@ package com.siju.acexplorer.filesystem.task;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
@@ -32,6 +30,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -40,33 +39,27 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class ExtractService extends Service {
-    public final String EXTRACT_CONDITION = "EXTRACT_CONDITION";
+    // --Commented out by Inspection (06-11-2016 11:23 PM):public final String EXTRACT_CONDITION = "EXTRACT_CONDITION";
 
 
     private Context c;
     // Binder given to clients
-    private HashMap<Integer, Boolean> hash = new HashMap<Integer, Boolean>();
-    private HashMap<Integer, ZipProgressModel> hash1 = new HashMap<>();
+    private final HashMap<Integer, Boolean> hash = new HashMap<>();
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
-    private ArrayList<String> entries = new ArrayList<String>();
+    private ArrayList<String> entries = new ArrayList<>();
     private boolean eentries;
-    private String epath;
-    private final int NOTIFICATION_ID = 1000;
 
     @Override
     public void onCreate() {
-        registerReceiver(receiver1, new IntentFilter("excancel"));
         c = getApplicationContext();
     }
-
-    private boolean foreground = true;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Bundle b = new Bundle();
         b.putInt("id", startId);
-        epath = PreferenceManager.getDefaultSharedPreferences(this).getString("extractpath", "");
+        String epath = PreferenceManager.getDefaultSharedPreferences(this).getString("extractpath", "");
         mNotifyManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         String file = intent.getStringExtra("zip");
@@ -85,7 +78,6 @@ public class ExtractService extends Service {
         progressModel.setId(startId);
         progressModel.setP1(0);
         progressModel.setCompleted(false);
-        hash1.put(startId, progressModel);
         Intent notificationIntent = new Intent(this, BaseActivity.class);
         notificationIntent.setAction(Intent.ACTION_MAIN);
         notificationIntent.putExtra("openprocesses", true);
@@ -103,15 +95,19 @@ public class ExtractService extends Service {
     private final IBinder mBinder = new LocalBinder();
 
     private class LocalBinder extends Binder {
+
         public ExtractService getService() {
             // Return this instance of LocalService so clients can call public methods
             return ExtractService.this;
         }
+
     }
+
 
     public void setProgressListener(ProgressListener progressListener) {
         this.progressListener = progressListener;
     }
+
 
     private ProgressListener progressListener;
 
@@ -121,7 +117,9 @@ public class ExtractService extends Service {
         void refresh();
     }
 
+
     private void publishResults(String fileName, int p1, int id, long total, long done, boolean b) {
+        int NOTIFICATION_ID = 1000;
         if (hash.get(id)) {
             mBuilder.setContentTitle(getResources().getString(R.string.extracting));
             mBuilder.setProgress(100, p1, false);
@@ -136,7 +134,7 @@ public class ExtractService extends Service {
                 mBuilder.setProgress(0, 0, false);
                 mBuilder.setOngoing(false);
                 mNotifyManager.notify(id1, mBuilder.build());
-                publishCompletedResult("", id1);
+                publishCompletedResult(id1);
             }
             ZipProgressModel progressModel = new ZipProgressModel();
             progressModel.setName(fileName);
@@ -149,10 +147,10 @@ public class ExtractService extends Service {
                 progressListener.onUpdate(progressModel);
                 if (b) progressListener.refresh();
             }
-        } else publishCompletedResult(fileName, NOTIFICATION_ID + id);
+        } else publishCompletedResult(NOTIFICATION_ID + id);
     }
 
-    private void publishCompletedResult(String a, int id1) {
+    private void publishCompletedResult(int id1) {
         try {
             mNotifyManager.cancel(id1);
         } catch (Exception e) {
@@ -178,7 +176,7 @@ public class ExtractService extends Service {
                 copiedbytes, final long totalbytes) {
             if (asyncTask != null && asyncTask.getStatus() == Status.RUNNING) asyncTask.cancel(true);
             asyncTask = new AsyncTask<Void, Void, Void>() {
-                int p1, p2;
+                int p1; // --Commented out by Inspection (06-11-2016 11:23 PM):p2;
 
                 @Override
                 protected Void doInBackground(Void... voids) {
@@ -223,7 +221,7 @@ public class ExtractService extends Service {
             BufferedInputStream inputStream = new BufferedInputStream(
                     zipfile.getInputStream(entry));
             BufferedOutputStream outputStream = new BufferedOutputStream(
-                    FileUtils.getOutputStream(outputFile, c, 0));
+                    FileUtils.getOutputStream(outputFile, c));
             Logger.log("ExtractService", "zipfile=" + zipfile + " zipentry=" + entry + " stream=" + inputStream);
 
             try {
@@ -247,8 +245,18 @@ public class ExtractService extends Service {
                     }
                 }
             } finally {
-                outputStream.close();
-                inputStream.close();
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    //closing quietly
+                }
+
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    //closing quietly
+                }
+
             }
         }
 
@@ -267,7 +275,7 @@ public class ExtractService extends Service {
             BufferedInputStream inputStream = new BufferedInputStream(
                     zipfile.getInputStream(entry));
             BufferedOutputStream outputStream = new BufferedOutputStream(
-                    FileUtils.getOutputStream(outputFile, c, entry.getFullUnpackSize()));
+                    FileUtils.getOutputStream(outputFile, c));
             try {
                 int len;
                 byte buf[] = new byte[20480];
@@ -288,8 +296,18 @@ public class ExtractService extends Service {
                     }
                 }
             } finally {
-                outputStream.close();
-                inputStream.close();
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    //closing quietly
+                }
+
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    //closing quietly
+                }
+
             }
         }
 
@@ -307,7 +325,7 @@ public class ExtractService extends Service {
             }
 
             BufferedOutputStream outputStream = new BufferedOutputStream(
-                    FileUtils.getOutputStream(outputFile, getBaseContext(), entry.getRealSize()));
+                    FileUtils.getOutputStream(outputFile, getBaseContext()));
             try {
                 int len;
                 byte buf[] = new byte[20480];
@@ -328,14 +346,18 @@ public class ExtractService extends Service {
                     }
                 }
             } finally {
-                outputStream.close();
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    //close
+                }
 
             }
         }
 
-        public boolean extract(int id, File archive, String destinationPath, ArrayList<String> x) {
+        public void extract(int id, File archive, String destinationPath, ArrayList<String> x) {
             int i = 0;
-            ArrayList<ZipEntry> entry1 = new ArrayList<ZipEntry>();
+            ArrayList<ZipEntry> entry1 = new ArrayList<>();
             try {
                 ZipFile zipfile = new ZipFile(archive);
                 calculateProgress(archive.getName(), id, false, copiedbytes, totalbytes);
@@ -367,18 +389,16 @@ public class ExtractService extends Service {
                 Intent intent = new Intent(FileConstants.RELOAD_LIST);
                 sendBroadcast(intent);
                 calculateProgress(archive.getName(), id, true, copiedbytes, totalbytes);
-                return true;
             } catch (Exception e) {
                 Log.e("TAG", "Error while extracting file " + archive, e);
                 Intent intent = new Intent(FileConstants.RELOAD_LIST);
                 sendBroadcast(intent);
                 calculateProgress(archive.getName(), id, true, copiedbytes, totalbytes);
-                return false;
             }
 
         }
 
-        boolean extract(int id, File archive, String destinationPath) {
+        void extract(int id, File archive, String destinationPath) {
             try {
                 ArrayList<ZipEntry> arrayList = new ArrayList<>();
                 ZipFile zipfile = new ZipFile(archive);
@@ -407,17 +427,14 @@ public class ExtractService extends Service {
                 Intent intent = new Intent(FileConstants.RELOAD_LIST);
                 sendBroadcast(intent);
                 calculateProgress(archive.getName(), id, true, copiedbytes, totalbytes);
-                return true;
             } catch (Exception e) {
                 Log.e(this.getClass().getSimpleName(), "Error while extracting file " + archive, e);
                 publishResults(archive.getName(), 100, id, totalbytes, copiedbytes, true);
-                return false;
             }
 
         }
 
-        boolean extractTar(int id, File archive, String destinationPath) {
-            int i = 0;
+        void extractTar(int id, File archive, String destinationPath) {
             try {
                 ArrayList<TarArchiveEntry> archiveEntries = new ArrayList<>();
                 TarArchiveInputStream inputStream;
@@ -453,19 +470,18 @@ public class ExtractService extends Service {
                 Intent intent = new Intent(FileConstants.RELOAD_LIST);
                 sendBroadcast(intent);
                 publishResults(archive.getName(), 100, id, totalbytes, copiedbytes, true);
-                return true;
+
             } catch (Exception e) {
                 Log.e("TAG", "Error while extracting file " + archive, e);
                 Intent intent = new Intent(FileConstants.RELOAD_LIST);
                 sendBroadcast(intent);
                 publishResults(archive.getName(), 100, id, totalbytes, copiedbytes, true);
-                return false;
+
             }
 
         }
 
-        boolean extractRar(int id, File archive, String destinationPath) {
-            int i = 0;
+        void extractRar(int id, File archive, String destinationPath) {
             try {
                 ArrayList<FileHeader> arrayList = new ArrayList<>();
                 Archive zipfile = new Archive(archive);
@@ -495,13 +511,13 @@ public class ExtractService extends Service {
                 Intent intent = new Intent(FileConstants.RELOAD_LIST);
                 sendBroadcast(intent);
                 calculateProgress(archive.getName(), id, true, copiedbytes, totalbytes);
-                return true;
+
             } catch (Exception e) {
                 Log.e("TAG", "Error while extracting file " + archive, e);
                 Intent intent = new Intent(FileConstants.RELOAD_LIST);
                 sendBroadcast(intent);
                 calculateProgress(archive.getName(), id, true, copiedbytes, totalbytes);
-                return false;
+
             }
         }
 
@@ -545,26 +561,7 @@ public class ExtractService extends Service {
 
 
     @Override
-    public void onDestroy() {
-        unregisterReceiver(receiver1);
-    }
-
-    /**
-     * Class used for the client Binder.  Because we know this service always
-     * runs in the same process as its clients, we don't need to deal with IPC.
-     */
-    private BroadcastReceiver receiver1 = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.i("TAG", "" + intent.getIntExtra("id", 1));
-            hash.put(intent.getIntExtra("id", 1), false);
-        }
-    };
-
-    @Override
     public IBinder onBind(Intent arg0) {
-        // TODO Auto-generated method stub
         return mBinder;
     }
 }

@@ -34,11 +34,6 @@
     <string name="action_delete">Delete</string>
     <string name="action_share">Share</string>
     <string name="msg_cut_copy">file(s) copied to clipboard</string>
-    <string name="msg_copy">Copying files &#8230;</string>
-    <string name="msg_cut">Moving files &#8230;</string>
-    <string name="msg_delete">Deleting files &#8230;</string>
-    <string name="msg_copy_success">copied successfully</string>
-    <string name="msg_move_success">moved successfully</string>
     <string name="msg_delete_success">deleted successfully</string>
     <string name="msg_copy_failure">Copy operation failed</string>
     <string name="msg_move_failure">Move operation failed</string>
@@ -48,13 +43,11 @@
     <string name="dialog_keep_both">Keep both files</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_title_paste_conflict">File exists</string>
-    <string name="msg_operation_cancel">Operation cancelled</string>
     <string name="dialog_from_placeholder">From</string>
     <string name="dialog_to_placeholder">To</string>
     <string name="button_paste_progress">Background</string>
     <string name="dialog_delete_title">Are you sure you want to delete the following files?</string>
     <string name="msg_ok">OK</string>
-    <string name="msg_save">Save</string>
     <string name="no_files">No files</string>
     <string name="msg_error_valid_name">Enter a valid name</string>
     <string name="path">Path:</string>
@@ -68,24 +61,15 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="properties">Properties</string>
-    <string name="msg_zip_success">Zip file created successfully</string>
-    <string name="msg_zip_failure">Zip operation failed</string>
     <string name="new_folder">New folder</string>
     <string name="new_file">New file</string>
-    <string name="msg_file_create_success">File created successfully</string>
-    <string name="msg_file_create_failure">Unable to create new file</string>
-    <string name="msg_folder_create_success">Folder created successfully</string>
-    <string name="msg_folder_create_failure">Unable to create new folder</string>
     <string name="rate_us">Rate Us</string>
     <string name="add_fav">Add to Favourites</string>
     <string name="msg_added_to_fav">Added to Favourites</string>
     <string name="msg_error_not_supported">No app to handle the action</string>
-    <string name="msg_open_file">Open file</string>
     <string name="permission_request">Need storage permission to show all the files</string>
     <string name="action_grant">GRANT</string>
-    <string name="permission_deny">Permission Denied.You cannot access storage.</string>
     <string name="action_sort">Sort</string>
-    <string name="action_view">View</string>
 
     <string name="action_view_list">List view</string>
     <string name="action_view_grid">Grid view</string>
@@ -101,14 +85,9 @@
 
     <string name="sort_date">Date (Older)</string>
     <string name="sort_date_desc">Date (Newest)</string>
-    <string name="extract_here">Extract here</string>
     <string name="extract_to">Extract to</string>
     <string name="open">Open</string>
-    <string name="dialog_title_options">Options</string>
     <string name="extracting">Extracting..</string>
-    <string name="msg_extract_success">Successfully extracted files</string>
-    <string name="msg_extract_failure">Error in extracting file</string>
-    <string name="dialog_title_extract_file">Extract file</string>
     <string name="dialog_current_path">Current path</string>
     <string name="dialog_specify_path">Specify path</string>
     <string name="select_path">Select path</string>
@@ -118,7 +97,6 @@
     <string name="action_select_all">Select All</string>
     <string name="delete_fav">Delete favourite</string>
     <string name="action_search">Search</string>
-    <string name="pref_category_general">GENERAL</string>
     <string name="pref_title_theme">Theme</string>
     <string name="pref_subs_light">Light</string>
     <string name="pref_subs_dark">Dark</string>
@@ -128,7 +106,6 @@
     <string name="pref_title_check_update">Check for updates</string>
     <string name="pref_title_change_lang">Language</string>
     <string name="pref_title_upgrade">Upgrade to Pro</string>
-    <string name="pref_title_donate">Donate</string>
     <string name="pref_title_about">About Us</string>
     <string name="pref_title_version">Version</string>
 
@@ -154,10 +131,8 @@
     <string name="text">Text</string>
     <string name="image">Image</string>
     <string name="audio">Audio</string>
-    <string name="video">Video</string>
     <string name="other">Other</string>
     <string name="file_exists">File already exists</string>
-    <string name="enter_zip">Enter zip name</string>
     <string name="create">Create</string>
     <string name="zip_progress_title">Creating zip</string>
     <string name="needsaccess">Write Access Required</string>
@@ -167,7 +142,6 @@
     <string name="msg_operation_failed">Operation failed</string>
     <string name="selected">selected</string>
     <string name="enter_name">Enter name</string>
-    <string name="grant_access">Grant access</string>
     <string name="storage_low">Insufficient space</string>
     <string name="paste_conflict_remember">Remember</string>
     <string name="copying">Copying files</string>
@@ -187,11 +161,8 @@
     <string name="permission_execute">Execute</string>
     <string name="permission_owner">Owner</string>
     <string name="permission_group">Group</string>
-    <string name="permission_other">Other</string>
 
 
-
-    <string name="title_activity_welcome">Home Screen</string>
     <string name="next">NEXT</string>
     <string name="skip">SKIP</string>
     <string name="start">GOT IT</string>
@@ -207,8 +178,10 @@
 
     <string name="slide_4_title">Themes</string>
     <string name="slide_4_desc">Dark or Light way! Your choice.</string>
-    <string name="blank" translatable="false">%d</string>
     <string name="no_music"> No Music files</string>
     <string name="fav_removed">Removed from favorites</string>
+    <string name="count_placeholder" translatable="false">1/</string>
+    <string name="percent_placeholder" translatable="false">%</string>
+
 
 </resources>

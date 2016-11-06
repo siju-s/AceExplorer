@@ -10,9 +10,6 @@ import com.siju.acexplorer.R;
 
 import java.util.ArrayList;
 
-/**
- * Created by Siju on 21-08-2016.
- */
 public class DialogUtils {
 
     public MaterialDialog showEditDialog(final Context context, String[] texts) {

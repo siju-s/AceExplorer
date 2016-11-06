@@ -1,5 +1,6 @@
 package com.siju.acexplorer.filesystem.helper;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -30,7 +31,7 @@ import java.util.ArrayList;
 
 public class FileOpsHelper {
 
-    private BaseActivity mActivity;
+    private final BaseActivity mActivity;
     private final String TAG = this.getClass().getSimpleName();
 
     public FileOpsHelper(BaseActivity baseActivity) {
@@ -39,9 +40,9 @@ public class FileOpsHelper {
 
 
     public void mkDir(final boolean rootMode, final File file) {
-        FileOperations.mkdir(file, mActivity, rootMode, new FileOperations.ErrorCallBack() {
+        FileOperations.mkdir(file, mActivity, rootMode, new FileOperations.FileOperationCallBack() {
             @Override
-            public void exists(final File file1) {
+            public void exists() {
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -77,7 +78,7 @@ public class FileOpsHelper {
 
 
             @Override
-            public void done(File hFile, final boolean success) {
+            public void opCompleted(File hFile, final boolean success) {
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -102,9 +103,9 @@ public class FileOpsHelper {
     public void mkFile(final boolean rootMode, final File file) {
         /*final Toast toast=Toast.makeText(ma.getActivity(), R.string.creatingfolder, Toast.LENGTH_LONG);
         toast.show();*/
-        FileOperations.mkfile(file, mActivity, rootMode, new FileOperations.ErrorCallBack() {
+        FileOperations.mkfile(file, mActivity, rootMode, new FileOperations.FileOperationCallBack() {
             @Override
-            public void exists(final File file1) {
+            public void exists() {
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -139,7 +140,7 @@ public class FileOpsHelper {
 
 
             @Override
-            public void done(final File file, final boolean success) {
+            public void opCompleted(final File file, final boolean success) {
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -163,10 +164,9 @@ public class FileOpsHelper {
 
     public void renameFile(boolean rootmode, final File oldFile, final File newFile, final int position) {
         Logger.log(TAG, "Rename--oldFile=" + oldFile + " new file=" + newFile);
-        FileOperations.rename(oldFile, newFile, rootmode, mActivity, new FileOperations
-                .ErrorCallBack() {
+        FileOperations.rename(oldFile, newFile, rootmode, mActivity, new FileOperations.FileOperationCallBack() {
             @Override
-            public void exists(final File file1) {
+            public void exists() {
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -198,7 +198,7 @@ public class FileOpsHelper {
 
 
             @Override
-            public void done(final File file, final boolean success) {
+            public void opCompleted(final File file, final boolean success) {
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -272,7 +272,7 @@ public class FileOpsHelper {
         textView.setText(mActivity.getString(R.string.needs_access_summary, path));
 
         materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View view) {
                 triggerStorageAccessFramework();

@@ -2,13 +2,9 @@ package com.siju.acexplorer.model;
 
 import java.util.ArrayList;
 
-/**
- * Created by Siju on 12-06-2016.
- */
-
 public class SectionGroup {
-    private String mHeader;
-    private ArrayList<SectionItems> mChildItems;
+    private final String mHeader;
+    private final ArrayList<SectionItems> mChildItems;
 
     public SectionGroup(String mHeader, ArrayList<SectionItems> mChildItems) {
 
@@ -20,17 +16,21 @@ public class SectionGroup {
         return mHeader;
     }
 
-    public void setmHeader(String mHeader) {
-        this.mHeader = mHeader;
-    }
+// --Commented out by Inspection START (06-11-2016 11:07 PM):
+//    public void setmHeader(String mHeader) {
+//        this.mHeader = mHeader;
+//    }
+// --Commented out by Inspection STOP (06-11-2016 11:07 PM)
 
     public ArrayList<SectionItems> getmChildItems() {
         return mChildItems;
     }
 
-    public void setmChildItems(ArrayList<SectionItems> mChildItems) {
-        this.mChildItems = mChildItems;
-    }
+// --Commented out by Inspection START (06-11-2016 11:07 PM):
+//    public void setmChildItems(ArrayList<SectionItems> mChildItems) {
+//        this.mChildItems = mChildItems;
+//    }
+// --Commented out by Inspection STOP (06-11-2016 11:07 PM)
 
 
 }

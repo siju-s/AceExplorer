@@ -20,23 +20,14 @@ import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 
 import java.util.ArrayList;
 
-
-/**
- * Created by Siju on 23-07-2016.
- */
 public class LibrarySortActivity extends AppCompatActivity implements OnStartDragListener {
-    private RecyclerView mRecyclerViewLibrarySort;
     private ItemTouchHelper mItemTouchHelper;
-    private LibrarySortAdapter mSortAdapter;
     private SharedPreferenceWrapper sharedPreferenceWrapper;
     private ArrayList<LibrarySortModel> savedLibraries = new ArrayList<>();
-    private ArrayList<LibrarySortModel> totalLibraries = new ArrayList<>();
+    private final ArrayList<LibrarySortModel> totalLibraries = new ArrayList<>();
     private int mResourceIds[];
     private String mLabels[];
     private int mCategoryIds[];
-    private Toolbar mToolbar;
-    private int mCurrentTheme;
-
 
 
     @Override
@@ -48,13 +39,13 @@ public class LibrarySortActivity extends AppCompatActivity implements OnStartDra
         sharedPreferenceWrapper = new SharedPreferenceWrapper();
         initConstants();
         initializeLibraries();
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         mToolbar.setTitle(getString(R.string.nav_header_collections));
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mRecyclerViewLibrarySort = (RecyclerView) findViewById(R.id.recyclerViewLibrarySort);
-        mSortAdapter = new LibrarySortAdapter(this, this, totalLibraries);
+        RecyclerView mRecyclerViewLibrarySort = (RecyclerView) findViewById(R.id.recyclerViewLibrarySort);
+        LibrarySortAdapter mSortAdapter = new LibrarySortAdapter(this, totalLibraries);
 
         mRecyclerViewLibrarySort.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(this);
@@ -65,22 +56,14 @@ public class LibrarySortActivity extends AppCompatActivity implements OnStartDra
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mSortAdapter);
         mItemTouchHelper = new ItemTouchHelper(callback);
         mItemTouchHelper.attachToRecyclerView(mRecyclerViewLibrarySort);
- /*       mSortAdapter.setOnItemClickListener(new LibrarySortAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-
-            }
-        });*/
-
     }
 
     private void checkTheme() {
-        mCurrentTheme = ThemeUtils.getTheme(this);
+        int mCurrentTheme = ThemeUtils.getTheme(this);
 
         if (mCurrentTheme == FileConstants.THEME_DARK) {
             setTheme(R.style.Dark_AppTheme_NoActionBar);
-        }
-        else {
+        } else {
             setTheme(R.style.AppTheme_NoActionBar);
         }
     }
@@ -121,13 +104,13 @@ public class LibrarySortActivity extends AppCompatActivity implements OnStartDra
         if (savedLibraries != null) {
             for (int j = 0; j < savedLibraries.size(); j++) {
                 totalLibraries.add(new LibrarySortModel(savedLibraries.get(j).getCategoryId(),
-                        savedLibraries.get(j).getLibraryName(), true));
+                        savedLibraries.get(j).getLibraryName()));
             }
         }
 
         for (int i = 0; i < mResourceIds.length; i++) {
-            LibrarySortModel model = new LibrarySortModel(mCategoryIds[i], mLabels[i],
-                    true);
+            LibrarySortModel model = new LibrarySortModel(mCategoryIds[i], mLabels[i]
+            );
             if (!totalLibraries.contains(model)) {
                 model.setChecked(false);
                 totalLibraries.add(model);
@@ -158,7 +141,6 @@ public class LibrarySortActivity extends AppCompatActivity implements OnStartDra
                 savedLibraries = new ArrayList<>();
                 for (int i = 0; i < totalLibraries.size(); i++) {
                     if (totalLibraries.get(i).isChecked()) {
-//                        sharedPreferenceWrapper.addLibrary(this, totalLibraries.get(i));
                         savedLibraries.add(totalLibraries.get(i));
                     }
                 }

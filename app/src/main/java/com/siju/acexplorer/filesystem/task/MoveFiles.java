@@ -23,7 +23,6 @@ package com.siju.acexplorer.filesystem.task;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v4.app.Fragment;
 
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
@@ -35,14 +34,10 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class MoveFiles extends AsyncTask<String, Void, Integer> {
-    ArrayList<FileInfo> files;
-    ArrayList<CopyData> copyData;
-
-    Context context;
-    int mode;
+    private final ArrayList<FileInfo> files;
+    private final ArrayList<CopyData> copyData;
+    private final Context context;
     private String mCurrentDir;
-    private Fragment mFragment;
-    private boolean mIsDualPane;
 
     public MoveFiles(Context context,ArrayList<FileInfo> files,ArrayList<CopyData> copyData) {
         this.context = context;
@@ -96,7 +91,7 @@ public class MoveFiles extends AsyncTask<String, Void, Integer> {
             intent.putExtra("FILE_PATHS", files);
             intent.putExtra("COPY_DIRECTORY", mCurrentDir);
             intent.putExtra("move", true);
-            intent.putExtra("MODE", mode);
+            intent.putExtra("MODE", 1);
             context.startService(intent);
         } else {
             Intent intent = new Intent("refresh");

@@ -3,38 +3,23 @@ package com.siju.acexplorer.filesystem.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
- * Created by arpitkh996 on 11-01-2016.
- */
 public class BaseFile implements Parcelable {
-    private long date, size;
-    private boolean isDirectory;
-    private String permission;
+    private final long date;
+    private final long size;
+    private final boolean isDirectory;
+    private final String permission;
     private String name;
     private String path;
 
     private String link = "";
-/*    public BaseFile(String path) {
-//        super(0,path);
-        this.path = path;
-    }*/
 
-    public BaseFile(String path, String permission, long date, long size, boolean isDirectory) {
-//        super(0,path);
+    public BaseFile(String path, String permission, long date, long size) {
         this.date = date;
         this.size = size;
-        this.isDirectory = isDirectory;
+        this.isDirectory = true;
         this.path = path;
         this.permission = permission;
 
-    }
-
-    private String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
 
@@ -50,24 +35,8 @@ public class BaseFile implements Parcelable {
         return date;
     }
 
-    public void setDate(long date) {
-        this.date = date;
-    }
-
     public long getSize() {
         return size;
-    }
-
-    public void setSize(long size) {
-        this.size = size;
-    }
-
-    public boolean isDirectory() {
-        return isDirectory;
-    }
-
-    public void setDirectory(boolean directory) {
-        isDirectory = directory;
     }
 
     public String getPath() {
@@ -77,10 +46,6 @@ public class BaseFile implements Parcelable {
 
     public String getPermission() {
         return permission;
-    }
-
-    public void setPermission(String permission) {
-        this.permission = permission;
     }
 
     private BaseFile(Parcel in) {

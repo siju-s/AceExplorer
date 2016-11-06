@@ -7,7 +7,6 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
@@ -35,35 +34,23 @@ import java.util.zip.ZipOutputStream;
 
 public class CreateZipTask extends Service {
 
-    // Binder given to clients
-    private HashMap<Integer, Boolean> hash = new HashMap<Integer, Boolean>();
-    private HashMap<Integer, ZipProgressModel> hash1 = new HashMap<>();
+    private final HashMap<Integer, Boolean> hash = new HashMap<>();
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
-    private String zpath;
     private Context c;
     private final int NOTIFICATION_ID = 1000;
 
-    @SuppressWarnings("deprecation")
     @Override
     public void onCreate() {
         c = getApplicationContext();
-        registerReceiver(receiver1, new IntentFilter("zipcancel"));
     }
 
-    private boolean foreground = true;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Bundle b = new Bundle();
-//        zpath = PreferenceManager.getDefaultSharedPreferences(this).getString("zippath", "");
-        mNotifyManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotifyManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         String name = intent.getStringExtra("name");
-        /*if ((zpath != null && zpath.length() != 0)) {
-            if (zpath.endsWith("/")) name = zpath + new File(name).getName();
-            else name = zpath + "/" + new File(name).getName();
-        }*/
         File c = new File(name);
         if (!c.exists()) {
             try {
@@ -79,7 +66,6 @@ public class CreateZipTask extends Service {
         progressModel.setId(startId);
         progressModel.setP1(0);
         progressModel.setCompleted(false);
-        hash1.put(startId, progressModel);
         mBuilder = new NotificationCompat.Builder(this);
         Intent notificationIntent = new Intent(this, BaseActivity.class);
         notificationIntent.putExtra("openprocesses", true);
@@ -109,11 +95,14 @@ public class CreateZipTask extends Service {
         }
     }
 
+
     public void setProgressListener(ProgressListener progressListener) {
         this.progressListener = progressListener;
     }
 
+
     private ProgressListener progressListener;
+
 
     public interface ProgressListener {
         void onUpdate(ZipProgressModel zipProgressModel);
@@ -121,13 +110,11 @@ public class CreateZipTask extends Service {
         void refresh();
     }
 
+
     public class Doback extends AsyncTask<Bundle, Void, Integer> {
-        ArrayList<String> files;
+        // --Commented out by Inspection (06-11-2016 11:23 PM):ArrayList<String> files;
 
-        public Doback() {
-        }
-
-        long totalBytes = 0L;
+        final long totalBytes = 0L;
         String name;
 
         protected Integer doInBackground(Bundle... p1) {
@@ -193,7 +180,6 @@ public class CreateZipTask extends Service {
             progressModel.setId(id);
             progressModel.setP1(i);
             progressModel.setCompleted(b);
-            hash1.put(id, progressModel);
             if (progressListener != null) {
                 progressListener.onUpdate(progressModel);
                 if (b) progressListener.refresh();
@@ -217,7 +203,7 @@ public class CreateZipTask extends Service {
      * runs in the same process as its clients, we don't need to deal with IPC.
      */
 
-    private BroadcastReceiver receiver1 = new BroadcastReceiver() {
+    private final BroadcastReceiver receiver1 = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -233,7 +219,7 @@ public class CreateZipTask extends Service {
         long size, totalBytes = 0;
         String fileName;
 
-        public void execute(int id, ArrayList<File> a, String fileOut) {
+        void execute(int id, ArrayList<File> a, String fileOut) {
             for (File f1 : a) {
                 if (f1.isDirectory()) {
                     totalBytes = totalBytes + FileUtils.getFolderSize(f1);
@@ -247,34 +233,34 @@ public class CreateZipTask extends Service {
             File zipDirectory = new File(fileOut);
 
             try {
-                out = FileUtils.getOutputStream(zipDirectory, c, totalBytes);
+                out = FileUtils.getOutputStream(zipDirectory, c);
                 zos = new ZipOutputStream(new BufferedOutputStream(out));
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             for (File file : a) {
                 try {
                     compressFile(id, file, "");
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
             try {
                 zos.flush();
                 zos.close();
 
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
 
         ZipOutputStream zos;
-        private int isCompressed = 0;
+        // --Commented out by Inspection (06-11-2016 11:23 PM):private int isCompressed = 0;
         AsyncTask asyncTask;
 
-        void calculateProgress(final String name, final int id, final boolean completed, final long
+        void calculateProgress(final String name, final int id, final long
                 copiedbytes, final long totalbytes) {
             if (asyncTask != null && asyncTask.getStatus() == AsyncTask.Status.RUNNING)
                 asyncTask.cancel(true);
             asyncTask = new AsyncTask<Void, Void, Void>() {
-                int p1, p2;
+                int p1; // --Commented out by Inspection (06-11-2016 11:23 PM):p2;
 
                 @Override
                 protected Void doInBackground(Void... voids) {
@@ -287,7 +273,7 @@ public class CreateZipTask extends Service {
 
                 @Override
                 public void onPostExecute(Void v) {
-                    publishResults(id, name, p1, completed, copiedbytes, totalbytes);
+                    publishResults(id, name, p1, false, copiedbytes, totalbytes);
                 }
             }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
@@ -306,7 +292,7 @@ public class CreateZipTask extends Service {
                         size += len;
                         int p = (int) ((size / (float) totalBytes) * 100);
                         if (p != lastpercent || lastpercent == 0) {
-                            calculateProgress(fileName, id, false, size, totalBytes);
+                            calculateProgress(fileName, id, size, totalBytes);
                         }
                         lastpercent = p;
                     }

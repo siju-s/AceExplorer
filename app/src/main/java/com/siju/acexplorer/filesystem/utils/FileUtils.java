@@ -26,7 +26,6 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
 import android.support.v4.provider.DocumentFile;
 import android.text.TextUtils;
 import android.text.format.Formatter;
@@ -77,7 +76,6 @@ import static android.webkit.MimeTypeMap.getSingleton;
 public class FileUtils implements CopyService.Progress {
 
     private static final String TAG = "FileUtils";
-    private static final int BUFFER = 2048; //2 KB
     public static final int ACTION_NONE = 0;
     public static final int ACTION_KEEP = 3;
     private static final HashMap<String, String> MIME_TYPES = new HashMap<>();
@@ -166,13 +164,15 @@ public class FileUtils implements CopyService.Progress {
     private ProgressBar progressBarPaste;
     private MaterialDialog progressDialog;
     private int copiedFilesSize;
-    private TextView textFileName, textFileFromPath, textFileToPath, textFileCount, textProgress;
+    private TextView textFileName;
+    private TextView textFileFromPath;
+    private TextView textFileCount;
+    private TextView textProgress;
     private ArrayList<FileInfo> copiedFileInfo;
     private Context mContext;
     private Intent mServiceIntent;
 
     public void showCopyProgressDialog(final Context context, final Intent intent) {
-//        registerReceiver(context);
         mContext = context;
         mServiceIntent = intent;
         context.bindService(mServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
@@ -186,7 +186,7 @@ public class FileUtils implements CopyService.Progress {
         View view = progressDialog.getCustomView();
         textFileName = (TextView) view.findViewById(R.id.textFileName);
         textFileFromPath = (TextView) view.findViewById(R.id.textFileFromPath);
-        textFileToPath = (TextView) view.findViewById(R.id.textFileToPath);
+        TextView textFileToPath = (TextView) view.findViewById(R.id.textFileToPath);
         textFileCount = (TextView) view.findViewById(R.id.textFilesLeft);
         textProgress = (TextView) view.findViewById(R.id.textProgressPercent);
 
@@ -199,14 +199,13 @@ public class FileUtils implements CopyService.Progress {
         textFileFromPath.setText(copiedFileInfo.get(0).getFilePath());
         textFileName.setText(copiedFileInfo.get(0).getFileName());
         textFileToPath.setText(intent.getStringExtra("COPY_DIRECTORY"));
-        textFileCount.setText("1/" + copiedFilesSize);
+        textFileCount.setText(String.format(Locale.getDefault(),"%s%d", context.getString(R.string.count_placeholder),
+                copiedFilesSize));
         textProgress.setText("0%");
 
         progressDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                context.stopService(intent);
-//                unregisterReceiver(context);
                 progressDialog.dismiss();
             }
         });
@@ -227,23 +226,10 @@ public class FileUtils implements CopyService.Progress {
         mContext.stopService(mServiceIntent);
     }
 
-    public static boolean isFileMusic(String path) {
-        return path.endsWith(".mp3") || path.endsWith(".amr") || path.endsWith(".wav");
-    }
-
 
     @Override
     public void onUpdate(Intent intent) {
-//        int progress = intent.getIntExtra("PROGRESS", 0);
-     /*   int copiedBytes = intent.getIntExtra("DONE", 0);
-        int totalBytes = intent.getIntExtra("TOTAL", 0);*/
-
-//        int count = intent.getIntExtra("COUNT", 1);
-//        Logger.log("FileUtils", "Progress=" + progress);
-
         Message msg = handler.obtainMessage();
-/*        msg.arg1 = copiedBytes;
-        msg.arg2 = totalBytes;*/
         msg.obj = intent;
 
         handler.sendMessage(msg);
@@ -266,12 +252,13 @@ public class FileUtils implements CopyService.Progress {
 
             int progress = intent.getIntExtra("PROGRESS", 0);
             int totalProgress = intent.getIntExtra("TOTAL_PROGRESS", 0);
-            Logger.log("FileUtils", "PROGRESS=" + progress+ " TOTAL PROGRESS="+totalProgress);
-            Logger.log("FileUtils", "Copied bytes=" + copiedBytes+ " TOTAL bytes="+totalBytes);
+            Logger.log("FileUtils", "PROGRESS=" + progress + " TOTAL PROGRESS=" + totalProgress);
+            Logger.log("FileUtils", "Copied bytes=" + copiedBytes + " TOTAL bytes=" + totalBytes);
 
 
             progressBarPaste.setProgress(totalProgress);
-            textProgress.setText(totalProgress + "%");
+            textProgress.setText(String.format(Locale.getDefault(),"%d%s", totalProgress, mContext.getString(R.string
+                    .percent_placeholder)));
             if (progress == 100 || totalBytes == copiedBytes) {
                 int count = intent.getIntExtra("COUNT", 1);
 //                progress =  intent.getIntExtra("PROGRESS", 0);
@@ -291,22 +278,24 @@ public class FileUtils implements CopyService.Progress {
 
     public static final String COPY_PROGRESS = "copy_progress_update";
 
-    private CopyService mService;
-
-    private ServiceConnection mServiceConnection = new ServiceConnection() {
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             CopyService.LocalBinder binder = (CopyService.LocalBinder) service;
-            mService = binder.getService();
+            CopyService mService = binder.getService();
             mService.registerProgressListener(FileUtils.this);
 
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-//              mService = null;
         }
     };
+
+
+    public static boolean isFileMusic(String path) {
+        return path.endsWith(".mp3") || path.endsWith(".amr") || path.endsWith(".wav");
+    }
 
 
     public static File getRootDirectory() {
@@ -329,7 +318,7 @@ public class FileUtils implements CopyService.Progress {
 
     private final static Pattern DIR_SEPARATOR = Pattern.compile("/");
 
-    public static List<String> getStorageDirectories(Context context, boolean permissionGranted) {
+    public static List<String> getStorageDirectories(Context context) {
         // Final set of paths
         final ArrayList<String> paths = new ArrayList<>();
         // Primary physical SD-CARD (not emulated)
@@ -377,7 +366,7 @@ public class FileUtils implements CopyService.Progress {
             final String[] rawSecondaryStorages = rawSecondaryStoragesStr.split(File.pathSeparator);
             Collections.addAll(paths, rawSecondaryStorages);
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && permissionGranted)
+        if (Utils.isAtleastMarsh())
             paths.clear();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             String pathList[] = getExtSdCardPaths(context);
@@ -433,7 +422,7 @@ public class FileUtils implements CopyService.Progress {
                     return f;
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         parent = new File("/mnt/sdcard/usbStorage");
         if (parent.exists() && parent.canExecute())
@@ -587,7 +576,7 @@ public class FileUtils implements CopyService.Progress {
     public static void viewFile(Fragment fragment, String path, String extension) {
 
         Context context = fragment.getContext();
-        Uri uri = createContentUriApi24(false, fragment.getContext(), path);
+        Uri uri = createContentUriApi24(fragment.getContext(), path);
 //        String realPath = getRealPathFromURI(context, uri);
 
         Intent intent = new Intent();
@@ -622,9 +611,9 @@ public class FileUtils implements CopyService.Progress {
 
     }
 
-    private static Uri createContentUriApi24(boolean useApi24, Context context, String path) {
+    private static Uri createContentUriApi24(Context context, String path) {
 
-        if (useApi24 && Build.VERSION.SDK_INT >= 24) {
+    /*    if (false) {
             String authority = "com.siju.acexplorer.fileprovider";//fragment.getContext().getPackageName() + "
 //                    .provider";
             return FileProvider.getUriForFile(context,
@@ -632,7 +621,8 @@ public class FileUtils implements CopyService.Progress {
         } else {
             return Uri.fromFile(new File(path));
         }
-
+*/
+        return Uri.fromFile(new File(path));
     }
 
 
@@ -700,55 +690,6 @@ public class FileUtils implements CopyService.Progress {
         });
         materialDialog.show();
     }
-       /* final Dialog dialog = new Dialog(context);
-        dialog.setContentView(R.layout.dialog_openas);
-        dialog.setTitle(context.getString(R.string.open_as));
-        String[] items = new String[]{context.getString(R.string.text), context.getString(R.string.image),
-                context.getString(R.string.video), context.getString(R.string.audio),
-                context.getString(R.string.other)};
-
-        ListView listView = (ListView) dialog.findViewById(R.id.listOpenAs);
-        ArrayAdapter<String> itemsAdapter =
-                new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, items);
-        listView.setAdapter(itemsAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                Intent intent = new Intent();
-                intent.setAction(android.content.Intent.ACTION_VIEW);
-                switch (position) {
-                    case 0:
-                        intent.setDataAndType(uri, "text*//*");
-                        break;
-                    case 1:
-                        intent.setDataAndType(uri, "image*//*");
-                        break;
-                    case 2:
-                        intent.setDataAndType(uri, "video*//*");
-                        break;
-                    case 3:
-                        intent.setDataAndType(uri, "audio*//*");
-                        break;
-          *//*          case 4:
-                        intent = new Intent(c, DbViewer.class);
-                        intent.putExtra("path", f.getPath());
-                        break;*//*
-                    case 4:
-                        intent.setDataAndType(uri, "**///*");
-//                        break;
-//                }
-               /* PackageManager packageManager = context.getPackageManager();
-                if (intent.resolveActivity(packageManager) != null) {
-//            Intent chooser = Intent.createChooser(intent, context.getString(R.string.msg_open_file));
-                    context.startActivity(intent);
-                } else {
-                    showMessage(context, context.getString(R.string.msg_error_not_supported));
-                }
-                dialog.dismiss();
-            }
-        });*//*
-*/
-
 
     /**
      * Validates file name at the time of creation
@@ -829,7 +770,7 @@ public class FileUtils implements CopyService.Progress {
     }
 
 
-    private static Comparator<? super FileInfo> comparatorByName = new Comparator<FileInfo>() {
+    private static final Comparator<? super FileInfo> comparatorByName = new Comparator<FileInfo>() {
 
         public int compare(FileInfo file1, FileInfo file2) {
 
@@ -844,7 +785,7 @@ public class FileUtils implements CopyService.Progress {
 
     };
 
-    private static Comparator<? super FileInfo> comparatorByNameDesc = new Comparator<FileInfo>() {
+    private static final Comparator<? super FileInfo> comparatorByNameDesc = new Comparator<FileInfo>() {
 
         public int compare(FileInfo file1, FileInfo file2) {
 
@@ -859,7 +800,7 @@ public class FileUtils implements CopyService.Progress {
 
     };
 
-    private static Comparator<? super FileInfo> comparatorBySize = new Comparator<FileInfo>() {
+    private static final Comparator<? super FileInfo> comparatorBySize = new Comparator<FileInfo>() {
 
         public int compare(FileInfo file1, FileInfo file2) {
 
@@ -877,7 +818,7 @@ public class FileUtils implements CopyService.Progress {
         }
     };
 
-    private static Comparator<? super FileInfo> comparatorBySizeDesc = new Comparator<FileInfo>() {
+    private static final Comparator<? super FileInfo> comparatorBySizeDesc = new Comparator<FileInfo>() {
 
         public int compare(FileInfo file1, FileInfo file2) {
 
@@ -894,7 +835,7 @@ public class FileUtils implements CopyService.Progress {
         }
     };
 
-    private static Comparator<? super FileInfo> comparatorByType = new Comparator<FileInfo>() {
+    private static final Comparator<? super FileInfo> comparatorByType = new Comparator<FileInfo>() {
 
         public int compare(FileInfo file1, FileInfo file2) {
 
@@ -919,7 +860,7 @@ public class FileUtils implements CopyService.Progress {
 
     };
 
-    private static Comparator<? super FileInfo> comparatorByTypeDesc = new Comparator<FileInfo>() {
+    private static final Comparator<? super FileInfo> comparatorByTypeDesc = new Comparator<FileInfo>() {
 
         public int compare(FileInfo file1, FileInfo file2) {
 
@@ -945,7 +886,7 @@ public class FileUtils implements CopyService.Progress {
     };
 
 
-    private static Comparator<? super FileInfo> comparatorByDate = new Comparator<FileInfo>() {
+    private static final Comparator<? super FileInfo> comparatorByDate = new Comparator<FileInfo>() {
 
         public int compare(FileInfo file1, FileInfo file2) {
 
@@ -955,7 +896,7 @@ public class FileUtils implements CopyService.Progress {
         }
     };
 
-    private static Comparator<? super FileInfo> comparatorByDateDesc = new Comparator<FileInfo>() {
+    private static final Comparator<? super FileInfo> comparatorByDateDesc = new Comparator<FileInfo>() {
 
         public int compare(FileInfo file1, FileInfo file2) {
 
@@ -975,7 +916,7 @@ public class FileUtils implements CopyService.Progress {
                 else
                     length += getFolderSize(file);
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return length;
     }
@@ -1063,7 +1004,7 @@ public class FileUtils implements CopyService.Progress {
         return size;
     }
 
-    public static OutputStream getOutputStream(@NonNull final File target, Context context, long s) throws Exception {
+    public static OutputStream getOutputStream(@NonNull final File target, Context context) {
 
         OutputStream outStream = null;
         try {
@@ -1085,7 +1026,7 @@ public class FileUtils implements CopyService.Progress {
 
 
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return outStream;
     }
@@ -1183,7 +1124,7 @@ public class FileUtils implements CopyService.Progress {
         if (fileUri != null) {
             try {
                 outputStream = context.getContentResolver().openOutputStream(fileUri);
-            } catch (Throwable th) {
+            } catch (Throwable ignored) {
             }
         }
         return outputStream;
@@ -1238,34 +1179,7 @@ public class FileUtils implements CopyService.Progress {
         return null;
     }
 
-    /**
-     * @param filePath
-     * @param newName
-     * @return
-     */
-    public static int renameTarget(String filePath, String newName) {
-        File src = new File(filePath);
-        String ext = "";
-        File dest;
-
-        if (src.isFile())
-            /*get file extension*/
-            ext = filePath.substring(filePath.lastIndexOf("."), filePath.length());
-
-        if (newName.length() < 1)
-            return -1;
-
-        String temp = filePath.substring(0, filePath.lastIndexOf("/"));
-
-        dest = new File(temp + File.separator + newName);
-        if (src.renameTo(dest))
-            return 0;
-        else
-            return -1;
-    }
-
-
-    static boolean mkfile(final File file, Context context) throws IOException {
+    static boolean mkfile(final File file, Context context) {
         if (file == null)
             return false;
         if (file.exists()) {
@@ -1333,7 +1247,7 @@ public class FileUtils implements CopyService.Progress {
      */
     static boolean renameFolder(@NonNull final File source, @NonNull final File target, Context context) {
         // First try the normal rename.
-        if (rename(source, target.getName(), false)) {
+        if (rename(source, target.getName())) {
             return true;
         }
         if (target.exists()) {
@@ -1355,13 +1269,11 @@ public class FileUtils implements CopyService.Progress {
         if (source.isFile()) {
             Logger.log(TAG, "Rename--root=");
 
-            try {
-                if (!mkfile(target, context)) {
-                    return false;
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+
+            if (!mkfile(target, context)) {
+                return false;
             }
+
         } else {
             // Try the manual way, moving files individually.
             if (!mkdir(target, context)) {
@@ -1462,12 +1374,12 @@ public class FileUtils implements CopyService.Progress {
         return true;
     }
 
-    private static boolean rename(File f, String name, boolean root) {
+    private static boolean rename(File f, String name) {
         String newname = f.getParent() + "/" + name;
         if (f.getParentFile().canWrite()) {
             Logger.log(TAG, "Rename--canWrite=" + true);
             return f.renameTo(new File(newname));
-        } else if (root) {
+        } else if (false) {
             Logger.log(TAG, "Rename--root=");
             RootTools.remount(f.getPath(), "rw");
             RootHelper.runAndWait("mv " + f.getPath() + " " + newname, true);
@@ -1723,7 +1635,7 @@ public class FileUtils implements CopyService.Progress {
         materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri uri = createContentUriApi24(false, fragment.getContext(), path);
+                Uri uri = createContentUriApi24(fragment.getContext(), path);
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_INSTALL_PACKAGE);
 
@@ -1955,26 +1867,6 @@ public class FileUtils implements CopyService.Progress {
         return getExtSdCardFolder(file, c) != null;
     }
 
-
-    public static boolean delete(Context context, boolean rootmode, String path) {
-        boolean b = deleteFile(new File(path), context);
-        if (!b && rootmode) {
-            String parent = new File(path).getParent();
-            RootTools.remount(parent, "rw");
-            RootHelper.runAndWait("rm -r \"" + path + "\"", true);
-            RootTools.remount(parent, "ro");
-        }
-        return !exists(context, path);
-    }
-
-    private static boolean exists(Context context, String path) {
-        boolean exists = false;
-//         if(isLocal())
-        exists = new File(path).exists();
-//        else if(isRoot())return RootHelper.fileExists(context,path);
-        return exists;
-    }
-
     public static boolean isFileExisting(String currentDir, String fileName) {
         File file = new File(currentDir);
         String[] list = file.list();
@@ -2103,4 +1995,6 @@ public class FileUtils implements CopyService.Progress {
         }
         return context.getString(R.string.app_name);
     }
+
+
 }

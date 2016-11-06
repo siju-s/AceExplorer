@@ -19,9 +19,9 @@ import java.util.ArrayList;
 
 class ExpandableListAdapter extends BaseExpandableListAdapter {
 
-    private Context mContext;
-    private ArrayList<SectionGroup> groups;
-    private boolean mIsDarkTheme;
+    private final Context mContext;
+    private final ArrayList<SectionGroup> groups;
+    private final boolean mIsDarkTheme;
 
 
     ExpandableListAdapter(Context context, ArrayList<SectionGroup> groups) {

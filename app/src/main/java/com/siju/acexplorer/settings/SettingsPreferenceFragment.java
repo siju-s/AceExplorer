@@ -1,16 +1,10 @@
 package com.siju.acexplorer.settings;
 
-/**
- * Created by SIJU on 06-07-2016.
- */
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,7 +17,6 @@ import android.preference.PreferenceScreen;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -38,25 +31,17 @@ import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 import com.siju.acexplorer.utils.LocaleHelper;
 
-import java.util.Locale;
-
 
 public class SettingsPreferenceFragment extends PreferenceFragment {
 
     private final String TAG = this.getClass().getSimpleName();
-    private final String PREFS_PRO = "prefsPro";
-    private final String PREFS_UPDATE = "prefsUpdate";
-    public static final String PREFS_LANGUAGE = "prefLanguage";
-
-    private Locale myLocale;
+    // --Commented out by Inspection (06-11-2016 11:23 PM):private final String PREFS_PRO = "prefsPro";
+    private static final String PREFS_LANGUAGE = "prefLanguage";
     private String mCurrentLanguage;
-    ListPreference langPreference;
-    ListPreference themePreference;
     private SharedPreferences mPrefs;
-    Preference updatePreference;
+    private Preference updatePreference;
     private Intent mSendIntent;
-    private final String PREFS_VERSION = "prefsVersion";
-    private int mIsTheme; // Default is Light
+    private int mIsTheme;
 
 
     @Override
@@ -68,11 +53,13 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
 
-        langPreference = (ListPreference) findPreference(PREFS_LANGUAGE);
-        themePreference = (ListPreference) findPreference(FileConstants.PREFS_THEME);
+        ListPreference langPreference = (ListPreference) findPreference(PREFS_LANGUAGE);
+        ListPreference themePreference = (ListPreference) findPreference(FileConstants.PREFS_THEME);
         mIsTheme =   ThemeUtils.getTheme(getActivity());
+        String PREFS_UPDATE = "prefsUpdate";
         updatePreference = findPreference(PREFS_UPDATE);
 
+        String PREFS_VERSION = "prefsVersion";
         Preference version = findPreference(PREFS_VERSION);
         try {
             version.setSummary(getActivity().getPackageManager()
@@ -161,7 +148,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         return false;
     }
 
-    public void setupActionBar(PreferenceScreen preferenceScreen) {
+    private void setupActionBar(PreferenceScreen preferenceScreen) {
         final Dialog dialog = preferenceScreen.getDialog();
         AppBarLayout bar;
         ViewParent view1 = dialog.findViewById(android.R.id.list).getParent();
@@ -219,7 +206,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
      */
-    private Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new
+    private final Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new
             Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object value) {
@@ -309,29 +296,6 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
 
     }
 
-    /**
-     * Set language
-     *
-     * @param lang
-     */
-    public void setLocale(String lang) {
-
-        myLocale = new Locale(lang);
-
-        Resources res = getResources();
-        DisplayMetrics dm = res.getDisplayMetrics();
-        Configuration conf = res.getConfiguration();
-        conf.locale = myLocale;
-        res.updateConfiguration(conf, dm);
-
- /*       SharedPreferences pref = PreferenceManager
-                .getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString(PRE, lang);
-        editor.apply();*/
-    }
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -343,7 +307,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
     }
 
 
-    SharedPreferences.OnSharedPreferenceChangeListener mListener =
+    private final SharedPreferences.OnSharedPreferenceChangeListener mListener =
             new SharedPreferences.OnSharedPreferenceChangeListener() {
                 public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
                     switch (key) {

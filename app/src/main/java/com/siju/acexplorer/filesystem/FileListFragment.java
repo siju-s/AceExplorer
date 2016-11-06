@@ -110,7 +110,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private View root;
     private final int LOADER_ID = 1000;
     private FileListAdapter fileListAdapter;
-    public ArrayList<FileInfo> fileInfoList;
+    private ArrayList<FileInfo> fileInfoList;
     private String mFilePath;
     private String mFilePathOther;
     private int mCategory;
@@ -139,26 +139,33 @@ public class FileListFragment extends Fragment implements LoaderManager
     private Toolbar mBottomToolbar;
     private ActionMode mActionMode;
     private SparseBooleanArray mSelectedItemPositions = new SparseBooleanArray();
-    MenuItem mPasteItem, mRenameItem, mInfoItem, mArchiveItem, mFavItem, mExtractItem, mHideItem, mPermissionItem;
+    private MenuItem mPasteItem;
+    private MenuItem mRenameItem;
+    private MenuItem mInfoItem;
+    private MenuItem mArchiveItem;
+    private MenuItem mFavItem;
+    private MenuItem mExtractItem;
+    private MenuItem mHideItem;
+    private MenuItem mPermissionItem;
     private boolean mIsMoveOperation = false;
     private String mCurrentZipDir;
     public ArrayList<ZipModel> totalZipList = new ArrayList<>();
     public ArrayList<ZipModel> zipChildren = new ArrayList<>();
     public Archive mArchive;
-    public ArrayList<FileHeader> totalRarList = new ArrayList<>();
-    public ArrayList<FileHeader> rarChildren = new ArrayList<>();
+    public final ArrayList<FileHeader> totalRarList = new ArrayList<>();
+    private final ArrayList<FileHeader> rarChildren = new ArrayList<>();
     private boolean mInParentZip = true;
     private int mParentZipCategory;
     private boolean mIsPasteItemVisible;
     private String mSelectedPath;
     private Button buttonPathSelect;
-    private HashMap<String, Bundle> scrollPosition = new HashMap<>();
-    private HashMap<String, Bundle> scrollPositionDualPane = new HashMap<>();
+    private final HashMap<String, Bundle> scrollPosition = new HashMap<>();
+    private final HashMap<String, Bundle> scrollPositionDualPane = new HashMap<>();
     private int mGridColumns;
     private SharedPreferences mPreferences;
     private int mCurrentOrientation;
-    private ArrayList<FileInfo> mCopiedData = new ArrayList<>();
-    private boolean mIsRootMode = true;
+    private final ArrayList<FileInfo> mCopiedData = new ArrayList<>();
+    private final boolean mIsRootMode = true;
     private boolean mIsSwipeRefreshed;
     private FileUtils mFileUtils;
     private boolean mStopAnim = true;
@@ -169,12 +176,8 @@ public class FileListFragment extends Fragment implements LoaderManager
     private boolean mInstanceStateExists;
     private final int DIALOG_FRAGMENT = 5000;
     private boolean clearCache;
-    private final String cacheTempDir = ".tmp";
-    ZipEntry zipEntry = null;
+    private ZipEntry zipEntry = null;
     private String zipEntryFileName;
-    Archive rar;
-    FileHeader header;
-    File output;
     private boolean setRefreshSpan;
 
 
@@ -306,8 +309,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
         if (mViewMode == FileConstants.KEY_LISTVIEW) {
             if (mDividerItemDecoration == null) {
-                mDividerItemDecoration = new DividerItemDecoration(getActivity(), LinearLayoutManager
-                        .VERTICAL, mIsDarkTheme);
+                mDividerItemDecoration = new DividerItemDecoration(getActivity(), mIsDarkTheme);
             } else {
                 recyclerViewFileList.removeItemDecoration(mDividerItemDecoration);
             }
@@ -511,7 +513,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                         isDualPaneInFocus = checkIfDualFragment();
                         mBaseActivity.setCurrentDir(path, isDualPaneInFocus);
 
-                        // This is done when any homescreen item is clicked like Fav . Then Fav->FavList . So on
+                        // This is opCompleted when any homescreen item is clicked like Fav . Then Fav->FavList . So on
                         // clicking fav list item, category has to be set to files
                         if (mCategory != FileConstants.CATEGORY.FILES.getValue() && FileUtils.checkIfFileCategory
                                 (mCategory)) {
@@ -564,7 +566,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                                         }
                                         zipEntry1 = zipEntry;
                                         new ExtractZipEntry(zipFile, cacheDirPath,
-                                                FileListFragment.this, name, true, zipEntry1)
+                                                FileListFragment.this, name, zipEntry1)
                                                 .execute();
                                     } catch (IOException e) {
                                         e.printStackTrace();
@@ -580,12 +582,10 @@ public class FileListFragment extends Fragment implements LoaderManager
                                     try {
                                         Archive rarFile = new Archive(new File(mZipParentPath));
                                         new ExtractZipEntry(rarFile, cacheDirPath,
-                                                FileListFragment.this, name, false, fileHeader)
+                                                FileListFragment.this, name, fileHeader)
                                                 .execute();
 
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    } catch (RarException e) {
+                                    } catch (IOException | RarException e) {
                                         e.printStackTrace();
                                     }
 
@@ -611,7 +611,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
     }
 
-    public boolean isZipViewable(String filePath) {
+    private boolean isZipViewable(String filePath) {
         return filePath.toLowerCase().endsWith("zip") ||
                 filePath.toLowerCase().endsWith("jar") ||
                 filePath.toLowerCase().endsWith("rar");
@@ -639,6 +639,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     }
 
     private String createCacheDirExtract() {
+        String cacheTempDir = ".tmp";
         File file = new File(getActivity().getExternalCacheDir().getParent(), cacheTempDir);
 
         if (!file.exists()) {
@@ -660,7 +661,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     }
 
 
-    private BroadcastReceiver mReloadListReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mReloadListReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -788,7 +789,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
     }
 
-    public void computeScroll() {
+    private void computeScroll() {
         View vi = recyclerViewFileList.getChildAt(0);
         int top = (vi == null) ? 0 : vi.getTop();
         int position;
@@ -807,7 +808,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
     }
 
-    public void setSelectedItemPos(SparseBooleanArray selectedItemPos) {
+    private void setSelectedItemPos(SparseBooleanArray selectedItemPos) {
         mSelectedItemPositions = selectedItemPos;
         if (selectedItemPos.size() > 1) {
             mRenameItem.setVisible(false);
@@ -821,7 +822,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     // 1 Extra for Footer since {#getItemCount has footer
     // TODO Remove this 1 when if footer removed in future
-    public void toggleSelectAll(boolean selectAll) {
+    private void toggleSelectAll(boolean selectAll) {
         fileListAdapter.clearSelection();
         for (int i = 0; i < fileListAdapter.getItemCount() - 1; i++) {
             fileListAdapter.toggleSelectAll(i, selectAll);
@@ -832,11 +833,11 @@ public class FileListFragment extends Fragment implements LoaderManager
         fileListAdapter.notifyDataSetChanged();
     }
 
-    public void clearSelection() {
+    private void clearSelection() {
         fileListAdapter.removeSelection();
     }
 
-    public void toggleDummyView(boolean isVisible) {
+    private void toggleDummyView(boolean isVisible) {
         if (isVisible)
             viewDummy.setVisibility(View.VISIBLE);
         else
@@ -867,7 +868,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         reloadList();
     }*/
 
-    public void stopAnimation() {
+    private void stopAnimation() {
         if ((!fileListAdapter.mStopAnimation)) {
             for (int i = 0; i < recyclerViewFileList.getChildCount(); i++) {
                 View view = recyclerViewFileList.getChildAt(i);
@@ -966,10 +967,10 @@ public class FileListFragment extends Fragment implements LoaderManager
             if (inChildZip) {
                 if (zipEntry.isDirectory()) {
                     return new FileListLoader(this, mChildZipPath, createCacheDirExtract(),
-                            zipEntryFileName, true, zipEntry);
+                            zipEntryFileName, zipEntry);
                 } else
                     return new FileListLoader(this, mZipParentPath, createCacheDirExtract(),
-                            zipEntryFileName, true, zipEntry);
+                            zipEntryFileName, zipEntry);
             }
             return new FileListLoader(this, path, FileConstants.CATEGORY.ZIP_VIEWER.getValue(),
                     mCurrentZipDir, isDualPaneInFocus, mInParentZip);
@@ -1052,7 +1053,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         return FileListFragment.this instanceof FileListDualFragment;
     }
 
-    public void startActionMode() {
+    private void startActionMode() {
 
         mBaseActivity.toggleFab(true);
         toggleDummyView(true);
@@ -1061,12 +1062,12 @@ public class FileListFragment extends Fragment implements LoaderManager
         mBottomToolbar.inflateMenu(R.menu.action_mode_bottom);
         mBottomToolbar.getMenu().clear();
         EnhancedMenuInflater.inflate(getActivity().getMenuInflater(), mBottomToolbar.getMenu(),
-                true, mCategory);
+                mCategory);
         mBottomToolbar.setOnMenuItemClickListener(this);
 
     }
 
-    public ActionMode getActionMode() {
+    private ActionMode getActionMode() {
         return mActionMode;
     }
 
@@ -1356,7 +1357,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                             pos.add(mSelectedItemPositions.keyAt(i));
 
                         }
-                        hideUnHideFiles(infoList,pos);
+                        hideUnHideFiles(infoList, pos);
                     }
                     mActionMode.finish();
                     return true;
@@ -1453,7 +1454,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     }
 
 
-    private void hideUnHideFiles(ArrayList<FileInfo> fileInfo,ArrayList<Integer> pos) {
+    private void hideUnHideFiles(ArrayList<FileInfo> fileInfo, ArrayList<Integer> pos) {
         for (int i = 0; i < fileInfo.size(); i++) {
             String fileName = fileInfo.get(i).getFileName();
             String renamedName;
@@ -1680,7 +1681,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     }
 
 
-    public void togglePasteVisibility(boolean isVisible) {
+    private void togglePasteVisibility(boolean isVisible) {
         mPasteItem.setVisible(isVisible);
         mIsPasteItemVisible = isVisible;
     }
@@ -1716,7 +1717,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             fileDate = FileUtils.convertDate(fileInfo.getDate() * 1000);
         }
         boolean isDirectory = fileInfo.isDirectory();
-        String fileNoOrSize = "";
+        String fileNoOrSize;
         if (isDirectory) {
             int childFileListSize = (int) fileInfo.getSize();
             if (childFileListSize == 0) {
@@ -1804,7 +1805,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     }
 
 
-    public BitmapDrawable writeOnDrawable(String text) {
+    private BitmapDrawable writeOnDrawable(String text) {
 
         Bitmap bm = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888);
         bm.eraseColor(Color.DKGRAY);
@@ -1836,8 +1837,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private class MyDragShadowBuilder extends View.DragShadowBuilder {
 
         // The drag shadow image, defined as a drawable thing
-        private Drawable shadow;
-        private Point mScaleFactor;
+        private final Drawable shadow;
 
         // Defines the constructor for myDragShadowBuilder
         MyDragShadowBuilder(View v, int count) {
@@ -1876,9 +1876,6 @@ public class FileListFragment extends Fragment implements LoaderManager
             // Sets the size parameter's width and height values. These get back to the system
             // through the size parameter.
             size.set(width, height);
-            // Sets size parameter to member that will be used for scaling shadow image.
-            mScaleFactor = size;
-
             // Sets the touch point's position to be in the middle of the drag shadow
             touch.set(2 * width, height * 2);
         }
@@ -1914,9 +1911,8 @@ public class FileListFragment extends Fragment implements LoaderManager
 
                 final boolean isMoveOperation = position == 1;
 
-                PasteConflictChecker conflictChecker = new PasteConflictChecker(mBaseActivity, FileListFragment
-                        .this, destinationDir,
-                        false, mIsRootMode, isMoveOperation, checkIfDualFragment());
+                PasteConflictChecker conflictChecker = new PasteConflictChecker(mBaseActivity, destinationDir,
+                        mIsRootMode, isMoveOperation);
                 ArrayList<FileInfo> info = new ArrayList<>();
                 info.addAll(sourcePaths);
                 conflictChecker.execute(info);
@@ -1940,7 +1936,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         materialDialog.show();
     }
 
-    protected class myDragEventListener implements View.OnDragListener {
+    class myDragEventListener implements View.OnDragListener {
 
         int oldPos = -1;
 
@@ -2049,9 +2045,8 @@ public class FileListFragment extends Fragment implements LoaderManager
                         showDragDialog(paths, destinationDir);
                     } else {
                         final boolean isMoveOperation = false;
-                        PasteConflictChecker conflictChecker = new PasteConflictChecker(mBaseActivity, FileListFragment
-                                .this, destinationDir,
-                                false, mIsRootMode, isMoveOperation, checkIfDualFragment());
+                        PasteConflictChecker conflictChecker = new PasteConflictChecker(mBaseActivity, destinationDir,
+                                mIsRootMode, isMoveOperation);
                         ArrayList<FileInfo> info = new ArrayList<>();
                         info.addAll(paths);
                         conflictChecker.execute(info);
@@ -2127,8 +2122,6 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
     }
 
-    ;
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         Log.d(FileListFragment.this.getClass().getSimpleName(), "On Create options " +
@@ -2148,7 +2141,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     }
 
-    public void updateMenuTitle() {
+    private void updateMenuTitle() {
         mViewItem.setTitle(mViewMode == 0 ? R.string.action_view_grid : R.string.action_view_list);
     }
 
@@ -2172,7 +2165,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     }
 
 
-    public void clearSelectedPos() {
+    private void clearSelectedPos() {
         if (mSelectedItemPositions != null && mSelectedItemPositions.size() != 0) {
             mSelectedItemPositions.clear();
         }
@@ -2184,11 +2177,10 @@ public class FileListFragment extends Fragment implements LoaderManager
         switch (item.getItemId()) {
 
             case R.id.action_paste:
-                if (mCopiedData != null && mCopiedData.size() > 0) {
+                if (mCopiedData.size() > 0) {
 
-                    PasteConflictChecker conflictChecker = new PasteConflictChecker(mBaseActivity, FileListFragment
-                            .this, mFilePath,
-                            false, mIsRootMode, mIsMoveOperation, checkIfDualFragment());
+                    PasteConflictChecker conflictChecker = new PasteConflictChecker(mBaseActivity, mFilePath,
+                            mIsRootMode, mIsMoveOperation);
 
                     ArrayList<FileInfo> info = new ArrayList<>();
                     info.addAll(mCopiedData);
@@ -2276,10 +2268,9 @@ public class FileListFragment extends Fragment implements LoaderManager
                 recyclerViewFileList.removeItemDecoration(mGridItemDecoration);
             }
             if (mDividerItemDecoration == null) {
-                mDividerItemDecoration = new DividerItemDecoration(getActivity(), LinearLayoutManager
-                        .VERTICAL, mIsDarkTheme);
+                mDividerItemDecoration = new DividerItemDecoration(getActivity(), mIsDarkTheme);
             }
-            mDividerItemDecoration.setOrientation(LinearLayoutManager.VERTICAL);
+            mDividerItemDecoration.setOrientation();
             recyclerViewFileList.addItemDecoration(mDividerItemDecoration);
         } else {
             if (mDividerItemDecoration != null) {
@@ -2303,7 +2294,8 @@ public class FileListFragment extends Fragment implements LoaderManager
             } else {
                 mGridColumns = getResources().getInteger(R.integer.grid_columns_dual);
             }
-            Log.d(TAG, "Refresh span--columns=" + mGridColumns + "category="+mCategory+" dual mode="+mIsDualModeEnabled);
+            Log.d(TAG, "Refresh span--columns=" + mGridColumns + "category=" + mCategory + " dual mode=" +
+                    mIsDualModeEnabled);
 
             llm = new CustomGridLayoutManager(getActivity(), mGridColumns);
             recyclerViewFileList.setLayoutManager(llm);

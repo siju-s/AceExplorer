@@ -28,36 +28,36 @@ import android.text.TextUtils;
 
 import com.simplecityapps.recyclerview_fastscroll.utils.Utils;
 
-public class FastScrollPopup {
+class FastScrollPopup {
 
-    private FastScrollRecyclerView mRecyclerView;
+    private final FastScrollRecyclerView mRecyclerView;
 
-    private Resources mRes;
+    private final Resources mRes;
 
     private int mBackgroundSize;
     private int mCornerRadius;
 
-    private Path mBackgroundPath = new Path();
-    private RectF mBackgroundRect = new RectF();
-    private Paint mBackgroundPaint;
+    private final Path mBackgroundPath = new Path();
+    private final RectF mBackgroundRect = new RectF();
+    private final Paint mBackgroundPaint;
 
-    private Rect mInvalidateRect = new Rect();
-    private Rect mTmpRect = new Rect();
+    private final Rect mInvalidateRect = new Rect();
+    private final Rect mTmpRect = new Rect();
 
     // The absolute bounds of the fast scroller bg
-    private Rect mBgBounds = new Rect();
+    private final Rect mBgBounds = new Rect();
 
     private String mSectionName;
 
-    private Paint mTextPaint;
-    private Rect mTextBounds = new Rect();
+    private final Paint mTextPaint;
+    private final Rect mTextBounds = new Rect();
 
-    private float mAlpha = 1;
+    private final float mAlpha = 1;
 
     private ObjectAnimator mAlphaAnimator;
     private boolean mVisible;
 
-    public FastScrollPopup(Resources resources, FastScrollRecyclerView recyclerView) {
+     FastScrollPopup(Resources resources, FastScrollRecyclerView recyclerView) {
 
         mRes = resources;
 
@@ -72,7 +72,7 @@ public class FastScrollPopup {
         setBackgroundSize(Utils.toPixels(mRes, 88));
     }
 
-    public void setBgColor(int color) {
+     void setBgColor(int color) {
         mBackgroundPaint.setColor(color);
         mRecyclerView.invalidate(mBgBounds);
     }
@@ -87,13 +87,13 @@ public class FastScrollPopup {
         mRecyclerView.invalidate(mBgBounds);
     }
 
-    public void setBackgroundSize(int size) {
+     void setBackgroundSize(int size) {
         mBackgroundSize = size;
         mCornerRadius = mBackgroundSize / 2;
         mRecyclerView.invalidate(mBgBounds);
     }
 
-    public void setTypeface(Typeface typeface) {
+     void setTypeface(Typeface typeface) {
         mTextPaint.setTypeface(typeface);
         mRecyclerView.invalidate(mBgBounds);
     }
@@ -101,7 +101,7 @@ public class FastScrollPopup {
     /**
      * Animates the visibility of the fast scroller popup.
      */
-    public void animateVisibility(boolean visible) {
+     void animateVisibility(boolean visible) {
         if (mVisible != visible) {
             mVisible = visible;
             if (mAlphaAnimator != null) {
@@ -113,17 +113,21 @@ public class FastScrollPopup {
         }
     }
 
-    // Setter/getter for the popup alpha for animations
-    public void setAlpha(float alpha) {
-        mAlpha = alpha;
-        mRecyclerView.invalidate(mBgBounds);
-    }
+// --Commented out by Inspection START (06-11-2016 11:23 PM):
+//    // Setter/getter for the popup alpha for animations
+//    public void setAlpha(float alpha) {
+//        mAlpha = alpha;
+//        mRecyclerView.invalidate(mBgBounds);
+//    }
+// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
 
-    public float getAlpha() {
-        return mAlpha;
-    }
+// --Commented out by Inspection START (06-11-2016 11:23 PM):
+//    public float getAlpha() {
+//        return mAlpha;
+//    }
+// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
 
-    public void draw(Canvas canvas) {
+     void draw(Canvas canvas) {
         if (isVisible()) {
             // Draw the fast scroller popup
             int restoreCount = canvas.save(Canvas.MATRIX_SAVE_FLAG);
@@ -155,7 +159,7 @@ public class FastScrollPopup {
         }
     }
 
-    public void setSectionName(String sectionName) {
+     void setSectionName(String sectionName) {
         if (!sectionName.equals(mSectionName)) {
             mSectionName = sectionName;
             mTextPaint.getTextBounds(sectionName, 0, sectionName.length(), mTextBounds);
@@ -197,7 +201,7 @@ public class FastScrollPopup {
         return mInvalidateRect;
     }
 
-    public boolean isVisible() {
+    private boolean isVisible() {
         return (mAlpha > 0f) && (!TextUtils.isEmpty(mSectionName));
     }
 }

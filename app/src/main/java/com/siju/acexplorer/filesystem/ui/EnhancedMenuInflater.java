@@ -1,9 +1,5 @@
 package com.siju.acexplorer.filesystem.ui;
 
-/**
- * Created by Siju on 20-06-2016.
- */
-
 import android.support.v4.internal.view.SupportMenuItem;
 import android.support.v7.view.menu.MenuItemImpl;
 import android.view.Menu;
@@ -16,7 +12,7 @@ import com.siju.acexplorer.filesystem.FileConstants;
 
 public class EnhancedMenuInflater {
 
-    public static void inflate(MenuInflater inflater, Menu menu, boolean forceVisible,int category) {
+    public static void inflate(MenuInflater inflater, Menu menu, int category) {
         inflater.inflate(R.menu.action_mode_bottom, menu);
 
         if (category != FileConstants.CATEGORY.FILES.getValue()) {
@@ -25,10 +21,6 @@ public class EnhancedMenuInflater {
             if (category == FileConstants.CATEGORY.FAVORITES.getValue()) {
                 menu.findItem(R.id.action_share).setVisible(false);
             }
-        }
-
-        if (!forceVisible) {
-            return;
         }
 
         int size = menu.size();

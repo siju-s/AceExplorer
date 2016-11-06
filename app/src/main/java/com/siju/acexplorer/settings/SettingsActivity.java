@@ -11,7 +11,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.filesystem.FileConstants;
@@ -31,8 +30,6 @@ import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
     private int mIsTheme; // Default is Dark
-    private RelativeLayout mRelativeLayoutSettings;
-    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +37,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pref_holder);
         PreferenceManager.setDefaultValues(this, R.xml.pref_settings, false);
-        mRelativeLayoutSettings = (RelativeLayout) findViewById(R.id.relativeLayoutSettings);
         setupActionBar();
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsPreferenceFragment())
@@ -68,13 +64,13 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     /**
      * Set up the {@link android.app.ActionBar}, if the API is available.
      */
-    public void setupActionBar() {
+    private void setupActionBar() {
         AppBarLayout bar;
         LinearLayout root = (LinearLayout) findViewById(android.R.id.list).getParent().getParent().getParent();
         bar = (AppBarLayout) LayoutInflater.from(this).inflate(R.layout.toolbar, root,
                 false);
         root.addView(bar, 0); // insert at top
-        mToolbar = (Toolbar) bar.getChildAt(0);
+        Toolbar mToolbar = (Toolbar) bar.getChildAt(0);
 
         if (mIsTheme == FileConstants.THEME_DARK) {
             mToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_colorPrimary));
@@ -100,67 +96,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         if (actionBar != null) {
             // Show the Up button in the action bar.
-            //*        actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color
-//                    .colorPrimary)));*//*
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
-
-
-    void setApplicationTheme(int theme) {
-        if (mIsTheme != theme) {
-            mIsTheme = theme;
-            if (theme == FileConstants.THEME_LIGHT) {
-        /*        getListView().setBackgroundColor(ContextCompat.getColor(this, R.color
-                        .color_light_bg));*/
-                mToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
-                mRelativeLayoutSettings.setBackgroundColor(ContextCompat.getColor(this, R.color
-                        .color_light_bg));
-                if (Build.VERSION.SDK_INT >= 21) {
-                    getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.color_light_status_bar));
-
-                }
-            } else if (theme == FileConstants.THEME_DARK) {
-         /*       getListView().setBackgroundColor(ContextCompat.getColor(this, R.color
-                        .color_dark_bg));*/
-                mToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.color_dark_bg));
-                mRelativeLayoutSettings.setBackgroundColor(ContextCompat.getColor(this, R.color.color_dark_bg));
-                if (Build.VERSION.SDK_INT >= 21) {
-                    getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.color_dark_status_bar));
-
-                }
-            }
-        }
-    }
-
-/*
-    private void setApplicationTheme(boolean themeLight) {
-        if (themeLight) {
-            this.mToolbar.setBackgroundColor(getResources().getColor(R.color.color_lt_background));
-            this.mRelativeLayoutSettings.setBackgroundColor(getResources().getColor(R.color.color_lt_background_motiv));
-            if (VERSION.SDK_INT >= 21) {
-                getWindow().setStatusBarColor(getResources().getColor(R.color.color_lt_status_bar));
-                return;
-            }
-            return;
-        }
-        this.mToolbar.setBackgroundColor(getResources().getColor(R.color.color_dk_background));
-        this.mRelativeLayoutSettings.setBackgroundColor(getResources().getColor(R.color.color_dk_background_motiv));
-        if (VERSION.SDK_INT >= 21) {
-            getWindow().setStatusBarColor(getResources().getColor(R.color.color_dk_status_bar));
-        }
-    }
-*/
-
-/*    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-           finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }*/
-
-
 }

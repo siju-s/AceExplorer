@@ -9,7 +9,6 @@ import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Trace;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -20,8 +19,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,7 +39,6 @@ import com.siju.acexplorer.filesystem.model.FavInfo;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.model.HomeLibraryInfo;
 import com.siju.acexplorer.filesystem.model.LibrarySortModel;
-import com.siju.acexplorer.filesystem.ui.HomeScreenGridLayoutManager;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 import com.siju.acexplorer.model.SectionItems;
@@ -58,14 +54,9 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     private int mResourceIds[];
     private String mLabels[];
     private int mCategoryIds[];
-    //    private RecyclerView recyclerViewLibrary;
-//    private RecyclerView recyclerViewStorages;
-    //    private HomeLibraryAdapter homeLibraryAdapter;
-    private HomeStoragesAdapter homeStoragesAdapter;
     private ArrayList<HomeLibraryInfo> homeLibraryInfoArrayList;
     private ArrayList<HomeLibraryInfo> tempLibraryInfoArrayList;
     private ArrayList<SectionItems> homeStoragesInfoArrayList;
-    public String STORAGE_INTERNAL, STORAGE_EXTERNAL;
     private final String TAG = this.getClass().getSimpleName();
     private SharedPreferenceWrapper sharedPreferenceWrapper;
     private ArrayList<LibrarySortModel> savedLibraries = new ArrayList<>();
@@ -74,8 +65,8 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     private boolean mIsDualModeEnabled;
     private SharedPreferences mSharedPreferences;
     private int mCurrentOrientation;
-    private Handler handler = new Handler();
-    private UriObserver mUriObserver = new UriObserver(handler);
+    private final Handler handler = new Handler();
+    private final UriObserver mUriObserver = new UriObserver(handler);
     private boolean mIsPermissionGranted = true;
     private TableLayout libraryContainer;
     private TableLayout storagesContainer;
@@ -105,7 +96,6 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
         Logger.log(TAG, "onActivityCreated" + savedInstanceState);
-        Trace.beginSection("HomePage");
 
         mCurrentOrientation = getResources().getConfiguration().orientation;
         mIsDualModeEnabled = getArguments().getBoolean(FileConstants.KEY_DUAL_ENABLED, false);
@@ -121,14 +111,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         initConstants();
         initializeLibraries();
         initializeStorageGroup();
-
-//        homeLibraryAdapter = new HomeLibraryAdapter(getActivity(), homeLibraryInfoArrayList);
-//        homeStoragesAdapter = new HomeStoragesAdapter(getActivity(), homeStoragesInfoArrayList);
-//        recyclerViewLibrary.setAdapter(homeLibraryAdapter);
-//        recyclerViewStorages.setAdapter(homeStoragesAdapter);
-
         setupLoaders();
-//        initListeners();
     }
 
     public void setPermissionGranted() {
@@ -151,34 +134,18 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     private void setGridColumns() {
         mGridColumns = getResources().getInteger(R.integer.homescreen_columns);
 //        Logger.log(TAG,"Grid columns="+mGridColumns);
-        GridLayoutManager gridLayoutManagerLibrary = new HomeScreenGridLayoutManager(getActivity(), mGridColumns);
-//        recyclerViewLibrary.setLayoutManager(gridLayoutManagerLibrary);
     }
 
 
     private void initializeViews() {
         boolean isDarkTheme = ThemeUtils.isDarkTheme(getActivity());
-//        recyclerViewLibrary = (RecyclerView) root.findViewById(R.id.recyclerViewLibrary);
-//        recyclerViewStorages = (RecyclerView) root.findViewById(R.id.recyclerViewStorages);
-////        recyclerViewLibrary.setHasFixedSize(true);
-//        recyclerViewStorages.setHasFixedSize(true);
-        LinearLayoutManager llmStorage = new LinearLayoutManager(getActivity());
         setGridColumns();
-//        recyclerViewLibrary.setItemAnimator(new DefaultItemAnimator());
-//        recyclerViewStorages.setLayoutManager(llmStorage);
-//        recyclerViewStorages.setItemAnimator(new DefaultItemAnimator());
-//        recyclerViewStorages.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager
-//                .VERTICAL, isDarkTheme));
         sharedPreferenceWrapper = new SharedPreferenceWrapper();
         libraryContainer = (TableLayout) root.findViewById(R.id.libraryContainer);
         storagesContainer = (TableLayout) root.findViewById(R.id.storagesContainer);
 
         LinearLayout layoutLibrary = (LinearLayout) root.findViewById(R.id.layoutLibrary);
         LinearLayout layoutStorages = (LinearLayout) root.findViewById(R.id.layoutStorages);
-
-
-//        CardView cardLibrary = (CardView) root.findViewById(R.id.cardLibrary);
-//        CardView cardStorage = (CardView) root.findViewById(R.id.cardStorage);
         NestedScrollView nestedScrollViewHome = (NestedScrollView) root.findViewById(R.id.scrollLayoutHome);
 
         if (isDarkTheme) {
@@ -195,69 +162,6 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
 
     }
 
-    private void initListeners() {
-/*        homeLibraryAdapter.setOnItemClickListener(new HomeLibraryAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                int categoryId = homeLibraryInfoArrayList.get(position).getCategoryId();
-                if (categoryId != FileConstants.CATEGORY.ADD.getValue()) {
-                    homeLibraryInfoArrayList.get(position).getCategoryName();
-                    FragmentTransaction ft = getActivity().getSupportFragmentManager()
-                            .beginTransaction();
-                    Bundle args = new Bundle();
-                    args.putBoolean(FileConstants.KEY_HOME, true);
-                    args.putInt(FileConstants.KEY_CATEGORY, categoryId);
-                    String path = null;
-                    if (homeLibraryInfoArrayList.get(position).getCategoryId() == FileConstants
-                            .CATEGORY.DOWNLOADS.getValue()) {
-                        path = FileUtils.getDownloadsDirectory().getAbsolutePath();
-                        args.putString(FileConstants.KEY_PATH, path);
-                    }
-                    mBaseActivity.setCurrentCategory(categoryId);
-                    mBaseActivity.setIsFromHomePage(true);
-                    mBaseActivity.addToBackStack(path, categoryId);
-
-                    FileListFragment fileListFragment = new FileListFragment();
-                    fileListFragment.setArguments(args);
-                    ft.add(R.id.main_container, fileListFragment);
-                    ft.hide(HomeScreenFragment.this);
-                    ft.addToBackStack(null);
-                    ft.commitAllowingStateLoss();
-                } else {
-                    Intent intent = new Intent(getActivity(), LibrarySortActivity.class);
-                    startActivityForResult(intent, REQUEST_CODE);
-                }
-
-            }
-        });*/
-
-//        homeStoragesAdapter.setOnItemClickListener(new HomeStoragesAdapter.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(View view, int position) {
-//                FragmentTransaction ft = getActivity().getSupportFragmentManager()
-//                        .beginTransaction();
-//                String currentDir = homeStoragesInfoArrayList.get(position).getPath();
-//                Bundle args = new Bundle();
-//                args.putBoolean(FileConstants.KEY_HOME, true);
-//                args.putString(FileConstants.KEY_PATH, currentDir);
-//                FileListFragment fileListFragment = new FileListFragment();
-//                fileListFragment.setArguments(args);
-//                ft.add(R.id.main_container, fileListFragment);
-//                ft.hide(HomeScreenFragment.this);
-//                ft.commitAllowingStateLoss();
-//                mBaseActivity.setCurrentCategory(FileConstants.CATEGORY.FILES.getValue());
-//                mBaseActivity.setDir(currentDir, false);
-//                mBaseActivity.addToBackStack(currentDir, FileConstants.CATEGORY.FILES.getValue());
-//                if (mIsDualModeEnabled) {
-//                    mBaseActivity.toggleDualPaneVisibility(true);
-//                    mBaseActivity.createDualFragment();
-//                    mBaseActivity.setDir(currentDir, true);
-//                    mBaseActivity.setCurrentCategory(FileConstants.CATEGORY.FILES.getValue());
-//                    mBaseActivity.addToBackStack(currentDir, FileConstants.CATEGORY.FILES.getValue());
-//                }
-//            }
-//        });
-    }
 
     private void initConstants() {
         mResourceIds = new int[]{R.drawable.ic_library_images, R.drawable.ic_library_music,
@@ -276,8 +180,6 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                 FileConstants.CATEGORY.DOCS.getValue(),
                 FileConstants.CATEGORY.DOWNLOADS.getValue(),
                 FileConstants.CATEGORY.ADD.getValue()};
-        STORAGE_INTERNAL = getResources().getString(R.string.nav_menu_internal_storage);
-        STORAGE_EXTERNAL = getResources().getString(R.string.nav_menu_ext_storage);
     }
 
     private void setupLoaders() {
@@ -356,19 +258,13 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     }
 
     private void inflateLibraryItem() {
-        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-/*        libraryContainer.setColumnStretchable(0,true);
-        libraryContainer.setColumnStretchable(2,true);*/
-/*        TableRow.LayoutParams params = new TableRow.LayoutParams();
-        params.span = 3;*/
         libraryContainer.removeAllViews();
         TableRow tableRow = new TableRow(getActivity());
-//        int gridColumns = getResources().getInteger(R.integer.homescreen_columns);
-
         int pos = 0;
         for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
 
-            RelativeLayout libraryItemContainer = (RelativeLayout) inflater.inflate(R.layout.library_item, null);
+            RelativeLayout libraryItemContainer = (RelativeLayout) View.inflate(getActivity(), R.layout.library_item,
+                    null);
             ImageView imageLibrary = (ImageView) libraryItemContainer.findViewById(R.id.imageLibrary);
             TextView textLibraryName = (TextView) libraryItemContainer.findViewById(R.id.textLibrary);
             TextView textCount = (TextView) libraryItemContainer.findViewById(R.id.textCount);
@@ -399,8 +295,6 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         if (pos != 0) {
             libraryContainer.addView(tableRow);
         }
-
-        Trace.endSection();
 
     }
 
@@ -646,13 +540,11 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     }
 
     private void inflateStoragesItem() {
-        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         storagesContainer.removeAllViews();
 
         for (int i = 0; i < homeStoragesInfoArrayList.size(); i++) {
-//            TableRow tableRow = new TableRow(getActivity());
-
-            RelativeLayout storageItemContainer = (RelativeLayout) inflater.inflate(R.layout.storage_item, null);
+            RelativeLayout storageItemContainer = (RelativeLayout) View.inflate(getActivity(),R.layout.storage_item,
+                    null);
             ProgressBar progressBarSpace = (ProgressBar) storageItemContainer
                     .findViewById(R.id.progressBarSD);
             ImageView imageStorage = (ImageView) storageItemContainer.findViewById(R.id.imageStorage);
@@ -664,7 +556,6 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             textSpace.setText(homeStoragesInfoArrayList.get(i).getSecondLine());
             progressBarSpace.setProgress(homeStoragesInfoArrayList.get(i).getProgress());
 
-//            tableRow.addView(storageItemContainer);
             storagesContainer.addView(storageItemContainer);
             storageItemContainer.setOnClickListener(this);
             storageItemContainer.setTag(homeStoragesInfoArrayList.get(i).getPath());
@@ -815,7 +706,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                     args.putString(FileConstants.KEY_PATH, path);
                 }
                 mBaseActivity.setCurrentCategory(categoryId);
-                mBaseActivity.setIsFromHomePage(true);
+                mBaseActivity.setIsFromHomePage();
                 mBaseActivity.addToBackStack(path, categoryId);
 
                 FileListFragment fileListFragment = new FileListFragment();
@@ -854,41 +745,40 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     }
 
 
+    class UriObserver extends ContentObserver {
+        private Uri mUri;
 
-class UriObserver extends ContentObserver {
-    private Uri mUri;
+        UriObserver(Handler handler) {
 
-    UriObserver(Handler handler) {
+            super(handler);
+        }
 
-        super(handler);
-    }
+        @Override
+        public void onChange(boolean selfChange) {
+            this.onChange(selfChange, null);
+        }
 
-    @Override
-    public void onChange(boolean selfChange) {
-        this.onChange(selfChange, null);
-    }
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            if (!uri.equals(mUri)) {
+                mUri = uri;
+                int categoryId = getCategoryForUri(uri);
+                Logger.log(TAG, "Observer Onchange" + uri + " cat id=" + categoryId);
 
-    @Override
-    public void onChange(boolean selfChange, Uri uri) {
-        if (!uri.equals(mUri)) {
-            mUri = uri;
-            int categoryId = getCategoryForUri(uri);
-            Logger.log(TAG, "Observer Onchange" + uri + " cat id=" + categoryId);
-
-            if (categoryId == 4) {
-                for (int i = 0; i < savedLibraries.size(); i++) {
-                    int id = savedLibraries.get(i).getCategoryId();
-                    if (id != 1 && id != 2 && id != 3 && id != 8) {
-                        Logger.log(TAG, "Observer savedib cat id=" + id);
-                        restartLoaders(id);
+                if (categoryId == 4) {
+                    for (int i = 0; i < savedLibraries.size(); i++) {
+                        int id = savedLibraries.get(i).getCategoryId();
+                        if (id != 1 && id != 2 && id != 3 && id != 8) {
+                            Logger.log(TAG, "Observer savedib cat id=" + id);
+                            restartLoaders(id);
+                        }
                     }
+                } else {
+                    restartLoaders(categoryId);
                 }
-            } else {
-                restartLoaders(categoryId);
             }
         }
     }
-}
 
 
 }

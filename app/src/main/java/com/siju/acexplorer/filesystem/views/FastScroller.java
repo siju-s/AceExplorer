@@ -40,36 +40,36 @@ import com.siju.acexplorer.filesystem.interfaces.OnFastScrollStateChangeListener
 import com.siju.acexplorer.filesystem.utils.Utils;
 
 
-public class FastScroller {
+class FastScroller {
     private static final int DEFAULT_AUTO_HIDE_DELAY = 1500;
 
-    private FastScrollRecyclerView mRecyclerView;
-    private FastScrollPopup mPopup;
+    private final FastScrollRecyclerView mRecyclerView;
+    private final FastScrollPopup mPopup;
 
-    private int mThumbHeight;
-    private int mWidth;
+    private final int mThumbHeight;
+    private final int mWidth;
 
-    private Paint mThumb;
-    private Paint mTrack;
+    private final Paint mThumb;
+    private final Paint mTrack;
 
-    private Rect mTmpRect = new Rect();
-    private Rect mInvalidateRect = new Rect();
-    private Rect mInvalidateTmpRect = new Rect();
+    private final Rect mTmpRect = new Rect();
+    private final Rect mInvalidateRect = new Rect();
+    private final Rect mInvalidateTmpRect = new Rect();
 
     // The inset is the buffer around which a point will still register as a click on the scrollbar
-    private int mTouchInset;
+    private final int mTouchInset;
 
     // This is the offset from the top of the scrollbar when the user first starts touching.  To
     // prevent jumping, this offset is applied as the user scrolls.
     private int mTouchOffset;
 
-    public Point mThumbPosition = new Point(-1, -1);
-    public Point mOffset = new Point(0, 0);
+    private final Point mThumbPosition = new Point(-1, -1);
+    private final Point mOffset = new Point(0, 0);
 
     private boolean mIsDragging;
 
     private Animator mAutoHideAnimator;
-    boolean mAnimatingShow;
+    private boolean mAnimatingShow;
     private int mAutoHideDelay = DEFAULT_AUTO_HIDE_DELAY;
     private boolean mAutoHideEnabled = true;
     private final Runnable mHideRunnable;
@@ -99,7 +99,7 @@ public class FastScroller {
             int thumbColor = typedArray.getColor(R.styleable.FastScrollRecyclerView_fastScrollThumbColor, 0xff000000);
             int popupBgColor = typedArray.getColor(R.styleable.FastScrollRecyclerView_fastScrollPopupBgColor, 0xff000000);
             int popupTextColor = typedArray.getColor(R.styleable.FastScrollRecyclerView_fastScrollPopupTextColor, 0xffffffff);
-            int popupTextSize = typedArray.getDimensionPixelSize(R.styleable.FastScrollRecyclerView_fastScrollPopupTextSize, Utils.toScreenPixels(resources, 56));
+            int popupTextSize = typedArray.getDimensionPixelSize(R.styleable.FastScrollRecyclerView_fastScrollPopupTextSize, Utils.toScreenPixels(resources));
             int popupBackgroundSize = typedArray.getDimensionPixelSize(R.styleable.FastScrollRecyclerView_fastScrollPopupBackgroundSize, Utils.toPixels(resources, 88));
 
             mTrack.setColor(trackColor);
@@ -244,7 +244,7 @@ public class FastScroller {
     }
 
 
-    public void setOffset(int x, int y) {
+    private void setOffset(int x, int y) {
         if (mOffset.x == x && mOffset.y == y) {
             return;
         }
@@ -265,7 +265,7 @@ public class FastScroller {
         return mOffset.x;
     }
 
-    public void show() {
+    private void show() {
         if (!mAnimatingShow) {
             if (mAutoHideAnimator != null) {
                 mAutoHideAnimator.cancel();
@@ -296,14 +296,14 @@ public class FastScroller {
         }
     }
 
-    protected void postAutoHideDelayed() {
+    private void postAutoHideDelayed() {
         if (mRecyclerView != null) {
             cancelAutoHide();
             mRecyclerView.postDelayed(mHideRunnable, mAutoHideDelay);
         }
     }
 
-    protected void cancelAutoHide() {
+    private void cancelAutoHide() {
         if (mRecyclerView != null) {
             mRecyclerView.removeCallbacks(mHideRunnable);
         }

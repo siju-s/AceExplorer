@@ -83,7 +83,7 @@ public class FileConstants {
         GENERIC_LIST(13),
         PICKER(14);
 
-        private int value;
+        private final int value;
 
         CATEGORY(int value) {
             this.value = value;
@@ -100,7 +100,7 @@ public class FileConstants {
         INTERNAL(1),
         EXTERNAL(2);
 
-        private int value;
+        private final int value;
 
         WRITE_MODES(int value) {
             this.value = value;

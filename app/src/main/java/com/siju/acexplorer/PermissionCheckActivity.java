@@ -11,13 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.siju.acexplorer.utils.DialogUtils;
 import com.siju.acexplorer.utils.PermissionUtils;
 
-/**
- * Created by Siju on 11-09-2016.
- */
 public class PermissionCheckActivity extends AppCompatActivity {
     private static final int REQUIRED_PERMISSIONS_REQUEST_CODE = 1;
     private static final long AUTOMATED_RESULT_THRESHOLD_MILLLIS = 250;
@@ -60,19 +55,12 @@ public class PermissionCheckActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-
-
-//        tryRequestPermission();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
-        if (redirectIfNeeded()) {
-            return;
-        }
+        redirectIfNeeded();
     }
 
 
@@ -102,68 +90,11 @@ public class PermissionCheckActivity extends AppCompatActivity {
                 // and checked the "Never ask again" check box.
                 if ((currentTimeMillis - mRequestTimeMillis) < AUTOMATED_RESULT_THRESHOLD_MILLLIS) {
                     mNextView.setVisibility(View.GONE);
-
                     mSettingsView.setVisibility(View.VISIBLE);
                     findViewById(R.id.textViewPermissionHint).setVisibility(View.VISIBLE);
-
-//                    showRationaleDialog(true);
                 }
-//                else {
-//                    showRationaleDialog(false);
-//                }
             }
         }
-    }
-
-    private void showRationaleDialog(boolean showSettings) {
-
-        String texts[] = new String[]{getString(R.string.need_permission), getString(R.string.msg_ok),
-                "", getString(R.string.exit)};
-
-        final MaterialDialog materialDialog = new DialogUtils().showCustomDialog(this,
-                R.layout.permission_rationale, texts);
-        TextView textOk = (TextView)materialDialog.findViewById(R.id.ok);
-        TextView textSettings = (TextView)materialDialog.findViewById(R.id.settings);
-
-
-        if (showSettings){
-            textOk.setVisibility(View.GONE);
-            textSettings.setVisibility(View.VISIBLE);
-            TextView textViewPermissionHint = (TextView)materialDialog.findViewById(R.id.textViewPermissionHint);
-            textViewPermissionHint.setVisibility(View.VISIBLE);
-
-        }
-
-        textOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                materialDialog.dismiss();
-                tryRequestPermission();
-            }
-        });
-
-        textSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                materialDialog.dismiss();
-                final Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                        Uri.parse(PACKAGE_URI_PREFIX + getPackageName()));
-                startActivity(intent);
-            }
-        });
-
-        materialDialog.findViewById(R.id.exit).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                materialDialog.dismiss();
-                finish();
-            }
-        });
-
-        materialDialog.show();
-
-
-
     }
 
     /**

@@ -39,11 +39,10 @@ public class Utils {
      * Converts sp to px
      *
      * @param res Resources
-     * @param sp  the value in sp
      * @return int
      */
-    public static int toScreenPixels(Resources res, float sp) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, res.getDisplayMetrics());
+    public static int toScreenPixels(Resources res) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, (float) 56, res.getDisplayMetrics());
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
