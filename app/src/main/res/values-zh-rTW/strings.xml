@@ -137,9 +137,7 @@
     <string name="package_installer_content">這行動將你喜歡做什麼？</string>
     <string name="open_source_license">開源許可證</string>
     <string name="need_permission">需要權限</string>
-    <string name="storage_access">王牌Explorer需要訪問設備上的文件存儲的許可</string>
     <string name="permission_setting_hint">點擊設置 - >權限，然後打開存儲上。</string>
-    <string name="exit">出口</string>
     <string name="access_denied_external">到外部寫存取SD不批</string>
     <string name="permission_read">讀</string>
     <string name="permission_write">寫</string>

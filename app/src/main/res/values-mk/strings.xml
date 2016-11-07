@@ -122,7 +122,7 @@
     <string name="create">Креирајте</string>
     <string name="zip_progress_title">креирање на zip</string>
     <string name="needsaccess">Напиши потребен пристап</string>
-    <string name="needs_access_summary">Ве молиме изберете root директориумот на% 1 $ s да се даде можност за запишување на работа</string>
+    <string name="needs_access_summary">Ве молиме изберете root директориумот на %1$s да се даде можност за запишување на работа</string>
     <string name="error">грешка</string>
     <string name="completed">Завршено</string>
     <string name="msg_operation_failed">операцијата не успеа</string>
@@ -138,9 +138,7 @@
     <string name="package_installer_content">Која акција би сакал да направам?</string>
     <string name="open_source_license">отворен код лиценци</string>
     <string name="need_permission">треба дозвола</string>
-    <string name="storage_access">Аце Explorer треба дозвола за складирање за да пристапите до датотеките на уредот</string>
     <string name="permission_setting_hint">Допрете Settings -> Дозволи и потоа вклучете чување на.</string>
-    <string name="exit">излез</string>
     <string name="access_denied_external">Пристап за пишување Надворешен не SD доделена</string>
     <string name="permission_read">Прочитај</string>
     <string name="permission_write">Напиши</string>

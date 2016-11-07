@@ -122,7 +122,7 @@
     <string name="create">ստեղծել</string>
     <string name="zip_progress_title">Ստեղծվում ZIP</string>
     <string name="needsaccess">Գրեք Access Պահանջվում</string>
-    <string name="needs_access_summary">Խնդրում ենք ընտրել արմատային դիրեկտորիայի% 1 $ s շնորհել գրելու հնարավորությունը գործել</string>
+    <string name="needs_access_summary">Խնդրում ենք ընտրել արմատային դիրեկտորիայի %1$s շնորհել գրելու հնարավորությունը գործել</string>
     <string name="error">սխալ</string>
     <string name="completed">Ավարտված</string>
     <string name="msg_operation_failed">Operation ձախողվեց</string>
@@ -138,9 +138,7 @@
     <string name="package_installer_content">Որ ակցիան կցանկանայիք անել:</string>
     <string name="open_source_license">Բաց կոդով լիցենզիաներ</string>
     <string name="need_permission">անհրաժեշտ է թույլտվություն</string>
-    <string name="storage_access">Ace Explorer կարիք պահեստային մուտք գործելու թույլտվություն ֆայլերը սարքի</string>
     <string name="permission_setting_hint">Թակել Պարամետրեր -> Թույլտվություններ, ապա միացնել պահպանման:</string>
-    <string name="exit">Ելք</string>
     <string name="access_denied_external">Գրեք հասանելիության արտաքին SD չի տրամադրվում</string>
     <string name="permission_read">կարդալ</string>
     <string name="permission_write">գրել</string>

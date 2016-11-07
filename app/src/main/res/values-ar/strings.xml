@@ -142,9 +142,7 @@
     <string name="package_installer_content">فما الإجراء الذي تريد أن تفعل؟</string>
     <string name="open_source_license">تراخيص مفتوحة المصدر</string>
     <string name="need_permission">تحتاج لتصريح</string>
-    <string name="storage_access">أس إكسبلورر يحتاج إذن التخزين للوصول إلى الملفات الموجودة على الجهاز</string>
     <string name="permission_setting_hint">انقر فوق إعدادات -> ضوابط وثم تتحول التخزين على.</string>
-    <string name="exit">خروج</string>
     <string name="access_denied_external">الكتابة الوصول لجهات خارجية SD لم تمنح</string>
     <string name="permission_read">اقرأ</string>
     <string name="permission_write">كتابة</string>

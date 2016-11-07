@@ -122,7 +122,7 @@
     <string name="create">yaratmak</string>
     <string name="zip_progress_title">oluşturma zip</string>
     <string name="needsaccess">Erişim Gerekli yaz</string>
-    <string name="needs_access_summary">çalışmasına yazma erişimi vermek için% 1 $ s kök dizinini seçiniz</string>
+    <string name="needs_access_summary">çalışmasına yazma erişimi vermek için %1$s kök dizinini seçiniz</string>
     <string name="error">Hata</string>
     <string name="completed">Tamamlanan</string>
     <string name="msg_operation_failed">Operasyon başarısız</string>
@@ -138,9 +138,7 @@
     <string name="package_installer_content">Hangi eylem yapmak istersiniz?</string>
     <string name="open_source_license">Açık kaynak lisansları</string>
     <string name="need_permission">izin alması gerekiyor</string>
-    <string name="storage_access">Ace Explorer cihazdaki dosyalara erişmek için depolama izin alması gerekiyor</string>
     <string name="permission_setting_hint">Dokunun Ayarlar -> İzinler ve ardından Saklama açın.</string>
-    <string name="exit">çıkış</string>
     <string name="access_denied_external">Dış Yazma erişim izni olmayan SD</string>
     <string name="permission_read">okumak</string>
     <string name="permission_write">Yazmak</string>

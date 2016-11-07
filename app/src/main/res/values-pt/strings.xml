@@ -122,7 +122,7 @@
     <string name="create">Crio</string>
     <string name="zip_progress_title">criando zip</string>
     <string name="needsaccess">Escrever Acesso Obrigatório</string>
-    <string name="needs_access_summary">Por favor, escolha o diretório raiz de% 1 $ s para conceder acesso de escrita para operar</string>
+    <string name="needs_access_summary">Por favor, escolha o diretório raiz de %1$s para conceder acesso de escrita para operar</string>
     <string name="error">Erro</string>
     <string name="completed">concluído</string>
     <string name="msg_operation_failed">Operação falhou</string>
@@ -138,9 +138,7 @@
     <string name="package_installer_content">Qual ação você gostaria de fazer?</string>
     <string name="open_source_license">licenças de código aberto</string>
     <string name="need_permission">precisa de permissão</string>
-    <string name="storage_access">Ace Explorer precisa de permissão de armazenamento para acessar os arquivos no dispositivo</string>
     <string name="permission_setting_hint">Toque em Configurações -> Permissões e em seguida, vire armazenamento on.</string>
-    <string name="exit">Saída</string>
     <string name="access_denied_external">Write acesso a externa não SD concedido</string>
     <string name="permission_read">Ler</string>
     <string name="permission_write">Escreva</string>

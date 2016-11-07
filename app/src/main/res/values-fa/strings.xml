@@ -138,9 +138,7 @@
     <string name="package_installer_content">کدام عمل را می خواهید انجام دهید؟</string>
     <string name="open_source_license">مجوزهای منبع باز</string>
     <string name="need_permission">نیاز به اجازه</string>
-    <string name="storage_access">آس اکسپلورر نیاز به اجازه ذخیره سازی برای دسترسی به فایل های روی دستگاه</string>
     <string name="permission_setting_hint">تنظیمات ضربه بزنید -> مجوز و پس از آن نوبت ذخیره سازی است.</string>
-    <string name="exit">خروج</string>
     <string name="access_denied_external">دسترسی برای نوشتن خارجی SD داده نمی</string>
     <string name="permission_read">خواندن</string>
     <string name="permission_write">نوشتن</string>

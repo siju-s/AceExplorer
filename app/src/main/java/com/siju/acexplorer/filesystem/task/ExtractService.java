@@ -33,7 +33,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -43,8 +42,6 @@ public class ExtractService extends Service {
 
 
     private Context c;
-    // Binder given to clients
-    private final HashMap<Integer, Boolean> hash = new HashMap<>();
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
     private ArrayList<String> entries = new ArrayList<>();
@@ -87,7 +84,6 @@ public class ExtractService extends Service {
         mBuilder.setContentTitle(getResources().getString(R.string.extracting))
                 .setContentText(new File(file).getName())
                 .setSmallIcon(R.drawable.ic_doc_compressed);
-        hash.put(startId, true);
         new Doback().execute(b);
         return START_STICKY;
     }
@@ -120,34 +116,32 @@ public class ExtractService extends Service {
 
     private void publishResults(String fileName, int p1, int id, long total, long done, boolean b) {
         int NOTIFICATION_ID = 1000;
-        if (hash.get(id)) {
-            mBuilder.setContentTitle(getResources().getString(R.string.extracting));
-            mBuilder.setProgress(100, p1, false);
-            mBuilder.setOngoing(true);
-            mBuilder.setContentText(new File(fileName).getName() + " " + Formatter.formatFileSize
-                    (c, done) + "/" + Formatter.formatFileSize(c, total));
-            int id1 = NOTIFICATION_ID + id;
+        mBuilder.setContentTitle(getResources().getString(R.string.extracting));
+        mBuilder.setProgress(100, p1, false);
+        mBuilder.setOngoing(true);
+        mBuilder.setContentText(new File(fileName).getName() + " " + Formatter.formatFileSize
+                (c, done) + "/" + Formatter.formatFileSize(c, total));
+        int id1 = NOTIFICATION_ID + id;
+        mNotifyManager.notify(id1, mBuilder.build());
+        if (p1 == 100) {
+            mBuilder.setContentTitle("Extract completed");
+            mBuilder.setContentText(new File(fileName).getName() + " " + Formatter.formatFileSize(c, total));
+            mBuilder.setProgress(0, 0, false);
+            mBuilder.setOngoing(false);
             mNotifyManager.notify(id1, mBuilder.build());
-            if (p1 == 100) {
-                mBuilder.setContentTitle("Extract completed");
-                mBuilder.setContentText(new File(fileName).getName() + " " + Formatter.formatFileSize(c, total));
-                mBuilder.setProgress(0, 0, false);
-                mBuilder.setOngoing(false);
-                mNotifyManager.notify(id1, mBuilder.build());
-                publishCompletedResult(id1);
-            }
-            ZipProgressModel progressModel = new ZipProgressModel();
-            progressModel.setName(fileName);
-            progressModel.setTotal(total);
-            progressModel.setDone(done);
-            progressModel.setId(id);
-            progressModel.setP1(p1);
-            progressModel.setCompleted(b);
-            if (progressListener != null) {
-                progressListener.onUpdate(progressModel);
-                if (b) progressListener.refresh();
-            }
-        } else publishCompletedResult(NOTIFICATION_ID + id);
+            publishCompletedResult(id1);
+        }
+        ZipProgressModel progressModel = new ZipProgressModel();
+        progressModel.setName(fileName);
+        progressModel.setTotal(total);
+        progressModel.setDone(done);
+        progressModel.setId(id);
+        progressModel.setP1(p1);
+        progressModel.setCompleted(b);
+        if (progressListener != null) {
+            progressListener.onUpdate(progressModel);
+            if (b) progressListener.refresh();
+        }
     }
 
     private void publishCompletedResult(int id1) {
@@ -198,13 +192,7 @@ public class ExtractService extends Service {
         long time = System.nanoTime() / 500000000;
 
         void stop(int b) {
-            hash.put(b, false);
-            boolean stop = true;
-            for (int a : hash.keySet()) {
-                if (hash.get(a)) stop = false;
-            }
-            if (stop)
-                stopSelf(b);
+            stopSelf(b);
         }
 
         private void unzipEntry(int id, ZipFile zipfile, ZipEntry entry, String outputDir)
@@ -228,20 +216,14 @@ public class ExtractService extends Service {
                 int len;
                 byte buf[] = new byte[20480];
                 while ((len = inputStream.read(buf)) > 0) {
-                    //System.out.println(id + " " + hash.get(id));
-                    if (hash.get(id)) {
-                        outputStream.write(buf, 0, len);
-                        copiedbytes = copiedbytes + len;
 
-                        long time1 = System.nanoTime() / 500000000;
-                        if (((int) time1) > ((int) (time))) {
-                            calculateProgress(zipfile.getName(), id, false);
-                            time = System.nanoTime() / 500000000;
-                        }
-                    } else {
+                    outputStream.write(buf, 0, len);
+                    copiedbytes = copiedbytes + len;
 
-                        calculateProgress(zipfile.getName(), id, true, copiedbytes, totalbytes);
-                        cancel(true);
+                    long time1 = System.nanoTime() / 500000000;
+                    if (((int) time1) > ((int) (time))) {
+                        calculateProgress(zipfile.getName(), id, false);
+                        time = System.nanoTime() / 500000000;
                     }
                 }
             } finally {
@@ -280,20 +262,15 @@ public class ExtractService extends Service {
                 int len;
                 byte buf[] = new byte[20480];
                 while ((len = inputStream.read(buf)) > 0) {
-                    //System.out.println(id + " " + hash.get(id));
-                    if (hash.get(id)) {
-                        outputStream.write(buf, 0, len);
-                        copiedbytes = copiedbytes + len;
-                        long time1 = System.nanoTime() / 500000000;
-                        if (((int) time1) > ((int) (time))) {
-                            calculateProgress(a, id, false);
-                            time = System.nanoTime() / 500000000;
-                        }
-                    } else {
-                        calculateProgress(a, id, true);
-                        cancel(true);
-                        stop(id);
+
+                    outputStream.write(buf, 0, len);
+                    copiedbytes = copiedbytes + len;
+                    long time1 = System.nanoTime() / 500000000;
+                    if (((int) time1) > ((int) (time))) {
+                        calculateProgress(a, id, false);
+                        time = System.nanoTime() / 500000000;
                     }
+
                 }
             } finally {
                 try {
@@ -330,20 +307,15 @@ public class ExtractService extends Service {
                 int len;
                 byte buf[] = new byte[20480];
                 while ((len = zipfile.read(buf)) > 0) {
-                    //System.out.println(id + " " + hash.get(id));
-                    if (hash.get(id)) {
-                        outputStream.write(buf, 0, len);
-                        copiedbytes = copiedbytes + len;
-                        long time1 = System.nanoTime() / 500000000;
-                        if (((int) time1) > ((int) (time))) {
-                            calculateProgress(string, id, false);
-                            time = System.nanoTime() / 500000000;
-                        }
-                    } else {
-                        calculateProgress(string, id, true);
-                        cancel(true);
-                        stop(id);
+
+                    outputStream.write(buf, 0, len);
+                    copiedbytes = copiedbytes + len;
+                    long time1 = System.nanoTime() / 500000000;
+                    if (((int) time1) > ((int) (time))) {
+                        calculateProgress(string, id, false);
+                        time = System.nanoTime() / 500000000;
                     }
+
                 }
             } finally {
                 try {
@@ -362,23 +334,18 @@ public class ExtractService extends Service {
                 ZipFile zipfile = new ZipFile(archive);
                 calculateProgress(archive.getName(), id, false, copiedbytes, totalbytes);
                 for (Enumeration e = zipfile.entries(); e.hasMoreElements(); ) {
-                    if (hash.get(id)) {
-                        ZipEntry entry = (ZipEntry) e.nextElement();
-                        for (String y : x) {
-                            if (y.endsWith("/")) {
-                                if (entry.getName().contains(y)) entry1.add(entry);
-                            } else {
-                                if (entry.getName().equals(y) || ("/" + entry.getName()).equals(y)) {
-                                    entry1.add(entry);
-                                }
+                    ZipEntry entry = (ZipEntry) e.nextElement();
+                    for (String y : x) {
+                        if (y.endsWith("/")) {
+                            if (entry.getName().contains(y)) entry1.add(entry);
+                        } else {
+                            if (entry.getName().equals(y) || ("/" + entry.getName()).equals(y)) {
+                                entry1.add(entry);
                             }
                         }
-                        i++;
-                    } else {
-                        cancel(true);
-                        stop(id);
-
                     }
+                    i++;
+
                 }
                 for (ZipEntry entry : entry1) {
                     totalbytes = totalbytes + entry.getSize();
@@ -404,25 +371,16 @@ public class ExtractService extends Service {
                 ZipFile zipfile = new ZipFile(archive);
                 calculateProgress(archive.getName(), id, false, copiedbytes, totalbytes);
                 for (Enumeration e = zipfile.entries(); e.hasMoreElements(); ) {
-                    if (hash.get(id)) {
-                        ZipEntry entry = (ZipEntry) e.nextElement();
-                        arrayList.add(entry);
-                    } else {
-                        stop(id);
 
-                    }
+                    ZipEntry entry = (ZipEntry) e.nextElement();
+                    arrayList.add(entry);
+
                 }
                 for (ZipEntry entry : arrayList) {
                     totalbytes = totalbytes + entry.getSize();
                 }
                 for (ZipEntry entry : arrayList) {
-                    if (hash.get(id)) {
-                        unzipEntry(id, zipfile, entry, destinationPath);
-
-                    } else {
-                        stop(id);
-
-                    }
+                    unzipEntry(id, zipfile, entry, destinationPath);
                 }
                 Intent intent = new Intent(FileConstants.RELOAD_LIST);
                 sendBroadcast(intent);
@@ -444,25 +402,17 @@ public class ExtractService extends Service {
                 publishResults(archive.getName(), 0, id, totalbytes, copiedbytes, false);
                 TarArchiveEntry tarArchiveEntry = inputStream.getNextTarEntry();
                 while (tarArchiveEntry != null) {
-                    if (hash.get(id)) {
 
-                        archiveEntries.add(tarArchiveEntry);
-                        tarArchiveEntry = inputStream.getNextTarEntry();
-                    } else {
-                        stop(id);
+                    archiveEntries.add(tarArchiveEntry);
+                    tarArchiveEntry = inputStream.getNextTarEntry();
 
-                    }
                 }
                 for (TarArchiveEntry entry : archiveEntries) {
                     totalbytes = totalbytes + entry.getSize();
                 }
                 for (TarArchiveEntry entry : archiveEntries) {
-                    if (hash.get(id)) {
-                        unzipTAREntry(id, inputStream, entry, destinationPath, archive.getName());
-                    } else {
-                        stop(id);
+                    unzipTAREntry(id, inputStream, entry, destinationPath, archive.getName());
 
-                    }
                 }
 
                 inputStream.close();
@@ -488,25 +438,19 @@ public class ExtractService extends Service {
                 FileHeader fh = zipfile.nextFileHeader();
                 publishResults(archive.getName(), 0, id, totalbytes, copiedbytes, false);
                 while (fh != null) {
-                    if (hash.get(id)) {
 
-                        arrayList.add(fh);
-                        fh = zipfile.nextFileHeader();
-                    } else {
-                        stop(id);
 
-                    }
+                    arrayList.add(fh);
+                    fh = zipfile.nextFileHeader();
+
                 }
                 for (FileHeader header : arrayList) {
                     totalbytes = totalbytes + header.getFullUnpackSize();
                 }
                 for (FileHeader header : arrayList) {
-                    if (hash.get(id)) {
-                        unzipRAREntry(id, archive.getName(), zipfile, header, destinationPath);
-                    } else {
-                        stop(id);
 
-                    }
+                    unzipRAREntry(id, archive.getName(), zipfile, header, destinationPath);
+
                 }
                 Intent intent = new Intent(FileConstants.RELOAD_LIST);
                 sendBroadcast(intent);

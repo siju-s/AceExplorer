@@ -2166,9 +2166,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
 
     private void clearSelectedPos() {
-        if (mSelectedItemPositions != null && mSelectedItemPositions.size() != 0) {
-            mSelectedItemPositions.clear();
-        }
+            mSelectedItemPositions = new SparseBooleanArray();
     }
 
 

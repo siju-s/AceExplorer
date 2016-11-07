@@ -69,7 +69,6 @@
     <string name="msg_error_not_supported">No app to handle the action</string>
     <string name="permission_request">Need storage permission to show all the files</string>
     <string name="action_grant">GRANT</string>
-    <string name="action_sort">Sort</string>
 
     <string name="action_view_list">List view</string>
     <string name="action_view_grid">Grid view</string>
@@ -152,9 +151,7 @@
     <string name="package_installer_content">Which action would you like to do?</string>
     <string name="open_source_license">Open source licenses</string>
     <string name="need_permission">Needs permission</string>
-    <string name="storage_access">Ace Explorer needs storage permission to access the files on device</string>
     <string name="permission_setting_hint">Tap Settings -> Permissions and then turn Storage on.</string>
-    <string name="exit">Exit</string>
     <string name="access_denied_external">Write access to External SD not granted</string>
     <string name="permission_read">Read</string>
     <string name="permission_write">Write</string>
@@ -175,13 +172,66 @@
 
     <string name="slide_3_title">Drag and Drop</string>
     <string name="slide_3_desc">Drag files from one folder to another!</string>
-
+    <string name="action_sort">Sort</string>
     <string name="slide_4_title">Themes</string>
     <string name="slide_4_desc">Dark or Light way! Your choice.</string>
     <string name="no_music"> No Music files</string>
     <string name="fav_removed">Removed from favorites</string>
     <string name="count_placeholder" translatable="false">1/</string>
     <string name="percent_placeholder" translatable="false">%</string>
+    <string name="img_accessibility_back">Back</string>
+    <string name="img_accessibility_permission">Grant permission</string>
+    <string name="img_accessibility_expand">Expand or Collapse</string>
+    <string name="img_accessibility_brand">App logo</string>
+    <string name="img_accessibility_icon_lib">Library icon</string>
+    <string name="img_accessibility_storage_icon">Storage icon</string>
+
+    <string-array name="changeLanguage">
+        <item name="1">English</item>
+        <item name="2">Afrikaans</item>
+        <item name="3">Arabic</item>
+        <item name="4">Armenian</item>
+        <item name="5">Belarusian</item>
+        <item name="6">Bulgarian</item>
+        <item name="7">Chinese</item>
+        <item name="8">Croatian</item>
+        <item name="9">Czech</item>
+        <item name="10">Danish</item>
+        <item name="11">Dutch</item>
+        <item name="12">Estonian</item>
+        <item name="13">Farsi</item>
+        <item name="14">Finnish</item>
+        <item name="15">French</item>
+        <item name="16">Georgian</item>
+        <item name="17">German</item>
+        <item name="18">Greek</item>
+        <item name="19">Hindi</item>
+        <item name="20">Hungarian</item>
+        <item name="21">Italian</item>
+        <item name="22">Japanese</item>
+        <item name="23">Korean</item>
+        <item name="24">Latvian</item>
+        <item name="25">Lithuanian</item>
+        <item name="26">Malay</item>
+        <item name="27">Mongolian</item>
+        <item name="28">Polish</item>
+        <item name="29">Portuguese</item>
+        <item name="30">Romanian</item>
+        <item name="31">Russian</item>
+        <item name="32">Serbian</item>
+        <item name="33">Slovak</item>
+        <item name="34">Slovenian</item>
+        <item name="35">Spanish</item>
+        <item name="36">Swahili</item>
+        <item name="37">Swedish</item>
+        <item name="38">Thai</item>
+        <item name="39">Turkish</item>
+        <item name="40">Ukrainian</item>
+        <item name="41">Zulu</item>
+    </string-array>
+
+
+
 
 
 </resources>

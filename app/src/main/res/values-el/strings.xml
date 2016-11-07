@@ -122,7 +122,7 @@
     <string name="create">Δημιουργώ</string>
     <string name="zip_progress_title">δημιουργία zip</string>
     <string name="needsaccess">Γράψτε Απαιτείται πρόσβαση</string>
-    <string name="needs_access_summary">Παρακαλώ επιλέξτε το ριζικό του% 1 $ s να επιτρέψει την πρόσβαση εγγραφής για να λειτουργήσει</string>
+    <string name="needs_access_summary">Παρακαλώ επιλέξτε το ριζικό του %1$s να επιτρέψει την πρόσβαση εγγραφής για να λειτουργήσει</string>
     <string name="error">Λάθος</string>
     <string name="completed">Ολοκληρώθηκε το</string>
     <string name="msg_operation_failed">Η λειτουργία απέτυχε</string>
@@ -138,9 +138,7 @@
     <string name="package_installer_content">Ποια μέτρα θα θέλατε να κάνετε;</string>
     <string name="open_source_license">Άδειες λογισμικού ανοικτού κώδικα</string>
     <string name="need_permission">χρειάζεται άδεια</string>
-    <string name="storage_access">Άσσος Explorer χρειάζεται άδεια αποθήκευσης για να αποκτήσετε πρόσβαση στα αρχεία στη συσκευή</string>
     <string name="permission_setting_hint">Πατήστε Ρυθμίσεις -> Δικαιώματα και στη συνέχεια ενεργοποιήστε Αποθήκευση σε.</string>
-    <string name="exit">Έξοδος</string>
     <string name="access_denied_external">Γράψτε την πρόσβαση σε εξωτερικές δεν SD χορηγηθεί</string>
     <string name="permission_read">Διαβάζω</string>
     <string name="permission_write">Γράφω</string>

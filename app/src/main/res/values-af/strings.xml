@@ -138,9 +138,7 @@
     <string name="package_installer_content">Watter aksie wil jy doen?</string>
     <string name="open_source_license">Open source lisensies</string>
     <string name="need_permission">moet toestemming</string>
-    <string name="storage_access">Ace Explorer moet stoor toestemming om toegang tot die lêers op die toestel</string>
     <string name="permission_setting_hint">Tik Instellings -> Permissions en dan draai berging op.</string>
-    <string name="exit">uitgang</string>
     <string name="access_denied_external">Skryf toegang tot eksterne SD-nie toegestaan</string>
     <string name="permission_read">Lees</string>
     <string name="permission_write">Skryf</string>

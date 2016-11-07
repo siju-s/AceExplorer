@@ -4,7 +4,6 @@ package com.siju.acexplorer.filesystem.task;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -28,13 +27,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class CreateZipTask extends Service {
 
-    private final HashMap<Integer, Boolean> hash = new HashMap<>();
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
     private Context c;
@@ -80,7 +77,6 @@ public class CreateZipTask extends Service {
         b.putInt("id", startId);
         b.putParcelableArrayList("files", zipFiles);
         b.putString("name", name);
-        hash.put(startId, true);
         new Doback().execute(b);
         // If we get killed, after returning from here, restart
         return START_STICKY;
@@ -122,20 +118,13 @@ public class CreateZipTask extends Service {
             ArrayList<FileInfo> files = p1[0].getParcelableArrayList("files");
             name = p1[0].getString("name");
             new zip().execute(id, toFileArray(files), name);
-            // TODO: Implement this method
             return id;
         }
 
         @Override
         public void onPostExecute(Integer b) {
             publishResults(b, name, 100, true, 0, totalBytes);
-            hash.put(b, false);
-            boolean stop = true;
-            for (int a : hash.keySet()) {
-                if (hash.get(a)) stop = false;
-            }
-            if (stop)
-                stopSelf(b);
+            stopSelf(b);
 
             // Broadcast result to FileListFragment
             Intent intent = new Intent(FileConstants.RELOAD_LIST);
@@ -155,37 +144,34 @@ public class CreateZipTask extends Service {
 
     private void publishResults(int id, String fileName, int i, boolean b, long done, long total) {
 
-        if (hash.get(id)) {
-            mBuilder.setProgress(100, i, false);
-            mBuilder.setOngoing(true);
-            int title = R.string.zip_progress_title;
-            mBuilder.setContentTitle(getResources().getString(title));
-            mBuilder.setContentText(new File(fileName).getName() + " " + Formatter.formatFileSize
-                    (c, done) + "/" + Formatter.formatFileSize(c, total));
-            int id1 = NOTIFICATION_ID + id;
+
+        mBuilder.setProgress(100, i, false);
+        mBuilder.setOngoing(true);
+        int title = R.string.zip_progress_title;
+        mBuilder.setContentTitle(getResources().getString(title));
+        mBuilder.setContentText(new File(fileName).getName() + " " + Formatter.formatFileSize
+                (c, done) + "/" + Formatter.formatFileSize(c, total));
+        int id1 = NOTIFICATION_ID + id;
+        mNotifyManager.notify(id1, mBuilder.build());
+        if (i == 100 || total == 0) {
+            mBuilder.setContentTitle("Zip completed");
+            mBuilder.setContentText("");
+            mBuilder.setProgress(0, 0, false);
+            mBuilder.setOngoing(false);
             mNotifyManager.notify(id1, mBuilder.build());
-            if (i == 100 || total == 0) {
-                mBuilder.setContentTitle("Zip completed");
-                mBuilder.setContentText("");
-                mBuilder.setProgress(0, 0, false);
-                mBuilder.setOngoing(false);
-                mNotifyManager.notify(id1, mBuilder.build());
-                publishCompletedResult(id1);
-                b = true;
-            }
-            ZipProgressModel progressModel = new ZipProgressModel();
-            progressModel.setName(fileName);
-            progressModel.setTotal(total);
-            progressModel.setDone(done);
-            progressModel.setId(id);
-            progressModel.setP1(i);
-            progressModel.setCompleted(b);
-            if (progressListener != null) {
-                progressListener.onUpdate(progressModel);
-                if (b) progressListener.refresh();
-            }
-        } else {
-            publishCompletedResult(NOTIFICATION_ID + id);
+            publishCompletedResult(id1);
+            b = true;
+        }
+        ZipProgressModel progressModel = new ZipProgressModel();
+        progressModel.setName(fileName);
+        progressModel.setTotal(total);
+        progressModel.setDone(done);
+        progressModel.setId(id);
+        progressModel.setP1(i);
+        progressModel.setCompleted(b);
+        if (progressListener != null) {
+            progressListener.onUpdate(progressModel);
+            if (b) progressListener.refresh();
         }
     }
 
@@ -197,19 +183,6 @@ public class CreateZipTask extends Service {
         }
     }
 
-
-    /**
-     * Class used for the client Binder.  Because we know this service always
-     * runs in the same process as its clients, we don't need to deal with IPC.
-     */
-
-    private final BroadcastReceiver receiver1 = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            hash.put(intent.getIntExtra("id", 1), false);
-        }
-    };
 
     class zip {
         public zip() {
@@ -287,15 +260,13 @@ public class CreateZipTask extends Service {
                 BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
                 zos.putNextEntry(new ZipEntry(path + "/" + file.getName()));
                 while ((len = in.read(buf)) > 0) {
-                    if (hash.get(id)) {
-                        zos.write(buf, 0, len);
-                        size += len;
-                        int p = (int) ((size / (float) totalBytes) * 100);
-                        if (p != lastpercent || lastpercent == 0) {
-                            calculateProgress(fileName, id, size, totalBytes);
-                        }
-                        lastpercent = p;
+                    zos.write(buf, 0, len);
+                    size += len;
+                    int p = (int) ((size / (float) totalBytes) * 100);
+                    if (p != lastpercent || lastpercent == 0) {
+                        calculateProgress(fileName, id, size, totalBytes);
                     }
+                    lastpercent = p;
                 }
                 in.close();
                 return;
@@ -318,9 +289,5 @@ public class CreateZipTask extends Service {
         return mBinder;
     }
 
-    @Override
-    public void onDestroy() {
-        this.unregisterReceiver(receiver1);
-    }
 }
 

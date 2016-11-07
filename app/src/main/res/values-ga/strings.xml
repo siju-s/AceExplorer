@@ -125,7 +125,7 @@
     <string name="create">Cruthaigh</string>
     <string name="zip_progress_title">zip Cruthú</string>
     <string name="needsaccess">Scríobh Rochtain Teastáil</string>
-    <string name="needs_access_summary">Roghnaigh an eolaire fhréamh% 1 $ s bealach scríofa a thabhairt ag feidhmiú</string>
+    <string name="needs_access_summary">Roghnaigh an eolaire fhréamh %1$s bealach scríofa a thabhairt ag feidhmiú</string>
     <string name="error">earráid</string>
     <string name="completed">Críochnaithe</string>
     <string name="msg_operation_failed">theip ar an oibríocht</string>
@@ -141,9 +141,7 @@
     <string name="package_installer_content">Cén gníomh ba mhaith leat a dhéanamh?</string>
     <string name="open_source_license">ceadúnas foinse oscailte</string>
     <string name="need_permission">cead riachtanais</string>
-    <string name="storage_access">Ace Explorer mór cead stórála chun rochtain ar na comhaid ar an ngléas</string>
     <string name="permission_setting_hint">Socruithe Beartaíonn -> Ceadanna agus ansin cas Stóráil ar.</string>
-    <string name="exit">An slí amach</string>
     <string name="access_denied_external">bealach scríofa a thabhairt Seachtracha Ní Lá Earraigh deonaíodh</string>
     <string name="permission_read">Léigh</string>
     <string name="permission_write">Scríobh</string>

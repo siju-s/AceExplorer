@@ -44,10 +44,6 @@ public class DialogUtils {
         MaterialDialog.Builder builder = new MaterialDialog.Builder(context);
 
         builder.customView(resourceId, true);
-
-        //        builder.widgetColor(ContextCompat.getColor(context,R.color.colorAccent));
-  /*      if(m.theme1==1)
-            a.theme(Theme.DARK);*/
         builder.title(texts[0]);
         builder.positiveText(texts[1]);
         builder.positiveColor(color);
@@ -60,11 +56,6 @@ public class DialogUtils {
         return builder.build();
     }
 
-
-
-
-
-
     public int getCurrentThemePrimary(Context context) {
         TypedValue typedValue = new TypedValue();
         context.getTheme().resolveAttribute(R.attr.titleTextColor, typedValue, true);
@@ -74,12 +65,9 @@ public class DialogUtils {
     public MaterialDialog showListDialog(final Context context, String[] texts, ArrayList<String> items) {
         int color = getCurrentThemePrimary(context);
         MaterialDialog.Builder builder = new MaterialDialog.Builder(context);
-  /*      if(m.theme1==1)
-            a.theme(Theme.DARK);*/
         builder.title(texts[0]);
         builder.positiveText(texts[1]);
         builder.positiveColor(color);
-//        builder.positiveColor(ContextCompat.getColor(context, R.color.colorPrimary));
         builder.neutralText(texts[2]);
         builder.items(items);
         if (texts[3] != (null)) {
@@ -92,8 +80,6 @@ public class DialogUtils {
     public MaterialDialog showDialog(final Context context, String[] texts) {
         int color = getCurrentThemePrimary(context);
         MaterialDialog.Builder builder = new MaterialDialog.Builder(context);
-  /*      if(m.theme1==1)
-            a.theme(Theme.DARK);*/
         builder.title(texts[0]);
         builder.positiveText(texts[1]);
         builder.positiveColor(color);

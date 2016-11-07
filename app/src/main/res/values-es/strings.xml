@@ -122,7 +122,7 @@
     <string name="create">Crear</string>
     <string name="zip_progress_title">Creación postal</string>
     <string name="needsaccess">El acceso de escritura Requerido</string>
-    <string name="needs_access_summary">Por favor seleccione el directorio raíz de% 1 $ s para conceder acceso de escritura para operar</string>
+    <string name="needs_access_summary">Por favor seleccione el directorio raíz de %1$s para conceder acceso de escritura para operar</string>
     <string name="error">Error</string>
     <string name="completed">Terminado</string>
     <string name="msg_operation_failed">Operación fallida</string>
@@ -138,9 +138,7 @@
     <string name="package_installer_content">¿Qué acción le gustaría hacer?</string>
     <string name="open_source_license">licencias de código abierto</string>
     <string name="need_permission">necesita el permiso</string>
-    <string name="storage_access">Ace Explorador necesita el permiso de almacenamiento para acceder a los archivos en el dispositivo</string>
     <string name="permission_setting_hint">Pulse Configuración -> Permisos de almacenamiento y luego girar sucesivamente.</string>
-    <string name="exit">Salida</string>
     <string name="access_denied_external">acceso de escritura externo SD no concedió</string>
     <string name="permission_read">Leer</string>
     <string name="permission_write">Escribir</string>

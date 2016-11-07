@@ -122,7 +122,7 @@
     <string name="create">Erstellen</string>
     <string name="zip_progress_title">Erstellen zip</string>
     <string name="needsaccess">Schreiben Sie Zugang erforderlich</string>
-    <string name="needs_access_summary">Bitte wählen Sie das Root-Verzeichnis% 1 $ s Schreibzugriff zu gewähren, zu betreiben</string>
+    <string name="needs_access_summary">Bitte wählen Sie das Root-Verzeichnis %1$s Schreibzugriff zu gewähren, zu betreiben</string>
     <string name="error">Fehler</string>
     <string name="completed">fertiggestellt</string>
     <string name="msg_operation_failed">Operation fehlgeschlagen</string>
@@ -138,9 +138,7 @@
     <string name="package_installer_content">Welche Aktion möchten Sie tun?</string>
     <string name="open_source_license">Open-Source-Lizenzen</string>
     <string name="need_permission">braucht Erlaubnis</string>
-    <string name="storage_access">Ace Explorer benötigt Speicher Erlaubnis, die Dateien auf dem Gerät zugreifen</string>
     <string name="permission_setting_hint">Tippen Sie auf Einstellungen -> Berechtigungen und schalten Lagerung auf.</string>
-    <string name="exit">Ausgang</string>
     <string name="access_denied_external">Schreibzugriff auf externe SD nicht gewährt</string>
     <string name="permission_read">Lesen</string>
     <string name="permission_write">Schreiben</string>

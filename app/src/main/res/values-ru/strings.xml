@@ -124,7 +124,7 @@
     <string name="create">Создайте</string>
     <string name="zip_progress_title">Создание почтового индекса</string>
     <string name="needsaccess">Написать Требуется доступ</string>
-    <string name="needs_access_summary">Пожалуйста, выберите корневой каталог% 1 $ S, чтобы предоставить доступ на запись для работы</string>
+    <string name="needs_access_summary">Пожалуйста, выберите корневой каталог %1$s, чтобы предоставить доступ на запись для работы</string>
     <string name="error">ошибка</string>
     <string name="completed">Завершенный</string>
     <string name="msg_operation_failed">Операция не удалась</string>
@@ -140,9 +140,7 @@
     <string name="package_installer_content">Какие действия вы хотели бы сделать?</string>
     <string name="open_source_license">лицензии с открытым исходным кодом</string>
     <string name="need_permission">Требуется разрешение</string>
-    <string name="storage_access">Ace Explorer, требуется разрешение для хранения, чтобы получить доступ к файлам на устройстве</string>
     <string name="permission_setting_hint">Нажмите Настройки -> Права доступа, а затем включите хранение на.</string>
-    <string name="exit">Выход</string>
     <string name="access_denied_external">Запись доступа к внешним источникам не SD предоставлено</string>
     <string name="permission_read">Читать</string>
     <string name="permission_write">Написать</string>

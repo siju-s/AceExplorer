@@ -137,9 +137,7 @@
     <string name="package_installer_content">어떤 행동을하기를 원하십니까?</string>
     <string name="open_source_license">오픈 소스 라이센스</string>
     <string name="need_permission">권한이 필요합니다</string>
-    <string name="storage_access">에이스 탐색기 장치의 파일에 액세스 할 수 저장 권한이 필요합니다</string>
     <string name="permission_setting_hint">탭 설정 -> 권한 및 다음에 저장을 켭니다.</string>
-    <string name="exit">출구</string>
     <string name="access_denied_external">외부에 대한 쓰기 권한이 부여되지 않은 (SD)</string>
     <string name="permission_read">독서</string>
     <string name="permission_write">쓰다</string>

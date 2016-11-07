@@ -121,7 +121,7 @@
     <string name="create">创建</string>
     <string name="zip_progress_title">创建ZIP</string>
     <string name="needsaccess">写访问所需</string>
-    <string name="needs_access_summary">请选择％1 $ s中的根目录授予写访问操作</string>
+    <string name="needs_access_summary">请选择 ％1$s 中的根目录授予写访问操作</string>
     <string name="error">错误</string>
     <string name="completed">完成</string>
     <string name="msg_operation_failed">手术失败</string>
@@ -137,9 +137,7 @@
     <string name="package_installer_content">这行动将你喜欢做什么？</string>
     <string name="open_source_license">开源许可证</string>
     <string name="need_permission">需要权限</string>
-    <string name="storage_access">王牌Explorer需要访问设备上的文件存储的许可</string>
     <string name="permission_setting_hint">点击设置 - >权限，然后打开存储上。</string>
-    <string name="exit">出口</string>
     <string name="access_denied_external">到外部写存取SD不批</string>
     <string name="permission_read">读</string>
     <string name="permission_write">写</string>

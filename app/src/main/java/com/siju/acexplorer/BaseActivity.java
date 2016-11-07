@@ -16,7 +16,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Trace;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -169,7 +168,6 @@ public class BaseActivity extends AppCompatActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Trace.beginSection("BaseActivity");
         setTheme();
         setLanguage();
         super.onCreate(savedInstanceState);
@@ -334,8 +332,6 @@ public class BaseActivity extends AppCompatActivity implements
     private void registerReceivers() {
         IntentFilter filter = new IntentFilter(Intent.ACTION_LOCALE_CHANGED);
         registerReceiver(mLocaleListener, filter);
-        Trace.endSection();
-
     }
 
     private void removeFragmentsOnPermissionRevoked(Bundle savedInstance) {
@@ -435,7 +431,7 @@ public class BaseActivity extends AppCompatActivity implements
         showSettings = !ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission
                 .WRITE_EXTERNAL_STORAGE);
         if (mPermissionDialog == null) {
-            mPermissionDialog = new Dialog(this, android.R.style.Theme_Light_NoTitleBar_Fullscreen);
+            mPermissionDialog = new Dialog(this, R.style.PermissionDialog);
             mPermissionDialog.setContentView(R.layout.dialog_runtime_permissions);
 
         }

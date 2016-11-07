@@ -11,15 +11,8 @@
     <color name="whiteOverlay">#F3F3F3</color>
     <color name="fabButtonText">#727272</color>
 
-    <color name="cardview_background_color">#D3D3D3</color>
-
-
-
     <!-- Light Theme -->
     <color name="light_text">#000000</color>
-
-
-
 
     <!-- Dark Theme -->
     <color name="dark_text">#ffffff</color>
@@ -36,12 +29,6 @@
     <color name="bg_screen2">#2278d4</color>
     <color name="bg_screen3">#FFAC33</color>
     <color name="bg_screen4">#FF6E33</color>
-
-    <!-- Screens background color-->
-    <!--<color name="bg_screen1">@color/colorPrimary</color>-->
-    <!--<color name="bg_screen2">@color/colorPrimary</color>-->
-    <!--<color name="bg_screen3">@color/colorPrimary</color>-->
-    <!--<color name="bg_screen4">@color/colorPrimary</color>-->
 
     <!-- dots inactive colors -->
     <color name="dot_dark_screen1">#d1395c</color>

@@ -122,7 +122,7 @@
     <string name="create">Búa</string>
     <string name="zip_progress_title">búa til Zip</string>
     <string name="needsaccess">Skrifaðu aðgang þarf</string>
-    <string name="needs_access_summary">Vinsamlegast veldu rót skrá af% 1 $ s að veita skrifréttindi starfa</string>
+    <string name="needs_access_summary">Vinsamlegast veldu rót skrá af %1$s að veita skrifréttindi starfa</string>
     <string name="error">villa</string>
     <string name="completed">lokið</string>
     <string name="msg_operation_failed">aðgerð mistókst</string>
@@ -138,9 +138,7 @@
     <string name="package_installer_content">Hvaða aðgerð viltu gera?</string>
     <string name="open_source_license">Opinn uppspretta leyfi</string>
     <string name="need_permission">þarf leyfi</string>
-    <string name="storage_access">Ace Explorer þarf geymsla leyfi til að opna skrár í tækinu</string>
     <string name="permission_setting_hint">Pikkaðu á Stillingar -> Heimildir og þá snúa geymslu á.</string>
-    <string name="exit">Hætta</string>
     <string name="access_denied_external">Skrifréttindi ytri SD ekki veitt</string>
     <string name="permission_read">Lesa</string>
     <string name="permission_write">skrifaðu</string>

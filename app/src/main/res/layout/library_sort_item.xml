@@ -30,5 +30,6 @@
         android:layout_alignParentEnd="true"
         android:background="@null"
         android:src="@drawable/ic_sort_black"
+        android:contentDescription="@string/action_sort"
         />
 </RelativeLayout>

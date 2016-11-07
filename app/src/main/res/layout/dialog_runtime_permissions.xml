@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dark_colorPrimary"
     android:orientation="vertical">
 
 
@@ -43,6 +42,7 @@
         android:layout_height="400dp"
         android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"
+        android:contentDescription="@string/img_accessibility_permission"
         android:src="@drawable/permission_rationale_dark" />
 
 </RelativeLayout>

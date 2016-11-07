@@ -9,5 +9,6 @@
         android:scaleType="centerCrop"
         android:clickable="false"
         android:src="@drawable/ic_drawer_bg"
+        android:contentDescription="@string/img_accessibility_brand"
         android:layout_gravity="center_horizontal|top" />
 </FrameLayout>

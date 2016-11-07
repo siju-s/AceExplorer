@@ -122,7 +122,7 @@
     <string name="create">Skape</string>
     <string name="zip_progress_title">Opprette zip</string>
     <string name="needsaccess">Skriv Tilgang Nødvendig</string>
-    <string name="needs_access_summary">Velg rotkatalogen% 1 $ s for å gi skrivetilgang for å operere</string>
+    <string name="needs_access_summary">Velg rotkatalogen %1$s for å gi skrivetilgang for å operere</string>
     <string name="error">Feil</string>
     <string name="completed">fullført</string>
     <string name="msg_operation_failed">operasjonen mislyktes</string>
@@ -138,9 +138,7 @@
     <string name="package_installer_content">Hvilke tiltak vil du gjøre?</string>
     <string name="open_source_license">Åpen kildekode-lisenser</string>
     <string name="need_permission">trenger tillatelse</string>
-    <string name="storage_access">Ace Explorer må lagring tillatelse til å få tilgang til filene på enheten</string>
     <string name="permission_setting_hint">Trykk på Innstillinger -> Tillatelser og deretter slå Lagring på.</string>
-    <string name="exit">Exit</string>
     <string name="access_denied_external">Skrivetilgang til eksterne SD ikke innvilget</string>
     <string name="permission_read">Lese</string>
     <string name="permission_write">Skrive</string>

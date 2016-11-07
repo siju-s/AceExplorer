@@ -121,7 +121,7 @@
     <string name="create">Tạo nên</string>
     <string name="zip_progress_title">tạo zip</string>
     <string name="needsaccess">Viết yêu cầu truy cập</string>
-    <string name="needs_access_summary">Vui lòng chọn thư mục gốc của% 1 $ s cấp ghi vào hoạt động</string>
+    <string name="needs_access_summary">Vui lòng chọn thư mục gốc của %1$s cấp ghi vào hoạt động</string>
     <string name="error">lỗi</string>
     <string name="completed">Đã hoàn thành</string>
     <string name="msg_operation_failed">Lỗi hệ thống</string>
@@ -137,9 +137,7 @@
     <string name="package_installer_content">Những hành động mà bạn muốn làm gì?</string>
     <string name="open_source_license">giấy phép mã nguồn mở</string>
     <string name="need_permission">cần sự cho phép</string>
-    <string name="storage_access">Ace Explorer cần sự cho phép lưu trữ để truy cập các tập tin trên thiết bị</string>
     <string name="permission_setting_hint">Vào phần Settings -> Quyền và sau đó lần lượt lưu trữ trên.</string>
-    <string name="exit">Lối thoát</string>
     <string name="access_denied_external">Viết tiếp cận với bên ngoài SD không được cấp</string>
     <string name="permission_read">Đọc</string>
     <string name="permission_write">viết</string>

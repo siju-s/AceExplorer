@@ -138,9 +138,7 @@
     <string name="package_installer_content">Quo vis facere?</string>
     <string name="open_source_license">Patefacio Source licenciis</string>
     <string name="need_permission">eget licentia,</string>
-    <string name="storage_access">Ace Rimor adipiscing eget licentia lima obvius ut in fabrica</string>
     <string name="permission_setting_hint">ICTUS Occasus -> Permissionibus, et tunc revertimini in repono.</string>
-    <string name="exit">exitus</string>
     <string name="access_denied_external">Praesent non conceditur accessum ad exteriora SD</string>
     <string name="permission_read">Read</string>
     <string name="permission_write">write</string>

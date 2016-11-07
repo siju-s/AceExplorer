@@ -122,7 +122,7 @@
     <string name="create">Teremt</string>
     <string name="zip_progress_title">létrehozása zip</string>
     <string name="needsaccess">Írja hozzáférés szükséges</string>
-    <string name="needs_access_summary">Kérjük, válassza ki a gyökér könyvtárat:% 1 $ s adhat írási működtetéséhez</string>
+    <string name="needs_access_summary">Kérjük, válassza ki a gyökér könyvtárat: %1$s adhat írási működtetéséhez</string>
     <string name="error">Hiba</string>
     <string name="completed">befejezték</string>
     <string name="msg_operation_failed">A művelet nem sikerült</string>
@@ -138,9 +138,7 @@
     <string name="package_installer_content">Melyik műveletet szeretne tenni?</string>
     <string name="open_source_license">Nyílt forráskódú licencek</string>
     <string name="need_permission">engedélyt kér</string>
-    <string name="storage_access">Ace Explorer szüksége tárolási engedélyt elérni a fájlokat a készüléken</string>
     <string name="permission_setting_hint">Érintse meg a Beállítások -> Engedélyek majd kapcsolja Tároló.</string>
-    <string name="exit">Kijárat</string>
     <string name="access_denied_external">Írási hozzáférést külső SD nem részesülő</string>
     <string name="permission_read">Olvas</string>
     <string name="permission_write">Ír</string>

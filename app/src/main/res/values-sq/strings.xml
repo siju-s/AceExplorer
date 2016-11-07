@@ -122,7 +122,7 @@
     <string name="create">krijoj</string>
     <string name="zip_progress_title">Krijimi zip</string>
     <string name="needsaccess">Shkruaj qasjen e kërkuar</string>
-    <string name="needs_access_summary">Ju lutemi zgjidhni dosjen rrënjë e% 1 $ s për të dhënë lejen e shkrimit për të vepruar</string>
+    <string name="needs_access_summary">Ju lutemi zgjidhni dosjen rrënjë e %1$s për të dhënë lejen e shkrimit për të vepruar</string>
     <string name="error">gabim</string>
     <string name="completed">i përfunduar</string>
     <string name="msg_operation_failed">Operacioni dështoi</string>
@@ -138,9 +138,7 @@
     <string name="package_installer_content">Cili veprim do të ju pëlqen të bëni?</string>
     <string name="open_source_license">kod të hapur</string>
     <string name="need_permission">leje ka nevojë për</string>
-    <string name="storage_access">Ace Explorer ka nevojë për lejen e magazinimit për të hyrë në fotografi në pajisjen</string>
     <string name="permission_setting_hint">Takoni Cilësimet -> Permissions dhe pastaj të kthehet në Storage.</string>
-    <string name="exit">dalje</string>
     <string name="access_denied_external">Shkruaj qasje në të jashtme jo SD dhënë</string>
     <string name="permission_read">lexoj</string>
     <string name="permission_write">Shkruaj</string>

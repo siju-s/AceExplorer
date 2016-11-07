@@ -124,7 +124,7 @@
     <string name="create">ustvarjanje</string>
     <string name="zip_progress_title">ustvarjanje zip</string>
     <string name="needsaccess">Napiši Dostopne</string>
-    <string name="needs_access_summary">Izberite korenski imenik% 1 $ s dovoliti dostop za pisanje delovati</string>
+    <string name="needs_access_summary">Izberite korenski imenik %1$s dovoliti dostop za pisanje delovati</string>
     <string name="error">Napaka</string>
     <string name="completed">končan</string>
     <string name="msg_operation_failed">operacija ni uspela</string>
@@ -140,9 +140,7 @@
     <string name="package_installer_content">Kateri ukrepi bi radi storili?</string>
     <string name="open_source_license">Odprtokodne licence</string>
     <string name="need_permission">potrebuje dovoljenje</string>
-    <string name="storage_access">Ace Explorer potrebuje za shranjevanje dovoljenje za dostop do datotek na napravi</string>
     <string name="permission_setting_hint">Tapnite Nastavitve -> Dovoljenja in nato Shranjevanje naprej.</string>
-    <string name="exit">Izhod</string>
     <string name="access_denied_external">Pisalni dostop do Zunanja ne SD dodeljena</string>
     <string name="permission_read">Preberi</string>
     <string name="permission_write">Napiši</string>

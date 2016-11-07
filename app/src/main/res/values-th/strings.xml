@@ -121,7 +121,7 @@
     <string name="create">สร้าง</string>
     <string name="zip_progress_title">สร้างไปรษณีย์</string>
     <string name="needsaccess">ต้องใช้การเข้าถึงการเขียน</string>
-    <string name="needs_access_summary">กรุณาเลือกไดเรกทอรีรากของ% 1 $ s ให้สิทธิการเข้าถึงการเขียนในการดำเนินงาน</string>
+    <string name="needs_access_summary">กรุณาเลือกไดเรกทอรีรากของ %1$s ให้สิทธิการเข้าถึงการเขียนในการดำเนินงาน</string>
     <string name="error">ความผิดพลาด</string>
     <string name="completed">เสร็จ</string>
     <string name="msg_operation_failed">การดำเนินการล้มเหลว</string>
@@ -137,9 +137,7 @@
     <string name="package_installer_content">ซึ่งการกระทำที่คุณต้องการจะทำอย่างไร?</string>
     <string name="open_source_license">ใบอนุญาตเปิดแหล่งที่มา</string>
     <string name="need_permission">ต้องได้รับอนุญาต</string>
-    <string name="storage_access">Ace Explorer ที่ต้องได้รับอนุญาตการจัดเก็บข้อมูลในการเข้าถึงไฟล์บนอุปกรณ์</string>
     <string name="permission_setting_hint">แตะการตั้งค่า -> การอนุญาตและเปิดการเก็บรักษาต่อ</string>
-    <string name="exit">ทางออก</string>
     <string name="access_denied_external">การเขียนการเข้าถึงภายนอก SD ไม่ได้รับ</string>
     <string name="permission_read">อ่าน</string>
     <string name="permission_write">เขียน</string>

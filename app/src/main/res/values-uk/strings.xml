@@ -124,7 +124,7 @@
     <string name="create">створити</string>
     <string name="zip_progress_title">Створення поштового індексу</string>
     <string name="needsaccess">Написати Потрібно доступ</string>
-    <string name="needs_access_summary">Будь ласка, виберіть кореневий каталог% 1 $ S, щоб надати доступ на запис для роботи</string>
+    <string name="needs_access_summary">Будь ласка, виберіть кореневий каталог %1$s, щоб надати доступ на запис для роботи</string>
     <string name="error">помилка</string>
     <string name="completed">завершений</string>
     <string name="msg_operation_failed">Чи не вдалося виконати операцію</string>
@@ -140,9 +140,7 @@
     <string name="package_installer_content">Які дії ви хотіли б зробити?</string>
     <string name="open_source_license">ліцензії з відкритим вихідним кодом</string>
     <string name="need_permission">потрібен дозвіл</string>
-    <string name="storage_access">Ace Explorer, потрібен дозвіл для зберігання, щоб отримати доступ до файлів на пристрої</string>
     <string name="permission_setting_hint">Натисніть Настройки -> Права доступу, а потім увімкніть зберігання на.</string>
-    <string name="exit">ВХІД</string>
     <string name="access_denied_external">Запис доступу до зовнішніх джерелами не SD надано</string>
     <string name="permission_read">зчитування</string>
     <string name="permission_write">запис</string>

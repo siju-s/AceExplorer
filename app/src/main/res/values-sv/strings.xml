@@ -138,9 +138,7 @@
     <string name="package_installer_content">Vilken åtgärd skulle du vilja göra?</string>
     <string name="open_source_license">Öppen källkod-licenser</string>
     <string name="need_permission">behöver behörighet</string>
-    <string name="storage_access">Ace Explorer behöver lagringstillåtelse att komma åt filerna på enheten</string>
     <string name="permission_setting_hint">Knacka på Inställningar -> Behörigheter och sedan slå Lagring på.</string>
-    <string name="exit">Utgång</string>
     <string name="access_denied_external">Skrivåtkomst till extern SD inte beviljas</string>
     <string name="permission_read">Läsa</string>
     <string name="permission_write">Skriva</string>

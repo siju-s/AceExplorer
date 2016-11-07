@@ -17,16 +17,18 @@
 
     <style name="WelcomScreen" parent="Theme.AppCompat.NoActionBar">
         <item name="windowActionBar">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
         <item name="windowNoTitle">true</item>
     </style>
 
 
-    <!-- <style name="Dark_AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-         &lt;!&ndash; Customize your theme here. &ndash;&gt;
-         <item name="colorPrimary">@color/dark_colorPrimary</item>
-         <item name="colorPrimaryDark">@color/dark_colorPrimaryDark</item>
-         <item name="colorAccent">@color/colorAccent</item>
-     </style>-->
+    <style name="PermissionDialog" parent="Theme.AppCompat.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="android:windowBackground">@color/dark_colorPrimary</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
 
     <style name="Dark_AppTheme_NoActionBar" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/dark_colorPrimary</item>
@@ -173,16 +175,6 @@
     <style name="checkBoxStyle" parent="Base.Theme.AppCompat">
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColorSecondary">@color/colorAccent</item>
-    </style>
-
-    <style name="PromoScreenButtonStyle">
-        <item name="android:textSize">14sp</item>
-        <!--<item name="android:fontFamily">roboto-medium</item>-->
-        <item name="android:textAllCaps">true</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:background">?android:attr/selectableItemBackground</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:gravity">center</item>
     </style>
 
 </resources>

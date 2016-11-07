@@ -122,7 +122,7 @@
     <string name="create">Skabe</string>
     <string name="zip_progress_title">Oprettelse zip</string>
     <string name="needsaccess">Skriv Access Påkrævet</string>
-    <string name="needs_access_summary">Vælg rodmappen på% 1 $ s til at give skriveadgang til at fungere</string>
+    <string name="needs_access_summary">Vælg rodmappen på %1$s til at give skriveadgang til at fungere</string>
     <string name="error">Fejl</string>
     <string name="completed">Afsluttet</string>
     <string name="msg_operation_failed">Operation mislykkedes</string>
@@ -138,9 +138,7 @@
     <string name="package_installer_content">Hvilken handling vil du gerne gøre?</string>
     <string name="open_source_license">Open source-licenser</string>
     <string name="need_permission">behov tilladelse</string>
-    <string name="storage_access">Ace Explorer brug for opbevaring tilladelse til at få adgang til filerne på enheden</string>
     <string name="permission_setting_hint">Tryk på Indstillinger -> Tilladelser og derefter slå Opbevaring på.</string>
-    <string name="exit">Udgang</string>
     <string name="access_denied_external">Skriveadgang til eksterne SD ikke ydet</string>
     <string name="permission_read">Læse</string>
     <string name="permission_write">Skrive</string>

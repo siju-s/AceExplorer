@@ -12,6 +12,7 @@
         android:layout_marginStart="@dimen/drawer_item_margin"
         android:layout_marginTop="@dimen/card_margin"
         android:background="@drawable/circle"
+        android:contentDescription="@string/img_accessibility_icon_lib"
         android:scaleType="centerInside"
         android:src="@drawable/ic_library_images"/>
 

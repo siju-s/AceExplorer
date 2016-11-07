@@ -122,7 +122,7 @@
     <string name="create">შექმნა</string>
     <string name="zip_progress_title">შექმნა zip</string>
     <string name="needsaccess">დაწერეთ წვდომა საჭირო</string>
-    <string name="needs_access_summary">გთხოვთ აირჩიოთ root დირექტორია% 1 $ s მიანიჭოს ჩაწერის ხელმისაწვდომობა მუშაობას</string>
+    <string name="needs_access_summary">გთხოვთ აირჩიოთ root დირექტორია %1$s მიანიჭოს ჩაწერის ხელმისაწვდომობა მუშაობას</string>
     <string name="error">შეცდომა</string>
     <string name="completed">დასრულებული</string>
     <string name="msg_operation_failed">ოპერაცია ვერ</string>
@@ -138,9 +138,7 @@
     <string name="package_installer_content">რომელი ქმედება გსურთ ამის გაკეთება?</string>
     <string name="open_source_license">ღია ლიცენზიები</string>
     <string name="need_permission">საჭიროებს ნებართვას</string>
-    <string name="storage_access">Ace Explorer საჭიროებს შენახვის ნებართვა შედიხართ ფაილი მოწყობილობა</string>
     <string name="permission_setting_hint">Tap Settings -> ნებართვები და შემდეგ აქციოს შენახვის შესახებ.</string>
-    <string name="exit">Exit</string>
     <string name="access_denied_external">ჩაწერის უფლება, გარე SD არ გაიცემა</string>
     <string name="permission_read">დაწვრილებით</string>
     <string name="permission_write">დაწერეთ</string>

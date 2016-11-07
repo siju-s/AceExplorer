@@ -123,7 +123,7 @@
     <string name="create">створити</string>
     <string name="zip_progress_title">kreiranje рар</string>
     <string name="needsaccess">Врите тражени приступ</string>
-    <string name="needs_access_summary">Молимо изаберите роот директоријум% 1 $ с да одобри приступ писања за рад</string>
+    <string name="needs_access_summary">Молимо изаберите роот директоријум %1$s да одобри приступ писања за рад</string>
     <string name="error">грешка</string>
     <string name="completed">завршен</string>
     <string name="msg_operation_failed">Операција неуспела</string>
@@ -139,9 +139,7 @@
     <string name="package_installer_content">Коју радњу желите да урадите?</string>
     <string name="open_source_license">Лиценце отвореног кода</string>
     <string name="need_permission">потребна дозвола</string>
-    <string name="storage_access">Аце Екплорер треба дозвола за складиштење за приступ датотекама на уређају</string>
     <string name="permission_setting_hint">Тапните на Подешавања -> Дозволе и затим га Стораге на.</string>
-    <string name="exit">излаз</string>
     <string name="access_denied_external">Врите приступ спољним не СД одобрено</string>
     <string name="permission_read">читати</string>
     <string name="permission_write">писати</string>

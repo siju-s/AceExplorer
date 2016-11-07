@@ -52,8 +52,6 @@ class FastScrollPopup {
     private final Paint mTextPaint;
     private final Rect mTextBounds = new Rect();
 
-    private final float mAlpha = 1;
-
     private ObjectAnimator mAlphaAnimator;
     private boolean mVisible;
 
@@ -149,6 +147,7 @@ class FastScrollPopup {
 
             mBackgroundPath.addRoundRect(mBackgroundRect, radii, Path.Direction.CW);
 
+            float mAlpha = 1;
             mBackgroundPaint.setAlpha((int) (mAlpha * 255));
             mTextPaint.setAlpha((int) (mAlpha * 255));
             canvas.drawPath(mBackgroundPath, mBackgroundPaint);
@@ -202,6 +201,6 @@ class FastScrollPopup {
     }
 
     private boolean isVisible() {
-        return (mAlpha > 0f) && (!TextUtils.isEmpty(mSectionName));
+        return (!TextUtils.isEmpty(mSectionName));
     }
 }

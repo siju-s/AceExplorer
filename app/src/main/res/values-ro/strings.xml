@@ -123,7 +123,7 @@
     <string name="create">Crea</string>
     <string name="zip_progress_title">crearea de zip</string>
     <string name="needsaccess">Este necesar accesul scrie</string>
-    <string name="needs_access_summary">Vă rugăm să selectați directorul rădăcină de% 1 $ s pentru a acorda acces de scriere pentru a opera</string>
+    <string name="needs_access_summary">Vă rugăm să selectați directorul rădăcină de %1$s pentru a acorda acces de scriere pentru a opera</string>
     <string name="error">Eroare</string>
     <string name="completed">terminat</string>
     <string name="msg_operation_failed">Operația a eșuat</string>
@@ -139,9 +139,7 @@
     <string name="package_installer_content">Ce acțiune doriți să faceți?</string>
     <string name="open_source_license">Licențe open source</string>
     <string name="need_permission">are nevoie de permisiune</string>
-    <string name="storage_access">Ace Explorer are nevoie de permisiunea de stocare pentru a accesa fișierele de pe dispozitiv</string>
     <string name="permission_setting_hint">Atingeți Setări -> Permisiuni și apoi porniți Storage.</string>
-    <string name="exit">Ieșire</string>
     <string name="access_denied_external">acces de scriere la exterior nu SD acordat</string>
     <string name="permission_read">Citit</string>
     <string name="permission_write">Scrie</string>

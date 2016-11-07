@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
@@ -13,7 +14,8 @@
         android:layout_marginStart="@dimen/drawer_item_margin"
         android:layout_marginTop="@dimen/drawer_item_margin"
         android:textSize="14sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        tools:ignore="RelativeOverlap"/>
 
     <ImageView
         android:id="@+id/imageExpand"
@@ -22,6 +24,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_marginTop="@dimen/drawer_item_margin"
+        android:contentDescription="@string/img_accessibility_expand"
         android:paddingEnd="@dimen/drawer_item_margin"
         android:paddingLeft="@dimen/drawer_item_margin"
         android:paddingRight="@dimen/drawer_item_margin"

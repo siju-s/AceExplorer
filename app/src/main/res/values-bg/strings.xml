@@ -122,7 +122,7 @@
     <string name="create">създавам</string>
     <string name="zip_progress_title">Създаване цип</string>
     <string name="needsaccess">Напиши Задължително Access</string>
-    <string name="needs_access_summary">Моля изберете главната директория на% 1 $ S за предоставяне на достъп за запис, за да работят</string>
+    <string name="needs_access_summary">Моля изберете главната директория на %1$s за предоставяне на достъп за запис, за да работят</string>
     <string name="error">грешка</string>
     <string name="completed">завършен</string>
     <string name="msg_operation_failed">операцията е неуспешна</string>
@@ -138,9 +138,7 @@
     <string name="package_installer_content">Кои действия бихте искали да направите?</string>
     <string name="open_source_license">лицензи за отворен код</string>
     <string name="need_permission">Има нужда от разрешение</string>
-    <string name="storage_access">Ace Explorer нуждае от разрешение за съхранение, за да получите достъп до файловете на устройството</string>
     <string name="permission_setting_hint">Докоснете Настройки -> Разрешения и след това включете съхранение на.</string>
-    <string name="exit">изход</string>
     <string name="access_denied_external">Напиши достъп до външно не SD отпуска</string>
     <string name="permission_read">Прочети</string>
     <string name="permission_write">пиша</string>

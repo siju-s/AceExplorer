@@ -124,7 +124,7 @@
     <string name="create">Stwórz</string>
     <string name="zip_progress_title">Tworzenie zip</string>
     <string name="needsaccess">Napisz wymagany dostęp</string>
-    <string name="needs_access_summary">Proszę wybrać katalog główny% 1 $ s do przyznania prawa do zapisu w obsłudze</string>
+    <string name="needs_access_summary">Proszę wybrać katalog główny %1$s do przyznania prawa do zapisu w obsłudze</string>
     <string name="error">Błąd</string>
     <string name="completed">Zakończony</string>
     <string name="msg_operation_failed">Operacja nie powiodła się</string>
@@ -140,9 +140,7 @@
     <string name="package_installer_content">Jaka akcja chcesz zrobić?</string>
     <string name="open_source_license">Licencje open source</string>
     <string name="need_permission">potrzebuje pozwolenia</string>
-    <string name="storage_access">Ace Explorer wymaga zgody przechowywania dostępu do plików na urządzeniu</string>
     <string name="permission_setting_hint">Dotknij Ustawienia -> Uprawnienia i włącz Storage dalej.</string>
-    <string name="exit">Wyjście</string>
     <string name="access_denied_external">Zapis dostęp do zewnętrznych nie przyznano SD</string>
     <string name="permission_read">Czytać</string>
     <string name="permission_write">pisać</string>

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -268,7 +267,7 @@ public class FileOpsHelper {
         final MaterialDialog materialDialog = new DialogUtils().showCustomDialog(mActivity, R.layout.dialog_saf, texts);
         View view = materialDialog.getCustomView();
         TextView textView = (TextView) view.findViewById(R.id.description);
-        ((ImageView) view.findViewById(R.id.icon)).setImageResource(R.drawable.sd_operate_step);
+        textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.sd_operate_step);
         textView.setText(mActivity.getString(R.string.needs_access_summary, path));
 
         materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {

@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.utils.PrefManager;
+import com.siju.acexplorer.utils.Utils;
 
 public class WelcomeActivity extends AppCompatActivity {
 
@@ -39,7 +40,7 @@ public class WelcomeActivity extends AppCompatActivity {
             launchHomeScreen();
             return;
         }
-        Logger.log("WelcomeAct","CALLED");
+        Logger.log("WelcomeAct", "CALLED");
 
         setContentView(R.layout.activity_welcome);
 
@@ -90,8 +91,9 @@ public class WelcomeActivity extends AppCompatActivity {
         });
     }
 
+    @SuppressWarnings("deprecation")
     private void addBottomDots(int currentPage) {
-        Logger.log("WelcomeAct","addBottomDots");
+        Logger.log("WelcomeAct", "addBottomDots");
 
         TextView[] dots = new TextView[layouts.length];
 
@@ -101,7 +103,11 @@ public class WelcomeActivity extends AppCompatActivity {
         dotsLayout.removeAllViews();
         for (int i = 0; i < dots.length; i++) {
             dots[i] = new TextView(this);
-            dots[i].setText(Html.fromHtml("&#8226;"));
+            if (Utils.isAtleastNougat()) {
+                dots[i].setText(Html.fromHtml("&#8226;", Html.FROM_HTML_MODE_LEGACY));
+            } else {
+                dots[i].setText(Html.fromHtml("&#8226;"));
+            }
             dots[i].setTextSize(35);
             dots[i].setTextColor(colorsInactive[currentPage]);
             dotsLayout.addView(dots[i]);
@@ -168,7 +174,7 @@ public class WelcomeActivity extends AppCompatActivity {
     public class MyViewPagerAdapter extends PagerAdapter {
         private LayoutInflater layoutInflater;
 
-         MyViewPagerAdapter() {
+        MyViewPagerAdapter() {
         }
 
         @Override

@@ -122,7 +122,7 @@
     <string name="create">सर्जन करना</string>
     <string name="zip_progress_title">बनाना ज़िप</string>
     <string name="needsaccess">प्रवेश के लिए आवश्यक लिखें</string>
-    <string name="needs_access_summary">कृपया संचालित करने के लिए उपयोग लिखने अनुदान के लिए% 1 $ s के रूट निर्देशिका का चयन</string>
+    <string name="needs_access_summary">कृपया संचालित करने के लिए उपयोग लिखने अनुदान के लिए %1$s के रूट निर्देशिका का चयन</string>
     <string name="error">त्रुटि</string>
     <string name="completed">पूरा कर लिया है</string>
     <string name="msg_operation_failed">कार्रवाई विफल</string>
@@ -138,9 +138,7 @@
     <string name="package_installer_content">जो लड़ाई आप क्या करना चाहते हैं?</string>
     <string name="open_source_license">ओपन सोर्स लाइसेंस</string>
     <string name="need_permission">अनुमति की जरूरत है</string>
-    <string name="storage_access">ऐस एक्सप्लोरर डिवाइस पर फ़ाइलों का उपयोग करने के लिए भंडारण की अनुमति की जरूरत है</string>
     <string name="permission_setting_hint">सेटिंग टैप करें -> अनुमतियां और फिर संग्रहण की बारी है।</string>
-    <string name="exit">बाहर जाएं</string>
     <string name="access_denied_external">बाहरी के लिए उपयोग लिखने के लिए दी नहीं SD</string>
     <string name="permission_read">पढ़ना</string>
     <string name="permission_write">लिखना</string>

@@ -122,7 +122,7 @@
     <string name="create">creëren</string>
     <string name="zip_progress_title">Het creëren zip</string>
     <string name="needsaccess">Schrijf Access Required</string>
-    <string name="needs_access_summary">Kies de root directory van% 1 $ s om schrijf toegang te verlenen om te werken</string>
+    <string name="needs_access_summary">Kies de root directory van %1$s om schrijf toegang te verlenen om te werken</string>
     <string name="error">Fout</string>
     <string name="completed">Voltooid</string>
     <string name="msg_operation_failed">Operatie mislukt</string>
@@ -138,9 +138,7 @@
     <string name="package_installer_content">Welke actie zou je willen doen?</string>
     <string name="open_source_license">Open source-licenties</string>
     <string name="need_permission">heeft toestemming nodig</string>
-    <string name="storage_access">Ace Explorer moet opslag toestemming om toegang te krijgen tot de bestanden op het apparaat</string>
     <string name="permission_setting_hint">Tik op Instellingen -> Machtigingen en vervolgens Opslag op.</string>
-    <string name="exit">Uitgang</string>
     <string name="access_denied_external">Schrijftoegang tot externe SD niet toegekend</string>
     <string name="permission_read">Lezen</string>
     <string name="permission_write">Schrijven</string>

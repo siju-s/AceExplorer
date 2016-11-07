@@ -16,8 +16,6 @@ import com.siju.acexplorer.R;
  */
 public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
-    private static final int HORIZONTAL_LIST = LinearLayoutManager.HORIZONTAL;
-
     private static final int VERTICAL_LIST = LinearLayoutManager.VERTICAL;
 
     private final Drawable mDivider;
@@ -34,9 +32,6 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
         setOrientation();
         leftMargin = context.getResources().getDimensionPixelSize(R.dimen.divider_margin_list);
-//        int)(55*(context.getResources().getDisplayMetrics
-//                ().densityDpi/160f));
-//
     }
 
     public void setOrientation() {
@@ -49,7 +44,6 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
         if (mOrientation == VERTICAL_LIST) {
             drawVertical(c, parent);
         } else {
-//            drawVertical(c, parent);
             drawHorizontal(c, parent);
         }
     }
@@ -92,8 +86,6 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
             final int left = child.getRight() + params.rightMargin;
             final int right = left + mDivider.getIntrinsicHeight();
             mDivider.setBounds(left, top, right, bottom);
-//            Logger.log("TAG","drawHorizontal --left="+left+" right-"+right);
-
             mDivider.draw(c);
         }
     }

@@ -121,7 +121,7 @@
     <string name="create">Membuat</string>
     <string name="zip_progress_title">membuat zip</string>
     <string name="needsaccess">Menulis Access Diperlukan</string>
-    <string name="needs_access_summary">Silahkan pilih direktori root dari% 1 $ s untuk memberikan akses tulis untuk beroperasi</string>
+    <string name="needs_access_summary">Silahkan pilih direktori root dari %1$s untuk memberikan akses tulis untuk beroperasi</string>
     <string name="error">Kesalahan</string>
     <string name="completed">Lengkap</string>
     <string name="msg_operation_failed">Operasi gagal</string>
@@ -137,9 +137,7 @@
     <string name="package_installer_content">tindakan yang akan Anda lakukan?</string>
     <string name="open_source_license">lisensi open source</string>
     <string name="need_permission">memerlukan izin</string>
-    <string name="storage_access">Ace Explorer memerlukan izin penyimpanan untuk mengakses file pada perangkat</string>
     <string name="permission_setting_hint">Ketuk -> Permissions kemudian hidupkan Storage di.</string>
-    <string name="exit">Keluar</string>
     <string name="access_denied_external">Tulis akses ke eksternal tidak SD diberikan</string>
     <string name="permission_read">Baca baca</string>
     <string name="permission_write">Menulis</string>
