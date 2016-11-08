@@ -121,7 +121,7 @@
     <string name="create">作ります</string>
     <string name="zip_progress_title">zipファイルを作成します</string>
     <string name="needsaccess">アクセス必須書きます</string>
-    <string name="needs_access_summary">動作させるために、書き込みアクセスを許可するには、％1$sのルートディレクトリを選択してください</string>
+    <string name="needs_access_summary">動作させるために、書き込みアクセスを許可するには、%1$s のルートディレクトリを選択してください</string>
     <string name="error">エラー</string>
     <string name="completed">完成しました</string>
     <string name="msg_operation_failed">操作が失敗しました</string>

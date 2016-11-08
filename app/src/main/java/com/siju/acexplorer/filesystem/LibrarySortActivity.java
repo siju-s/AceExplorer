@@ -73,7 +73,7 @@ public class LibrarySortActivity extends AppCompatActivity implements OnStartDra
                 R.drawable.ic_library_videos, R.drawable.ic_library_docs,
                 R.drawable.ic_library_downloads,
                 R.drawable.ic_library_compressed, R.drawable.ic_library_favorite,
-                R.drawable.ic_library_pdf, R.drawable.ic_library_app, R.drawable.ic_library_large};
+                R.drawable.ic_library_pdf, R.drawable.ic_library_apk, R.drawable.ic_library_large};
         // No Add Label to be shown
         mLabels = new String[]{getString(R.string
                 .nav_menu_image), getString(R.string

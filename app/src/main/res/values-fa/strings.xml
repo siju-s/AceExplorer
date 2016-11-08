@@ -122,7 +122,7 @@
     <string name="create">ايجاد كردن</string>
     <string name="zip_progress_title">ایجاد فایل های فشرده</string>
     <string name="needsaccess">ارسال دسترسی مورد نیاز</string>
-    <string name="needs_access_summary">لطفا پوشه ریشه از٪ 1 $ s را انتخاب کنید تا اجازه دسترسی به این عمل</string>
+    <string name="needs_access_summary">لطفا پوشه ریشه از %1$s را انتخاب کنید تا اجازه دسترسی به این عمل</string>
     <string name="error">خطا</string>
     <string name="completed">تکمیل شده</string>
     <string name="msg_operation_failed">عملیات شکست خورد</string>

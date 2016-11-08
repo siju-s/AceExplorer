@@ -126,7 +126,7 @@
     <string name="create">خلق</string>
     <string name="zip_progress_title">خلق البريدي</string>
     <string name="needsaccess">إرسال الوصول المطلوبة</string>
-    <string name="needs_access_summary">الرجاء اختيار الدليل الجذر من٪ 1 $ s إلى منح حق الوصول للكتابة للعمل</string>
+    <string name="needs_access_summary">الرجاء اختيار الدليل الجذر من %1 $ s إلى منح حق الوصول للكتابة للعمل</string>
     <string name="error">خطأ</string>
     <string name="completed">منجز</string>
     <string name="msg_operation_failed">فشلت العملية</string>

@@ -121,7 +121,7 @@
     <string name="create">몹시 떠들어 대다</string>
     <string name="zip_progress_title">만들기 지퍼</string>
     <string name="needsaccess">액세스 필수 쓰기</string>
-    <string name="needs_access_summary">작동 쓰기 액세스 권한을 부여 % 1 $ S의 루트 디렉토리를 선택하십시오</string>
+    <string name="needs_access_summary">작동 쓰기 액세스 권한을 부여 %1$s 의 루트 디렉토리를 선택하십시오</string>
     <string name="error">오류</string>
     <string name="completed">완료</string>
     <string name="msg_operation_failed">작업이 실패</string>

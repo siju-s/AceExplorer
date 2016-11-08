@@ -122,7 +122,7 @@
     <string name="create">Skapa</string>
     <string name="zip_progress_title">skapa zip</string>
     <string name="needsaccess">Skriv Åtkomst krävs</string>
-    <string name="needs_access_summary">Välj rotkatalogen på% 1 $ s för att bevilja skriv att fungera</string>
+    <string name="needs_access_summary">Välj rotkatalogen på %1$s för att bevilja skriv att fungera</string>
     <string name="error">Fel</string>
     <string name="completed">Avslutad</string>
     <string name="msg_operation_failed">Operationen misslyckades</string>

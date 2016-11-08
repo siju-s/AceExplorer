@@ -122,7 +122,7 @@
     <string name="create">לִיצוֹר</string>
     <string name="zip_progress_title">zip יצירה</string>
     <string name="needsaccess">כתוב נדרשת גישה</string>
-    <string name="needs_access_summary">בחר בספריית השורש של% 1 $ s להעניק גישת כתיבה לפעול</string>
+    <string name="needs_access_summary">בחר בספריית השורש של % 1 $ s להעניק גישת כתיבה לפעול</string>
     <string name="error">שְׁגִיאָה</string>
     <string name="completed">הושלם</string>
     <string name="msg_operation_failed">פעולה נכשלה</string>

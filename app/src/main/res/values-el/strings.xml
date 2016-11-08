@@ -122,7 +122,8 @@
     <string name="create">Δημιουργώ</string>
     <string name="zip_progress_title">δημιουργία zip</string>
     <string name="needsaccess">Γράψτε Απαιτείται πρόσβαση</string>
-    <string name="needs_access_summary">Παρακαλώ επιλέξτε το ριζικό του %1$s να επιτρέψει την πρόσβαση εγγραφής για να λειτουργήσει</string>
+    <string name="needs_access_summary">Παρακαλώ επιλέξτε το ριζικό του %1$s να επιτρέψει την πρόσβαση εγγραφής για
+        να λειτουργήσει</string>
     <string name="error">Λάθος</string>
     <string name="completed">Ολοκληρώθηκε το</string>
     <string name="msg_operation_failed">Η λειτουργία απέτυχε</string>

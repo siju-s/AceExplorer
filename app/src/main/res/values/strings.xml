@@ -135,7 +135,8 @@
     <string name="create">Create</string>
     <string name="zip_progress_title">Creating zip</string>
     <string name="needsaccess">Write Access Required</string>
-    <string name="needs_access_summary">Please choose the root directory of %1$s to grant write access to operate</string>
+    <string name="needs_access_summary">Please choose the root directory of %1$s to grant write access to
+        operate</string>
     <string name="error">Error</string>
     <string name="completed">Completed</string>
     <string name="msg_operation_failed">Operation failed</string>
@@ -175,10 +176,10 @@
     <string name="action_sort">Sort</string>
     <string name="slide_4_title">Themes</string>
     <string name="slide_4_desc">Dark or Light way! Your choice.</string>
-    <string name="no_music"> No Music files</string>
-    <string name="fav_removed">Removed from favorites</string>
     <string name="count_placeholder" translatable="false">1/</string>
     <string name="percent_placeholder" translatable="false">%</string>
+    <string name="no_music"> No Music files</string>
+    <string name="fav_removed">Removed from favorites</string>
     <string name="img_accessibility_back">Back</string>
     <string name="img_accessibility_permission">Grant permission</string>
     <string name="img_accessibility_expand">Expand or Collapse</string>
