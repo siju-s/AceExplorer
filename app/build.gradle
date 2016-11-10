@@ -45,11 +45,13 @@ android {
         exclude 'META-INF/NOTICE'
         exclude 'META-INF/DEPENDENCIES.txt'
         exclude 'META-INF/DEPENDENCIES'
+        return true
     }
     buildTypes {
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            return true
         }
         release {
             minifyEnabled true
@@ -61,6 +63,8 @@ android {
                             "Ace_" + defaultConfig.versionName))
                 }
             }
+            return true
+
         }
     }
 

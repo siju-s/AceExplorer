@@ -26,9 +26,9 @@ import java.io.File;
 import java.util.ArrayList;
 
 
-public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String, ArrayList<FileInfo>> {
+public class PasteConflictChecker extends AsyncTask<Void, String, ArrayList<FileInfo>> {
 
-    private ArrayList<FileInfo> mFiles;
+    private final ArrayList<FileInfo> mFiles;
     private final ArrayList<FileInfo> mConflictFiles = new ArrayList<>();
     private int counter = 0;
     private boolean rootmode = false;
@@ -40,11 +40,12 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
 
 
     public PasteConflictChecker(BaseActivity context, String currentDir, boolean
-            rootMode, boolean isMoveOperation) {
+            rootMode, boolean isMoveOperation,ArrayList<FileInfo> files) {
         mActivity = context;
         mCurrentDir = currentDir;
         this.rootmode = rootMode;
         this.mIsMoveOperation = isMoveOperation;
+        mFiles = files;
     }
 
     @Override
@@ -52,12 +53,10 @@ public class PasteConflictChecker extends AsyncTask<ArrayList<FileInfo>, String,
         Toast.makeText(mActivity, message[0], Toast.LENGTH_LONG).show();
     }
 
-    @SafeVarargs
+
     @Override
-    protected final ArrayList<FileInfo> doInBackground(ArrayList<FileInfo>... params) {
+    protected final ArrayList<FileInfo> doInBackground(Void... params) {
 
-
-        mFiles = params[0];
         long totalBytes = 0;
         mTotalFileList  = new ArrayList<>();
 

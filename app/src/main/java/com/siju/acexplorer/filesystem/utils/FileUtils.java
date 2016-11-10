@@ -46,6 +46,8 @@ import com.siju.acexplorer.filesystem.FileListDualFragment;
 import com.siju.acexplorer.filesystem.FileListFragment;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.task.CopyService;
+import com.siju.acexplorer.filesystem.task.CreateZipTask;
+import com.siju.acexplorer.filesystem.task.Progress;
 import com.siju.acexplorer.helper.RootHelper;
 import com.siju.acexplorer.utils.DialogUtils;
 import com.siju.acexplorer.utils.Utils;
@@ -73,7 +75,7 @@ import java.util.regex.Pattern;
 import static android.webkit.MimeTypeMap.getSingleton;
 
 
-public class FileUtils implements CopyService.Progress {
+public class FileUtils implements Progress {
 
     private static final String TAG = "FileUtils";
     public static final int ACTION_NONE = 0;
@@ -199,7 +201,7 @@ public class FileUtils implements CopyService.Progress {
         textFileFromPath.setText(copiedFileInfo.get(0).getFilePath());
         textFileName.setText(copiedFileInfo.get(0).getFileName());
         textFileToPath.setText(intent.getStringExtra("COPY_DIRECTORY"));
-        textFileCount.setText(String.format(Locale.getDefault(),"%s%d", context.getString(R.string.count_placeholder),
+        textFileCount.setText(String.format(Locale.getDefault(), "%s%d", context.getString(R.string.count_placeholder),
                 copiedFilesSize));
         textProgress.setText("0%");
 
@@ -221,8 +223,63 @@ public class FileUtils implements CopyService.Progress {
         progressDialog.show();
     }
 
+
+    public void showZipProgressDialog(final Context context, final Intent intent) {
+        mContext = context;
+        mServiceIntent = intent;
+        context.bindService(mServiceIntent, mZipServiceConnection, Context.BIND_AUTO_CREATE);
+        context.startService(mServiceIntent);
+        String title = context.getString(R.string.zip_progress_title);
+        String texts[] = new String[]{title, context.getString(R.string.button_paste_progress), "",
+                context.getString(R.string.dialog_cancel)};
+        progressDialog = new DialogUtils().showCustomDialog(context,
+                R.layout.dialog_progress_paste, texts);
+        progressDialog.setCancelable(false);
+        View view = progressDialog.getCustomView();
+        textFileName = (TextView) view.findViewById(R.id.textFileName);
+        textFileFromPath = (TextView) view.findViewById(R.id.textFileFromPath);
+        TextView textFromPlaceHolder = (TextView)view.findViewById(R.id.textFileFromPlaceHolder);
+        (view.findViewById(R.id.textFileToPlaceHolder)).setVisibility(View.GONE);
+
+        textFromPlaceHolder.setVisibility(View.GONE);
+        textFileCount = (TextView) view.findViewById(R.id.textFilesLeft);
+        textProgress = (TextView) view.findViewById(R.id.textProgressPercent);
+
+        progressBarPaste = (ProgressBar) view.findViewById(R.id.progressBarPaste);
+        copiedFileInfo = intent.getParcelableArrayListExtra("files");
+        String fileName = intent.getStringExtra("name");
+        copiedFilesSize = copiedFileInfo.size();
+        Logger.log("FileUtils", "Totalfiles=" + copiedFilesSize);
+        textFileName.setText(fileName);
+//        textFileCount.setText(String.format(Locale.getDefault(),"%s%d", context.getString(R.string.count_placeholder),
+//                copiedFilesSize));
+        textProgress.setText("0%");
+
+        progressDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressDialog.dismiss();
+            }
+        });
+
+        progressDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopZipService();
+                progressDialog.dismiss();
+            }
+        });
+
+        progressDialog.show();
+    }
+
     private void stopCopyService() {
         mContext.unbindService(mServiceConnection);
+        mContext.stopService(mServiceIntent);
+    }
+
+    private void stopZipService() {
+        mContext.unbindService(mZipServiceConnection);
         mContext.stopService(mServiceIntent);
     }
 
@@ -231,7 +288,6 @@ public class FileUtils implements CopyService.Progress {
     public void onUpdate(Intent intent) {
         Message msg = handler.obtainMessage();
         msg.obj = intent;
-
         handler.sendMessage(msg);
 
     }
@@ -240,43 +296,61 @@ public class FileUtils implements CopyService.Progress {
     private final Handler handler = new Handler(Looper.getMainLooper()) {
         public void handleMessage(Message msg) {
             Intent intent = (Intent) msg.obj;
+            int progress =   intent.getIntExtra("PROGRESS", 0);
             long copiedBytes = intent.getLongExtra("DONE", 0);
             long totalBytes = intent.getLongExtra("TOTAL", 0);
-            boolean isSuccess = intent.getBooleanExtra(FileConstants.IS_OPERATION_SUCCESS, true);
 
-            if (!isSuccess) {
-                stopCopyService();
-                progressDialog.dismiss();
-                return;
-            }
+            switch (intent.getAction()) {
+                case ZIP_PROGRESS:
+                    progressBarPaste.setProgress(progress);
+                    if (progress == 100 || totalBytes == copiedBytes) {
+                        stopZipService();
+                        progressDialog.dismiss();
 
-            int progress = intent.getIntExtra("PROGRESS", 0);
-            int totalProgress = intent.getIntExtra("TOTAL_PROGRESS", 0);
-            Logger.log("FileUtils", "PROGRESS=" + progress + " TOTAL PROGRESS=" + totalProgress);
-            Logger.log("FileUtils", "Copied bytes=" + copiedBytes + " TOTAL bytes=" + totalBytes);
+                    }
+                    break;
+                case COPY_PROGRESS:
+                    boolean isSuccess = intent.getBooleanExtra(FileConstants.IS_OPERATION_SUCCESS, true);
+
+                    if (!isSuccess) {
+                        stopCopyService();
+                        progressDialog.dismiss();
+                        return;
+                    }
 
 
-            progressBarPaste.setProgress(totalProgress);
-            textProgress.setText(String.format(Locale.getDefault(),"%d%s", totalProgress, mContext.getString(R.string
-                    .percent_placeholder)));
-            if (progress == 100 || totalBytes == copiedBytes) {
-                int count = intent.getIntExtra("COUNT", 1);
+                    int totalProgress = intent.getIntExtra("TOTAL_PROGRESS", 0);
+                    Logger.log("FileUtils", "PROGRESS=" + progress + " TOTAL PROGRESS=" + totalProgress);
+                    Logger.log("FileUtils", "Copied bytes=" + copiedBytes + " TOTAL bytes=" + totalBytes);
+
+
+                    progressBarPaste.setProgress(totalProgress);
+                    textProgress.setText(String.format(Locale.getDefault(), "%d%s", totalProgress, mContext.getString
+                            (R.string
+                            .percent_placeholder)));
+                    if (progress == 100 || totalBytes == copiedBytes) {
+                        int count = intent.getIntExtra("COUNT", 1);
 //                progress =  intent.getIntExtra("PROGRESS", 0);
-                Logger.log("FileUtils", "COUNT=" + count);
-                if (count == copiedFilesSize || copiedBytes == totalBytes) {
-                    stopCopyService();
-                    progressDialog.dismiss();
-                } else {
-                    int newCount = count + 1;
-                    textFileFromPath.setText(copiedFileInfo.get(count).getFilePath());
-                    textFileName.setText(copiedFileInfo.get(count).getFileName());
-                    textFileCount.setText(newCount + "/" + copiedFilesSize);
-                }
+                        Logger.log("FileUtils", "COUNT=" + count);
+                        if (count == copiedFilesSize || copiedBytes == totalBytes) {
+                            stopCopyService();
+                            progressDialog.dismiss();
+                        } else {
+                            int newCount = count + 1;
+                            textFileFromPath.setText(copiedFileInfo.get(count).getFilePath());
+                            textFileName.setText(copiedFileInfo.get(count).getFileName());
+                            textFileCount.setText(newCount + "/" + copiedFilesSize);
+                        }
+                    }
+                    break;
             }
         }
+
     };
 
     public static final String COPY_PROGRESS = "copy_progress_update";
+    public static final String ZIP_PROGRESS = "zip_progress_update";
+
 
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
@@ -285,6 +359,20 @@ public class FileUtils implements CopyService.Progress {
             CopyService mService = binder.getService();
             mService.registerProgressListener(FileUtils.this);
 
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+        }
+    };
+
+
+    private final ServiceConnection mZipServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            CreateZipTask.LocalBinder binder = (CreateZipTask.LocalBinder) service;
+            CreateZipTask mService = binder.getService();
+            mService.registerProgressListener(FileUtils.this);
         }
 
         @Override
@@ -698,13 +786,12 @@ public class FileUtils implements CopyService.Progress {
      * @param name the file which needs to be validated
      * @return boolean if the file name is valid or invalid
      */
-    public static boolean validateFileName(String name) {
+    public static boolean isFileNameInvalid(String name) {
 
        /* StringBuilder builder = new StringBuilder(file.getPath());
         String newName = builder.substring(builder.lastIndexOf("/") + 1, builder.length());*/
         String newName = name.trim();
-        return !(newName.contains("/") ||
-                newName.length() == 0);
+        return newName.contains("/") || newName.length() == 0;
     }
 
 
@@ -1420,7 +1507,7 @@ public class FileUtils implements CopyService.Progress {
             }
 
             // On Android 5 and above, trigger storage access framework.
-            if (!isWritableNormalOrSaf(folder, context)) {
+            if (isFileNonWritable(folder, context)) {
                 return 2;
             }
             return 1;
@@ -1564,7 +1651,7 @@ public class FileUtils implements CopyService.Progress {
             @Override
             public void onClick(View view) {
                 String fileName = materialDialog.getInputEditText().getText().toString();
-                if (!FileUtils.validateFileName(fileName)) {
+                if (FileUtils.isFileNameInvalid(fileName)) {
                     materialDialog.getInputEditText().setError(activity.getResources().getString(R.string
                             .msg_error_valid_name));
                     return;
@@ -1599,7 +1686,7 @@ public class FileUtils implements CopyService.Progress {
             @Override
             public void onClick(View view) {
                 String fileName = materialDialog.getInputEditText().getText().toString();
-                if (!FileUtils.validateFileName(fileName)) {
+                if (FileUtils.isFileNameInvalid(fileName)) {
                     materialDialog.getInputEditText().setError(activity.getResources().getString(R.string
                             .msg_error_valid_name));
                     return;
@@ -1692,7 +1779,7 @@ public class FileUtils implements CopyService.Progress {
             @Override
             public void onClick(View view) {
                 String fileName = materialDialog.getInputEditText().getText().toString();
-                if (!FileUtils.validateFileName(fileName)) {
+                if (FileUtils.isFileNameInvalid(fileName)) {
                     materialDialog.getInputEditText().setError(activity.getResources().getString(R.string
                             .msg_error_valid_name));
                     return;
@@ -1727,7 +1814,7 @@ public class FileUtils implements CopyService.Progress {
      * @param folder The directory
      * @return true if it is possible to write in this directory.
      */
-    public static boolean isWritableNormalOrSaf(final File folder, Context c) {
+    public static boolean isFileNonWritable(final File folder, Context c) {
         // Verify that this is a directory.
         if (folder == null)
             return false;
@@ -1746,14 +1833,14 @@ public class FileUtils implements CopyService.Progress {
 
         // First check regular writability
         if (isWritable(file)) {
-            return true;
+            return false;
         }
 
         // Next check SAF writability.
         DocumentFile document = getDocumentFile(file, false, c);
 
         if (document == null) {
-            return false;
+            return true;
         }
 
         // This should have created the file - otherwise something is wrong with access URL.
@@ -1761,7 +1848,7 @@ public class FileUtils implements CopyService.Progress {
 
         // Ensure that the dummy file is not remaining.
         deleteFile(file, c);
-        return result;
+        return !result;
     }
 
     /**

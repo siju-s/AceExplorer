@@ -16,12 +16,11 @@ import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.FileInfo;
-import com.siju.acexplorer.filesystem.task.CreateZipTask;
 import com.siju.acexplorer.filesystem.task.DeleteTask;
 import com.siju.acexplorer.filesystem.task.ExtractService;
 import com.siju.acexplorer.filesystem.utils.FileOperations;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
-import com.siju.acexplorer.utils.*;
+import com.siju.acexplorer.utils.DialogUtils;
 import com.siju.acexplorer.utils.Utils;
 
 import java.io.File;
@@ -251,10 +250,11 @@ public class FileOpsHelper {
             mActivity.mFiles = files;
             mActivity.mOperation = FileConstants.COMPRESS;
         } else if (mode == 1) {
-            Intent zipIntent = new Intent(mActivity, CreateZipTask.class);
+            Intent zipIntent = new Intent(mActivity, FileUtils.class);
             zipIntent.putExtra("name", newFile.getAbsolutePath());
             zipIntent.putParcelableArrayListExtra("files", files);
-            mActivity.startService(zipIntent);
+            new FileUtils().showZipProgressDialog(mActivity,zipIntent);
+//            mActivity.startService(zipIntent);
 
         } else Toast.makeText(mActivity, R.string.msg_operation_failed, Toast.LENGTH_SHORT).show();
     }
@@ -310,7 +310,7 @@ public class FileOpsHelper {
                 return FileConstants.WRITE_MODES.ROOT.getValue();
             }
 
-            if (!FileUtils.isWritableNormalOrSaf(folder, context)) {
+            if (FileUtils.isFileNonWritable(folder, context)) {
                 // On Android 5 and above, trigger storage access framework.
                 showSAFDialog(folder.getAbsolutePath());
                 return FileConstants.WRITE_MODES.EXTERNAL.getValue();

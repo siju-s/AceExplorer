@@ -556,10 +556,7 @@ public class CopyService extends Service {
 
     private Progress mProgressListener;
 
-    public interface Progress {
-        void onUpdate(Intent intent);
 
-    }
 
 
     public void registerProgressListener(Progress progress) {
@@ -568,7 +565,6 @@ public class CopyService extends Service {
 
     @Override
     public IBinder onBind(Intent arg0) {
-        // TODO Auto-generated method stub
         return mBinder;//registerCallback.asBinder();
     }
 }

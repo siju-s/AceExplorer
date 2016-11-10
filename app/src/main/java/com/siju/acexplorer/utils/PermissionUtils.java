@@ -15,10 +15,6 @@ public class PermissionUtils {
     };
     private static final Hashtable<String, Integer> sPermissions = new Hashtable<>();
 
-    public static String[] getRequiredPermissions() {
-        return sRequiredPermissions;
-    }
-
     /** Does the app have the minimum set of permissions required to operate. */
     public static boolean hasRequiredPermissions() {
         return hasPermissions();

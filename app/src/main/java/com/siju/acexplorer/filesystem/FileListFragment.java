@@ -1416,7 +1416,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             @Override
             public void onClick(View view) {
                 String fileName = materialDialog.getInputEditText().getText().toString();
-                if (!FileUtils.validateFileName(fileName)) {
+                if (FileUtils.isFileNameInvalid(fileName)) {
                     materialDialog.getInputEditText().setError(getResources().getString(R.string
                             .msg_error_valid_name));
                     return;
@@ -1604,7 +1604,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             @Override
             public void onClick(View view) {
                 String fileName = editFileName.getText().toString();
-                if (!FileUtils.validateFileName(fileName)) {
+                if (FileUtils.isFileNameInvalid(fileName)) {
                     editFileName.setError(getResources().getString(R.string
                             .msg_error_valid_name));
                     return;
@@ -1910,12 +1910,11 @@ public class FileListFragment extends Fragment implements LoaderManager
             public boolean onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
 
                 final boolean isMoveOperation = position == 1;
-
-                PasteConflictChecker conflictChecker = new PasteConflictChecker(mBaseActivity, destinationDir,
-                        mIsRootMode, isMoveOperation);
                 ArrayList<FileInfo> info = new ArrayList<>();
                 info.addAll(sourcePaths);
-                conflictChecker.execute(info);
+                PasteConflictChecker conflictChecker = new PasteConflictChecker(mBaseActivity, destinationDir,
+                        mIsRootMode, isMoveOperation, info);
+                conflictChecker.execute();
                 clearSelectedPos();
                 mActionMode.finish();
                 return true;
@@ -2019,6 +2018,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                     int position = recyclerViewFileList.getChildAdapterPosition(top);
                     Logger.log(TAG, "DROP new pos=" + position);
                     fileListAdapter.clearDragPos();
+                    @SuppressWarnings("unchecked")
                     ArrayList<FileInfo> paths = (ArrayList<FileInfo>) event.getLocalState();
 
                   /*  ArrayList<FileInfo> paths = dragData.getParcelableArrayListExtra(FileConstants
@@ -2045,11 +2045,11 @@ public class FileListFragment extends Fragment implements LoaderManager
                         showDragDialog(paths, destinationDir);
                     } else {
                         final boolean isMoveOperation = false;
-                        PasteConflictChecker conflictChecker = new PasteConflictChecker(mBaseActivity, destinationDir,
-                                mIsRootMode, isMoveOperation);
                         ArrayList<FileInfo> info = new ArrayList<>();
                         info.addAll(paths);
-                        conflictChecker.execute(info);
+                        PasteConflictChecker conflictChecker = new PasteConflictChecker(mBaseActivity, destinationDir,
+                                mIsRootMode, isMoveOperation, info);
+                        conflictChecker.execute();
                         clearSelectedPos();
                         Logger.log(TAG, "Source=" + paths.get(0) + "Dest=" + destinationDir);
                         mActionMode.finish();
@@ -2062,6 +2062,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
                     View top1 = recyclerViewFileList.findChildViewUnder(event.getX(), event.getY());
                     int position1 = recyclerViewFileList.getChildAdapterPosition(top1);
+                    @SuppressWarnings("unchecked")
                     ArrayList<FileInfo> dragPaths = (ArrayList<FileInfo>) event.getLocalState();
 
 
@@ -2166,7 +2167,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
 
     private void clearSelectedPos() {
-            mSelectedItemPositions = new SparseBooleanArray();
+        mSelectedItemPositions = new SparseBooleanArray();
     }
 
 
@@ -2176,13 +2177,11 @@ public class FileListFragment extends Fragment implements LoaderManager
 
             case R.id.action_paste:
                 if (mCopiedData.size() > 0) {
-
-                    PasteConflictChecker conflictChecker = new PasteConflictChecker(mBaseActivity, mFilePath,
-                            mIsRootMode, mIsMoveOperation);
-
                     ArrayList<FileInfo> info = new ArrayList<>();
                     info.addAll(mCopiedData);
-                    conflictChecker.execute(info);
+                    PasteConflictChecker conflictChecker = new PasteConflictChecker(mBaseActivity, mFilePath,
+                            mIsRootMode, mIsMoveOperation, info);
+                    conflictChecker.execute();
                     clearSelectedPos();
                     mCopiedData.clear();
                     togglePasteVisibility(false);

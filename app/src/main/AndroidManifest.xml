@@ -76,7 +76,7 @@
             android:name="com.siju.acexplorer.filesystem.LibrarySortActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
 
-        <service android:name="com.siju.acexplorer.filesystem.task.CreateZipTask"/>
+        <service android:name=".filesystem.task.CreateZipTask"/>
         <service android:name=".filesystem.task.CopyService"/>
         <service android:name=".filesystem.task.ExtractService"/>
 

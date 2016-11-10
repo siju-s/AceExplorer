@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import static com.siju.acexplorer.filesystem.utils.FileUtils.ZIP_PROGRESS;
+
 public class CreateZipTask extends Service {
 
     private NotificationManager mNotifyManager;
@@ -69,7 +71,7 @@ public class CreateZipTask extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
         mBuilder.setContentIntent(pendingIntent);
         mBuilder.setContentTitle(getResources().getString(R.string.zip_progress_title))
-                .setSmallIcon(R.drawable.ic_library_compressed);
+                .setSmallIcon(R.drawable.ic_archive_white);
 
         startForeground(NOTIFICATION_ID + startId, mBuilder.build());
 
@@ -82,29 +84,6 @@ public class CreateZipTask extends Service {
         return START_STICKY;
     }
 
-    private final IBinder mBinder = new LocalBinder();
-
-    private class LocalBinder extends Binder {
-        public CreateZipTask getService() {
-            // Return this instance of LocalService so clients can call public methods
-            return CreateZipTask.this;
-        }
-    }
-
-
-    public void setProgressListener(ProgressListener progressListener) {
-        this.progressListener = progressListener;
-    }
-
-
-    private ProgressListener progressListener;
-
-
-    public interface ProgressListener {
-        void onUpdate(ZipProgressModel zipProgressModel);
-
-        void refresh();
-    }
 
 
     public class Doback extends AsyncTask<Bundle, Void, Integer> {
@@ -162,16 +141,27 @@ public class CreateZipTask extends Service {
             publishCompletedResult(id1);
             b = true;
         }
-        ZipProgressModel progressModel = new ZipProgressModel();
+/*        ZipProgressModel progressModel = new ZipProgressModel();
         progressModel.setName(fileName);
         progressModel.setTotal(total);
         progressModel.setDone(done);
         progressModel.setId(id);
         progressModel.setP1(i);
-        progressModel.setCompleted(b);
-        if (progressListener != null) {
-            progressListener.onUpdate(progressModel);
-            if (b) progressListener.refresh();
+        progressModel.setCompleted(b);*/
+        Intent intent = new Intent(ZIP_PROGRESS);
+        if (i == 100 || total == 0) {
+            intent.putExtra("PROGRESS", 100);
+        }
+        else {
+            intent.putExtra("PROGRESS", i);
+
+        }
+        intent.putExtra("DONE", done);
+        intent.putExtra("TOTAL", total);
+        intent.putExtra("name", fileName);
+        if (mProgressListener != null) {
+            mProgressListener.onUpdate(intent);
+//            if (b) mProgressListener.refresh();
         }
     }
 
@@ -283,6 +273,24 @@ public class CreateZipTask extends Service {
             }
         }
     }
+
+    private final IBinder mBinder = new LocalBinder();
+
+    public class LocalBinder extends Binder {
+        public CreateZipTask getService() {
+            // Return this instance of LocalService so clients can call public methods
+            return CreateZipTask.this;
+        }
+    }
+
+    private Progress mProgressListener;
+
+
+
+    public void registerProgressListener(Progress progress) {
+        mProgressListener = progress;
+    }
+
 
     @Override
     public IBinder onBind(Intent arg0) {
