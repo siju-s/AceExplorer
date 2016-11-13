@@ -10,7 +10,7 @@
         android:layout_height="@dimen/home_library_width"
         android:layout_marginLeft="@dimen/drawer_item_margin"
         android:layout_marginStart="@dimen/drawer_item_margin"
-        android:layout_marginTop="@dimen/card_margin"
+        android:layout_marginTop="5dp"
         android:background="@drawable/circle"
         android:contentDescription="@string/img_accessibility_icon_lib"
         android:scaleType="centerInside"
@@ -29,16 +29,16 @@
         android:minHeight="25dp"
         android:minWidth="25dp"
         android:textColor="@color/white"
-        android:textSize="11sp"/>
+        android:textSize="@dimen/library_count_font_size"/>
 
     <TextView
         android:id="@+id/textLibrary"
-        android:layout_width="@dimen/home_library_width"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageLibrary"
         android:layout_marginLeft="@dimen/drawer_item_margin"
         android:layout_marginStart="@dimen/drawer_item_margin"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="3dp"
         android:gravity="center"
         />
 

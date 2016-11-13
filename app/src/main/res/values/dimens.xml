@@ -31,13 +31,14 @@
 
     <integer name="grid_columns">4</integer>
     <dimen name="drag_shadow_font">20sp</dimen>
-    <dimen name="home_library_width">75dp</dimen>
+    <dimen name="home_library_width">78dp</dimen>
     <dimen name="card_margin">5dp</dimen>
     <dimen name="homescreen_storage_margin">16dp</dimen>
+    <dimen name="library_count_font_size">11sp</dimen>
 
 
-    <integer name="homescreen_columns">3</integer>
     <dimen name="padding_5">5dp</dimen>
+
 
     <dimen name="dots_height">30dp</dimen>
     <dimen name="dots_margin_bottom">20dp</dimen>

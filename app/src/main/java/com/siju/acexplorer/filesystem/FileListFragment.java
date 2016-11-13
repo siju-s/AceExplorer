@@ -497,8 +497,6 @@ public class FileListFragment extends Fragment implements LoaderManager
                 if (fileInfoList.get(position).isDirectory()) {
                     computeScroll();
                     if (mIsZip) {
-//                        zipEntry = null;
-//                        inChildZip = false;
                         String name = zipChildren.get(position).getName();
                         if (name.startsWith("/")) name = name.substring(1, name.length());
                         String name1 = name.substring(0, name.length() - 1); // 2 so that / doesnt come

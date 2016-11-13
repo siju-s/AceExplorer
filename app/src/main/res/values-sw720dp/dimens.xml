@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="grid_columns">5</integer>
-    <integer name="homescreen_columns">4</integer>
     <bool name="isTablet">true</bool>
     <dimen name="drawer_width">320dp</dimen>
 

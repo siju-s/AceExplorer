@@ -2,5 +2,4 @@
 <resources>
     <integer name="grid_columns_dual">4</integer>
     <integer name="grid_columns">6</integer>
-    <integer name="homescreen_columns">6</integer>
 </resources>

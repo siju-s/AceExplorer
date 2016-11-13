@@ -161,7 +161,7 @@
     <string name="img_accessibility_back">Arrière</string>
     <string name="img_accessibility_permission">Donner la permission</string>
     <string name="img_accessibility_expand">Développer ou Réduire</string>
-    <string name="img_accessibility_brand">Logo de l'application</string>
+    <string name="img_accessibility_brand">Logo de l\'application</string>
     <string name="img_accessibility_icon_lib">Icône de la bibliothèque</string>
     <string name="img_accessibility_storage_icon">Icône de stockage</string>
 </resources>

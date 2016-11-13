@@ -10,7 +10,7 @@ public class PrefManager {
     // Shared preferences file name
     private static final String PREF_NAME = "ace_prefs";
 
-    private static final String IS_FIRST_TIME_LAUNCH = "first_launch"; //TODO change it later
+    private static final String IS_FIRST_TIME_LAUNCH = "first_launch";
 
     public PrefManager(Context context) {
         int PRIVATE_MODE = 0;

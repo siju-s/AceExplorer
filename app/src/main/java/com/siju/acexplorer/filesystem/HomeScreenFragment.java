@@ -19,6 +19,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -72,6 +73,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     private TableLayout storagesContainer;
 
     private int mGridColumns;
+    private int spacing;
     private boolean mIsThemeDark;
 
 
@@ -132,8 +134,16 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     }
 
     private void setGridColumns() {
-        mGridColumns = getResources().getInteger(R.integer.homescreen_columns);
-//        Logger.log(TAG,"Grid columns="+mGridColumns);
+        DisplayMetrics metrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        int width = metrics.widthPixels;
+        int libWidth = getResources().getDimensionPixelSize(R.dimen.home_library_width) +
+                getResources().getDimensionPixelSize(R.dimen.drawer_item_margin) +
+                getResources().getDimensionPixelSize(R.dimen.padding_5);
+        mGridColumns = width / libWidth;//getResources().getInteger(R.integer.homescreen_columns);
+        spacing = (width - mGridColumns * libWidth) / mGridColumns;
+        Logger.log(TAG, "Grid columns=" + mGridColumns + " width=" + width + " liub size=" + libWidth+"space="+spacing);
     }
 
 
@@ -159,7 +169,6 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     private void getSavedLibraries() {
         savedLibraries = new ArrayList<>();
         savedLibraries = sharedPreferenceWrapper.getLibraries(getActivity());
-
     }
 
 
@@ -275,6 +284,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             } else {
                 textCount.setVisibility(View.VISIBLE);
             }
+            libraryItemContainer.setPadding(0,0,spacing,0);
             textCount.setText(roundOffCount(homeLibraryInfoArrayList.get(i).getCount()));
             int j = i + 1;
             if (j % mGridColumns == 0) {
@@ -543,7 +553,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         storagesContainer.removeAllViews();
 
         for (int i = 0; i < homeStoragesInfoArrayList.size(); i++) {
-            RelativeLayout storageItemContainer = (RelativeLayout) View.inflate(getActivity(),R.layout.storage_item,
+            RelativeLayout storageItemContainer = (RelativeLayout) View.inflate(getActivity(), R.layout.storage_item,
                     null);
             ProgressBar progressBarSpace = (ProgressBar) storageItemContainer
                     .findViewById(R.id.progressBarSD);
