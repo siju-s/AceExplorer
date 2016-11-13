@@ -156,4 +156,12 @@
     <string name="slide_3_desc">Քաշել ֆայլեր մեկ թղթապանակում մյուսը:</string>
     <string name="slide_4_title">Թեմաներ</string>
     <string name="slide_4_desc">Dark կամ թեթեւ ճանապարհ. Ձեր ընտրությունը.</string>
+    <string name="no_music"> Ոչ երաժշտական ​​ֆայլերը</string>
+    <string name="fav_removed">Հեռացվել է դնել</string>
+    <string name="img_accessibility_back">Վերադառնալ</string>
+    <string name="img_accessibility_permission">Grant թույլտվություն</string>
+    <string name="img_accessibility_expand">Ընդլայնել կամ Ամբողջությամբ ցուցադրել</string>
+    <string name="img_accessibility_brand">App լոգոն</string>
+    <string name="img_accessibility_icon_lib">Գրադարան պատկերակը</string>
+    <string name="img_accessibility_storage_icon">Storage պատկերակը</string>
 </resources>

@@ -107,11 +107,8 @@
     <string name="pref_title_upgrade">Upgrade to Pro</string>
     <string name="pref_title_about">About Us</string>
     <string name="pref_title_version">Version</string>
-
-
     <string name="prefs_summary_dev">Developer</string>
     <string name="dev_name" translatable="false">Siju</string>
-
     <string name="hide">Hide</string>
     <string name="unhide">Unhide</string>
     <string name="more">more</string>
@@ -187,47 +184,4 @@
     <string name="img_accessibility_icon_lib">Library icon</string>
     <string name="img_accessibility_storage_icon">Storage icon</string>
 
-    <string-array name="changeLanguage">
-        <item name="1">English</item>
-        <item name="2">Afrikaans</item>
-        <item name="3">Arabic</item>
-        <item name="4">Armenian</item>
-        <item name="5">Belarusian</item>
-        <item name="6">Bulgarian</item>
-        <item name="7">Chinese</item>
-        <item name="8">Croatian</item>
-        <item name="9">Czech</item>
-        <item name="10">Danish</item>
-        <item name="11">Dutch</item>
-        <item name="12">Estonian</item>
-        <item name="13">Farsi</item>
-        <item name="14">Finnish</item>
-        <item name="15">French</item>
-        <item name="16">Georgian</item>
-        <item name="17">German</item>
-        <item name="18">Greek</item>
-        <item name="19">Hindi</item>
-        <item name="20">Hungarian</item>
-        <item name="21">Italian</item>
-        <item name="22">Japanese</item>
-        <item name="23">Korean</item>
-        <item name="24">Latvian</item>
-        <item name="25">Lithuanian</item>
-        <item name="26">Malay</item>
-        <item name="27">Mongolian</item>
-        <item name="28">Polish</item>
-        <item name="29">Portuguese</item>
-        <item name="30">Romanian</item>
-        <item name="31">Russian</item>
-        <item name="32">Serbian</item>
-        <item name="33">Slovak</item>
-        <item name="34">Slovenian</item>
-        <item name="35">Spanish</item>
-        <item name="36">Swahili</item>
-        <item name="37">Swedish</item>
-        <item name="38">Thai</item>
-        <item name="39">Turkish</item>
-        <item name="40">Ukrainian</item>
-        <item name="41">Zulu</item>
-    </string-array>
 </resources>

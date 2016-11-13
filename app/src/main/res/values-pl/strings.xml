@@ -42,7 +42,7 @@
     <string name="dialog_cancel">Anuluj</string>
     <string name="dialog_title_paste_conflict">plik istnieje</string>
     <string name="dialog_from_placeholder">Od</string>
-    <string name="dialog_to_placeholder">Do:</string>
+    <string name="dialog_to_placeholder">Do</string>
     <string name="button_paste_progress">tło</string>
     <string name="dialog_delete_title">Czy na pewno chcesz usunąć następujące pliki?</string>
     <string name="msg_ok">ok</string>
@@ -67,7 +67,6 @@
     <string name="msg_error_not_supported">Brak aplikacji do obsługi działań</string>
     <string name="permission_request">Potrzebujesz zgody pamięci, aby wyświetlić wszystkie pliki</string>
     <string name="action_grant">DOTACJA</string>
-    <string name="action_sort">Sortować</string>
     <string name="action_view_list">widok listy</string>
     <string name="action_view_grid">grid view</string>
     <string name="sort_name">Nazwa (A-Z)</string>
@@ -97,7 +96,7 @@
     <string name="pref_title_show_hidden">Pokaż ukryte pliki</string>
     <string name="pref_title_disable_dual">Podwójna szyba w Krajobraz</string>
     <string name="pref_title_check_update">Sprawdź aktualizacje</string>
-    <string name="pref_title_change_lang">Zmień język</string>
+    <string name="pref_title_change_lang">Język</string>
     <string name="pref_title_upgrade">Przejść na wersje Pro</string>
     <string name="pref_title_about">O nas</string>
     <string name="pref_title_version">Wersja</string>
@@ -124,7 +123,8 @@
     <string name="create">Stwórz</string>
     <string name="zip_progress_title">Tworzenie zip</string>
     <string name="needsaccess">Napisz wymagany dostęp</string>
-    <string name="needs_access_summary">Proszę wybrać katalog główny %1$s do przyznania prawa do zapisu w obsłudze</string>
+    <string name="needs_access_summary">Proszę wybrać katalog główny %1$s do przyznania prawa do zapisu w
+        obsłudze</string>
     <string name="error">Błąd</string>
     <string name="completed">Zakończony</string>
     <string name="msg_operation_failed">Operacja nie powiodła się</string>
@@ -156,6 +156,15 @@
     <string name="slide_2_desc">Łatwa nawigacja z dowolnego ekranu.</string>
     <string name="slide_3_title">Przeciągnij i upuść</string>
     <string name="slide_3_desc">Przeciągnij pliki z jednego folderu do drugiego!</string>
+    <string name="action_sort">Sortować</string>
     <string name="slide_4_title">Motywy</string>
     <string name="slide_4_desc">Ciemny lub jasny sposób! Twój wybór.</string>
+    <string name="no_music"> Żadne pliki muzyczne</string>
+    <string name="fav_removed">Usunięto z ulubionych</string>
+    <string name="img_accessibility_back">Plecy</string>
+    <string name="img_accessibility_permission">Dać pozwolenie</string>
+    <string name="img_accessibility_expand">Rozwinąć lub zwinąć</string>
+    <string name="img_accessibility_brand">App logo</string>
+    <string name="img_accessibility_icon_lib">icon Library</string>
+    <string name="img_accessibility_storage_icon">ikona bagażu</string>
 </resources>

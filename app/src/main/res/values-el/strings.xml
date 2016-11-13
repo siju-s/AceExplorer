@@ -157,4 +157,12 @@
     <string name="slide_3_desc">Σύρετε τα αρχεία από ένα φάκελο σε ένα άλλο!</string>
     <string name="slide_4_title">θέματα</string>
     <string name="slide_4_desc">Σκούρο ή φως τρόπο! Επιλογή σου.</string>
+    <string name="no_music"> Δεν υπάρχουν αρχεία μουσικής</string>
+    <string name="fav_removed">Καταργήθηκε από τα αγαπημένα</string>
+    <string name="img_accessibility_back">Πίσω</string>
+    <string name="img_accessibility_permission">να χορηγήσει άδεια</string>
+    <string name="img_accessibility_expand">Ανάπτυξη ή σύμπτυξη</string>
+    <string name="img_accessibility_brand">App logo</string>
+    <string name="img_accessibility_icon_lib">εικονίδιο βιβλιοθήκη</string>
+    <string name="img_accessibility_storage_icon">εικονίδιο αποθήκευσης</string>
 </resources>

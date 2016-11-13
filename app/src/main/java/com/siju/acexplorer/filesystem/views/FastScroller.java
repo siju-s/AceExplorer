@@ -26,8 +26,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.graphics.Typeface;
-import android.support.annotation.ColorInt;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.support.v7.widget.RecyclerView;
@@ -140,7 +138,7 @@ class FastScroller {
         }
     }
 
-    public int getThumbHeight() {
+    int getThumbHeight() {
         return mThumbHeight;
     }
 
@@ -148,7 +146,7 @@ class FastScroller {
         return mWidth;
     }
 
-    public boolean isDragging() {
+    boolean isDragging() {
         return mIsDragging;
     }
 
@@ -156,8 +154,8 @@ class FastScroller {
      * Handles the touch event and determines whether to show the fast scroller (or updates it if
      * it is already showing).
      */
-    public void handleTouchEvent(MotionEvent ev, int downX, int downY, int lastY,
-                                 OnFastScrollStateChangeListener stateChangeListener) {
+    void handleTouchEvent(MotionEvent ev, int downX, int downY, int lastY,
+                          OnFastScrollStateChangeListener stateChangeListener) {
         ViewConfiguration config = ViewConfiguration.get(mRecyclerView.getContext());
 
         int action = ev.getAction();
@@ -205,7 +203,7 @@ class FastScroller {
         }
     }
 
-    public void draw(Canvas canvas) {
+    void draw(Canvas canvas) {
 
         if (mThumbPosition.x < 0 || mThumbPosition.y < 0) {
             return;
@@ -231,7 +229,7 @@ class FastScroller {
         return mTmpRect.contains(x, y);
     }
 
-    public void setThumbPosition(int x, int y) {
+    void setThumbPosition(int x, int y) {
         if (mThumbPosition.x == x && mThumbPosition.y == y) {
             return;
         }
@@ -244,26 +242,30 @@ class FastScroller {
     }
 
 
-    private void setOffset(int x, int y) {
-        if (mOffset.x == x && mOffset.y == y) {
-            return;
-        }
-        // do not create new objects here, this is called quite often
-        mInvalidateRect.set(mThumbPosition.x + mOffset.x, mOffset.y, mThumbPosition.x + mOffset.x + mWidth, mRecyclerView.getHeight() + mOffset.y);
-        mOffset.set(x, y);
-        mInvalidateTmpRect.set(mThumbPosition.x + mOffset.x, mOffset.y, mThumbPosition.x + mOffset.x + mWidth, mRecyclerView.getHeight() + mOffset.y);
-        mInvalidateRect.union(mInvalidateTmpRect);
-        mRecyclerView.invalidate(mInvalidateRect);
-    }
+//    private void setOffset(int x, int y) {
+//        if (mOffset.x == x && mOffset.y == y) {
+//            return;
+//        }
+//        // do not create new objects here, this is called quite often
+//        mInvalidateRect.set(mThumbPosition.x + mOffset.x, mOffset.y, mThumbPosition.x + mOffset.x + mWidth, mRecyclerView.getHeight() + mOffset.y);
+//        mOffset.set(x, y);
+//        mInvalidateTmpRect.set(mThumbPosition.x + mOffset.x, mOffset.y, mThumbPosition.x + mOffset.x + mWidth, mRecyclerView.getHeight() + mOffset.y);
+//        mInvalidateRect.union(mInvalidateTmpRect);
+//        mRecyclerView.invalidate(mInvalidateRect);
+//    }
 
-    // Setter/getter for the popup alpha for animations
-    public void setOffsetX(int x) {
-        setOffset(x, mOffset.y);
-    }
+// --Commented out by Inspection START (13-11-2016 02:57 PM):
+//    // Setter/getter for the popup alpha for animations
+//    public void setOffsetX(int x) {
+//        setOffset(x, mOffset.y);
+//    }
+// --Commented out by Inspection STOP (13-11-2016 02:57 PM)
 
-    public int getOffsetX() {
-        return mOffset.x;
-    }
+// --Commented out by Inspection START (13-11-2016 02:57 PM):
+//    public int getOffsetX() {
+//        return mOffset.x;
+//    }
+// --Commented out by Inspection STOP (13-11-2016 02:57 PM)
 
     private void show() {
         if (!mAnimatingShow) {
@@ -309,45 +311,61 @@ class FastScroller {
         }
     }
 
-    public void setThumbColor(@ColorInt int color) {
-        mThumb.setColor(color);
-        mRecyclerView.invalidate(mInvalidateRect);
-    }
+// --Commented out by Inspection START (13-11-2016 02:57 PM):
+//    public void setThumbColor(@ColorInt int color) {
+//        mThumb.setColor(color);
+//        mRecyclerView.invalidate(mInvalidateRect);
+//    }
+// --Commented out by Inspection STOP (13-11-2016 02:57 PM)
 
-    public void setTrackColor(@ColorInt int color) {
-        mTrack.setColor(color);
-        mRecyclerView.invalidate(mInvalidateRect);
-    }
+// --Commented out by Inspection START (13-11-2016 02:57 PM):
+//    public void setTrackColor(@ColorInt int color) {
+//        mTrack.setColor(color);
+//        mRecyclerView.invalidate(mInvalidateRect);
+//    }
+// --Commented out by Inspection STOP (13-11-2016 02:57 PM)
 
-    public void setPopupBgColor(@ColorInt int color) {
-        mPopup.setBgColor(color);
-    }
+// --Commented out by Inspection START (13-11-2016 02:57 PM):
+//    public void setPopupBgColor(@ColorInt int color) {
+//        mPopup.setBgColor(color);
+//    }
+// --Commented out by Inspection STOP (13-11-2016 02:57 PM)
 
-    public void setPopupTextColor(@ColorInt int color) {
-        mPopup.setTextColor(color);
-    }
+// --Commented out by Inspection START (13-11-2016 02:57 PM):
+//    public void setPopupTextColor(@ColorInt int color) {
+//        mPopup.setTextColor(color);
+//    }
+// --Commented out by Inspection STOP (13-11-2016 02:57 PM)
 
-    public void setPopupTypeface(Typeface typeface) {
-        mPopup.setTypeface(typeface);
-    }
+// --Commented out by Inspection START (13-11-2016 02:57 PM):
+//    public void setPopupTypeface(Typeface typeface) {
+//        mPopup.setTypeface(typeface);
+//    }
+// --Commented out by Inspection STOP (13-11-2016 02:57 PM)
 
-    public void setPopupTextSize(int size) {
-        mPopup.setTextSize(size);
-    }
+// --Commented out by Inspection START (13-11-2016 02:57 PM):
+//    public void setPopupTextSize(int size) {
+//        mPopup.setTextSize(size);
+//    }
+// --Commented out by Inspection STOP (13-11-2016 02:57 PM)
 
-    public void setAutoHideDelay(int hideDelay) {
-        mAutoHideDelay = hideDelay;
-        if (mAutoHideEnabled) {
-            postAutoHideDelayed();
-        }
-    }
+// --Commented out by Inspection START (13-11-2016 02:57 PM):
+//    public void setAutoHideDelay(int hideDelay) {
+//        mAutoHideDelay = hideDelay;
+//        if (mAutoHideEnabled) {
+//            postAutoHideDelayed();
+//        }
+//    }
+// --Commented out by Inspection STOP (13-11-2016 02:57 PM)
 
-    public void setAutoHideEnabled(boolean autoHideEnabled) {
-        mAutoHideEnabled = autoHideEnabled;
-        if (autoHideEnabled) {
-            postAutoHideDelayed();
-        } else {
-            cancelAutoHide();
-        }
-    }
+// --Commented out by Inspection START (13-11-2016 02:57 PM):
+//    public void setAutoHideEnabled(boolean autoHideEnabled) {
+//        mAutoHideEnabled = autoHideEnabled;
+//        if (autoHideEnabled) {
+//            postAutoHideDelayed();
+//        } else {
+//            cancelAutoHide();
+//        }
+//    }
+// --Commented out by Inspection STOP (13-11-2016 02:57 PM)
 }

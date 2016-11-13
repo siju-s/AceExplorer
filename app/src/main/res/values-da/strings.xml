@@ -156,4 +156,12 @@
     <string name="slide_3_desc">Træk filer fra en mappe til en anden!</string>
     <string name="slide_4_title">Temaer</string>
     <string name="slide_4_desc">Mørk eller Lys måde! Dit valg.</string>
+    <string name="no_music"> Ingen musikfiler</string>
+    <string name="fav_removed">Fjernet fra favoritter</string>
+    <string name="img_accessibility_back">Tilbage</string>
+    <string name="img_accessibility_permission">Grant tilladelse</string>
+    <string name="img_accessibility_expand">Udvid eller Skjul</string>
+    <string name="img_accessibility_brand">App-logo</string>
+    <string name="img_accessibility_icon_lib">ikon Bibliotek</string>
+    <string name="img_accessibility_storage_icon">ikon Opbevaring</string>
 </resources>

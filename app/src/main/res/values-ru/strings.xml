@@ -19,8 +19,8 @@
     <plurals name="number_of_files">
         <item quantity="one">%d файл</item>
         <item quantity="few">%d файл</item>
-        <item quantity="many">%d файлы</item>
         <item quantity="other">%d файлы</item>
+        <item quantity="many">%d файлы</item>
     </plurals>
     <string name="downloads">Загрузки</string>
     <string name="action_rename">переименовывать</string>
@@ -42,7 +42,7 @@
     <string name="dialog_cancel">Отмена</string>
     <string name="dialog_title_paste_conflict">Файл существует</string>
     <string name="dialog_from_placeholder">Из</string>
-    <string name="dialog_to_placeholder">Для того, чтобы:</string>
+    <string name="dialog_to_placeholder">к</string>
     <string name="button_paste_progress">Задний план</string>
     <string name="dialog_delete_title">Вы уверены, что хотите удалить следующие файлы?</string>
     <string name="msg_ok">ОК</string>
@@ -67,7 +67,6 @@
     <string name="msg_error_not_supported">Нет приложение не обрабатывать действия</string>
     <string name="permission_request">Нужно разрешение хранения, чтобы показать все файлы</string>
     <string name="action_grant">ГРАНТ</string>
-    <string name="action_sort">Сортировать</string>
     <string name="action_view_list">Посмотреть список</string>
     <string name="action_view_grid">Вид сетки</string>
     <string name="sort_name">Имя (A-Z)</string>
@@ -97,7 +96,7 @@
     <string name="pref_title_show_hidden">Показать скрытые файлы</string>
     <string name="pref_title_disable_dual">Двойная панель в ландшафтном</string>
     <string name="pref_title_check_update">Проверить наличие обновлений</string>
-    <string name="pref_title_change_lang">изменение языка</string>
+    <string name="pref_title_change_lang">язык</string>
     <string name="pref_title_upgrade">Обновление до Pro</string>
     <string name="pref_title_about">О нас</string>
     <string name="pref_title_version">Версия</string>
@@ -124,7 +123,8 @@
     <string name="create">Создайте</string>
     <string name="zip_progress_title">Создание почтового индекса</string>
     <string name="needsaccess">Написать Требуется доступ</string>
-    <string name="needs_access_summary">Пожалуйста, выберите корневой каталог %1$s, чтобы предоставить доступ на запись для работы</string>
+    <string name="needs_access_summary">Пожалуйста, выберите корневой каталог %1$s, чтобы предоставить доступ на
+        запись для работы</string>
     <string name="error">ошибка</string>
     <string name="completed">Завершенный</string>
     <string name="msg_operation_failed">Операция не удалась</string>
@@ -156,6 +156,15 @@
     <string name="slide_2_desc">Удобная навигация с любого экрана.</string>
     <string name="slide_3_title">Перетаскивание</string>
     <string name="slide_3_desc">Перетащите файлы из одной папки в другую!</string>
+    <string name="action_sort">Сортировать</string>
     <string name="slide_4_title">Темы</string>
     <string name="slide_4_desc">Темный или Светлый путь! Твой выбор.</string>
+    <string name="no_music"> Нет музыкальных файлов</string>
+    <string name="fav_removed">Удалены из избранного</string>
+    <string name="img_accessibility_back">назад</string>
+    <string name="img_accessibility_permission">разрешение гранта</string>
+    <string name="img_accessibility_expand">Развернуть или свернуть</string>
+    <string name="img_accessibility_brand">App логотип</string>
+    <string name="img_accessibility_icon_lib">значок библиотеки</string>
+    <string name="img_accessibility_storage_icon">значок хранения</string>
 </resources>

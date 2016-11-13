@@ -156,4 +156,12 @@
     <string name="slide_3_desc">Sleep lêers van een gids na \'n ander!</string>
     <string name="slide_4_title">Temas</string>
     <string name="slide_4_desc">Donker of Light manier! Jou keuse.</string>
+    <string name="no_music"> Geen musiek lêers</string>
+    <string name="fav_removed">Verwyder van gunstelinge</string>
+    <string name="img_accessibility_back">terug</string>
+    <string name="img_accessibility_permission">Grant toestemming</string>
+    <string name="img_accessibility_expand">Uit te brei of ineenstorting</string>
+    <string name="img_accessibility_brand">app logo</string>
+    <string name="img_accessibility_icon_lib">biblioteek ikoon</string>
+    <string name="img_accessibility_storage_icon">stoor ikoon</string>
  </resources>

@@ -18,7 +18,7 @@
     <string name="empty">Vuoto</string>
     <plurals name="number_of_files">
         <item quantity="one">%d file</item>
-        <item quantity="other">%d File</item>
+        <item quantity="other">%d file</item>
     </plurals>
     <string name="downloads">download</string>
     <string name="action_rename">Rinominare</string>
@@ -40,7 +40,7 @@
     <string name="dialog_cancel">Annulla</string>
     <string name="dialog_title_paste_conflict">il file esiste</string>
     <string name="dialog_from_placeholder">Da parte di</string>
-    <string name="dialog_to_placeholder">A:</string>
+    <string name="dialog_to_placeholder">A</string>
     <string name="button_paste_progress">sfondo</string>
     <string name="dialog_delete_title">Sei sicuro di voler eliminare i seguenti file?</string>
     <string name="msg_ok">ok</string>
@@ -62,10 +62,9 @@
     <string name="rate_us">tasso degli Stati Uniti</string>
     <string name="add_fav">Aggiungi ai preferiti</string>
     <string name="msg_added_to_fav">Aggiunto ai preferiti</string>
-    <string name="msg_error_not_supported">No app per gestire l\'azione</string>
+    <string name="msg_error_not_supported">No app per gestire l'azione</string>
     <string name="permission_request">Necessario il permesso di archiviazione per visualizzare tutti i file</string>
     <string name="action_grant">CONCEDERE</string>
-    <string name="action_sort">Ordinare</string>
     <string name="action_view_list">Visualizzazione elenco</string>
     <string name="action_view_grid">Vista a griglia</string>
     <string name="sort_name">Nome (A-Z)</string>
@@ -95,7 +94,7 @@
     <string name="pref_title_show_hidden">Mostra file nascosti</string>
     <string name="pref_title_disable_dual">A doppio pannello in Landscape</string>
     <string name="pref_title_check_update">Controlla gli aggiornamenti</string>
-    <string name="pref_title_change_lang">Cambia lingua</string>
+    <string name="pref_title_change_lang">Lingua</string>
     <string name="pref_title_upgrade">Aggiornamento a Pro</string>
     <string name="pref_title_about">Riguardo a noi</string>
     <string name="pref_title_version">Versione</string>
@@ -122,7 +121,8 @@
     <string name="create">Creare</string>
     <string name="zip_progress_title">Creazione di zip</string>
     <string name="needsaccess">Scrivi accesso richiesto</string>
-    <string name="needs_access_summary">Scegliere la directory principale %1$s per concedere l\'accesso in scrittura per operare</string>
+    <string name="needs_access_summary">Scegliere la directory principale %1$s per concedere l'accesso in
+        scrittura per operare</string>
     <string name="error">Errore</string>
     <string name="completed">Completato</string>
     <string name="msg_operation_failed">Operazione fallita</string>
@@ -153,7 +153,16 @@
     <string name="slide_2_title">Navigazione</string>
     <string name="slide_2_desc">Facile navigazione da qualsiasi schermata.</string>
     <string name="slide_3_title">Trascinare e rilasciare</string>
-    <string name="slide_3_desc">Trascinare i file da una cartella ad un\'altra!</string>
+    <string name="slide_3_desc">Trascinare i file da una cartella ad un'altra!</string>
+    <string name="action_sort">Ordinare</string>
     <string name="slide_4_title">Temi</string>
     <string name="slide_4_desc">modo scuro o chiaro! La tua scelta.</string>
+    <string name="no_music"> Nessun file musicali</string>
+    <string name="fav_removed">Rimosso dai preferiti</string>
+    <string name="img_accessibility_back">Indietro</string>
+    <string name="img_accessibility_permission">Concedere l'autorizzazione</string>
+    <string name="img_accessibility_expand">Espandere o comprimere</string>
+    <string name="img_accessibility_brand">App logo</string>
+    <string name="img_accessibility_icon_lib">icon library</string>
+    <string name="img_accessibility_storage_icon">icona di archiviazione</string>
 </resources>

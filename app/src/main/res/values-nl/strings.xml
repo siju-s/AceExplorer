@@ -156,4 +156,12 @@
     <string name="slide_3_desc">Sleep bestanden van de ene map naar de andere!</string>
     <string name="slide_4_title">Thema\'s</string>
     <string name="slide_4_desc">Dark of Light manier! Uw keuze.</string>
+    <string name="no_music"> Geen Muziekbestanden</string>
+    <string name="fav_removed">Verwijderd uit favorieten</string>
+    <string name="img_accessibility_back">Terug</string>
+    <string name="img_accessibility_permission">Toestemming geven</string>
+    <string name="img_accessibility_expand">Uitvouwen of samenvouwen</string>
+    <string name="img_accessibility_brand">App logo</string>
+    <string name="img_accessibility_icon_lib">bibliotheek icoon</string>
+    <string name="img_accessibility_storage_icon">opslag icon</string>
 </resources>

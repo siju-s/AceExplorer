@@ -38,7 +38,6 @@ import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.CopyData;
 import com.siju.acexplorer.filesystem.model.FileInfo;
-import com.siju.acexplorer.filesystem.model.ZipProgressModel;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.helper.RootHelper;
 import com.stericson.RootTools.RootTools;
@@ -84,7 +83,6 @@ public class CopyService extends Service {
         Intent notificationIntent = new Intent(this, BaseActivity.class);
         notificationIntent.setAction(Intent.ACTION_MAIN);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        notificationIntent.putExtra("openprocesses", true);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
         mBuilder = new NotificationCompat.Builder(mContext);
         mBuilder.setContentIntent(pendingIntent);
@@ -99,18 +97,8 @@ public class CopyService extends Service {
         b.putParcelableArrayList("files", files);
         b.putParcelableArrayList("action", copyData);
         hash.put(startId, true);
-        ZipProgressModel progressModel = new ZipProgressModel();
-        progressModel.setName(files.get(0).getFileName());
-        progressModel.setTotal(0);
-        progressModel.setDone(0);
-        progressModel.setId(startId);
-        progressModel.setP1(0);
-        progressModel.setP2(0);
-        progressModel.setCompleted(false);
-        progressModel.setMove(intent.getBooleanExtra("move", false));
         new DoInBackground().execute(b);
 
-        // If we get killed, after returning from here, restart
         return START_STICKY;
     }
 
@@ -136,7 +124,7 @@ public class CopyService extends Service {
 
         @Override
         public void onPostExecute(Integer b) {
-            copy.publishResults("", 0, 0, b, 0, 0, true, move);
+            copy.publishResults("", 0, b, 0, 0, move);
 //            generateNotification(copy.failedFOps, move);
             Intent intent = new Intent("refresh");
             intent.putExtra(FileConstants.IS_OPERATION_SUCCESS, copy.copy_successful);
@@ -364,25 +352,23 @@ public class CopyService extends Service {
             long time = System.nanoTime() / 500000000;
             AsyncTask asyncTask;
 
-            void calculateProgress(final String name, final long fileBytes, final int id, final long
-                    size, final boolean move) {
+            void calculateProgress(final String name, final int id, final boolean move) {
                 if (asyncTask != null && asyncTask.getStatus() == AsyncTask.Status.RUNNING)
                     asyncTask.cancel(true);
                 asyncTask = new AsyncTask<Void, Void, Void>() {
-                    int p1, p2;
+                    int p1;
 
                     @Override
                     protected Void doInBackground(Void... voids) {
                         p1 = (int) ((copiedBytes / (float) totalBytes) * 100);
                         Logger.log("CopyService", "Copied=" + copiedBytes + " Totalbytes=" + totalBytes);
-                        p2 = (int) ((fileBytes / (float) size) * 100);
                         if (calculatingTotalSize) p1 = 0;
                         return null;
                     }
 
                     @Override
                     public void onPostExecute(Void v) {
-                        publishResults(name, p1, p2, id, totalBytes, copiedBytes, false, move);
+                        publishResults(name, p1, id, totalBytes, copiedBytes, move);
                     }
                 }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
@@ -403,7 +389,7 @@ public class CopyService extends Service {
                         fileBytes += length;
                         long time1 = System.nanoTime() / 500000000;
                         if (((int) time1) > ((int) (time))) {
-                            calculateProgress(name, fileBytes, id, size, move);
+                            calculateProgress(name, id, move);
                             time = System.nanoTime() / 500000000;
                         }
 
@@ -439,7 +425,7 @@ public class CopyService extends Service {
                 out.close();
             }
 
-            private void publishResults(String fileName, int p1, int p2, int id, long total, long done, boolean b,
+            private void publishResults(String fileName, int p1, int id, long total, long done,
                                         boolean move) {
                 if (hash.get(id)) {
                     //notification
@@ -466,16 +452,7 @@ public class CopyService extends Service {
                         mNotifyManager.notify(id1, mBuilder.build());
                         publishCompletedResult(id1);
                     }
-                    //for processviewer
-                    ZipProgressModel progressModel = new ZipProgressModel();
-                    progressModel.setName(fileName);
-                    progressModel.setTotal(total);
-                    progressModel.setDone(done);
-                    progressModel.setId(id);
-                    progressModel.setP1(p1);
-                    progressModel.setP2(p2);
-                    progressModel.setMove(move);
-                    progressModel.setCompleted(b);
+
                     Intent intent = new Intent(COPY_PROGRESS);
                     intent.putExtra("DONE", copiedBytes);
                     intent.putExtra("TOTAL", totalBytes);

@@ -40,7 +40,7 @@
     <string name="dialog_cancel">Kansellere</string>
     <string name="dialog_title_paste_conflict">Det finnes fil</string>
     <string name="dialog_from_placeholder">Fra</string>
-    <string name="dialog_to_placeholder">Til:</string>
+    <string name="dialog_to_placeholder">Til</string>
     <string name="button_paste_progress">Bakgrunn</string>
     <string name="dialog_delete_title">Er du sikker på at du vil slette disse filene?</string>
     <string name="msg_ok">OK</string>
@@ -65,7 +65,6 @@
     <string name="msg_error_not_supported">Ingen app for å håndtere handlingen</string>
     <string name="permission_request">Trenger lagring tillatelse til å vise alle filene</string>
     <string name="action_grant">STIPEND</string>
-    <string name="action_sort">Sortere</string>
     <string name="action_view_list">Listevisning</string>
     <string name="action_view_grid">Rutenett visning</string>
     <string name="sort_name">Navn (A-Z)</string>
@@ -95,7 +94,7 @@
     <string name="pref_title_show_hidden">Vis skjulte filer</string>
     <string name="pref_title_disable_dual">Dual-ruten i Landskap</string>
     <string name="pref_title_check_update">Se etter oppdateringer</string>
-    <string name="pref_title_change_lang">Skifte språk</string>
+    <string name="pref_title_change_lang">Språk</string>
     <string name="pref_title_upgrade">Oppgrader til Pro</string>
     <string name="pref_title_about">Om oss</string>
     <string name="pref_title_version">Versjon</string>
@@ -154,6 +153,15 @@
     <string name="slide_2_desc">Enkel navigering fra hvilken som helst skjerm.</string>
     <string name="slide_3_title">Dra og slipp</string>
     <string name="slide_3_desc">Dra filer fra en mappe til en annen!</string>
+    <string name="action_sort">Sortere</string>
     <string name="slide_4_title">temaer</string>
     <string name="slide_4_desc">Mørk eller lys vei! Ditt valg.</string>
+    <string name="no_music"> Ingen musikkfiler</string>
+    <string name="fav_removed">Fjernet fra favoritter</string>
+    <string name="img_accessibility_back">Tilbake</string>
+    <string name="img_accessibility_permission">Grant tillatelse</string>
+    <string name="img_accessibility_expand">Utvid eller skjul</string>
+    <string name="img_accessibility_brand">App logo</string>
+    <string name="img_accessibility_icon_lib">bibliotek-ikonet</string>
+    <string name="img_accessibility_storage_icon">Storage icon</string>
 </resources>

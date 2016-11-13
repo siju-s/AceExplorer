@@ -156,4 +156,12 @@
     <string name="slide_3_desc">Плъзнете файлове от една папка в друга!</string>
     <string name="slide_4_title">Теми</string>
     <string name="slide_4_desc">Тъмен или светъл начин! Твой избор.</string>
+    <string name="no_music"> Не музикални файлове</string>
+    <string name="fav_removed">Премахнато от любими</string>
+    <string name="img_accessibility_back">обратно</string>
+    <string name="img_accessibility_permission">разрешение Grant</string>
+    <string name="img_accessibility_expand">Разгъване или свиване</string>
+    <string name="img_accessibility_brand">лого App</string>
+    <string name="img_accessibility_icon_lib">икона библиотека</string>
+    <string name="img_accessibility_storage_icon">икона за съхранение</string>
 </resources>

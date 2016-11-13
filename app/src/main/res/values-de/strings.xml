@@ -156,4 +156,12 @@
     <string name="slide_3_desc">Ziehen Sie Dateien von einem Ordner in einen anderen!</string>
     <string name="slide_4_title">Themen</string>
     <string name="slide_4_desc">Dunkel oder Hell Weg! Deine Entscheidung.</string>
+    <string name="no_music"> Keine Musikdateien</string>
+    <string name="fav_removed">Aus Favoriten entfernt</string>
+    <string name="img_accessibility_back">Zurück</string>
+    <string name="img_accessibility_permission">Erlaubnis erteilen</string>
+    <string name="img_accessibility_expand">Erweitern oder reduzieren</string>
+    <string name="img_accessibility_brand">App-Logo</string>
+    <string name="img_accessibility_icon_lib">Bibliothek Symbol</string>
+    <string name="img_accessibility_storage_icon">Speicher-Symbol</string>
 </resources>

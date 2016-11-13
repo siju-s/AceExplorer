@@ -40,7 +40,7 @@
     <string name="dialog_cancel">Hætta</string>
     <string name="dialog_title_paste_conflict">skráin er til</string>
     <string name="dialog_from_placeholder">frá</string>
-    <string name="dialog_to_placeholder">til:</string>
+    <string name="dialog_to_placeholder">til</string>
     <string name="button_paste_progress">bakgrunnur</string>
     <string name="dialog_delete_title">Ertu viss um að þú viljir eyða eftirfarandi skrár?</string>
     <string name="msg_ok">OK</string>
@@ -65,7 +65,6 @@
     <string name="msg_error_not_supported">Ekkert forrit til að höndla aðgerð</string>
     <string name="permission_request">Þarftu geymsla leyfi til að sýna allar skrár</string>
     <string name="action_grant">GRANT</string>
-    <string name="action_sort">Raða</string>
     <string name="action_view_list">List view</string>
     <string name="action_view_grid">Grid view</string>
     <string name="sort_name">Nafn (A-Ö)</string>
@@ -95,7 +94,7 @@
     <string name="pref_title_show_hidden">Sýna faldar skrár</string>
     <string name="pref_title_disable_dual">Dual megin í landslaginu</string>
     <string name="pref_title_check_update">Athugaðu með uppfærslur</string>
-    <string name="pref_title_change_lang">Breyta tungumáli</string>
+    <string name="pref_title_change_lang">Tungumál</string>
     <string name="pref_title_upgrade">Uppfærsla í Pro</string>
     <string name="pref_title_about">Um okkur</string>
     <string name="pref_title_version">útgáfa</string>
@@ -154,6 +153,15 @@
     <string name="slide_2_desc">Þægilegur siglingar af hvaða skjá.</string>
     <string name="slide_3_title">Draga og sleppa</string>
     <string name="slide_3_desc">Dragðu skrár úr einni möppu í aðra!</string>
+    <string name="action_sort">Raða</string>
     <string name="slide_4_title">Þemu</string>
     <string name="slide_4_desc">Dark eða Light hátt! Val þitt.</string>
+    <string name="no_music"> Engar Tónl.skrár</string>
+    <string name="fav_removed">Fjarlægt úr eftirlæti</string>
+    <string name="img_accessibility_back">Back</string>
+    <string name="img_accessibility_permission">Grant leyfi</string>
+    <string name="img_accessibility_expand">Stækka eða Minnka</string>
+    <string name="img_accessibility_brand">app logo</string>
+    <string name="img_accessibility_icon_lib">Bókasafn táknið</string>
+    <string name="img_accessibility_storage_icon">geymsla táknið</string>
 </resources>

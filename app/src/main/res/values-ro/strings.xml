@@ -41,7 +41,7 @@
     <string name="dialog_cancel">Anulare</string>
     <string name="dialog_title_paste_conflict">fisierul exista</string>
     <string name="dialog_from_placeholder">Din</string>
-    <string name="dialog_to_placeholder">La:</string>
+    <string name="dialog_to_placeholder">La</string>
     <string name="button_paste_progress">fundal</string>
     <string name="dialog_delete_title">Sunteți sigur că doriți să ștergeți următoarele fișiere?</string>
     <string name="msg_ok">O.K</string>
@@ -66,7 +66,6 @@
     <string name="msg_error_not_supported">Nici o aplicație să se ocupe de acțiune</string>
     <string name="permission_request">Nevoie de permisiunea de stocare pentru a afișa toate fișierele</string>
     <string name="action_grant">ACORDA</string>
-    <string name="action_sort">Fel</string>
     <string name="action_view_list">Vizualizare listă</string>
     <string name="action_view_grid">Vizualizare grilă</string>
     <string name="sort_name">Numele (A-Z)</string>
@@ -96,7 +95,7 @@
     <string name="pref_title_show_hidden">Afișare fișiere ascunse</string>
     <string name="pref_title_disable_dual">geam dublu în peisajul</string>
     <string name="pref_title_check_update">Verifică pentru actualizări</string>
-    <string name="pref_title_change_lang">schimbare limbă</string>
+    <string name="pref_title_change_lang">Limba</string>
     <string name="pref_title_upgrade">Upgrade la Pro</string>
     <string name="pref_title_about">Despre noi</string>
     <string name="pref_title_version">Versiune</string>
@@ -123,7 +122,8 @@
     <string name="create">Crea</string>
     <string name="zip_progress_title">crearea de zip</string>
     <string name="needsaccess">Este necesar accesul scrie</string>
-    <string name="needs_access_summary">Vă rugăm să selectați directorul rădăcină de %1$s pentru a acorda acces de scriere pentru a opera</string>
+    <string name="needs_access_summary">Vă rugăm să selectați directorul rădăcină de %1$s pentru a acorda acces de
+        scriere pentru a opera</string>
     <string name="error">Eroare</string>
     <string name="completed">terminat</string>
     <string name="msg_operation_failed">Operația a eșuat</string>
@@ -155,6 +155,15 @@
     <string name="slide_2_desc">navigare ușoară din orice ecran.</string>
     <string name="slide_3_title">Tragere și plasare</string>
     <string name="slide_3_desc">Trageți fișiere dintr-un dosar în altul!</string>
+    <string name="action_sort">Fel</string>
     <string name="slide_4_title">tematică</string>
     <string name="slide_4_desc">Întuneric sau lumină drum! Alegerea ta.</string>
+    <string name="no_music"> Nu există fișiere de muzică</string>
+    <string name="fav_removed">Eliminată din favorite</string>
+    <string name="img_accessibility_back">Înapoi</string>
+    <string name="img_accessibility_permission">Acordați permisiunea</string>
+    <string name="img_accessibility_expand">Expand sau Collapse</string>
+    <string name="img_accessibility_brand">aplicaţia logo</string>
+    <string name="img_accessibility_icon_lib">pictograma bibliotecă</string>
+    <string name="img_accessibility_storage_icon">pictograma de stocare</string>
 </resources>

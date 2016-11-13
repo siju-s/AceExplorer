@@ -39,7 +39,7 @@
     <string name="dialog_cancel">ยกเลิก</string>
     <string name="dialog_title_paste_conflict">ไฟล์ที่มีอยู่</string>
     <string name="dialog_from_placeholder">จาก</string>
-    <string name="dialog_to_placeholder">ไปที่:</string>
+    <string name="dialog_to_placeholder">ไปยัง</string>
     <string name="button_paste_progress">พื้นหลัง</string>
     <string name="dialog_delete_title">คุณคุณแน่ใจหรือว่าต้องการลบไฟล์ต่อไปนี้?</string>
     <string name="msg_ok">ตกลง</string>
@@ -64,7 +64,6 @@
     <string name="msg_error_not_supported">ไม่มีแอปที่จะจัดการกับการกระทำ</string>
     <string name="permission_request">ต้องได้รับอนุญาตการจัดเก็บข้อมูลที่จะแสดงไฟล์ทั้งหมด</string>
     <string name="action_grant">GRANT</string>
-    <string name="action_sort">ประเภท</string>
     <string name="action_view_list">มุมมองรายการ</string>
     <string name="action_view_grid">มุมมองตาราง</string>
     <string name="sort_name">ชื่อ (A-Z)</string>
@@ -88,13 +87,13 @@
     <string name="delete_fav">ลบรายการโปรด</string>
     <string name="action_search">ค้นหา</string>
     <string name="pref_title_theme">กระทู้</string>
-    <string name="pref_subs_light">เบา</string>
+    <string name="pref_subs_light">แสง</string>
     <string name="pref_subs_dark">มืด</string>
     <string name="pref_title_reset_fav">รายการโปรดรีเซ็ต</string>
     <string name="pref_title_show_hidden">แสดงไฟล์ที่ซ่อน</string>
     <string name="pref_title_disable_dual">บานหน้าต่างสองในภูมิทัศน์</string>
     <string name="pref_title_check_update">ตรวจสอบสำหรับการอัพเดต</string>
-    <string name="pref_title_change_lang">เปลี่ยนภาษา</string>
+    <string name="pref_title_change_lang">ภาษา</string>
     <string name="pref_title_upgrade">อัพเกรดเป็น Pro</string>
     <string name="pref_title_about">เกี่ยวกับเรา</string>
     <string name="pref_title_version">รุ่น</string>
@@ -121,7 +120,8 @@
     <string name="create">สร้าง</string>
     <string name="zip_progress_title">สร้างไปรษณีย์</string>
     <string name="needsaccess">ต้องใช้การเข้าถึงการเขียน</string>
-    <string name="needs_access_summary">กรุณาเลือกไดเรกทอรีรากของ %1$s ให้สิทธิการเข้าถึงการเขียนในการดำเนินงาน</string>
+    <string name="needs_access_summary">กรุณาเลือกไดเรกทอรีรากของ %1$s
+        ให้สิทธิการเข้าถึงการเขียนในการดำเนินงาน</string>
     <string name="error">ความผิดพลาด</string>
     <string name="completed">เสร็จ</string>
     <string name="msg_operation_failed">การดำเนินการล้มเหลว</string>
@@ -153,6 +153,15 @@
     <string name="slide_2_desc">ง่ายต่อจากหน้าจอใด</string>
     <string name="slide_3_title">ลากแล้ววาง</string>
     <string name="slide_3_desc">ลากไฟล์จากโฟลเดอร์หนึ่งไปยังอีก!</string>
+    <string name="action_sort">ประเภท</string>
     <string name="slide_4_title">ธีม</string>
     <string name="slide_4_desc">วิธีที่มืดหรือสว่าง! ตัวเลือกของคุณ.</string>
+    <string name="no_music"> ไม่มีไฟล์เพลง</string>
+    <string name="fav_removed">ลบออกจากรายการโปรด</string>
+    <string name="img_accessibility_back">กลับ</string>
+    <string name="img_accessibility_permission">แกรนท์ได้รับอนุญาต</string>
+    <string name="img_accessibility_expand">ขยายหรือยุบ</string>
+    <string name="img_accessibility_brand">โลโก้แอป</string>
+    <string name="img_accessibility_icon_lib">ไอคอนห้องสมุด</string>
+    <string name="img_accessibility_storage_icon">ไอคอนการจัดเก็บข้อมูล</string>
 </resources>

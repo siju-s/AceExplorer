@@ -156,4 +156,12 @@
     <string name="slide_3_desc">Povucite datoteke iz jedne mape u drugu!</string>
     <string name="slide_4_title">Teme</string>
     <string name="slide_4_desc">Tamno ili svijetlo način! Tvoj izbor.</string>
+    <string name="no_music"> Nema glazbene datoteke</string>
+    <string name="fav_removed">Uklonjeno iz favorita</string>
+    <string name="img_accessibility_back">Nazad</string>
+    <string name="img_accessibility_permission">Davanje dozvola</string>
+    <string name="img_accessibility_expand">Proširili ili saželi</string>
+    <string name="img_accessibility_brand">logotip aplikacije</string>
+    <string name="img_accessibility_icon_lib">ikona knjižnica</string>
+    <string name="img_accessibility_storage_icon">ikona za pohranu</string>
 </resources>

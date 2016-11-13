@@ -16,6 +16,7 @@ import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.FileInfo;
+import com.siju.acexplorer.filesystem.task.CreateZipTask;
 import com.siju.acexplorer.filesystem.task.DeleteTask;
 import com.siju.acexplorer.filesystem.task.ExtractService;
 import com.siju.acexplorer.filesystem.utils.FileOperations;
@@ -239,7 +240,7 @@ public class FileOpsHelper {
             Intent intent = new Intent(mActivity, ExtractService.class);
             intent.putExtra("zip", currentFile.getPath());
             intent.putExtra("new_path", file.getAbsolutePath());
-            mActivity.startService(intent);
+            new FileUtils().showExtractProgressDialog(mActivity,intent);
         } else Toast.makeText(mActivity, R.string.msg_operation_failed, Toast.LENGTH_SHORT).show();
     }
 
@@ -250,15 +251,14 @@ public class FileOpsHelper {
             mActivity.mFiles = files;
             mActivity.mOperation = FileConstants.COMPRESS;
         } else if (mode == 1) {
-            Intent zipIntent = new Intent(mActivity, FileUtils.class);
+            Intent zipIntent = new Intent(mActivity, CreateZipTask.class);
             zipIntent.putExtra("name", newFile.getAbsolutePath());
             zipIntent.putParcelableArrayListExtra("files", files);
             new FileUtils().showZipProgressDialog(mActivity,zipIntent);
-//            mActivity.startService(zipIntent);
-
         } else Toast.makeText(mActivity, R.string.msg_operation_failed, Toast.LENGTH_SHORT).show();
     }
 
+    @SuppressWarnings("ConstantConditions")
     private void showSAFDialog(String path) {
 
         String title = mActivity.getString(R.string.needsaccess);

@@ -611,6 +611,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
     }
 
+
     private boolean isZipViewable(String filePath) {
         return filePath.toLowerCase().endsWith("zip") ||
                 filePath.toLowerCase().endsWith("jar") ||
@@ -640,7 +641,9 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     private String createCacheDirExtract() {
         String cacheTempDir = ".tmp";
-        File file = new File(getActivity().getExternalCacheDir().getParent(), cacheTempDir);
+        File cacheDir = getActivity().getExternalCacheDir();
+        if (cacheDir == null) return null;
+        File file = new File(cacheDir.getParent(), cacheTempDir);
 
         if (!file.exists()) {
             boolean result = file.mkdir();
@@ -1393,6 +1396,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     private void renameDialog(final String oldFilePath, final String newFilePath, final int
             position) {
         String fileName = oldFilePath.substring(oldFilePath.lastIndexOf("/") + 1, oldFilePath.length());
@@ -1562,7 +1566,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     }
 
-
+    @SuppressWarnings("ConstantConditions")
     private void showExtractOptions(final String currentFilePath, final String currentDir) {
 
         mSelectedPath = null;
@@ -1612,10 +1616,20 @@ public class FileListFragment extends Fragment implements LoaderManager
                 if (radioButtonSpecify.isChecked()) {
                     File newFile = new File(mSelectedPath + "/" + currentFileName);
                     File currentFile = new File(currentFilePath);
+                    if (FileUtils.isFileExisting(mSelectedPath, newFile.getName())) {
+                        materialDialog.getInputEditText().setError(getResources().getString(R.string
+                                .dialog_title_paste_conflict));
+                        return;
+                    }
                     mBaseActivity.mFileOpsHelper.extractFile(currentFile, newFile);
                 } else {
-                    File newFile = new File(currentDir + "/" + currentFileName);
+                    File newFile = new File(currentDir + "/" + fileName);
                     File currentFile = new File(currentFilePath);
+                    if (FileUtils.isFileExisting(currentDir, newFile.getName())) {
+                        materialDialog.getInputEditText().setError(getResources().getString(R.string
+                                .dialog_title_paste_conflict));
+                        return;
+                    }
                     mBaseActivity.mFileOpsHelper.extractFile(currentFile, newFile);
                 }
                 setBackPressed();
@@ -1686,6 +1700,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         mIsPasteItemVisible = isVisible;
     }
 
+    @SuppressWarnings("ConstantConditions")
     private void showInfoDialog(FileInfo fileInfo) {
         String title = getString(R.string.properties);
         String texts[] = new String[]{title, getString(R.string.msg_ok), "", null};

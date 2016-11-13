@@ -156,4 +156,12 @@
     <string name="slide_3_desc">Arrastre los archivos de una carpeta a otra!</string>
     <string name="slide_4_title">temas</string>
     <string name="slide_4_desc">manera clara u oscura! Tu elección.</string>
+    <string name="no_music"> No hay archivos de música</string>
+    <string name="fav_removed">Eliminado de los favoritos</string>
+    <string name="img_accessibility_back">Espalda</string>
+    <string name="img_accessibility_permission">Conceder permiso</string>
+    <string name="img_accessibility_expand">Expandir o Contraer</string>
+    <string name="img_accessibility_brand">Logo de la aplicación</string>
+    <string name="img_accessibility_icon_lib">Icono de la biblioteca</string>
+    <string name="img_accessibility_storage_icon">Icono de almacenamiento</string>
 </resources>

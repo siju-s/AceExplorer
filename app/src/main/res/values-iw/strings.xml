@@ -158,4 +158,12 @@
     <string name="slide_3_desc">גרור קבצים מתיקיה אחת לאחרת!</string>
     <string name="slide_4_title">ערכות נושא</string>
     <string name="slide_4_desc">דרך כהה או בהירה! בחירה שלך.</string>
+    <string name="no_music"> אין קובצי מוסיקה</string>
+    <string name="fav_removed">הוסר מהמועדפים</string>
+    <string name="img_accessibility_back">חזור</string>
+    <string name="img_accessibility_permission">מתן הרשאה</string>
+    <string name="img_accessibility_expand">רחב או כווץ</string>
+    <string name="img_accessibility_brand">לוגו App</string>
+    <string name="img_accessibility_icon_lib">סמל הספרייה</string>
+    <string name="img_accessibility_storage_icon">סמל חפצים</string>
 </resources>

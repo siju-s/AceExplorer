@@ -172,6 +172,9 @@ public class MediaStoreHack {
             Log.w("MediaFile", "Error installing tempory track.", ex);
             return 0;
         }
+        if (temporaryTrack == null) {
+            return 0;
+        }
         final Uri filesUri = MediaStore.Files.getContentUri("external");
         final String[] selectionArgs = {
                 temporaryTrack.getAbsolutePath()

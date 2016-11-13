@@ -445,23 +445,25 @@ public class RootHelper {
         return -1;
     }
 
-    public static boolean isDirectory(String a, boolean root, int count) {
-        File f = new File(a);
-        String name = f.getName();
-        String p = f.getParent();
-        if (p != null && p.length() > 1) {
-            ArrayList<String> ls = runAndWait1("ls -la " + p, root);
+    public static boolean isDirectory(String filePath, boolean root, int count) {
+        File file = new File(filePath);
+        String name = file.getName();
+        String parentFile = file.getParent();
+        if (parentFile != null && parentFile.length() > 1) {
+            ArrayList<String> ls = runAndWait1("ls -la " + parentFile, root);
+            if (ls == null) return file.isDirectory();
             for (String s : ls) {
                 if (contains(s.split(" "), name)) {
                     try {
                         BaseFile path = parseName(s);
+                        if (path == null) return file.isDirectory();
                         if (path.getPermission().trim().startsWith("d")) return true;
                         else if (path.getPermission().trim().startsWith("l")) {
                             if (count > 5)
-                                return f.isDirectory();
+                                return file.isDirectory();
                             else
                                 return isDirectory(path.getLink().trim(), root, ++count);
-                        } else return f.isDirectory();
+                        } else return file.isDirectory();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -470,7 +472,7 @@ public class RootHelper {
             }
 
         }
-        return f.isDirectory();
+        return file.isDirectory();
     }
 
     private static boolean isDirectory(BaseFile path) {

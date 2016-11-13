@@ -41,7 +41,7 @@
     <string name="dialog_cancel">отказати</string>
     <string name="dialog_title_paste_conflict">file екистс</string>
     <string name="dialog_from_placeholder">од</string>
-    <string name="dialog_to_placeholder">До:</string>
+    <string name="dialog_to_placeholder">До</string>
     <string name="button_paste_progress">позадина</string>
     <string name="dialog_delete_title">Да ли сте сигурни да желите да избришете следеће фајлове?</string>
     <string name="msg_ok">ок</string>
@@ -66,7 +66,6 @@
     <string name="msg_error_not_supported">Но апликација за руковање акцију</string>
     <string name="permission_request">Потребна дозвола за складиштење да покаже све фајлове</string>
     <string name="action_grant">ГРАНТ</string>
-    <string name="action_sort">Врста</string>
     <string name="action_view_list">лист виев</string>
     <string name="action_view_grid">Поглед мрежа</string>
     <string name="sort_name">Име (А-З)</string>
@@ -80,7 +79,7 @@
     <string name="extract_to">Екстрактовати у</string>
     <string name="open">отворен</string>
     <string name="extracting">Издвајање ..</string>
-    <string name="dialog_current_path">strujni</string>
+    <string name="dialog_current_path">Струјни</string>
     <string name="dialog_specify_path">Наведите путању</string>
     <string name="select_path">Избор путања</string>
     <string name="enter_file_name">Унесите назив датотеке</string>
@@ -96,7 +95,7 @@
     <string name="pref_title_show_hidden">Схов хидден филес</string>
     <string name="pref_title_disable_dual">Дуал панел у Ландсцапе</string>
     <string name="pref_title_check_update">Провери ажурирања</string>
-    <string name="pref_title_change_lang">Промени ЈЕЗИК</string>
+    <string name="pref_title_change_lang">језик</string>
     <string name="pref_title_upgrade">Унапреди се у професионалца</string>
     <string name="pref_title_about">О нама</string>
     <string name="pref_title_version">верзија</string>
@@ -123,7 +122,8 @@
     <string name="create">створити</string>
     <string name="zip_progress_title">kreiranje рар</string>
     <string name="needsaccess">Врите тражени приступ</string>
-    <string name="needs_access_summary">Молимо изаберите роот директоријум %1$s да одобри приступ писања за рад</string>
+    <string name="needs_access_summary">Молимо изаберите роот директоријум %1$s да одобри приступ писања за
+        рад</string>
     <string name="error">грешка</string>
     <string name="completed">завршен</string>
     <string name="msg_operation_failed">Операција неуспела</string>
@@ -155,6 +155,15 @@
     <string name="slide_2_desc">Лако кретање на било ком екрану.</string>
     <string name="slide_3_title">Превуци и отпусти</string>
     <string name="slide_3_desc">Вући фајлове из једног фолдера у други!</string>
+    <string name="action_sort">Врста</string>
     <string name="slide_4_title">Теме</string>
     <string name="slide_4_desc">Светла или тамна пут! Ваш избор.</string>
+    <string name="no_music"> Но Музичке датотеке</string>
+    <string name="fav_removed">Уклоњено из омиљених</string>
+    <string name="img_accessibility_back">Назад</string>
+    <string name="img_accessibility_permission">грант дозвола</string>
+    <string name="img_accessibility_expand">Екпанд или Цоллапсе</string>
+    <string name="img_accessibility_brand">апп лого</string>
+    <string name="img_accessibility_icon_lib">biblioteka икона</string>
+    <string name="img_accessibility_storage_icon">складиштење икона</string>
 </resources>

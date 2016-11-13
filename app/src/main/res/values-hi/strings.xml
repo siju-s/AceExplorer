@@ -156,4 +156,12 @@
     <string name="slide_3_desc">दूसरे के लिए एक फ़ोल्डर से फ़ाइलों को खींचें!</string>
     <string name="slide_4_title">विषय-वस्तु</string>
     <string name="slide_4_desc">अंधेरे या प्रकाश तरीका! आपकी पंसद।</string>
+    <string name="no_music"> No संगीत फ़ाइलें</string>
+    <string name="fav_removed">पसंदीदा से निकाला</string>
+    <string name="img_accessibility_back">वापस</string>
+    <string name="img_accessibility_permission">अनुदान अनुमति</string>
+    <string name="img_accessibility_expand">विस्तृत या संक्षिप्त</string>
+    <string name="img_accessibility_brand">अनुप्रयोग लोगो</string>
+    <string name="img_accessibility_icon_lib">लाइब्रेरी आइकन</string>
+    <string name="img_accessibility_storage_icon">संग्रहण आइकन</string>
 </resources>

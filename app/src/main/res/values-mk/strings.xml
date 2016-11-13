@@ -40,7 +40,7 @@
     <string name="dialog_cancel">Откажи</string>
     <string name="dialog_title_paste_conflict">постои датотека</string>
     <string name="dialog_from_placeholder">од</string>
-    <string name="dialog_to_placeholder">До:</string>
+    <string name="dialog_to_placeholder">До</string>
     <string name="button_paste_progress">позадина</string>
     <string name="dialog_delete_title">Дали сте сигурни дека сакате да ја избришете следните датотеки?</string>
     <string name="msg_ok">добро</string>
@@ -65,7 +65,6 @@
     <string name="msg_error_not_supported">Не апликација за да се справи со акција</string>
     <string name="permission_request">Треба дозвола за складирање за да се прикажат сите датотеки</string>
     <string name="action_grant">GRANT</string>
-    <string name="action_sort">вид</string>
     <string name="action_view_list">приказ на листа</string>
     <string name="action_view_grid">Приказ на мрежа</string>
     <string name="sort_name">Име (А-Z)</string>
@@ -95,7 +94,7 @@
     <string name="pref_title_show_hidden">Прикажи ги скриените датотеки</string>
     <string name="pref_title_disable_dual">Двојна панелот во пејзаж</string>
     <string name="pref_title_check_update">Провери за надградби</string>
-    <string name="pref_title_change_lang">Промени го јазикот</string>
+    <string name="pref_title_change_lang">Јазик</string>
     <string name="pref_title_upgrade">Надоградете Про</string>
     <string name="pref_title_about">за нас</string>
     <string name="pref_title_version">верзија</string>
@@ -122,7 +121,8 @@
     <string name="create">Креирајте</string>
     <string name="zip_progress_title">креирање на zip</string>
     <string name="needsaccess">Напиши потребен пристап</string>
-    <string name="needs_access_summary">Ве молиме изберете root директориумот на %1$s да се даде можност за запишување на работа</string>
+    <string name="needs_access_summary">Ве молиме изберете root директориумот на %1$s да се даде можност за
+        запишување на работа</string>
     <string name="error">грешка</string>
     <string name="completed">Завршено</string>
     <string name="msg_operation_failed">операцијата не успеа</string>
@@ -154,6 +154,15 @@
     <string name="slide_2_desc">Лесна навигација од секој екран.</string>
     <string name="slide_3_title">Повлечи и пушти</string>
     <string name="slide_3_desc">Одвлекувате датотеки од една папка на друг!</string>
+    <string name="action_sort">вид</string>
     <string name="slide_4_title">теми</string>
     <string name="slide_4_desc">Темно или светло начин! Твој избор.</string>
+    <string name="no_music"> Нема музички фајлови</string>
+    <string name="fav_removed">Отстранет од омилени</string>
+    <string name="img_accessibility_back">назад</string>
+    <string name="img_accessibility_permission">дозвола за грант</string>
+    <string name="img_accessibility_expand">Отворите или затворите</string>
+    <string name="img_accessibility_brand">логото на апликацијата</string>
+    <string name="img_accessibility_icon_lib">икона библиотека</string>
+    <string name="img_accessibility_storage_icon">иконата за складирање</string>
 </resources>

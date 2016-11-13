@@ -40,7 +40,7 @@
     <string name="dialog_cancel">Annullera</string>
     <string name="dialog_title_paste_conflict">fil existerar</string>
     <string name="dialog_from_placeholder">Från</string>
-    <string name="dialog_to_placeholder">Till:</string>
+    <string name="dialog_to_placeholder">Till</string>
     <string name="button_paste_progress">Bakgrund</string>
     <string name="dialog_delete_title">Är du säker på att du vill ta bort följande filer?</string>
     <string name="msg_ok">ok</string>
@@ -65,7 +65,6 @@
     <string name="msg_error_not_supported">Ingen app för att hantera åtgärden</string>
     <string name="permission_request">Behöver lagringstillåtelse att visa alla filer</string>
     <string name="action_grant">BEVILJA</string>
-    <string name="action_sort">Sortera</string>
     <string name="action_view_list">Listvy</string>
     <string name="action_view_grid">rutnät</string>
     <string name="sort_name">Namn (A-Z)</string>
@@ -95,7 +94,7 @@
     <string name="pref_title_show_hidden">Visa dolda filer</string>
     <string name="pref_title_disable_dual">Dubbla rutan i landskaps</string>
     <string name="pref_title_check_update">Kolla efter uppdateringar</string>
-    <string name="pref_title_change_lang">Ändra språk</string>
+    <string name="pref_title_change_lang">Språk</string>
     <string name="pref_title_upgrade">Uppgradera till PRO</string>
     <string name="pref_title_about">Om oss</string>
     <string name="pref_title_version">Version</string>
@@ -154,6 +153,15 @@
     <string name="slide_2_desc">Enkel navigering från vilken skärm som helst.</string>
     <string name="slide_3_title">Dra och släpp</string>
     <string name="slide_3_desc">Dra filer från en mapp till en annan!</string>
+    <string name="action_sort">Sortera</string>
     <string name="slide_4_title">teman</string>
     <string name="slide_4_desc">Mörk eller ljus sätt! Ditt val.</string>
+    <string name="no_music"> Inga Musikfiler</string>
+    <string name="fav_removed">Avlägsnas från favoriter</string>
+    <string name="img_accessibility_back">Tillbaka</string>
+    <string name="img_accessibility_permission">Grant tillstånd</string>
+    <string name="img_accessibility_expand">Expandera eller komprimera</string>
+    <string name="img_accessibility_brand">app logo</string>
+    <string name="img_accessibility_icon_lib">bibliotek ikon</string>
+    <string name="img_accessibility_storage_icon">ikon lagring</string>
 </resources>

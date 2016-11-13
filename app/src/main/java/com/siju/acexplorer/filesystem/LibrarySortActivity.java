@@ -31,6 +31,7 @@ public class LibrarySortActivity extends AppCompatActivity implements OnStartDra
 
 
     @Override
+    @SuppressWarnings("ConstantConditions")
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         checkTheme();
         super.onCreate(savedInstanceState);

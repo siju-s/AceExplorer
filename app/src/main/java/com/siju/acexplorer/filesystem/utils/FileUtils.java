@@ -47,6 +47,7 @@ import com.siju.acexplorer.filesystem.FileListFragment;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.task.CopyService;
 import com.siju.acexplorer.filesystem.task.CreateZipTask;
+import com.siju.acexplorer.filesystem.task.ExtractService;
 import com.siju.acexplorer.filesystem.task.Progress;
 import com.siju.acexplorer.helper.RootHelper;
 import com.siju.acexplorer.utils.DialogUtils;
@@ -174,6 +175,7 @@ public class FileUtils implements Progress {
     private Context mContext;
     private Intent mServiceIntent;
 
+    @SuppressWarnings("ConstantConditions")
     public void showCopyProgressDialog(final Context context, final Intent intent) {
         mContext = context;
         mServiceIntent = intent;
@@ -223,7 +225,7 @@ public class FileUtils implements Progress {
         progressDialog.show();
     }
 
-
+    @SuppressWarnings("ConstantConditions")
     public void showZipProgressDialog(final Context context, final Intent intent) {
         mContext = context;
         mServiceIntent = intent;
@@ -238,7 +240,7 @@ public class FileUtils implements Progress {
         View view = progressDialog.getCustomView();
         textFileName = (TextView) view.findViewById(R.id.textFileName);
         textFileFromPath = (TextView) view.findViewById(R.id.textFileFromPath);
-        TextView textFromPlaceHolder = (TextView)view.findViewById(R.id.textFileFromPlaceHolder);
+        TextView textFromPlaceHolder = (TextView) view.findViewById(R.id.textFileFromPlaceHolder);
         (view.findViewById(R.id.textFileToPlaceHolder)).setVisibility(View.GONE);
 
         textFromPlaceHolder.setVisibility(View.GONE);
@@ -251,8 +253,6 @@ public class FileUtils implements Progress {
         copiedFilesSize = copiedFileInfo.size();
         Logger.log("FileUtils", "Totalfiles=" + copiedFilesSize);
         textFileName.setText(fileName);
-//        textFileCount.setText(String.format(Locale.getDefault(),"%s%d", context.getString(R.string.count_placeholder),
-//                copiedFilesSize));
         textProgress.setText("0%");
 
         progressDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
@@ -273,6 +273,52 @@ public class FileUtils implements Progress {
         progressDialog.show();
     }
 
+    @SuppressWarnings("ConstantConditions")
+    public void showExtractProgressDialog(final Context context, final Intent intent) {
+        mContext = context;
+        mServiceIntent = intent;
+        context.bindService(mServiceIntent, mExtractServiceConnection, Context.BIND_AUTO_CREATE);
+        context.startService(mServiceIntent);
+        String title = context.getString(R.string.extracting);
+        String texts[] = new String[]{title, context.getString(R.string.button_paste_progress), "",
+                context.getString(R.string.dialog_cancel)};
+        progressDialog = new DialogUtils().showCustomDialog(context,
+                R.layout.dialog_progress_paste, texts);
+        progressDialog.setCancelable(false);
+        View view = progressDialog.getCustomView();
+        textFileName = (TextView) view.findViewById(R.id.textFileName);
+        textFileFromPath = (TextView) view.findViewById(R.id.textFileFromPath);
+        TextView textFileToPath = (TextView) view.findViewById(R.id.textFileToPath);
+        TextView textFromPlaceHolder = (TextView) view.findViewById(R.id.textFileFromPlaceHolder);
+        textFromPlaceHolder.setVisibility(View.GONE);
+        textFileCount = (TextView) view.findViewById(R.id.textFilesLeft);
+        textProgress = (TextView) view.findViewById(R.id.textProgressPercent);
+
+        progressBarPaste = (ProgressBar) view.findViewById(R.id.progressBarPaste);
+        textFileToPath.setText(intent.getStringExtra("new_path"));
+        String fileName = intent.getStringExtra("zip");
+
+        textFileName.setText(fileName);
+        textProgress.setText("0%");
+
+        progressDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressDialog.dismiss();
+            }
+        });
+
+        progressDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopExtractService();
+                progressDialog.dismiss();
+            }
+        });
+
+        progressDialog.show();
+    }
+
     private void stopCopyService() {
         mContext.unbindService(mServiceConnection);
         mContext.stopService(mServiceIntent);
@@ -280,6 +326,11 @@ public class FileUtils implements Progress {
 
     private void stopZipService() {
         mContext.unbindService(mZipServiceConnection);
+        mContext.stopService(mServiceIntent);
+    }
+
+    private void stopExtractService() {
+        mContext.unbindService(mExtractServiceConnection);
         mContext.stopService(mServiceIntent);
     }
 
@@ -296,17 +347,34 @@ public class FileUtils implements Progress {
     private final Handler handler = new Handler(Looper.getMainLooper()) {
         public void handleMessage(Message msg) {
             Intent intent = (Intent) msg.obj;
-            int progress =   intent.getIntExtra("PROGRESS", 0);
+            int progress = intent.getIntExtra("PROGRESS", 0);
             long copiedBytes = intent.getLongExtra("DONE", 0);
             long totalBytes = intent.getLongExtra("TOTAL", 0);
 
             switch (intent.getAction()) {
                 case ZIP_PROGRESS:
                     progressBarPaste.setProgress(progress);
+                    textFileCount.setText(Formatter.formatFileSize
+                            (mContext, copiedBytes) + "/" + Formatter.formatFileSize(mContext, totalBytes));
+                    textProgress.setText(String.format(Locale.getDefault(), "%d%s", progress, mContext.getString
+                            (R.string.percent_placeholder)));
+
                     if (progress == 100 || totalBytes == copiedBytes) {
                         stopZipService();
                         progressDialog.dismiss();
+                    }
+                    break;
 
+                case EXTRACT_PROGRESS:
+                    progressBarPaste.setProgress(progress);
+                    textFileCount.setText(Formatter.formatFileSize
+                            (mContext, copiedBytes) + "/" + Formatter.formatFileSize(mContext, totalBytes));
+                    textProgress.setText(String.format(Locale.getDefault(), "%d%s", progress, mContext.getString
+                            (R.string.percent_placeholder)));
+
+                    if (progress == 100) {
+                        stopExtractService();
+                        progressDialog.dismiss();
                     }
                     break;
                 case COPY_PROGRESS:
@@ -317,20 +385,15 @@ public class FileUtils implements Progress {
                         progressDialog.dismiss();
                         return;
                     }
-
-
                     int totalProgress = intent.getIntExtra("TOTAL_PROGRESS", 0);
                     Logger.log("FileUtils", "PROGRESS=" + progress + " TOTAL PROGRESS=" + totalProgress);
                     Logger.log("FileUtils", "Copied bytes=" + copiedBytes + " TOTAL bytes=" + totalBytes);
-
-
                     progressBarPaste.setProgress(totalProgress);
                     textProgress.setText(String.format(Locale.getDefault(), "%d%s", totalProgress, mContext.getString
                             (R.string
-                            .percent_placeholder)));
+                                    .percent_placeholder)));
                     if (progress == 100 || totalBytes == copiedBytes) {
                         int count = intent.getIntExtra("COUNT", 1);
-//                progress =  intent.getIntExtra("PROGRESS", 0);
                         Logger.log("FileUtils", "COUNT=" + count);
                         if (count == copiedFilesSize || copiedBytes == totalBytes) {
                             stopCopyService();
@@ -350,6 +413,7 @@ public class FileUtils implements Progress {
 
     public static final String COPY_PROGRESS = "copy_progress_update";
     public static final String ZIP_PROGRESS = "zip_progress_update";
+    public static final String EXTRACT_PROGRESS = "extract_progress_update";
 
 
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -381,8 +445,37 @@ public class FileUtils implements Progress {
     };
 
 
+    private final ServiceConnection mExtractServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            ExtractService.LocalBinder binder = (ExtractService.LocalBinder) service;
+            ExtractService mService = binder.getService();
+            mService.registerProgressListener(FileUtils.this);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+        }
+    };
+
+
     public static boolean isFileMusic(String path) {
-        return path.endsWith(".mp3") || path.endsWith(".amr") || path.endsWith(".wav");
+        return path.toLowerCase().endsWith(".mp3") || path.toLowerCase().endsWith(".amr") || path.
+                toLowerCase().endsWith(".wav") || path.
+                toLowerCase().endsWith(".m4a");
+    }
+
+
+    /**
+     * To be used when RAR as viewable not needed
+     *
+     * @param filePath
+     * @return
+     */
+    public static boolean isZipViewable(String filePath) {
+        return filePath.toLowerCase().endsWith(".zip") ||
+                filePath.toLowerCase().endsWith(".jar") ||
+                filePath.toLowerCase().endsWith(".apk");
     }
 
 
@@ -535,124 +628,6 @@ public class FileUtils implements Progress {
                 category == FileConstants.CATEGORY.ZIP_VIEWER.getValue();
     }
 
-
-    /**
-     * @param source      the file to be copied
-     * @param destination the directory to move the file to
-     * @return
-     */
-/*
-    public static int copyToDirectory(Context context, String source, String destination, boolean isMoveOperation, int
-            action, PasteUtils.BackGroundOperationsTask.Progress progress) {
-        PasteUtils.BackGroundOperationsTask.Progress progressBg = progress;
-        Logger.log(TAG, "ACTION==" + action + " Move=" + isMoveOperation);
-        File sourceFile = new File(source);
-        File destinationDir = new File(destination);
-        byte[] data = new byte[BUFFER];
-        int read = 0;
-        boolean isMove = isMoveOperation;
-        int fileAction = action;
-
-        boolean exists = destinationDir.exists();
-        boolean value = destinationDir.canWrite();
-        boolean sourceisFile = sourceFile.isFile();
-        boolean destIsDir = destinationDir.isDirectory();
-        File newFile = null;
-
-        if (destinationDir.canWrite()) {
-            String file_name = source.substring(source.lastIndexOf("/"), source.length());
-            if (sourceFile.isFile() && destinationDir.isDirectory()) {
-                String fileNameWithoutExt = file_name.substring(0, file_name.lastIndexOf("."));
-                long size = sourceFile.length();
-                Logger.log(TAG, "fileNameWithoutExt==" + fileNameWithoutExt);
-                if (fileAction == ACTION_SKIP) {
-                    return -1;
-                } else if (fileAction == ACTION_KEEP) {
-                    String extension = file_name.substring(file_name.lastIndexOf("."), file_name.length());
-                    String newName = destination + fileNameWithoutExt + "(2)" + extension;
-                    Logger.log(TAG, "newName==" + newName);
-                    newFile = new File(newName);
-                } else if (fileAction == ACTION_REPLACE) {
-                    String destinationDirFile = destinationDir + "/" + file_name;
-                    new File(destinationDirFile).delete();
-                    newFile = new File(destination + file_name);
-                } else {
-                    newFile = new File(destination + file_name);
-                }
-
-                int progress1 = 0;
-                try {
-
-                    BufferedOutputStream outputStream = new BufferedOutputStream(
-                            new FileOutputStream(newFile));
-                    BufferedInputStream bufferedInputStream = new BufferedInputStream(
-                            new FileInputStream(sourceFile));
-                    int count = 0;
-                    int tempProgress = 0;
-                    while ((read = bufferedInputStream.read(data, 0, BUFFER)) != -1) {
-                        count++;
-                        outputStream.write(data, 0, read);
-                        double value1 = (double) BUFFER / size;
-                        if (progress != null) {
-                            progress1 = (int) (value1 * count * 100);
-                            if (tempProgress != progress1) {
-                                tempProgress = progress1;
-                                progress.publish(tempProgress);
-//                            System.out.println("Progress==" + progress1 + "File=" + file_name);
-                            }
-                        }
-
-
-                    }
-//                    if (progress1 != 100) {
-//                        progress.publish(100);
-//                    }
-                    outputStream.flush();
-                    bufferedInputStream.close();
-                    outputStream.close();
-
-                } catch (FileNotFoundException e) {
-                    Log.e("FileNotFoundException", e.getMessage());
-                    return -1;
-
-                } catch (IOException e) {
-                    Log.e("IOException", e.getMessage());
-                    return -1;
-
-                }
-
-            } else if (sourceFile.isDirectory() && destinationDir.isDirectory()) {
-                if (fileAction == ACTION_SKIP) {
-                    return -1;
-                } else if (fileAction == ACTION_REPLACE) {
-                    String destinationDirFile = destinationDir + "/" + file_name;
-                    new File(destinationDirFile).delete();
-                }
-
-                String files[] = sourceFile.list();
-                String dir = destination + file_name;
-                int len = files.length;
-
-                if (!new File(dir).mkdir()) {
-                    return -1;
-                }
-
-                for (int i = 0; i < len; i++) {
-                    copyToDirectory(context, source + "/" + files[i], dir, isMove, fileAction, progressBg);
-                }
-
-            }
-        } else {
-            return -1;
-        }
-
-        // If move operation
-        if (isMove && action != FileUtils.ACTION_REPLACE) {
-            // delete the original file
-            sourceFile.delete();
-        }
-        return 0;
-    }*/
 
     /**
      * View the file in external apps based on Mime Type
@@ -1466,12 +1441,6 @@ public class FileUtils implements Progress {
         if (f.getParentFile().canWrite()) {
             Logger.log(TAG, "Rename--canWrite=" + true);
             return f.renameTo(new File(newname));
-        } else if (false) {
-            Logger.log(TAG, "Rename--root=");
-            RootTools.remount(f.getPath(), "rw");
-            RootHelper.runAndWait("mv " + f.getPath() + " " + newname, true);
-            RootTools.remount(f.getPath(), "ro");
-            return true;
         }
         return false;
     }
@@ -1637,7 +1606,7 @@ public class FileUtils implements Progress {
         materialDialog.show();
     }
 
-
+    @SuppressWarnings("ConstantConditions")
     public void createFileDialog(final BaseActivity activity, final boolean isRootMode, final String path) {
 
         String title = activity.getString(R.string.new_file);
@@ -1675,6 +1644,7 @@ public class FileUtils implements Progress {
         materialDialog.show();
     }
 
+    @SuppressWarnings("ConstantConditions")
     public void createDirDialog(final BaseActivity activity, final boolean isRootMode, final String path) {
 
         String title = activity.getString(R.string.new_folder);
@@ -1759,7 +1729,7 @@ public class FileUtils implements Progress {
 
     }
 
-
+    @SuppressWarnings("ConstantConditions")
     public void showCompressDialog(final BaseActivity activity, final String currentDir, final ArrayList<FileInfo>
             paths) {
 
@@ -2033,16 +2003,19 @@ public class FileUtils implements Progress {
             FileInputStream fin = new FileInputStream(file);
             if (file.length() > 1048576L) {
                 byte data[] = new byte[(int) file.length() / 100];
+                //noinspection ResultOfMethodCallIgnored
                 fin.read(data);
                 fin.close();
                 hash = new BigInteger(1, md.digest(data)).toString(16);
             } else if (file.length() > 1024L) {
                 byte data[] = new byte[(int) file.length() / 10];
+                //noinspection ResultOfMethodCallIgnored
                 fin.read(data);
                 fin.close();
                 hash = new BigInteger(1, md.digest(data)).toString(16);
             } else {
                 byte data[] = new byte[(int) file.length()];
+                //noinspection ResultOfMethodCallIgnored
                 fin.read(data);
                 fin.close();
                 hash = new BigInteger(1, md.digest(data)).toString(16);

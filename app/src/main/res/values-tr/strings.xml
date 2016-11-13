@@ -40,7 +40,7 @@
     <string name="dialog_cancel">İptal etmek</string>
     <string name="dialog_title_paste_conflict">dosya var</string>
     <string name="dialog_from_placeholder">itibaren</string>
-    <string name="dialog_to_placeholder">için:</string>
+    <string name="dialog_to_placeholder">için</string>
     <string name="button_paste_progress">Arka fon</string>
     <string name="dialog_delete_title">Aşağıdaki dosyaları silmek istediğinizden emin misiniz?</string>
     <string name="msg_ok">tamam</string>
@@ -65,7 +65,6 @@
     <string name="msg_error_not_supported">Hiçbir uygulama eylemi işlemek için</string>
     <string name="permission_request">tüm dosyaları göstermek için depolama iznine ihtiyacınız</string>
     <string name="action_grant">HİBE</string>
-    <string name="action_sort">çeşit</string>
     <string name="action_view_list">Liste görünümü</string>
     <string name="action_view_grid">ızgara görünümü</string>
     <string name="sort_name">İsim (A-Z)</string>
@@ -95,13 +94,13 @@
     <string name="pref_title_show_hidden">Gizli dosyaları göster</string>
     <string name="pref_title_disable_dual">Manzara Çift bölmesi</string>
     <string name="pref_title_check_update">Güncellemeleri kontrol et</string>
-    <string name="pref_title_change_lang">Dili değiştir</string>
-    <string name="pref_title_upgrade">Pro\'ya yükselt</string>
+    <string name="pref_title_change_lang">Dil</string>
+    <string name="pref_title_upgrade">Pro'ya yükselt</string>
     <string name="pref_title_about">Hakkımızda</string>
     <string name="pref_title_version">versiyon</string>
     <string name="prefs_summary_dev">Geliştirici</string>
     <string name="hide">gizlemek</string>
-    <string name="unhide">Göster\'i</string>
+    <string name="unhide">Göster'i</string>
     <string name="more">Daha</string>
     <string name="drag">Sürüklemek</string>
     <string name="move">Hareket</string>
@@ -154,6 +153,15 @@
     <string name="slide_2_desc">Herhangi bir ekrandan kolay navigasyon.</string>
     <string name="slide_3_title">Sürükle ve bırak</string>
     <string name="slide_3_desc">başka bir klasördeki dosyaları sürükleyin!</string>
+    <string name="action_sort">çeşit</string>
     <string name="slide_4_title">Temalar</string>
     <string name="slide_4_desc">Koyu veya Açık yolu! Senin seçimin.</string>
+    <string name="no_music"> Hiçbir Müzik dosyaları</string>
+    <string name="fav_removed">favorilerden kaldırıldı</string>
+    <string name="img_accessibility_back">Arka</string>
+    <string name="img_accessibility_permission">hibe izni</string>
+    <string name="img_accessibility_expand">Expand veya kapa</string>
+    <string name="img_accessibility_brand">Uygulama logosu</string>
+    <string name="img_accessibility_icon_lib">Kütüphane simgesi</string>
+    <string name="img_accessibility_storage_icon">depolama simgesi</string>
 </resources>

@@ -42,7 +42,7 @@
     <string name="dialog_cancel">Prekliči</string>
     <string name="dialog_title_paste_conflict">datoteka obstaja</string>
     <string name="dialog_from_placeholder">iz</string>
-    <string name="dialog_to_placeholder">da:</string>
+    <string name="dialog_to_placeholder">Za</string>
     <string name="button_paste_progress">Ozadje</string>
     <string name="dialog_delete_title">Ali ste prepričani, da želite izbrisati te datoteke?</string>
     <string name="msg_ok">v redu</string>
@@ -67,7 +67,6 @@
     <string name="msg_error_not_supported">Ne aplikacija za obravnavo tožbe</string>
     <string name="permission_request">Potrebujejo za shranjevanje dovoljenje, da pokažejo vse datoteke</string>
     <string name="action_grant">GRANT</string>
-    <string name="action_sort">Razvrsti</string>
     <string name="action_view_list">pogled seznama</string>
     <string name="action_view_grid">pogled Mreža</string>
     <string name="sort_name">Ime (A-Z)</string>
@@ -97,7 +96,7 @@
     <string name="pref_title_show_hidden">Prikaži skrite datoteke</string>
     <string name="pref_title_disable_dual">Dual pane v krajini</string>
     <string name="pref_title_check_update">Preveri za posodobitve</string>
-    <string name="pref_title_change_lang">Spremeni jezik</string>
+    <string name="pref_title_change_lang">Jezik</string>
     <string name="pref_title_upgrade">Nadgradnja na Pro</string>
     <string name="pref_title_about">O podjetju</string>
     <string name="pref_title_version">različica</string>
@@ -156,6 +155,15 @@
     <string name="slide_2_desc">Enostavno navigacijo iz katerega koli zaslonu.</string>
     <string name="slide_3_title">Povleci in spusti</string>
     <string name="slide_3_desc">Povlecite datoteke iz ene mape v drugo!</string>
+    <string name="action_sort">Razvrsti</string>
     <string name="slide_4_title">Teme</string>
     <string name="slide_4_desc">Temno ali Svetloba način! Tvoja izbira.</string>
+    <string name="no_music"> Ni Glasbene datoteke</string>
+    <string name="fav_removed">Odstranjeno iz priljubljenih</string>
+    <string name="img_accessibility_back">Nazaj</string>
+    <string name="img_accessibility_permission">dovoljenje Grant</string>
+    <string name="img_accessibility_expand">Razširiti ali strniti</string>
+    <string name="img_accessibility_brand">App logo</string>
+    <string name="img_accessibility_icon_lib">Knjižnica icon</string>
+    <string name="img_accessibility_storage_icon">ikona za shranjevanje</string>
 </resources>

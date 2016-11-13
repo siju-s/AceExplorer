@@ -156,4 +156,12 @@
     <string name="slide_3_desc">Húzza a fájlokat egyik mappából a másikba!</string>
     <string name="slide_4_title">témák</string>
     <string name="slide_4_desc">Sötét vagy világos utat! A te döntésed.</string>
+    <string name="no_music"> Nem zenefájlok</string>
+    <string name="fav_removed">Eltávolítva a kedvencek közül</string>
+    <string name="img_accessibility_back">Hát</string>
+    <string name="img_accessibility_permission">engedélyt adhat</string>
+    <string name="img_accessibility_expand">Kibontása vagy összecsukása</string>
+    <string name="img_accessibility_brand">App logo</string>
+    <string name="img_accessibility_icon_lib">könyvtár ikon</string>
+    <string name="img_accessibility_storage_icon">Tárolás ikont</string>
 </resources>

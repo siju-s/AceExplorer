@@ -39,7 +39,7 @@
     <string name="dialog_cancel">キャンセル</string>
     <string name="dialog_title_paste_conflict">ファイルが存在しています</string>
     <string name="dialog_from_placeholder">から</string>
-    <string name="dialog_to_placeholder">に：</string>
+    <string name="dialog_to_placeholder">に</string>
     <string name="button_paste_progress">バックグラウンド</string>
     <string name="dialog_delete_title">次のファイルを削除してもよろしいですか？</string>
     <string name="msg_ok">[OK]</string>
@@ -64,7 +64,6 @@
     <string name="msg_error_not_supported">アクションを処理するために、いいえアプリはありません</string>
     <string name="permission_request">すべてのファイルを表示するように記憶許可が必要です</string>
     <string name="action_grant">付与</string>
-    <string name="action_sort">ソート</string>
     <string name="action_view_list">リストビュー</string>
     <string name="action_view_grid">グリッドビュー</string>
     <string name="sort_name">名前（A-Z）</string>
@@ -94,7 +93,7 @@
     <string name="pref_title_show_hidden">隠しファイルを表示</string>
     <string name="pref_title_disable_dual">風景の中にデュアルペイン</string>
     <string name="pref_title_check_update">アップデートを確認</string>
-    <string name="pref_title_change_lang">言語を変えてください</string>
+    <string name="pref_title_change_lang">言語</string>
     <string name="pref_title_upgrade">プロ仕様にアップグレードする</string>
     <string name="pref_title_about">私たちに関しては</string>
     <string name="pref_title_version">バージョン</string>
@@ -153,6 +152,15 @@
     <string name="slide_2_desc">任意の画面から簡単なナビゲーション。</string>
     <string name="slide_3_title">ドラッグアンドドロップ</string>
     <string name="slide_3_desc">あるフォルダから別のフォルダにファイルをドラッグします！</string>
+    <string name="action_sort">ソート</string>
     <string name="slide_4_title">テーマ</string>
     <string name="slide_4_desc">ダークまたはライト方法！あなたの選択。</string>
+    <string name="no_music"> いいえ音楽ファイルがありません</string>
+    <string name="fav_removed">お気に入りから削除</string>
+    <string name="img_accessibility_back">バック</string>
+    <string name="img_accessibility_permission">権限を付与</string>
+    <string name="img_accessibility_expand">展開または折りたたみます</string>
+    <string name="img_accessibility_brand">アプリのロゴ</string>
+    <string name="img_accessibility_icon_lib">ライブラリアイコン</string>
+    <string name="img_accessibility_storage_icon">ストレージのアイコン</string>
 </resources>

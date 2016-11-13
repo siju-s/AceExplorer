@@ -40,7 +40,7 @@
     <string name="dialog_cancel">გაუქმება</string>
     <string name="dialog_title_paste_conflict">ფაილი არსებობს</string>
     <string name="dialog_from_placeholder">მდებარეობა</string>
-    <string name="dialog_to_placeholder">დან:</string>
+    <string name="dialog_to_placeholder">იმისათვის, რომ</string>
     <string name="button_paste_progress">Background</string>
     <string name="dialog_delete_title">დარწმუნებული ხართ, რომ გსურთ წაშალოთ შემდეგი ფაილი?</string>
     <string name="msg_ok">კარგი</string>
@@ -65,7 +65,6 @@
     <string name="msg_error_not_supported">არარის app გაუმკლავდეს აქცია</string>
     <string name="permission_request">უნდა შენახვის ნებართვა ნახოთ ყველა ფაილი</string>
     <string name="action_grant">GRANT</string>
-    <string name="action_sort">დალაგება</string>
     <string name="action_view_list">სია</string>
     <string name="action_view_grid">Grid კალენდარი</string>
     <string name="sort_name">სახელი (A-Z)</string>
@@ -95,7 +94,7 @@
     <string name="pref_title_show_hidden">Show Hidden Files</string>
     <string name="pref_title_disable_dual">Dual მინა Landscape</string>
     <string name="pref_title_check_update">შეამოწმოთ განახლებები</string>
-    <string name="pref_title_change_lang">ენის შეცვლა</string>
+    <string name="pref_title_change_lang">ენა</string>
     <string name="pref_title_upgrade">განახლება პრო</string>
     <string name="pref_title_about">ჩვენს შესახებ</string>
     <string name="pref_title_version">მობილური</string>
@@ -122,7 +121,8 @@
     <string name="create">შექმნა</string>
     <string name="zip_progress_title">შექმნა zip</string>
     <string name="needsaccess">დაწერეთ წვდომა საჭირო</string>
-    <string name="needs_access_summary">გთხოვთ აირჩიოთ root დირექტორია %1$s მიანიჭოს ჩაწერის ხელმისაწვდომობა მუშაობას</string>
+    <string name="needs_access_summary">გთხოვთ აირჩიოთ root დირექტორია %1$s მიანიჭოს ჩაწერის ხელმისაწვდომობა
+        მუშაობას</string>
     <string name="error">შეცდომა</string>
     <string name="completed">დასრულებული</string>
     <string name="msg_operation_failed">ოპერაცია ვერ</string>
@@ -154,6 +154,15 @@
     <string name="slide_2_desc">მარტივი ნავიგაცია ნებისმიერი ეკრანზე.</string>
     <string name="slide_3_title">გადმოათრიე და ჩააგდე</string>
     <string name="slide_3_desc">გადაათრიეთ ფაილი ერთ საქაღალდეში და სხვა!</string>
+    <string name="action_sort">დალაგება</string>
     <string name="slide_4_title">თემები</string>
     <string name="slide_4_desc">მუქი ან ღია გზა! შენი არჩევანი.</string>
+    <string name="no_music"> მუსიკის ფაილი</string>
+    <string name="fav_removed">ამოღებულ დამატება</string>
+    <string name="img_accessibility_back">უკან</string>
+    <string name="img_accessibility_permission">ნებართვის</string>
+    <string name="img_accessibility_expand">გაფართოებას ან დაიშალოს</string>
+    <string name="img_accessibility_brand">app logo</string>
+    <string name="img_accessibility_icon_lib">ბიბლიოთეკა ხატი</string>
+    <string name="img_accessibility_storage_icon">შენახვის ხატი</string>
 </resources>

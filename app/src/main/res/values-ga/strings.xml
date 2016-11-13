@@ -159,4 +159,12 @@
     <string name="slide_3_desc">Comhaid Drag ó fhillteán amháin go ceann eile!</string>
     <string name="slide_4_title">téamaí</string>
     <string name="slide_4_desc">Dorcha nó Light bhealach! Do rogha.</string>
+    <string name="no_music"> Uimh comhaid Ceol</string>
+    <string name="fav_removed">Bainte ó Favorites</string>
+    <string name="img_accessibility_back">Ar ais</string>
+    <string name="img_accessibility_permission">cead Deontais</string>
+    <string name="img_accessibility_expand">Leathnaigh nó Collapse</string>
+    <string name="img_accessibility_brand">app logo</string>
+    <string name="img_accessibility_icon_lib">icon Library</string>
+    <string name="img_accessibility_storage_icon">icon stóráil</string>
 </resources>

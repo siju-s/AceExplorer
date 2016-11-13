@@ -156,4 +156,12 @@
     <string name="slide_3_desc">کشیدن فایل ها از یک پوشه به دیگری!</string>
     <string name="slide_4_title">تم</string>
     <string name="slide_4_desc">تیره یا روشن راه! انتخاب شما.</string>
+    <string name="no_music"> بدون فایل های موسیقی</string>
+    <string name="fav_removed">حذف از علاقه مندی ها</string>
+    <string name="img_accessibility_back">بازگشت</string>
+    <string name="img_accessibility_permission">ارائه مجوز</string>
+    <string name="img_accessibility_expand">بزرگ کردن یا کوچک</string>
+    <string name="img_accessibility_brand">آرم برنامه</string>
+    <string name="img_accessibility_icon_lib">آیکون کتابخانه</string>
+    <string name="img_accessibility_storage_icon">آیکون ذخیره سازی</string>
 </resources>

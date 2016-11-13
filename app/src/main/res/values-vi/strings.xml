@@ -39,7 +39,7 @@
     <string name="dialog_cancel">hủy bỏ</string>
     <string name="dialog_title_paste_conflict">File tồn tại</string>
     <string name="dialog_from_placeholder">Từ</string>
-    <string name="dialog_to_placeholder">Đến:</string>
+    <string name="dialog_to_placeholder">Đến</string>
     <string name="button_paste_progress">Lý lịch</string>
     <string name="dialog_delete_title">Bạn có chắc chắn muốn xóa các tập tin sau đây?</string>
     <string name="msg_ok">được</string>
@@ -64,7 +64,6 @@
     <string name="msg_error_not_supported">Không có ứng dụng để xử lý các hành động</string>
     <string name="permission_request">Cần cho phép lưu trữ để hiển thị tất cả các tập tin</string>
     <string name="action_grant">BAN CHO</string>
-    <string name="action_sort">loại</string>
     <string name="action_view_list">danh sách xem</string>
     <string name="action_view_grid">Chế độ hiển thị theo ô</string>
     <string name="sort_name">Tên (A-Z)</string>
@@ -94,7 +93,7 @@
     <string name="pref_title_show_hidden">Hiển thị cac file bị ẩn</string>
     <string name="pref_title_disable_dual">đôi pane trong Phong cảnh</string>
     <string name="pref_title_check_update">Kiểm tra cập nhật</string>
-    <string name="pref_title_change_lang">Thay đổi ngôn ngữ</string>
+    <string name="pref_title_change_lang">ngôn ngữ</string>
     <string name="pref_title_upgrade">Nâng cấp lên Pro</string>
     <string name="pref_title_about">Về chúng tôi</string>
     <string name="pref_title_version">Phiên bản</string>
@@ -153,6 +152,15 @@
     <string name="slide_2_desc">Dễ dàng chuyển hướng từ bất kỳ màn hình.</string>
     <string name="slide_3_title">Kéo và thả</string>
     <string name="slide_3_desc">Kéo tập tin từ một thư mục khác!</string>
+    <string name="action_sort">loại</string>
     <string name="slide_4_title">chủ đề</string>
     <string name="slide_4_desc">cách tối hoặc ánh sáng! Lựa chọn của bạn.</string>
+    <string name="no_music"> Không có tập tin nhạc</string>
+    <string name="fav_removed">Gỡ bỏ khỏi mục ưa thích</string>
+    <string name="img_accessibility_back">Trở lại</string>
+    <string name="img_accessibility_permission">Cấp phép</string>
+    <string name="img_accessibility_expand">Mở rộng hoặc Thu gọn</string>
+    <string name="img_accessibility_brand">biểu tượng ứng dụng</string>
+    <string name="img_accessibility_icon_lib">thư viện icon</string>
+    <string name="img_accessibility_storage_icon">biểu tượng lưu trữ</string>
 </resources>

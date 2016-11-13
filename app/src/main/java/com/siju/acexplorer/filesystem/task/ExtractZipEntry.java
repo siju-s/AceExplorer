@@ -81,6 +81,7 @@ public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
 
         output = new File(outputDir, fileName);
         if (entry.isDirectory()) {
+            //noinspection ResultOfMethodCallIgnored
             new File(outputDir, fileName).mkdir();
             return;
         }

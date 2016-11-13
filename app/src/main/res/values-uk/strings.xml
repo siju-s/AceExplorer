@@ -3,7 +3,7 @@
     <string name="navigation_drawer_open">Відкрити панель навігації</string>
     <string name="navigation_drawer_close">Закрити панель навігації</string>
     <string name="action_settings">настройки</string>
-    <string name="nav_menu_internal_storage">Внутрішня пам\'ять</string>
+    <string name="nav_menu_internal_storage">Внутрішня пам'ять</string>
     <string name="nav_menu_root">корінь</string>
     <string name="nav_menu_ext_storage">зовнішня SD</string>
     <string name="nav_menu_music">музика</string>
@@ -42,12 +42,12 @@
     <string name="dialog_cancel">скасувати</string>
     <string name="dialog_title_paste_conflict">файл існує</string>
     <string name="dialog_from_placeholder">з</string>
-    <string name="dialog_to_placeholder">Для того, щоб:</string>
+    <string name="dialog_to_placeholder">до</string>
     <string name="button_paste_progress">фон</string>
     <string name="dialog_delete_title">Ви впевнені, що хочете видалити такі файли?</string>
     <string name="msg_ok">добре</string>
     <string name="no_files">немає файлів</string>
-    <string name="msg_error_valid_name">Введіть дійсне ім\'я</string>
+    <string name="msg_error_valid_name">Введіть дійсне ім'я</string>
     <string name="path">шлях:</string>
     <string name="size">Розмір:</string>
     <string name="date_modified">Дата зміни:</string>
@@ -67,11 +67,10 @@
     <string name="msg_error_not_supported">Ні додаток не обробляти дії</string>
     <string name="permission_request">Потрібно дозвіл зберігання, щоб показати всі файли</string>
     <string name="action_grant">ГРАНТ</string>
-    <string name="action_sort">сортувати</string>
     <string name="action_view_list">перегляд списку</string>
     <string name="action_view_grid">вид у вигляді таблиці</string>
-    <string name="sort_name">Ім\'я (A-Z)</string>
-    <string name="sort_name_desc">Ім\'я (Z-A)</string>
+    <string name="sort_name">Ім'я (A-Z)</string>
+    <string name="sort_name_desc">Ім'я (Z-A)</string>
     <string name="sort_type">Тип (по зростанню)</string>
     <string name="sort_type_desc">Тип (по спадаючій)</string>
     <string name="sort_size">Розмір (менше)</string>
@@ -84,7 +83,7 @@
     <string name="dialog_current_path">Поточний шлях</string>
     <string name="dialog_specify_path">вкажіть шлях</string>
     <string name="select_path">Виберіть шлях</string>
-    <string name="enter_file_name">Введіть ім\'я файлу</string>
+    <string name="enter_file_name">Введіть ім'я файлу</string>
     <string name="extract">екстракт</string>
     <string name="dialog_title_browse">Виберіть папку</string>
     <string name="action_select_all">Вибрати все</string>
@@ -97,7 +96,7 @@
     <string name="pref_title_show_hidden">Показувати приховані файли</string>
     <string name="pref_title_disable_dual">Подвійна панель в ландшафтному</string>
     <string name="pref_title_check_update">Перевірити наявність оновлень</string>
-    <string name="pref_title_change_lang">Змінити мову</string>
+    <string name="pref_title_change_lang">Мова</string>
     <string name="pref_title_upgrade">Оновлення до Pro</string>
     <string name="pref_title_about">Про нас</string>
     <string name="pref_title_version">версія</string>
@@ -124,14 +123,15 @@
     <string name="create">створити</string>
     <string name="zip_progress_title">Створення поштового індексу</string>
     <string name="needsaccess">Написати Потрібно доступ</string>
-    <string name="needs_access_summary">Будь ласка, виберіть кореневий каталог %1$s, щоб надати доступ на запис для роботи</string>
+    <string name="needs_access_summary">Будь ласка, виберіть кореневий каталог %1$s, щоб надати доступ на запис
+        для роботи</string>
     <string name="error">помилка</string>
     <string name="completed">завершений</string>
     <string name="msg_operation_failed">Чи не вдалося виконати операцію</string>
     <string name="selected">обраний</string>
-    <string name="enter_name">Введіть ім\'я</string>
+    <string name="enter_name">Введіть ім'я</string>
     <string name="storage_low">недостатньо місця</string>
-    <string name="paste_conflict_remember">запам\'ятати</string>
+    <string name="paste_conflict_remember">запам'ятати</string>
     <string name="copying">копіювання файлів</string>
     <string name="moving">переміщення файлів</string>
     <string name="package_installer">пакет вторинного розповсюдження інсталятора</string>
@@ -156,6 +156,15 @@
     <string name="slide_2_desc">Зручна навігація з будь-якого екрану.</string>
     <string name="slide_3_title">Перетягни та Впусти</string>
     <string name="slide_3_desc">Перетягніть файли з однієї папки в іншу!</string>
+    <string name="action_sort">сортувати</string>
     <string name="slide_4_title">теми</string>
     <string name="slide_4_desc">Темний або Світлий шлях! Ваш вибір.</string>
+    <string name="no_music"> Ні музичних файлів</string>
+    <string name="fav_removed">Вилучені з обраного</string>
+    <string name="img_accessibility_back">назад</string>
+    <string name="img_accessibility_permission">дозвіл гранту</string>
+    <string name="img_accessibility_expand">Розгорнути або згорнути</string>
+    <string name="img_accessibility_brand">App логотип</string>
+    <string name="img_accessibility_icon_lib">значок бібліотеки</string>
+    <string name="img_accessibility_storage_icon">значок зберігання</string>
 </resources>

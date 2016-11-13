@@ -161,4 +161,12 @@
     <string name="slide_3_desc">سحب الملفات من مجلد واحد لآخر!</string>
     <string name="slide_4_title">المواضيع</string>
     <string name="slide_4_desc">الظلام أو الضوء الطريق! اختيارك.</string>
+    <string name="no_music"> لا توجد ملفات الموسيقى</string>
+    <string name="fav_removed">إزالة من المفضلة</string>
+    <string name="img_accessibility_back">الى الخلف</string>
+    <string name="img_accessibility_permission">يعطي الأذن</string>
+    <string name="img_accessibility_expand">توسيع أو طي</string>
+    <string name="img_accessibility_brand">التطبيق شعار</string>
+    <string name="img_accessibility_icon_lib">رمز المكتبة</string>
+    <string name="img_accessibility_storage_icon">رمز التخزين</string>
 </resources>

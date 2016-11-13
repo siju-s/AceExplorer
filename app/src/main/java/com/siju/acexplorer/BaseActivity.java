@@ -220,6 +220,7 @@ public class BaseActivity extends AppCompatActivity implements
         RATE = getResources().getString(R.string.rate_us);
     }
 
+    @SuppressWarnings("ConstantConditions")
     private void initViews() {
         mFrameDualPane = (FrameLayout) findViewById(R.id.frame_container_dual);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);

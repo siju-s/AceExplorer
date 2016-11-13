@@ -40,7 +40,7 @@
     <string name="dialog_cancel">anuloj</string>
     <string name="dialog_title_paste_conflict">skedari ekziston</string>
     <string name="dialog_from_placeholder">nga</string>
-    <string name="dialog_to_placeholder">Te:</string>
+    <string name="dialog_to_placeholder">Te</string>
     <string name="button_paste_progress">Sfond</string>
     <string name="dialog_delete_title">Jeni te sigurte qe doni te fshini fotografi mëposhtme?</string>
     <string name="msg_ok">Ne rregull</string>
@@ -65,7 +65,6 @@
     <string name="msg_error_not_supported">No app për të trajtuar veprimin</string>
     <string name="permission_request">Duhet leje e magazinimit për të treguar të gjitha dosjet</string>
     <string name="action_grant">GRANT</string>
-    <string name="action_sort">lloj</string>
     <string name="action_view_list">Lista view</string>
     <string name="action_view_grid">view Grid</string>
     <string name="sort_name">Emri (A-Z)</string>
@@ -95,7 +94,7 @@
     <string name="pref_title_show_hidden">Trego Hidden Files</string>
     <string name="pref_title_disable_dual">pane dyfishtë në Peisazhi</string>
     <string name="pref_title_check_update">Kontrollo për përditësime</string>
-    <string name="pref_title_change_lang">Ndrysho gjuhen</string>
+    <string name="pref_title_change_lang">Gjuhe</string>
     <string name="pref_title_upgrade">Upgrade për Pro</string>
     <string name="pref_title_about">Rreth nesh</string>
     <string name="pref_title_version">Version</string>
@@ -122,7 +121,8 @@
     <string name="create">krijoj</string>
     <string name="zip_progress_title">Krijimi zip</string>
     <string name="needsaccess">Shkruaj qasjen e kërkuar</string>
-    <string name="needs_access_summary">Ju lutemi zgjidhni dosjen rrënjë e %1$s për të dhënë lejen e shkrimit për të vepruar</string>
+    <string name="needs_access_summary">Ju lutemi zgjidhni dosjen rrënjë e %1$s për të dhënë lejen e shkrimit për
+        të vepruar</string>
     <string name="error">gabim</string>
     <string name="completed">i përfunduar</string>
     <string name="msg_operation_failed">Operacioni dështoi</string>
@@ -154,6 +154,15 @@
     <string name="slide_2_desc">Navigacion lehtë nga çdo ekran.</string>
     <string name="slide_3_title">Tërhiq dhe lësho</string>
     <string name="slide_3_desc">Drag fotografi nga një dosje në një tjetër!</string>
+    <string name="action_sort">lloj</string>
     <string name="slide_4_title">Tema</string>
     <string name="slide_4_desc">mënyrë të errët apo të lehta! Zgjedhja juaj.</string>
+    <string name="no_music"> Nuk ka fotografi Muzikë</string>
+    <string name="fav_removed">Hequr nga të preferuarat</string>
+    <string name="img_accessibility_back">prapa</string>
+    <string name="img_accessibility_permission">leje Grant</string>
+    <string name="img_accessibility_expand">Expand ose Collapse</string>
+    <string name="img_accessibility_brand">App logo</string>
+    <string name="img_accessibility_icon_lib">icon Library</string>
+    <string name="img_accessibility_storage_icon">Storage icon</string>
 </resources>
