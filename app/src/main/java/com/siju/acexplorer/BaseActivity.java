@@ -185,6 +185,7 @@ public class BaseActivity extends AppCompatActivity implements
         }
         setupInitialData();
         registerReceivers();
+//        handleIntent(getIntent());
     }
 
     private void setTheme() {
@@ -257,7 +258,7 @@ public class BaseActivity extends AppCompatActivity implements
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         expandableListView = (ExpandableListView) findViewById(R.id.expand_list_drawer);
-        View list_header = View.inflate(this,R.layout.drawerlist_header, null);
+        View list_header = View.inflate(this, R.layout.drawerlist_header, null);
         expandableListView.addHeaderView(list_header);
 
         fabCreateMenu = (FloatingActionsMenu) findViewById(R.id.fabCreate);
@@ -415,7 +416,9 @@ public class BaseActivity extends AppCompatActivity implements
         checkPreferences();
         checkScreenOrientation();
         prepareListData();
-        initialScreenSetup(mIsHomeScreenEnabled);
+        if (!handleIntent(getIntent())) {
+            initialScreenSetup(mIsHomeScreenEnabled);
+        }
         getSavedFavourites();
         initializeGroups();
         initListeners();
@@ -531,18 +534,8 @@ public class BaseActivity extends AppCompatActivity implements
 
         String[] listDataHeader = getResources().getStringArray(R.array.expand_headers);
         mListHeader = Arrays.asList(listDataHeader);
-/*        Thread storageThread = new Thread(storageRunnable);
-        storageThread.start();*/
         initializeStorageGroup();
     }
-
-/*    private Runnable storageRunnable = new Runnable() {
-        @Override
-        public void run() {
-            android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
-            initializeStorageGroup();
-        }
-    };*/
 
     private void initializeGroups() {
         initializeFavouritesGroup();
@@ -707,6 +700,35 @@ public class BaseActivity extends AppCompatActivity implements
             }
         }
     }
+
+    private static final String ACTION_IMAGES = "android.intent.action.SHORTCUT_IMAGES";
+    private static final String ACTION_MUSIC = "android.intent.action.SHORTCUT_MUSIC";
+    private static final String ACTION_VIDEOS = "android.intent.action.SHORTCUT_VIDEOS";
+
+
+    private boolean handleIntent(Intent intent) {
+        if (intent != null && intent.getAction() != null) {
+            int category = FileConstants.CATEGORY.IMAGE.getValue();
+            switch (intent.getAction()) {
+                case ACTION_IMAGES:
+                    category = FileConstants.CATEGORY.IMAGE.getValue();
+                    break;
+                case ACTION_MUSIC:
+                    category = FileConstants.CATEGORY.AUDIO.getValue();
+                    break;
+                case ACTION_VIDEOS:
+                    category = FileConstants.CATEGORY.VIDEO.getValue();
+                    break;
+
+            }
+            openCategoryItem(null, category);
+            mIsHomePageAdded = true;
+            return true;
+        }
+        return false;
+    }
+
+
 
     private final BroadcastReceiver mLocaleListener = new BroadcastReceiver() {
         @Override
@@ -963,10 +985,9 @@ public class BaseActivity extends AppCompatActivity implements
         // If root dir , parts will be 0
         if (parts.length == 0) {
 
-            if (isDualPaneInFocus)  {
+            if (isDualPaneInFocus) {
                 isCurrentDualDirRoot = true;
-            }
-            else {
+            } else {
                 isCurrentDirRoot = true;
             }
             mStartingDir = File.separator;
@@ -1017,10 +1038,9 @@ public class BaseActivity extends AppCompatActivity implements
 
         int WRAP_CONTENT = LinearLayout.LayoutParams.WRAP_CONTENT;
         if (dir.equals(getInternalStorage().getAbsolutePath())) {
-            if (isDualPaneInFocus)  {
+            if (isDualPaneInFocus) {
                 isCurrentDualDirRoot = false;
-            }
-            else {
+            } else {
                 isCurrentDirRoot = false;
             }
 
@@ -1028,10 +1048,9 @@ public class BaseActivity extends AppCompatActivity implements
         } else if (dir.equals(File.separator)) {
             createNavButton(STORAGE_ROOT, dir);
         } else if (mExternalSDPaths.contains(dir)) {
-            if (isDualPaneInFocus)  {
+            if (isDualPaneInFocus) {
                 isCurrentDualDirRoot = false;
-            }
-            else {
+            } else {
                 isCurrentDirRoot = false;
             }
             createNavButton(STORAGE_EXTERNAL, dir);
@@ -1127,7 +1146,7 @@ public class BaseActivity extends AppCompatActivity implements
     }
 
     private void navButtonOnClick(View view, final String dir) {
-        Logger.log(TAG, "Dir=" + dir + " mCurrentDir="+mCurrentDir);
+        Logger.log(TAG, "Dir=" + dir + " mCurrentDir=" + mCurrentDir);
 
         FileListFragment fileListFragment = (FileListFragment) getSupportFragmentManager().findFragmentById(R.id
                 .main_container);
@@ -1189,20 +1208,20 @@ public class BaseActivity extends AppCompatActivity implements
                         }
                     }
                 } else {
-                        mCurrentDirDualPane = dir;
-                        int position = 0;
-                        for (int i = 0; i < mBackStackListDual.size(); i++) {
-                            if (mCurrentDir.equals(mBackStackListDual.get(i).getFilePath())) {
-                                position = i;
-                                break;
-                            }
+                    mCurrentDirDualPane = dir;
+                    int position = 0;
+                    for (int i = 0; i < mBackStackListDual.size(); i++) {
+                        if (mCurrentDir.equals(mBackStackListDual.get(i).getFilePath())) {
+                            position = i;
+                            break;
                         }
-                        for (int j = mBackStackListDual.size() - 1; j > position; j--) {
-                            mBackStackListDual.remove(j);
-                        }
+                    }
+                    for (int j = mBackStackListDual.size() - 1; j > position; j--) {
+                        mBackStackListDual.remove(j);
+                    }
 
-                        fileListDualFragment.reloadList(true, mCurrentDirDualPane);
-                        setNavDirectory(mCurrentDirDualPane, true);
+                    fileListDualFragment.reloadList(true, mCurrentDirDualPane);
+                    setNavDirectory(mCurrentDirDualPane, true);
 
                 }
             }
@@ -1556,21 +1575,32 @@ public class BaseActivity extends AppCompatActivity implements
                     dualFragment.reloadList(false, directory);
                 }
             } else {
-                ((FileListFragment) fragment).setCategory(category);
-                if (((FileListFragment) fragment).isZipMode()) {
-                    BackStackModel model = ((FileListFragment) fragment).endZipMode();
-                    mBackStackList.remove(model);
-                }
-                if (FileUtils.checkIfLibraryCategory(category)) {
-                    if (isDualPaneInFocus) {
-                        navDirectoryDualPane.removeAllViews();
-                    } else {
-                        navDirectory.removeAllViews();
+                if (fragment == null) {
+                    FileListFragment fileListFragment = new FileListFragment();
+                    fileListFragment.setArguments(args);
+                    ft.add(R.id.main_container, fileListFragment, directory);
+                    ft.addToBackStack(null);
+                    ft.commit();
+//            ft.commitAllowingStateLoss();
+                    boolean value = mCategory == FileConstants.CATEGORY.FILES.getValue();
+                    toggleDualPaneVisibility(value);
+                } else {
+                    ((FileListFragment) fragment).setCategory(category);
+                    if (((FileListFragment) fragment).isZipMode()) {
+                        BackStackModel model = ((FileListFragment) fragment).endZipMode();
+                        mBackStackList.remove(model);
                     }
-                    addHomeNavButton(false);
-                }
+                    if (FileUtils.checkIfLibraryCategory(category)) {
+                        if (isDualPaneInFocus) {
+                            navDirectoryDualPane.removeAllViews();
+                        } else {
+                            navDirectory.removeAllViews();
+                        }
+                        addHomeNavButton(false);
+                    }
 
-                ((FileListFragment) fragment).reloadList(false, directory);
+                    ((FileListFragment) fragment).reloadList(false, directory);
+                }
             }
         }
         drawerLayout.closeDrawer(relativeLayoutDrawerPane);

@@ -166,7 +166,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
                         getActivity().finish();
                     } else if (isFilePicker) {
                         Intent intent = new Intent();
-                        intent.setData(Uri.fromFile(file));
+                        intent.setData(FileUtils.createContentUriApi24(getActivity(), file.getAbsolutePath()));
                         getActivity().setResult(Activity.RESULT_OK, intent);
                         getActivity().finish();
                     }
@@ -190,17 +190,12 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
             @Override
             public void onClick(View view) {
                 Logger.log(TAG, "cancel");
-//                Intent intent = new Intent();
                 getActivity().setResult(AppCompatActivity.RESULT_CANCELED, null);
                 if (mIsRingtonePicker)
                     getActivity().finish();
                 else
                     getDialog().dismiss();
 
-
-    /*            if (mIsRingtonePicker) {
-                    getActivity().finish();
-                }*/
             }
         });
 

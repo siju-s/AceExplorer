@@ -10,6 +10,7 @@ import android.content.ServiceConnection;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.media.MediaScannerConnection;
@@ -26,6 +27,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.provider.DocumentFile;
 import android.text.TextUtils;
 import android.text.format.Formatter;
@@ -640,11 +642,9 @@ public class FileUtils implements Progress {
 
         Context context = fragment.getContext();
         Uri uri = createContentUriApi24(fragment.getContext(), path);
-//        String realPath = getRealPathFromURI(context, uri);
 
-        Intent intent = new Intent();
-        intent.setAction(android.content.Intent.ACTION_VIEW);
-        // To lowercase used since capital extensions like MKV doesn't get recognised
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+
         if (extension == null) {
             openWith(uri, context);
             return;
@@ -657,16 +657,8 @@ public class FileUtils implements Progress {
             String mimeType = getSingleton().getMimeTypeFromExtension(ext);
             Logger.log(TAG, " uri==" + uri + "MIME=" + mimeType);
             intent.setDataAndType(uri, mimeType);
-//            intent.setData(uri);
-            PackageManager packageManager = context.getPackageManager();
-
             if (mimeType != null) {
-                if (intent.resolveActivity(packageManager) != null) {
-//            Intent chooser = Intent.createChooser(intent, context.getString(R.string.msg_open_file));
-                    context.startActivity(intent);
-                } else {
-                    showMessage(context, context.getString(R.string.msg_error_not_supported));
-                }
+                grantUriPermission(context, intent, uri);
             } else {
                 openWith(uri, context);
             }
@@ -674,35 +666,37 @@ public class FileUtils implements Progress {
 
     }
 
-    private static Uri createContentUriApi24(Context context, String path) {
+    public static Uri createContentUriApi24(Context context, String path) {
 
-    /*    if (false) {
-            String authority = "com.siju.acexplorer.fileprovider";//fragment.getContext().getPackageName() + "
-//                    .provider";
-            return FileProvider.getUriForFile(context,
-                    authority, new File(path));
+        if (Utils.isAtleastNougat()) {
+            String authority = context.getPackageName() + ".fileprovider";
+            return FileProvider.getUriForFile(context, authority, new File(path));
         } else {
             return Uri.fromFile(new File(path));
         }
-*/
-        return Uri.fromFile(new File(path));
     }
 
+    private static void grantUriPermission(Context context, Intent intent, Uri uri) {
+        PackageManager packageManager = context.getPackageManager();
+        if (intent.resolveActivity(packageManager) != null) {
+            if (Utils.isAtleastLollipop()) {
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            } else {
+                List<ResolveInfo> resInfoList = packageManager.queryIntentActivities(intent, PackageManager
+                        .MATCH_DEFAULT_ONLY);
 
-    /*public static String getRealPathFromURI(Context context, Uri contentUri) {
-        String[] proj = {MediaStore.Images.Media.DATA};
-        Cursor cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
+                for (ResolveInfo resolveInfo : resInfoList) {
+                    String packageName = resolveInfo.activityInfo.packageName;
+                    context.grantUriPermission(packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION |
+                            Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                }
+            }
+            context.startActivity(intent);
+        } else {
+            showMessage(context, context.getString(R.string.msg_error_not_supported));
+        }
+    }
 
-        if (cursor == null)
-            return null;
-
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-
-        cursor.moveToFirst();
-        String path = cursor.getString(column_index);
-        cursor.close();
-        return path;
-    }*/
 
     private static void openWith(final Uri uri, final Context context) {
 
@@ -719,8 +713,7 @@ public class FileUtils implements Progress {
         materialDialog.getBuilder().itemsCallback(new MaterialDialog.ListCallback() {
             @Override
             public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
-                Intent intent = new Intent();
-                intent.setAction(android.content.Intent.ACTION_VIEW);
+                Intent intent = new Intent(Intent.ACTION_VIEW);
                 switch (position) {
                     case 0:
                         intent.setDataAndType(uri, "text/*");
@@ -734,20 +727,11 @@ public class FileUtils implements Progress {
                     case 3:
                         intent.setDataAndType(uri, "audio/*");
                         break;
-          /*          case 4:
-                        intent = new Intent(c, DbViewer.class);
-                        intent.putExtra("path", f.getPath());
-                        break;*/
                     case 4:
                         intent.setDataAndType(uri, "*/*");
                         break;
                 }
-                PackageManager packageManager = context.getPackageManager();
-                if (intent.resolveActivity(packageManager) != null) {
-                    context.startActivity(intent);
-                } else {
-                    showMessage(context, context.getString(R.string.msg_error_not_supported));
-                }
+                grantUriPermission(context, intent, uri);
                 materialDialog.dismiss();
             }
         });
@@ -788,8 +772,7 @@ public class FileUtils implements Progress {
         ArrayList<Uri> files = new ArrayList<>();
 
         for (FileInfo info : fileInfo) {
-            File file = new File(info.getFilePath());
-            Uri uri = Uri.fromFile(file);
+            Uri uri = createContentUriApi24(context, info.getFilePath());
             System.out.println("shareuri==" + uri);
             files.add(uri);
         }
@@ -1700,11 +1683,7 @@ public class FileUtils implements Progress {
                 intent.setData(uri);
 
                 if (mimeType != null) {
-                    if (FileUtils.checkAppForIntent(context, intent)) {
-                        showMessage(context, context.getString(R.string.msg_error_not_supported));
-                    } else {
-                        context.startActivity(intent);
-                    }
+                    grantUriPermission(context, intent, uri);
                 } else {
                     openWith(uri, context);
                 }
@@ -1859,10 +1838,6 @@ public class FileUtils implements Progress {
 
     public static void scanFile(Context context, String path) {
 
-//        Uri contentUri = Uri.fromFile(new File(path));
-/*        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        mediaScanIntent.setData(contentUri);
-        context.sendBroadcast(mediaScanIntent);*/
         MediaScannerConnection.scanFile(context,
                 new String[]{path}, null,
                 new MediaScannerConnection.OnScanCompletedListener() {

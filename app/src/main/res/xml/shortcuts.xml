@@ -1,0 +1,52 @@
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="image"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_images"
+        android:shortcutShortLabel="@string/nav_menu_image"
+        android:shortcutLongLabel="@string/nav_menu_image"
+        android:shortcutDisabledMessage="@string/nav_menu_image">
+        <intent
+            android:action="android.intent.action.SHORTCUT_IMAGES"
+            android:targetPackage="com.siju.acexplorer"
+            android:targetClass="com.siju.acexplorer.BaseActivity"
+            />
+        <!-- If your shortcut is associated with multiple intents, include them
+             here. The last intent in the list is what the user sees when they
+             launch this shortcut. -->
+     </shortcut>
+
+    <shortcut
+        android:shortcutId="music"
+        android:enabled="true"
+        android:icon="@drawable/ic_library_music"
+        android:shortcutShortLabel="@string/nav_menu_music"
+        android:shortcutLongLabel="@string/nav_menu_music"
+        android:shortcutDisabledMessage="@string/nav_menu_image">
+        <intent
+            android:action="android.intent.action.SHORTCUT_MUSIC"
+            android:targetPackage="com.siju.acexplorer"
+            android:targetClass="com.siju.acexplorer.BaseActivity"
+            />
+        <!-- If your shortcut is associated with multiple intents, include them
+             here. The last intent in the list is what the user sees when they
+             launch this shortcut. -->
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="videos"
+        android:enabled="true"
+        android:icon="@drawable/ic_library_music"
+        android:shortcutShortLabel="@string/nav_menu_video"
+        android:shortcutLongLabel="@string/nav_menu_video"
+        android:shortcutDisabledMessage="@string/nav_menu_video">
+        <intent
+            android:action="android.intent.action.SHORTCUT_VIDEOS"
+            android:targetPackage="com.siju.acexplorer"
+            android:targetClass="com.siju.acexplorer.BaseActivity"
+            />
+        <!-- If your shortcut is associated with multiple intents, include them
+             here. The last intent in the list is what the user sees when they
+             launch this shortcut. -->
+    </shortcut>
+</shortcuts>

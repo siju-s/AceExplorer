@@ -20,11 +20,11 @@ repositories {
 }
 android {
     compileSdkVersion 25
-    buildToolsVersion "23.0.3"
+    buildToolsVersion "25.0.0"
     defaultConfig {
         applicationId "com.siju.acexplorer"
         minSdkVersion 15
-        targetSdkVersion 23
+        targetSdkVersion 25
         versionCode 1
         versionName "Build 16-Final Alpha"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
