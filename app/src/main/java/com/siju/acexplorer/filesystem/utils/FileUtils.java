@@ -1,5 +1,6 @@
 package com.siju.acexplorer.filesystem.utils;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -530,6 +531,7 @@ public class FileUtils implements Progress {
                 final String lastFolder = folders[folders.length - 1];
                 boolean isDigit = false;
                 try {
+                    //noinspection ResultOfMethodCallIgnored
                     Integer.valueOf(lastFolder);
                     isDigit = true;
                 } catch (NumberFormatException ignored) {
@@ -595,6 +597,7 @@ public class FileUtils implements Progress {
     }
 
 
+    @SuppressLint("SdCardPath")
     private static File getUsbDrive() {
         File parent;
         parent = new File("/storage");
@@ -1102,6 +1105,7 @@ public class FileUtils implements Progress {
 
         // Ensure that file is not created during this process.
         if (!isExisting) {
+            //noinspection ResultOfMethodCallIgnored
             file.delete();
         }
 

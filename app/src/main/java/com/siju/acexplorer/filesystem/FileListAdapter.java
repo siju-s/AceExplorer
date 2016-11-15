@@ -94,7 +94,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public interface OnItemClickListener {
-        void onItemClick(View view, int position);
+        void onItemClick(int position);
     }
 
     interface OnItemLongClickListener {
@@ -533,7 +533,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             Logger.log("TAG", "" + mItemClickListener);
 
             if (mItemClickListener != null) {
-                mItemClickListener.onItemClick(v, getAdapterPosition());
+                mItemClickListener.onItemClick(getAdapterPosition());
             }
         }
 

@@ -1,5 +1,6 @@
 package com.siju.acexplorer.helper;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
@@ -129,6 +130,7 @@ public class RootHelper {
         return per;
     }
 
+    @SuppressLint("SdCardPath")
     public static ArrayList<FileInfo> getFilesList(String path, boolean root,
                                                    boolean showHidden, boolean isRingtonePicker) {
         ArrayList<FileInfo> fileInfoArrayList = new ArrayList<>();
@@ -195,7 +197,7 @@ public class RootHelper {
             if (root) {
 //            if (!path.startsWith("/storage") && !path.startsWith("/sdcard")) {
                 String cpath = getCommandLineString(path);
-                ls = runAndWait1("ls -l" + p + cpath, root);
+                ls = runAndWait1("ls -l" + p + cpath, true);
                 if (ls != null) {
                     for (int i = 0; i < ls.size(); i++) {
                         String file1 = ls.get(i);
@@ -219,7 +221,7 @@ public class RootHelper {
 //                                    array.setPath();
                                     boolean isDirectory;
                                     if (array.getLink().trim().length() > 0) {
-                                        isDirectory = isDirectory(array.getLink(), root, 0);
+                                        isDirectory = isDirectory(array.getLink(), true, 0);
                                     } else isDirectory = isDirectory(array);
                                     long size1 = array.getSize();
                                     fileInfoArrayList.add(new FileInfo(name, path1,
@@ -243,6 +245,7 @@ public class RootHelper {
 
     private final ArrayList<FileInfo> fileInfoArrayList = new ArrayList<>();
 
+    @SuppressLint("SdCardPath")
     public ArrayList<FileInfo> getFilesListRecursively(Context context, String path, boolean root) {
 
         File file = new File(path);
@@ -303,7 +306,7 @@ public class RootHelper {
             if (root) {
 //            if (!path.startsWith("/storage") && !path.startsWith("/sdcard")) {
                 String cpath = getCommandLineString(path);
-                ls = runAndWait1("ls -l" + p + cpath, root);
+                ls = runAndWait1("ls -l" + p + cpath, true);
                 if (ls != null) {
                     for (int i = 0; i < ls.size(); i++) {
                         String file1 = ls.get(i);
@@ -327,7 +330,7 @@ public class RootHelper {
 //                                    array.setPath();
                                     boolean isDirectory;
                                     if (array.getLink().trim().length() > 0) {
-                                        isDirectory = isDirectory(array.getLink(), root, 0);
+                                        isDirectory = isDirectory(array.getLink(), true, 0);
 //                                        array.setDirectory(isdirectory);
                                     } else isDirectory = isDirectory(array);
                                     long size1 = array.getSize();

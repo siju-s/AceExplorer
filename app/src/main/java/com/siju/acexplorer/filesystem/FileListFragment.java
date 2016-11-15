@@ -153,6 +153,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     public ArrayList<ZipModel> zipChildren = new ArrayList<>();
     public Archive mArchive;
     public final ArrayList<FileHeader> totalRarList = new ArrayList<>();
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private final ArrayList<FileHeader> rarChildren = new ArrayList<>();
     private boolean mInParentZip = true;
     private int mParentZipCategory;
@@ -354,7 +355,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private void initializeListeners() {
         fileListAdapter.setOnItemClickListener(new FileListAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(View view, int position) {
+            public void onItemClick(int position) {
                 if (getActionMode() != null) {
                     if (mIsDualActionModeActive) {
                         if (checkIfDualFragment()) {
@@ -649,6 +650,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                 String nomedia = ".nomedia";
                 File noMedia = new File(file + File.separator + nomedia);
                 try {
+                    //noinspection ResultOfMethodCallIgnored
                     noMedia.createNewFile();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -1197,7 +1199,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                     String filePath = fileInfoList.get(mSelectedItemPositions.keyAt(0))
                             .getFilePath();
 
-                    boolean isRoot = !filePath.startsWith("/sdcard") && !filePath.startsWith("/storage");
+                    @SuppressLint("SdCardPath") boolean isRoot = !filePath.startsWith("/sdcard") && !filePath.startsWith("/storage");
                     if (FileUtils.isFileCompressed(filePath)) {
                         mExtractItem.setVisible(true);
                     }
@@ -2332,6 +2334,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
             if (files != null) {
                 for (File file : files)
+                    //noinspection ResultOfMethodCallIgnored
                     file.delete();
             }
         }

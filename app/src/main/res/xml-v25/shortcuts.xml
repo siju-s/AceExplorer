@@ -1,0 +1,43 @@
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_images"
+        android:shortcutDisabledMessage="@string/nav_menu_image"
+        android:shortcutId="image"
+        android:shortcutLongLabel="@string/nav_menu_image"
+        android:shortcutShortLabel="@string/nav_menu_image">
+        <intent
+            android:action="android.intent.action.SHORTCUT_IMAGES"
+            android:targetClass="com.siju.acexplorer.BaseActivity"
+            android:targetPackage="com.siju.acexplorer"
+            />
+    </shortcut>
+
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_music"
+        android:shortcutDisabledMessage="@string/nav_menu_image"
+        android:shortcutId="music"
+        android:shortcutLongLabel="@string/nav_menu_music"
+        android:shortcutShortLabel="@string/nav_menu_music">
+        <intent
+            android:action="android.intent.action.SHORTCUT_MUSIC"
+            android:targetClass="com.siju.acexplorer.BaseActivity"
+            android:targetPackage="com.siju.acexplorer"
+            />
+    </shortcut>
+
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_videos"
+        android:shortcutDisabledMessage="@string/nav_menu_video"
+        android:shortcutId="videos"
+        android:shortcutLongLabel="@string/nav_menu_video"
+        android:shortcutShortLabel="@string/nav_menu_video">
+        <intent
+            android:action="android.intent.action.SHORTCUT_VIDEOS"
+            android:targetClass="com.siju.acexplorer.BaseActivity"
+            android:targetPackage="com.siju.acexplorer"
+            />
+    </shortcut>
+</shortcuts>

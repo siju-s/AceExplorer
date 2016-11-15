@@ -132,7 +132,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
 
         fileListAdapter.setOnItemClickListener(new FileListAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(View view, int position) {
+            public void onItemClick(int position) {
                 File file = new File(fileInfoList.get(position).getFilePath());
                 if (file.isDirectory()) {
                     mInStoragesList = false;
