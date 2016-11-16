@@ -86,6 +86,7 @@ public class RootHelper {
     private static boolean waitForCommand(Command cmd, long time) {
         long t = 0;
         while (!cmd.isFinished()) {
+            //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cmd) {
                 try {
                     if (!cmd.isFinished()) {

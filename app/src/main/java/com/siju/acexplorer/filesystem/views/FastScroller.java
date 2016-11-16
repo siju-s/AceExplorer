@@ -26,6 +26,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.support.annotation.ColorInt;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.support.v7.widget.RecyclerView;
@@ -114,6 +115,7 @@ class FastScroller {
             @Override
             public void run() {
                 if (!mIsDragging) {
+
                     if (mAutoHideAnimator != null) {
                         mAutoHideAnimator.cancel();
                     }
@@ -242,32 +244,31 @@ class FastScroller {
     }
 
 
-//    private void setOffset(int x, int y) {
-//        if (mOffset.x == x && mOffset.y == y) {
-//            return;
-//        }
-//        // do not create new objects here, this is called quite often
-//        mInvalidateRect.set(mThumbPosition.x + mOffset.x, mOffset.y, mThumbPosition.x + mOffset.x + mWidth, mRecyclerView.getHeight() + mOffset.y);
-//        mOffset.set(x, y);
-//        mInvalidateTmpRect.set(mThumbPosition.x + mOffset.x, mOffset.y, mThumbPosition.x + mOffset.x + mWidth, mRecyclerView.getHeight() + mOffset.y);
-//        mInvalidateRect.union(mInvalidateTmpRect);
-//        mRecyclerView.invalidate(mInvalidateRect);
-//    }
+    private void setOffset(int x, int y) {
+        if (mOffset.x == x && mOffset.y == y) {
+            return;
+        }
+        // do not create new objects here, this is called quite often
+        mInvalidateRect.set(mThumbPosition.x + mOffset.x, mOffset.y, mThumbPosition.x + mOffset.x + mWidth, mRecyclerView.getHeight() + mOffset.y);
+        mOffset.set(x, y);
+        mInvalidateTmpRect.set(mThumbPosition.x + mOffset.x, mOffset.y, mThumbPosition.x + mOffset.x + mWidth, mRecyclerView.getHeight() + mOffset.y);
+        mInvalidateRect.union(mInvalidateTmpRect);
+        mRecyclerView.invalidate(mInvalidateRect);
+    }
 
-// --Commented out by Inspection START (13-11-2016 02:57 PM):
 //    // Setter/getter for the popup alpha for animations
-//    public void setOffsetX(int x) {
-//        setOffset(x, mOffset.y);
-//    }
-// --Commented out by Inspection STOP (13-11-2016 02:57 PM)
+    public void setOffsetX(int x) {
+        setOffset(x, mOffset.y);
+    }
 
-// --Commented out by Inspection START (13-11-2016 02:57 PM):
-//    public int getOffsetX() {
-//        return mOffset.x;
-//    }
-// --Commented out by Inspection STOP (13-11-2016 02:57 PM)
+
+    public int getOffsetX() {
+        return mOffset.x;
+    }
+
 
     private void show() {
+
         if (!mAnimatingShow) {
             if (mAutoHideAnimator != null) {
                 mAutoHideAnimator.cancel();
@@ -319,10 +320,10 @@ class FastScroller {
 // --Commented out by Inspection STOP (13-11-2016 02:57 PM)
 
 // --Commented out by Inspection START (13-11-2016 02:57 PM):
-//    public void setTrackColor(@ColorInt int color) {
-//        mTrack.setColor(color);
-//        mRecyclerView.invalidate(mInvalidateRect);
-//    }
+    public void setTrackColor(@ColorInt int color) {
+        mTrack.setColor(color);
+        mRecyclerView.invalidate(mInvalidateRect);
+    }
 // --Commented out by Inspection STOP (13-11-2016 02:57 PM)
 
 // --Commented out by Inspection START (13-11-2016 02:57 PM):
@@ -350,22 +351,22 @@ class FastScroller {
 // --Commented out by Inspection STOP (13-11-2016 02:57 PM)
 
 // --Commented out by Inspection START (13-11-2016 02:57 PM):
-//    public void setAutoHideDelay(int hideDelay) {
-//        mAutoHideDelay = hideDelay;
-//        if (mAutoHideEnabled) {
-//            postAutoHideDelayed();
-//        }
-//    }
+void setAutoHideDelay(int hideDelay) {
+        mAutoHideDelay = hideDelay;
+        if (mAutoHideEnabled) {
+            postAutoHideDelayed();
+        }
+    }
 // --Commented out by Inspection STOP (13-11-2016 02:57 PM)
 
 // --Commented out by Inspection START (13-11-2016 02:57 PM):
-//    public void setAutoHideEnabled(boolean autoHideEnabled) {
-//        mAutoHideEnabled = autoHideEnabled;
-//        if (autoHideEnabled) {
-//            postAutoHideDelayed();
-//        } else {
-//            cancelAutoHide();
-//        }
-//    }
+void setAutoHideEnabled(boolean autoHideEnabled) {
+        mAutoHideEnabled = autoHideEnabled;
+        if (autoHideEnabled) {
+            postAutoHideDelayed();
+        } else {
+            cancelAutoHide();
+        }
+    }
 // --Commented out by Inspection STOP (13-11-2016 02:57 PM)
 }

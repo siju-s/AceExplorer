@@ -7,8 +7,8 @@
     android:orientation="vertical">
 
     <pl.droidsonroids.gif.GifImageView
-        android:layout_width="@dimen/img_width_height"
-        android:layout_height="@dimen/img_width_height"
+        android:layout_width="@dimen/intro_img_height"
+        android:layout_height="@dimen/intro_img_height"
         android:src="@drawable/library" />
 
     <TextView

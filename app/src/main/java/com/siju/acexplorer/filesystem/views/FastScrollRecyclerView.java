@@ -69,6 +69,7 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
     public FastScrollRecyclerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mScrollbar = new FastScroller(context, this, attrs);
+//        setAutoHideEnabled(true);
     }
 
     public int getScrollBarWidth() {
@@ -331,22 +332,22 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
 // --Commented out by Inspection STOP (06-11-2016 11:43 PM)
 
 // --Commented out by Inspection START (06-11-2016 11:43 PM):
-//    public void setAutoHideDelay(int hideDelay) {
-//        mScrollbar.setAutoHideDelay(hideDelay);
-//    }
+    public void setAutoHideDelay(int hideDelay) {
+        mScrollbar.setAutoHideDelay(hideDelay);
+    }
 // --Commented out by Inspection STOP (06-11-2016 11:43 PM)
 
-// --Commented out by Inspection START (06-11-2016 11:43 PM):
-//    public void setAutoHideEnabled(boolean autoHideEnabled) {
-//        mScrollbar.setAutoHideEnabled(autoHideEnabled);
-//    }
-// --Commented out by Inspection STOP (06-11-2016 11:43 PM)
 
-// --Commented out by Inspection START (06-11-2016 11:43 PM):
+    public void setAutoHideEnabled(boolean autoHideEnabled) {
+        mScrollbar.setAutoHideEnabled(autoHideEnabled);
+    }
+
+
+//
 //    public void setStateChangeListener(OnFastScrollStateChangeListener stateChangeListener) {
 //        mStateChangeListener = stateChangeListener;
 //    }
-// --Commented out by Inspection STOP (06-11-2016 11:43 PM)
+//
 
     public interface SectionedAdapter {
         @NonNull
