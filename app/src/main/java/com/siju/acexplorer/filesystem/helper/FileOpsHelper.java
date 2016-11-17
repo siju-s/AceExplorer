@@ -86,7 +86,7 @@ public class FileOpsHelper {
                             Intent intent = new Intent(FileConstants.REFRESH);
                             intent.putExtra(FileConstants.OPERATION, FileConstants.FOLDER_CREATE);
                             mActivity.sendBroadcast(intent);
-                            FileUtils.scanFile(mActivity, file.getAbsolutePath());
+                            FileUtils.scanFile(mActivity.getApplicationContext(), file.getAbsolutePath());
 
                         } else
                             Toast.makeText(mActivity, R.string.msg_operation_failed,

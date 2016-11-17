@@ -180,6 +180,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private ZipEntry zipEntry = null;
     private String zipEntryFileName;
     private boolean setRefreshSpan;
+    private MyMediaScannerConnectionClient scannerConnectionClient;
 
 
     @Override
@@ -674,7 +675,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                 String path = intent.getStringExtra(FileConstants.KEY_PATH);
                 Logger.log(TAG, "New zip PAth=" + path);
                 if (path != null) {
-                    FileUtils.scanFile(getActivity(), path);
+                    FileUtils.scanFile(getActivity().getApplicationContext(), path);
                 }
                 reloadList(true, mFilePath);
             } else if (action.equals("refresh")) {
@@ -691,16 +692,23 @@ public class FileListFragment extends Fragment implements LoaderManager
                         ArrayList<String> paths = new ArrayList<>();
                         for (FileInfo info : deletedFilesList) {
                             paths.add(info.getFilePath());
+                            scannerConnectionClient = new MyMediaScannerConnectionClient
+                                    (getActivity().getApplicationContext(), new File(info.getFilePath()), null);
                         }
-                        paths.toArray(pathArray);
 
-                        MediaScannerConnection.scanFile(getActivity(), pathArray, null, new OnScanCompletedListener() {
+
+//                        paths.toArray(pathArray);
+
+/*                        MediaScannerConnection.scanFile(getActivity().getApplicationContext(), pathArray, null, new
+ OnScanCompletedListener
+                                () {
 
                             @Override
                             public void onScanCompleted(String path, Uri uri) {
                                 Log.d(TAG, "Scan completed=" + path + "uri=" + uri);
                             }
-                        });
+                        });*/
+
 
                         mIsBackPressed = true;
                         Uri uri = FileUtils.getUriForCategory(mCategory);
@@ -763,6 +771,17 @@ public class FileListFragment extends Fragment implements LoaderManager
             }
         }
     };
+
+
+    private RefreshData refreshData;
+
+    public interface RefreshData {
+        void refresh(int category);
+    }
+
+    public void setRefreshData(RefreshData data) {
+        refreshData = data;
+    }
 
 
     private void itemClickActionMode(int position, boolean isLongPress) {
@@ -1199,7 +1218,8 @@ public class FileListFragment extends Fragment implements LoaderManager
                     String filePath = fileInfoList.get(mSelectedItemPositions.keyAt(0))
                             .getFilePath();
 
-                    @SuppressLint("SdCardPath") boolean isRoot = !filePath.startsWith("/sdcard") && !filePath.startsWith("/storage");
+                    @SuppressLint("SdCardPath") boolean isRoot = !filePath.startsWith("/sdcard") && !filePath
+                            .startsWith("/storage");
                     if (FileUtils.isFileCompressed(filePath)) {
                         mExtractItem.setVisible(true);
                     }
@@ -2320,6 +2340,10 @@ public class FileListFragment extends Fragment implements LoaderManager
             mPreferences.edit().putInt(FileConstants.KEY_GRID_COLUMNS, mGridColumns).apply();
             sharedPreferenceWrapper.savePrefs(getActivity(), mViewMode);
         }
+        if (scannerConnectionClient != null) {
+            scannerConnectionClient.disconnect();
+        }
+        refreshData = null;
         if (clearCache) {
             clearCache();
             clearCache = false;
@@ -2351,5 +2375,37 @@ public class FileListFragment extends Fragment implements LoaderManager
             refreshSpan();
         }
 
+    }
+
+     final class MyMediaScannerConnectionClient
+            implements MediaScannerConnection.MediaScannerConnectionClient {
+
+        private String mFilename;
+        private String mMimetype;
+        private MediaScannerConnection mConn;
+
+         MyMediaScannerConnectionClient
+                (Context ctx, File file, String mimetype) {
+            this.mFilename = file.getAbsolutePath();
+            mConn = new MediaScannerConnection(ctx, this);
+            mConn.connect();
+        }
+        @Override
+        public void onMediaScannerConnected() {
+            mConn.scanFile(mFilename, mMimetype);
+        }
+
+        @Override
+        public void onScanCompleted(String path, Uri uri) {
+            Logger.log("MediaScanner","Scan completed"+path);
+            // TODO: 18-11-2016 THis method should be called only once per deletion
+            if (refreshData != null)
+            refreshData.refresh(mCategory);
+            disconnect();
+        }
+         void disconnect() {
+            if (mConn != null)
+                mConn.disconnect();
+        }
     }
 }

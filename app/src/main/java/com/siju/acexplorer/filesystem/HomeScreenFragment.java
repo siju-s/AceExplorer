@@ -49,7 +49,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class HomeScreenFragment extends Fragment implements LoaderManager
-        .LoaderCallbacks<ArrayList<FileInfo>>, View.OnClickListener {
+        .LoaderCallbacks<ArrayList<FileInfo>>, View.OnClickListener,FileListFragment.RefreshData {
 
     private View root;
     private int mResourceIds[];
@@ -721,6 +721,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
 
                 FileListFragment fileListFragment = new FileListFragment();
                 fileListFragment.setArguments(args);
+                fileListFragment.setRefreshData(this);
                 ft.add(R.id.main_container, fileListFragment);
                 ft.hide(HomeScreenFragment.this);
                 ft.addToBackStack(null);
@@ -738,6 +739,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             args.putString(FileConstants.KEY_PATH, currentDir);
             FileListFragment fileListFragment = new FileListFragment();
             fileListFragment.setArguments(args);
+            fileListFragment.setRefreshData(this);
             ft.add(R.id.main_container, fileListFragment);
             ft.hide(HomeScreenFragment.this);
             ft.commitAllowingStateLoss();
@@ -752,6 +754,12 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                 mBaseActivity.addToBackStack(currentDir, FileConstants.CATEGORY.FILES.getValue());
             }
         }
+    }
+
+    @Override
+    public void refresh(int category) {
+        Logger.log(TAG,"REFRESH");
+        restartLoaders(category);
     }
 
 
