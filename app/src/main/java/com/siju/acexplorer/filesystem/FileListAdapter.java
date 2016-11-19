@@ -33,7 +33,7 @@ import java.util.ArrayList;
 
 public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private final Context mContext;
+    private Context mContext;
     private ArrayList<FileInfo> fileInfoArrayList = new ArrayList<>();
     private SparseBooleanArray mSelectedItemsIds;
     private final SparseBooleanArray mAnimatedPos = new SparseBooleanArray();
@@ -66,15 +66,22 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public void updateAdapter(ArrayList<FileInfo> fileInfos) {
-        this.fileInfoArrayList = fileInfos;
-        fileInfoArrayListCopy.addAll(fileInfos);
-        offset = 0;
-        mStopAnimation = !mIsAnimNeeded;
-        notifyDataSetChanged();
-        for (int i = 0; i < fileInfos.size(); i++) {
-            mAnimatedPos.put(i, false);
+        clear();
+        if (fileInfos != null) {
+            this.fileInfoArrayList = fileInfos;
+            fileInfoArrayListCopy.addAll(fileInfos);
+            offset = 0;
+            mStopAnimation = !mIsAnimNeeded;
+            notifyDataSetChanged();
+            for (int i = 0; i < fileInfos.size(); i++) {
+                mAnimatedPos.put(i, false);
+            }
         }
         Logger.log("SIJU", "updateAdapter--animated=" + mStopAnimation);
+    }
+
+    private void clear() {
+        fileInfoArrayList = new ArrayList<>();
     }
 
 
@@ -551,6 +558,10 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         FooterViewHolder(View itemView) {
             super(itemView);
         }
+    }
+
+    void onDetach() {
+        mContext = null;
     }
 
 

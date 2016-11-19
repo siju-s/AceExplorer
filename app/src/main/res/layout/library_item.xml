@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp">
+                android:layout_margin="5dp">
 
     <ImageView
         android:id="@+id/imageLibrary"
@@ -10,6 +10,8 @@
         android:layout_height="@dimen/home_library_width"
         android:layout_marginLeft="@dimen/drawer_item_margin"
         android:layout_marginStart="@dimen/drawer_item_margin"
+        android:layout_marginRight="@dimen/drawer_item_margin"
+        android:layout_marginEnd="@dimen/drawer_item_margin"
         android:layout_marginTop="5dp"
         android:background="@drawable/circle"
         android:contentDescription="@string/img_accessibility_icon_lib"
@@ -38,6 +40,8 @@
         android:layout_below="@+id/imageLibrary"
         android:layout_marginLeft="@dimen/drawer_item_margin"
         android:layout_marginStart="@dimen/drawer_item_margin"
+        android:layout_marginRight="@dimen/drawer_item_margin"
+        android:layout_marginEnd="@dimen/drawer_item_margin"
         android:layout_marginTop="3dp"
         android:gravity="center"
         />

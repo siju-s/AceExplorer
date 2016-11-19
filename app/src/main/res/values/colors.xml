@@ -3,7 +3,7 @@
     <color name="colorPrimary">#73066e</color>
     <color name="colorPrimaryDark">#800080</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="navDrawerBg">#fafafa</color>
+    <color name="navDrawerBg">#F5F5F5</color>
     <color name="navButtons">#ffffff</color>
     <!--20% transparent -->
     <color name="actionModeItemSelected">#33800080</color>
@@ -13,12 +13,16 @@
 
     <!-- Light Theme -->
     <color name="light_text">#000000</color>
+    <color name="light_home_bg">#BFBFBF</color>
+    <color name="light_home_lib">#F5F5F5</color>
+
+
 
     <!-- Dark Theme -->
     <color name="dark_text">#ffffff</color>
-    <color name="dark_home_bg">#595959</color>
-    <color name="dark_colorPrimary">#262626</color>
-    <color name="dark_colorPrimaryDark">#000000</color>
+    <color name="dark_home_bg">#3D3D3D</color>
+    <color name="dark_colorPrimary">#292929</color>
+    <color name="dark_colorPrimaryDark">#262626</color>
     <color name="dark_actionModeItemSelected">#33ffffff</color>
     <color name="dark_divider">#80262626</color>
     <color name="dark_overlay">#595959</color>

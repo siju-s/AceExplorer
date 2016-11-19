@@ -19,6 +19,7 @@
     <plurals name="number_of_files">
         <item quantity="one">%d file</item>
         <item quantity="few">%d slika</item>
+        <item quantity="other">%d slika</item>
     </plurals>
     <string name="downloads">preuzimanja</string>
     <string name="action_rename">Preimenovati</string>

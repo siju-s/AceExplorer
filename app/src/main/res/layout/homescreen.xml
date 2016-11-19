@@ -18,7 +18,7 @@
             android:id="@+id/layoutLibrary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/card_margin"
+            android:layout_margin="@dimen/padding_10"
             android:background="@drawable/layer_card_background"
             android:orientation="vertical">
 
@@ -54,10 +54,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/layoutLibrary"
-            android:layout_marginBottom="4dp"
-            android:layout_marginLeft="6dp"
-            android:layout_marginRight="6dp"
-            android:layout_marginTop="4dp"
+            android:layout_margin="@dimen/padding_10"
             android:background="@drawable/layer_card_background"
             android:orientation="vertical">
 

@@ -22,7 +22,6 @@
     <plurals name="number_of_files">
         <item quantity="one">%d file</item>
         <item quantity="other">%d files</item>
-
     </plurals>
     <string name="downloads">Downloads</string>
     <string name="action_rename">Rename</string>
@@ -183,5 +182,6 @@
     <string name="img_accessibility_brand">App logo</string>
     <string name="img_accessibility_icon_lib">Library icon</string>
     <string name="img_accessibility_storage_icon">Storage icon</string>
+    <string name="unlock_full_version">Unlock full version</string>
 
 </resources>

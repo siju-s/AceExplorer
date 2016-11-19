@@ -3,6 +3,6 @@
 
     <integer name="grid_columns_dual">3</integer>
     <integer name="grid_columns">5</integer>
-
+    <integer name="homescreen_columns">5</integer>
 
 </resources>

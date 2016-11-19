@@ -5,10 +5,12 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -16,6 +18,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -49,6 +52,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.vending.billing.IInAppBillingService;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.kobakei.ratethisapp.RateThisApp;
@@ -114,7 +118,7 @@ public class BaseActivity extends AppCompatActivity implements
     private String mCurrentDir;
     private String mCurrentDirDualPane;
     private String STORAGE_ROOT, STORAGE_INTERNAL, STORAGE_EXTERNAL, DOWNLOADS, IMAGES, VIDEO,
-            MUSIC, DOCS, SETTINGS, RATE;
+            MUSIC, DOCS, SETTINGS, RATE, BUY;
     private final ArrayList<SectionItems> favouritesGroupChild = new ArrayList<>();
     private SharedPreferenceWrapper sharedPreferenceWrapper;
     private SharedPreferences mSharedPreferences;
@@ -164,6 +168,8 @@ public class BaseActivity extends AppCompatActivity implements
     private boolean mIsTablet;
     private HomeScreenFragment mHomeScreenFragment;
     private String mCurrentLanguage;
+    private boolean inappShortcutMode;
+    IInAppBillingService mService;
 
 
     @Override
@@ -172,6 +178,10 @@ public class BaseActivity extends AppCompatActivity implements
         setLanguage();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Intent serviceIntent =
+                new Intent("com.android.vending.billing.InAppBillingService.BIND");
+        serviceIntent.setPackage("com.android.vending");
+        bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
         PreferenceManager.setDefaultValues(this, R.xml.pref_settings, false);
         Logger.log(TAG, "onCreate");
 
@@ -185,8 +195,20 @@ public class BaseActivity extends AppCompatActivity implements
         }
         setupInitialData();
         registerReceivers();
-//        handleIntent(getIntent());
     }
+
+    ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mService = null;
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name,
+                                       IBinder service) {
+            mService = IInAppBillingService.Stub.asInterface(service);
+        }
+    };
 
     private void setTheme() {
         mCurrentTheme = ThemeUtils.getTheme(this);
@@ -218,6 +240,7 @@ public class BaseActivity extends AppCompatActivity implements
         DOCS = getResources().getString(R.string.nav_menu_docs);
         IMAGES = getResources().getString(R.string.nav_menu_image);
         SETTINGS = getResources().getString(R.string.action_settings);
+        BUY = getResources().getString(R.string.unlock_full_version);
         RATE = getResources().getString(R.string.rate_us);
     }
 
@@ -395,8 +418,14 @@ public class BaseActivity extends AppCompatActivity implements
 
                 if (PermissionUtils.hasRequiredPermissions()) {
                     Logger.log(TAG, "Permission granted");
-                    fabCreateMenu.setVisibility(View.VISIBLE);
-                    setPermissionGranted();
+                    if (!inappShortcutMode) {
+                        fabCreateMenu.setVisibility(View.VISIBLE);
+                        setPermissionGranted();
+                    }
+                    else {
+                        openCategoryItem(null,mCategory);
+                        inappShortcutMode = false;
+                    }
                     dismissRationaleDialog();
                 } else {
                     showRationale();
@@ -416,7 +445,7 @@ public class BaseActivity extends AppCompatActivity implements
         checkPreferences();
         checkScreenOrientation();
         prepareListData();
-        if (!handleIntent(getIntent())) {
+        if (!checkIfInAppShortcut(getIntent())) {
             initialScreenSetup(mIsHomeScreenEnabled);
         }
         getSavedFavourites();
@@ -641,6 +670,7 @@ public class BaseActivity extends AppCompatActivity implements
 
     private void initializeOthersGroup() {
         ArrayList<SectionItems> othersGroupChild = new ArrayList<>();
+        othersGroupChild.add(new SectionItems(BUY, "", R.drawable.ic_unlock_full, null, 0));
         othersGroupChild.add(new SectionItems(RATE, "", R.drawable.ic_rate_white, null, 0));
         othersGroupChild.add(new SectionItems(SETTINGS, "", R.drawable.ic_settings_white, null, 0));
         totalGroup.add(new SectionGroup(mListHeader.get(3), othersGroupChild));
@@ -706,7 +736,7 @@ public class BaseActivity extends AppCompatActivity implements
     private static final String ACTION_VIDEOS = "android.intent.action.SHORTCUT_VIDEOS";
 
 
-    private boolean handleIntent(Intent intent) {
+    private boolean checkIfInAppShortcut(Intent intent) {
         if (intent != null && intent.getAction() != null) {
             int category = FileConstants.CATEGORY.IMAGE.getValue();
             switch (intent.getAction()) {
@@ -721,7 +751,12 @@ public class BaseActivity extends AppCompatActivity implements
                     break;
 
             }
-            openCategoryItem(null, category);
+            inappShortcutMode = true;
+            mCategory = category;
+            if (PermissionUtils.hasRequiredPermissions() ) {
+                openCategoryItem(null, category);
+            }
+
             mIsHomePageAdded = true;
             return true;
         }
@@ -1645,7 +1680,9 @@ public class BaseActivity extends AppCompatActivity implements
                 break;
             case 3:
                 switch (childPos) {
-                    case 0: // Rate us
+                    case 0:
+                        break;
+                    case 1: // Rate us
                         Intent intent = new Intent(Intent.ACTION_VIEW);
                         // Try Google play
                         intent.setData(Uri
@@ -1667,7 +1704,7 @@ public class BaseActivity extends AppCompatActivity implements
                         }
                         drawerLayout.closeDrawer(relativeLayoutDrawerPane);
                         break;
-                    case 1: // Settings
+                    case 2: // Settings
                         startActivityForResult(new Intent(this, SettingsActivity.class),
                                 PREFS_REQUEST);
                         expandableListView.setSelection(0);
@@ -2071,6 +2108,9 @@ public class BaseActivity extends AppCompatActivity implements
             }
         }
         super.onDestroy();
+        if (mService != null) {
+            unbindService(mServiceConnection);
+        }
     }
 
 

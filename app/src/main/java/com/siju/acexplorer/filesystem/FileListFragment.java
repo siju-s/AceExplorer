@@ -692,23 +692,10 @@ public class FileListFragment extends Fragment implements LoaderManager
                         ArrayList<String> paths = new ArrayList<>();
                         for (FileInfo info : deletedFilesList) {
                             paths.add(info.getFilePath());
-                            scannerConnectionClient = new MyMediaScannerConnectionClient
-                                    (getActivity().getApplicationContext(), new File(info.getFilePath()), null);
+                            FileUtils.scanFile(getActivity().getApplicationContext(),info.getFilePath());
+//                            scannerConnectionClient = new MyMediaScannerConnectionClient
+//                                    (getActivity().getApplicationContext(), new File(info.getFilePath()), null);
                         }
-
-
-//                        paths.toArray(pathArray);
-
-/*                        MediaScannerConnection.scanFile(getActivity().getApplicationContext(), pathArray, null, new
- OnScanCompletedListener
-                                () {
-
-                            @Override
-                            public void onScanCompleted(String path, Uri uri) {
-                                Log.d(TAG, "Scan completed=" + path + "uri=" + uri);
-                            }
-                        });*/
-
 
                         mIsBackPressed = true;
                         Uri uri = FileUtils.getUriForCategory(mCategory);
@@ -1068,7 +1055,8 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     @Override
     public void onLoaderReset(Loader<ArrayList<FileInfo>> loader) {
-
+        // Clear the data in the adapter.
+        fileListAdapter.updateAdapter(null);
     }
 
     private boolean checkIfDualFragment() {
@@ -2054,7 +2042,8 @@ public class FileListFragment extends Fragment implements LoaderManager
                     Logger.log(TAG, "DROP new pos=" + position);
                     fileListAdapter.clearDragPos();
                     @SuppressWarnings("unchecked")
-                    ArrayList<FileInfo> paths = (ArrayList<FileInfo>) event.getLocalState();
+                    ArrayList<FileInfo> draggedFiles = (ArrayList<FileInfo>) event.getLocalState();
+                    ArrayList<String> paths = new ArrayList<>();
 
                   /*  ArrayList<FileInfo> paths = dragData.getParcelableArrayListExtra(FileConstants
                             .KEY_PATH);*/
@@ -2065,7 +2054,12 @@ public class FileListFragment extends Fragment implements LoaderManager
                     } else {
                         destinationDir = mFilePath;
                     }
-                    String sourceParent = new File(paths.get(0).getFilePath()).getParent();
+
+                    for (FileInfo info : draggedFiles) {
+                        paths.add(info.getFilePath());
+                    }
+
+                    String sourceParent = new File(draggedFiles.get(0).getFilePath()).getParent();
                     if (!new File(destinationDir).isDirectory()) {
                         destinationDir = new File(destinationDir).getParent();
                     }
@@ -2074,20 +2068,22 @@ public class FileListFragment extends Fragment implements LoaderManager
                     Logger.log(TAG, "Source parent=" + sourceParent + " " + value);
 
 
-                    if (!destinationDir.equals(sourceParent)) {
-                        Logger.log(TAG, "Source parent=" + sourceParent + " Dest=" +
-                                destinationDir);
-                        showDragDialog(paths, destinationDir);
-                    } else {
-                        final boolean isMoveOperation = false;
-                        ArrayList<FileInfo> info = new ArrayList<>();
-                        info.addAll(paths);
-                        PasteConflictChecker conflictChecker = new PasteConflictChecker(mBaseActivity, destinationDir,
-                                mIsRootMode, isMoveOperation, info);
-                        conflictChecker.execute();
-                        clearSelectedPos();
-                        Logger.log(TAG, "Source=" + paths.get(0) + "Dest=" + destinationDir);
-                        mActionMode.finish();
+                    if (!paths.contains(destinationDir)) {
+                        if (!destinationDir.equals(sourceParent)) {
+                            Logger.log(TAG, "Source parent=" + sourceParent + " Dest=" +
+                                    destinationDir);
+                            showDragDialog(draggedFiles, destinationDir);
+                        } else {
+                            final boolean isMoveOperation = false;
+                            ArrayList<FileInfo> info = new ArrayList<>();
+                            info.addAll(draggedFiles);
+                            PasteConflictChecker conflictChecker = new PasteConflictChecker(mBaseActivity, destinationDir,
+                                    mIsRootMode, isMoveOperation, info);
+                            conflictChecker.execute();
+                            clearSelectedPos();
+                            Logger.log(TAG, "Source=" + draggedFiles.get(0) + "Dest=" + destinationDir);
+                            mActionMode.finish();
+                        }
                     }
 
                     mDragPaths = new ArrayList<>();
@@ -2342,13 +2338,21 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
         if (scannerConnectionClient != null) {
             scannerConnectionClient.disconnect();
+            scannerConnectionClient = null;
         }
         refreshData = null;
         if (clearCache) {
             clearCache();
             clearCache = false;
         }
+        fileListAdapter.onDetach();
         super.onDestroyView();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mBaseActivity = null;
     }
 
     private void clearCache() {
@@ -2399,13 +2403,16 @@ public class FileListFragment extends Fragment implements LoaderManager
         public void onScanCompleted(String path, Uri uri) {
             Logger.log("MediaScanner","Scan completed"+path);
             // TODO: 18-11-2016 THis method should be called only once per deletion
-            if (refreshData != null)
-            refreshData.refresh(mCategory);
+            if (refreshData != null) {
+                refreshData.refresh(mCategory);
+            }
             disconnect();
         }
          void disconnect() {
-            if (mConn != null)
+             Logger.log("MyMediaScannerConnectionClient","Disconnect");
+            if (mConn != null) {
                 mConn.disconnect();
+            }
         }
     }
 }

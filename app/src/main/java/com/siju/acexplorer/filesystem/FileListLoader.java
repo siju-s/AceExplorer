@@ -46,12 +46,11 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private ArrayList<FileInfo> fileInfoList;
 
     private final String mPath;
-    private Context mContext;
     private boolean mShowHidden;
     private final int mCategory;
     private String mZipPath;
     private boolean mIsDualPaneInFocus;
-    private final Fragment mFragment;
+    private Fragment mFragment;
     private boolean mInParentZip;
     private int mSortMode;
     private boolean mIsRingtonePicker;
@@ -67,7 +66,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     FileListLoader(Fragment fragment, Context context, String path, int category) {
         super(context);
         mPath = path;
-        mContext = getContext();
         mCategory = category;
         mShowHidden = PreferenceManager.getDefaultSharedPreferences(context).getBoolean
                 (FileConstants.PREFS_HIDDEN, false);
@@ -83,7 +81,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         mPath = path;
         Context context = fragment.getContext();
         mFragment = fragment;
-        mContext = context;
         mCategory = category;
         mShowHidden = PreferenceManager.getDefaultSharedPreferences(context).getBoolean
                 (FileConstants.PREFS_HIDDEN, false);
@@ -99,7 +96,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     public FileListLoader(Fragment fragment, Context context, String path, int category, boolean isRingtonePicker) {
         super(context);
         mPath = path;
-        mContext = getContext();
         mCategory = category;
         mShowHidden = PreferenceManager.getDefaultSharedPreferences(context).getBoolean
                 (FileConstants.PREFS_HIDDEN, false);
@@ -182,6 +178,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         if (fileInfoList != null) {
             onReleaseResources();
             fileInfoList = null;
+            mFragment = null;
         }
         if (mMountUnmountReceiver != null) {
             getContext().unregisterReceiver(mMountUnmountReceiver);
@@ -201,7 +198,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     }
 
     private void onReleaseResources() {
-        mContext = null;
+
     }
 
 
@@ -329,7 +326,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         long startTime = System.currentTimeMillis();
         Logger.log(this.getClass().getSimpleName(), "Starting time=" + startTime / 1000);
 
-        Cursor cursor = mContext.getContentResolver().query(uri, null, where, selectionArgs,
+        Cursor cursor = getContext().getContentResolver().query(uri, null, where, selectionArgs,
                 null);
         if (cursor != null) {
 
@@ -374,7 +371,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
     private void fetchFavorites() {
         SharedPreferenceWrapper wrapper = new SharedPreferenceWrapper();
-        ArrayList<FavInfo> favList = wrapper.getFavorites(mContext);
+        ArrayList<FavInfo> favList = wrapper.getFavorites(getContext());
         for (FavInfo favInfo : favList) {
             String path = favInfo.getFilePath();
             File file = new File(path);
@@ -439,7 +436,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 totalZipList = new ArrayList<>();
                 ZipEntry zipEntry;
                 Uri uri = Uri.parse(parentZipPath);
-                ZipInputStream zipfile1 = new ZipInputStream(mContext.getContentResolver()
+                ZipInputStream zipfile1 = new ZipInputStream(getContext().getContentResolver()
                         .openInputStream(uri));
                 while ((zipEntry = zipfile1.getNextEntry()) != null) {
                     totalZipList.add(new ZipModel(zipEntry, zipEntry.getTime(), zipEntry.getSize(), zipEntry
@@ -787,7 +784,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
     private void fetchVideos() {
         Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-        Cursor cursor = mContext.getContentResolver().query(uri, null, null, null, null);
+        Cursor cursor = getContext().getContentResolver().query(uri, null, null, null, null);
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 if (isHomeFragment()) {
@@ -891,10 +888,10 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
         Cursor cursor;
         if (category == 9 || category == 11) {
-            cursor = mContext.getContentResolver().query(uri, null, where, selectionArgs,
+            cursor = getContext().getContentResolver().query(uri, null, where, selectionArgs,
                     null);
         } else {
-            cursor = mContext.getContentResolver().query(uri, null, where, null, null);
+            cursor = getContext().getContentResolver().query(uri, null, where, null, null);
         }
         if (cursor != null) {
             if (cursor.moveToFirst()) {
@@ -946,11 +943,11 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
     }
 
-    public static class MountUnmountReceiver extends BroadcastReceiver {
+    private static class MountUnmountReceiver extends BroadcastReceiver {
 
         final FileListLoader mLoader;
 
-        public MountUnmountReceiver(FileListLoader loader) {
+        MountUnmountReceiver(FileListLoader loader) {
             mLoader = loader;
             IntentFilter filter = new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
             filter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);

@@ -49,7 +49,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class HomeScreenFragment extends Fragment implements LoaderManager
-        .LoaderCallbacks<ArrayList<FileInfo>>, View.OnClickListener,FileListFragment.RefreshData {
+        .LoaderCallbacks<ArrayList<FileInfo>>, View.OnClickListener, FileListFragment.RefreshData {
 
     private View root;
     private int mResourceIds[];
@@ -139,11 +139,15 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
 
         int width = metrics.widthPixels;
         int libWidth = getResources().getDimensionPixelSize(R.dimen.home_library_width) +
-                getResources().getDimensionPixelSize(R.dimen.drawer_item_margin) +
+                2 * getResources().getDimensionPixelSize(R.dimen.drawer_item_margin) +
                 getResources().getDimensionPixelSize(R.dimen.padding_5);
-        mGridColumns = width / libWidth;//getResources().getInteger(R.integer.homescreen_columns);
+
+        mGridColumns = getResources().getInteger(R.integer.homescreen_columns);//width / libWidth;//getResources()
+        // .getInteger(R.integer.homescreen_columns);
+//        mGridColumns = Math.min(mGridColumns,homeLibraryInfoArrayList.size());
         spacing = (width - mGridColumns * libWidth) / mGridColumns;
-        Logger.log(TAG, "Grid columns=" + mGridColumns + " width=" + width + " liub size=" + libWidth+"space="+spacing);
+        Logger.log(TAG, "Grid columns=" + mGridColumns + " width=" + width + " liub size=" + libWidth + "space=" +
+                spacing);
     }
 
 
@@ -162,6 +166,13 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             layoutLibrary.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_colorPrimary));
             layoutStorages.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_colorPrimary));
             nestedScrollViewHome.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_home_bg));
+        }
+        else {
+            layoutLibrary.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.light_home_lib));
+            layoutStorages.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.light_home_lib));
+            nestedScrollViewHome.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.light_home_bg));
+
+
         }
     }
 
@@ -284,7 +295,9 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             } else {
                 textCount.setVisibility(View.VISIBLE);
             }
-            libraryItemContainer.setPadding(0,0,spacing,0);
+            libraryItemContainer.setPadding(0, 0, spacing, 0);
+ /*           RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) imageLibrary.getLayoutParams();
+            layoutParams.setMargins(0,0,spacing,0);*/
             textCount.setText(roundOffCount(homeLibraryInfoArrayList.get(i).getCount()));
             int j = i + 1;
             if (j % mGridColumns == 0) {
@@ -560,6 +573,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             ImageView imageStorage = (ImageView) storageItemContainer.findViewById(R.id.imageStorage);
             TextView textStorage = (TextView) storageItemContainer.findViewById(R.id.textStorage);
             TextView textSpace = (TextView) storageItemContainer.findViewById(R.id.textSpace);
+            View homeStoragesDivider = storageItemContainer.findViewById(R.id.home_storages_divider);
 
             imageStorage.setImageResource(homeStoragesInfoArrayList.get(i).getIcon());
             textStorage.setText(homeStoragesInfoArrayList.get(i).getFirstLine());
@@ -569,6 +583,9 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             storagesContainer.addView(storageItemContainer);
             storageItemContainer.setOnClickListener(this);
             storageItemContainer.setTag(homeStoragesInfoArrayList.get(i).getPath());
+            if (i + 1 == homeStoragesInfoArrayList.size()) {
+                homeStoragesDivider.setVisibility(View.GONE);
+            }
 
         }
 
@@ -758,7 +775,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
 
     @Override
     public void refresh(int category) {
-        Logger.log(TAG,"REFRESH");
+        Logger.log(TAG, "REFRESH");
         restartLoaders(category);
     }
 

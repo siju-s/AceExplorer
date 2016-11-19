@@ -544,4 +544,10 @@ public class CopyService extends Service {
     public IBinder onBind(Intent arg0) {
         return mBinder;//registerCallback.asBinder();
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mContext = null;
+    }
 }
