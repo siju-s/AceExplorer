@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-   >
+                xmlns:ads="http://schemas.android.com/apk/res-auto"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
     <TextView
         android:id="@+id/textEmpty"
@@ -13,45 +13,53 @@
         android:gravity="center"
         android:text="@string/no_files"
         android:textSize="20sp"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
-    <View
-        android:id="@+id/viewDummy"
+    <LinearLayout
+        android:id="@+id/layoutDummy"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/colorPrimary"
-        android:visibility="gone" />
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/viewDummy"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            android:visibility="gone"/>
+
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/adView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            ads:adSize="BANNER"
+            android:layout_gravity="center"
+            ads:adUnitId="@string/banner_ad_unit_id">
+        </com.google.android.gms.ads.AdView>
+
+    </LinearLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/viewDummy">
+        android:layout_above="@+id/layoutDummy">
 
-<!--        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerViewFileList"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="none"
-           />-->
 
         <com.siju.acexplorer.filesystem.views.FastScrollRecyclerView
             android:id="@+id/recyclerViewFileList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:fastScrollAutoHide="true"
-            app:fastScrollTrackColor="@android:color/transparent"
             app:fastScrollAutoHideDelay="1500"
             app:fastScrollPopupBgColor="@color/colorPrimary"
             app:fastScrollPopupTextColor="@android:color/primary_text_dark"
-            app:fastScrollThumbColor="@color/colorPrimary" />
-
+            app:fastScrollThumbColor="@color/colorPrimary"
+            app:fastScrollTrackColor="@android:color/transparent"/>
 
 
     </android.support.v4.widget.SwipeRefreshLayout>
-
-
 
 
     <!--    <com.siju.acexplorer.filesystem.ui.FastScroller
@@ -71,12 +79,12 @@
     <!--/>-->
 
     <!--<com.siju.acexplorer.filesystem.ui.vertical.VerticalRecyclerViewFastScroller-->
-        <!--android:id="@+id/fast_scroller"-->
-        <!--android:layout_width="24dp"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:paddingBottom="?attr/actionBarSize"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--/>-->
+    <!--android:id="@+id/fast_scroller"-->
+    <!--android:layout_width="24dp"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:paddingBottom="?attr/actionBarSize"-->
+    <!--android:layout_alignParentRight="true"-->
+    <!--/>-->
 
 
 </RelativeLayout>

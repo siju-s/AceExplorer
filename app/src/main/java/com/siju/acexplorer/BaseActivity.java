@@ -5,12 +5,10 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -18,7 +16,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -52,9 +49,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.vending.billing.IInAppBillingService;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.google.android.gms.ads.MobileAds;
 import com.kobakei.ratethisapp.RateThisApp;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.common.SharedPreferenceWrapper;
@@ -78,6 +75,10 @@ import com.siju.acexplorer.settings.SettingsActivity;
 import com.siju.acexplorer.utils.LocaleHelper;
 import com.siju.acexplorer.utils.PermissionUtils;
 import com.siju.acexplorer.utils.Utils;
+import com.siju.acexplorer.utils.inappbilling.IabHelper;
+import com.siju.acexplorer.utils.inappbilling.IabResult;
+import com.siju.acexplorer.utils.inappbilling.Inventory;
+import com.siju.acexplorer.utils.inappbilling.Purchase;
 import com.stericson.RootTools.RootTools;
 
 import java.io.File;
@@ -113,6 +114,7 @@ public class BaseActivity extends AppCompatActivity implements
     private ExpandableListView expandableListView;
     private List<String> mListHeader;
     private final ArrayList<SectionGroup> totalGroup = new ArrayList<>();
+    private ArrayList<SectionItems> libraryGroupChild = new ArrayList<>();
     private DrawerLayout drawerLayout;
     private NavigationView relativeLayoutDrawerPane;
     private String mCurrentDir;
@@ -169,7 +171,22 @@ public class BaseActivity extends AppCompatActivity implements
     private HomeScreenFragment mHomeScreenFragment;
     private String mCurrentLanguage;
     private boolean inappShortcutMode;
-    IInAppBillingService mService;
+
+    static final String SKU_REMOVE_ADS = "com.siju.acexplorer.pro";
+
+    // (arbitrary) request code for the purchase flow
+    static final int RC_REQUEST = 10111;
+
+
+    // The helper object
+    IabHelper mHelper;
+
+    private String base64EncodedPublicKey =
+            "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAomGBqi0dGhyE1KphvTxc6K3OXsTsWEcAdLNsg22Un" +
+                    "/6VJakiajmZMBODktRggHlUgWDZZvFZCw2so53U++pVHRfyevKIbP7" +
+                    "/eIkB7mtlartsbOkD3yGQCUVxE1kQ3Olum1CYv7DqBQC4J9h9q22ApcGIfkZq6Os3Jm7vKmuzHHLKN63yWQS1FuwwcLAmpSN2EOX4Has4eElrgZoySu4qv5SOooOJS27Y4fzzxToQX5T50tO9dG+NYKrLmPK4yL5JGB5E3UD0I8vNLD/Wj2qPBE1tiYbjHHeX3PrF9lJhXtZs9uiMnMzox6dxW9+VmPYxNuMXakXrURGfpgaWGK00ZQIDAQAB";
+    String payload = "REMOVE_ADS";
+    private boolean isPremium;
 
 
     @Override
@@ -178,10 +195,7 @@ public class BaseActivity extends AppCompatActivity implements
         setLanguage();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Intent serviceIntent =
-                new Intent("com.android.vending.billing.InAppBillingService.BIND");
-        serviceIntent.setPackage("com.android.vending");
-        bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
+        setupBilling();
         PreferenceManager.setDefaultValues(this, R.xml.pref_settings, false);
         Logger.log(TAG, "onCreate");
 
@@ -196,19 +210,6 @@ public class BaseActivity extends AppCompatActivity implements
         setupInitialData();
         registerReceivers();
     }
-
-    ServiceConnection mServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mService = null;
-        }
-
-        @Override
-        public void onServiceConnected(ComponentName name,
-                                       IBinder service) {
-            mService = IInAppBillingService.Stub.asInterface(service);
-        }
-    };
 
     private void setTheme() {
         mCurrentTheme = ThemeUtils.getTheme(this);
@@ -227,6 +228,41 @@ public class BaseActivity extends AppCompatActivity implements
         if (!mCurrentLanguage.equals(Locale.getDefault().getLanguage())) {
             LocaleHelper.setLocale(this, mCurrentLanguage);
         }
+    }
+
+    private void setupBilling() {
+        // Create the helper, passing it our context and the public key to
+        // verify signatures with
+        Log.d(TAG, "Creating IAB helper.");
+        mHelper = new IabHelper(this, base64EncodedPublicKey);
+
+        // enable debug logging (for a production application, you should set
+        // this to false).
+        mHelper.enableDebugLogging(true);
+
+        // Start setup. This is asynchronous and the specified listener
+        // will be called once setup completes.
+        Log.d(TAG, "Starting setup.");
+        mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
+            public void onIabSetupFinished(IabResult result) {
+                Log.d(TAG, "Setup finished.");
+
+                if (!result.isSuccess()) {
+                    // Oh noes, there was a problem.
+                     complain("Problem setting up in-app billing: " + result);
+                    return;
+                }
+
+                // Have we been disposed off in the meantime? If so, quit.
+                if (mHelper == null)
+                    return;
+
+                // IAB is fully set up. Now, let's get an inventory of stuff we
+                // own.
+                Log.d(TAG, "Setup successful. Querying inventory.");
+                mHelper.queryInventoryAsync(mGotInventoryListener);
+            }
+        });
     }
 
 
@@ -421,9 +457,8 @@ public class BaseActivity extends AppCompatActivity implements
                     if (!inappShortcutMode) {
                         fabCreateMenu.setVisibility(View.VISIBLE);
                         setPermissionGranted();
-                    }
-                    else {
-                        openCategoryItem(null,mCategory);
+                    } else {
+                        openCategoryItem(null, mCategory);
                         inappShortcutMode = false;
                     }
                     dismissRationaleDialog();
@@ -557,6 +592,60 @@ public class BaseActivity extends AppCompatActivity implements
         fabCreateFileDual.setOnClickListener(this);
         fabCreateFolder.setOnClickListener(this);
         fabCreateFolderDual.setOnClickListener(this);
+
+
+    }
+
+    // Listener that's called when we finish querying the items and
+    // subscriptions we own
+    IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
+        public void onQueryInventoryFinished(IabResult result,
+                                             Inventory inventory) {
+            Log.d(TAG, "Query inventory finished."+mHelper);
+
+            // Have we been disposed of in the meantime? If so, quit.
+            if (mHelper == null)
+                return;
+
+            // Is it a failure?
+            if (result.isFailure()) {
+                complain("Failed to query inventory: " + result);
+                return;
+            }
+
+            Log.d(TAG, "Query inventory was successful.");
+
+            /*
+             * Check for items we own. Notice that for each purchase, we check
+             * the developer payload to see if it's correct! See
+             * verifyDeveloperPayload().
+             */
+
+            // Do we have the premium upgrade?
+            boolean removeAdsPurchase = inventory.hasPurchase(SKU_REMOVE_ADS);
+            if (removeAdsPurchase) {
+                // User paid to remove the Ads - so hide 'em
+                isPremium = true;
+            } else {
+                isPremium = false;
+
+                showAds();
+            }
+//            Constants.isAdsDisabled = (removeAdsPurchase != null && verifyDeveloperPayload(removeAdsPurchase));
+//            removeAds();
+
+            Log.d(TAG, "User has "
+                    + (isPremium ? "REMOVED ADS"
+                    : "NOT REMOVED ADS"));
+
+            // setWaitScreen(false);
+            Log.d(TAG, "Initial inventory query finished; enabling main UI.");
+        }
+    };
+
+    private void showAds() {
+        //TODO Replace with valid ad unit id.This is just a test ad
+        MobileAds.initialize(getApplicationContext(), "ca-app-pub-3940256099942544~3347511713");
     }
 
     private void prepareListData() {
@@ -660,7 +749,6 @@ public class BaseActivity extends AppCompatActivity implements
     }
 
     private void initializeLibraryGroup() {
-        ArrayList<SectionItems> libraryGroupChild = new ArrayList<>();
         libraryGroupChild.add(new SectionItems(MUSIC, null, R.drawable.ic_music_white, null, 0));
         libraryGroupChild.add(new SectionItems(VIDEO, null, R.drawable.ic_video_white, null, 0));
         libraryGroupChild.add(new SectionItems(IMAGES, null, R.drawable.ic_photos_white, null, 0));
@@ -670,7 +758,9 @@ public class BaseActivity extends AppCompatActivity implements
 
     private void initializeOthersGroup() {
         ArrayList<SectionItems> othersGroupChild = new ArrayList<>();
-        othersGroupChild.add(new SectionItems(BUY, "", R.drawable.ic_unlock_full, null, 0));
+        if (!isPremium) {
+            othersGroupChild.add(new SectionItems(BUY, "", R.drawable.ic_unlock_full, null, 0));
+        }
         othersGroupChild.add(new SectionItems(RATE, "", R.drawable.ic_rate_white, null, 0));
         othersGroupChild.add(new SectionItems(SETTINGS, "", R.drawable.ic_settings_white, null, 0));
         totalGroup.add(new SectionGroup(mListHeader.get(3), othersGroupChild));
@@ -705,6 +795,7 @@ public class BaseActivity extends AppCompatActivity implements
             args.putBoolean(FileConstants.KEY_HOME, true);
             args.putBoolean(BaseActivity.PREFS_FIRST_RUN, mIsFirstRun);
             args.putBoolean(FileConstants.KEY_DUAL_ENABLED, mIsDualModeEnabled);
+            args.putBoolean(FileConstants.KEY_PREMIUM,isPremium);
             mHomeScreenFragment = new HomeScreenFragment();
             mHomeScreenFragment.setArguments(args);
 //            ft.setCustomAnimations(R.anim.slide_in_left,R.anim.slide_out_right);
@@ -720,6 +811,7 @@ public class BaseActivity extends AppCompatActivity implements
             Bundle args = new Bundle();
             args.putBoolean(FileConstants.KEY_HOME, false);
             args.putString(FileConstants.KEY_PATH, mCurrentDir);
+            args.putBoolean(FileConstants.KEY_PREMIUM,isPremium);
             FileListFragment fileListFragment = new FileListFragment();
             fileListFragment.setArguments(args);
             ft.replace(R.id.main_container, fileListFragment, mCurrentDir);
@@ -753,7 +845,7 @@ public class BaseActivity extends AppCompatActivity implements
             }
             inappShortcutMode = true;
             mCategory = category;
-            if (PermissionUtils.hasRequiredPermissions() ) {
+            if (PermissionUtils.hasRequiredPermissions()) {
                 openCategoryItem(null, category);
             }
 
@@ -762,7 +854,6 @@ public class BaseActivity extends AppCompatActivity implements
         }
         return false;
     }
-
 
 
     private final BroadcastReceiver mLocaleListener = new BroadcastReceiver() {
@@ -811,92 +902,111 @@ public class BaseActivity extends AppCompatActivity implements
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         // Called when user returns from the settings screen
-        if (requestCode == PREFS_REQUEST) {
-            Logger.log(TAG, "OnActivityResult=" + resultCode);
-            if (resultCode == RESULT_OK) {
-                if (intent != null && intent.getBooleanExtra(FileConstants.PREFS_RESET, false)) {
-                    resetFavouritesGroup();
-                    expandableListView.smoothScrollToPosition(0);
-                }
-                onSharedPrefsChanged();
+        Log.d(TAG, "onActivityResult(" + requestCode + "," + resultCode + ","
+                + intent);
+/*        if (mHelper == null)
+            return ;
 
-            }
-        } else if (requestCode == SETTINGS_REQUEST) {
-            // User clicked the Setting button and we have permissions,setupInitialData the data
-            if (PermissionUtils.hasRequiredPermissions()) {
+        // Pass on the activity result to the helper for handling
+        if (!mHelper.handleActivityResult(requestCode, resultCode, intent)) {
+            // not handled, so handle it ourselves (here's where you'd
+            // perform any handling of activity results not related to in-app
+            // billing...
+            return false;
+        } else {
+
+            Log.d(TAG, "onActivityResult handled by IABUtil.");
+
+            return true;
+        }*/
+        if (!mHelper.handleActivityResult(requestCode, resultCode, intent)) {
+            if (requestCode == PREFS_REQUEST) {
+                Logger.log(TAG, "OnActivityResult=" + resultCode);
+                if (resultCode == RESULT_OK) {
+                    if (intent != null && intent.getBooleanExtra(FileConstants.PREFS_RESET, false)) {
+                        resetFavouritesGroup();
+                        expandableListView.smoothScrollToPosition(0);
+                    }
+                    onSharedPrefsChanged();
+
+                }
+            } else if (requestCode == SETTINGS_REQUEST) {
+                // User clicked the Setting button and we have permissions,setupInitialData the data
+                if (PermissionUtils.hasRequiredPermissions()) {
 //                fabCreateMenu.setVisibility(View.VISIBLE);
-                setPermissionGranted();
+                    setPermissionGranted();
            /*     setupInitialData();
                 setUpInitialData();*/
-            } else {
-                // User clicked the Setting button and we don't permissions,show snackbar again
-                showRationale();
-            }
-        } else if (requestCode == SAF_REQUEST) {
-            String uriString = mSharedPreferences.getString(FileConstants.SAF_URI, null);
+                } else {
+                    // User clicked the Setting button and we don't permissions,show snackbar again
+                    showRationale();
+                }
+            } else if (requestCode == SAF_REQUEST) {
+                String uriString = mSharedPreferences.getString(FileConstants.SAF_URI, null);
 
-            Uri oldUri = uriString != null ? Uri.parse(uriString) : null;
+                Uri oldUri = uriString != null ? Uri.parse(uriString) : null;
 
-            if (resultCode == Activity.RESULT_OK) {
-                Uri treeUri = intent.getData();
-                Log.d(TAG, "tree uri=" + treeUri + " old uri=" + oldUri);
-                // Get Uri from Storage Access Framework.
-                // Persist URI - this is required for verification of writability.
-                if (treeUri != null) {
-                    mSharedPreferences.edit().putString(FileConstants.SAF_URI, treeUri.toString()).apply();
-                    int takeFlags = intent.getFlags();
-                    takeFlags &= (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    getContentResolver().takePersistableUriPermission(treeUri, takeFlags);
+                if (resultCode == Activity.RESULT_OK) {
+                    Uri treeUri = intent.getData();
+                    Log.d(TAG, "tree uri=" + treeUri + " old uri=" + oldUri);
+                    // Get Uri from Storage Access Framework.
+                    // Persist URI - this is required for verification of writability.
+                    if (treeUri != null) {
+                        mSharedPreferences.edit().putString(FileConstants.SAF_URI, treeUri.toString()).apply();
+                        int takeFlags = intent.getFlags();
+                        takeFlags &= (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        getContentResolver().takePersistableUriPermission(treeUri, takeFlags);
 
-                    switch (mOperation) {
-                        case FileConstants.DELETE:
-                            new DeleteTask(this, mIsRootMode, mFiles).execute();
-                            mFiles = new ArrayList<>();
-                            break;
-                        case FileConstants.COPY:
-                            Intent intent1 = new Intent(this, CopyService.class);
-                            intent1.putParcelableArrayListExtra("FILE_PATHS", mFiles);
-                            intent1.putExtra("COPY_DIRECTORY", mNewFilePath);
-                            intent.putParcelableArrayListExtra("ACTION", mCopyData);
-                            intent1.putParcelableArrayListExtra("TOTAL_LIST", mTotalFiles);
-                            new FileUtils().showCopyProgressDialog(this, intent1);
-                            break;
-                        case FileConstants.MOVE:
-                            new MoveFiles(this, mFiles, mCopyData).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                                    mNewFilePath);
-                            break;
-                        case FileConstants.FOLDER_CREATE:
-                            mFileOpsHelper.mkDir(mIsRootMode, new File(mNewFilePath));
-                            break;
-                        case FileConstants.RENAME:
-                            mFileOpsHelper.renameFile(mIsRootMode, new File(mOldFilePath), new File(mNewFilePath),
-                                    mRenamedPosition);
-                            break;
-                        case FileConstants.FILE_CREATE:
-                            mFileOpsHelper.mkFile(mIsRootMode, new File(mNewFilePath));
-                            break;
-                        case FileConstants.EXTRACT:
-                            mFileOpsHelper.extractFile(new File(mOldFilePath), new File(mNewFilePath));
-                            break;
-                        case FileConstants.COMPRESS:
-                            mFileOpsHelper.compressFile(new File(mNewFilePath), mFiles);
+                        switch (mOperation) {
+                            case FileConstants.DELETE:
+                                new DeleteTask(this, mIsRootMode, mFiles).execute();
+                                mFiles = new ArrayList<>();
+                                break;
+                            case FileConstants.COPY:
+                                Intent intent1 = new Intent(this, CopyService.class);
+                                intent1.putParcelableArrayListExtra("FILE_PATHS", mFiles);
+                                intent1.putExtra("COPY_DIRECTORY", mNewFilePath);
+                                intent.putParcelableArrayListExtra("ACTION", mCopyData);
+                                intent1.putParcelableArrayListExtra("TOTAL_LIST", mTotalFiles);
+                                new FileUtils().showCopyProgressDialog(this, intent1);
+                                break;
+                            case FileConstants.MOVE:
+                                new MoveFiles(this, mFiles, mCopyData).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                                        mNewFilePath);
+                                break;
+                            case FileConstants.FOLDER_CREATE:
+                                mFileOpsHelper.mkDir(mIsRootMode, new File(mNewFilePath));
+                                break;
+                            case FileConstants.RENAME:
+                                mFileOpsHelper.renameFile(mIsRootMode, new File(mOldFilePath), new File(mNewFilePath),
+                                        mRenamedPosition);
+                                break;
+                            case FileConstants.FILE_CREATE:
+                                mFileOpsHelper.mkFile(mIsRootMode, new File(mNewFilePath));
+                                break;
+                            case FileConstants.EXTRACT:
+                                mFileOpsHelper.extractFile(new File(mOldFilePath), new File(mNewFilePath));
+                                break;
+                            case FileConstants.COMPRESS:
+                                mFileOpsHelper.compressFile(new File(mNewFilePath), mFiles);
+                        }
                     }
                 }
+                // If not confirmed SAF, or if still not writable, then revert settings.
+                else {
+
+                    if (oldUri != null)
+                        mSharedPreferences.edit().putString(FileConstants.SAF_URI, oldUri.toString()).apply();
+
+                    Toast.makeText(this, getString(R.string.access_denied_external), Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                mOperation = -1;
+                mNewFilePath = null;
             }
-            // If not confirmed SAF, or if still not writable, then revert settings.
-            else {
-
-                if (oldUri != null)
-                    mSharedPreferences.edit().putString(FileConstants.SAF_URI, oldUri.toString()).apply();
-
-                Toast.makeText(this, getString(R.string.access_denied_external), Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            mOperation = -1;
-            mNewFilePath = null;
+            super.onActivityResult(requestCode, resultCode, intent);
         }
-        super.onActivityResult(requestCode, resultCode, intent);
     }
 
 
@@ -1552,6 +1662,7 @@ public class BaseActivity extends AppCompatActivity implements
         Bundle args = new Bundle();
         args.putString(FileConstants.KEY_PATH, directory);
         args.putInt(FileConstants.KEY_CATEGORY, category);
+        args.putBoolean(FileConstants.KEY_PREMIUM,isPremium);
 
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
         if (fragment instanceof HomeScreenFragment) {
@@ -1679,8 +1790,14 @@ public class BaseActivity extends AppCompatActivity implements
                 drawerLayout.closeDrawer(relativeLayoutDrawerPane);
                 break;
             case 3:
+                if (isPremium) {
+                   childPos = childPos + 1;
+                }
                 switch (childPos) {
+
                     case 0:
+                        mHelper.launchPurchaseFlow(this, SKU_REMOVE_ADS,
+                                RC_REQUEST, mPurchaseFinishedListener, payload);
                         break;
                     case 1: // Rate us
                         Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -1713,6 +1830,90 @@ public class BaseActivity extends AppCompatActivity implements
                 }
         }
     }
+
+    /**
+     * Verifies the developer payload of a purchase.
+     */
+    boolean verifyDeveloperPayload(Purchase p) {
+        String payload = p.getDeveloperPayload();
+
+        /*
+         * TODO: verify that the developer payload of the purchase is correct.
+         * It will be the same one that you sent when initiating the purchase.
+         *
+         * WARNING: Locally generating a random string when starting a purchase
+         * and verifying it here might seem like a good approach, but this will
+         * fail in the case where the user purchases an item on one device and
+         * then uses your app on a different device, because on the other device
+         * you will not have access to the random string you originally
+         * generated.
+         *
+         * So a good developer payload has these characteristics:
+         *
+         * 1. If two different users purchase an item, the payload is different
+         * between them, so that one user's purchase can't be replayed to
+         * another user.
+         *
+         * 2. The payload must be such that you can verify it even when the app
+         * wasn't the one who initiated the purchase flow (so that items
+         * purchased by the user on one device work on other devices owned by
+         * the user).
+         *
+         * Using your own server to store and verify developer payloads across
+         * app installations is recommended.
+         */
+        return true;
+    }
+
+    // Callback for when a purchase is finished
+    IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
+        public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
+            Log.d(TAG, "Purchase finished: " + result + ", purchase: "
+                    + purchase);
+
+            // if we were disposed of in the meantime, quit.
+            if (mHelper == null)
+                return;
+
+            if (result.isFailure()) {
+                complain("Error purchasing: " + result);
+                return;
+            }
+            if (!verifyDeveloperPayload(purchase)) {
+                complain("Error purchasing. Authenticity verification failed.");
+                return;
+            }
+
+            Log.d(TAG, "Purchase successful.");
+
+            if (purchase.getSku().equals(SKU_REMOVE_ADS)) {
+                // bought the premium upgrade!
+                isPremium = true;
+                hideAds();
+
+            }
+        }
+    };
+
+    private void hideAds() {
+        Log.d(TAG,"Hide ads");
+        libraryGroupChild.remove(0);
+        expandableListAdapter.notifyDataSetChanged();
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
+        if (fragment instanceof FileListFragment) {
+            ((FileListFragment)fragment).setPremium();
+        }
+        else if (fragment instanceof HomeScreenFragment) {
+            ((HomeScreenFragment)fragment).setPremium();
+        }
+    }
+
+
+    void complain(String message) {
+        Log.e(TAG, "**** Error: " + message);
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
@@ -2107,10 +2308,9 @@ public class BaseActivity extends AppCompatActivity implements
                 e.printStackTrace();
             }
         }
+        if (mHelper != null) mHelper.dispose();
+        mHelper = null;
         super.onDestroy();
-        if (mService != null) {
-            unbindService(mServiceConnection);
-        }
     }
 
 

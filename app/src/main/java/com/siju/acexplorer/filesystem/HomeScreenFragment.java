@@ -32,6 +32,8 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
@@ -71,10 +73,12 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     private boolean mIsPermissionGranted = true;
     private TableLayout libraryContainer;
     private TableLayout storagesContainer;
-
     private int mGridColumns;
     private int spacing;
     private boolean mIsThemeDark;
+    private AdView mAdView;
+    private boolean isPremium;
+    private RelativeLayout layoutContainer;
 
 
     @Override
@@ -171,9 +175,26 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             layoutLibrary.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.light_home_lib));
             layoutStorages.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.light_home_lib));
             nestedScrollViewHome.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.light_home_bg));
-
-
         }
+        layoutContainer= (RelativeLayout) root.findViewById(R.id.layoutContainer);
+        mAdView = (AdView) root.findViewById(R.id.adView);
+        isPremium = getArguments() != null && getArguments().getBoolean(FileConstants.KEY_PREMIUM, false);
+        hideAds();
+        if (!isPremium) {
+            AdRequest adRequest = new AdRequest.Builder().build();
+            mAdView.loadAd(adRequest);
+        }
+    }
+
+    private void hideAds() {
+        if (isPremium) {
+            layoutContainer.removeView(mAdView);
+        }
+    }
+
+    public void setPremium() {
+        isPremium = true;
+        hideAds();
     }
 
 

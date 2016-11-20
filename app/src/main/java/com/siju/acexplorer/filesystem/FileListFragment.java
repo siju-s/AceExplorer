@@ -57,6 +57,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -68,6 +69,8 @@ import com.bumptech.glide.Glide;
 import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
 import com.github.junrar.rarfile.FileHeader;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
@@ -181,6 +184,9 @@ public class FileListFragment extends Fragment implements LoaderManager
     private String zipEntryFileName;
     private boolean setRefreshSpan;
     private MyMediaScannerConnectionClient scannerConnectionClient;
+    private boolean isPremium;
+    private AdView mAdView;
+    private LinearLayout layoutDummy;
 
 
     @Override
@@ -307,6 +313,17 @@ public class FileListFragment extends Fragment implements LoaderManager
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    private void hideAds() {
+        if (isPremium) {
+            layoutDummy.removeView(mAdView);
+        }
+    }
+
+    public void setPremium() {
+        isPremium = true;
+        hideAds();
+    }
+
     private void addItemDecoration() {
 
         if (mViewMode == FileConstants.KEY_LISTVIEW) {
@@ -351,6 +368,15 @@ public class FileListFragment extends Fragment implements LoaderManager
         });
         mBottomToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar_bottom);
         mFileUtils = new FileUtils();
+        layoutDummy = (LinearLayout) root.findViewById(R.id.layoutDummy);
+        mAdView = (AdView) root.findViewById(R.id.adView);
+        isPremium = getArguments() != null && getArguments().getBoolean(FileConstants.KEY_PREMIUM, false);
+        hideAds();
+        if (!isPremium) {
+            AdRequest adRequest = new AdRequest.Builder().build();
+            mAdView.loadAd(adRequest);
+        }
+
     }
 
     private void initializeListeners() {
@@ -692,7 +718,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                         ArrayList<String> paths = new ArrayList<>();
                         for (FileInfo info : deletedFilesList) {
                             paths.add(info.getFilePath());
-                            FileUtils.scanFile(getActivity().getApplicationContext(),info.getFilePath());
+                            FileUtils.scanFile(getActivity().getApplicationContext(), info.getFilePath());
 //                            scannerConnectionClient = new MyMediaScannerConnectionClient
 //                                    (getActivity().getApplicationContext(), new File(info.getFilePath()), null);
                         }
@@ -847,7 +873,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     }
 
     private void toggleDummyView(boolean isVisible) {
-        if (isVisible)
+        if (isVisible && !isPremium)
             viewDummy.setVisibility(View.VISIBLE);
         else
             viewDummy.setVisibility(View.GONE);
@@ -2077,7 +2103,8 @@ public class FileListFragment extends Fragment implements LoaderManager
                             final boolean isMoveOperation = false;
                             ArrayList<FileInfo> info = new ArrayList<>();
                             info.addAll(draggedFiles);
-                            PasteConflictChecker conflictChecker = new PasteConflictChecker(mBaseActivity, destinationDir,
+                            PasteConflictChecker conflictChecker = new PasteConflictChecker(mBaseActivity,
+                                    destinationDir,
                                     mIsRootMode, isMoveOperation, info);
                             conflictChecker.execute();
                             clearSelectedPos();
@@ -2381,19 +2408,20 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     }
 
-     final class MyMediaScannerConnectionClient
+    final class MyMediaScannerConnectionClient
             implements MediaScannerConnection.MediaScannerConnectionClient {
 
         private String mFilename;
         private String mMimetype;
         private MediaScannerConnection mConn;
 
-         MyMediaScannerConnectionClient
+        MyMediaScannerConnectionClient
                 (Context ctx, File file, String mimetype) {
             this.mFilename = file.getAbsolutePath();
             mConn = new MediaScannerConnection(ctx, this);
             mConn.connect();
         }
+
         @Override
         public void onMediaScannerConnected() {
             mConn.scanFile(mFilename, mMimetype);
@@ -2401,15 +2429,16 @@ public class FileListFragment extends Fragment implements LoaderManager
 
         @Override
         public void onScanCompleted(String path, Uri uri) {
-            Logger.log("MediaScanner","Scan completed"+path);
+            Logger.log("MediaScanner", "Scan completed" + path);
             // TODO: 18-11-2016 THis method should be called only once per deletion
             if (refreshData != null) {
                 refreshData.refresh(mCategory);
             }
             disconnect();
         }
-         void disconnect() {
-             Logger.log("MyMediaScannerConnectionClient","Disconnect");
+
+        void disconnect() {
+            Logger.log("MyMediaScannerConnectionClient", "Disconnect");
             if (mConn != null) {
                 mConn.disconnect();
             }

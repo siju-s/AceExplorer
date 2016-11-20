@@ -183,5 +183,6 @@
     <string name="img_accessibility_icon_lib">Library icon</string>
     <string name="img_accessibility_storage_icon">Storage icon</string>
     <string name="unlock_full_version">Unlock full version</string>
+    <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
 
 </resources>
