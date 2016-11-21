@@ -170,26 +170,30 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             layoutLibrary.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_colorPrimary));
             layoutStorages.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_colorPrimary));
             nestedScrollViewHome.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_home_bg));
-        }
-        else {
+        } else {
             layoutLibrary.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.light_home_lib));
             layoutStorages.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.light_home_lib));
             nestedScrollViewHome.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.light_home_bg));
         }
-        layoutContainer= (RelativeLayout) root.findViewById(R.id.layoutContainer);
+        layoutContainer = (RelativeLayout) root.findViewById(R.id.layoutContainer);
         mAdView = (AdView) root.findViewById(R.id.adView);
         isPremium = getArguments() != null && getArguments().getBoolean(FileConstants.KEY_PREMIUM, false);
-        hideAds();
-        if (!isPremium) {
-            AdRequest adRequest = new AdRequest.Builder().build();
-            mAdView.loadAd(adRequest);
+        if (isPremium) {
+            hideAds();
+        } else {
+            showAds();
         }
+
     }
 
     private void hideAds() {
-        if (isPremium) {
-            layoutContainer.removeView(mAdView);
-        }
+        layoutContainer.removeView(mAdView);
+
+    }
+
+    private void showAds() {
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 
     public void setPremium() {
@@ -747,6 +751,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                 Bundle args = new Bundle();
                 args.putBoolean(FileConstants.KEY_HOME, true);
                 args.putInt(FileConstants.KEY_CATEGORY, categoryId);
+                args.putBoolean(FileConstants.KEY_PREMIUM, isPremium);
                 String path = null;
                 if (categoryId == FileConstants
                         .CATEGORY.DOWNLOADS.getValue()) {
@@ -775,6 +780,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             Bundle args = new Bundle();
             args.putBoolean(FileConstants.KEY_HOME, true);
             args.putString(FileConstants.KEY_PATH, currentDir);
+            args.putBoolean(FileConstants.KEY_PREMIUM, isPremium);
             FileListFragment fileListFragment = new FileListFragment();
             fileListFragment.setArguments(args);
             fileListFragment.setRefreshData(this);

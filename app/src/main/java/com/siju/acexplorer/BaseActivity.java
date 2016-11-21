@@ -114,7 +114,7 @@ public class BaseActivity extends AppCompatActivity implements
     private ExpandableListView expandableListView;
     private List<String> mListHeader;
     private final ArrayList<SectionGroup> totalGroup = new ArrayList<>();
-    private ArrayList<SectionItems> libraryGroupChild = new ArrayList<>();
+    private ArrayList<SectionItems> othersGroupChild = new ArrayList<>();
     private DrawerLayout drawerLayout;
     private NavigationView relativeLayoutDrawerPane;
     private String mCurrentDir;
@@ -173,6 +173,8 @@ public class BaseActivity extends AppCompatActivity implements
     private boolean inappShortcutMode;
 
     static final String SKU_REMOVE_ADS = "com.siju.acexplorer.pro";
+    static final String SKU_TEST = "android.test.purchased";
+
 
     // (arbitrary) request code for the purchase flow
     static final int RC_REQUEST = 10111;
@@ -249,7 +251,7 @@ public class BaseActivity extends AppCompatActivity implements
 
                 if (!result.isSuccess()) {
                     // Oh noes, there was a problem.
-                     complain("Problem setting up in-app billing: " + result);
+                    complain("Problem setting up in-app billing: " + result);
                     return;
                 }
 
@@ -601,7 +603,7 @@ public class BaseActivity extends AppCompatActivity implements
     IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
         public void onQueryInventoryFinished(IabResult result,
                                              Inventory inventory) {
-            Log.d(TAG, "Query inventory finished."+mHelper);
+            Log.d(TAG, "Query inventory finished." + mHelper);
 
             // Have we been disposed of in the meantime? If so, quit.
             if (mHelper == null)
@@ -615,6 +617,8 @@ public class BaseActivity extends AppCompatActivity implements
 
             Log.d(TAG, "Query inventory was successful.");
 
+            consumeItems(inventory);
+
             /*
              * Check for items we own. Notice that for each purchase, we check
              * the developer payload to see if it's correct! See
@@ -626,6 +630,7 @@ public class BaseActivity extends AppCompatActivity implements
             if (removeAdsPurchase) {
                 // User paid to remove the Ads - so hide 'em
                 isPremium = true;
+                hideAds();
             } else {
                 isPremium = false;
 
@@ -642,6 +647,23 @@ public class BaseActivity extends AppCompatActivity implements
             Log.d(TAG, "Initial inventory query finished; enabling main UI.");
         }
     };
+
+    private void consumeItems(Inventory inventory) {
+        Purchase premiumPurchase = inventory.getPurchase(SKU_REMOVE_ADS);
+        boolean isConsumed =  mSharedPreferences.getBoolean("consumed",false);
+        Log.d(TAG, "consumeItems : premiumPurchase="+premiumPurchase+ " consumed="+isConsumed);
+
+        if (premiumPurchase != null && !isConsumed) {
+            mHelper.consumeAsync(premiumPurchase, new IabHelper.OnConsumeFinishedListener() {
+                @Override
+                public void onConsumeFinished(Purchase purchase, IabResult result) {
+                    Log.d(TAG, "Test purchase is consumed.");
+                    mSharedPreferences.edit().putBoolean("consumed",true).apply();
+
+                }
+            });
+        }
+    }
 
     private void showAds() {
         //TODO Replace with valid ad unit id.This is just a test ad
@@ -749,6 +771,7 @@ public class BaseActivity extends AppCompatActivity implements
     }
 
     private void initializeLibraryGroup() {
+        ArrayList<SectionItems> libraryGroupChild = new ArrayList<>();
         libraryGroupChild.add(new SectionItems(MUSIC, null, R.drawable.ic_music_white, null, 0));
         libraryGroupChild.add(new SectionItems(VIDEO, null, R.drawable.ic_video_white, null, 0));
         libraryGroupChild.add(new SectionItems(IMAGES, null, R.drawable.ic_photos_white, null, 0));
@@ -757,7 +780,7 @@ public class BaseActivity extends AppCompatActivity implements
     }
 
     private void initializeOthersGroup() {
-        ArrayList<SectionItems> othersGroupChild = new ArrayList<>();
+
         if (!isPremium) {
             othersGroupChild.add(new SectionItems(BUY, "", R.drawable.ic_unlock_full, null, 0));
         }
@@ -795,7 +818,7 @@ public class BaseActivity extends AppCompatActivity implements
             args.putBoolean(FileConstants.KEY_HOME, true);
             args.putBoolean(BaseActivity.PREFS_FIRST_RUN, mIsFirstRun);
             args.putBoolean(FileConstants.KEY_DUAL_ENABLED, mIsDualModeEnabled);
-            args.putBoolean(FileConstants.KEY_PREMIUM,isPremium);
+            args.putBoolean(FileConstants.KEY_PREMIUM, isPremium);
             mHomeScreenFragment = new HomeScreenFragment();
             mHomeScreenFragment.setArguments(args);
 //            ft.setCustomAnimations(R.anim.slide_in_left,R.anim.slide_out_right);
@@ -811,7 +834,7 @@ public class BaseActivity extends AppCompatActivity implements
             Bundle args = new Bundle();
             args.putBoolean(FileConstants.KEY_HOME, false);
             args.putString(FileConstants.KEY_PATH, mCurrentDir);
-            args.putBoolean(FileConstants.KEY_PREMIUM,isPremium);
+            args.putBoolean(FileConstants.KEY_PREMIUM, isPremium);
             FileListFragment fileListFragment = new FileListFragment();
             fileListFragment.setArguments(args);
             ft.replace(R.id.main_container, fileListFragment, mCurrentDir);
@@ -1662,7 +1685,7 @@ public class BaseActivity extends AppCompatActivity implements
         Bundle args = new Bundle();
         args.putString(FileConstants.KEY_PATH, directory);
         args.putInt(FileConstants.KEY_CATEGORY, category);
-        args.putBoolean(FileConstants.KEY_PREMIUM,isPremium);
+        args.putBoolean(FileConstants.KEY_PREMIUM, isPremium);
 
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
         if (fragment instanceof HomeScreenFragment) {
@@ -1791,7 +1814,7 @@ public class BaseActivity extends AppCompatActivity implements
                 break;
             case 3:
                 if (isPremium) {
-                   childPos = childPos + 1;
+                    childPos = childPos + 1;
                 }
                 switch (childPos) {
 
@@ -1890,21 +1913,22 @@ public class BaseActivity extends AppCompatActivity implements
                 // bought the premium upgrade!
                 isPremium = true;
                 hideAds();
-
             }
         }
     };
 
     private void hideAds() {
-        Log.d(TAG,"Hide ads");
-        libraryGroupChild.remove(0);
-        expandableListAdapter.notifyDataSetChanged();
+        Log.d(TAG, "hideAds:");
+        if (othersGroupChild.get(0) != null && othersGroupChild.get(0).getIcon() == (R.drawable.ic_unlock_full)) {
+            othersGroupChild.remove(0);
+            expandableListAdapter.notifyDataSetChanged();
+            Log.d(TAG, "Hide ads SUCCESS");
+        }
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
         if (fragment instanceof FileListFragment) {
-            ((FileListFragment)fragment).setPremium();
-        }
-        else if (fragment instanceof HomeScreenFragment) {
-            ((HomeScreenFragment)fragment).setPremium();
+            ((FileListFragment) fragment).setPremium();
+        } else if (fragment instanceof HomeScreenFragment) {
+            ((HomeScreenFragment) fragment).setPremium();
         }
     }
 

@@ -25,13 +25,13 @@ android {
         applicationId "com.siju.acexplorer"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 4
-        versionName "0.2"
+        versionCode 5
+        versionName "0.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     dexOptions {
         maxProcessCount 2
-        javaMaxHeapSize "4g"
+        javaMaxHeapSize "8g"
     }
     configurations {
         all*.exclude group: 'commons-logging', module: 'commons-logging'

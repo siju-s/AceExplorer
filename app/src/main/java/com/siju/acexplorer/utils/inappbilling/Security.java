@@ -57,7 +57,7 @@ public class Security {
             Log.e(TAG, "Purchase verification failed: missing data.");
             return false;
         }
-
+//        return true;
         PublicKey key = Security.generatePublicKey(base64PublicKey);
         return Security.verify(key, signedData, signature);
     }
