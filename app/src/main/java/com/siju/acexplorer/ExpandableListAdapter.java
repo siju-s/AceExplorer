@@ -76,6 +76,8 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
             childViewHolder.textSecondLine.setText(child.getSecondLine());
         } else {
             childViewHolder.progressBar.setVisibility(View.GONE);
+            childViewHolder.textFirstLine.setPadding(0,mContext.getResources().getDimensionPixelSize(R.dimen
+                    .padding_5),0,0);
             childViewHolder.textSecondLine.setText("");
         }
         return view;

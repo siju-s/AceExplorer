@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/drawer_item_text_margin"
         android:layout_marginStart="@dimen/drawer_item_text_margin"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="6dp"
         android:layout_toRightOf="@+id/imageDrawerItem"
         android:layout_toEndOf="@+id/imageDrawerItem"
         android:textSize="14sp"/>
