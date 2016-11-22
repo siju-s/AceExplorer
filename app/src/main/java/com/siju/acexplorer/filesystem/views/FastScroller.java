@@ -257,11 +257,13 @@ class FastScroller {
     }
 
 //    // Setter/getter for the popup alpha for animations
+    @SuppressWarnings("unused")
     public void setOffsetX(int x) {
         setOffset(x, mOffset.y);
     }
 
 
+    @SuppressWarnings("unused")
     public int getOffsetX() {
         return mOffset.x;
     }
@@ -320,6 +322,7 @@ class FastScroller {
 // --Commented out by Inspection STOP (13-11-2016 02:57 PM)
 
 // --Commented out by Inspection START (13-11-2016 02:57 PM):
+    @SuppressWarnings("unused")
     public void setTrackColor(@ColorInt int color) {
         mTrack.setColor(color);
         mRecyclerView.invalidate(mInvalidateRect);
@@ -350,23 +353,4 @@ class FastScroller {
 //    }
 // --Commented out by Inspection STOP (13-11-2016 02:57 PM)
 
-// --Commented out by Inspection START (13-11-2016 02:57 PM):
-void setAutoHideDelay(int hideDelay) {
-        mAutoHideDelay = hideDelay;
-        if (mAutoHideEnabled) {
-            postAutoHideDelayed();
-        }
-    }
-// --Commented out by Inspection STOP (13-11-2016 02:57 PM)
-
-// --Commented out by Inspection START (13-11-2016 02:57 PM):
-void setAutoHideEnabled(boolean autoHideEnabled) {
-        mAutoHideEnabled = autoHideEnabled;
-        if (autoHideEnabled) {
-            postAutoHideDelayed();
-        } else {
-            cancelAutoHide();
-        }
-    }
-// --Commented out by Inspection STOP (13-11-2016 02:57 PM)
 }

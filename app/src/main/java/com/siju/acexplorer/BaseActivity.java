@@ -49,6 +49,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.gms.ads.MobileAds;
@@ -68,10 +70,12 @@ import com.siju.acexplorer.filesystem.task.CopyService;
 import com.siju.acexplorer.filesystem.task.DeleteTask;
 import com.siju.acexplorer.filesystem.task.MoveFiles;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
+import com.siju.acexplorer.filesystem.utils.PremiumUtils;
 import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 import com.siju.acexplorer.model.SectionGroup;
 import com.siju.acexplorer.model.SectionItems;
 import com.siju.acexplorer.settings.SettingsActivity;
+import com.siju.acexplorer.utils.DialogUtils;
 import com.siju.acexplorer.utils.LocaleHelper;
 import com.siju.acexplorer.utils.PermissionUtils;
 import com.siju.acexplorer.utils.Utils;
@@ -114,7 +118,7 @@ public class BaseActivity extends AppCompatActivity implements
     private ExpandableListView expandableListView;
     private List<String> mListHeader;
     private final ArrayList<SectionGroup> totalGroup = new ArrayList<>();
-    private ArrayList<SectionItems> othersGroupChild = new ArrayList<>();
+    private final ArrayList<SectionItems> othersGroupChild = new ArrayList<>();
     private DrawerLayout drawerLayout;
     private NavigationView relativeLayoutDrawerPane;
     private String mCurrentDir;
@@ -172,22 +176,16 @@ public class BaseActivity extends AppCompatActivity implements
     private String mCurrentLanguage;
     private boolean inappShortcutMode;
 
-    static final String SKU_REMOVE_ADS = "com.siju.acexplorer.pro";
-    static final String SKU_TEST = "android.test.purchased";
-
+    private static final String SKU_REMOVE_ADS = "com.siju.acexplorer.pro";
+//    static final String SKU_TEST = "android.test.purchased";
 
     // (arbitrary) request code for the purchase flow
-    static final int RC_REQUEST = 10111;
+    private static final int RC_REQUEST = 10111;
 
 
     // The helper object
-    IabHelper mHelper;
+    private IabHelper mHelper;
 
-    private String base64EncodedPublicKey =
-            "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAomGBqi0dGhyE1KphvTxc6K3OXsTsWEcAdLNsg22Un" +
-                    "/6VJakiajmZMBODktRggHlUgWDZZvFZCw2so53U++pVHRfyevKIbP7" +
-                    "/eIkB7mtlartsbOkD3yGQCUVxE1kQ3Olum1CYv7DqBQC4J9h9q22ApcGIfkZq6Os3Jm7vKmuzHHLKN63yWQS1FuwwcLAmpSN2EOX4Has4eElrgZoySu4qv5SOooOJS27Y4fzzxToQX5T50tO9dG+NYKrLmPK4yL5JGB5E3UD0I8vNLD/Wj2qPBE1tiYbjHHeX3PrF9lJhXtZs9uiMnMzox6dxW9+VmPYxNuMXakXrURGfpgaWGK00ZQIDAQAB";
-    String payload = "REMOVE_ADS";
     private boolean isPremium;
 
 
@@ -236,6 +234,10 @@ public class BaseActivity extends AppCompatActivity implements
         // Create the helper, passing it our context and the public key to
         // verify signatures with
         Log.d(TAG, "Creating IAB helper.");
+        String base64EncodedPublicKey =
+                "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAomGBqi0dGhyE1KphvTxc6K3OXsTsWEcAdLNsg22Un" +
+                "/6VJakiajmZMBODktRggHlUgWDZZvFZCw2so53U++pVHRfyevKIbP7" +
+                "/eIkB7mtlartsbOkD3yGQCUVxE1kQ3Olum1CYv7DqBQC4J9h9q22ApcGIfkZq6Os3Jm7vKmuzHHLKN63yWQS1FuwwcLAmpSN2EOX4Has4eElrgZoySu4qv5SOooOJS27Y4fzzxToQX5T50tO9dG+NYKrLmPK4yL5JGB5E3UD0I8vNLD/Wj2qPBE1tiYbjHHeX3PrF9lJhXtZs9uiMnMzox6dxW9+VmPYxNuMXakXrURGfpgaWGK00ZQIDAQAB";
         mHelper = new IabHelper(this, base64EncodedPublicKey);
 
         // enable debug logging (for a production application, you should set
@@ -600,7 +602,7 @@ public class BaseActivity extends AppCompatActivity implements
 
     // Listener that's called when we finish querying the items and
     // subscriptions we own
-    IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
+    private final IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
         public void onQueryInventoryFinished(IabResult result,
                                              Inventory inventory) {
             Log.d(TAG, "Query inventory finished." + mHelper);
@@ -617,8 +619,6 @@ public class BaseActivity extends AppCompatActivity implements
 
             Log.d(TAG, "Query inventory was successful.");
 
-            consumeItems(inventory);
-
             /*
              * Check for items we own. Notice that for each purchase, we check
              * the developer payload to see if it's correct! See
@@ -631,43 +631,44 @@ public class BaseActivity extends AppCompatActivity implements
                 // User paid to remove the Ads - so hide 'em
                 isPremium = true;
                 hideAds();
+//                consumeItems(inventory);
             } else {
                 isPremium = false;
-
                 showAds();
             }
-//            Constants.isAdsDisabled = (removeAdsPurchase != null && verifyDeveloperPayload(removeAdsPurchase));
-//            removeAds();
-
             Log.d(TAG, "User has "
                     + (isPremium ? "REMOVED ADS"
                     : "NOT REMOVED ADS"));
-
-            // setWaitScreen(false);
             Log.d(TAG, "Initial inventory query finished; enabling main UI.");
         }
     };
 
-    private void consumeItems(Inventory inventory) {
-        Purchase premiumPurchase = inventory.getPurchase(SKU_REMOVE_ADS);
-        boolean isConsumed =  mSharedPreferences.getBoolean("consumed",false);
-        Log.d(TAG, "consumeItems : premiumPurchase="+premiumPurchase+ " consumed="+isConsumed);
-
-        if (premiumPurchase != null && !isConsumed) {
-            mHelper.consumeAsync(premiumPurchase, new IabHelper.OnConsumeFinishedListener() {
-                @Override
-                public void onConsumeFinished(Purchase purchase, IabResult result) {
-                    Log.d(TAG, "Test purchase is consumed.");
-                    mSharedPreferences.edit().putBoolean("consumed",true).apply();
-
-                }
-            });
-        }
-    }
+// --Commented out by Inspection START (22-11-2016 11:20 PM):
+//    private void consumeItems(Inventory inventory) {
+//        Purchase premiumPurchase = inventory.getPurchase(SKU_REMOVE_ADS);
+//        boolean isConsumed =  mSharedPreferences.getBoolean("consumed",false);
+//        Log.d(TAG, "consumeItems : premiumPurchase="+premiumPurchase+ " consumed="+isConsumed);
+//
+//        if (premiumPurchase != null && !isConsumed) {
+//            mHelper.consumeAsync(premiumPurchase, new IabHelper.OnConsumeFinishedListener() {
+//                @Override
+//                public void onConsumeFinished(Purchase purchase, IabResult result) {
+//                    Log.d(TAG, "Test purchase is consumed.");
+//                    mSharedPreferences.edit().putBoolean("consumed",true).apply();
+//
+//                }
+//            });
+//        }
+//    }
+// --Commented out by Inspection STOP (22-11-2016 11:20 PM)
 
     private void showAds() {
         //TODO Replace with valid ad unit id.This is just a test ad
         MobileAds.initialize(getApplicationContext(), "ca-app-pub-3940256099942544~3347511713");
+        PremiumUtils.onStart(this);
+        if (PremiumUtils.shouldShowPremiumDialog()) {
+            showPremiumDialog();
+        }
     }
 
     private void prepareListData() {
@@ -1031,6 +1032,48 @@ public class BaseActivity extends AppCompatActivity implements
             super.onActivityResult(requestCode, resultCode, intent);
         }
     }
+
+    /**
+     * Show the rate dialog
+     * @param context
+     */
+    private  void showPremiumDialog() {
+        int color = new DialogUtils().getCurrentThemePrimary(this);
+
+        final MaterialDialog.Builder builder = new MaterialDialog.Builder(this);
+        builder.title(getString(R.string.unlock_full_version));
+        builder.content(getString(R.string.full_version_buy_ask));
+        builder.positiveText(getString(R.string.yes));
+        builder.positiveColor(color);
+        builder.negativeText(getString(R.string.no));
+        builder.negativeColor(color);
+        final MaterialDialog materialDialog = builder.build();
+
+        materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                materialDialog.dismiss();
+                showPurchaseDialog();
+            }
+        });
+
+        materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                materialDialog.dismiss();
+                optOutPremiumDialog();
+            }
+        });
+
+        materialDialog.show();
+    }
+
+    private void optOutPremiumDialog() {
+        SharedPreferences pref = getSharedPreferences(PremiumUtils.PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putBoolean(PremiumUtils.KEY_OPT_OUT, true).apply();
+    }
+
 
 
     public void updateFavourites(ArrayList<FavInfo> favInfoArrayList) {
@@ -1709,18 +1752,6 @@ public class BaseActivity extends AppCompatActivity implements
                 fragmentTransaction.commitAllowingStateLoss();
             }
         } else {
-
-/*
-            FileListFragment fileListFragment = new FileListFragment();
-
-
-
-            fileListFragment.setArguments(args);
-            ft.replace(R.id.main_container, fileListFragment, directory);
-//            ft.addToBackStack(null);
-            ft.commitAllowingStateLoss();
-*/
-
             FileListDualFragment dualFragment = (FileListDualFragment)
                     getSupportFragmentManager()
                             .findFragmentById(R.id
@@ -1819,8 +1850,7 @@ public class BaseActivity extends AppCompatActivity implements
                 switch (childPos) {
 
                     case 0:
-                        mHelper.launchPurchaseFlow(this, SKU_REMOVE_ADS,
-                                RC_REQUEST, mPurchaseFinishedListener, payload);
+                        showPremiumDialog();
                         break;
                     case 1: // Rate us
                         Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -1854,13 +1884,17 @@ public class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    /**
-     * Verifies the developer payload of a purchase.
-     */
-    boolean verifyDeveloperPayload(Purchase p) {
-        String payload = p.getDeveloperPayload();
+    private void showPurchaseDialog() {
+        String payload = "REMOVE_ADS";
+        mHelper.launchPurchaseFlow(this, SKU_REMOVE_ADS,
+                RC_REQUEST, mPurchaseFinishedListener, payload);
+    }
 
-        /*
+   /* *//**
+     * Verifies the developer payload of a purchase.
+     *//*
+    private boolean verifyDeveloperPayload(Purchase p) {
+        *//*
          * TODO: verify that the developer payload of the purchase is correct.
          * It will be the same one that you sent when initiating the purchase.
          *
@@ -1884,12 +1918,12 @@ public class BaseActivity extends AppCompatActivity implements
          *
          * Using your own server to store and verify developer payloads across
          * app installations is recommended.
-         */
-        return true;
-    }
+         *//*
+        return false;
+    }*/
 
     // Callback for when a purchase is finished
-    IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
+    private final IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
         public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
             Log.d(TAG, "Purchase finished: " + result + ", purchase: "
                     + purchase);
@@ -1902,11 +1936,6 @@ public class BaseActivity extends AppCompatActivity implements
                 complain("Error purchasing: " + result);
                 return;
             }
-            if (!verifyDeveloperPayload(purchase)) {
-                complain("Error purchasing. Authenticity verification failed.");
-                return;
-            }
-
             Log.d(TAG, "Purchase successful.");
 
             if (purchase.getSku().equals(SKU_REMOVE_ADS)) {
@@ -1933,9 +1962,9 @@ public class BaseActivity extends AppCompatActivity implements
     }
 
 
-    void complain(String message) {
+    private void complain(String message) {
         Log.e(TAG, "**** Error: " + message);
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -2332,7 +2361,9 @@ public class BaseActivity extends AppCompatActivity implements
                 e.printStackTrace();
             }
         }
-        if (mHelper != null) mHelper.dispose();
+        if (mHelper != null) {
+            mHelper.dispose();
+        }
         mHelper = null;
         super.onDestroy();
     }

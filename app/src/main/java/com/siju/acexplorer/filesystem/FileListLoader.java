@@ -144,24 +144,15 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     public void deliverResult(ArrayList<FileInfo> data) {
         if (isReset()) {
             // The Loader has been reset; ignore the result and invalidate the data.
-            onReleaseResources();
             return;
         }
 
-        // Hold a reference to the old data so it doesn't get garbage collected.
-        // We must protect it until the new data has been delivered.
-        ArrayList<FileInfo> oldData = fileInfoList;
         fileInfoList = data;
 
         if (isStarted()) {
             // If the Loader is in a started state, deliver the results to the
             // client. The superclass method does this for us.
             super.deliverResult(data);
-        }
-
-        // Invalidate the old data as we don't need it any more.
-        if (oldData != null && oldData != data) {
-            onReleaseResources();
         }
         super.deliverResult(data);
     }
@@ -176,7 +167,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         onStopLoading();
 
         if (fileInfoList != null) {
-            onReleaseResources();
             fileInfoList = null;
             mFragment = null;
         }
@@ -190,16 +180,13 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     @Override
     public void onCanceled(ArrayList<FileInfo> data) {
         super.onCanceled(data);
-        onReleaseResources();
     }
 
     private boolean isHomeFragment() {
         return mFragment instanceof HomeScreenFragment;
     }
 
-    private void onReleaseResources() {
 
-    }
 
 
     @Override

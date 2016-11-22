@@ -38,54 +38,13 @@ package com.siju.acexplorer.utils.inappbilling;
  * <p>Note {@link CharBase64} is a GWT-compatible implementation of this
  * class.
  */
-public class Base64 {
-    /** Specify encoding (value is {@code true}). */
-    public final static boolean ENCODE = true;
-
-    /** Specify decoding (value is {@code false}). */
-    public final static boolean DECODE = false;
-
+@SuppressWarnings("ALL")
+class Base64 {
     /** The equals sign (=) as a byte. */
     private final static byte EQUALS_SIGN = (byte) '=';
 
     /** The new line character (\n) as a byte. */
     private final static byte NEW_LINE = (byte) '\n';
-
-    /**
-     * The 64 valid Base64 values.
-     */
-    private final static byte[] ALPHABET =
-        {(byte) 'A', (byte) 'B', (byte) 'C', (byte) 'D', (byte) 'E', (byte) 'F',
-        (byte) 'G', (byte) 'H', (byte) 'I', (byte) 'J', (byte) 'K',
-        (byte) 'L', (byte) 'M', (byte) 'N', (byte) 'O', (byte) 'P',
-        (byte) 'Q', (byte) 'R', (byte) 'S', (byte) 'T', (byte) 'U',
-        (byte) 'V', (byte) 'W', (byte) 'X', (byte) 'Y', (byte) 'Z',
-        (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd', (byte) 'e',
-        (byte) 'f', (byte) 'g', (byte) 'h', (byte) 'i', (byte) 'j',
-        (byte) 'k', (byte) 'l', (byte) 'm', (byte) 'n', (byte) 'o',
-        (byte) 'p', (byte) 'q', (byte) 'r', (byte) 's', (byte) 't',
-        (byte) 'u', (byte) 'v', (byte) 'w', (byte) 'x', (byte) 'y',
-        (byte) 'z', (byte) '0', (byte) '1', (byte) '2', (byte) '3',
-        (byte) '4', (byte) '5', (byte) '6', (byte) '7', (byte) '8',
-        (byte) '9', (byte) '+', (byte) '/'};
-
-    /**
-     * The 64 valid web safe Base64 values.
-     */
-    private final static byte[] WEBSAFE_ALPHABET =
-        {(byte) 'A', (byte) 'B', (byte) 'C', (byte) 'D', (byte) 'E', (byte) 'F',
-        (byte) 'G', (byte) 'H', (byte) 'I', (byte) 'J', (byte) 'K',
-        (byte) 'L', (byte) 'M', (byte) 'N', (byte) 'O', (byte) 'P',
-        (byte) 'Q', (byte) 'R', (byte) 'S', (byte) 'T', (byte) 'U',
-        (byte) 'V', (byte) 'W', (byte) 'X', (byte) 'Y', (byte) 'Z',
-        (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd', (byte) 'e',
-        (byte) 'f', (byte) 'g', (byte) 'h', (byte) 'i', (byte) 'j',
-        (byte) 'k', (byte) 'l', (byte) 'm', (byte) 'n', (byte) 'o',
-        (byte) 'p', (byte) 'q', (byte) 'r', (byte) 's', (byte) 't',
-        (byte) 'u', (byte) 'v', (byte) 'w', (byte) 'x', (byte) 'y',
-        (byte) 'z', (byte) '0', (byte) '1', (byte) '2', (byte) '3',
-        (byte) '4', (byte) '5', (byte) '6', (byte) '7', (byte) '8',
-        (byte) '9', (byte) '-', (byte) '_'};
 
     /**
      * Translates a Base64 value to either its 6-bit reconstruction value
@@ -124,43 +83,7 @@ public class Base64 {
         -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9         // Decimal 244 - 255 */
     };
 
-    /** The web safe decodabet */
-    private final static byte[] WEBSAFE_DECODABET =
-        {-9, -9, -9, -9, -9, -9, -9, -9, -9, // Decimal  0 -  8
-        -5, -5, // Whitespace: Tab and Linefeed
-        -9, -9, // Decimal 11 - 12
-        -5, // Whitespace: Carriage Return
-        -9, -9, -9, -9, -9, -9, -9, -9, -9, -9, -9, -9, -9, // Decimal 14 - 26
-        -9, -9, -9, -9, -9, // Decimal 27 - 31
-        -5, // Whitespace: Space
-        -9, -9, -9, -9, -9, -9, -9, -9, -9, -9, -9, -9, // Decimal 33 - 44
-        62, // Dash '-' sign at decimal 45
-        -9, -9, // Decimal 46-47
-        52, 53, 54, 55, 56, 57, 58, 59, 60, 61, // Numbers zero through nine
-        -9, -9, -9, // Decimal 58 - 60
-        -1, // Equals sign at decimal 61
-        -9, -9, -9, // Decimal 62 - 64
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, // Letters 'A' through 'N'
-        14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, // Letters 'O' through 'Z'
-        -9, -9, -9, -9, // Decimal 91-94
-        63, // Underscore '_' at decimal 95
-        -9, // Decimal 96
-        26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, // Letters 'a' through 'm'
-        39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, // Letters 'n' through 'z'
-        -9, -9, -9, -9, -9 // Decimal 123 - 127
-        /*  ,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 128 - 139
-        -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 140 - 152
-        -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 153 - 165
-        -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 166 - 178
-        -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 179 - 191
-        -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 192 - 204
-        -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 205 - 217
-        -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 218 - 230
-        -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 231 - 243
-        -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9         // Decimal 244 - 255 */
-        };
-
-    // Indicates white space in encoding
+     // Indicates white space in encoding
     private final static byte WHITE_SPACE_ENC = -5;
     // Indicates equals sign in encoding
     private final static byte EQUALS_SIGN_ENC = -1;
@@ -235,116 +158,6 @@ public class Base64 {
         } // end switch
     } // end encode3to4
 
-    /**
-     * Encodes a byte array into Base64 notation.
-     * Equivalent to calling
-     * {@code encodeBytes(source, 0, source.length)}
-     *
-     * @param source The data to convert
-     * @since 1.4
-     */
-    public static String encode(byte[] source) {
-        return encode(source, 0, source.length, ALPHABET, true);
-    }
-
-    /**
-     * Encodes a byte array into web safe Base64 notation.
-     *
-     * @param source The data to convert
-     * @param doPadding is {@code true} to pad result with '=' chars
-     *        if it does not fall on 3 byte boundaries
-     */
-    public static String encodeWebSafe(byte[] source, boolean doPadding) {
-        return encode(source, 0, source.length, WEBSAFE_ALPHABET, doPadding);
-    }
-
-    /**
-     * Encodes a byte array into Base64 notation.
-     *
-     * @param source the data to convert
-     * @param off offset in array where conversion should begin
-     * @param len length of data to convert
-     * @param alphabet the encoding alphabet
-     * @param doPadding is {@code true} to pad result with '=' chars
-     * if it does not fall on 3 byte boundaries
-     * @since 1.4
-     */
-    public static String encode(byte[] source, int off, int len, byte[] alphabet,
-            boolean doPadding) {
-        byte[] outBuff = encode(source, off, len, alphabet, Integer.MAX_VALUE);
-        int outLen = outBuff.length;
-
-        // If doPadding is false, set length to truncate '='
-        // padding characters
-        while (!doPadding && outLen > 0) {
-            if (outBuff[outLen - 1] != '=') {
-                break;
-            }
-            outLen -= 1;
-        }
-
-        return new String(outBuff, 0, outLen);
-    }
-
-    /**
-     * Encodes a byte array into Base64 notation.
-     *
-     * @param source the data to convert
-     * @param off offset in array where conversion should begin
-     * @param len length of data to convert
-     * @param alphabet is the encoding alphabet
-     * @param maxLineLength maximum length of one line.
-     * @return the BASE64-encoded byte array
-     */
-    public static byte[] encode(byte[] source, int off, int len, byte[] alphabet,
-            int maxLineLength) {
-        int lenDiv3 = (len + 2) / 3; // ceil(len / 3)
-        int len43 = lenDiv3 * 4;
-        byte[] outBuff = new byte[len43 // Main 4:3
-                                  + (len43 / maxLineLength)]; // New lines
-
-        int d = 0;
-        int e = 0;
-        int len2 = len - 2;
-        int lineLength = 0;
-        for (; d < len2; d += 3, e += 4) {
-
-            // The following block of code is the same as
-            // encode3to4( source, d + off, 3, outBuff, e, alphabet );
-            // but inlined for faster encoding (~20% improvement)
-            int inBuff =
-                    ((source[d + off] << 24) >>> 8)
-                    | ((source[d + 1 + off] << 24) >>> 16)
-                    | ((source[d + 2 + off] << 24) >>> 24);
-            outBuff[e] = alphabet[(inBuff >>> 18)];
-            outBuff[e + 1] = alphabet[(inBuff >>> 12) & 0x3f];
-            outBuff[e + 2] = alphabet[(inBuff >>> 6) & 0x3f];
-            outBuff[e + 3] = alphabet[(inBuff) & 0x3f];
-
-            lineLength += 4;
-            if (lineLength == maxLineLength) {
-                outBuff[e + 4] = NEW_LINE;
-                e++;
-                lineLength = 0;
-            } // end if: end of line
-        } // end for: each piece of array
-
-        if (d < len) {
-            encode3to4(source, d + off, len - d, outBuff, e, alphabet);
-
-            lineLength += 4;
-            if (lineLength == maxLineLength) {
-                // Add a last newline
-                outBuff[e + 4] = NEW_LINE;
-                e++;
-            }
-            e += 4;
-        }
-
-        assert (e == outBuff.length);
-        return outBuff;
-    }
-
 
     /* ********  D E C O D I N G   M E T H O D S  ******** */
 
@@ -415,50 +228,12 @@ public class Base64 {
      * @return the decoded data
      * @since 1.4
      */
-    public static byte[] decode(String s) throws Base64DecoderException {
+    static byte[] decode(String s) throws Base64DecoderException {
         byte[] bytes = s.getBytes();
         return decode(bytes, 0, bytes.length);
     }
 
     /**
-     * Decodes data from web safe Base64 notation.
-     * Web safe encoding uses '-' instead of '+', '_' instead of '/'
-     *
-     * @param s the string to decode (decoded in default encoding)
-     * @return the decoded data
-     */
-    public static byte[] decodeWebSafe(String s) throws Base64DecoderException {
-        byte[] bytes = s.getBytes();
-        return decodeWebSafe(bytes, 0, bytes.length);
-    }
-
-    /**
-     * Decodes Base64 content in byte array format and returns
-     * the decoded byte array.
-     *
-     * @param source The Base64 encoded data
-     * @return decoded data
-     * @since 1.3
-     * @throws Base64DecoderException
-     */
-    public static byte[] decode(byte[] source) throws Base64DecoderException {
-        return decode(source, 0, source.length);
-    }
-
-    /**
-     * Decodes web safe Base64 content in byte array format and returns
-     * the decoded data.
-     * Web safe encoding uses '-' instead of '+', '_' instead of '/'
-     *
-     * @param source the string to decode (decoded in default encoding)
-     * @return the decoded data
-     */
-    public static byte[] decodeWebSafe(byte[] source)
-            throws Base64DecoderException {
-        return decodeWebSafe(source, 0, source.length);
-    }
-
-    /**
      * Decodes Base64 content in byte array format and returns
      * the decoded byte array.
      *
@@ -469,25 +244,11 @@ public class Base64 {
      * @since 1.3
      * @throws Base64DecoderException
      */
-    public static byte[] decode(byte[] source, int off, int len)
+    private static byte[] decode(byte[] source, int off, int len)
             throws Base64DecoderException {
         return decode(source, off, len, DECODABET);
     }
 
-    /**
-     * Decodes web safe Base64 content in byte array format and returns
-     * the decoded byte array.
-     * Web safe encoding uses '-' instead of '+', '_' instead of '/'
-     *
-     * @param source the Base64 encoded data
-     * @param off    the offset of where to begin decoding
-     * @param len    the length of characters to decode
-     * @return decoded data
-     */
-    public static byte[] decodeWebSafe(byte[] source, int off, int len)
-            throws Base64DecoderException {
-        return decode(source, off, len, WEBSAFE_DECODABET);
-    }
 
     /**
      * Decodes Base64 content using the supplied decodabet and returns
@@ -499,7 +260,7 @@ public class Base64 {
      * @param decodabet the decodabet for decoding Base64 content
      * @return decoded data
      */
-    public static byte[] decode(byte[] source, int off, int len, byte[] decodabet)
+    private static byte[] decode(byte[] source, int off, int len, byte[] decodabet)
             throws Base64DecoderException {
         int len34 = len * 3 / 4;
         byte[] outBuff = new byte[2 + len34]; // Upper limit on size of output

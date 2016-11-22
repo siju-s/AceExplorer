@@ -23,9 +23,10 @@ package com.siju.acexplorer.utils.inappbilling;
  * can also inquire whether a result is a success or a failure by
  * calling {@link #isSuccess()} and {@link #isFailure()}.
  */
+@SuppressWarnings("ALL")
 public class IabResult {
-    int mResponse;
-    String mMessage;
+    private int mResponse;
+    private String mMessage;
 
     public IabResult(int response, String message) {
         mResponse = response;

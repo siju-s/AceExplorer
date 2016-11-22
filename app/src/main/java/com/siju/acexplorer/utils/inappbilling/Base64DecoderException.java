@@ -19,12 +19,9 @@ package com.siju.acexplorer.utils.inappbilling;
  *
  * @author nelson
  */
-public class Base64DecoderException extends Exception {
-    public Base64DecoderException() {
-        super();
-    }
+class Base64DecoderException extends Exception {
 
-    public Base64DecoderException(String s) {
+    Base64DecoderException(String s) {
         super(s);
     }
 
