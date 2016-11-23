@@ -59,7 +59,7 @@ public class TransparentActivity extends AppCompatActivity {
         int theme = ThemeUtils.getTheme(this);
 
         if (theme == FileConstants.THEME_DARK) {
-            return R.style.Dark_AppTheme_NoActionBar;
+            return R.style.DarkAppTheme_NoActionBar;
         } else {
             return R.style.AppTheme_NoActionBar;
         }

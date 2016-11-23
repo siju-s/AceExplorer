@@ -26,6 +26,7 @@
     <color name="dark_actionModeItemSelected">#33ffffff</color>
     <color name="dark_divider">#80262626</color>
     <color name="dark_overlay">#595959</color>
+    <color name="light_divider">#80262626</color>
 
 
     <!-- Screens background color-->

@@ -30,6 +30,7 @@
         android:layout_below="@+id/textStorage"
         android:layout_marginLeft="@dimen/margin_16"
         android:layout_marginStart="@dimen/margin_16"
+        android:progress="50"
         android:layout_toEndOf="@+id/imageStorage"
         android:layout_toRightOf="@+id/imageStorage"
         android:max="100"/>

@@ -33,6 +33,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
@@ -176,7 +177,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             nestedScrollViewHome.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.light_home_bg));
         }
         layoutContainer = (RelativeLayout) root.findViewById(R.id.layoutContainer);
-        mAdView = (AdView) root.findViewById(R.id.adView);
+//        mAdView = (AdView) root.findViewById(R.id.adView);
         isPremium = getArguments() != null && getArguments().getBoolean(FileConstants.KEY_PREMIUM, false);
         if (isPremium) {
             hideAds();
@@ -187,11 +188,39 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     }
 
     private void hideAds() {
-        layoutContainer.removeView(mAdView);
+        LinearLayout adviewLayout = (LinearLayout) root.findViewById(R.id.adviewLayout);
+        if (adviewLayout.getChildCount() != 0) {
+            adviewLayout.removeView(mAdView);
+        }
 
     }
 
     private void showAds() {
+        // DYNAMICALLY CREATE AD START
+        LinearLayout adviewLayout = (LinearLayout) root.findViewById(R.id.adviewLayout);
+        // Create an ad.
+        if (mAdView == null) {
+            mAdView = new AdView(getActivity().getApplicationContext());
+            mAdView.setAdSize(AdSize.BANNER);
+            mAdView.setAdUnitId(getString(R.string.banner_ad_unit_id));
+            // DYNAMICALLY CREATE AD END
+            AdRequest adRequest = new AdRequest.Builder().build();
+            // Start loading the ad in the background.
+            mAdView.loadAd(adRequest);
+            // Add the AdView to the view hierarchy. The view will have no size until the ad is loaded.
+            adviewLayout.addView(mAdView);
+        }
+        else {
+            ((LinearLayout) mAdView.getParent()).removeAllViews();
+            adviewLayout.addView(mAdView);
+            // Reload Ad if necessary.  Loaded ads are lost when the activity is paused.
+            if (!mAdView.isLoading()) {
+                AdRequest adRequest = new AdRequest.Builder().build();
+                // Start loading the ad in the background.
+                mAdView.loadAd(adRequest);
+            }
+        }
+        // DYNAMICALLY CREATE AD END
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
     }
@@ -737,6 +766,14 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         Logger.log(TAG, "onDestroyView");
         getActivity().getContentResolver().unregisterContentObserver(mUriObserver);
         super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
+        super.onDestroy();
     }
 
     @Override

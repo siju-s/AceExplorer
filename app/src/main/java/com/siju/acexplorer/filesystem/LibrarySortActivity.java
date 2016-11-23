@@ -63,7 +63,7 @@ public class LibrarySortActivity extends AppCompatActivity implements OnStartDra
         int mCurrentTheme = ThemeUtils.getTheme(this);
 
         if (mCurrentTheme == FileConstants.THEME_DARK) {
-            setTheme(R.style.Dark_AppTheme_NoActionBar);
+            setTheme(R.style.DarkAppTheme_NoActionBar);
         } else {
             setTheme(R.style.AppTheme_NoActionBar);
         }

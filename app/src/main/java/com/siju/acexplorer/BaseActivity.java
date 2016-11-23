@@ -20,7 +20,6 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -46,6 +45,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -75,6 +75,7 @@ import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 import com.siju.acexplorer.model.SectionGroup;
 import com.siju.acexplorer.model.SectionItems;
 import com.siju.acexplorer.settings.SettingsActivity;
+import com.siju.acexplorer.ui.ScrimInsetsRelativeLayout;
 import com.siju.acexplorer.utils.DialogUtils;
 import com.siju.acexplorer.utils.LocaleHelper;
 import com.siju.acexplorer.utils.PermissionUtils;
@@ -120,7 +121,7 @@ public class BaseActivity extends AppCompatActivity implements
     private final ArrayList<SectionGroup> totalGroup = new ArrayList<>();
     private final ArrayList<SectionItems> othersGroupChild = new ArrayList<>();
     private DrawerLayout drawerLayout;
-    private NavigationView relativeLayoutDrawerPane;
+    private ScrimInsetsRelativeLayout relativeLayoutDrawerPane;
     private String mCurrentDir;
     private String mCurrentDirDualPane;
     private String STORAGE_ROOT, STORAGE_INTERNAL, STORAGE_EXTERNAL, DOWNLOADS, IMAGES, VIDEO,
@@ -187,6 +188,9 @@ public class BaseActivity extends AppCompatActivity implements
     private IabHelper mHelper;
 
     private boolean isPremium;
+    private RelativeLayout unlockPremium;
+    private RelativeLayout rateUs;
+    private RelativeLayout settings;
 
 
     @Override
@@ -195,6 +199,13 @@ public class BaseActivity extends AppCompatActivity implements
         setLanguage();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // Start the dummy admob activity.  Don't try to start it twice or an exception will be thrown
+//        if (AdMobActivity.AdMobMemoryLeakWorkAroundActivity == null) {
+//            Log.i("CHAT", "starting the AdMobActivity");
+//            Intent intent = new Intent(this,AdMobActivity.class);
+//            startActivity(intent);
+////            AdMobActivity.startAdMobActivity(this);
+//        }
         setupBilling();
         PreferenceManager.setDefaultValues(this, R.xml.pref_settings, false);
         Logger.log(TAG, "onCreate");
@@ -215,7 +226,7 @@ public class BaseActivity extends AppCompatActivity implements
         mCurrentTheme = ThemeUtils.getTheme(this);
 
         if (mCurrentTheme == FileConstants.THEME_DARK) {
-            setTheme(R.style.Dark_AppTheme_NoActionBar);
+            setTheme(R.style.DarkAppTheme_NoActionBar);
         } else {
             setTheme(R.style.AppTheme_NoActionBar);
         }
@@ -236,8 +247,8 @@ public class BaseActivity extends AppCompatActivity implements
         Log.d(TAG, "Creating IAB helper.");
         String base64EncodedPublicKey =
                 "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAomGBqi0dGhyE1KphvTxc6K3OXsTsWEcAdLNsg22Un" +
-                "/6VJakiajmZMBODktRggHlUgWDZZvFZCw2so53U++pVHRfyevKIbP7" +
-                "/eIkB7mtlartsbOkD3yGQCUVxE1kQ3Olum1CYv7DqBQC4J9h9q22ApcGIfkZq6Os3Jm7vKmuzHHLKN63yWQS1FuwwcLAmpSN2EOX4Has4eElrgZoySu4qv5SOooOJS27Y4fzzxToQX5T50tO9dG+NYKrLmPK4yL5JGB5E3UD0I8vNLD/Wj2qPBE1tiYbjHHeX3PrF9lJhXtZs9uiMnMzox6dxW9+VmPYxNuMXakXrURGfpgaWGK00ZQIDAQAB";
+                        "/6VJakiajmZMBODktRggHlUgWDZZvFZCw2so53U++pVHRfyevKIbP7" +
+                        "/eIkB7mtlartsbOkD3yGQCUVxE1kQ3Olum1CYv7DqBQC4J9h9q22ApcGIfkZq6Os3Jm7vKmuzHHLKN63yWQS1FuwwcLAmpSN2EOX4Has4eElrgZoySu4qv5SOooOJS27Y4fzzxToQX5T50tO9dG+NYKrLmPK4yL5JGB5E3UD0I8vNLD/Wj2qPBE1tiYbjHHeX3PrF9lJhXtZs9uiMnMzox6dxW9+VmPYxNuMXakXrURGfpgaWGK00ZQIDAQAB";
         mHelper = new IabHelper(this, base64EncodedPublicKey);
 
         // enable debug logging (for a production application, you should set
@@ -298,13 +309,17 @@ public class BaseActivity extends AppCompatActivity implements
         mMainLayout = (CoordinatorLayout) findViewById(R.id.main_content);
         mBottomToolbar = (Toolbar) findViewById(R.id.toolbar_bottom);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        relativeLayoutDrawerPane = (NavigationView) findViewById(R.id.drawerPane);
+        relativeLayoutDrawerPane = (ScrimInsetsRelativeLayout) findViewById(R.id.drawerPane);
         navDirectory = (LinearLayout) findViewById(R.id.navButtons);
         navDirectoryDualPane = (LinearLayout) findViewById(R.id.navButtonsDualPane);
         scrollNavigation = (HorizontalScrollView) findViewById(R.id.scrollNavigation);
         scrollNavigationDualPane = (HorizontalScrollView) findViewById(R.id
                 .scrollNavigationDualPane);
         mViewSeperator = findViewById(R.id.viewSeperator);
+        unlockPremium = (RelativeLayout) findViewById(R.id.unlockPremium);
+        rateUs = (RelativeLayout) findViewById(R.id.rateUs);
+        settings = (RelativeLayout) findViewById(R.id.layoutSettings);
+
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, mToolbar, R.string.navigation_drawer_open, R.string
@@ -420,13 +435,16 @@ public class BaseActivity extends AppCompatActivity implements
 
     private void setViewTheme() {
         if (mCurrentTheme == FileConstants.THEME_DARK) {
-            expandableListView.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_colorPrimary));
+            relativeLayoutDrawerPane.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_colorPrimary));
             mNavigationLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_colorPrimary));
             mBottomToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_colorPrimary));
             mToolbar.setPopupTheme(R.style.Dark_AppTheme_PopupOverlay);
             frameLayoutFab.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_overlay));
             frameLayoutFabDual.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_overlay));
             mMainLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_colorPrimary));
+        }
+        else {
+            relativeLayoutDrawerPane.setBackgroundColor(ContextCompat.getColor(this, R.color.navDrawerBg));
         }
     }
 
@@ -596,13 +614,15 @@ public class BaseActivity extends AppCompatActivity implements
         fabCreateFileDual.setOnClickListener(this);
         fabCreateFolder.setOnClickListener(this);
         fabCreateFolderDual.setOnClickListener(this);
-
-
+        rateUs.setOnClickListener(this);
+        unlockPremium.setOnClickListener(this);
+        settings.setOnClickListener(this);
     }
 
     // Listener that's called when we finish querying the items and
     // subscriptions we own
-    private final IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
+    private final IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper
+            .QueryInventoryFinishedListener() {
         public void onQueryInventoryFinished(IabResult result,
                                              Inventory inventory) {
             Log.d(TAG, "Query inventory finished." + mHelper);
@@ -681,7 +701,6 @@ public class BaseActivity extends AppCompatActivity implements
     private void initializeGroups() {
         initializeFavouritesGroup();
         initializeLibraryGroup();
-        initializeOthersGroup();
     }
 
     private void initializeStorageGroup() {
@@ -780,7 +799,7 @@ public class BaseActivity extends AppCompatActivity implements
         totalGroup.add(new SectionGroup(mListHeader.get(2), libraryGroupChild));
     }
 
-    private void initializeOthersGroup() {
+   /* private void initializeOthersGroup() {
 
         if (!isPremium) {
             othersGroupChild.add(new SectionItems(BUY, "", R.drawable.ic_unlock_full, null, 0));
@@ -788,7 +807,7 @@ public class BaseActivity extends AppCompatActivity implements
         othersGroupChild.add(new SectionItems(RATE, "", R.drawable.ic_rate_white, null, 0));
         othersGroupChild.add(new SectionItems(SETTINGS, "", R.drawable.ic_settings_white, null, 0));
         totalGroup.add(new SectionGroup(mListHeader.get(3), othersGroupChild));
-    }
+    }*/
 
     private void setListAdapter() {
         expandableListAdapter = new ExpandableListAdapter(this, totalGroup);
@@ -1035,9 +1054,10 @@ public class BaseActivity extends AppCompatActivity implements
 
     /**
      * Show the rate dialog
+     *
      * @param context
      */
-    private  void showPremiumDialog() {
+    private void showPremiumDialog() {
         int color = new DialogUtils().getCurrentThemePrimary(this);
 
         final MaterialDialog.Builder builder = new MaterialDialog.Builder(this);
@@ -1073,7 +1093,6 @@ public class BaseActivity extends AppCompatActivity implements
         SharedPreferences.Editor editor = pref.edit();
         editor.putBoolean(PremiumUtils.KEY_OPT_OUT, true).apply();
     }
-
 
 
     public void updateFavourites(ArrayList<FavInfo> favInfoArrayList) {
@@ -1492,6 +1511,38 @@ public class BaseActivity extends AppCompatActivity implements
                     ((FileListDualFragment) dualFragment).setBackPressed();
                 }
                 break;
+
+            case R.id.unlockPremium:
+                showPremiumDialog();
+                break;
+            case R.id.rateUs: // Rate us
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                // Try Google play
+                intent.setData(Uri
+                        .parse("market://details?id=" + getPackageName()));
+                if (FileUtils.checkAppForIntent(this, intent)) {
+                    // Market (Google play) app seems not installed,
+                    // let's try to open a webbrowser
+                    intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=" +
+                            getPackageName()));
+                    if (FileUtils.checkAppForIntent(this, intent)) {
+                        Toast.makeText(this,
+                                getString(R.string.msg_error_not_supported),
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        startActivity(intent);
+                    }
+                } else {
+                    startActivity(intent);
+                }
+                drawerLayout.closeDrawer(relativeLayoutDrawerPane);
+                break;
+            case R.id.layoutSettings: // Settings
+                startActivityForResult(new Intent(this, SettingsActivity.class),
+                        PREFS_REQUEST);
+                expandableListView.setSelection(0);
+                drawerLayout.closeDrawer(relativeLayoutDrawerPane);
+                break;
         }
     }
 
@@ -1843,44 +1894,6 @@ public class BaseActivity extends AppCompatActivity implements
                 displaySelectedGroup(groupPos, childPos, path);
                 drawerLayout.closeDrawer(relativeLayoutDrawerPane);
                 break;
-            case 3:
-                if (isPremium) {
-                    childPos = childPos + 1;
-                }
-                switch (childPos) {
-
-                    case 0:
-                        showPremiumDialog();
-                        break;
-                    case 1: // Rate us
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        // Try Google play
-                        intent.setData(Uri
-                                .parse("market://details?id=" + getPackageName()));
-                        if (FileUtils.checkAppForIntent(this, intent)) {
-                            // Market (Google play) app seems not installed,
-                            // let's try to open a webbrowser
-                            intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=" +
-                                    getPackageName()));
-                            if (FileUtils.checkAppForIntent(this, intent)) {
-                                Toast.makeText(this,
-                                        getString(R.string.msg_error_not_supported),
-                                        Toast.LENGTH_SHORT).show();
-                            } else {
-                                startActivity(intent);
-                            }
-                        } else {
-                            startActivity(intent);
-                        }
-                        drawerLayout.closeDrawer(relativeLayoutDrawerPane);
-                        break;
-                    case 2: // Settings
-                        startActivityForResult(new Intent(this, SettingsActivity.class),
-                                PREFS_REQUEST);
-                        expandableListView.setSelection(0);
-                        drawerLayout.closeDrawer(relativeLayoutDrawerPane);
-                        break;
-                }
         }
     }
 
@@ -1890,7 +1903,8 @@ public class BaseActivity extends AppCompatActivity implements
                 RC_REQUEST, mPurchaseFinishedListener, payload);
     }
 
-   /* *//**
+   /* */
+    /**
      * Verifies the developer payload of a purchase.
      *//*
     private boolean verifyDeveloperPayload(Purchase p) {
@@ -1923,7 +1937,8 @@ public class BaseActivity extends AppCompatActivity implements
     }*/
 
     // Callback for when a purchase is finished
-    private final IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
+    private final IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper
+            .OnIabPurchaseFinishedListener() {
         public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
             Log.d(TAG, "Purchase finished: " + result + ", purchase: "
                     + purchase);
@@ -1948,11 +1963,14 @@ public class BaseActivity extends AppCompatActivity implements
 
     private void hideAds() {
         Log.d(TAG, "hideAds:");
-        if (othersGroupChild.get(0) != null && othersGroupChild.get(0).getIcon() == (R.drawable.ic_unlock_full)) {
+
+ /*       if (othersGroupChild.get(0) != null && othersGroupChild.get(0).getIcon() == (R.drawable.ic_unlock_full)) {
             othersGroupChild.remove(0);
             expandableListAdapter.notifyDataSetChanged();
             Log.d(TAG, "Hide ads SUCCESS");
-        }
+        }*/
+
+        unlockPremium.setVisibility(View.GONE);
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
         if (fragment instanceof FileListFragment) {
             ((FileListFragment) fragment).setPremium();

@@ -68,6 +68,7 @@ import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
 import com.github.junrar.rarfile.FileHeader;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
@@ -311,8 +312,9 @@ public class FileListFragment extends Fragment implements LoaderManager
     }
 
     private void hideAds() {
-        if (isPremium) {
-            layoutDummy.removeView(mAdView);
+        LinearLayout adviewLayout = (LinearLayout) root.findViewById(R.id.adviewLayout);
+        if (adviewLayout.getChildCount() != 0) {
+            adviewLayout.removeView(mAdView);
         }
     }
 
@@ -366,15 +368,44 @@ public class FileListFragment extends Fragment implements LoaderManager
         mBottomToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar_bottom);
         mFileUtils = new FileUtils();
         layoutDummy = (LinearLayout) root.findViewById(R.id.layoutDummy);
-        mAdView = (AdView) root.findViewById(R.id.adView);
         isPremium = getArguments() != null && getArguments().getBoolean(FileConstants.KEY_PREMIUM, false);
-        hideAds();
-        if (!isPremium) {
-            AdRequest adRequest = new AdRequest.Builder().build();
-            mAdView.loadAd(adRequest);
+        if (isPremium) {
+            hideAds();
+        } else {
+            showAds();
         }
 
     }
+
+    private void showAds() {
+        // DYNAMICALLY CREATE AD START
+        LinearLayout adviewLayout = (LinearLayout) root.findViewById(R.id.adviewLayout);
+        // Create an ad.
+        if (mAdView == null) {
+            mAdView = new AdView(getActivity().getApplicationContext());
+            mAdView.setAdSize(AdSize.BANNER);
+            mAdView.setAdUnitId(getString(R.string.banner_ad_unit_id));
+            // DYNAMICALLY CREATE AD END
+            AdRequest adRequest = new AdRequest.Builder().build();
+            // Start loading the ad in the background.
+            mAdView.loadAd(adRequest);
+            // Add the AdView to the view hierarchy. The view will have no size until the ad is loaded.
+            adviewLayout.addView(mAdView);
+        } else {
+            ((LinearLayout) mAdView.getParent()).removeAllViews();
+            adviewLayout.addView(mAdView);
+            // Reload Ad if necessary.  Loaded ads are lost when the activity is paused.
+            if (!mAdView.isLoading()) {
+                AdRequest adRequest = new AdRequest.Builder().build();
+                // Start loading the ad in the background.
+                mAdView.loadAd(adRequest);
+            }
+        }
+        // DYNAMICALLY CREATE AD END
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+    }
+
 
     private void initializeListeners() {
         fileListAdapter.setOnItemClickListener(new FileListAdapter.OnItemClickListener() {
@@ -1674,7 +1705,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         int theme = ThemeUtils.getTheme(getActivity());
 
         if (theme == FileConstants.THEME_DARK) {
-            return R.style.Dark_AppTheme_NoActionBar;
+            return R.style.DarkAppTheme_NoActionBar;
         } else {
             return R.style.AppTheme_NoActionBar;
         }
@@ -2357,6 +2388,14 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
         fileListAdapter.onDetach();
         super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
+        super.onDestroy();
     }
 
     @Override

@@ -15,6 +15,20 @@
         <item name="android:actionModeBackground">@color/colorPrimary</item>
     </style>
 
+    <style name="DarkAppTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/dark_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/dark_colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="DarkAppTheme.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeBackground">@color/dark_colorPrimary</item>
+        <item name="android:actionModeBackground">@color/dark_colorPrimary</item>
+    </style>
+
     <style name="WelcomScreen" parent="Theme.AppCompat.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -30,20 +44,20 @@
     </style>
 
 
-    <style name="Dark_AppTheme_NoActionBar" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorPrimary">@color/dark_colorPrimary</item>
-        <item name="colorPrimaryDark">@color/dark_colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionModeOverlay">true</item>
-        <item name="actionModeBackground">@color/dark_colorPrimary</item>
-        <item name="android:actionModeBackground">@color/dark_colorPrimary</item>
-        <!--<item name="android:background">#000000</item>-->
-        <item name="android:textColor">@color/dark_text</item>
-        <item name="android:textColorPrimary">@color/dark_text</item>
-        <item name="android:textColorSecondary">@color/dark_text</item>
-    </style>
+    <!--<style name="Dark_AppTheme_NoActionBar" parent="Theme.AppCompat.NoActionBar">-->
+        <!--<item name="colorPrimary">@color/dark_colorPrimary</item>-->
+        <!--<item name="colorPrimaryDark">@color/dark_colorPrimaryDark</item>-->
+        <!--<item name="colorAccent">@color/colorAccent</item>-->
+        <!--<item name="windowActionBar">false</item>-->
+        <!--<item name="windowNoTitle">true</item>-->
+        <!--<item name="windowActionModeOverlay">true</item>-->
+        <!--<item name="actionModeBackground">@color/dark_colorPrimary</item>-->
+        <!--<item name="android:actionModeBackground">@color/dark_colorPrimary</item>-->
+        <!--&lt;!&ndash;<item name="android:background">#000000</item>&ndash;&gt;-->
+        <!--<item name="android:textColor">@color/dark_text</item>-->
+        <!--<item name="android:textColorPrimary">@color/dark_text</item>-->
+        <!--<item name="android:textColorSecondary">@color/dark_text</item>-->
+    <!--</style>-->
 
     <style name="ToolbarTitle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">20sp</item>

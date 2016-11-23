@@ -32,6 +32,10 @@
                        android:resource="@xml/shortcuts" />
         </activity>
 
+        <activity android:name=".AdMobActivity"
+                  android:theme="@style/TransparentTheme"
+                  android:launchMode="singleInstance" />
+
 
         <activity
             android:name="com.siju.acexplorer.BaseActivity"
