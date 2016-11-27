@@ -59,6 +59,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
     private ArrayList<FileInfo> storagesInfoList;
     private ImageButton mImageButtonBack;
     private TextView mTextCurrentPath;
+    private TextView mTitle;
     private Button mButtonOk;
     private Button mButtonCancel;
     private String mCurrentPath;
@@ -112,6 +113,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
 
         if (getArguments() != null) {
             if (getArguments().getBoolean("ringtone_picker")) {
+                mTitle.setText(getString(R.string.dialog_title_picker));
                 mButtonOk.setVisibility(View.GONE);
                 mIsRingtonePicker = true;
                 mRingToneType = getArguments().getInt("ringtone_type");
@@ -394,6 +396,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
         mTextCurrentPath = (TextView) root.findViewById(R.id.textPath);
         mButtonOk = (Button) root.findViewById(R.id.buttonOk);
         mButtonCancel = (Button) root.findViewById(R.id.buttonCancel);
+        mTitle = (TextView)root.findViewById(R.id.textDialogTitle);
 
     }
 

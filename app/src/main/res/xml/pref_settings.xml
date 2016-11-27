@@ -51,10 +51,7 @@
         android:key="prefsUpdate"
         android:layout="@layout/prefs_settings_item"
         android:title="@string/pref_title_check_update"/>
-    <Preference
-        android:key="prefsPro"
-        android:layout="@layout/prefs_settings_item"
-        android:title="@string/pref_title_upgrade"/>
+
 
     <PreferenceScreen
         android:key="container"

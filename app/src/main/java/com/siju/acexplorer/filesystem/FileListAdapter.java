@@ -80,7 +80,14 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         Logger.log("SIJU", "updateAdapter--animated=" + mStopAnimation);
     }
 
-    private void clear() {
+    void updateSearchResult(FileInfo fileInfo) {
+        Logger.log("Adapter","Count="+getItemCount());;
+        fileInfoArrayList.add(fileInfo);
+        notifyDataSetChanged();
+//        notifyItemChanged(getItemCount());
+    }
+
+    void clear() {
         fileInfoArrayList = new ArrayList<>();
     }
 

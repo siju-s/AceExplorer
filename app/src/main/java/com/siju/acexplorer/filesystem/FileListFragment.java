@@ -80,6 +80,7 @@ import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.model.ZipModel;
 import com.siju.acexplorer.filesystem.task.ExtractZipEntry;
 import com.siju.acexplorer.filesystem.task.PasteConflictChecker;
+import com.siju.acexplorer.filesystem.task.SearchTask;
 import com.siju.acexplorer.filesystem.ui.CustomGridLayoutManager;
 import com.siju.acexplorer.filesystem.ui.CustomLayoutManager;
 import com.siju.acexplorer.filesystem.ui.DialogBrowseFragment;
@@ -105,7 +106,7 @@ import java.util.zip.ZipFile;
 public class FileListFragment extends Fragment implements LoaderManager
         .LoaderCallbacks<ArrayList<FileInfo>>,
         SearchView.OnQueryTextListener,
-        Toolbar.OnMenuItemClickListener {
+        Toolbar.OnMenuItemClickListener,SearchTask.SearchHelper {
 
     private final String TAG = this.getClass().getSimpleName();
     private FastScrollRecyclerView recyclerViewFileList;
@@ -185,6 +186,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private boolean isPremium;
     private AdView mAdView;
     private LinearLayout layoutDummy;
+    private MenuItem mSearchItem;
 
 
     @Override
@@ -803,8 +805,47 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
     };
 
+    private boolean isInitialSearch;
+
+    private void addSearchResult(FileInfo fileInfo) {
+        // initially clearing the array for new result set
+        if (!isInitialSearch) {
+            fileInfoList.clear();
+            fileListAdapter.clear();
+
+        }
+        isInitialSearch = true;
+        fileInfoList.add(fileInfo);
+        fileListAdapter.updateSearchResult(fileInfo);
+        stopAnimation();
+//        mBaseActivity.addToBackStack(mFilePath, mCategory);
+
+    }
+
 
     private RefreshData refreshData;
+
+    @Override
+    public void onPreExecute() {
+        mSwipeRefreshLayout.setRefreshing(true);
+    }
+
+    @Override
+    public void onPostExecute() {
+        mSwipeRefreshLayout.setRefreshing(false);
+
+    }
+
+    @Override
+    public void onProgressUpdate(FileInfo val) {
+          addSearchResult(val);
+    }
+
+    @Override
+    public void onCancelled() {
+        mSwipeRefreshLayout.setRefreshing(false);
+
+    }
 
     public interface RefreshData {
         void refresh(int category);
@@ -1446,6 +1487,10 @@ public class FileListFragment extends Fragment implements LoaderManager
                 mBaseActivity.toggleFab(false);
             }
         }
+    }
+
+    public boolean isSearchVisible() {
+        return mSearchView!= null && !mSearchView.isIconified();
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -2207,7 +2252,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         menu.clear();
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.file_base, menu);
-        MenuItem mSearchItem = menu.findItem(R.id.action_search);
+        mSearchItem = menu.findItem(R.id.action_search);
         mSearchView = (SearchView) MenuItemCompat.getActionView(mSearchItem);
         mPasteItem = menu.findItem(R.id.action_paste);
         mPasteItem.setVisible(mIsPasteItemVisible);
@@ -2228,16 +2273,47 @@ public class FileListFragment extends Fragment implements LoaderManager
         mSearchView.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
         mSearchView.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         mSearchView.setOnQueryTextListener(this);
+/*        mSearchView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent event) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN)) {
+                    // Perform action on key press
+                    mainActivityHelper.search(searchViewEditText.getText().toString());
+                    hideSearchView();
+                    return true;
+                }
+                return false;
+            }
+        });*/
     }
+
+    public void hideSearchView() {
+        MenuItemCompat.collapseActionView(mSearchItem);
+
+//        mSearchView.onActionViewCollapsed();
+    }
+
+    private  SearchTask searchTask;
 
     @Override
     public boolean onQueryTextChange(String query) {
-        fileListAdapter.filter(query);
+
+//        fileListAdapter.filter(query);
         return true;
     }
 
     @Override
     public boolean onQueryTextSubmit(String query) {
+        if (!query.isEmpty()) {
+            if (searchTask == null) {
+                searchTask = new SearchTask(this,query,mFilePath);
+
+            }
+            else {
+                searchTask.execute(query);
+            }
+        }
+        hideSearchView();
         return false;
     }
 
@@ -2381,6 +2457,8 @@ public class FileListFragment extends Fragment implements LoaderManager
             mPreferences.edit().putInt(FileConstants.KEY_GRID_COLUMNS, mGridColumns).apply();
             sharedPreferenceWrapper.savePrefs(getActivity(), mViewMode);
         }
+        removeSearchTask();
+
         refreshData = null;
         if (clearCache) {
             clearCache();
@@ -2396,6 +2474,12 @@ public class FileListFragment extends Fragment implements LoaderManager
             mAdView.destroy();
         }
         super.onDestroy();
+    }
+
+    public void removeSearchTask() {
+        if (searchTask != null) {
+            searchTask.searchAsync.cancel(true);
+        }
     }
 
     @Override

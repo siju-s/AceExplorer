@@ -2156,6 +2156,10 @@ public class BaseActivity extends AppCompatActivity implements
             mIsDualModeEnabled = false;
             mIsHomePageAdded = false;
         } else if (fragment instanceof FileListFragment) {
+            if (((FileListFragment) fragment).isSearchVisible()) {
+                ((FileListFragment) fragment).hideSearchView();
+                ((FileListFragment) fragment).removeSearchTask();
+            }
             backOperation(fragment);
         } else {
             // Remove HomeScreen Frag & Exit App
@@ -2204,7 +2208,8 @@ public class BaseActivity extends AppCompatActivity implements
                 }
             }
         } else {
-            if (((FileListFragment) fragment).isZipMode()) {
+
+             if (((FileListFragment) fragment).isZipMode()) {
 
                 if (((FileListFragment) fragment).checkZipMode()) {
                     int newSize = mBackStackList.size() - 1;
