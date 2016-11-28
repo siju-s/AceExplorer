@@ -96,7 +96,6 @@
     <string name="pref_title_disable_dual">Διπλή παράθυρο στο τοπίο</string>
     <string name="pref_title_check_update">Έλεγχος για ενημερώσεις</string>
     <string name="pref_title_change_lang">Άλλαξε γλώσσα</string>
-    <string name="pref_title_upgrade">Αναβάθμιση σε επαγγελματικό</string>
     <string name="pref_title_about">Σχετικά με εμάς</string>
     <string name="pref_title_version">Εκδοχή</string>
     <string name="prefs_summary_dev">προγραμματιστής</string>

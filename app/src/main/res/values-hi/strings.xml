@@ -96,7 +96,6 @@
     <string name="pref_title_disable_dual">लैंडस्केप में दोहरी फलक</string>
     <string name="pref_title_check_update">अद्यतन के लिए जाँच</string>
     <string name="pref_title_change_lang">भाषा बदलो</string>
-    <string name="pref_title_upgrade">प्रो में अपग्रेड</string>
     <string name="pref_title_about">हमारे बारे में</string>
     <string name="pref_title_version">संस्करण</string>
     <string name="prefs_summary_dev">डेवलपर</string>

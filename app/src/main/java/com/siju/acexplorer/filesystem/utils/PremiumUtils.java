@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.util.Log;
 
 import java.util.Date;
@@ -74,14 +73,12 @@ public class PremiumUtils {
      */
     private static void storeInstallDate(final Context context, SharedPreferences.Editor editor) {
         Date installDate = new Date();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-            PackageManager packMan = context.getPackageManager();
-            try {
-                PackageInfo pkgInfo = packMan.getPackageInfo(context.getPackageName(), 0);
-                installDate = new Date(pkgInfo.firstInstallTime);
-            } catch (PackageManager.NameNotFoundException e) {
-                e.printStackTrace();
-            }
+        PackageManager packMan = context.getPackageManager();
+        try {
+            PackageInfo pkgInfo = packMan.getPackageInfo(context.getPackageName(), 0);
+            installDate = new Date(pkgInfo.firstInstallTime);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
         }
         editor.putLong(KEY_INSTALL_DATE, installDate.getTime());
         log("First install: " + installDate.toString());

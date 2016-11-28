@@ -95,7 +95,6 @@
     <string name="pref_title_disable_dual">Manzara Çift bölmesi</string>
     <string name="pref_title_check_update">Güncellemeleri kontrol et</string>
     <string name="pref_title_change_lang">Dil</string>
-    <string name="pref_title_upgrade">Pro\'ya yükselt</string>
     <string name="pref_title_about">Hakkımızda</string>
     <string name="pref_title_version">versiyon</string>
     <string name="prefs_summary_dev">Geliştirici</string>

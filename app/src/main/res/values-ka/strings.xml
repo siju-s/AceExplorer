@@ -95,7 +95,6 @@
     <string name="pref_title_disable_dual">Dual მინა Landscape</string>
     <string name="pref_title_check_update">შეამოწმოთ განახლებები</string>
     <string name="pref_title_change_lang">ენა</string>
-    <string name="pref_title_upgrade">განახლება პრო</string>
     <string name="pref_title_about">ჩვენს შესახებ</string>
     <string name="pref_title_version">მობილური</string>
     <string name="prefs_summary_dev">დეველოპერი</string>

@@ -97,7 +97,6 @@
     <string name="pref_title_disable_dual">Подвійна панель в ландшафтному</string>
     <string name="pref_title_check_update">Перевірити наявність оновлень</string>
     <string name="pref_title_change_lang">Мова</string>
-    <string name="pref_title_upgrade">Оновлення до Pro</string>
     <string name="pref_title_about">Про нас</string>
     <string name="pref_title_version">версія</string>
     <string name="prefs_summary_dev">розробник</string>

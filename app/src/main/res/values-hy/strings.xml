@@ -96,7 +96,6 @@
     <string name="pref_title_disable_dual">Dual թրաշ է լանդշաֆտային</string>
     <string name="pref_title_check_update">Ստուգել թարմացումները</string>
     <string name="pref_title_change_lang">Փոխել լեզուն</string>
-    <string name="pref_title_upgrade">Upgrade է Pro</string>
     <string name="pref_title_about">Մեր մասին</string>
     <string name="pref_title_version">տարբերակ</string>
     <string name="prefs_summary_dev">Developer</string>

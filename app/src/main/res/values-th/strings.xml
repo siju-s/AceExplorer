@@ -94,7 +94,6 @@
     <string name="pref_title_disable_dual">บานหน้าต่างสองในภูมิทัศน์</string>
     <string name="pref_title_check_update">ตรวจสอบสำหรับการอัพเดต</string>
     <string name="pref_title_change_lang">ภาษา</string>
-    <string name="pref_title_upgrade">อัพเกรดเป็น Pro</string>
     <string name="pref_title_about">เกี่ยวกับเรา</string>
     <string name="pref_title_version">รุ่น</string>
     <string name="prefs_summary_dev">ผู้พัฒนา</string>

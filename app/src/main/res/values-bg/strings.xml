@@ -96,7 +96,6 @@
     <string name="pref_title_disable_dual">Dual стъкло в Пейзаж</string>
     <string name="pref_title_check_update">Провери за актуализации</string>
     <string name="pref_title_change_lang">Смени езика</string>
-    <string name="pref_title_upgrade">Ъпгрейд Pro</string>
     <string name="pref_title_about">За нас</string>
     <string name="pref_title_version">версия</string>
     <string name="prefs_summary_dev">Разработчик</string>

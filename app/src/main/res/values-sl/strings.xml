@@ -97,7 +97,6 @@
     <string name="pref_title_disable_dual">Dual pane v krajini</string>
     <string name="pref_title_check_update">Preveri za posodobitve</string>
     <string name="pref_title_change_lang">Jezik</string>
-    <string name="pref_title_upgrade">Nadgradnja na Pro</string>
     <string name="pref_title_about">O podjetju</string>
     <string name="pref_title_version">različica</string>
     <string name="prefs_summary_dev">razvijalec</string>

@@ -96,7 +96,6 @@
     <string name="pref_title_disable_dual">de doble panel en paisaje</string>
     <string name="pref_title_check_update">Comprobar si hay actualizaciones</string>
     <string name="pref_title_change_lang">Cambiar idioma</string>
-    <string name="pref_title_upgrade">Actualizar a Pro</string>
     <string name="pref_title_about">Sobre nosotros</string>
     <string name="pref_title_version">Versión</string>
     <string name="prefs_summary_dev">Desarrollador</string>

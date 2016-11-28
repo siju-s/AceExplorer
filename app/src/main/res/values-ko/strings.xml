@@ -94,7 +94,6 @@
     <string name="pref_title_disable_dual">풍경 듀얼 창</string>
     <string name="pref_title_check_update">업데이트 확인</string>
     <string name="pref_title_change_lang">언어</string>
-    <string name="pref_title_upgrade">프로로 업그레이드</string>
     <string name="pref_title_about">회사 소개</string>
     <string name="pref_title_version">번역</string>
     <string name="prefs_summary_dev">개발자</string>

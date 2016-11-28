@@ -97,7 +97,6 @@
     <string name="pref_title_disable_dual">Dual okno u krajoliku</string>
     <string name="pref_title_check_update">Provjeri ažuriranja</string>
     <string name="pref_title_change_lang">Promijeni jezik</string>
-    <string name="pref_title_upgrade">Nadogradi na pro</string>
     <string name="pref_title_about">O nama</string>
     <string name="pref_title_version">Verzija</string>
     <string name="prefs_summary_dev">razvijač</string>

@@ -94,7 +94,6 @@
     <string name="pref_title_disable_dual">橫向的雙窗格</string>
     <string name="pref_title_check_update">檢查更新</string>
     <string name="pref_title_change_lang">語言</string>
-    <string name="pref_title_upgrade">升級到專業版</string>
     <string name="pref_title_about">關於我們</string>
     <string name="pref_title_version">版</string>
     <string name="prefs_summary_dev">開發人員</string>

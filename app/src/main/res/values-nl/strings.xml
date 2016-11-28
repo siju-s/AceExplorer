@@ -96,7 +96,6 @@
     <string name="pref_title_disable_dual">Dubbele ruit in het Landschap</string>
     <string name="pref_title_check_update">Controleren op updates</string>
     <string name="pref_title_change_lang">wijzig taal</string>
-    <string name="pref_title_upgrade">Upgraden naar Pro</string>
     <string name="pref_title_about">Over ons</string>
     <string name="pref_title_version">Versie</string>
     <string name="prefs_summary_dev">Ontwikkelaar</string>

@@ -94,7 +94,6 @@
     <string name="pref_title_disable_dual">đôi pane trong Phong cảnh</string>
     <string name="pref_title_check_update">Kiểm tra cập nhật</string>
     <string name="pref_title_change_lang">ngôn ngữ</string>
-    <string name="pref_title_upgrade">Nâng cấp lên Pro</string>
     <string name="pref_title_about">Về chúng tôi</string>
     <string name="pref_title_version">Phiên bản</string>
     <string name="prefs_summary_dev">Nhà phát triển</string>

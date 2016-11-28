@@ -98,7 +98,6 @@
     <string name="pref_title_disable_dual">בחלונית כפול ב נוף</string>
     <string name="pref_title_check_update">בדוק עדכונים</string>
     <string name="pref_title_change_lang">שנה שפה</string>
-    <string name="pref_title_upgrade">שדרוג לפרו</string>
     <string name="pref_title_about">עלינו</string>
     <string name="pref_title_version">גִרְסָה</string>
     <string name="prefs_summary_dev">מפתח</string>

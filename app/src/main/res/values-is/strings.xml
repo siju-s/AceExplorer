@@ -95,7 +95,6 @@
     <string name="pref_title_disable_dual">Dual megin í landslaginu</string>
     <string name="pref_title_check_update">Athugaðu með uppfærslur</string>
     <string name="pref_title_change_lang">Tungumál</string>
-    <string name="pref_title_upgrade">Uppfærsla í Pro</string>
     <string name="pref_title_about">Um okkur</string>
     <string name="pref_title_version">útgáfa</string>
     <string name="prefs_summary_dev">Hönnuður</string>

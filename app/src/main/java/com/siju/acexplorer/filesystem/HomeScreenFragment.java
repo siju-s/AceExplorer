@@ -170,8 +170,8 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         if (isDarkTheme) {
             layoutLibrary.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_colorPrimary));
             layoutStorages.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_colorPrimary));
-            nestedScrollViewHome.setBackgroundResource(R.drawable.bg_home);
-//            nestedScrollViewHome.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_home_bg));
+//            nestedScrollViewHome.setBackgroundResource(R.drawable.bg_home);
+            nestedScrollViewHome.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_home_bg));
         } else {
             layoutLibrary.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.light_home_lib));
             layoutStorages.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.light_home_lib));

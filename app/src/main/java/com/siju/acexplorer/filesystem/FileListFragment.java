@@ -2298,13 +2298,13 @@ public class FileListFragment extends Fragment implements LoaderManager
     @Override
     public boolean onQueryTextChange(String query) {
 
-//        fileListAdapter.filter(query);
+        fileListAdapter.filter(query);
         return true;
     }
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        if (!query.isEmpty()) {
+/*        if (!query.isEmpty()) {
             if (searchTask == null) {
                 searchTask = new SearchTask(this,query,mFilePath);
 
@@ -2313,7 +2313,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                 searchTask.execute(query);
             }
         }
-        hideSearchView();
+        hideSearchView();*/
         return false;
     }
 

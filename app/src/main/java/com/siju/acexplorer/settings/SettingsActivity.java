@@ -1,6 +1,8 @@
 package com.siju.acexplorer.settings;
 
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
@@ -12,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 
+import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.utils.ThemeUtils;
@@ -54,6 +57,18 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             setTheme(R.style.Settings_LightTheme);
             mIsTheme = FileConstants.THEME_LIGHT;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent in = new Intent(this, BaseActivity.class);
+        final int enter_anim = android.R.anim.fade_in;
+        final int exit_anim = android.R.anim.fade_out;
+        Activity activity = this;
+        activity.overridePendingTransition(enter_anim, exit_anim);
+        activity.finish();
+        activity.overridePendingTransition(enter_anim, exit_anim);
+        activity.startActivity(in);
     }
 
     @Override

@@ -25,6 +25,7 @@ import android.view.ViewParent;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
@@ -290,8 +291,6 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         activity.overridePendingTransition(enter_anim, exit_anim);
         activity.finish();
         activity.overridePendingTransition(enter_anim, exit_anim);
-        /*final Intent intent = getActivity().getIntent();
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);*/
         activity.startActivity(activity.getIntent());
 
     }
@@ -300,7 +299,15 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            getActivity().finish();
+            Intent in = new Intent(getActivity(), BaseActivity.class);
+            final int enter_anim = android.R.anim.fade_in;
+            final int exit_anim = android.R.anim.fade_out;
+            Activity activity = getActivity();
+            activity.overridePendingTransition(enter_anim, exit_anim);
+            activity.finish();
+            activity.overridePendingTransition(enter_anim, exit_anim);
+            activity.startActivity(in);
+//            getActivity().finish();
             return true;
         }
         return super.onOptionsItemSelected(item);

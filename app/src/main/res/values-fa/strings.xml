@@ -96,7 +96,6 @@
     <string name="pref_title_disable_dual">پنجره دو در چشم انداز</string>
     <string name="pref_title_check_update">به روز رسانی ها رو بررسی کن</string>
     <string name="pref_title_change_lang">تغییر زبان</string>
-    <string name="pref_title_upgrade">پیشرفت</string>
     <string name="pref_title_about">دربارهی ما</string>
     <string name="pref_title_version">نسخه</string>
     <string name="prefs_summary_dev">توسعه دهنده</string>

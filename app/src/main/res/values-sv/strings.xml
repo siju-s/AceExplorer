@@ -95,7 +95,6 @@
     <string name="pref_title_disable_dual">Dubbla rutan i landskaps</string>
     <string name="pref_title_check_update">Kolla efter uppdateringar</string>
     <string name="pref_title_change_lang">Språk</string>
-    <string name="pref_title_upgrade">Uppgradera till PRO</string>
     <string name="pref_title_about">Om oss</string>
     <string name="pref_title_version">Version</string>
     <string name="prefs_summary_dev">Utvecklare</string>

@@ -436,8 +436,9 @@ public class BaseActivity extends AppCompatActivity implements
     private void setViewTheme() {
         if (mCurrentTheme == FileConstants.THEME_DARK) {
             relativeLayoutDrawerPane.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_colorPrimary));
-            mNavigationLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_colorPrimary));
+            mNavigationLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
             mBottomToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_colorPrimary));
+//            mToolbar.setBackgroundColor(ContextCompat.getColor(this,R.color.colorPrimary));
             mToolbar.setPopupTheme(R.style.Dark_AppTheme_PopupOverlay);
             frameLayoutFab.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_overlay));
             frameLayoutFabDual.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_overlay));
@@ -1538,7 +1539,11 @@ public class BaseActivity extends AppCompatActivity implements
                 drawerLayout.closeDrawer(relativeLayoutDrawerPane);
                 break;
             case R.id.layoutSettings: // Settings
-                startActivityForResult(new Intent(this, SettingsActivity.class),
+                Intent intent1 = new Intent(this, SettingsActivity.class);
+                final int enter_anim = android.R.anim.fade_in;
+                final int exit_anim = android.R.anim.fade_out;
+                overridePendingTransition(enter_anim, exit_anim);
+                startActivityForResult(intent1,
                         PREFS_REQUEST);
                 expandableListView.setSelection(0);
                 drawerLayout.closeDrawer(relativeLayoutDrawerPane);

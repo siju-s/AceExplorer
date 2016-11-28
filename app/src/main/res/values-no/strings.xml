@@ -95,7 +95,6 @@
     <string name="pref_title_disable_dual">Dual-ruten i Landskap</string>
     <string name="pref_title_check_update">Se etter oppdateringer</string>
     <string name="pref_title_change_lang">Språk</string>
-    <string name="pref_title_upgrade">Oppgrader til Pro</string>
     <string name="pref_title_about">Om oss</string>
     <string name="pref_title_version">Versjon</string>
     <string name="prefs_summary_dev">Utvikler</string>

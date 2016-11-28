@@ -100,7 +100,6 @@
     <string name="pref_title_disable_dual">جزء المزدوج في المناظر الطبيعية</string>
     <string name="pref_title_check_update">تحقق من وجود تحديثات</string>
     <string name="pref_title_change_lang">غير اللغة</string>
-    <string name="pref_title_upgrade">التطور للاحترافية</string>
     <string name="pref_title_about">معلومات عنا</string>
     <string name="pref_title_version">الإصدار</string>
     <string name="prefs_summary_dev">مطور</string>

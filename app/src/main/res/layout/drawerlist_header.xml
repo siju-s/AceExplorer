@@ -8,6 +8,7 @@
         android:layout_height="@dimen/nav_header_height"
         android:scaleType="centerCrop"
         android:clickable="false"
+        android:background="@color/colorPrimary"
         android:src="@drawable/ic_drawer_bg"
         android:contentDescription="@string/img_accessibility_brand"
         android:layout_gravity="center_horizontal|top" />

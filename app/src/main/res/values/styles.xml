@@ -1,13 +1,16 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+    <!--<style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">-->
+        <!--&lt;!&ndash; Customize your theme here. &ndash;&gt;-->
+        <!--<item name="colorPrimary">@color/colorPrimary</item>-->
+        <!--<item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
+        <!--<item name="colorAccent">@color/colorAccent</item>-->
+    <!--</style>-->
+
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-    </style>
-
-    <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionModeOverlay">true</item>
@@ -15,13 +18,16 @@
         <item name="android:actionModeBackground">@color/colorPrimary</item>
     </style>
 
-    <style name="DarkAppTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorPrimary">@color/dark_colorPrimary</item>
-        <item name="colorPrimaryDark">@color/dark_colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
+    <!--<style name="DarkAppTheme" parent="Theme.AppCompat">-->
+        <!--<item name="colorPrimary">@color/colorPrimary</item>-->
+        <!--<item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
+        <!--<item name="colorAccent">@color/colorAccent</item>-->
+    <!--</style>-->
 
-    <style name="DarkAppTheme.NoActionBar">
+    <style name="DarkAppTheme.NoActionBar" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="windowActionModeOverlay">true</item>
@@ -29,10 +35,10 @@
         <item name="android:actionModeBackground">@color/dark_colorPrimary</item>
     </style>
 
-    <style name="WelcomScreen" parent="Theme.AppCompat.NoActionBar">
+    <style name="WelcomeScreen" parent="Theme.AppCompat.NoActionBar">
         <item name="windowActionBar">false</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
 
@@ -66,6 +72,30 @@
 
     <style name="TransparentTheme" parent="Theme.AppCompat.Light.Dialog">
         <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="TransparentTheme_AppTheme_NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeBackground">@color/colorPrimary</item>
+        <item name="android:actionModeBackground">@color/colorPrimary</item>
+    </style>
+
+    <style name="TransparentTheme_DarkAppTheme_NoActionBar" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+        <!--<item name="android:background">#000000</item>-->
+        <!--<item name="android:textColor">@color/dark_text</item>-->
+        <!--<item name="android:textColorPrimary">@color/dark_text</item>-->
+        <!--<item name="android:textColorSecondary">@color/dark_text</item>-->
     </style>
 
 

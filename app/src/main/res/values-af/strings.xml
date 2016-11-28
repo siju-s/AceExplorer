@@ -96,7 +96,6 @@
     <string name="pref_title_disable_dual">Dubbele paneel in Landscape</string>
     <string name="pref_title_check_update">Kyk vir updates</string>
     <string name="pref_title_change_lang">Verander taal</string>
-    <string name="pref_title_upgrade">Gradeer na Pro</string>
     <string name="pref_title_about">Oor ons</string>
     <string name="pref_title_version">weergawe</string>
     <string name="prefs_summary_dev">Ontwikkelaar</string>

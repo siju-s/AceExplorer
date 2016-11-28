@@ -96,7 +96,6 @@
     <string name="pref_title_disable_dual">Double vitrage dans Paysage</string>
     <string name="pref_title_check_update">Vérifier les mises à jour</string>
     <string name="pref_title_change_lang">Changer de langue</string>
-    <string name="pref_title_upgrade">Passer à Pro</string>
     <string name="pref_title_about">À propos de nous</string>
     <string name="pref_title_version">Version</string>
     <string name="prefs_summary_dev">Développeur</string>

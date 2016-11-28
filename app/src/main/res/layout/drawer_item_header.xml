@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/drawer_item_margin"
         android:layout_marginStart="@dimen/drawer_item_margin"
-        android:layout_marginTop="@dimen/drawer_item_margin"
+        android:layout_marginTop="@dimen/padding_10"
         android:textSize="14sp"
         android:textStyle="bold"
         tools:ignore="RelativeOverlap"/>
@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="@dimen/drawer_item_margin"
+        android:layout_marginTop="@dimen/padding_10"
         android:contentDescription="@string/img_accessibility_expand"
         android:paddingEnd="@dimen/drawer_item_margin"
         android:paddingLeft="@dimen/drawer_item_margin"

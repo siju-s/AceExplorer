@@ -94,7 +94,6 @@
     <string name="pref_title_disable_dual">Dual pane di Landscape</string>
     <string name="pref_title_check_update">Periksa pembaruan</string>
     <string name="pref_title_change_lang">Bahasa</string>
-    <string name="pref_title_upgrade">Upgrade ke yang lebih baik</string>
     <string name="pref_title_about">Tentang kami</string>
     <string name="pref_title_version">Versi</string>
     <string name="prefs_summary_dev">pembangun</string>

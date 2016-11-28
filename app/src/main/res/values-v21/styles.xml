@@ -1,21 +1,26 @@
 <resources>
 
-    <style name="AppTheme.NoActionBar">
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <!--<item name="android:windowTranslucentStatus">true</item>-->
-        <!--<item name="android:statusBarColor">@color/colorPrimaryDark</item>-->
+        <item name="android:windowTranslucentStatus">true</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@color/colorPrimary</item>
         <item name="android:actionModeBackground">@color/colorPrimary</item>
     </style>
 
-    <style name="DarkAppTheme.NoActionBar">
+    <style name="DarkAppTheme.NoActionBar" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <!--<item name="android:windowTranslucentStatus">true</item>-->
+        <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="windowActionModeOverlay">true</item>
@@ -28,5 +33,10 @@
         <!--<item name="android:textColorPrimary">@color/dark_text</item>-->
         <!--<item name="android:textColorSecondary">@color/dark_text</item>-->
     </style>
+
+
+
+
+
 
 </resources>

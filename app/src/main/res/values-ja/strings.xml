@@ -94,7 +94,6 @@
     <string name="pref_title_disable_dual">風景の中にデュアルペイン</string>
     <string name="pref_title_check_update">アップデートを確認</string>
     <string name="pref_title_change_lang">言語</string>
-    <string name="pref_title_upgrade">プロ仕様にアップグレードする</string>
     <string name="pref_title_about">私たちに関しては</string>
     <string name="pref_title_version">バージョン</string>
     <string name="prefs_summary_dev">ディベロッパー</string>

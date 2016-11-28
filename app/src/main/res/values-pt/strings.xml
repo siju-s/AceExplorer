@@ -95,7 +95,6 @@
     <string name="pref_title_disable_dual">Painel duplo em Paisagem</string>
     <string name="pref_title_check_update">Verificar atualizações</string>
     <string name="pref_title_change_lang">Língua</string>
-    <string name="pref_title_upgrade">Atualização para profissional</string>
     <string name="pref_title_about">Sobre nós</string>
     <string name="pref_title_version">Versão</string>
     <string name="prefs_summary_dev">Desenvolvedor</string>
