@@ -6,7 +6,7 @@ import android.util.Log;
 
 public final class AdMobActivity extends Activity {
 
-    public static AdMobActivity AdMobMemoryLeakWorkAroundActivity;
+    private static AdMobActivity AdMobMemoryLeakWorkAroundActivity;
 
     public AdMobActivity() {
         super();

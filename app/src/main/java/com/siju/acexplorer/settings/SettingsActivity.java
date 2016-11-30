@@ -32,8 +32,6 @@ import com.siju.acexplorer.filesystem.utils.ThemeUtils;
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
-    private int mIsTheme; // Default is Dark
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         checkTheme();
@@ -52,10 +50,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         if (theme == FileConstants.THEME_DARK) {
             setTheme(R.style.Settings_BlackTheme);
-            mIsTheme = FileConstants.THEME_DARK;
         } else {
             setTheme(R.style.Settings_LightTheme);
-            mIsTheme = FileConstants.THEME_LIGHT;
         }
     }
 
@@ -87,26 +83,13 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         root.addView(bar, 0); // insert at top
         Toolbar mToolbar = (Toolbar) bar.getChildAt(0);
 
-        if (mIsTheme == FileConstants.THEME_DARK) {
-            mToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_colorPrimary));
+        mToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
 
-            if (Build.VERSION.SDK_INT >= 21) {
-                getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.dark_colorPrimaryDark));
-            }
+        if (Build.VERSION.SDK_INT >= 21) {
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         }
 
-        else {
-            mToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
-
-            if (Build.VERSION.SDK_INT >= 21) {
-                getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
-            }
-        }
-
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-
-
         ActionBar actionBar = getSupportActionBar();
 
         if (actionBar != null) {

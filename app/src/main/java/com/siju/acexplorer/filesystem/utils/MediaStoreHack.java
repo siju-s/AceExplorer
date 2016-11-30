@@ -122,8 +122,8 @@ public class MediaStoreHack {
                 if (query.getCount() != 0) {
                     query.moveToFirst();
                     int id = query.getInt(0);
-                    /** If ringtone/notification/alarm flag not there in custom uri, add it .
-                     * This part was necessary to make it work on Note 2 (4.4.2) */
+                    /* If ringtone/notification/alarm flag not there in custom uri, add it .
+                      This part was necessary to make it work on Note 2 (4.4.2) */
                     if (query.getInt(1) == 0 && type != 0) {
                         ContentValues contentValues = new ContentValues();
                         contentValues.put(musicType, true);

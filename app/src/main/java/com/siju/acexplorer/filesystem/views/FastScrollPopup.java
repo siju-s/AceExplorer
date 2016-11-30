@@ -23,6 +23,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.support.annotation.Keep;
 import android.text.TextUtils;
 
 import com.siju.acexplorer.filesystem.utils.Utils;
@@ -54,6 +55,7 @@ class FastScrollPopup {
 
     private ObjectAnimator mAlphaAnimator;
     private boolean mVisible;
+    private float mAlpha;
 
     FastScrollPopup(Resources resources, FastScrollRecyclerView recyclerView) {
 
@@ -111,19 +113,19 @@ class FastScrollPopup {
         }
     }
 
-// --Commented out by Inspection START (13-11-2016 02:58 PM):
+    @SuppressWarnings("unused")
+    @Keep
 //    // Setter/getter for the popup alpha for animations
-//    public void setAlpha(float alpha) {
-//        mAlpha = alpha;
-//        mRecyclerView.invalidate(mBgBounds);
-//    }
-// --Commented out by Inspection STOP (13-11-2016 02:58 PM)
+    public void setAlpha(float alpha) {
+        mAlpha = alpha;
+        mRecyclerView.invalidate(mBgBounds);
+    }
 
-// --Commented out by Inspection START (13-11-2016 02:58 PM):
-//    public float getAlpha() {
-//        return mAlpha;
-//    }
-// --Commented out by Inspection STOP (13-11-2016 02:58 PM)
+    @SuppressWarnings("unused")
+    @Keep
+    public float getAlpha() {
+        return mAlpha;
+    }
 
     void draw(Canvas canvas) {
         if (isVisible()) {
@@ -139,10 +141,12 @@ class FastScrollPopup {
             float[] radii;
 
             if (Utils.isRtl(mRes)) {
-                radii = new float[]{mCornerRadius, mCornerRadius, mCornerRadius, mCornerRadius, mCornerRadius, mCornerRadius, 0, 0};
+                radii = new float[]{mCornerRadius, mCornerRadius, mCornerRadius, mCornerRadius, mCornerRadius,
+                        mCornerRadius, 0, 0};
             } else {
 
-                radii = new float[]{mCornerRadius, mCornerRadius, mCornerRadius, mCornerRadius, 0, 0, mCornerRadius, mCornerRadius};
+                radii = new float[]{mCornerRadius, mCornerRadius, mCornerRadius, mCornerRadius, 0, 0, mCornerRadius,
+                        mCornerRadius};
             }
 
             mBackgroundPath.addRoundRect(mBackgroundRect, radii, Path.Direction.CW);
@@ -189,7 +193,8 @@ class FastScrollPopup {
                 mBgBounds.left = mBgBounds.right - bgWidth;
             }
             mBgBounds.top = thumbOffsetY - bgHeight + recyclerView.getScrollBarThumbHeight() / 2;
-            mBgBounds.top = Math.max(edgePadding, Math.min(mBgBounds.top, recyclerView.getHeight() - edgePadding - bgHeight));
+            mBgBounds.top = Math.max(edgePadding, Math.min(mBgBounds.top, recyclerView.getHeight() - edgePadding -
+                    bgHeight));
             mBgBounds.bottom = mBgBounds.top + bgHeight;
         } else {
             mBgBounds.setEmpty();

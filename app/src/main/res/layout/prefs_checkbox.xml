@@ -1,9 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:minHeight="?android:attr/listPreferredItemHeight"
-    android:orientation="horizontal">
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:gravity="center_vertical"
+              android:minHeight="?android:attr/listPreferredItemHeight"
+              android:orientation="horizontal">
 
     <RelativeLayout
         android:layout_width="0dp"
@@ -17,7 +17,7 @@
             android:layout_marginLeft="@dimen/margin_16"
             android:layout_marginStart="@dimen/margin_16"
             android:gravity="center_vertical"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textSize="18sp"/>
 
         <TextView
             android:id="@android:id/summary"
@@ -29,7 +29,8 @@
             android:layout_marginLeft="@dimen/margin_16"
             android:layout_marginStart="@dimen/margin_16"
             android:gravity="center_vertical"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:textSize="15sp"
+            />
 
     </RelativeLayout>
 
@@ -38,8 +39,8 @@
         android:id="@android:id/checkbox"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginRight="@dimen/margin_16"
         android:layout_marginEnd="@dimen/margin_16"
+        android:layout_marginRight="@dimen/margin_16"
         android:clickable="false"
         android:focusable="false"
         android:focusableInTouchMode="false"

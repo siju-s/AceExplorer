@@ -12,7 +12,6 @@
     <color name="fabButtonText">#727272</color>
 
     <!-- Light Theme -->
-    <color name="light_text">#000000</color>
     <color name="light_home_bg">#BFBFBF</color>
     <color name="light_home_lib">#F5F5F5</color>
 
@@ -27,6 +26,7 @@
     <color name="dark_divider">#80262626</color>
     <color name="dark_overlay">#595959</color>
     <color name="light_divider">#80262626</color>
+    <color name="dark_gray">#595959</color>
 
 
     <!-- Screens background color-->
@@ -36,29 +36,8 @@
     <color name="bg_screen4">#FF6E33</color>
 
     <!-- dots inactive colors -->
-    <color name="dot_dark_screen1">#d1395c</color>
-    <color name="dot_dark_screen2">#14a895</color>
-    <color name="dot_dark_screen3">#2278d4</color>
 
     <!-- dots active colors -->
-    <color name="dot_light_screen1">#37d6c1</color>
-    <color name="dot_light_screen2">#8cf9eb</color>
-    <color name="dot_light_screen3">#ff7032</color>
-    <color name="dot_light_screen4">#8a36b5</color>
-
-    <array name="array_dot_active">
-        <item>@color/dot_light_screen1</item>
-        <item>@color/dot_light_screen2</item>
-        <item>@color/dot_light_screen3</item>
-        <item>@color/dot_light_screen4</item>
-    </array>
-
-    <array name="array_dot_inactive">
-        <item>@color/dot_dark_screen3</item>
-        <item>@color/dot_dark_screen2</item>
-        <item>@color/dot_dark_screen1</item>
-        <item>@color/dot_light_screen1</item>
-    </array>
 
 
     <!-- Colors for library items in Homescreen -->

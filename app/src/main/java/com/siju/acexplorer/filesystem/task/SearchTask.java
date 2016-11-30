@@ -13,11 +13,11 @@ import java.util.regex.Pattern;
 
 public class SearchTask {
 
-    private SearchHelper searchHelper;
+    private final SearchHelper searchHelper;
     private String input;
     public SearchAsync searchAsync;
     private String mPath;
-    private boolean mShowHidden;
+    private final boolean mShowHidden;
 
     public interface SearchHelper {
         void onPreExecute();
@@ -38,7 +38,7 @@ public class SearchTask {
 
     }
 
-    public void execute(String input) {
+    private void execute(String input) {
         this.input = input;
         if (searchAsync == null) {
             searchAsync = new SearchAsync();
@@ -51,7 +51,7 @@ public class SearchTask {
         }
     }
 
-    public class SearchAsync extends AsyncTask<String, FileInfo, Void> {
+    private class SearchAsync extends AsyncTask<String, FileInfo, Void> {
 
 
         @Override
@@ -98,42 +98,6 @@ public class SearchTask {
             }
         }
 
-/*        *//**
-         * Recursively search for occurrences of a given text in file names and publish the result
-         *
-         * @param file  the current path
-         * @param query the searched text
-         *//*
-        private void search(FileInfo file, String query) {
-
-            if (file.isDirectory()) {
-                ArrayList<BaseFile> f = file.listFiles(mRootMode);
-                // do you have permission to read this directory?
-                if (!isCancelled())
-                    for (BaseFile x : f) {
-                        if (!isCancelled()) {
-                            if (x.isDirectory()) {
-                                if (x.getName().toLowerCase()
-                                        .contains(query.toLowerCase())) {
-                                    publishProgress(x);
-                                }
-                                if (!isCancelled()) search(x, query);
-
-                            } else {
-                                if (x.getName().toLowerCase()
-                                        .contains(query.toLowerCase())) {
-                                    publishProgress(x);
-                                }
-                            }
-                        } else return;
-                    }
-                else return;
-            } else {
-                System.out
-                        .println(file.getPath() + "Permission Denied");
-            }
-        }*/
-
         /**
          * Recursively find a java regex pattern {@link Pattern} in the file names and publish the result
          *
@@ -173,10 +137,10 @@ public class SearchTask {
             }
         }
 
-     /*   *//**
-         * Recursively match a java regex pattern {@link Pattern} with the file names and publish the result
-         *
-         * @param file    the current file
+     /*   *//*
+          Recursively match a java regex pattern {@link Pattern} with the file names and publish the result
+
+          @param file    the current file
          * @param pattern the compiled java regex
          *//*
         private void searchRegExMatch(HFile file, Pattern pattern) {

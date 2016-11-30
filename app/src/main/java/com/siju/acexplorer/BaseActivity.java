@@ -124,8 +124,14 @@ public class BaseActivity extends AppCompatActivity implements
     private ScrimInsetsRelativeLayout relativeLayoutDrawerPane;
     private String mCurrentDir;
     private String mCurrentDirDualPane;
-    private String STORAGE_ROOT, STORAGE_INTERNAL, STORAGE_EXTERNAL, DOWNLOADS, IMAGES, VIDEO,
-            MUSIC, DOCS, SETTINGS, RATE, BUY;
+    private String STORAGE_ROOT;
+    private String STORAGE_INTERNAL;
+    private String STORAGE_EXTERNAL;
+    private String DOWNLOADS;
+    private String IMAGES;
+    private String VIDEO;
+    private String MUSIC;
+    private String DOCS;
     private final ArrayList<SectionItems> favouritesGroupChild = new ArrayList<>();
     private SharedPreferenceWrapper sharedPreferenceWrapper;
     private SharedPreferences mSharedPreferences;
@@ -290,9 +296,6 @@ public class BaseActivity extends AppCompatActivity implements
         VIDEO = getResources().getString(R.string.nav_menu_video);
         DOCS = getResources().getString(R.string.nav_menu_docs);
         IMAGES = getResources().getString(R.string.nav_menu_image);
-        SETTINGS = getResources().getString(R.string.action_settings);
-        BUY = getResources().getString(R.string.unlock_full_version);
-        RATE = getResources().getString(R.string.rate_us);
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -924,18 +927,15 @@ public class BaseActivity extends AppCompatActivity implements
         Logger.log(TAG, "oNResume--mPermissionDialog" + mPermissionDialog + " " + PermissionUtils
                 .hasRequiredPermissions());
 
-        /**
-         * This handles the scenario when snackbar is shown and user presses home and grants access to app and
-         * returns to app. In that case,setupInitialData the data and dismiss the snackbar.
+        /*
+          This handles the scenario when snackbar is shown and user presses home and grants access to app and
+          returns to app. In that case,setupInitialData the data and dismiss the snackbar.
          */
 
         if (mPermissionDialog != null && mPermissionDialog.isShowing()) {
             if (PermissionUtils.hasRequiredPermissions()) {
                 mPermissionDialog.dismiss();
                 setPermissionGranted();
-//                mSnackbar.dismiss();
-         /*       setupInitialData();
-                setUpInitialData();*/
             }
         }
 

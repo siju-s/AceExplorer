@@ -79,7 +79,6 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     private boolean mIsThemeDark;
     private AdView mAdView;
     private boolean isPremium;
-    private RelativeLayout layoutContainer;
 
 
     @Override
@@ -177,8 +176,6 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             layoutStorages.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.light_home_lib));
             nestedScrollViewHome.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.light_home_bg));
         }
-        layoutContainer = (RelativeLayout) root.findViewById(R.id.layoutContainer);
-//        mAdView = (AdView) root.findViewById(R.id.adView);
         isPremium = getArguments() != null && getArguments().getBoolean(FileConstants.KEY_PREMIUM, false);
         if (isPremium) {
             hideAds();

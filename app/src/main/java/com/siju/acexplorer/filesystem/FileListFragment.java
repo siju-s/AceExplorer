@@ -185,7 +185,6 @@ public class FileListFragment extends Fragment implements LoaderManager
     private boolean setRefreshSpan;
     private boolean isPremium;
     private AdView mAdView;
-    private LinearLayout layoutDummy;
     private MenuItem mSearchItem;
 
 
@@ -369,7 +368,6 @@ public class FileListFragment extends Fragment implements LoaderManager
         });
         mBottomToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar_bottom);
         mFileUtils = new FileUtils();
-        layoutDummy = (LinearLayout) root.findViewById(R.id.layoutDummy);
         isPremium = getArguments() != null && getArguments().getBoolean(FileConstants.KEY_PREMIUM, false);
         if (isPremium) {
             hideAds();
@@ -2293,7 +2291,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 //        mSearchView.onActionViewCollapsed();
     }
 
-    private  SearchTask searchTask;
+    private final SearchTask searchTask;
 
     @Override
     public boolean onQueryTextChange(String query) {

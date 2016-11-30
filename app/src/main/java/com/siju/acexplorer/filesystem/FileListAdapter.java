@@ -81,7 +81,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     void updateSearchResult(FileInfo fileInfo) {
-        Logger.log("Adapter","Count="+getItemCount());;
+        Logger.log("Adapter","Count="+getItemCount());
         fileInfoArrayList.add(fileInfo);
         notifyDataSetChanged();
 //        notifyItemChanged(getItemCount());

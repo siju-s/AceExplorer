@@ -31,8 +31,8 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="windowActionModeOverlay">true</item>
-        <item name="actionModeBackground">@color/dark_colorPrimary</item>
-        <item name="android:actionModeBackground">@color/dark_colorPrimary</item>
+        <item name="actionModeBackground">@color/colorPrimary</item>
+        <item name="android:actionModeBackground">@color/colorPrimary</item>
     </style>
 
     <style name="WelcomeScreen" parent="Theme.AppCompat.NoActionBar">
@@ -163,8 +163,8 @@
     </style>
 
     <style name="Settings.BlackTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorPrimary">@color/dark_colorPrimary</item>
-        <item name="colorPrimaryDark">@color/dark_colorPrimaryDark</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <!--<item name="android:background">@color/dark_colorPrimary</item>-->
         <!--<item name="android:textColor">@color/dark_text</item>-->
@@ -191,11 +191,12 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:textColorSecondary">@color/light_text</item>
+        <item name="android:textColorSecondary">@color/dark_gray</item>
         <!--<item name="colorControlNormal">#ffffffff</item>-->
         <!--<item name="android:background">@color/colorPrimary</item>-->
         <item name="android:listDivider">@null</item>
-        <item name="android:textColorPrimary">#000000</item>
+        <item name="android:textColorPrimary">@color/dark_gray</item>
+        <item name="android:textColor">@color/dark_gray</item>
         <!--<item name="android:textColorAlertDialogListItem">@color/dark_colorPrimary</item>-->
         <!--<item name="android:alertDialogTheme">@style/DialogTheme</item>-->
         <!--<item name="android:radioButtonStyle">@style/MRadioButton.Purple</item>-->

@@ -337,11 +337,10 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                     long fileId = cursor.getLong(fileIdIndex);
 
                     String mimeType = cursor.getString(mimeTypeIndex);
-                    int type = mCategory;
                     String extension = path.substring(path.lastIndexOf(".") + 1);
                     String nameWithExt = fileName + "." + extension;
 
-                    fileInfoList.add(new FileInfo(fileId, nameWithExt, path, date1, size1, type,
+                    fileInfoList.add(new FileInfo(fileId, nameWithExt, path, date1, size1, mCategory,
                             extension, mimeType));
 
                 } while (cursor.moveToNext());

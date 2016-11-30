@@ -1,34 +1,37 @@
 package com.siju.acexplorer;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.view.PagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.utils.PrefManager;
-import com.siju.acexplorer.utils.Utils;
 
-public class WelcomeActivity extends AppCompatActivity {
+public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener,
+        ViewPager.OnPageChangeListener {
 
     private ViewPager viewPager;
     private LinearLayout dotsLayout;
-    private int[] layouts;
     private Button btnSkip, btnNext;
     private PrefManager prefManager;
+    private int dotsCount;
+    private ImageView[] dots;
+    private final int[] mImageResources = {
+            R.raw.library,
+            R.raw.drawer,
+            R.raw.dragdrop,
+            R.raw.theme
+    };
+
+    private WelcomePagerAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,10 +40,8 @@ public class WelcomeActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        // Checking for first time launch - before calling setContentView()
         prefManager = new PrefManager(this);
         Logger.log("WelcomeAct", "CALLED");
-
 
         if (!prefManager.isFirstTimeLaunch()) {
             launchHomeScreen();
@@ -48,82 +49,62 @@ public class WelcomeActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_welcome);
+        initializeViews();
+    }
 
+    private void initializeViews() {
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         dotsLayout = (LinearLayout) findViewById(R.id.layoutDots);
         btnSkip = (Button) findViewById(R.id.btn_skip);
         btnNext = (Button) findViewById(R.id.btn_next);
 
+        btnNext.setOnClickListener(this);
+        btnSkip.setOnClickListener(this);
 
-        // layouts of all welcome sliders
-        // add few more layouts if you want
-        layouts = new int[]{
-                R.layout.welcome_slide1,
-                R.layout.welcome_slide2,
-                R.layout.welcome_slide3,
-                R.layout.welcome_slide4};
+        String[] headerText = {getString(R.string.slide_1_title),
+                getString(R.string.slide_2_title),
+                getString(R.string.slide_3_title),
+                getString(R.string.slide_4_title)};
 
-        // adding bottom dots
-        addBottomDots(0);
-
-        // making notification bar transparent
-        changeStatusBarColor();
-
-        MyViewPagerAdapter myViewPagerAdapter = new MyViewPagerAdapter();
-        viewPager.setAdapter(myViewPagerAdapter);
-        viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
-
-        btnSkip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                launchHomeScreen();
-            }
-        });
-
-        btnNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // checking for last page
-                // if last page home screen will be launched
-                int current = getItem(+1);
-                if (current < layouts.length) {
-                    // move to next screen
-                    viewPager.setCurrentItem(current);
-                } else {
-                    launchHomeScreen();
-                }
-            }
-        });
+        String[] text = {getString(R.string.slide_1_desc),
+                getString(R.string.slide_2_desc),
+                getString(R.string.slide_3_desc),
+                getString(R.string.slide_4_desc)};
+        int[] bgColors = {ContextCompat.getColor(this, R.color.bg_screen1),
+                ContextCompat.getColor(this, R.color.bg_screen2),
+                ContextCompat.getColor(this, R.color.bg_screen3),
+                ContextCompat.getColor(this, R.color.bg_screen4)};
+        mAdapter = new WelcomePagerAdapter(this, mImageResources, headerText, text, bgColors);
+        viewPager.setAdapter(mAdapter);
+        viewPager.setCurrentItem(0);
+        viewPager.addOnPageChangeListener(this);
+        addBottomDots();
     }
 
-    @SuppressWarnings("deprecation")
-    private void addBottomDots(int currentPage) {
-        Logger.log("WelcomeAct", "addBottomDots");
 
-        TextView[] dots = new TextView[layouts.length];
+    private void addBottomDots() {
 
-        int[] colorsActive = getResources().getIntArray(R.array.array_dot_active);
-        int[] colorsInactive = getResources().getIntArray(R.array.array_dot_inactive);
 
-        dotsLayout.removeAllViews();
-        for (int i = 0; i < dots.length; i++) {
-            dots[i] = new TextView(this);
-            if (Utils.isAtleastNougat()) {
-                dots[i].setText(Html.fromHtml("&#8226;", Html.FROM_HTML_MODE_LEGACY));
-            } else {
-                dots[i].setText(Html.fromHtml("&#8226;"));
-            }
-            dots[i].setTextSize(35);
-            dots[i].setTextColor(colorsInactive[currentPage]);
-            dotsLayout.addView(dots[i]);
+        dotsCount = mAdapter.getCount();
+        dots = new ImageView[dotsCount];
+
+        for (int i = 0; i < dotsCount; i++) {
+            dots[i] = new ImageView(this);
+            dots[i].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.intro_unselecteditem));
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+
+            params.setMargins(4, 0, 4, 0);
+
+            dotsLayout.addView(dots[i], params);
         }
 
-        if (dots.length > 0)
-            dots[currentPage].setTextColor(colorsActive[currentPage]);
-    }
+        dots[0].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.intro_selecteditem));
+        Logger.log("WelcomeAct", "addBottomDots");
 
-    private int getItem(int i) {
-        return viewPager.getCurrentItem() + i;
     }
 
     private void launchHomeScreen() {
@@ -132,81 +113,53 @@ public class WelcomeActivity extends AppCompatActivity {
         finish();
     }
 
-    //	viewpager change listener
-    private final ViewPager.OnPageChangeListener viewPagerPageChangeListener = new ViewPager.OnPageChangeListener() {
 
-        @Override
-        public void onPageSelected(int position) {
-            addBottomDots(position);
-
-            // changing the next button text 'NEXT' / 'GOT IT'
-            if (position == layouts.length - 1) {
-                // last page. make button text to GOT IT
-                btnNext.setText(getString(R.string.start));
-                btnSkip.setVisibility(View.GONE);
-            } else {
-                // still pages are left
-                btnNext.setText(getString(R.string.next));
-                btnSkip.setVisibility(View.VISIBLE);
-            }
-        }
-
-        @Override
-        public void onPageScrolled(int arg0, float arg1, int arg2) {
-
-        }
-
-        @Override
-        public void onPageScrollStateChanged(int arg0) {
-
-        }
-    };
-
-    /**
-     * Making notification bar transparent
-     */
-    private void changeStatusBarColor() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(Color.TRANSPARENT);
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btn_next:
+                int current = viewPager.getCurrentItem();
+                if (current + 1 < dotsCount) {
+                    // move to next screen
+                    viewPager.setCurrentItem(current + 1);
+                } else {
+                    launchHomeScreen();
+                }
+                break;
+            case R.id.btn_skip:
+                launchHomeScreen();
+                break;
         }
     }
 
-    /**
-     * View pager adapter
-     */
-    public class MyViewPagerAdapter extends PagerAdapter {
-        private LayoutInflater layoutInflater;
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-        MyViewPagerAdapter() {
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        for (int i = 0; i < dotsCount; i++) {
+            dots[i].setImageDrawable(ContextCompat.getDrawable(WelcomeActivity.this, R.drawable
+                    .intro_unselecteditem));
         }
 
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        dots[position].setImageDrawable(ContextCompat.getDrawable(WelcomeActivity.this, R.drawable
+                .intro_selecteditem));
 
-            View view = layoutInflater.inflate(layouts[position], container, false);
-            container.addView(view);
-
-            return view;
-        }
-
-        @Override
-        public int getCount() {
-            return layouts.length;
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object obj) {
-            return view == obj;
-        }
-
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            View view = (View) object;
-            container.removeView(view);
+        if (position + 1 == dotsCount) {
+            btnNext.setText(getString(R.string.start));
+            btnSkip.setVisibility(View.GONE);
+        } else {
+            btnNext.setText(getString(R.string.next));
+            btnSkip.setVisibility(View.VISIBLE);
         }
     }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
+
+
 }

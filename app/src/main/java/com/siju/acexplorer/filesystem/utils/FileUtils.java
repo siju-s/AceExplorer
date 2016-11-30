@@ -1149,7 +1149,7 @@ public class FileUtils implements Progress {
         // start with root of SD card and then parse through document tree.
         DocumentFile document = DocumentFile.fromTreeUri(context, treeUri);
         if (originalDirectory) return document;
-        String[] parts = relativePath.split("\\/");
+        String[] parts = relativePath.split("/");
         for (int i = 0; i < parts.length; i++) {
             DocumentFile nextDocument = document.findFile(parts[i]);
 
