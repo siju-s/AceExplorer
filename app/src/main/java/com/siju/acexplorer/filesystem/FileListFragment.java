@@ -845,7 +845,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     }
 
-    public interface RefreshData {
+    interface RefreshData {
         void refresh(int category);
     }
 
@@ -1268,12 +1268,14 @@ public class FileListFragment extends Fragment implements LoaderManager
         @SuppressLint("NewApi")
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+
             // Dont show Fav and Archive option for Non file mode
             if (mCategory != 0) {
                 mArchiveItem.setVisible(false);
                 mFavItem.setVisible(false);
                 mHideItem.setVisible(false);
             }
+
             if (mSelectedItemPositions.size() > 1) {
                 mRenameItem.setVisible(false);
                 mInfoItem.setVisible(false);
@@ -1289,10 +1291,12 @@ public class FileListFragment extends Fragment implements LoaderManager
                     String filePath = fileInfoList.get(mSelectedItemPositions.keyAt(0))
                             .getFilePath();
 
-                    @SuppressLint("SdCardPath") boolean isRoot = !filePath.startsWith("/sdcard") && !filePath
+                    @SuppressLint("SdCardPath")
+                    boolean isRoot = !filePath.startsWith("/sdcard") && !filePath
                             .startsWith("/storage");
                     if (FileUtils.isFileCompressed(filePath)) {
                         mExtractItem.setVisible(true);
+                        mArchiveItem.setVisible(false);
                     }
                     if (isRoot) {
                         mPermissionItem.setVisible(true);
@@ -1336,11 +1340,9 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
 
         private void setupMenu() {
-//            MenuItem item = menu.findItem(R.id.action_archive);
             SpannableStringBuilder builder = new SpannableStringBuilder(" " + "  " + getString(R
                     .string
                     .action_archive));
-            // replace "*" with icon
             if (mIsDarkTheme) {
                 builder.setSpan(new ImageSpan(getActivity(), R.drawable.ic_archive_white), 0, 1,
                         Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -1351,10 +1353,22 @@ public class FileListFragment extends Fragment implements LoaderManager
 
             mArchiveItem.setTitle(builder);
 
+
+            SpannableStringBuilder extractBuilder = new SpannableStringBuilder(" " + "  " + getString(R
+                    .string.extract_to));
+            if (mIsDarkTheme) {
+                extractBuilder.setSpan(new ImageSpan(getActivity(), R.drawable.ic_extract_white), 0, 1,
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            } else {
+                extractBuilder.setSpan(new ImageSpan(getActivity(), R.drawable.ic_extract_black), 0, 1,
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+
+            mExtractItem.setTitle(extractBuilder);
+
             SpannableStringBuilder favBuilder = new SpannableStringBuilder(" " + "  " + getString
                     (R.string
                             .add_fav));
-            // replace "*" with icon
             if (mIsDarkTheme) {
                 favBuilder.setSpan(new ImageSpan(getActivity(), R.drawable.ic_favorite_white), 0, 1,
                         Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -2045,7 +2059,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         materialDialog.show();
     }
 
-    class myDragEventListener implements View.OnDragListener {
+    private class myDragEventListener implements View.OnDragListener {
 
         int oldPos = -1;
 
@@ -2291,7 +2305,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 //        mSearchView.onActionViewCollapsed();
     }
 
-    private final SearchTask searchTask;
+//    private  SearchTask searchTask;
 
     @Override
     public boolean onQueryTextChange(String query) {
@@ -2475,9 +2489,10 @@ public class FileListFragment extends Fragment implements LoaderManager
     }
 
     public void removeSearchTask() {
-        if (searchTask != null) {
+
+     /*   if (searchTask != null) {
             searchTask.searchAsync.cancel(true);
-        }
+        }*/
     }
 
     @Override

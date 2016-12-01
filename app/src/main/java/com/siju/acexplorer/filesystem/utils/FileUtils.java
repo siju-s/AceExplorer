@@ -1858,7 +1858,7 @@ public class FileUtils implements Progress {
     }
 
 
-    public static boolean checkAppForIntent(Context context, Intent intent) {
+    public static boolean isPackageIntentUnavailable(Context context, Intent intent) {
         return context.getPackageManager().resolveActivity(intent, 0) == null;
     }
 

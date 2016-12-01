@@ -29,6 +29,7 @@ import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
+import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 import com.siju.acexplorer.utils.LocaleHelper;
 
@@ -197,6 +198,23 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
                         // Try Google play
                         intent.setData(Uri
                                 .parse("market://details?id=" + getActivity().getPackageName()));
+
+                        if (FileUtils.isPackageIntentUnavailable(getActivity(), intent)) {
+                            // Market (Google play) app seems not installed,
+                            // let's try to open a webbrowser
+                            intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=" +
+                                    getActivity().getPackageName()));
+                            if (FileUtils.isPackageIntentUnavailable(getActivity(), intent)) {
+                                Toast.makeText(getActivity(),
+                                        getString(R.string.msg_error_not_supported),
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                startActivity(intent);
+                            }
+                        } else {
+                            startActivity(intent);
+                        }
+
                         return true;
                     }
                 });

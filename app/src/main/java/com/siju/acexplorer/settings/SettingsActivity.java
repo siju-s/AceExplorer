@@ -82,6 +82,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 false);
         root.addView(bar, 0); // insert at top
         Toolbar mToolbar = (Toolbar) bar.getChildAt(0);
+        mToolbar.setPadding(0,getStatusBarHeight(),0,0);
 
         mToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
 
@@ -96,5 +97,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // Show the Up button in the action bar.
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+    }
+
+    private int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 }

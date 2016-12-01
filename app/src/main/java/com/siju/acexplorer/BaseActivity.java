@@ -440,8 +440,7 @@ public class BaseActivity extends AppCompatActivity implements
         if (mCurrentTheme == FileConstants.THEME_DARK) {
             relativeLayoutDrawerPane.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_colorPrimary));
             mNavigationLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
-            mBottomToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_colorPrimary));
-//            mToolbar.setBackgroundColor(ContextCompat.getColor(this,R.color.colorPrimary));
+            mBottomToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
             mToolbar.setPopupTheme(R.style.Dark_AppTheme_PopupOverlay);
             frameLayoutFab.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_overlay));
             frameLayoutFabDual.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_overlay));
@@ -449,6 +448,8 @@ public class BaseActivity extends AppCompatActivity implements
         }
         else {
             relativeLayoutDrawerPane.setBackgroundColor(ContextCompat.getColor(this, R.color.navDrawerBg));
+            mToolbar.setPopupTheme(R.style.AppTheme_PopupOverlay);
+
         }
     }
 
@@ -845,6 +846,8 @@ public class BaseActivity extends AppCompatActivity implements
             args.putBoolean(FileConstants.KEY_PREMIUM, isPremium);
             mHomeScreenFragment = new HomeScreenFragment();
             mHomeScreenFragment.setArguments(args);
+            ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
+                    .exit_to_left);
 //            ft.setCustomAnimations(R.anim.slide_in_left,R.anim.slide_out_right);
             ft.replace(R.id.main_container, mHomeScreenFragment);
             ft.addToBackStack(null);
@@ -861,6 +864,8 @@ public class BaseActivity extends AppCompatActivity implements
             args.putBoolean(FileConstants.KEY_PREMIUM, isPremium);
             FileListFragment fileListFragment = new FileListFragment();
             fileListFragment.setArguments(args);
+            ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
+                    .exit_to_left);
             ft.replace(R.id.main_container, fileListFragment, mCurrentDir);
             ft.commitAllowingStateLoss();
             if (mIsDualModeEnabled) {
@@ -1521,12 +1526,12 @@ public class BaseActivity extends AppCompatActivity implements
                 // Try Google play
                 intent.setData(Uri
                         .parse("market://details?id=" + getPackageName()));
-                if (FileUtils.checkAppForIntent(this, intent)) {
+                if (FileUtils.isPackageIntentUnavailable(this, intent)) {
                     // Market (Google play) app seems not installed,
                     // let's try to open a webbrowser
                     intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=" +
                             getPackageName()));
-                    if (FileUtils.checkAppForIntent(this, intent)) {
+                    if (FileUtils.isPackageIntentUnavailable(this, intent)) {
                         Toast.makeText(this,
                                 getString(R.string.msg_error_not_supported),
                                 Toast.LENGTH_SHORT).show();
@@ -1790,6 +1795,8 @@ public class BaseActivity extends AppCompatActivity implements
         if (fragment instanceof HomeScreenFragment) {
             FileListFragment fileListFragment = new FileListFragment();
             fileListFragment.setArguments(args);
+            ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
+                    .exit_to_left);
             ft.add(R.id.main_container, fileListFragment, directory);
             ft.hide(fragment);
             ft.addToBackStack(null);
@@ -1834,6 +1841,8 @@ public class BaseActivity extends AppCompatActivity implements
                 if (fragment == null) {
                     FileListFragment fileListFragment = new FileListFragment();
                     fileListFragment.setArguments(args);
+                    ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
+                            .exit_to_left);
                     ft.add(R.id.main_container, fileListFragment, directory);
                     ft.addToBackStack(null);
                     ft.commit();
@@ -2350,6 +2359,8 @@ public class BaseActivity extends AppCompatActivity implements
         Logger.log(TAG, "RemoveFragmentFromBackStack--frag=" + fragment);
         FragmentTransaction ft = getSupportFragmentManager()
                 .beginTransaction();
+        ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
+                .exit_to_left);
 
         ft.remove(fragment);
         if (mHomeScreenFragment != null) {
@@ -2449,6 +2460,8 @@ public class BaseActivity extends AppCompatActivity implements
             args.putString(FileConstants.KEY_PATH, FileUtils.getInternalStorage().getAbsolutePath());
             FileListFragment fileListFragment = new FileListFragment();
             fileListFragment.setArguments(args);
+            ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
+                    .exit_to_left);
             ft.replace(R.id.main_container, fileListFragment);
             ft.commit();
             mIsHomeSettingToggled = false;

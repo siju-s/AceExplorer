@@ -15,7 +15,7 @@ public class SearchTask {
 
     private final SearchHelper searchHelper;
     private String input;
-    public SearchAsync searchAsync;
+    private SearchAsync searchAsync;
     private String mPath;
     private final boolean mShowHidden;
 
@@ -51,7 +51,7 @@ public class SearchTask {
         }
     }
 
-    private class SearchAsync extends AsyncTask<String, FileInfo, Void> {
+    public class SearchAsync extends AsyncTask<String, FileInfo, Void> {
 
 
         @Override

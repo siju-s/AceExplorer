@@ -177,6 +177,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             nestedScrollViewHome.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.light_home_bg));
         }
         isPremium = getArguments() != null && getArguments().getBoolean(FileConstants.KEY_PREMIUM, false);
+        isPremium = true;
         if (isPremium) {
             hideAds();
         } else {
@@ -207,8 +208,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             mAdView.loadAd(adRequest);
             // Add the AdView to the view hierarchy. The view will have no size until the ad is loaded.
             adviewLayout.addView(mAdView);
-        }
-        else {
+        } else {
             ((LinearLayout) mAdView.getParent()).removeAllViews();
             adviewLayout.addView(mAdView);
             // Reload Ad if necessary.  Loaded ads are lost when the activity is paused.
@@ -800,6 +800,8 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                 FileListFragment fileListFragment = new FileListFragment();
                 fileListFragment.setArguments(args);
                 fileListFragment.setRefreshData(this);
+                ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
+                        .exit_to_left);
                 ft.add(R.id.main_container, fileListFragment);
                 ft.hide(HomeScreenFragment.this);
                 ft.addToBackStack(null);
@@ -819,6 +821,9 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             FileListFragment fileListFragment = new FileListFragment();
             fileListFragment.setArguments(args);
             fileListFragment.setRefreshData(this);
+//            ft.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_in_down, R.anim.slide_out_down, R.anim.slide_out_up);
+            ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
+                    .exit_to_left);
             ft.add(R.id.main_container, fileListFragment);
             ft.hide(HomeScreenFragment.this);
             ft.commitAllowingStateLoss();
