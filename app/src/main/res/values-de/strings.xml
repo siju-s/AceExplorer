@@ -163,4 +163,7 @@
     <string name="img_accessibility_brand">App-Logo</string>
     <string name="img_accessibility_icon_lib">Bibliothek Symbol</string>
     <string name="img_accessibility_storage_icon">Speicher-Symbol</string>
-</resources>
+<string name="unlock_full_version">Vollversion freischalten</string>
+    <string name="full_version_buy_ask">Vollversion entfernt lästige Anzeigen. Wollen sie es kaufen?</string>
+    <string name="dialog_title_picker">Wählen Sie eine Musikdatei</string>
+	</resources>

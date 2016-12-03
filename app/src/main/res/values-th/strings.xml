@@ -163,4 +163,7 @@
     <string name="img_accessibility_brand">โลโก้แอป</string>
     <string name="img_accessibility_icon_lib">ไอคอนห้องสมุด</string>
     <string name="img_accessibility_storage_icon">ไอคอนการจัดเก็บข้อมูล</string>
-</resources>
+<string name="unlock_full_version">ปลดล็อคเวอร์ชันเต็ม</string>
+    <string name="full_version_buy_ask">เวอร์ชันเต็มลบโฆษณาที่น่ารำคาญ คุณต้องการที่จะซื้อได้หรือไม่</string>
+    <string name="dialog_title_picker">เลือกไฟล์เพลง</string>
+	</resources>

@@ -132,7 +132,6 @@ public class FileListFragment extends Fragment implements LoaderManager
     private RecyclerView.LayoutManager llm;
     private String mLastDualPaneDir;
     private String mLastSinglePaneDir;
-    private View viewDummy;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private String mZipParentPath;
     private String mChildZipPath;
@@ -354,7 +353,6 @@ public class FileListFragment extends Fragment implements LoaderManager
         mTextEmpty = (TextView) root.findViewById(R.id.textEmpty);
         sharedPreferenceWrapper = new SharedPreferenceWrapper();
         recyclerViewFileList.setOnDragListener(new myDragEventListener());
-        viewDummy = root.findViewById(R.id.viewDummy);
         mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipeRefreshLayout);
         int colorResIds[] = {R.color.colorPrimaryDark, R.color.colorPrimary, R.color.colorPrimaryDark};
         mSwipeRefreshLayout.setColorSchemeResources(colorResIds);
@@ -539,7 +537,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
 
     private void handleCategoryItemClick(int position) {
-        if (position >= fileInfoList.size()) return;
+        if (position >= fileInfoList.size() || position == RecyclerView.NO_POSITION) return;
 
         switch (mCategory) {
             case 0:
@@ -740,11 +738,8 @@ public class FileListFragment extends Fragment implements LoaderManager
                     case FileConstants.DELETE:
 
                         ArrayList<FileInfo> deletedFilesList = intent.getParcelableArrayListExtra("deleted_files");
-//                        if (!FileUtils.checkIfFileCategory(mCategory)) {
 
-                        ArrayList<String> paths = new ArrayList<>();
                         for (FileInfo info : deletedFilesList) {
-                            paths.add(info.getFilePath());
                             FileUtils.scanFile(getActivity().getApplicationContext(), info.getFilePath());
                         }
 
@@ -929,12 +924,6 @@ public class FileListFragment extends Fragment implements LoaderManager
         fileListAdapter.removeSelection();
     }
 
-    private void toggleDummyView(boolean isVisible) {
-        if (isVisible && !isPremium)
-            viewDummy.setVisibility(View.VISIBLE);
-        else
-            viewDummy.setVisibility(View.GONE);
-    }
 
     public void refreshList() {
         Bundle args = new Bundle();
@@ -1149,7 +1138,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private void startActionMode() {
 
         mBaseActivity.toggleFab(true);
-        toggleDummyView(true);
+//        toggleDummyView(true);
         mBottomToolbar.setVisibility(View.VISIBLE);
         mBottomToolbar.startActionMode(new ActionModeCallback());
         mBottomToolbar.inflateMenu(R.menu.action_mode_bottom);
@@ -1487,7 +1476,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         @Override
         public void onDestroyActionMode(ActionMode mode) {
             clearSelection();
-            toggleDummyView(false);
+//            toggleDummyView(false);
 
             mActionMode = null;
             mBottomToolbar.setVisibility(View.GONE);
@@ -1726,7 +1715,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                     File newFile = new File(mSelectedPath + "/" + currentFileName);
                     File currentFile = new File(currentFilePath);
                     if (FileUtils.isFileExisting(mSelectedPath, newFile.getName())) {
-                        materialDialog.getInputEditText().setError(getResources().getString(R.string
+                        editFileName.setError(getResources().getString(R.string
                                 .dialog_title_paste_conflict));
                         return;
                     }
@@ -1735,7 +1724,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                     File newFile = new File(currentDir + "/" + fileName);
                     File currentFile = new File(currentFilePath);
                     if (FileUtils.isFileExisting(currentDir, newFile.getName())) {
-                        materialDialog.getInputEditText().setError(getResources().getString(R.string
+                        editFileName.setError(getResources().getString(R.string
                                 .dialog_title_paste_conflict));
                         return;
                     }
@@ -2476,7 +2465,9 @@ public class FileListFragment extends Fragment implements LoaderManager
             clearCache();
             clearCache = false;
         }
-        fileListAdapter.onDetach();
+        if (fileListAdapter != null) {
+            fileListAdapter.onDetach();
+        }
         super.onDestroyView();
     }
 

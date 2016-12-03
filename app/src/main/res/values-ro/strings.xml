@@ -165,4 +165,7 @@
     <string name="img_accessibility_brand">aplicaţia logo</string>
     <string name="img_accessibility_icon_lib">pictograma bibliotecă</string>
     <string name="img_accessibility_storage_icon">pictograma de stocare</string>
+	<string name="unlock_full_version">Debloca versiunea completă</string>
+    <string name="full_version_buy_ask">versiune completa elimină anunțurile enervant. Vrei să-l cumpere?</string>
+    <string name="dialog_title_picker">Alegeți un fișier de muzică</string>
 </resources>

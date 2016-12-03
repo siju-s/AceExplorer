@@ -52,7 +52,7 @@
     <dimen name="padding_60">60dp</dimen>
     <dimen name="actionbar_height">54dp</dimen>
     <integer name="homescreen_columns">3</integer>
-    <integer name="duration_fragment_anim">200</integer>
+    <integer name="duration_fragment_anim">350</integer>
 
 
 </resources>

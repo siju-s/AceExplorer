@@ -163,4 +163,6 @@
     <string name="img_accessibility_brand">آرم برنامه</string>
     <string name="img_accessibility_icon_lib">آیکون کتابخانه</string>
     <string name="img_accessibility_storage_icon">آیکون ذخیره سازی</string>
-</resources>
+<string name="unlock_full_version">باز کردن نسخه کامل</string>
+    <string name="full_version_buy_ask">نسخه کامل حذف تبلیغات مزاحم است. آیا می خواهید به آن را خرید؟</string>
+    <string name="dialog_title_picker">انتخاب فایل موسیقی</string></resources>

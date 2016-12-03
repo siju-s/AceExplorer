@@ -165,4 +165,7 @@
     <string name="img_accessibility_brand">לוגו App</string>
     <string name="img_accessibility_icon_lib">סמל הספרייה</string>
     <string name="img_accessibility_storage_icon">סמל חפצים</string>
-</resources>
+<string name="unlock_full_version">נעילת גרסה מלאה</string>
+    <string name="full_version_buy_ask">גרסה מלאה מסירה פרסומות מעצבנות. האם אתה רוצה לקנות את זה?</string>
+    <string name="dialog_title_picker">בחר קובץ מוסיקה</string>
+	</resources>

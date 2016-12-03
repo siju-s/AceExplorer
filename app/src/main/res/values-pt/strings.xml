@@ -164,4 +164,7 @@
     <string name="img_accessibility_brand">Logotipo do aplicativo</string>
     <string name="img_accessibility_icon_lib">Ícone da biblioteca</string>
     <string name="img_accessibility_storage_icon">Ícone de armazenamento</string>
+	    <string name="unlock_full_version">Desbloquear versão completa</string>
+    <string name="full_version_buy_ask">A versão completa remove anúncios irritantes. Você quer comprar isso?</string>
+    <string name="dialog_title_picker">Escolha o arquivo de música</string>
 </resources>

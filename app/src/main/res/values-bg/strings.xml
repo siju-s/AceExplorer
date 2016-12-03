@@ -163,4 +163,7 @@
     <string name="img_accessibility_brand">лого App</string>
     <string name="img_accessibility_icon_lib">икона библиотека</string>
     <string name="img_accessibility_storage_icon">икона за съхранение</string>
+	<string name="unlock_full_version">Отключване на пълна версия</string>
+    <string name="full_version_buy_ask">Пълен версия премахва досадни реклами. Искате ли да го купя?</string>
+    <string name="dialog_title_picker">Изберете музикален файл</string>
 </resources>

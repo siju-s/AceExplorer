@@ -21,13 +21,6 @@
         android:layout_alignParentBottom="true"
         android:orientation="vertical">
 
-        <View
-            android:id="@+id/viewDummy"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorPrimary"
-            android:visibility="gone"/>
-
         <LinearLayout
             android:id="@+id/adviewLayout"
             android:layout_width="wrap_content"

@@ -164,4 +164,7 @@
     <string name="img_accessibility_brand">logotip aplikacije</string>
     <string name="img_accessibility_icon_lib">ikona knjižnica</string>
     <string name="img_accessibility_storage_icon">ikona za pohranu</string>
-</resources>
+<string name="unlock_full_version">Otključaj punu verziju</string>
+    <string name="full_version_buy_ask">Puna verzija uklanja dosadnih oglasa. Želite li ga kupiti?</string>
+    <string name="dialog_title_picker">Odaberite glazbenu datoteku</string>
+	</resources>

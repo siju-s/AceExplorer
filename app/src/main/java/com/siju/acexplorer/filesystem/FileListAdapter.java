@@ -166,6 +166,8 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
+        if (mContext == null) return;
+
         if (holder instanceof FileListViewHolder) {
             FileListViewHolder fileListViewHolder = (FileListViewHolder) holder;
 

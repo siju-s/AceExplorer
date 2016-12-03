@@ -163,4 +163,7 @@
     <string name="img_accessibility_brand">logo aplikasi</string>
     <string name="img_accessibility_icon_lib">ikon perpustakaan</string>
     <string name="img_accessibility_storage_icon">icon penyimpanan</string>
-</resources>
+<string name="unlock_full_version">Membuka versi lengkap</string>
+    <string name="full_version_buy_ask">Versi lengkap menghilangkan iklan yang mengganggu. Apakah Anda ingin membelinya?</string>
+    <string name="dialog_title_picker">Pilih file musik</string>
+	</resources>

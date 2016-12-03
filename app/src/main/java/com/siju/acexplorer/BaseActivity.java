@@ -804,22 +804,11 @@ public class BaseActivity extends AppCompatActivity implements
         totalGroup.add(new SectionGroup(mListHeader.get(2), libraryGroupChild));
     }
 
-   /* private void initializeOthersGroup() {
-
-        if (!isPremium) {
-            othersGroupChild.add(new SectionItems(BUY, "", R.drawable.ic_unlock_full, null, 0));
-        }
-        othersGroupChild.add(new SectionItems(RATE, "", R.drawable.ic_rate_white, null, 0));
-        othersGroupChild.add(new SectionItems(SETTINGS, "", R.drawable.ic_settings_white, null, 0));
-        totalGroup.add(new SectionGroup(mListHeader.get(3), othersGroupChild));
-    }*/
-
     private void setListAdapter() {
         expandableListAdapter = new ExpandableListAdapter(this, totalGroup);
         expandableListView.setAdapter(expandableListAdapter);
-        for (int i = 0; i < expandableListAdapter.getGroupCount(); i++) {
-            expandableListView.expandGroup(i);
-        }
+        expandableListView.expandGroup(0);
+
     }
 
     /**
@@ -1346,7 +1335,9 @@ public class BaseActivity extends AppCompatActivity implements
             imageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    navButtonOnClick(view, dir);
+                    if (dir != null) {
+                        navButtonOnClick(view, dir);
+                    }
                 }
             });
             if (!isDualPaneInFocus) {

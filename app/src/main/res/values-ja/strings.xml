@@ -162,4 +162,7 @@
     <string name="img_accessibility_brand">アプリのロゴ</string>
     <string name="img_accessibility_icon_lib">ライブラリアイコン</string>
     <string name="img_accessibility_storage_icon">ストレージのアイコン</string>
-</resources>
+<string name="unlock_full_version">フルバージョンのロックを解除</string>
+    <string name="full_version_buy_ask">完全版は迷惑な広告を削除します。 あなたはそれを購入したいですか？</string>
+    <string name="dialog_title_picker">音楽ファイルを選択</string>
+	</resources>

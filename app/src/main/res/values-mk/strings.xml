@@ -164,4 +164,7 @@
     <string name="img_accessibility_brand">логото на апликацијата</string>
     <string name="img_accessibility_icon_lib">икона библиотека</string>
     <string name="img_accessibility_storage_icon">иконата за складирање</string>
-</resources>
+<string name="unlock_full_version">Отклучите целосна верзија</string>
+    <string name="full_version_buy_ask">Целосна верзија отстранува досадни реклами. Дали сакате да го купите?</string>
+    <string name="dialog_title_picker">Изберете музичка датотека</string>
+	</resources>

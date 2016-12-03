@@ -57,7 +57,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
 
         ListPreference langPreference = (ListPreference) findPreference(PREFS_LANGUAGE);
         ListPreference themePreference = (ListPreference) findPreference(FileConstants.PREFS_THEME);
-        mIsTheme =   ThemeUtils.getTheme(getActivity());
+        mIsTheme = ThemeUtils.getTheme(getActivity());
         String PREFS_UPDATE = "prefsUpdate";
         updatePreference = findPreference(PREFS_UPDATE);
 
@@ -155,7 +155,8 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         AppBarLayout bar;
         ViewParent view1 = dialog.findViewById(android.R.id.list).getParent();
         ViewParent view2 = view1.getParent();
-        Log.d(this.getClass().getSimpleName(), "On prefernce tree-" + view1 + " view2=" + view2 + " view3=" + view2.getParent());
+        Log.d(this.getClass().getSimpleName(), "On prefernce tree-" + view1 + " view2=" + view2 + " view3=" +
+                view2.getParent());
         LinearLayout root;
         if (Build.VERSION.SDK_INT >= 24) {
             root = (LinearLayout) dialog.findViewById(android.R.id.list).getParent().getParent();
@@ -167,16 +168,16 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         root.addView(bar, 0);
         Toolbar toolbar = (Toolbar) bar.getChildAt(0);
         toolbar.setTitle(preferenceScreen.getTitle());
+        toolbar.setPadding(0, ((SettingsActivity) getActivity()).getStatusBarHeight(), 0, 0);
 
 
-        if (mIsTheme == FileConstants.THEME_DARK) {
-            toolbar.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_colorPrimary));
+
+            toolbar.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorPrimary));
 
             if (Build.VERSION.SDK_INT >= 21) {
                 getActivity().getWindow().setStatusBarColor(ContextCompat.getColor(getActivity(), R.color
-                        .dark_colorPrimaryDark));
+                        .colorPrimaryDark));
 
-            }
         }
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {

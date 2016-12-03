@@ -177,7 +177,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             nestedScrollViewHome.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.light_home_bg));
         }
         isPremium = getArguments() != null && getArguments().getBoolean(FileConstants.KEY_PREMIUM, false);
-        isPremium = true;
+//        isPremium = true;
         if (isPremium) {
             hideAds();
         } else {
@@ -821,7 +821,8 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             FileListFragment fileListFragment = new FileListFragment();
             fileListFragment.setArguments(args);
             fileListFragment.setRefreshData(this);
-//            ft.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_in_down, R.anim.slide_out_down, R.anim.slide_out_up);
+//            ft.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_in_down, R.anim.slide_out_down, R.anim
+// .slide_out_up);
             ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
                     .exit_to_left);
             ft.add(R.id.main_container, fileListFragment);
@@ -847,7 +848,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     }
 
 
-    class UriObserver extends ContentObserver {
+    private class UriObserver extends ContentObserver {
         private Uri mUri;
 
         UriObserver(Handler handler) {
@@ -862,7 +863,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
-            if (!uri.equals(mUri)) {
+            if (!uri.equals(mUri) && PermissionUtils.hasRequiredPermissions()) {
                 mUri = uri;
                 int categoryId = getCategoryForUri(uri);
                 Logger.log(TAG, "Observer Onchange" + uri + " cat id=" + categoryId);

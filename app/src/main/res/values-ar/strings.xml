@@ -168,4 +168,7 @@
     <string name="img_accessibility_brand">التطبيق شعار</string>
     <string name="img_accessibility_icon_lib">رمز المكتبة</string>
     <string name="img_accessibility_storage_icon">رمز التخزين</string>
+    <string name="unlock_full_version">فتح النسخة الكاملة</string>
+    <string name="full_version_buy_ask">النسخة الكاملة يزيل الإعلانات المزعجة. هل تريد أن تشتريه؟</string>
+    <string name="dialog_title_picker">اختيار الملفات الموسيقية</string>
 </resources>

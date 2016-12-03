@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@color/bg_screen1"
               android:gravity="center_horizontal"
               android:orientation="vertical">
 
@@ -10,6 +9,7 @@
         android:id="@+id/imageIntro"
         android:layout_width="@dimen/intro_img_height"
         android:layout_height="@dimen/intro_img_height"
+        android:paddingTop="@dimen/margin_16"
         android:contentDescription="@string/image"
         />
 
@@ -20,6 +20,7 @@
         android:layout_gravity="bottom|center"
         android:textColor="@android:color/white"
         android:textSize="@dimen/slide_title"
+        android:paddingTop="@dimen/margin_16"
         android:textStyle="bold"/>
 
     <TextView

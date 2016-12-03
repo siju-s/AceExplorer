@@ -16,95 +16,92 @@
         <item>0</item>
         <item>1</item>
     </string-array>
-	
-	
-	    <string-array name="changeLanguage" tools:ignore="MissingTranslation">
+
+
+    <string-array name="changeLanguage" tools:ignore="MissingTranslation">
+
         <item name="1">English</item>
-        <item name="2">Afrikaans</item>
-        <item name="3">Arabic</item>
-        <item name="4">Armenian</item>
-        <item name="5">Belarusian</item>
+        <item name="2">Albanian</item>
+        <item name="3">Afrikaans</item>
+        <item name="4">Arabic</item>
+        <item name="5">Armenian</item>
         <item name="6">Bulgarian</item>
-        <item name="7">Chinese</item>
-        <item name="8">Croatian</item>
-        <item name="9">Czech</item>
+        <item name="7">Chinese (Simplified)</item>
+        <item name="8">Chinese (Traditional)</item>
+        <item name="9">Croatian</item>
         <item name="10">Danish</item>
         <item name="11">Dutch</item>
-        <item name="12">Estonian</item>
-        <item name="13">Farsi</item>
-        <item name="14">Finnish</item>
-        <item name="15">French</item>
-        <item name="16">Georgian</item>
-        <item name="17">German</item>
-        <item name="18">Greek</item>
-        <item name="19">Hindi</item>
-        <item name="20">Hungarian</item>
-        <item name="21">Italian</item>
-        <item name="22">Japanese</item>
-        <item name="23">Korean</item>
-        <item name="24">Latvian</item>
-        <item name="25">Lithuanian</item>
-        <item name="26">Malay</item>
-        <item name="27">Mongolian</item>
+        <item name="12">Persian</item>
+        <item name="13">French</item>
+        <item name="14">Georgian</item>
+        <item name="15">German</item>
+        <item name="16">Greek</item>
+        <item name="17">Hebrew</item>
+        <item name="18">Hindi</item>
+        <item name="19">Hungarian</item>
+        <item name="20">Indonesian</item>
+        <item name="21">Icelandic</item>
+        <item name="22">Italian</item>
+        <item name="23">Irish</item>
+        <item name="24">Japanese</item>
+        <item name="25">Korean</item>
+        <item name="26">Macedonian</item>
+        <item name="27">Norwegian</item>
         <item name="28">Polish</item>
         <item name="29">Portuguese</item>
         <item name="30">Romanian</item>
         <item name="31">Russian</item>
         <item name="32">Serbian</item>
-        <item name="33">Slovak</item>
-        <item name="34">Slovenian</item>
-        <item name="35">Spanish</item>
-        <item name="36">Swahili</item>
-        <item name="37">Swedish</item>
-        <item name="38">Thai</item>
-        <item name="39">Turkish</item>
-        <item name="40">Ukrainian</item>
-        <item name="41">Zulu</item>
+        <item name="33">Slovenian</item>
+        <item name="34">Spanish</item>
+        <item name="35">Swedish</item>
+        <item name="36">Thai</item>
+        <item name="37">Turkish</item>
+        <item name="38">Ukrainian</item>
+        <item name="39">Vietnamese</item>
     </string-array>
 
 
     <string-array name="changeLanguageValues" tools:ignore="MissingTranslation">
         <item name="1">en</item>
-        <item name="2">af</item>
-        <item name="3">ar</item>
-        <item name="4">hy</item>
-        <item name="5">be</item>
+        <item name="2">sq</item>
+        <item name="3">af</item>
+        <item name="4">ar</item>
+        <item name="5">hy</item>
         <item name="6">bg</item>
         <item name="7">zh-rCN</item>
-        <item name="8">hr</item>
-        <item name="9">cs</item>
+        <item name="8">zh-rTW</item>
+        <item name="9">hr</item>
         <item name="10">da</item>
         <item name="11">nl</item>
-        <item name="12">et</item>
-        <item name="13">fa</item>
-        <item name="14">fi</item>
-        <item name="15">fr</item>
-        <item name="16">ka</item>
-        <item name="17">de</item>
-        <item name="18">el</item>
-        <item name="19">hi</item>
-        <item name="20">hu</item>
-        <item name="21">it</item>
-        <item name="22">ja</item>
-        <item name="23">ko</item>
-        <item name="24">lv</item>
-        <item name="25">lt</item>
-        <item name="26">ms</item>
-        <item name="27">mn</item>
+        <item name="12">fa</item>
+        <item name="13">fr</item>
+        <item name="14">ka</item>
+        <item name="15">de</item>
+        <item name="16">el</item>
+        <item name="17">iw</item>
+        <item name="18">hi</item>
+        <item name="19">hu</item>
+        <item name="20">in</item>
+        <item name="21">is</item>
+        <item name="22">it</item>
+        <item name="23">ga</item>
+        <item name="24">ja</item>
+        <item name="25">ko</item>
+        <item name="26">mk</item>
+        <item name="27">no</item>
         <item name="28">pl</item>
         <item name="29">pt</item>
         <item name="30">ro</item>
         <item name="31">ru</item>
         <item name="32">sr</item>
-        <item name="33">sk</item>
-        <item name="34">sl</item>
-        <item name="35">es</item>
-        <item name="36">sw</item>
-        <item name="37">sv</item>
-        <item name="38">th</item>
-        <item name="39">tr</item>
-        <item name="40">uk</item>
-        <item name="41">zu</item>
+        <item name="33">sl</item>
+        <item name="34">es</item>
+        <item name="35">sv</item>
+        <item name="36">th</item>
+        <item name="37">tr</item>
+        <item name="38">uk</item>
+        <item name="39">vi</item>
     </string-array>
 
 </resources>

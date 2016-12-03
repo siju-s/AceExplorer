@@ -162,4 +162,7 @@
     <string name="img_accessibility_brand">앱 로고</string>
     <string name="img_accessibility_icon_lib">도서관 아이콘</string>
     <string name="img_accessibility_storage_icon">저장 아이콘</string>
+	<string name="unlock_full_version">정식 버전 잠금 해제</string>
+    <string name="full_version_buy_ask">가득 차있는 버전은 성가신 광고를 제거합니다. 그것을 사고 싶습니까?</string>
+    <string name="dialog_title_picker">음악 파일 선택</string>
 </resources>

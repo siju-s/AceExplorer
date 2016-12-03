@@ -163,4 +163,7 @@
     <string name="img_accessibility_brand">app logo</string>
     <string name="img_accessibility_icon_lib">bibliotek ikon</string>
     <string name="img_accessibility_storage_icon">ikon lagring</string>
-</resources>
+<string name="unlock_full_version">Lås full version</string>
+    <string name="full_version_buy_ask">Fullständiga versionen tar bort irriterande annonser. Vill du köpa den?</string>
+    <string name="dialog_title_picker">Välj musikfil</string>
+	</resources>
