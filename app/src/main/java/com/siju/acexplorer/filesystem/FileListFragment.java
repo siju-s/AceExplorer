@@ -19,6 +19,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -371,7 +372,14 @@ public class FileListFragment extends Fragment implements LoaderManager
         if (isPremium) {
             hideAds();
         } else {
-            showAds();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (getActivity() != null && !getActivity().isFinishing()) {
+                        showAds();
+                    }
+                }
+            }, 2000);
         }
 
     }

@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -106,7 +107,7 @@ public class BaseActivity extends AppCompatActivity implements
     private static final int SETTINGS_REQUEST = 200;
     private static final int PREFS_REQUEST = 1000;
     public static final int SAF_REQUEST = 3000;
-    public static final int REQUEST_INVITE = 4000;
+    private static final int REQUEST_INVITE = 4000;
 
     public int mOperation = -1;
     public String mOldFilePath;
@@ -209,7 +210,7 @@ public class BaseActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        setupBilling();
+        setupBilling();
         PreferenceManager.setDefaultValues(this, R.xml.pref_settings, false);
         Logger.log(TAG, "onCreate");
 
@@ -417,7 +418,7 @@ public class BaseActivity extends AppCompatActivity implements
         });
 
         mFileOpsHelper = new FileOpsHelper(this);
-        imageInvite = (ImageView)findViewById(R.id.imageInvite);
+        imageInvite = (ImageView) findViewById(R.id.imageInvite);
 
     }
 
@@ -698,7 +699,14 @@ public class BaseActivity extends AppCompatActivity implements
 
     private void showAds() {
         //TODO Replace with valid ad unit id.This is just a test ad
-        MobileAds.initialize(getApplicationContext(), "ca-app-pub-3940256099942544~3347511713");
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!isFinishing()) {
+                    MobileAds.initialize(getApplicationContext(), "ca-app-pub-3940256099942544~3347511713");
+                }
+            }
+        }, 2000);
         PremiumUtils.onStart(this);
         if (PremiumUtils.shouldShowPremiumDialog()) {
             showPremiumDialog();

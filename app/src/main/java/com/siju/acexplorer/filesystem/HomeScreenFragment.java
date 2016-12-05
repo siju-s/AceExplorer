@@ -169,7 +169,6 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         if (isDarkTheme) {
             layoutLibrary.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_colorPrimary));
             layoutStorages.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_colorPrimary));
-//            nestedScrollViewHome.setBackgroundResource(R.drawable.bg_home);
             nestedScrollViewHome.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.dark_home_bg));
         } else {
             layoutLibrary.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.light_home_lib));
@@ -177,11 +176,18 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             nestedScrollViewHome.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.light_home_bg));
         }
         isPremium = getArguments() != null && getArguments().getBoolean(FileConstants.KEY_PREMIUM, false);
-//        isPremium = true;
         if (isPremium) {
             hideAds();
         } else {
-            showAds();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (getActivity() != null && !getActivity().isFinishing()) {
+                        showAds();
+                    }
+                }
+            }, 2000);
+
         }
 
     }

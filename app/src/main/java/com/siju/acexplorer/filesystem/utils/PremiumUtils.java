@@ -22,7 +22,7 @@ public class PremiumUtils {
     private static Date mInstallDate = new Date();
     private static int mLaunchTimes = 0;
     private static Date mAskLaterDate = new Date();
-    private static final int CRITERIA_LAUNCH_TIME = 10;
+    private static final int CRITERIA_LAUNCH_TIME = 15;
     private static final int CRITERIA_DAYS = 3;
 
     /**
