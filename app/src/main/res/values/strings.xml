@@ -185,6 +185,8 @@
     <string name="unlock_full_version">Unlock full version</string>
     <string name="full_version_buy_ask">Full version removes annoying ads.Do you want to buy it?</string>
     <string name="dialog_title_picker">Choose music file</string>
+    <string name="app_invite_title">App invite</string>
+    <string name="app_invite_msg">Try this cool file manager !!</string>
 
 
 </resources>

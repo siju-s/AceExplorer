@@ -1,15 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              android:layout_width="match_parent"
-             android:layout_height="match_parent">
+             android:layout_height="wrap_content">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="@dimen/nav_header_height"
-        android:scaleType="centerCrop"
-        android:clickable="false"
+        android:layout_gravity="center_horizontal|top"
         android:background="@color/colorPrimary"
-        android:src="@drawable/ic_drawer_bg"
+        android:clickable="false"
         android:contentDescription="@string/img_accessibility_brand"
-        android:layout_gravity="center_horizontal|top" />
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_drawer_bg"/>
+
+    <ImageView
+        android:id="@+id/imageInvite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:background="@null"
+        android:clickable="true"
+        android:contentDescription="@string/action_share"
+        android:paddingBottom="@dimen/padding_10"
+        android:paddingEnd="@dimen/padding_10"
+        android:paddingLeft="@dimen/padding_10"
+        android:paddingRight="@dimen/padding_10"
+        android:paddingStart="@dimen/padding_10"
+        android:src="@drawable/ic_share"/>
 </FrameLayout>

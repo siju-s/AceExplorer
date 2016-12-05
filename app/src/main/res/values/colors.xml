@@ -21,7 +21,6 @@
     <color name="dark_text">#ffffff</color>
     <color name="dark_home_bg">#3D3D3D</color>
     <color name="dark_colorPrimary">#292929</color>
-    <color name="dark_colorPrimaryDark">#262626</color>
     <color name="dark_actionModeItemSelected">#33ffffff</color>
     <color name="dark_divider">#80262626</color>
     <color name="dark_overlay">#595959</color>

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -54,6 +55,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.kobakei.ratethisapp.RateThisApp;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.common.SharedPreferenceWrapper;
@@ -104,6 +106,7 @@ public class BaseActivity extends AppCompatActivity implements
     private static final int SETTINGS_REQUEST = 200;
     private static final int PREFS_REQUEST = 1000;
     public static final int SAF_REQUEST = 3000;
+    public static final int REQUEST_INVITE = 4000;
 
     public int mOperation = -1;
     public String mOldFilePath;
@@ -119,7 +122,6 @@ public class BaseActivity extends AppCompatActivity implements
     private ExpandableListView expandableListView;
     private List<String> mListHeader;
     private final ArrayList<SectionGroup> totalGroup = new ArrayList<>();
-    private final ArrayList<SectionItems> othersGroupChild = new ArrayList<>();
     private DrawerLayout drawerLayout;
     private ScrimInsetsRelativeLayout relativeLayoutDrawerPane;
     private String mCurrentDir;
@@ -197,6 +199,7 @@ public class BaseActivity extends AppCompatActivity implements
     private RelativeLayout unlockPremium;
     private RelativeLayout rateUs;
     private RelativeLayout settings;
+    private ImageView imageInvite;
 
 
     @Override
@@ -205,14 +208,8 @@ public class BaseActivity extends AppCompatActivity implements
         setLanguage();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // Start the dummy admob activity.  Don't try to start it twice or an exception will be thrown
-//        if (AdMobActivity.AdMobMemoryLeakWorkAroundActivity == null) {
-//            Log.i("CHAT", "starting the AdMobActivity");
-//            Intent intent = new Intent(this,AdMobActivity.class);
-//            startActivity(intent);
-////            AdMobActivity.startAdMobActivity(this);
-//        }
-        setupBilling();
+
+//        setupBilling();
         PreferenceManager.setDefaultValues(this, R.xml.pref_settings, false);
         Logger.log(TAG, "onCreate");
 
@@ -226,6 +223,17 @@ public class BaseActivity extends AppCompatActivity implements
         }
         setupInitialData();
         registerReceivers();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
+            if (fragment instanceof FileListFragment) {
+                ((FileListFragment) fragment).performVoiceSearch(query);
+            }
+        }
     }
 
     private void setTheme() {
@@ -259,7 +267,7 @@ public class BaseActivity extends AppCompatActivity implements
 
         // enable debug logging (for a production application, you should set
         // this to false).
-        mHelper.enableDebugLogging(true);
+        mHelper.enableDebugLogging(false);
 
         // Start setup. This is asynchronous and the specified listener
         // will be called once setup completes.
@@ -409,6 +417,7 @@ public class BaseActivity extends AppCompatActivity implements
         });
 
         mFileOpsHelper = new FileOpsHelper(this);
+        imageInvite = (ImageView)findViewById(R.id.imageInvite);
 
     }
 
@@ -445,8 +454,7 @@ public class BaseActivity extends AppCompatActivity implements
             frameLayoutFab.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_overlay));
             frameLayoutFabDual.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_overlay));
             mMainLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_colorPrimary));
-        }
-        else {
+        } else {
             relativeLayoutDrawerPane.setBackgroundColor(ContextCompat.getColor(this, R.color.navDrawerBg));
             mToolbar.setPopupTheme(R.style.AppTheme_PopupOverlay);
 
@@ -622,6 +630,7 @@ public class BaseActivity extends AppCompatActivity implements
         rateUs.setOnClickListener(this);
         unlockPremium.setOnClickListener(this);
         settings.setOnClickListener(this);
+        imageInvite.setOnClickListener(this);
     }
 
     // Listener that's called when we finish querying the items and
@@ -835,8 +844,8 @@ public class BaseActivity extends AppCompatActivity implements
             args.putBoolean(FileConstants.KEY_PREMIUM, isPremium);
             mHomeScreenFragment = new HomeScreenFragment();
             mHomeScreenFragment.setArguments(args);
-            ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
-                    .exit_to_left);
+//            ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
+//                    .exit_to_left);
 //            ft.setCustomAnimations(R.anim.slide_in_left,R.anim.slide_out_right);
             ft.replace(R.id.main_container, mHomeScreenFragment);
             ft.addToBackStack(null);
@@ -853,8 +862,8 @@ public class BaseActivity extends AppCompatActivity implements
             args.putBoolean(FileConstants.KEY_PREMIUM, isPremium);
             FileListFragment fileListFragment = new FileListFragment();
             fileListFragment.setArguments(args);
-            ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
-                    .exit_to_left);
+//            ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
+//                    .exit_to_left);
             ft.replace(R.id.main_container, fileListFragment, mCurrentDir);
             ft.commitAllowingStateLoss();
             if (mIsDualModeEnabled) {
@@ -1042,6 +1051,18 @@ public class BaseActivity extends AppCompatActivity implements
 
                 mOperation = -1;
                 mNewFilePath = null;
+            } else if (requestCode == REQUEST_INVITE) {
+                if (resultCode == RESULT_OK) {
+                    // Get the invitation IDs of all sent messages
+                    String[] ids = AppInviteInvitation.getInvitationIds(resultCode, intent);
+                    for (String id : ids) {
+                        Log.d(TAG, "onActivityResult: sent invitation " + id);
+                    }
+                } else {
+                    Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show();
+                    // Sending failed or it was canceled, show failure message to the user
+                    // ...
+                }
             }
             super.onActivityResult(requestCode, resultCode, intent);
         }
@@ -1359,7 +1380,9 @@ public class BaseActivity extends AppCompatActivity implements
                 @Override
                 public void onClick(View view) {
                     Logger.log(TAG, "nav button onclick--dir=" + dir);
-                    navButtonOnClick(view, dir);
+                    if (dir != null) {
+                        navButtonOnClick(view, dir);
+                    }
                 }
             });
             if (!isDualPaneInFocus) {
@@ -1544,6 +1567,13 @@ public class BaseActivity extends AppCompatActivity implements
                 expandableListView.setSelection(0);
                 drawerLayout.closeDrawer(relativeLayoutDrawerPane);
                 break;
+            case R.id.imageInvite:
+                Intent inviteIntent = new AppInviteInvitation.IntentBuilder(getString(R.string.app_invite_title))
+                        .setMessage(getString(R.string.app_invite_msg))
+                        .build();
+                startActivityForResult(inviteIntent, REQUEST_INVITE);
+                break;
+
         }
     }
 
@@ -2214,7 +2244,7 @@ public class BaseActivity extends AppCompatActivity implements
             }
         } else {
 
-             if (((FileListFragment) fragment).isZipMode()) {
+            if (((FileListFragment) fragment).isZipMode()) {
 
                 if (((FileListFragment) fragment).checkZipMode()) {
                     int newSize = mBackStackList.size() - 1;

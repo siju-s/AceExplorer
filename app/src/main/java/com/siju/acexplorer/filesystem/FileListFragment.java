@@ -1,6 +1,7 @@
 package com.siju.acexplorer.filesystem;
 
 import android.annotation.SuppressLint;
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipDescription;
@@ -106,7 +107,7 @@ import java.util.zip.ZipFile;
 public class FileListFragment extends Fragment implements LoaderManager
         .LoaderCallbacks<ArrayList<FileInfo>>,
         SearchView.OnQueryTextListener,
-        Toolbar.OnMenuItemClickListener,SearchTask.SearchHelper {
+        Toolbar.OnMenuItemClickListener, SearchTask.SearchHelper {
 
     private final String TAG = this.getClass().getSimpleName();
     private FastScrollRecyclerView recyclerViewFileList;
@@ -831,7 +832,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     @Override
     public void onProgressUpdate(FileInfo val) {
-          addSearchResult(val);
+        addSearchResult(val);
     }
 
     @Override
@@ -1491,7 +1492,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     }
 
     public boolean isSearchVisible() {
-        return mSearchView!= null && !mSearchView.isIconified();
+        return mSearchView != null && !mSearchView.isIconified();
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -2274,6 +2275,9 @@ public class FileListFragment extends Fragment implements LoaderManager
         mSearchView.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
         mSearchView.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         mSearchView.setOnQueryTextListener(this);
+
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
 /*        mSearchView.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View view, int i, KeyEvent event) {
@@ -2292,6 +2296,10 @@ public class FileListFragment extends Fragment implements LoaderManager
         MenuItemCompat.collapseActionView(mSearchItem);
 
 //        mSearchView.onActionViewCollapsed();
+    }
+
+    public void performVoiceSearch(String query) {
+        mSearchView.setQuery(query, false);
     }
 
 //    private  SearchTask searchTask;

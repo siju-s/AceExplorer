@@ -80,9 +80,8 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'io.github.kobakei:ratethisapp:1.1.0'
     compile 'org.apache.commons:commons-compress:1.12'
-    compile ('com.afollestad.material-dialogs:core:0.9.1.0') {
-        exclude group: 'com.android.support' , module : 'support-v13'
-    }
+    compile 'com.afollestad.material-dialogs:core:0.9.1.0'
+
     compile 'com.github.junrar:junrar:0.7'
     compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
         transitive = true;
@@ -90,7 +89,8 @@ dependencies {
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
-    compile 'com.google.firebase:firebase-ads:9.8.0'
+    compile 'com.google.firebase:firebase-ads:10.0.1'
+    compile 'com.google.firebase:firebase-invites:10.0.1'
 
 }
 apply plugin: 'com.google.gms.google-services'

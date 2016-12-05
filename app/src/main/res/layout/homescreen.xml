@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
         android:orientation="vertical"
-        android:id="@+id/layoutContainer"
         app:layout_scrollFlags="scroll|enterAlways">
 
         <LinearLayout
@@ -35,7 +34,6 @@
                 android:textStyle="bold"/>
 
             <View
-                android:id="@+id/viewDummy"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_marginBottom="2dp"
