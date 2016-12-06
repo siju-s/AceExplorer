@@ -162,7 +162,10 @@
     <string name="img_accessibility_brand">应用标志</string>
     <string name="img_accessibility_icon_lib">图书馆图标</string>
     <string name="img_accessibility_storage_icon">存储图标</string>
-<string name="unlock_full_version">解锁完整版本</string>
+	<string name="unlock_full_version">解锁完整版本</string>
     <string name="full_version_buy_ask">完整版本删除烦人的广告。 你想买吗？</string>
     <string name="dialog_title_picker">选择音乐文件</string>
-	</resources>
+	<string name="app_invite_title">应用程式邀请</string>
+    <string name="app_invite_msg">尝试这个酷文件管理器！</string>
+    <string name="app_invite_failed">发送邀请失败。</string>
+</resources>

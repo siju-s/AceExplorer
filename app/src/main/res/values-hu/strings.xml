@@ -163,7 +163,10 @@
     <string name="img_accessibility_brand">App logo</string>
     <string name="img_accessibility_icon_lib">könyvtár ikon</string>
     <string name="img_accessibility_storage_icon">Tárolás ikont</string>
-<string name="unlock_full_version">Kinyit teljes verzió</string>
+	<string name="unlock_full_version">Kinyit teljes verzió</string>
     <string name="full_version_buy_ask">Teljes verzió eltávolítja idegesítő hirdetéseket. Szeretné megvenni?</string>
     <string name="dialog_title_picker">Válasszon zenefájlt</string>
-	</resources>
+	<string name="app_invite_title">App meghívja</string>
+    <string name="app_invite_msg">Próbáld ki ezt a hűvös fájlkezelő !!</string>
+    <string name="app_invite_failed">Küldés meghívás sikertelen.</string>
+</resources>

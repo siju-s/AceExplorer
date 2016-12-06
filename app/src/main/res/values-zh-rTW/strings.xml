@@ -162,7 +162,10 @@
     <string name="img_accessibility_brand">應用標誌</string>
     <string name="img_accessibility_icon_lib">圖書館圖標</string>
     <string name="img_accessibility_storage_icon">存儲圖標</string>
-<string name="unlock_full_version">解鎖完整版本</string>
+	<string name="unlock_full_version">解鎖完整版本</string>
     <string name="full_version_buy_ask">完整版本刪除煩人的廣告。 你想買嗎？</string>
     <string name="dialog_title_picker">選擇音樂文件</string>
-	</resources>
+	<string name="app_invite_title">應用程式邀請</string>
+    <string name="app_invite_msg">嘗試這個酷文件管理器！</string>
+    <string name="app_invite_failed">發送邀請失敗。</string>
+</resources>

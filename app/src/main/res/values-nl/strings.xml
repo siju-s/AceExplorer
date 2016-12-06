@@ -163,7 +163,10 @@
     <string name="img_accessibility_brand">App logo</string>
     <string name="img_accessibility_icon_lib">bibliotheek icoon</string>
     <string name="img_accessibility_storage_icon">opslag icon</string>
-<string name="unlock_full_version">Unlock de volledige versie</string>
+	<string name="unlock_full_version">Unlock de volledige versie</string>
     <string name="full_version_buy_ask">Full version verwijdert vervelende advertenties. Wil je het kopen?</string>
     <string name="dialog_title_picker">Kies muziekbestand</string>
-	</resources>
+	<string name="app_invite_title">App uitnodigen</string>
+    <string name="app_invite_msg">Probeer deze coole file manager !!</string>
+    <string name="app_invite_failed">Het versturen van uitnodiging is mislukt.</string>
+</resources>

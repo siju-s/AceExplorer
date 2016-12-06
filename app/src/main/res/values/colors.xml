@@ -14,6 +14,7 @@
     <!-- Light Theme -->
     <color name="light_home_bg">#D0D3D4</color>
     <color name="light_home_lib">#F5F5F5</color>
+    <color name="inset_foreground">#AA000000</color>
 
 
 

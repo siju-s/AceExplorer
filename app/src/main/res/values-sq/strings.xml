@@ -164,7 +164,10 @@
     <string name="img_accessibility_brand">App logo</string>
     <string name="img_accessibility_icon_lib">icon Library</string>
     <string name="img_accessibility_storage_icon">Storage icon</string>
-<string name="unlock_full_version">Zhbllokuar versionin e plotë</string>
+	<string name="unlock_full_version">Zhbllokuar versionin e plotë</string>
     <string name="full_version_buy_ask">Versioni i plotë i heq reklama bezdisshëm. A doni për të blerë atë?</string>
     <string name="dialog_title_picker">Zgjidhni dosjen muzikë</string>
-	</resources>
+	<string name="app_invite_title">App ftojë</string>
+    <string name="app_invite_msg">Provoni këtë menaxher ftohtë skedarëve !!</string>
+    <string name="app_invite_failed">Dërgimi ftojë dështuar.</string>
+</resources>

@@ -187,8 +187,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     }
 
 
-
-
     @Override
     public ArrayList<FileInfo> loadInBackground() {
         fileInfoList = new ArrayList<>();
@@ -286,7 +284,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         File file = new File(mPath);
         String fileExtension = mPath.substring(mPath.lastIndexOf(".") + 1);
 
-        if (file.canRead()) {
+//        if (file.canRead()) {
 
             if (fileExtension.equalsIgnoreCase("zip")) {
                 getZipContents("", file.getAbsolutePath());
@@ -297,11 +295,11 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                         true, mShowHidden, mIsRingtonePicker);
                 fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
             }
-        } else {
+       /* } else {
             fileInfoList = RootHelper.getFilesList(mPath,
                     true, mShowHidden, mIsRingtonePicker);
             fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
-        }
+        }*/
     }
 
     private void fetchApk() {

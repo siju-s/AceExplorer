@@ -196,7 +196,7 @@ public class BaseActivity extends AppCompatActivity implements
     // The helper object
     private IabHelper mHelper;
 
-    private boolean isPremium;
+    private boolean isPremium = true;
     private RelativeLayout unlockPremium;
     private RelativeLayout rateUs;
     private RelativeLayout settings;
@@ -698,12 +698,17 @@ public class BaseActivity extends AppCompatActivity implements
 // --Commented out by Inspection STOP (22-11-2016 11:20 PM)
 
     private void showAds() {
-        //TODO Replace with valid ad unit id.This is just a test ad
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 if (!isFinishing()) {
                     MobileAds.initialize(getApplicationContext(), "ca-app-pub-3940256099942544~3347511713");
+                    Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
+                    if (fragment instanceof FileListFragment) {
+                        ((FileListFragment) fragment).setTrial();
+                    } else if (fragment instanceof HomeScreenFragment) {
+                        ((HomeScreenFragment) fragment).setTrial();
+                    }
                 }
             }
         }, 2000);
@@ -1064,12 +1069,10 @@ public class BaseActivity extends AppCompatActivity implements
                     // Get the invitation IDs of all sent messages
                     String[] ids = AppInviteInvitation.getInvitationIds(resultCode, intent);
                     for (String id : ids) {
-                        Log.d(TAG, "onActivityResult: sent invitation " + id);
+                        Logger.log(TAG, "onActivityResult: sent invitation " + id);
                     }
                 } else {
-                    Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show();
-                    // Sending failed or it was canceled, show failure message to the user
-                    // ...
+                    Toast.makeText(this, getString(R.string.app_invite_failed), Toast.LENGTH_SHORT).show();
                 }
             }
             super.onActivityResult(requestCode, resultCode, intent);
@@ -1085,6 +1088,7 @@ public class BaseActivity extends AppCompatActivity implements
         int color = new DialogUtils().getCurrentThemePrimary(this);
 
         final MaterialDialog.Builder builder = new MaterialDialog.Builder(this);
+        builder.iconRes(R.drawable.no_ads);
         builder.title(getString(R.string.unlock_full_version));
         builder.content(getString(R.string.full_version_buy_ask));
         builder.positiveText(getString(R.string.yes));

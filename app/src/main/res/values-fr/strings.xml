@@ -163,8 +163,11 @@
     <string name="img_accessibility_brand">Logo de l\'application</string>
     <string name="img_accessibility_icon_lib">Icône de la bibliothèque</string>
     <string name="img_accessibility_storage_icon">Icône de stockage</string>
-    <string name="unlock_full_version">Débloquer la version complète</string>
+	<string name="unlock_full_version">Débloquer la version complète</string>
     <string name="full_version_buy_ask">La version complète supprime les annonces ennuyeuses. Veux-tu
         l\'acheter?</string>
     <string name="dialog_title_picker">Choisissez un fichier de musique</string>
+	<string name="app_invite_title">Invitation à l\'application</string>
+    <string name="app_invite_msg">Essayez ce gestionnaire de fichiers cool!</string>
+    <string name="app_invite_failed">Échec de l\'envoi de l\'invitation.</string>
 </resources>

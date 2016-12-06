@@ -184,7 +184,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private ZipEntry zipEntry = null;
     private String zipEntryFileName;
     private boolean setRefreshSpan;
-    private boolean isPremium;
+    private boolean isPremium = true;
     private AdView mAdView;
     private MenuItem mSearchItem;
 
@@ -287,10 +287,16 @@ public class FileListFragment extends Fragment implements LoaderManager
             intentFilter.addAction(FileConstants.REFRESH);
             getActivity().registerReceiver(mReloadListReceiver, intentFilter);
         }
+        if (mAdView != null) {
+            mAdView.resume();
+        }
     }
 
     @Override
     public void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
         super.onPause();
         Logger.log(TAG, "OnPause");
         if (!mInstanceStateExists) {
@@ -323,6 +329,11 @@ public class FileListFragment extends Fragment implements LoaderManager
     public void setPremium() {
         isPremium = true;
         hideAds();
+    }
+
+    public void setTrial() {
+        isPremium = false;
+        showAds();
     }
 
     private void addItemDecoration() {
@@ -368,7 +379,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         });
         mBottomToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar_bottom);
         mFileUtils = new FileUtils();
-        isPremium = getArguments() != null && getArguments().getBoolean(FileConstants.KEY_PREMIUM, false);
+        isPremium = getArguments() != null && getArguments().getBoolean(FileConstants.KEY_PREMIUM, true);
         if (isPremium) {
             hideAds();
         } else {
@@ -2470,6 +2481,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     @Override
     public void onDestroyView() {
+        recyclerViewFileList.stopScroll();
         if (!mInstanceStateExists) {
             mPreferences.edit().putInt(FileConstants.KEY_GRID_COLUMNS, mGridColumns).apply();
             sharedPreferenceWrapper.savePrefs(getActivity(), mViewMode);
@@ -2495,6 +2507,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         super.onDestroy();
     }
 
+    @SuppressWarnings("EmptyMethod")
     public void removeSearchTask() {
 
      /*   if (searchTask != null) {

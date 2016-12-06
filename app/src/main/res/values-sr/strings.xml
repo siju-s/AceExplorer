@@ -165,7 +165,10 @@
     <string name="img_accessibility_brand">апп лого</string>
     <string name="img_accessibility_icon_lib">biblioteka икона</string>
     <string name="img_accessibility_storage_icon">складиштење икона</string>
-<string name="unlock_full_version">Унлоцк пуну верзију</string>
+	<string name="unlock_full_version">Унлоцк пуну верзију</string>
     <string name="full_version_buy_ask">Пуна верзија уклања досадне рекламе. Да ли желите да га купи?</string>
     <string name="dialog_title_picker">Изаберите музички фајл</string>
-	</resources>
+	<string name="app_invite_title">апп позвати</string>
+    <string name="app_invite_msg">Покушајте ово кул филе манагер !!</string>
+    <string name="app_invite_failed">Слање инвите није успело.</string>
+</resources>

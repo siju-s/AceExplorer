@@ -163,7 +163,10 @@
     <string name="img_accessibility_brand">app logo</string>
     <string name="img_accessibility_icon_lib">Bókasafn táknið</string>
     <string name="img_accessibility_storage_icon">geymsla táknið</string>
-<string name="unlock_full_version">Aflæsa fulla útgáfu</string>
+	<string name="unlock_full_version">Aflæsa fulla útgáfu</string>
     <string name="full_version_buy_ask">Full útgáfa fjarlægir pirrandi auglýsingar. Viltu kaupa það?</string>
     <string name="dialog_title_picker">Veldu hljóðskrá</string>
-	</resources>
+	<string name="app_invite_title">app bjóða</string>
+    <string name="app_invite_msg">Prófaðu þetta flott skráastjóri !!</string>
+    <string name="app_invite_failed">Sending Boðskort mistókst.</string>
+</resources>

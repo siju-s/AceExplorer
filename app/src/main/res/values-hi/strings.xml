@@ -163,7 +163,10 @@
     <string name="img_accessibility_brand">अनुप्रयोग लोगो</string>
     <string name="img_accessibility_icon_lib">लाइब्रेरी आइकन</string>
     <string name="img_accessibility_storage_icon">संग्रहण आइकन</string>
-<string name="unlock_full_version">पूर्ण संस्करण अनलॉक</string>
+	<string name="unlock_full_version">पूर्ण संस्करण अनलॉक</string>
     <string name="full_version_buy_ask">पूर्ण संस्करण कष्टप्रद विज्ञापनों को हटा। क्या आप इसे खरीदना चाहते हैं?</string>
     <string name="dialog_title_picker">संगीत फ़ाइल चुनें</string>
-	</resources>
+	<string name="app_invite_title">अनुप्रयोग को आमंत्रित</string>
+    <string name="app_invite_msg">इस शांत फ़ाइल प्रबंधक की कोशिश !!</string>
+    <string name="app_invite_failed">भेजा जा रहा है विफल रहे आमंत्रित करते हैं।</string>
+ </resources>

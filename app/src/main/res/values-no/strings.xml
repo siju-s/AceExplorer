@@ -166,4 +166,7 @@
 	<string name="unlock_full_version">Lås opp fullversjonen </string>
     <string name="full_version_buy_ask">Full versjonen fjerner irriterende annonser. Ønsker du å kjøpe den?</string>
     <string name="dialog_title_picker">Velg musikkfil</string>
+	<string name="app_invite_title">App invitere</string>
+    <string name="app_invite_msg">Prøv denne kule filbehandler !!</string>
+    <string name="app_invite_failed">Sende invitasjon mislyktes.</string>
 </resources>

@@ -171,4 +171,7 @@
     <string name="unlock_full_version">فتح النسخة الكاملة</string>
     <string name="full_version_buy_ask">النسخة الكاملة يزيل الإعلانات المزعجة. هل تريد أن تشتريه؟</string>
     <string name="dialog_title_picker">اختيار الملفات الموسيقية</string>
+	<string name="app_invite_title">التطبيق دعوة</string>
+    <string name="app_invite_msg">حاول هذا المدير ملف بارد !!</string>
+    <string name="app_invite_failed">مع المدعوين فشل الإرسال.</string>
 </resources>

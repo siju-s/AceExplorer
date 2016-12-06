@@ -166,7 +166,10 @@
     <string name="img_accessibility_brand">app logo</string>
     <string name="img_accessibility_icon_lib">icon Library</string>
     <string name="img_accessibility_storage_icon">icon stóráil</string>
-<string name="unlock_full_version">Díghlasáil leagan iomlán</string>
+	<string name="unlock_full_version">Díghlasáil leagan iomlán</string>
     <string name="full_version_buy_ask">Cuireann leagan iomlán fógraí annoying. Ar mhaith leat é a cheannach?</string>
     <string name="dialog_title_picker">Roghnaigh comhad ceol</string>
-	</resources>
+	<string name="app_invite_title">app cuireadh</string>
+    <string name="app_invite_msg">Bain triail as an bainisteoir comhad fionnuar !!</string>
+    <string name="app_invite_failed">Seoladh iarraidh dhuine theip.</string>
+</resources>

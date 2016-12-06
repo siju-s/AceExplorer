@@ -166,4 +166,7 @@
     <string name="unlock_full_version">Ontsluit volledige weergawe</string>
     <string name="full_version_buy_ask">Volledige weergawe verwyder irriterende advertensies. Wil jy om dit te koop?</string>
     <string name="dialog_title_picker">Kies musiek lêer</string>
- </resources>
+	<string name="app_invite_title">app nooi</string>
+    <string name="app_invite_msg">Probeer hierdie oulike lêerbestuurder !!</string>
+    <string name="app_invite_failed">Stuur nooi misluk.</string>
+</resources>

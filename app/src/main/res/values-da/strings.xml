@@ -163,7 +163,10 @@
     <string name="img_accessibility_brand">App-logo</string>
     <string name="img_accessibility_icon_lib">ikon Bibliotek</string>
     <string name="img_accessibility_storage_icon">ikon Opbevaring</string>
-    <string name="unlock_full_version">Lås den fulde version</string>
+	<string name="unlock_full_version">Lås den fulde version</string>
     <string name="full_version_buy_ask">Fuld version fjerner irriterende annoncer. Ønsker du at købe det?</string>
     <string name="dialog_title_picker">Vælg musikfilen</string>
-	</resources>
+	<string name="app_invite_title">App invitere</string>
+    <string name="app_invite_msg">Prøv denne cool filhåndtering !!</string>
+    <string name="app_invite_failed">Sender invitere mislykkedes.</string>
+</resources>

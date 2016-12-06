@@ -166,7 +166,10 @@
     <string name="img_accessibility_brand">App logo</string>
     <string name="img_accessibility_icon_lib">icon Library</string>
     <string name="img_accessibility_storage_icon">ikona bagażu</string>
-    <string name="unlock_full_version">Odblokuj pełną wersję</string>
+	<string name="unlock_full_version">Odblokuj pełną wersję</string>
     <string name="full_version_buy_ask">Pełna wersja usuwa irytujące reklamy. Chcesz go kupić?</string>
-    <string name="dialog_title_picker">Wybierz plik muzyczny</string>	
-	</resources>
+    <string name="dialog_title_picker">Wybierz plik muzyczny</string>
+	<string name="app_invite_title">App zaprosić</string>
+    <string name="app_invite_msg">Spróbuj tego chłodnego menedżera plików !!</string>
+    <string name="app_invite_failed">Wysyłanie zaprosić niepowodzeniem.</string>
+</resources>

@@ -165,4 +165,7 @@
 	<string name="unlock_full_version">정식 버전 잠금 해제</string>
     <string name="full_version_buy_ask">가득 차있는 버전은 성가신 광고를 제거합니다. 그것을 사고 싶습니까?</string>
     <string name="dialog_title_picker">음악 파일 선택</string>
+	<string name="app_invite_title">앱 초대</string>
+    <string name="app_invite_msg">이 멋진 파일 관리자를 사용해보십시오 !!</string>
+    <string name="app_invite_failed">초대장 보내기가 실패했습니다.</string>
 </resources>

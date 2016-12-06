@@ -163,7 +163,10 @@
     <string name="img_accessibility_brand">Uygulama logosu</string>
     <string name="img_accessibility_icon_lib">Kütüphane simgesi</string>
     <string name="img_accessibility_storage_icon">depolama simgesi</string>
-    <string name="unlock_full_version">Tam sürümün kilidini aç</string>
+	<string name="unlock_full_version">Tam sürümün kilidini aç</string>
     <string name="full_version_buy_ask">Tam sürüm rahatsız edici reklamları kaldırır. Satın almak istiyor musun</string>
     <string name="dialog_title_picker">Müzik dosyası seçin</string>
+	<string name="app_invite_title">Uygulama davetiyesi</string>
+    <string name="app_invite_msg">Bu harika dosya yöneticisini deneyin !!</string>
+    <string name="app_invite_failed">Davetiye gönderilemedi.</string>
 </resources>

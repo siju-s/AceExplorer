@@ -137,7 +137,7 @@ public class RootHelper {
         ArrayList<FileInfo> fileInfoArrayList = new ArrayList<>();
         File file = new File(path);
 //        Logger.log("RootHelper", "Starting time FILES=");
-        if (file.canRead() && (path.startsWith("/storage") || path.startsWith("/sdcard"))) {
+        if (file.canRead()) {
             File[] listFiles = file.listFiles();
 
             if (listFiles != null) {

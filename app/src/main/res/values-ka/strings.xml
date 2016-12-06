@@ -164,7 +164,10 @@
     <string name="img_accessibility_brand">app logo</string>
     <string name="img_accessibility_icon_lib">ბიბლიოთეკა ხატი</string>
     <string name="img_accessibility_storage_icon">შენახვის ხატი</string>
-<string name="unlock_full_version">ზარალი სრული ვერსია</string>
+	<string name="unlock_full_version">ზარალი სრული ვერსია</string>
     <string name="full_version_buy_ask">სრული ვერსია ხსნის შემაშფოთებელი განცხადებები. გსურთ ყიდვა?</string>
     <string name="dialog_title_picker">არჩევა მუსიკა ფაილი</string>
-	</resources>
+	 <string name="app_invite_title">app მოიწვიოს</string>
+    <string name="app_invite_msg">სცადეთ ამ მაგარი ფაილ მენეჯერი !!</string>
+    <string name="app_invite_failed">გაგზავნის მოიწვიოს ვერ მოხერხდა.</string>
+</resources>

@@ -166,4 +166,7 @@
 	<string name="unlock_full_version">Отключване на пълна версия</string>
     <string name="full_version_buy_ask">Пълен версия премахва досадни реклами. Искате ли да го купя?</string>
     <string name="dialog_title_picker">Изберете музикален файл</string>
+	<string name="app_invite_title">App покани</string>
+    <string name="app_invite_msg">Опитайте тази готина файлов мениджър !!</string>
+    <string name="app_invite_failed">Изпращането не покани.</string>
 </resources>

@@ -163,7 +163,10 @@
     <string name="img_accessibility_brand">App լոգոն</string>
     <string name="img_accessibility_icon_lib">Գրադարան պատկերակը</string>
     <string name="img_accessibility_storage_icon">Storage պատկերակը</string>
-<string name="unlock_full_version">Բացել ամբողջական տարբերակը</string>
+	<string name="unlock_full_version">Բացել ամբողջական տարբերակը</string>
     <string name="full_version_buy_ask">Ամբողջական հեռացնում annoying ազդերը. Դուք ցանկանում եք գնել այն.</string>
     <string name="dialog_title_picker">Ընտրեք երաժշտությունը ֆայլ</string>
-	</resources>
+	<string name="app_invite_title">App հրավիրում</string>
+    <string name="app_invite_msg">Փորձեք այս առաջնակարգ ֆայլ մենեջերի !!</string>
+    <string name="app_invite_failed">Ուղարկում հրավիրել ձախողվեց:</string>
+</resources>

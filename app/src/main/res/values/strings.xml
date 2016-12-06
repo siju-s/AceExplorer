@@ -181,12 +181,14 @@
     <string name="img_accessibility_brand">App logo</string>
     <string name="img_accessibility_icon_lib">Library icon</string>
     <string name="img_accessibility_storage_icon">Storage icon</string>
-    <string name="banner_ad_unit_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="test_banner_ad_unit_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="banner_ad_unit_id" translatable="false">ca-app-pub-9999245634890753/6045569427</string>
     <string name="unlock_full_version">Unlock full version</string>
-    <string name="full_version_buy_ask">Full version removes annoying ads.Do you want to buy it?</string>
+    <string name="full_version_buy_ask">Full version removes annoying ads. Do you want to buy it?</string>
     <string name="dialog_title_picker">Choose music file</string>
     <string name="app_invite_title">App invite</string>
     <string name="app_invite_msg">Try this cool file manager !!</string>
+    <string name="app_invite_failed">Sending invite failed.</string>
 
 
 </resources>

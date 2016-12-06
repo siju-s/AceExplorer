@@ -26,7 +26,6 @@ public class PremiumUtils {
     private static final int CRITERIA_DAYS = 3;
 
     /**
-     *
      * @param context Context
      */
     public static void onStart(Context context) {

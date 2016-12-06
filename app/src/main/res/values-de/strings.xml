@@ -163,7 +163,10 @@
     <string name="img_accessibility_brand">App-Logo</string>
     <string name="img_accessibility_icon_lib">Bibliothek Symbol</string>
     <string name="img_accessibility_storage_icon">Speicher-Symbol</string>
-<string name="unlock_full_version">Vollversion freischalten</string>
+	<string name="unlock_full_version">Vollversion freischalten</string>
     <string name="full_version_buy_ask">Vollversion entfernt lästige Anzeigen. Wollen sie es kaufen?</string>
-    <string name="dialog_title_picker">Wählen Sie eine Musikdatei</string>
-	</resources>
+    <string name="dialog_title_picker">Wählen Sie eine Musikdatei</string> 
+	<string name="app_invite_title">App einladen</string>
+    <string name="app_invite_msg">Versuchen Sie diese coole Datei-Manager!</string>
+    <string name="app_invite_failed">Einladung fehlgeschlagen.</string>
+</resources>

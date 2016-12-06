@@ -162,7 +162,10 @@
     <string name="img_accessibility_brand">biểu tượng ứng dụng</string>
     <string name="img_accessibility_icon_lib">thư viện icon</string>
     <string name="img_accessibility_storage_icon">biểu tượng lưu trữ</string>
-    <string name="unlock_full_version">Mở khóa phiên bản đầy đủ</string>
+	<string name="unlock_full_version">Mở khóa phiên bản đầy đủ</string>
     <string name="full_version_buy_ask">Phiên bản đầy đủ loại bỏ quảng cáo gây phiền nhiễu. Bạn có muốn mua nó không?</string>
     <string name="dialog_title_picker">Chọn tập tin nhạc</string>
-</resources>
+	<string name="app_invite_title">App mời</string>
+    <string name="app_invite_msg">Hãy thử trình quản lý file mát này !!</string>
+    <string name="app_invite_failed">Gửi mời thất bại.</string>
+	</resources>

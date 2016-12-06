@@ -165,7 +165,10 @@
     <string name="img_accessibility_brand">App logo</string>
     <string name="img_accessibility_icon_lib">Knjižnica icon</string>
     <string name="img_accessibility_storage_icon">ikona za shranjevanje</string>
-<string name="unlock_full_version">Odklepanje polno verzijo</string>
+	<string name="unlock_full_version">Odklepanje polno verzijo</string>
     <string name="full_version_buy_ask">Popolna različica odstrani nadležne oglase. Želite kupiti?</string>
     <string name="dialog_title_picker">Izberite glasbeno datoteko</string>
-	</resources>
+	<string name="app_invite_title">App povabi</string>
+    <string name="app_invite_msg">Poskusite to kul upravitelj datotek !!</string>
+    <string name="app_invite_failed">Pošiljanje povabila ni uspelo.</string>
+</resources>

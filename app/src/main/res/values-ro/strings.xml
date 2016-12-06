@@ -168,4 +168,7 @@
 	<string name="unlock_full_version">Debloca versiunea completă</string>
     <string name="full_version_buy_ask">versiune completa elimină anunțurile enervant. Vrei să-l cumpere?</string>
     <string name="dialog_title_picker">Alegeți un fișier de muzică</string>
+	<string name="app_invite_title">aplicaţia invitați</string>
+    <string name="app_invite_msg">Încercați acest manager de fișiere se răcească !!</string>
+    <string name="app_invite_failed">Trimiterea de invitație a eșuat.</string>
 </resources>

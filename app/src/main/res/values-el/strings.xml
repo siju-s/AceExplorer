@@ -164,7 +164,10 @@
     <string name="img_accessibility_brand">App logo</string>
     <string name="img_accessibility_icon_lib">εικονίδιο βιβλιοθήκη</string>
     <string name="img_accessibility_storage_icon">εικονίδιο αποθήκευσης</string>
-<string name="unlock_full_version">Ξεκλειδώστε πλήρη έκδοση</string>
+	<string name="unlock_full_version">Ξεκλειδώστε πλήρη έκδοση</string>
     <string name="full_version_buy_ask">Η πλήρης έκδοση αφαιρεί τις ενοχλητικές διαφημίσεις. Θέλετε να το αγοράσει;</string>
     <string name="dialog_title_picker">Επιλέξτε το αρχείο μουσικής</string>
-	</resources>
+	<string name="app_invite_title">App προσκαλούν</string>
+    <string name="app_invite_msg">Δοκιμάστε αυτό το δροσερό διαχειριστή αρχείων !!</string>
+    <string name="app_invite_failed">Η αποστολή απέτυχε Πρόσκληση.</string>
+</resources>

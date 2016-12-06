@@ -166,7 +166,10 @@
     <string name="img_accessibility_brand">App логотип</string>
     <string name="img_accessibility_icon_lib">значок библиотеки</string>
     <string name="img_accessibility_storage_icon">значок хранения</string>
-<string name="unlock_full_version">Разблокировать полную версию</string>
+	<string name="unlock_full_version">Разблокировать полную версию</string>
     <string name="full_version_buy_ask">Полная версия удаляет назойливую рекламу. Вы хотите купить?</string>
     <string name="dialog_title_picker">Выберите музыкальный файл</string>
-	</resources>
+	<string name="app_invite_title">App пригласить</string>
+    <string name="app_invite_msg">Попробуйте этот прохладный файловый менеджер !!</string>
+    <string name="app_invite_failed">Отправка пригласит не удалось.</string>
+</resources>

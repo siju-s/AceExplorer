@@ -163,6 +163,10 @@
     <string name="img_accessibility_brand">آرم برنامه</string>
     <string name="img_accessibility_icon_lib">آیکون کتابخانه</string>
     <string name="img_accessibility_storage_icon">آیکون ذخیره سازی</string>
-<string name="unlock_full_version">باز کردن نسخه کامل</string>
+	<string name="unlock_full_version">باز کردن نسخه کامل</string>
     <string name="full_version_buy_ask">نسخه کامل حذف تبلیغات مزاحم است. آیا می خواهید به آن را خرید؟</string>
-    <string name="dialog_title_picker">انتخاب فایل موسیقی</string></resources>
+    <string name="dialog_title_picker">انتخاب فایل موسیقی</string>
+	<string name="app_invite_title">برنامه دعوت</string>
+    <string name="app_invite_msg">سعی کنید این مدیر فایل سرد!</string>
+    <string name="app_invite_failed">در حال ارسال دعوت شکست خورده است.</string>
+	</resources>

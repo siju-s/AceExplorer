@@ -78,7 +78,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     private int spacing;
     private boolean mIsThemeDark;
     private AdView mAdView;
-    private boolean isPremium;
+    private boolean isPremium = true;
 
 
     @Override
@@ -175,7 +175,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             layoutStorages.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.light_home_lib));
             nestedScrollViewHome.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.light_home_bg));
         }
-        isPremium = getArguments() != null && getArguments().getBoolean(FileConstants.KEY_PREMIUM, false);
+        isPremium = getArguments() != null && getArguments().getBoolean(FileConstants.KEY_PREMIUM, true);
         if (isPremium) {
             hideAds();
         } else {
@@ -234,6 +234,11 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         hideAds();
     }
 
+    public void setTrial() {
+        isPremium = false;
+        showAds();
+    }
+
 
     private void getSavedLibraries() {
         savedLibraries = new ArrayList<>();
@@ -282,6 +287,22 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         }
         inflateLibraryItem();
 
+    }
+
+    @Override
+    public void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
     }
 
     public void setDualModeEnabled(boolean isDualModeEnabled) {

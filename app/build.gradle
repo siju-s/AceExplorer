@@ -25,8 +25,8 @@ android {
         applicationId "com.siju.acexplorer"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 6
-        versionName "Beta2"
+        versionCode 7
+        versionName "Beta3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     dexOptions {
@@ -80,7 +80,9 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'io.github.kobakei:ratethisapp:1.1.0'
     compile 'org.apache.commons:commons-compress:1.12'
-    compile 'com.afollestad.material-dialogs:core:0.9.1.0'
+    compile ('com.afollestad.material-dialogs:core:0.9.1.0') {
+        exclude group: 'com.android.support' , module: 'support-v13'
+    }
 
     compile 'com.github.junrar:junrar:0.7'
     compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
