@@ -2,11 +2,13 @@ package com.siju.acexplorer.filesystem.utils;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -281,6 +283,8 @@ public class FileUtils implements Progress {
         mServiceIntent = intent;
         context.bindService(mServiceIntent, mExtractServiceConnection, Context.BIND_AUTO_CREATE);
         context.startService(mServiceIntent);
+        registerReceiver(context);
+        isExtractServiceAlive = true;
         String title = context.getString(R.string.extracting);
         String texts[] = new String[]{title, context.getString(R.string.button_paste_progress), "",
                 context.getString(R.string.dialog_cancel)};
@@ -334,8 +338,40 @@ public class FileUtils implements Progress {
     private void stopExtractService() {
         mContext.unbindService(mExtractServiceConnection);
         mContext.stopService(mServiceIntent);
+        if (isExtractServiceAlive) {
+            unRegisterReceiver(mContext);
+        }
+        isExtractServiceAlive = false;
+
     }
 
+    private BroadcastReceiver operationFailureReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(FileConstants.OPERATION_FAILED)) {
+                int operation = intent.getIntExtra(FileConstants.OPERATION, -1);
+                switch (operation) {
+                    case FileConstants.EXTRACT:
+                        Logger.log(TAG,"Failure broacast="+isExtractServiceAlive);
+                        if (isExtractServiceAlive) {
+                            unRegisterReceiver(mContext);
+                            progressDialog.dismiss();
+                            isExtractServiceAlive = false;
+                        }
+                        break;
+                }
+            }
+        }
+    };
+
+    private void registerReceiver(Context context) {
+        IntentFilter filter = new IntentFilter(FileConstants.OPERATION_FAILED);
+        context.registerReceiver(operationFailureReceiver, filter);
+    }
+
+    private void unRegisterReceiver(Context context) {
+       context.unregisterReceiver(operationFailureReceiver);
+    }
 
     @Override
     public void onUpdate(Intent intent) {
@@ -344,6 +380,7 @@ public class FileUtils implements Progress {
         handler.sendMessage(msg);
 
     }
+
 
     // Define the Handler that receives messages from the thread and update the progress
     private final Handler handler = new Handler(Looper.getMainLooper()) {
@@ -368,6 +405,7 @@ public class FileUtils implements Progress {
                     break;
 
                 case EXTRACT_PROGRESS:
+                    Logger.log(TAG, "Progress=" + progress + "Operation=" + EXTRACT_PROGRESS);
                     progressBarPaste.setProgress(progress);
                     textFileCount.setText(Formatter.formatFileSize
                             (mContext, copiedBytes) + "/" + Formatter.formatFileSize(mContext, totalBytes));
@@ -447,6 +485,7 @@ public class FileUtils implements Progress {
     };
 
 
+    private boolean isExtractServiceAlive;
     private final ServiceConnection mExtractServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {

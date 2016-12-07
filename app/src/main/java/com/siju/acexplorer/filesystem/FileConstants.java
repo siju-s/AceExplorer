@@ -28,6 +28,8 @@ public class FileConstants {
     public static final int EXTRACT = 8;
 
     public static final String IS_OPERATION_SUCCESS = "IS_OPERATION_SUCCESS";
+    public static final String OPERATION_FAILED = "OPERATION_FAILED";
+
     public static final String RELOAD_LIST = "reload_list";
     public static final String REFRESH = "refresh";
     public static final String KEY_PATH = "PATH";

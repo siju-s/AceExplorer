@@ -97,7 +97,9 @@ public class ExtractService extends Service {
         intent.putExtra("name", fileName);
         if (mProgressListener != null) {
             mProgressListener.onUpdate(intent);
-            if (p1 == 100) mProgressListener = null;
+            if (p1 == 100) {
+                mProgressListener = null;
+            }
         }
     }
 
@@ -109,7 +111,7 @@ public class ExtractService extends Service {
         }
     }
 
-    public class Doback extends AsyncTask<Bundle, Void, Integer> {
+    private class Doback extends AsyncTask<Bundle, Void, Integer> {
         long copiedbytes = 0, totalbytes = 0;
 
         private void createDir(File dir) {
@@ -304,6 +306,10 @@ public class ExtractService extends Service {
                 calculateProgress(archive.getName(), id, copiedbytes, totalbytes);
             } catch (Exception e) {
                 Log.e(this.getClass().getSimpleName(), "Error while extracting file " + archive, e);
+                Intent intent = new Intent(FileConstants.OPERATION_FAILED);
+                intent.putExtra(FileConstants.OPERATION, FileConstants.EXTRACT);
+                sendBroadcast(intent);
+                mProgressListener = null;
                 publishResults(archive.getName(), 100, id, totalbytes, copiedbytes);
             }
 

@@ -161,7 +161,8 @@ public class FileOpsHelper {
     }
 
 
-    public void renameFile(boolean rootmode, final File oldFile, final File newFile, final int position) {
+    public void renameFile(boolean rootmode, final File oldFile, final File newFile, final int position, final boolean
+            isDualPane) {
         Logger.log(TAG, "Rename--oldFile=" + oldFile + " new file=" + newFile);
         FileOperations.rename(oldFile, newFile, rootmode, mActivity, new FileOperations.FileOperationCallBack() {
             @Override
@@ -207,6 +208,7 @@ public class FileOpsHelper {
                             intent.putExtra("position", position);
                             intent.putExtra("old_file", oldFile.getAbsolutePath());
                             intent.putExtra("new_file", file.getAbsolutePath());
+                            intent.putExtra(FileConstants.KEY_FOCUS_DUAL, isDualPane);
                             mActivity.sendBroadcast(intent);
 
                         } else
@@ -240,7 +242,7 @@ public class FileOpsHelper {
             Intent intent = new Intent(mActivity, ExtractService.class);
             intent.putExtra("zip", currentFile.getPath());
             intent.putExtra("new_path", file.getAbsolutePath());
-            new FileUtils().showExtractProgressDialog(mActivity,intent);
+            new FileUtils().showExtractProgressDialog(mActivity, intent);
         } else Toast.makeText(mActivity, R.string.msg_operation_failed, Toast.LENGTH_SHORT).show();
     }
 
@@ -254,7 +256,7 @@ public class FileOpsHelper {
             Intent zipIntent = new Intent(mActivity, CreateZipTask.class);
             zipIntent.putExtra("name", newFile.getAbsolutePath());
             zipIntent.putParcelableArrayListExtra("files", files);
-            new FileUtils().showZipProgressDialog(mActivity,zipIntent);
+            new FileUtils().showZipProgressDialog(mActivity, zipIntent);
         } else Toast.makeText(mActivity, R.string.msg_operation_failed, Toast.LENGTH_SHORT).show();
     }
 

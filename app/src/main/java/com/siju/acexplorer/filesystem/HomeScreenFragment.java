@@ -100,7 +100,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(false);
         Logger.log(TAG, "onActivityCreated" + savedInstanceState);
 
         mCurrentOrientation = getResources().getConfiguration().orientation;

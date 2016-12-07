@@ -187,6 +187,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private boolean isPremium = true;
     private AdView mAdView;
     private MenuItem mSearchItem;
+    private boolean isInSelectionMode;
 
 
     @Override
@@ -210,6 +211,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
         initializeViews();
+
 
         if (savedInstanceState == null) {
             mCurrentOrientation = getResources().getConfiguration().orientation;
@@ -750,7 +752,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                     FileUtils.scanFile(getActivity().getApplicationContext(), path);
                 }
                 reloadList(true, mFilePath);
-            } else if (action.equals("refresh")) {
+            } else if (action.equals(FileConstants.REFRESH)) {
 
                 int operation = intent.getIntExtra(FileConstants.OPERATION, -1);
 
@@ -779,16 +781,37 @@ public class FileListFragment extends Fragment implements LoaderManager
                         final int position = intent.getIntExtra("position", -1);
                         String oldFile = intent.getStringExtra("old_file");
                         String newFile = intent.getStringExtra("new_file");
+                        boolean isDualPane = intent.getBooleanExtra(FileConstants.KEY_FOCUS_DUAL, false);
+                        //TODO Find better way to handle AE-222
+                        if (isDualPane) {
 
-                        int type = fileInfoList.get(position).getType();
-                        FileUtils.removeMedia(getActivity(), new File(oldFile), type);
-                        FileUtils.scanFile(getActivity().getApplicationContext(), newFile);
-                        fileInfoList.get(position).setFilePath(newFile);
-                        fileInfoList.get(position).setFileName(new File(newFile).getName());
-                        fileListAdapter.setStopAnimation(true);
-                        Logger.log(TAG, "Position changed=" + position);
-                        FileUtils.scanFile(getActivity().getApplicationContext(), newFile);
-                        fileListAdapter.notifyItemChanged(position);
+                            if (FileListFragment.this instanceof FileListDualFragment) {
+                                int type = fileInfoList.get(position).getType();
+                                FileUtils.removeMedia(getActivity(), new File(oldFile), type);
+                                FileUtils.scanFile(getActivity().getApplicationContext(), newFile);
+                                fileInfoList.get(position).setFilePath(newFile);
+                                fileInfoList.get(position).setFileName(new File(newFile).getName());
+                                fileListAdapter.setStopAnimation(true);
+                                Logger.log(TAG, "Position changed=" + position);
+                                FileUtils.scanFile(getActivity().getApplicationContext(), newFile);
+                                fileListAdapter.notifyItemChanged(position);
+                            }
+
+                        } else {
+                            if (!(FileListFragment.this instanceof FileListDualFragment)) {
+                                int type = fileInfoList.get(position).getType();
+                                FileUtils.removeMedia(getActivity(), new File(oldFile), type);
+                                FileUtils.scanFile(getActivity().getApplicationContext(), newFile);
+                                fileInfoList.get(position).setFilePath(newFile);
+                                fileInfoList.get(position).setFileName(new File(newFile).getName());
+                                fileListAdapter.setStopAnimation(true);
+                                Logger.log(TAG, "Position changed=" + position);
+                                FileUtils.scanFile(getActivity().getApplicationContext(), newFile);
+                                fileListAdapter.notifyItemChanged(position);
+                            }
+                        }
+
+
                         break;
 
                     case FileConstants.MOVE:
@@ -1261,6 +1284,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             mActionMode = mode;
+            isInSelectionMode = true;
             MenuInflater inflater = mActionMode.getMenuInflater();
             inflater.inflate(R.menu.action_mode, menu);
             mRenameItem = menu.findItem(R.id.action_rename);
@@ -1495,6 +1519,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
+            isInSelectionMode = false;
             clearSelection();
 //            toggleDummyView(false);
 
@@ -1508,6 +1533,20 @@ public class FileListFragment extends Fragment implements LoaderManager
                 mBaseActivity.toggleFab(false);
             }
         }
+    }
+
+    public void endActionMode() {
+        isInSelectionMode = false;
+        mActionMode.finish();
+        mActionMode = null;
+        mBottomToolbar.setVisibility(View.GONE);
+        mSelectedItemPositions = new SparseBooleanArray();
+        mSwipeRefreshLayout.setEnabled(true);
+        mDragPaths.clear();
+    }
+
+    public boolean isInSelectionMode() {
+        return isInSelectionMode;
     }
 
     public boolean isSearchVisible() {
@@ -1559,7 +1598,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                 }
                 File oldFile = new File(oldFilePath);
                 mBaseActivity.mFileOpsHelper.renameFile(mIsRootMode, oldFile, newFile,
-                        position);
+                        position, checkIfDualFragment());
                 materialDialog.dismiss();
             }
         });
@@ -1591,7 +1630,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
             File newFile = new File(temp + File.separator + renamedName);
             mBaseActivity.mFileOpsHelper.renameFile(mIsRootMode, oldFile, newFile,
-                    pos.get(i));
+                    pos.get(i),checkIfDualFragment());
         }
     }
 
@@ -2049,7 +2088,9 @@ public class FileListFragment extends Fragment implements LoaderManager
                         mIsRootMode, isMoveOperation, info);
                 conflictChecker.execute();
                 clearSelectedPos();
-                mActionMode.finish();
+                if (mActionMode != null) {
+                    mActionMode.finish();
+                }
                 return true;
             }
         });
@@ -2265,10 +2306,10 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
     }
 
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.d(FileListFragment.this.getClass().getSimpleName(), "On Create options " +
-                "Fragment=");
+        Log.d(this.getClass().getSimpleName(), "onCreateOptionsMenu" + "Fragment=");
 
         menu.clear();
         super.onCreateOptionsMenu(menu, inflater);
@@ -2281,13 +2322,11 @@ public class FileListFragment extends Fragment implements LoaderManager
         mViewItem = menu.findItem(R.id.action_view);
         updateMenuTitle();
         setupSearchView();
-
     }
 
     private void updateMenuTitle() {
         mViewItem.setTitle(mViewMode == 0 ? R.string.action_view_grid : R.string.action_view_list);
     }
-
 
     private void setupSearchView() {
         // Disable full screen keyboard in landscape

@@ -1039,7 +1039,7 @@ public class BaseActivity extends AppCompatActivity implements
                                 break;
                             case FileConstants.RENAME:
                                 mFileOpsHelper.renameFile(mIsRootMode, new File(mOldFilePath), new File(mNewFilePath),
-                                        mRenamedPosition);
+                                        mRenamedPosition, isDualPaneInFocus);
                                 break;
                             case FileConstants.FILE_CREATE:
                                 mFileOpsHelper.mkFile(mIsRootMode, new File(mNewFilePath));
@@ -1173,6 +1173,7 @@ public class BaseActivity extends AppCompatActivity implements
             imageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    endActionMode();
                     removeFragmentFromBackStack();
                 }
             });
@@ -1218,6 +1219,17 @@ public class BaseActivity extends AppCompatActivity implements
             } else {
                 navDirectoryDualPane.addView(textView);
             }
+        }
+    }
+
+    private void endActionMode() {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
+        if (fragment instanceof FileListFragment && ((FileListFragment) fragment).isInSelectionMode()) {
+            ((FileListFragment) fragment).endActionMode();
+        }
+        Fragment dualFragment = getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
+        if (dualFragment instanceof FileListDualFragment && ((FileListDualFragment) dualFragment).isInSelectionMode()) {
+            ((FileListDualFragment) dualFragment).endActionMode();
         }
     }
 
@@ -2382,13 +2394,15 @@ public class BaseActivity extends AppCompatActivity implements
 
         int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
+        Fragment dualFragment = getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
+
 
         Logger.log(TAG, "RemoveFragmentFromBackStack --backstack==" + backStackCount +
                 "home_enabled=" + mIsHomeScreenEnabled + " frag=" + fragment);
+
         mBackStackList.clear();
         mBackStackListDual.clear();
         cleanUpFileScreen();
-//        super.onBackPressed();
         Logger.log(TAG, "RemoveFragmentFromBackStack--frag=" + fragment);
         FragmentTransaction ft = getSupportFragmentManager()
                 .beginTransaction();
@@ -2396,6 +2410,12 @@ public class BaseActivity extends AppCompatActivity implements
                 .exit_to_left);
 
         ft.remove(fragment);
+
+        if (dualFragment != null) {
+            ft.remove(dualFragment);
+        }
+
+
         if (mHomeScreenFragment != null) {
             ft.show(mHomeScreenFragment);
             toggleNavigationVisibility(false);
@@ -2412,9 +2432,7 @@ public class BaseActivity extends AppCompatActivity implements
             mCurrentDirDualPane = null;
             mStartingDir = null;
             mStartingDirDualPane = null;
-            isDualPaneInFocus = false;
-            mFrameDualPane.setVisibility(View.GONE);
-            mViewSeperator.setVisibility(View.GONE);
+            toggleDualPaneVisibility(false);
         }
 
     }
