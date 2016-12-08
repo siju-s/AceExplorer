@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="activity_horizontal_margin">64dp</dimen>
     <integer name="grid_columns">5</integer>
     <bool name="isTablet">true</bool>
     <dimen name="drawer_width">320dp</dimen>
-    <dimen name="intro_img_height">650dp</dimen>
+    <dimen name="intro_img_height">750dp</dimen>
     <integer name="homescreen_columns">5</integer>
 
 

@@ -9,7 +9,7 @@
         android:id="@+id/imageIntro"
         android:layout_width="@dimen/intro_img_height"
         android:layout_height="@dimen/intro_img_height"
-        android:paddingTop="@dimen/margin_16"
+        android:paddingTop="@dimen/activity_horizontal_margin"
         android:contentDescription="@string/image"
         />
 
@@ -20,7 +20,7 @@
         android:layout_gravity="bottom|center"
         android:textColor="@android:color/white"
         android:textSize="@dimen/slide_title"
-        android:paddingTop="@dimen/margin_16"
+        android:paddingTop="@dimen/activity_horizontal_margin"
         android:textStyle="bold"/>
 
     <TextView

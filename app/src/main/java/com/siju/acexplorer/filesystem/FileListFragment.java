@@ -454,6 +454,8 @@ public class FileListFragment extends Fragment implements LoaderManager
             @Override
             public void onItemLongClick(View view, int position) {
                 Logger.log(TAG, "On long click" + isDragStarted);
+                if (position >= fileInfoList.size() || position == RecyclerView.NO_POSITION) return;
+
                 if (!mIsZip) {
                     itemClickActionMode(position, true);
                     mLongPressedTime = System.currentTimeMillis();
@@ -781,37 +783,15 @@ public class FileListFragment extends Fragment implements LoaderManager
                         final int position = intent.getIntExtra("position", -1);
                         String oldFile = intent.getStringExtra("old_file");
                         String newFile = intent.getStringExtra("new_file");
-                        boolean isDualPane = intent.getBooleanExtra(FileConstants.KEY_FOCUS_DUAL, false);
-                        //TODO Find better way to handle AE-222
-                        if (isDualPane) {
-
-                            if (FileListFragment.this instanceof FileListDualFragment) {
-                                int type = fileInfoList.get(position).getType();
-                                FileUtils.removeMedia(getActivity(), new File(oldFile), type);
-                                FileUtils.scanFile(getActivity().getApplicationContext(), newFile);
-                                fileInfoList.get(position).setFilePath(newFile);
-                                fileInfoList.get(position).setFileName(new File(newFile).getName());
-                                fileListAdapter.setStopAnimation(true);
-                                Logger.log(TAG, "Position changed=" + position);
-                                FileUtils.scanFile(getActivity().getApplicationContext(), newFile);
-                                fileListAdapter.notifyItemChanged(position);
-                            }
-
-                        } else {
-                            if (!(FileListFragment.this instanceof FileListDualFragment)) {
-                                int type = fileInfoList.get(position).getType();
-                                FileUtils.removeMedia(getActivity(), new File(oldFile), type);
-                                FileUtils.scanFile(getActivity().getApplicationContext(), newFile);
-                                fileInfoList.get(position).setFilePath(newFile);
-                                fileInfoList.get(position).setFileName(new File(newFile).getName());
-                                fileListAdapter.setStopAnimation(true);
-                                Logger.log(TAG, "Position changed=" + position);
-                                FileUtils.scanFile(getActivity().getApplicationContext(), newFile);
-                                fileListAdapter.notifyItemChanged(position);
-                            }
-                        }
-
-
+                        int type = fileInfoList.get(position).getType();
+                        FileUtils.removeMedia(getActivity(), new File(oldFile), type);
+                        FileUtils.scanFile(getActivity().getApplicationContext(), newFile);
+                        fileInfoList.get(position).setFilePath(newFile);
+                        fileInfoList.get(position).setFileName(new File(newFile).getName());
+                        fileListAdapter.setStopAnimation(true);
+                        Logger.log(TAG, "Position changed=" + position);
+                        FileUtils.scanFile(getActivity().getApplicationContext(), newFile);
+                        fileListAdapter.notifyItemChanged(position);
                         break;
 
                     case FileConstants.MOVE:
@@ -1175,7 +1155,8 @@ public class FileListFragment extends Fragment implements LoaderManager
     }
 
     private boolean checkIfDualFragment() {
-        return FileListFragment.this instanceof FileListDualFragment;
+        return false;
+//        return FileListFragment.this instanceof FileListDualFragment;
     }
 
     private void startActionMode() {
@@ -2261,7 +2242,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
                         if (((View) parent1).getId() == R.id.frame_container_dual) {
                             Logger.log(TAG, "DRAG END parent dual =" + true);
-                            FileListDualFragment dualPaneFragment = (FileListDualFragment)
+/*                            FileListDualFragment dualPaneFragment = (FileListDualFragment)
                                     getFragmentManager()
                                             .findFragmentById(R
                                                     .id.frame_container_dual);
@@ -2273,7 +2254,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 //                                if (!destinationDir.equals(paths.get(0))) {
                                 showDragDialog(dragPaths, mLastDualPaneDir);
 //                                }
-                            }
+                            }*/
                         } else {
                             Logger.log(TAG, "DRAG END parent dual =" + false);
                             FileListFragment singlePaneFragment = (FileListFragment)

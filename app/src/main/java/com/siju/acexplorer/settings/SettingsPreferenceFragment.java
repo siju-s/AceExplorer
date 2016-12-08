@@ -71,7 +71,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         }
 
 
-        CheckBoxPreference preference = (CheckBoxPreference) findPreference("prefDualPane");
+       /* CheckBoxPreference preference = (CheckBoxPreference) findPreference("prefDualPane");
 
 
         preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -82,7 +82,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
                 getActivity().setResult(Activity.RESULT_OK, null);
                 return true;
             }
-        });
+        });*/
 
         CheckBoxPreference hiddenPreference = (CheckBoxPreference) findPreference("prefHidden");
         hiddenPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {

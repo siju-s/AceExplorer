@@ -46,7 +46,6 @@ import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
-import com.siju.acexplorer.filesystem.FileListDualFragment;
 import com.siju.acexplorer.filesystem.FileListFragment;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.task.CopyService;
@@ -682,7 +681,7 @@ public class FileUtils implements Progress {
     public static void viewFile(Fragment fragment, String path, String extension) {
 
         Context context = fragment.getContext();
-        Uri uri = createContentUriApi24(fragment.getContext(), path);
+        Uri uri = createContentUri(fragment.getContext(), path);
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
 
@@ -707,7 +706,7 @@ public class FileUtils implements Progress {
 
     }
 
-    public static Uri createContentUriApi24(Context context, String path) {
+    public static Uri createContentUri(Context context, String path) {
 
         if (Utils.isAtleastNougat()) {
             String authority = context.getPackageName() + ".fileprovider";
@@ -813,7 +812,7 @@ public class FileUtils implements Progress {
         ArrayList<Uri> files = new ArrayList<>();
 
         for (FileInfo info : fileInfo) {
-            Uri uri = createContentUriApi24(context, info.getFilePath());
+            Uri uri = createContentUri(context, info.getFilePath());
             System.out.println("shareuri==" + uri);
             files.add(uri);
         }
@@ -1717,7 +1716,7 @@ public class FileUtils implements Progress {
         materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri uri = createContentUriApi24(fragment.getContext(), path);
+                Uri uri = createContentUri(fragment.getContext(), path);
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_INSTALL_PACKAGE);
 
@@ -1737,9 +1736,9 @@ public class FileUtils implements Progress {
         materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (fragment instanceof FileListDualFragment)
+             /*   if (fragment instanceof FileListDualFragment)
                     ((FileListDualFragment) fragment).openCompressedFile(path);
-                else
+                else*/
                     ((FileListFragment) fragment).openCompressedFile(path);
 
                 materialDialog.dismiss();
@@ -1759,7 +1758,7 @@ public class FileUtils implements Progress {
         String filePath = paths.get(0).getFilePath();
         String zipName = fileName;
         if (!(new File(filePath).isDirectory())) {
-            zipName = fileName.substring(0, fileName.lastIndexOf(".") - 1);
+            zipName = fileName.substring(0, fileName.lastIndexOf("."));
         }
         String title = activity.getString(R.string.create);
         String texts[] = new String[]{"", zipName, title, title, "",
@@ -1882,7 +1881,7 @@ public class FileUtils implements Progress {
 
         Intent intent =
                 new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        intent.setData(Uri.fromFile(new File(path)));
+        intent.setData(createContentUri(context,path));
         context.sendBroadcast(intent);
 
 

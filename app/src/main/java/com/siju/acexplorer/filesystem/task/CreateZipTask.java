@@ -77,7 +77,7 @@ public class CreateZipTask extends Service {
     }
 
 
-    public class Doback extends AsyncTask<Bundle, Void, Integer> {
+    private class Doback extends AsyncTask<Bundle, Void, Integer> {
         final long totalBytes = 0L;
         String name;
 
@@ -92,12 +92,13 @@ public class CreateZipTask extends Service {
         @Override
         public void onPostExecute(Integer b) {
             publishResults(b, name, 100, 0, totalBytes);
-            stopSelf(b);
 
             // Broadcast result to FileListFragment
             Intent intent = new Intent(FileConstants.RELOAD_LIST);
             intent.putExtra(FileConstants.KEY_PATH, name);
             sendBroadcast(intent);
+            stopSelf(b);
+
         }
 
     }

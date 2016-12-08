@@ -860,7 +860,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             mBaseActivity.addToBackStack(currentDir, FileConstants.CATEGORY.FILES.getValue());
             if (mIsDualModeEnabled) {
                 mBaseActivity.toggleDualPaneVisibility(true);
-                mBaseActivity.createDualFragment();
+//                mBaseActivity.createDualFragment();
                 mBaseActivity.setDir(currentDir, true);
                 mBaseActivity.setCurrentCategory(FileConstants.CATEGORY.FILES.getValue());
                 mBaseActivity.addToBackStack(currentDir, FileConstants.CATEGORY.FILES.getValue());

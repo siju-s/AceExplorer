@@ -286,15 +286,15 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
 //        if (file.canRead()) {
 
-            if (fileExtension.equalsIgnoreCase("zip")) {
-                getZipContents("", file.getAbsolutePath());
-            } else if (fileExtension.equalsIgnoreCase("rar")) {
-                getRarContents("", file.getAbsolutePath());
-            } else {
-                fileInfoList = RootHelper.getFilesList(mPath,
-                        true, mShowHidden, mIsRingtonePicker);
-                fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
-            }
+        if (fileExtension.equalsIgnoreCase("zip")) {
+            getZipContents("", file.getAbsolutePath());
+        } else if (fileExtension.equalsIgnoreCase("rar")) {
+            getRarContents("", file.getAbsolutePath());
+        } else {
+            fileInfoList = RootHelper.getFilesList(mPath,
+                    true, mShowHidden, mIsRingtonePicker);
+            fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
+        }
        /* } else {
             fileInfoList = RootHelper.getFilesList(mPath,
                     true, mShowHidden, mIsRingtonePicker);
@@ -401,11 +401,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         ZipFile zipfile;
         ArrayList<ZipModel> totalZipList;
         ArrayList<ZipModel> elements = new ArrayList<>();
-        if (mIsDualPaneInFocus) {
-            totalZipList = ((FileListDualFragment) mFragment).totalZipList;
-        } else {
-            totalZipList = ((FileListFragment) mFragment).totalZipList;
-        }
+        totalZipList = ((FileListFragment) mFragment).totalZipList;
         try {
 //            if (totalZipList.size() == 0 || entry != null) {
             if (new File(parentZipPath).canRead()) {
@@ -427,12 +423,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                             .isDirectory()));
                 }
             }
-            if (mIsDualPaneInFocus) {
-                ((FileListDualFragment) mFragment).totalZipList = totalZipList;
-            } else {
-                ((FileListFragment) mFragment).totalZipList = totalZipList;
-            }
-//            }
+            ((FileListFragment) mFragment).totalZipList = totalZipList;
 
             ArrayList<String> strings = new ArrayList<>();
             for (ZipModel entry : totalZipList) {
@@ -510,11 +501,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
         Collections.sort(elements, comparatorByNameZip1);
 
-        if (mIsDualPaneInFocus) {
-            ((FileListDualFragment) mFragment).zipChildren = elements;
-        } else {
-            ((FileListFragment) mFragment).zipChildren = elements;
-        }
+        ((FileListFragment) mFragment).zipChildren = elements;
         for (ZipModel model : elements) {
             String name = model.getName();
             if (name.startsWith("/")) {
@@ -565,13 +552,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         try {
             Archive zipfile = new Archive(new File(parentZipPath));
             ArrayList<FileHeader> totalRarList;
-            if (mIsDualPaneInFocus) {
-                ((FileListDualFragment) mFragment).mArchive = zipfile;
-                totalRarList = ((FileListDualFragment) mFragment).totalRarList;
-            } else {
-                ((FileListFragment) mFragment).mArchive = zipfile;
-                totalRarList = ((FileListFragment) mFragment).totalRarList;
-            }
+            ((FileListFragment) mFragment).mArchive = zipfile;
+            totalRarList = ((FileListFragment) mFragment).totalRarList;
 
             if (totalRarList.size() == 0) {
 

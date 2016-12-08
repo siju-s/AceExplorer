@@ -168,7 +168,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
                         getActivity().finish();
                     } else if (isFilePicker) {
                         Intent intent = new Intent();
-                        intent.setData(FileUtils.createContentUriApi24(getActivity(), file.getAbsolutePath()));
+                        intent.setData(FileUtils.createContentUri(getActivity(), file.getAbsolutePath()));
                         getActivity().setResult(Activity.RESULT_OK, intent);
                         getActivity().finish();
                     }
