@@ -189,6 +189,9 @@
     <string name="app_invite_title">App invite</string>
     <string name="app_invite_msg">Try this cool file manager !!</string>
     <string name="app_invite_failed">Sending invite failed.</string>
+    <!-- Start for 1.0.1 update -->
+    <string name="pref_title_rooted">Root Explorer</string>
+    <string name="msg_error_unrooted">Root access denied.</string>
 
 
 </resources>

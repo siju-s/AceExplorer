@@ -54,7 +54,11 @@ public class RootHelper {
         Command cc = new Command(1, cmd) {
             @Override
             public void commandOutput(int i, String s) {
+                System.out.println("commandOutput" + i + s);
+
                 output.add(s);
+                System.out.println("output " + output);
+
             }
 
             @Override
@@ -66,6 +70,7 @@ public class RootHelper {
 
             @Override
             public void commandCompleted(int i, int i2) {
+                System.out.println("commandCompleted" + i + i2);
 
             }
         };
@@ -79,7 +84,6 @@ public class RootHelper {
         if (!waitForCommand(cc, -1)) {
             return null;
         }
-
         return output;
     }
 
@@ -137,7 +141,7 @@ public class RootHelper {
         ArrayList<FileInfo> fileInfoArrayList = new ArrayList<>();
         File file = new File(path);
 //        Logger.log("RootHelper", "Starting time FILES=");
-        if (file.canRead()) {
+        if (file.canRead()) { //file.canRead()) {
             File[] listFiles = file.listFiles();
 
             if (listFiles != null) {
@@ -209,7 +213,6 @@ public class RootHelper {
                                     String name = array.getPath();
                                     String path1;
 
-
                                     if (!path.equals("/")) {
                                         path1 = path + "/" + name;
                                     } else {
@@ -242,6 +245,30 @@ public class RootHelper {
         }
         return fileInfoArrayList;
 
+    }
+
+    public static String getPermissions(String filePath, boolean isDirectory) {
+        final String cmdPath = getCommandLineString(filePath);
+        String directory = " ";
+        if (isDirectory) {
+            directory = "d ";
+        }
+        final String[] permissionString = {null};
+        final String finalDirectory = directory;
+
+        ArrayList<String> contents = runAndWait1("ls -l" + finalDirectory + cmdPath, true);
+        System.out.println("getPermissions " + contents);
+        if (contents != null && contents.size() == 1) {
+            permissionString[0] = getPermissionFile(contents.get(0));
+
+        }
+        return permissionString[0];
+    }
+
+
+    private static String getPermissionFile(String line) {
+        String[] array = line.split(" ");
+        return array[0];
     }
 
     private final ArrayList<FileInfo> fileInfoArrayList = new ArrayList<>();
@@ -388,6 +415,7 @@ public class RootHelper {
         }
         return false;
     }
+
 
     private static BaseFile parseName(String line) {
         boolean linked = false;

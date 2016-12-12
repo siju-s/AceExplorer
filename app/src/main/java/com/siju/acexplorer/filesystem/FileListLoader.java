@@ -23,6 +23,7 @@ import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.model.ZipModel;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.helper.RootHelper;
+import com.stericson.RootTools.RootTools;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -245,6 +246,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
 
     private void fetchDataByCategory() {
+        RootTools.debugMode = true;
         switch (mCategory) {
             case 0:
             case 5:

@@ -351,7 +351,7 @@ public class FileUtils implements Progress {
                 int operation = intent.getIntExtra(FileConstants.OPERATION, -1);
                 switch (operation) {
                     case FileConstants.EXTRACT:
-                        Logger.log(TAG,"Failure broacast="+isExtractServiceAlive);
+                        Logger.log(TAG, "Failure broacast=" + isExtractServiceAlive);
                         if (isExtractServiceAlive) {
                             unRegisterReceiver(mContext);
                             progressDialog.dismiss();
@@ -369,7 +369,7 @@ public class FileUtils implements Progress {
     }
 
     private void unRegisterReceiver(Context context) {
-       context.unregisterReceiver(operationFailureReceiver);
+        context.unregisterReceiver(operationFailureReceiver);
     }
 
     @Override
@@ -1594,7 +1594,8 @@ public class FileUtils implements Progress {
     /**
      * @param fileInfo Paths to delete
      */
-    public void showDeleteDialog(final BaseActivity activity, final ArrayList<FileInfo> fileInfo) {
+    public void showDeleteDialog(final BaseActivity activity, final ArrayList<FileInfo> fileInfo, final boolean
+            isRooted) {
         String title = activity.getString(R.string.dialog_delete_title);
         String texts[] = new String[]{title, activity.getString(R.string.msg_ok), "", activity.getString(R.string
                 .dialog_cancel)};
@@ -1615,7 +1616,7 @@ public class FileUtils implements Progress {
         materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                activity.mFileOpsHelper.deleteFiles(fileInfo);
+                activity.mFileOpsHelper.deleteFiles(fileInfo, isRooted);
                 materialDialog.dismiss();
             }
         });
@@ -1739,7 +1740,7 @@ public class FileUtils implements Progress {
              /*   if (fragment instanceof FileListDualFragment)
                     ((FileListDualFragment) fragment).openCompressedFile(path);
                 else*/
-                    ((FileListFragment) fragment).openCompressedFile(path);
+                ((FileListFragment) fragment).openCompressedFile(path);
 
                 materialDialog.dismiss();
             }
@@ -1881,7 +1882,7 @@ public class FileUtils implements Progress {
 
         Intent intent =
                 new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        intent.setData(createContentUri(context,path));
+        intent.setData(createContentUri(context, path));
         context.sendBroadcast(intent);
 
 
@@ -1920,8 +1921,10 @@ public class FileUtils implements Progress {
         if (folder == null)
             return false;
         if (folder.isDirectory()) {
-            for (File child : folder.listFiles()) {
-                deleteFilesInFolder(child, context);
+            if (folder.listFiles() != null) {
+                for (File child : folder.listFiles()) {
+                    deleteFilesInFolder(child, context);
+                }
             }
 
             if (!folder.delete())

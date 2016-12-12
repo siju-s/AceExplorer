@@ -594,7 +594,7 @@ public class BaseActivity extends AppCompatActivity implements
         mShowHidden = mSharedPreferences.getBoolean(FileConstants.PREFS_HIDDEN, false);
         mIsDualPaneEnabled = mSharedPreferences.getBoolean(FileConstants.PREFS_DUAL_PANE,
                 false);
-        mIsRootMode = mSharedPreferences.getBoolean(FileConstants.ROOT_ACCESS, true);
+        mIsRootMode = mSharedPreferences.getBoolean(FileConstants.PREFS_ROOTED, false);
     }
 
 

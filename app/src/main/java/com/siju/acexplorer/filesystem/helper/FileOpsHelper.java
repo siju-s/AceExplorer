@@ -220,7 +220,7 @@ public class FileOpsHelper {
         });
     }
 
-    public void deleteFiles(ArrayList<FileInfo> files) {
+    public void deleteFiles(ArrayList<FileInfo> files,boolean isRooted) {
         if (files == null) return;
 
         int mode = checkWriteAccessMode(mActivity, new File(files.get(0).getFilePath()).getParentFile());
@@ -228,7 +228,7 @@ public class FileOpsHelper {
             mActivity.mFiles = files;
             mActivity.mOperation = FileConstants.DELETE;
         } else if (mode == 1 || mode == 0)
-            new DeleteTask(mActivity, true, files).execute();
+            new DeleteTask(mActivity, isRooted, files).execute();
     }
 
     public void extractFile(File currentFile, File file) {

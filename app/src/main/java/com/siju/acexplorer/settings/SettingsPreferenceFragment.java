@@ -32,6 +32,7 @@ import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 import com.siju.acexplorer.utils.LocaleHelper;
+import com.stericson.RootTools.RootTools;
 
 
 public class SettingsPreferenceFragment extends PreferenceFragment {
@@ -88,6 +89,21 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         hiddenPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
+                getActivity().setResult(Activity.RESULT_OK, null);
+                return true;
+            }
+        });
+
+        final CheckBoxPreference rootPreference = (CheckBoxPreference) findPreference(FileConstants.PREFS_ROOTED);
+        rootPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                boolean result = RootTools.isAccessGiven();
+                if (!result) {
+                    rootPreference.setChecked(false);
+                    Toast.makeText(getActivity(), getString(R.string.msg_error_unrooted), Toast.LENGTH_SHORT).show();
+                }
                 getActivity().setResult(Activity.RESULT_OK, null);
                 return true;
             }
@@ -171,12 +187,11 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         toolbar.setPadding(0, ((SettingsActivity) getActivity()).getStatusBarHeight(), 0, 0);
 
 
+        toolbar.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorPrimary));
 
-            toolbar.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorPrimary));
-
-            if (Build.VERSION.SDK_INT >= 21) {
-                getActivity().getWindow().setStatusBarColor(ContextCompat.getColor(getActivity(), R.color
-                        .colorPrimaryDark));
+        if (Build.VERSION.SDK_INT >= 21) {
+            getActivity().getWindow().setStatusBarColor(ContextCompat.getColor(getActivity(), R.color
+                    .colorPrimaryDark));
 
         }
 

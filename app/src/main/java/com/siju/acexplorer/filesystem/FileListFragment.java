@@ -92,6 +92,7 @@ import com.siju.acexplorer.filesystem.ui.GridItemDecoration;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 import com.siju.acexplorer.filesystem.views.FastScrollRecyclerView;
+import com.siju.acexplorer.helper.RootHelper;
 import com.siju.acexplorer.utils.DialogUtils;
 import com.siju.acexplorer.utils.Utils;
 import com.stericson.RootTools.RootTools;
@@ -1222,7 +1223,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                         removeFavorite(filesToDelete);
                         Toast.makeText(getContext(), getString(R.string.fav_removed), Toast.LENGTH_SHORT).show();
                     } else {
-                        mFileUtils.showDeleteDialog(mBaseActivity, filesToDelete);
+                        mFileUtils.showDeleteDialog(mBaseActivity, filesToDelete, isRooted());
                     }
                     mActionMode.finish();
                 }
@@ -1253,6 +1254,11 @@ public class FileListFragment extends Fragment implements LoaderManager
                 break;
         }
         return false;
+    }
+
+    private boolean isRooted() {
+        return PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean(FileConstants.PREFS_ROOTED,
+                false);
     }
 
 
@@ -1306,8 +1312,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                             .getFilePath();
 
                     @SuppressLint("SdCardPath")
-                    boolean isRoot = !filePath.startsWith("/sdcard") && !filePath
-                            .startsWith("/storage");
+                    boolean isRoot = mPreferences.getBoolean(FileConstants.PREFS_ROOTED, false);
                     if (FileUtils.isFileCompressed(filePath)) {
                         mExtractItem.setVisible(true);
                         mArchiveItem.setVisible(false);
@@ -1611,7 +1616,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
             File newFile = new File(temp + File.separator + renamedName);
             mBaseActivity.mFileOpsHelper.renameFile(mIsRootMode, oldFile, newFile,
-                    pos.get(i),checkIfDualFragment());
+                    pos.get(i), checkIfDualFragment());
         }
     }
 
@@ -1631,21 +1636,32 @@ public class FileListFragment extends Fragment implements LoaderManager
         final CheckBox exeown = (CheckBox) materialDialog.findViewById(R.id.cexeown);
         final CheckBox exegroup = (CheckBox) materialDialog.findViewById(R.id.cexegroup);
         final CheckBox exeother = (CheckBox) materialDialog.findViewById(R.id.cexeother);
-        String perm = fileInfo.getPermissions();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                String perm = RootHelper.getPermissions(fileInfo.getFilePath(), fileInfo.isDirectory());
+                ArrayList<Boolean[]> arrayList = FileUtils.parse(perm);
+                final Boolean[] read = arrayList.get(0);
+                final Boolean[] write = arrayList.get(1);
+                final Boolean[] exe = arrayList.get(2);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        readown.setChecked(read[0]);
+                        readgroup.setChecked(read[1]);
+                        readother.setChecked(read[2]);
+                        writeown.setChecked(write[0]);
+                        writegroup.setChecked(write[1]);
+                        writeother.setChecked(write[2]);
+                        exeown.setChecked(exe[0]);
+                        exegroup.setChecked(exe[1]);
+                        exeother.setChecked(exe[2]);
+                    }
+                });
+            }
+        };
 
-        ArrayList<Boolean[]> arrayList = FileUtils.parse(perm);
-        Boolean[] read = arrayList.get(0);
-        Boolean[] write = arrayList.get(1);
-        Boolean[] exe = arrayList.get(2);
-        readown.setChecked(read[0]);
-        readgroup.setChecked(read[1]);
-        readother.setChecked(read[2]);
-        writeown.setChecked(write[0]);
-        writegroup.setChecked(write[1]);
-        writeother.setChecked(write[2]);
-        exeown.setChecked(exe[0]);
-        exegroup.setChecked(exe[1]);
-        exeother.setChecked(exe[2]);
+        new Thread(runnable).start();
 
         materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1703,6 +1719,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         materialDialog.show();
 
     }
+
 
     @SuppressWarnings("ConstantConditions")
     private void showExtractOptions(final String currentFilePath, final String currentDir) {

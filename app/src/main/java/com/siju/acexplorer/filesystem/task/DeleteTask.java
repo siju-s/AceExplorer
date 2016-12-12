@@ -48,11 +48,13 @@ public class DeleteTask extends AsyncTask<Void, Void, Integer> {
 
             if (!isDeleted) {
                 if (mIsRootMode) {
-                    RootTools.remount(new File(path).getParent(), "rw");
-                    RootHelper.runAndWait("rm -r \"" + path + "\"", true);
-                    RootTools.remount(new File(path).getParent(), "ro");
-                    deletedFilesList.add(fileList.get(i));
-                    deletedCount++;
+                    boolean remountRw = RootTools.remount(new File(path).getParent(), "rw");
+                    if (remountRw) {
+                        RootHelper.runAndWait("rm -r \"" + path + "\"", true);
+                        RootTools.remount(new File(path).getParent(), "ro");
+                        deletedFilesList.add(fileList.get(i));
+                        deletedCount++;
+                    }
                 }
 
             } else {
