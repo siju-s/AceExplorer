@@ -31,8 +31,8 @@ import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.utils.ThemeUtils;
+import com.siju.acexplorer.helper.root.RootTools;
 import com.siju.acexplorer.utils.LocaleHelper;
-import com.stericson.RootTools.RootTools;
 
 
 public class SettingsPreferenceFragment extends PreferenceFragment {

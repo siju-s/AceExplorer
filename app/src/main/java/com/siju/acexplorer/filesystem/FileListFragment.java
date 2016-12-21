@@ -90,13 +90,14 @@ import com.siju.acexplorer.filesystem.ui.DividerItemDecoration;
 import com.siju.acexplorer.filesystem.ui.EnhancedMenuInflater;
 import com.siju.acexplorer.filesystem.ui.GridItemDecoration;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
+import com.siju.acexplorer.filesystem.utils.RootUtils;
 import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 import com.siju.acexplorer.filesystem.views.FastScrollRecyclerView;
 import com.siju.acexplorer.helper.RootHelper;
+import com.siju.acexplorer.helper.root.RootTools;
+import com.siju.acexplorer.helper.root.rootshell.execution.Command;
 import com.siju.acexplorer.utils.DialogUtils;
 import com.siju.acexplorer.utils.Utils;
-import com.stericson.RootTools.RootTools;
-import com.stericson.RootTools.execution.Command;
 
 import java.io.File;
 import java.io.IOException;
@@ -1223,7 +1224,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                         removeFavorite(filesToDelete);
                         Toast.makeText(getContext(), getString(R.string.fav_removed), Toast.LENGTH_SHORT).show();
                     } else {
-                        mFileUtils.showDeleteDialog(mBaseActivity, filesToDelete, isRooted());
+                        mFileUtils.showDeleteDialog(mBaseActivity, filesToDelete, RootUtils.isRooted(getActivity()));
                     }
                     mActionMode.finish();
                 }
@@ -1255,12 +1256,6 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
         return false;
     }
-
-    private boolean isRooted() {
-        return PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean(FileConstants.PREFS_ROOTED,
-                false);
-    }
-
 
     /**
      * Triggered on long press click on item

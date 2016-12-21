@@ -22,7 +22,7 @@ import com.siju.acexplorer.filesystem.model.CopyData;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.helper.RootHelper;
-import com.stericson.RootTools.RootTools;
+import com.siju.acexplorer.helper.root.RootTools;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -170,7 +170,8 @@ public class CopyService extends Service {
                 Logger.log("TAG", "execute" + files.size() + " mode==" + new FileUtils().checkFolder(currentDir,
                         mContext));
 
-                if (new FileUtils().checkFolder(currentDir, mContext) == 1) {
+                if (new FileUtils().checkFolder(currentDir, mContext) == FileConstants.WRITE_MODES.INTERNAL
+                        .getValue()) {
                     getTotalBytes(files);
                     for (int i = 0; i < files.size(); i++) {
                         FileInfo sourceFile = files.get(i);
@@ -247,13 +248,16 @@ public class CopyService extends Service {
                 }
             }
 
-            void copyRoot(String path, String name, String FILE2) {
+            void copyRoot(String path, String name, String destinationPath) {
                 boolean result = RootTools.copyFile(RootHelper.getCommandLineString(path), RootHelper
-                        .getCommandLineString(FILE2) + "/" + name, true, true);
-                if (!result && path.contains("/0/"))
-                    RootTools.copyFile(RootHelper.getCommandLineString(path.replace("/0/", "/legacy/")), RootHelper
-                            .getCommandLineString(FILE2) + "/" + name, true, true);
-                FileUtils.scanFile(mContext, FILE2 + "/" + name);
+                        .getCommandLineString(destinationPath) + "/" + name, true, true);
+                if (!result && path.contains("/0/")) {
+                    result = RootTools.copyFile(RootHelper.getCommandLineString(path.replace("/0/", "/legacy/")),
+                            RootHelper.getCommandLineString(destinationPath) + "/" + name, true, true);
+                }
+                if (result) {
+                    FileUtils.scanFile(mContext, destinationPath + "/" + name);
+                }
             }
 
             private void copyFiles(final FileInfo sourceFile, final FileInfo targetFile, final int id, final boolean
@@ -271,7 +275,6 @@ public class CopyService extends Service {
                         }*/
                         if (mode == 1 || mode == 0)
                             FileUtils.mkdir(destinationDir, mContext);
-//                        destinationDir.mkdir();
                     }
                     if (!destinationDir.exists()) {
                         Log.e("Copy", "cant make dir");
@@ -461,28 +464,28 @@ public class CopyService extends Service {
     }
 
     //check if copy is successful
-    private boolean checkFiles(FileInfo hFile1, FileInfo hFile2) {
-        if (RootHelper.isDirectory(hFile1.getFilePath(), rootmode, 5)) {
-            if (RootHelper.fileExists(hFile2.getFilePath())) return false;
-            ArrayList<FileInfo> baseFiles = RootHelper.getFilesList(hFile1.getFilePath(), true, true, false);
+    private boolean checkFiles(FileInfo oldFileInfo, FileInfo newFileInfo) {
+        if (oldFileInfo.isDirectory()) {
+            if (RootHelper.fileExists(newFileInfo.getFilePath())) return false;
+            ArrayList<FileInfo> baseFiles = RootHelper.getFilesList(oldFileInfo.getFilePath(), true, true, false);
             if (baseFiles.size() > 0) {
                 boolean b = true;
                 for (FileInfo baseFile : baseFiles) {
-                    baseFile.setFilePath(hFile2.getFilePath() + "/" + (baseFile.getFileName()));
+                    baseFile.setFilePath(newFileInfo.getFilePath() + "/" + (baseFile.getFileName()));
                     if (!checkFiles(baseFile, baseFile))
                         b = false;
                 }
                 return b;
             }
-            return RootHelper.fileExists(hFile2.getFilePath());
+            return RootHelper.fileExists(newFileInfo.getFilePath());
         } else {
-            String parent = new File(hFile1.getFilePath()).getParent();
+            String parent = new File(oldFileInfo.getFilePath()).getParent();
             ArrayList<FileInfo> baseFiles = RootHelper.getFilesList(parent, true, true, false);
             int i = -1;
             int index = -1;
             for (FileInfo b : baseFiles) {
                 i++;
-                if (b.getFilePath().equals(hFile1.getFilePath())) {
+                if (b.getFilePath().equals(oldFileInfo.getFilePath())) {
                     index = i;
                     break;
                 }
@@ -492,12 +495,12 @@ public class CopyService extends Service {
             int index1 = -1;
             for (FileInfo b : baseFiles1) {
                 i1++;
-                if (b.getFilePath().equals(hFile1.getFilePath())) {
+                if (b.getFilePath().equals(oldFileInfo.getFilePath())) {
                     index1 = i1;
                     break;
                 }
             }
-            return baseFiles.get(index).getSize()  == (baseFiles1.get(index1)
+            return !(index == -1 || index1 == -1) && baseFiles.get(index).getSize() == (baseFiles1.get(index1)
                     .getSize());
         }
     }

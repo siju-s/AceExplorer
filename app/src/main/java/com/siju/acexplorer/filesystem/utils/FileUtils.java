@@ -27,6 +27,7 @@ import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -53,9 +54,9 @@ import com.siju.acexplorer.filesystem.task.CreateZipTask;
 import com.siju.acexplorer.filesystem.task.ExtractService;
 import com.siju.acexplorer.filesystem.task.Progress;
 import com.siju.acexplorer.helper.RootHelper;
+import com.siju.acexplorer.helper.root.RootTools;
 import com.siju.acexplorer.utils.DialogUtils;
 import com.siju.acexplorer.utils.Utils;
-import com.stericson.RootTools.RootTools;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -604,7 +605,8 @@ public class FileUtils implements Progress {
     }
 
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private static String[] getExtSdCardPaths(Context context) {
         List<String> paths = new ArrayList<>();
         for (File file : context.getExternalFilesDirs("external")) {
@@ -1158,6 +1160,7 @@ public class FileUtils implements Progress {
      * @param isDirectory flag indicating if the file should be a directory.
      * @return The DocumentFile
      */
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private static DocumentFile getDocumentFile(final File file, final boolean isDirectory, Context context) {
         String baseFolder = getExtSdCardFolder(file, context);
         boolean originalDirectory = false;
@@ -1250,7 +1253,7 @@ public class FileUtils implements Progress {
      * @return The main folder of the external SD card containing this file, if the file is on an SD card. Otherwise,
      * null is returned.
      */
-    @TargetApi(Build.VERSION_CODES.KITKAT)
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private static String getExtSdCardFolder(final File file, Context context) {
         String[] extSdPaths = getExtSdCardPaths(context);
         try {
@@ -1331,6 +1334,7 @@ public class FileUtils implements Progress {
      * @param target The target folder.
      * @return true if the renaming was successful.
      */
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     static boolean renameFolder(@NonNull final File source, @NonNull final File target, Context context) {
         // First try the normal rename.
         if (rename(source, target.getName())) {
@@ -1494,23 +1498,23 @@ public class FileUtils implements Progress {
     public int checkFolder(final String f, Context context) {
         if (f == null) return 0;
         File folder = new File(f);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && isOnExtSdCard(folder, context)) {
+        if (Utils.isAtleastLollipop() && isOnExtSdCard(folder, context)) {
             if (!folder.exists() || !folder.isDirectory()) {
-                return 0;
+                return FileConstants.WRITE_MODES.ROOT.getValue();
             }
 
             // On Android 5 and above, trigger storage access framework.
             if (isFileNonWritable(folder, context)) {
-                return 2;
+                return FileConstants.WRITE_MODES.EXTERNAL.getValue();
             }
-            return 1;
-        } else if (Build.VERSION.SDK_INT == 19 && isOnExtSdCard(folder, context)) {
+            return FileConstants.WRITE_MODES.INTERNAL.getValue();
+        } else if (Utils.isKitkat() && isOnExtSdCard(folder, context)) {
             // Assume that Kitkat workaround works
-            return 1;
+            return FileConstants.WRITE_MODES.INTERNAL.getValue();
         } else if (isWritable(new File(folder, "DummyFile"))) {
-            return 1;
+            return FileConstants.WRITE_MODES.INTERNAL.getValue();
         } else {
-            return 0;
+            return FileConstants.WRITE_MODES.ROOT.getValue();
         }
     }
 
@@ -1805,6 +1809,7 @@ public class FileUtils implements Progress {
      * @param folder The directory
      * @return true if it is possible to write in this directory.
      */
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     public static boolean isFileNonWritable(final File folder, Context c) {
         // Verify that this is a directory.
         if (folder == null)
@@ -1855,7 +1860,7 @@ public class FileUtils implements Progress {
             return true;
 
         // Try with Storage Access Framework.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && isOnExtSdCard(file, context)) {
+        if (Utils.isAtleastLollipop() && isOnExtSdCard(file, context)) {
 
             DocumentFile document = getDocumentFile(file, false, context);
             return document != null && document.delete();

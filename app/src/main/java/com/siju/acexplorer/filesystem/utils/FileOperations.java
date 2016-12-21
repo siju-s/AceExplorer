@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.helper.RootHelper;
-import com.stericson.RootTools.RootTools;
+import com.siju.acexplorer.helper.root.RootTools;
 
 import java.io.File;
 
@@ -21,28 +21,27 @@ public class FileOperations {
 
         void launchSAF(File oldFile, File newFile);
 
-        void opCompleted(File file, boolean b);
-    }
+                    void opCompleted(File file, boolean b);
+                }
 
-    public static void mkdir(final File file, final Context context, final boolean isRoot, @NonNull
-    final FileOperationCallBack fileOperationCallBack) {
-        if (file == null) return;
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
+            public static void mkdir(final File file, final Context context, final boolean isRoot, @NonNull
+            final FileOperationCallBack fileOperationCallBack) {
+                if (file == null) return;
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... params) {
 
-                if (file.exists()) fileOperationCallBack.exists();
+                        if (file.exists()) fileOperationCallBack.exists();
 
 //                if (file.isLocal() || isRoot) {
-                int mode = new FileUtils().checkFolder(file.getParent(), context);
-                if (mode == 2) {
+                        int mode = new FileUtils().checkFolder(file.getParent(), context);
+                        if (mode == 2) {
                     fileOperationCallBack.launchSAF(file);
                     return null;
                 } else if (mode == 1 || mode == 0) {
                     boolean result = FileUtils.mkdir(file, context);
                     // Try the root way
                     if (!result && isRoot) {
-//                        file.setMode(HFile.ROOT_MODE);
                         if (file.exists()) fileOperationCallBack.exists();
                         boolean remount = false;
                         try {

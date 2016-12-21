@@ -192,6 +192,6 @@
     <!-- Start for 1.0.1 update -->
     <string name="pref_title_rooted">Root Explorer</string>
     <string name="msg_error_unrooted">Root access denied.</string>
-
+    <string name="billing_unsupported">In-app purchases not supported on this device.</string>
 
 </resources>

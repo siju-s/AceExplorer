@@ -45,7 +45,6 @@ public class FileOpsHelper {
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-//                        if (toast != null) toast.cancel();
                         FileUtils.showMessage(mActivity, mActivity.getString(R.string.file_exists));
 
 //                        if (ma != null && ma.getActivity() != null)
@@ -306,8 +305,7 @@ public class FileOpsHelper {
 
 
     public int checkWriteAccessMode(Context context, final File folder) {
-        boolean isOnExtSd = FileUtils.isOnExtSdCard(folder, context);
-        if (Utils.isAtleastLollipop() && isOnExtSd) {
+        if (Utils.isAtleastLollipop() && FileUtils.isOnExtSdCard(folder, context)) {
             if (!folder.exists() || !folder.isDirectory()) {
                 return FileConstants.WRITE_MODES.ROOT.getValue();
             }
@@ -317,8 +315,8 @@ public class FileOpsHelper {
                 showSAFDialog(folder.getAbsolutePath());
                 return FileConstants.WRITE_MODES.EXTERNAL.getValue();
             }
-            return 1;
-        } else if (Build.VERSION.SDK_INT == 19 && FileUtils.isOnExtSdCard(folder, mActivity)) {
+            return FileConstants.WRITE_MODES.INTERNAL.getValue();
+        } else if (Utils.isKitkat() && FileUtils.isOnExtSdCard(folder, mActivity)) {
             // Assume that Kitkat workaround works
             return FileConstants.WRITE_MODES.INTERNAL.getValue();
         } else if (FileUtils.isWritable(new File(folder, "DummyFile"))) {

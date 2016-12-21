@@ -22,8 +22,9 @@ import com.siju.acexplorer.filesystem.model.FavInfo;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.model.ZipModel;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
+import com.siju.acexplorer.filesystem.utils.RootUtils;
 import com.siju.acexplorer.helper.RootHelper;
-import com.stericson.RootTools.RootTools;
+import com.siju.acexplorer.helper.root.RootTools;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -63,6 +64,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private ZipEntry entry = null;
     private Archive rar;
     private FileHeader header;
+    private boolean isRooted;
 
     FileListLoader(Fragment fragment, Context context, String path, int category) {
         super(context);
@@ -73,6 +75,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         mSortMode = PreferenceManager.getDefaultSharedPreferences(context).getInt(
                 FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
         mFragment = fragment;
+
     }
 
     FileListLoader(Fragment fragment, String path, int category, String zipPath, boolean
@@ -246,7 +249,9 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
 
     private void fetchDataByCategory() {
+        //TODO Change debug mode to False in Release build
         RootTools.debugMode = true;
+        isRooted = RootUtils.isRooted(getContext());
         switch (mCategory) {
             case 0:
             case 5:
@@ -294,7 +299,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             getRarContents("", file.getAbsolutePath());
         } else {
             fileInfoList = RootHelper.getFilesList(mPath,
-                    true, mShowHidden, mIsRingtonePicker);
+                    isRooted, mShowHidden, mIsRingtonePicker);
             fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
         }
        /* } else {

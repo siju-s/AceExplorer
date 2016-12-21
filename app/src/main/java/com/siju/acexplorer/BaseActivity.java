@@ -74,6 +74,7 @@ import com.siju.acexplorer.filesystem.task.MoveFiles;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.utils.PremiumUtils;
 import com.siju.acexplorer.filesystem.utils.ThemeUtils;
+import com.siju.acexplorer.helper.root.RootTools;
 import com.siju.acexplorer.model.SectionGroup;
 import com.siju.acexplorer.model.SectionItems;
 import com.siju.acexplorer.settings.SettingsActivity;
@@ -85,7 +86,6 @@ import com.siju.acexplorer.utils.inappbilling.IabHelper;
 import com.siju.acexplorer.utils.inappbilling.IabResult;
 import com.siju.acexplorer.utils.inappbilling.Inventory;
 import com.siju.acexplorer.utils.inappbilling.Purchase;
-import com.stericson.RootTools.RootTools;
 
 import java.io.File;
 import java.io.IOException;
@@ -199,6 +199,7 @@ public class BaseActivity extends AppCompatActivity implements
     private RelativeLayout rateUs;
     private RelativeLayout settings;
     private ImageView imageInvite;
+    private boolean inappBillingSupported;
 
 
     @Override
@@ -254,6 +255,8 @@ public class BaseActivity extends AppCompatActivity implements
         }
     }
 
+    private static final int BILLING_UNAVAILABLE = 3;
+
     private void setupBilling() {
         // Create the helper, passing it our context and the public key to
         // verify signatures with
@@ -275,6 +278,13 @@ public class BaseActivity extends AppCompatActivity implements
             public void onIabSetupFinished(IabResult result) {
                 Log.d(TAG, "Setup finished.");
 
+
+                if (result.getResponse() == BILLING_UNAVAILABLE) {
+                    inappBillingSupported = false;
+                    isPremium = false;
+                    showAds();
+                }
+
                 if (!result.isSuccess()) {
                     // Oh noes, there was a problem.
                     complain("Problem setting up in-app billing: " + result);
@@ -288,6 +298,7 @@ public class BaseActivity extends AppCompatActivity implements
                 // IAB is fully set up. Now, let's get an inventory of stuff we
                 // own.
                 Log.d(TAG, "Setup successful. Querying inventory.");
+                inappBillingSupported = true;
                 mHelper.queryInventoryAsync(mGotInventoryListener);
             }
         });
@@ -710,9 +721,11 @@ public class BaseActivity extends AppCompatActivity implements
                 }
             }
         }, 2000);
-        PremiumUtils.onStart(this);
-        if (PremiumUtils.shouldShowPremiumDialog()) {
-            showPremiumDialog();
+        if (inappBillingSupported) {
+            PremiumUtils.onStart(this);
+            if (PremiumUtils.shouldShowPremiumDialog()) {
+                showPremiumDialog();
+            }
         }
     }
 
@@ -1520,7 +1533,11 @@ public class BaseActivity extends AppCompatActivity implements
                 break;
 
             case R.id.unlockPremium:
-                showPremiumDialog();
+                if (inappBillingSupported) {
+                    showPremiumDialog();
+                } else {
+                    Toast.makeText(this, getString(R.string.billing_unsupported), Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.rateUs: // Rate us
                 Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -1584,7 +1601,6 @@ public class BaseActivity extends AppCompatActivity implements
                     isCurrentDirRoot = groupPos == 0 && childPos == 0;
                 else
                     isCurrentDualDirRoot = groupPos == 0 && childPos == 0;
-
 
                 mToolbar.setTitle(getString(R.string.app_name));
                 if (fragment instanceof FileListFragment) {
@@ -2199,48 +2215,48 @@ public class BaseActivity extends AppCompatActivity implements
     private void backOperation(Fragment fragment) {
 
 
-            if (((FileListFragment) fragment).isZipMode()) {
+        if (((FileListFragment) fragment).isZipMode()) {
 
-                if (((FileListFragment) fragment).checkZipMode()) {
-                    int newSize = mBackStackList.size() - 1;
+            if (((FileListFragment) fragment).checkZipMode()) {
+                int newSize = mBackStackList.size() - 1;
 
-                    mBackStackList.remove(newSize);
-                    mCurrentDir = mBackStackList.get(newSize - 1).getFilePath();
-                    mCategory = mBackStackList.get(newSize - 1).getCategory();
-                    ((FileListFragment) fragment).reloadList(true, mCurrentDir);
-                    if (!mIsFromHomePage) {
-                        setNavDirectory(mCurrentDir, false);
-                    } else {
-                        hideFab();
-                    }
-                }
-            } else if (mStartingDir == null) {
-                removeFragmentFromBackStack();
-            } else if (checkIfBackStackExists()) {
-                if (!isDualPaneInFocus) {
-                    ((FileListFragment) fragment).setCategory(mCategory);
-                    ((FileListFragment) fragment).reloadList(true, mCurrentDir);
+                mBackStackList.remove(newSize);
+                mCurrentDir = mBackStackList.get(newSize - 1).getFilePath();
+                mCategory = mBackStackList.get(newSize - 1).getCategory();
+                ((FileListFragment) fragment).reloadList(true, mCurrentDir);
+                if (!mIsFromHomePage) {
+                    setNavDirectory(mCurrentDir, false);
                 } else {
-                    if (mCategoryDual == FileConstants.CATEGORY.GENERIC_LIST.getValue()) {
-                        super.onBackPressed();
-                    }
-                }
-                setTitleForCategory(mCategory);
-                if (mCategory == FileConstants.CATEGORY.FILES.getValue()) {
-                    showFab();
-                    if (!isDualPaneInFocus)
-                        setNavDirectory(mCurrentDir, isDualPaneInFocus);
-                    else
-                        setNavDirectory(mCurrentDirDualPane, isDualPaneInFocus);
-
-                }
-
-            } else {
-                removeFragmentFromBackStack();
-                if (!mIsHomeScreenEnabled) {
-                    finish();
+                    hideFab();
                 }
             }
+        } else if (mStartingDir == null) {
+            removeFragmentFromBackStack();
+        } else if (checkIfBackStackExists()) {
+            if (!isDualPaneInFocus) {
+                ((FileListFragment) fragment).setCategory(mCategory);
+                ((FileListFragment) fragment).reloadList(true, mCurrentDir);
+            } else {
+                if (mCategoryDual == FileConstants.CATEGORY.GENERIC_LIST.getValue()) {
+                    super.onBackPressed();
+                }
+            }
+            setTitleForCategory(mCategory);
+            if (mCategory == FileConstants.CATEGORY.FILES.getValue()) {
+                showFab();
+                if (!isDualPaneInFocus)
+                    setNavDirectory(mCurrentDir, isDualPaneInFocus);
+                else
+                    setNavDirectory(mCurrentDirDualPane, isDualPaneInFocus);
+
+            }
+
+        } else {
+            removeFragmentFromBackStack();
+            if (!mIsHomeScreenEnabled) {
+                finish();
+            }
+        }
 
 
     }
@@ -2477,6 +2493,8 @@ public class BaseActivity extends AppCompatActivity implements
                 restartApp(false);
             }
         }
+
+        mIsRootMode = mSharedPreferences.getBoolean(FileConstants.PREFS_ROOTED, false);
 
         String language = mSharedPreferences.getString(LocaleHelper.SELECTED_LANGUAGE, Locale.getDefault()
                 .getLanguage());

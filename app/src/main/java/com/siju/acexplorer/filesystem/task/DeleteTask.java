@@ -9,7 +9,7 @@ import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.helper.RootHelper;
-import com.stericson.RootTools.RootTools;
+import com.siju.acexplorer.helper.root.RootTools;
 
 import java.io.File;
 import java.util.ArrayList;

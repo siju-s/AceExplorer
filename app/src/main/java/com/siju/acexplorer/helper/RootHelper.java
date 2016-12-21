@@ -9,8 +9,8 @@ import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.BaseFile;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
-import com.stericson.RootTools.RootTools;
-import com.stericson.RootTools.execution.Command;
+import com.siju.acexplorer.helper.root.RootTools;
+import com.siju.acexplorer.helper.root.rootshell.execution.Command;
 
 import java.io.File;
 import java.text.ParsePosition;
