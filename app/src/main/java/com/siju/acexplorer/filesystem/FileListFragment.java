@@ -465,11 +465,6 @@ public class FileListFragment extends Fragment implements LoaderManager
                     if (getActionMode() != null && fileListAdapter
                             .getSelectedCount() >= 1) {
                         mSwipeRefreshLayout.setEnabled(false);
-                        FileInfo fileInfo = fileInfoList.get(position);
-
-                        if (!mDragPaths.contains(fileInfo)) {
-                            mDragPaths.add(fileInfo);
-                        }
                         mItemView = view;
                         isDragStarted = true;
                     }
@@ -550,7 +545,10 @@ public class FileListFragment extends Fragment implements LoaderManager
         isDualPaneInFocus = checkIfDualFragment();
         Logger.log(TAG, "Opencompressedfile--mCategory" + mCategory);
         if (mCategory == FileConstants.CATEGORY.COMPRESSED.getValue() ||
-                mCategory == FileConstants.CATEGORY.APPS.getValue()) {
+                mCategory == FileConstants.CATEGORY.APPS.getValue() ||
+                mCategory == FileConstants.CATEGORY.DOWNLOADS.getValue() ||
+                mCategory == FileConstants.CATEGORY.FAVORITES.getValue() ||
+                mCategory == FileConstants.CATEGORY.LARGE_FILES.getValue()) {
             mBaseActivity.showFab();
             mBaseActivity.setCurrentDir(path, isDualPaneInFocus);
             mBaseActivity.setCurrentCategory(mCategory);
@@ -873,9 +871,18 @@ public class FileListFragment extends Fragment implements LoaderManager
         refreshData = data;
     }
 
+    private void toggleDragData(FileInfo fileInfo) {
+        if (mDragPaths.contains(fileInfo)) {
+            mDragPaths.remove(fileInfo);
+        }
+        else {
+            mDragPaths.add(fileInfo);
+        }
+    }
 
     private void itemClickActionMode(int position, boolean isLongPress) {
         fileListAdapter.toggleSelection(position, isLongPress);
+
         boolean hasCheckedItems = fileListAdapter.getSelectedCount() > 0;
         ActionMode actionMode = getActionMode();
         if (hasCheckedItems && actionMode == null) {
@@ -894,6 +901,8 @@ public class FileListFragment extends Fragment implements LoaderManager
             actionMode.finish();
         }
         if (getActionMode() != null) {
+            FileInfo fileInfo = fileInfoList.get(position);
+            toggleDragData(fileInfo);
             SparseBooleanArray checkedItemPos = fileListAdapter.getSelectedItemPositions();
             setSelectedItemPos(checkedItemPos);
             mActionMode.setTitle(String.valueOf(fileListAdapter
@@ -1009,7 +1018,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             inChildZip = false;
             Logger.log(TAG, "checkZipMode--currentzipdir B4=" + mCurrentZipDir);
             mCurrentZipDir = new File(mCurrentZipDir).getParent();
-            if (mCurrentZipDir.equals(File.separator)) {
+            if (mCurrentZipDir != null && mCurrentZipDir.equals(File.separator)) {
                 mCurrentZipDir = null;
             }
             Logger.log(TAG, "checkZipMode--currentzipdir AFT=" + mCurrentZipDir);
