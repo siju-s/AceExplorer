@@ -21,8 +21,9 @@ import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.CopyData;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
+import com.siju.acexplorer.filesystem.utils.RootNotPermittedException;
+import com.siju.acexplorer.filesystem.utils.RootUtils;
 import com.siju.acexplorer.helper.RootHelper;
-import com.siju.acexplorer.helper.root.RootTools;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -249,15 +250,29 @@ public class CopyService extends Service {
             }
 
             void copyRoot(String path, String name, String destinationPath) {
-                boolean result = RootTools.copyFile(RootHelper.getCommandLineString(path), RootHelper
-                        .getCommandLineString(destinationPath) + "/" + name, true, true);
+/*                boolean result = RootTools.copyFile(RootHelper.getCommandLineString(path), RootHelper
+                        .getCommandLineString(destinationPath) + "/" + name, true, false);
                 if (!result && path.contains("/0/")) {
                     result = RootTools.copyFile(RootHelper.getCommandLineString(path.replace("/0/", "/legacy/")),
                             RootHelper.getCommandLineString(destinationPath) + "/" + name, true, true);
+                }*/
+                 String targetPath = destinationPath + File.separator + name;
+                try {
+                    // TODO: 04-01-2017 This causes the phone to brick. Fix it ASAP.
+                    RootUtils.mountRW(destinationPath);
+                    RootUtils.mountOwnerRW(destinationPath);
+//                    if (!move)
+
+                        RootUtils.copy(path, targetPath);
+                    RootUtils.mountRO(destinationPath);
+//                    else if (move) RootUtils.move(path, targetPath);
+                } catch (RootNotPermittedException e) {
+//                    failedFOps.add(sourceFile);
+                    e.printStackTrace();
                 }
-                if (result) {
+//                if (result) {
                     FileUtils.scanFile(mContext, destinationPath + "/" + name);
-                }
+//                }
             }
 
             private void copyFiles(final FileInfo sourceFile, final FileInfo targetFile, final int id, final boolean

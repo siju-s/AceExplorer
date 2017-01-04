@@ -18,6 +18,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -74,7 +75,6 @@ import com.siju.acexplorer.filesystem.task.MoveFiles;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.utils.PremiumUtils;
 import com.siju.acexplorer.filesystem.utils.ThemeUtils;
-import com.siju.acexplorer.helper.root.RootTools;
 import com.siju.acexplorer.model.SectionGroup;
 import com.siju.acexplorer.model.SectionItems;
 import com.siju.acexplorer.settings.SettingsActivity;
@@ -88,11 +88,12 @@ import com.siju.acexplorer.utils.inappbilling.Inventory;
 import com.siju.acexplorer.utils.inappbilling.Purchase;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+
+import eu.chainfire.libsuperuser.Shell;
 
 import static com.siju.acexplorer.filesystem.utils.FileUtils.getInternalStorage;
 
@@ -201,6 +202,9 @@ public class BaseActivity extends AppCompatActivity implements
     private ImageView imageInvite;
     private boolean inappBillingSupported;
 
+    public static Shell.Interactive shellInteractive;
+    private static Handler handler;
+    private static HandlerThread handlerThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -523,6 +527,7 @@ public class BaseActivity extends AppCompatActivity implements
 
     private void setupInitialData() {
         checkPreferences();
+        initializeInteractiveShell();
         checkScreenOrientation();
         prepareListData();
         if (!checkIfInAppShortcut(getIntent())) {
@@ -606,6 +611,25 @@ public class BaseActivity extends AppCompatActivity implements
         mIsDualPaneEnabled = mSharedPreferences.getBoolean(FileConstants.PREFS_DUAL_PANE,
                 false);
         mIsRootMode = mSharedPreferences.getBoolean(FileConstants.PREFS_ROOTED, false);
+    }
+
+    /**
+     * Initializes an interactive shell, which will stay throughout the app lifecycle
+     * The shell is associated with a handler thread which maintain the message queue from the
+     * callbacks of shell as we certainly cannot allow the callbacks to run on same thread because
+     * of possible deadlock situation and the asynchronous behaviour of LibSuperSU
+     */
+    private void initializeInteractiveShell() {
+
+        // only one looper can be associated to a thread. So we're making sure not to create new
+        // handler threads every time the code relaunch.
+        if (mIsRootMode) {
+
+            handlerThread = new HandlerThread("root_handler");
+            handlerThread.start();
+            handler = new Handler(handlerThread.getLooper());
+            shellInteractive = (new Shell.Builder()).useSU().setHandler(handler).open();
+        }
     }
 
 
@@ -2389,11 +2413,17 @@ public class BaseActivity extends AppCompatActivity implements
         unregisterReceiver(mLocaleListener);
         mSharedPreferences.edit().putInt(FileConstants.CURRENT_THEME, mCurrentTheme).apply();
         if (mIsRootMode) {
-            try {
+            // close interactive shell and handler thread associated with it
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                // let it finish up first with what it's doing
+                handlerThread.quitSafely();
+            } else handlerThread.quit();
+            shellInteractive.close();
+     /*       try {
                 RootTools.closeAllShells();
             } catch (IOException e) {
                 e.printStackTrace();
-            }
+            }*/
         }
         if (mHelper != null) {
             mHelper.dispose();

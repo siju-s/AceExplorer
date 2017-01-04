@@ -683,10 +683,10 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             case 9:
             case 10:
             case 11:
-                return new FileListLoader(this, getContext(), null, id);
+                return new FileListLoader(this, null, id, false);
             case 5:
                 String path = FileUtils.getDownloadsDirectory().getAbsolutePath();
-                return new FileListLoader(this, getContext(), path, id);
+                return new FileListLoader(this, path, id, false);
 
         }
         return null;

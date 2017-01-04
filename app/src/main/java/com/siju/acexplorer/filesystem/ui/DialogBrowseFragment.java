@@ -438,7 +438,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
         } else {
             path = FileUtils.getInternalStorage().getAbsolutePath();
         }
-        return new FileListLoader(this, getContext(), path, FileConstants.CATEGORY.FILES.getValue(), mIsRingtonePicker);
+        return new FileListLoader(this, path, FileConstants.CATEGORY.FILES.getValue(), mIsRingtonePicker);
     }
 
     @Override

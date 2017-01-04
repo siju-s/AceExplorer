@@ -191,7 +191,6 @@ public class FileListFragment extends Fragment implements LoaderManager
     private MenuItem mSearchItem;
     private boolean isInSelectionMode;
 
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -1090,7 +1089,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             return new FileListLoader(this, path, FileConstants.CATEGORY.ZIP_VIEWER.getValue(),
                     mCurrentZipDir, isDualPaneInFocus, mInParentZip);
         } else {
-            return new FileListLoader(this, getContext(), path, mCategory);
+            return new FileListLoader(this,path, mCategory,false);
         }
     }
 

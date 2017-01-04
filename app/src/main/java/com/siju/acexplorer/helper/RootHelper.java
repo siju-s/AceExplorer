@@ -5,10 +5,12 @@ import android.content.Context;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
+import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.BaseFile;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
+import com.siju.acexplorer.filesystem.utils.RootNotPermittedException;
 import com.siju.acexplorer.helper.root.RootTools;
 import com.siju.acexplorer.helper.root.rootshell.execution.Command;
 
@@ -17,9 +19,69 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
+import eu.chainfire.libsuperuser.Shell;
+
 public class RootHelper {
+
+    /**
+     * Runs the command and stores output in a list. The listener is set on the caller thread,
+     * thus any code run in callback must be thread safe.
+     * Command is run from the root context (u:r:SuperSU0)
+     * @param cmd the command
+     * @return a list of results. Null only if the command passed is a blocking call or no output is
+     * there for the command passed
+     * @throws RootNotPermittedException
+     */
+    public static ArrayList<String> runShellCommand(String cmd) throws RootNotPermittedException {
+        if (!Shell.SU.available()) throw new RootNotPermittedException();
+        final ArrayList<String> result = new ArrayList<>();
+
+        // setting STDOUT listener so as to avoid extra buffer and possible memory loss by superuser
+        BaseActivity.shellInteractive.addCommand(cmd, 0, new Shell.OnCommandResultListener() {
+            @Override
+            public void onCommandResult(int commandCode, int exitCode, List<String> output) {
+
+                for (String line : output) {
+                    result.add(line);
+                }
+            }
+        });
+        BaseActivity.shellInteractive.waitForIdle();
+        return result;
+    }
+
+    /**
+     * Runs the command and stores output in a list. The listener is set on the caller thread,
+     * thus any code run in callback must be thread safe.
+     * Command is run from superuser context (u:r:SuperSU0)
+     * @param cmd the command
+     * @param callback
+     * @return a list of results. Null only if the command passed is a blocking call or no output is
+     * there for the command passed
+     * @throws RootNotPermittedException
+     */
+    public static void runShellCommand(String cmd, Shell.OnCommandResultListener callback)
+            throws RootNotPermittedException {
+        if (!Shell.SU.available()) throw new RootNotPermittedException();
+        BaseActivity.shellInteractive.addCommand(cmd, 0, callback);
+    }
+
+    /**
+     * Runs the command and stores output in a list. The listener is set on the caller thread,
+     * thus any code run in callback must be thread safe.
+     * Command is run from a third-party level context (u:r:init_shell0)
+     * Not callback supported as the shell is not interactive
+     * @param cmd the command
+     * @return a list of results. Null only if the command passed is a blocking call or no output is
+     * there for the command passed
+     * @throws RootNotPermittedException
+     */
+    public static List<String> runNonRootShellCommand(String cmd) {
+        return Shell.SH.run(cmd);
+    }
 
     public static void runAndWait(String cmd, boolean root) {
 

@@ -63,7 +63,7 @@ public class SanityCheckRootTools extends Activity {
                 .penaltyDeath()
                 .build());
 
-        RootTools.debugMode = true;
+        RootTools.debugMode = false;
 
         mTextView = new TextView(this);
         mTextView.setText("");

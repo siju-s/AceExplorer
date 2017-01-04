@@ -66,16 +66,17 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private FileHeader header;
     private boolean isRooted;
 
-    FileListLoader(Fragment fragment, Context context, String path, int category) {
-        super(context);
+
+     public FileListLoader(Fragment fragment, String path, int category, boolean isRingtonePicker) {
+        super(fragment.getContext());
         mPath = path;
         mCategory = category;
-        mShowHidden = PreferenceManager.getDefaultSharedPreferences(context).getBoolean
+        mShowHidden = PreferenceManager.getDefaultSharedPreferences(fragment.getContext()).getBoolean
                 (FileConstants.PREFS_HIDDEN, false);
-        mSortMode = PreferenceManager.getDefaultSharedPreferences(context).getInt(
+        mSortMode = PreferenceManager.getDefaultSharedPreferences(fragment.getContext()).getInt(
                 FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
         mFragment = fragment;
-
+        mIsRingtonePicker = isRingtonePicker;
     }
 
     FileListLoader(Fragment fragment, String path, int category, String zipPath, boolean
@@ -97,17 +98,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
     }
 
-    public FileListLoader(Fragment fragment, Context context, String path, int category, boolean isRingtonePicker) {
-        super(context);
-        mPath = path;
-        mCategory = category;
-        mShowHidden = PreferenceManager.getDefaultSharedPreferences(context).getBoolean
-                (FileConstants.PREFS_HIDDEN, false);
-        mSortMode = PreferenceManager.getDefaultSharedPreferences(context).getInt(
-                FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
-        mFragment = fragment;
-        mIsRingtonePicker = isRingtonePicker;
-    }
+
 
     FileListLoader(Fragment fragment, String path, String outputDir, String fileName,
                    ZipEntry zipEntry) {
