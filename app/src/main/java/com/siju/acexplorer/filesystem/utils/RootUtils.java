@@ -3,6 +3,7 @@ package com.siju.acexplorer.filesystem.utils;
 import android.content.Context;
 import android.preference.PreferenceManager;
 
+import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.helper.RootHelper;
 
@@ -79,12 +80,33 @@ public class RootUtils {
 
     public static void mountRW(String path) throws RootNotPermittedException {
         if (!Shell.SU.available()) throw new RootNotPermittedException();
-        RootHelper.runShellCommand("mount -o rw,remount " + path);
+        String str = "mount -o %s,remount %s";
+        String mountPoint = "/";
+        if (path.startsWith("/system")) {
+            mountPoint = "/system";
+        }
+        Object[] objArr = new Object[2];
+        objArr[0] = "rw";
+        objArr[1] = mountPoint;
+        String cmd = String.format(str, objArr);
+        Logger.log("RootUtils", "Command=" + cmd);
+        RootHelper.runShellCommand(cmd);
     }
 
     public static void mountRO(String path) throws RootNotPermittedException {
         if (!Shell.SU.available()) throw new RootNotPermittedException();
-        RootHelper.runShellCommand("mount -o ro,remount " + path);
+        String str = "mount -o %s,remount %s";
+        String mountPoint = "/";
+        if (path.startsWith("/system")) {
+            mountPoint = "/system";
+        }
+        Object[] objArr = new Object[2];
+        objArr[0] = "ro";
+        objArr[1] = mountPoint;
+
+        String cmd = String.format(str, objArr);
+        Logger.log("RootUtils", "Command=" + cmd);
+        RootHelper.runShellCommand(cmd);
     }
 
 

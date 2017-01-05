@@ -260,7 +260,7 @@ public class CopyService extends Service {
                 try {
                     // TODO: 04-01-2017 This causes the phone to brick. Fix it ASAP.
                     RootUtils.mountRW(destinationPath);
-                    RootUtils.mountOwnerRW(destinationPath);
+//                    RootUtils.mountOwnerRW(destinationPath);
 //                    if (!move)
 
                         RootUtils.copy(path, targetPath);
