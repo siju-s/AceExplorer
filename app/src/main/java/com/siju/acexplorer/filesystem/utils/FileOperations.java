@@ -21,31 +21,36 @@ public class FileOperations {
 
         void launchSAF(File oldFile, File newFile);
 
-                    void opCompleted(File file, boolean b);
-                }
+        void opCompleted(File file, boolean b);
+    }
 
-            public static void mkdir(final File file, final Context context, final boolean isRoot, @NonNull
-            final FileOperationCallBack fileOperationCallBack) {
-                if (file == null) return;
-                new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected Void doInBackground(Void... params) {
+    public static void mkdir(final String path, final String fileName, final Context context, final boolean isRoot, @NonNull
+    final FileOperationCallBack fileOperationCallBack) {
+        if (path == null) return;
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                File newFile = new File(path + File.separator + fileName);
 
-                        if (file.exists()) fileOperationCallBack.exists();
+                if (newFile.exists()) fileOperationCallBack.exists();
 
 //                if (file.isLocal() || isRoot) {
-                        int mode = new FileUtils().checkFolder(file.getParent(), context);
-                        if (mode == 2) {
-                    fileOperationCallBack.launchSAF(file);
+                int mode = new FileUtils().checkFolder(path, context);
+                if (mode == 2) {
+                    fileOperationCallBack.launchSAF(newFile);
                     return null;
                 } else if (mode == 1 || mode == 0) {
-                    boolean result = FileUtils.mkdir(file, context);
+                    boolean result = FileUtils.mkdir(newFile, context);
                     // Try the root way
                     if (!result && isRoot) {
-                        if (file.exists()) fileOperationCallBack.exists();
+                        if (newFile.exists()) fileOperationCallBack.exists();
                         boolean remount = false;
                         try {
-                            String res;
+                            RootUtils.mountRW(path);
+                            RootUtils.mkDir(path, fileName);
+                            RootUtils.mountRO(path);
+
+             /*               String res;
                             if (!("rw".equals(res = RootTools.getMountedAs(file.getParent()))))
                                 remount = true;
                             if (remount)
@@ -54,13 +59,13 @@ public class FileOperations {
                             if (remount) {
                                 if (res == null || res.length() == 0) res = "ro";
                                 RootTools.remount(file.getParent(), res);
-                            }
-                        } catch (Exception e) {
-                            Logger.log(TAG, file.getPath());
+                            }*/
+                        } catch (RootNotPermittedException e) {
+                            Logger.log(TAG, newFile.getPath());
                         }
-                        result = file.exists();
+                        result = newFile.exists();
                     }
-                    fileOperationCallBack.opCompleted(file, result);
+                    fileOperationCallBack.opCompleted(newFile, result);
                     return null;
                 }
                 return null;
@@ -140,7 +145,7 @@ public class FileOperations {
                         if (!a && rootMode) {
                             try {
                                 FileUtils.renameRoot(oldFile, newFile.getName());
-                            } catch (Exception e) {
+                            } catch (RootNotPermittedException e) {
                                 Logger.log(TAG, oldFile.getPath() + "\n" + newFile.getPath());
                             }
 

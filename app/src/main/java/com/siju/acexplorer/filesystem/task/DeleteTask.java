@@ -8,8 +8,8 @@ import com.siju.acexplorer.R;
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
-import com.siju.acexplorer.helper.RootHelper;
-import com.siju.acexplorer.helper.root.RootTools;
+import com.siju.acexplorer.filesystem.utils.RootNotPermittedException;
+import com.siju.acexplorer.filesystem.utils.RootUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -48,12 +48,14 @@ public class DeleteTask extends AsyncTask<Void, Void, Integer> {
 
             if (!isDeleted) {
                 if (mIsRootMode) {
-                    boolean remountRw = RootTools.remount(new File(path).getParent(), "rw");
-                    if (remountRw) {
-                        RootHelper.runAndWait("rm -r \"" + path + "\"", true);
-                        RootTools.remount(new File(path).getParent(), "ro");
+                    try {
+                        RootUtils.mountRW(path);
+                        RootUtils.delete(path);
+                        RootUtils.mountRO(path);
                         deletedFilesList.add(fileList.get(i));
                         deletedCount++;
+                    } catch (RootNotPermittedException e) {
+                        e.printStackTrace();
                     }
                 }
 

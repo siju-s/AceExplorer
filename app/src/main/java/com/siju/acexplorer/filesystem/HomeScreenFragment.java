@@ -46,7 +46,7 @@ import com.siju.acexplorer.filesystem.model.LibrarySortModel;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 import com.siju.acexplorer.model.SectionItems;
-import com.siju.acexplorer.utils.PermissionUtils;
+import com.siju.acexplorer.permission.PermissionUtils;
 
 import java.io.File;
 import java.util.ArrayList;

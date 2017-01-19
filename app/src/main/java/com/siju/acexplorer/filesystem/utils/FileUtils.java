@@ -53,8 +53,6 @@ import com.siju.acexplorer.filesystem.task.CopyService;
 import com.siju.acexplorer.filesystem.task.CreateZipTask;
 import com.siju.acexplorer.filesystem.task.ExtractService;
 import com.siju.acexplorer.filesystem.task.Progress;
-import com.siju.acexplorer.helper.RootHelper;
-import com.siju.acexplorer.helper.root.RootTools;
 import com.siju.acexplorer.utils.DialogUtils;
 import com.siju.acexplorer.utils.Utils;
 
@@ -603,7 +601,6 @@ public class FileUtils implements Progress {
         if (usb != null && !paths.contains(usb.getPath())) paths.add(usb.getPath());
         return paths;
     }
-
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -1312,19 +1309,21 @@ public class FileUtils implements Progress {
     }
 
 
-    static void renameRoot(File a, String v) throws Exception {
-        boolean remount = false;
-        String newname = a.getParent() + "/" + v;
-        String res;
-        if (!("rw".equals(res = RootTools.getMountedAs(a.getParent()))))
+    static void renameRoot(File sourceFile, String newFileName) throws RootNotPermittedException {
+        String destinationPath = sourceFile.getParent() + File.separator + newFileName;
+        RootUtils.mountRW(sourceFile.getPath());
+        RootUtils.move(sourceFile.getPath(), destinationPath);
+        RootUtils.mountRO(sourceFile.getPath());
+
+/*        if (!("rw".equals(res = RootTools.getMountedAs(sourceFile.getParent()))))
             remount = true;
         if (remount)
-            RootTools.remount(a.getParent(), "rw");
-        RootHelper.runAndWait("mv \"" + a.getPath() + "\" \"" + newname + "\"", true);
+            RootTools.remount(sourceFile.getParent(), "rw");
+        RootHelper.runAndWait("mv \"" + sourceFile.getPath() + "\" \"" + destinationPath + "\"", true);
         if (remount) {
             if (res == null || res.length() == 0) res = "ro";
-            RootTools.remount(a.getParent(), res);
-        }
+            RootTools.remount(sourceFile.getParent(), res);
+        }*/
     }
 
     /**
@@ -1693,7 +1692,7 @@ public class FileUtils implements Progress {
 
                 fileName = fileName.trim();
                 fileName = path + File.separator + fileName;
-                activity.mFileOpsHelper.mkDir(isRootMode, new File(fileName));
+                activity.mFileOpsHelper.mkDir(isRootMode, path, fileName);
                 materialDialog.dismiss();
             }
         });

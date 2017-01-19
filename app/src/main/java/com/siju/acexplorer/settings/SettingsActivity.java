@@ -78,7 +78,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     private void setupActionBar() {
         AppBarLayout bar;
         LinearLayout root = (LinearLayout) findViewById(android.R.id.list).getParent().getParent().getParent();
-        bar = (AppBarLayout) LayoutInflater.from(this).inflate(R.layout.toolbar, root,
+        bar = (AppBarLayout) LayoutInflater.from(this).inflate(R.layout.toolbar_settings, root,
                 false);
         root.addView(bar, 0); // insert at top
         Toolbar mToolbar = (Toolbar) bar.getChildAt(0);

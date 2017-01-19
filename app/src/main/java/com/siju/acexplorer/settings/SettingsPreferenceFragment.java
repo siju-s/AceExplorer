@@ -179,7 +179,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         } else {
             root = (LinearLayout) dialog.findViewById(android.R.id.list).getParent();
         }
-        bar = (AppBarLayout) LayoutInflater.from(getActivity()).inflate(R.layout.toolbar, root,
+        bar = (AppBarLayout) LayoutInflater.from(getActivity()).inflate(R.layout.toolbar_settings, root,
                 false);
         root.addView(bar, 0);
         Toolbar toolbar = (Toolbar) bar.getChildAt(0);

@@ -38,17 +38,18 @@ public class FileOpsHelper {
     }
 
 
-    public void mkDir(final boolean rootMode, final File file) {
-        FileOperations.mkdir(file, mActivity, rootMode, new FileOperations.FileOperationCallBack() {
+    public void mkDir(final boolean rootMode, final String path, final String fileName) {
+        FileOperations.mkdir(path,fileName, mActivity, rootMode, new FileOperations.FileOperationCallBack() {
             @Override
             public void exists() {
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         FileUtils.showMessage(mActivity, mActivity.getString(R.string.file_exists));
+                        String newFilePath = path + File.separator + fileName;
 
 //                        if (ma != null && ma.getActivity() != null)
-                        new FileUtils().createDirDialog(mActivity, rootMode, file.getAbsolutePath());
+                        new FileUtils().createDirDialog(mActivity, rootMode, newFilePath);
 
                     }
                 });
@@ -60,7 +61,8 @@ public class FileOpsHelper {
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mActivity.mNewFilePath = file.getAbsolutePath();
+                        mActivity.mNewFilePath = path;
+                        mActivity.mFileName = fileName;
                         mActivity.mOperation = FileConstants.FOLDER_CREATE;
                         showSAFDialog(mActivity.mNewFilePath);
 
@@ -85,7 +87,9 @@ public class FileOpsHelper {
                             Intent intent = new Intent(FileConstants.REFRESH);
                             intent.putExtra(FileConstants.OPERATION, FileConstants.FOLDER_CREATE);
                             mActivity.sendBroadcast(intent);
-                            FileUtils.scanFile(mActivity.getApplicationContext(), file.getAbsolutePath());
+                            String newFilePath = path + File.separator + fileName;
+
+                            FileUtils.scanFile(mActivity.getApplicationContext(), newFilePath);
 
                         } else
                             Toast.makeText(mActivity, R.string.msg_operation_failed,

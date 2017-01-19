@@ -1,4 +1,4 @@
-package com.siju.acexplorer.utils;
+package com.siju.acexplorer.permission;
 
 import android.Manifest;
 import android.content.Context;

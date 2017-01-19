@@ -31,7 +31,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.drawable.DrawerArrowDrawable;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -59,11 +58,13 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.kobakei.ratethisapp.RateThisApp;
+import com.siju.acexplorer.billing.BillingHelper;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.common.SharedPreferenceWrapper;
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.FileListFragment;
 import com.siju.acexplorer.filesystem.HomeScreenFragment;
+import com.siju.acexplorer.filesystem.groups.StoragesGroup;
 import com.siju.acexplorer.filesystem.helper.FileOpsHelper;
 import com.siju.acexplorer.filesystem.model.BackStackModel;
 import com.siju.acexplorer.filesystem.model.CopyData;
@@ -74,17 +75,17 @@ import com.siju.acexplorer.filesystem.task.DeleteTask;
 import com.siju.acexplorer.filesystem.task.MoveFiles;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.utils.PremiumUtils;
-import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 import com.siju.acexplorer.model.SectionGroup;
 import com.siju.acexplorer.model.SectionItems;
+import com.siju.acexplorer.permission.PermissionHelper;
+import com.siju.acexplorer.permission.PermissionResultCallback;
 import com.siju.acexplorer.settings.SettingsActivity;
 import com.siju.acexplorer.ui.ScrimInsetsRelativeLayout;
 import com.siju.acexplorer.utils.DialogUtils;
 import com.siju.acexplorer.utils.LocaleHelper;
-import com.siju.acexplorer.utils.PermissionUtils;
+import com.siju.acexplorer.permission.PermissionUtils;
 import com.siju.acexplorer.utils.inappbilling.IabHelper;
 import com.siju.acexplorer.utils.inappbilling.IabResult;
-import com.siju.acexplorer.utils.inappbilling.Inventory;
 import com.siju.acexplorer.utils.inappbilling.Purchase;
 
 import java.io.File;
@@ -95,15 +96,18 @@ import java.util.Locale;
 
 import eu.chainfire.libsuperuser.Shell;
 
+import static android.media.tv.TvContract.Programs.Genres.MUSIC;
+import static com.siju.acexplorer.filesystem.FileConstants.CATEGORY.DOCS;
+import static com.siju.acexplorer.filesystem.FileConstants.CATEGORY.VIDEO;
 import static com.siju.acexplorer.filesystem.utils.FileUtils.getInternalStorage;
 
 
-public class BaseActivity extends AppCompatActivity implements
-        View.OnClickListener {
+public class BaseActivity extends BaseImpl implements
+        View.OnClickListener,PermissionResultCallback {
 
     public static final String PREFS_FIRST_RUN = "first_app_run";
-    private static final int PERMISSIONS_REQUEST = 1;
-    private static final int SETTINGS_REQUEST = 200;
+    public static final int PERMISSIONS_REQUEST = 100;
+    public static final int SETTINGS_REQUEST = 200;
     private static final int PREFS_REQUEST = 1000;
     public static final int SAF_REQUEST = 3000;
     private static final int REQUEST_INVITE = 4000;
@@ -111,6 +115,7 @@ public class BaseActivity extends AppCompatActivity implements
     public int mOperation = -1;
     public String mOldFilePath;
     public String mNewFilePath;
+    public String mFileName;
     public ArrayList<FileInfo> mFiles = new ArrayList<>();
     public ArrayList<FileInfo> mTotalFiles = new ArrayList<>();
     public ArrayList<CopyData> mCopyData = new ArrayList<>();
@@ -120,20 +125,13 @@ public class BaseActivity extends AppCompatActivity implements
     private final String TAG = this.getClass().getSimpleName();
     private ExpandableListAdapter expandableListAdapter;
     private ExpandableListView expandableListView;
-    private List<String> mListHeader;
     private final ArrayList<SectionGroup> totalGroup = new ArrayList<>();
     private DrawerLayout drawerLayout;
     private ScrimInsetsRelativeLayout relativeLayoutDrawerPane;
     private String mCurrentDir;
     private String mCurrentDirDualPane;
-    private String STORAGE_ROOT;
-    private String STORAGE_INTERNAL;
-    private String STORAGE_EXTERNAL;
-    private String DOWNLOADS;
-    private String IMAGES;
-    private String VIDEO;
-    private String MUSIC;
-    private String DOCS;
+
+
     private final ArrayList<SectionItems> favouritesGroupChild = new ArrayList<>();
     private SharedPreferenceWrapper sharedPreferenceWrapper;
     private SharedPreferences mSharedPreferences;
@@ -176,31 +174,22 @@ public class BaseActivity extends AppCompatActivity implements
     private final ArrayList<String> mExternalSDPaths = new ArrayList<>();
     private final ArrayList<BackStackModel> mBackStackList = new ArrayList<>();
     private final ArrayList<BackStackModel> mBackStackListDual = new ArrayList<>();
-    private final ArrayList<SectionItems> storageGroupChild = new ArrayList<>();
     private int mCurrentOrientation;
     private boolean mIsRootMode;
-    private Dialog mPermissionDialog;
     private boolean mIsTablet;
     private HomeScreenFragment mHomeScreenFragment;
-    private String mCurrentLanguage;
     private boolean inappShortcutMode;
 
-    private static final String SKU_REMOVE_ADS = "com.siju.acexplorer.pro";
-//    static final String SKU_TEST = "android.test.purchased";
 
     // (arbitrary) request code for the purchase flow
     private static final int RC_REQUEST = 10111;
 
 
-    // The helper object
-    private IabHelper mHelper;
-
-    private boolean isPremium = true;
     private RelativeLayout unlockPremium;
     private RelativeLayout rateUs;
     private RelativeLayout settings;
     private ImageView imageInvite;
-    private boolean inappBillingSupported;
+
 
     public static Shell.Interactive shellInteractive;
     private static Handler handler;
@@ -208,23 +197,24 @@ public class BaseActivity extends AppCompatActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme();
-        setLanguage();
+
+        LocaleHelper.setLanguage(this);
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
-        setupBilling();
+        BillingHelper.getInstance().setupBilling(this);
         PreferenceManager.setDefaultValues(this, R.xml.pref_settings, false);
         Logger.log(TAG, "onCreate");
 
         initConstants();
         initViews();
-        removeFragmentsOnPermissionRevoked(savedInstanceState);
+//        removeFragmentsOnPermissionRevoked(savedInstanceState);
 
-        if (PermissionUtils.isAtLeastM()) {
-            checkPermissions();
-            Logger.log(TAG, "onCreate : useRuntimepermission");
-        }
+//        if (PermissionUtils.isAtLeastM()) {
+        PermissionHelper.getInstance(this).checkPermissions();
+        Logger.log(TAG, "onCreate : useRuntimepermission");
+//        }
         setupInitialData();
         registerReceivers();
     }
@@ -240,85 +230,7 @@ public class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    private void setTheme() {
-        mCurrentTheme = ThemeUtils.getTheme(this);
 
-        if (mCurrentTheme == FileConstants.THEME_DARK) {
-            setTheme(R.style.DarkAppTheme_NoActionBar);
-        } else {
-            setTheme(R.style.AppTheme_NoActionBar);
-        }
-
-    }
-
-    private void setLanguage() {
-        mCurrentLanguage = LocaleHelper.getLanguage(this);
-
-        if (!mCurrentLanguage.equals(Locale.getDefault().getLanguage())) {
-            LocaleHelper.setLocale(this, mCurrentLanguage);
-        }
-    }
-
-    private static final int BILLING_UNAVAILABLE = 3;
-
-    private void setupBilling() {
-        // Create the helper, passing it our context and the public key to
-        // verify signatures with
-        Log.d(TAG, "Creating IAB helper.");
-        String base64EncodedPublicKey =
-                "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAomGBqi0dGhyE1KphvTxc6K3OXsTsWEcAdLNsg22Un" +
-                        "/6VJakiajmZMBODktRggHlUgWDZZvFZCw2so53U++pVHRfyevKIbP7" +
-                        "/eIkB7mtlartsbOkD3yGQCUVxE1kQ3Olum1CYv7DqBQC4J9h9q22ApcGIfkZq6Os3Jm7vKmuzHHLKN63yWQS1FuwwcLAmpSN2EOX4Has4eElrgZoySu4qv5SOooOJS27Y4fzzxToQX5T50tO9dG+NYKrLmPK4yL5JGB5E3UD0I8vNLD/Wj2qPBE1tiYbjHHeX3PrF9lJhXtZs9uiMnMzox6dxW9+VmPYxNuMXakXrURGfpgaWGK00ZQIDAQAB";
-        mHelper = new IabHelper(this, base64EncodedPublicKey);
-
-        // enable debug logging (for a production application, you should set
-        // this to false).
-        mHelper.enableDebugLogging(false);
-
-        // Start setup. This is asynchronous and the specified listener
-        // will be called once setup completes.
-        Log.d(TAG, "Starting setup.");
-        mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
-            public void onIabSetupFinished(IabResult result) {
-                Log.d(TAG, "Setup finished.");
-
-
-                if (result.getResponse() == BILLING_UNAVAILABLE) {
-                    inappBillingSupported = false;
-                    isPremium = false;
-                    showAds();
-                }
-
-                if (!result.isSuccess()) {
-                    // Oh noes, there was a problem.
-                    complain("Problem setting up in-app billing: " + result);
-                    return;
-                }
-
-                // Have we been disposed off in the meantime? If so, quit.
-                if (mHelper == null)
-                    return;
-
-                // IAB is fully set up. Now, let's get an inventory of stuff we
-                // own.
-                Log.d(TAG, "Setup successful. Querying inventory.");
-                inappBillingSupported = true;
-                mHelper.queryInventoryAsync(mGotInventoryListener);
-            }
-        });
-    }
-
-
-    private void initConstants() {
-        STORAGE_ROOT = getResources().getString(R.string.nav_menu_root);
-        STORAGE_INTERNAL = getResources().getString(R.string.nav_menu_internal_storage);
-        STORAGE_EXTERNAL = getResources().getString(R.string.nav_menu_ext_storage);
-        DOWNLOADS = getResources().getString(R.string.downloads);
-        MUSIC = getResources().getString(R.string.nav_menu_music);
-        VIDEO = getResources().getString(R.string.nav_menu_video);
-        DOCS = getResources().getString(R.string.nav_menu_docs);
-        IMAGES = getResources().getString(R.string.nav_menu_image);
-    }
 
     @SuppressWarnings("ConstantConditions")
     private void initViews() {
@@ -475,46 +387,14 @@ public class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    /**
-     * Called for the 1st time when app is launched to check permissions
-     */
-    private void checkPermissions() {
-        if (!PermissionUtils.hasRequiredPermissions()) {
-            fabCreateMenu.setVisibility(View.GONE);
-            requestPermission();
-        } else {
-            Logger.log(TAG, "checkPermissions ELSE");
-            fabCreateMenu.setVisibility(View.VISIBLE);
-        }
-
-    }
-
-    private void requestPermission() {
-        Logger.log(TAG, "requestPermission");
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
-                .WRITE_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST);
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[]
             grantResults) {
         switch (requestCode) {
             case PERMISSIONS_REQUEST:
-
-                if (PermissionUtils.hasRequiredPermissions()) {
-                    Logger.log(TAG, "Permission granted");
-                    if (!inappShortcutMode) {
-                        fabCreateMenu.setVisibility(View.VISIBLE);
-                        setPermissionGranted();
-                    } else {
-                        openCategoryItem(null, mCategory);
-                        inappShortcutMode = false;
-                    }
-                    dismissRationaleDialog();
-                } else {
-                    showRationale();
-                    fabCreateMenu.setVisibility(View.GONE);
-                }
+                PermissionHelper.getInstance(this).onPermissionResult();
+                break;
         }
     }
 
@@ -539,59 +419,6 @@ public class BaseActivity extends AppCompatActivity implements
         setListAdapter();
     }
 
-    private void showRationale() {
-        Log.d(TAG, "showRationale");
-
-        final boolean showSettings;
-        Button buttonGrant;
-        TextView textViewPermissionHint;
-
-        showSettings = !ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission
-                .WRITE_EXTERNAL_STORAGE);
-        if (mPermissionDialog == null) {
-            mPermissionDialog = new Dialog(this, R.style.PermissionDialog);
-            mPermissionDialog.setContentView(R.layout.dialog_runtime_permissions);
-
-        }
-        mPermissionDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                Log.d(TAG, "Rationale dismiss");
-                if (!PermissionUtils.hasRequiredPermissions()) {
-                    mPermissionDialog.dismiss();
-                    finish();
-                }
-            }
-        });
-        buttonGrant = (Button) mPermissionDialog.findViewById(R.id.buttonGrant);
-        textViewPermissionHint = (TextView) mPermissionDialog.findViewById(R.id.textPermissionHint);
-        if (showSettings) {
-            buttonGrant.setText(R.string.action_settings);
-            textViewPermissionHint.setVisibility(View.VISIBLE);
-        }
-        buttonGrant.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!showSettings) {
-                    requestPermission();
-                } else {
-                    Intent intent = new Intent();
-                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                    Uri uri = Uri.fromParts("package", getPackageName(), null);
-                    intent.setData(uri);
-                    startActivityForResult(intent, SETTINGS_REQUEST);
-                }
-            }
-        });
-
-        mPermissionDialog.show();
-    }
-
-    private void dismissRationaleDialog() {
-        if (mPermissionDialog != null && mPermissionDialog.isShowing()) {
-            mPermissionDialog.dismiss();
-        }
-    }
 
     private void checkPreferences() {
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -633,10 +460,7 @@ public class BaseActivity extends AppCompatActivity implements
     }
 
 
-    private void getSavedFavourites() {
-        sharedPreferenceWrapper = new SharedPreferenceWrapper();
-        savedFavourites = sharedPreferenceWrapper.getFavorites(this);
-    }
+
 
     private void initListeners() {
         expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
@@ -667,49 +491,6 @@ public class BaseActivity extends AppCompatActivity implements
         imageInvite.setOnClickListener(this);
     }
 
-    // Listener that's called when we finish querying the items and
-    // subscriptions we own
-    private final IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper
-            .QueryInventoryFinishedListener() {
-        public void onQueryInventoryFinished(IabResult result,
-                                             Inventory inventory) {
-            Log.d(TAG, "Query inventory finished." + mHelper);
-
-            // Have we been disposed of in the meantime? If so, quit.
-            if (mHelper == null)
-                return;
-
-            // Is it a failure?
-            if (result.isFailure()) {
-                complain("Failed to query inventory: " + result);
-                return;
-            }
-
-            Log.d(TAG, "Query inventory was successful.");
-
-            /*
-             * Check for items we own. Notice that for each purchase, we check
-             * the developer payload to see if it's correct! See
-             * verifyDeveloperPayload().
-             */
-
-            // Do we have the premium upgrade?
-            boolean removeAdsPurchase = inventory.hasPurchase(SKU_REMOVE_ADS);
-            if (removeAdsPurchase) {
-                // User paid to remove the Ads - so hide 'em
-                isPremium = true;
-                hideAds();
-//                consumeItems(inventory);
-            } else {
-                isPremium = false;
-                showAds();
-            }
-            Log.d(TAG, "User has "
-                    + (isPremium ? "REMOVED ADS"
-                    : "NOT REMOVED ADS"));
-            Log.d(TAG, "Initial inventory query finished; enabling main UI.");
-        }
-    };
 
 // --Commented out by Inspection START (22-11-2016 11:20 PM):
 //    private void consumeItems(Inventory inventory) {
@@ -730,7 +511,7 @@ public class BaseActivity extends AppCompatActivity implements
 //    }
 // --Commented out by Inspection STOP (22-11-2016 11:20 PM)
 
-    private void showAds() {
+/*    private void showAds() {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -751,115 +532,23 @@ public class BaseActivity extends AppCompatActivity implements
                 showPremiumDialog();
             }
         }
-    }
+    }*/
 
     private void prepareListData() {
 
-        String[] listDataHeader = getResources().getStringArray(R.array.expand_headers);
-        mListHeader = Arrays.asList(listDataHeader);
+
         initializeStorageGroup();
     }
 
-    private void initializeGroups() {
-        initializeFavouritesGroup();
-        initializeLibraryGroup();
-    }
 
-    private void initializeStorageGroup() {
-        Logger.log(TAG, "initializeStorageGroup START");
-        List<String> storagePaths = FileUtils.getStorageDirectories(this);
 
-        File systemDir = FileUtils.getRootDirectory();
-        File rootDir = systemDir.getParentFile();
 
-        long spaceLeftRoot = getSpaceLeft(systemDir);
-        long totalSpaceRoot = getTotalSpace(systemDir);
-        int leftProgressRoot = (int) (((float) spaceLeftRoot / totalSpaceRoot) * 100);
-        int progressRoot = 100 - leftProgressRoot;
-        storageGroupChild.add(new SectionItems(STORAGE_ROOT, storageSpace(spaceLeftRoot, totalSpaceRoot), R.drawable
-                .ic_root_white, FileUtils.getAbsolutePath(rootDir), progressRoot));
-
-        for (String path : storagePaths) {
-            File file = new File(path);
-            int icon;
-            String name;
-            if ("/storage/emulated/legacy".equals(path) || "/storage/emulated/0".equals(path)) {
-                name = STORAGE_INTERNAL;
-                icon = R.drawable.ic_phone_white;
-
-            } else if ("/storage/sdcard1".equals(path)) {
-                name = STORAGE_EXTERNAL;
-                icon = R.drawable.ic_ext_white;
-                mExternalSDPaths.add(path);
-            } else {
-                name = file.getName();
-                icon = R.drawable.ic_ext_white;
-                mExternalSDPaths.add(path);
-            }
-            if (!file.isDirectory() || file.canExecute()) {
-                long spaceLeft = getSpaceLeft(file);
-                long totalSpace = getTotalSpace(file);
-                int leftProgress = (int) (((float) spaceLeft / totalSpace) * 100);
-                int progress = 100 - leftProgress;
-                String spaceText = storageSpace(spaceLeft, totalSpace);
-                storageGroupChild.add(new SectionItems(name, spaceText, icon, path, progress));
-            }
-        }
-        Logger.log(TAG, "initializeStorageGroup END");
-
-        totalGroup.add(new SectionGroup(mListHeader.get(0), storageGroupChild));
-    }
-
-    private long getSpaceLeft(File file) {
-        return file.getFreeSpace();
-    }
-
-    private long getTotalSpace(File file) {
-        return file.getTotalSpace();
-    }
-
-    private String storageSpace(long spaceLeft, long totalSpace) {
-        String freePlaceholder = " " + getResources().getString(R.string.msg_free) + " ";
-        return FileUtils.formatSize(this, spaceLeft) + freePlaceholder +
-                FileUtils.formatSize(this, totalSpace);
-    }
 
     public ArrayList<SectionItems> getStorageGroupList() {
         return storageGroupChild;
     }
 
-    private void initializeFavouritesGroup() {
-        if (mIsFirstRun) {
-            String path = FileUtils
-                    .getAbsolutePath(FileUtils.getDownloadsDirectory());
-            favouritesGroupChild.add(new SectionItems(DOWNLOADS, path, R.drawable.ic_download,
-                    path, 0));
-            FavInfo favInfo = new FavInfo();
-            favInfo.setFileName(DOWNLOADS);
-            favInfo.setFilePath(path);
-            sharedPreferenceWrapper.addFavorite(this, favInfo);
-        }
 
-        if (savedFavourites != null && savedFavourites.size() > 0) {
-            for (int i = 0; i < savedFavourites.size(); i++) {
-                String savedPath = savedFavourites.get(i).getFilePath();
-                favouritesGroupChild.add(new SectionItems(savedFavourites.get(i).getFileName(),
-                        savedPath, R.drawable
-                        .ic_fav_folder,
-                        savedPath, 0));
-            }
-        }
-        totalGroup.add(new SectionGroup(mListHeader.get(1), favouritesGroupChild));
-    }
-
-    private void initializeLibraryGroup() {
-        ArrayList<SectionItems> libraryGroupChild = new ArrayList<>();
-        libraryGroupChild.add(new SectionItems(MUSIC, null, R.drawable.ic_music_white, null, 0));
-        libraryGroupChild.add(new SectionItems(VIDEO, null, R.drawable.ic_video_white, null, 0));
-        libraryGroupChild.add(new SectionItems(IMAGES, null, R.drawable.ic_photos_white, null, 0));
-        libraryGroupChild.add(new SectionItems(DOCS, null, R.drawable.ic_file_white, null, 0));
-        totalGroup.add(new SectionGroup(mListHeader.get(2), libraryGroupChild));
-    }
 
     private void setListAdapter() {
         expandableListAdapter = new ExpandableListAdapter(this, totalGroup);
@@ -937,7 +626,7 @@ public class BaseActivity extends AppCompatActivity implements
                     category = FileConstants.CATEGORY.AUDIO.getValue();
                     break;
                 case ACTION_VIDEOS:
-                    category = FileConstants.CATEGORY.VIDEO.getValue();
+                    category = VIDEO.getValue();
                     break;
 
             }
@@ -1070,7 +759,7 @@ public class BaseActivity extends AppCompatActivity implements
                                         mNewFilePath);
                                 break;
                             case FileConstants.FOLDER_CREATE:
-                                mFileOpsHelper.mkDir(mIsRootMode, new File(mNewFilePath));
+                                mFileOpsHelper.mkDir(mIsRootMode, mNewFilePath, mFileName);
                                 break;
                             case FileConstants.RENAME:
                                 mFileOpsHelper.renameFile(mIsRootMode, new File(mOldFilePath), new File(mNewFilePath),
@@ -1666,7 +1355,7 @@ public class BaseActivity extends AppCompatActivity implements
                         break;
                     // When Video item is clicked
                     case 1:
-                        category = FileConstants.CATEGORY.VIDEO.getValue();
+                        category = VIDEO.getValue();
                         openCategoryItem(path, category);
                         break;
                     // When Images item is clicked
@@ -1676,7 +1365,7 @@ public class BaseActivity extends AppCompatActivity implements
                         break;
                     // When Documents item is clicked
                     case 3:
-                        category = FileConstants.CATEGORY.DOCS.getValue();
+                        category = DOCS.getValue();
                         openCategoryItem(path, category);
                         break;
                 }
@@ -2039,12 +1728,6 @@ public class BaseActivity extends AppCompatActivity implements
         } else if (fragment instanceof HomeScreenFragment) {
             ((HomeScreenFragment) fragment).setPremium();
         }
-    }
-
-
-    private void complain(String message) {
-        Log.e(TAG, "**** Error: " + message);
-//        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -2425,10 +2108,7 @@ public class BaseActivity extends AppCompatActivity implements
                 e.printStackTrace();
             }*/
         }
-        if (mHelper != null) {
-            mHelper.dispose();
-        }
-        mHelper = null;
+        BillingHelper.getInstance().disposeBilling();
         super.onDestroy();
     }
 
@@ -2633,5 +2313,14 @@ public class BaseActivity extends AppCompatActivity implements
     }
 
 
+    @Override
+    public void onPermissionGranted(String[] permissionName) {
+
+    }
+
+    @Override
+    public void onPermissionDeclined(String[] permissionName) {
+
+    }
 }
 

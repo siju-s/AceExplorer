@@ -250,20 +250,14 @@ public class CopyService extends Service {
             }
 
             void copyRoot(String path, String name, String destinationPath) {
-/*                boolean result = RootTools.copyFile(RootHelper.getCommandLineString(path), RootHelper
-                        .getCommandLineString(destinationPath) + "/" + name, true, false);
-                if (!result && path.contains("/0/")) {
-                    result = RootTools.copyFile(RootHelper.getCommandLineString(path.replace("/0/", "/legacy/")),
-                            RootHelper.getCommandLineString(destinationPath) + "/" + name, true, true);
-                }*/
-                 String targetPath = destinationPath + File.separator + name;
+                String targetPath = destinationPath + File.separator + name;
                 try {
                     // TODO: 04-01-2017 This causes the phone to brick. Fix it ASAP.
                     RootUtils.mountRW(destinationPath);
 //                    RootUtils.mountOwnerRW(destinationPath);
 //                    if (!move)
 
-                        RootUtils.copy(path, targetPath);
+                    RootUtils.copy(path, targetPath);
                     RootUtils.mountRO(destinationPath);
 //                    else if (move) RootUtils.move(path, targetPath);
                 } catch (RootNotPermittedException e) {
@@ -271,7 +265,7 @@ public class CopyService extends Service {
                     e.printStackTrace();
                 }
 //                if (result) {
-                    FileUtils.scanFile(mContext, destinationPath + "/" + name);
+                FileUtils.scanFile(mContext, destinationPath + "/" + name);
 //                }
             }
 

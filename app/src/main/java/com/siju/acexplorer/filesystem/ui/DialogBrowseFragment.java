@@ -40,7 +40,7 @@ import com.siju.acexplorer.filesystem.utils.MediaStoreHack;
 import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 import com.siju.acexplorer.filesystem.views.FastScrollRecyclerView;
 import com.siju.acexplorer.utils.DialogUtils;
-import com.siju.acexplorer.utils.PermissionUtils;
+import com.siju.acexplorer.permission.PermissionUtils;
 
 import java.io.File;
 import java.util.ArrayList;

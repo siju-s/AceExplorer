@@ -98,13 +98,5 @@ public class MoveFiles extends AsyncTask<String, Void, Integer> {
             intent.putExtra(FileConstants.OPERATION, FileConstants.MOVE);
             context.sendBroadcast(intent);
         }
-/*        if (b) {
-
-            for (FileInfo f : files) {
-                FileUtils.scanFile(context, f.getFilePath());
-                FileUtils.scanFile(context, path + "/" + f.getFileName());
-
-            }
-        } */
     }
 }

@@ -23,6 +23,14 @@ public class LocaleHelper {
         updateResources(context, language);
     }
 
+    public static void setLanguage(Context context) {
+        String currentLanguage = LocaleHelper.getLanguage(context);
+
+        if (!currentLanguage.equals(Locale.getDefault().getLanguage())) {
+            setLocale(context, currentLanguage);
+        }
+    }
+
     private static String getPersistedData(Context context, String defaultLanguage) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString(SELECTED_LANGUAGE, defaultLanguage);
