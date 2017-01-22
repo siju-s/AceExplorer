@@ -42,7 +42,7 @@ public class FileConstants {
     public static final String KEY_OFFSET = "offset";
     public static final String KEY_DUAL_MODE = "DUAL_MODE";
     public static final String APK_EXTENSION = "apk";
-    public static final String KEY_CATEGORY = "CATEGORY";
+    public static final String KEY_CATEGORY = "Category";
     public static final String KEY_PREMIUM= "PREMIUM";
 
     public static final String KEY_ZIP = "ZIP";
@@ -69,35 +69,10 @@ public class FileConstants {
     public static final String EXT_TGZ = "tgz";
     public static final String EXT_RAR = "rar";
 
+    public static final String ADS = "ACTION_ADS";
 
-    public enum CATEGORY {
-        FILES(0),
-        AUDIO(1),
-        VIDEO(2),
-        IMAGE(3),
-        DOCS(4),
-        DOWNLOADS(5),
-        ADD(6),
-        COMPRESSED(7),
-        FAVORITES(8),
-        PDF(9),
-        APPS(10),
-        LARGE_FILES(11),
-        ZIP_VIEWER(12),
-        GENERIC_LIST(13),
-        PICKER(14);
 
-        private final int value;
 
-        CATEGORY(int value) {
-            this.value = value;
-        }
-
-        public int getValue() {
-
-            return value;
-        }
-    }
 
     public enum WRITE_MODES {
         ROOT(0),

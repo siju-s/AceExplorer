@@ -103,7 +103,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
 
     private void launchHomeScreen() {
         prefManager.setFirstTimeLaunch();
-        startActivity(new Intent(WelcomeActivity.this, BaseActivity.class));
+        startActivity(new Intent(WelcomeActivity.this, AceActivity.class));
         finish();
     }
 

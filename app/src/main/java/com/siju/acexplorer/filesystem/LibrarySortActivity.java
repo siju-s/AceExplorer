@@ -16,7 +16,7 @@ import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.SharedPreferenceWrapper;
 import com.siju.acexplorer.filesystem.helper.SimpleItemTouchHelperCallback;
 import com.siju.acexplorer.filesystem.model.LibrarySortModel;
-import com.siju.acexplorer.filesystem.utils.ThemeUtils;
+import com.siju.acexplorer.filesystem.theme.ThemeUtils;
 
 import java.util.ArrayList;
 

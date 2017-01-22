@@ -13,7 +13,7 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.Formatter;
 
-import com.siju.acexplorer.BaseActivity;
+import com.siju.acexplorer.AceActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.FileInfo;
@@ -59,7 +59,7 @@ public class CreateZipTask extends Service {
             }
         }
         mBuilder = new NotificationCompat.Builder(this);
-        Intent notificationIntent = new Intent(this, BaseActivity.class);
+        Intent notificationIntent = new Intent(this, AceActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
         mBuilder.setContentIntent(pendingIntent);
         mBuilder.setContentTitle(getResources().getString(R.string.zip_progress_title))
@@ -93,7 +93,7 @@ public class CreateZipTask extends Service {
         public void onPostExecute(Integer b) {
             publishResults(b, name, 100, 0, totalBytes);
 
-            // Broadcast result to FileListFragment
+            // Broadcast result to BaseFileList
             Intent intent = new Intent(FileConstants.RELOAD_LIST);
             intent.putExtra(FileConstants.KEY_PATH, name);
             sendBroadcast(intent);

@@ -25,12 +25,12 @@ import android.view.ViewParent;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.siju.acexplorer.BaseActivity;
+import com.siju.acexplorer.AceActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
-import com.siju.acexplorer.filesystem.utils.ThemeUtils;
+import com.siju.acexplorer.filesystem.theme.ThemeUtils;
 import com.siju.acexplorer.helper.root.RootTools;
 import com.siju.acexplorer.utils.LocaleHelper;
 
@@ -333,7 +333,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            Intent in = new Intent(getActivity(), BaseActivity.class);
+            Intent in = new Intent(getActivity(), AceActivity.class);
             final int enter_anim = android.R.anim.fade_in;
             final int exit_anim = android.R.anim.fade_out;
             Activity activity = getActivity();

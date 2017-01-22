@@ -1,11 +1,13 @@
 package com.siju.acexplorer.billing;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
 import com.siju.acexplorer.utils.inappbilling.IabHelper;
 import com.siju.acexplorer.utils.inappbilling.IabResult;
 import com.siju.acexplorer.utils.inappbilling.Inventory;
+import com.siju.acexplorer.utils.inappbilling.Purchase;
 
 
 public class BillingHelper {
@@ -13,6 +15,9 @@ public class BillingHelper {
     private static final String SKU_REMOVE_ADS = "com.siju.acexplorer.pro";
     //    static final String SKU_TEST = "android.test.purchased";
     private static final int BILLING_UNAVAILABLE = 3;
+
+    // (arbitrary) request code for the purchase flow
+    private static final int RC_REQUEST = 10111;
 
     private boolean inappBillingSupported;
 
@@ -122,6 +127,30 @@ public class BillingHelper {
         }
     };
 
+    // Callback for when a purchase is finished
+    private final IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper
+            .OnIabPurchaseFinishedListener() {
+        public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
+            Log.d(TAG, "Purchase finished: " + result + ", purchase: "
+                    + purchase);
+
+            // if we were disposed of in the meantime, quit.
+            if (mHelper == null)
+                return;
+
+            if (result.isFailure()) {
+                complain("Error purchasing: " + result);
+                return;
+            }
+            Log.d(TAG, "Purchase successful.");
+
+            if (purchase.getSku().equals(SKU_REMOVE_ADS)) {
+                // bought the premium upgrade!
+                isPremium = true;
+            }
+        }
+    };
+
     private void complain(String message) {
         Log.e(TAG, "**** Error: " + message);
     }
@@ -142,4 +171,29 @@ public class BillingHelper {
         }
         mHelper = null;
     }
+
+    public void launchPurchaseFlow(Activity context) {
+        String payload = "REMOVE_ADS";
+        mHelper.launchPurchaseFlow(context, SKU_REMOVE_ADS,
+                RC_REQUEST, mPurchaseFinishedListener, payload);
+    }
+
+    // --Commented out by Inspection START (22-11-2016 11:20 PM):
+//    private void consumeItems(Inventory inventory) {
+//        Purchase premiumPurchase = inventory.getPurchase(SKU_REMOVE_ADS);
+//        boolean isConsumed =  mSharedPreferences.getBoolean("consumed",false);
+//        Log.d(TAG, "consumeItems : premiumPurchase="+premiumPurchase+ " consumed="+isConsumed);
+//
+//        if (premiumPurchase != null && !isConsumed) {
+//            mHelper.consumeAsync(premiumPurchase, new IabHelper.OnConsumeFinishedListener() {
+//                @Override
+//                public void onConsumeFinished(Purchase purchase, IabResult result) {
+//                    Log.d(TAG, "Test purchase is consumed.");
+//                    mSharedPreferences.edit().putBoolean("consumed",true).apply();
+//
+//                }
+//            });
+//        }
+//    }
+// --Commented out by Inspection STOP (22-11-2016 11:20 PM)
 }

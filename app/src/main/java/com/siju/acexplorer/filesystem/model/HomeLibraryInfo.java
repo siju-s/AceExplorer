@@ -1,28 +1,31 @@
 package com.siju.acexplorer.filesystem.model;
 
+import com.siju.acexplorer.filesystem.groups.Category;
+
 public class HomeLibraryInfo {
 
     private final String categoryName;
     private final int resourceId;
     private int count;
-    private final int categoryId;
+    private Category category;
 
-    public HomeLibraryInfo(int categoryId,String categoryName, int resourceId, int count) {
+    public HomeLibraryInfo(Category category, String categoryName, int resourceId, int count) {
         this.categoryName = categoryName;
         this.resourceId = resourceId;
         this.count = count;
-        this.categoryId = categoryId;
+        this.category = category;
+
     }
 
-    public int getCategoryId() {
-        return categoryId;
+
+
+    public Category getCategory() {
+        return category;
     }
 
-// --Commented out by Inspection START (06-11-2016 11:23 PM):
-//    public void setCategoryId(int categoryId) {
-//        this.categoryId = categoryId;
-//    }
-// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 
     public String getCategoryName() {
         return categoryName;

@@ -15,12 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.siju.acexplorer.BaseActivity.PREFS_FIRST_RUN;
-
-
-/**
- * Created by SJ on 20-01-2017.
- */
+import static com.siju.acexplorer.AceActivity.PREFS_FIRST_RUN;
 
 public class DrawerItems {
 
@@ -31,11 +26,9 @@ public class DrawerItems {
     private String DOCS;
 
     private Context context;
-    private final ArrayList<SectionGroup> totalGroup = new ArrayList<>();
+    private final ArrayList<SectionGroup> totalGroupData = new ArrayList<>();
     private final ArrayList<SectionItems> favouritesGroupChild = new ArrayList<>();
     private SharedPreferenceWrapper sharedPreferenceWrapper = new SharedPreferenceWrapper();
-    private SharedPreferences mSharedPreferences;
-    private ArrayList<FavInfo> savedFavourites = new ArrayList<>();
     private List<String> drawerListHeaders;
 
 
@@ -55,10 +48,17 @@ public class DrawerItems {
         drawerListHeaders = Arrays.asList(listDataHeader);
     }
 
-    private void initializeGroups() {
+    public ArrayList<SectionGroup> getTotalGroupData() {
         initConstants();
+        initializeStorageGroup();
         initializeFavouritesGroup();
         initializeLibraryGroup();
+        return totalGroupData;
+    }
+
+    private void initializeStorageGroup() {
+        populateDrawerItems(new SectionGroup(drawerListHeaders.get(0), new StoragesGroup(context).
+                getStorageGroupData()));
     }
 
     private void initializeFavouritesGroup() {
@@ -85,7 +85,7 @@ public class DrawerItems {
     }
 
     private void addSavedFavorites() {
-        savedFavourites = sharedPreferenceWrapper.getFavorites(context);
+        ArrayList<FavInfo> savedFavourites = sharedPreferenceWrapper.getFavorites(context);
 
         if (savedFavourites != null && savedFavourites.size() > 0) {
             for (int i = 0; i < savedFavourites.size(); i++) {
@@ -99,7 +99,7 @@ public class DrawerItems {
     }
 
     private void populateDrawerItems(SectionGroup group) {
-        totalGroup.add(group);
+        totalGroupData.add(group);
     }
 
     private void initializeLibraryGroup() {
@@ -115,5 +115,8 @@ public class DrawerItems {
         libraryGroupChild.add(new SectionItems(DOCS, null, R.drawable.ic_file_white, null, 0));
         return libraryGroupChild;
     }
+
+
+
 
 }

@@ -20,6 +20,10 @@ public class PermissionUtils {
         return hasPermissions();
     }
 
+    public static boolean hasStoragePermission() {
+        return hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+    }
+
     /** Does the app have all the specified permissions */
     private static boolean hasPermissions() {
         for (final String permission : PermissionUtils.sRequiredPermissions) {

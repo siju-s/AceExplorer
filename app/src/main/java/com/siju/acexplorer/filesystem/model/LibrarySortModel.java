@@ -3,15 +3,18 @@ package com.siju.acexplorer.filesystem.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.siju.acexplorer.filesystem.groups.Category;
+
 public class LibrarySortModel implements Parcelable{
     private int categoryId;
     private String libraryName;
     private boolean isChecked;
+    private Category category;
 
-    public LibrarySortModel(int categoryId, String libraryName) {
+    public LibrarySortModel(Category category,String libraryName) {
+        this.category = category;
         this.libraryName = libraryName;
         this.isChecked = true;
-        this.categoryId = categoryId;
     }
 
     public LibrarySortModel() {
@@ -23,9 +26,16 @@ public class LibrarySortModel implements Parcelable{
         if (obj == this) return true;
         if (!(obj instanceof LibrarySortModel)) return false;
         LibrarySortModel o = (LibrarySortModel) obj;
-        return o.categoryId == this.categoryId;
+        return o.category.equals(this.category);
     }
 
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 
     private LibrarySortModel(Parcel in) {
         categoryId = in.readInt();
@@ -45,13 +55,13 @@ public class LibrarySortModel implements Parcelable{
         }
     };
 
-    public int getCategoryId() {
+/*    public int getCategoryId() {
         return categoryId;
     }
 
     public void setCategoryId(int categoryId) {
         this.categoryId = categoryId;
-    }
+    }*/
 
     public String getLibraryName() {
         return libraryName;

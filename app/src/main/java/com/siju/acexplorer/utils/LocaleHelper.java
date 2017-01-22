@@ -24,7 +24,7 @@ public class LocaleHelper {
     }
 
     public static void setLanguage(Context context) {
-        String currentLanguage = LocaleHelper.getLanguage(context);
+        String currentLanguage = getLanguage(context);
 
         if (!currentLanguage.equals(Locale.getDefault().getLanguage())) {
             setLocale(context, currentLanguage);

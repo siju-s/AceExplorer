@@ -19,7 +19,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -27,6 +26,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -44,6 +44,7 @@ import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.DragEvent;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -56,6 +57,9 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -66,16 +70,22 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
+import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
 import com.github.junrar.rarfile.FileHeader;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
+import com.siju.acexplorer.AceActivity;
 import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.billing.BillingHelper;
+import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.common.SharedPreferenceWrapper;
+import com.siju.acexplorer.filesystem.groups.Category;
 import com.siju.acexplorer.filesystem.model.BackStackModel;
 import com.siju.acexplorer.filesystem.model.FavInfo;
 import com.siju.acexplorer.filesystem.model.FileInfo;
@@ -83,6 +93,8 @@ import com.siju.acexplorer.filesystem.model.ZipModel;
 import com.siju.acexplorer.filesystem.task.ExtractZipEntry;
 import com.siju.acexplorer.filesystem.task.PasteConflictChecker;
 import com.siju.acexplorer.filesystem.task.SearchTask;
+import com.siju.acexplorer.filesystem.theme.ThemeUtils;
+import com.siju.acexplorer.filesystem.theme.Themes;
 import com.siju.acexplorer.filesystem.ui.CustomGridLayoutManager;
 import com.siju.acexplorer.filesystem.ui.CustomLayoutManager;
 import com.siju.acexplorer.filesystem.ui.DialogBrowseFragment;
@@ -91,7 +103,6 @@ import com.siju.acexplorer.filesystem.ui.EnhancedMenuInflater;
 import com.siju.acexplorer.filesystem.ui.GridItemDecoration;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.utils.RootUtils;
-import com.siju.acexplorer.filesystem.utils.ThemeUtils;
 import com.siju.acexplorer.filesystem.views.FastScrollRecyclerView;
 import com.siju.acexplorer.helper.RootHelper;
 import com.siju.acexplorer.helper.root.RootTools;
@@ -103,11 +114,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import static com.siju.acexplorer.filesystem.FileConstants.ADS;
+import static com.siju.acexplorer.filesystem.groups.Category.FILES;
 
-public class FileListFragment extends Fragment implements LoaderManager
+
+public class BaseFileList extends Fragment implements LoaderManager
         .LoaderCallbacks<ArrayList<FileInfo>>,
         SearchView.OnQueryTextListener,
         Toolbar.OnMenuItemClickListener, SearchTask.SearchHelper {
@@ -120,7 +135,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private ArrayList<FileInfo> fileInfoList;
     private String mFilePath;
     private String mFilePathOther;
-    private int mCategory;
+    private Category category;
     private int mViewMode = FileConstants.KEY_LISTVIEW;
     private boolean mIsZip;
     private SharedPreferenceWrapper sharedPreferenceWrapper;
@@ -140,7 +155,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private String mZipParentPath;
     private String mChildZipPath;
     private boolean inChildZip;
-    private BaseActivity mBaseActivity;
+    private AceActivity aceActivity;
     private boolean isDualPaneInFocus;
     private Toolbar mBottomToolbar;
     private ActionMode mActionMode;
@@ -169,7 +184,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private final HashMap<String, Bundle> scrollPosition = new HashMap<>();
     private final HashMap<String, Bundle> scrollPositionDualPane = new HashMap<>();
     private int mGridColumns;
-    private SharedPreferences mPreferences;
+    private SharedPreferences preferences;
     private int mCurrentOrientation;
     private final ArrayList<FileInfo> mCopiedData = new ArrayList<>();
     private final boolean mIsRootMode = true;
@@ -190,19 +205,26 @@ public class FileListFragment extends Fragment implements LoaderManager
     private AdView mAdView;
     private MenuItem mSearchItem;
     private boolean isInSelectionMode;
+    private FloatingActionsMenu fabCreateMenu;
+    private FloatingActionButton fabCreateFolder;
+    private FloatingActionButton fabCreateFile;
+    private LinearLayout mNavigationLayout;
+    private FrameLayout frameLayoutFab;
+    private LinearLayout navDirectory;
+    private HorizontalScrollView scrollNavigation;
+    private Toolbar toolbar;
+
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mBaseActivity = (BaseActivity) context;
+        aceActivity = (AceActivity) context;
     }
 
 
     @Override
-    public View onCreateView(
-            LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-        root = inflater.inflate(R.layout.file_list, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        root = inflater.inflate(R.layout.main_list, container, false);
         return root;
 
     }
@@ -212,75 +234,288 @@ public class FileListFragment extends Fragment implements LoaderManager
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
         initializeViews();
-
+        setViewTheme();
+        setupAds();
+        registerReceivers();
+        mFileUtils = new FileUtils();
 
         if (savedInstanceState == null) {
             mCurrentOrientation = getResources().getConfiguration().orientation;
-            mPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            mIsDualModeEnabled = mPreferences
-                    .getBoolean(FileConstants.PREFS_DUAL_PANE, false);
-            mGridColumns = mPreferences.getInt(FileConstants.KEY_GRID_COLUMNS, 0);
+            checkPreferences();
             mIsDarkTheme = ThemeUtils.isDarkTheme(getActivity());
-
-            if (getArguments() != null) {
-                if (getArguments().getString(FileConstants.KEY_PATH) != null) {
-                    mFilePath = getArguments().getString(FileConstants.KEY_PATH);
-                    mFilePathOther = getArguments().getString(FileConstants.KEY_PATH_OTHER);
-                }
-                mCategory = getArguments().getInt(FileConstants.KEY_CATEGORY, FileConstants.CATEGORY.FILES.getValue());
-                if (FileUtils.checkIfLibraryCategory(mCategory)) {
-                    mBaseActivity.hideFab();
-                    mBaseActivity.addHomeNavButton(false);
-                } else {
-                    mBaseActivity.showFab();
-                }
-                mBaseActivity.toggleNavigationVisibility(true);
-
-                mIsZip = getArguments().getBoolean(FileConstants.KEY_ZIP, false);
-                boolean isDualPaneInFocus = getArguments().getBoolean(FileConstants.KEY_FOCUS_DUAL, false);
-                if (isDualPaneInFocus) {
-                    mLastDualPaneDir = mFilePath;
-                    mLastSinglePaneDir = mFilePathOther;
-                    Log.d(TAG, "on onActivityCreated dual focus Yes--singledir" + mLastSinglePaneDir + "dualDir=" +
-                            mLastDualPaneDir);
-
-                } else {
-                    mLastSinglePaneDir = mFilePath;
-                    mLastDualPaneDir = mFilePathOther;
-                    Log.d(TAG, "on onActivityCreated dual focus No--singledir" + mLastSinglePaneDir + "dualDir=" +
-                            mLastDualPaneDir);
-                }
-
-            }
+            getArgs();
             mViewMode = sharedPreferenceWrapper.getViewMode(getActivity());
-
-            Log.d(TAG, "on onActivityCreated--Path" + mFilePath);
-            Log.d(TAG, "View mode=" + mViewMode);
-            Bundle args = new Bundle();
-            args.putString(FileConstants.KEY_PATH, mFilePath);
-            recyclerViewFileList.setHasFixedSize(true);
-
-            if (mViewMode == FileConstants.KEY_LISTVIEW) {
-                llm = new CustomLayoutManager(getActivity());
-                recyclerViewFileList.setLayoutManager(llm);
-            } else {
-                refreshSpan();
-            }
-            recyclerViewFileList.setItemAnimator(new DefaultItemAnimator());
-            fileListAdapter = new FileListAdapter(getContext(), fileInfoList,
-                    mCategory, mViewMode);
+            setupList();
             isDualPaneInFocus = checkIfDualFragment();
             if (mCategory == FileConstants.CATEGORY.FILES.getValue()) {
-                mBaseActivity.setNavDirectory(mFilePath, isDualPaneInFocus);
+                setNavDirectory(mFilePath, isDualPaneInFocus);
             }
+            Bundle args = new Bundle();
+            args.putString(FileConstants.KEY_PATH, mFilePath);
             getLoaderManager().initLoader(LOADER_ID, args, this);
             initializeListeners();
         } else {
             mInstanceStateExists = true;
         }
+    }
 
+    private void initializeViews() {
+        recyclerViewFileList = (FastScrollRecyclerView) root.findViewById(R.id.recyclerViewFileList);
+        mTextEmpty = (TextView) root.findViewById(R.id.textEmpty);
+        sharedPreferenceWrapper = new SharedPreferenceWrapper();
+        recyclerViewFileList.setOnDragListener(new myDragEventListener());
+        mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipeRefreshLayout);
+        int colorResIds[] = {R.color.colorPrimaryDark, R.color.colorPrimary, R.color.colorPrimaryDark};
+        mSwipeRefreshLayout.setColorSchemeResources(colorResIds);
+        mSwipeRefreshLayout.setDistanceToTriggerSync(500);
+        mBottomToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar_bottom);
+        toolbar = (Toolbar) root.findViewById(R.id.toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        frameLayoutFab = (FrameLayout) root.findViewById(R.id.frameLayoutFab);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setTitle(R.string.app_name);
+        fabCreateMenu = (FloatingActionsMenu) getActivity().findViewById(R.id.fabCreate);
+        fabCreateFolder = (FloatingActionButton) getActivity().findViewById(R.id.fabCreateFolder);
+        fabCreateFile = (FloatingActionButton) getActivity().findViewById(R.id.fabCreateFile);
+        navDirectory = (LinearLayout) root.findViewById(R.id.navButtons);
+        scrollNavigation = (HorizontalScrollView) root.findViewById(R.id.scrollNavigation);
+        frameLayoutFab.getBackground().setAlpha(0);
+    }
+
+    private void setViewTheme() {
+        Themes theme = ((BaseActivity) getActivity()).getCurrentTheme();
+        switch (theme) {
+            case DARK:
+                mNavigationLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
+                mBottomToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
+                toolbar.setPopupTheme(R.style.Dark_AppTheme_PopupOverlay);
+                frameLayoutFab.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_overlay));
+                break;
+            case LIGHT:
+                toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay);
+                break;
+        }
+    }
+
+    private BroadcastReceiver adsReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(ADS)) {
+                isPremium = intent.getBooleanExtra(FileConstants.KEY_PREMIUM, false);
+                if (isPremium) {
+                    hideAds();
+                } else {
+                    showAds();
+                }
+            }
+        }
+    };
+
+    private void setupAds() {
+        isPremium = BillingHelper.getInstance().getInAppBillingStatus().equals(BillingStatus.PREMIUM);
+        if (isPremium) {
+            hideAds();
+        } else {
+            if (getActivity() != null && !getActivity().isFinishing()) {
+                showAds();
+            }
+        }
+    }
+
+
+    private void hideAds() {
+        LinearLayout adviewLayout = (LinearLayout) root.findViewById(R.id.adviewLayout);
+        if (adviewLayout.getChildCount() != 0) {
+            adviewLayout.removeView(mAdView);
+        }
+    }
+
+    private void showAds() {
+        // DYNAMICALLY CREATE AD START
+        LinearLayout adviewLayout = (LinearLayout) root.findViewById(R.id.adviewLayout);
+        // Create an ad.
+        if (mAdView == null) {
+            mAdView = new AdView(getActivity().getApplicationContext());
+            mAdView.setAdSize(AdSize.BANNER);
+            mAdView.setAdUnitId(getString(R.string.banner_ad_unit_id));
+            // DYNAMICALLY CREATE AD END
+            AdRequest adRequest = new AdRequest.Builder().build();
+            // Start loading the ad in the background.
+            mAdView.loadAd(adRequest);
+            // Add the AdView to the view hierarchy. The view will have no size until the ad is loaded.
+            adviewLayout.addView(mAdView);
+        } else {
+            ((LinearLayout) mAdView.getParent()).removeAllViews();
+            adviewLayout.addView(mAdView);
+            // Reload Ad if necessary.  Loaded ads are lost when the activity is paused.
+            if (!mAdView.isLoading()) {
+                AdRequest adRequest = new AdRequest.Builder().build();
+                // Start loading the ad in the background.
+                mAdView.loadAd(adRequest);
+            }
+        }
+        // DYNAMICALLY CREATE AD END
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+    }
+
+    private void registerReceivers() {
+        IntentFilter intentFilter = new IntentFilter(ADS);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(adsReceiver, intentFilter);
+    }
+
+    private void checkPreferences() {
+        preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        mIsDualModeEnabled = preferences
+                .getBoolean(FileConstants.PREFS_DUAL_PANE, false);
+        mGridColumns = preferences.getInt(FileConstants.KEY_GRID_COLUMNS, 0);
+    }
+
+    private void getArgs() {
+        if (getArguments() != null) {
+            if (getArguments().getString(FileConstants.KEY_PATH) != null) {
+                mFilePath = getArguments().getString(FileConstants.KEY_PATH);
+                mFilePathOther = getArguments().getString(FileConstants.KEY_PATH_OTHER);
+            }
+            category = (Category) getArguments().getSerializable(FileConstants.KEY_CATEGORY);
+            if (checkIfLibraryCategory(category)) {
+                hideFab();
+                addHomeNavButton(false);
+            } else {
+                showFab();
+            }
+            toggleNavigationVisibility(true);
+
+            mIsZip = getArguments().getBoolean(FileConstants.KEY_ZIP, false);
+            boolean isDualPaneInFocus = getArguments().getBoolean(FileConstants.KEY_FOCUS_DUAL, false);
+            if (isDualPaneInFocus) {
+                mLastDualPaneDir = mFilePath;
+                mLastSinglePaneDir = mFilePathOther;
+                Log.d(TAG, "on onActivityCreated dual focus Yes--singledir" + mLastSinglePaneDir + "dualDir=" +
+                        mLastDualPaneDir);
+
+            } else {
+                mLastSinglePaneDir = mFilePath;
+                mLastDualPaneDir = mFilePathOther;
+                Log.d(TAG, "on onActivityCreated dual focus No--singledir" + mLastSinglePaneDir + "dualDir=" +
+                        mLastDualPaneDir);
+            }
+
+        }
+    }
+
+    private boolean checkIfLibraryCategory(Category category) {
+        return !category.equals(FILES);
+    }
+
+    public void showFab() {
+        frameLayoutFab.setVisibility(View.VISIBLE);
+    }
+
+    public void hideFab() {
+        frameLayoutFab.setVisibility(View.GONE);
+    }
+
+    public void addHomeNavButton(boolean isFilesCategory) {
+        if (mIsHomeScreenEnabled) {
+            if (!isDualPaneInFocus) {
+                navDirectory.removeAllViews();
+            }
+            ImageButton imageButton = new ImageButton(this);
+            imageButton.setImageResource(R.drawable.ic_home_white);
+            imageButton.setBackgroundColor(Color.parseColor("#00ffffff"));
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            params.gravity = Gravity.CENTER_VERTICAL;
+
+            imageButton.setLayoutParams(params);
+            imageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    endActionMode();
+                    removeFragmentFromBackStack();
+                }
+            });
+            navDirectory.addView(imageButton);
+
+            ImageView navArrow = new ImageView(this);
+            params.leftMargin = 15;
+            params.rightMargin = 20;
+            navArrow.setImageResource(R.drawable.ic_arrow_nav);
+            navArrow.setLayoutParams(params);
+            navDirectory.addView(navArrow);
+            addTitleText(isFilesCategory);
+        } else {
+            addTitleText(isFilesCategory);
+        }
 
     }
+
+    private void addTitleText(boolean isFilesCategory) {
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.gravity = Gravity.CENTER_VERTICAL;
+
+        if (!isFilesCategory) {
+            String title = getTitleForCategory(category).toUpperCase(Locale.getDefault());
+            final TextView textView = new TextView(getContext());
+            textView.setText(title);
+            textView.setTextColor(ContextCompat.getColor(getContext(), R.color.navButtons));
+            textView.setTextSize(19);
+            int paddingRight = getResources().getDimensionPixelSize(R.dimen.padding_60);
+            textView.setPadding(0, 0, paddingRight, 0);
+            textView.setLayoutParams(params);
+            navDirectory.addView(textView);
+        }
+    }
+
+    public String getTitleForCategory(Category category) {
+        switch (category) {
+            case AUDIO:
+                return getString(R.string.nav_menu_music);
+            case VIDEO:
+                return getString(R.string.nav_menu_video);
+            case IMAGE:
+                return getString(R.string.nav_menu_image);
+            case DOCS:
+                return getString(R.string.nav_menu_docs);
+            case DOWNLOADS:
+                return getString(R.string.downloads);
+            case COMPRESSED:
+                return getString(R.string.compressed);
+            case FAVORITES:
+                return getString(R.string.nav_header_favourites);
+            case PDF:
+                return getString(R.string.pdf);
+            case APPS:
+                return getString(R.string.apk);
+            case LARGE_FILES:
+                return getString(R.string.library_large);
+
+        }
+        return getString(R.string.app_name);
+    }
+
+
+    public void toggleNavigationVisibility(boolean isVisible) {
+        mNavigationLayout.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+    }
+
+
+    private void setupList() {
+        recyclerViewFileList.setHasFixedSize(true);
+        if (mViewMode == FileConstants.KEY_LISTVIEW) {
+            llm = new CustomLayoutManager(getActivity());
+            recyclerViewFileList.setLayoutManager(llm);
+        } else {
+            refreshSpan();
+        }
+        recyclerViewFileList.setItemAnimator(new DefaultItemAnimator());
+        fileListAdapter = new FileListAdapter(getContext(), fileInfoList,
+                category, mViewMode);
+    }
+
 
     @Override
     public void onResume() {
@@ -322,22 +557,6 @@ public class FileListFragment extends Fragment implements LoaderManager
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void hideAds() {
-        LinearLayout adviewLayout = (LinearLayout) root.findViewById(R.id.adviewLayout);
-        if (adviewLayout.getChildCount() != 0) {
-            adviewLayout.removeView(mAdView);
-        }
-    }
-
-    public void setPremium() {
-        isPremium = true;
-        hideAds();
-    }
-
-    public void setTrial() {
-        isPremium = false;
-        showAds();
-    }
 
     private void addItemDecoration() {
 
@@ -364,15 +583,9 @@ public class FileListFragment extends Fragment implements LoaderManager
         }
     }
 
-    private void initializeViews() {
-        recyclerViewFileList = (FastScrollRecyclerView) root.findViewById(R.id.recyclerViewFileList);
-        mTextEmpty = (TextView) root.findViewById(R.id.textEmpty);
-        sharedPreferenceWrapper = new SharedPreferenceWrapper();
-        recyclerViewFileList.setOnDragListener(new myDragEventListener());
-        mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipeRefreshLayout);
-        int colorResIds[] = {R.color.colorPrimaryDark, R.color.colorPrimary, R.color.colorPrimaryDark};
-        mSwipeRefreshLayout.setColorSchemeResources(colorResIds);
-        mSwipeRefreshLayout.setDistanceToTriggerSync(500);
+
+    private void initializeListeners() {
+
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -380,55 +593,31 @@ public class FileListFragment extends Fragment implements LoaderManager
                 refreshList();
             }
         });
-        mBottomToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar_bottom);
-        mFileUtils = new FileUtils();
-        isPremium = getArguments() != null && getArguments().getBoolean(FileConstants.KEY_PREMIUM, true);
-        if (isPremium) {
-            hideAds();
-        } else {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (getActivity() != null && !getActivity().isFinishing()) {
-                        showAds();
+
+        fabCreateFile.setOnClickListener(this);
+        fabCreateFolder.setOnClickListener(this);
+
+        fabCreateMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu
+                .OnFloatingActionsMenuUpdateListener() {
+
+            @Override
+            public void onMenuExpanded() {
+                frameLayoutFab.getBackground().setAlpha(240);
+                frameLayoutFab.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        fabCreateMenu.collapse();
+                        return true;
                     }
-                }
-            }, 2000);
-        }
-
-    }
-
-    private void showAds() {
-        // DYNAMICALLY CREATE AD START
-        LinearLayout adviewLayout = (LinearLayout) root.findViewById(R.id.adviewLayout);
-        // Create an ad.
-        if (mAdView == null) {
-            mAdView = new AdView(getActivity().getApplicationContext());
-            mAdView.setAdSize(AdSize.BANNER);
-            mAdView.setAdUnitId(getString(R.string.banner_ad_unit_id));
-            // DYNAMICALLY CREATE AD END
-            AdRequest adRequest = new AdRequest.Builder().build();
-            // Start loading the ad in the background.
-            mAdView.loadAd(adRequest);
-            // Add the AdView to the view hierarchy. The view will have no size until the ad is loaded.
-            adviewLayout.addView(mAdView);
-        } else {
-            ((LinearLayout) mAdView.getParent()).removeAllViews();
-            adviewLayout.addView(mAdView);
-            // Reload Ad if necessary.  Loaded ads are lost when the activity is paused.
-            if (!mAdView.isLoading()) {
-                AdRequest adRequest = new AdRequest.Builder().build();
-                // Start loading the ad in the background.
-                mAdView.loadAd(adRequest);
+                });
             }
-        }
-        // DYNAMICALLY CREATE AD END
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
-    }
 
-
-    private void initializeListeners() {
+            @Override
+            public void onMenuCollapsed() {
+                frameLayoutFab.getBackground().setAlpha(0);
+                frameLayoutFab.setOnTouchListener(null);
+            }
+        });
         fileListAdapter.setOnItemClickListener(new FileListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
@@ -530,6 +719,240 @@ public class FileListFragment extends Fragment implements LoaderManager
         });
     }
 
+    public void setNavDirectory(String path, boolean isDualPane) {
+        String[] parts;
+        parts = path.split(File.separator);
+        isDualPaneInFocus = isDualPane;
+
+        if (!isDualPaneInFocus) {
+            navDirectory.removeAllViews();
+            mCurrentDir = path;
+        } else {
+            navDirectoryDualPane.removeAllViews();
+            mCurrentDirDualPane = path;
+        }
+
+
+        String dir = "";
+
+        addHomeNavButton(true);
+
+        // If root dir , parts will be 0
+        if (parts.length == 0) {
+
+            if (isDualPaneInFocus) {
+                isCurrentDualDirRoot = true;
+            } else {
+                isCurrentDirRoot = true;
+            }
+            mStartingDir = File.separator;
+            setNavDir(File.separator, File.separator); // Add Root button
+        } else {
+            int count = 0;
+            for (int i = 1; i < parts.length; i++) {
+                dir += File.separator + parts[i];
+
+//                if (!isCurrentDirRoot) {
+                if (!isDualPaneInFocus) {
+//                    Logger.log(TAG, "setNavDirectory--dir=" + dir + "  Starting dir=" + mStartingDir);
+
+                    if (!dir.contains(mStartingDir)) {
+                        continue;
+                    }
+                } else {
+//                    Logger.log(TAG, "setNavDirectory--dir=" + dir + "  Starting DUAL dir=" + mStartingDirDualPane);
+
+                    if (!dir.contains(mStartingDirDualPane)) {
+                        continue;
+                    }
+                }
+//                }
+                /*Count check so that ROOT is added only once in Navigation
+                  Handles the scenario :
+                  1. When Fav item is a root child and if we click on any folder in that fav item
+                     multiple ROOT blocks are not added to Navigation view*/
+                if (!isDualPaneInFocus) {
+                    if (isCurrentDirRoot && count == 0) {
+                        setNavDir(File.separator, File.separator);
+                    }
+                } else {
+                    if (isCurrentDualDirRoot && count == 0) {
+                        setNavDir(File.separator, File.separator);
+                    }
+                }
+
+                count++;
+                setNavDir(dir, parts[i]);
+            }
+        }
+
+    }
+
+    private void setNavDir(String dir, String parts) {
+
+
+        int WRAP_CONTENT = LinearLayout.LayoutParams.WRAP_CONTENT;
+        if (dir.equals(getInternalStorage().getAbsolutePath())) {
+            if (isDualPaneInFocus) {
+                isCurrentDualDirRoot = false;
+            } else {
+                isCurrentDirRoot = false;
+            }
+
+            createNavButton(STORAGE_INTERNAL, dir);
+        } else if (dir.equals(File.separator)) {
+            createNavButton(STORAGE_ROOT, dir);
+        } else if (mExternalSDPaths.contains(dir)) {
+            if (isDualPaneInFocus) {
+                isCurrentDualDirRoot = false;
+            } else {
+                isCurrentDirRoot = false;
+            }
+            createNavButton(STORAGE_EXTERNAL, dir);
+        } else {
+            ImageView navArrow = new ImageView(this);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(WRAP_CONTENT,
+                    WRAP_CONTENT);
+            layoutParams.leftMargin = 20;
+            layoutParams.gravity = Gravity.CENTER_VERTICAL;
+            navArrow.setImageResource(R.drawable.ic_arrow_nav);
+            navArrow.setLayoutParams(layoutParams);
+
+            if (!isDualPaneInFocus) {
+                navDirectory.addView(navArrow);
+            } else {
+                navDirectoryDualPane.addView(navArrow);
+            }
+            createNavButton(parts, dir);
+            if (!isDualPaneInFocus) {
+                scrollNavigation.postDelayed(new Runnable() {
+                    public void run() {
+                        HorizontalScrollView hv = (HorizontalScrollView) findViewById(R.id
+                                .scrollNavigation);
+                        hv.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
+                    }
+                }, 100L);
+            } else {
+                scrollNavigationDualPane.postDelayed(new Runnable() {
+                    public void run() {
+                        HorizontalScrollView hv = (HorizontalScrollView) findViewById(R.id
+                                .scrollNavigationDualPane);
+                        hv.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
+                    }
+                }, 100L);
+            }
+        }
+    }
+
+    private void createNavButton(String text, final String dir) {
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.gravity = Gravity.CENTER_VERTICAL;
+
+        if (text.equals(STORAGE_INTERNAL) || text.equals(STORAGE_EXTERNAL) ||
+                text.equals(STORAGE_ROOT)) {
+            ImageButton imageButton = new ImageButton(this);
+            if (text.equals(STORAGE_INTERNAL)) {
+                imageButton.setImageResource(R.drawable.ic_storage_white_nav);
+            } else if (text.equals(STORAGE_EXTERNAL)) {
+                imageButton.setImageResource(R.drawable.ic_ext_nav);
+            } else {
+                imageButton.setImageResource(R.drawable.ic_root_white_nav);
+            }
+            imageButton.setBackgroundColor(Color.parseColor("#00ffffff"));
+            imageButton.setLayoutParams(params);
+            imageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (dir != null) {
+                        navButtonOnClick(view, dir);
+                    }
+                }
+            });
+            if (!isDualPaneInFocus) {
+                navDirectory.addView(imageButton);
+            } else {
+                navDirectoryDualPane.addView(imageButton);
+            }
+
+        } else {
+            final TextView textView = new TextView(this);
+            textView.setText(text);
+            textView.setAllCaps(true);
+            textView.setTextColor(ContextCompat.getColor(this, R.color.navButtons));
+            textView.setTextSize(15);
+            params.leftMargin = 20;
+            textView.setPadding(0, 0, 35, 0);
+            textView.setLayoutParams(params);
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Logger.log(TAG, "nav button onclick--dir=" + dir);
+                    if (dir != null) {
+                        navButtonOnClick(view, dir);
+                    }
+                }
+            });
+            if (!isDualPaneInFocus) {
+                navDirectory.addView(textView);
+            } else {
+                navDirectoryDualPane.addView(textView);
+            }
+        }
+
+
+    }
+
+    private void navButtonOnClick(View view, final String dir) {
+        Logger.log(TAG, "Dir=" + dir + " mCurrentDir=" + mCurrentDir);
+
+        BaseFileList baseFileList = (BaseFileList) getSupportFragmentManager().findFragmentById(R.id
+                .main_container);
+
+  /*      FileListDualFragment fileListDualFragment = (FileListDualFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.frame_container_dual);*/
+
+        boolean isDualPaneButtonClicked;
+        LinearLayout parent = (LinearLayout) view.getParent();
+        isDualPaneButtonClicked = parent.getId() != navDirectory.getId();
+
+        if (!isDualPaneButtonClicked) {
+            if (!mCurrentDir.equals(dir)) {
+                if (baseFileList.isZipMode()) {
+                    if (baseFileList.isInZipMode(dir)) {
+                        int newSize = mBackStackList.size() - 1;
+                        mBackStackList.remove(newSize);
+                        mCurrentDir = mBackStackList.get(newSize - 1).getFilePath();
+                        mCategory = mBackStackList.get(newSize - 1).getCategory();
+                        baseFileList.reloadList(true, mCurrentDir);
+                        if (!mIsFromHomePage) {
+                            setNavDirectory(mCurrentDir, false);
+                        } else {
+                            hideFab();
+                        }
+                    }
+                } else {
+                    mCurrentDir = dir;
+                    int position = 0;
+                    for (int i = 0; i < mBackStackList.size(); i++) {
+                        if (mCurrentDir.equals(mBackStackList.get(i).getFilePath())) {
+                            position = i;
+                            break;
+                        }
+                    }
+                    for (int j = mBackStackList.size() - 1; j > position; j--) {
+                        mBackStackList.remove(j);
+                    }
+
+                    baseFileList.reloadList(true, mCurrentDir);
+                    setNavDirectory(mCurrentDir, false);
+
+                }
+            }
+        }
+    }
+
 
     public void openCompressedFile(String path) {
         computeScroll();
@@ -548,13 +971,13 @@ public class FileListFragment extends Fragment implements LoaderManager
                 mCategory == FileConstants.CATEGORY.DOWNLOADS.getValue() ||
                 mCategory == FileConstants.CATEGORY.FAVORITES.getValue() ||
                 mCategory == FileConstants.CATEGORY.LARGE_FILES.getValue()) {
-            mBaseActivity.showFab();
-            mBaseActivity.setCurrentDir(path, isDualPaneInFocus);
-            mBaseActivity.setCurrentCategory(mCategory);
-            mBaseActivity.initializeStartingDirectory();
+            aceActivity.showFab();
+            aceActivity.setCurrentDir(path, isDualPaneInFocus);
+            aceActivity.setCurrentCategory(mCategory);
+            aceActivity.initializeStartingDirectory();
         }
-        mBaseActivity.setNavDirectory(path, isDualPaneInFocus);
-        mBaseActivity.addToBackStack(path, mCategory);
+        aceActivity.setNavDirectory(path, isDualPaneInFocus);
+        aceActivity.addToBackStack(path, mCategory);
 
     }
 
@@ -586,20 +1009,20 @@ public class FileListFragment extends Fragment implements LoaderManager
                         String path = mFilePath = fileInfoList.get(position).getFilePath();
 
                         isDualPaneInFocus = checkIfDualFragment();
-                        mBaseActivity.setCurrentDir(path, isDualPaneInFocus);
+                        aceActivity.setCurrentDir(path, isDualPaneInFocus);
 
                         // This is opCompleted when any homescreen item is clicked like Fav . Then Fav->FavList . So on
                         // clicking fav list item, category has to be set to files
                         if (mCategory != FileConstants.CATEGORY.FILES.getValue() && FileUtils.checkIfFileCategory
                                 (mCategory)) {
                             mCategory = FileConstants.CATEGORY.FILES.getValue();
-                            mBaseActivity.showFab();
-                            mBaseActivity.setCurrentCategory(mCategory);
-                            mBaseActivity.initializeStartingDirectory();
+                            aceActivity.showFab();
+                            aceActivity.setCurrentCategory(mCategory);
+                            aceActivity.initializeStartingDirectory();
                         }
                         reloadList(false, mFilePath);
-                        mBaseActivity.setNavDirectory(path, isDualPaneInFocus);
-                        mBaseActivity.addToBackStack(path, mCategory);
+                        aceActivity.setNavDirectory(path, isDualPaneInFocus);
+                        aceActivity.addToBackStack(path, mCategory);
                     }
 
 
@@ -641,7 +1064,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                                         }
                                         zipEntry1 = zipEntry;
                                         new ExtractZipEntry(zipFile, cacheDirPath,
-                                                FileListFragment.this, name, zipEntry1)
+                                                BaseFileList.this, name, zipEntry1)
                                                 .execute();
                                     } catch (IOException e) {
                                         e.printStackTrace();
@@ -657,7 +1080,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                                     try {
                                         Archive rarFile = new Archive(new File(mZipParentPath));
                                         new ExtractZipEntry(rarFile, cacheDirPath,
-                                                FileListFragment.this, name, fileHeader)
+                                                BaseFileList.this, name, fileHeader)
                                                 .execute();
 
                                     } catch (IOException | RarException e) {
@@ -669,7 +1092,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                             }
 
                         } else {
-                            FileUtils.viewFile(FileListFragment.this, filePath, extension);
+                            FileUtils.viewFile(BaseFileList.this, filePath, extension);
                         }
                     }
                 }
@@ -678,7 +1101,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             case 2:
             case 3:
             case 4:
-                FileUtils.viewFile(FileListFragment.this, fileInfoList.get(position).getFilePath(),
+                FileUtils.viewFile(BaseFileList.this, fileInfoList.get(position).getFilePath(),
                         fileInfoList.get
                                 (position).getExtension());
                 break;
@@ -710,8 +1133,8 @@ public class FileListFragment extends Fragment implements LoaderManager
         } else {
             newPath = mZipParentPath + File.separator + mCurrentZipDir;
         }
-        mBaseActivity.setCurrentDir(newPath, isDualPaneInFocus);
-        mBaseActivity.setNavDirectory(newPath, isDualPaneInFocus);
+        aceActivity.setCurrentDir(newPath, isDualPaneInFocus);
+        aceActivity.setNavDirectory(newPath, isDualPaneInFocus);
     }
 
     private String createCacheDirExtract() {
@@ -833,7 +1256,7 @@ public class FileListFragment extends Fragment implements LoaderManager
         fileInfoList.add(fileInfo);
         fileListAdapter.updateSearchResult(fileInfo);
         stopAnimation();
-//        mBaseActivity.addToBackStack(mFilePath, mCategory);
+//        aceActivity.addToBackStack(mFilePath, mCategory);
 
     }
 
@@ -873,8 +1296,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     private void toggleDragData(FileInfo fileInfo) {
         if (mDragPaths.contains(fileInfo)) {
             mDragPaths.remove(fileInfo);
-        }
-        else {
+        } else {
             mDragPaths.add(fileInfo);
         }
     }
@@ -886,13 +1308,13 @@ public class FileListFragment extends Fragment implements LoaderManager
         ActionMode actionMode = getActionMode();
         if (hasCheckedItems && actionMode == null) {
             // there are some selected items, start the actionMode
-//            mBaseActivity.updateDrawerIcon(true);
+//            aceActivity.updateDrawerIcon(true);
 
             startActionMode();
 
 
             mIsDualActionModeActive = checkIfDualFragment();
-//            ((BaseActivity) getActivity()).setFileList(fileInfoList);
+//            ((AceActivity) getActivity()).setFileList(fileInfoList);
         } else if (!hasCheckedItems && actionMode != null) {
             // there no selected items, finish the actionMode
 
@@ -1033,8 +1455,8 @@ public class FileListFragment extends Fragment implements LoaderManager
                     newPath = mZipParentPath + mCurrentZipDir;
                 }
             }
-            mBaseActivity.setCurrentDir(newPath, isDualPaneInFocus);
-            mBaseActivity.setNavDirectory(newPath, isDualPaneInFocus);
+            aceActivity.setCurrentDir(newPath, isDualPaneInFocus);
+            aceActivity.setNavDirectory(newPath, isDualPaneInFocus);
             return false;
         }
     }
@@ -1047,8 +1469,8 @@ public class FileListFragment extends Fragment implements LoaderManager
             mInParentZip = true;
             mCurrentZipDir = null;
             reloadList(true, mZipParentPath);
-            mBaseActivity.setCurrentDir(mZipParentPath, isDualPaneInFocus);
-            mBaseActivity.setNavDirectory(mZipParentPath, isDualPaneInFocus);
+            aceActivity.setCurrentDir(mZipParentPath, isDualPaneInFocus);
+            aceActivity.setNavDirectory(mZipParentPath, isDualPaneInFocus);
             return false;
         } else {
             String newPath = path.substring(mZipParentPath.length() + 1, path.length());
@@ -1056,8 +1478,8 @@ public class FileListFragment extends Fragment implements LoaderManager
             mCurrentZipDir = newPath;
             mInParentZip = false;
             reloadList(false, mZipParentPath);
-            mBaseActivity.setCurrentDir(path, isDualPaneInFocus);
-            mBaseActivity.setNavDirectory(path, isDualPaneInFocus);
+            aceActivity.setCurrentDir(path, isDualPaneInFocus);
+            aceActivity.setNavDirectory(path, isDualPaneInFocus);
             return false;
         }
     }
@@ -1089,7 +1511,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             return new FileListLoader(this, path, FileConstants.CATEGORY.ZIP_VIEWER.getValue(),
                     mCurrentZipDir, isDualPaneInFocus, mInParentZip);
         } else {
-            return new FileListLoader(this,path, mCategory,false);
+            return new FileListLoader(this, path, mCategory, false);
         }
     }
 
@@ -1106,7 +1528,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
             Log.d(TAG, "on onLoadFinished--" + data.size());
 /*            if (FileUtils.checkIfLibraryCategory(mCategory)) {
-                mBaseActivity.addCountText(data.size());
+                aceActivity.addCountText(data.size());
             }*/
             mStopAnim = true;
             fileInfoList = data;
@@ -1166,12 +1588,12 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     private boolean checkIfDualFragment() {
         return false;
-//        return FileListFragment.this instanceof FileListDualFragment;
+//        return BaseFileList.this instanceof FileListDualFragment;
     }
 
     private void startActionMode() {
 
-        mBaseActivity.toggleFab(true);
+        aceActivity.toggleFab(true);
 //        toggleDummyView(true);
         mBottomToolbar.setVisibility(View.VISIBLE);
         mBottomToolbar.startActionMode(new ActionModeCallback());
@@ -1232,7 +1654,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                         removeFavorite(filesToDelete);
                         Toast.makeText(getContext(), getString(R.string.fav_removed), Toast.LENGTH_SHORT).show();
                     } else {
-                        mFileUtils.showDeleteDialog(mBaseActivity, filesToDelete, RootUtils.isRooted(getActivity()));
+                        mFileUtils.showDeleteDialog(aceActivity, filesToDelete, RootUtils.isRooted(getActivity()));
                     }
                     mActionMode.finish();
                 }
@@ -1315,7 +1737,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                             .getFilePath();
 
                     @SuppressLint("SdCardPath")
-                    boolean isRoot = mPreferences.getBoolean(FileConstants.PREFS_ROOTED, false);
+                    boolean isRoot = preferences.getBoolean(FileConstants.PREFS_ROOTED, false);
                     if (FileUtils.isFileCompressed(filePath)) {
                         mExtractItem.setVisible(true);
                         mArchiveItem.setVisible(false);
@@ -1438,7 +1860,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                             paths.add(info);
                         }
                         setBackPressed();
-                        mFileUtils.showCompressDialog(mBaseActivity, mFilePath, paths);
+                        mFileUtils.showCompressDialog(aceActivity, mFilePath, paths);
                     }
                     mActionMode.finish();
                     return true;
@@ -1519,7 +1941,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             mDragPaths.clear();
             // FAB should be visible only for Files Category
             if (mCategory == 0) {
-                mBaseActivity.toggleFab(false);
+                aceActivity.toggleFab(false);
             }
         }
     }
@@ -1586,7 +2008,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                     return;
                 }
                 File oldFile = new File(oldFilePath);
-                mBaseActivity.mFileOpsHelper.renameFile(mIsRootMode, oldFile, newFile,
+                aceActivity.mFileOpsHelper.renameFile(mIsRootMode, oldFile, newFile,
                         position, checkIfDualFragment());
                 materialDialog.dismiss();
             }
@@ -1618,7 +2040,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             String temp = path.substring(0, path.lastIndexOf(File.separator));
 
             File newFile = new File(temp + File.separator + renamedName);
-            mBaseActivity.mFileOpsHelper.renameFile(mIsRootMode, oldFile, newFile,
+            aceActivity.mFileOpsHelper.renameFile(mIsRootMode, oldFile, newFile,
                     pos.get(i), checkIfDualFragment());
         }
     }
@@ -1756,7 +2178,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             @Override
             public void onClick(View view) {
                 DialogBrowseFragment dialogFragment = new DialogBrowseFragment();
-                dialogFragment.setTargetFragment(FileListFragment.this, DIALOG_FRAGMENT);
+                dialogFragment.setTargetFragment(BaseFileList.this, DIALOG_FRAGMENT);
                 dialogFragment.setStyle(DialogFragment.STYLE_NORMAL, checkTheme());
                 dialogFragment.show(getFragmentManager(), "Browse Fragment");
             }
@@ -1779,7 +2201,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                                 .dialog_title_paste_conflict));
                         return;
                     }
-                    mBaseActivity.mFileOpsHelper.extractFile(currentFile, newFile);
+                    aceActivity.mFileOpsHelper.extractFile(currentFile, newFile);
                 } else {
                     File newFile = new File(currentDir + "/" + fileName);
                     File currentFile = new File(currentFilePath);
@@ -1788,7 +2210,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                                 .dialog_title_paste_conflict));
                         return;
                     }
-                    mBaseActivity.mFileOpsHelper.extractFile(currentFile, newFile);
+                    aceActivity.mFileOpsHelper.extractFile(currentFile, newFile);
                 }
                 setBackPressed();
                 materialDialog.dismiss();
@@ -1832,7 +2254,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             favInfoArrayList.add(favInfo);
         }
 
-        mBaseActivity.updateFavourites(favInfoArrayList);
+        aceActivity.updateFavourites(favInfoArrayList);
     }
 
     private void removeFavorite(ArrayList<FileInfo> fileInfoList) {
@@ -1849,7 +2271,7 @@ public class FileListFragment extends Fragment implements LoaderManager
             favInfoArrayList.add(favInfo);
         }
         refreshList();
-        mBaseActivity.removeFavourites(favInfoArrayList);
+        aceActivity.removeFavourites(favInfoArrayList);
     }
 
 
@@ -2085,7 +2507,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                 final boolean isMoveOperation = position == 1;
                 ArrayList<FileInfo> info = new ArrayList<>();
                 info.addAll(sourcePaths);
-                PasteConflictChecker conflictChecker = new PasteConflictChecker(mBaseActivity, destinationDir,
+                PasteConflictChecker conflictChecker = new PasteConflictChecker(aceActivity, destinationDir,
                         mIsRootMode, isMoveOperation, info);
                 conflictChecker.execute();
                 clearSelectedPos();
@@ -2229,7 +2651,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                             final boolean isMoveOperation = false;
                             ArrayList<FileInfo> info = new ArrayList<>();
                             info.addAll(draggedFiles);
-                            PasteConflictChecker conflictChecker = new PasteConflictChecker(mBaseActivity,
+                            PasteConflictChecker conflictChecker = new PasteConflictChecker(aceActivity,
                                     destinationDir,
                                     mIsRootMode, isMoveOperation, info);
                             conflictChecker.execute();
@@ -2277,7 +2699,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                             }*/
                         } else {
                             Logger.log(TAG, "DRAG END parent dual =" + false);
-                            FileListFragment singlePaneFragment = (FileListFragment)
+                            BaseFileList singlePaneFragment = (BaseFileList)
                                     getFragmentManager()
                                             .findFragmentById(R
                                                     .id.main_container);
@@ -2399,7 +2821,7 @@ public class FileListFragment extends Fragment implements LoaderManager
                 if (mCopiedData.size() > 0) {
                     ArrayList<FileInfo> info = new ArrayList<>();
                     info.addAll(mCopiedData);
-                    PasteConflictChecker conflictChecker = new PasteConflictChecker(mBaseActivity, mFilePath,
+                    PasteConflictChecker conflictChecker = new PasteConflictChecker(aceActivity, mFilePath,
                             mIsRootMode, mIsMoveOperation, info);
                     conflictChecker.execute();
                     clearSelectedPos();
@@ -2455,11 +2877,11 @@ public class FileListFragment extends Fragment implements LoaderManager
     }
 
     private void persistSortMode(int sortMode) {
-        mPreferences.edit().putInt(FileConstants.KEY_SORT_MODE, sortMode).apply();
+        preferences.edit().putInt(FileConstants.KEY_SORT_MODE, sortMode).apply();
     }
 
     private int getSortMode() {
-        return mPreferences.getInt(FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
+        return preferences.getInt(FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
     }
 
     private void switchView() {
@@ -2503,7 +2925,7 @@ public class FileListFragment extends Fragment implements LoaderManager
 
     public void refreshSpan() {
         if (mViewMode == FileConstants.KEY_GRIDVIEW) {
-            mIsDualModeEnabled = mPreferences
+            mIsDualModeEnabled = preferences
                     .getBoolean(FileConstants.PREFS_DUAL_PANE, false);
             if (mCurrentOrientation == Configuration.ORIENTATION_PORTRAIT || !mIsDualModeEnabled || FileUtils
                     .checkIfLibraryCategory(mCategory)) {
@@ -2523,7 +2945,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     public void onDestroyView() {
         recyclerViewFileList.stopScroll();
         if (!mInstanceStateExists) {
-            mPreferences.edit().putInt(FileConstants.KEY_GRID_COLUMNS, mGridColumns).apply();
+            preferences.edit().putInt(FileConstants.KEY_GRID_COLUMNS, mGridColumns).apply();
             sharedPreferenceWrapper.savePrefs(getActivity(), mViewMode);
         }
         removeSearchTask();
@@ -2558,7 +2980,7 @@ public class FileListFragment extends Fragment implements LoaderManager
     @Override
     public void onDetach() {
         super.onDetach();
-        mBaseActivity = null;
+        aceActivity = null;
     }
 
     private void clearCache() {

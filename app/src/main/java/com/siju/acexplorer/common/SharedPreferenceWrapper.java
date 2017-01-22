@@ -89,7 +89,7 @@ public class SharedPreferenceWrapper {
 
     public ArrayList<FavInfo> getFavorites(Context context) {
         SharedPreferences settings;
-        List<FavInfo> favorites;
+        ArrayList<FavInfo> favorites = new ArrayList<>();
 
         settings = context.getSharedPreferences(PREFS_NAME,
                 Context.MODE_PRIVATE);
@@ -98,13 +98,10 @@ public class SharedPreferenceWrapper {
             Gson gson = new Gson();
             FavInfo[] favoriteItems = gson.fromJson(jsonFavorites,
                     FavInfo[].class);
+            favorites.addAll(Arrays.asList(favoriteItems));
+        }
 
-            favorites = Arrays.asList(favoriteItems);
-            favorites = new ArrayList<>(favorites);
-        } else
-            return null;
-
-        return (ArrayList<FavInfo>) favorites;
+        return favorites;
     }
 
     public void addLibrary(Context context, LibrarySortModel librarySortModel) {
@@ -115,14 +112,14 @@ public class SharedPreferenceWrapper {
             libraries.add(librarySortModel);
             saveLibrary(context, libraries);
         }
-        Logger.log("SIJU","addLibrary="+libraries.size());
+        Logger.log("SIJU", "addLibrary=" + libraries.size());
 
     }
 
 
     public ArrayList<LibrarySortModel> getLibraries(Context context) {
         SharedPreferences settings;
-        List<LibrarySortModel> libraries;
+        ArrayList<LibrarySortModel> libraries = new ArrayList<>();
 
         settings = context.getSharedPreferences(PREFS_NAME,
                 Context.MODE_PRIVATE);
@@ -131,15 +128,11 @@ public class SharedPreferenceWrapper {
             Gson gson = new Gson();
             LibrarySortModel[] libItems = gson.fromJson(jsonFavorites,
                     LibrarySortModel[].class);
+            libraries.addAll(Arrays.asList(libItems));
 
-            libraries = Arrays.asList(libItems);
-            libraries = new ArrayList<>(libraries);
-//            Logger.log("SIJU","getLibraries="+jsonFavorites);
+        }
 
-        } else
-            return null;
-
-        return (ArrayList<LibrarySortModel>) libraries;
+        return libraries;
     }
 
     public void savePrefs(Context context, int viewMode) {
@@ -163,7 +156,7 @@ public class SharedPreferenceWrapper {
 
         Gson gson = new Gson();
         String jsonFavorites = gson.toJson(librarySortModel);
-        Logger.log("SIJU","Save library="+jsonFavorites);
+        Logger.log("SIJU", "Save library=" + jsonFavorites);
         editor.putString(LIBRARIES, jsonFavorites);
 
         editor.apply();

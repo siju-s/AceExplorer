@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.siju.acexplorer.BaseActivity;
+import com.siju.acexplorer.AceActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
@@ -35,12 +35,12 @@ public class PasteConflictChecker extends AsyncTask<Void, String, ArrayList<File
     private boolean rootmode = false;
     private final String mCurrentDir;
     private boolean mIsMoveOperation = false;
-    private final BaseActivity mActivity;
+    private final AceActivity mActivity;
     private ArrayList<FileInfo> mTotalFileList;
     private boolean mLowStorage;
 
 
-    public PasteConflictChecker(BaseActivity context, String currentDir, boolean
+    public PasteConflictChecker(AceActivity context, String currentDir, boolean
             rootMode, boolean isMoveOperation, ArrayList<FileInfo> files) {
         mActivity = context;
         mCurrentDir = currentDir;

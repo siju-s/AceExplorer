@@ -9,7 +9,7 @@ import android.util.Log;
 
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.ui.DialogBrowseFragment;
-import com.siju.acexplorer.filesystem.utils.ThemeUtils;
+import com.siju.acexplorer.filesystem.theme.ThemeUtils;
 
 
 public class TransparentActivity extends AppCompatActivity {

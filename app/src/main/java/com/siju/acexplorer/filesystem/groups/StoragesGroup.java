@@ -3,9 +3,7 @@ package com.siju.acexplorer.filesystem.groups;
 import android.content.Context;
 
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
-import com.siju.acexplorer.model.SectionGroup;
 import com.siju.acexplorer.model.SectionItems;
 
 import java.io.File;
@@ -22,6 +20,7 @@ public class StoragesGroup {
     private String STORAGE_EXTERNAL;
     private final ArrayList<SectionItems> totalStorages = new ArrayList<>();
     private final ArrayList<SectionItems> storagesList = new ArrayList<>();
+    private ArrayList<String> externalSDPaths = new ArrayList<>();
 
     private Context context;
 
@@ -36,11 +35,12 @@ public class StoragesGroup {
         STORAGE_EXTERNAL = context.getResources().getString(R.string.nav_menu_ext_storage);
     }
 
-    public void initializeStorageGroup() {
+    public ArrayList<SectionItems> getStorageGroupData() {
         initConstants();
         addRootDir();
         addStorages();
         totalStorages.addAll(storagesList);
+        return totalStorages;
     }
 
 
@@ -71,11 +71,11 @@ public class StoragesGroup {
             } else if ("/storage/sdcard1".equals(path)) {
                 name = STORAGE_EXTERNAL;
                 icon = R.drawable.ic_ext_white;
-                mExternalSDPaths.add(path);
+                externalSDPaths.add(path);
             } else {
                 name = file.getName();
                 icon = R.drawable.ic_ext_white;
-                mExternalSDPaths.add(path);
+                externalSDPaths.add(path);
             }
             if (!file.isDirectory() || file.canExecute()) {
                 long spaceLeft = getSpaceLeft(file);
@@ -92,6 +92,11 @@ public class StoragesGroup {
         return storagesList;
     }
 
+    public ArrayList<String> getExternalSDList() {
+        return externalSDPaths;
+    }
+
+
     public ArrayList<SectionItems> getTotalStorages() {
         return totalStorages;
     }
@@ -101,5 +106,6 @@ public class StoragesGroup {
         return FileUtils.formatSize(context, spaceLeft) + freePlaceholder +
                 FileUtils.formatSize(context, totalSpace);
     }
+
 
 }

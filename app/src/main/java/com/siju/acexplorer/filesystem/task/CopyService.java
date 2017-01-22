@@ -14,7 +14,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 
-import com.siju.acexplorer.BaseActivity;
+import com.siju.acexplorer.AceActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
@@ -65,7 +65,7 @@ public class CopyService extends Service {
         mNotifyManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         b.putInt("id", startId);
-        Intent notificationIntent = new Intent(this, BaseActivity.class);
+        Intent notificationIntent = new Intent(this, AceActivity.class);
         notificationIntent.setAction(Intent.ACTION_MAIN);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);

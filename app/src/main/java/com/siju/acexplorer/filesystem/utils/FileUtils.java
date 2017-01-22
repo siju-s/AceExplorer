@@ -43,11 +43,11 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.siju.acexplorer.BaseActivity;
+import com.siju.acexplorer.AceActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
-import com.siju.acexplorer.filesystem.FileListFragment;
+import com.siju.acexplorer.filesystem.BaseFileList;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.task.CopyService;
 import com.siju.acexplorer.filesystem.task.CreateZipTask;
@@ -1034,9 +1034,7 @@ public class FileUtils implements Progress {
 
     }
 
-    public static boolean checkIfLibraryCategory(int category) {
-        return category != FileConstants.CATEGORY.FILES.getValue();
-    }
+
 
     public static boolean isMediaScanningRequired(String mimeType) {
         Logger.log(TAG, "Mime type=" + mimeType);
@@ -1597,7 +1595,7 @@ public class FileUtils implements Progress {
     /**
      * @param fileInfo Paths to delete
      */
-    public void showDeleteDialog(final BaseActivity activity, final ArrayList<FileInfo> fileInfo, final boolean
+    public void showDeleteDialog(final AceActivity activity, final ArrayList<FileInfo> fileInfo, final boolean
             isRooted) {
         String title = activity.getString(R.string.dialog_delete_title);
         String texts[] = new String[]{title, activity.getString(R.string.msg_ok), "", activity.getString(R.string
@@ -1635,7 +1633,7 @@ public class FileUtils implements Progress {
     }
 
     @SuppressWarnings("ConstantConditions")
-    public void createFileDialog(final BaseActivity activity, final boolean isRootMode, final String path) {
+    public void createFileDialog(final AceActivity activity, final boolean isRootMode, final String path) {
 
         String title = activity.getString(R.string.new_file);
         String texts[] = new String[]{activity.getString(R.string.enter_name), "", title, activity.getString(R.string
@@ -1673,7 +1671,7 @@ public class FileUtils implements Progress {
     }
 
     @SuppressWarnings("ConstantConditions")
-    public void createDirDialog(final BaseActivity activity, final boolean isRootMode, final String path) {
+    public void createDirDialog(final AceActivity activity, final boolean isRootMode, final String path) {
 
         String title = activity.getString(R.string.new_folder);
         String texts[] = new String[]{activity.getString(R.string.enter_name), "", title, activity.getString(R.string
@@ -1743,7 +1741,7 @@ public class FileUtils implements Progress {
              /*   if (fragment instanceof FileListDualFragment)
                     ((FileListDualFragment) fragment).openCompressedFile(path);
                 else*/
-                ((FileListFragment) fragment).openCompressedFile(path);
+                ((BaseFileList) fragment).openCompressedFile(path);
 
                 materialDialog.dismiss();
             }
@@ -1754,7 +1752,7 @@ public class FileUtils implements Progress {
     }
 
     @SuppressWarnings("ConstantConditions")
-    public void showCompressDialog(final BaseActivity activity, final String currentDir, final ArrayList<FileInfo>
+    public void showCompressDialog(final AceActivity activity, final String currentDir, final ArrayList<FileInfo>
             paths) {
 
         final String ext = ".zip";
@@ -2056,33 +2054,6 @@ public class FileUtils implements Progress {
 
 
         return hash;
-    }
-
-    public static String getTitleForCategory(Context context, int category) {
-        switch (category) {
-            case 1:
-                return context.getString(R.string.nav_menu_music);
-            case 2:
-                return context.getString(R.string.nav_menu_video);
-            case 3:
-                return context.getString(R.string.nav_menu_image);
-            case 4:
-                return context.getString(R.string.nav_menu_docs);
-            case 5:
-                return context.getString(R.string.downloads);
-            case 7:
-                return context.getString(R.string.compressed);
-            case 8:
-                return context.getString(R.string.nav_header_favourites);
-            case 9:
-                return context.getString(R.string.pdf);
-            case 10:
-                return context.getString(R.string.apk);
-            case 11:
-                return context.getString(R.string.library_large);
-
-        }
-        return context.getString(R.string.app_name);
     }
 
 

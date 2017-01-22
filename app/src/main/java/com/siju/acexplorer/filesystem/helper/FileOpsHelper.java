@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.siju.acexplorer.BaseActivity;
+import com.siju.acexplorer.AceActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
@@ -30,11 +30,11 @@ import java.util.ArrayList;
 
 public class FileOpsHelper {
 
-    private final BaseActivity mActivity;
+    private final AceActivity mActivity;
     private final String TAG = this.getClass().getSimpleName();
 
-    public FileOpsHelper(BaseActivity baseActivity) {
-        mActivity = baseActivity;
+    public FileOpsHelper(AceActivity aceActivity) {
+        mActivity = aceActivity;
     }
 
 
@@ -301,7 +301,7 @@ public class FileOpsHelper {
 
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
         if (mActivity.getPackageManager().resolveActivity(intent, 0) != null) {
-            mActivity.startActivityForResult(intent, BaseActivity.SAF_REQUEST);
+            mActivity.startActivityForResult(intent, AceActivity.SAF_REQUEST);
         } else {
             Toast.makeText(mActivity, mActivity.getString(R.string.msg_error_not_supported), Toast.LENGTH_LONG).show();
         }

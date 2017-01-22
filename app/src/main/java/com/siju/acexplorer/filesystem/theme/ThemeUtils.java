@@ -1,4 +1,4 @@
-package com.siju.acexplorer.filesystem.utils;
+package com.siju.acexplorer.filesystem.theme;
 
 import android.content.Context;
 import android.preference.PreferenceManager;

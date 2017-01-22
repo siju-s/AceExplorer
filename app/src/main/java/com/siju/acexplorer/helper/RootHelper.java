@@ -5,7 +5,7 @@ import android.content.Context;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
-import com.siju.acexplorer.BaseActivity;
+import com.siju.acexplorer.AceActivity;
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.BaseFile;
 import com.siju.acexplorer.filesystem.model.FileInfo;
@@ -40,7 +40,7 @@ public class RootHelper {
         final ArrayList<String> result = new ArrayList<>();
 
         // setting STDOUT listener so as to avoid extra buffer and possible memory loss by superuser
-        BaseActivity.shellInteractive.addCommand(cmd, 0, new Shell.OnCommandResultListener() {
+        AceActivity.shellInteractive.addCommand(cmd, 0, new Shell.OnCommandResultListener() {
             @Override
             public void onCommandResult(int commandCode, int exitCode, List<String> output) {
 
@@ -49,7 +49,7 @@ public class RootHelper {
                 }
             }
         });
-        BaseActivity.shellInteractive.waitForIdle();
+        AceActivity.shellInteractive.waitForIdle();
         return result;
     }
 
@@ -66,7 +66,7 @@ public class RootHelper {
     public static void runShellCommand(String cmd, Shell.OnCommandResultListener callback)
             throws RootNotPermittedException {
         if (!Shell.SU.available()) throw new RootNotPermittedException();
-        BaseActivity.shellInteractive.addCommand(cmd, 0, callback);
+        AceActivity.shellInteractive.addCommand(cmd, 0, callback);
     }
 
     /**

@@ -8,7 +8,7 @@
         android:shortcutShortLabel="@string/nav_menu_image">
         <intent
             android:action="android.intent.action.SHORTCUT_IMAGES"
-            android:targetClass="com.siju.acexplorer.BaseActivity"
+            android:targetClass="com.siju.acexplorer.AceActivity"
             android:targetPackage="com.siju.acexplorer"
             />
     </shortcut>
@@ -22,7 +22,7 @@
         android:shortcutShortLabel="@string/nav_menu_music">
         <intent
             android:action="android.intent.action.SHORTCUT_MUSIC"
-            android:targetClass="com.siju.acexplorer.BaseActivity"
+            android:targetClass="com.siju.acexplorer.AceActivity"
             android:targetPackage="com.siju.acexplorer"
             />
     </shortcut>
@@ -36,7 +36,7 @@
         android:shortcutShortLabel="@string/nav_menu_video">
         <intent
             android:action="android.intent.action.SHORTCUT_VIDEOS"
-            android:targetClass="com.siju.acexplorer.BaseActivity"
+            android:targetClass="com.siju.acexplorer.AceActivity"
             android:targetPackage="com.siju.acexplorer"
             />
     </shortcut>

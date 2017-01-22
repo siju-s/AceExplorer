@@ -17,12 +17,9 @@ import android.widget.TextView;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 
-import static com.siju.acexplorer.BaseActivity.PERMISSIONS_REQUEST;
-import static com.siju.acexplorer.BaseActivity.SETTINGS_REQUEST;
+import static com.siju.acexplorer.AceActivity.PERMISSIONS_REQUEST;
+import static com.siju.acexplorer.AceActivity.SETTINGS_REQUEST;
 
-/**
- * Created by SJ on 19-01-2017.
- */
 
 public class PermissionHelper {
     private static final String TAG = "PermissionHelper";
@@ -33,7 +30,7 @@ public class PermissionHelper {
     private PermissionResultCallback permissionCallback;
 
 
-    private PermissionHelper(@NonNull Activity context) {
+    public PermissionHelper(@NonNull Activity context) {
         this.context = context;
         if (context instanceof PermissionResultCallback) {
             this.permissionCallback = (PermissionResultCallback) context;
@@ -42,20 +39,25 @@ public class PermissionHelper {
         }
     }
 
-    public static PermissionHelper getInstance(Activity context) {
-        return new PermissionHelper(context);
+
+    public void onResume() {
+         /*
+          This handles the scenario when snackbar is shown and user presses home and grants access to app and
+          returns to app. In that case,setupInitialData the data and dismiss the snackbar.
+         */
+
+        if (permissionDialog != null && permissionDialog.isShowing()) {
+            if (PermissionUtils.hasRequiredPermissions()) {
+                permissionDialog.dismiss();
+                permissionCallback.onPermissionGranted(permissions);
+            }
+        }
     }
 
-    /**
-     * Called for the 1st time when app is launched to check permissions
-     */
     public void checkPermissions() {
         if (!PermissionUtils.hasRequiredPermissions()) {
             requestPermission();
-        } else {
-            Logger.log(TAG, "checkPermissions ELSE");
         }
-
     }
 
     private void requestPermission() {
@@ -66,13 +68,7 @@ public class PermissionHelper {
     public void onPermissionResult() {
         if (PermissionUtils.hasRequiredPermissions()) {
             Logger.log(TAG, "Permission granted");
-            if (!inappShortcutMode) {
-                permissionCallback.onPermissionGranted(permissions);
-//                setPermissionGranted();
-            } else {
-                openCategoryItem(null, mCategory);
-                inappShortcutMode = false;
-            }
+            permissionCallback.onPermissionGranted(permissions);
             dismissRationaleDialog();
         } else {
             showRationale();

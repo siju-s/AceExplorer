@@ -399,7 +399,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         ZipFile zipfile;
         ArrayList<ZipModel> totalZipList;
         ArrayList<ZipModel> elements = new ArrayList<>();
-        totalZipList = ((FileListFragment) mFragment).totalZipList;
+        totalZipList = ((BaseFileList) mFragment).totalZipList;
         try {
 //            if (totalZipList.size() == 0 || entry != null) {
             if (new File(parentZipPath).canRead()) {
@@ -421,7 +421,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                             .isDirectory()));
                 }
             }
-            ((FileListFragment) mFragment).totalZipList = totalZipList;
+            ((BaseFileList) mFragment).totalZipList = totalZipList;
 
             ArrayList<String> strings = new ArrayList<>();
             for (ZipModel entry : totalZipList) {
@@ -499,7 +499,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
         Collections.sort(elements, comparatorByNameZip1);
 
-        ((FileListFragment) mFragment).zipChildren = elements;
+        ((BaseFileList) mFragment).zipChildren = elements;
         for (ZipModel model : elements) {
             String name = model.getName();
             if (name.startsWith("/")) {
@@ -550,8 +550,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         try {
             Archive zipfile = new Archive(new File(parentZipPath));
             ArrayList<FileHeader> totalRarList;
-            ((FileListFragment) mFragment).mArchive = zipfile;
-            totalRarList = ((FileListFragment) mFragment).totalRarList;
+            ((BaseFileList) mFragment).mArchive = zipfile;
+            totalRarList = ((BaseFileList) mFragment).totalRarList;
 
             if (totalRarList.size() == 0) {
 

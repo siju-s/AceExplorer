@@ -15,7 +15,7 @@ import android.util.Log;
 
 import com.github.junrar.Archive;
 import com.github.junrar.rarfile.FileHeader;
-import com.siju.acexplorer.BaseActivity;
+import com.siju.acexplorer.AceActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
@@ -58,7 +58,7 @@ public class ExtractService extends Service {
         bundle.putString("file", file);
         bundle.putString("new_path", newFile);
 
-        Intent notificationIntent = new Intent(this, BaseActivity.class);
+        Intent notificationIntent = new Intent(this, AceActivity.class);
         notificationIntent.setAction(Intent.ACTION_MAIN);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
         mBuilder = new NotificationCompat.Builder(context);
