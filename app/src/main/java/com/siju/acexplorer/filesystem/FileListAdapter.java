@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
+import com.siju.acexplorer.filesystem.groups.Category;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.theme.ThemeUtils;
@@ -40,7 +41,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     boolean mStopAnimation;
     private OnItemClickListener mItemClickListener;
     private OnItemLongClickListener mOnItemLongClickListener;
-    private int mCategory;
+    private Category category;
     private final Uri mAudioUri = Uri.parse("content://media/external/audio/albumart");
     private final int mViewMode;
     private final ArrayList<FileInfo> fileInfoArrayListCopy = new ArrayList<>();
@@ -54,12 +55,12 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 
     public FileListAdapter(Context mContext, ArrayList<FileInfo>
-            fileInfoArrayList, int category, int viewMode) {
+            fileInfoArrayList, Category category, int viewMode) {
 
         this.mContext = mContext;
         this.fileInfoArrayList = fileInfoArrayList;
         mSelectedItemsIds = new SparseBooleanArray();
-        mCategory = category;
+        this.category = category;
         this.mViewMode = viewMode;
         mAnimation = R.anim.fade_in_top;
         mIsThemeDark = ThemeUtils.isDarkTheme(mContext);
@@ -104,7 +105,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public void setCategory(int category) {
-        mCategory = category;
+        this.category = category;
     }
 
     public interface OnItemClickListener {
@@ -251,7 +252,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             String fileName = fileInfoArrayList.get(position).getFileName();
             String fileDate;
-            if (FileUtils.isDateNotInMs(mCategory)) {
+            if (FileUtils.isDateNotInMs(category)) {
                 fileDate = FileUtils.convertDate(fileInfoArrayList.get(position).getDate());
             } else {
                 fileDate = FileUtils.convertDate(fileInfoArrayList.get(position).getDate() * 1000);
@@ -282,7 +283,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
             fileListViewHolder.textNoOfFileOrSize.setText(fileNoOrSize);
 
-            switch (mCategory) {
+            switch (category) {
 
                 case 0:
                 case 5:

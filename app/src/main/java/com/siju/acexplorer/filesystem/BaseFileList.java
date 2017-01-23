@@ -23,6 +23,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
@@ -85,11 +86,15 @@ import com.siju.acexplorer.billing.BillingHelper;
 import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.common.SharedPreferenceWrapper;
+import com.siju.acexplorer.filesystem.backstack.BackStackInfo;
+import com.siju.acexplorer.filesystem.backstack.NavigationCallback;
+import com.siju.acexplorer.filesystem.backstack.NavigationInfo;
 import com.siju.acexplorer.filesystem.groups.Category;
 import com.siju.acexplorer.filesystem.model.BackStackModel;
 import com.siju.acexplorer.filesystem.model.FavInfo;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.model.ZipModel;
+import com.siju.acexplorer.filesystem.modes.ViewMode;
 import com.siju.acexplorer.filesystem.task.ExtractZipEntry;
 import com.siju.acexplorer.filesystem.task.PasteConflictChecker;
 import com.siju.acexplorer.filesystem.task.SearchTask;
@@ -120,12 +125,14 @@ import java.util.zip.ZipFile;
 
 import static com.siju.acexplorer.filesystem.FileConstants.ADS;
 import static com.siju.acexplorer.filesystem.groups.Category.FILES;
+import static com.siju.acexplorer.filesystem.utils.FileUtils.getInternalStorage;
 
 
 public class BaseFileList extends Fragment implements LoaderManager
         .LoaderCallbacks<ArrayList<FileInfo>>,
         SearchView.OnQueryTextListener,
-        Toolbar.OnMenuItemClickListener, SearchTask.SearchHelper {
+        Toolbar.OnMenuItemClickListener, SearchTask.SearchHelper,
+        View.OnClickListener,NavigationCallback {
 
     private final String TAG = this.getClass().getSimpleName();
     private FastScrollRecyclerView recyclerViewFileList;
@@ -136,7 +143,7 @@ public class BaseFileList extends Fragment implements LoaderManager
     private String mFilePath;
     private String mFilePathOther;
     private Category category;
-    private int mViewMode = FileConstants.KEY_LISTVIEW;
+    private int viewMode = ViewMode.LIST;
     private boolean mIsZip;
     private SharedPreferenceWrapper sharedPreferenceWrapper;
     private TextView mTextEmpty;
@@ -183,7 +190,7 @@ public class BaseFileList extends Fragment implements LoaderManager
     private Button buttonPathSelect;
     private final HashMap<String, Bundle> scrollPosition = new HashMap<>();
     private final HashMap<String, Bundle> scrollPositionDualPane = new HashMap<>();
-    private int mGridColumns;
+    private int gridCols;
     private SharedPreferences preferences;
     private int mCurrentOrientation;
     private final ArrayList<FileInfo> mCopiedData = new ArrayList<>();
@@ -213,7 +220,10 @@ public class BaseFileList extends Fragment implements LoaderManager
     private LinearLayout navDirectory;
     private HorizontalScrollView scrollNavigation;
     private Toolbar toolbar;
-
+    private boolean isHomeScreenEnabled;
+    private String currentDir;
+    private NavigationInfo navigationInfo;
+    private BackStackInfo backStackInfo;
 
     @Override
     public void onAttach(Context context) {
@@ -232,27 +242,27 @@ public class BaseFileList extends Fragment implements LoaderManager
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         setHasOptionsMenu(true);
         initializeViews();
         setViewTheme();
         setupAds();
         registerReceivers();
         mFileUtils = new FileUtils();
+        navigationInfo = new NavigationInfo(getContext());
+        backStackInfo = new BackStackInfo();
 
         if (savedInstanceState == null) {
             mCurrentOrientation = getResources().getConfiguration().orientation;
             checkPreferences();
             mIsDarkTheme = ThemeUtils.isDarkTheme(getActivity());
             getArgs();
-            mViewMode = sharedPreferenceWrapper.getViewMode(getActivity());
+            viewMode = sharedPreferenceWrapper.getViewMode(getActivity());
             setupList();
-            isDualPaneInFocus = checkIfDualFragment();
-            if (mCategory == FileConstants.CATEGORY.FILES.getValue()) {
-                setNavDirectory(mFilePath, isDualPaneInFocus);
+            if (category.equals(FILES)) {
+                navigationInfo.setNavDirectory(mFilePath,isHomeScreenEnabled,category);
             }
-            Bundle args = new Bundle();
-            args.putString(FileConstants.KEY_PATH, mFilePath);
-            getLoaderManager().initLoader(LOADER_ID, args, this);
+            initLoader();
             initializeListeners();
         } else {
             mInstanceStateExists = true;
@@ -369,7 +379,8 @@ public class BaseFileList extends Fragment implements LoaderManager
         preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mIsDualModeEnabled = preferences
                 .getBoolean(FileConstants.PREFS_DUAL_PANE, false);
-        mGridColumns = preferences.getInt(FileConstants.KEY_GRID_COLUMNS, 0);
+        gridCols = preferences.getInt(FileConstants.KEY_GRID_COLUMNS, 0);
+        isHomeScreenEnabled = preferences.getBoolean(FileConstants.PREFS_HOMESCREEN, true);
     }
 
     private void getArgs() {
@@ -417,86 +428,61 @@ public class BaseFileList extends Fragment implements LoaderManager
         frameLayoutFab.setVisibility(View.GONE);
     }
 
-    public void addHomeNavButton(boolean isFilesCategory) {
-        if (mIsHomeScreenEnabled) {
-            if (!isDualPaneInFocus) {
-                navDirectory.removeAllViews();
+
+    private void scrollNavigation() {
+        scrollNavigation.postDelayed(new Runnable() {
+            public void run() {
+                scrollNavigation.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
             }
-            ImageButton imageButton = new ImageButton(this);
-            imageButton.setImageResource(R.drawable.ic_home_white);
-            imageButton.setBackgroundColor(Color.parseColor("#00ffffff"));
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            params.gravity = Gravity.CENTER_VERTICAL;
+        }, 100L);
+    }
 
-            imageButton.setLayoutParams(params);
-            imageButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    endActionMode();
-                    removeFragmentFromBackStack();
-                }
-            });
-            navDirectory.addView(imageButton);
 
-            ImageView navArrow = new ImageView(this);
-            params.leftMargin = 15;
-            params.rightMargin = 20;
-            navArrow.setImageResource(R.drawable.ic_arrow_nav);
-            navArrow.setLayoutParams(params);
-            navDirectory.addView(navArrow);
-            addTitleText(isFilesCategory);
-        } else {
-            addTitleText(isFilesCategory);
+
+
+    /**
+     * Called from {@link #onBackPressed()} . Does the following:
+     * 1. If homescreen enabled, returns to home screen
+     * 2. If homescreen disabled, exits the app
+     */
+    private void removeFragmentFromBackStack() {
+
+        Fragment fragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.main_container);
+        Fragment dualFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
+
+        mBackStackList.clear();
+        cleanUpFileScreen();
+        Logger.log(TAG, "RemoveFragmentFromBackStack--frag=" + fragment);
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
+                .exit_to_left);
+
+        ft.remove(fragment);
+
+        if (dualFragment != null) {
+            ft.remove(dualFragment);
         }
+
+/*
+        if (mHomeScreenFragment != null) {
+            ft.show(mHomeScreenFragment);
+            toggleNavigationVisibility(false);
+        }*/
+        ft.commitAllowingStateLoss();
 
     }
 
-    private void addTitleText(boolean isFilesCategory) {
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.gravity = Gravity.CENTER_VERTICAL;
-
-        if (!isFilesCategory) {
-            String title = getTitleForCategory(category).toUpperCase(Locale.getDefault());
-            final TextView textView = new TextView(getContext());
-            textView.setText(title);
-            textView.setTextColor(ContextCompat.getColor(getContext(), R.color.navButtons));
-            textView.setTextSize(19);
-            int paddingRight = getResources().getDimensionPixelSize(R.dimen.padding_60);
-            textView.setPadding(0, 0, paddingRight, 0);
-            textView.setLayoutParams(params);
-            navDirectory.addView(textView);
+    private void cleanUpFileScreen() {
+        if (isHomeScreenEnabled) {
+            setTitleForCategory(100); // Setting title to App name
+            hideFab();
+            currentDir = null;
+            mStartingDir = null;
+            mStartingDirDualPane = null;
+            toggleDualPaneVisibility(false);
         }
+
     }
-
-    public String getTitleForCategory(Category category) {
-        switch (category) {
-            case AUDIO:
-                return getString(R.string.nav_menu_music);
-            case VIDEO:
-                return getString(R.string.nav_menu_video);
-            case IMAGE:
-                return getString(R.string.nav_menu_image);
-            case DOCS:
-                return getString(R.string.nav_menu_docs);
-            case DOWNLOADS:
-                return getString(R.string.downloads);
-            case COMPRESSED:
-                return getString(R.string.compressed);
-            case FAVORITES:
-                return getString(R.string.nav_header_favourites);
-            case PDF:
-                return getString(R.string.pdf);
-            case APPS:
-                return getString(R.string.apk);
-            case LARGE_FILES:
-                return getString(R.string.library_large);
-
-        }
-        return getString(R.string.app_name);
-    }
-
 
     public void toggleNavigationVisibility(boolean isVisible) {
         mNavigationLayout.setVisibility(isVisible ? View.VISIBLE : View.GONE);
@@ -505,7 +491,7 @@ public class BaseFileList extends Fragment implements LoaderManager
 
     private void setupList() {
         recyclerViewFileList.setHasFixedSize(true);
-        if (mViewMode == FileConstants.KEY_LISTVIEW) {
+        if (viewMode == ViewMode.LIST) {
             llm = new CustomLayoutManager(getActivity());
             recyclerViewFileList.setLayoutManager(llm);
         } else {
@@ -513,7 +499,13 @@ public class BaseFileList extends Fragment implements LoaderManager
         }
         recyclerViewFileList.setItemAnimator(new DefaultItemAnimator());
         fileListAdapter = new FileListAdapter(getContext(), fileInfoList,
-                category, mViewMode);
+                category, viewMode);
+    }
+
+    private void initLoader() {
+        Bundle args = new Bundle();
+        args.putString(FileConstants.KEY_PATH, mFilePath);
+        getLoaderManager().initLoader(LOADER_ID, args, this);
     }
 
 
@@ -560,7 +552,7 @@ public class BaseFileList extends Fragment implements LoaderManager
 
     private void addItemDecoration() {
 
-        if (mViewMode == FileConstants.KEY_LISTVIEW) {
+        if (viewMode == FileConstants.KEY_LISTVIEW) {
             if (mDividerItemDecoration == null) {
                 mDividerItemDecoration = new DividerItemDecoration(getActivity(), mIsDarkTheme);
             } else {
@@ -575,7 +567,7 @@ public class BaseFileList extends Fragment implements LoaderManager
                 divider = ContextCompat.getDrawable(getActivity(), R.drawable.divider_line);
             }
             if (mGridItemDecoration == null) {
-                mGridItemDecoration = new GridItemDecoration(divider, divider, mGridColumns);
+                mGridItemDecoration = new GridItemDecoration(divider, divider, gridCols);
             } else {
                 recyclerViewFileList.removeItemDecoration(mGridItemDecoration);
             }
@@ -626,17 +618,17 @@ public class BaseFileList extends Fragment implements LoaderManager
                         if (checkIfDualFragment()) {
                             itemClickActionMode(position, false);
                         } else {
-                            handleCategoryItemClick(position);
+                            handleItemClick(position);
                         }
                     } else {
                         if (checkIfDualFragment()) {
-                            handleCategoryItemClick(position);
+                            handleItemClick(position);
                         } else {
                             itemClickActionMode(position, false);
                         }
                     }
                 } else {
-                    handleCategoryItemClick(position);
+                    handleItemClick(position);
                 }
             }
         });
@@ -719,239 +711,7 @@ public class BaseFileList extends Fragment implements LoaderManager
         });
     }
 
-    public void setNavDirectory(String path, boolean isDualPane) {
-        String[] parts;
-        parts = path.split(File.separator);
-        isDualPaneInFocus = isDualPane;
 
-        if (!isDualPaneInFocus) {
-            navDirectory.removeAllViews();
-            mCurrentDir = path;
-        } else {
-            navDirectoryDualPane.removeAllViews();
-            mCurrentDirDualPane = path;
-        }
-
-
-        String dir = "";
-
-        addHomeNavButton(true);
-
-        // If root dir , parts will be 0
-        if (parts.length == 0) {
-
-            if (isDualPaneInFocus) {
-                isCurrentDualDirRoot = true;
-            } else {
-                isCurrentDirRoot = true;
-            }
-            mStartingDir = File.separator;
-            setNavDir(File.separator, File.separator); // Add Root button
-        } else {
-            int count = 0;
-            for (int i = 1; i < parts.length; i++) {
-                dir += File.separator + parts[i];
-
-//                if (!isCurrentDirRoot) {
-                if (!isDualPaneInFocus) {
-//                    Logger.log(TAG, "setNavDirectory--dir=" + dir + "  Starting dir=" + mStartingDir);
-
-                    if (!dir.contains(mStartingDir)) {
-                        continue;
-                    }
-                } else {
-//                    Logger.log(TAG, "setNavDirectory--dir=" + dir + "  Starting DUAL dir=" + mStartingDirDualPane);
-
-                    if (!dir.contains(mStartingDirDualPane)) {
-                        continue;
-                    }
-                }
-//                }
-                /*Count check so that ROOT is added only once in Navigation
-                  Handles the scenario :
-                  1. When Fav item is a root child and if we click on any folder in that fav item
-                     multiple ROOT blocks are not added to Navigation view*/
-                if (!isDualPaneInFocus) {
-                    if (isCurrentDirRoot && count == 0) {
-                        setNavDir(File.separator, File.separator);
-                    }
-                } else {
-                    if (isCurrentDualDirRoot && count == 0) {
-                        setNavDir(File.separator, File.separator);
-                    }
-                }
-
-                count++;
-                setNavDir(dir, parts[i]);
-            }
-        }
-
-    }
-
-    private void setNavDir(String dir, String parts) {
-
-
-        int WRAP_CONTENT = LinearLayout.LayoutParams.WRAP_CONTENT;
-        if (dir.equals(getInternalStorage().getAbsolutePath())) {
-            if (isDualPaneInFocus) {
-                isCurrentDualDirRoot = false;
-            } else {
-                isCurrentDirRoot = false;
-            }
-
-            createNavButton(STORAGE_INTERNAL, dir);
-        } else if (dir.equals(File.separator)) {
-            createNavButton(STORAGE_ROOT, dir);
-        } else if (mExternalSDPaths.contains(dir)) {
-            if (isDualPaneInFocus) {
-                isCurrentDualDirRoot = false;
-            } else {
-                isCurrentDirRoot = false;
-            }
-            createNavButton(STORAGE_EXTERNAL, dir);
-        } else {
-            ImageView navArrow = new ImageView(this);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(WRAP_CONTENT,
-                    WRAP_CONTENT);
-            layoutParams.leftMargin = 20;
-            layoutParams.gravity = Gravity.CENTER_VERTICAL;
-            navArrow.setImageResource(R.drawable.ic_arrow_nav);
-            navArrow.setLayoutParams(layoutParams);
-
-            if (!isDualPaneInFocus) {
-                navDirectory.addView(navArrow);
-            } else {
-                navDirectoryDualPane.addView(navArrow);
-            }
-            createNavButton(parts, dir);
-            if (!isDualPaneInFocus) {
-                scrollNavigation.postDelayed(new Runnable() {
-                    public void run() {
-                        HorizontalScrollView hv = (HorizontalScrollView) findViewById(R.id
-                                .scrollNavigation);
-                        hv.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
-                    }
-                }, 100L);
-            } else {
-                scrollNavigationDualPane.postDelayed(new Runnable() {
-                    public void run() {
-                        HorizontalScrollView hv = (HorizontalScrollView) findViewById(R.id
-                                .scrollNavigationDualPane);
-                        hv.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
-                    }
-                }, 100L);
-            }
-        }
-    }
-
-    private void createNavButton(String text, final String dir) {
-
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.gravity = Gravity.CENTER_VERTICAL;
-
-        if (text.equals(STORAGE_INTERNAL) || text.equals(STORAGE_EXTERNAL) ||
-                text.equals(STORAGE_ROOT)) {
-            ImageButton imageButton = new ImageButton(this);
-            if (text.equals(STORAGE_INTERNAL)) {
-                imageButton.setImageResource(R.drawable.ic_storage_white_nav);
-            } else if (text.equals(STORAGE_EXTERNAL)) {
-                imageButton.setImageResource(R.drawable.ic_ext_nav);
-            } else {
-                imageButton.setImageResource(R.drawable.ic_root_white_nav);
-            }
-            imageButton.setBackgroundColor(Color.parseColor("#00ffffff"));
-            imageButton.setLayoutParams(params);
-            imageButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (dir != null) {
-                        navButtonOnClick(view, dir);
-                    }
-                }
-            });
-            if (!isDualPaneInFocus) {
-                navDirectory.addView(imageButton);
-            } else {
-                navDirectoryDualPane.addView(imageButton);
-            }
-
-        } else {
-            final TextView textView = new TextView(this);
-            textView.setText(text);
-            textView.setAllCaps(true);
-            textView.setTextColor(ContextCompat.getColor(this, R.color.navButtons));
-            textView.setTextSize(15);
-            params.leftMargin = 20;
-            textView.setPadding(0, 0, 35, 0);
-            textView.setLayoutParams(params);
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Logger.log(TAG, "nav button onclick--dir=" + dir);
-                    if (dir != null) {
-                        navButtonOnClick(view, dir);
-                    }
-                }
-            });
-            if (!isDualPaneInFocus) {
-                navDirectory.addView(textView);
-            } else {
-                navDirectoryDualPane.addView(textView);
-            }
-        }
-
-
-    }
-
-    private void navButtonOnClick(View view, final String dir) {
-        Logger.log(TAG, "Dir=" + dir + " mCurrentDir=" + mCurrentDir);
-
-        BaseFileList baseFileList = (BaseFileList) getSupportFragmentManager().findFragmentById(R.id
-                .main_container);
-
-  /*      FileListDualFragment fileListDualFragment = (FileListDualFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.frame_container_dual);*/
-
-        boolean isDualPaneButtonClicked;
-        LinearLayout parent = (LinearLayout) view.getParent();
-        isDualPaneButtonClicked = parent.getId() != navDirectory.getId();
-
-        if (!isDualPaneButtonClicked) {
-            if (!mCurrentDir.equals(dir)) {
-                if (baseFileList.isZipMode()) {
-                    if (baseFileList.isInZipMode(dir)) {
-                        int newSize = mBackStackList.size() - 1;
-                        mBackStackList.remove(newSize);
-                        mCurrentDir = mBackStackList.get(newSize - 1).getFilePath();
-                        mCategory = mBackStackList.get(newSize - 1).getCategory();
-                        baseFileList.reloadList(true, mCurrentDir);
-                        if (!mIsFromHomePage) {
-                            setNavDirectory(mCurrentDir, false);
-                        } else {
-                            hideFab();
-                        }
-                    }
-                } else {
-                    mCurrentDir = dir;
-                    int position = 0;
-                    for (int i = 0; i < mBackStackList.size(); i++) {
-                        if (mCurrentDir.equals(mBackStackList.get(i).getFilePath())) {
-                            position = i;
-                            break;
-                        }
-                    }
-                    for (int j = mBackStackList.size() - 1; j > position; j--) {
-                        mBackStackList.remove(j);
-                    }
-
-                    baseFileList.reloadList(true, mCurrentDir);
-                    setNavDirectory(mCurrentDir, false);
-
-                }
-            }
-        }
-    }
 
 
     public void openCompressedFile(String path) {
@@ -971,18 +731,18 @@ public class BaseFileList extends Fragment implements LoaderManager
                 mCategory == FileConstants.CATEGORY.DOWNLOADS.getValue() ||
                 mCategory == FileConstants.CATEGORY.FAVORITES.getValue() ||
                 mCategory == FileConstants.CATEGORY.LARGE_FILES.getValue()) {
-            aceActivity.showFab();
+            showFab();
             aceActivity.setCurrentDir(path, isDualPaneInFocus);
             aceActivity.setCurrentCategory(mCategory);
             aceActivity.initializeStartingDirectory();
         }
-        aceActivity.setNavDirectory(path, isDualPaneInFocus);
+        setNavDirectory(path, isDualPaneInFocus);
         aceActivity.addToBackStack(path, mCategory);
 
     }
 
 
-    private void handleCategoryItemClick(int position) {
+    private void handleItemClick(int position) {
         if (position >= fileInfoList.size() || position == RecyclerView.NO_POSITION) return;
 
         switch (mCategory) {
@@ -993,7 +753,7 @@ public class BaseFileList extends Fragment implements LoaderManager
             case 9:
             case 10:
             case 11:
-                Logger.log(TAG, "on handleCategoryItemClick--");
+                Logger.log(TAG, "on handleItemClick--");
                 if (fileInfoList.get(position).isDirectory()) {
                     computeScroll();
                     if (mIsZip) {
@@ -1002,7 +762,7 @@ public class BaseFileList extends Fragment implements LoaderManager
                         String name1 = name.substring(0, name.length() - 1); // 2 so that / doesnt come
                         zipEntry = zipChildren.get(position).getEntry();
                         zipEntryFileName = name1;
-                        Logger.log(TAG, "handleCategoryItemClick--entry=" + zipEntry + " dir=" + zipEntry.isDirectory()
+                        Logger.log(TAG, "handleItemClick--entry=" + zipEntry + " dir=" + zipEntry.isDirectory()
                                 + "name=" + zipEntryFileName);
                         viewZipContents(position);
                     } else {
@@ -1285,6 +1045,65 @@ public class BaseFileList extends Fragment implements LoaderManager
 
     }
 
+    @Override
+    public void onClick(View v) {
+
+    }
+
+    @Override
+    public void addViewToNavigation(View view) {
+        navDirectory.addView(view);
+    }
+
+    @Override
+    public void clearNavigation() {
+        navDirectory.removeAllViews();
+    }
+
+    @Override
+    public void onHomeClicked() {
+        endActionMode();
+        removeFragmentFromBackStack();
+    }
+
+    @Override
+    public void onNavButtonClicked(String dir) {
+
+        if (!currentDir.equals(dir)) {
+            if (isZipMode()) {
+                if (isInZipMode(dir)) {
+                    int newSize = mBackStackList.size() - 1;
+                    mBackStackList.remove(newSize);
+                    currentDir = mBackStackList.get(newSize - 1).getFilePath();
+                    mCategory = mBackStackList.get(newSize - 1).getCategory();
+                    baseFileList.reloadList(true, currentDir);
+                    if (!mIsFromHomePage) {
+                        setNavDirectory(currentDir);
+                    } else {
+                        hideFab();
+                    }
+                }
+            } else {
+                currentDir = dir;
+                int position = 0;
+                for (int i = 0; i < mBackStackList.size(); i++) {
+                    if (currentDir.equals(mBackStackList.get(i).getFilePath())) {
+                        position = i;
+                        break;
+                    }
+                }
+                for (int j = mBackStackList.size() - 1; j > position; j--) {
+                    mBackStackList.remove(j);
+                }
+
+                baseFileList.reloadList(true, currentDir);
+                setNavDirectory(currentDir);
+
+            }
+        }
+    }
+
+
     interface RefreshData {
         void refresh(int category);
     }
@@ -1335,7 +1154,7 @@ public class BaseFileList extends Fragment implements LoaderManager
         View vi = recyclerViewFileList.getChildAt(0);
         int top = (vi == null) ? 0 : vi.getTop();
         int position;
-        if (mViewMode == FileConstants.KEY_LISTVIEW) {
+        if (viewMode == FileConstants.KEY_LISTVIEW) {
             position = ((LinearLayoutManager) llm).findFirstVisibleItemPosition();
         } else {
             position = ((GridLayoutManager) llm).findFirstVisibleItemPosition();
@@ -1548,7 +1367,7 @@ public class BaseFileList extends Fragment implements LoaderManager
                     if (checkIfDualFragment()) {
                         if (scrollPositionDualPane.containsKey(mFilePath)) {
                             Bundle b = scrollPositionDualPane.get(mFilePath);
-                            if (mViewMode == FileConstants.KEY_LISTVIEW)
+                            if (viewMode == FileConstants.KEY_LISTVIEW)
                                 ((LinearLayoutManager) llm).scrollToPositionWithOffset(b.getInt(FileConstants
                                         .KEY_POSITION), b.getInt(FileConstants.KEY_OFFSET));
                             else
@@ -1561,7 +1380,7 @@ public class BaseFileList extends Fragment implements LoaderManager
 
                         if (scrollPosition.containsKey(mFilePath)) {
                             Bundle b = scrollPosition.get(mFilePath);
-                            if (mViewMode == FileConstants.KEY_LISTVIEW)
+                            if (viewMode == FileConstants.KEY_LISTVIEW)
                                 ((LinearLayoutManager) llm).scrollToPositionWithOffset(b.getInt(FileConstants
                                         .KEY_POSITION), b.getInt(FileConstants.KEY_OFFSET));
                             else
@@ -2675,8 +2494,8 @@ public class BaseFileList extends Fragment implements LoaderManager
                     Logger.log(TAG, "DRAG END new pos=" + position1);
                     Logger.log(TAG, "DRAG END Local state=" + dragPaths);
                     Logger.log(TAG, "DRAG END result=" + event.getResult());
-                    Logger.log(TAG, "DRAG END mCurrentDirSingle=" + mLastSinglePaneDir);
-                    Logger.log(TAG, "DRAG END mCurrentDirDual=" + mLastDualPaneDir);
+                    Logger.log(TAG, "DRAG END currentDirSingle=" + mLastSinglePaneDir);
+                    Logger.log(TAG, "DRAG END currentDirDual=" + mLastDualPaneDir);
                     Log.d(TAG, "DRag end");
                     fileListAdapter.clearDragPos();
                     if (!event.getResult() && position1 == RecyclerView.NO_POSITION) {
@@ -2741,14 +2560,14 @@ public class BaseFileList extends Fragment implements LoaderManager
         mSearchView = (SearchView) MenuItemCompat.getActionView(mSearchItem);
         mPasteItem = menu.findItem(R.id.action_paste);
         mPasteItem.setVisible(mIsPasteItemVisible);
-        mViewMode = sharedPreferenceWrapper.getViewMode(getActivity());
+        viewMode = sharedPreferenceWrapper.getViewMode(getActivity());
         mViewItem = menu.findItem(R.id.action_view);
         updateMenuTitle();
         setupSearchView();
     }
 
     private void updateMenuTitle() {
-        mViewItem.setTitle(mViewMode == 0 ? R.string.action_view_grid : R.string.action_view_list);
+        mViewItem.setTitle(viewMode == 0 ? R.string.action_view_grid : R.string.action_view_list);
     }
 
     private void setupSearchView() {
@@ -2831,12 +2650,12 @@ public class BaseFileList extends Fragment implements LoaderManager
                 break;
 
             case R.id.action_view:
-                if (mViewMode == FileConstants.KEY_LISTVIEW) {
-                    mViewMode = FileConstants.KEY_GRIDVIEW;
+                if (viewMode == FileConstants.KEY_LISTVIEW) {
+                    viewMode = FileConstants.KEY_GRIDVIEW;
                 } else {
-                    mViewMode = FileConstants.KEY_LISTVIEW;
+                    viewMode = FileConstants.KEY_LISTVIEW;
                 }
-                sharedPreferenceWrapper.savePrefs(getActivity(), mViewMode);
+                sharedPreferenceWrapper.savePrefs(getActivity(), viewMode);
                 switchView();
                 updateMenuTitle();
                 break;
@@ -2888,7 +2707,7 @@ public class BaseFileList extends Fragment implements LoaderManager
         fileListAdapter = null;
         recyclerViewFileList.setHasFixedSize(true);
 
-        if (mViewMode == FileConstants.KEY_LISTVIEW) {
+        if (viewMode == FileConstants.KEY_LISTVIEW) {
             llm = new CustomLayoutManager(getActivity());
             recyclerViewFileList.setLayoutManager(llm);
 
@@ -2899,10 +2718,10 @@ public class BaseFileList extends Fragment implements LoaderManager
         mStopAnim = true;
 
         fileListAdapter = new FileListAdapter(getContext(), fileInfoList,
-                mCategory, mViewMode);
+                mCategory, viewMode);
 
         recyclerViewFileList.setAdapter(fileListAdapter);
-        if (mViewMode == FileConstants.KEY_LISTVIEW) {
+        if (viewMode == FileConstants.KEY_LISTVIEW) {
             if (mGridItemDecoration != null) {
                 recyclerViewFileList.removeItemDecoration(mGridItemDecoration);
             }
@@ -2924,19 +2743,19 @@ public class BaseFileList extends Fragment implements LoaderManager
 
 
     public void refreshSpan() {
-        if (mViewMode == FileConstants.KEY_GRIDVIEW) {
+        if (viewMode == ViewMode.GRID) {
             mIsDualModeEnabled = preferences
                     .getBoolean(FileConstants.PREFS_DUAL_PANE, false);
-            if (mCurrentOrientation == Configuration.ORIENTATION_PORTRAIT || !mIsDualModeEnabled || FileUtils
-                    .checkIfLibraryCategory(mCategory)) {
-                mGridColumns = getResources().getInteger(R.integer.grid_columns);
+            if (mCurrentOrientation == Configuration.ORIENTATION_PORTRAIT || !mIsDualModeEnabled ||
+                    checkIfLibraryCategory(category)) {
+                gridCols = getResources().getInteger(R.integer.grid_columns);
             } else {
-                mGridColumns = getResources().getInteger(R.integer.grid_columns_dual);
+                gridCols = getResources().getInteger(R.integer.grid_columns_dual);
             }
-            Log.d(TAG, "Refresh span--columns=" + mGridColumns + "category=" + mCategory + " dual mode=" +
+            Log.d(TAG, "Refresh span--columns=" + gridCols + "category=" + category + " dual mode=" +
                     mIsDualModeEnabled);
 
-            llm = new CustomGridLayoutManager(getActivity(), mGridColumns);
+            llm = new CustomGridLayoutManager(getActivity(), gridCols);
             recyclerViewFileList.setLayoutManager(llm);
         }
     }
@@ -2945,8 +2764,8 @@ public class BaseFileList extends Fragment implements LoaderManager
     public void onDestroyView() {
         recyclerViewFileList.stopScroll();
         if (!mInstanceStateExists) {
-            preferences.edit().putInt(FileConstants.KEY_GRID_COLUMNS, mGridColumns).apply();
-            sharedPreferenceWrapper.savePrefs(getActivity(), mViewMode);
+            preferences.edit().putInt(FileConstants.KEY_GRID_COLUMNS, gridCols).apply();
+            sharedPreferenceWrapper.savePrefs(getActivity(), viewMode);
         }
         removeSearchTask();
 

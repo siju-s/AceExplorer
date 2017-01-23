@@ -1,11 +1,13 @@
 package com.siju.acexplorer.filesystem.model;
 
+import com.siju.acexplorer.filesystem.groups.Category;
+
 public class BackStackModel {
 
     private final String filePath;
-    private final int category;
+    private final Category category;
 
-    public BackStackModel(String filePath, int category) {
+    public BackStackModel(String filePath, Category category) {
         this.filePath = filePath;
         this.category = category;
     }
@@ -14,7 +16,7 @@ public class BackStackModel {
         return filePath;
     }
 
-    public int getCategory() {
+    public Category getCategory() {
         return category;
     }
 

@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -29,18 +28,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
-import android.widget.HorizontalScrollView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -58,7 +52,6 @@ import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.HomeScreenFragment;
 import com.siju.acexplorer.filesystem.groups.Category;
 import com.siju.acexplorer.filesystem.groups.DrawerGroups;
-import com.siju.acexplorer.filesystem.groups.DrawerItems;
 import com.siju.acexplorer.filesystem.helper.FileOpsHelper;
 import com.siju.acexplorer.filesystem.model.BackStackModel;
 import com.siju.acexplorer.filesystem.model.CopyData;
@@ -87,12 +80,10 @@ import java.util.Locale;
 
 import eu.chainfire.libsuperuser.Shell;
 
-import static com.siju.acexplorer.R.id.frameLayoutFab;
 import static com.siju.acexplorer.filesystem.FileConstants.ADS;
 import static com.siju.acexplorer.filesystem.FileConstants.KEY_PREMIUM;
 import static com.siju.acexplorer.filesystem.groups.Category.AUDIO;
 import static com.siju.acexplorer.filesystem.groups.Category.DOCS;
-import static com.siju.acexplorer.filesystem.groups.Category.FILES;
 import static com.siju.acexplorer.filesystem.groups.Category.IMAGE;
 import static com.siju.acexplorer.filesystem.groups.Category.VIDEO;
 import static com.siju.acexplorer.filesystem.utils.FileUtils.getInternalStorage;
@@ -135,27 +126,19 @@ public class AceActivity extends BaseActivity
     private SharedPreferences mSharedPreferences;
     private ArrayList<FavInfo> savedFavourites = new ArrayList<>();
     private View mViewSeperator;
-    private Category mCategory = FILES;
-    private int mCategoryDual = FileConstants.CATEGORY.FILES.getValue();
     private CoordinatorLayout mMainLayout;
     private final int MENU_FAVOURITES = 1;
     private boolean mIsFirstRun;
-    private boolean mIsDualPaneEnabled;
     private boolean mShowDualPane;
     private boolean mIsHomeScreenEnabled;
     private boolean mShowHidden;
     private boolean mIsHomePageAdded;
-
-    private boolean isCurrentDirRoot;
-    private boolean isCurrentDualDirRoot;
     private String mStartingDir;
     private String mStartingDirDualPane;
     private boolean mIsDualModeEnabled;
     private boolean mIsFromHomePage;
     private int mCurrentTheme = FileConstants.THEME_LIGHT;
     private final ArrayList<String> mExternalSDPaths = new ArrayList<>();
-    private final ArrayList<BackStackModel> mBackStackList = new ArrayList<>();
-    private final ArrayList<BackStackModel> mBackStackListDual = new ArrayList<>();
     private int mCurrentOrientation;
     private boolean mIsRootMode;
     private boolean mIsTablet;
@@ -172,8 +155,8 @@ public class AceActivity extends BaseActivity
     private static Handler handler;
     private static HandlerThread handlerThread;
     private PermissionHelper permissionHelper;
-    private DrawerItems drawerItems;
     private BasePresenterImpl basePresenter;
+    private FrameLayout frameDualPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -209,8 +192,7 @@ public class AceActivity extends BaseActivity
 
 
     private void initViews() {
-        mFrameDualPane = (FrameLayout) findViewById(R.id.frame_container_dual);
-
+        frameDualPane = (FrameLayout) findViewById(R.id.frame_container_dual);
         mMainLayout = (CoordinatorLayout) findViewById(R.id.main_content);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         relativeLayoutDrawerPane = (ScrimInsetsRelativeLayout) findViewById(R.id.drawerPane);
@@ -819,17 +801,6 @@ public class AceActivity extends BaseActivity
     }
 
 
-    public void addToBackStack(String path, int category) {
-        if (!isDualPaneInFocus) {
-            mBackStackList.add(new BackStackModel(path, category));
-            Logger.log(TAG, "Back stack--size=" + mBackStackList.size() + " Path=" + path + "Category=" + category);
-
-        } else {
-            mBackStackListDual.add(new BackStackModel(path, category));
-            Logger.log(TAG, "Back stack DUAL--size=" + mBackStackList.size() + " Path=" + path +
-                    "Category=" + category);
-        }
-    }
 
     private void checkIfFavIsRootDir(int groupPos) {
         if (groupPos == 1) {
@@ -1204,63 +1175,6 @@ public class AceActivity extends BaseActivity
     }
 
 
-    private boolean checkIfBackStackExists() {
-        int backStackSize;
-        if (!isDualPaneInFocus) {
-            backStackSize = mBackStackList.size();
-            Logger.log(TAG, "checkIfBackStackExists --size=" + backStackSize);
-        } else {
-            backStackSize = mBackStackListDual.size();
-            Logger.log(TAG, "checkIfBackStackExists --DUAL size=" + backStackSize);
-        }
-
-        if (backStackSize == 1) {
-            if (!isDualPaneInFocus) {
-                mCurrentDir = mBackStackList.get(0).getFilePath();
-                mCategory = mBackStackList.get(0).getCategory();
-                Logger.log(TAG, "checkIfBackStackExists--Path=" + mCurrentDir + "  Category=" + mCategory);
-                mIsFromHomePage = false;
-                mBackStackList.clear();
-            } else {
-                mCurrentDirDualPane = mBackStackListDual.get(0).getFilePath();
-                mCategoryDual = mBackStackListDual.get(0).getCategory();
-                Logger.log(TAG, "checkIfBackStackExists--DUAL Path=" + mCurrentDirDualPane + "  " +
-                        "Category=" + mCategoryDual);
-                mBackStackListDual.clear();
-            }
-            return false;
-        } else if (backStackSize > 1) {
-            int newSize = backStackSize - 1;
-            if (!isDualPaneInFocus) {
-                mBackStackList.remove(newSize);
-                mCurrentDir = mBackStackList.get(newSize - 1).getFilePath();
-                mCategory = mBackStackList.get(newSize - 1).getCategory();
-                if (FileUtils.checkIfFileCategory(mCategory) && !mIsFromHomePage) {
-                    initializeStartingDirectory();
-                } else {
-                    hideFab();
-                }
-
-                Logger.log(TAG, "checkIfBackStackExists--Path=" + mCurrentDir + "  Category=" + mCategory);
-                Logger.log(TAG, "checkIfBackStackExists --New size=" + mBackStackList.size());
-            } else {
-                mBackStackListDual.remove(newSize);
-                mCurrentDirDualPane = mBackStackListDual.get(newSize - 1).getFilePath();
-                mCategoryDual = mBackStackListDual.get(newSize - 1).getCategory();
-                if (FileUtils.checkIfFileCategory(mCategoryDual)) {
-                    initializeStartingDirectory();
-                } else {
-                    hideFab();
-                }
-                Logger.log(TAG, "checkIfBackStackExists--DUAL Path=" + mCurrentDirDualPane + "  " +
-                        "Category=" + mCategoryDual);
-                Logger.log(TAG, "checkIfBackStackExists --DUAL New size=" + mBackStackListDual.size());
-            }
-            return true;
-        }
-//        Logger.log(TAG, "checkIfBackStackExists --Path=" + mCurrentDir + "  Category=" + mCategory);
-        return false;
-    }
 
     public void setCurrentCategory(int category) {
         if (!isDualPaneInFocus) mCategory = category;
@@ -1271,57 +1185,9 @@ public class AceActivity extends BaseActivity
         mIsFromHomePage = true;
     }
 
-    /**
-     * Called from {@link #onBackPressed()} . Does the following:
-     * 1. If homescreen enabled, returns to home screen
-     * 2. If homescreen disabled, exits the app
-     */
-    private void removeFragmentFromBackStack() {
-
-        int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
-        Fragment dualFragment = getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
 
 
-        Logger.log(TAG, "RemoveFragmentFromBackStack --backstack==" + backStackCount +
-                "home_enabled=" + mIsHomeScreenEnabled + " frag=" + fragment);
 
-        mBackStackList.clear();
-        mBackStackListDual.clear();
-        cleanUpFileScreen();
-        Logger.log(TAG, "RemoveFragmentFromBackStack--frag=" + fragment);
-        FragmentTransaction ft = getSupportFragmentManager()
-                .beginTransaction();
-        ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
-                .exit_to_left);
-
-        ft.remove(fragment);
-
-        if (dualFragment != null) {
-            ft.remove(dualFragment);
-        }
-
-
-        if (mHomeScreenFragment != null) {
-            ft.show(mHomeScreenFragment);
-            toggleNavigationVisibility(false);
-        }
-        ft.commitAllowingStateLoss();
-
-    }
-
-    private void cleanUpFileScreen() {
-        if (mIsHomeScreenEnabled) {
-            setTitleForCategory(100); // Setting title to App name
-            hideFab();
-            mCurrentDir = null;
-            mCurrentDirDualPane = null;
-            mStartingDir = null;
-            mStartingDirDualPane = null;
-            toggleDualPaneVisibility(false);
-        }
-
-    }
 
     @Override
     protected void onDestroy() {
