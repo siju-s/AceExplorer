@@ -14,6 +14,7 @@ import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.groups.Category;
 import com.siju.acexplorer.filesystem.groups.StoragesGroup;
+import com.siju.acexplorer.filesystem.utils.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class NavigationInfo {
     private Context context;
     private NavigationCallback navigationCallback;
     private boolean isCurrentDirRoot;
-    private String STORAGE_INTERNAL,STORAGE_ROOT,STORAGE_EXTERNAL;
+    private String STORAGE_INTERNAL, STORAGE_ROOT, STORAGE_EXTERNAL;
     private ArrayList<String> externalSDPaths = new ArrayList<>();
 
 
@@ -40,6 +41,35 @@ public class NavigationInfo {
         STORAGE_INTERNAL = context.getResources().getString(R.string.nav_menu_internal_storage);
         STORAGE_EXTERNAL = context.getResources().getString(R.string.nav_menu_ext_storage);
         externalSDPaths = new StoragesGroup(context).getExternalSDList();
+    }
+
+    public void setInitialDir() {
+        if (currentDir.contains(FileUtils.getInternalStorage().getAbsolutePath())) {
+            initialDir = FileUtils.getInternalStorage().getAbsolutePath();
+            isCurrentDirRoot = false;
+        } else if (externalSDPaths.size() > 0) {
+            for (String path : externalSDPaths) {
+                if (currentDir.contains(path)) {
+                    initialDir = path;
+                    isCurrentDirRoot = false;
+                    return;
+                }
+            }
+            initialDir = File.separator;
+        } else {
+            initialDir = File.separator;
+        }
+        Logger.log(TAG, "initializeStartingDirectory--startingdir=" + initialDir);
+
+    }
+
+    private void checkIfFavIsRootDir() {
+
+        if (!currentDir.contains(getInternalStorage().getAbsolutePath()) && !externalSDPaths.contains
+                (currentDir)) {
+            isCurrentDirRoot = true;
+            initialDir = File.separator;
+        }
     }
 
     public void addHomeNavButton(boolean isHomeScreenEnabled, Category category) {
@@ -120,7 +150,7 @@ public class NavigationInfo {
         return context.getString(R.string.app_name);
     }
 
-    public void setNavDirectory(String path,boolean isHomeScreenEnabled, Category category) {
+    public void setNavDirectory(String path, boolean isHomeScreenEnabled, Category category) {
         String[] parts;
         parts = path.split(File.separator);
 
@@ -242,4 +272,6 @@ public class NavigationInfo {
         navigationCallback.onNavButtonClicked(dir);
 
     }
+
+    private String
 }

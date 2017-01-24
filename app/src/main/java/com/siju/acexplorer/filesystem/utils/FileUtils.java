@@ -1005,13 +1005,7 @@ public class FileUtils implements Progress {
         return length;
     }
 
-    public static boolean checkIfFileCategory(int category) {
-        return category == FileConstants.CATEGORY.FILES.getValue() ||
-                category == FileConstants.CATEGORY.COMPRESSED.getValue() ||
-                category == FileConstants.CATEGORY.DOWNLOADS.getValue() ||
-                category == FileConstants.CATEGORY.FAVORITES.getValue() ||
-                category == FileConstants.CATEGORY.LARGE_FILES.getValue();
-    }
+
 
     public static Uri getUriForCategory(int category) {
         switch (category) {

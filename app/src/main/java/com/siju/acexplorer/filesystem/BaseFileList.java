@@ -123,8 +123,17 @@ import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import static android.R.attr.fragment;
+import static android.media.tv.TvContract.Programs.Genres.MUSIC;
+import static com.siju.acexplorer.R.string.view;
 import static com.siju.acexplorer.filesystem.FileConstants.ADS;
+import static com.siju.acexplorer.filesystem.groups.Category.COMPRESSED;
+import static com.siju.acexplorer.filesystem.groups.Category.DOCS;
+import static com.siju.acexplorer.filesystem.groups.Category.DOWNLOADS;
+import static com.siju.acexplorer.filesystem.groups.Category.FAVORITES;
 import static com.siju.acexplorer.filesystem.groups.Category.FILES;
+import static com.siju.acexplorer.filesystem.groups.Category.LARGE_FILES;
+import static com.siju.acexplorer.filesystem.groups.Category.VIDEO;
 import static com.siju.acexplorer.filesystem.utils.FileUtils.getInternalStorage;
 
 
@@ -132,7 +141,7 @@ public class BaseFileList extends Fragment implements LoaderManager
         .LoaderCallbacks<ArrayList<FileInfo>>,
         SearchView.OnQueryTextListener,
         Toolbar.OnMenuItemClickListener, SearchTask.SearchHelper,
-        View.OnClickListener,NavigationCallback {
+        View.OnClickListener, NavigationCallback {
 
     private final String TAG = this.getClass().getSimpleName();
     private FastScrollRecyclerView recyclerViewFileList;
@@ -260,7 +269,7 @@ public class BaseFileList extends Fragment implements LoaderManager
             viewMode = sharedPreferenceWrapper.getViewMode(getActivity());
             setupList();
             if (category.equals(FILES)) {
-                navigationInfo.setNavDirectory(mFilePath,isHomeScreenEnabled,category);
+                navigationInfo.setNavDirectory(mFilePath, isHomeScreenEnabled, category);
             }
             initLoader();
             initializeListeners();
@@ -392,7 +401,7 @@ public class BaseFileList extends Fragment implements LoaderManager
             category = (Category) getArguments().getSerializable(FileConstants.KEY_CATEGORY);
             if (checkIfLibraryCategory(category)) {
                 hideFab();
-                addHomeNavButton(false);
+//                navigationInfo.addHomeNavButton(false);
             } else {
                 showFab();
             }
@@ -437,7 +446,111 @@ public class BaseFileList extends Fragment implements LoaderManager
         }, 100L);
     }
 
+    public void onBackPressed() {
+        if (isSearchVisible()) {
+            hideSearchView();
+            removeSearchTask();
+        } else if (isZipMode()) {
+            onBackPressInZip();
+        } else if (checkIfBackStackExists()) {
+            backOperation();
+        }
 
+    }
+
+    private void onBackPressInZip() {
+        if (checkZipMode()) {
+            backStackInfo.removeEntry(backStackInfo.getBackStack().size() - 1);
+            String currentDir = backStackInfo.getCurrentDir(backStackInfo.getBackStack().size() - 1);
+            Category currentCategory = backStackInfo.getCurrentCategory(backStackInfo.getBackStack().size() - 1);
+            reloadList(true, currentDir);
+            navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled, currentCategory);
+        }
+    }
+
+    private boolean checkIfBackStackExists() {
+        int backStackSize = backStackInfo.getBackStack().size();
+        Logger.log(TAG, "checkIfBackStackExists --size=" + backStackSize);
+
+
+        if (backStackSize == 1) {
+            backStackInfo.clearBackStack();
+            return false;
+        } else if (backStackSize > 1) {
+
+            Logger.log(TAG, "checkIfBackStackExists--Path=" + currentDir + "  Category=" + category);
+            return true;
+        }
+//        Logger.log(TAG, "checkIfBackStackExists --Path=" + mCurrentDir + "  Category=" + mCategory);
+        return false;
+    }
+
+
+    private void backOperation() {
+
+        if (checkIfBackStackExists()) {
+
+            backStackInfo.removeEntry(backStackInfo.getBackStack().size() - 1);
+            String currentDir = backStackInfo.getCurrentDir(backStackInfo.getBackStack().size() - 1);
+            Category currentCategory = backStackInfo.getCurrentCategory(backStackInfo.getBackStack().size() - 1);
+            if (checkIfFileCategory(currentCategory)) {
+                navigationInfo.setInitialDir();
+            } else {
+                hideFab();
+            }
+            reloadList(true, currentDir);
+            setTitleForCategory(currentCategory);
+            if (currentCategory.equals(FILES)) {
+                showFab();
+                navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled, currentCategory);
+            }
+
+        } else {
+            removeFragmentFromBackStack();
+            if (!isHomeScreenEnabled) {
+                getActivity().finish();
+            }
+        }
+    }
+
+
+    private boolean checkIfFileCategory(Category category) {
+        return category.equals(FILES) ||
+                category.equals(COMPRESSED) ||
+                category.equals(DOWNLOADS) ||
+                category.equals(FAVORITES) ||
+                category.equals(LARGE_FILES);
+    }
+
+    private void setTitleForCategory(Category category) {
+        switch (category) {
+            case FILES:
+                toolbar.setTitle(getString(R.string.app_name));
+                break;
+            case AUDIO:
+                toolbar.setTitle(getString(R.string.nav_menu_music));
+                break;
+            case VIDEO:
+                toolbar.setTitle(getString(R.string.nav_menu_video));
+                break;
+            case IMAGE:
+                toolbar.setTitle(getString(R.string.nav_menu_image));
+                break;
+            case DOCS:
+                toolbar.setTitle(getString(R.string.nav_menu_docs));
+                break;
+            default:
+                toolbar.setTitle(getString(R.string.app_name));
+        }
+    }
+
+    public boolean isFabExpanded() {
+        return fabCreateMenu.isExpanded();
+    }
+
+    public void collapseFab() {
+        fabCreateMenu.collapse();
+    }
 
 
     /**
@@ -710,8 +823,6 @@ public class BaseFileList extends Fragment implements LoaderManager
             }
         });
     }
-
-
 
 
     public void openCompressedFile(String path) {
@@ -1020,6 +1131,13 @@ public class BaseFileList extends Fragment implements LoaderManager
 
     }
 
+    public void removeHomeFromNavPath() {
+        Logger.log(TAG, "Nav directory count=" + navDirectory.getChildCount());
+
+        for (int i = 0; i < Math.min(navDirectory.getChildCount(), 2); i++) {
+            navDirectory.removeViewAt(0);
+        }
+    }
 
     private RefreshData refreshData;
 
@@ -1046,8 +1164,30 @@ public class BaseFileList extends Fragment implements LoaderManager
     }
 
     @Override
-    public void onClick(View v) {
-
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.fabCreateFile:
+            case R.id.fabCreateFolder:
+                if (view.getId() == R.id.fabCreateFolder || view.getId() == R.id.fabCreateFile) {
+                    fabCreateMenu.collapse();
+                }
+                if (view.getId() == R.id.fabCreateFolder || view.getId() == R.id
+                        .fabCreateFolderDual) {
+                    mOperation = FileConstants.FOLDER_CREATE;
+                    String path = isDualPaneInFocus ? mCurrentDirDualPane : mCurrentDir;
+                    new FileUtils().createDirDialog(getActivity(), mIsRootMode, path);
+                } else {
+                    mOperation = FileConstants.FILE_CREATE;
+                    String path = isDualPaneInFocus ? mCurrentDirDualPane : mCurrentDir;
+                    new FileUtils().createFileDialog(this, mIsRootMode, path);
+                }
+                setBackPressed();
+/*                if (isDualPaneInFocus) {
+                    Fragment dualFragment = getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
+                    ((FileListDualFragment) dualFragment).setBackPressed();
+                }*/
+                break;
+        }
     }
 
     @Override
@@ -1079,8 +1219,6 @@ public class BaseFileList extends Fragment implements LoaderManager
                     baseFileList.reloadList(true, currentDir);
                     if (!mIsFromHomePage) {
                         setNavDirectory(currentDir);
-                    } else {
-                        hideFab();
                     }
                 }
             } else {
@@ -1250,7 +1388,7 @@ public class BaseFileList extends Fragment implements LoaderManager
     }
 
 
-    public boolean checkZipMode() {
+    private boolean checkZipMode() {
         if (mCurrentZipDir == null || mCurrentZipDir.length() == 0) {
             endZipMode();
             return true;
@@ -2739,6 +2877,17 @@ public class BaseFileList extends Fragment implements LoaderManager
 
         initializeListeners();
 
+    }
+
+    /**
+     * Show dual pane in Landscape mode
+     */
+    public void showDualPane() {
+
+        // For Files category only, show dual pane
+            mIsDualModeEnabled = true;
+            refreshSpan();
+//            createDualFragment();
     }
 
 

@@ -48,12 +48,12 @@ import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.common.SharedPreferenceWrapper;
 import com.siju.acexplorer.filesystem.BaseFileList;
+import com.siju.acexplorer.filesystem.DualPaneList;
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.HomeScreenFragment;
 import com.siju.acexplorer.filesystem.groups.Category;
 import com.siju.acexplorer.filesystem.groups.DrawerGroups;
 import com.siju.acexplorer.filesystem.helper.FileOpsHelper;
-import com.siju.acexplorer.filesystem.model.BackStackModel;
 import com.siju.acexplorer.filesystem.model.CopyData;
 import com.siju.acexplorer.filesystem.model.FavInfo;
 import com.siju.acexplorer.filesystem.model.FileInfo;
@@ -83,7 +83,7 @@ import eu.chainfire.libsuperuser.Shell;
 import static com.siju.acexplorer.filesystem.FileConstants.ADS;
 import static com.siju.acexplorer.filesystem.FileConstants.KEY_PREMIUM;
 import static com.siju.acexplorer.filesystem.groups.Category.AUDIO;
-import static com.siju.acexplorer.filesystem.groups.Category.DOCS;
+import static com.siju.acexplorer.filesystem.groups.Category.FILES;
 import static com.siju.acexplorer.filesystem.groups.Category.IMAGE;
 import static com.siju.acexplorer.filesystem.groups.Category.VIDEO;
 import static com.siju.acexplorer.filesystem.utils.FileUtils.getInternalStorage;
@@ -117,10 +117,6 @@ public class AceActivity extends BaseActivity
     private ArrayList<SectionGroup> totalGroupData = new ArrayList<>();
     private DrawerLayout drawerLayout;
     private ScrimInsetsRelativeLayout relativeLayoutDrawerPane;
-    private String mCurrentDir;
-    private String mCurrentDirDualPane;
-
-
     private final ArrayList<SectionItems> favouritesGroupChild = new ArrayList<>();
     private SharedPreferenceWrapper sharedPreferenceWrapper;
     private SharedPreferences mSharedPreferences;
@@ -133,8 +129,6 @@ public class AceActivity extends BaseActivity
     private boolean mIsHomeScreenEnabled;
     private boolean mShowHidden;
     private boolean mIsHomePageAdded;
-    private String mStartingDir;
-    private String mStartingDirDualPane;
     private boolean mIsDualModeEnabled;
     private boolean mIsFromHomePage;
     private int mCurrentTheme = FileConstants.THEME_LIGHT;
@@ -157,6 +151,7 @@ public class AceActivity extends BaseActivity
     private PermissionHelper permissionHelper;
     private BasePresenterImpl basePresenter;
     private FrameLayout frameDualPane;
+    private boolean isDualPaneEnabled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -260,7 +255,7 @@ public class AceActivity extends BaseActivity
         checkPreferences();
 //        initializeInteractiveShell();
         if (!checkIfInAppShortcut(getIntent())) {
-            initialScreenSetup(mIsHomeScreenEnabled);
+            displayMainScreen(mIsHomeScreenEnabled);
         }
         initListeners();
         setListAdapter();
@@ -335,33 +330,6 @@ public class AceActivity extends BaseActivity
         imageInvite.setOnClickListener(this);
     }
 
-
-
-
-/*    private void showAds() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (!isFinishing()) {
-                    MobileAds.initialize(getApplicationContext(), "ca-app-pub-3940256099942544~3347511713");
-                    Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
-                    if (fragment instanceof BaseFileList) {
-                        ((BaseFileList) fragment).setTrial();
-                    } else if (fragment instanceof HomeScreenFragment) {
-                        ((HomeScreenFragment) fragment).setTrial();
-                    }
-                }
-            }
-        }, 2000);
-        if (inappBillingSupported) {
-            PremiumUtils.onStart(this);
-            if (PremiumUtils.shouldShowPremiumDialog()) {
-                showPremiumDialog();
-            }
-        }
-    }*/
-
-
     private void setListAdapter() {
         totalGroupData = basePresenter.getTotalGroupData();
         expandableListAdapter = new ExpandableListAdapter(this, totalGroupData);
@@ -369,45 +337,33 @@ public class AceActivity extends BaseActivity
         expandableListView.expandGroup(0);
     }
 
-    private void initialScreenSetup(boolean isHomeScreenEnabled) {
+    private void displayMainScreen(boolean isHomeScreenEnabled) {
         if (isHomeScreenEnabled) {
-            hideFab();
-            mNavigationLayout.setVisibility(View.GONE);
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            Bundle args = new Bundle();
-            args.putBoolean(FileConstants.KEY_HOME, true);
-            args.putBoolean(AceActivity.PREFS_FIRST_RUN, mIsFirstRun);
-            args.putBoolean(FileConstants.KEY_DUAL_ENABLED, mIsDualModeEnabled);
-//            args.putBoolean(FileConstants.KEY_PREMIUM, isPremium);
-            mHomeScreenFragment = new HomeScreenFragment();
-            mHomeScreenFragment.setArguments(args);
+            displayHomeScreen();
+        } else {
+            displayFileList(getInternalStorage().getAbsolutePath(), FILES);
+            if (mIsDualModeEnabled) {
+                toggleDualPaneVisibility(true);
+//                showDualPane();
+            }
+        }
+    }
+
+    private void displayHomeScreen() {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Bundle args = new Bundle();
+        args.putBoolean(FileConstants.KEY_HOME, true);
+        args.putBoolean(AceActivity.PREFS_FIRST_RUN, mIsFirstRun);
+        args.putBoolean(FileConstants.KEY_DUAL_ENABLED, mIsDualModeEnabled);
+        mHomeScreenFragment = new HomeScreenFragment();
+        mHomeScreenFragment.setArguments(args);
 //            ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
 //                    .exit_to_left);
 //            ft.setCustomAnimations(R.anim.slide_in_left,R.anim.slide_out_right);
-            ft.replace(R.id.main_container, mHomeScreenFragment);
-            ft.addToBackStack(null);
-            Logger.log(TAG, "initialScreenSetup");
-            ft.commitAllowingStateLoss();
-        } else {
-            showFab();
-            // Initialising only if Home screen disabled
-            currentScreenSetup(getInternalStorage().getAbsolutePath(), FileConstants.CATEGORY.FILES.getValue(), false);
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            Bundle args = new Bundle();
-            args.putBoolean(FileConstants.KEY_HOME, false);
-            args.putString(FileConstants.KEY_PATH, mCurrentDir);
-//            args.putBoolean(FileConstants.KEY_PREMIUM, isPremium);
-            BaseFileList baseFileList = new BaseFileList();
-            baseFileList.setArguments(args);
-//            ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
-//                    .exit_to_left);
-            ft.replace(R.id.main_container, baseFileList, mCurrentDir);
-            ft.commitAllowingStateLoss();
-            if (mIsDualModeEnabled) {
-                toggleDualPaneVisibility(true);
-                showDualPane();
-            }
-        }
+        ft.replace(R.id.main_container, mHomeScreenFragment);
+        ft.addToBackStack(null);
+        Logger.log(TAG, "initialScreenSetup");
+        ft.commitAllowingStateLoss();
     }
 
     private static final String ACTION_IMAGES = "android.intent.action.SHORTCUT_IMAGES";
@@ -474,6 +430,7 @@ public class AceActivity extends BaseActivity
         // Called when user returns from the settings screen
         Log.d(TAG, "onActivityResult(" + requestCode + "," + resultCode + ","
                 + intent);
+
         if (!mHelper.handleActivityResult(requestCode, resultCode, intent)) {
             if (requestCode == PREFS_REQUEST) {
                 Logger.log(TAG, "OnActivityResult=" + resultCode);
@@ -641,10 +598,6 @@ public class AceActivity extends BaseActivity
     }
 
 
-
-
-
-
     private void endActionMode() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
         if (fragment instanceof BaseFileList && ((BaseFileList) fragment).isInSelectionMode()) {
@@ -657,66 +610,15 @@ public class AceActivity extends BaseActivity
     }
 
 
-
-
-
-    /**
-     * Show dual pane in Landscape mode
-     */
-    private void showDualPane() {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
-
-        if (fragment instanceof HomeScreenFragment) {
-            mIsDualModeEnabled = true;
-            ((HomeScreenFragment) fragment).setDualModeEnabled(true);
-        }
-        // For Files category only, show dual pane
-        else if (mCategory == FileConstants.CATEGORY.FILES.getValue()) {
-            mIsDualModeEnabled = true;
-            isDualPaneInFocus = true;
-            toggleDualPaneVisibility(true);
-            ((BaseFileList) fragment).refreshSpan();
-            currentScreenSetup(FileUtils.getInternalStorage().getAbsolutePath(), FileConstants
-                    .CATEGORY.FILES.getValue(), isDualPaneInFocus);
-//            createDualFragment();
-        }
-    }
-
     @Override
     public void onClick(final View view) {
         switch (view.getId()) {
 
-            case R.id.fabCreateFileDual:
-            case R.id.fabCreateFolderDual:
-                fabCreateMenuDual.collapse();
-            case R.id.fabCreateFile:
-            case R.id.fabCreateFolder:
-                if (view.getId() == R.id.fabCreateFolder || view.getId() == R.id.fabCreateFile) {
-                    fabCreateMenu.collapse();
-                }
-                if (view.getId() == R.id.fabCreateFolder || view.getId() == R.id
-                        .fabCreateFolderDual) {
-                    mOperation = FileConstants.FOLDER_CREATE;
-                    String path = isDualPaneInFocus ? mCurrentDirDualPane : mCurrentDir;
-                    new FileUtils().createDirDialog(this, mIsRootMode, path);
-                } else {
-                    mOperation = FileConstants.FILE_CREATE;
-                    String path = isDualPaneInFocus ? mCurrentDirDualPane : mCurrentDir;
-                    new FileUtils().createFileDialog(this, mIsRootMode, path);
-                }
-                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
-                ((BaseFileList) fragment).setBackPressed();
-/*                if (isDualPaneInFocus) {
-                    Fragment dualFragment = getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
-                    ((FileListDualFragment) dualFragment).setBackPressed();
-                }*/
-                break;
-
             case R.id.unlockPremium:
-                if (inappBillingSupported) {
-                    showPremiumDialog();
-                } else {
+                if (BillingHelper.getInstance().getInAppBillingStatus().equals(BillingStatus.UNSUPPORTED)) {
                     Toast.makeText(this, getString(R.string.billing_unsupported), Toast.LENGTH_SHORT).show();
+                } else {
+                    showPremiumDialog();
                 }
                 break;
             case R.id.rateUs: // Rate us
@@ -761,15 +663,6 @@ public class AceActivity extends BaseActivity
         }
     }
 
-    private boolean checkIfSameItemClicked(String path, int category) {
-        if (!isDualPaneInFocus)
-            return mCurrentDir != null && mCurrentDir.equals(path) && mCategory == category;
-        else
-            return mCurrentDirDualPane != null && mCurrentDirDualPane.equals(path) && mCategoryDual
-                    == category;
-
-    }
-
     public void onDrawerItemClick(int groupPos, int childPos) {
         String path = totalGroupData.get(groupPos).getmChildItems().get(childPos).getPath();
         displaySelectedGroup(groupPos, childPos, path);
@@ -790,9 +683,9 @@ public class AceActivity extends BaseActivity
     }
 
     private void onStorageItemClicked(int groupPos, String path) {
-        initializeStartingDirectory();
-        checkIfFavIsRootDir(groupPos);
-        displayFileList(path, Category.FILES);
+/*        initializeStartingDirectory();
+        checkIfFavIsRootDir(groupPos);*/
+        displayFileList(path, FILES);
     }
 
     private void onLibraryItemClicked(int childPos) {
@@ -800,87 +693,6 @@ public class AceActivity extends BaseActivity
         displayFileList(null, category);
     }
 
-
-
-    private void checkIfFavIsRootDir(int groupPos) {
-        if (groupPos == 1) {
-
-            if (!isDualPaneInFocus) {
-                if (!mCurrentDir.contains(getInternalStorage().getAbsolutePath()) && !mExternalSDPaths.contains
-                        (mCurrentDir)) {
-                    isCurrentDirRoot = true;
-                    mStartingDir = File.separator;
-                }
-            } else {
-                if (!mCurrentDirDualPane.contains(getInternalStorage().getAbsolutePath()) && !mExternalSDPaths
-                        .contains(mCurrentDirDualPane)) {
-                    isCurrentDualDirRoot = true;
-                    mStartingDirDualPane = File.separator;
-                }
-            }
-        }
-    }
-
-    public void initializeStartingDirectory() {
-        if (!isDualPaneInFocus) {
-            if (mCurrentDir.contains(FileUtils.getInternalStorage().getAbsolutePath())) {
-                mStartingDir = FileUtils.getInternalStorage().getAbsolutePath();
-                isCurrentDirRoot = false;
-            } else if (mExternalSDPaths.size() > 0) {
-                for (String path : mExternalSDPaths) {
-                    if (mCurrentDir.contains(path)) {
-                        mStartingDir = path;
-                        isCurrentDirRoot = false;
-                        return;
-                    }
-                }
-                mStartingDir = File.separator;
-            } else {
-                mStartingDir = File.separator;
-            }
-            Logger.log(TAG, "initializeStartingDirectory--startingdir=" + mStartingDir);
-
-        } else {
-            if (mCurrentDirDualPane.contains(FileUtils.getInternalStorage().getAbsolutePath())) {
-                mStartingDirDualPane = FileUtils.getInternalStorage().getAbsolutePath();
-                isCurrentDualDirRoot = false;
-            } else if (mExternalSDPaths.size() > 0) {
-                for (String path : mExternalSDPaths) {
-                    if (mCurrentDirDualPane.contains(path)) {
-                        mStartingDirDualPane = path;
-                        isCurrentDualDirRoot = false;
-                        return;
-                    }
-                }
-                mStartingDirDualPane = File.separator;
-            } else {
-                mStartingDirDualPane = File.separator;
-            }
-            Logger.log(TAG, "initializeStartingDirectory--startingdirDUAL=" + mStartingDirDualPane);
-        }
-    }
-
-    private void setTitleForCategory(int category) {
-        switch (category) {
-            case 0:
-                mToolbar.setTitle(R.string.app_name);
-                break;
-            case 1:
-                mToolbar.setTitle(MUSIC);
-                break;
-            case 2:
-                mToolbar.setTitle(VIDEO);
-                break;
-            case 3:
-                mToolbar.setTitle(IMAGES);
-                break;
-            case 4:
-                mToolbar.setTitle(DOCS);
-                break;
-            default:
-                mToolbar.setTitle(R.string.app_name);
-        }
-    }
 
     private void displayFileList(String directory, Category category) {
 
@@ -899,19 +711,11 @@ public class AceActivity extends BaseActivity
             ft.addToBackStack(null);
             ft.commit();
         } else {
-            ((BaseFileList) fragment).reloadList(directory);
+            ((BaseFileList) fragment).reloadList(false, directory);
         }
 
     }
 
-
-
-
-    private void currentScreenSetup(String directory, int category, boolean isDualPane) {
-        setDir(directory, isDualPane);
-        setCurrentCategory(category);
-        addToBackStack(directory, category);
-    }
 
     private void showPurchaseDialog() {
         BillingHelper.getInstance().launchPurchaseFlow(this);
@@ -929,11 +733,11 @@ public class AceActivity extends BaseActivity
 
         unlockPremium.setVisibility(View.GONE);
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
-        if (fragment instanceof BaseFileList) {
+/*        if (fragment instanceof BaseFileList) {
             ((BaseFileList) fragment).setPremium();
         } else if (fragment instanceof HomeScreenFragment) {
             ((HomeScreenFragment) fragment).setPremium();
-        }
+        }*/
     }
 
 
@@ -1003,14 +807,11 @@ public class AceActivity extends BaseActivity
         if (mCurrentOrientation != newConfig.orientation) {
             mCurrentOrientation = newConfig.orientation;
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
-
-            if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE && mIsDualPaneEnabled) {
-                showDualPane();
-            } else {
-                mIsDualModeEnabled = false;
-                isDualPaneInFocus = false;
-                if (fragment instanceof HomeScreenFragment) {
-                    ((HomeScreenFragment) fragment).setDualModeEnabled(false);
+            if (fragment instanceof BaseFileList) {
+                if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    toggleDualPaneVisibility(true);
+                    ((BaseFileList) fragment).showDualPane();
+                    createDualFragment();
                 } else {
                     toggleDualPaneVisibility(false);
                 }
@@ -1027,42 +828,32 @@ public class AceActivity extends BaseActivity
     public void toggleDualPaneVisibility(boolean isFilesCategory) {
         if (isFilesCategory) {
             if (mIsDualModeEnabled) {
-                FrameLayout frameLayout = (FrameLayout) findViewById(R.id
-                        .frame_container_dual);
-                frameLayout.setVisibility(View.VISIBLE);
-                frameLayoutFabDual.setVisibility(View.VISIBLE);
+                frameDualPane.setVisibility(View.VISIBLE);
                 mViewSeperator.setVisibility(View.VISIBLE);
-                scrollNavigationDualPane.setVisibility(View.VISIBLE);
             }
         } else {
-            FrameLayout frameLayout = (FrameLayout) findViewById(R.id.frame_container_dual);
-            frameLayout.setVisibility(View.GONE);
-            frameLayoutFabDual.setVisibility(View.GONE);
+            frameDualPane.setVisibility(View.VISIBLE);
             mViewSeperator.setVisibility(View.GONE);
-            scrollNavigationDualPane.setVisibility(View.GONE);
-            isDualPaneInFocus = false;
-            mBackStackListDual.clear();
         }
-
     }
 
-/*    public void createDualFragment() {
+    public void createDualFragment() {
         FragmentTransaction ft = getSupportFragmentManager()
                 .beginTransaction();
         String internalStoragePath = getInternalStorage().getAbsolutePath();
         Bundle args = new Bundle();
         args.putString(FileConstants.KEY_PATH, internalStoragePath);
 
-        args.putString(FileConstants.KEY_PATH_OTHER, mCurrentDir);
+//        args.putString(FileConstants.KEY_PATH_OTHER, mCurrentDir);
         args.putBoolean(FileConstants.KEY_FOCUS_DUAL, true);
 
         args.putBoolean(FileConstants.KEY_DUAL_MODE, true);
-        FileListDualFragment dualFragment = new FileListDualFragment();
+        DualPaneList dualFragment = new DualPaneList();
         dualFragment.setArguments(args);
         ft.replace(R.id.frame_container_dual, dualFragment);
 //        ft.commit();
         ft.commitAllowingStateLoss();
-    }*/
+    }
 
 
     @Override
@@ -1075,119 +866,36 @@ public class AceActivity extends BaseActivity
         Logger.log(TAG, "Onbackpress--fragment=" + fragment + " " +
                 "mHomePageRemoved=" + mIsHomePageRemoved + "home added=" + mIsHomePageAdded + " " +
                 "backstack=" + backStackEntryCount);
-//        Logger.log(TAG, "Onbackpress--fab exp=" + fabCreateMenu.isExpanded()+"fabDUAL exp="+fabCreateMenuDual
-// .isExpanded());
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if (fabCreateMenu.isExpanded()) {
-            fabCreateMenu.collapse();
-        } else if (fabCreateMenuDual.isExpanded()) {
-            fabCreateMenuDual.collapse();
-        } else if (mIsHomePageRemoved) {
-//            super.onBackPressed();
-            if (backStackEntryCount != 0) {
-                finish();
-                /*getSupportFragmentManager().popBackStack();
-                super.onBackPressed();
- */
+        } else if (fragment instanceof BaseFileList) {
+            if (((BaseFileList) fragment).isFabExpanded()) {
+                ((BaseFileList) fragment).collapseFab();
+            } else if (mIsHomePageRemoved) {
+                if (backStackEntryCount != 0) {
+                    finish();
+                }
+            } else {
+                ((BaseFileList) fragment).onBackPressed();
             }
-        } else if (mIsHomePageAdded) {
+
+        }
+  /*      else if (mIsHomePageAdded) {
             initialScreenSetup(true);
             setTitleForCategory(100); // Setting title to App name
-            mCurrentDir = null;
-            mCurrentDirDualPane = null;
-            mStartingDir = null;
-            mStartingDirDualPane = null;
-            isDualPaneInFocus = false;
-            mFrameDualPane.setVisibility(View.GONE);
+            frameDualPane.setVisibility(View.GONE);
             mViewSeperator.setVisibility(View.GONE);
-//            cleanUpFileScreen();
-            mIsDualModeEnabled = false;
             mIsHomePageAdded = false;
-        } else if (fragment instanceof BaseFileList) {
-            if (((BaseFileList) fragment).isSearchVisible()) {
-                ((BaseFileList) fragment).hideSearchView();
-                ((BaseFileList) fragment).removeSearchTask();
-            }
-            backOperation(fragment);
-        } else {
+        } */
+        else {
             // Remove HomeScreen Frag & Exit App
             Logger.log(TAG, "Onbackpress--ELSE=");
-            mCurrentDir = null;
-            mStartingDir = null;
-            mStartingDirDualPane = null;
-            mCurrentDirDualPane = null;
             finish();
 //            super.onBackPressed();
         }
     }
-
-
-    private void backOperation(Fragment fragment) {
-
-
-        if (((BaseFileList) fragment).isZipMode()) {
-
-            if (((BaseFileList) fragment).checkZipMode()) {
-                int newSize = mBackStackList.size() - 1;
-
-                mBackStackList.remove(newSize);
-                mCurrentDir = mBackStackList.get(newSize - 1).getFilePath();
-                mCategory = mBackStackList.get(newSize - 1).getCategory();
-                ((BaseFileList) fragment).reloadList(true, mCurrentDir);
-                if (!mIsFromHomePage) {
-                    setNavDirectory(mCurrentDir, false);
-                } else {
-                    hideFab();
-                }
-            }
-        } else if (mStartingDir == null) {
-            removeFragmentFromBackStack();
-        } else if (checkIfBackStackExists()) {
-            if (!isDualPaneInFocus) {
-                ((BaseFileList) fragment).setCategory(mCategory);
-                ((BaseFileList) fragment).reloadList(true, mCurrentDir);
-            } else {
-                if (mCategoryDual == FileConstants.CATEGORY.GENERIC_LIST.getValue()) {
-                    super.onBackPressed();
-                }
-            }
-            setTitleForCategory(mCategory);
-            if (mCategory == FileConstants.CATEGORY.FILES.getValue()) {
-                showFab();
-                if (!isDualPaneInFocus)
-                    setNavDirectory(mCurrentDir, isDualPaneInFocus);
-                else
-                    setNavDirectory(mCurrentDirDualPane, isDualPaneInFocus);
-
-            }
-
-        } else {
-            removeFragmentFromBackStack();
-            if (!mIsHomeScreenEnabled) {
-                finish();
-            }
-        }
-
-
-    }
-
-
-
-    public void setCurrentCategory(int category) {
-        if (!isDualPaneInFocus) mCategory = category;
-        else mCategoryDual = category;
-    }
-
-    public void setIsFromHomePage() {
-        mIsFromHomePage = true;
-    }
-
-
-
-
 
     @Override
     protected void onDestroy() {
@@ -1213,37 +921,6 @@ public class AceActivity extends BaseActivity
         super.onDestroy();
     }
 
-
-    public void toggleFab(boolean isActionMode) {
-        if (isActionMode) {
-            fabCreateMenu.setVisibility(View.GONE);
-        } else {
-            fabCreateMenu.setVisibility(View.VISIBLE);
-        }
-    }
-
-    public void setCurrentDir(String dir, boolean isDualPaneInFocus) {
-        if (isDualPaneInFocus) {
-            mCurrentDirDualPane = dir;
-        } else {
-            mCurrentDir = dir;
-        }
-        this.isDualPaneInFocus = isDualPaneInFocus;
-    }
-
-    public void setDir(String dir, boolean isDualPaneInFocus) {
-        Logger.log(TAG, "setDir=Dir=" + dir + "dualPane=" + isDualPaneInFocus);
-        if (isDualPaneInFocus) {
-            mCurrentDirDualPane = dir;
-            mStartingDirDualPane = dir;
-        } else {
-            mCurrentDir = dir;
-            mStartingDir = dir;
-        }
-        this.isDualPaneInFocus = isDualPaneInFocus;
-    }
-
-
     private boolean mIsHomeSettingToggled;
     private boolean mIsHomePageRemoved;
 
@@ -1258,18 +935,7 @@ public class AceActivity extends BaseActivity
         Logger.log(TAG, "onPostResume" + mIsHomeSettingToggled);
         if (mIsHomeSettingToggled) {
 
-            currentScreenSetup(FileUtils.getInternalStorage().getAbsolutePath(), FileConstants
-                    .CATEGORY.FILES.getValue(), false);
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            Bundle args = new Bundle();
-            args.putBoolean(FileConstants.KEY_HOME, false);
-            args.putString(FileConstants.KEY_PATH, FileUtils.getInternalStorage().getAbsolutePath());
-            BaseFileList baseFileList = new BaseFileList();
-            baseFileList.setArguments(args);
-            ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
-                    .exit_to_left);
-            ft.replace(R.id.main_container, baseFileList);
-            ft.commit();
+            displayFileList(getInternalStorage().getAbsolutePath(), FILES);
             mIsHomeSettingToggled = false;
             mIsHomePageRemoved = true;
         } else if (mShowDualPane) {
@@ -1309,8 +975,7 @@ public class AceActivity extends BaseActivity
 
         String language = mSharedPreferences.getString(LocaleHelper.SELECTED_LANGUAGE, Locale.getDefault()
                 .getLanguage());
-        if (!language.equals(mCurrentLanguage)) {
-            mCurrentLanguage = language;
+        if (!language.equals(Locale.getDefault().getLanguage())) {
             LocaleHelper.setLocale(this, language);
             restartApp(false);
         }
@@ -1347,17 +1012,7 @@ public class AceActivity extends BaseActivity
                 if (fragment instanceof HomeScreenFragment) {
                     mIsHomeSettingToggled = true;
                 } else {
-                    Logger.log(TAG, "Nav directory count=" + navDirectory.getChildCount());
-
-                    for (int i = 0; i < Math.min(navDirectory.getChildCount(), 2); i++) {
-                        navDirectory.removeViewAt(0);
-                    }
-
-                    if (navDirectoryDualPane.getChildCount() > 0) {
-                        for (int i = 0; i < Math.min(navDirectoryDualPane.getChildCount(), 2); i++) {
-                            navDirectoryDualPane.removeViewAt(0);
-                        }
-                    }
+                    ((BaseFileList) fragment).removeHomeFromNavPath();
                     // Set a flag so that it can be removed on backPress
                     mIsHomePageRemoved = true;
                     mIsHomePageAdded = false;
@@ -1370,33 +1025,22 @@ public class AceActivity extends BaseActivity
                 mIsHomePageRemoved = false;
             }
         }
-/*
         boolean isDualPaneEnabledSettings = mSharedPreferences.getBoolean(FileConstants
                 .PREFS_DUAL_PANE, mIsTablet);
-        if (isDualPaneEnabledSettings != mIsDualPaneEnabled) {
-            mIsDualPaneEnabled = isDualPaneEnabledSettings;
 
-            Logger.log(TAG, "OnPrefschanged PREFS_DUAL_PANE" + mIsDualPaneEnabled);
+        Logger.log(TAG, "OnPrefschanged PREFS_DUAL_PANE" + isDualPaneEnabledSettings);
 
-            if (!mIsDualPaneEnabled) {
-                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id
-                        .main_container);
-                toggleDualPaneVisibility(false);
-                if (fragment instanceof HomeScreenFragment) {
-                    ((HomeScreenFragment) fragment).setDualModeEnabled(false);
-                } else {
-                    ((BaseFileList) fragment).refreshSpan(); // For changing the no of columns in non-dual mode
-                }
-
-                mIsDualModeEnabled = false;
-                mShowDualPane = false;
-            } else {
-                checkScreenOrientation();
-                if (mCategory == FileConstants.Category.FILES.getValue() && mIsDualModeEnabled) {
-                    mShowDualPane = true;
-                }
+        if (!isDualPaneEnabledSettings) {
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id
+                    .main_container);
+            toggleDualPaneVisibility(false);
+            if (fragment instanceof BaseFileList) {
+                ((BaseFileList) fragment).refreshSpan(); // For changing the no of columns in non-dual mode
             }
-        }*/
+
+            mIsDualModeEnabled = false;
+            mShowDualPane = false;
+        }
 
     }
 
@@ -1422,7 +1066,6 @@ public class AceActivity extends BaseActivity
         } else {
             ((BaseFileList) fragment).onPermissionGranted();
         }
-
     }
 
     @Override
