@@ -70,7 +70,7 @@ import com.siju.acexplorer.permission.PermissionResultCallback;
 import com.siju.acexplorer.permission.PermissionUtils;
 import com.siju.acexplorer.settings.SettingsActivity;
 import com.siju.acexplorer.ui.ScrimInsetsRelativeLayout;
-import com.siju.acexplorer.utils.DialogUtils;
+import com.siju.acexplorer.utils.Dialogs;
 import com.siju.acexplorer.utils.LocaleHelper;
 
 import java.io.File;
@@ -98,7 +98,6 @@ public class AceActivity extends BaseActivity
     public static final int PERMISSIONS_REQUEST = 100;
     public static final int SETTINGS_REQUEST = 200;
     private static final int PREFS_REQUEST = 1000;
-    public static final int SAF_REQUEST = 3000;
     private static final int REQUEST_INVITE = 4000;
 
     public int mOperation = -1;
@@ -108,7 +107,6 @@ public class AceActivity extends BaseActivity
     public ArrayList<FileInfo> mFiles = new ArrayList<>();
     public ArrayList<FileInfo> mTotalFiles = new ArrayList<>();
     public ArrayList<CopyData> mCopyData = new ArrayList<>();
-    public FileOpsHelper mFileOpsHelper;
     public int mRenamedPosition;
 
     private final String TAG = this.getClass().getSimpleName();
@@ -130,9 +128,7 @@ public class AceActivity extends BaseActivity
     private boolean mShowHidden;
     private boolean mIsHomePageAdded;
     private boolean mIsDualModeEnabled;
-    private boolean mIsFromHomePage;
     private int mCurrentTheme = FileConstants.THEME_LIGHT;
-    private final ArrayList<String> mExternalSDPaths = new ArrayList<>();
     private int mCurrentOrientation;
     private boolean mIsRootMode;
     private boolean mIsTablet;
@@ -199,7 +195,6 @@ public class AceActivity extends BaseActivity
         View list_header = View.inflate(this, R.layout.drawerlist_header, null);
         expandableListView.addHeaderView(list_header);
         imageInvite = (ImageView) findViewById(R.id.imageInvite);
-        mFileOpsHelper = new FileOpsHelper(this);
     }
 
     private void registerReceivers() {
@@ -442,70 +437,7 @@ public class AceActivity extends BaseActivity
                     onSharedPrefsChanged();
 
                 }
-            } else if (requestCode == SAF_REQUEST) {
-                String uriString = mSharedPreferences.getString(FileConstants.SAF_URI, null);
-
-                Uri oldUri = uriString != null ? Uri.parse(uriString) : null;
-
-                if (resultCode == Activity.RESULT_OK) {
-                    Uri treeUri = intent.getData();
-                    Log.d(TAG, "tree uri=" + treeUri + " old uri=" + oldUri);
-                    // Get Uri from Storage Access Framework.
-                    // Persist URI - this is required for verification of writability.
-                    if (treeUri != null) {
-                        mSharedPreferences.edit().putString(FileConstants.SAF_URI, treeUri.toString()).apply();
-                        int takeFlags = intent.getFlags();
-                        takeFlags &= (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                        getContentResolver().takePersistableUriPermission(treeUri, takeFlags);
-
-                        switch (mOperation) {
-                            case FileConstants.DELETE:
-                                new DeleteTask(this, mIsRootMode, mFiles).execute();
-                                mFiles = new ArrayList<>();
-                                break;
-                            case FileConstants.COPY:
-                                Intent intent1 = new Intent(this, CopyService.class);
-                                intent1.putParcelableArrayListExtra("FILE_PATHS", mFiles);
-                                intent1.putExtra("COPY_DIRECTORY", mNewFilePath);
-                                intent.putParcelableArrayListExtra("ACTION", mCopyData);
-                                intent1.putParcelableArrayListExtra("TOTAL_LIST", mTotalFiles);
-                                new FileUtils().showCopyProgressDialog(this, intent1);
-                                break;
-                            case FileConstants.MOVE:
-                                new MoveFiles(this, mFiles, mCopyData).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                                        mNewFilePath);
-                                break;
-                            case FileConstants.FOLDER_CREATE:
-                                mFileOpsHelper.mkDir(mIsRootMode, mNewFilePath, mFileName);
-                                break;
-                            case FileConstants.RENAME:
-                                mFileOpsHelper.renameFile(mIsRootMode, new File(mOldFilePath), new File(mNewFilePath),
-                                        mRenamedPosition, isDualPaneInFocus);
-                                break;
-                            case FileConstants.FILE_CREATE:
-                                mFileOpsHelper.mkFile(mIsRootMode, new File(mNewFilePath));
-                                break;
-                            case FileConstants.EXTRACT:
-                                mFileOpsHelper.extractFile(new File(mOldFilePath), new File(mNewFilePath));
-                                break;
-                            case FileConstants.COMPRESS:
-                                mFileOpsHelper.compressFile(new File(mNewFilePath), mFiles);
-                        }
-                    }
-                }
-                // If not confirmed SAF, or if still not writable, then revert settings.
-                else {
-
-                    if (oldUri != null)
-                        mSharedPreferences.edit().putString(FileConstants.SAF_URI, oldUri.toString()).apply();
-
-                    Toast.makeText(this, getString(R.string.access_denied_external), Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-                mOperation = -1;
-                mNewFilePath = null;
-            } else if (requestCode == REQUEST_INVITE) {
+            }  else if (requestCode == REQUEST_INVITE) {
                 if (resultCode == RESULT_OK) {
                     // Get the invitation IDs of all sent messages
                     String[] ids = AppInviteInvitation.getInvitationIds(resultCode, intent);
@@ -526,7 +458,7 @@ public class AceActivity extends BaseActivity
      * @param context
      */
     private void showPremiumDialog() {
-        int color = new DialogUtils().getCurrentThemePrimary(this);
+        int color = new Dialogs().getCurrentThemePrimary(this);
 
         final MaterialDialog.Builder builder = new MaterialDialog.Builder(this);
         builder.iconRes(R.drawable.no_ads);

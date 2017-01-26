@@ -18,8 +18,6 @@ public class BackStackInfo {
         Logger.log(TAG, "Back stack--size=" + backStack.size() + " Path=" + path + "Category=" + category);
     }
 
-
-
     public void clearBackStack() {
          backStack.clear();
     }
@@ -32,11 +30,11 @@ public class BackStackInfo {
         backStack.remove(index);
     }
 
-    public String getCurrentDir(int index) {
+    public String getDirAtPosition(int index) {
         return backStack.get(index).getFilePath();
     }
 
-    public Category getCurrentCategory(int index) {
+    public Category getCategoryAtPosition(int index) {
         return backStack.get(index).getCategory();
     }
 

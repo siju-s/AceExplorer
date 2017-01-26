@@ -268,10 +268,12 @@ public class NavigationInfo {
 
     private void navButtonOnClick(final String dir) {
         Logger.log(TAG, "Dir=" + dir + " currentDir=" + currentDir);
+        if (!currentDir.equals(dir)) {
 
+        }
         navigationCallback.onNavButtonClicked(dir);
 
     }
 
-    private String
+
 }

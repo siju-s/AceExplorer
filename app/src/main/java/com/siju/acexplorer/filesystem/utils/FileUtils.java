@@ -43,17 +43,16 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.siju.acexplorer.AceActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
-import com.siju.acexplorer.filesystem.BaseFileList;
+import com.siju.acexplorer.filesystem.groups.Category;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.task.CopyService;
 import com.siju.acexplorer.filesystem.task.CreateZipTask;
 import com.siju.acexplorer.filesystem.task.ExtractService;
 import com.siju.acexplorer.filesystem.task.Progress;
-import com.siju.acexplorer.utils.DialogUtils;
+import com.siju.acexplorer.utils.Dialogs;
 import com.siju.acexplorer.utils.Utils;
 
 import java.io.File;
@@ -76,6 +75,8 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 import static android.webkit.MimeTypeMap.getSingleton;
+import static com.siju.acexplorer.filesystem.groups.Category.LARGE_FILES;
+import static com.siju.acexplorer.filesystem.helper.UriHelper.createContentUri;
 
 
 public class FileUtils implements Progress {
@@ -186,7 +187,7 @@ public class FileUtils implements Progress {
         String title = context.getString(R.string.action_copy);
         String texts[] = new String[]{title, context.getString(R.string.button_paste_progress), "",
                 context.getString(R.string.dialog_cancel)};
-        progressDialog = new DialogUtils().showCustomDialog(context,
+        progressDialog = new Dialogs().showCustomDialog(context,
                 R.layout.dialog_progress_paste, texts);
         progressDialog.setCancelable(false);
         View view = progressDialog.getCustomView();
@@ -236,7 +237,7 @@ public class FileUtils implements Progress {
         String title = context.getString(R.string.zip_progress_title);
         String texts[] = new String[]{title, context.getString(R.string.button_paste_progress), "",
                 context.getString(R.string.dialog_cancel)};
-        progressDialog = new DialogUtils().showCustomDialog(context,
+        progressDialog = new Dialogs().showCustomDialog(context,
                 R.layout.dialog_progress_paste, texts);
         progressDialog.setCancelable(false);
         View view = progressDialog.getCustomView();
@@ -286,7 +287,7 @@ public class FileUtils implements Progress {
         String title = context.getString(R.string.extracting);
         String texts[] = new String[]{title, context.getString(R.string.button_paste_progress), "",
                 context.getString(R.string.dialog_cancel)};
-        progressDialog = new DialogUtils().showCustomDialog(context,
+        progressDialog = new Dialogs().showCustomDialog(context,
                 R.layout.dialog_progress_paste, texts);
         progressDialog.setCancelable(false);
         View view = progressDialog.getCustomView();
@@ -662,14 +663,6 @@ public class FileUtils implements Progress {
         return df2.format(dateInMs);
     }
 
-    public static boolean isDateNotInMs(int category) {
-        return category == FileConstants.CATEGORY.FILES.getValue() ||
-                category == FileConstants.CATEGORY.DOWNLOADS.getValue() ||
-                category == FileConstants.CATEGORY.FAVORITES.getValue() ||
-                category == FileConstants.CATEGORY.ZIP_VIEWER.getValue();
-    }
-
-
     /**
      * View the file in external apps based on Mime Type
      *
@@ -705,77 +698,8 @@ public class FileUtils implements Progress {
 
     }
 
-    public static Uri createContentUri(Context context, String path) {
-
-        if (Utils.isAtleastNougat()) {
-            String authority = context.getPackageName() + ".fileprovider";
-            return FileProvider.getUriForFile(context, authority, new File(path));
-        } else {
-            return Uri.fromFile(new File(path));
-        }
-    }
-
-    private static void grantUriPermission(Context context, Intent intent, Uri uri) {
-        PackageManager packageManager = context.getPackageManager();
-        if (intent.resolveActivity(packageManager) != null) {
-            if (Utils.isAtleastLollipop()) {
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            } else {
-                List<ResolveInfo> resInfoList = packageManager.queryIntentActivities(intent, PackageManager
-                        .MATCH_DEFAULT_ONLY);
-
-                for (ResolveInfo resolveInfo : resInfoList) {
-                    String packageName = resolveInfo.activityInfo.packageName;
-                    context.grantUriPermission(packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION |
-                            Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                }
-            }
-            context.startActivity(intent);
-        } else {
-            showMessage(context, context.getString(R.string.msg_error_not_supported));
-        }
-    }
 
 
-    private static void openWith(final Uri uri, final Context context) {
-
-        String texts[] = new String[]{context.getString(R.string.open_as), null, null, null};
-        ArrayList<String> items = new ArrayList<>();
-        items.add(context.getString(R.string.text));
-        items.add(context.getString(R.string.image));
-        items.add(context.getString(R.string.audio));
-        items.add(context.getString(R.string.other));
-        items.add(context.getString(R.string.text));
-
-        final MaterialDialog materialDialog = new DialogUtils().showListDialog(context, texts, items);
-
-        materialDialog.getBuilder().itemsCallback(new MaterialDialog.ListCallback() {
-            @Override
-            public void onSelection(MaterialDialog dialog, View itemView, int position, CharSequence text) {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                switch (position) {
-                    case 0:
-                        intent.setDataAndType(uri, "text/*");
-                        break;
-                    case 1:
-                        intent.setDataAndType(uri, "image/*");
-                        break;
-                    case 2:
-                        intent.setDataAndType(uri, "video/*");
-                        break;
-                    case 3:
-                        intent.setDataAndType(uri, "audio/*");
-                        break;
-                    case 4:
-                        intent.setDataAndType(uri, "*/*");
-                        break;
-                }
-                grantUriPermission(context, intent, uri);
-                materialDialog.dismiss();
-            }
-        });
-        materialDialog.show();
-    }
 
     /**
      * Validates file name at the time of creation
@@ -797,28 +721,6 @@ public class FileUtils implements Progress {
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
     }
 
-    public static void shareFiles(Context context, ArrayList<FileInfo> fileInfo, int category) {
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_SEND_MULTIPLE);
-        if (checkIfFileCategory(category)) {
-            intent.setType("*/*");
-        } else {
-            String extension = fileInfo.get(0).getExtension();
-            String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-            intent.setType(mimeType);
-        }
-
-        ArrayList<Uri> files = new ArrayList<>();
-
-        for (FileInfo info : fileInfo) {
-            Uri uri = createContentUri(context, info.getFilePath());
-            System.out.println("shareuri==" + uri);
-            files.add(uri);
-        }
-
-        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
-        context.startActivity(intent);
-    }
 
 
     public static ArrayList<FileInfo> sortFiles(ArrayList<FileInfo> files, int sortMode) {
@@ -1004,30 +906,6 @@ public class FileUtils implements Progress {
         }
         return length;
     }
-
-
-
-    public static Uri getUriForCategory(int category) {
-        switch (category) {
-            case 0:
-            case 4:
-            case 5:
-            case 7:
-            case 9:
-            case 10:
-            case 11:
-                return MediaStore.Files.getContentUri("external");
-            case 1:
-                return MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-            case 2:
-                return MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-            case 3:
-                return MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        }
-        return MediaStore.Files.getContentUri("external");
-
-    }
-
 
 
     public static boolean isMediaScanningRequired(String mimeType) {
@@ -1585,213 +1463,6 @@ public class FileUtils implements Progress {
         arrayList.add(execute);
         return arrayList;
     }
-
-    /**
-     * @param fileInfo Paths to delete
-     */
-    public void showDeleteDialog(final AceActivity activity, final ArrayList<FileInfo> fileInfo, final boolean
-            isRooted) {
-        String title = activity.getString(R.string.dialog_delete_title);
-        String texts[] = new String[]{title, activity.getString(R.string.msg_ok), "", activity.getString(R.string
-                .dialog_cancel)};
-
-        ArrayList<String> items = new ArrayList<>();
-        for (int i = 0; i < fileInfo.size(); i++) {
-            String path = fileInfo.get(i).getFilePath();
-            items.add(path);
-            if (i == 9 && fileInfo.size() > 10) {
-                int rem = fileInfo.size() - 10;
-                items.add("+" + rem + " " + activity.getString(R.string.more));
-                break;
-            }
-        }
-        final MaterialDialog materialDialog = new DialogUtils().showListDialog(activity, texts, items);
-
-
-        materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                activity.mFileOpsHelper.deleteFiles(fileInfo, isRooted);
-                materialDialog.dismiss();
-            }
-        });
-
-        materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                materialDialog.dismiss();
-            }
-        });
-
-        materialDialog.show();
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    public void createFileDialog(final AceActivity activity, final boolean isRootMode, final String path) {
-
-        String title = activity.getString(R.string.new_file);
-        String texts[] = new String[]{activity.getString(R.string.enter_name), "", title, activity.getString(R.string
-                .create),
-                "",
-                activity.getString(R.string.dialog_cancel)};
-        final MaterialDialog materialDialog = new DialogUtils().showEditDialog(activity, texts);
-
-        materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String fileName = materialDialog.getInputEditText().getText().toString();
-                if (FileUtils.isFileNameInvalid(fileName)) {
-                    materialDialog.getInputEditText().setError(activity.getResources().getString(R.string
-                            .msg_error_valid_name));
-                    return;
-                }
-
-                fileName = fileName.trim();
-                fileName = fileName + ".txt";
-                fileName = path + File.separator + fileName;
-                activity.mFileOpsHelper.mkFile(isRootMode, new File(fileName));
-                materialDialog.dismiss();
-            }
-        });
-
-        materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                materialDialog.dismiss();
-            }
-        });
-
-        materialDialog.show();
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    public void createDirDialog(final AceActivity activity, final boolean isRootMode, final String path) {
-
-        String title = activity.getString(R.string.new_folder);
-        String texts[] = new String[]{activity.getString(R.string.enter_name), "", title, activity.getString(R.string
-                .create), "", activity.getString(R.string.dialog_cancel)};
-        final MaterialDialog materialDialog = new DialogUtils().showEditDialog(activity, texts);
-
-        materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String fileName = materialDialog.getInputEditText().getText().toString();
-                if (FileUtils.isFileNameInvalid(fileName)) {
-                    materialDialog.getInputEditText().setError(activity.getResources().getString(R.string
-                            .msg_error_valid_name));
-                    return;
-                }
-
-                fileName = fileName.trim();
-                fileName = path + File.separator + fileName;
-                activity.mFileOpsHelper.mkDir(isRootMode, path, fileName);
-                materialDialog.dismiss();
-            }
-        });
-
-        materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                materialDialog.dismiss();
-            }
-        });
-
-        materialDialog.show();
-    }
-
-    private static void showApkOptionsDialog(final Fragment fragment, final String path, final String extension) {
-        final Context context = fragment.getContext();
-
-        String texts[] = new String[]{context.getString(R.string.package_installer), context.getString(R.string
-                .install), context.getString(R.string.dialog_cancel), context.getString(R.string.view),
-                context.getString(R.string.package_installer_content)};
-
-        final MaterialDialog materialDialog = new DialogUtils().showDialog(context, texts);
-
-
-        materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Uri uri = createContentUri(fragment.getContext(), path);
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_INSTALL_PACKAGE);
-
-                String mimeType = getSingleton().getMimeTypeFromExtension(extension);
-                intent.setData(uri);
-
-                if (mimeType != null) {
-                    grantUriPermission(context, intent, uri);
-                } else {
-                    openWith(uri, context);
-                }
-                materialDialog.dismiss();
-
-            }
-        });
-
-        materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-             /*   if (fragment instanceof FileListDualFragment)
-                    ((FileListDualFragment) fragment).openCompressedFile(path);
-                else*/
-                ((BaseFileList) fragment).openCompressedFile(path);
-
-                materialDialog.dismiss();
-            }
-        });
-
-        materialDialog.show();
-
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    public void showCompressDialog(final AceActivity activity, final String currentDir, final ArrayList<FileInfo>
-            paths) {
-
-        final String ext = ".zip";
-        String fileName = paths.get(0).getFileName();
-        String filePath = paths.get(0).getFilePath();
-        String zipName = fileName;
-        if (!(new File(filePath).isDirectory())) {
-            zipName = fileName.substring(0, fileName.lastIndexOf("."));
-        }
-        String title = activity.getString(R.string.create);
-        String texts[] = new String[]{"", zipName, title, title, "",
-                activity.getString(R.string.dialog_cancel)};
-        final MaterialDialog materialDialog = new DialogUtils().showEditDialog(activity, texts);
-
-        materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String fileName = materialDialog.getInputEditText().getText().toString();
-                if (FileUtils.isFileNameInvalid(fileName)) {
-                    materialDialog.getInputEditText().setError(activity.getResources().getString(R.string
-                            .msg_error_valid_name));
-                    return;
-                }
-                String newFilePath = currentDir + "/" + fileName + ext;
-
-                if (FileUtils.isFileExisting(currentDir, fileName + ext)) {
-                    materialDialog.getInputEditText().setError(activity.getResources().getString(R.string
-                            .dialog_title_paste_conflict));
-                    return;
-                }
-                activity.mFileOpsHelper.compressFile(new File(newFilePath), paths);
-                materialDialog.dismiss();
-            }
-        });
-
-        materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                materialDialog.dismiss();
-            }
-        });
-
-        materialDialog.show();
-    }
-
 
     /**
      * Check for a directory if it is possible to create files within this directory, either via normal writing or via

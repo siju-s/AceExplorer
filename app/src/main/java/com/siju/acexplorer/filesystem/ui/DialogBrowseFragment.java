@@ -39,7 +39,7 @@ import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.utils.MediaStoreHack;
 import com.siju.acexplorer.filesystem.theme.ThemeUtils;
 import com.siju.acexplorer.filesystem.views.FastScrollRecyclerView;
-import com.siju.acexplorer.utils.DialogUtils;
+import com.siju.acexplorer.utils.Dialogs;
 import com.siju.acexplorer.permission.PermissionUtils;
 
 import java.io.File;
@@ -330,7 +330,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
             texts[1] = getString(R.string.action_settings);
         }
 
-        materialDialog = new DialogUtils().showDialog(getActivity(), texts);
+        materialDialog = new Dialogs().showDialog(getActivity(), texts);
         materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

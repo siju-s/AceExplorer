@@ -3,6 +3,8 @@ package com.siju.acexplorer.filesystem.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.siju.acexplorer.filesystem.groups.Category;
+
 public class FileInfo implements Parcelable {
 
     private String fileName;
@@ -18,7 +20,7 @@ public class FileInfo implements Parcelable {
     private String permissions;
     private long date;
     private long size;
-    private int categoryId;
+    private Category category;
     private int count;
     private int icon;
 
@@ -119,8 +121,8 @@ public class FileInfo implements Parcelable {
         this.extension = extension;
     }
 
-    public FileInfo(int categoryId, int count) {
-        this.categoryId = categoryId;
+    public FileInfo(Category categoryId, int count) {
+        this.category = categoryId;
         this.count = count;
     }
 

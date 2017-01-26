@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.filesystem.theme.Themes;
 
 /**
  *
@@ -22,14 +23,19 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     private int mOrientation;
     private final int leftMargin;
 
-    public DividerItemDecoration(Context context, boolean isDarkTheme) {
-        if (isDarkTheme) {
-            mDivider = ContextCompat.getDrawable(context, R.drawable.divider_line_dark);
+    public DividerItemDecoration(Context context, Themes theme) {
 
-        } else {
-            mDivider = ContextCompat.getDrawable(context, R.drawable.divider_line);
+        switch (theme) {
+            case LIGHT:
+                mDivider = ContextCompat.getDrawable(context, R.drawable.divider_line);
+                break;
+            case DARK:
+                mDivider = ContextCompat.getDrawable(context, R.drawable.divider_line_dark);
+                break;
+            default:
+                mDivider = ContextCompat.getDrawable(context, R.drawable.divider_line_dark);
+
         }
-
         setOrientation();
         leftMargin = context.getResources().getDimensionPixelSize(R.dimen.divider_margin_list);
     }

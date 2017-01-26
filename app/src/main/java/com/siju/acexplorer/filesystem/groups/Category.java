@@ -1,10 +1,5 @@
 package com.siju.acexplorer.filesystem.groups;
 
-
-/**
- * Created by SJ on 21-01-2017.
- */
-
 public enum Category {
     FILES(0),
     AUDIO(1),
@@ -65,5 +60,13 @@ public enum Category {
                 return PICKER;
         }
         return FILES;
+    }
+
+    public static boolean checkIfFileCategory(Category category) {
+        return category.equals(FILES) ||
+                category.equals(COMPRESSED) ||
+                category.equals(DOWNLOADS) ||
+                category.equals(FAVORITES) ||
+                category.equals(LARGE_FILES);
     }
 }

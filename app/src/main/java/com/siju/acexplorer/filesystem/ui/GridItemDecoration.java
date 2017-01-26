@@ -1,10 +1,15 @@
 package com.siju.acexplorer.filesystem.ui;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+
+import com.siju.acexplorer.R;
+import com.siju.acexplorer.filesystem.theme.Themes;
 
 public class GridItemDecoration extends RecyclerView.ItemDecoration {
 
@@ -22,9 +27,20 @@ public class GridItemDecoration extends RecyclerView.ItemDecoration {
      *                          columns of the grid of the RecyclerView
      * @param numColumns        The number of columns in the grid of the RecyclerView
      */
-    public GridItemDecoration(Drawable horizontalDivider, Drawable verticalDivider, int numColumns) {
-        mHorizontalDivider = horizontalDivider;
-        mVerticalDivider = verticalDivider;
+    public GridItemDecoration(Context context, Themes theme, int numColumns) {
+        switch (theme) {
+            case LIGHT:
+                mHorizontalDivider = ContextCompat.getDrawable(context, R.drawable.divider_line);
+                mVerticalDivider = ContextCompat.getDrawable(context, R.drawable.divider_line);
+                break;
+            case DARK:
+                mHorizontalDivider = ContextCompat.getDrawable(context, R.drawable.divider_line_dark);
+                mVerticalDivider = ContextCompat.getDrawable(context, R.drawable.divider_line_dark);
+                break;
+            default:
+                mHorizontalDivider = ContextCompat.getDrawable(context, R.drawable.divider_line_dark);
+                mVerticalDivider = ContextCompat.getDrawable(context, R.drawable.divider_line_dark);
+        }
         mNumColumns = numColumns;
     }
 

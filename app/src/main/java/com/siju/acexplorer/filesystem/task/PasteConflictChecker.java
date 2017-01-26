@@ -20,7 +20,7 @@ import com.siju.acexplorer.filesystem.model.CopyData;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.helper.RootHelper;
-import com.siju.acexplorer.utils.DialogUtils;
+import com.siju.acexplorer.utils.Dialogs;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -162,7 +162,7 @@ public class PasteConflictChecker extends AsyncTask<Void, String, ArrayList<File
             String texts[] = new String[]{mActivity.getString(R.string.dialog_title_paste_conflict),
                     mActivity.getString(R.string.dialog_skip), mActivity.getString(R.string.dialog_keep_both), mActivity.getString(R
                     .string.dialog_replace)};
-            final MaterialDialog materialDialog = new DialogUtils().showCustomDialog(mActivity, R.layout.dialog_paste_conflict,
+            final MaterialDialog materialDialog = new Dialogs().showCustomDialog(mActivity, R.layout.dialog_paste_conflict,
                     texts);
 
 

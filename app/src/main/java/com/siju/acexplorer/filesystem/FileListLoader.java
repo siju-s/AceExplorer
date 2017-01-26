@@ -18,6 +18,7 @@ import com.github.junrar.exception.RarException;
 import com.github.junrar.rarfile.FileHeader;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.common.SharedPreferenceWrapper;
+import com.siju.acexplorer.filesystem.groups.Category;
 import com.siju.acexplorer.filesystem.model.FavInfo;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.model.ZipModel;
@@ -49,7 +50,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
     private final String mPath;
     private boolean mShowHidden;
-    private final int mCategory;
+    private final Category category;
     private String mZipPath;
     private boolean mIsDualPaneInFocus;
     private Fragment mFragment;
@@ -67,10 +68,10 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private boolean isRooted;
 
 
-     public FileListLoader(Fragment fragment, String path, int category, boolean isRingtonePicker) {
+     public FileListLoader(Fragment fragment, String path, Category category, boolean isRingtonePicker) {
         super(fragment.getContext());
         mPath = path;
-        mCategory = category;
+        this.category = category;
         mShowHidden = PreferenceManager.getDefaultSharedPreferences(fragment.getContext()).getBoolean
                 (FileConstants.PREFS_HIDDEN, false);
         mSortMode = PreferenceManager.getDefaultSharedPreferences(fragment.getContext()).getInt(
@@ -79,48 +80,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         mIsRingtonePicker = isRingtonePicker;
     }
 
-    FileListLoader(Fragment fragment, String path, int category, String zipPath, boolean
-            isDualPaneInFocus, boolean isParentZip) {
-        super(fragment.getContext());
-        Logger.log(TAG, "Zip" + "dir=" + zipPath);
-        mPath = path;
-        Context context = fragment.getContext();
-        mFragment = fragment;
-        mCategory = category;
-        mShowHidden = PreferenceManager.getDefaultSharedPreferences(context).getBoolean
-                (FileConstants.PREFS_HIDDEN, false);
-        if (zipPath != null && zipPath.endsWith(File.separator))
-            zipPath = zipPath.substring(0, zipPath.length() - 1);
-        mZipPath = zipPath;
-        mIsDualPaneInFocus = isDualPaneInFocus;
-        mInParentZip = isParentZip;
-        mSortMode = PreferenceManager.getDefaultSharedPreferences(context).getInt(
-                FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
-    }
 
-
-
-    FileListLoader(Fragment fragment, String path, String outputDir, String fileName,
-                   ZipEntry zipEntry) {
-        super(fragment.getContext());
-        this.zip = true;
-        this.outputDir = outputDir;
-        mCategory = FileConstants.CATEGORY.ZIP_VIEWER.getValue();
-        Logger.log(TAG, "Zip PARENT=" + path + " ENTRY=" + zipEntry);
-        try {
-            this.zipFile = new ZipFile(path);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        mZipPath = zipEntry.getName();
-        if (mZipPath.endsWith("/")) {
-            mZipPath = mZipPath.substring(0, mZipPath.length() - 1);
-        }
-        mPath = path;
-        mFragment = fragment;
-        this.fileName = fileName;
-        this.entry = zipEntry;
-    }
 
     @Override
     protected void onStartLoading() {
@@ -185,65 +145,17 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     @Override
     public ArrayList<FileInfo> loadInBackground() {
         fileInfoList = new ArrayList<>();
-        if (entry != null && entry.getName().endsWith(".zip")) {
-            if (zip) {
-                try {
-                    unzipEntry(zipFile, entry, outputDir);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                try {
-                    unzipRAREntry(rar, header, outputDir);
-                } catch (IOException | RarException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else {
-            fetchDataByCategory();
-
-        }
+        fetchDataByCategory();
         return fileInfoList;
     }
 
-    private final Comparator<? super FileInfo> comparatorByNameZip = new Comparator<FileInfo>() {
-
-        public int compare(FileInfo file1, FileInfo file2) {
-            // sort folders first
-            if ((file1.isDirectory()) && (!file2.isDirectory()))
-                return -1;
-            if ((!file1.isDirectory()) && (file2.isDirectory()))
-                return 1;
-
-            // here both are folders or both are files : sort alpha
-            return file1.getFileName().toLowerCase()
-                    .compareTo(file2.getFileName().toLowerCase());
-        }
-
-    };
-
-    private final Comparator<? super ZipModel> comparatorByNameZip1 = new Comparator<ZipModel>() {
-
-        public int compare(ZipModel file1, ZipModel file2) {
-            // sort folders first
-            if ((file1.isDirectory()) && (!file2.isDirectory()))
-                return -1;
-            if ((!file1.isDirectory()) && (file2.isDirectory()))
-                return 1;
-
-            // here both are folders or both are files : sort alpha
-            return file1.getName().toLowerCase()
-                    .compareTo(file2.getName().toLowerCase());
-        }
-
-    };
 
 
     private void fetchDataByCategory() {
         //TODO Change debug mode to False in Release build
         RootTools.debugMode = true;
         isRooted = RootUtils.isRooted(getContext());
-        switch (mCategory) {
+        switch (category) {
             case 0:
             case 5:
                 fetchFiles();
@@ -264,13 +176,10 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             case 7:
             case 9:
             case 11:
-                fetchByCategory(mCategory);
+                fetchByCategory(category);
                 break;
             case 12:
-                if (mPath.endsWith("rar"))
-                    getRarContents(mZipPath, mPath);
-                else
-                    getZipContents(mZipPath, mPath);
+
                 break;
             case 8:
                 fetchFavorites();
@@ -315,7 +224,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
             if (cursor.moveToFirst()) {
                 if (isHomeFragment()) {
-                    fileInfoList.add(new FileInfo(mCategory, cursor.getCount()));
+                    fileInfoList.add(new FileInfo(category, cursor.getCount()));
                     return;
                 }
                 do {
@@ -336,7 +245,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                     String extension = path.substring(path.lastIndexOf(".") + 1);
                     String nameWithExt = fileName + "." + extension;
 
-                    fileInfoList.add(new FileInfo(fileId, nameWithExt, path, date1, size1, mCategory,
+                    fileInfoList.add(new FileInfo(fileId, nameWithExt, path, date1, size1, category,
                             extension, mimeType));
 
                 } while (cursor.moveToNext());
@@ -390,275 +299,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
     }
 
-    /**
-     * @param dir           Child path names. First time it will be null
-     * @param parentZipPath Original zip path with.zip extension
-     * @return Zip contents
-     */
-    private void getZipContents(String dir, String parentZipPath) {
-        ZipFile zipfile;
-        ArrayList<ZipModel> totalZipList;
-        ArrayList<ZipModel> elements = new ArrayList<>();
-        totalZipList = ((BaseFileList) mFragment).totalZipList;
-        try {
-//            if (totalZipList.size() == 0 || entry != null) {
-            if (new File(parentZipPath).canRead()) {
-                totalZipList = new ArrayList<>();
-                zipfile = new ZipFile(parentZipPath);
-                for (Enumeration e = zipfile.entries(); e.hasMoreElements(); ) {
-                    ZipEntry entry = (ZipEntry) e.nextElement();
-                    totalZipList.add(new ZipModel(entry, entry.getTime(), entry.getSize(), entry
-                            .isDirectory()));
-                }
-            } else {
-                totalZipList = new ArrayList<>();
-                ZipEntry zipEntry;
-                Uri uri = Uri.parse(parentZipPath);
-                ZipInputStream zipfile1 = new ZipInputStream(getContext().getContentResolver()
-                        .openInputStream(uri));
-                while ((zipEntry = zipfile1.getNextEntry()) != null) {
-                    totalZipList.add(new ZipModel(zipEntry, zipEntry.getTime(), zipEntry.getSize(), zipEntry
-                            .isDirectory()));
-                }
-            }
-            ((BaseFileList) mFragment).totalZipList = totalZipList;
-
-            ArrayList<String> strings = new ArrayList<>();
-            for (ZipModel entry : totalZipList) {
-
-                File file = new File(entry.getName());
-                if (dir == null || dir.trim().length() == 0) {
-                    String y = entry.getName();
-                    System.out.println("entry name==" + y);
-
-              /*      if (y.startsWith(File.separator))
-                        y = y.substring(1, y.length());*/
-                    if (file.getParent() == null || file.getParent().length() == 0 || file.getParent().equals(File
-                            .separator)) {
-                        System.out.println("entry if isdir==" + entry.isDirectory() + "y=" + y);
-                        if (!strings.contains(y)) {
-                            elements.add(new ZipModel(new ZipEntry(y), entry.getTime(), entry.getSize(),
-                                    entry.isDirectory()));
-                            strings.add(y);
-                        }
-                    } else {
-                        boolean slash = false;
-                        if (y.startsWith(File.separator)) {
-                            slash = true;
-                            y = y.substring(1, y.length());
-                        }
-                        String path = y.substring(0, y.indexOf(File.separator) + 1);
-                        if (slash) {
-                            path = "/" + path;
-                        }
-                        System.out.println("entry else path==" + path);
-                        ZipModel zipObj;
-                        if (!strings.contains(path)) {
-                            zipObj = new ZipModel(new ZipEntry(path), entry.getTime(), entry
-                                    .getSize(), true);
-                            strings.add(path);
-                            elements.add(zipObj);
-                        }
-                    }
-                } else {
-                    String y = entry.getName();
-                    System.out.println("ZIP ITEM==" + y + "dir=" + dir);
-                /*    if (y.startsWith(File.separator))
-                        y = y.substring(1, y.length());*/
-
-                    if (file.getParent() != null && (file.getParent().equals(dir) || file.getParent().equals(File
-                            .separator + dir))) {
-                        if (!strings.contains(y)) {
-                            elements.add(new ZipModel(new ZipEntry(y), entry.getTime(), entry.getSize(), entry
-                                    .isDirectory()));
-                            strings.add(y);
-                        }
-                    } else {
-                        if (y.startsWith(dir + File.separator) && y.length() > dir.length() + 1) {
-                            String path1 = y.substring(dir.length() + 1, y.length());
-                            System.out.println("path1==" + path1);
-
-                            int index = dir.length() + 1 + path1.indexOf(File.separator);
-                            String path = y.substring(0, index + 1);
-                            System.out.println("path==" + path);
-
-                            if (!strings.contains(path)) {
-                                ZipModel zipObj = new ZipModel(new ZipEntry(y.substring(0, index + 1)), entry.getTime
-                                        (), entry.getSize(), true);
-                                strings.add(path);
-                                elements.add(zipObj);
-                            }
-                        }
-                    }
-
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Collections.sort(elements, comparatorByNameZip1);
-
-        ((BaseFileList) mFragment).zipChildren = elements;
-        for (ZipModel model : elements) {
-            String name = model.getName();
-            if (name.startsWith("/")) {
-                name = name.substring(1, name.length());
-            }
-            boolean isDirectory = model.isDirectory();
-            long size;
-            if (isDirectory) {
-                int count = 0;
-                for (ZipModel zipmodel : totalZipList) {
-                    String modelName = zipmodel.getEntry().getName();
-                    if (modelName.startsWith(File.separator))
-                        modelName = modelName.substring(1, modelName.length());
-                    System.out.println("SIJU --Dir true--modelname" + modelName + " name=" + name);
-
-                    if (modelName.startsWith(name)) {
-                        count++;
-                    }
-                }
-                size = count;
-            } else {
-                size = model.getSize();
-            }
-            int type = FileConstants.CATEGORY.COMPRESSED.getValue();
-            long date = model.getTime();
-            String extension;
-            if (isDirectory) {
-                name = name.substring(0, name.length() - 1);
-                if (!mInParentZip) {
-                    name = name.substring(name.lastIndexOf(File.separator) + 1);
-                }
-                extension = null;
-            } else {
-                name = name.substring(name.lastIndexOf(File.separator) + 1);
-                extension = name.substring(name.lastIndexOf(".") + 1, name.length());
-            }
-            String path = parentZipPath + File.separator + name;
-
-            FileInfo fileInfo = new FileInfo(name, path, date, size,
-                    isDirectory, extension, type, RootHelper.parseFilePermission(new File(path)));
-            fileInfoList.add(fileInfo);
-        }
-        Collections.sort(fileInfoList, comparatorByNameZip);
-    }
-
-    private void getRarContents(String dir, String parentZipPath) {
-        ArrayList<FileHeader> elements = new ArrayList<>();
-        try {
-            Archive zipfile = new Archive(new File(parentZipPath));
-            ArrayList<FileHeader> totalRarList;
-            ((BaseFileList) mFragment).mArchive = zipfile;
-            totalRarList = ((BaseFileList) mFragment).totalRarList;
-
-            if (totalRarList.size() == 0) {
-
-                FileHeader fh = zipfile.nextFileHeader();
-                while (fh != null) {
-                    totalRarList.add(fh);
-                    fh = zipfile.nextFileHeader();
-                }
-            }
-            if (dir == null || dir.trim().length() == 0 || dir.equals("")) {
-
-                for (FileHeader header : totalRarList) {
-                    String name = header.getFileNameString();
-
-                    if (!name.contains("\\")) {
-                        elements.add(header);
-
-                    }
-                }
-            } else {
-                for (FileHeader header : totalRarList) {
-                    String name = header.getFileNameString();
-                    if (name.substring(0, name.lastIndexOf("\\")).equals(dir)) {
-                        elements.add(header);
-                    }
-                }
-            }
-        } catch (Exception ignored) {
-        }
-
-        for (FileHeader fileHeader : elements) {
-            String name = fileHeader.getFileNameString();
-
-            boolean isDirectory = fileHeader.isDirectory();
-        /*    if (isDirectory) {
-                name = name.substring(name.lastIndexOf(File.separator) + 1);
-            }*/
-            long size = fileHeader.getPackSize();
-            int type = FileConstants.CATEGORY.COMPRESSED.getValue();
-            Date date = fileHeader.getMTime();
-            long date1 = date.getTime();
-//            String noOfFilesOrSize = Formatter.formatFileSize(mContext, size);
-//            String fileModifiedDate = FileUtils.convertDate(date);
-            String extension;
-            if (isDirectory) {
-                name = name.substring(0, name.length() - 1);
-                if (!mInParentZip) {
-                    name = name.substring(name.lastIndexOf(File.separator) + 1);
-                }
-                extension = null;
-            } else {
-                name = name.substring(name.lastIndexOf(File.separator) + 1);
-                extension = name.substring(name.lastIndexOf(".") + 1, name.length());
-            }
-            String path = parentZipPath + File.separator + name;
-
-            FileInfo fileInfo = new FileInfo(name, path, date1, size,
-                    isDirectory, extension, type, RootHelper.parseFilePermission(new File(path)));
-            fileInfoList.add(fileInfo);
-        }
-        Collections.sort(fileInfoList, comparatorByNameZip);
-    }
-
-    private void unzipEntry(ZipFile zipfile, ZipEntry entry, String outputDir)
-            throws IOException {
-
-        File output = new File(outputDir, fileName);
-        BufferedInputStream inputStream = new BufferedInputStream(
-                zipfile.getInputStream(entry));
-        BufferedOutputStream outputStream = new BufferedOutputStream(
-                new FileOutputStream(output));
-        Logger.log("Extract", "zipfile=" + zipfile.getName() + " zipentry=" + entry + " stream=" + inputStream);
-        Logger.log("Extract", "outputDir=" + outputDir + " filename=" + fileName);
-
-        Logger.log("Extract", "Bytes START=" + inputStream.available());
-
-        try {
-            int len;
-            byte buf[] = new byte[20480];
-            while ((len = inputStream.read(buf)) > 0) {
-                //System.out.println(id + " " + hash.get(id));
-                outputStream.write(buf, 0, len);
-            }
-        } finally {
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-                //closing quietly
-            }
-
-            try {
-                outputStream.close();
-            } catch (IOException e) {
-                //closing quietly
-            }
-
-        }
-        getZipContents("", output.getAbsolutePath());
-    }
-
-    private void unzipRAREntry(Archive zipfile, FileHeader header, String outputDir)
-            throws IOException, RarException {
-
-        File output = new File(outputDir + "/" + header.getFileNameString().trim());
-        FileOutputStream fileOutputStream = new FileOutputStream(output);
-        zipfile.extractFile(header, fileOutputStream);
-    }
 
 
     private void fetchMusic() {
@@ -673,7 +313,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 if (isHomeFragment()) {
-                    fileInfoList.add(new FileInfo(mCategory, cursor.getCount()));
+                    fileInfoList.add(new FileInfo(category, cursor.getCount()));
                     return;
                 }
                 do {
@@ -711,7 +351,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 if (isHomeFragment()) {
-                    fileInfoList.add(new FileInfo(mCategory, cursor.getCount()));
+                    fileInfoList.add(new FileInfo(category, cursor.getCount()));
                     return;
                 }
                 do {
@@ -752,7 +392,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 if (isHomeFragment()) {
-                    fileInfoList.add(new FileInfo(mCategory, cursor.getCount()));
+                    fileInfoList.add(new FileInfo(category, cursor.getCount()));
                     return;
                 }
                 do {
@@ -861,7 +501,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             if (cursor.moveToFirst()) {
                 if (isHomeFragment()) {
                     fileInfoList.clear();
-                    fileInfoList.add(new FileInfo(mCategory, cursor.getCount()));
+                    fileInfoList.add(new FileInfo(this.category, cursor.getCount()));
                     return;
                 }
                 do {
@@ -895,7 +535,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     }
 
     private int getTypeForMime(String mimeType) {
-        if (mimeType == null) return mCategory;
+        if (mimeType == null) return category;
         if (mimeType.startsWith("image")) {
             return FileConstants.CATEGORY.IMAGE.getValue();
         } else if (mimeType.startsWith("audio")) {
@@ -903,7 +543,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         } else if (mimeType.startsWith("video")) {
             return FileConstants.CATEGORY.VIDEO.getValue();
         }
-        return mCategory;
+        return category;
 
     }
 
