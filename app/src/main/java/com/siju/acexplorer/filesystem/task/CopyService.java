@@ -20,6 +20,7 @@ import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.CopyData;
 import com.siju.acexplorer.filesystem.model.FileInfo;
+import com.siju.acexplorer.filesystem.operations.OperationUtils;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.utils.RootNotPermittedException;
 import com.siju.acexplorer.filesystem.utils.RootUtils;
@@ -33,7 +34,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
-import static com.siju.acexplorer.filesystem.utils.FileUtils.COPY_PROGRESS;
+import static com.siju.acexplorer.filesystem.operations.OperationProgress.COPY_PROGRESS;
+import static com.siju.acexplorer.filesystem.operations.Operations.COPY;
+import static com.siju.acexplorer.filesystem.operations.Operations.CUT;
 
 public class CopyService extends Service {
     private final SparseBooleanArray hash = new SparseBooleanArray();
@@ -110,7 +113,7 @@ public class CopyService extends Service {
             copy.publishResults("", 0, b, 0, 0, move);
             Intent intent = new Intent("refresh");
             intent.putExtra(FileConstants.IS_OPERATION_SUCCESS, copy.copy_successful);
-            intent.putExtra(FileConstants.OPERATION, move ? FileConstants.MOVE : FileConstants.COPY);
+            intent.putExtra(FileConstants.OPERATION, move ? CUT : COPY);
             intent.putStringArrayListExtra(FileConstants.KEY_PATH, filesToMediaIndex);
             sendBroadcast(intent);
             if (mProgressListener != null) {
@@ -168,11 +171,9 @@ public class CopyService extends Service {
 
             void execute(int id, final ArrayList<FileInfo> files, final String currentDir, final boolean move,
                          ArrayList<CopyData> copyData) {
-                Logger.log("TAG", "execute" + files.size() + " mode==" + new FileUtils().checkFolder(currentDir,
-                        mContext));
 
-                if (new FileUtils().checkFolder(currentDir, mContext) == FileConstants.WRITE_MODES.INTERNAL
-                        .getValue()) {
+
+                if (OperationUtils.checkFolder(currentDir, mContext) == OperationUtils.WriteMode.INTERNAL) {
                     getTotalBytes(files);
                     for (int i = 0; i < files.size(); i++) {
                         FileInfo sourceFile = files.get(i);
@@ -184,9 +185,9 @@ public class CopyService extends Service {
                                     copyRoot(files.get(i).getFilePath(), files.get(i).getFileName(), currentDir);
                                     continue;
                                 }
-                                FileInfo destFile = new FileInfo(sourceFile.getFileName(), sourceFile.getFilePath(),
-                                        sourceFile.getDate(), sourceFile.getSize(), sourceFile.isDirectory(),
-                                        sourceFile.getExtension(), sourceFile.getType(), sourceFile.getPermissions());
+                                FileInfo destFile = new FileInfo(sourceFile.getCategory(),sourceFile.getFileName(),
+                                        sourceFile.getFilePath(),sourceFile.getDate(), sourceFile.getSize(), sourceFile.isDirectory(),
+                                        sourceFile.getExtension(), sourceFile.getPermissions());
                                 int action = FileUtils.ACTION_NONE;
                                 if (copyData != null) {
                                     for (CopyData copyData1 : copyData) {
@@ -277,12 +278,11 @@ public class CopyService extends Service {
                     if (!hash.get(id)) return;
                     File destinationDir = new File(targetFile.getFilePath());
                     if (!destinationDir.exists()) {
-                        int mode = new FileUtils().checkFolder(destinationDir.getParent(), mContext);
+/*                        int mode = new FileOpsHelper().checkFolder(destinationDir.getParent(), mContext);
                         //TODO Find way to show SAF dialog since in service its not possible.
-/*                        if (mode == 2) {
+*//*                        if (mode == 2) {
 
                         }*/
-                        if (mode == 1 || mode == 0)
                             FileUtils.mkdir(destinationDir, mContext);
                     }
                     if (!destinationDir.exists()) {
@@ -297,9 +297,9 @@ public class CopyService extends Service {
                             true, false);
                     for (FileInfo file : filePaths) {
 
-                        FileInfo destFile = new FileInfo(sourceFile.getFileName(), sourceFile.getFilePath(),
+                        FileInfo destFile = new FileInfo(sourceFile.getCategory(),sourceFile.getFileName(), sourceFile.getFilePath(),
                                 sourceFile.getDate(), sourceFile.getSize(), sourceFile.isDirectory(),
-                                sourceFile.getExtension(), sourceFile.getType(), sourceFile.getPermissions());
+                                sourceFile.getExtension(), sourceFile.getPermissions());
                         destFile.setFilePath(targetFile.getFilePath() + "/" + file.getFileName());
                         copyFiles(file, destFile, id, move);
                     }

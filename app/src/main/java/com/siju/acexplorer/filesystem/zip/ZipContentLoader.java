@@ -30,6 +30,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
+import static com.siju.acexplorer.filesystem.groups.Category.COMPRESSED;
 import static com.siju.acexplorer.filesystem.helper.SortHelper.comparatorByNameZip;
 
 
@@ -270,7 +271,7 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             } else {
                 size = model.getSize();
             }
-            int type = Category.COMPRESSED.getValue();
+            int type = COMPRESSED.getValue();
             long date = model.getTime();
             String extension;
             if (isDirectory) {
@@ -285,8 +286,8 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             }
             String path = parentZipPath + File.separator + name;
 
-            FileInfo fileInfo = new FileInfo(name, path, date, size,
-                    isDirectory, extension, type, RootHelper.parseFilePermission(new File(path)));
+            FileInfo fileInfo = new FileInfo(COMPRESSED, name, path, date, size,
+                    isDirectory, extension, RootHelper.parseFilePermission(new File(path)));
             fileInfoList.add(fileInfo);
         }
         Collections.sort(fileInfoList, comparatorByNameZip);
@@ -371,7 +372,7 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 name = name.substring(name.lastIndexOf(File.separator) + 1);
             }*/
             long size = fileHeader.getPackSize();
-            int type = Category.COMPRESSED.getValue();
+            int type = COMPRESSED.getValue();
             Date date = fileHeader.getMTime();
             long date1 = date.getTime();
 //            String noOfFilesOrSize = Formatter.formatFileSize(mContext, size);
@@ -389,8 +390,8 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             }
             String path = parentZipPath + File.separator + name;
 
-            FileInfo fileInfo = new FileInfo(name, path, date1, size,
-                    isDirectory, extension, type, RootHelper.parseFilePermission(new File(path)));
+            FileInfo fileInfo = new FileInfo(COMPRESSED, name, path, date1, size,
+                    isDirectory, extension, RootHelper.parseFilePermission(new File(path)));
             fileInfoList.add(fileInfo);
         }
         Collections.sort(fileInfoList, comparatorByNameZip);

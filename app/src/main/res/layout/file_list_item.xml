@@ -33,7 +33,7 @@
         android:layout_toEndOf="@+id/imageIcon"
         android:textSize="14sp"/>
 
-    <!-- This will be no of files for directory & size for file -->
+    <!-- This will be no of filesToMove for directory & size for file -->
     <TextView
         android:id="@+id/textSecondLine"
         android:layout_width="wrap_content"

@@ -1,6 +1,7 @@
 package com.siju.acexplorer.filesystem;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
@@ -20,9 +21,11 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -89,9 +92,13 @@ import com.siju.acexplorer.filesystem.backstack.NavigationInfo;
 import com.siju.acexplorer.filesystem.groups.Category;
 import com.siju.acexplorer.filesystem.helper.FileOpsHelper;
 import com.siju.acexplorer.filesystem.helper.ShareHelper;
+import com.siju.acexplorer.filesystem.model.CopyData;
 import com.siju.acexplorer.filesystem.model.FavInfo;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.modes.ViewMode;
+import com.siju.acexplorer.filesystem.operations.OperationProgress;
+import com.siju.acexplorer.filesystem.operations.OperationUtils;
+import com.siju.acexplorer.filesystem.operations.Operations;
 import com.siju.acexplorer.filesystem.task.CopyService;
 import com.siju.acexplorer.filesystem.task.DeleteTask;
 import com.siju.acexplorer.filesystem.task.MoveFiles;
@@ -119,9 +126,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static android.R.attr.breadCrumbShortTitle;
-import static android.R.attr.data;
-import static android.R.attr.name;
 import static com.siju.acexplorer.filesystem.FileConstants.ADS;
 import static com.siju.acexplorer.filesystem.groups.Category.AUDIO;
 import static com.siju.acexplorer.filesystem.groups.Category.FAVORITES;
@@ -130,6 +134,9 @@ import static com.siju.acexplorer.filesystem.groups.Category.IMAGE;
 import static com.siju.acexplorer.filesystem.groups.Category.VIDEO;
 import static com.siju.acexplorer.filesystem.groups.Category.checkIfFileCategory;
 import static com.siju.acexplorer.filesystem.helper.UriHelper.getUriForCategory;
+import static com.siju.acexplorer.filesystem.operations.OperationUtils.ACTION_OP_REFRESH;
+import static com.siju.acexplorer.filesystem.operations.OperationUtils.ACTION_RELOAD_LIST;
+import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_OPERATION;
 
 
 public class BaseFileList extends Fragment implements LoaderManager
@@ -139,9 +146,11 @@ public class BaseFileList extends Fragment implements LoaderManager
         View.OnClickListener, NavigationCallback {
 
     private final String TAG = this.getClass().getSimpleName();
+    private CoordinatorLayout mMainLayout;
     private FastScrollRecyclerView recyclerViewFileList;
     private View root;
     private final int LOADER_ID = 1000;
+    private final int INVALID_POS = -1;
     private FileListAdapter fileListAdapter;
     private ArrayList<FileInfo> fileInfoList;
     private String currentDir;
@@ -208,8 +217,6 @@ public class BaseFileList extends Fragment implements LoaderManager
     private BackStackInfo backStackInfo;
     private Themes currentTheme;
     private FileOpsHelper fileOpHelper;
-    private ArrayList<FileInfo> tempFiles = new ArrayList<>();
-
 
     @Override
     public void onAttach(Context context) {
@@ -236,7 +243,7 @@ public class BaseFileList extends Fragment implements LoaderManager
         registerReceivers();
         fileOpHelper = new FileOpsHelper(this);
         dialogs = new Dialogs();
-        navigationInfo = new NavigationInfo(getContext());
+        navigationInfo = new NavigationInfo(this);
         backStackInfo = new BackStackInfo();
 
         if (savedInstanceState == null) {
@@ -247,8 +254,11 @@ public class BaseFileList extends Fragment implements LoaderManager
             setupList();
             if (category.equals(FILES)) {
                 navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled, category);
+            } else {
+                navigationInfo.addHomeNavButton(isHomeScreenEnabled, category);
             }
-            initLoader();
+            backStackInfo.addToBackStack(currentDir, category);
+            refreshList();
             initializeListeners();
         } else {
             mInstanceStateExists = true;
@@ -256,6 +266,7 @@ public class BaseFileList extends Fragment implements LoaderManager
     }
 
     private void initializeViews() {
+        mMainLayout = (CoordinatorLayout) root.findViewById(R.id.main_content);
         recyclerViewFileList = (FastScrollRecyclerView) root.findViewById(R.id.recyclerViewFileList);
         mTextEmpty = (TextView) root.findViewById(R.id.textEmpty);
         sharedPreferenceWrapper = new SharedPreferenceWrapper();
@@ -270,6 +281,8 @@ public class BaseFileList extends Fragment implements LoaderManager
         frameLayoutFab = (FrameLayout) root.findViewById(R.id.frameLayoutFab);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_drawer);
+        aceActivity.syncDrawerState();
         toolbar.setTitle(R.string.app_name);
         fabCreateMenu = (FloatingActionsMenu) getActivity().findViewById(R.id.fabCreate);
         fabCreateFolder = (FloatingActionButton) getActivity().findViewById(R.id.fabCreateFolder);
@@ -283,6 +296,7 @@ public class BaseFileList extends Fragment implements LoaderManager
         currentTheme = ((BaseActivity) getActivity()).getCurrentTheme();
         switch (currentTheme) {
             case DARK:
+                mMainLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.dark_colorPrimary));
                 scrollNavigation.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
                 mBottomToolbar.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
                 toolbar.setPopupTheme(R.style.Dark_AppTheme_PopupOverlay);
@@ -415,11 +429,12 @@ public class BaseFileList extends Fragment implements LoaderManager
                 category, viewMode);
     }
 
-    private void initLoader() {
+    public void refreshList() {
         Bundle args = new Bundle();
         args.putString(FileConstants.KEY_PATH, currentDir);
-        getLoaderManager().initLoader(LOADER_ID, args, this);
+        getLoaderManager().restartLoader(LOADER_ID, args, this);
     }
+
 
     private void initializeListeners() {
 
@@ -428,6 +443,13 @@ public class BaseFileList extends Fragment implements LoaderManager
             public void onRefresh() {
                 mIsSwipeRefreshed = true;
                 refreshList();
+            }
+        });
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                aceActivity.openDrawer();
             }
         });
 
@@ -625,15 +647,16 @@ public class BaseFileList extends Fragment implements LoaderManager
         }, 100L);
     }
 
-    public void onBackPressed() {
+    public boolean onBackPressed() {
         if (isSearchVisible()) {
             hideSearchView();
             removeSearchTask();
         } else if (isZipMode()) {
             zipViewer.onBackPressed();
-        } else if (checkIfBackStackExists()) {
-            backOperation();
+        } else {
+            return backOperation();
         }
+        return false;
     }
 
 
@@ -652,7 +675,7 @@ public class BaseFileList extends Fragment implements LoaderManager
     }
 
 
-    private void backOperation() {
+    private boolean backOperation() {
 
         if (checkIfBackStackExists()) {
 
@@ -670,13 +693,18 @@ public class BaseFileList extends Fragment implements LoaderManager
                 showFab();
                 navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled, currentCategory);
             }
-
+            return false;
         } else {
-            removeFragmentFromBackStack();
-            if (!isHomeScreenEnabled) {
+            removeFileFragment();
+  /*          if (!isHomeScreenEnabled) {
                 getActivity().finish();
-            }
+            }*/
+            return true;
         }
+    }
+
+    public void onPermissionGranted() {
+        refreshList();
     }
 
 
@@ -716,32 +744,20 @@ public class BaseFileList extends Fragment implements LoaderManager
      * 1. If homescreen enabled, returns to home screen
      * 2. If homescreen disabled, exits the app
      */
-    private void removeFragmentFromBackStack() {
+    private void removeFileFragment() {
 
         Fragment fragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.main_container);
         Fragment dualFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
 
         backStackInfo.clearBackStack();
-        cleanUpFileScreen();
         Logger.log(TAG, "RemoveFragmentFromBackStack--frag=" + fragment);
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
-                .exit_to_left);
-
-        ft.remove(fragment);
 
         if (dualFragment != null) {
+            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+            ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
+                    .exit_to_left);
             ft.remove(dualFragment);
-        }
-
-        ft.commitAllowingStateLoss();
-
-    }
-
-    private void cleanUpFileScreen() {
-        if (isHomeScreenEnabled) {
-            setTitleForCategory(Category.GENERIC_LIST); // Setting title to App name
-            aceActivity.toggleDualPaneVisibility(false);
+            ft.commitAllowingStateLoss();
         }
     }
 
@@ -750,8 +766,8 @@ public class BaseFileList extends Fragment implements LoaderManager
     public void onResume() {
         super.onResume();
         if (!mInstanceStateExists) {
-            IntentFilter intentFilter = new IntentFilter(FileConstants.RELOAD_LIST);
-            intentFilter.addAction(FileConstants.REFRESH);
+            IntentFilter intentFilter = new IntentFilter(ACTION_RELOAD_LIST);
+            intentFilter.addAction(ACTION_OP_REFRESH);
             getActivity().registerReceiver(mReloadListReceiver, intentFilter);
         }
         resumeAds();
@@ -780,6 +796,7 @@ public class BaseFileList extends Fragment implements LoaderManager
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         switch (requestCode) {
@@ -805,59 +822,81 @@ public class BaseFileList extends Fragment implements LoaderManager
                         int takeFlags = intent.getFlags();
                         takeFlags &= (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                         getActivity().getContentResolver().takePersistableUriPermission(treeUri, takeFlags);
-                        int operation = intent.getIntExtra(FileConstants.OPERATION, 0);
-                        switch (operation) {
-                            case FileConstants.DELETE:
-                                new DeleteTask(getContext(), mIsRootMode, tempFiles).execute();
-                                tempFiles = new ArrayList<>();
-                                break;
-                            case FileConstants.COPY:
-                                Intent intent1 = new Intent(getActivity(), CopyService.class);
-                                intent1.putParcelableArrayListExtra("FILE_PATHS", tempFiles);
-                                intent1.putExtra("COPY_DIRECTORY", mNewFilePath);
-                                intent.putParcelableArrayListExtra("ACTION", mCopyData);
-                                intent1.putParcelableArrayListExtra("TOTAL_LIST", mTotalFiles);
-                                new FileUtils().showCopyProgressDialog(getActivity(), intent1);
-                                break;
-                            case FileConstants.MOVE:
-                                new MoveFiles(this, tempFiles, mCopyData).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                                        mNewFilePath);
-                                break;
-                            case FileConstants.FOLDER_CREATE:
-                                fileOpHelper.mkDir(mIsRootMode, mNewFilePath, mFileName);
-                                break;
-                            case FileConstants.RENAME:
-                                fileOpHelper.renameFile(mIsRootMode, new File(mOldFilePath), new File(mNewFilePath),
-                                        mRenamedPosition, isDualPaneInFocus);
-                                break;
-                            case FileConstants.FILE_CREATE:
-                                fileOpHelper.mkFile(mIsRootMode, new File(mNewFilePath));
-                                break;
-                            case FileConstants.EXTRACT:
-                                fileOpHelper.extractFile(new File(mOldFilePath), new File(mNewFilePath));
-                                break;
-                            case FileConstants.COMPRESS:
-                                fileOpHelper.compressFile(new File(mNewFilePath), tempFiles);
-                                break;
-                        }
+                        handleOperationActivityResult(intent);
                     }
                 }
                 // If not confirmed SAF, or if still not writable, then revert settings.
                 else {
-
-                    if (oldUri != null)
+                    if (oldUri != null) {
                         preferences.edit().putString(FileConstants.SAF_URI, oldUri.toString()).apply();
+                    }
 
                     Toast.makeText(getContext(), getString(R.string.access_denied_external), Toast.LENGTH_LONG).show();
                     return;
                 }
-
-                mOperation = -1;
-                mNewFilePath = null;
-
-
         }
-        super.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, intent);
+    }
+
+    private void handleOperationActivityResult(Intent intent) {
+        Operations operation = (Operations) intent.getSerializableExtra(KEY_OPERATION);
+        switch (operation) {
+
+            case DELETE:
+                ArrayList<FileInfo> files = intent.getParcelableArrayListExtra(OperationUtils.KEY_FILES);
+                new DeleteTask(getContext(), mIsRootMode, files).execute();
+                break;
+
+            case COPY:
+
+                Intent copyIntent = new Intent(getActivity(), CopyService.class);
+                ArrayList<FileInfo> copiedFiles = intent.getParcelableArrayListExtra(OperationUtils.KEY_FILES);
+                ArrayList<CopyData> copyData = intent.getParcelableArrayListExtra(OperationUtils.KEY_CONFLICT_DATA);
+                String destinationPath = intent.getStringExtra(OperationUtils.KEY_FILEPATH);
+                copyIntent.putParcelableArrayListExtra(OperationUtils.KEY_FILES, copiedFiles);
+                copyIntent.putParcelableArrayListExtra(OperationUtils.KEY_CONFLICT_DATA, copyData);
+                copyIntent.putExtra(OperationUtils.KEY_FILEPATH, destinationPath);
+                new OperationProgress().showCopyProgressDialog(getActivity(), copyIntent);
+                break;
+
+            case CUT:
+                ArrayList<FileInfo> movedFiles = intent.getParcelableArrayListExtra(OperationUtils.KEY_FILES);
+                ArrayList<CopyData> moveData = intent.getParcelableArrayListExtra(OperationUtils.KEY_CONFLICT_DATA);
+                String destinationMovePath = intent.getStringExtra(OperationUtils.KEY_FILEPATH);
+                new MoveFiles(getContext(), movedFiles, moveData).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                        destinationMovePath);
+                break;
+
+            case FOLDER_CREATION:
+                String path = intent.getStringExtra(OperationUtils.KEY_FILEPATH);
+                fileOpHelper.mkDir(new File(path), mIsRootMode);
+                break;
+
+            case FILE_CREATION:
+                String newFilePathCreate = intent.getStringExtra(OperationUtils.KEY_FILEPATH);
+                fileOpHelper.mkFile(new File(newFilePathCreate), mIsRootMode);
+                break;
+
+            case RENAME:
+                String oldFilePath = intent.getStringExtra(OperationUtils.KEY_FILEPATH);
+                String newFilePath = intent.getStringExtra(OperationUtils.KEY_FILEPATH2);
+                int position = intent.getIntExtra(OperationUtils.KEY_POSITION, INVALID_POS);
+                fileOpHelper.renameFile(new File(oldFilePath), new File(newFilePath),
+                        position, mIsRootMode);
+                break;
+
+            case EXTRACT:
+                String newFilePath1 = intent.getStringExtra(OperationUtils.KEY_FILEPATH);
+                String oldFilePath1 = intent.getStringExtra(OperationUtils.KEY_FILEPATH2);
+                fileOpHelper.extractFile(new File(oldFilePath1), new File(newFilePath1));
+                break;
+
+            case COMPRESS:
+                ArrayList<FileInfo> compressedFiles = intent.getParcelableArrayListExtra(OperationUtils.KEY_FILES);
+                String destinationCompressPath = intent.getStringExtra(OperationUtils.KEY_FILEPATH);
+                fileOpHelper.compressFile(new File(destinationCompressPath), compressedFiles);
+                break;
+        }
     }
 
 
@@ -898,7 +937,7 @@ public class BaseFileList extends Fragment implements LoaderManager
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (action.equals(FileConstants.RELOAD_LIST)) {
+            if (action.equals(ACTION_RELOAD_LIST)) {
                 computeScroll();
                 String path = intent.getStringExtra(FileConstants.KEY_PATH);
                 Logger.log(TAG, "New zip PAth=" + path);
@@ -906,72 +945,76 @@ public class BaseFileList extends Fragment implements LoaderManager
                     FileUtils.scanFile(getActivity().getApplicationContext(), path);
                 }
                 reloadList(true, currentDir);
-            } else if (action.equals(FileConstants.REFRESH)) {
+            } else if (action.equals(ACTION_OP_REFRESH)) {
 
-                int operation = intent.getIntExtra(FileConstants.OPERATION, -1);
-
-                switch (operation) {
-                    case FileConstants.DELETE:
-
-                        ArrayList<FileInfo> deletedFilesList = intent.getParcelableArrayListExtra("deleted_files");
-
-                        for (FileInfo info : deletedFilesList) {
-                            FileUtils.scanFile(getActivity().getApplicationContext(), info.getFilePath());
-                        }
-
-                        mIsBackPressed = true;
-                        Uri uri = getUriForCategory(category);
-                        getContext().getContentResolver().notifyChange(uri, null);
-                        for (int i = 0; i < deletedFilesList.size(); i++) {
-                            fileInfoList.remove(deletedFilesList.get(i));
-                        }
-                        fileListAdapter.setStopAnimation(true);
-                        fileListAdapter.updateAdapter(fileInfoList);
-
-                        break;
-
-                    case FileConstants.RENAME:
-
-                        final int position = intent.getIntExtra("position", -1);
-                        String oldFile = intent.getStringExtra("old_file");
-                        String newFile = intent.getStringExtra("new_file");
-                        int type = fileInfoList.get(position).getType();
-                        FileUtils.removeMedia(getActivity(), new File(oldFile), type);
-                        FileUtils.scanFile(getActivity().getApplicationContext(), newFile);
-                        fileInfoList.get(position).setFilePath(newFile);
-                        fileInfoList.get(position).setFileName(new File(newFile).getName());
-                        fileListAdapter.setStopAnimation(true);
-                        Logger.log(TAG, "Position changed=" + position);
-                        FileUtils.scanFile(getActivity().getApplicationContext(), newFile);
-                        fileListAdapter.notifyItemChanged(position);
-                        break;
-
-                    case FileConstants.MOVE:
-                    case FileConstants.FOLDER_CREATE:
-                    case FileConstants.FILE_CREATE:
-                    case FileConstants.COPY:
-                        boolean isSuccess = intent.getBooleanExtra(FileConstants.IS_OPERATION_SUCCESS, true);
-                        ArrayList<String> copiedFiles = intent.getStringArrayListExtra(FileConstants.KEY_PATH);
-
-                        if (copiedFiles != null) {
-                            for (String path : copiedFiles) {
-                                FileUtils.scanFile(getActivity().getApplicationContext(), path);
-                            }
-                        }
-
-                        if (!isSuccess) {
-                            Toast.makeText(getActivity(), getString(R.string.msg_operation_failed), Toast
-                                    .LENGTH_LONG).show();
-                        } else {
-                            computeScroll();
-                            reloadList(true, currentDir);
-                        }
-                        break;
-
-                }
+                Operations operation = (Operations) intent.getSerializableExtra(KEY_OPERATION);
+                onOperationResult(intent, operation);
             }
         }
     };
+
+    private void onOperationResult(Intent intent, Operations operation) {
+
+        switch (operation) {
+            case DELETE:
+
+                ArrayList<FileInfo> deletedFilesList = intent.getParcelableArrayListExtra("deleted_files");
+
+                for (FileInfo info : deletedFilesList) {
+                    FileUtils.scanFile(getActivity().getApplicationContext(), info.getFilePath());
+                }
+
+                mIsBackPressed = true;
+                Uri uri = getUriForCategory(category);
+                getContext().getContentResolver().notifyChange(uri, null);
+                for (int i = 0; i < deletedFilesList.size(); i++) {
+                    fileInfoList.remove(deletedFilesList.get(i));
+                }
+                fileListAdapter.setStopAnimation(true);
+                fileListAdapter.updateAdapter(fileInfoList);
+
+                break;
+
+            case RENAME:
+
+                final int position = intent.getIntExtra("position", -1);
+                String oldFile = intent.getStringExtra("old_file");
+                String newFile = intent.getStringExtra("new_file");
+                int type = fileInfoList.get(position).getType();
+                FileUtils.removeMedia(getActivity(), new File(oldFile), type);
+                FileUtils.scanFile(getActivity().getApplicationContext(), newFile);
+                fileInfoList.get(position).setFilePath(newFile);
+                fileInfoList.get(position).setFileName(new File(newFile).getName());
+                fileListAdapter.setStopAnimation(true);
+                Logger.log(TAG, "Position changed=" + position);
+                FileUtils.scanFile(getActivity().getApplicationContext(), newFile);
+                fileListAdapter.notifyItemChanged(position);
+                break;
+
+            case CUT:
+            case FOLDER_CREATION:
+            case FILE_CREATION:
+            case COPY:
+                boolean isSuccess = intent.getBooleanExtra(FileConstants.IS_OPERATION_SUCCESS, true);
+                ArrayList<String> copiedFiles = intent.getStringArrayListExtra(FileConstants.KEY_PATH);
+
+                if (copiedFiles != null) {
+                    for (String path : copiedFiles) {
+                        FileUtils.scanFile(getActivity().getApplicationContext(), path);
+                    }
+                }
+
+                if (!isSuccess) {
+                    Toast.makeText(getActivity(), getString(R.string.msg_operation_failed), Toast
+                            .LENGTH_LONG).show();
+                } else {
+                    computeScroll();
+                    reloadList(true, currentDir);
+                }
+                break;
+
+        }
+    }
 
     private boolean isInitialSearch;
 
@@ -1050,7 +1093,8 @@ public class BaseFileList extends Fragment implements LoaderManager
     @Override
     public void onHomeClicked() {
         endActionMode();
-        removeFragmentFromBackStack();
+        removeFileFragment();
+        getActivity().onBackPressed();
     }
 
     @Override
@@ -1065,7 +1109,7 @@ public class BaseFileList extends Fragment implements LoaderManager
 
 
     interface RefreshData {
-        void refresh(int category);
+        void refresh(Category category);
     }
 
     public void setRefreshData(RefreshData data) {
@@ -1151,13 +1195,6 @@ public class BaseFileList extends Fragment implements LoaderManager
     }
 
 
-    public void refreshList() {
-        Bundle args = new Bundle();
-        args.putString(FileConstants.KEY_PATH, currentDir);
-        args.putBoolean(FileConstants.KEY_ZIP, isZipViewer);
-        getLoaderManager().restartLoader(LOADER_ID, args, this);
-    }
-
     public void reloadList(boolean isBackPressed, String path) {
         currentDir = path;
         mIsBackPressed = isBackPressed;
@@ -1196,7 +1233,6 @@ public class BaseFileList extends Fragment implements LoaderManager
             fileListAdapter.clearList();
         }
         String path = args.getString(FileConstants.KEY_PATH);
-        Category category = (Category) args.getSerializable(FileConstants.KEY_CATEGORY);
         mSwipeRefreshLayout.setRefreshing(true);
         return new FileListLoader(this, path, category, false);
     }
@@ -1621,7 +1657,9 @@ public class BaseFileList extends Fragment implements LoaderManager
 
     public void endActionMode() {
         isInSelectionMode = false;
-        actionMode.finish();
+        if (actionMode != null) {
+            actionMode.finish();
+        }
         actionMode = null;
         mBottomToolbar.setVisibility(View.GONE);
         mSelectedItemPositions = new SparseBooleanArray();
@@ -1681,7 +1719,7 @@ public class BaseFileList extends Fragment implements LoaderManager
                     return;
                 }
                 File oldFile = new File(oldFilePath);
-                fileOpHelper.renameFile(mIsRootMode, oldFile, newFile, position);
+                fileOpHelper.renameFile(oldFile, newFile, position, mIsRootMode);
                 materialDialog.dismiss();
             }
         });
@@ -1712,8 +1750,7 @@ public class BaseFileList extends Fragment implements LoaderManager
             String temp = path.substring(0, path.lastIndexOf(File.separator));
 
             File newFile = new File(temp + File.separator + renamedName);
-            aceActivity.mFileOpsHelper.renameFile(mIsRootMode, oldFile, newFile,
-                    pos.get(i));
+            fileOpHelper.renameFile(oldFile, newFile, pos.get(i), mIsRootMode);
         }
     }
 
@@ -1873,7 +1910,7 @@ public class BaseFileList extends Fragment implements LoaderManager
                                 .dialog_title_paste_conflict));
                         return;
                     }
-                    aceActivity.mFileOpsHelper.extractFile(currentFile, newFile);
+                    fileOpHelper.extractFile(currentFile, newFile);
                 } else {
                     File newFile = new File(currentDir + "/" + fileName);
                     File currentFile = new File(currentFilePath);
@@ -1882,7 +1919,7 @@ public class BaseFileList extends Fragment implements LoaderManager
                                 .dialog_title_paste_conflict));
                         return;
                     }
-                    aceActivity.mFileOpsHelper.extractFile(currentFile, newFile);
+                    fileOpHelper.extractFile(currentFile, newFile);
                 }
                 setBackPressed();
                 materialDialog.dismiss();
@@ -2179,7 +2216,7 @@ public class BaseFileList extends Fragment implements LoaderManager
                 final boolean isMoveOperation = position == 1;
                 ArrayList<FileInfo> info = new ArrayList<>();
                 info.addAll(sourcePaths);
-                PasteConflictChecker conflictChecker = new PasteConflictChecker(aceActivity, destinationDir,
+                PasteConflictChecker conflictChecker = new PasteConflictChecker(BaseFileList.this, destinationDir,
                         mIsRootMode, isMoveOperation, info);
                 conflictChecker.execute();
                 clearSelectedPos();
@@ -2323,9 +2360,8 @@ public class BaseFileList extends Fragment implements LoaderManager
                             final boolean isMoveOperation = false;
                             ArrayList<FileInfo> info = new ArrayList<>();
                             info.addAll(draggedFiles);
-                            PasteConflictChecker conflictChecker = new PasteConflictChecker(aceActivity,
-                                    destinationDir,
-                                    mIsRootMode, isMoveOperation, info);
+                            PasteConflictChecker conflictChecker = new PasteConflictChecker(BaseFileList.this,
+                                    destinationDir, mIsRootMode, isMoveOperation, info);
                             conflictChecker.execute();
                             clearSelectedPos();
                             Logger.log(TAG, "Source=" + draggedFiles.get(0) + "Dest=" + destinationDir);
@@ -2492,7 +2528,7 @@ public class BaseFileList extends Fragment implements LoaderManager
                 if (mCopiedData.size() > 0) {
                     ArrayList<FileInfo> info = new ArrayList<>();
                     info.addAll(mCopiedData);
-                    PasteConflictChecker conflictChecker = new PasteConflictChecker(aceActivity, currentDir,
+                    PasteConflictChecker conflictChecker = new PasteConflictChecker(this, currentDir,
                             mIsRootMode, mIsMoveOperation, info);
                     conflictChecker.execute();
                     clearSelectedPos();

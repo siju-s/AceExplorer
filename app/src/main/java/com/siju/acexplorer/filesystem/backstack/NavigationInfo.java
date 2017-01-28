@@ -2,6 +2,7 @@ package com.siju.acexplorer.filesystem.backstack;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
 import android.view.View;
@@ -14,19 +15,18 @@ import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.groups.Category;
 import com.siju.acexplorer.filesystem.groups.StoragesGroup;
-import com.siju.acexplorer.filesystem.utils.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import static com.siju.acexplorer.filesystem.utils.FileUtils.getInternalStorage;
+import static com.siju.acexplorer.filesystem.storage.StorageUtils.getInternalStorage;
 
 
 public class NavigationInfo {
     private static final String TAG = "NavigationInfo";
     private String currentDir;
-    private String initialDir;
+    private String initialDir = getInternalStorage();
     private Context context;
     private NavigationCallback navigationCallback;
     private boolean isCurrentDirRoot;
@@ -34,9 +34,9 @@ public class NavigationInfo {
     private ArrayList<String> externalSDPaths = new ArrayList<>();
 
 
-    public NavigationInfo(Context context) {
-        this.context = context;
-        navigationCallback = (NavigationCallback) context;
+    public NavigationInfo(Fragment fragment) {
+        this.context = fragment.getContext();
+        navigationCallback = (NavigationCallback) fragment;
         STORAGE_ROOT = context.getResources().getString(R.string.nav_menu_root);
         STORAGE_INTERNAL = context.getResources().getString(R.string.nav_menu_internal_storage);
         STORAGE_EXTERNAL = context.getResources().getString(R.string.nav_menu_ext_storage);
@@ -44,8 +44,8 @@ public class NavigationInfo {
     }
 
     public void setInitialDir() {
-        if (currentDir.contains(FileUtils.getInternalStorage().getAbsolutePath())) {
-            initialDir = FileUtils.getInternalStorage().getAbsolutePath();
+        if (currentDir.contains(getInternalStorage())) {
+            initialDir = getInternalStorage();
             isCurrentDirRoot = false;
         } else if (externalSDPaths.size() > 0) {
             for (String path : externalSDPaths) {
@@ -65,7 +65,7 @@ public class NavigationInfo {
 
     private void checkIfFavIsRootDir() {
 
-        if (!currentDir.contains(getInternalStorage().getAbsolutePath()) && !externalSDPaths.contains
+        if (!currentDir.contains(getInternalStorage()) && !externalSDPaths.contains
                 (currentDir)) {
             isCurrentDirRoot = true;
             initialDir = File.separator;
@@ -192,7 +192,7 @@ public class NavigationInfo {
 
 
         int WRAP_CONTENT = LinearLayout.LayoutParams.WRAP_CONTENT;
-        if (dir.equals(getInternalStorage().getAbsolutePath())) {
+        if (dir.equals(getInternalStorage())) {
             isCurrentDirRoot = false;
             createNavButton(STORAGE_INTERNAL, dir);
         } else if (dir.equals(File.separator)) {

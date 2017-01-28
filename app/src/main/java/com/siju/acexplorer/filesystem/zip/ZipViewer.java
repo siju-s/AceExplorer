@@ -77,7 +77,8 @@ public class ZipViewer implements LoaderManager
     public ZipViewer(Fragment fragment, String path) {
         context = fragment;
         zipParentPath = path;
-        navigationInfo = new NavigationInfo(fragment.getContext());
+        navigationInfo = new NavigationInfo(fragment);
+        backStackInfo = new BackStackInfo();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(fragment.getContext());
         isHomeScreenEnabled = preferences.getBoolean(FileConstants.PREFS_HOMESCREEN, true);
         navigationInfo.setNavDirectory(path, isHomeScreenEnabled, category);

@@ -12,12 +12,16 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.siju.acexplorer.AceActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
-import com.siju.acexplorer.filesystem.FileConstants;
+import com.siju.acexplorer.filesystem.BaseFileList;
+import com.siju.acexplorer.filesystem.groups.StoragesGroup;
+import com.siju.acexplorer.filesystem.helper.FileOpsHelper;
 import com.siju.acexplorer.filesystem.model.CopyData;
 import com.siju.acexplorer.filesystem.model.FileInfo;
+import com.siju.acexplorer.filesystem.operations.OperationProgress;
+import com.siju.acexplorer.filesystem.operations.OperationUtils;
+import com.siju.acexplorer.filesystem.operations.Operations;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.helper.RootHelper;
 import com.siju.acexplorer.utils.Dialogs;
@@ -26,6 +30,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.siju.acexplorer.filesystem.storage.StorageUtils.getInternalStorage;
+
 
 public class PasteConflictChecker extends AsyncTask<Void, String, ArrayList<FileInfo>> {
 
@@ -33,25 +39,26 @@ public class PasteConflictChecker extends AsyncTask<Void, String, ArrayList<File
     private final ArrayList<FileInfo> mConflictFiles = new ArrayList<>();
     private int counter = 0;
     private boolean rootmode = false;
-    private final String mCurrentDir;
+    private final String destinationDir;
     private boolean mIsMoveOperation = false;
-    private final AceActivity mActivity;
-    private ArrayList<FileInfo> mTotalFileList;
+    private final BaseFileList fragment;
     private boolean mLowStorage;
+    private FileOpsHelper fileOpsHelper;
 
 
-    public PasteConflictChecker(AceActivity context, String currentDir, boolean
+    public PasteConflictChecker(BaseFileList fragment, String currentDir, boolean
             rootMode, boolean isMoveOperation, ArrayList<FileInfo> files) {
-        mActivity = context;
-        mCurrentDir = currentDir;
+        this.fragment = fragment;
+        destinationDir = currentDir;
         this.rootmode = rootMode;
         this.mIsMoveOperation = isMoveOperation;
         mFiles = files;
+        fileOpsHelper = new FileOpsHelper(fragment);
     }
 
     @Override
     public void onProgressUpdate(String... message) {
-        Toast.makeText(mActivity, message[0], Toast.LENGTH_LONG).show();
+        Toast.makeText(fragment.getContext(), message[0], Toast.LENGTH_LONG).show();
     }
 
 
@@ -59,35 +66,23 @@ public class PasteConflictChecker extends AsyncTask<Void, String, ArrayList<File
     protected final ArrayList<FileInfo> doInBackground(Void... params) {
 
         long totalBytes = 0;
-        mTotalFileList = new ArrayList<>();
 
         for (int i = 0; i < mFiles.size(); i++) {
             FileInfo f1 = mFiles.get(i);
 
             if (f1.isDirectory()) {
-
-                ArrayList<FileInfo> listFiles = new RootHelper().getFilesListRecursively(mActivity, f1.getFilePath(),
-                        rootmode);
-
-                int childCount = listFiles.size();
-                if (childCount == 0) {
-                    mTotalFileList.add(f1);
-                } else {
-                    mTotalFileList.addAll(listFiles);
-                }
                 totalBytes = totalBytes + FileUtils.getFolderSize(new File(f1.getFilePath()));
             } else {
                 totalBytes = totalBytes + new File(f1.getFilePath()).length();
-                mTotalFileList.add(f1);
             }
         }
 
-        File f = new File(mCurrentDir);
-        boolean isRootDir = !mCurrentDir.startsWith(FileUtils.getInternalStorage().getAbsolutePath());
-        List<String> storageDirectories = FileUtils.getStorageDirectories(mActivity);
+        File f = new File(destinationDir);
+        boolean isRootDir = !destinationDir.startsWith(getInternalStorage());
+        List<String> externalSDList = new StoragesGroup(fragment.getContext()).getExternalSDList();
 
-        for (String dir : storageDirectories) {
-            if (mCurrentDir.startsWith(dir)) {
+        for (String dir : externalSDList) {
+            if (destinationDir.startsWith(dir)) {
                 isRootDir = false;
             }
         }
@@ -95,7 +90,7 @@ public class PasteConflictChecker extends AsyncTask<Void, String, ArrayList<File
 
         if (isRootDir || f.getFreeSpace() >= totalBytes) {
 
-            ArrayList<FileInfo> listFiles = RootHelper.getFilesList(mCurrentDir,
+            ArrayList<FileInfo> listFiles = RootHelper.getFilesList(destinationDir,
                     rootmode, true, false);
 
             for (FileInfo fileInfo : listFiles) {
@@ -107,7 +102,7 @@ public class PasteConflictChecker extends AsyncTask<Void, String, ArrayList<File
             }
         } else {
             mLowStorage = true;
-            publishProgress(mActivity.getString(R.string.storage_low));
+            publishProgress(fragment.getString(R.string.storage_low));
         }
 
         return mConflictFiles;
@@ -121,48 +116,42 @@ public class PasteConflictChecker extends AsyncTask<Void, String, ArrayList<File
         if (counter == mConflictFiles.size() || mConflictFiles.size() == 0) {
             if (mFiles != null && mFiles.size() != 0) {
 
-                int mode = mActivity.mFileOpsHelper.checkWriteAccessMode(mActivity, new File(mCurrentDir));
-                if (mode == 2) {
-                    mActivity.mFiles = mFiles;
-                    mActivity.mTotalFiles = mTotalFileList;
-                    mActivity.mOperation = mIsMoveOperation ? FileConstants.MOVE : FileConstants.COPY;
-                    mActivity.mCopyData = mCopyData;
-                    mActivity.mNewFilePath = mCurrentDir;
-                } else if (mode == 1 || mode == 0) {
+                OperationUtils.WriteMode mode = fileOpsHelper.checkWriteAccessMode(fragment.getContext(), new File(destinationDir));
+                if (mode == OperationUtils.WriteMode.EXTERNAL) {
+                    Operations operation = mIsMoveOperation ? Operations.CUT : Operations.COPY;
+                    fileOpsHelper.formSAFIntentMoveCopy(destinationDir, mFiles, mCopyData, operation);
+                } else if (mode == OperationUtils.WriteMode.INTERNAL || mode == OperationUtils.WriteMode.ROOT) {
 
                     if (!mIsMoveOperation) {
 
-                        if (rootmode || new File(mCurrentDir).canWrite()) {
+                        if (rootmode || new File(destinationDir).canWrite()) {
 
-                            Intent intent = new Intent(mActivity, CopyService.class);
-                            intent.putParcelableArrayListExtra("FILE_PATHS", mFiles);
-                            intent.putParcelableArrayListExtra("ACTION", mCopyData);
-                            intent.putExtra("COPY_DIRECTORY", mCurrentDir);
-                            int openMode = 0;
-                            intent.putExtra("MODE", openMode);
-                            intent.putParcelableArrayListExtra("TOTAL_LIST", mTotalFileList);
-                            new FileUtils().showCopyProgressDialog(mActivity, intent);
+                            Intent intent = new Intent(fragment.getActivity(), CopyService.class);
+                            intent.putParcelableArrayListExtra(OperationUtils.KEY_FILES, mFiles);
+                            intent.putParcelableArrayListExtra(OperationUtils.KEY_CONFLICT_DATA, mCopyData);
+                            intent.putExtra(OperationUtils.KEY_FILEPATH, destinationDir);
+                            new OperationProgress().showCopyProgressDialog(fragment.getContext(), intent);
                         } else {
-                            Toast.makeText(mActivity, mActivity.getString(R.string.msg_operation_failed),
+                            Toast.makeText(fragment.getContext(), fragment.getString(R.string.msg_operation_failed),
                                     Toast.LENGTH_SHORT).show();
                         }
 
                     } else {
-                        new MoveFiles(mActivity, mFiles, mCopyData).executeOnExecutor
-                                (AsyncTask.THREAD_POOL_EXECUTOR, mCurrentDir);
+                        new MoveFiles(fragment.getContext(), mFiles, mCopyData).executeOnExecutor
+                                (AsyncTask.THREAD_POOL_EXECUTOR, destinationDir);
                     }
                 }
             } else {
 
-                Toast.makeText(mActivity, mIsMoveOperation ? mActivity.getString(R.string.msg_move_failure) :
-                        mActivity.getString(R.string.msg_copy_failure), Toast.LENGTH_SHORT).show();
+                Toast.makeText(fragment.getContext(), mIsMoveOperation ? fragment.getString(R.string.msg_move_failure) :
+                        fragment.getString(R.string.msg_copy_failure), Toast.LENGTH_SHORT).show();
             }
         } else {
 
-            String texts[] = new String[]{mActivity.getString(R.string.dialog_title_paste_conflict),
-                    mActivity.getString(R.string.dialog_skip), mActivity.getString(R.string.dialog_keep_both), mActivity.getString(R
+            String texts[] = new String[]{fragment.getString(R.string.dialog_title_paste_conflict),
+                    fragment.getString(R.string.dialog_skip), fragment.getString(R.string.dialog_keep_both), fragment.getString(R
                     .string.dialog_replace)};
-            final MaterialDialog materialDialog = new Dialogs().showCustomDialog(mActivity, R.layout.dialog_paste_conflict,
+            final MaterialDialog materialDialog = new Dialogs().showCustomDialog(fragment.getContext(), R.layout.dialog_paste_conflict,
                     texts);
 
 
@@ -177,16 +166,16 @@ public class PasteConflictChecker extends AsyncTask<Void, String, ArrayList<File
             long date = sourceFile.lastModified();
             String fileModifiedDate = FileUtils.convertDate(date);
             long size = sourceFile.length();
-            String fileSize = Formatter.formatFileSize(mActivity, size);
+            String fileSize = Formatter.formatFileSize(fragment.getContext(), size);
             textFileDate.setText(fileModifiedDate);
             textFileSize.setText(fileSize);
-            Drawable drawable = FileUtils.getAppIcon(mActivity, mConflictFiles.get(counter).getFilePath());
+            Drawable drawable = FileUtils.getAppIcon(fragment.getContext(), mConflictFiles.get(counter).getFilePath());
             if (drawable != null) {
                 icon.setImageDrawable(drawable);
             }
 
             // POSITIVE BUTTON ->SKIP   NEGATIVE ->REPLACE    NEUTRAL ->KEEP BOTH
-            if (sourceFile.getParent().equals(mCurrentDir)) {
+            if (sourceFile.getParent().equals(destinationDir)) {
                 if (mIsMoveOperation) {
                     materialDialog.getActionButton(DialogAction.NEUTRAL).setEnabled(false);
                     materialDialog.getActionButton(DialogAction.NEGATIVE).setEnabled(false);

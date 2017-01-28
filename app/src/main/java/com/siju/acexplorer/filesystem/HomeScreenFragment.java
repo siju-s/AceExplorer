@@ -19,6 +19,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -47,15 +48,16 @@ import com.siju.acexplorer.filesystem.model.FavInfo;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.model.HomeLibraryInfo;
 import com.siju.acexplorer.filesystem.model.LibrarySortModel;
+import com.siju.acexplorer.filesystem.storage.StorageUtils;
 import com.siju.acexplorer.filesystem.theme.ThemeUtils;
 import com.siju.acexplorer.filesystem.theme.Themes;
-import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.model.SectionItems;
 import com.siju.acexplorer.permission.PermissionUtils;
 
 import java.util.ArrayList;
 
 import static android.R.attr.id;
+import static com.siju.acexplorer.filesystem.FileConstants.KEY_CATEGORY;
 import static com.siju.acexplorer.filesystem.groups.Category.ADD;
 import static com.siju.acexplorer.filesystem.groups.Category.AUDIO;
 import static com.siju.acexplorer.filesystem.groups.Category.DOCS;
@@ -65,8 +67,7 @@ import static com.siju.acexplorer.filesystem.groups.Category.FILES;
 import static com.siju.acexplorer.filesystem.groups.Category.IMAGE;
 import static com.siju.acexplorer.filesystem.groups.Category.VIDEO;
 
-public class HomeScreenFragment extends Fragment implements LoaderManager
-        .LoaderCallbacks<ArrayList<FileInfo>>, View.OnClickListener, BaseFileList.RefreshData {
+public class HomeScreenFragment extends Fragment implements LoaderManager.LoaderCallbacks<ArrayList<FileInfo>>, View.OnClickListener, BaseFileList.RefreshData {
 
 
     private static final int COUNT_ZERO = 0;
@@ -95,6 +96,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     private LinearLayout layoutStorages;
     private NestedScrollView nestedScrollViewHome;
     private Themes theme;
+    private Toolbar toolbar;
 
 
     @Override
@@ -125,6 +127,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         initializeViews();
+        initializeListeners();
         initConstants();
         checkBillingStatus();
         setGridColumns();
@@ -143,6 +146,21 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         layoutLibrary = (LinearLayout) root.findViewById(R.id.layoutLibrary);
         layoutStorages = (LinearLayout) root.findViewById(R.id.layoutStorages);
         nestedScrollViewHome = (NestedScrollView) root.findViewById(R.id.scrollLayoutHome);
+        toolbar = (Toolbar) root.findViewById(R.id.toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_drawer);
+        aceActivity.syncDrawerState();
+    }
+
+    private void initializeListeners() {
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                aceActivity.openDrawer();
+            }
+        });
     }
 
     private void initConstants() {
@@ -225,6 +243,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             addToLibrary(new HomeLibraryInfo(categories[i], mLabels[i], mResourceIds[i], COUNT_ZERO));
             LibrarySortModel model = new LibrarySortModel();
             model.setCategory(categories[i]);
+            model.setLibraryName(mLabels[i]);
             model.setChecked(true);
             if (!model.getCategory().equals(ADD)) {
                 sharedPreferenceWrapper.addLibrary(getActivity(), model);
@@ -294,15 +313,17 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         if (hasStoragePermission()) {
             for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
                 Category category = homeLibraryInfoArrayList.get(i).getCategory();
-                initLoaders(category.getValue());
+                initLoaders(category);
                 registerObservers(getUriForCategory(category));
             }
             setupFavorites();
         }
     }
 
-    private void initLoaders(int categoryId) {
-        getLoaderManager().initLoader(categoryId, null, this);
+    private void initLoaders(Category category) {
+        Bundle args = new Bundle();
+        args.putSerializable(KEY_CATEGORY, category);
+        getLoaderManager().initLoader(category.getValue(), args, this);
     }
 
     private void registerObservers(Uri uri) {
@@ -494,6 +515,8 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             if (isAddCategory(category)) {
                 Intent intent = new Intent(getActivity(), LibrarySortActivity.class);
                 startActivityForResult(intent, REQUEST_CODE);
+            } else if (category.equals(DOWNLOADS)) {
+                displayFileListFrag(StorageUtils.getDownloadsDirectory(), category);
             } else {
                 displayFileListFrag(null, category);
             }
@@ -578,8 +601,10 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
         }
     }
 
-    private void restartLoaders(int categoryId) {
-        getLoaderManager().restartLoader(categoryId, null, this);
+    private void restartLoaders(Category category) {
+        Bundle args = new Bundle();
+        args.putSerializable(KEY_CATEGORY, category);
+        getLoaderManager().restartLoader(category.getValue(), null, this);
     }
 
 
@@ -688,6 +713,8 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     @Override
     public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
         Log.d(TAG, "on onCreateLoader--" + id);
+        Category category = (Category) args.getSerializable(KEY_CATEGORY);
+        String path = null;
         switch (id) {
             case 1:
             case 2:
@@ -697,10 +724,10 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
             case 9:
             case 10:
             case 11:
-                return new FileListLoader(this, null, id, false);
+                return new FileListLoader(this, path, category, false);
             case 5:
-                String path = FileUtils.getDownloadsDirectory().getAbsolutePath();
-                return new FileListLoader(this, path, id, false);
+                path = StorageUtils.getDownloadsDirectory();
+                return new FileListLoader(this, path, category, false);
         }
         return null;
 
@@ -718,7 +745,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
 
                         homeLibraryInfoArrayList.get(i).setCount(data.size());
                         updateCount(i, data.size());
-                    } else if (data.get(0).getCategoryId() == homeLibraryInfoArrayList.get(i).getCategory().getValue()) {
+                    } else if (data.get(0).getCategory().equals(homeLibraryInfoArrayList.get(i).getCategory())) {
                         Log.d(TAG, "on onLoadFinished--category=" + loader.getId() + "size=" + data.get(0).getCount());
                         homeLibraryInfoArrayList.get(i).setCount(data.get(0).getCount());
                         updateCount(i, data.get(0).getCount());
@@ -789,7 +816,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                 .beginTransaction();
         Bundle args = new Bundle();
         args.putBoolean(FileConstants.KEY_HOME, true);
-        args.putSerializable(FileConstants.KEY_CATEGORY, category);
+        args.putSerializable(KEY_CATEGORY, category);
         args.putBoolean(FileConstants.KEY_PREMIUM, isPremium);
         args.putString(FileConstants.KEY_PATH, path);
 /*        String path = null;
@@ -827,7 +854,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
     }
 
     @Override
-    public void refresh(int category) {
+    public void refresh(Category category) {
         Logger.log(TAG, "REFRESH");
         restartLoaders(category);
     }
@@ -880,11 +907,11 @@ public class HomeScreenFragment extends Fragment implements LoaderManager
                         Category category1 = homeLibraryInfoArrayList.get(i).getCategory();
                         if (isCategoryGenericUri(category1)) {
                             Logger.log(TAG, "Observer savedib cat id=" + id);
-                            restartLoaders(category1.getValue());
+                            restartLoaders(category1);
                         }
                     }
                 } else {
-                    restartLoaders(category.getValue());
+                    restartLoaders(category);
                 }
             }
         }

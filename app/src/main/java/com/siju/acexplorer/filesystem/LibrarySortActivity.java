@@ -14,11 +14,23 @@ import android.view.MenuItem;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.SharedPreferenceWrapper;
+import com.siju.acexplorer.filesystem.groups.Category;
 import com.siju.acexplorer.filesystem.helper.SimpleItemTouchHelperCallback;
 import com.siju.acexplorer.filesystem.model.LibrarySortModel;
 import com.siju.acexplorer.filesystem.theme.ThemeUtils;
 
 import java.util.ArrayList;
+
+import static com.siju.acexplorer.filesystem.groups.Category.APPS;
+import static com.siju.acexplorer.filesystem.groups.Category.AUDIO;
+import static com.siju.acexplorer.filesystem.groups.Category.COMPRESSED;
+import static com.siju.acexplorer.filesystem.groups.Category.DOCS;
+import static com.siju.acexplorer.filesystem.groups.Category.DOWNLOADS;
+import static com.siju.acexplorer.filesystem.groups.Category.FAVORITES;
+import static com.siju.acexplorer.filesystem.groups.Category.IMAGE;
+import static com.siju.acexplorer.filesystem.groups.Category.LARGE_FILES;
+import static com.siju.acexplorer.filesystem.groups.Category.PDF;
+import static com.siju.acexplorer.filesystem.groups.Category.VIDEO;
 
 public class LibrarySortActivity extends AppCompatActivity implements OnStartDragListener {
     private ItemTouchHelper mItemTouchHelper;
@@ -27,7 +39,7 @@ public class LibrarySortActivity extends AppCompatActivity implements OnStartDra
     private final ArrayList<LibrarySortModel> totalLibraries = new ArrayList<>();
     private int mResourceIds[];
     private String mLabels[];
-    private int mCategoryIds[];
+    private Category categories[];
 
 
     @Override
@@ -87,16 +99,16 @@ public class LibrarySortActivity extends AppCompatActivity implements OnStartDra
                 .pdf), getString(R.string
                 .apk), getString(R.string
                 .library_large)};
-        mCategoryIds = new int[]{FileConstants.CATEGORY.IMAGE.getValue(),
-                FileConstants.CATEGORY.AUDIO.getValue(),
-                FileConstants.CATEGORY.VIDEO.getValue(),
-                FileConstants.CATEGORY.DOCS.getValue(),
-                FileConstants.CATEGORY.DOWNLOADS.getValue(),
-                FileConstants.CATEGORY.COMPRESSED.getValue(),
-                FileConstants.CATEGORY.FAVORITES.getValue(),
-                FileConstants.CATEGORY.PDF.getValue(),
-                FileConstants.CATEGORY.APPS.getValue(),
-                FileConstants.CATEGORY.LARGE_FILES.getValue()};
+        categories = new Category[]{IMAGE,
+                AUDIO,
+                VIDEO,
+                DOCS,
+                DOWNLOADS,
+                COMPRESSED,
+                FAVORITES,
+                PDF,
+                APPS,
+                LARGE_FILES};
     }
 
 
@@ -104,14 +116,13 @@ public class LibrarySortActivity extends AppCompatActivity implements OnStartDra
         savedLibraries = sharedPreferenceWrapper.getLibraries(this);
         if (savedLibraries != null) {
             for (int j = 0; j < savedLibraries.size(); j++) {
-                totalLibraries.add(new LibrarySortModel(savedLibraries.get(j).getCategoryId(),
+                totalLibraries.add(new LibrarySortModel(savedLibraries.get(j).getCategory(),
                         savedLibraries.get(j).getLibraryName()));
             }
         }
 
         for (int i = 0; i < mResourceIds.length; i++) {
-            LibrarySortModel model = new LibrarySortModel(mCategoryIds[i], mLabels[i]
-            );
+            LibrarySortModel model = new LibrarySortModel(categories[i], mLabels[i]);
             if (!totalLibraries.contains(model)) {
                 model.setChecked(false);
                 totalLibraries.add(model);

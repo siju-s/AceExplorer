@@ -7,7 +7,6 @@ import android.preference.PreferenceManager;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.SharedPreferenceWrapper;
 import com.siju.acexplorer.filesystem.model.FavInfo;
-import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.model.SectionGroup;
 import com.siju.acexplorer.model.SectionItems;
 
@@ -16,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.siju.acexplorer.AceActivity.PREFS_FIRST_RUN;
+import static com.siju.acexplorer.filesystem.storage.StorageUtils.getDownloadsDirectory;
 
 public class DrawerItems {
 
@@ -72,10 +72,9 @@ public class DrawerItems {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         boolean isFirstRun = sharedPreferences.getBoolean(PREFS_FIRST_RUN, true);
         if (isFirstRun) {
-            String path = FileUtils
-                    .getAbsolutePath(FileUtils.getDownloadsDirectory());
+            String path = getDownloadsDirectory();
             favouritesGroupChild.add(new SectionItems(DOWNLOADS, path, R.drawable.ic_download,
-                    path, 0));
+                    getDownloadsDirectory(), 0));
             FavInfo favInfo = new FavInfo();
             favInfo.setFileName(DOWNLOADS);
             favInfo.setFilePath(path);

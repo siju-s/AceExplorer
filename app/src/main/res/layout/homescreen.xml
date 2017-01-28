@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/scrollLayoutHome"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -25,104 +24,111 @@
             app:titleTextAppearance="@style/ToolbarTitle" />
     </android.support.design.widget.AppBarLayout>
 
-    <RelativeLayout
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/scrollLayoutHome"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fitsSystemWindows="true"
-        android:orientation="vertical"
-        app:layout_scrollFlags="scroll|enterAlways">
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <LinearLayout
-            android:id="@+id/layoutLibrary"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/padding_10"
-            android:background="@drawable/layer_card_background"
-            android:orientation="vertical">
+            android:fitsSystemWindows="true"
+            android:orientation="vertical"
+            app:layout_scrollFlags="scroll|enterAlways">
 
-            <TextView
-                android:id="@+id/textLibrary"
+            <LinearLayout
+                android:id="@+id/layoutLibrary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_16"
-                android:layout_marginRight="@dimen/margin_16"
-                android:text="@string/nav_header_collections"
-                android:textAllCaps="true"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:layout_margin="@dimen/padding_10"
+                android:background="@drawable/layer_card_background"
+                android:orientation="vertical">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginBottom="2dp"
-                android:layout_marginTop="2dp"
-                android:background="@color/colorPrimaryDark" />
+                <TextView
+                    android:id="@+id/textLibrary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_16"
+                    android:layout_marginRight="@dimen/margin_16"
+                    android:text="@string/nav_header_collections"
+                    android:textAllCaps="true"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    android:background="@color/colorPrimaryDark" />
 
 
-            <TableLayout
-                android:id="@+id/libraryContainer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                <TableLayout
+                    android:id="@+id/libraryContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
-        </LinearLayout>
+            </LinearLayout>
 
 
-        <LinearLayout
-            android:id="@+id/layoutStorages"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/layoutLibrary"
-            android:layout_margin="@dimen/padding_10"
-            android:background="@drawable/layer_card_background"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_16"
-                android:layout_marginRight="@dimen/margin_16"
-                android:text="@string/nav_header_storages"
-                android:textAllCaps="true"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginBottom="2dp"
-                android:layout_marginTop="2dp"
-                android:background="@color/colorPrimaryDark" />
-
-            <TableLayout
-                android:id="@+id/storagesContainer"
+            <LinearLayout
+                android:id="@+id/layoutStorages"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/card_margin">
+                android:layout_below="@+id/layoutLibrary"
+                android:layout_margin="@dimen/padding_10"
+                android:background="@drawable/layer_card_background"
+                android:orientation="vertical">
 
-                <include layout="@layout/storage_item" />
-            </TableLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_16"
+                    android:layout_marginRight="@dimen/margin_16"
+                    android:text="@string/nav_header_storages"
+                    android:textAllCaps="true"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-        </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    android:background="@color/colorPrimaryDark" />
 
-        <LinearLayout
-            android:id="@+id/adviewLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_below="@+id/layoutStorages"
-            android:layout_centerHorizontal="true"
-            android:orientation="vertical" />
+                <TableLayout
+                    android:id="@+id/storagesContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/card_margin">
 
-        <!--<com.google.android.gms.ads.AdView-->
-        <!--android:id="@+id/adView"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--ads:adSize="BANNER"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:layout_below="@+id/layoutStorages"-->
-        <!--android:layout_centerHorizontal="true"-->
-        <!--ads:adUnitId="@string/banner_ad_unit_id">-->
-        <!--</com.google.android.gms.ads.AdView>-->
+                    <include layout="@layout/storage_item" />
+                </TableLayout>
 
-    </RelativeLayout>
-</android.support.v4.widget.NestedScrollView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/adviewLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/layoutStorages"
+                android:layout_centerHorizontal="true"
+                android:orientation="vertical" />
+
+            <!--<com.google.android.gms.ads.AdView-->
+            <!--android:id="@+id/adView"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--ads:adSize="BANNER"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:layout_below="@+id/layoutStorages"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--ads:adUnitId="@string/banner_ad_unit_id">-->
+            <!--</com.google.android.gms.ads.AdView>-->
+
+        </RelativeLayout>
+    </android.support.v4.widget.NestedScrollView>
+</android.support.design.widget.CoordinatorLayout>

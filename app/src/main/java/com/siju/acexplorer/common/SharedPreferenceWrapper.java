@@ -4,14 +4,15 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
-import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.FavInfo;
 import com.siju.acexplorer.filesystem.model.LibrarySortModel;
-import com.siju.acexplorer.filesystem.utils.FileUtils;
+import com.siju.acexplorer.filesystem.modes.ViewMode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.siju.acexplorer.filesystem.storage.StorageUtils.getDownloadsDirectory;
 
 
 public class SharedPreferenceWrapper {
@@ -70,8 +71,7 @@ public class SharedPreferenceWrapper {
         ArrayList<FavInfo> favorites = getFavorites(context);
         if (favorites != null) {
             for (int i = favorites.size() - 1; i >= 0; i--) {
-                if (!favorites.get(i).getFilePath().equalsIgnoreCase(FileUtils
-                        .getDownloadsDirectory().getAbsolutePath())) {
+                if (!favorites.get(i).getFilePath().equalsIgnoreCase(getDownloadsDirectory())) {
                     Logger.log("TAG", "Fav path=" + favorites.get(i).getFilePath());
                     favorites.remove(i);
                 }
@@ -180,9 +180,9 @@ public class SharedPreferenceWrapper {
         sharedPreferences = context.getSharedPreferences(PREFS_NAME,
                 Context.MODE_PRIVATE);
         if (sharedPreferences.contains(PREFS_VIEW_MODE)) {
-            mode = sharedPreferences.getInt(PREFS_VIEW_MODE, FileConstants.KEY_LISTVIEW);
+            mode = sharedPreferences.getInt(PREFS_VIEW_MODE, ViewMode.LIST);
         } else {
-            return FileConstants.KEY_LISTVIEW;
+            return ViewMode.LIST;
         }
         return mode;
     }

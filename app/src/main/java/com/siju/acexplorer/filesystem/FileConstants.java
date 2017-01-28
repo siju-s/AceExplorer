@@ -18,20 +18,9 @@ public class FileConstants {
     public static final int THEME_DARK = 1;
     public static final String OPERATION = "operation";
 
-    public static final int FOLDER_CREATE = 1;
-    public static final int FILE_CREATE = 2;
-    public static final int RENAME = 3;
-    public static final int MOVE = 4;
-    public static final int COPY = 5;
-    public static final int DELETE = 6;
-    public static final int COMPRESS = 7;
-    public static final int EXTRACT = 8;
-
     public static final String IS_OPERATION_SUCCESS = "IS_OPERATION_SUCCESS";
     public static final String OPERATION_FAILED = "OPERATION_FAILED";
 
-    public static final String RELOAD_LIST = "reload_list";
-    public static final String REFRESH = "refresh";
     public static final String KEY_PATH = "PATH";
     public static final String KEY_HOME = "HOME";
     public static final String KEY_PATH_OTHER = "OTHER_PATH";
@@ -70,22 +59,4 @@ public class FileConstants {
     public static final String ADS = "ACTION_ADS";
 
 
-
-
-    public enum WRITE_MODES {
-        ROOT(0),
-        INTERNAL(1),
-        EXTERNAL(2);
-
-        private final int value;
-
-        WRITE_MODES(int value) {
-            this.value = value;
-        }
-
-        public int getValue() {
-
-            return value;
-        }
-    }
 }

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.utils.RootNotPermittedException;
@@ -13,6 +12,9 @@ import com.siju.acexplorer.filesystem.utils.RootUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+
+import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_OPERATION;
+import static com.siju.acexplorer.filesystem.operations.Operations.DELETE;
 
 public class DeleteTask extends AsyncTask<Void, Void, Integer> {
 
@@ -73,7 +75,7 @@ public class DeleteTask extends AsyncTask<Void, Void, Integer> {
     protected void onPostExecute(Integer filesDel) {
         int deletedFiles = filesDel;
         Intent intent = new Intent("refresh");
-        intent.putExtra(FileConstants.OPERATION, FileConstants.DELETE);
+        intent.putExtra(KEY_OPERATION, DELETE);
         intent.putParcelableArrayListExtra("deleted_files", deletedFilesList);
         mContext.sendBroadcast(intent);
         if (mShowToast) {

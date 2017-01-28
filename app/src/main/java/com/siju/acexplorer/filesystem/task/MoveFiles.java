@@ -25,34 +25,37 @@ import android.content.Intent;
 import android.os.AsyncTask;
 
 import com.siju.acexplorer.common.Logger;
-import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.CopyData;
 import com.siju.acexplorer.filesystem.model.FileInfo;
+import com.siju.acexplorer.filesystem.operations.OperationUtils;
+import com.siju.acexplorer.filesystem.operations.Operations;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 
+import static com.siju.acexplorer.filesystem.operations.OperationUtils.ACTION_OP_REFRESH;
+
 public class MoveFiles extends AsyncTask<String, Void, Integer> {
-    private final ArrayList<FileInfo> files;
+    private final ArrayList<FileInfo> filesToMove;
     private final ArrayList<CopyData> copyData;
     private final Context context;
-    private String mCurrentDir;
+    private String destinationDir;
 
-    public MoveFiles(Context context,ArrayList<FileInfo> files,ArrayList<CopyData> copyData) {
+    public MoveFiles(Context context, ArrayList<FileInfo> filesToMove, ArrayList<CopyData> copyData) {
         this.context = context;
-        this.files = files;
+        this.filesToMove = filesToMove;
         this.copyData =  copyData;
      }
 
     @Override
     protected Integer doInBackground(String... strings) {
-        mCurrentDir = strings[0];
+        destinationDir = strings[0];
         int filesMoved = 0;
 
-        if (files.size() == 0) return 0;
+        if (filesToMove.size() == 0) return 0;
 
-        for (FileInfo f : files) {
+        for (FileInfo f : filesToMove) {
             int action = FileUtils.ACTION_NONE;
 
             if (copyData != null) {
@@ -64,11 +67,11 @@ public class MoveFiles extends AsyncTask<String, Void, Integer> {
                 }
             }
             String fileName = f.getFileName();
-            String path = mCurrentDir + "/" + fileName;
+            String path = destinationDir + "/" + fileName;
             if (action == FileUtils.ACTION_KEEP) {
                 String fileNameWithoutExt = fileName.substring(0, fileName.
                         lastIndexOf("."));
-                path = mCurrentDir + "/" + fileNameWithoutExt + "(2)" + "." + f.getExtension();
+                path = destinationDir + "/" + fileNameWithoutExt + "(2)" + "." + f.getExtension();
             }
             File file = new File(path);
             File file1 = new File(f.getFilePath());
@@ -83,19 +86,18 @@ public class MoveFiles extends AsyncTask<String, Void, Integer> {
     @Override
     public void onPostExecute(Integer count) {
 
-        if (files.size() != count) {
-            boolean canWrite = new File(mCurrentDir).canWrite();
+        if (filesToMove.size() != count) {
+            boolean canWrite = new File(destinationDir).canWrite();
 
-            Logger.log("TAG", "File size"+files.size()+" moved=="+count + " Can write = "+canWrite);
-            Intent intent = new Intent(context, CopyService.class);
-            intent.putExtra("FILE_PATHS", files);
-            intent.putExtra("COPY_DIRECTORY", mCurrentDir);
-            intent.putExtra("move", true);
-            intent.putExtra("MODE", 1);
-            context.startService(intent);
+            Logger.log("TAG", "File size"+ filesToMove.size()+" moved=="+count + " Can write = "+canWrite);
+            Intent copyIntent = new Intent(context, CopyService.class);
+            copyIntent.putParcelableArrayListExtra(OperationUtils.KEY_FILES, filesToMove);
+            copyIntent.putParcelableArrayListExtra(OperationUtils.KEY_CONFLICT_DATA, copyData);
+            copyIntent.putExtra(OperationUtils.KEY_FILEPATH, destinationDir);
+            context.startService(copyIntent);
         } else {
-            Intent intent = new Intent("refresh");
-            intent.putExtra(FileConstants.OPERATION, FileConstants.MOVE);
+            Intent intent = new Intent(ACTION_OP_REFRESH);
+            intent.putExtra(OperationUtils.KEY_OPERATION, Operations.CUT);
             context.sendBroadcast(intent);
         }
     }

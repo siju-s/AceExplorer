@@ -10,8 +10,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.siju.acexplorer.filesystem.groups.StoragesInfo.getSpaceLeft;
-import static com.siju.acexplorer.filesystem.groups.StoragesInfo.getTotalSpace;
+import static android.os.Environment.getRootDirectory;
+import static com.siju.acexplorer.filesystem.storage.StorageUtils.getSpaceLeft;
+import static com.siju.acexplorer.filesystem.storage.StorageUtils.getStorageDirectories;
+import static com.siju.acexplorer.filesystem.storage.StorageUtils.getTotalSpace;
 
 
 public class StoragesGroup {
@@ -45,7 +47,7 @@ public class StoragesGroup {
 
 
     private void addRootDir() {
-        File systemDir = FileUtils.getRootDirectory();
+        File systemDir = getRootDirectory();
         File rootDir = systemDir.getParentFile();
 
         long spaceLeftRoot = getSpaceLeft(systemDir);
@@ -58,7 +60,8 @@ public class StoragesGroup {
 
     private void addStorages() {
 
-        List<String> storagePaths = FileUtils.getStorageDirectories(context);
+        List<String> storagePaths = getStorageDirectories(context);
+        externalSDPaths = new ArrayList<>();
 
         for (String path : storagePaths) {
             File file = new File(path);
@@ -89,6 +92,10 @@ public class StoragesGroup {
     }
 
     public ArrayList<SectionItems> getStoragesList() {
+        if (storagesList.size() == 0){
+            initConstants();
+            addStorages();
+        }
         return storagesList;
     }
 

@@ -7,9 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import com.siju.acexplorer.filesystem.theme.ThemeUtils;
 import com.siju.acexplorer.filesystem.theme.Themes;
 
-/**
- * Created by SJ on 18-01-2017.
- */
 
 public class BaseActivity extends AppCompatActivity {
 

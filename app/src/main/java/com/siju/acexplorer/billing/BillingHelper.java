@@ -2,6 +2,7 @@ package com.siju.acexplorer.billing;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import com.siju.acexplorer.utils.inappbilling.IabHelper;
@@ -176,6 +177,10 @@ public class BillingHelper {
         String payload = "REMOVE_ADS";
         mHelper.launchPurchaseFlow(context, SKU_REMOVE_ADS,
                 RC_REQUEST, mPurchaseFinishedListener, payload);
+    }
+
+    public boolean onActivityResult(int requestCode, int resultCode, Intent intent) {
+        return mHelper.handleActivityResult(requestCode,resultCode,intent);
     }
 
     // --Commented out by Inspection START (22-11-2016 11:20 PM):

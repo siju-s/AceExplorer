@@ -141,8 +141,12 @@ public class RootUtils {
         RootHelper.runShellCommand("cp " + source + " " + destination);
     }
 
-    public static void mkDir(String path, String name) throws RootNotPermittedException {
-        RootHelper.runShellCommand("mkdir " + path + "/" + name);
+    public static void mkDir(String path) throws RootNotPermittedException {
+        RootHelper.runShellCommand("mkdir " + path);
+    }
+
+    public static void mkFile(String path) throws RootNotPermittedException {
+        RootHelper.runShellCommand("touch " + path);
     }
 
     /**

@@ -10,7 +10,7 @@ public class ThemeUtils {
     public static boolean isDarkTheme(Context context) {
 
         int theme = getTheme(context);
-        return theme == FileConstants.THEME_DARK;
+        return theme == Themes.DARK.getValue();
     }
 
     public static int getTheme(Context context) {

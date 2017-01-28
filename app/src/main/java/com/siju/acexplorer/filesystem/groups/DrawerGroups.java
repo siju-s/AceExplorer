@@ -1,9 +1,5 @@
 package com.siju.acexplorer.filesystem.groups;
 
-/**
- * Created by SJ on 21-01-2017.
- */
-
 public enum DrawerGroups {
 
     STORAGE(0),

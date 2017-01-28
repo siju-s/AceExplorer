@@ -1,7 +1,6 @@
 package com.siju.acexplorer;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,14 +9,12 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -28,6 +25,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -50,16 +48,11 @@ import com.siju.acexplorer.common.SharedPreferenceWrapper;
 import com.siju.acexplorer.filesystem.BaseFileList;
 import com.siju.acexplorer.filesystem.DualPaneList;
 import com.siju.acexplorer.filesystem.FileConstants;
+import com.siju.acexplorer.filesystem.FileList;
 import com.siju.acexplorer.filesystem.HomeScreenFragment;
 import com.siju.acexplorer.filesystem.groups.Category;
 import com.siju.acexplorer.filesystem.groups.DrawerGroups;
-import com.siju.acexplorer.filesystem.helper.FileOpsHelper;
-import com.siju.acexplorer.filesystem.model.CopyData;
 import com.siju.acexplorer.filesystem.model.FavInfo;
-import com.siju.acexplorer.filesystem.model.FileInfo;
-import com.siju.acexplorer.filesystem.task.CopyService;
-import com.siju.acexplorer.filesystem.task.DeleteTask;
-import com.siju.acexplorer.filesystem.task.MoveFiles;
 import com.siju.acexplorer.filesystem.theme.Themes;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.utils.PremiumUtils;
@@ -73,7 +66,6 @@ import com.siju.acexplorer.ui.ScrimInsetsRelativeLayout;
 import com.siju.acexplorer.utils.Dialogs;
 import com.siju.acexplorer.utils.LocaleHelper;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -86,7 +78,8 @@ import static com.siju.acexplorer.filesystem.groups.Category.AUDIO;
 import static com.siju.acexplorer.filesystem.groups.Category.FILES;
 import static com.siju.acexplorer.filesystem.groups.Category.IMAGE;
 import static com.siju.acexplorer.filesystem.groups.Category.VIDEO;
-import static com.siju.acexplorer.filesystem.utils.FileUtils.getInternalStorage;
+import static com.siju.acexplorer.filesystem.storage.StorageUtils.getDownloadsDirectory;
+import static com.siju.acexplorer.filesystem.storage.StorageUtils.getInternalStorage;
 
 
 public class AceActivity extends BaseActivity
@@ -100,15 +93,6 @@ public class AceActivity extends BaseActivity
     private static final int PREFS_REQUEST = 1000;
     private static final int REQUEST_INVITE = 4000;
 
-    public int mOperation = -1;
-    public String mOldFilePath;
-    public String mNewFilePath;
-    public String mFileName;
-    public ArrayList<FileInfo> mFiles = new ArrayList<>();
-    public ArrayList<FileInfo> mTotalFiles = new ArrayList<>();
-    public ArrayList<CopyData> mCopyData = new ArrayList<>();
-    public int mRenamedPosition;
-
     private final String TAG = this.getClass().getSimpleName();
     private ExpandableListAdapter expandableListAdapter;
     private ExpandableListView expandableListView;
@@ -118,9 +102,7 @@ public class AceActivity extends BaseActivity
     private final ArrayList<SectionItems> favouritesGroupChild = new ArrayList<>();
     private SharedPreferenceWrapper sharedPreferenceWrapper;
     private SharedPreferences mSharedPreferences;
-    private ArrayList<FavInfo> savedFavourites = new ArrayList<>();
     private View mViewSeperator;
-    private CoordinatorLayout mMainLayout;
     private final int MENU_FAVOURITES = 1;
     private boolean mIsFirstRun;
     private boolean mShowDualPane;
@@ -147,7 +129,7 @@ public class AceActivity extends BaseActivity
     private PermissionHelper permissionHelper;
     private BasePresenterImpl basePresenter;
     private FrameLayout frameDualPane;
-    private boolean isDualPaneEnabled;
+    private ActionBarDrawerToggle drawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,7 +166,6 @@ public class AceActivity extends BaseActivity
 
     private void initViews() {
         frameDualPane = (FrameLayout) findViewById(R.id.frame_container_dual);
-        mMainLayout = (CoordinatorLayout) findViewById(R.id.main_content);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         relativeLayoutDrawerPane = (ScrimInsetsRelativeLayout) findViewById(R.id.drawerPane);
         mViewSeperator = findViewById(R.id.viewSeperator);
@@ -226,7 +207,6 @@ public class AceActivity extends BaseActivity
         switch (theme) {
             case DARK:
                 relativeLayoutDrawerPane.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_colorPrimary));
-                mMainLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_colorPrimary));
                 break;
             case LIGHT:
                 relativeLayoutDrawerPane.setBackgroundColor(ContextCompat.getColor(this, R.color.navDrawerBg));
@@ -289,7 +269,7 @@ public class AceActivity extends BaseActivity
 
 
     private void initListeners() {
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        drawerToggle = new ActionBarDrawerToggle(
                 this, drawerLayout, R.string.navigation_drawer_open, R.string
                 .navigation_drawer_close) {
 
@@ -301,8 +281,8 @@ public class AceActivity extends BaseActivity
 
 /*        DrawerArrowDrawable mArrowDrawable = new DrawerArrowDrawable(this);
         mToolbar.setNavigationIcon(mArrowDrawable);*/
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
+        drawerLayout.addDrawerListener(drawerToggle);
+        drawerToggle.syncState();
         expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int
@@ -336,7 +316,7 @@ public class AceActivity extends BaseActivity
         if (isHomeScreenEnabled) {
             displayHomeScreen();
         } else {
-            displayFileList(getInternalStorage().getAbsolutePath(), FILES);
+            displayFileList(getInternalStorage(), FILES);
             if (mIsDualModeEnabled) {
                 toggleDualPaneVisibility(true);
 //                showDualPane();
@@ -382,7 +362,6 @@ public class AceActivity extends BaseActivity
 
             }
             inappShortcutMode = true;
-            mCategory = category;
             if (PermissionUtils.hasRequiredPermissions()) {
                 displayFileList(null, category);
             }
@@ -426,7 +405,7 @@ public class AceActivity extends BaseActivity
         Log.d(TAG, "onActivityResult(" + requestCode + "," + resultCode + ","
                 + intent);
 
-        if (!mHelper.handleActivityResult(requestCode, resultCode, intent)) {
+        if (!BillingHelper.getInstance().onActivityResult(requestCode, resultCode, intent)) {
             if (requestCode == PREFS_REQUEST) {
                 Logger.log(TAG, "OnActivityResult=" + resultCode);
                 if (resultCode == RESULT_OK) {
@@ -530,18 +509,6 @@ public class AceActivity extends BaseActivity
     }
 
 
-    private void endActionMode() {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
-        if (fragment instanceof BaseFileList && ((BaseFileList) fragment).isInSelectionMode()) {
-            ((BaseFileList) fragment).endActionMode();
-        }
-/*        Fragment dualFragment = getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
-        if (dualFragment instanceof FileListDualFragment && ((FileListDualFragment) dualFragment).isInSelectionMode()) {
-            ((FileListDualFragment) dualFragment).endActionMode();
-        }*/
-    }
-
-
     @Override
     public void onClick(final View view) {
         switch (view.getId()) {
@@ -635,7 +602,7 @@ public class AceActivity extends BaseActivity
 
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
         if (fragment instanceof HomeScreenFragment) {
-            BaseFileList baseFileList = new BaseFileList();
+            FileList baseFileList = new FileList();
             baseFileList.setArguments(args);
             ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
                     .exit_to_left);
@@ -764,7 +731,7 @@ public class AceActivity extends BaseActivity
                 mViewSeperator.setVisibility(View.VISIBLE);
             }
         } else {
-            frameDualPane.setVisibility(View.VISIBLE);
+            frameDualPane.setVisibility(View.GONE);
             mViewSeperator.setVisibility(View.GONE);
         }
     }
@@ -772,7 +739,7 @@ public class AceActivity extends BaseActivity
     public void createDualFragment() {
         FragmentTransaction ft = getSupportFragmentManager()
                 .beginTransaction();
-        String internalStoragePath = getInternalStorage().getAbsolutePath();
+        String internalStoragePath = getInternalStorage();
         Bundle args = new Bundle();
         args.putString(FileConstants.KEY_PATH, internalStoragePath);
 
@@ -810,7 +777,11 @@ public class AceActivity extends BaseActivity
                     finish();
                 }
             } else {
-                ((BaseFileList) fragment).onBackPressed();
+                boolean isHome = ((BaseFileList) fragment).onBackPressed();
+                if (isHome) {
+                    toggleDualPaneVisibility(false);
+                    super.onBackPressed();
+                }
             }
 
         }
@@ -827,6 +798,9 @@ public class AceActivity extends BaseActivity
             finish();
 //            super.onBackPressed();
         }
+
+
+
     }
 
     @Override
@@ -867,11 +841,16 @@ public class AceActivity extends BaseActivity
         Logger.log(TAG, "onPostResume" + mIsHomeSettingToggled);
         if (mIsHomeSettingToggled) {
 
-            displayFileList(getInternalStorage().getAbsolutePath(), FILES);
+            displayFileList(getInternalStorage(), FILES);
             mIsHomeSettingToggled = false;
             mIsHomePageRemoved = true;
         } else if (mShowDualPane) {
-            showDualPane();
+            toggleDualPaneVisibility(true);
+            Fragment fragment  = getSupportFragmentManager().findFragmentById(R.id.main_container);
+            if (fragment instanceof BaseFileList) {
+                ((BaseFileList) fragment).showDualPane();
+            }
+            createDualFragment();
             mShowDualPane = false;
         }
     }
@@ -979,14 +958,21 @@ public class AceActivity extends BaseActivity
     private void resetFavouritesGroup() {
 
         for (int i = favouritesGroupChild.size() - 1; i >= 0; i--) {
-            if (!favouritesGroupChild.get(i).getSecondLine().equalsIgnoreCase(FileUtils
-                    .getDownloadsDirectory().getAbsolutePath())) {
+            if (!favouritesGroupChild.get(i).getSecondLine().equalsIgnoreCase(getDownloadsDirectory())) {
                 favouritesGroupChild.remove(i);
             }
         }
         sharedPreferenceWrapper.resetFavourites(this);
         expandableListAdapter.notifyDataSetChanged();
 
+    }
+
+    public void syncDrawerState() {
+        drawerToggle.syncState();
+    }
+
+    public void openDrawer() {
+        drawerLayout.openDrawer(Gravity.START);
     }
 
 

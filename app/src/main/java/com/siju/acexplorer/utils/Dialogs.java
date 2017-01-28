@@ -49,7 +49,7 @@ public class Dialogs {
                 fileName = fileName.trim();
                 fileName = fileName + ".txt";
                 fileName = path + File.separator + fileName;
-                baseFileList.getFileOpHelper().mkFile(isRootMode, new File(fileName));
+                baseFileList.getFileOpHelper().mkFile(new File(fileName), isRootMode);
                 materialDialog.dismiss();
             }
         });
@@ -65,7 +65,7 @@ public class Dialogs {
     }
 
     @SuppressWarnings("ConstantConditions")
-    public void createDirDialog(final BaseFileList baseFileList, final boolean isRootMode, final String path) {
+    public void createDirDialog(final BaseFileList baseFileList, final boolean isRooted, final String path) {
 
         String title = baseFileList.getString(R.string.new_folder);
         String texts[] = new String[]{baseFileList.getString(R.string.enter_name), "", title, baseFileList.getString(R.string
@@ -83,8 +83,8 @@ public class Dialogs {
                 }
 
                 fileName = fileName.trim();
-                fileName = path + File.separator + fileName;
-                baseFileList.getFileOpHelper().mkDir(isRootMode, path, fileName);
+                String newPath = path + File.separator + fileName;
+                baseFileList.getFileOpHelper().mkDir(new File(newPath), isRooted);
                 materialDialog.dismiss();
             }
         });
@@ -186,7 +186,7 @@ public class Dialogs {
 
     }
 
-    private static void openWith(final Uri uri, final Context context) {
+    public static void openWith(final Uri uri, final Context context) {
 
         String texts[] = new String[]{context.getString(R.string.open_as), null, null, null};
         ArrayList<String> items = new ArrayList<>();

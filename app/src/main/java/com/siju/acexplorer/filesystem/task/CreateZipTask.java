@@ -17,6 +17,7 @@ import com.siju.acexplorer.AceActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.FileInfo;
+import com.siju.acexplorer.filesystem.operations.OperationUtils;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 
 import java.io.BufferedInputStream;
@@ -29,7 +30,8 @@ import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static com.siju.acexplorer.filesystem.utils.FileUtils.ZIP_PROGRESS;
+import static com.siju.acexplorer.filesystem.operations.OperationProgress.ZIP_PROGRESS;
+
 
 public class CreateZipTask extends Service {
 
@@ -94,7 +96,7 @@ public class CreateZipTask extends Service {
             publishResults(b, name, 100, 0, totalBytes);
 
             // Broadcast result to BaseFileList
-            Intent intent = new Intent(FileConstants.RELOAD_LIST);
+            Intent intent = new Intent(OperationUtils.ACTION_RELOAD_LIST);
             intent.putExtra(FileConstants.KEY_PATH, name);
             sendBroadcast(intent);
             stopSelf(b);

@@ -10,11 +10,10 @@ public class HomeLibraryInfo {
     private Category category;
 
     public HomeLibraryInfo(Category category, String categoryName, int resourceId, int count) {
+        this.category = category;
         this.categoryName = categoryName;
         this.resourceId = resourceId;
         this.count = count;
-        this.category = category;
-
     }
 
 

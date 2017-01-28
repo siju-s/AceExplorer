@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import com.siju.acexplorer.filesystem.groups.Category;
 
+import static android.R.attr.type;
+
 public class FileInfo implements Parcelable {
 
     private String fileName;
@@ -13,10 +15,8 @@ public class FileInfo implements Parcelable {
     private String noOfFilesOrSize;
     private boolean isDirectory;
     private String extension;
-    private int type;
     private long id = -1;
     private long bucketId = -1;
-    private String mimeType;
     private String permissions;
     private long date;
     private long size;
@@ -24,125 +24,63 @@ public class FileInfo implements Parcelable {
     private int count;
     private int icon;
 
-/*    public FileInfo(String fileName, String filePath, String fileDate, String noOfFilesOrSize, boolean isDirectory,
-                    String extension, int type,String permissions) {
-        this.fileName = fileName;
-        this.filePath = filePath;
-        this.fileDate = fileDate;
-        this.noOfFilesOrSize = noOfFilesOrSize;
-        this.isDirectory = isDirectory;
-        this.extension = extension;
-        this.type = type;
-        this.permissions = permissions;
-    }*/
 
-    public FileInfo(String fileName, String filePath, long fileDate, long noOfFilesOrSize, boolean isDirectory,
-                    String extension, int type, String permissions) {
+    public FileInfo(Category category, String fileName, String filePath, long fileDate, long noOfFilesOrSize, boolean isDirectory,
+                    String extension, String permissions) {
         this.fileName = fileName;
         this.filePath = filePath;
         this.date = fileDate;
         this.size = noOfFilesOrSize;
         this.isDirectory = isDirectory;
         this.extension = extension;
-        this.type = type;
+        this.category = category;
         this.permissions = permissions;
     }
 
-    public FileInfo(String fileName, String filePath, int icon, int type) {
+    // Used for apk
+    public FileInfo(Category category, long id, String fileName, String filePath, long fileDate, long size,
+                    String extension) {
+        this(category, fileName, filePath, fileDate, size, false, extension, null);
+        this.id = id;
+    }
+
+
+    public FileInfo(Category category, long id, long bucketId, String fileName, String filePath, long fileDate, long size,
+                    String extension) {
+        this(category, id, fileName, filePath, fileDate, size, extension);
+        this.bucketId = bucketId;
+    }
+
+
+    public FileInfo(Category category, String fileName, String filePath, int icon) {
         this.fileName = fileName;
         this.filePath = filePath;
         this.icon = icon;
-        this.type = type;
+        this.category = category;
     }
 
-/*    public FileInfo(long id, String fileName, String filePath, String fileDate, String noOfFilesOrSize, int type,
-                    String extension,String mimeType) {
-        this.id = id;
-        this.fileName = fileName;
-        this.filePath = filePath;
-        this.fileDate = fileDate;
-        this.noOfFilesOrSize = noOfFilesOrSize;
-        this.type = type;
-        this.extension = extension;
-        this.mimeType = mimeType;
-    }*/
-
-
-    // Used for apk
-    public FileInfo(long id, String fileName, String filePath, long fileDate, long size, int type,
-                    String extension, String mimeType) {
-        this.id = id;
-        this.fileName = fileName;
-        this.filePath = filePath;
-        this.date = fileDate;
-        this.size = size;
-        this.type = type;
-        this.extension = extension;
-        this.mimeType = mimeType;
-    }
-
-// --Commented out by Inspection START (06-11-2016 11:23 PM):
-//    /**
-//     * Used for Audio,Videos,Images
-//     *
-//     * @param id
-//     * @param bucketId
-//     * @param fileName
-//     * @param filePath
-//     * @param fileDate
-//     * @param noOfFilesOrSize
-//     * @param type
-//     * @param extension
-//     */
-//    public FileInfo(long id, long bucketId, String fileName, String filePath, String fileDate, String noOfFilesOrSize,
-//                    int type,
-//                    String extension) {
-//        this.id = id;
-//        this.bucketId = bucketId;
-//        this.fileName = fileName;
-//        this.filePath = filePath;
-//        this.fileDate = fileDate;
-//        this.noOfFilesOrSize = noOfFilesOrSize;
-//        this.type = type;
-//        this.extension = extension;
-//    }
-// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
-
-    public FileInfo(long id, long bucketId, String fileName, String filePath, long fileDate, long size,
-                    int type,
-                    String extension) {
-        this.id = id;
-        this.bucketId = bucketId;
-        this.fileName = fileName;
-        this.filePath = filePath;
-        this.date = fileDate;
-        this.size = size;
-        this.type = type;
-        this.extension = extension;
-    }
-
-    public FileInfo(Category categoryId, int count) {
-        this.category = categoryId;
+    public FileInfo(Category category, int count) {
+        this.category = category;
         this.count = count;
     }
 
 
     private FileInfo(Parcel in) {
+        category = (Category) in.readSerializable();
         fileName = in.readString();
         filePath = in.readString();
         fileDate = in.readString();
         noOfFilesOrSize = in.readString();
         isDirectory = in.readByte() != 0;
         extension = in.readString();
-        type = in.readInt();
         id = in.readLong();
         bucketId = in.readLong();
-        mimeType = in.readString();
         permissions = in.readString();
     }
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeSerializable(category);
         parcel.writeString(fileName);
         parcel.writeString(filePath);
         parcel.writeString(fileDate);
@@ -152,7 +90,6 @@ public class FileInfo implements Parcelable {
         parcel.writeInt(type);
         parcel.writeLong(id);
         parcel.writeLong(bucketId);
-        parcel.writeString(mimeType);
         parcel.writeString(permissions);
 
     }
@@ -188,8 +125,8 @@ public class FileInfo implements Parcelable {
 //    }
 // --Commented out by Inspection STOP (06-11-2016 11:23 PM)
 
-    public int getCategoryId() {
-        return categoryId;
+    public Category getCategory() {
+        return category;
     }
 
 // --Commented out by Inspection START (06-11-2016 11:23 PM):

@@ -6,7 +6,6 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.siju.acexplorer.AceActivity;
-import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.BaseFile;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
@@ -23,6 +22,11 @@ import java.util.List;
 import java.util.Locale;
 
 import eu.chainfire.libsuperuser.Shell;
+
+import static com.siju.acexplorer.filesystem.groups.Category.AUDIO;
+import static com.siju.acexplorer.filesystem.groups.Category.FILES;
+import static com.siju.acexplorer.filesystem.groups.Category.IMAGE;
+import static com.siju.acexplorer.filesystem.groups.Category.VIDEO;
 
 public class RootHelper {
 
@@ -250,8 +254,8 @@ public class RootHelper {
                     long date = file1.lastModified();
 //                    String fileModifiedDate = convertDate(date);
 
-                    FileInfo fileInfo = new FileInfo(file1.getName(), filePath, date, size,
-                            isDirectory, extension, type, parseFilePermission(file1));
+                    FileInfo fileInfo = new FileInfo(FILES,file1.getName(), filePath, date, size,
+                            isDirectory, extension, parseFilePermission(file1));
                     fileInfoArrayList.add(fileInfo);
                 }
 //                Logger.log("RootHelper", "END time FILES=");
@@ -290,11 +294,9 @@ public class RootHelper {
                                         isDirectory = isDirectory(array.getLink(), true, 0);
                                     } else isDirectory = isDirectory(array);
                                     long size1 = array.getSize();
-                                    fileInfoArrayList.add(new FileInfo(name, path1,
-                                            array.getDate(),
-                                            size1, isDirectory, null,
-                                            FileConstants.CATEGORY
-                                                    .FILES.getValue(), array.getPermission()));
+                                    fileInfoArrayList.add(new FileInfo(FILES,name, path1,
+                                            array.getDate(),size1, isDirectory, null,
+                                                   array.getPermission()));
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -380,8 +382,8 @@ public class RootHelper {
                     long date = file1.lastModified();
 //                    String fileModifiedDate = convertDate(date);
 
-                    FileInfo fileInfo = new FileInfo(file1.getName(), filePath, date, size,
-                            isDirectory, extension, type, parseFilePermission(file1));
+                    FileInfo fileInfo = new FileInfo(FILES,file1.getName(), filePath, date, size,
+                            isDirectory, extension, parseFilePermission(file1));
                     fileInfoArrayList.add(fileInfo);
 //                    Logger.log("RootHelper", "fileInfoArrayList element="+fileInfo.getFilePath());
 
@@ -424,11 +426,9 @@ public class RootHelper {
 //                                        array.setDirectory(isdirectory);
                                     } else isDirectory = isDirectory(array);
                                     long size1 = array.getSize();
-                                    fileInfoArrayList.add(new FileInfo(name, path1,
-                                            array.getDate(),
-                                            size1, isDirectory, null,
-                                            FileConstants.CATEGORY
-                                                    .FILES.getValue(), array.getPermission()));
+                                    fileInfoArrayList.add(new FileInfo(FILES,name, path1,
+                                            array.getDate(),size1, isDirectory, null,
+                                           array.getPermission()));
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -454,11 +454,11 @@ public class RootHelper {
 
         if (mimeType != null) {
             if (mimeType.indexOf("image") == 0) {
-                value = FileConstants.CATEGORY.IMAGE.getValue();
+                value = IMAGE.getValue();
             } else if (mimeType.indexOf("video") == 0) {
-                value = FileConstants.CATEGORY.VIDEO.getValue();
+                value = VIDEO.getValue();
             } else if (mimeType.indexOf("audio") == 0) {
-                value = FileConstants.CATEGORY.AUDIO.getValue();
+                value = AUDIO.getValue();
             }
         }
         return value;

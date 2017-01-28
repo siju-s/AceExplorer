@@ -19,6 +19,7 @@ import com.siju.acexplorer.AceActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
+import com.siju.acexplorer.filesystem.operations.OperationUtils;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
@@ -34,6 +35,10 @@ import java.util.Enumeration;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import static com.siju.acexplorer.filesystem.operations.OperationProgress.EXTRACT_PROGRESS;
+import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_OPERATION;
+import static com.siju.acexplorer.filesystem.operations.Operations.EXTRACT;
 
 public class ExtractService extends Service {
     private Context context;
@@ -90,7 +95,7 @@ public class ExtractService extends Service {
 
         Logger.log(ExtractService.this.getClass().getCanonicalName(), "Progress=" + p1 + " done=" + done + " total="
                 + total);
-        Intent intent = new Intent(FileUtils.EXTRACT_PROGRESS);
+        Intent intent = new Intent(EXTRACT_PROGRESS);
         intent.putExtra("PROGRESS", p1);
         intent.putExtra("DONE", done);
         intent.putExtra("TOTAL", total);
@@ -126,7 +131,8 @@ public class ExtractService extends Service {
 
         void calculateProgress(final String name, final int id, final long
                 copiedbytes, final long totalbytes) {
-            if (asyncTask != null && asyncTask.getStatus() == Status.RUNNING) asyncTask.cancel(true);
+            if (asyncTask != null && asyncTask.getStatus() == Status.RUNNING)
+                asyncTask.cancel(true);
             asyncTask = new AsyncTask<Void, Void, Void>() {
                 int p1;
 
@@ -301,13 +307,13 @@ public class ExtractService extends Service {
                 for (ZipEntry entry : arrayList) {
                     unzipEntry(id, zipfile, entry, destinationPath);
                 }
-                Intent intent = new Intent(FileConstants.RELOAD_LIST);
+                Intent intent = new Intent(OperationUtils.ACTION_RELOAD_LIST);
                 sendBroadcast(intent);
                 calculateProgress(archive.getName(), id, copiedbytes, totalbytes);
             } catch (Exception e) {
                 Log.e(this.getClass().getSimpleName(), "Error while extracting file " + archive, e);
                 Intent intent = new Intent(FileConstants.OPERATION_FAILED);
-                intent.putExtra(FileConstants.OPERATION, FileConstants.EXTRACT);
+                intent.putExtra(KEY_OPERATION, EXTRACT);
                 sendBroadcast(intent);
                 mProgressListener = null;
                 publishResults(archive.getName(), 100, id, totalbytes, copiedbytes);
@@ -321,7 +327,8 @@ public class ExtractService extends Service {
                 TarArchiveInputStream inputStream;
                 if (archive.getName().endsWith(".tar"))
                     inputStream = new TarArchiveInputStream(new BufferedInputStream(new FileInputStream(archive)));
-                else inputStream = new TarArchiveInputStream(new GZIPInputStream(new FileInputStream(archive)));
+                else
+                    inputStream = new TarArchiveInputStream(new GZIPInputStream(new FileInputStream(archive)));
                 publishResults(archive.getName(), 0, id, totalbytes, copiedbytes);
                 TarArchiveEntry tarArchiveEntry = inputStream.getNextTarEntry();
                 while (tarArchiveEntry != null) {
@@ -340,13 +347,13 @@ public class ExtractService extends Service {
 
                 inputStream.close();
 
-                Intent intent = new Intent(FileConstants.RELOAD_LIST);
+                Intent intent = new Intent(OperationUtils.ACTION_RELOAD_LIST);
                 sendBroadcast(intent);
                 publishResults(archive.getName(), 100, id, totalbytes, copiedbytes);
 
             } catch (Exception e) {
                 Log.e("TAG", "Error while extracting file " + archive, e);
-                Intent intent = new Intent(FileConstants.RELOAD_LIST);
+                Intent intent = new Intent(OperationUtils.ACTION_RELOAD_LIST);
                 sendBroadcast(intent);
                 publishResults(archive.getName(), 100, id, totalbytes, copiedbytes);
 
@@ -375,13 +382,13 @@ public class ExtractService extends Service {
                     unzipRAREntry(id, archive.getName(), zipfile, header, destinationPath);
 
                 }
-                Intent intent = new Intent(FileConstants.RELOAD_LIST);
+                Intent intent = new Intent(OperationUtils.ACTION_RELOAD_LIST);
                 sendBroadcast(intent);
                 calculateProgress(archive.getName(), id, copiedbytes, totalbytes);
 
             } catch (Exception e) {
                 Log.e("TAG", "Error while extracting file " + archive, e);
-                Intent intent = new Intent(FileConstants.RELOAD_LIST);
+                Intent intent = new Intent(OperationUtils.ACTION_RELOAD_LIST);
                 sendBroadcast(intent);
                 calculateProgress(archive.getName(), id, copiedbytes, totalbytes);
 

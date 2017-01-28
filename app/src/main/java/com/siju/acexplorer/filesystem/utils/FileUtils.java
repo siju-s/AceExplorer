@@ -1,58 +1,31 @@
 package com.siju.acexplorer.filesystem.utils;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Looper;
-import android.os.Message;
-import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
 import android.support.v4.provider.DocumentFile;
-import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.util.Log;
-import android.view.View;
 import android.webkit.MimeTypeMap;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
-import com.siju.acexplorer.filesystem.FileConstants;
-import com.siju.acexplorer.filesystem.groups.Category;
 import com.siju.acexplorer.filesystem.model.FileInfo;
-import com.siju.acexplorer.filesystem.task.CopyService;
-import com.siju.acexplorer.filesystem.task.CreateZipTask;
-import com.siju.acexplorer.filesystem.task.ExtractService;
-import com.siju.acexplorer.filesystem.task.Progress;
-import com.siju.acexplorer.utils.Dialogs;
 import com.siju.acexplorer.utils.Utils;
 
 import java.io.File;
@@ -70,16 +43,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 import static android.webkit.MimeTypeMap.getSingleton;
-import static com.siju.acexplorer.filesystem.groups.Category.LARGE_FILES;
 import static com.siju.acexplorer.filesystem.helper.UriHelper.createContentUri;
+import static com.siju.acexplorer.filesystem.helper.UriHelper.grantUriPermission;
+import static com.siju.acexplorer.filesystem.storage.StorageUtils.getDocumentFile;
+import static com.siju.acexplorer.filesystem.storage.StorageUtils.isOnExtSdCard;
+import static com.siju.acexplorer.utils.Dialogs.openWith;
+import static com.siju.acexplorer.utils.Dialogs.showApkOptionsDialog;
 
 
-public class FileUtils implements Progress {
+public class FileUtils  {
 
     private static final String TAG = "FileUtils";
     public static final int ACTION_NONE = 0;
@@ -167,336 +142,6 @@ public class FileUtils implements Progress {
 
     }
 
-    private ProgressBar progressBarPaste;
-    private MaterialDialog progressDialog;
-    private int copiedFilesSize;
-    private TextView textFileName;
-    private TextView textFileFromPath;
-    private TextView textFileCount;
-    private TextView textProgress;
-    private ArrayList<FileInfo> copiedFileInfo;
-    private Context mContext;
-    private Intent mServiceIntent;
-
-    @SuppressWarnings("ConstantConditions")
-    public void showCopyProgressDialog(final Context context, final Intent intent) {
-        mContext = context;
-        mServiceIntent = intent;
-        context.bindService(mServiceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
-        context.startService(mServiceIntent);
-        String title = context.getString(R.string.action_copy);
-        String texts[] = new String[]{title, context.getString(R.string.button_paste_progress), "",
-                context.getString(R.string.dialog_cancel)};
-        progressDialog = new Dialogs().showCustomDialog(context,
-                R.layout.dialog_progress_paste, texts);
-        progressDialog.setCancelable(false);
-        View view = progressDialog.getCustomView();
-        textFileName = (TextView) view.findViewById(R.id.textFileName);
-        textFileFromPath = (TextView) view.findViewById(R.id.textFileFromPath);
-        TextView textFileToPath = (TextView) view.findViewById(R.id.textFileToPath);
-        textFileCount = (TextView) view.findViewById(R.id.textFilesLeft);
-        textProgress = (TextView) view.findViewById(R.id.textProgressPercent);
-
-        progressBarPaste = (ProgressBar) view.findViewById(R.id.progressBarPaste);
-        copiedFileInfo = intent.getParcelableArrayListExtra("TOTAL_LIST");
-        copiedFilesSize = copiedFileInfo.size();
-        Logger.log("FileUtils", "Totalfiles=" + copiedFilesSize);
-
-
-        textFileFromPath.setText(copiedFileInfo.get(0).getFilePath());
-        textFileName.setText(copiedFileInfo.get(0).getFileName());
-        textFileToPath.setText(intent.getStringExtra("COPY_DIRECTORY"));
-        textFileCount.setText(String.format(Locale.getDefault(), "%s%d", context.getString(R.string.count_placeholder),
-                copiedFilesSize));
-        textProgress.setText("0%");
-
-        progressDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                progressDialog.dismiss();
-            }
-        });
-
-        progressDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                stopCopyService();
-                progressDialog.dismiss();
-            }
-        });
-
-        progressDialog.show();
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    public void showZipProgressDialog(final Context context, final Intent intent) {
-        mContext = context;
-        mServiceIntent = intent;
-        context.bindService(mServiceIntent, mZipServiceConnection, Context.BIND_AUTO_CREATE);
-        context.startService(mServiceIntent);
-        String title = context.getString(R.string.zip_progress_title);
-        String texts[] = new String[]{title, context.getString(R.string.button_paste_progress), "",
-                context.getString(R.string.dialog_cancel)};
-        progressDialog = new Dialogs().showCustomDialog(context,
-                R.layout.dialog_progress_paste, texts);
-        progressDialog.setCancelable(false);
-        View view = progressDialog.getCustomView();
-        textFileName = (TextView) view.findViewById(R.id.textFileName);
-        textFileFromPath = (TextView) view.findViewById(R.id.textFileFromPath);
-        TextView textFromPlaceHolder = (TextView) view.findViewById(R.id.textFileFromPlaceHolder);
-        (view.findViewById(R.id.textFileToPlaceHolder)).setVisibility(View.GONE);
-
-        textFromPlaceHolder.setVisibility(View.GONE);
-        textFileCount = (TextView) view.findViewById(R.id.textFilesLeft);
-        textProgress = (TextView) view.findViewById(R.id.textProgressPercent);
-
-        progressBarPaste = (ProgressBar) view.findViewById(R.id.progressBarPaste);
-        copiedFileInfo = intent.getParcelableArrayListExtra("files");
-        String fileName = intent.getStringExtra("name");
-        copiedFilesSize = copiedFileInfo.size();
-        Logger.log("FileUtils", "Totalfiles=" + copiedFilesSize);
-        textFileName.setText(fileName);
-        textProgress.setText("0%");
-
-        progressDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                progressDialog.dismiss();
-            }
-        });
-
-        progressDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                stopZipService();
-                progressDialog.dismiss();
-            }
-        });
-
-        progressDialog.show();
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    public void showExtractProgressDialog(final Context context, final Intent intent) {
-        mContext = context;
-        mServiceIntent = intent;
-        context.bindService(mServiceIntent, mExtractServiceConnection, Context.BIND_AUTO_CREATE);
-        context.startService(mServiceIntent);
-        registerReceiver(context);
-        isExtractServiceAlive = true;
-        String title = context.getString(R.string.extracting);
-        String texts[] = new String[]{title, context.getString(R.string.button_paste_progress), "",
-                context.getString(R.string.dialog_cancel)};
-        progressDialog = new Dialogs().showCustomDialog(context,
-                R.layout.dialog_progress_paste, texts);
-        progressDialog.setCancelable(false);
-        View view = progressDialog.getCustomView();
-        textFileName = (TextView) view.findViewById(R.id.textFileName);
-        textFileFromPath = (TextView) view.findViewById(R.id.textFileFromPath);
-        TextView textFileToPath = (TextView) view.findViewById(R.id.textFileToPath);
-        TextView textFromPlaceHolder = (TextView) view.findViewById(R.id.textFileFromPlaceHolder);
-        textFromPlaceHolder.setVisibility(View.GONE);
-        textFileCount = (TextView) view.findViewById(R.id.textFilesLeft);
-        textProgress = (TextView) view.findViewById(R.id.textProgressPercent);
-
-        progressBarPaste = (ProgressBar) view.findViewById(R.id.progressBarPaste);
-        textFileToPath.setText(intent.getStringExtra("new_path"));
-        String fileName = intent.getStringExtra("zip");
-
-        textFileName.setText(fileName);
-        textProgress.setText("0%");
-
-        progressDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                progressDialog.dismiss();
-            }
-        });
-
-        progressDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                stopExtractService();
-                progressDialog.dismiss();
-            }
-        });
-
-        progressDialog.show();
-    }
-
-    private void stopCopyService() {
-        mContext.unbindService(mServiceConnection);
-        mContext.stopService(mServiceIntent);
-    }
-
-    private void stopZipService() {
-        mContext.unbindService(mZipServiceConnection);
-        mContext.stopService(mServiceIntent);
-    }
-
-    private void stopExtractService() {
-        mContext.unbindService(mExtractServiceConnection);
-        mContext.stopService(mServiceIntent);
-        if (isExtractServiceAlive) {
-            unRegisterReceiver(mContext);
-        }
-        isExtractServiceAlive = false;
-
-    }
-
-    private BroadcastReceiver operationFailureReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(FileConstants.OPERATION_FAILED)) {
-                int operation = intent.getIntExtra(FileConstants.OPERATION, -1);
-                switch (operation) {
-                    case FileConstants.EXTRACT:
-                        Logger.log(TAG, "Failure broacast=" + isExtractServiceAlive);
-                        if (isExtractServiceAlive) {
-                            unRegisterReceiver(mContext);
-                            progressDialog.dismiss();
-                            isExtractServiceAlive = false;
-                        }
-                        break;
-                }
-            }
-        }
-    };
-
-    private void registerReceiver(Context context) {
-        IntentFilter filter = new IntentFilter(FileConstants.OPERATION_FAILED);
-        context.registerReceiver(operationFailureReceiver, filter);
-    }
-
-    private void unRegisterReceiver(Context context) {
-        context.unregisterReceiver(operationFailureReceiver);
-    }
-
-    @Override
-    public void onUpdate(Intent intent) {
-        Message msg = handler.obtainMessage();
-        msg.obj = intent;
-        handler.sendMessage(msg);
-
-    }
-
-
-    // Define the Handler that receives messages from the thread and update the progress
-    private final Handler handler = new Handler(Looper.getMainLooper()) {
-        public void handleMessage(Message msg) {
-            Intent intent = (Intent) msg.obj;
-            int progress = intent.getIntExtra("PROGRESS", 0);
-            long copiedBytes = intent.getLongExtra("DONE", 0);
-            long totalBytes = intent.getLongExtra("TOTAL", 0);
-
-            switch (intent.getAction()) {
-                case ZIP_PROGRESS:
-                    progressBarPaste.setProgress(progress);
-                    textFileCount.setText(Formatter.formatFileSize
-                            (mContext, copiedBytes) + "/" + Formatter.formatFileSize(mContext, totalBytes));
-                    textProgress.setText(String.format(Locale.getDefault(), "%d%s", progress, mContext.getString
-                            (R.string.percent_placeholder)));
-
-                    if (progress == 100 || totalBytes == copiedBytes) {
-                        stopZipService();
-                        progressDialog.dismiss();
-                    }
-                    break;
-
-                case EXTRACT_PROGRESS:
-                    Logger.log(TAG, "Progress=" + progress + "Operation=" + EXTRACT_PROGRESS);
-                    progressBarPaste.setProgress(progress);
-                    textFileCount.setText(Formatter.formatFileSize
-                            (mContext, copiedBytes) + "/" + Formatter.formatFileSize(mContext, totalBytes));
-                    textProgress.setText(String.format(Locale.getDefault(), "%d%s", progress, mContext.getString
-                            (R.string.percent_placeholder)));
-
-                    if (progress == 100) {
-                        stopExtractService();
-                        progressDialog.dismiss();
-                    }
-                    break;
-                case COPY_PROGRESS:
-                    boolean isSuccess = intent.getBooleanExtra(FileConstants.IS_OPERATION_SUCCESS, true);
-
-                    if (!isSuccess) {
-                        stopCopyService();
-                        progressDialog.dismiss();
-                        return;
-                    }
-                    int totalProgress = intent.getIntExtra("TOTAL_PROGRESS", 0);
-                    Logger.log("FileUtils", "PROGRESS=" + progress + " TOTAL PROGRESS=" + totalProgress);
-                    Logger.log("FileUtils", "Copied bytes=" + copiedBytes + " TOTAL bytes=" + totalBytes);
-                    progressBarPaste.setProgress(totalProgress);
-                    textProgress.setText(String.format(Locale.getDefault(), "%d%s", totalProgress, mContext.getString
-                            (R.string
-                                    .percent_placeholder)));
-                    if (progress == 100 || totalBytes == copiedBytes) {
-                        int count = intent.getIntExtra("COUNT", 1);
-                        Logger.log("FileUtils", "COUNT=" + count);
-                        if (count == copiedFilesSize || copiedBytes == totalBytes) {
-                            stopCopyService();
-                            progressDialog.dismiss();
-                        } else {
-                            int newCount = count + 1;
-                            textFileFromPath.setText(copiedFileInfo.get(count).getFilePath());
-                            textFileName.setText(copiedFileInfo.get(count).getFileName());
-                            textFileCount.setText(newCount + "/" + copiedFilesSize);
-                        }
-                    }
-                    break;
-            }
-        }
-
-    };
-
-    public static final String COPY_PROGRESS = "copy_progress_update";
-    public static final String ZIP_PROGRESS = "zip_progress_update";
-    public static final String EXTRACT_PROGRESS = "extract_progress_update";
-
-
-    private final ServiceConnection mServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            CopyService.LocalBinder binder = (CopyService.LocalBinder) service;
-            CopyService mService = binder.getService();
-            mService.registerProgressListener(FileUtils.this);
-
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-        }
-    };
-
-
-    private final ServiceConnection mZipServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            CreateZipTask.LocalBinder binder = (CreateZipTask.LocalBinder) service;
-            CreateZipTask mService = binder.getService();
-            mService.registerProgressListener(FileUtils.this);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-        }
-    };
-
-
-    private boolean isExtractServiceAlive;
-    private final ServiceConnection mExtractServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            ExtractService.LocalBinder binder = (ExtractService.LocalBinder) service;
-            ExtractService mService = binder.getService();
-            mService.registerProgressListener(FileUtils.this);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-        }
-    };
 
 
     public static boolean isFileMusic(String path) {
@@ -519,13 +164,7 @@ public class FileUtils implements Progress {
     }
 
 
-    public static File getRootDirectory() {
-        return Environment.getRootDirectory();
-    }
 
-    public static File getInternalStorage() {
-        return Environment.getExternalStorageDirectory();
-    }
 
     public static String getAbsolutePath(File file) {
         if (file == null)
@@ -533,129 +172,6 @@ public class FileUtils implements Progress {
         return file.getAbsolutePath();
     }
 
-    public static File getDownloadsDirectory() {
-        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-    }
-
-    private final static Pattern DIR_SEPARATOR = Pattern.compile("/");
-
-    public static List<String> getStorageDirectories(Context context) {
-        // Final set of paths
-        final ArrayList<String> paths = new ArrayList<>();
-        // Primary physical SD-CARD (not emulated)
-        final String rawExternalStorage = System.getenv("EXTERNAL_STORAGE");
-        // All Secondary SD-CARDs (all exclude primary) separated by ":"
-        final String rawSecondaryStoragesStr = System.getenv("SECONDARY_STORAGE");
-        // Primary emulated SD-CARD
-        final String rawEmulatedStorageTarget = System.getenv("EMULATED_STORAGE_TARGET");
-        if (TextUtils.isEmpty(rawEmulatedStorageTarget)) {
-            // Device has physical external storage; use plain paths.
-            if (TextUtils.isEmpty(rawExternalStorage)) {
-                // EXTERNAL_STORAGE undefined; falling back to default.
-                paths.add("/storage/sdcard0");
-            } else {
-                paths.add(rawExternalStorage);
-            }
-        } else {
-            // Device has emulated storage; external storage paths should have
-            // userId burned into them.
-            final String rawUserId;
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                rawUserId = "";
-            } else {
-                final String path = Environment.getExternalStorageDirectory().getAbsolutePath();
-                final String[] folders = DIR_SEPARATOR.split(path);
-                final String lastFolder = folders[folders.length - 1];
-                boolean isDigit = false;
-                try {
-                    //noinspection ResultOfMethodCallIgnored
-                    Integer.valueOf(lastFolder);
-                    isDigit = true;
-                } catch (NumberFormatException ignored) {
-                }
-                rawUserId = isDigit ? lastFolder : "";
-            }
-            // /storage/emulated/0[1,2,...]
-            if (TextUtils.isEmpty(rawUserId)) {
-                paths.add(rawEmulatedStorageTarget);
-            } else {
-                paths.add(rawEmulatedStorageTarget + File.separator + rawUserId);
-            }
-        }
-        // Add all secondary storages
-        if (!TextUtils.isEmpty(rawSecondaryStoragesStr)) {
-            // All Secondary SD-CARDs splited into array
-            final String[] rawSecondaryStorages = rawSecondaryStoragesStr.split(File.pathSeparator);
-            Collections.addAll(paths, rawSecondaryStorages);
-        }
-        if (Utils.isAtleastMarsh())
-            paths.clear();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            String pathList[] = getExtSdCardPaths(context);
-            for (String path : pathList) {
-                if (!paths.contains(path))
-                    paths.add(path);
-            }
-        }
-
-        File usb = getUsbDrive();
-        if (usb != null && !paths.contains(usb.getPath())) paths.add(usb.getPath());
-        return paths;
-    }
-
-
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    private static String[] getExtSdCardPaths(Context context) {
-        List<String> paths = new ArrayList<>();
-        for (File file : context.getExternalFilesDirs("external")) {
-            if (file != null) {
-                int index = file.getAbsolutePath().lastIndexOf("/Android/data");
-                if (index < 0) {
-                    Log.w("FileUtils", "Unexpected external file dir: " + file.getAbsolutePath());
-                } else {
-                    String path = file.getAbsolutePath().substring(0, index);
-                    try {
-                        path = new File(path).getCanonicalPath();
-                    } catch (IOException e) {
-                        // Keep non-canonical path.
-                    }
-                    if (!paths.contains(path)) {
-                        paths.add(path);
-                    }
-                }
-            }
-        }
-
-        File file = new File("/storage/sdcard1");
-        if (file.exists() && file.canExecute() && !paths.contains(file.getAbsolutePath())) {
-            paths.add("/storage/sdcard1");
-        }
-        return paths.toArray(new String[0]);
-    }
-
-
-    @SuppressLint("SdCardPath")
-    private static File getUsbDrive() {
-        File parent;
-        parent = new File("/storage");
-
-        try {
-            for (File f : parent.listFiles()) {
-                if (f.exists() && f.getName().toLowerCase().contains("usb") && f.canExecute()) {
-                    return f;
-                }
-            }
-        } catch (Exception ignored) {
-        }
-        parent = new File("/mnt/sdcard/usbStorage");
-        if (parent.exists() && parent.canExecute())
-            return (parent);
-        parent = new File("/mnt/sdcard/usb_storage");
-        if (parent.exists() && parent.canExecute())
-            return parent;
-
-        return null;
-    }
 
 
     public static String convertDate(long dateInMs) {
@@ -1019,61 +535,6 @@ public class FileUtils implements Progress {
     }
 
 
-    /**
-     * Get a DocumentFile corresponding to the given file (for writing on ExtSdCard on Android 5). If the file is not
-     * existing, it is created.
-     *
-     * @param file        The file.
-     * @param isDirectory flag indicating if the file should be a directory.
-     * @return The DocumentFile
-     */
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    private static DocumentFile getDocumentFile(final File file, final boolean isDirectory, Context context) {
-        String baseFolder = getExtSdCardFolder(file, context);
-        boolean originalDirectory = false;
-        if (baseFolder == null) {
-            return null;
-        }
-
-        String relativePath = null;
-        try {
-            String fullPath = file.getCanonicalPath();
-            if (!baseFolder.equals(fullPath))
-                relativePath = fullPath.substring(baseFolder.length() + 1);
-            else originalDirectory = true;
-        } catch (IOException e) {
-            return null;
-        } catch (Exception f) {
-            originalDirectory = true;
-        }
-        String as = PreferenceManager.getDefaultSharedPreferences(context).getString(FileConstants.SAF_URI, null);
-
-        Uri treeUri = null;
-        if (as != null) treeUri = Uri.parse(as);
-        if (treeUri == null) {
-            return null;
-        }
-
-        // start with root of SD card and then parse through document tree.
-        DocumentFile document = DocumentFile.fromTreeUri(context, treeUri);
-        if (originalDirectory) return document;
-        String[] parts = relativePath.split("/");
-        for (int i = 0; i < parts.length; i++) {
-            DocumentFile nextDocument = document.findFile(parts[i]);
-
-            if (nextDocument == null) {
-                if ((i < parts.length - 1) || isDirectory) {
-                    nextDocument = document.createDirectory(parts[i]);
-                } else {
-                    nextDocument = document.createFile("image", parts[i]);
-                }
-            }
-            document = nextDocument;
-        }
-
-        return document;
-    }
-
     private static OutputStream getOutputStream(Context context, String str) {
         OutputStream outputStream = null;
         Uri fileUri = getUriFromFile(str, context);
@@ -1112,28 +573,6 @@ public class FileUtils implements Progress {
 
     }
 
-
-    /**
-     * Determine the main folder of the external SD card containing the given file.
-     *
-     * @param file the file.
-     * @return The main folder of the external SD card containing this file, if the file is on an SD card. Otherwise,
-     * null is returned.
-     */
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    private static String getExtSdCardFolder(final File file, Context context) {
-        String[] extSdPaths = getExtSdCardPaths(context);
-        try {
-            for (String extSdPath : extSdPaths) {
-                if (file.getCanonicalPath().startsWith(extSdPath)) {
-                    return extSdPath;
-                }
-            }
-        } catch (IOException e) {
-            return null;
-        }
-        return null;
-    }
 
     static boolean mkfile(final File file, Context context) {
         if (file == null)
@@ -1363,31 +802,6 @@ public class FileUtils implements Progress {
         return type;
     }
 
-
-    public int checkFolder(final String f, Context context) {
-        if (f == null) return 0;
-        File folder = new File(f);
-        if (Utils.isAtleastLollipop() && isOnExtSdCard(folder, context)) {
-            if (!folder.exists() || !folder.isDirectory()) {
-                return FileConstants.WRITE_MODES.ROOT.getValue();
-            }
-
-            // On Android 5 and above, trigger storage access framework.
-            if (isFileNonWritable(folder, context)) {
-                return FileConstants.WRITE_MODES.EXTERNAL.getValue();
-            }
-            return FileConstants.WRITE_MODES.INTERNAL.getValue();
-        } else if (Utils.isKitkat() && isOnExtSdCard(folder, context)) {
-            // Assume that Kitkat workaround works
-            return FileConstants.WRITE_MODES.INTERNAL.getValue();
-        } else if (isWritable(new File(folder, "DummyFile"))) {
-            return FileConstants.WRITE_MODES.INTERNAL.getValue();
-        } else {
-            return FileConstants.WRITE_MODES.ROOT.getValue();
-        }
-    }
-
-
     /**
      * Create a folder. The folder may even be on external SD card for Kitkat.
      *
@@ -1604,17 +1018,6 @@ public class FileUtils implements Progress {
         return totalSuccess;
     }
 
-
-    /**
-     * Determine if a file is on external sd card. (Kitkat or higher.)
-     *
-     * @param file The file.
-     * @return true if on external sd card.
-     */
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    public static boolean isOnExtSdCard(final File file, Context c) {
-        return getExtSdCardFolder(file, c) != null;
-    }
 
     public static boolean isFileExisting(String currentDir, String fileName) {
         File file = new File(currentDir);

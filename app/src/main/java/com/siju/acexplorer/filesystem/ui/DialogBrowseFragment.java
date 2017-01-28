@@ -35,17 +35,25 @@ import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.FileListAdapter;
 import com.siju.acexplorer.filesystem.FileListLoader;
 import com.siju.acexplorer.filesystem.model.FileInfo;
+import com.siju.acexplorer.filesystem.modes.ViewMode;
+import com.siju.acexplorer.filesystem.theme.ThemeUtils;
+import com.siju.acexplorer.filesystem.theme.Themes;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.utils.MediaStoreHack;
-import com.siju.acexplorer.filesystem.theme.ThemeUtils;
 import com.siju.acexplorer.filesystem.views.FastScrollRecyclerView;
-import com.siju.acexplorer.utils.Dialogs;
 import com.siju.acexplorer.permission.PermissionUtils;
+import com.siju.acexplorer.utils.Dialogs;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import static com.siju.acexplorer.filesystem.groups.Category.FILES;
+import static com.siju.acexplorer.filesystem.groups.Category.PICKER;
+import static com.siju.acexplorer.filesystem.helper.UriHelper.createContentUri;
+import static com.siju.acexplorer.filesystem.storage.StorageUtils.getInternalStorage;
+import static com.siju.acexplorer.filesystem.storage.StorageUtils.getStorageDirectories;
 
 
 public class DialogBrowseFragment extends DialogFragment implements LoaderManager.LoaderCallbacks<ArrayList<FileInfo>> {
@@ -66,7 +74,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
     private boolean mIsRingtonePicker;
     private boolean isFilePicker;
     private int mRingToneType;
-    private boolean mIsDarkTheme;
+    private Themes currentTheme;
     private static final int MY_PERMISSIONS_REQUEST = 1;
     private static final int SETTINGS_REQUEST = 200;
     private MaterialDialog materialDialog;
@@ -108,7 +116,8 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
-        mIsDarkTheme = ThemeUtils.isDarkTheme(getActivity());
+        currentTheme = Themes.getTheme(ThemeUtils.getTheme(getContext()));
+
         initializeViews();
 
         if (getArguments() != null) {
@@ -125,10 +134,10 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
 
         loadStoragesList();
 
-        mCurrentPath = FileUtils.getInternalStorage().getAbsolutePath();
+        mCurrentPath = getInternalStorage();
         mTextCurrentPath.setText(mCurrentPath);
         recyclerViewFileList.setItemAnimator(new DefaultItemAnimator());
-        fileListAdapter = new FileListAdapter(getContext(), fileInfoList, 0, 0);
+        fileListAdapter = new FileListAdapter(getContext(), fileInfoList, FILES, ViewMode.LIST);
         recyclerViewFileList.setAdapter(fileListAdapter);
 
 
@@ -168,7 +177,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
                         getActivity().finish();
                     } else if (isFilePicker) {
                         Intent intent = new Intent();
-                        intent.setData(FileUtils.createContentUri(getActivity(), file.getAbsolutePath()));
+                        intent.setData(createContentUri(getActivity(), file.getAbsolutePath()));
                         getActivity().setResult(Activity.RESULT_OK, intent);
                         getActivity().finish();
                     }
@@ -247,12 +256,12 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
     }
 
     private boolean checkIfRootDir() {
-        return !mCurrentPath.equals(FileUtils.getInternalStorage().getAbsolutePath());
+        return !mCurrentPath.equals(getInternalStorage());
     }
 
 
     private void loadStoragesList() {
-        mStoragesList = FileUtils.getStorageDirectories(getActivity());
+        mStoragesList = getStorageDirectories(getActivity());
         storagesInfoList = new ArrayList<>();
         String STORAGE_INTERNAL, STORAGE_EXTERNAL;
         STORAGE_INTERNAL = getResources().getString(R.string.nav_menu_internal_storage);
@@ -273,7 +282,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
                 icon = R.drawable.ic_ext_white;
             }
             if (!file.isDirectory() || file.canExecute()) {
-                storagesInfoList.add(new FileInfo(name, path, icon, FileConstants.CATEGORY.PICKER.getValue()));
+                storagesInfoList.add(new FileInfo(PICKER, name, path, icon));
             }
         }
     }
@@ -396,7 +405,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
         mTextCurrentPath = (TextView) root.findViewById(R.id.textPath);
         mButtonOk = (Button) root.findViewById(R.id.buttonOk);
         mButtonCancel = (Button) root.findViewById(R.id.buttonCancel);
-        mTitle = (TextView)root.findViewById(R.id.textDialogTitle);
+        mTitle = (TextView) root.findViewById(R.id.textDialogTitle);
 
     }
 
@@ -433,12 +442,11 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
         }
         String path;
         if (args != null) {
-            path = args.getString(FileConstants.KEY_PATH, FileUtils.getInternalStorage()
-                    .getAbsolutePath());
+            path = args.getString(FileConstants.KEY_PATH, getInternalStorage());
         } else {
-            path = FileUtils.getInternalStorage().getAbsolutePath();
+            path = getInternalStorage();
         }
-        return new FileListLoader(this, path, FileConstants.CATEGORY.FILES.getValue(), mIsRingtonePicker);
+        return new FileListLoader(this, path, FILES, mIsRingtonePicker);
     }
 
     @Override
@@ -449,7 +457,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
             fileListAdapter.setStopAnimation(true);
             fileListAdapter.updateAdapter(fileInfoList);
             recyclerViewFileList.setAdapter(fileListAdapter);
-            recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), mIsDarkTheme));
+            recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), currentTheme));
             if (!data.isEmpty()) {
                 if (mIsBackPressed) {
                     Log.d("TEST", "on onLoadFinished scrollpos--" + scrollPosition.entrySet());
