@@ -110,7 +110,7 @@ public class NavigationInfo {
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params.gravity = Gravity.CENTER_VERTICAL;
 
-        if (!category.equals(Category.FILES)) {
+        if (!category.equals(Category.FILES) && !category.equals(Category.DOWNLOADS)) {
             String title = getTitleForCategory(category).toUpperCase(Locale.getDefault());
             final TextView textView = new TextView(context);
             textView.setText(title);
@@ -211,6 +211,8 @@ public class NavigationInfo {
 
             navigationCallback.addViewToNavigation(navArrow);
             createNavButton(parts, dir);
+            navigationCallback.scrollNavigation();
+
         }
     }
 
@@ -269,9 +271,9 @@ public class NavigationInfo {
     private void navButtonOnClick(final String dir) {
         Logger.log(TAG, "Dir=" + dir + " currentDir=" + currentDir);
         if (!currentDir.equals(dir)) {
+            navigationCallback.onNavButtonClicked(dir);
 
         }
-        navigationCallback.onNavButtonClicked(dir);
 
     }
 

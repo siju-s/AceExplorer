@@ -266,7 +266,7 @@ public class ZipViewer implements LoaderManager
 
     public void onBackPressed() {
         if (checkZipMode()) {
-            backStackInfo.removeEntry(backStackInfo.getBackStack().size() - 1);
+            backStackInfo.removeEntryAtIndex(backStackInfo.getBackStack().size() - 1);
             String currentDir = backStackInfo.getDirAtPosition(backStackInfo.getBackStack().size() - 1);
             Category currentCategory = backStackInfo.getCategoryAtPosition(backStackInfo.getBackStack().size() - 1);
             reloadList();

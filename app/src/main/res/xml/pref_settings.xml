@@ -8,23 +8,28 @@
         android:layout="@layout/prefs_settings_item"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
-        android:title="@string/pref_title_theme"/>
+        android:title="@string/pref_title_theme" />
 
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="prefHomeScreen"
         android:layout="@layout/prefs_checkbox"
-        android:title="@string/pref_title_homescreen"/>
+        android:title="@string/pref_title_homescreen" />
 
     <CheckBoxPreference
         android:key="prefHidden"
         android:layout="@layout/prefs_checkbox"
-        android:title="@string/pref_title_show_hidden"/>
+        android:title="@string/pref_title_show_hidden" />
+
+    <CheckBoxPreference
+        android:key="prefDualPane"
+        android:layout="@layout/prefs_checkbox"
+        android:title="@string/pref_title_disable_dual" />
 
     <Preference
         android:key="prefsReset"
         android:layout="@layout/prefs_settings_item"
-        android:title="@string/pref_title_reset_fav"/>
+        android:title="@string/pref_title_reset_fav" />
 
 
     <ListPreference
@@ -34,18 +39,18 @@
         android:layout="@layout/prefs_settings_item"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
-        android:title="@string/pref_title_change_lang"/>
+        android:title="@string/pref_title_change_lang" />
 
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="prefIsRooted"
         android:layout="@layout/prefs_checkbox"
-        android:title="@string/pref_title_rooted"/>
+        android:title="@string/pref_title_rooted" />
 
     <Preference
         android:key="prefsUpdate"
         android:layout="@layout/prefs_settings_item"
-        android:title="@string/pref_title_check_update"/>
+        android:title="@string/pref_title_check_update" />
 
 
     <PreferenceScreen
@@ -57,18 +62,17 @@
         <Preference
             android:key="prefsVersion"
             android:layout="@layout/prefs_settings_item"
-            android:title="@string/pref_title_version"/>
+            android:title="@string/pref_title_version" />
 
         <com.siju.acexplorer.settings.OpenSourceDialogPreference
             android:key="prefsOpenSource"
             android:layout="@layout/prefs_settings_item"
-            android:title="@string/open_source_license"
-            />
+            android:title="@string/open_source_license" />
 
         <Preference
             android:layout="@layout/prefs_settings_item"
             android:summary="@string/dev_name"
-            android:title="@string/prefs_summary_dev"/>
+            android:title="@string/prefs_summary_dev" />
 
     </PreferenceScreen>
 

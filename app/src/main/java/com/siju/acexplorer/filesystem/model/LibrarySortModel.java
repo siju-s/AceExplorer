@@ -6,7 +6,6 @@ import android.os.Parcelable;
 import com.siju.acexplorer.filesystem.groups.Category;
 
 public class LibrarySortModel implements Parcelable{
-    private int categoryId;
     private String libraryName;
     private boolean isChecked;
     private Category category;
@@ -38,7 +37,7 @@ public class LibrarySortModel implements Parcelable{
     }
 
     private LibrarySortModel(Parcel in) {
-        categoryId = in.readInt();
+        category = (Category) in.readSerializable();
         libraryName = in.readString();
         isChecked = in.readByte() != 0;
     }
@@ -54,14 +53,6 @@ public class LibrarySortModel implements Parcelable{
             return new LibrarySortModel[size];
         }
     };
-
-/*    public int getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(int categoryId) {
-        this.categoryId = categoryId;
-    }*/
 
     public String getLibraryName() {
         return libraryName;
@@ -87,7 +78,7 @@ public class LibrarySortModel implements Parcelable{
     @Override
     public void writeToParcel(Parcel parcel, int i) {
 
-        parcel.writeInt(categoryId);
+        parcel.writeSerializable(category);
         parcel.writeString(libraryName);
         parcel.writeByte((byte) (isChecked ? 1 : 0));
     }

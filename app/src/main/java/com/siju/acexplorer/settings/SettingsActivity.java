@@ -16,8 +16,9 @@ import android.widget.LinearLayout;
 
 import com.siju.acexplorer.AceActivity;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.theme.ThemeUtils;
+
+import static com.siju.acexplorer.filesystem.theme.ThemeUtils.THEME_DARK;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -48,7 +49,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     private void checkTheme() {
         int theme = ThemeUtils.getTheme(this);
 
-        if (theme == FileConstants.THEME_DARK) {
+        if (theme == THEME_DARK) {
             setTheme(R.style.Settings_BlackTheme);
         } else {
             setTheme(R.style.Settings_LightTheme);

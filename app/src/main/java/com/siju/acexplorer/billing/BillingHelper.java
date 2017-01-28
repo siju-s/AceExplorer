@@ -20,16 +20,17 @@ public class BillingHelper {
     // (arbitrary) request code for the purchase flow
     private static final int RC_REQUEST = 10111;
 
-    private boolean inappBillingSupported;
+    private boolean inappBillingSupported = true;
 
     // The helper object
     private IabHelper mHelper;
 
     private boolean isPremium = true;
     private static BillingHelper billingInstance;
+    private BillingResultCallback billingResultCallback;
 
     private BillingHelper() {
-    // To avoid instantiation outside class
+        // To avoid instantiation outside class
     }
 
     public static BillingHelper getInstance() {
@@ -48,7 +49,9 @@ public class BillingHelper {
                         "/6VJakiajmZMBODktRggHlUgWDZZvFZCw2so53U++pVHRfyevKIbP7" +
                         "/eIkB7mtlartsbOkD3yGQCUVxE1kQ3Olum1CYv7DqBQC4J9h9q22ApcGIfkZq6Os3Jm7vKmuzHHLKN63yWQS1FuwwcLAmpSN2EOX4Has4eElrgZoySu4qv5SOooOJS27Y4fzzxToQX5T50tO9dG+NYKrLmPK4yL5JGB5E3UD0I8vNLD/Wj2qPBE1tiYbjHHeX3PrF9lJhXtZs9uiMnMzox6dxW9+VmPYxNuMXakXrURGfpgaWGK00ZQIDAQAB";
         mHelper = new IabHelper(context, base64EncodedPublicKey);
-
+        if (context instanceof BillingResultCallback) {
+            billingResultCallback = (BillingResultCallback) context;
+        }
         // enable debug logging (for a production application, you should set
         // this to false).
         mHelper.enableDebugLogging(false);
@@ -123,6 +126,8 @@ public class BillingHelper {
                 isPremium = false;
 //                showAds();
             }*/
+            billingResultCallback.onBillingResult(getInAppBillingStatus());
+
             Log.d(TAG, "User has " + (isPremium ? "REMOVED ADS" : "NOT REMOVED ADS"));
             Log.d(TAG, "Initial inventory query finished; enabling main UI.");
         }
@@ -149,6 +154,8 @@ public class BillingHelper {
                 // bought the premium upgrade!
                 isPremium = true;
             }
+            billingResultCallback.onBillingResult(getInAppBillingStatus());
+
         }
     };
 
@@ -180,7 +187,7 @@ public class BillingHelper {
     }
 
     public boolean onActivityResult(int requestCode, int resultCode, Intent intent) {
-        return mHelper.handleActivityResult(requestCode,resultCode,intent);
+        return mHelper != null && mHelper.handleActivityResult(requestCode, resultCode, intent);
     }
 
     // --Commented out by Inspection START (22-11-2016 11:20 PM):

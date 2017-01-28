@@ -7,9 +7,10 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.siju.acexplorer.filesystem.FileConstants;
-import com.siju.acexplorer.filesystem.ui.DialogBrowseFragment;
 import com.siju.acexplorer.filesystem.theme.ThemeUtils;
+import com.siju.acexplorer.filesystem.ui.DialogBrowseFragment;
+
+import static com.siju.acexplorer.filesystem.theme.ThemeUtils.THEME_DARK;
 
 
 public class TransparentActivity extends AppCompatActivity {
@@ -58,7 +59,7 @@ public class TransparentActivity extends AppCompatActivity {
     private int checkTheme() {
         int theme = ThemeUtils.getTheme(this);
 
-        if (theme == FileConstants.THEME_DARK) {
+        if (theme == THEME_DARK) {
             return R.style.TransparentTheme_DarkAppTheme_NoActionBar;
         } else {
             return R.style.TransparentTheme_AppTheme_NoActionBar;

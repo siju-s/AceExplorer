@@ -26,7 +26,7 @@ public class BackStackInfo {
         return backStack;
     }
 
-    public void removeEntry(int index) {
+    public void removeEntryAtIndex(int index) {
         backStack.remove(index);
     }
 

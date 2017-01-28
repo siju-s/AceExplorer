@@ -65,6 +65,7 @@ import com.siju.acexplorer.settings.SettingsActivity;
 import com.siju.acexplorer.ui.ScrimInsetsRelativeLayout;
 import com.siju.acexplorer.utils.Dialogs;
 import com.siju.acexplorer.utils.LocaleHelper;
+import com.siju.acexplorer.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,6 +74,7 @@ import java.util.Locale;
 import eu.chainfire.libsuperuser.Shell;
 
 import static com.siju.acexplorer.filesystem.FileConstants.ADS;
+import static com.siju.acexplorer.filesystem.FileConstants.KEY_CATEGORY;
 import static com.siju.acexplorer.filesystem.FileConstants.KEY_PREMIUM;
 import static com.siju.acexplorer.filesystem.groups.Category.AUDIO;
 import static com.siju.acexplorer.filesystem.groups.Category.FILES;
@@ -80,6 +82,8 @@ import static com.siju.acexplorer.filesystem.groups.Category.IMAGE;
 import static com.siju.acexplorer.filesystem.groups.Category.VIDEO;
 import static com.siju.acexplorer.filesystem.storage.StorageUtils.getDownloadsDirectory;
 import static com.siju.acexplorer.filesystem.storage.StorageUtils.getInternalStorage;
+import static com.siju.acexplorer.filesystem.theme.ThemeUtils.CURRENT_THEME;
+import static com.siju.acexplorer.filesystem.theme.ThemeUtils.PREFS_THEME;
 
 
 public class AceActivity extends BaseActivity
@@ -110,7 +114,8 @@ public class AceActivity extends BaseActivity
     private boolean mShowHidden;
     private boolean mIsHomePageAdded;
     private boolean mIsDualModeEnabled;
-    private int mCurrentTheme = FileConstants.THEME_LIGHT;
+    private boolean isDualPaneEnabled;
+    private Themes mCurrentTheme;
     private int mCurrentOrientation;
     private boolean mIsRootMode;
     private boolean mIsTablet;
@@ -203,8 +208,8 @@ public class AceActivity extends BaseActivity
     }
 
     private void setViewTheme() {
-        Themes theme = getCurrentTheme();
-        switch (theme) {
+        mCurrentTheme = getCurrentTheme();
+        switch (mCurrentTheme) {
             case DARK:
                 relativeLayoutDrawerPane.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_colorPrimary));
                 break;
@@ -243,9 +248,27 @@ public class AceActivity extends BaseActivity
             mIsFirstRun = true;
             mSharedPreferences.edit().putInt(FileConstants.KEY_SORT_MODE, FileConstants
                     .KEY_SORT_NAME).apply();
+            mIsTablet = Utils.isTablet(this);
+            if (mIsTablet) {
+                Logger.log(TAG, "Istab");
+                mSharedPreferences.edit().putBoolean(FileConstants.PREFS_DUAL_PANE, true).apply();
+            }
         }
         mIsHomeScreenEnabled = mSharedPreferences.getBoolean(FileConstants.PREFS_HOMESCREEN, true);
         mIsRootMode = mSharedPreferences.getBoolean(FileConstants.PREFS_ROOTED, false);
+        isDualPaneEnabled = mSharedPreferences.getBoolean(FileConstants.PREFS_DUAL_PANE,
+                mIsTablet);
+    }
+
+    /**
+     * Checks if orientation is landscape when app is run 1st time to enable Dual Panel
+     */
+    private void checkScreenOrientation() {
+        mCurrentOrientation = getResources().getConfiguration().orientation;
+        if (mCurrentOrientation == Configuration.ORIENTATION_LANDSCAPE
+                && isDualPaneEnabled) {
+            mIsDualModeEnabled = true;
+        }
     }
 
     /**
@@ -416,7 +439,7 @@ public class AceActivity extends BaseActivity
                     onSharedPrefsChanged();
 
                 }
-            }  else if (requestCode == REQUEST_INVITE) {
+            } else if (requestCode == REQUEST_INVITE) {
                 if (resultCode == RESULT_OK) {
                     // Get the invitation IDs of all sent messages
                     String[] ids = AppInviteInvitation.getInvitationIds(resultCode, intent);
@@ -576,7 +599,7 @@ public class AceActivity extends BaseActivity
                 onStorageItemClicked(groupPos, path);
                 break;
             case LIBRARY:
-                onLibraryItemClicked(childPos);
+                onLibraryItemClicked(childPos + 1);
                 break;
         }
     }
@@ -601,7 +624,7 @@ public class AceActivity extends BaseActivity
         args.putSerializable(FileConstants.KEY_CATEGORY, category);
 
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
-        if (fragment instanceof HomeScreenFragment) {
+        if (fragment == null || fragment instanceof HomeScreenFragment) {
             FileList baseFileList = new FileList();
             baseFileList.setArguments(args);
             ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
@@ -707,11 +730,12 @@ public class AceActivity extends BaseActivity
             mCurrentOrientation = newConfig.orientation;
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
             if (fragment instanceof BaseFileList) {
-                if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE &&isDualPaneEnabled) {
                     toggleDualPaneVisibility(true);
                     ((BaseFileList) fragment).showDualPane();
                     createDualFragment();
                 } else {
+                    mIsDualModeEnabled = false;
                     toggleDualPaneVisibility(false);
                 }
             }
@@ -742,6 +766,7 @@ public class AceActivity extends BaseActivity
         String internalStoragePath = getInternalStorage();
         Bundle args = new Bundle();
         args.putString(FileConstants.KEY_PATH, internalStoragePath);
+        args.putSerializable(KEY_CATEGORY, FILES);
 
 //        args.putString(FileConstants.KEY_PATH_OTHER, mCurrentDir);
         args.putBoolean(FileConstants.KEY_FOCUS_DUAL, true);
@@ -800,7 +825,6 @@ public class AceActivity extends BaseActivity
         }
 
 
-
     }
 
     @Override
@@ -809,7 +833,7 @@ public class AceActivity extends BaseActivity
 
         unregisterForContextMenu(expandableListView);
         unregisterReceiver(mLocaleListener);
-        mSharedPreferences.edit().putInt(FileConstants.CURRENT_THEME, mCurrentTheme).apply();
+        mSharedPreferences.edit().putInt(CURRENT_THEME, mCurrentTheme.getValue()).apply();
         if (mIsRootMode) {
             // close interactive shell and handler thread associated with it
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -845,9 +869,9 @@ public class AceActivity extends BaseActivity
             mIsHomeSettingToggled = false;
             mIsHomePageRemoved = true;
         } else if (mShowDualPane) {
-            toggleDualPaneVisibility(true);
-            Fragment fragment  = getSupportFragmentManager().findFragmentById(R.id.main_container);
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
             if (fragment instanceof BaseFileList) {
+                toggleDualPaneVisibility(true);
                 ((BaseFileList) fragment).showDualPane();
             }
             createDualFragment();
@@ -873,10 +897,11 @@ public class AceActivity extends BaseActivity
      */
     private void onSharedPrefsChanged() {
 
-        String value = mSharedPreferences.getString(FileConstants.PREFS_THEME, "");
+        String value = mSharedPreferences.getString(PREFS_THEME, "");
         if (!value.isEmpty()) {
-            int theme = Integer.valueOf(value);
-            if (theme != mCurrentTheme) {
+            int themePos = Integer.valueOf(value);
+            Themes theme = Themes.getTheme(themePos);
+            if (!theme.equals(mCurrentTheme)) {
                 mCurrentTheme = theme;
                 restartApp(false);
             }
@@ -952,6 +977,10 @@ public class AceActivity extends BaseActivity
             mIsDualModeEnabled = false;
             mShowDualPane = false;
         }
+        else {
+            checkScreenOrientation();
+            mShowDualPane = true;
+        }
 
     }
 
@@ -1001,6 +1030,9 @@ public class AceActivity extends BaseActivity
                 }
             case FREE:
                 setupAds();
+                break;
+            case PREMIUM:
+                unlockPremium.setVisibility(View.GONE);
                 break;
 
         }

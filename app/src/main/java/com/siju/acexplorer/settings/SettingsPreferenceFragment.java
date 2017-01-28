@@ -34,6 +34,9 @@ import com.siju.acexplorer.filesystem.theme.ThemeUtils;
 import com.siju.acexplorer.helper.root.RootTools;
 import com.siju.acexplorer.utils.LocaleHelper;
 
+import static com.siju.acexplorer.filesystem.theme.ThemeUtils.CURRENT_THEME;
+import static com.siju.acexplorer.filesystem.theme.ThemeUtils.PREFS_THEME;
+
 
 public class SettingsPreferenceFragment extends PreferenceFragment {
 
@@ -57,7 +60,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
 
 
         ListPreference langPreference = (ListPreference) findPreference(PREFS_LANGUAGE);
-        ListPreference themePreference = (ListPreference) findPreference(FileConstants.PREFS_THEME);
+        ListPreference themePreference = (ListPreference) findPreference(PREFS_THEME);
         mIsTheme = ThemeUtils.getTheme(getActivity());
         String PREFS_UPDATE = "prefsUpdate";
         updatePreference = findPreference(PREFS_UPDATE);
@@ -271,14 +274,13 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
                             }
                         }
 
-                        if (listPreference.getKey().equals(FileConstants.PREFS_THEME)) {
+                        if (listPreference.getKey().equals(PREFS_THEME)) {
                             int theme = Integer.valueOf(stringValue);
-                            mPrefs.edit().putInt(FileConstants.CURRENT_THEME, theme).apply();
+                            mPrefs.edit().putInt(CURRENT_THEME, theme).apply();
                             Logger.log("TAG", "Current theme=" + mIsTheme + " new theme=" + theme);
                             if (mIsTheme != theme) {
                                 getActivity().setResult(Activity.RESULT_OK, mSendIntent);
                                 restartApp();
-
                             }
 
 //                            ((SettingsActivity) getActivity()).setApplicationTheme(theme);
@@ -341,7 +343,6 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
             activity.finish();
             activity.overridePendingTransition(enter_anim, exit_anim);
             activity.startActivity(in);
-//            getActivity().finish();
             return true;
         }
         return super.onOptionsItemSelected(item);

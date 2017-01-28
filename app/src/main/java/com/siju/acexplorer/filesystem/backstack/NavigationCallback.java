@@ -12,4 +12,5 @@ public interface NavigationCallback {
     void clearNavigation();
     void onHomeClicked();
     void onNavButtonClicked(String dir);
+    void scrollNavigation();
 }

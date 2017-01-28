@@ -3,7 +3,6 @@ package com.siju.acexplorer.filesystem;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -12,12 +11,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.SharedPreferenceWrapper;
 import com.siju.acexplorer.filesystem.groups.Category;
 import com.siju.acexplorer.filesystem.helper.SimpleItemTouchHelperCallback;
 import com.siju.acexplorer.filesystem.model.LibrarySortModel;
-import com.siju.acexplorer.filesystem.theme.ThemeUtils;
 
 import java.util.ArrayList;
 
@@ -32,7 +31,7 @@ import static com.siju.acexplorer.filesystem.groups.Category.LARGE_FILES;
 import static com.siju.acexplorer.filesystem.groups.Category.PDF;
 import static com.siju.acexplorer.filesystem.groups.Category.VIDEO;
 
-public class LibrarySortActivity extends AppCompatActivity implements OnStartDragListener {
+public class LibrarySortActivity extends BaseActivity implements OnStartDragListener {
     private ItemTouchHelper mItemTouchHelper;
     private SharedPreferenceWrapper sharedPreferenceWrapper;
     private ArrayList<LibrarySortModel> savedLibraries = new ArrayList<>();
@@ -45,7 +44,6 @@ public class LibrarySortActivity extends AppCompatActivity implements OnStartDra
     @Override
     @SuppressWarnings("ConstantConditions")
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        checkTheme();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.library_sort);
 
@@ -69,16 +67,6 @@ public class LibrarySortActivity extends AppCompatActivity implements OnStartDra
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mSortAdapter);
         mItemTouchHelper = new ItemTouchHelper(callback);
         mItemTouchHelper.attachToRecyclerView(mRecyclerViewLibrarySort);
-    }
-
-    private void checkTheme() {
-        int mCurrentTheme = ThemeUtils.getTheme(this);
-
-        if (mCurrentTheme == FileConstants.THEME_DARK) {
-            setTheme(R.style.DarkAppTheme_NoActionBar);
-        } else {
-            setTheme(R.style.AppTheme_NoActionBar);
-        }
     }
 
     private void initConstants() {

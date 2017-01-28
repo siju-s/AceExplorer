@@ -8,14 +8,11 @@ public class FileConstants {
     public static final String KEY_DUAL_ENABLED = "dualEnabled";
     public static final String PREFS_HOMESCREEN = "prefHomeScreen";
     public static final String PREFS_RESET = "prefsReset";
-    public static final String PREFS_THEME = "prefThemes";
 
-    public static final String CURRENT_THEME = "theme";
     public static final String PREFS_ROOTED = "prefIsRooted";
     public static final String SAF_URI = "saf_uri";
 
-    public static final int THEME_LIGHT = 0;
-    public static final int THEME_DARK = 1;
+
     public static final String OPERATION = "operation";
 
     public static final String IS_OPERATION_SUCCESS = "IS_OPERATION_SUCCESS";

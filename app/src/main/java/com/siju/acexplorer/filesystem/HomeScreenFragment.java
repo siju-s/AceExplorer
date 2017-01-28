@@ -835,7 +835,6 @@ public class HomeScreenFragment extends Fragment implements LoaderManager.Loader
         ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
                 .exit_to_left);
         ft.replace(R.id.main_container, baseFileList);
-//        ft.hide(HomeScreenFragment.this);
         ft.addToBackStack(null);
         ft.commitAllowingStateLoss();
     }

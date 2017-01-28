@@ -92,6 +92,7 @@ import com.siju.acexplorer.filesystem.backstack.NavigationInfo;
 import com.siju.acexplorer.filesystem.groups.Category;
 import com.siju.acexplorer.filesystem.helper.FileOpsHelper;
 import com.siju.acexplorer.filesystem.helper.ShareHelper;
+import com.siju.acexplorer.filesystem.model.BackStackModel;
 import com.siju.acexplorer.filesystem.model.CopyData;
 import com.siju.acexplorer.filesystem.model.FavInfo;
 import com.siju.acexplorer.filesystem.model.FileInfo;
@@ -104,7 +105,6 @@ import com.siju.acexplorer.filesystem.task.DeleteTask;
 import com.siju.acexplorer.filesystem.task.MoveFiles;
 import com.siju.acexplorer.filesystem.task.PasteConflictChecker;
 import com.siju.acexplorer.filesystem.task.SearchTask;
-import com.siju.acexplorer.filesystem.theme.ThemeUtils;
 import com.siju.acexplorer.filesystem.theme.Themes;
 import com.siju.acexplorer.filesystem.ui.CustomGridLayoutManager;
 import com.siju.acexplorer.filesystem.ui.CustomLayoutManager;
@@ -128,6 +128,7 @@ import java.util.HashMap;
 
 import static com.siju.acexplorer.filesystem.FileConstants.ADS;
 import static com.siju.acexplorer.filesystem.groups.Category.AUDIO;
+import static com.siju.acexplorer.filesystem.groups.Category.DOWNLOADS;
 import static com.siju.acexplorer.filesystem.groups.Category.FAVORITES;
 import static com.siju.acexplorer.filesystem.groups.Category.FILES;
 import static com.siju.acexplorer.filesystem.groups.Category.IMAGE;
@@ -192,7 +193,6 @@ public class BaseFileList extends Fragment implements LoaderManager
     private int mCurrentOrientation;
     private final ArrayList<FileInfo> mCopiedData = new ArrayList<>();
     private final boolean mIsRootMode = true;
-    private boolean mIsSwipeRefreshed;
     private Dialogs dialogs;
     private boolean shouldStopAnimation = true;
     private boolean mIsBackPressed;
@@ -252,7 +252,7 @@ public class BaseFileList extends Fragment implements LoaderManager
             getArgs();
             viewMode = sharedPreferenceWrapper.getViewMode(getActivity());
             setupList();
-            if (category.equals(FILES)) {
+            if (category.equals(FILES) || category.equals(DOWNLOADS)) {
                 navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled, category);
             } else {
                 navigationInfo.addHomeNavButton(isHomeScreenEnabled, category);
@@ -300,7 +300,7 @@ public class BaseFileList extends Fragment implements LoaderManager
                 scrollNavigation.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
                 mBottomToolbar.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
                 toolbar.setPopupTheme(R.style.Dark_AppTheme_PopupOverlay);
-                frameLayoutFab.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.dark_overlay));
+//                frameLayoutFab.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.dark_overlay));
                 break;
             case LIGHT:
                 toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay);
@@ -396,7 +396,6 @@ public class BaseFileList extends Fragment implements LoaderManager
             }
             toggleNavigationVisibility(true);
             mLastSinglePaneDir = currentDir;
-            Log.d(TAG, "on onActivityCreated dual focus No--singledir" + mLastSinglePaneDir);
         }
     }
 
@@ -441,7 +440,6 @@ public class BaseFileList extends Fragment implements LoaderManager
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mIsSwipeRefreshed = true;
                 refreshList();
             }
         });
@@ -610,8 +608,8 @@ public class BaseFileList extends Fragment implements LoaderManager
         } else {
             String path = currentDir = fileInfoList.get(position).getFilePath();
             reloadList(false, currentDir);
-            navigationInfo.setNavDirectory(path, isHomeScreenEnabled, category);
-            backStackInfo.addToBackStack(path, category);
+            navigationInfo.setNavDirectory(path, isHomeScreenEnabled, FILES);
+            backStackInfo.addToBackStack(path, FILES);
         }
 
     }
@@ -639,7 +637,8 @@ public class BaseFileList extends Fragment implements LoaderManager
     }
 
 
-    private void scrollNavigation() {
+    @Override
+    public void scrollNavigation() {
         scrollNavigation.postDelayed(new Runnable() {
             public void run() {
                 scrollNavigation.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
@@ -679,11 +678,12 @@ public class BaseFileList extends Fragment implements LoaderManager
 
         if (checkIfBackStackExists()) {
 
-            backStackInfo.removeEntry(backStackInfo.getBackStack().size() - 1);
+            backStackInfo.removeEntryAtIndex(backStackInfo.getBackStack().size() - 1);
             String currentDir = backStackInfo.getDirAtPosition(backStackInfo.getBackStack().size() - 1);
             Category currentCategory = backStackInfo.getCategoryAtPosition(backStackInfo.getBackStack().size() - 1);
             if (checkIfFileCategory(currentCategory)) {
-                navigationInfo.setInitialDir();
+//                navigationInfo.setInitialDir();
+                navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled, currentCategory);
             } else {
                 hideFab();
             }
@@ -691,7 +691,6 @@ public class BaseFileList extends Fragment implements LoaderManager
             setTitleForCategory(currentCategory);
             if (currentCategory.equals(FILES)) {
                 showFab();
-                navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled, currentCategory);
             }
             return false;
         } else {
@@ -1103,7 +1102,21 @@ public class BaseFileList extends Fragment implements LoaderManager
         if (isZipMode()) {
             zipViewer.onBackPressed();
         } else {
-            backOperation();
+            currentDir = dir;
+            int position = 0;
+            ArrayList<BackStackModel> backStack = backStackInfo.getBackStack();
+            for (int i = 0; i < backStack.size(); i++) {
+                if (currentDir.equals(backStack.get(i).getFilePath())) {
+                    position = i;
+                    break;
+                }
+            }
+            for (int j = backStack.size() - 1; j > position; j--) {
+                backStackInfo.removeEntryAtIndex(j);
+            }
+
+            reloadList(true, currentDir);
+            navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled, FILES);
         }
     }
 
@@ -1232,9 +1245,8 @@ public class BaseFileList extends Fragment implements LoaderManager
         if (fileListAdapter != null) {
             fileListAdapter.clearList();
         }
-        String path = args.getString(FileConstants.KEY_PATH);
         mSwipeRefreshLayout.setRefreshing(true);
-        return new FileListLoader(this, path, category, false);
+        return new FileListLoader(this, currentDir, category, false);
     }
 
 
@@ -1246,14 +1258,11 @@ public class BaseFileList extends Fragment implements LoaderManager
     @Override
     public void onLoaderReset(Loader<ArrayList<FileInfo>> loader) {
         // Clear the data in the adapter.
+        Log.d(TAG, "onLoaderReset: ");
         fileListAdapter.updateAdapter(null);
     }
 
     private void onDataLoaded(ArrayList<FileInfo> data) {
-        if (mIsSwipeRefreshed) {
-            mSwipeRefreshLayout.setRefreshing(false);
-            mIsSwipeRefreshed = false;
-        }
         mSwipeRefreshLayout.setRefreshing(false);
 
         if (data != null) {
@@ -1263,8 +1272,9 @@ public class BaseFileList extends Fragment implements LoaderManager
             shouldStopAnimation = true;
             fileInfoList = data;
             fileListAdapter.setCategory(category);
-            fileListAdapter.updateAdapter(fileInfoList);
             recyclerViewFileList.setAdapter(fileListAdapter);
+            fileListAdapter.updateAdapter(fileInfoList);
+
             addItemDecoration();
 
             if (!data.isEmpty()) {
@@ -1888,7 +1898,7 @@ public class BaseFileList extends Fragment implements LoaderManager
             public void onClick(View view) {
                 DialogBrowseFragment dialogFragment = new DialogBrowseFragment();
                 dialogFragment.setTargetFragment(BaseFileList.this, DIALOG_FRAGMENT);
-                dialogFragment.setStyle(DialogFragment.STYLE_NORMAL, checkTheme());
+                dialogFragment.setStyle(DialogFragment.STYLE_NORMAL, getThemeStyle());
                 dialogFragment.show(getFragmentManager(), "Browse Fragment");
             }
         });
@@ -1938,14 +1948,15 @@ public class BaseFileList extends Fragment implements LoaderManager
 
     }
 
-    private int checkTheme() {
-        int theme = ThemeUtils.getTheme(getActivity());
-
-        if (theme == FileConstants.THEME_DARK) {
-            return R.style.DarkAppTheme_NoActionBar;
-        } else {
-            return R.style.AppTheme_NoActionBar;
+    private int getThemeStyle() {
+        switch (currentTheme) {
+            case DARK:
+                return R.style.DarkAppTheme_NoActionBar;
+            case LIGHT:
+                return R.style.AppTheme_NoActionBar;
         }
+        return R.style.DarkAppTheme_NoActionBar;
+
     }
 
 
