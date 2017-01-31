@@ -27,12 +27,11 @@ import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static com.siju.acexplorer.filesystem.groups.Category.COMPRESSED;
+import static com.siju.acexplorer.filesystem.groups.Category.FILES;
 import static com.siju.acexplorer.filesystem.groups.Category.ZIP_VIEWER;
+import static com.siju.acexplorer.filesystem.storage.StorageUtils.getInternalStorage;
 
-public class ZipViewer implements LoaderManager
-        .LoaderCallbacks<ArrayList<FileInfo>>,
-        ZipElements {
+public class ZipViewer implements ZipElements {
 
     private final String TAG = this.getClass().getSimpleName();
     private final int LOADER_ID = 1000;
@@ -48,7 +47,7 @@ public class ZipViewer implements LoaderManager
     private ArrayList<ZipModel> zipChildren = new ArrayList<>();
     private final ArrayList<FileHeader> rarChildren = new ArrayList<>();
     private boolean isHomeScreenEnabled;
-    private Category category = COMPRESSED;
+    private Category category = FILES;
 
 
     enum ZipFormats {
@@ -76,26 +75,22 @@ public class ZipViewer implements LoaderManager
 
     public ZipViewer(Fragment fragment, String path) {
         context = fragment;
-        zipParentPath = path;
+        zipParentPath = zipPath = path;
         navigationInfo = new NavigationInfo(fragment);
         backStackInfo = new BackStackInfo();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(fragment.getContext());
         isHomeScreenEnabled = preferences.getBoolean(FileConstants.PREFS_HOMESCREEN, true);
-        navigationInfo.setNavDirectory(path, isHomeScreenEnabled, category);
+        setNavDirectory(path);
         backStackInfo.addToBackStack(path, category);
-        loadList();
     }
 
     public void setZipData(ArrayList<ZipModel> zipData) {
         zipChildren = zipData;
     }
 
-    private void loadList() {
-        context.getLoaderManager().initLoader(LOADER_ID, null, this);
-    }
-
     private void reloadList() {
-        context.getLoaderManager().restartLoader(LOADER_ID, null, this);
+        context.getLoaderManager().restartLoader(LOADER_ID, null, (LoaderManager
+                .LoaderCallbacks<ArrayList<FileInfo>>) context);
     }
 
     private String createCacheDirExtract() {
@@ -146,7 +141,7 @@ public class ZipViewer implements LoaderManager
                     newPath = zipParentPath + currentDir;
                 }
             }
-            navigationInfo.setNavDirectory(newPath, isHomeScreenEnabled, COMPRESSED);
+            setNavDirectory(newPath);
             return false;
         }
     }
@@ -154,7 +149,10 @@ public class ZipViewer implements LoaderManager
     public void endZipMode() {
         currentDir = null;
         zipChildren.clear();
+        ((BaseFileList) context).endZipMode();
         clearCache();
+        reloadList();
+        setNavDirectory(getInternalStorage());
     }
 
     private void clearCache() {
@@ -191,7 +189,7 @@ public class ZipViewer implements LoaderManager
     }
 
     private void setNavDirectory(String path) {
-        navigationInfo.setNavDirectory(path, isHomeScreenEnabled, COMPRESSED);
+        navigationInfo.setNavDirectory(path, isHomeScreenEnabled, FILES);
 
     }
 
@@ -265,13 +263,15 @@ public class ZipViewer implements LoaderManager
     }
 
     public void onBackPressed() {
-        if (checkZipMode()) {
+        checkZipMode();
+/*        if (!checkZipMode()) {
             backStackInfo.removeEntryAtIndex(backStackInfo.getBackStack().size() - 1);
+            int backStackSize = backStackInfo.getBackStack().size();
             String currentDir = backStackInfo.getDirAtPosition(backStackInfo.getBackStack().size() - 1);
             Category currentCategory = backStackInfo.getCategoryAtPosition(backStackInfo.getBackStack().size() - 1);
             reloadList();
             navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled, currentCategory);
-        }
+        }*/
     }
 
 
@@ -293,7 +293,6 @@ public class ZipViewer implements LoaderManager
         setNavDirectory(newPath);
     }
 
-    @Override
     public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
         if (inChildZip) {
             String path;
@@ -308,12 +307,12 @@ public class ZipViewer implements LoaderManager
         return new ZipContentLoader(context, this, zipPath, ZIP_VIEWER, currentDir);
     }
 
-    @Override
+
     public void onLoadFinished(Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
         ((BaseFileList) context).onZipContentsLoaded(data);
     }
 
-    @Override
+
     public void onLoaderReset(Loader<ArrayList<FileInfo>> loader) {
 
     }

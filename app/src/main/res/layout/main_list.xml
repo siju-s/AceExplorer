@@ -115,75 +115,88 @@
         </com.getbase.floatingactionbutton.FloatingActionsMenu>
     </FrameLayout>
 
-  <!--  <FrameLayout
-        android:id="@+id/frameLayoutFabDual"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_vertical|center_horizontal"
-        android:background="@color/whiteOverlay"
-        android:visibility="gone">
+    <!--  <FrameLayout
+          android:id="@+id/frameLayoutFabDual"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:layout_gravity="center_vertical|center_horizontal"
+          android:background="@color/whiteOverlay"
+          android:visibility="gone">
 
 
-        <com.getbase.floatingactionbutton.FloatingActionsMenu
-            android:id="@+id/fabCreateDual"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_vertical|center_horizontal"
-            android:layout_marginBottom="@dimen/fab_margin"
-            android:layout_marginEnd="@dimen/fab_margin_dual_right"
-            android:layout_marginRight="@dimen/fab_margin_dual_right"
-            android:layout_marginTop="@dimen/fab_margin"
-            app:fab_addButtonSize="normal"
-            fab:fab_addButtonColorNormal="@color/colorPrimary"
-            fab:fab_addButtonColorPressed="@color/colorPrimaryDark"
-            fab:fab_addButtonPlusIconColor="@color/white"
-            fab:fab_addButtonStrokeVisible="false"
-            fab:fab_labelStyle="@style/menu_labels_style"
-            fab:fab_labelsPosition="left">
+          <com.getbase.floatingactionbutton.FloatingActionsMenu
+              android:id="@+id/fabCreateDual"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="bottom|center_vertical|center_horizontal"
+              android:layout_marginBottom="@dimen/fab_margin"
+              android:layout_marginEnd="@dimen/fab_margin_dual_right"
+              android:layout_marginRight="@dimen/fab_margin_dual_right"
+              android:layout_marginTop="@dimen/fab_margin"
+              app:fab_addButtonSize="normal"
+              fab:fab_addButtonColorNormal="@color/colorPrimary"
+              fab:fab_addButtonColorPressed="@color/colorPrimaryDark"
+              fab:fab_addButtonPlusIconColor="@color/white"
+              fab:fab_addButtonStrokeVisible="false"
+              fab:fab_labelStyle="@style/menu_labels_style"
+              fab:fab_labelsPosition="left">
 
-            <com.getbase.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fabCreateFileDual"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                fab:fab_colorNormal="@color/colorPrimary"
-                fab:fab_colorPressed="@color/colorPrimaryDark"
-                fab:fab_icon="@drawable/ic_fab_file"
-                fab:fab_plusIconColor="@color/white"
-                fab:fab_size="normal"
-                fab:fab_title="@string/new_file" />
+              <com.getbase.floatingactionbutton.FloatingActionButton
+                  android:id="@+id/fabCreateFileDual"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  fab:fab_colorNormal="@color/colorPrimary"
+                  fab:fab_colorPressed="@color/colorPrimaryDark"
+                  fab:fab_icon="@drawable/ic_fab_file"
+                  fab:fab_plusIconColor="@color/white"
+                  fab:fab_size="normal"
+                  fab:fab_title="@string/new_file" />
 
-            <com.getbase.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fabCreateFolderDual"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                fab:fab_colorNormal="@color/colorPrimary"
-                fab:fab_colorPressed="@color/colorPrimaryDark"
-                fab:fab_icon="@drawable/ic_fab_folder"
-                fab:fab_plusIconColor="@color/white"
-                fab:fab_size="normal"
-                fab:fab_title="@string/new_folder" />
-        </com.getbase.floatingactionbutton.FloatingActionsMenu>
-    </FrameLayout>-->
+              <com.getbase.floatingactionbutton.FloatingActionButton
+                  android:id="@+id/fabCreateFolderDual"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  fab:fab_colorNormal="@color/colorPrimary"
+                  fab:fab_colorPressed="@color/colorPrimaryDark"
+                  fab:fab_icon="@drawable/ic_fab_folder"
+                  fab:fab_plusIconColor="@color/white"
+                  fab:fab_size="normal"
+                  fab:fab_title="@string/new_folder" />
+          </com.getbase.floatingactionbutton.FloatingActionsMenu>
+      </FrameLayout>-->
 
     <!--<LinearLayout-->
     <!--android:layout_width="match_parent"-->
     <!--android:layout_height="match_parent"-->
     <!--android:orientation="vertical">-->
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <com.siju.acexplorer.ui.SplitToolbar
-            android:id="@+id/toolbar_bottom"
+    <!--    <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:layout_gravity="bottom"
-            android:background="@color/colorPrimary"
-            android:visibility="gone"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-        <!--</LinearLayout>-->
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
-    </LinearLayout>
+
+        </FrameLayout>-->
+    <!--</LinearLayout>
+
+</LinearLayout>-->
+
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="?attr/actionBarSize"-->
+        <!--android:layout_gravity="bottom"-->
+        <!--android:orientation="vertical"-->
+        <!--android:visibility="visible">-->
+
+    <com.siju.acexplorer.ui.SplitToolbar
+        android:id="@+id/toolbar_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_gravity="bottom"
+        android:background="@color/colorPrimary"
+        android:visibility="gone"
+        app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+
+    <!--</LinearLayout>-->
 </android.support.design.widget.CoordinatorLayout>

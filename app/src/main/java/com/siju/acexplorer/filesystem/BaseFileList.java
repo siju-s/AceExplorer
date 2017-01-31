@@ -252,7 +252,7 @@ public class BaseFileList extends Fragment implements LoaderManager
             getArgs();
             viewMode = sharedPreferenceWrapper.getViewMode(getActivity());
             setupList();
-            if (category.equals(FILES) || category.equals(DOWNLOADS)) {
+            if (shouldShowPathNavigation()) {
                 navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled, category);
             } else {
                 navigationInfo.addHomeNavButton(isHomeScreenEnabled, category);
@@ -429,9 +429,7 @@ public class BaseFileList extends Fragment implements LoaderManager
     }
 
     public void refreshList() {
-        Bundle args = new Bundle();
-        args.putString(FileConstants.KEY_PATH, currentDir);
-        getLoaderManager().restartLoader(LOADER_ID, args, this);
+        getLoaderManager().restartLoader(LOADER_ID, null, this);
     }
 
 
@@ -607,6 +605,7 @@ public class BaseFileList extends Fragment implements LoaderManager
             zipViewer.onDirectoryClicked(position);
         } else {
             String path = currentDir = fileInfoList.get(position).getFilePath();
+            category = FILES;
             reloadList(false, currentDir);
             navigationInfo.setNavDirectory(path, isHomeScreenEnabled, FILES);
             backStackInfo.addToBackStack(path, FILES);
@@ -677,13 +676,19 @@ public class BaseFileList extends Fragment implements LoaderManager
     private boolean backOperation() {
 
         if (checkIfBackStackExists()) {
-
+            removeScrolledPos(currentDir);
             backStackInfo.removeEntryAtIndex(backStackInfo.getBackStack().size() - 1);
+
             String currentDir = backStackInfo.getDirAtPosition(backStackInfo.getBackStack().size() - 1);
             Category currentCategory = backStackInfo.getCategoryAtPosition(backStackInfo.getBackStack().size() - 1);
             if (checkIfFileCategory(currentCategory)) {
 //                navigationInfo.setInitialDir();
-                navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled, currentCategory);
+                category = currentCategory;
+                if (shouldShowPathNavigation()) {
+                    navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled, currentCategory);
+                } else {
+                    navigationInfo.addHomeNavButton(isHomeScreenEnabled, currentCategory);
+                }
             } else {
                 hideFab();
             }
@@ -700,6 +705,11 @@ public class BaseFileList extends Fragment implements LoaderManager
             }*/
             return true;
         }
+    }
+
+    private boolean shouldShowPathNavigation() {
+        return category.equals(FILES) || category.equals(DOWNLOADS);
+
     }
 
     public void onPermissionGranted() {
@@ -926,8 +936,14 @@ public class BaseFileList extends Fragment implements LoaderManager
 
     public void openZipViewer(String path) {
         computeScroll();
-        zipViewer = new ZipViewer(this, path);
         isZipViewer = true;
+        zipViewer = new ZipViewer(this, path);
+        refreshList();
+    }
+
+    public void endZipMode() {
+        isZipViewer = false;
+        zipViewer = null;
     }
 
 
@@ -1175,7 +1191,7 @@ public class BaseFileList extends Fragment implements LoaderManager
         bundle.putInt(FileConstants.KEY_POSITION, position);
         bundle.putInt(FileConstants.KEY_OFFSET, top);
 
-        scrollPosition.put(currentDir, bundle);
+        putScrolledPosition(currentDir, bundle);
     }
 
     private void setSelectedItemPos(SparseBooleanArray selectedItemPos) {
@@ -1241,12 +1257,17 @@ public class BaseFileList extends Fragment implements LoaderManager
 
     @Override
     public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
+        Log.d(TAG, "onCreateLoader: ");
         fileInfoList = new ArrayList<>();
         if (fileListAdapter != null) {
             fileListAdapter.clearList();
         }
         mSwipeRefreshLayout.setRefreshing(true);
-        return new FileListLoader(this, currentDir, category, false);
+        if (isZipMode()) {
+            return zipViewer.onCreateLoader(id, args);
+        } else {
+            return new FileListLoader(this, currentDir, category, false);
+        }
     }
 
 
@@ -1279,26 +1300,42 @@ public class BaseFileList extends Fragment implements LoaderManager
 
             if (!data.isEmpty()) {
 
-                if (mIsBackPressed) {
-                    Log.d("TEST", "on onLoadFinished scrollpos--" + scrollPosition.entrySet());
-
-                    if (scrollPosition.containsKey(currentDir)) {
-                        Bundle b = scrollPosition.get(currentDir);
-                        if (viewMode == ViewMode.LIST)
-                            ((LinearLayoutManager) layoutManager).scrollToPositionWithOffset(b.getInt(FileConstants
-                                    .KEY_POSITION), b.getInt(FileConstants.KEY_OFFSET));
-                        else
-                            ((GridLayoutManager) layoutManager).scrollToPositionWithOffset(b.getInt(FileConstants
-                                    .KEY_POSITION), b.getInt(FileConstants.KEY_OFFSET));
-                    }
-                    mIsBackPressed = false;
-                }
+//                if (mIsBackPressed) {
+                Log.d("TEST", "on onLoadFinished scrollpos--" + scrollPosition.entrySet());
+                getScrolledPosition();
+                mIsBackPressed = false;
+//                }
                 recyclerViewFileList.stopScroll();
                 mTextEmpty.setVisibility(View.GONE);
             } else {
                 mTextEmpty.setVisibility(View.VISIBLE);
             }
         }
+    }
+
+    private void getScrolledPosition() {
+        if (currentDir != null && scrollPosition.containsKey(currentDir)) {
+            Bundle b = scrollPosition.get(currentDir);
+            if (viewMode == ViewMode.LIST)
+                ((LinearLayoutManager) layoutManager).scrollToPositionWithOffset(b.getInt(FileConstants
+                        .KEY_POSITION), b.getInt(FileConstants.KEY_OFFSET));
+            else
+                ((GridLayoutManager) layoutManager).scrollToPositionWithOffset(b.getInt(FileConstants
+                        .KEY_POSITION), b.getInt(FileConstants.KEY_OFFSET));
+        }
+    }
+
+    private void putScrolledPosition(String path, Bundle position) {
+        Log.d(TAG, "putScrolledPosition: " + path);
+        scrollPosition.put(path, position);
+    }
+
+    private void removeScrolledPos(String path) {
+        if (path == null) {
+            return;
+        }
+        Log.d(TAG, "removeScrolledPos: " + path);
+        scrollPosition.remove(path);
     }
 
     public void onZipContentsLoaded(ArrayList<FileInfo> fileInfoList) {
@@ -1402,6 +1439,21 @@ public class BaseFileList extends Fragment implements LoaderManager
         return false;
     }
 
+    private void addBottomMargin() {
+        LinearLayout.LayoutParams  mlp = (LinearLayout.LayoutParams ) mSwipeRefreshLayout
+                .getLayoutParams();
+        mlp.setMargins(0,0,0,100);
+
+//        mlp.bottomMargin = 100;
+    }
+
+    private void removeBottomMargin() {
+        LinearLayout.LayoutParams mlp = (LinearLayout.LayoutParams) mSwipeRefreshLayout
+                .getLayoutParams();
+
+        mlp.bottomMargin = 0;
+    }
+
     /**
      * Triggered on long press click on item
      */
@@ -1410,6 +1462,8 @@ public class BaseFileList extends Fragment implements LoaderManager
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+//            addBottomMargin();
+            mBottomToolbar.setVisibility(View.VISIBLE);
             actionMode = mode;
             isInSelectionMode = true;
             MenuInflater inflater = actionMode.getMenuInflater();
@@ -1451,7 +1505,6 @@ public class BaseFileList extends Fragment implements LoaderManager
                     String filePath = fileInfoList.get(mSelectedItemPositions.keyAt(0))
                             .getFilePath();
 
-                    @SuppressLint("SdCardPath")
                     boolean isRoot = preferences.getBoolean(FileConstants.PREFS_ROOTED, false);
                     if (FileUtils.isFileCompressed(filePath)) {
                         mExtractItem.setVisible(true);
@@ -1650,6 +1703,7 @@ public class BaseFileList extends Fragment implements LoaderManager
 //            toggleDummyView(false);
 
             actionMode = null;
+            removeBottomMargin();
             mBottomToolbar.setVisibility(View.GONE);
             mSelectedItemPositions = new SparseBooleanArray();
             mSwipeRefreshLayout.setEnabled(true);

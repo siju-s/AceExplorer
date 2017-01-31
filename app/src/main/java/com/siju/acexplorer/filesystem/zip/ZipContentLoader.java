@@ -106,6 +106,55 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     }
 
     @Override
+    protected void onStartLoading() {
+        if (fileInfoList != null) {
+            deliverResult(fileInfoList);
+        }
+
+        if (takeContentChanged() || fileInfoList == null)
+            forceLoad();
+    }
+
+    @Override
+    public void deliverResult(ArrayList<FileInfo> data) {
+        if (isReset()) {
+            // The Loader has been reset; ignore the result and invalidate the data.
+            return;
+        }
+
+        fileInfoList = data;
+
+        if (isStarted()) {
+            // If the Loader is in a started state, deliver the results to the
+            // client. The superclass method does this for us.
+            super.deliverResult(data);
+        }
+        super.deliverResult(data);
+    }
+
+    @Override
+    protected void onStopLoading() {
+        cancelLoad();
+    }
+
+    @Override
+    protected void onReset() {
+        onStopLoading();
+
+        if (fileInfoList != null) {
+            fileInfoList = null;
+            mFragment = null;
+        }
+    }
+
+
+    @Override
+    public void onCanceled(ArrayList<FileInfo> data) {
+        super.onCanceled(data);
+    }
+
+
+    @Override
     public ArrayList<FileInfo> loadInBackground() {
         fileInfoList = new ArrayList<>();
         if (entry != null) {
