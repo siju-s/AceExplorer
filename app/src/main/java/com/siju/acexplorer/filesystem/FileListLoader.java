@@ -28,6 +28,7 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 
 import static com.siju.acexplorer.filesystem.groups.Category.AUDIO;
+import static com.siju.acexplorer.filesystem.groups.Category.FILES;
 import static com.siju.acexplorer.filesystem.groups.Category.IMAGE;
 import static com.siju.acexplorer.filesystem.groups.Category.LARGE_FILES;
 import static com.siju.acexplorer.filesystem.groups.Category.PDF;
@@ -258,7 +259,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             }*/
             long date = file.lastModified();
 
-            FileInfo fileInfo = new FileInfo(category, fileName, path, date, childFileListSize,
+            FileInfo fileInfo = new FileInfo(FILES, fileName, path, date, childFileListSize,
                     true, null, RootHelper.parseFilePermission(new File(path)));
             fileInfoList.add(fileInfo);
         }

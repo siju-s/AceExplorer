@@ -6,6 +6,7 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.siju.acexplorer.AceActivity;
+import com.siju.acexplorer.filesystem.groups.Category;
 import com.siju.acexplorer.filesystem.model.BaseFile;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
@@ -34,6 +35,7 @@ public class RootHelper {
      * Runs the command and stores output in a list. The listener is set on the caller thread,
      * thus any code run in callback must be thread safe.
      * Command is run from the root context (u:r:SuperSU0)
+     *
      * @param cmd the command
      * @return a list of results. Null only if the command passed is a blocking call or no output is
      * there for the command passed
@@ -61,7 +63,8 @@ public class RootHelper {
      * Runs the command and stores output in a list. The listener is set on the caller thread,
      * thus any code run in callback must be thread safe.
      * Command is run from superuser context (u:r:SuperSU0)
-     * @param cmd the command
+     *
+     * @param cmd      the command
      * @param callback
      * @return a list of results. Null only if the command passed is a blocking call or no output is
      * there for the command passed
@@ -78,6 +81,7 @@ public class RootHelper {
      * thus any code run in callback must be thread safe.
      * Command is run from a third-party level context (u:r:init_shell0)
      * Not callback supported as the shell is not interactive
+     *
      * @param cmd the command
      * @return a list of results. Null only if the command passed is a blocking call or no output is
      * there for the command passed
@@ -217,7 +221,7 @@ public class RootHelper {
 //                    String noOfFilesOrSize = null;
                     long size;
                     String extension = null;
-                    int type = 0;
+                    Category category = FILES;
 
 
                     // Dont show hidden files by default
@@ -245,7 +249,7 @@ public class RootHelper {
                         size = file1.length();
 //                        noOfFilesOrSize = Formatter.formatFileSize(context, size);
                         extension = filePath.substring(filePath.lastIndexOf(".") + 1);
-                        type = checkMimeType(extension);
+                        category = checkMimeType(extension);
                         if (isRingtonePicker && !FileUtils.isFileMusic(filePath)) {
                             continue;
                         }
@@ -254,7 +258,7 @@ public class RootHelper {
                     long date = file1.lastModified();
 //                    String fileModifiedDate = convertDate(date);
 
-                    FileInfo fileInfo = new FileInfo(FILES,file1.getName(), filePath, date, size,
+                    FileInfo fileInfo = new FileInfo(category, file1.getName(), filePath, date, size,
                             isDirectory, extension, parseFilePermission(file1));
                     fileInfoArrayList.add(fileInfo);
                 }
@@ -294,9 +298,9 @@ public class RootHelper {
                                         isDirectory = isDirectory(array.getLink(), true, 0);
                                     } else isDirectory = isDirectory(array);
                                     long size1 = array.getSize();
-                                    fileInfoArrayList.add(new FileInfo(FILES,name, path1,
-                                            array.getDate(),size1, isDirectory, null,
-                                                   array.getPermission()));
+                                    fileInfoArrayList.add(new FileInfo(FILES, name, path1,
+                                            array.getDate(), size1, isDirectory, null,
+                                            array.getPermission()));
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -353,7 +357,7 @@ public class RootHelper {
 //                    String noOfFilesOrSize = null;
                     long size;
                     String extension = null;
-                    int type = 0;
+                    Category category = FILES;
 
                     if (file1.isDirectory()) {
 
@@ -377,12 +381,12 @@ public class RootHelper {
                         size = file1.length();
 //                        noOfFilesOrSize = Formatter.formatFileSize(context, size);
                         extension = filePath.substring(filePath.lastIndexOf(".") + 1);
-                        type = checkMimeType(extension);
+                        category = checkMimeType(extension);
                     }
                     long date = file1.lastModified();
 //                    String fileModifiedDate = convertDate(date);
 
-                    FileInfo fileInfo = new FileInfo(FILES,file1.getName(), filePath, date, size,
+                    FileInfo fileInfo = new FileInfo(category, file1.getName(), filePath, date, size,
                             isDirectory, extension, parseFilePermission(file1));
                     fileInfoArrayList.add(fileInfo);
 //                    Logger.log("RootHelper", "fileInfoArrayList element="+fileInfo.getFilePath());
@@ -426,9 +430,9 @@ public class RootHelper {
 //                                        array.setDirectory(isdirectory);
                                     } else isDirectory = isDirectory(array);
                                     long size1 = array.getSize();
-                                    fileInfoArrayList.add(new FileInfo(FILES,name, path1,
-                                            array.getDate(),size1, isDirectory, null,
-                                           array.getPermission()));
+                                    fileInfoArrayList.add(new FileInfo(FILES, name, path1,
+                                            array.getDate(), size1, isDirectory, null,
+                                            array.getPermission()));
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -444,21 +448,21 @@ public class RootHelper {
     }
 
 
-    private static int checkMimeType(String extension) {
-//        String mimeType = URLConnection.guessContentTypeFromName(path);
+    private static Category checkMimeType(String extension) {
+//        StrinmimeType = URLConnection.guessContentTypeFromName(path);
 
-        int value = 0;
-        if (extension == null) return value;
+        Category value = FILES;
+        if (extension == null) return FILES;
         extension = extension.toLowerCase(); // necessary
         String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
 
         if (mimeType != null) {
             if (mimeType.indexOf("image") == 0) {
-                value = IMAGE.getValue();
+                value = IMAGE;
             } else if (mimeType.indexOf("video") == 0) {
-                value = VIDEO.getValue();
+                value = VIDEO;
             } else if (mimeType.indexOf("audio") == 0) {
-                value = AUDIO.getValue();
+                value = AUDIO;
             }
         }
         return value;

@@ -15,7 +15,6 @@ import android.text.format.Formatter;
 
 import com.siju.acexplorer.AceActivity;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.operations.OperationUtils;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
@@ -31,6 +30,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import static com.siju.acexplorer.filesystem.operations.OperationProgress.ZIP_PROGRESS;
+import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_FILEPATH;
+import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_OPERATION;
+import static com.siju.acexplorer.filesystem.operations.Operations.COMPRESS;
 
 
 public class CreateZipTask extends Service {
@@ -97,7 +99,8 @@ public class CreateZipTask extends Service {
 
             // Broadcast result to BaseFileList
             Intent intent = new Intent(OperationUtils.ACTION_RELOAD_LIST);
-            intent.putExtra(FileConstants.KEY_PATH, name);
+            intent.putExtra(KEY_OPERATION,COMPRESS);
+            intent.putExtra(KEY_FILEPATH, name);
             sendBroadcast(intent);
             stopSelf(b);
 

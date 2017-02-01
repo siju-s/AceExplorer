@@ -4,47 +4,11 @@
 
 
     <item
-        android:id="@+id/action_rename"
-        android:icon="@drawable/ic_rename_white"
-        android:title="@string/action_rename"
-        app:showAsAction="ifRoom"/>
-
-    <item
-        android:id="@+id/action_info"
-        android:icon="@drawable/ic_info_white"
-        android:title="@string/action_info"
-        app:showAsAction="ifRoom"/>
-
-    <item
-        android:id="@+id/action_permissions"
-        android:icon="@drawable/ic_info_white"
-        android:title="@string/permissions"
-        android:visible="false"
+        android:id="@+id/action_select_all"
+        android:icon="@drawable/ic_select_all_white"
+        android:title="@string/action_select_all"
         app:showAsAction="ifRoom"/>
 
 
-    <item
-        android:id="@+id/action_archive"
-        android:icon="@drawable/ic_archive_white"
-        android:title="@string/action_archive"
-        app:showAsAction="never"/>
 
-    <item
-        android:id="@+id/action_extract"
-        android:icon="@drawable/ic_extract_white"
-        android:title="@string/extract_to"
-        android:visible="false"
-        app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/action_fav"
-        android:icon="@drawable/ic_favorite_white"
-        android:title="@string/add_fav"
-        app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/action_hide"
-        android:icon="@drawable/ic_hide_white"
-        android:title="@string/hide"
-        app:showAsAction="never"/>
 </menu>

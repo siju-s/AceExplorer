@@ -22,6 +22,7 @@ public class OperationUtils {
     public static final String KEY_CONFLICT_DATA = "conflict_data";
     public static final String ACTION_OP_REFRESH = "refresh";
     public static final String ACTION_RELOAD_LIST = "reload";
+    public static final String KEY_RESULT = "result";
 
 
 

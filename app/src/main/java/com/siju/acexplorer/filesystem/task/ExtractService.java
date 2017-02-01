@@ -308,6 +308,7 @@ public class ExtractService extends Service {
                     unzipEntry(id, zipfile, entry, destinationPath);
                 }
                 Intent intent = new Intent(OperationUtils.ACTION_RELOAD_LIST);
+                intent.putExtra(KEY_OPERATION, EXTRACT);
                 sendBroadcast(intent);
                 calculateProgress(archive.getName(), id, copiedbytes, totalbytes);
             } catch (Exception e) {
@@ -348,12 +349,14 @@ public class ExtractService extends Service {
                 inputStream.close();
 
                 Intent intent = new Intent(OperationUtils.ACTION_RELOAD_LIST);
+                intent.putExtra(KEY_OPERATION, EXTRACT);
                 sendBroadcast(intent);
                 publishResults(archive.getName(), 100, id, totalbytes, copiedbytes);
 
             } catch (Exception e) {
                 Log.e("TAG", "Error while extracting file " + archive, e);
                 Intent intent = new Intent(OperationUtils.ACTION_RELOAD_LIST);
+                intent.putExtra(KEY_OPERATION, EXTRACT);
                 sendBroadcast(intent);
                 publishResults(archive.getName(), 100, id, totalbytes, copiedbytes);
 
@@ -383,12 +386,14 @@ public class ExtractService extends Service {
 
                 }
                 Intent intent = new Intent(OperationUtils.ACTION_RELOAD_LIST);
+                intent.putExtra(KEY_OPERATION, EXTRACT);
                 sendBroadcast(intent);
                 calculateProgress(archive.getName(), id, copiedbytes, totalbytes);
 
             } catch (Exception e) {
                 Log.e("TAG", "Error while extracting file " + archive, e);
                 Intent intent = new Intent(OperationUtils.ACTION_RELOAD_LIST);
+                intent.putExtra(KEY_OPERATION, EXTRACT);
                 sendBroadcast(intent);
                 calculateProgress(archive.getName(), id, copiedbytes, totalbytes);
 

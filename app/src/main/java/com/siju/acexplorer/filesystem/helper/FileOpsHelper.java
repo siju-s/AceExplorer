@@ -200,9 +200,9 @@ public class FileOpsHelper {
                         if (success) {
                             Intent intent = new Intent(ACTION_OP_REFRESH);
                             intent.putExtra(KEY_OPERATION, RENAME);
-                            intent.putExtra("position", position);
-                            intent.putExtra("old_file", oldFile.getAbsolutePath());
-                            intent.putExtra("new_file", file.getAbsolutePath());
+                            intent.putExtra(KEY_POSITION, position);
+                            intent.putExtra(KEY_FILEPATH, oldFile.getAbsolutePath());
+                            intent.putExtra(KEY_FILEPATH2, file.getAbsolutePath());
                             context.getActivity().sendBroadcast(intent);
 
                         } else

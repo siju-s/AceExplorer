@@ -35,12 +35,14 @@ import java.io.File;
 import java.util.ArrayList;
 
 import static com.siju.acexplorer.filesystem.operations.OperationUtils.ACTION_OP_REFRESH;
+import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_FILES;
 
 public class MoveFiles extends AsyncTask<String, Void, Integer> {
     private final ArrayList<FileInfo> filesToMove;
     private final ArrayList<CopyData> copyData;
     private final Context context;
     private String destinationDir;
+    private ArrayList<String> filesMovedList;
 
     public MoveFiles(Context context, ArrayList<FileInfo> filesToMove, ArrayList<CopyData> copyData) {
         this.context = context;
@@ -54,6 +56,7 @@ public class MoveFiles extends AsyncTask<String, Void, Integer> {
         int filesMoved = 0;
 
         if (filesToMove.size() == 0) return 0;
+        filesMovedList = new ArrayList<>();
 
         for (FileInfo f : filesToMove) {
             int action = FileUtils.ACTION_NONE;
@@ -77,6 +80,7 @@ public class MoveFiles extends AsyncTask<String, Void, Integer> {
             File file1 = new File(f.getFilePath());
             if (file1.renameTo(file)) {
                 filesMoved++;
+                filesMovedList.add(file.getAbsolutePath());
             }
         }
 
@@ -86,19 +90,22 @@ public class MoveFiles extends AsyncTask<String, Void, Integer> {
     @Override
     public void onPostExecute(Integer count) {
 
+        if (count > 0) {
+            Intent intent = new Intent(ACTION_OP_REFRESH);
+            intent.putExtra(OperationUtils.KEY_OPERATION, Operations.CUT);
+            intent.putStringArrayListExtra(KEY_FILES, filesMovedList);
+            context.sendBroadcast(intent);
+        }
+
         if (filesToMove.size() != count) {
             boolean canWrite = new File(destinationDir).canWrite();
 
             Logger.log("TAG", "File size"+ filesToMove.size()+" moved=="+count + " Can write = "+canWrite);
             Intent copyIntent = new Intent(context, CopyService.class);
-            copyIntent.putParcelableArrayListExtra(OperationUtils.KEY_FILES, filesToMove);
+            copyIntent.putParcelableArrayListExtra(KEY_FILES, filesToMove);
             copyIntent.putParcelableArrayListExtra(OperationUtils.KEY_CONFLICT_DATA, copyData);
             copyIntent.putExtra(OperationUtils.KEY_FILEPATH, destinationDir);
             context.startService(copyIntent);
-        } else {
-            Intent intent = new Intent(ACTION_OP_REFRESH);
-            intent.putExtra(OperationUtils.KEY_OPERATION, Operations.CUT);
-            context.sendBroadcast(intent);
         }
     }
 }

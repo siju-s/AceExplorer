@@ -35,6 +35,12 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 
 import static com.siju.acexplorer.filesystem.operations.OperationProgress.COPY_PROGRESS;
+import static com.siju.acexplorer.filesystem.operations.OperationUtils.ACTION_OP_REFRESH;
+import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_CONFLICT_DATA;
+import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_FILEPATH;
+import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_FILES;
+import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_OPERATION;
+import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_RESULT;
 import static com.siju.acexplorer.filesystem.operations.Operations.COPY;
 import static com.siju.acexplorer.filesystem.operations.Operations.CUT;
 
@@ -60,10 +66,10 @@ public class CopyService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Bundle b = new Bundle();
-        ArrayList<FileInfo> files = intent.getParcelableArrayListExtra("FILE_PATHS");
-        ArrayList<CopyData> copyData = intent.getParcelableArrayListExtra("ACTION");
+        ArrayList<FileInfo> files = intent.getParcelableArrayListExtra(KEY_FILES);
+        ArrayList<CopyData> copyData = intent.getParcelableArrayListExtra(KEY_CONFLICT_DATA);
 
-        String currentDir = intent.getStringExtra("COPY_DIRECTORY");
+        String currentDir = intent.getStringExtra(KEY_FILEPATH);
         int mode = intent.getIntExtra("MODE", 0);
         mNotifyManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -80,10 +86,10 @@ public class CopyService extends Service {
             foreground = false;
         }
         b.putBoolean("move", intent.getBooleanExtra("move", false));
-        b.putString("current_dir", currentDir);
+        b.putString(KEY_FILEPATH, currentDir);
         b.putInt("MODE", mode);
-        b.putParcelableArrayList("files", files);
-        b.putParcelableArrayList("action", copyData);
+        b.putParcelableArrayList(KEY_FILES, files);
+        b.putParcelableArrayList(KEY_CONFLICT_DATA, copyData);
         hash.put(startId, true);
         new DoInBackground().execute(b);
 
@@ -98,10 +104,10 @@ public class CopyService extends Service {
 
 
         protected Integer doInBackground(Bundle... p1) {
-            String currentDir = p1[0].getString("current_dir");
+            String currentDir = p1[0].getString(KEY_FILEPATH);
             int id = p1[0].getInt("id");
-            files = p1[0].getParcelableArrayList("files");
-            copyData = p1[0].getParcelableArrayList("action");
+            files = p1[0].getParcelableArrayList(KEY_FILES);
+            copyData = p1[0].getParcelableArrayList(KEY_CONFLICT_DATA);
             move = p1[0].getBoolean("move");
             copy = new Copy();
             copy.execute(id, files, currentDir, move, copyData);
@@ -111,10 +117,10 @@ public class CopyService extends Service {
         @Override
         public void onPostExecute(Integer b) {
             copy.publishResults("", 0, b, 0, 0, move);
-            Intent intent = new Intent("refresh");
-            intent.putExtra(FileConstants.IS_OPERATION_SUCCESS, copy.copy_successful);
-            intent.putExtra(FileConstants.OPERATION, move ? CUT : COPY);
-            intent.putStringArrayListExtra(FileConstants.KEY_PATH, filesToMediaIndex);
+            Intent intent = new Intent(ACTION_OP_REFRESH);
+            intent.putExtra(KEY_RESULT, copy.copy_successful);
+            intent.putExtra(KEY_OPERATION, move ? CUT : COPY);
+            intent.putStringArrayListExtra(KEY_FILES, filesToMediaIndex);
             sendBroadcast(intent);
             if (mProgressListener != null) {
                 mProgressListener.onUpdate(intent);

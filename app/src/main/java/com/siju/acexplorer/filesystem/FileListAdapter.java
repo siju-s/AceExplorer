@@ -286,7 +286,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
             fileListViewHolder.textNoOfFileOrSize.setText(fileNoOrSize);
 
-            displayThumb(fileListViewHolder, category, position);
+            displayThumb(fileListViewHolder, fileInfoArrayList.get(position).getCategory(), position);
         }
 
     }
