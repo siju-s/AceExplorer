@@ -34,7 +34,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
-import static com.siju.acexplorer.filesystem.operations.OperationProgress.COPY_PROGRESS;
 import static com.siju.acexplorer.filesystem.operations.OperationUtils.ACTION_OP_REFRESH;
 import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_CONFLICT_DATA;
 import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_FILEPATH;
@@ -43,6 +42,12 @@ import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_OPERA
 import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_RESULT;
 import static com.siju.acexplorer.filesystem.operations.Operations.COPY;
 import static com.siju.acexplorer.filesystem.operations.Operations.CUT;
+import static com.siju.acexplorer.filesystem.operations.ProgressUtils.KEY_COMPLETED;
+import static com.siju.acexplorer.filesystem.operations.ProgressUtils.COPY_PROGRESS;
+import static com.siju.acexplorer.filesystem.operations.ProgressUtils.KEY_COUNT;
+import static com.siju.acexplorer.filesystem.operations.ProgressUtils.KEY_PROGRESS;
+import static com.siju.acexplorer.filesystem.operations.ProgressUtils.KEY_TOTAL;
+import static com.siju.acexplorer.filesystem.operations.ProgressUtils.KEY_TOTAL_PROGRESS;
 
 public class CopyService extends Service {
     private final SparseBooleanArray hash = new SparseBooleanArray();
@@ -191,8 +196,8 @@ public class CopyService extends Service {
                                     copyRoot(files.get(i).getFilePath(), files.get(i).getFileName(), currentDir);
                                     continue;
                                 }
-                                FileInfo destFile = new FileInfo(sourceFile.getCategory(),sourceFile.getFileName(),
-                                        sourceFile.getFilePath(),sourceFile.getDate(), sourceFile.getSize(), sourceFile.isDirectory(),
+                                FileInfo destFile = new FileInfo(sourceFile.getCategory(), sourceFile.getFileName(),
+                                        sourceFile.getFilePath(), sourceFile.getDate(), sourceFile.getSize(), sourceFile.isDirectory(),
                                         sourceFile.getExtension(), sourceFile.getPermissions());
                                 int action = FileUtils.ACTION_NONE;
                                 if (copyData != null) {
@@ -289,7 +294,7 @@ public class CopyService extends Service {
 *//*                        if (mode == 2) {
 
                         }*/
-                            FileUtils.mkdir(destinationDir, mContext);
+                        FileUtils.mkdir(destinationDir, mContext);
                     }
                     if (!destinationDir.exists()) {
                         Log.e("Copy", "cant make dir");
@@ -303,7 +308,7 @@ public class CopyService extends Service {
                             true, false);
                     for (FileInfo file : filePaths) {
 
-                        FileInfo destFile = new FileInfo(sourceFile.getCategory(),sourceFile.getFileName(), sourceFile.getFilePath(),
+                        FileInfo destFile = new FileInfo(sourceFile.getCategory(), sourceFile.getFileName(), sourceFile.getFilePath(),
                                 sourceFile.getDate(), sourceFile.getSize(), sourceFile.isDirectory(),
                                 sourceFile.getExtension(), sourceFile.getPermissions());
                         destFile.setFilePath(targetFile.getFilePath() + "/" + file.getFileName());
@@ -311,10 +316,10 @@ public class CopyService extends Service {
                     }
                     if (filePaths.size() == 0) {
                         Intent intent = new Intent(COPY_PROGRESS);
-                        intent.putExtra("PROGRESS", 100);
-                        intent.putExtra("DONE", 0L);
-                        intent.putExtra("TOTAL", totalBytes);
-                        intent.putExtra("COUNT", 1);
+                        intent.putExtra(KEY_PROGRESS, 100);
+                        intent.putExtra(KEY_COMPLETED, 0L);
+                        intent.putExtra(KEY_TOTAL, totalBytes);
+                        intent.putExtra(KEY_COUNT, 1);
                         if (mProgressListener != null) {
                             mProgressListener.onUpdate(intent);
                             if (totalBytes == 0) mProgressListener = null;
@@ -404,15 +409,15 @@ public class CopyService extends Service {
                     if (FileUtils.isMediaScanningRequired(FileUtils.getMimeType(new File(targetPath)))) {
                         filesToMediaIndex.add(targetPath);
                     }
-                    Logger.log("CopyService", "Completed " + name + " COUNT=" + count);
+                    Logger.log("CopyService", "Completed " + name + " KEY_COUNT=" + count);
 
                     Intent intent = new Intent(COPY_PROGRESS);
-                    intent.putExtra("PROGRESS", 100);
-                    intent.putExtra("DONE", copiedBytes);
-                    intent.putExtra("TOTAL", totalBytes);
-                    intent.putExtra("COUNT", count);
+                    intent.putExtra(KEY_PROGRESS, 100);
+                    intent.putExtra(KEY_COMPLETED, copiedBytes);
+                    intent.putExtra(KEY_TOTAL, totalBytes);
+                    intent.putExtra(KEY_COUNT, count);
                     int p1 = (int) ((copiedBytes / (float) totalBytes) * 100);
-                    intent.putExtra("TOTAL_PROGRESS", p1);
+                    intent.putExtra(KEY_TOTAL_PROGRESS, p1);
 
                     if (mProgressListener != null) {
                         mProgressListener.onUpdate(intent);
@@ -453,9 +458,9 @@ public class CopyService extends Service {
                     }
 
                     Intent intent = new Intent(COPY_PROGRESS);
-                    intent.putExtra("DONE", copiedBytes);
-                    intent.putExtra("TOTAL", totalBytes);
-                    intent.putExtra("TOTAL_PROGRESS", p1);
+                    intent.putExtra(KEY_COMPLETED, copiedBytes);
+                    intent.putExtra(KEY_TOTAL, totalBytes);
+                    intent.putExtra(KEY_TOTAL_PROGRESS, p1);
 
                     if (mProgressListener != null)
                         mProgressListener.onUpdate(intent);

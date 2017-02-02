@@ -19,7 +19,6 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
-import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.task.CopyService;
 import com.siju.acexplorer.filesystem.task.CreateZipTask;
@@ -30,16 +29,26 @@ import com.siju.acexplorer.utils.Dialogs;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import static com.siju.acexplorer.filesystem.operations.OperationUtils.ACTION_OP_FAILED;
+import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_FILENAME;
+import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_FILEPATH;
+import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_FILEPATH2;
+import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_FILES;
 import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_OPERATION;
+import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_RESULT;
+import static com.siju.acexplorer.filesystem.operations.ProgressUtils.COPY_PROGRESS;
+import static com.siju.acexplorer.filesystem.operations.ProgressUtils.EXTRACT_PROGRESS;
+import static com.siju.acexplorer.filesystem.operations.ProgressUtils.KEY_COMPLETED;
+import static com.siju.acexplorer.filesystem.operations.ProgressUtils.KEY_COUNT;
+import static com.siju.acexplorer.filesystem.operations.ProgressUtils.KEY_PROGRESS;
+import static com.siju.acexplorer.filesystem.operations.ProgressUtils.KEY_TOTAL;
+import static com.siju.acexplorer.filesystem.operations.ProgressUtils.KEY_TOTAL_PROGRESS;
+import static com.siju.acexplorer.filesystem.operations.ProgressUtils.ZIP_PROGRESS;
 
 
 public class OperationProgress implements Progress {
 
     private static final String TAG = "OperationProgress";
-    public static final String COPY_PROGRESS = "copy_progress_update";
-    public static final String ZIP_PROGRESS = "zip_progress_update";
-    public static final String EXTRACT_PROGRESS = "extract_progress_update";
-
     private ProgressBar progressBarPaste;
     private MaterialDialog progressDialog;
     private int copiedFilesSize;
@@ -71,14 +80,14 @@ public class OperationProgress implements Progress {
         textProgress = (TextView) view.findViewById(R.id.textProgressPercent);
 
         progressBarPaste = (ProgressBar) view.findViewById(R.id.progressBarPaste);
-        copiedFileInfo = intent.getParcelableArrayListExtra("TOTAL_LIST");
+        copiedFileInfo = intent.getParcelableArrayListExtra(KEY_FILES);
         copiedFilesSize = copiedFileInfo.size();
         Logger.log("FileUtils", "Totalfiles=" + copiedFilesSize);
 
 
         textFileFromPath.setText(copiedFileInfo.get(0).getFilePath());
         textFileName.setText(copiedFileInfo.get(0).getFileName());
-        textFileToPath.setText(intent.getStringExtra("COPY_DIRECTORY"));
+        textFileToPath.setText(intent.getStringExtra(KEY_FILEPATH));
         textFileCount.setText(String.format(Locale.getDefault(), "%s%d", context.getString(R.string.count_placeholder),
                 copiedFilesSize));
         textProgress.setText("0%");
@@ -124,8 +133,8 @@ public class OperationProgress implements Progress {
         textProgress = (TextView) view.findViewById(R.id.textProgressPercent);
 
         progressBarPaste = (ProgressBar) view.findViewById(R.id.progressBarPaste);
-        copiedFileInfo = intent.getParcelableArrayListExtra("files");
-        String fileName = intent.getStringExtra("name");
+        copiedFileInfo = intent.getParcelableArrayListExtra(KEY_FILES);
+        String fileName = intent.getStringExtra(KEY_FILENAME);
         copiedFilesSize = copiedFileInfo.size();
         Logger.log("FileUtils", "Totalfiles=" + copiedFilesSize);
         textFileName.setText(fileName);
@@ -173,8 +182,8 @@ public class OperationProgress implements Progress {
         textProgress = (TextView) view.findViewById(R.id.textProgressPercent);
 
         progressBarPaste = (ProgressBar) view.findViewById(R.id.progressBarPaste);
-        textFileToPath.setText(intent.getStringExtra("new_path"));
-        String fileName = intent.getStringExtra("zip");
+        textFileToPath.setText(intent.getStringExtra(KEY_FILEPATH));
+        String fileName = intent.getStringExtra(KEY_FILEPATH2);
 
         textFileName.setText(fileName);
         textProgress.setText("0%");
@@ -220,7 +229,7 @@ public class OperationProgress implements Progress {
     private BroadcastReceiver operationFailureReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(FileConstants.OPERATION_FAILED)) {
+            if (intent.getAction().equals(ACTION_OP_FAILED)) {
                 Operations operation = (Operations) intent.getSerializableExtra(KEY_OPERATION);
                 switch (operation) {
                     case EXTRACT:
@@ -237,7 +246,7 @@ public class OperationProgress implements Progress {
     };
 
     private void registerReceiver(Context context) {
-        IntentFilter filter = new IntentFilter(FileConstants.OPERATION_FAILED);
+        IntentFilter filter = new IntentFilter(ACTION_OP_FAILED);
         context.registerReceiver(operationFailureReceiver, filter);
     }
 
@@ -258,9 +267,9 @@ public class OperationProgress implements Progress {
     private final Handler handler = new Handler(Looper.getMainLooper()) {
         public void handleMessage(Message msg) {
             Intent intent = (Intent) msg.obj;
-            int progress = intent.getIntExtra("PROGRESS", 0);
-            long copiedBytes = intent.getLongExtra("DONE", 0);
-            long totalBytes = intent.getLongExtra("TOTAL", 0);
+            int progress = intent.getIntExtra(KEY_PROGRESS, 0);
+            long copiedBytes = intent.getLongExtra(KEY_COMPLETED, 0);
+            long totalBytes = intent.getLongExtra(KEY_TOTAL, 0);
 
             switch (intent.getAction()) {
                 case ZIP_PROGRESS:
@@ -290,23 +299,23 @@ public class OperationProgress implements Progress {
                     }
                     break;
                 case COPY_PROGRESS:
-                    boolean isSuccess = intent.getBooleanExtra(FileConstants.IS_OPERATION_SUCCESS, true);
+                    boolean isSuccess = intent.getBooleanExtra(KEY_RESULT, true);
 
                     if (!isSuccess) {
                         stopCopyService();
                         progressDialog.dismiss();
                         return;
                     }
-                    int totalProgress = intent.getIntExtra("TOTAL_PROGRESS", 0);
-                    Logger.log("FileUtils", "PROGRESS=" + progress + " TOTAL PROGRESS=" + totalProgress);
-                    Logger.log("FileUtils", "Copied bytes=" + copiedBytes + " TOTAL bytes=" + totalBytes);
+                    int totalProgress = intent.getIntExtra(KEY_TOTAL_PROGRESS, 0);
+                    Logger.log("FileUtils", "KEY_PROGRESS=" + progress + " KEY_TOTAL KEY_PROGRESS=" + totalProgress);
+                    Logger.log("FileUtils", "Copied bytes=" + copiedBytes + " KEY_TOTAL bytes=" + totalBytes);
                     progressBarPaste.setProgress(totalProgress);
                     textProgress.setText(String.format(Locale.getDefault(), "%d%s", totalProgress, mContext.getString
                             (R.string
                                     .percent_placeholder)));
                     if (progress == 100 || totalBytes == copiedBytes) {
-                        int count = intent.getIntExtra("COUNT", 1);
-                        Logger.log("FileUtils", "COUNT=" + count);
+                        int count = intent.getIntExtra(KEY_COUNT, 1);
+                        Logger.log("FileUtils", "KEY_COUNT=" + count);
                         if (count == copiedFilesSize || copiedBytes == totalBytes) {
                             stopCopyService();
                             progressDialog.dismiss();

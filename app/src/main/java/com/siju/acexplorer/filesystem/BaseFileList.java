@@ -966,9 +966,8 @@ public class BaseFileList extends Fragment implements LoaderManager
                 }
                 reloadList(true, currentDir);
             } else if (action.equals(ACTION_OP_REFRESH)) {
-
-                Operations operation = (Operations) intent.getSerializableExtra(KEY_OPERATION);
-                Log.d(TAG, "result: "+operation);
+                Bundle bundle = intent.getExtras();
+                Operations operation = (Operations) bundle.getSerializable(KEY_OPERATION);
                 onOperationResult(intent, operation);
             }
         }
@@ -1090,9 +1089,11 @@ public class BaseFileList extends Fragment implements LoaderManager
         switch (view.getId()) {
             case R.id.fabCreateFile:
                 new Dialogs().createFileDialog(this, mIsRootMode, currentDir);
+                fabCreateMenu.collapse();
                 break;
             case R.id.fabCreateFolder:
                 new Dialogs().createDirDialog(this, mIsRootMode, currentDir);
+                fabCreateMenu.collapse();
                 break;
         }
     }

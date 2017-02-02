@@ -230,8 +230,8 @@ public class FileOpsHelper {
             formSAFIntentExtract(file.getAbsolutePath(), Operations.EXTRACT, currentFile.getAbsolutePath());
         } else if (mode == OperationUtils.WriteMode.INTERNAL) {
             Intent intent = new Intent(context.getActivity(), ExtractService.class);
-            intent.putExtra("zip", currentFile.getPath());
-            intent.putExtra("new_path", file.getAbsolutePath());
+            intent.putExtra(KEY_FILEPATH, currentFile.getPath());
+            intent.putExtra(KEY_FILEPATH2, file.getAbsolutePath());
             new OperationProgress().showExtractProgressDialog(context.getContext(), intent);
         } else
             Toast.makeText(context.getContext(), R.string.msg_operation_failed, Toast.LENGTH_SHORT).show();
@@ -243,8 +243,8 @@ public class FileOpsHelper {
             formSAFIntentCompress(newFile.getAbsolutePath(), files, Operations.COMPRESS);
         } else if (mode == OperationUtils.WriteMode.INTERNAL) {
             Intent zipIntent = new Intent(context.getActivity(), CreateZipTask.class);
-            zipIntent.putExtra("name", newFile.getAbsolutePath());
-            zipIntent.putParcelableArrayListExtra("files", files);
+            zipIntent.putExtra(KEY_FILEPATH, newFile.getAbsolutePath());
+            zipIntent.putParcelableArrayListExtra(KEY_FILES, files);
             new OperationProgress().showZipProgressDialog(context.getContext(), zipIntent);
         } else
             Toast.makeText(context.getContext(), R.string.msg_operation_failed, Toast.LENGTH_SHORT).show();

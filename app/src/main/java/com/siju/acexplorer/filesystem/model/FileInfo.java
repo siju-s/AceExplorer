@@ -87,7 +87,6 @@ public class FileInfo implements Parcelable {
         parcel.writeString(noOfFilesOrSize);
         parcel.writeByte((byte) (isDirectory ? 1 : 0));
         parcel.writeString(extension);
-        parcel.writeInt(type);
         parcel.writeLong(id);
         parcel.writeLong(bucketId);
         parcel.writeString(permissions);

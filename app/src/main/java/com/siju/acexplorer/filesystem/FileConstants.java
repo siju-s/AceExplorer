@@ -13,11 +13,6 @@ public class FileConstants {
     public static final String SAF_URI = "saf_uri";
 
 
-    public static final String OPERATION = "operation";
-
-    public static final String IS_OPERATION_SUCCESS = "IS_OPERATION_SUCCESS";
-    public static final String OPERATION_FAILED = "OPERATION_FAILED";
-
     public static final String KEY_PATH = "PATH";
     public static final String KEY_HOME = "HOME";
     public static final String KEY_PATH_OTHER = "OTHER_PATH";

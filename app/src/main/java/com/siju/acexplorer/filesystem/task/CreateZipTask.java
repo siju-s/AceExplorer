@@ -29,10 +29,15 @@ import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static com.siju.acexplorer.filesystem.operations.OperationProgress.ZIP_PROGRESS;
+import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_FILENAME;
 import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_FILEPATH;
+import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_FILES;
 import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_OPERATION;
 import static com.siju.acexplorer.filesystem.operations.Operations.COMPRESS;
+import static com.siju.acexplorer.filesystem.operations.ProgressUtils.KEY_COMPLETED;
+import static com.siju.acexplorer.filesystem.operations.ProgressUtils.KEY_PROGRESS;
+import static com.siju.acexplorer.filesystem.operations.ProgressUtils.KEY_TOTAL;
+import static com.siju.acexplorer.filesystem.operations.ProgressUtils.ZIP_PROGRESS;
 
 
 public class CreateZipTask extends Service {
@@ -52,7 +57,7 @@ public class CreateZipTask extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Bundle b = new Bundle();
         mNotifyManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        String name = intent.getStringExtra("name");
+        String name = intent.getStringExtra(KEY_FILENAME);
         File zipName = new File(name);
         if (!zipName.exists()) {
             try {
@@ -71,10 +76,10 @@ public class CreateZipTask extends Service {
 
         startForeground(NOTIFICATION_ID + startId, mBuilder.build());
 
-        ArrayList<FileInfo> zipFiles = intent.getParcelableArrayListExtra("files");
+        ArrayList<FileInfo> zipFiles = intent.getParcelableArrayListExtra(KEY_FILES);
         b.putInt("id", startId);
-        b.putParcelableArrayList("files", zipFiles);
-        b.putString("name", name);
+        b.putParcelableArrayList(KEY_FILES, zipFiles);
+        b.putString(KEY_FILENAME, name);
         new Doback().execute(b);
 
         return START_STICKY;
@@ -87,8 +92,8 @@ public class CreateZipTask extends Service {
 
         protected Integer doInBackground(Bundle... p1) {
             int id = p1[0].getInt("id");
-            ArrayList<FileInfo> files = p1[0].getParcelableArrayList("files");
-            name = p1[0].getString("name");
+            ArrayList<FileInfo> files = p1[0].getParcelableArrayList(KEY_FILES);
+            name = p1[0].getString(KEY_FILENAME);
             new zip().execute(id, toFileArray(files), name);
             return id;
         }
@@ -138,13 +143,13 @@ public class CreateZipTask extends Service {
 
         Intent intent = new Intent(ZIP_PROGRESS);
         if (i == 100 || total == 0) {
-            intent.putExtra("PROGRESS", 100);
+            intent.putExtra(KEY_PROGRESS, 100);
         } else {
-            intent.putExtra("PROGRESS", i);
+            intent.putExtra(KEY_PROGRESS, i);
         }
-        intent.putExtra("DONE", done);
-        intent.putExtra("TOTAL", total);
-        intent.putExtra("name", fileName);
+        intent.putExtra(KEY_COMPLETED, done);
+        intent.putExtra(KEY_TOTAL, total);
+        intent.putExtra(KEY_FILENAME, fileName);
         if (mProgressListener != null) {
             mProgressListener.onUpdate(intent);
             if (total == done) mProgressListener = null;

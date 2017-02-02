@@ -3,7 +3,7 @@ package com.siju.acexplorer.filesystem.task;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.util.Log;
+import android.os.Bundle;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.filesystem.model.FileInfo;
@@ -78,9 +78,10 @@ public class DeleteTask extends AsyncTask<Void, Void, Integer> {
     protected void onPostExecute(Integer filesDel) {
         int deletedFiles = filesDel;
         Intent intent = new Intent(ACTION_OP_REFRESH);
-        intent.putExtra(KEY_OPERATION, DELETE);
-        Log.d(this.getClass().getSimpleName(), "onPostExecute: "+DELETE.name());
-        intent.putParcelableArrayListExtra(KEY_FILES, deletedFilesList);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(KEY_OPERATION, DELETE);
+        bundle.putParcelableArrayList(KEY_FILES, deletedFilesList);
+        intent.putExtras(bundle);
         mContext.sendBroadcast(intent);
         if (mShowToast) {
             if (deletedFiles != 0) {
