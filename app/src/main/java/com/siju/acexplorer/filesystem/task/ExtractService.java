@@ -19,6 +19,7 @@ import com.siju.acexplorer.AceActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
+import com.siju.acexplorer.filesystem.zip.ZipUtils;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -45,6 +46,7 @@ import static com.siju.acexplorer.filesystem.operations.ProgressUtils.EXTRACT_PR
 import static com.siju.acexplorer.filesystem.operations.ProgressUtils.KEY_COMPLETED;
 import static com.siju.acexplorer.filesystem.operations.ProgressUtils.KEY_PROGRESS;
 import static com.siju.acexplorer.filesystem.operations.ProgressUtils.KEY_TOTAL;
+import static com.siju.acexplorer.filesystem.utils.FileOperations.mkdir;
 
 public class ExtractService extends Service {
     private Context context;
@@ -61,13 +63,13 @@ public class ExtractService extends Service {
         mNotifyManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        String file = intent.getStringExtra(KEY_FILEPATH2);
-        String newFile = intent.getStringExtra(KEY_FILEPATH);
+        String file = intent.getStringExtra(KEY_FILEPATH);
+        String newFile = intent.getStringExtra(KEY_FILEPATH2);
 
         Bundle bundle = new Bundle();
         bundle.putInt("id", startId);
-        bundle.putString(KEY_FILEPATH2, file);
-        bundle.putString(KEY_FILEPATH, newFile);
+        bundle.putString(KEY_FILEPATH, file);
+        bundle.putString(KEY_FILEPATH2, newFile);
 
         Intent notificationIntent = new Intent(this, AceActivity.class);
         notificationIntent.setAction(Intent.ACTION_MAIN);
@@ -126,7 +128,7 @@ public class ExtractService extends Service {
         long copiedbytes = 0, totalbytes = 0;
 
         private void createDir(File dir) {
-            FileUtils.mkdir(dir, context);
+            mkdir(dir, context);
         }
 
         AsyncTask asyncTask;
@@ -407,16 +409,16 @@ public class ExtractService extends Service {
         }
 
         protected Integer doInBackground(Bundle... p1) {
-            String zipFilePath = p1[0].getString("file");
-            String newFile = p1[0].getString("new_path");
+            String zipFilePath = p1[0].getString(KEY_FILEPATH);
+            String newFile = p1[0].getString(KEY_FILEPATH2);
 
             if (zipFilePath != null) {
                 File zipFile = new File(zipFilePath);
-                if (FileUtils.isZipViewable(zipFile.getName()))
+                if (ZipUtils.isZipViewable(zipFilePath))
                     extract(p1[0].getInt("id"), zipFile, newFile);
-                else if (zipFile.getName().toLowerCase().endsWith(".rar"))
+                else if (zipFilePath.toLowerCase().endsWith(".rar"))
                     extractRar(p1[0].getInt("id"), zipFile, newFile);
-                else if (zipFile.getName().toLowerCase().endsWith(".tar") || zipFile.getName().toLowerCase().endsWith
+                else if (zipFilePath.toLowerCase().endsWith(".tar") || zipFile.getName().toLowerCase().endsWith
                         (".tar.gz"))
                     extractTar(p1[0].getInt("id"), zipFile, newFile);
             }

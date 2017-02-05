@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import static com.siju.acexplorer.filesystem.operations.OperationUtils.ACTION_OP_FAILED;
-import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_FILENAME;
 import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_FILEPATH;
 import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_FILEPATH2;
 import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_FILES;
@@ -110,7 +109,6 @@ public class OperationProgress implements Progress {
         progressDialog.show();
     }
 
-    @SuppressWarnings("ConstantConditions")
     public void showZipProgressDialog(final Context context, final Intent intent) {
         mContext = context;
         mServiceIntent = intent;
@@ -134,7 +132,7 @@ public class OperationProgress implements Progress {
 
         progressBarPaste = (ProgressBar) view.findViewById(R.id.progressBarPaste);
         copiedFileInfo = intent.getParcelableArrayListExtra(KEY_FILES);
-        String fileName = intent.getStringExtra(KEY_FILENAME);
+        String fileName = intent.getStringExtra(KEY_FILEPATH);
         copiedFilesSize = copiedFileInfo.size();
         Logger.log("FileUtils", "Totalfiles=" + copiedFilesSize);
         textFileName.setText(fileName);

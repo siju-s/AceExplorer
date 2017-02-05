@@ -30,6 +30,7 @@ import com.siju.acexplorer.utils.Utils;
 import java.io.File;
 import java.util.ArrayList;
 
+import static com.siju.acexplorer.filesystem.helper.MediaStoreHelper.scanFile;
 import static com.siju.acexplorer.filesystem.operations.OperationUtils.ACTION_OP_REFRESH;
 import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_CONFLICT_DATA;
 import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_FILEPATH;
@@ -94,7 +95,7 @@ public class FileOpsHelper {
                             Intent intent = new Intent(ACTION_OP_REFRESH);
                             intent.putExtra(OperationUtils.KEY_OPERATION, FOLDER_CREATION);
                             context.getActivity().sendBroadcast(intent);
-                            FileUtils.scanFile(context.getActivity().getApplicationContext(), file.getAbsolutePath());
+                            scanFile(context.getActivity().getApplicationContext(), file.getAbsolutePath());
 
                         } else
                             Toast.makeText(context.getContext(), R.string.msg_operation_failed,
@@ -148,7 +149,7 @@ public class FileOpsHelper {
                             Intent intent = new Intent(ACTION_OP_REFRESH);
                             intent.putExtra(OperationUtils.KEY_OPERATION, FILE_CREATION);
                             context.getActivity().sendBroadcast(intent);
-                            FileUtils.scanFile(context.getActivity().getApplicationContext(), file.getAbsolutePath());
+                            scanFile(context.getActivity().getApplicationContext(), file.getAbsolutePath());
 
                         } else
                             Toast.makeText(context.getContext(), R.string.msg_operation_failed,

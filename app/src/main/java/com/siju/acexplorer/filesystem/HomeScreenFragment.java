@@ -97,6 +97,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager.Loader
     private NestedScrollView nestedScrollViewHome;
     private Themes theme;
     private Toolbar toolbar;
+    private boolean isDualModeActive;
 
 
     @Override
@@ -819,6 +820,8 @@ public class HomeScreenFragment extends Fragment implements LoaderManager.Loader
         args.putSerializable(KEY_CATEGORY, category);
         args.putBoolean(FileConstants.KEY_PREMIUM, isPremium);
         args.putString(FileConstants.KEY_PATH, path);
+        args.putBoolean(FileConstants.KEY_DUAL_ENABLED, isDualModeActive);
+
 /*        String path = null;
         if (categoryId == FileConstants
                 .CATEGORY.DOWNLOADS.getValue()) {
@@ -829,14 +832,19 @@ public class HomeScreenFragment extends Fragment implements LoaderManager.Loader
 //        aceActivity.setIsFromHomePage();
 //        aceActivity.addToBackStack(path, categoryId);
 
-        BaseFileList baseFileList = new BaseFileList();
+        FileList baseFileList = new FileList();
         baseFileList.setArguments(args);
         baseFileList.setRefreshData(this);
         ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
                 .exit_to_left);
         ft.replace(R.id.main_container, baseFileList);
         ft.addToBackStack(null);
-        ft.commitAllowingStateLoss();
+        ft.commit();
+
+    }
+
+    public void setDualMode(boolean value) {
+        isDualModeActive = value;
     }
 
     @Override

@@ -9,7 +9,6 @@ import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
 import com.github.junrar.rarfile.FileHeader;
 import com.siju.acexplorer.common.Logger;
-import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.helper.RootHelper;
 
 import java.io.BufferedInputStream;
@@ -19,6 +18,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import static com.siju.acexplorer.filesystem.helper.ViewHelper.viewFile;
 
 public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
     private final String outputDir;
@@ -72,7 +73,7 @@ public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
         RootHelper.runAndWait(cmd, false);
         String outputPath = output.getPath();
         String extension = outputPath.substring(outputPath.lastIndexOf(".") + 1, outputPath.length());
-        FileUtils.viewFile(fragment, outputPath, extension);
+        viewFile(fragment, outputPath, extension);
 
     }
 

@@ -10,7 +10,7 @@ import com.siju.acexplorer.filesystem.groups.Category;
 import com.siju.acexplorer.filesystem.model.BaseFile;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
-import com.siju.acexplorer.filesystem.utils.RootNotPermittedException;
+import com.siju.acexplorer.filesystem.root.RootDeniedException;
 import com.siju.acexplorer.helper.root.RootTools;
 import com.siju.acexplorer.helper.root.rootshell.execution.Command;
 
@@ -39,10 +39,10 @@ public class RootHelper {
      * @param cmd the command
      * @return a list of results. Null only if the command passed is a blocking call or no output is
      * there for the command passed
-     * @throws RootNotPermittedException
+     * @throws RootDeniedException
      */
-    public static ArrayList<String> runShellCommand(String cmd) throws RootNotPermittedException {
-        if (!Shell.SU.available()) throw new RootNotPermittedException();
+    public static ArrayList<String> runShellCommand(String cmd) throws RootDeniedException {
+        if (!Shell.SU.available()) throw new RootDeniedException();
         final ArrayList<String> result = new ArrayList<>();
 
         // setting STDOUT listener so as to avoid extra buffer and possible memory loss by superuser
@@ -68,11 +68,11 @@ public class RootHelper {
      * @param callback
      * @return a list of results. Null only if the command passed is a blocking call or no output is
      * there for the command passed
-     * @throws RootNotPermittedException
+     * @throws RootDeniedException
      */
     public static void runShellCommand(String cmd, Shell.OnCommandResultListener callback)
-            throws RootNotPermittedException {
-        if (!Shell.SU.available()) throw new RootNotPermittedException();
+            throws RootDeniedException {
+        if (!Shell.SU.available()) throw new RootDeniedException();
         AceActivity.shellInteractive.addCommand(cmd, 0, callback);
     }
 
@@ -85,7 +85,7 @@ public class RootHelper {
      * @param cmd the command
      * @return a list of results. Null only if the command passed is a blocking call or no output is
      * there for the command passed
-     * @throws RootNotPermittedException
+     * @throws RootDeniedException
      */
     public static List<String> runNonRootShellCommand(String cmd) {
         return Shell.SH.run(cmd);

@@ -18,7 +18,7 @@
         android:id="@+id/viewSeperator"
         android:layout_width="3dp"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimary"
+        android:background="@drawable/test"
         android:visibility="gone"/>
 
     <FrameLayout

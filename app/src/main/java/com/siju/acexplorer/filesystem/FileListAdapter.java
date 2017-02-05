@@ -32,6 +32,8 @@ import com.siju.acexplorer.filesystem.utils.FileUtils;
 import java.io.File;
 import java.util.ArrayList;
 
+import static com.siju.acexplorer.filesystem.app.AppUtils.getAppIcon;
+import static com.siju.acexplorer.filesystem.app.AppUtils.getAppIconForFolder;
 import static com.siju.acexplorer.filesystem.groups.Category.AUDIO;
 import static com.siju.acexplorer.filesystem.groups.Category.IMAGE;
 import static com.siju.acexplorer.filesystem.groups.Category.PICKER;
@@ -309,7 +311,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             case ZIP_VIEWER:
                 if (isDirectory) {
                     fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_folder_white);
-                    Drawable apkIcon = FileUtils.getAppIconForFolder(mContext, fileName);
+                    Drawable apkIcon = getAppIconForFolder(mContext, fileName);
                     if (apkIcon != null) {
                         fileListViewHolder.imageThumbIcon.setVisibility(View.VISIBLE);
                         fileListViewHolder.imageThumbIcon.setImageDrawable(apkIcon);
@@ -398,7 +400,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             path) {
         switch (extension) {
             case FileConstants.APK_EXTENSION:
-                Drawable apkIcon = FileUtils.getAppIcon(mContext, path);
+                Drawable apkIcon = getAppIcon(mContext, path);
                 fileListViewHolder.imageIcon.setImageDrawable(apkIcon);
                 break;
             case FileConstants.EXT_DOC:

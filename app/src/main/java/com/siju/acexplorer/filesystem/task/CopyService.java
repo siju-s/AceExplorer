@@ -22,8 +22,8 @@ import com.siju.acexplorer.filesystem.model.CopyData;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.operations.OperationUtils;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
-import com.siju.acexplorer.filesystem.utils.RootNotPermittedException;
-import com.siju.acexplorer.filesystem.utils.RootUtils;
+import com.siju.acexplorer.filesystem.root.RootDeniedException;
+import com.siju.acexplorer.filesystem.root.RootUtils;
 import com.siju.acexplorer.helper.RootHelper;
 
 import java.io.BufferedInputStream;
@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import static com.siju.acexplorer.filesystem.helper.MediaStoreHelper.scanFile;
 import static com.siju.acexplorer.filesystem.operations.OperationUtils.ACTION_OP_REFRESH;
 import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_CONFLICT_DATA;
 import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_FILEPATH;
@@ -48,6 +49,7 @@ import static com.siju.acexplorer.filesystem.operations.ProgressUtils.KEY_COUNT;
 import static com.siju.acexplorer.filesystem.operations.ProgressUtils.KEY_PROGRESS;
 import static com.siju.acexplorer.filesystem.operations.ProgressUtils.KEY_TOTAL;
 import static com.siju.acexplorer.filesystem.operations.ProgressUtils.KEY_TOTAL_PROGRESS;
+import static com.siju.acexplorer.filesystem.utils.FileOperations.mkdir;
 
 public class CopyService extends Service {
     private final SparseBooleanArray hash = new SparseBooleanArray();
@@ -272,12 +274,12 @@ public class CopyService extends Service {
                     RootUtils.copy(path, targetPath);
                     RootUtils.mountRO(destinationPath);
 //                    else if (move) RootUtils.move(path, targetPath);
-                } catch (RootNotPermittedException e) {
+                } catch (RootDeniedException e) {
 //                    failedFOps.add(sourceFile);
                     e.printStackTrace();
                 }
 //                if (result) {
-                FileUtils.scanFile(mContext, destinationPath + "/" + name);
+                scanFile(mContext, destinationPath + "/" + name);
 //                }
             }
 
@@ -294,7 +296,7 @@ public class CopyService extends Service {
 *//*                        if (mode == 2) {
 
                         }*/
-                        FileUtils.mkdir(destinationDir, mContext);
+                        mkdir(destinationDir, mContext);
                     }
                     if (!destinationDir.exists()) {
                         Log.e("Copy", "cant make dir");

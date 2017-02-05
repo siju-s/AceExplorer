@@ -30,6 +30,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.siju.acexplorer.filesystem.app.AppUtils.getAppIcon;
 import static com.siju.acexplorer.filesystem.storage.StorageUtils.getInternalStorage;
 
 
@@ -169,7 +170,7 @@ public class PasteConflictChecker extends AsyncTask<Void, String, ArrayList<File
             String fileSize = Formatter.formatFileSize(fragment.getContext(), size);
             textFileDate.setText(fileModifiedDate);
             textFileSize.setText(fileSize);
-            Drawable drawable = FileUtils.getAppIcon(fragment.getContext(), mConflictFiles.get(counter).getFilePath());
+            Drawable drawable = getAppIcon(fragment.getContext(), mConflictFiles.get(counter).getFilePath());
             if (drawable != null) {
                 icon.setImageDrawable(drawable);
             }

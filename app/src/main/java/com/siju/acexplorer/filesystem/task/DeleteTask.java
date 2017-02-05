@@ -8,8 +8,8 @@ import android.os.Bundle;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
-import com.siju.acexplorer.filesystem.utils.RootNotPermittedException;
-import com.siju.acexplorer.filesystem.utils.RootUtils;
+import com.siju.acexplorer.filesystem.root.RootDeniedException;
+import com.siju.acexplorer.filesystem.root.RootUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public class DeleteTask extends AsyncTask<Void, Void, Integer> {
                         RootUtils.mountRO(path);
                         deletedFilesList.add(fileList.get(i));
                         deletedCount++;
-                    } catch (RootNotPermittedException e) {
+                    } catch (RootDeniedException e) {
                         e.printStackTrace();
                     }
                 }

@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_FILENAME;
 import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_FILEPATH;
 import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_FILES;
 import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_OPERATION;
@@ -57,7 +56,7 @@ public class CreateZipTask extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Bundle b = new Bundle();
         mNotifyManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        String name = intent.getStringExtra(KEY_FILENAME);
+        String name = intent.getStringExtra(KEY_FILEPATH);
         File zipName = new File(name);
         if (!zipName.exists()) {
             try {
@@ -79,7 +78,7 @@ public class CreateZipTask extends Service {
         ArrayList<FileInfo> zipFiles = intent.getParcelableArrayListExtra(KEY_FILES);
         b.putInt("id", startId);
         b.putParcelableArrayList(KEY_FILES, zipFiles);
-        b.putString(KEY_FILENAME, name);
+        b.putString(KEY_FILEPATH, name);
         new Doback().execute(b);
 
         return START_STICKY;
@@ -93,7 +92,7 @@ public class CreateZipTask extends Service {
         protected Integer doInBackground(Bundle... p1) {
             int id = p1[0].getInt("id");
             ArrayList<FileInfo> files = p1[0].getParcelableArrayList(KEY_FILES);
-            name = p1[0].getString(KEY_FILENAME);
+            name = p1[0].getString(KEY_FILEPATH);
             new zip().execute(id, toFileArray(files), name);
             return id;
         }
@@ -121,14 +120,14 @@ public class CreateZipTask extends Service {
         return b;
     }
 
-    private void publishResults(int id, String fileName, int i, long done, long total) {
+    private void publishResults(int id, String filePath, int i, long done, long total) {
 
 
         mBuilder.setProgress(100, i, false);
         mBuilder.setOngoing(true);
         int title = R.string.zip_progress_title;
         mBuilder.setContentTitle(getResources().getString(title));
-        mBuilder.setContentText(new File(fileName).getName() + " " + Formatter.formatFileSize
+        mBuilder.setContentText(new File(filePath).getName() + " " + Formatter.formatFileSize
                 (context, done) + "/" + Formatter.formatFileSize(context, total));
         int id1 = NOTIFICATION_ID + id;
         mNotifyManager.notify(id1, mBuilder.build());
@@ -149,7 +148,7 @@ public class CreateZipTask extends Service {
         }
         intent.putExtra(KEY_COMPLETED, done);
         intent.putExtra(KEY_TOTAL, total);
-        intent.putExtra(KEY_FILENAME, fileName);
+        intent.putExtra(KEY_FILEPATH, filePath);
         if (mProgressListener != null) {
             mProgressListener.onUpdate(intent);
             if (total == done) mProgressListener = null;
@@ -171,7 +170,7 @@ public class CreateZipTask extends Service {
 
         int lastpercent;
         long size, totalBytes = 0;
-        String fileName;
+        String filePath;
 
         void execute(int id, ArrayList<File> a, String fileOut) {
             for (File f1 : a) {
@@ -182,7 +181,7 @@ public class CreateZipTask extends Service {
                 }
             }
             OutputStream out;
-            fileName = fileOut;
+            filePath = fileOut;
             File zipDirectory = new File(fileOut);
 
             try {
@@ -244,7 +243,7 @@ public class CreateZipTask extends Service {
                     size += len;
                     int p = (int) ((size / (float) totalBytes) * 100);
                     if (p != lastpercent || lastpercent == 0) {
-                        calculateProgress(fileName, id, size, totalBytes);
+                        calculateProgress(filePath, id, size, totalBytes);
                     }
                     lastpercent = p;
                 }

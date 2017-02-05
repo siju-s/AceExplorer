@@ -1,4 +1,4 @@
-package com.siju.acexplorer.filesystem.utils;
+package com.siju.acexplorer.filesystem.root;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
@@ -46,7 +46,7 @@ public class RootUtils {
      * @param str
      * @return
      */
-    public static ArrayList<String> getDirListingSu(String str) throws RootNotPermittedException {
+    public static ArrayList<String> getDirListingSu(String str) throws RootDeniedException {
         ArrayList<String> arrayLis = RootHelper.runShellCommand(LS.replace("%", str));
         return arrayLis;
     }
@@ -58,7 +58,7 @@ public class RootUtils {
      * @param str
      * @return
      */
-    public static List<String> getDirListing(String str) throws RootNotPermittedException {
+    public static List<String> getDirListing(String str) throws RootDeniedException {
         return RootHelper.runNonRootShellCommand(LS.replace("%", str));
     }
 
@@ -67,10 +67,10 @@ public class RootUtils {
      *
      * @param path
      * @param octalNotation octal notation of permission
-     * @throws RootNotPermittedException
+     * @throws RootDeniedException
      */
-    public static void chmod(String path, int octalNotation) throws RootNotPermittedException {
-        if (!Shell.SU.available()) throw new RootNotPermittedException();
+    public static void chmod(String path, int octalNotation) throws RootDeniedException {
+        if (!Shell.SU.available()) throw new RootDeniedException();
         String command = "chmod %s %s";
         Object[] args = new Object[2];
         args[0] = octalNotation;
@@ -78,8 +78,8 @@ public class RootUtils {
         RootHelper.runShellCommand(String.format(command, args));
     }
 
-    public static void mountRW(String path) throws RootNotPermittedException {
-        if (!Shell.SU.available()) throw new RootNotPermittedException();
+    public static void mountRW(String path) throws RootDeniedException {
+        if (!Shell.SU.available()) throw new RootDeniedException();
         String str = "mount -o %s,remount %s";
         String mountPoint = "/";
         if (path.startsWith("/system")) {
@@ -93,8 +93,8 @@ public class RootUtils {
         RootHelper.runShellCommand(cmd);
     }
 
-    public static void mountRO(String path) throws RootNotPermittedException {
-        if (!Shell.SU.available()) throw new RootNotPermittedException();
+    public static void mountRO(String path) throws RootDeniedException {
+        if (!Shell.SU.available()) throw new RootDeniedException();
         String str = "mount -o %s,remount %s";
         String mountPoint = "/";
         if (path.startsWith("/system")) {
@@ -114,10 +114,10 @@ public class RootUtils {
      * Mount path for writable access (rw)
      *
      * @param path
-     * @throws RootNotPermittedException
+     * @throws RootDeniedException
      */
-    public static void mountOwnerRW(String path) throws RootNotPermittedException {
-        if (!Shell.SU.available()) throw new RootNotPermittedException();
+    public static void mountOwnerRW(String path) throws RootDeniedException {
+        if (!Shell.SU.available()) throw new RootDeniedException();
         chmod(path, 644);
     }
 
@@ -125,27 +125,27 @@ public class RootUtils {
      * Mount path for readable access (ro)
      *
      * @param path
-     * @throws RootNotPermittedException
+     * @throws RootDeniedException
      */
-    public static void mountOwnerRO(String path) throws RootNotPermittedException {
-        if (!Shell.SU.available()) throw new RootNotPermittedException();
+    public static void mountOwnerRO(String path) throws RootDeniedException {
+        if (!Shell.SU.available()) throw new RootDeniedException();
         chmod(path, 444);
     }
 
     /**
      * @param source
      * @param destination
-     * @throws RootNotPermittedException
+     * @throws RootDeniedException
      */
-    public static void copy(String source, String destination) throws RootNotPermittedException {
+    public static void copy(String source, String destination) throws RootDeniedException {
         RootHelper.runShellCommand("cp " + source + " " + destination);
     }
 
-    public static void mkDir(String path) throws RootNotPermittedException {
+    public static void mkDir(String path) throws RootDeniedException {
         RootHelper.runShellCommand("mkdir " + path);
     }
 
-    public static void mkFile(String path) throws RootNotPermittedException {
+    public static void mkFile(String path) throws RootDeniedException {
         RootHelper.runShellCommand("touch " + path);
     }
 
@@ -153,22 +153,22 @@ public class RootUtils {
      * Recursively removes a path with it's contents (if any)
      *
      * @param path
-     * @throws RootNotPermittedException
+     * @throws RootDeniedException
      */
-    public static void delete(String path) throws RootNotPermittedException {
+    public static void delete(String path) throws RootDeniedException {
         RootHelper.runShellCommand("rm -r " + path);
     }
 
     /**
      * @param path
      * @param destination
-     * @throws RootNotPermittedException
+     * @throws RootDeniedException
      */
-    public static void move(String path, String destination) throws RootNotPermittedException {
+    public static void move(String path, String destination) throws RootDeniedException {
         RootHelper.runShellCommand("mv " + path + " " + destination);
     }
 
-    public static void rename(String oldPath, String newPath) throws RootNotPermittedException {
+    public static void rename(String oldPath, String newPath) throws RootDeniedException {
         RootHelper.runShellCommand("mv " + oldPath + " " + newPath);
     }
 

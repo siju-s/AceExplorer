@@ -113,7 +113,7 @@ public class AceActivity extends BaseActivity
     private boolean mIsHomeScreenEnabled;
     private boolean mShowHidden;
     private boolean mIsHomePageAdded;
-    private boolean mIsDualModeEnabled;
+    private boolean isDualModeActive;
     private boolean isDualPaneEnabled;
     private Themes mCurrentTheme;
     private int mCurrentOrientation;
@@ -233,6 +233,7 @@ public class AceActivity extends BaseActivity
 
     private void setupInitialData() {
         checkPreferences();
+        checkScreenOrientation();
 //        initializeInteractiveShell();
         if (!checkIfInAppShortcut(getIntent())) {
             displayMainScreen(mIsHomeScreenEnabled);
@@ -258,6 +259,8 @@ public class AceActivity extends BaseActivity
         mIsRootMode = mSharedPreferences.getBoolean(FileConstants.PREFS_ROOTED, false);
         isDualPaneEnabled = mSharedPreferences.getBoolean(FileConstants.PREFS_DUAL_PANE,
                 mIsTablet);
+
+
     }
 
     /**
@@ -267,7 +270,7 @@ public class AceActivity extends BaseActivity
         mCurrentOrientation = getResources().getConfiguration().orientation;
         if (mCurrentOrientation == Configuration.ORIENTATION_LANDSCAPE
                 && isDualPaneEnabled) {
-            mIsDualModeEnabled = true;
+            isDualModeActive = true;
         }
     }
 
@@ -340,7 +343,7 @@ public class AceActivity extends BaseActivity
             displayHomeScreen();
         } else {
             displayFileList(getInternalStorage(), FILES);
-            if (mIsDualModeEnabled) {
+            if (isDualModeActive) {
                 toggleDualPaneVisibility(true);
 //                showDualPane();
             }
@@ -352,7 +355,7 @@ public class AceActivity extends BaseActivity
         Bundle args = new Bundle();
         args.putBoolean(FileConstants.KEY_HOME, true);
         args.putBoolean(AceActivity.PREFS_FIRST_RUN, mIsFirstRun);
-        args.putBoolean(FileConstants.KEY_DUAL_ENABLED, mIsDualModeEnabled);
+        args.putBoolean(FileConstants.KEY_DUAL_ENABLED, isDualModeActive);
         mHomeScreenFragment = new HomeScreenFragment();
         mHomeScreenFragment.setArguments(args);
 //            ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
@@ -622,6 +625,7 @@ public class AceActivity extends BaseActivity
         Bundle args = new Bundle();
         args.putString(FileConstants.KEY_PATH, directory);
         args.putSerializable(FileConstants.KEY_CATEGORY, category);
+        args.putBoolean(FileConstants.KEY_DUAL_ENABLED, isDualModeActive);
 
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
         if (fragment == null || fragment instanceof HomeScreenFragment) {
@@ -633,7 +637,7 @@ public class AceActivity extends BaseActivity
             ft.addToBackStack(null);
             ft.commit();
         } else {
-            ((BaseFileList) fragment).reloadList(false, directory);
+            ((BaseFileList) fragment).reloadList(directory);
         }
 
     }
@@ -729,16 +733,20 @@ public class AceActivity extends BaseActivity
         if (mCurrentOrientation != newConfig.orientation) {
             mCurrentOrientation = newConfig.orientation;
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
-            if (fragment instanceof BaseFileList) {
-                if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE &&isDualPaneEnabled) {
+            if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE && isDualPaneEnabled) {
+                isDualModeActive = true;
+                if (fragment instanceof BaseFileList) {
                     toggleDualPaneVisibility(true);
                     ((BaseFileList) fragment).showDualPane();
                     createDualFragment();
                 } else {
-                    mIsDualModeEnabled = false;
-                    toggleDualPaneVisibility(false);
+                    ((HomeScreenFragment) fragment).setDualMode(true);
                 }
+            } else {
+                isDualModeActive = false;
+                toggleDualPaneVisibility(false);
             }
+
         }
         super.onConfigurationChanged(newConfig);
     }
@@ -750,7 +758,7 @@ public class AceActivity extends BaseActivity
      */
     public void toggleDualPaneVisibility(boolean isFilesCategory) {
         if (isFilesCategory) {
-            if (mIsDualModeEnabled) {
+            if (isDualModeActive) {
                 frameDualPane.setVisibility(View.VISIBLE);
                 mViewSeperator.setVisibility(View.VISIBLE);
             }
@@ -761,22 +769,20 @@ public class AceActivity extends BaseActivity
     }
 
     public void createDualFragment() {
-        FragmentTransaction ft = getSupportFragmentManager()
-                .beginTransaction();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         String internalStoragePath = getInternalStorage();
         Bundle args = new Bundle();
         args.putString(FileConstants.KEY_PATH, internalStoragePath);
         args.putSerializable(KEY_CATEGORY, FILES);
-
 //        args.putString(FileConstants.KEY_PATH_OTHER, mCurrentDir);
         args.putBoolean(FileConstants.KEY_FOCUS_DUAL, true);
-
         args.putBoolean(FileConstants.KEY_DUAL_MODE, true);
+
         DualPaneList dualFragment = new DualPaneList();
         dualFragment.setArguments(args);
         ft.replace(R.id.frame_container_dual, dualFragment);
-//        ft.commit();
-        ft.commitAllowingStateLoss();
+        ft.commit();
+//        ft.commitAllowingStateLoss();
     }
 
 
@@ -974,10 +980,9 @@ public class AceActivity extends BaseActivity
                 ((BaseFileList) fragment).refreshSpan(); // For changing the no of columns in non-dual mode
             }
 
-            mIsDualModeEnabled = false;
+            isDualModeActive = false;
             mShowDualPane = false;
-        }
-        else {
+        } else {
             checkScreenOrientation();
             mShowDualPane = true;
         }
