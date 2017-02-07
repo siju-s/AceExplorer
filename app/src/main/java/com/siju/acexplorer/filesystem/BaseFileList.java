@@ -2,7 +2,6 @@ package com.siju.acexplorer.filesystem;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipDescription;
@@ -32,15 +31,16 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -54,12 +54,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -121,6 +122,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.siju.acexplorer.R.string.hide;
 import static com.siju.acexplorer.filesystem.FileConstants.ADS;
 import static com.siju.acexplorer.filesystem.app.AppUtils.getAppIcon;
 import static com.siju.acexplorer.filesystem.app.AppUtils.getAppIconForFolder;
@@ -151,7 +153,7 @@ public class BaseFileList extends Fragment implements LoaderManager
         .LoaderCallbacks<ArrayList<FileInfo>>,
         SearchView.OnQueryTextListener,
         Toolbar.OnMenuItemClickListener, SearchTask.SearchHelper,
-        View.OnClickListener, NavigationCallback {
+        View.OnClickListener, NavigationCallback, com.siju.acexplorer.common.SearchView.Listener, PopupMenu.OnMenuItemClickListener {
 
     private final String TAG = this.getClass().getSimpleName();
     private CoordinatorLayout mMainLayout;
@@ -169,7 +171,6 @@ public class BaseFileList extends Fragment implements LoaderManager
     private TextView mTextEmpty;
     private boolean mIsDualModeEnabled;
     private MenuItem mViewItem;
-    private SearchView mSearchView;
     private boolean isDragStarted;
     private long mLongPressedTime;
     private View mItemView;
@@ -209,7 +210,6 @@ public class BaseFileList extends Fragment implements LoaderManager
     public static final int SAF_REQUEST = 2000;
     private boolean isPremium = true;
     private AdView mAdView;
-    private MenuItem mSearchItem;
     private boolean isInSelectionMode;
     private FloatingActionsMenu fabCreateMenu;
     private FloatingActionButton fabCreateFolder;
@@ -223,6 +223,10 @@ public class BaseFileList extends Fragment implements LoaderManager
     private BackStackInfo backStackInfo;
     private Themes currentTheme;
     private FileOpsHelper fileOpHelper;
+    private ImageButton imgNavigationIcon;
+    private TextView toolbarTitle;
+    private com.siju.acexplorer.common.SearchView searchView;
+    private ImageButton imgOverflow;
 
     @Override
     public void onAttach(Context context) {
@@ -243,8 +247,7 @@ public class BaseFileList extends Fragment implements LoaderManager
 
         setHasOptionsMenu(true);
         initializeViews();
-        View logo = getLayoutInflater(savedInstanceState).inflate(R.layout.testt, null);
-        toolbar.addView(logo);
+        setToolbar(savedInstanceState);
         setViewTheme();
         setupAds();
         registerReceivers();
@@ -300,6 +303,19 @@ public class BaseFileList extends Fragment implements LoaderManager
         frameLayoutFab.getBackground().setAlpha(0);
 
     }
+
+    private void setToolbar(Bundle savedInstanceState) {
+        View actionBar = getLayoutInflater(savedInstanceState).inflate(R.layout.abc_custom, null);
+        toolbar.addView(actionBar);
+        searchView = (com.siju.acexplorer.common.SearchView) actionBar.findViewById(R.id.search_view);
+        searchView.setListener(this);
+        imgNavigationIcon = (ImageButton) actionBar.findViewById(R.id.imgNavigationIcon);
+        toolbarTitle = (TextView) actionBar.findViewById(R.id.toolbarTitle);
+        imgNavigationIcon.setOnClickListener(this);
+        imgOverflow = (ImageButton) actionBar.findViewById(R.id.imgButtonOverflow);
+        imgOverflow.setOnClickListener(this);
+    }
+
 
     private void setViewTheme() {
         currentTheme = ((BaseActivity) getActivity()).getCurrentTheme();
@@ -411,7 +427,7 @@ public class BaseFileList extends Fragment implements LoaderManager
     }
 
     private void createDualFrag() {
-        if (mIsDualModeEnabled) {
+        if (mIsDualModeEnabled && this instanceof FileList) {
             aceActivity.toggleDualPaneVisibility(true);
             showDualPane();
             aceActivity.createDualFragment();
@@ -470,6 +486,7 @@ public class BaseFileList extends Fragment implements LoaderManager
 
         fabCreateFile.setOnClickListener(this);
         fabCreateFolder.setOnClickListener(this);
+
         setupFab();
 
 
@@ -625,7 +642,7 @@ public class BaseFileList extends Fragment implements LoaderManager
         } else {
             String path = currentDir = fileInfoList.get(position).getFilePath();
             category = FILES;
-            reloadList(currentDir);
+            reloadList(currentDir, category);
             navigationInfo.setNavDirectory(path, isHomeScreenEnabled, FILES);
             backStackInfo.addToBackStack(path, FILES);
         }
@@ -711,7 +728,7 @@ public class BaseFileList extends Fragment implements LoaderManager
             } else {
                 hideFab();
             }
-            reloadList(currentDir);
+            reloadList(currentDir, currentCategory);
             setTitleForCategory(currentCategory);
             if (currentCategory.equals(FILES)) {
                 showFab();
@@ -978,7 +995,7 @@ public class BaseFileList extends Fragment implements LoaderManager
                 if (path != null) {
                     scanFile(getActivity().getApplicationContext(), path);
                 }
-                reloadList(currentDir);
+                reloadList(currentDir, category);
             } else if (action.equals(ACTION_OP_REFRESH)) {
                 Bundle bundle = intent.getExtras();
                 Operations operation = (Operations) bundle.getSerializable(KEY_OPERATION);
@@ -1042,7 +1059,7 @@ public class BaseFileList extends Fragment implements LoaderManager
                             .LENGTH_LONG).show();
                 } else {
                     computeScroll();
-                    reloadList(currentDir);
+                    reloadList(currentDir, FILES);
                 }
                 break;
 
@@ -1099,6 +1116,7 @@ public class BaseFileList extends Fragment implements LoaderManager
 
     @Override
     public void onClick(View view) {
+        Log.d(TAG, "onClick: ");
         switch (view.getId()) {
             case R.id.fabCreateFile:
                 new Dialogs().createFileDialog(this, mIsRootMode, currentDir);
@@ -1108,7 +1126,28 @@ public class BaseFileList extends Fragment implements LoaderManager
                 new Dialogs().createDirDialog(this, mIsRootMode, currentDir);
                 fabCreateMenu.collapse();
                 break;
+            case R.id.imgNavigationIcon:
+                if (searchView.isExpanded()) {
+                    searchView.enableSearch(false);
+                } else {
+                    aceActivity.openDrawer();
+                }
+                break;
+            case R.id.imgButtonOverflow:
+                showOptionsPopup(imgOverflow);
+                break;
         }
+    }
+
+    private void showOptionsPopup(View view) {
+        PopupMenu popupMenu = new PopupMenu(getContext(), view);
+        MenuInflater inflater = popupMenu.getMenuInflater();
+        inflater.inflate(R.menu.file_base, popupMenu.getMenu());
+        viewMode = sharedPreferenceWrapper.getViewMode(getActivity());
+        mViewItem = popupMenu.getMenu().findItem(R.id.action_view);
+        updateMenuTitle();
+        popupMenu.setOnMenuItemClickListener(this);
+        popupMenu.show();
     }
 
     public FileOpsHelper getFileOpHelper() {
@@ -1128,8 +1167,19 @@ public class BaseFileList extends Fragment implements LoaderManager
     @Override
     public void onHomeClicked() {
         endActionMode();
+        if (isSearchVisible()) {
+            hideKeyboard();
+            hideSearchView();
+        }
         removeFileFragment();
         getActivity().onBackPressed();
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (inputMethodManager != null) {
+            inputMethodManager.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
+        }
     }
 
     @Override
@@ -1151,8 +1201,38 @@ public class BaseFileList extends Fragment implements LoaderManager
                 backStackInfo.removeEntryAtIndex(j);
             }
 
-            reloadList(currentDir);
+            reloadList(currentDir, FILES);
             navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled, FILES);
+        }
+    }
+
+    @Override
+    public void onAnimationProgress(float f, boolean z) {
+
+    }
+
+    @Override
+    public void onQueryChange(CharSequence charSequence) {
+        if (!TextUtils.isEmpty(charSequence)) {
+            fileListAdapter.filter(charSequence.toString());
+        }
+    }
+
+    @Override
+    public void onQuerySubmit(CharSequence charSequence) {
+
+    }
+
+    @Override
+    public void onSearchEnabled(boolean isExpanded) {
+        Log.d(TAG, "onSearchEnabled: " + isExpanded);
+        if (isExpanded) {
+            toolbarTitle.setVisibility(View.GONE);
+            searchView.setHint(getString(R.string.action_search));
+            imgNavigationIcon.setImageResource(R.drawable.ic_up_arrow);
+        } else {
+            toolbarTitle.setVisibility(View.VISIBLE);
+            imgNavigationIcon.setImageResource(R.drawable.ic_drawer);
         }
     }
 
@@ -1238,8 +1318,15 @@ public class BaseFileList extends Fragment implements LoaderManager
     }
 
 
-    public void reloadList(String path) {
+    public void reloadList(String path, Category category) {
         currentDir = path;
+        this.category = category;
+        if (shouldShowPathNavigation()) {
+            navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled, category);
+        } else {
+            navigationInfo.addHomeNavButton(isHomeScreenEnabled, category);
+        }
+        backStackInfo.addToBackStack(path, category);
         refreshList();
     }
 
@@ -1435,7 +1522,7 @@ public class BaseFileList extends Fragment implements LoaderManager
 
                 }
             } else {
-                mHideItem.setTitle(getString(R.string.hide));
+                mHideItem.setTitle(getString(hide));
                 if (currentTheme.equals(Themes.DARK)) {
                     mHideItem.setIcon(R.drawable.ic_hide_white);
                 } else {
@@ -1604,6 +1691,22 @@ public class BaseFileList extends Fragment implements LoaderManager
                     actionMode.finish();
                 }
                 break;
+
+
+            case R.id.action_view:
+                if (viewMode == ViewMode.LIST) {
+                    viewMode = ViewMode.GRID;
+                } else {
+                    viewMode = ViewMode.LIST;
+                }
+                sharedPreferenceWrapper.savePrefs(getActivity(), viewMode);
+                switchView();
+                updateMenuTitle();
+                break;
+
+            case R.id.action_sort:
+                showSortDialog();
+                break;
         }
         return false;
     }
@@ -1689,7 +1792,7 @@ public class BaseFileList extends Fragment implements LoaderManager
     }
 
     public boolean isSearchVisible() {
-        return mSearchView != null && !mSearchView.isIconified();
+        return searchView.isExpanded();
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -2476,36 +2579,12 @@ public class BaseFileList extends Fragment implements LoaderManager
         mViewItem.setTitle(viewMode == ViewMode.LIST ? R.string.action_view_grid : R.string.action_view_list);
     }
 
-    private void setupSearchView() {
-        // Disable full screen keyboard in landscape
-        mSearchView.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
-        mSearchView.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
-        mSearchView.setOnQueryTextListener(this);
-
-        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-/*        mSearchView.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View view, int i, KeyEvent event) {
-                if ((event.getAction() == KeyEvent.ACTION_DOWN)) {
-                    // Perform action on key press
-                    mainActivityHelper.search(searchViewEditText.getText().toString());
-                    hideSearchView();
-                    return true;
-                }
-                return false;
-            }
-        });*/
-    }
-
     public void hideSearchView() {
-        MenuItemCompat.collapseActionView(mSearchItem);
-
-//        mSearchView.onActionViewCollapsed();
+        searchView.enableSearch(false);
     }
 
     public void performVoiceSearch(String query) {
-        mSearchView.setQuery(query, false);
+//        searchView.setQuery(query, false);
     }
 
 //    private  SearchTask searchTask;
@@ -2555,20 +2634,6 @@ public class BaseFileList extends Fragment implements LoaderManager
                 }
                 break;
 
-            case R.id.action_view:
-                if (viewMode == ViewMode.LIST) {
-                    viewMode = ViewMode.GRID;
-                } else {
-                    viewMode = ViewMode.LIST;
-                }
-                sharedPreferenceWrapper.savePrefs(getActivity(), viewMode);
-                switchView();
-                updateMenuTitle();
-                break;
-
-            case R.id.action_sort:
-                showSortDialog();
-                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -2658,8 +2723,6 @@ public class BaseFileList extends Fragment implements LoaderManager
 
     public void refreshSpan() {
         if (viewMode == ViewMode.GRID) {
-            mIsDualModeEnabled = preferences
-                    .getBoolean(FileConstants.PREFS_DUAL_PANE, false);
             if (mCurrentOrientation == Configuration.ORIENTATION_PORTRAIT || !mIsDualModeEnabled ||
                     checkIfLibraryCategory(category)) {
                 gridCols = getResources().getInteger(R.integer.grid_columns);

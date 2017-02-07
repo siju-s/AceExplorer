@@ -15,13 +15,10 @@ public class FileConstants {
 
     public static final String KEY_PATH = "PATH";
     public static final String KEY_HOME = "HOME";
-    public static final String KEY_PATH_OTHER = "OTHER_PATH";
-    public static final String KEY_FOCUS_DUAL = "DUAL_FOCUS";
     public static final String KEY_LIB_SORTLIST = "LIB_LIST";
     public static final String KEY_GRID_COLUMNS = "grid_columns";
     public static final String KEY_POSITION = "position";
     public static final String KEY_OFFSET = "offset";
-    public static final String KEY_DUAL_MODE = "DUAL_MODE";
     public static final String APK_EXTENSION = "apk";
     public static final String KEY_CATEGORY = "Category";
     public static final String KEY_PREMIUM= "PREMIUM";

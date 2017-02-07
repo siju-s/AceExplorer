@@ -117,7 +117,7 @@ public class AceActivity extends BaseActivity
     private boolean isDualPaneEnabled;
     private Themes mCurrentTheme;
     private int mCurrentOrientation;
-    private boolean mIsRootMode;
+    private boolean mIsRootMode = true;
     private boolean mIsTablet;
     private HomeScreenFragment mHomeScreenFragment;
     private boolean inappShortcutMode;
@@ -234,7 +234,7 @@ public class AceActivity extends BaseActivity
     private void setupInitialData() {
         checkPreferences();
         checkScreenOrientation();
-//        initializeInteractiveShell();
+        initializeInteractiveShell();
         if (!checkIfInAppShortcut(getIntent())) {
             displayMainScreen(mIsHomeScreenEnabled);
         }
@@ -590,6 +590,7 @@ public class AceActivity extends BaseActivity
 
     public void onDrawerItemClick(int groupPos, int childPos) {
         String path = totalGroupData.get(groupPos).getmChildItems().get(childPos).getPath();
+        Log.d(TAG, "onDrawerItemClick: " + path);
         displaySelectedGroup(groupPos, childPos, path);
         drawerLayout.closeDrawer(relativeLayoutDrawerPane);
     }
@@ -637,7 +638,7 @@ public class AceActivity extends BaseActivity
             ft.addToBackStack(null);
             ft.commit();
         } else {
-            ((BaseFileList) fragment).reloadList(directory);
+            ((BaseFileList) fragment).reloadList(directory, category);
         }
 
     }
@@ -774,15 +775,13 @@ public class AceActivity extends BaseActivity
         Bundle args = new Bundle();
         args.putString(FileConstants.KEY_PATH, internalStoragePath);
         args.putSerializable(KEY_CATEGORY, FILES);
-//        args.putString(FileConstants.KEY_PATH_OTHER, mCurrentDir);
-        args.putBoolean(FileConstants.KEY_FOCUS_DUAL, true);
-        args.putBoolean(FileConstants.KEY_DUAL_MODE, true);
+//        args.putBoolean(FileConstants.KEY_FOCUS_DUAL, true);
+        args.putBoolean(FileConstants.KEY_DUAL_ENABLED, true);
 
         DualPaneList dualFragment = new DualPaneList();
         dualFragment.setArguments(args);
         ft.replace(R.id.frame_container_dual, dualFragment);
         ft.commit();
-//        ft.commitAllowingStateLoss();
     }
 
 

@@ -1,9 +1,5 @@
 package com.siju.acexplorer.common;
 
-/**
- * Created by SJ on 06-02-2017.
- */
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -25,6 +21,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
@@ -34,68 +31,47 @@ import android.widget.TextView.OnEditorActionListener;
 
 import com.siju.acexplorer.R;
 
+
 public class SearchView extends RelativeLayout {
     private ImageButton searchIcon;
     private AutoCompleteTextView autoCompleteTextView;
-    private Listener c;
-    private Animator d;
-    private boolean e;
-    private Runnable f = new Runnable(this) {
-        final /* synthetic */ SearchView a;
+    private Listener listener;
+    private Animator animator;
+    private boolean isExpanded;
+    private Runnable showInputRunnable = new Runnable() {
 
-        {
-            this.a = r1;
-        }
 
         public void run() {
-            InputMethodManager inputMethodManager = (InputMethodManager) this.a.getContext().getSystemService("input_method");
+            InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             if (inputMethodManager != null) {
-                inputMethodManager.showSoftInput(this.a.autoCompleteTextView, 0);
+                inputMethodManager.showSoftInput(autoCompleteTextView, 0);
             }
         }
     };
-    private Runnable g = new Runnable(this) {
-        final /* synthetic */ SearchView a;
-
-        {
-            this.a = r1;
-        }
+    private Runnable submitRunnable = new Runnable() {
 
         public void run() {
-            if (this.a.c != null) {
-                this.a.c.onQuerySubmit(this.a.autoCompleteTextView.getText());
+            if (listener != null) {
+                listener.onQuerySubmit(autoCompleteTextView.getText());
             }
         }
     };
-    private OnClickListener h = new OnClickListener(this) {
-        final /* synthetic */ SearchView a;
-
-        {
-            this.a = r1;
-        }
+    private OnClickListener onClickListener = new OnClickListener() {
 
         public void onClick(View view) {
             switch (view.getId()) {
-                case 2131689849:
-                    this.a.onSearchClicked();
-                    return;
-                default:
-                    return;
+                case R.id.search:
+                    onSearchClicked();
             }
         }
     };
-    private TextWatcher i = new TextWatcher(this) {
-        final /* synthetic */ SearchView a;
-
-        {
-            this.a = r1;
-        }
+    private TextWatcher i = new TextWatcher() {
 
         public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
         }
 
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            this.a.onQueryChange(charSequence);
+            onQueryChange(charSequence);
         }
 
         public void afterTextChanged(Editable editable) {
@@ -109,7 +85,7 @@ public class SearchView extends RelativeLayout {
 
         void onQuerySubmit(CharSequence charSequence);
 
-        void onSearchEnabled(boolean z);
+        void onSearchEnabled(boolean isExpanded);
     }
 
     public SearchView(Context context) {
@@ -132,24 +108,20 @@ public class SearchView extends RelativeLayout {
         LayoutInflater.from(getContext()).inflate(R.layout.search_view, this);
         this.autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.input);
         this.autoCompleteTextView.addTextChangedListener(this.i);
-        this.autoCompleteTextView.setOnEditorActionListener(new OnEditorActionListener(this) {
-            final /* synthetic */ SearchView a;
+        this.autoCompleteTextView.setOnEditorActionListener(new OnEditorActionListener() {
 
-            {
-                this.a = r1;
-            }
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
 
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if (i != 6 && i != 3) {
+                if (actionId != EditorInfo.IME_ACTION_DONE && actionId != EditorInfo.IME_ACTION_SEARCH) {
                     return false;
                 }
-                this.a.removeCallbacks(this.a.g);
-                this.a.g.run();
+                removeCallbacks(submitRunnable);
+                submitRunnable.run();
                 return true;
             }
         });
-        this.searchIcon = (ImageButton) findViewById(R.id.action_search);
-        this.searchIcon.setOnClickListener(this.h);
+        this.searchIcon = (ImageButton) findViewById(R.id.search);
+        this.searchIcon.setOnClickListener(onClickListener);
     }
 
     public AutoCompleteTextView getInput() {
@@ -157,13 +129,13 @@ public class SearchView extends RelativeLayout {
     }
 
     public void setListener(Listener listener) {
-        this.c = listener;
+        this.listener = listener;
     }
 
     public void setHint(CharSequence charSequence) {
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder("   ");
         spannableStringBuilder.append(charSequence);
-        Drawable drawable = ContextCompat.getDrawable(getContext(),R.drawable.ic_search_white);
+        Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_search_white);
         int textSize = (int) (((double) this.autoCompleteTextView.getTextSize()) * 1.25d);
         drawable.setBounds(0, 0, textSize, textSize);
         spannableStringBuilder.setSpan(new ImageSpan(drawable), 1, 2, 33);
@@ -171,42 +143,42 @@ public class SearchView extends RelativeLayout {
     }
 
     public boolean isExpanded() {
-        return this.e;
+        return this.isExpanded;
     }
 
     public void enableSearch(boolean z) {
-        if (z && !this.e) {
+        if (z && !this.isExpanded) {
             onSearchClicked();
-        } else if (!z && this.e) {
+        } else if (!z && this.isExpanded) {
             onCloseClicked();
         }
     }
 
     private void onSearchClicked() {
-        this.e = true;
-        if (this.c != null) {
-            this.c.onSearchEnabled(true);
+        this.isExpanded = true;
+        if (this.listener != null) {
+            this.listener.onSearchEnabled(true);
         }
         animate(true);
     }
 
     private void onCloseClicked() {
-        this.e = false;
-        if (this.c != null) {
-            this.c.onSearchEnabled(false);
+        this.isExpanded = false;
+        if (this.listener != null) {
+            this.listener.onSearchEnabled(false);
         }
         animate(false);
-        removeCallbacks(this.g);
+        removeCallbacks(this.submitRunnable);
     }
 
-    private void animate(final boolean z) {
+    private void animate(final boolean isExpanded) {
         float f;
         float f2 = 0.0f;
         PropertyValuesHolder[] propertyValuesHolderArr = new PropertyValuesHolder[1];
         Property property = View.X;
         float[] fArr = new float[2];
-        fArr[0] = z ? (float) getWidth() : 0.0f;
-        if (z) {
+        fArr[0] = isExpanded ? (float) getWidth() : 0.0f;
+        if (isExpanded) {
             f = 0.0f;
         } else {
             f = (float) getWidth();
@@ -214,30 +186,28 @@ public class SearchView extends RelativeLayout {
         fArr[1] = f;
         propertyValuesHolderArr[0] = PropertyValuesHolder.ofFloat(property, fArr);
         ObjectAnimator ofPropertyValuesHolder = ObjectAnimator.ofPropertyValuesHolder(this.autoCompleteTextView, propertyValuesHolderArr);
-        ofPropertyValuesHolder.addListener(new AnimatorListenerAdapter(this) {
-            final /* synthetic */ SearchView b;
+        ofPropertyValuesHolder.addListener(new AnimatorListenerAdapter() {
 
             public void onAnimationStart(Animator animator) {
-                if (z) {
-                    this.b.autoCompleteTextView.setVisibility(0);
+                if (isExpanded) {
+                    autoCompleteTextView.setVisibility(VISIBLE);
                 }
             }
 
             public void onAnimationEnd(Animator animator) {
-                if (z) {
-                    this.b.onExpand();
+                if (isExpanded) {
+                    onExpand();
                     return;
                 }
-                this.b.autoCompleteTextView.setVisibility(4);
-                this.b.onCollapse();
+                autoCompleteTextView.setVisibility(INVISIBLE);
+                onCollapse();
             }
         });
-        ofPropertyValuesHolder.addUpdateListener(new AnimatorUpdateListener(this) {
-            final /* synthetic */ SearchView b;
+        ofPropertyValuesHolder.addUpdateListener(new AnimatorUpdateListener() {
 
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                if (this.b.c != null) {
-                    this.b.c.onAnimationProgress(valueAnimator.getAnimatedFraction(), z);
+                if (listener != null) {
+                    listener.onAnimationProgress(valueAnimator.getAnimatedFraction(), isExpanded);
                 }
             }
         });
@@ -245,35 +215,35 @@ public class SearchView extends RelativeLayout {
         PropertyValuesHolder[] propertyValuesHolderArr2 = new PropertyValuesHolder[1];
         Property property2 = View.ALPHA;
         float[] fArr2 = new float[1];
-        if (!z) {
+        if (!isExpanded) {
             f2 = 1.0f;
         }
         fArr2[0] = f2;
         propertyValuesHolderArr2[0] = PropertyValuesHolder.ofFloat(property2, fArr2);
-        ObjectAnimator.ofPropertyValuesHolder(imageButton, propertyValuesHolderArr2).addListener(new AnimatorListenerAdapter(this) {
-            final /* synthetic */ SearchView b;
+        ObjectAnimator ofPropertyValuesHolder2 = ObjectAnimator.ofPropertyValuesHolder(imageButton, propertyValuesHolderArr2);
+        ofPropertyValuesHolder2.addListener(new AnimatorListenerAdapter() {
 
             public void onAnimationStart(Animator animator) {
-                if (!z) {
-                    this.b.searchIcon.setVisibility(0);
+                if (!isExpanded) {
+                    searchIcon.setVisibility(View.VISIBLE);
                 }
             }
 
             public void onAnimationEnd(Animator animator) {
-                if (z) {
-                    this.b.searchIcon.setVisibility(4);
+                if (isExpanded) {
+                    searchIcon.setVisibility(View.INVISIBLE);
                 }
             }
         });
-        Animator animatorSet = new AnimatorSet();
+        AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.setDuration(500);
         animatorSet.setInterpolator(new DecelerateInterpolator(2.0f));
-        animatorSet.playTogether(new Animator[]{ofPropertyValuesHolder, r1});
-        if (this.d != null) {
-            this.d.cancel();
+        animatorSet.playTogether(new Animator[]{ofPropertyValuesHolder, ofPropertyValuesHolder2});
+        if (this.animator != null) {
+            this.animator.cancel();
         }
         animatorSet.start();
-        this.d = animatorSet;
+        this.animator = animatorSet;
     }
 
     private void onExpand() {
@@ -286,22 +256,22 @@ public class SearchView extends RelativeLayout {
     }
 
     private void onQueryChange(CharSequence charSequence) {
-        removeCallbacks(this.g);
-        if (this.e) {
-            if (this.c != null) {
-                this.c.onQueryChange(charSequence);
+        removeCallbacks(this.submitRunnable);
+        if (this.isExpanded) {
+            if (this.listener != null) {
+                this.listener.onQueryChange(charSequence);
             }
-            postDelayed(this.g, 800);
+            postDelayed(this.submitRunnable, 800);
         }
     }
 
     private void setImeVisibility(boolean z) {
         if (z) {
-            post(this.f);
+            post(this.showInputRunnable);
             return;
         }
-        removeCallbacks(this.f);
-        InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService("input_method");
+        removeCallbacks(this.showInputRunnable);
+        InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         if (inputMethodManager != null) {
             inputMethodManager.hideSoftInputFromWindow(getWindowToken(), 0);
         }

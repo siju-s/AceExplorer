@@ -3,36 +3,38 @@
     android:id="@+id/action_bar_panel"
     style="?attr/actionBarStyle"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingTop="@dimen/margin_16">
+    android:layout_height="wrap_content">
 
     <ImageButton
-        android:id="@+id/ab_icon"
+        android:id="@+id/imgNavigationIcon"
         android:src="@drawable/ic_drawer"
         android:background="@null"
         android:layout_marginLeft="@dimen/margin_16"
         android:layout_marginStart="@dimen/margin_16"
-        android:layout_width="30dp"
-        android:layout_height="30dp" />
+        android:layout_marginRight="@dimen/margin_16"
+        android:layout_marginEnd="@dimen/margin_16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        />
 
     <RelativeLayout
         android:id="@+id/action_bar_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/ab_icon"
-        android:layout_toLeftOf="@+id/action_overflow">
+        android:layout_marginTop="15dp"
+        android:layout_toRightOf="@id/imgNavigationIcon">
 
         <LinearLayout
             android:id="@+id/ab_title_container"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
             android:layout_marginEnd="10dp"
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/ab_title"
+                android:id="@+id/toolbarTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="false"
@@ -40,28 +42,31 @@
                 android:focusable="false"
                 android:gravity="top|bottom|center_vertical|center"
                 android:maxLines="1"
-                android:text="@string/action_select_all"
-                android:textColor="@color/colorPrimary"
-                android:textSize="16sp" />
+                android:text="@string/app_name"
+                android:textSize="18sp" />
         </LinearLayout>
 
-        <android.support.v7.widget.SearchView
+
+
+        <com.siju.acexplorer.common.SearchView
             android:id="@+id/search_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:iconifiedByDefault="true"
+            android:layout_height="45dp"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_toLeftOf="@+id/action_overflow" />
+            android:layout_marginRight="40dp"
+            android:layout_toLeftOf="@+id/imgButtonOverflow" />
 
         <ImageButton
-            android:id="@+id/action_overflow"
+            android:id="@+id/imgButtonOverflow"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:background="@null"
             android:src="@drawable/ic_overflow" />
+
+
     </RelativeLayout>
     <!--<ViewStub android:id="@+id/context_stub" android:visibility="gone" android:inflatedId="@id/action_bar_context" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_toRightOf="@id/ab_icon" />-->
 </com.siju.acexplorer.ActionBarCustomView>
