@@ -640,13 +640,10 @@ public class BaseFileList extends Fragment implements LoaderManager
         if (isZipMode()) {
             zipViewer.onDirectoryClicked(position);
         } else {
-            String path = currentDir = fileInfoList.get(position).getFilePath();
+            String path = fileInfoList.get(position).getFilePath();
             category = FILES;
-            reloadList(currentDir, category);
-            navigationInfo.setNavDirectory(path, isHomeScreenEnabled, FILES);
-            backStackInfo.addToBackStack(path, FILES);
+            reloadList(path, category);
         }
-
     }
 
     private void onFileClicked(int position) {
@@ -721,6 +718,7 @@ public class BaseFileList extends Fragment implements LoaderManager
 //                navigationInfo.setInitialDir();
                 category = currentCategory;
                 if (shouldShowPathNavigation()) {
+                    navigationInfo.setInitialDir(currentDir);
                     navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled, currentCategory);
                 } else {
                     navigationInfo.addHomeNavButton(isHomeScreenEnabled, currentCategory);
@@ -728,11 +726,13 @@ public class BaseFileList extends Fragment implements LoaderManager
             } else {
                 hideFab();
             }
-            reloadList(currentDir, currentCategory);
+            this.currentDir = currentDir;
+            refreshList();
             setTitleForCategory(currentCategory);
             if (currentCategory.equals(FILES)) {
                 showFab();
             }
+
             return false;
         } else {
             removeFileFragment();
@@ -995,7 +995,7 @@ public class BaseFileList extends Fragment implements LoaderManager
                 if (path != null) {
                     scanFile(getActivity().getApplicationContext(), path);
                 }
-                reloadList(currentDir, category);
+                refreshList();
             } else if (action.equals(ACTION_OP_REFRESH)) {
                 Bundle bundle = intent.getExtras();
                 Operations operation = (Operations) bundle.getSerializable(KEY_OPERATION);
@@ -1059,7 +1059,7 @@ public class BaseFileList extends Fragment implements LoaderManager
                             .LENGTH_LONG).show();
                 } else {
                     computeScroll();
-                    reloadList(currentDir, FILES);
+                    refreshList();
                 }
                 break;
 
@@ -1201,7 +1201,7 @@ public class BaseFileList extends Fragment implements LoaderManager
                 backStackInfo.removeEntryAtIndex(j);
             }
 
-            reloadList(currentDir, FILES);
+            refreshList();
             navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled, FILES);
         }
     }
@@ -1329,6 +1329,8 @@ public class BaseFileList extends Fragment implements LoaderManager
         backStackInfo.addToBackStack(path, category);
         refreshList();
     }
+
+
 
 
     private void stopAnimation() {

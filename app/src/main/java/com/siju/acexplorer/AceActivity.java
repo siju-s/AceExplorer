@@ -66,12 +66,12 @@ import com.siju.acexplorer.ui.ScrimInsetsRelativeLayout;
 import com.siju.acexplorer.utils.Dialogs;
 import com.siju.acexplorer.utils.LocaleHelper;
 import com.siju.acexplorer.utils.Utils;
+import com.stericson.RootTools.RootTools;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import eu.chainfire.libsuperuser.Shell;
 
 import static com.siju.acexplorer.filesystem.FileConstants.ADS;
 import static com.siju.acexplorer.filesystem.FileConstants.KEY_CATEGORY;
@@ -128,7 +128,7 @@ public class AceActivity extends BaseActivity
     private ImageView imageInvite;
 
 
-    public static Shell.Interactive shellInteractive;
+//    public static Shell.Interactive shellInteractive;
     private static Handler handler;
     private static HandlerThread handlerThread;
     private PermissionHelper permissionHelper;
@@ -234,7 +234,7 @@ public class AceActivity extends BaseActivity
     private void setupInitialData() {
         checkPreferences();
         checkScreenOrientation();
-        initializeInteractiveShell();
+//        initializeInteractiveShell();
         if (!checkIfInAppShortcut(getIntent())) {
             displayMainScreen(mIsHomeScreenEnabled);
         }
@@ -280,7 +280,7 @@ public class AceActivity extends BaseActivity
      * callbacks of shell as we certainly cannot allow the callbacks to run on same thread because
      * of possible deadlock situation and the asynchronous behaviour of LibSuperSU
      */
-    private void initializeInteractiveShell() {
+    /*private void initializeInteractiveShell() {
 
         // only one looper can be associated to a thread. So we're making sure not to create new
         // handler threads every time the code relaunch.
@@ -291,7 +291,7 @@ public class AceActivity extends BaseActivity
             handler = new Handler(handlerThread.getLooper());
             shellInteractive = (new Shell.Builder()).useSU().setHandler(handler).open();
         }
-    }
+    }*/
 
 
     private void initListeners() {
@@ -841,16 +841,16 @@ public class AceActivity extends BaseActivity
         mSharedPreferences.edit().putInt(CURRENT_THEME, mCurrentTheme.getValue()).apply();
         if (mIsRootMode) {
             // close interactive shell and handler thread associated with it
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+/*            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 // let it finish up first with what it's doing
                 handlerThread.quitSafely();
             } else handlerThread.quit();
-            shellInteractive.close();
-     /*       try {
+            shellInteractive.close();*/
+            try {
                 RootTools.closeAllShells();
             } catch (IOException e) {
                 e.printStackTrace();
-            }*/
+            }
         }
         BillingHelper.getInstance().disposeBilling();
         super.onDestroy();

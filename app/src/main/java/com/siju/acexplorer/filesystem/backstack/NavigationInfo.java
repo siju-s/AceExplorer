@@ -43,7 +43,7 @@ public class NavigationInfo {
         externalSDPaths = new StoragesGroup(context).getExternalSDList();
     }
 
-    public void setInitialDir() {
+    public void setInitialDir(String currentDir) {
         if (currentDir.contains(getInternalStorage())) {
             initialDir = getInternalStorage();
             isCurrentDirRoot = false;

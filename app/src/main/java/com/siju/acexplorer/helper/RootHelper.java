@@ -5,29 +5,28 @@ import android.content.Context;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
-import com.siju.acexplorer.AceActivity;
 import com.siju.acexplorer.filesystem.groups.Category;
 import com.siju.acexplorer.filesystem.model.BaseFile;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.root.RootDeniedException;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
-import com.siju.acexplorer.helper.root.RootTools;
-import com.siju.acexplorer.helper.root.rootshell.execution.Command;
+import com.stericson.RootTools.RootTools;
+import com.stericson.RootTools.execution.Command;
 
 import java.io.File;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
-
-import eu.chainfire.libsuperuser.Shell;
 
 import static com.siju.acexplorer.filesystem.groups.Category.AUDIO;
 import static com.siju.acexplorer.filesystem.groups.Category.FILES;
 import static com.siju.acexplorer.filesystem.groups.Category.IMAGE;
 import static com.siju.acexplorer.filesystem.groups.Category.VIDEO;
+
+/*import com.siju.acexplorer.helper.root.RootTools;
+import com.siju.acexplorer.helper.root.rootshell.execution.Command;*/
 
 public class RootHelper {
 
@@ -41,7 +40,7 @@ public class RootHelper {
      * there for the command passed
      * @throws RootDeniedException
      */
-    public static ArrayList<String> runShellCommand(String cmd) throws RootDeniedException {
+   /* public static ArrayList<String> runShellCommand(String cmd) throws RootDeniedException {
         if (!Shell.SU.available()) throw new RootDeniedException();
         final ArrayList<String> result = new ArrayList<>();
 
@@ -59,7 +58,7 @@ public class RootHelper {
         return result;
     }
 
-    /**
+    *//**
      * Runs the command and stores output in a list. The listener is set on the caller thread,
      * thus any code run in callback must be thread safe.
      * Command is run from superuser context (u:r:SuperSU0)
@@ -69,14 +68,14 @@ public class RootHelper {
      * @return a list of results. Null only if the command passed is a blocking call or no output is
      * there for the command passed
      * @throws RootDeniedException
-     */
+     *//*
     public static void runShellCommand(String cmd, Shell.OnCommandResultListener callback)
             throws RootDeniedException {
         if (!Shell.SU.available()) throw new RootDeniedException();
         AceActivity.shellInteractive.addCommand(cmd, 0, callback);
     }
 
-    /**
+    *//**
      * Runs the command and stores output in a list. The listener is set on the caller thread,
      * thus any code run in callback must be thread safe.
      * Command is run from a third-party level context (u:r:init_shell0)
@@ -86,12 +85,12 @@ public class RootHelper {
      * @return a list of results. Null only if the command passed is a blocking call or no output is
      * there for the command passed
      * @throws RootDeniedException
-     */
+     *//*
     public static List<String> runNonRootShellCommand(String cmd) {
         return Shell.SH.run(cmd);
-    }
+    }*/
 
-    public static void runAndWait(String cmd, boolean root) {
+    public static void runAndWait(String cmd) {
 
         Command c = new Command(0, cmd) {
             @Override
@@ -110,7 +109,7 @@ public class RootHelper {
             }
         };
         try {
-            RootTools.getShell(root).add(c);
+            RootTools.getShell(true).add(c);
         } catch (Exception e) {
             return;
         }

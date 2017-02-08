@@ -70,7 +70,7 @@ public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
 
         String cmd = "chmod 777 " + output.getPath();
         Log.d("change permissions", cmd);
-        RootHelper.runAndWait(cmd, false);
+        RootHelper.runAndWait(cmd);
         String outputPath = output.getPath();
         String extension = outputPath.substring(outputPath.lastIndexOf(".") + 1, outputPath.length());
         viewFile(fragment, outputPath, extension);
