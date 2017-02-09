@@ -90,22 +90,24 @@ public class RootHelper {
         return Shell.SH.run(cmd);
     }*/
 
+     private static final String TAG = "RootHelper";
     public static void runAndWait(String cmd) {
 
         Command c = new Command(0, cmd) {
             @Override
             public void commandOutput(int i, String s) {
+                Log.d(TAG, "commandOutput: i="+i+ " s="+s);
 
             }
 
             @Override
             public void commandTerminated(int i, String s) {
-
+                Log.d(TAG, "commandTerminated: i="+i+ " s="+s);
             }
 
             @Override
             public void commandCompleted(int i, int i2) {
-
+                Log.d(TAG, "commandCompleted: i="+i+ " i2="+i2);
             }
         };
         try {

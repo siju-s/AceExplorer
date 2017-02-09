@@ -649,24 +649,6 @@ public class AceActivity extends BaseActivity
     }
 
 
-    private void hideAds() {
-        Log.d(TAG, "hideAds:");
-
- /*       if (othersGroupChild.get(0) != null && othersGroupChild.get(0).getIcon() == (R.drawable.ic_unlock_full)) {
-            othersGroupChild.remove(0);
-            expandableListAdapter.notifyDataSetChanged();
-            Log.d(TAG, "Hide ads SUCCESS");
-        }*/
-
-        unlockPremium.setVisibility(View.GONE);
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_container);
-/*        if (fragment instanceof BaseFileList) {
-            ((BaseFileList) fragment).setPremium();
-        } else if (fragment instanceof HomeScreenFragment) {
-            ((HomeScreenFragment) fragment).setPremium();
-        }*/
-    }
-
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,

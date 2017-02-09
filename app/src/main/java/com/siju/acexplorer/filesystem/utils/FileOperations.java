@@ -13,6 +13,7 @@ import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.operations.OperationUtils;
 import com.siju.acexplorer.filesystem.root.RootDeniedException;
 import com.siju.acexplorer.filesystem.root.RootUtils;
+import com.stericson.RootTools.RootTools;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,6 +22,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 
+import static com.siju.acexplorer.filesystem.operations.OperationUtils.WriteMode.EXTERNAL;
+import static com.siju.acexplorer.filesystem.operations.OperationUtils.WriteMode.INTERNAL;
+import static com.siju.acexplorer.filesystem.operations.OperationUtils.WriteMode.ROOT;
 import static com.siju.acexplorer.filesystem.root.RootOperations.renameRoot;
 import static com.siju.acexplorer.filesystem.storage.StorageUtils.getDocumentFile;
 import static com.siju.acexplorer.filesystem.storage.StorageUtils.isOnExtSdCard;
@@ -54,12 +58,12 @@ public class FileOperations {
                 if (file.exists()) fileOperationCallBack.exists();
 
                 OperationUtils.WriteMode mode = OperationUtils.checkFolder(file.getParent(), context);
-                if (mode == OperationUtils.WriteMode.EXTERNAL) {
+                if (mode == EXTERNAL) {
                     fileOperationCallBack.launchSAF(file);
                     return null;
-                } else if (mode == OperationUtils.WriteMode.INTERNAL || mode == OperationUtils.WriteMode.ROOT) {
+                } else if (mode == INTERNAL || mode == ROOT) {
                     boolean result = mkdir(file, context);
-                    // Try the root way
+
                     if (!result && isRoot) {
                         if (file.exists()) fileOperationCallBack.exists();
                         try {
@@ -70,7 +74,8 @@ public class FileOperations {
                         } catch (RootDeniedException e) {
                             Logger.log(TAG, file.getAbsolutePath());
                         }
-                        result = file.exists();
+                        result = true;
+
                     }
                     fileOperationCallBack.opCompleted(file, result);
                     return null;
@@ -91,14 +96,15 @@ public class FileOperations {
                 if (file.exists()) fileOperationCallBack.exists();
 
                 OperationUtils.WriteMode mode = OperationUtils.checkFolder(file.getParent(), context);
-                if (mode == OperationUtils.WriteMode.EXTERNAL) {
+                if (mode == EXTERNAL) {
                     fileOperationCallBack.launchSAF(file);
                     return null;
-                } else if (mode == OperationUtils.WriteMode.INTERNAL || mode == OperationUtils.WriteMode.ROOT) {
+                } else if (mode == INTERNAL || mode == ROOT) {
                     boolean result = mkfile(file, context);
 
                     // Try the root way
                     if (!result && isRoot) {
+                        RootTools.debugMode = true;
                         if (file.exists()) fileOperationCallBack.exists();
                         try {
                             String parentPath = file.getParent();
@@ -108,7 +114,11 @@ public class FileOperations {
                         } catch (RootDeniedException e) {
                             Logger.log(TAG, file.getAbsolutePath());
                         }
-                        result = file.exists();
+                        Log.d(TAG, "AFTER CMD FINISH mkfile: "+file.getAbsolutePath());
+
+                        result = true;
+//                        Log.d(TAG, "Result: "+result);
+
                     }
                     fileOperationCallBack.opCompleted(file, result);
                     return null;
@@ -133,23 +143,23 @@ public class FileOperations {
                 OperationUtils.WriteMode mode = OperationUtils.checkFolder(oldFile.getParentFile().getAbsolutePath(), context);
                 Logger.log(TAG, "Rename--mode=" + mode);
 
-                if (mode == OperationUtils.WriteMode.EXTERNAL) {
+                if (mode == EXTERNAL) {
                     fileOperationCallBack.launchSAF(oldFile, newFile);
-                } else if (mode == OperationUtils.WriteMode.INTERNAL || mode == OperationUtils.WriteMode.ROOT) {
+                } else if (mode == INTERNAL || mode == ROOT) {
 
                     boolean result = renameFolder(oldFile, newFile, context);
-                    boolean a = !oldFile.exists() && newFile.exists();
-                    Logger.log(TAG, "Rename--filexists=" + a + "rootmode=" + rootMode + "result==" + result);
+                    boolean exists = !oldFile.exists() && newFile.exists();
+                    Logger.log(TAG, "Rename--filexists=" + exists + "rootmode=" + rootMode + "result==" + result);
 
                     if (!result) {
-                        if (!a && rootMode) {
+                        if (!exists && rootMode) {
                             try {
                                 renameRoot(oldFile, newFile.getName());
                             } catch (RootDeniedException e) {
                                 Logger.log(TAG, oldFile.getPath() + "\n" + newFile.getPath());
                             }
 
-                            result = !oldFile.exists() && newFile.exists();
+                            result = true;
                         }
                     }
                     fileOperationCallBack.opCompleted(newFile, result);
@@ -170,7 +180,7 @@ public class FileOperations {
      * @return true if the renaming was successful.
      */
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    static boolean renameFolder(@NonNull final File source, @NonNull final File target, Context context) {
+    private static boolean renameFolder(@NonNull final File source, @NonNull final File target, Context context) {
         // First try the normal rename.
         if (rename(source, target.getName())) {
             return true;
