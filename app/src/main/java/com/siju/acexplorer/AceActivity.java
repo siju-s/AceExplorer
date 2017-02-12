@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -98,6 +97,7 @@ public class AceActivity extends BaseActivity
     private static final int REQUEST_INVITE = 4000;
 
     private final String TAG = this.getClass().getSimpleName();
+
     private ExpandableListAdapter expandableListAdapter;
     private ExpandableListView expandableListView;
     private ArrayList<SectionGroup> totalGroupData = new ArrayList<>();
@@ -117,8 +117,7 @@ public class AceActivity extends BaseActivity
     private boolean isDualPaneEnabled;
     private Themes mCurrentTheme;
     private int mCurrentOrientation;
-    private boolean mIsRootMode = true;
-    private boolean mIsTablet;
+    private boolean isTablet;
     private HomeScreenFragment mHomeScreenFragment;
     private boolean inappShortcutMode;
 
@@ -127,10 +126,6 @@ public class AceActivity extends BaseActivity
     private RelativeLayout settings;
     private ImageView imageInvite;
 
-
-//    public static Shell.Interactive shellInteractive;
-    private static Handler handler;
-    private static HandlerThread handlerThread;
     private PermissionHelper permissionHelper;
     private BasePresenterImpl basePresenter;
     private FrameLayout frameDualPane;
@@ -234,7 +229,6 @@ public class AceActivity extends BaseActivity
     private void setupInitialData() {
         checkPreferences();
         checkScreenOrientation();
-//        initializeInteractiveShell();
         if (!checkIfInAppShortcut(getIntent())) {
             displayMainScreen(mIsHomeScreenEnabled);
         }
@@ -245,22 +239,20 @@ public class AceActivity extends BaseActivity
 
     private void checkPreferences() {
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferenceWrapper = new SharedPreferenceWrapper();
         if (mSharedPreferences.getBoolean(PREFS_FIRST_RUN, true)) {
             mIsFirstRun = true;
             mSharedPreferences.edit().putInt(FileConstants.KEY_SORT_MODE, FileConstants
                     .KEY_SORT_NAME).apply();
-            mIsTablet = Utils.isTablet(this);
-            if (mIsTablet) {
+            isTablet = Utils.isTablet(this);
+            if (isTablet) {
                 Logger.log(TAG, "Istab");
                 mSharedPreferences.edit().putBoolean(FileConstants.PREFS_DUAL_PANE, true).apply();
             }
         }
         mIsHomeScreenEnabled = mSharedPreferences.getBoolean(FileConstants.PREFS_HOMESCREEN, true);
-        mIsRootMode = mSharedPreferences.getBoolean(FileConstants.PREFS_ROOTED, false);
         isDualPaneEnabled = mSharedPreferences.getBoolean(FileConstants.PREFS_DUAL_PANE,
-                mIsTablet);
-
-
+                isTablet);
     }
 
     /**
@@ -274,25 +266,6 @@ public class AceActivity extends BaseActivity
         }
     }
 
-    /**
-     * Initializes an interactive shell, which will stay throughout the app lifecycle
-     * The shell is associated with a handler thread which maintain the message queue from the
-     * callbacks of shell as we certainly cannot allow the callbacks to run on same thread because
-     * of possible deadlock situation and the asynchronous behaviour of LibSuperSU
-     */
-    /*private void initializeInteractiveShell() {
-
-        // only one looper can be associated to a thread. So we're making sure not to create new
-        // handler threads every time the code relaunch.
-        if (mIsRootMode) {
-
-            handlerThread = new HandlerThread("root_handler");
-            handlerThread.start();
-            handler = new Handler(handlerThread.getLooper());
-            shellInteractive = (new Shell.Builder()).useSU().setHandler(handler).open();
-        }
-    }*/
-
 
     private void initListeners() {
         drawerToggle = new ActionBarDrawerToggle(
@@ -305,8 +278,6 @@ public class AceActivity extends BaseActivity
             }
         };
 
-/*        DrawerArrowDrawable mArrowDrawable = new DrawerArrowDrawable(this);
-        mToolbar.setNavigationIcon(mArrowDrawable);*/
         drawerLayout.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
         expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
@@ -345,7 +316,6 @@ public class AceActivity extends BaseActivity
             displayFileList(getInternalStorage(), FILES);
             if (isDualModeActive) {
                 toggleDualPaneVisibility(true);
-//                showDualPane();
             }
         }
     }
@@ -354,13 +324,11 @@ public class AceActivity extends BaseActivity
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Bundle args = new Bundle();
         args.putBoolean(FileConstants.KEY_HOME, true);
-        args.putBoolean(AceActivity.PREFS_FIRST_RUN, mIsFirstRun);
+        args.putBoolean(PREFS_FIRST_RUN, mIsFirstRun);
         args.putBoolean(FileConstants.KEY_DUAL_ENABLED, isDualModeActive);
         mHomeScreenFragment = new HomeScreenFragment();
         mHomeScreenFragment.setArguments(args);
-//            ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
-//                    .exit_to_left);
-//            ft.setCustomAnimations(R.anim.slide_in_left,R.anim.slide_out_right);
+
         ft.replace(R.id.main_container, mHomeScreenFragment);
         ft.addToBackStack(null);
         Logger.log(TAG, "initialScreenSetup");
@@ -432,33 +400,35 @@ public class AceActivity extends BaseActivity
                 + intent);
 
         if (!BillingHelper.getInstance().onActivityResult(requestCode, resultCode, intent)) {
-            if (requestCode == PREFS_REQUEST) {
-                Logger.log(TAG, "OnActivityResult=" + resultCode);
-                if (resultCode == RESULT_OK) {
-                    if (intent != null && intent.getBooleanExtra(FileConstants.PREFS_RESET, false)) {
-                        resetFavouritesGroup();
-                        expandableListView.smoothScrollToPosition(0);
+            switch (requestCode) {
+                case PREFS_REQUEST:
+                    Logger.log(TAG, "OnActivityResult=" + resultCode);
+                    if (resultCode == RESULT_OK) {
+                        if (intent != null && intent.getBooleanExtra(FileConstants.PREFS_RESET, false)) {
+                            resetFavouritesGroup();
+                            expandableListView.smoothScrollToPosition(0);
+                        }
+                        onSharedPrefsChanged();
                     }
-                    onSharedPrefsChanged();
-
-                }
-            } else if (requestCode == REQUEST_INVITE) {
-                if (resultCode == RESULT_OK) {
-                    // Get the invitation IDs of all sent messages
-                    String[] ids = AppInviteInvitation.getInvitationIds(resultCode, intent);
-                    for (String id : ids) {
-                        Logger.log(TAG, "onActivityResult: sent invitation " + id);
+                    break;
+                case REQUEST_INVITE:
+                    if (resultCode == RESULT_OK) {
+                        // Get the invitation IDs of all sent messages
+                        String[] ids = AppInviteInvitation.getInvitationIds(resultCode, intent);
+                        for (String id : ids) {
+                            Logger.log(TAG, "onActivityResult: sent invitation " + id);
+                        }
+                    } else {
+                        Toast.makeText(this, getString(R.string.app_invite_failed), Toast.LENGTH_SHORT).show();
                     }
-                } else {
-                    Toast.makeText(this, getString(R.string.app_invite_failed), Toast.LENGTH_SHORT).show();
-                }
+                    break;
             }
             super.onActivityResult(requestCode, resultCode, intent);
         }
     }
 
     /**
-     * Show the rate dialog
+     * Show the premium dialog
      *
      * @param context
      */
@@ -640,14 +610,12 @@ public class AceActivity extends BaseActivity
         } else {
             ((BaseFileList) fragment).reloadList(directory, category);
         }
-
     }
 
 
     private void showPurchaseDialog() {
         BillingHelper.getInstance().launchPurchaseFlow(this);
     }
-
 
 
     @Override
@@ -704,7 +672,6 @@ public class AceActivity extends BaseActivity
                 expandableListAdapter.notifyDataSetChanged();
                 return true;
 
-
             default:
                 return super.onContextItemSelected(menuItem);
         }
@@ -729,7 +696,6 @@ public class AceActivity extends BaseActivity
                 isDualModeActive = false;
                 toggleDualPaneVisibility(false);
             }
-
         }
         super.onConfigurationChanged(newConfig);
     }
@@ -757,7 +723,6 @@ public class AceActivity extends BaseActivity
         Bundle args = new Bundle();
         args.putString(FileConstants.KEY_PATH, internalStoragePath);
         args.putSerializable(KEY_CATEGORY, FILES);
-//        args.putBoolean(FileConstants.KEY_FOCUS_DUAL, true);
         args.putBoolean(FileConstants.KEY_DUAL_ENABLED, true);
 
         DualPaneList dualFragment = new DualPaneList();
@@ -821,18 +786,10 @@ public class AceActivity extends BaseActivity
         unregisterForContextMenu(expandableListView);
         unregisterReceiver(mLocaleListener);
         mSharedPreferences.edit().putInt(CURRENT_THEME, mCurrentTheme.getValue()).apply();
-        if (mIsRootMode) {
-            // close interactive shell and handler thread associated with it
-/*            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                // let it finish up first with what it's doing
-                handlerThread.quitSafely();
-            } else handlerThread.quit();
-            shellInteractive.close();*/
-            try {
-                RootTools.closeAllShells();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            RootTools.closeAllShells();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         BillingHelper.getInstance().disposeBilling();
         super.onDestroy();
@@ -894,8 +851,6 @@ public class AceActivity extends BaseActivity
             }
         }
 
-        mIsRootMode = mSharedPreferences.getBoolean(FileConstants.PREFS_ROOTED, false);
-
         String language = mSharedPreferences.getString(LocaleHelper.SELECTED_LANGUAGE, Locale.getDefault()
                 .getLanguage());
         if (!language.equals(Locale.getDefault().getLanguage())) {
@@ -949,7 +904,7 @@ public class AceActivity extends BaseActivity
             }
         }
         boolean isDualPaneEnabledSettings = mSharedPreferences.getBoolean(FileConstants
-                .PREFS_DUAL_PANE, mIsTablet);
+                .PREFS_DUAL_PANE, isTablet);
 
         Logger.log(TAG, "OnPrefschanged PREFS_DUAL_PANE" + isDualPaneEnabledSettings);
 

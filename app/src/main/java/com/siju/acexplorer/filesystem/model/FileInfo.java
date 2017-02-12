@@ -9,6 +9,7 @@ import static android.R.attr.type;
 
 public class FileInfo implements Parcelable {
 
+    private Category category;
     private String fileName;
     private String filePath;
     private String fileDate;
@@ -20,13 +21,14 @@ public class FileInfo implements Parcelable {
     private String permissions;
     private long date;
     private long size;
-    private Category category;
+    private boolean isRootMode;
+
     private int count;
     private int icon;
 
 
     public FileInfo(Category category, String fileName, String filePath, long fileDate, long noOfFilesOrSize, boolean isDirectory,
-                    String extension, String permissions) {
+                    String extension, String permissions, boolean rootMode) {
         this.fileName = fileName;
         this.filePath = filePath;
         this.date = fileDate;
@@ -35,12 +37,13 @@ public class FileInfo implements Parcelable {
         this.extension = extension;
         this.category = category;
         this.permissions = permissions;
+        isRootMode = rootMode;
     }
 
     // Used for apk
     public FileInfo(Category category, long id, String fileName, String filePath, long fileDate, long size,
                     String extension) {
-        this(category, fileName, filePath, fileDate, size, false, extension, null);
+        this(category, fileName, filePath, fileDate, size, false, extension, null, false);
         this.id = id;
     }
 
@@ -76,7 +79,14 @@ public class FileInfo implements Parcelable {
         id = in.readLong();
         bucketId = in.readLong();
         permissions = in.readString();
+        isRootMode = in.readByte() != 0;
+
     }
+
+    public boolean isRootMode() {
+        return isRootMode;
+    }
+
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
@@ -90,7 +100,7 @@ public class FileInfo implements Parcelable {
         parcel.writeLong(id);
         parcel.writeLong(bucketId);
         parcel.writeString(permissions);
-
+        parcel.writeByte((byte) (isRootMode ? 1 : 0));
     }
 
     public boolean equals(Object obj) {

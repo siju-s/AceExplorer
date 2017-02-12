@@ -3,8 +3,8 @@ package com.siju.acexplorer.filesystem.task;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.siju.acexplorer.filesystem.FileListLoader;
 import com.siju.acexplorer.filesystem.model.FileInfo;
-import com.siju.acexplorer.helper.RootHelper;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -108,7 +108,7 @@ public class SearchTask {
 
             if (file.isDirectory()) {
                 String path = file.getAbsolutePath();
-                ArrayList<FileInfo> f = RootHelper.getFilesList(path, true, mShowHidden, false);
+                ArrayList<FileInfo> f = FileListLoader.getFilesList(path, true, mShowHidden, false);
                 Log.d("SearchTask", "searchRegExFind:size= "+f.size());
 
                 if (!isCancelled()) {

@@ -1,10 +1,10 @@
 package com.siju.acexplorer.filesystem.root;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.siju.acexplorer.common.Logger;
-import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.helper.RootHelper;
 import com.stericson.RootTools.RootTools;
 
@@ -16,6 +16,7 @@ public class RootUtils {
     private static final String LS = "ls -lAnH \"%\" --color=never";
     private static final String LSDIR = "ls -land \"%\" --color=never";
     public static final String SYSTEM_APP_DIR = "/system/app";
+    public static final String PREFS_ROOTED = "is_rooted";
     private static final Pattern mLsPattern;
 
     static {
@@ -23,8 +24,13 @@ public class RootUtils {
     }
 
     public static boolean isRooted(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(FileConstants.PREFS_ROOTED,
-                false);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(PREFS_ROOTED, false);
+    }
+
+    public static void setRooted(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        preferences.edit().putBoolean(PREFS_ROOTED, true).apply();
     }
 
 

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_paste"
+        android:icon="@drawable/ic_paste_white"
+        android:orderInCategory="1"
+        android:title="@string/action_paste"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_create"
+        android:icon="@drawable/ic_fab_folder"
+        android:orderInCategory="2"
+        android:title="@string/create"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_cancel"
+        android:icon="@drawable/ic_up_arrow"
+        android:orderInCategory="3"
+        android:title="@string/dialog_cancel"
+        app:showAsAction="ifRoom"/>
+
+</menu>

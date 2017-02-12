@@ -1,15 +1,10 @@
 package com.siju.acexplorer.helper;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.util.Log;
-import android.webkit.MimeTypeMap;
 
-import com.siju.acexplorer.filesystem.groups.Category;
 import com.siju.acexplorer.filesystem.model.BaseFile;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.root.RootDeniedException;
-import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.stericson.RootTools.RootTools;
 import com.stericson.RootTools.execution.Command;
 
@@ -20,10 +15,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.siju.acexplorer.filesystem.groups.Category.AUDIO;
+import static com.siju.acexplorer.filesystem.FileListLoader.getFilesList;
 import static com.siju.acexplorer.filesystem.groups.Category.FILES;
-import static com.siju.acexplorer.filesystem.groups.Category.IMAGE;
-import static com.siju.acexplorer.filesystem.groups.Category.VIDEO;
 
 /*import com.siju.acexplorer.helper.root.RootTools;
 import com.siju.acexplorer.helper.root.rootshell.execution.Command;*/
@@ -206,91 +199,23 @@ public class RootHelper {
         return per;
     }
 
-    @SuppressLint("SdCardPath")
-    public static ArrayList<FileInfo> getFilesList(String path, boolean root,
-                                                   boolean showHidden, boolean isRingtonePicker) {
-        File file = new File(path);
-        ArrayList<FileInfo> fileInfoArrayList;
-        if (file.canRead()) {
-            fileInfoArrayList = getNonRootedList(file, showHidden, isRingtonePicker);
-        } else {
-            fileInfoArrayList = getRootedList(path, root, showHidden);
-        }
-        return fileInfoArrayList;
-
-    }
-
-    private static ArrayList<FileInfo> getNonRootedList(File file,boolean showHidden,
-                                                        boolean isRingtonePicker) {
-
-        ArrayList<FileInfo> fileInfoArrayList = new ArrayList<>();
-        File[] listFiles = file.listFiles();
-
-        if (listFiles != null) {
-            for (File file1 : listFiles) {
-                String filePath = file1.getAbsolutePath();
-                boolean isDirectory = false;
-//                    String noOfFilesOrSize = null;
-                long size;
-                String extension = null;
-                Category category = FILES;
-
-                // Dont show hidden files by default
-                if (file1.isHidden() && !showHidden) {
-                    continue;
-                }
-                if (file1.isDirectory()) {
-
-                    isDirectory = true;
-                    int childFileListSize = 0;
-                    String[] list = file1.list();
-                    if (list != null) {
-                        childFileListSize = list.length;
-                    }
-                    // Saves us 200 ms by avoiding filtering of hidden files
-                      /*  if (childFileListSize == 0) {
-                            noOfFilesOrSize = context.getResources().getString(R.string.empty);
-                        } else {
-                            noOfFilesOrSize = context.getResources().getQuantityString(R.plurals.number_of_files,
-                                    childFileListSize, childFileListSize);
-                        }*/
-                    size = childFileListSize;
-//                        }
-                } else {
-                    size = file1.length();
-//                        noOfFilesOrSize = Formatter.formatFileSize(context, size);
-                    extension = filePath.substring(filePath.lastIndexOf(".") + 1);
-                    category = checkMimeType(extension);
-                    if (isRingtonePicker && !FileUtils.isFileMusic(filePath)) {
-                        continue;
-                    }
-                }
-
-                long date = file1.lastModified();
-//                    String fileModifiedDate = convertDate(date);
-
-                FileInfo fileInfo = new FileInfo(category, file1.getName(), filePath, date, size,
-                        isDirectory, extension, parseFilePermission(file1));
-                fileInfoArrayList.add(fileInfo);
-            }
-        }
-        return fileInfoArrayList;
-    }
 
 
-    private static ArrayList<FileInfo> getRootedList(String path, boolean root,
+    public static ArrayList<FileInfo> getRootedList(String path, boolean root,
                                                      boolean showHidden) {
         ArrayList<FileInfo> fileInfoArrayList = new ArrayList<>();
 
-        String p = " ";
-        if (showHidden) p = "a ";
+        String hidden = " ";
+        if (showHidden) {
+            hidden = "a ";
+        }
         ArrayList<String> ls;
 
-        root = root || RootTools.isAccessGiven();
-        if (root) {
-//            if (!path.startsWith("/storage") && !path.startsWith("/sdcard")) {
+        boolean rootAccessGiven = RootTools.isAccessGiven();
+        boolean rooted = root || rootAccessGiven;
+        if (rooted) {
             String cpath = getCommandLineString(path);
-            ls = runAndWait1("ls -l" + p + cpath, true);
+            ls = runAndWait1("ls -l" + hidden + cpath, true);
             if (ls != null) {
                 for (int i = 0; i < ls.size(); i++) {
                     String file1 = ls.get(i);
@@ -313,7 +238,7 @@ public class RootHelper {
                                 long size1 = array.getSize();
                                 fileInfoArrayList.add(new FileInfo(FILES, name, path1,
                                         array.getDate(), size1, isDirectory, null,
-                                        array.getPermission()));
+                                        array.getPermission(), true));
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -348,134 +273,6 @@ public class RootHelper {
         return array[0];
     }
 
-    private final ArrayList<FileInfo> fileInfoArrayList = new ArrayList<>();
-
-    @SuppressLint("SdCardPath")
-    public ArrayList<FileInfo> getFilesListRecursively(Context context, String path, boolean root) {
-
-        File file = new File(path);
-//        Logger.log("RootHelper", "Starting time FILES=");
-
-        if (file.canRead() && (path.startsWith("/storage") || path.startsWith("/sdcard"))) {
-            File[] listFiles = file.listFiles();
-
-            if (listFiles != null) {
-                for (File file1 : listFiles) {
-                    String filePath = file1.getAbsolutePath();
-                    boolean isDirectory = false;
-//                    String noOfFilesOrSize = null;
-                    long size;
-                    String extension = null;
-                    Category category = FILES;
-
-                    if (file1.isDirectory()) {
-
-                        isDirectory = true;
-                        int childFileListSize = 0;
-                        String[] list = file1.list();
-                        if (list != null) {
-                            childFileListSize = list.length;
-                        }
-                        getFilesListRecursively(context, filePath, true);
-                        // Saves us 200 ms by avoiding filtering of hidden files
-                      /*  if (childFileListSize == 0) {
-                            noOfFilesOrSize = context.getResources().getString(R.string.empty);
-                        } else {
-                            noOfFilesOrSize = context.getResources().getQuantityString(R.plurals.number_of_files,
-                                    childFileListSize, childFileListSize);
-                        }*/
-                        size = childFileListSize;
-//                        }
-                    } else {
-                        size = file1.length();
-//                        noOfFilesOrSize = Formatter.formatFileSize(context, size);
-                        extension = filePath.substring(filePath.lastIndexOf(".") + 1);
-                        category = checkMimeType(extension);
-                    }
-                    long date = file1.lastModified();
-//                    String fileModifiedDate = convertDate(date);
-
-                    FileInfo fileInfo = new FileInfo(category, file1.getName(), filePath, date, size,
-                            isDirectory, extension, parseFilePermission(file1));
-                    fileInfoArrayList.add(fileInfo);
-//                    Logger.log("RootHelper", "fileInfoArrayList element="+fileInfo.getFilePath());
-
-                }
-//                Logger.log("RootHelper", "END fileInfoArrayList size="+fileInfoArrayList.size());
-
-            }
-        } else {
-            String p;
-            p = "a ";
-            ArrayList<String> ls;
-            if (root) {
-//            if (!path.startsWith("/storage") && !path.startsWith("/sdcard")) {
-                String cpath = getCommandLineString(path);
-                ls = runAndWait1("ls -l" + p + cpath, true);
-                if (ls != null) {
-                    for (int i = 0; i < ls.size(); i++) {
-                        String file1 = ls.get(i);
-                        if (!file1.contains("Permission denied"))
-                            try {
-                                BaseFile array = parseName(file1);
-                                if (array != null) {
-                                    String name = array.getPath();
-                                    String path1;
-
-
-                                    if (!path.equals("/")) {
-                                        path1 = path + "/" + name;
-                                    } else {
-                                        path1 = "/" + name;
-                                    }
-//                                    Logger.log("RootHelper", "Path==" + path);
-
-//                                    Logger.log("RootHelper", "path1==" + path1);
-//                                    array.setName(array.getPath());
-//                                    array.setPath();
-                                    boolean isDirectory;
-                                    if (array.getLink().trim().length() > 0) {
-                                        isDirectory = isDirectory(array.getLink(), true, 0);
-//                                        array.setDirectory(isdirectory);
-                                    } else isDirectory = isDirectory(array);
-                                    long size1 = array.getSize();
-                                    fileInfoArrayList.add(new FileInfo(FILES, name, path1,
-                                            array.getDate(), size1, isDirectory, null,
-                                            array.getPermission()));
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                    }
-                }
-            }
-//            }
-
-        }
-        return fileInfoArrayList;
-
-    }
-
-
-    private static Category checkMimeType(String extension) {
-//        StrinmimeType = URLConnection.guessContentTypeFromName(path);
-
-        Category value = FILES;
-        if (extension == null) return FILES;
-        extension = extension.toLowerCase(); // necessary
-        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-
-        if (mimeType != null) {
-            if (mimeType.indexOf("image") == 0) {
-                value = IMAGE;
-            } else if (mimeType.indexOf("video") == 0) {
-                value = VIDEO;
-            } else if (mimeType.indexOf("audio") == 0) {
-                value = AUDIO;
-            }
-        }
-        return value;
-    }
 
     public static boolean fileExists(String path) {
         File f = new File(path);

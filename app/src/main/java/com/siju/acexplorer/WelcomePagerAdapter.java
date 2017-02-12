@@ -2,7 +2,6 @@ package com.siju.acexplorer;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,7 +51,6 @@ class WelcomePagerAdapter extends PagerAdapter {
         textHeader.setText(mHeaderText[position]);
         textContent.setText(mText[position]);
 
-        Log.d("TAG", "Adapter=" + position);
         Glide.with(mContext).load(mResources[position])
                 .asGif()
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)

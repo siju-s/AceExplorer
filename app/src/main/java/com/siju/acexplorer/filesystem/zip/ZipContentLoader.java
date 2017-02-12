@@ -336,7 +336,7 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             String path = parentZipPath + File.separator + name;
 
             FileInfo fileInfo = new FileInfo(COMPRESSED, name, path, date, size,
-                    isDirectory, extension, RootHelper.parseFilePermission(new File(path)));
+                    isDirectory, extension, RootHelper.parseFilePermission(new File(path)), false);
             fileInfoList.add(fileInfo);
         }
         Collections.sort(fileInfoList, comparatorByNameZip);
@@ -440,7 +440,7 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             String path = parentZipPath + File.separator + name;
 
             FileInfo fileInfo = new FileInfo(COMPRESSED, name, path, date1, size,
-                    isDirectory, extension, RootHelper.parseFilePermission(new File(path)));
+                    isDirectory, extension, RootHelper.parseFilePermission(new File(path)), false);
             fileInfoList.add(fileInfo);
         }
         Collections.sort(fileInfoList, comparatorByNameZip);

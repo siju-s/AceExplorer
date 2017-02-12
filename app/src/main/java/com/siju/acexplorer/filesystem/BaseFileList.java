@@ -184,6 +184,8 @@ public class BaseFileList extends Fragment implements LoaderManager
     private ActionMode actionMode;
     private SparseBooleanArray mSelectedItemPositions = new SparseBooleanArray();
     private MenuItem mPasteItem;
+    private MenuItem cancelItem;
+    private MenuItem createItem;
     private MenuItem mRenameItem;
     private MenuItem mInfoItem;
     private MenuItem mArchiveItem;
@@ -192,7 +194,6 @@ public class BaseFileList extends Fragment implements LoaderManager
     private MenuItem mHideItem;
     private MenuItem mPermissionItem;
     private boolean mIsMoveOperation = false;
-    private boolean mIsPasteItemVisible;
     private String mSelectedPath;
     private Button buttonPathSelect;
     private final HashMap<String, Bundle> scrollPosition = new HashMap<>();
@@ -214,6 +215,7 @@ public class BaseFileList extends Fragment implements LoaderManager
     private FloatingActionsMenu fabCreateMenu;
     private FloatingActionButton fabCreateFolder;
     private FloatingActionButton fabCreateFile;
+    private FloatingActionButton fabOperation;
     private FrameLayout frameLayoutFab;
     private LinearLayout navDirectory;
     private HorizontalScrollView scrollNavigation;
@@ -227,6 +229,7 @@ public class BaseFileList extends Fragment implements LoaderManager
     private TextView toolbarTitle;
     private com.siju.acexplorer.common.SearchView searchView;
     private ImageButton imgOverflow;
+    private boolean isPasteVisible;
 
     @Override
     public void onAttach(Context context) {
@@ -290,18 +293,16 @@ public class BaseFileList extends Fragment implements LoaderManager
         toolbar = (Toolbar) root.findViewById(R.id.toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         frameLayoutFab = (FrameLayout) root.findViewById(R.id.frameLayoutFab);
-  /*      ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_drawer);*/
         aceActivity.syncDrawerState();
         toolbar.setTitle(R.string.app_name);
         fabCreateMenu = (FloatingActionsMenu) getActivity().findViewById(R.id.fabCreate);
         fabCreateFolder = (FloatingActionButton) getActivity().findViewById(R.id.fabCreateFolder);
         fabCreateFile = (FloatingActionButton) getActivity().findViewById(R.id.fabCreateFile);
+        fabOperation = (FloatingActionButton) getActivity().findViewById(R.id.fabOperation);
+
         navDirectory = (LinearLayout) root.findViewById(R.id.navButtons);
         scrollNavigation = (HorizontalScrollView) root.findViewById(R.id.scrollNavigation);
         frameLayoutFab.getBackground().setAlpha(0);
-
     }
 
     private void setToolbar(Bundle savedInstanceState) {
@@ -486,6 +487,7 @@ public class BaseFileList extends Fragment implements LoaderManager
 
         fabCreateFile.setOnClickListener(this);
         fabCreateFolder.setOnClickListener(this);
+        fabOperation.setOnClickListener(this);
 
         setupFab();
 
@@ -1331,8 +1333,6 @@ public class BaseFileList extends Fragment implements LoaderManager
     }
 
 
-
-
     private void stopAnimation() {
         if (!fileListAdapter.mStopAnimation) {
             for (int i = 0; i < recyclerViewFileList.getChildCount(); i++) {
@@ -1483,6 +1483,14 @@ public class BaseFileList extends Fragment implements LoaderManager
 
     }
 
+    private void setupPasteMenu() {
+        Menu menu = mBottomToolbar.getMenu();
+        mPasteItem = menu.findItem(R.id.action_paste);
+        createItem = menu.findItem(R.id.action_create);
+        cancelItem = menu.findItem(R.id.action_cancel);
+
+    }
+
     private void setupMenuVisibility() {
         Log.d(TAG, "setupMenuVisibility: " + mSelectedItemPositions.size());
         if (mSelectedItemPositions.size() > 1) {
@@ -1500,7 +1508,7 @@ public class BaseFileList extends Fragment implements LoaderManager
                 String filePath = fileInfoList.get(mSelectedItemPositions.keyAt(0))
                         .getFilePath();
 
-                boolean isRoot = preferences.getBoolean(FileConstants.PREFS_ROOTED, false);
+                boolean isRoot = fileInfoList.get(mSelectedItemPositions.keyAt(0)).isRootMode();
                 if (FileUtils.isFileCompressed(filePath)) {
                     mExtractItem.setVisible(true);
                     mArchiveItem.setVisible(false);
@@ -1551,10 +1559,9 @@ public class BaseFileList extends Fragment implements LoaderManager
                     for (int i = 0; i < mSelectedItemPositions.size(); i++) {
                         mCopiedData.add(fileInfoList.get(mSelectedItemPositions.keyAt(i)));
                     }
+                    isPasteVisible = true;
                     mIsMoveOperation = true;
-                    togglePasteVisibility(true);
-                    getActivity().supportInvalidateOptionsMenu();
-                    actionMode.finish();
+                    showPasteIcon();
                 }
                 break;
             case R.id.action_copy:
@@ -1567,11 +1574,28 @@ public class BaseFileList extends Fragment implements LoaderManager
                     for (int i = 0; i < mSelectedItemPositions.size(); i++) {
                         mCopiedData.add(fileInfoList.get(mSelectedItemPositions.keyAt(i)));
                     }
-                    togglePasteVisibility(true);
-                    getActivity().supportInvalidateOptionsMenu();
-                    actionMode.finish();
+                    isPasteVisible = true;
+                    showPasteIcon();
                 }
                 break;
+
+            case R.id.action_paste:
+                if (mCopiedData.size() > 0) {
+                    ArrayList<FileInfo> info = new ArrayList<>();
+                    info.addAll(mCopiedData);
+                    PasteConflictChecker conflictChecker = new PasteConflictChecker(this, currentDir,
+                            mIsRootMode, mIsMoveOperation, info);
+                    conflictChecker.execute();
+                    clearSelectedPos();
+                    mCopiedData.clear();
+                    endActionMode();
+                }
+                break;
+
+            case R.id.action_create:
+                new Dialogs().createDirDialog(this, mIsRootMode, currentDir);
+                break;
+
             case R.id.action_delete:
 
                 if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
@@ -1584,7 +1608,7 @@ public class BaseFileList extends Fragment implements LoaderManager
                         removeFavorite(filesToDelete);
                         Toast.makeText(getContext(), getString(R.string.fav_removed), Toast.LENGTH_SHORT).show();
                     } else {
-                        dialogs.showDeleteDialog(this, filesToDelete, RootUtils.isRooted(getActivity()));
+                        dialogs.showDeleteDialog(this, filesToDelete, RootUtils.isRooted(getContext()));
                     }
                     actionMode.finish();
                 }
@@ -1758,10 +1782,8 @@ public class BaseFileList extends Fragment implements LoaderManager
         public void onDestroyActionMode(ActionMode mode) {
             isInSelectionMode = false;
             clearSelection();
-//            toggleDummyView(false);
-
             actionMode = null;
-//            removeBottomMargin();
+            hidePasteIcon();
             mBottomToolbar.setVisibility(View.GONE);
             mSelectedItemPositions = new SparseBooleanArray();
             mSwipeRefreshLayout.setEnabled(true);
@@ -1960,9 +1982,10 @@ public class BaseFileList extends Fragment implements LoaderManager
                                 .LENGTH_LONG).show();
                     }
                 };
-                try {//
-                    RootTools.remount(fileInfo.getFilePath(), "RW");
+                try {
+                    RootUtils.mountRW(fileInfo.getFilePath());
                     RootTools.getShell(true).add(com);
+                    RootUtils.mountRO(fileInfo.getFilePath());
                     refreshList();
                 } catch (Exception e1) {
                     Toast.makeText(getActivity(), getResources().getString(R.string.error), Toast.LENGTH_LONG)
@@ -2106,10 +2129,22 @@ public class BaseFileList extends Fragment implements LoaderManager
     }
 
 
-    private void togglePasteVisibility(boolean isVisible) {
-        mPasteItem.setVisible(isVisible);
-        mIsPasteItemVisible = isVisible;
+    private void showPasteIcon() {
+        mBottomToolbar.setVisibility(View.VISIBLE);
+        mBottomToolbar.getMenu().clear();
+        mBottomToolbar.inflateMenu(R.menu.action_mode_paste);
+/*        EnhancedMenuInflater.inflate(getActivity().getMenuInflater(), mBottomToolbar.getMenu(),
+                category);*/
+        setupPasteMenu();
+/*        fabCreateMenu.setVisibility(View.GONE);
+        fabOperation.setVisibility(View.VISIBLE);*/
     }
+
+    private void hidePasteIcon() {
+   /*     fabOperation.setVisibility(View.GONE);
+        fabCreateMenu.setVisibility(View.VISIBLE);*/
+    }
+
 
     @SuppressWarnings("ConstantConditions")
     private void showInfoDialog(FileInfo fileInfo) {
@@ -2618,27 +2653,6 @@ public class BaseFileList extends Fragment implements LoaderManager
         mSelectedItemPositions = new SparseBooleanArray();
     }
 
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-
-            case R.id.action_paste:
-                if (mCopiedData.size() > 0) {
-                    ArrayList<FileInfo> info = new ArrayList<>();
-                    info.addAll(mCopiedData);
-                    PasteConflictChecker conflictChecker = new PasteConflictChecker(this, currentDir,
-                            mIsRootMode, mIsMoveOperation, info);
-                    conflictChecker.execute();
-                    clearSelectedPos();
-                    mCopiedData.clear();
-                    togglePasteVisibility(false);
-                }
-                break;
-
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     private void showSortDialog() {
         int color = new Dialogs().getCurrentThemePrimary(getActivity());

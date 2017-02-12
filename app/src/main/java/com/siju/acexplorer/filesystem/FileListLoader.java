@@ -19,6 +19,7 @@ import com.siju.acexplorer.filesystem.groups.Category;
 import com.siju.acexplorer.filesystem.model.FavInfo;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.root.RootUtils;
+import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.helper.RootHelper;
 import com.siju.acexplorer.helper.root.RootTools;
 
@@ -30,6 +31,8 @@ import static com.siju.acexplorer.filesystem.groups.Category.FILES;
 import static com.siju.acexplorer.filesystem.groups.Category.LARGE_FILES;
 import static com.siju.acexplorer.filesystem.groups.Category.PDF;
 import static com.siju.acexplorer.filesystem.helper.SortHelper.sortFiles;
+import static com.siju.acexplorer.filesystem.utils.FileUtils.checkMimeType;
+import static com.siju.acexplorer.helper.RootHelper.parseFilePermission;
 
 
 public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
@@ -99,10 +102,9 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     protected void onReset() {
         onStopLoading();
 
-        if (fileInfoList != null) {
-            fileInfoList = null;
-            mFragment = null;
-        }
+        fileInfoList = null;
+        mFragment = null;
+
         if (mMountUnmountReceiver != null) {
             getContext().unregisterReceiver(mMountUnmountReceiver);
             mMountUnmountReceiver = null;
@@ -163,18 +165,71 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
     private void fetchFiles() {
 
-
-//        if (file.canRead()) {
-
-        fileInfoList = RootHelper.getFilesList(currentDir,
+        fileInfoList = getFilesList(currentDir,
                 isRooted, mShowHidden, mIsRingtonePicker);
         fileInfoList = sortFiles(fileInfoList, mSortMode);
-       /* } else {
-            fileInfoList = RootHelper.getFilesList(currentDir,
-                    true, mShowHidden, mIsRingtonePicker);
-            fileInfoList = FileUtils.sortFiles(fileInfoList, mSortMode);
-        }*/
     }
+
+    public static ArrayList<FileInfo> getFilesList(String path, boolean root,
+                                                   boolean showHidden, boolean isRingtonePicker) {
+        File file = new File(path);
+        ArrayList<FileInfo> fileInfoArrayList;
+        if (file.canRead()) {
+            fileInfoArrayList = getNonRootedList(file, showHidden, isRingtonePicker);
+        } else {
+            fileInfoArrayList = RootHelper.getRootedList(path, root, showHidden);
+        }
+        return fileInfoArrayList;
+
+    }
+
+    private static ArrayList<FileInfo> getNonRootedList(File file,boolean showHidden,
+                                                        boolean isRingtonePicker) {
+
+        ArrayList<FileInfo> fileInfoArrayList = new ArrayList<>();
+        File[] listFiles = file.listFiles();
+
+        if (listFiles != null) {
+            for (File file1 : listFiles) {
+                String filePath = file1.getAbsolutePath();
+                boolean isDirectory = false;
+                long size;
+                String extension = null;
+                Category category = FILES;
+
+                // Dont show hidden files by default
+                if (file1.isHidden() && !showHidden) {
+                    continue;
+                }
+                if (file1.isDirectory()) {
+
+                    isDirectory = true;
+                    int childFileListSize = 0;
+                    String[] list = file1.list();
+                    if (list != null) {
+                        childFileListSize = list.length;
+                    }
+                    size = childFileListSize;
+                } else {
+                    size = file1.length();
+                    extension = filePath.substring(filePath.lastIndexOf(".") + 1);
+                    category = checkMimeType(extension);
+                    if (isRingtonePicker && !FileUtils.isFileMusic(filePath)) {
+                        continue;
+                    }
+                }
+
+                long date = file1.lastModified();
+//                    String fileModifiedDate = convertDate(date);
+
+                FileInfo fileInfo = new FileInfo(category, file1.getName(), filePath, date, size,
+                        isDirectory, extension, parseFilePermission(file1), false);
+                fileInfoArrayList.add(fileInfo);
+            }
+        }
+        return fileInfoArrayList;
+    }
+
 
     private void fetchApk() {
 
@@ -257,7 +312,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             long date = file.lastModified();
 
             FileInfo fileInfo = new FileInfo(FILES, fileName, path, date, childFileListSize,
-                    true, null, RootHelper.parseFilePermission(new File(path)));
+                    true, null, parseFilePermission(new File(path)), false);
             fileInfoList.add(fileInfo);
         }
         fileInfoList = sortFiles(fileInfoList, mSortMode);

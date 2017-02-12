@@ -41,12 +41,6 @@
         android:positiveButtonText="@null"
         android:title="@string/pref_title_change_lang" />
 
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="prefIsRooted"
-        android:layout="@layout/prefs_checkbox"
-        android:title="@string/pref_title_rooted" />
-
     <Preference
         android:key="prefsUpdate"
         android:layout="@layout/prefs_settings_item"

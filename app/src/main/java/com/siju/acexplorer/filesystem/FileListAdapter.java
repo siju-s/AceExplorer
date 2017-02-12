@@ -267,14 +267,18 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             boolean isDirectory = fileInfoArrayList.get(position).isDirectory();
             String fileNoOrSize;
             if (isDirectory) {
-                int childFileListSize = (int) fileInfoArrayList.get(position).getSize();
-                if (childFileListSize == 0) {
-                    fileNoOrSize = mContext.getResources().getString(R.string.empty);
-                } else if (childFileListSize == -1) {
-                    fileNoOrSize = "";
+                if (fileInfoArrayList.get(position).isRootMode()) {
+                    fileNoOrSize = mContext.getString(R.string.directory);
                 } else {
-                    fileNoOrSize = mContext.getResources().getQuantityString(R.plurals.number_of_files,
-                            childFileListSize, childFileListSize);
+                    int childFileListSize = (int) fileInfoArrayList.get(position).getSize();
+                    if (childFileListSize == 0) {
+                        fileNoOrSize = mContext.getResources().getString(R.string.empty);
+                    } else if (childFileListSize == -1) {
+                        fileNoOrSize = "";
+                    } else {
+                        fileNoOrSize = mContext.getResources().getQuantityString(R.plurals.number_of_files,
+                                childFileListSize, childFileListSize);
+                    }
                 }
             } else {
                 long size = fileInfoArrayList.get(position).getSize();

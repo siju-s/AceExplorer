@@ -29,9 +29,8 @@ import com.siju.acexplorer.AceActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
-import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.theme.ThemeUtils;
-import com.siju.acexplorer.helper.root.RootTools;
+import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.utils.LocaleHelper;
 
 import static com.siju.acexplorer.filesystem.theme.ThemeUtils.CURRENT_THEME;
@@ -92,21 +91,6 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         hiddenPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                getActivity().setResult(Activity.RESULT_OK, null);
-                return true;
-            }
-        });
-
-        final CheckBoxPreference rootPreference = (CheckBoxPreference) findPreference(FileConstants.PREFS_ROOTED);
-        rootPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                boolean result = RootTools.isAccessGiven();
-                if (!result) {
-                    rootPreference.setChecked(false);
-                    Toast.makeText(getActivity(), getString(R.string.msg_error_unrooted), Toast.LENGTH_SHORT).show();
-                }
                 getActivity().setResult(Activity.RESULT_OK, null);
                 return true;
             }

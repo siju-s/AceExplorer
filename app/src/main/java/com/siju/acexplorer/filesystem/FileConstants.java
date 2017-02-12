@@ -9,7 +9,6 @@ public class FileConstants {
     public static final String PREFS_HOMESCREEN = "prefHomeScreen";
     public static final String PREFS_RESET = "prefsReset";
 
-    public static final String PREFS_ROOTED = "prefIsRooted";
     public static final String SAF_URI = "saf_uri";
 
 

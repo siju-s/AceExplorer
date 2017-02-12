@@ -13,6 +13,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 import com.siju.acexplorer.common.Logger;
+import com.siju.acexplorer.filesystem.groups.Category;
 import com.siju.acexplorer.utils.Utils;
 
 import java.io.File;
@@ -28,6 +29,10 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Locale;
 
+import static com.siju.acexplorer.filesystem.groups.Category.AUDIO;
+import static com.siju.acexplorer.filesystem.groups.Category.FILES;
+import static com.siju.acexplorer.filesystem.groups.Category.IMAGE;
+import static com.siju.acexplorer.filesystem.groups.Category.VIDEO;
 import static com.siju.acexplorer.filesystem.helper.UriHelper.getUriFromFile;
 import static com.siju.acexplorer.filesystem.storage.StorageUtils.getDocumentFile;
 import static com.siju.acexplorer.filesystem.storage.StorageUtils.isOnExtSdCard;
@@ -260,6 +265,25 @@ public class FileUtils  {
             }
         }
         return outputStream;
+    }
+
+    public static Category checkMimeType(String extension) {
+
+        Category value = FILES;
+        if (extension == null) return FILES;
+        extension = extension.toLowerCase(); // necessary
+        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+
+        if (mimeType != null) {
+            if (mimeType.indexOf("image") == 0) {
+                value = IMAGE;
+            } else if (mimeType.indexOf("video") == 0) {
+                value = VIDEO;
+            } else if (mimeType.indexOf("audio") == 0) {
+                value = AUDIO;
+            }
+        }
+        return value;
     }
 
 

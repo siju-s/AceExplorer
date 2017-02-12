@@ -15,6 +15,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.BaseFileList;
+import com.siju.acexplorer.filesystem.FileListLoader;
 import com.siju.acexplorer.filesystem.groups.StoragesGroup;
 import com.siju.acexplorer.filesystem.helper.FileOpsHelper;
 import com.siju.acexplorer.filesystem.model.CopyData;
@@ -23,7 +24,6 @@ import com.siju.acexplorer.filesystem.operations.OperationProgress;
 import com.siju.acexplorer.filesystem.operations.OperationUtils;
 import com.siju.acexplorer.filesystem.operations.Operations;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
-import com.siju.acexplorer.helper.RootHelper;
 import com.siju.acexplorer.utils.Dialogs;
 
 import java.io.File;
@@ -91,7 +91,7 @@ public class PasteConflictChecker extends AsyncTask<Void, String, ArrayList<File
 
         if (isRootDir || f.getFreeSpace() >= totalBytes) {
 
-            ArrayList<FileInfo> listFiles = RootHelper.getFilesList(destinationDir,
+            ArrayList<FileInfo> listFiles = FileListLoader.getFilesList(destinationDir,
                     rootmode, true, false);
 
             for (FileInfo fileInfo : listFiles) {

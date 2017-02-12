@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -17,13 +16,13 @@ import android.util.SparseBooleanArray;
 import com.siju.acexplorer.AceActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
-import com.siju.acexplorer.filesystem.FileConstants;
+import com.siju.acexplorer.filesystem.FileListLoader;
 import com.siju.acexplorer.filesystem.model.CopyData;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.operations.OperationUtils;
-import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.root.RootDeniedException;
 import com.siju.acexplorer.filesystem.root.RootUtils;
+import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.helper.RootHelper;
 
 import java.io.BufferedInputStream;
@@ -43,8 +42,8 @@ import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_OPERA
 import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_RESULT;
 import static com.siju.acexplorer.filesystem.operations.Operations.COPY;
 import static com.siju.acexplorer.filesystem.operations.Operations.CUT;
-import static com.siju.acexplorer.filesystem.operations.ProgressUtils.KEY_COMPLETED;
 import static com.siju.acexplorer.filesystem.operations.ProgressUtils.COPY_PROGRESS;
+import static com.siju.acexplorer.filesystem.operations.ProgressUtils.KEY_COMPLETED;
 import static com.siju.acexplorer.filesystem.operations.ProgressUtils.KEY_COUNT;
 import static com.siju.acexplorer.filesystem.operations.ProgressUtils.KEY_PROGRESS;
 import static com.siju.acexplorer.filesystem.operations.ProgressUtils.KEY_TOTAL;
@@ -65,8 +64,7 @@ public class CopyService extends Service {
     @Override
     public void onCreate() {
         mContext = getApplicationContext();
-        rootmode = PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean(FileConstants.PREFS_ROOTED,
-                false);
+        rootmode = RootUtils.isRooted(mContext);
     }
 
 
@@ -200,7 +198,7 @@ public class CopyService extends Service {
                                 }
                                 FileInfo destFile = new FileInfo(sourceFile.getCategory(), sourceFile.getFileName(),
                                         sourceFile.getFilePath(), sourceFile.getDate(), sourceFile.getSize(), sourceFile.isDirectory(),
-                                        sourceFile.getExtension(), sourceFile.getPermissions());
+                                        sourceFile.getExtension(), sourceFile.getPermissions(), false);
                                 int action = FileUtils.ACTION_NONE;
                                 if (copyData != null) {
                                     for (CopyData copyData1 : copyData) {
@@ -306,13 +304,13 @@ public class CopyService extends Service {
                     }
 //                    targetFile.setFileDate(sourceFile.lastModified());
                     if (!hash.get(id)) return;
-                    ArrayList<FileInfo> filePaths = RootHelper.getFilesList(sourceFile.getFilePath(), false,
+                    ArrayList<FileInfo> filePaths = FileListLoader.getFilesList(sourceFile.getFilePath(), false,
                             true, false);
                     for (FileInfo file : filePaths) {
 
                         FileInfo destFile = new FileInfo(sourceFile.getCategory(), sourceFile.getFileName(), sourceFile.getFilePath(),
                                 sourceFile.getDate(), sourceFile.getSize(), sourceFile.isDirectory(),
-                                sourceFile.getExtension(), sourceFile.getPermissions());
+                                sourceFile.getExtension(), sourceFile.getPermissions(), false);
                         destFile.setFilePath(targetFile.getFilePath() + "/" + file.getFileName());
                         copyFiles(file, destFile, id, move);
                     }
@@ -489,7 +487,7 @@ public class CopyService extends Service {
     private boolean checkFiles(FileInfo oldFileInfo, FileInfo newFileInfo) {
         if (oldFileInfo.isDirectory()) {
             if (RootHelper.fileExists(newFileInfo.getFilePath())) return false;
-            ArrayList<FileInfo> baseFiles = RootHelper.getFilesList(oldFileInfo.getFilePath(), true, true, false);
+            ArrayList<FileInfo> baseFiles = FileListLoader.getFilesList(oldFileInfo.getFilePath(), true, true, false);
             if (baseFiles.size() > 0) {
                 boolean b = true;
                 for (FileInfo baseFile : baseFiles) {
@@ -502,7 +500,7 @@ public class CopyService extends Service {
             return RootHelper.fileExists(newFileInfo.getFilePath());
         } else {
             String parent = new File(oldFileInfo.getFilePath()).getParent();
-            ArrayList<FileInfo> baseFiles = RootHelper.getFilesList(parent, true, true, false);
+            ArrayList<FileInfo> baseFiles = FileListLoader.getFilesList(parent, true, true, false);
             int i = -1;
             int index = -1;
             for (FileInfo b : baseFiles) {
@@ -512,7 +510,7 @@ public class CopyService extends Service {
                     break;
                 }
             }
-            ArrayList<FileInfo> baseFiles1 = RootHelper.getFilesList(parent, true, true, false);
+            ArrayList<FileInfo> baseFiles1 = FileListLoader.getFilesList(parent, true, true, false);
             int i1 = -1;
             int index1 = -1;
             for (FileInfo b : baseFiles1) {
