@@ -142,6 +142,8 @@ public class AceActivity extends BaseActivity
         BillingHelper.getInstance().setupBilling(this);
         PreferenceManager.setDefaultValues(this, R.xml.pref_settings, false);
         Logger.log(TAG, "onCreate");
+        Logger.log(TAG, "onCreate");
+
         initViews();
         setViewTheme();
 
@@ -427,11 +429,7 @@ public class AceActivity extends BaseActivity
         }
     }
 
-    /**
-     * Show the premium dialog
-     *
-     * @param context
-     */
+
     private void showPremiumDialog() {
         int color = new Dialogs().getCurrentThemePrimary(this);
 
