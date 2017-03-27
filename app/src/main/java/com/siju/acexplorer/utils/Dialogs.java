@@ -46,10 +46,14 @@ public class Dialogs {
                     return;
                 }
 
-                fileName = fileName.trim();
-                fileName = fileName + ".txt";
-                fileName = path + File.separator + fileName;
-                baseFileList.getFileOpHelper().mkFile(new File(fileName), isRootMode);
+                fileName = fileName.trim() + ".txt";
+                String filePath = path + File.separator + fileName;
+                if (baseFileList.exists(filePath)) {
+                    materialDialog.getInputEditText().setError(baseFileList.getResources().getString(R.string
+                            .file_exists));
+                    return;
+                }
+                baseFileList.getFileOpHelper().mkFile(new File(filePath), isRootMode);
                 materialDialog.dismiss();
             }
         });
@@ -84,6 +88,11 @@ public class Dialogs {
 
                 fileName = fileName.trim();
                 String newPath = path + File.separator + fileName;
+                if (baseFileList.exists(newPath)) {
+                    materialDialog.getInputEditText().setError(baseFileList.getResources().getString(R.string
+                            .file_exists));
+                    return;
+                }
                 baseFileList.getFileOpHelper().mkDir(new File(newPath), isRooted);
                 materialDialog.dismiss();
             }

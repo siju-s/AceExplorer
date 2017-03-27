@@ -1818,7 +1818,7 @@ public class BaseFileList extends Fragment implements LoaderManager
         actionMode.finish();
     }
 
-    private boolean exists(String filePath) {
+    public boolean exists(String filePath) {
         for (FileInfo fileInfo : fileInfoList) {
             if (fileInfo.getFilePath().equals(filePath)) {
                 return true;
