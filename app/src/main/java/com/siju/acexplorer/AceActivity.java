@@ -90,6 +90,9 @@ public class AceActivity extends BaseActivity
         PermissionResultCallback,
         BillingResultCallback {
 
+    public static String STORAGE_ROOT;
+    public static String STORAGE_INTERNAL;
+    public static String STORAGE_EXTERNAL;
     public static final String PREFS_FIRST_RUN = "first_app_run";
     public static final int PERMISSIONS_REQUEST = 100;
     public static final int SETTINGS_REQUEST = 200;
@@ -103,7 +106,7 @@ public class AceActivity extends BaseActivity
     private ArrayList<SectionGroup> totalGroupData = new ArrayList<>();
     private DrawerLayout drawerLayout;
     private ScrimInsetsRelativeLayout relativeLayoutDrawerPane;
-    private final ArrayList<SectionItems> favouritesGroupChild = new ArrayList<>();
+    private ArrayList<SectionItems> favouritesGroupChild = new ArrayList<>();
     private SharedPreferenceWrapper sharedPreferenceWrapper;
     private SharedPreferences mSharedPreferences;
     private View mViewSeperator;
@@ -142,8 +145,8 @@ public class AceActivity extends BaseActivity
         BillingHelper.getInstance().setupBilling(this);
         PreferenceManager.setDefaultValues(this, R.xml.pref_settings, false);
         Logger.log(TAG, "onCreate");
-        Logger.log(TAG, "onCreate");
 
+        initConstants();
         initViews();
         setViewTheme();
 
@@ -166,6 +169,12 @@ public class AceActivity extends BaseActivity
     }
 
 
+    private void initConstants() {
+        STORAGE_ROOT = getResources().getString(R.string.nav_menu_root);
+        STORAGE_INTERNAL = getResources().getString(R.string.nav_menu_internal_storage);
+        STORAGE_EXTERNAL = getResources().getString(R.string.nav_menu_ext_storage);
+    }
+
     private void initViews() {
         frameDualPane = (FrameLayout) findViewById(R.id.frame_container_dual);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -179,6 +188,8 @@ public class AceActivity extends BaseActivity
         expandableListView.addHeaderView(list_header);
         imageInvite = (ImageView) findViewById(R.id.imageInvite);
     }
+
+
 
     private void registerReceivers() {
         IntentFilter filter = new IntentFilter(Intent.ACTION_LOCALE_CHANGED);
@@ -306,6 +317,7 @@ public class AceActivity extends BaseActivity
 
     private void setListAdapter() {
         totalGroupData = basePresenter.getTotalGroupData();
+        favouritesGroupChild = totalGroupData.get(1).getmChildItems();
         expandableListAdapter = new ExpandableListAdapter(this, totalGroupData);
         expandableListView.setAdapter(expandableListAdapter);
         expandableListView.expandGroup(0);

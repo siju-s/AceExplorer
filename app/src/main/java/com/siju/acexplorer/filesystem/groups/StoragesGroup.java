@@ -2,6 +2,7 @@ package com.siju.acexplorer.filesystem.groups;
 
 import android.content.Context;
 
+import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.model.SectionItems;
@@ -11,34 +12,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.os.Environment.getRootDirectory;
+import static com.siju.acexplorer.AceActivity.STORAGE_EXTERNAL;
+import static com.siju.acexplorer.AceActivity.STORAGE_INTERNAL;
+import static com.siju.acexplorer.AceActivity.STORAGE_ROOT;
 import static com.siju.acexplorer.filesystem.storage.StorageUtils.getSpaceLeft;
 import static com.siju.acexplorer.filesystem.storage.StorageUtils.getStorageDirectories;
 import static com.siju.acexplorer.filesystem.storage.StorageUtils.getTotalSpace;
 
 
 public class StoragesGroup {
-    private String STORAGE_ROOT;
-    private String STORAGE_INTERNAL;
-    private String STORAGE_EXTERNAL;
-    private final ArrayList<SectionItems> totalStorages = new ArrayList<>();
-    private final ArrayList<SectionItems> storagesList = new ArrayList<>();
-    private ArrayList<String> externalSDPaths = new ArrayList<>();
 
-    private Context context;
+    private static StoragesGroup storagesGroup;
+    private ArrayList<SectionItems> totalStorages;
+    private ArrayList<SectionItems> storagesList;
+    private ArrayList<String> externalSDPaths;
 
-    public StoragesGroup(Context context) {
-        this.context = context;
+    public static StoragesGroup getInstance() {
+        if (storagesGroup == null) {
+            storagesGroup = new StoragesGroup();
+        }
+        return storagesGroup;
     }
 
-
-    private void initConstants() {
-        STORAGE_ROOT = context.getResources().getString(R.string.nav_menu_root);
-        STORAGE_INTERNAL = context.getResources().getString(R.string.nav_menu_internal_storage);
-        STORAGE_EXTERNAL = context.getResources().getString(R.string.nav_menu_ext_storage);
+    private void clearStoragesList() {
+        totalStorages = new ArrayList<>();
+        storagesList = new ArrayList<>();
     }
 
-    public ArrayList<SectionItems> getStorageGroupData() {
-        initConstants();
+    ArrayList<SectionItems> getStorageGroupData() {
+        clearStoragesList();
         addRootDir();
         addStorages();
         totalStorages.addAll(storagesList);
@@ -60,7 +62,7 @@ public class StoragesGroup {
 
     private void addStorages() {
 
-        List<String> storagePaths = getStorageDirectories(context);
+        List<String> storagePaths = getStorageDirectories();
         externalSDPaths = new ArrayList<>();
 
         for (String path : storagePaths) {
@@ -92,8 +94,7 @@ public class StoragesGroup {
     }
 
     public ArrayList<SectionItems> getStoragesList() {
-        if (storagesList.size() == 0){
-            initConstants();
+        if (storagesList.size() == 0) {
             addStorages();
         }
         return storagesList;
@@ -103,12 +104,8 @@ public class StoragesGroup {
         return externalSDPaths;
     }
 
-
-    public ArrayList<SectionItems> getTotalStorages() {
-        return totalStorages;
-    }
-
     private String storageSpace(long spaceLeft, long totalSpace) {
+        Context context = AceApplication.getAppContext();
         String freePlaceholder = " " + context.getResources().getString(R.string.msg_free) + " ";
         return FileUtils.formatSize(context, spaceLeft) + freePlaceholder +
                 FileUtils.formatSize(context, totalSpace);

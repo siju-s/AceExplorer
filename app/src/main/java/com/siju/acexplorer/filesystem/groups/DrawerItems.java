@@ -57,7 +57,7 @@ public class DrawerItems {
     }
 
     private void initializeStorageGroup() {
-        populateDrawerItems(new SectionGroup(drawerListHeaders.get(0), new StoragesGroup(context).
+        populateDrawerItems(new SectionGroup(drawerListHeaders.get(0), StoragesGroup.getInstance().
                 getStorageGroupData()));
     }
 

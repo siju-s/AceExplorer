@@ -1,6 +1,8 @@
 package com.siju.acexplorer.filesystem.root;
 
 
+import android.util.Log;
+
 import java.io.File;
 
 public class RootOperations {
@@ -21,5 +23,13 @@ public class RootOperations {
             if (res == null || res.length() == 0) res = "ro";
             RootTools.remount(sourceFile.getParent(), res);
         }*/
+    }
+
+    public static boolean fileExists(String path, boolean isDir) throws RootDeniedException {
+        Log.d("RootOPerations", "fileExists: "+path);
+        RootUtils.mountRW(path);
+        boolean exists = RootUtils.fileExists(path, isDir);
+        RootUtils.mountRO(path);
+        return exists;
     }
 }

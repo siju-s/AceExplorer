@@ -6,7 +6,7 @@
     <AutoCompleteTextView
         android:id="@+id/input"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:imeOptions="actionNone|actionGo|actionSearch|actionNext|actionDone|flagNoExtractUi"
         android:maxLines="1"
         android:background="@android:color/transparent"
@@ -16,7 +16,7 @@
         android:id="@+id/search"
         style="@style/ActionButton"
         android:background="@null"
-        android:layout_gravity="center_vertical"
         android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:src="@drawable/ic_search_white" />
 </merge>

@@ -1,6 +1,7 @@
 package com.siju.acexplorer;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -8,6 +9,8 @@ import io.fabric.sdk.android.Fabric;
 
 
 public class AceApplication extends Application {
+
+    private static Context appContext;
 
     @Override
     public void onCreate() {
@@ -20,7 +23,8 @@ public class AceApplication extends Application {
                     .penaltyLog()
                     .build());
         }*/
-        if (!BuildConfig.DEBUG) {
+        appContext = this;
+        if (BuildConfig.ENABLE_CRASHLYTICS) {
             Fabric.with(this, new Crashlytics());
         }
 /*        if (LeakCanary.isInAnalyzerProcess(this)) {
@@ -31,5 +35,9 @@ public class AceApplication extends Application {
         LeakCanary.install(this);*/
 
         Factory.setInstance(this);
+    }
+
+    public static Context getAppContext() {
+        return appContext;
     }
 }

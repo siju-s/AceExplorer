@@ -151,8 +151,7 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
      */
     private int getAvailableScrollBarHeight() {
         int visibleHeight = getHeight();
-        return visibleHeight - (mScrollbar.getThumbHeight() + getContext().getResources()
-                .getDimensionPixelSize(R.dimen.actionbar_height));
+        return visibleHeight - (mScrollbar.getThumbHeight());
     }
 
     @Override

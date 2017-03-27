@@ -28,6 +28,7 @@ android {
         versionCode 8
         versionName "1.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        buildConfigField 'boolean', 'ENABLE_CRASHLYTICS', 'true'
     }
     dexOptions {
         maxProcessCount 2
@@ -48,6 +49,10 @@ android {
         return true
     }
     buildTypes {
+        debug {
+            minifyEnabled false
+            buildConfigField 'boolean', 'ENABLE_CRASHLYTICS', 'false'
+        }
         release {
             minifyEnabled true
             shrinkResources true
@@ -72,9 +77,9 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:25.1.0'
-    compile 'com.android.support:recyclerview-v7:25.1.0'
-    compile 'com.android.support:design:25.1.0'
+    compile 'com.android.support:appcompat-v7:25.2.0'
+    compile 'com.android.support:recyclerview-v7:25.2.0'
+    compile 'com.android.support:design:25.2.0'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.getbase:floatingactionbutton:1.10.1'
     compile 'com.google.code.gson:gson:2.8.0'
@@ -85,7 +90,7 @@ dependencies {
     }
 
     compile 'com.github.junrar:junrar:0.7'
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {
         transitive = true;
     }
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'

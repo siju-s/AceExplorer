@@ -261,7 +261,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
 
 
     private void loadStoragesList() {
-        mStoragesList = getStorageDirectories(getActivity());
+        mStoragesList = getStorageDirectories();
         storagesInfoList = new ArrayList<>();
         String STORAGE_INTERNAL, STORAGE_EXTERNAL;
         STORAGE_INTERNAL = getResources().getString(R.string.nav_menu_internal_storage);

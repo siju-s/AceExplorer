@@ -443,7 +443,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
     /**
      * Fetch all the docs from device
-     * Formats as in {@link com.siju.acexplorer.filesystem.FileConstants.CATEGORY}
+     *
      *
      * @return Files
      */

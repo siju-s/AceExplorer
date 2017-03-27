@@ -275,7 +275,7 @@ public class HomeScreenFragment extends Fragment implements LoaderManager.Loader
 
 
     private void initializeStorageGroup() {
-        storagesList = new StoragesGroup(getContext()).getStoragesList();
+        storagesList = StoragesGroup.getInstance().getStoragesList();
         inflateStoragesItem();
     }
 

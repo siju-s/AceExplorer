@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageButton;
@@ -40,7 +41,7 @@ public class NavigationInfo {
         STORAGE_ROOT = context.getResources().getString(R.string.nav_menu_root);
         STORAGE_INTERNAL = context.getResources().getString(R.string.nav_menu_internal_storage);
         STORAGE_EXTERNAL = context.getResources().getString(R.string.nav_menu_ext_storage);
-        externalSDPaths = new StoragesGroup(context).getExternalSDList();
+        externalSDPaths = StoragesGroup.getInstance().getExternalSDList();
     }
 
     public void setInitialDir(String currentDir) {
@@ -123,7 +124,7 @@ public class NavigationInfo {
         }
     }
 
-    public String getTitleForCategory(Category category) {
+    private String getTitleForCategory(Category category) {
         switch (category) {
             case AUDIO:
                 return context.getString(R.string.nav_menu_music);
@@ -158,7 +159,7 @@ public class NavigationInfo {
         currentDir = path;
         String dir = "";
         addHomeNavButton(isHomeScreenEnabled, category);
-
+        Log.d(TAG, "setNavDirectory: initialDir:"+initialDir);
         // If root dir , parts will be 0
         if (parts.length == 0) {
 
@@ -189,6 +190,8 @@ public class NavigationInfo {
     }
 
     private void setNavDir(String dir, String parts) {
+
+        Log.d(TAG, "setNavDir: "+dir);
 
 
         int WRAP_CONTENT = LinearLayout.LayoutParams.WRAP_CONTENT;

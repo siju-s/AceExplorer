@@ -211,9 +211,9 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemViewType(int position) {
-        if (isPositionFooter(position)) {
+/*        if (isPositionFooter(position)) {
             return TYPE_FOOTER;
-        }
+        }*/
         return TYPE_ITEM;
     }
 
@@ -235,7 +235,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (fileInfoArrayList == null) {
             return 0;
         } else {
-            return fileInfoArrayList.size() + 1;
+            return fileInfoArrayList.size();
         }
     }
 

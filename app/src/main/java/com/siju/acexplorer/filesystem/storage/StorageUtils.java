@@ -12,6 +12,7 @@ import android.support.v4.provider.DocumentFile;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.utils.Utils;
 
@@ -40,7 +41,8 @@ public class StorageUtils {
         return Environment.getExternalStorageDirectory().getAbsolutePath();
     }
 
-    public static List<String> getStorageDirectories(Context context) {
+    public static List<String> getStorageDirectories() {
+
         // Final set of paths
         final ArrayList<String> paths = new ArrayList<>();
         // Primary physical SD-CARD (not emulated)
@@ -92,7 +94,7 @@ public class StorageUtils {
         if (Utils.isAtleastMarsh())
             paths.clear();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            String pathList[] = getExtSdCardPaths(context);
+            String pathList[] = getExtSdCardPaths();
             for (String path : pathList) {
                 if (!paths.contains(path))
                     paths.add(path);
@@ -106,7 +108,8 @@ public class StorageUtils {
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    private static String[] getExtSdCardPaths(Context context) {
+    private static String[] getExtSdCardPaths() {
+        Context context = AceApplication.getAppContext();
         List<String> paths = new ArrayList<>();
         for (File file : context.getExternalFilesDirs("external")) {
             if (file != null) {
@@ -169,7 +172,7 @@ public class StorageUtils {
      */
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private static String getExtSdCardFolder(final File file, Context context) {
-        String[] extSdPaths = getExtSdCardPaths(context);
+        String[] extSdPaths = getExtSdCardPaths();
         try {
             for (String extSdPath : extSdPaths) {
                 if (file.getCanonicalPath().startsWith(extSdPath)) {

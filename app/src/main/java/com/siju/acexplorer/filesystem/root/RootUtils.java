@@ -98,6 +98,10 @@ public class RootUtils {
         RootHelper.runAndWait(cmd);
     }
 
+    public static boolean fileExists(String path , boolean isDir) throws RootDeniedException{
+        return RootTools.exists(path,isDir);
+    }
+
     public static void mountRO(String path) throws RootDeniedException {
         if (!RootTools.isAccessGiven()) throw new RootDeniedException();
         String str = "mount -o %s,remount %s";

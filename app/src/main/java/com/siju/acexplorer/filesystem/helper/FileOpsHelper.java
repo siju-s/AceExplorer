@@ -3,6 +3,7 @@ package com.siju.acexplorer.filesystem.helper;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.view.View;
@@ -19,9 +20,11 @@ import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.operations.OperationProgress;
 import com.siju.acexplorer.filesystem.operations.OperationUtils;
 import com.siju.acexplorer.filesystem.operations.Operations;
+import com.siju.acexplorer.filesystem.task.CopyService;
 import com.siju.acexplorer.filesystem.task.CreateZipTask;
 import com.siju.acexplorer.filesystem.task.DeleteTask;
 import com.siju.acexplorer.filesystem.task.ExtractService;
+import com.siju.acexplorer.filesystem.task.MoveFiles;
 import com.siju.acexplorer.filesystem.utils.FileOperations;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.utils.Dialogs;
@@ -48,6 +51,9 @@ public class FileOpsHelper {
 
     private final BaseFileList context;
     private final String TAG = this.getClass().getSimpleName();
+    private static final String OPERATION_INTENT = "operation_intent";
+    private final int INVALID_POS = -1;
+
 
     public FileOpsHelper(BaseFileList baseFileList) {
         context = baseFileList;
@@ -253,10 +259,11 @@ public class FileOpsHelper {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void formSAFIntentCreation(String path, Operations operations) {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-        intent.putExtra(KEY_FILEPATH, path);
-        intent.putExtra(KEY_OPERATION, operations);
-        showSAFDialog(intent, path);
+        operationIntent = new Intent(OPERATION_INTENT);
+        operationIntent.putExtra(KEY_FILEPATH, path);
+        operationIntent.putExtra(KEY_OPERATION, operations);
+        setCurrentOperationData(operationIntent);
+        showSAFDialog(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE), path);
     }
 
     private void formSAFIntentExtract(String path, Operations operations, String newFile) {
@@ -265,40 +272,43 @@ public class FileOpsHelper {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void formSAFIntentRename(String path, Operations operations, String newFile, int position) {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-        intent.putExtra(KEY_FILEPATH, path);
-        intent.putExtra(KEY_FILEPATH2, newFile);
-        intent.putExtra(KEY_POSITION, position);
-        intent.putExtra(KEY_OPERATION, operations);
-        showSAFDialog(intent, path);
+        operationIntent = new Intent(OPERATION_INTENT);
+        operationIntent.putExtra(KEY_FILEPATH, path);
+        operationIntent.putExtra(KEY_FILEPATH2, newFile);
+        operationIntent.putExtra(KEY_POSITION, position);
+        operationIntent.putExtra(KEY_OPERATION, operations);
+        setCurrentOperationData(operationIntent);
+        showSAFDialog(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE), path);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void formSAFIntentCompress(String path, ArrayList<FileInfo> files, Operations operations) {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-        intent.putExtra(KEY_FILEPATH, path);
-        intent.putExtra(KEY_FILES, files);
-        intent.putExtra(KEY_OPERATION, operations);
-        showSAFDialog(intent, path);
+        operationIntent = new Intent(OPERATION_INTENT);
+        operationIntent.putExtra(KEY_FILEPATH, path);
+        operationIntent.putExtra(KEY_FILES, files);
+        operationIntent.putExtra(KEY_OPERATION, operations);
+        setCurrentOperationData(operationIntent);
+        showSAFDialog(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE), path);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void formSAFIntentMoveCopy(String destinationDir, ArrayList<FileInfo> files,
                                       ArrayList<CopyData> copyData, Operations operations) {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-        intent.putExtra(KEY_FILES, files);
-        intent.putExtra(KEY_CONFLICT_DATA, copyData);
-        intent.putExtra(KEY_FILEPATH, destinationDir);
-        intent.putExtra(KEY_OPERATION, operations);
-        showSAFDialog(intent, destinationDir);
+        operationIntent = new Intent(OPERATION_INTENT);
+        operationIntent.putExtra(KEY_FILES, files);
+        operationIntent.putExtra(KEY_CONFLICT_DATA, copyData);
+        operationIntent.putExtra(KEY_FILEPATH, destinationDir);
+        operationIntent.putExtra(KEY_OPERATION, operations);
+        showSAFDialog(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE), destinationDir);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void formSAFIntentDelete(String path, ArrayList<FileInfo> files, Operations operations) {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-        intent.putExtra(KEY_FILES, files);
-        intent.putExtra(KEY_OPERATION, operations);
-        showSAFDialog(intent, path);
+        operationIntent = new Intent(OPERATION_INTENT);
+        operationIntent.putExtra(KEY_FILES, files);
+        operationIntent.putExtra(KEY_OPERATION, operations);
+        setCurrentOperationData(operationIntent);
+        showSAFDialog(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE), path);
     }
 
 
@@ -365,6 +375,78 @@ public class FileOpsHelper {
             return OperationUtils.WriteMode.ROOT;
         }
     }
+
+    private Intent operationIntent;
+    private void setCurrentOperationData(Intent intent) {
+      this.operationIntent = intent;
+    }
+
+    private Intent getCurrentOpData() {
+        return operationIntent;
+    }
+
+    public void handleSAFOpResult(boolean rootMode) {
+        Intent intent = getCurrentOpData();
+        Operations operation = (Operations) intent.getSerializableExtra(KEY_OPERATION);
+        switch (operation) {
+
+            case DELETE:
+                ArrayList<FileInfo> files = intent.getParcelableArrayListExtra(KEY_FILES);
+                new DeleteTask(context.getActivity(),rootMode, files).execute();
+                break;
+
+            case COPY:
+
+                Intent copyIntent = new Intent(context.getActivity(), CopyService.class);
+                ArrayList<FileInfo> copiedFiles = intent.getParcelableArrayListExtra(KEY_FILES);
+                ArrayList<CopyData> copyData = intent.getParcelableArrayListExtra(KEY_CONFLICT_DATA);
+                String destinationPath = intent.getStringExtra(KEY_FILEPATH);
+                copyIntent.putParcelableArrayListExtra(KEY_FILES, copiedFiles);
+                copyIntent.putParcelableArrayListExtra(KEY_CONFLICT_DATA, copyData);
+                copyIntent.putExtra(KEY_FILEPATH, destinationPath);
+                new OperationProgress().showCopyProgressDialog(context.getActivity(), copyIntent);
+                break;
+
+            case CUT:
+                ArrayList<FileInfo> movedFiles = intent.getParcelableArrayListExtra(KEY_FILES);
+                ArrayList<CopyData> moveData = intent.getParcelableArrayListExtra(KEY_CONFLICT_DATA);
+                String destinationMovePath = intent.getStringExtra(KEY_FILEPATH);
+                new MoveFiles(context.getActivity(), movedFiles, moveData).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                        destinationMovePath);
+                break;
+
+            case FOLDER_CREATION:
+                String path = intent.getStringExtra(KEY_FILEPATH);
+                mkDir(new File(path), rootMode);
+                break;
+
+            case FILE_CREATION:
+                String newFilePathCreate = intent.getStringExtra(KEY_FILEPATH);
+                mkFile(new File(newFilePathCreate), rootMode);
+                break;
+
+            case RENAME:
+                String oldFilePath = intent.getStringExtra(KEY_FILEPATH);
+                String newFilePath = intent.getStringExtra(KEY_FILEPATH2);
+                int position = intent.getIntExtra(KEY_POSITION, INVALID_POS);
+                renameFile(new File(oldFilePath), new File(newFilePath),
+                        position, rootMode);
+                break;
+
+            case EXTRACT:
+                String oldFilePath1 = intent.getStringExtra(KEY_FILEPATH);
+                String newFilePath1 = intent.getStringExtra(KEY_FILEPATH2);
+                extractFile(new File(oldFilePath1), new File(newFilePath1));
+                break;
+
+            case COMPRESS:
+                ArrayList<FileInfo> compressedFiles = intent.getParcelableArrayListExtra(KEY_FILES);
+                String destinationCompressPath = intent.getStringExtra(KEY_FILEPATH);
+                compressFile(new File(destinationCompressPath), compressedFiles);
+                break;
+        }
+    }
+
 
 
 }

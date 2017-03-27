@@ -80,7 +80,7 @@ public class PasteConflictChecker extends AsyncTask<Void, String, ArrayList<File
 
         File f = new File(destinationDir);
         boolean isRootDir = !destinationDir.startsWith(getInternalStorage());
-        List<String> externalSDList = new StoragesGroup(fragment.getContext()).getExternalSDList();
+        List<String> externalSDList = StoragesGroup.getInstance().getExternalSDList();
 
         for (String dir : externalSDList) {
             if (destinationDir.startsWith(dir)) {

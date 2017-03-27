@@ -18,7 +18,6 @@ import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -90,16 +89,11 @@ import com.siju.acexplorer.filesystem.groups.Category;
 import com.siju.acexplorer.filesystem.helper.FileOpsHelper;
 import com.siju.acexplorer.filesystem.helper.ShareHelper;
 import com.siju.acexplorer.filesystem.model.BackStackModel;
-import com.siju.acexplorer.filesystem.model.CopyData;
 import com.siju.acexplorer.filesystem.model.FavInfo;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.modes.ViewMode;
-import com.siju.acexplorer.filesystem.operations.OperationProgress;
 import com.siju.acexplorer.filesystem.operations.Operations;
 import com.siju.acexplorer.filesystem.root.RootUtils;
-import com.siju.acexplorer.filesystem.task.CopyService;
-import com.siju.acexplorer.filesystem.task.DeleteTask;
-import com.siju.acexplorer.filesystem.task.MoveFiles;
 import com.siju.acexplorer.filesystem.task.PasteConflictChecker;
 import com.siju.acexplorer.filesystem.task.SearchTask;
 import com.siju.acexplorer.filesystem.theme.Themes;
@@ -140,7 +134,6 @@ import static com.siju.acexplorer.filesystem.helper.UriHelper.getUriForCategory;
 import static com.siju.acexplorer.filesystem.helper.ViewHelper.viewFile;
 import static com.siju.acexplorer.filesystem.operations.OperationUtils.ACTION_OP_REFRESH;
 import static com.siju.acexplorer.filesystem.operations.OperationUtils.ACTION_RELOAD_LIST;
-import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_CONFLICT_DATA;
 import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_FILEPATH;
 import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_FILEPATH2;
 import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_FILES;
@@ -160,7 +153,6 @@ public class BaseFileList extends Fragment implements LoaderManager
     private FastScrollRecyclerView recyclerViewFileList;
     private View root;
     private final int LOADER_ID = 1000;
-    private final int INVALID_POS = -1;
     private FileListAdapter fileListAdapter;
     private ArrayList<FileInfo> fileInfoList;
     private String currentDir;
@@ -291,7 +283,7 @@ public class BaseFileList extends Fragment implements LoaderManager
         mSwipeRefreshLayout.setDistanceToTriggerSync(500);
         mBottomToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar_bottom);
         toolbar = (Toolbar) root.findViewById(R.id.toolbar);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+//        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         frameLayoutFab = (FrameLayout) root.findViewById(R.id.frameLayoutFab);
         aceActivity.syncDrawerState();
         toolbar.setTitle(R.string.app_name);
@@ -333,6 +325,8 @@ public class BaseFileList extends Fragment implements LoaderManager
             case LIGHT:
                 toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay);
                 mBottomToolbar.setPopupTheme(R.style.AppTheme_PopupOverlay);
+                toolbarTitle.setTextColor(ContextCompat.getColor(getActivity(), R.color.white));
+                searchView.getInput().setTextColor(ContextCompat.getColor(getActivity(), R.color.white));
                 break;
         }
     }
@@ -423,6 +417,9 @@ public class BaseFileList extends Fragment implements LoaderManager
                 showFab();
             }
             toggleNavigationVisibility(true);
+            if (shouldShowPathNavigation()) {
+                navigationInfo.setInitialDir(currentDir);
+            }
             mLastSinglePaneDir = currentDir;
         }
     }
@@ -474,6 +471,7 @@ public class BaseFileList extends Fragment implements LoaderManager
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                removeScrolledPos(currentDir);
                 refreshList();
             }
         });
@@ -495,7 +493,7 @@ public class BaseFileList extends Fragment implements LoaderManager
         fileListAdapter.setOnItemClickListener(new FileListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                if (actionMode != null) {
+                if (actionMode != null && !isPasteVisible) {
                     itemClickActionMode(position, false);
                 } else {
                     handleItemClick(position);
@@ -508,7 +506,7 @@ public class BaseFileList extends Fragment implements LoaderManager
                 Logger.log(TAG, "On long click" + isDragStarted);
                 if (position >= fileInfoList.size() || position == RecyclerView.NO_POSITION) return;
 
-                if (!isZipViewer) {
+                if (!isZipViewer && !isPasteVisible) {
                     itemClickActionMode(position, true);
                     mLongPressedTime = System.currentTimeMillis();
 
@@ -869,7 +867,7 @@ public class BaseFileList extends Fragment implements LoaderManager
                         int takeFlags = intent.getFlags();
                         takeFlags &= (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                         getActivity().getContentResolver().takePersistableUriPermission(treeUri, takeFlags);
-                        handleSAFOpResult(intent);
+                        fileOpHelper.handleSAFOpResult(mIsRootMode);
                     }
                 }
                 // If not confirmed SAF, or if still not writable, then revert settings.
@@ -883,67 +881,6 @@ public class BaseFileList extends Fragment implements LoaderManager
                 }
         }
         super.onActivityResult(requestCode, resultCode, intent);
-    }
-
-    private void handleSAFOpResult(Intent intent) {
-        Operations operation = (Operations) intent.getSerializableExtra(KEY_OPERATION);
-        switch (operation) {
-
-            case DELETE:
-                ArrayList<FileInfo> files = intent.getParcelableArrayListExtra(KEY_FILES);
-                new DeleteTask(getContext(), mIsRootMode, files).execute();
-                break;
-
-            case COPY:
-
-                Intent copyIntent = new Intent(getActivity(), CopyService.class);
-                ArrayList<FileInfo> copiedFiles = intent.getParcelableArrayListExtra(KEY_FILES);
-                ArrayList<CopyData> copyData = intent.getParcelableArrayListExtra(KEY_CONFLICT_DATA);
-                String destinationPath = intent.getStringExtra(KEY_FILEPATH);
-                copyIntent.putParcelableArrayListExtra(KEY_FILES, copiedFiles);
-                copyIntent.putParcelableArrayListExtra(KEY_CONFLICT_DATA, copyData);
-                copyIntent.putExtra(KEY_FILEPATH, destinationPath);
-                new OperationProgress().showCopyProgressDialog(getActivity(), copyIntent);
-                break;
-
-            case CUT:
-                ArrayList<FileInfo> movedFiles = intent.getParcelableArrayListExtra(KEY_FILES);
-                ArrayList<CopyData> moveData = intent.getParcelableArrayListExtra(KEY_CONFLICT_DATA);
-                String destinationMovePath = intent.getStringExtra(KEY_FILEPATH);
-                new MoveFiles(getContext(), movedFiles, moveData).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                        destinationMovePath);
-                break;
-
-            case FOLDER_CREATION:
-                String path = intent.getStringExtra(KEY_FILEPATH);
-                fileOpHelper.mkDir(new File(path), mIsRootMode);
-                break;
-
-            case FILE_CREATION:
-                String newFilePathCreate = intent.getStringExtra(KEY_FILEPATH);
-                fileOpHelper.mkFile(new File(newFilePathCreate), mIsRootMode);
-                break;
-
-            case RENAME:
-                String oldFilePath = intent.getStringExtra(KEY_FILEPATH);
-                String newFilePath = intent.getStringExtra(KEY_FILEPATH2);
-                int position = intent.getIntExtra(KEY_POSITION, INVALID_POS);
-                fileOpHelper.renameFile(new File(oldFilePath), new File(newFilePath),
-                        position, mIsRootMode);
-                break;
-
-            case EXTRACT:
-                String oldFilePath1 = intent.getStringExtra(KEY_FILEPATH);
-                String newFilePath1 = intent.getStringExtra(KEY_FILEPATH2);
-                fileOpHelper.extractFile(new File(oldFilePath1), new File(newFilePath1));
-                break;
-
-            case COMPRESS:
-                ArrayList<FileInfo> compressedFiles = intent.getParcelableArrayListExtra(KEY_FILES);
-                String destinationCompressPath = intent.getStringExtra(KEY_FILEPATH);
-                fileOpHelper.compressFile(new File(destinationCompressPath), compressedFiles);
-                break;
-        }
     }
 
 
@@ -1580,6 +1517,7 @@ public class BaseFileList extends Fragment implements LoaderManager
                 break;
 
             case R.id.action_paste:
+                isPasteVisible = false;
                 if (mCopiedData.size() > 0) {
                     ArrayList<FileInfo> info = new ArrayList<>();
                     info.addAll(mCopiedData);
@@ -1635,7 +1573,6 @@ public class BaseFileList extends Fragment implements LoaderManager
                     int renamedPosition = mSelectedItemPositions.keyAt(0);
                     String newFilePath = new File(oldFilePath).getParent();
                     renameDialog(oldFilePath, newFilePath, renamedPosition);
-                    actionMode.finish();
                 }
                 break;
 
@@ -1782,6 +1719,7 @@ public class BaseFileList extends Fragment implements LoaderManager
         public void onDestroyActionMode(ActionMode mode) {
             isInSelectionMode = false;
             clearSelection();
+            isPasteVisible = false;
             actionMode = null;
             hidePasteIcon();
             mBottomToolbar.setVisibility(View.GONE);
@@ -1857,7 +1795,8 @@ public class BaseFileList extends Fragment implements LoaderManager
                 }
 
                 File newFile = new File(newFilePath + "/" + renamedName);
-                if (FileUtils.isFileExisting(newFilePath, newFile.getName())) {
+
+                if (exists(newFile.getAbsolutePath())) {
                     materialDialog.getInputEditText().setError(getResources().getString(R.string
                             .dialog_title_paste_conflict));
                     return;
@@ -1877,6 +1816,15 @@ public class BaseFileList extends Fragment implements LoaderManager
 
         materialDialog.show();
         actionMode.finish();
+    }
+
+    private boolean exists(String filePath) {
+        for (FileInfo fileInfo : fileInfoList) {
+            if (fileInfo.getFilePath().equals(filePath)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
