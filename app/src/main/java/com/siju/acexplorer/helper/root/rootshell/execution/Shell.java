@@ -1,23 +1,17 @@
-/* 
- * This file is part of the RootShell Project: http://code.google.com/p/RootShell/
- *  
- * Copyright (c) 2014 Stephen Erickson, Chris Ravenscroft
- *  
- * This code is dual-licensed under the terms of the Apache License Version 2.0 and
- * the terms of the General Public License (GPL) Version 2.
- * You may use this code according to either of these licenses as is most appropriate
- * for your project on a case-by-case basis.
- * 
- * The terms of each license can be found in the root directory of this project's repository as well as at:
- * 
- * * http://www.apache.org/licenses/LICENSE-2.0
- * * http://www.gnu.org/licenses/gpl-2.0.txt
- *  
+/*
+ * Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under these Licenses is distributed on an "AS IS" BASIS,
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See each License for the specific language governing permissions and
- * limitations under that License.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.siju.acexplorer.helper.root.rootshell.execution;
 

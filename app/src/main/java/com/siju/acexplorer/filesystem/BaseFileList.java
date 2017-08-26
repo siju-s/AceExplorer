@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.siju.acexplorer.filesystem;
 
 import android.annotation.TargetApi;
@@ -298,7 +314,7 @@ public class BaseFileList extends Fragment implements LoaderManager
     }
 
     private void setToolbar(Bundle savedInstanceState) {
-        View actionBar = getLayoutInflater(savedInstanceState).inflate(R.layout.abc_custom, null);
+        View actionBar = getLayoutInflater(savedInstanceState).inflate(R.layout.actionbar_custom, null);
         toolbar.addView(actionBar);
         searchView = (com.siju.acexplorer.common.SearchView) actionBar.findViewById(R.id.search_view);
         searchView.setListener(this);
@@ -1546,7 +1562,7 @@ public class BaseFileList extends Fragment implements LoaderManager
                         removeFavorite(filesToDelete);
                         Toast.makeText(getContext(), getString(R.string.fav_removed), Toast.LENGTH_SHORT).show();
                     } else {
-                        dialogs.showDeleteDialog(this, filesToDelete, RootUtils.isRooted(getContext()));
+                        dialogs.showDeleteDialog(this, filesToDelete, mIsRootMode);
                     }
                     actionMode.finish();
                 }
