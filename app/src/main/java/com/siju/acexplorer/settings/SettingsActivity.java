@@ -26,8 +26,11 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.siju.acexplorer.AceActivity;
@@ -36,18 +39,7 @@ import com.siju.acexplorer.filesystem.theme.ThemeUtils;
 
 import static com.siju.acexplorer.filesystem.theme.ThemeUtils.THEME_DARK;
 
-/**
- * A {@link PreferenceActivity} that presents a set of application settings. On
- * handset devices, settings are presented as a single list. On tablets,
- * settings are split by category, with category headers shown to the left of
- * the list of settings.
- * <p/>
- * See <a href="http://developer.android.com/design/patterns/settings.html">
- * Android Design: Settings</a> for design guidelines and the <a
- * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
- * API Guide</a> for more information on developing a Settings UI.
- */
-public class SettingsActivity extends AppCompatPreferenceActivity {
+public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,9 +58,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         int theme = ThemeUtils.getTheme(this);
 
         if (theme == THEME_DARK) {
-            setTheme(R.style.Settings_BlackTheme);
+            setTheme(R.style.BaseDarkTheme_Settings);
         } else {
-            setTheme(R.style.Settings_LightTheme);
+            setTheme(R.style.BaseLightTheme_Settings);
         }
     }
 
@@ -84,36 +76,43 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         activity.startActivity(in);
     }
 
-    @Override
-    protected boolean isValidFragment(String fragmentName) {
-        return true;
-    }
 
     /**
      * Set up the {@link android.app.ActionBar}, if the API is available.
      */
     private void setupActionBar() {
+        ViewGroup rootView = findViewById(R.id.action_bar_root);
+        Log.d("Settings", "setupActionBar: "+rootView);
         AppBarLayout bar;
-        LinearLayout root = (LinearLayout) findViewById(android.R.id.list).getParent().getParent().getParent();
+        if (rootView != null) {
+            bar = (AppBarLayout) LayoutInflater.from(this).inflate(R.layout.toolbar_settings, rootView,
+                    false);
+            rootView.addView(bar, 0); // insert at top
+            Toolbar toolbar = (Toolbar) bar.getChildAt(0);
+            toolbar.setPadding(0,getStatusBarHeight(),0,0);
+            toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
+
+            if (Build.VERSION.SDK_INT >= 21) {
+                getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+            }
+
+            setSupportActionBar(toolbar);
+            ActionBar actionBar = getSupportActionBar();
+
+            if (actionBar != null) {
+                // Show the Up button in the action bar.
+                actionBar.setDisplayHomeAsUpEnabled(true);
+            }
+        }
+
+/*        LinearLayout root = (LinearLayout) findViewById(android.R.id.list).getParent().getParent().getParent();
         bar = (AppBarLayout) LayoutInflater.from(this).inflate(R.layout.toolbar_settings, root,
                 false);
         root.addView(bar, 0); // insert at top
-        Toolbar mToolbar = (Toolbar) bar.getChildAt(0);
-        mToolbar.setPadding(0,getStatusBarHeight(),0,0);
+        Toolbar toolbar = (Toolbar) bar.getChildAt(0);
+        toolbar.setPadding(0,getStatusBarHeight(),0,0);*/
 
-        mToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
-        }
-
-        setSupportActionBar(mToolbar);
-        ActionBar actionBar = getSupportActionBar();
-
-        if (actionBar != null) {
-            // Show the Up button in the action bar.
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
     }
 
     int getStatusBarHeight() {

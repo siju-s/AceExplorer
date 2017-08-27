@@ -16,11 +16,8 @@
 
 <resources>
 
-    <style name="DrawerIconStyle" parent="Widget.AppCompat.DrawerArrowToggle">
-        <item name="color">@android:color/white</item>
-    </style>
 
-    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="BaseLightTheme">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -32,16 +29,27 @@
         <item name="drawerArrowStyle">@style/DrawerIconStyle</item>
     </style>
 
-    <style name="DarkAppTheme.NoActionBar" parent="Theme.AppCompat.NoActionBar">
+    <style name="BaseDarkTheme">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@color/colorPrimary</item>
         <item name="android:actionModeBackground">@color/colorPrimary</item>
+        <item name="drawerArrowStyle">@style/DrawerIconStyle</item>
     </style>
+
+
+    <style name="BaseLightTheme.Light" />
+
+    <style name="BaseDarkTheme.Dark" />
+
+    <style name="DrawerIconStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="color">@android:color/white</item>
+    </style>
+
 
     <style name="WelcomeScreen" parent="Theme.AppCompat.NoActionBar">
         <item name="windowActionBar">false</item>
@@ -149,12 +157,10 @@
         <!--<item name="android:backgroundDimEnabled">false</item>-->
     </style>
 
-    <style name="Settings.BlackTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <style name="BaseDarkTheme.Settings">
         <!--<item name="android:background">@color/dark_colorPrimary</item>-->
         <!--<item name="android:textColor">@color/dark_text</item>-->
+        <item name="windowActionModeOverlay">false</item>
         <item name="android:textColorPrimary">@color/dark_text</item>
         <item name="android:textColorSecondary">@color/dark_text</item>
         <item name="android:listDivider">@null</item>
@@ -164,10 +170,8 @@
     </style>
 
 
-    <style name="Settings.LightTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <style name="BaseLightTheme.Settings">
+        <item name="windowActionModeOverlay">false</item>
         <item name="android:textColorSecondary">@color/dark_gray</item>
         <item name="android:listDivider">@null</item>
         <item name="android:textColorPrimary">@color/dark_gray</item>

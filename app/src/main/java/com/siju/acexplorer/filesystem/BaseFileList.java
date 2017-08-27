@@ -2049,11 +2049,11 @@ public class BaseFileList extends Fragment implements LoaderManager
     private int getThemeStyle() {
         switch (currentTheme) {
             case DARK:
-                return R.style.DarkAppTheme_NoActionBar;
+                return R.style.BaseDarkTheme_Dark;
             case LIGHT:
-                return R.style.AppTheme_NoActionBar;
+                return R.style.BaseLightTheme_Light;
         }
-        return R.style.DarkAppTheme_NoActionBar;
+        return R.style.BaseDarkTheme_Dark;
 
     }
 

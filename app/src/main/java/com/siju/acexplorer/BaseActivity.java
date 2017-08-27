@@ -41,10 +41,10 @@ public class BaseActivity extends AppCompatActivity {
         currentTheme = Themes.getTheme(ThemeUtils.getTheme(this));
         switch (currentTheme) {
             case DARK:
-                setTheme(R.style.DarkAppTheme_NoActionBar);
+                setTheme(R.style.BaseDarkTheme_Dark);
                 break;
             case LIGHT:
-                setTheme(R.style.AppTheme_NoActionBar);
+                setTheme(R.style.BaseLightTheme_Light);
                 break;
 
         }

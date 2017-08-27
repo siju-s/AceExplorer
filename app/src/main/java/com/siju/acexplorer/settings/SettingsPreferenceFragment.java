@@ -16,6 +16,7 @@
 
 package com.siju.acexplorer.settings;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -37,6 +38,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -169,41 +171,46 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         return false;
     }
 
+    @SuppressLint("CutPasteId")
     private void setupActionBar(PreferenceScreen preferenceScreen) {
         final Dialog dialog = preferenceScreen.getDialog();
         AppBarLayout bar;
-        ViewParent view1 = dialog.findViewById(android.R.id.list).getParent();
+         ViewParent view1 = dialog.findViewById(android.R.id.list).getParent();
         ViewParent view2 = view1.getParent();
+        LinearLayout root;
         Log.d(this.getClass().getSimpleName(), "On prefernce tree-" + view1 + " view2=" + view2 + " view3=" +
                 view2.getParent());
-        LinearLayout root;
-        if (Build.VERSION.SDK_INT >= 24) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             root = (LinearLayout) dialog.findViewById(android.R.id.list).getParent().getParent();
         } else {
             root = (LinearLayout) dialog.findViewById(android.R.id.list).getParent();
         }
-        bar = (AppBarLayout) LayoutInflater.from(getActivity()).inflate(R.layout.toolbar_settings, root,
-                false);
-        root.addView(bar, 0);
-        Toolbar toolbar = (Toolbar) bar.getChildAt(0);
-        toolbar.setTitle(preferenceScreen.getTitle());
-        toolbar.setPadding(0, ((SettingsActivity) getActivity()).getStatusBarHeight(), 0, 0);
+        if (root != null) {
+            bar = (AppBarLayout) LayoutInflater.from(getActivity()).inflate(R.layout.toolbar_settings, root,
+
+                    false);
+            root.addView(bar, 0);
+            Toolbar toolbar = (Toolbar) bar.getChildAt(0);
+            toolbar.setTitle(preferenceScreen.getTitle());
+            toolbar.setPadding(0, ((SettingsActivity) getActivity()).getStatusBarHeight(), 0, 0);
 
 
-        toolbar.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorPrimary));
+            toolbar.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorPrimary));
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            getActivity().getWindow().setStatusBarColor(ContextCompat.getColor(getActivity(), R.color
-                    .colorPrimaryDark));
+            if (Build.VERSION.SDK_INT >= 21) {
+                getActivity().getWindow().setStatusBarColor(ContextCompat.getColor(getActivity(),
+                        R.color
+                        .colorPrimaryDark));
 
-        }
-
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
             }
-        });
+
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+        }
     }
 
 

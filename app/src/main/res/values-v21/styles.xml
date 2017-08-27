@@ -16,7 +16,8 @@
 
 <resources>
 
-    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+
+    <style name="BaseLightTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -32,7 +33,8 @@
         <item name="drawerArrowStyle">@style/DrawerIconStyle</item>
     </style>
 
-    <style name="DarkAppTheme.NoActionBar" parent="Theme.AppCompat.NoActionBar">
+
+    <style name="BaseDarkTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -44,38 +46,30 @@
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@color/colorPrimary</item>
         <item name="android:actionModeBackground">@color/colorPrimary</item>
+        <item name="actionBarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+        <item name="drawerArrowStyle">@style/DrawerIconStyle</item>
     </style>
 
-    <style name="Settings.BlackTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <style name="BaseLightTheme.Light" />
+
+    <style name="BaseDarkTheme.Dark" />
+
+
+    <style name="BaseDarkTheme.Settings">
+        <item name="windowActionModeOverlay">false</item>
         <item name="android:textColorPrimary">@color/dark_text</item>
         <item name="android:textColorSecondary">@color/dark_text</item>
         <item name="android:listDivider">@null</item>
         <item name="android:windowBackground">@color/dark_colorPrimary</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
 
-    <style name="Settings.LightTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <style name="BaseLightTheme.Settings">
+        <item name="windowActionModeOverlay">false</item>
         <item name="android:textColorSecondary">@color/dark_gray</item>
         <item name="android:listDivider">@null</item>
         <item name="android:textColorPrimary">@color/dark_gray</item>
         <item name="android:textColor">@color/dark_gray</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
-
-
-
-
-
 
 
 </resources>
