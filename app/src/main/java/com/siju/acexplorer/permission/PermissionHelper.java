@@ -33,12 +33,12 @@ import android.widget.TextView;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 
-import static com.siju.acexplorer.AceActivity.PERMISSIONS_REQUEST;
-import static com.siju.acexplorer.AceActivity.SETTINGS_REQUEST;
+import static com.siju.acexplorer.view.MainUiView.PERMISSIONS_REQUEST;
 
 
 public class PermissionHelper {
     private static final String TAG = "PermissionHelper";
+    private final int SETTINGS_REQUEST = 1000;
     private final Activity context;
     private Dialog permissionDialog;
     private String permissions[] = new String[]{Manifest.permission
@@ -46,19 +46,16 @@ public class PermissionHelper {
     private PermissionResultCallback permissionCallback;
 
 
-    public PermissionHelper(@NonNull Activity context) {
+    public PermissionHelper(@NonNull Activity context, PermissionResultCallback permissionCallback) {
         this.context = context;
-        if (context instanceof PermissionResultCallback) {
-            this.permissionCallback = (PermissionResultCallback) context;
-        } else {
-            throw new IllegalArgumentException("Activity must implement (OnPermissionCallback)");
-        }
+        this.permissionCallback =  permissionCallback;
     }
 
 
     public void onResume() {
          /*
-          This handles the scenario when snackbar is shown and user presses home and grants access to app and
+          This handles the scenario when snackbar is shown and user presses home and grants
+          access to app and
           returns to app. In that case,setupInitialData the data and dismiss the snackbar.
          */
 
@@ -86,7 +83,8 @@ public class PermissionHelper {
             Logger.log(TAG, "Permission granted");
             permissionCallback.onPermissionGranted(permissions);
             dismissRationaleDialog();
-        } else {
+        }
+        else {
             showRationale();
         }
     }
@@ -98,7 +96,8 @@ public class PermissionHelper {
         Button buttonGrant;
         TextView textViewPermissionHint;
 
-        showSettings = !ActivityCompat.shouldShowRequestPermissionRationale(context, Manifest.permission
+        showSettings = !ActivityCompat.shouldShowRequestPermissionRationale(context, Manifest
+                .permission
                 .WRITE_EXTERNAL_STORAGE);
         if (permissionDialog == null) {
             permissionDialog = new Dialog(context, R.style.PermissionDialog);
@@ -126,7 +125,8 @@ public class PermissionHelper {
             public void onClick(View v) {
                 if (!showSettings) {
                     requestPermission();
-                } else {
+                }
+                else {
                     Intent intent = new Intent();
                     intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                     Uri uri = Uri.fromParts("package", context.getPackageName(), null);

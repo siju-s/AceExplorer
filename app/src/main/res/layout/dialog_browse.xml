@@ -61,7 +61,7 @@
     </LinearLayout>
 
     <View
-        android:id="@+id/viewSeperator"
+        android:id="@+id/viewSeparator"
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:layout_below="@id/layoutFileNavigate"
@@ -96,6 +96,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/layoutButtons"
-        android:layout_below="@id/viewSeperator"/>
+        android:layout_below="@id/viewSeparator"/>
 
 </RelativeLayout>

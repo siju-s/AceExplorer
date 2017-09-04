@@ -27,7 +27,7 @@ import com.github.junrar.exception.RarException;
 import com.github.junrar.rarfile.FileHeader;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
-import com.siju.acexplorer.filesystem.groups.Category;
+import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.filesystem.helper.SortHelper;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.model.ZipModel;
@@ -46,7 +46,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
-import static com.siju.acexplorer.filesystem.groups.Category.COMPRESSED;
+import static com.siju.acexplorer.model.groups.Category.COMPRESSED;
 import static com.siju.acexplorer.filesystem.helper.SortHelper.comparatorByNameZip;
 
 

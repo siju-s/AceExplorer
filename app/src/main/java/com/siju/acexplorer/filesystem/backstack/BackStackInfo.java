@@ -17,7 +17,7 @@
 package com.siju.acexplorer.filesystem.backstack;
 
 import com.siju.acexplorer.common.Logger;
-import com.siju.acexplorer.filesystem.groups.Category;
+import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.filesystem.model.BackStackModel;
 
 import java.util.ArrayList;

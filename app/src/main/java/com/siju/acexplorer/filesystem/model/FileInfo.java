@@ -19,7 +19,7 @@ package com.siju.acexplorer.filesystem.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.siju.acexplorer.filesystem.groups.Category;
+import com.siju.acexplorer.model.groups.Category;
 
 import static android.R.attr.type;
 

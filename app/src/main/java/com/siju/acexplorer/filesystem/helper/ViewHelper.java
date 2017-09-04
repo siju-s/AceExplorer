@@ -36,14 +36,13 @@ public class ViewHelper {
     /**
      * View the file in external apps based on Mime Type
      *
-     * @param fragment
+     * @param context
      * @param path
      * @param extension
      */
-    public static void viewFile(Fragment fragment, String path, String extension) {
+    public static void viewFile(Context context, String path, String extension) {
 
-        Context context = fragment.getContext();
-        Uri uri = createContentUri(fragment.getContext(), path);
+        Uri uri = createContentUri(context, path);
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
 
@@ -54,7 +53,7 @@ public class ViewHelper {
         String ext = extension.toLowerCase();
 
         if (ext.equals("apk")) {
-            showApkOptionsDialog(fragment, path, ext);
+            showApkOptionsDialog(context, path, ext);
         } else {
             String mimeType = getSingleton().getMimeTypeFromExtension(ext);
             Logger.log(TAG, " uri==" + uri + "MIME=" + mimeType);

@@ -36,6 +36,7 @@
         android:layout_gravity="bottom|end"
         android:background="@null"
         android:clickable="true"
+        android:focusable="true"
         android:contentDescription="@string/action_share"
         android:paddingBottom="@dimen/padding_10"
         android:paddingEnd="@dimen/padding_10"

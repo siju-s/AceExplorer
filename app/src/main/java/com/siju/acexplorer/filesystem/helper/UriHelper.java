@@ -29,7 +29,7 @@ import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.filesystem.groups.Category;
+import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.utils.Utils;
 
 import java.io.File;

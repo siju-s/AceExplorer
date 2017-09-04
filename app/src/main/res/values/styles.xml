@@ -60,7 +60,7 @@
 
     <style name="PermissionDialog" parent="Theme.AppCompat.NoActionBar">
         <item name="windowActionBar">false</item>
-        <item name="android:windowBackground">@color/dark_colorPrimary</item>
+        <item name="android:windowBackground">@color/dark_background</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
     </style>
@@ -189,7 +189,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorControlActivated">@color/colorPrimary</item>
-        <item name="colorControlNormal">@color/dark_colorPrimary</item>
+        <item name="colorControlNormal">@color/dark_background</item>
     </style>
 
     <style name="checkBoxStyle" parent="Base.Theme.AppCompat">
@@ -200,6 +200,23 @@
     <style name="ActionButton">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="DialogTitle">
+        <item name="android:textSize">20sp</item>
+        <item name="android:layout_marginLeft">@dimen/margin_16</item>
+        <item name="android:layout_marginRight">@dimen/margin_16</item>
+        <item name="android:textColor">@color/color_text</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="DialogMessage">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/black_40</item>
+        <item name="android:layout_marginLeft">@dimen/margin_16</item>
+        <item name="android:layout_marginRight">@dimen/margin_16</item>
+        <item name="android:layout_marginTop">@dimen/margin_16</item>
+        <item name="android:fontFamily">sans-serif</item>
     </style>
 
 </resources>

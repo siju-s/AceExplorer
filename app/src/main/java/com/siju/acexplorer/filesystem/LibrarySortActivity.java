@@ -30,22 +30,22 @@ import android.view.MenuItem;
 import com.siju.acexplorer.BaseActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.SharedPreferenceWrapper;
-import com.siju.acexplorer.filesystem.groups.Category;
+import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.filesystem.helper.SimpleItemTouchHelperCallback;
 import com.siju.acexplorer.filesystem.model.LibrarySortModel;
 
 import java.util.ArrayList;
 
-import static com.siju.acexplorer.filesystem.groups.Category.APPS;
-import static com.siju.acexplorer.filesystem.groups.Category.AUDIO;
-import static com.siju.acexplorer.filesystem.groups.Category.COMPRESSED;
-import static com.siju.acexplorer.filesystem.groups.Category.DOCS;
-import static com.siju.acexplorer.filesystem.groups.Category.DOWNLOADS;
-import static com.siju.acexplorer.filesystem.groups.Category.FAVORITES;
-import static com.siju.acexplorer.filesystem.groups.Category.IMAGE;
-import static com.siju.acexplorer.filesystem.groups.Category.LARGE_FILES;
-import static com.siju.acexplorer.filesystem.groups.Category.PDF;
-import static com.siju.acexplorer.filesystem.groups.Category.VIDEO;
+import static com.siju.acexplorer.model.groups.Category.APPS;
+import static com.siju.acexplorer.model.groups.Category.AUDIO;
+import static com.siju.acexplorer.model.groups.Category.COMPRESSED;
+import static com.siju.acexplorer.model.groups.Category.DOCS;
+import static com.siju.acexplorer.model.groups.Category.DOWNLOADS;
+import static com.siju.acexplorer.model.groups.Category.FAVORITES;
+import static com.siju.acexplorer.model.groups.Category.IMAGE;
+import static com.siju.acexplorer.model.groups.Category.LARGE_FILES;
+import static com.siju.acexplorer.model.groups.Category.PDF;
+import static com.siju.acexplorer.model.groups.Category.VIDEO;
 
 public class LibrarySortActivity extends BaseActivity implements OnStartDragListener {
     private ItemTouchHelper mItemTouchHelper;

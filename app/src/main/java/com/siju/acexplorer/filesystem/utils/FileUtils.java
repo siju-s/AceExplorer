@@ -29,7 +29,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 import com.siju.acexplorer.common.Logger;
-import com.siju.acexplorer.filesystem.groups.Category;
+import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.utils.Utils;
 
 import java.io.File;
@@ -45,10 +45,10 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Locale;
 
-import static com.siju.acexplorer.filesystem.groups.Category.AUDIO;
-import static com.siju.acexplorer.filesystem.groups.Category.FILES;
-import static com.siju.acexplorer.filesystem.groups.Category.IMAGE;
-import static com.siju.acexplorer.filesystem.groups.Category.VIDEO;
+import static com.siju.acexplorer.model.groups.Category.AUDIO;
+import static com.siju.acexplorer.model.groups.Category.FILES;
+import static com.siju.acexplorer.model.groups.Category.IMAGE;
+import static com.siju.acexplorer.model.groups.Category.VIDEO;
 import static com.siju.acexplorer.filesystem.helper.UriHelper.getUriFromFile;
 import static com.siju.acexplorer.filesystem.storage.StorageUtils.getDocumentFile;
 import static com.siju.acexplorer.filesystem.storage.StorageUtils.isOnExtSdCard;

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,168 +14,66 @@
   ~ limitations under the License.
   -->
 
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                        xmlns:tools="http://schemas.android.com/tools"
-                                        android:id="@+id/drawer_layout"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:fitsSystemWindows="true"
-                                        tools:openDrawer="start">
+<com.siju.acexplorer.view.MainUiView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start">
 
     <include
         layout="@layout/content_main"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
-    <com.siju.acexplorer.ui.ScrimInsetsRelativeLayout
+    <android.support.design.widget.NavigationView
         android:id="@+id/drawerPane"
         android:layout_width="@dimen/drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true">
 
-        <ExpandableListView
-            android:id="@+id/expand_list_drawer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/divider"
-            android:layout_gravity="start"
-            android:divider="@null"
-            android:fitsSystemWindows="true"
-            android:groupIndicator="@null"
-            android:scrollbars="none"/>
-
-        <View
-            android:id="@+id/divider"
-            android:layout_width="@dimen/drawer_width"
-            android:layout_height="1dp"
-            android:layout_above="@+id/rateUs"
-            android:background="@color/light_divider"/>
-
-
         <RelativeLayout
-            android:id="@+id/rateUs"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/unlockPremium"
-            android:layout_marginTop="5dp"
-            android:clickable="true"
-            android:paddingEnd="@dimen/drawer_item_margin"
-            android:paddingLeft="@dimen/drawer_item_margin"
-            android:paddingRight="@dimen/drawer_item_margin"
-            android:paddingStart="@dimen/drawer_item_margin">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/imageRateUs"
-                android:layout_width="@dimen/drawer_item_icon_width"
-                android:layout_height="@dimen/drawer_item_icon_width"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginLeft="@dimen/drawer_item_margin"
-                android:layout_marginStart="@dimen/drawer_item_margin"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_rate_white"
-                tools:ignore="ContentDescription"/>
+            <include
+                android:id="@+id/header"
+                layout="@layout/drawerlist_header" />
 
-            <TextView
-                android:layout_width="wrap_content"
+            <ExpandableListView
+                android:id="@+id/expandListDrawer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/header"
+                android:layout_gravity="start"
+                android:divider="@null"
+                android:fitsSystemWindows="true"
+                android:groupIndicator="@null"
+                android:layout_above="@+id/divider"
+                android:scrollbars="none" />
+
+            <View
+                android:id="@+id/divider"
+                android:layout_width="@dimen/drawer_width"
+                android:layout_height="1dp"
+                android:layout_above="@+id/listGeneric"
+                android:background="@color/light_divider" />
+
+
+            <ListView
+                android:id="@+id/listGeneric"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/drawer_item_text_margin"
-                android:layout_marginStart="@dimen/drawer_item_text_margin"
-                android:layout_toEndOf="@+id/imageRateUs"
-                android:layout_toRightOf="@+id/imageRateUs"
-                android:clickable="false"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="@string/rate_us"
-                android:textSize="14sp"/>
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="5dp"
+                android:divider="@null" />
+
 
         </RelativeLayout>
 
+    </android.support.design.widget.NavigationView>
 
-        <RelativeLayout
-            android:id="@+id/unlockPremium"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/layoutSettings"
-            android:clickable="true"
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp"
-            android:paddingEnd="@dimen/drawer_item_margin"
-            android:paddingLeft="@dimen/drawer_item_margin"
-            android:paddingRight="@dimen/drawer_item_margin"
-            android:paddingStart="@dimen/drawer_item_margin">
-
-            <ImageView
-                android:id="@+id/imageUnlock"
-                android:layout_width="@dimen/drawer_item_icon_width"
-                android:layout_height="@dimen/drawer_item_icon_width"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginLeft="@dimen/drawer_item_margin"
-                android:layout_marginStart="@dimen/drawer_item_margin"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_unlock_full"
-                tools:ignore="ContentDescription"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/drawer_item_text_margin"
-                android:layout_marginStart="@dimen/drawer_item_text_margin"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/imageUnlock"
-                android:layout_toRightOf="@+id/imageUnlock"
-                android:clickable="false"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="@string/unlock_full_version"
-                android:textSize="14sp"/>
-        </RelativeLayout>
-
-
-        <RelativeLayout
-            android:id="@+id/layoutSettings"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:clickable="true"
-            android:layout_marginBottom="@dimen/drawer_item_margin"
-            android:paddingEnd="@dimen/drawer_item_margin"
-            android:paddingLeft="@dimen/drawer_item_margin"
-            android:paddingRight="@dimen/drawer_item_margin"
-            android:paddingStart="@dimen/drawer_item_margin">
-
-            <ImageView
-                android:id="@+id/imageSettings"
-                android:layout_width="@dimen/drawer_item_icon_width"
-                android:layout_height="@dimen/drawer_item_icon_width"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginLeft="@dimen/drawer_item_margin"
-                android:layout_marginStart="@dimen/drawer_item_margin"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_settings_white"
-                tools:ignore="ContentDescription"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/drawer_item_text_margin"
-                android:layout_marginStart="@dimen/drawer_item_text_margin"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/imageSettings"
-                android:layout_toRightOf="@+id/imageSettings"
-                android:clickable="false"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="@string/action_settings"
-                android:textSize="14sp"/>
-
-        </RelativeLayout>
-
-    </com.siju.acexplorer.ui.ScrimInsetsRelativeLayout>
-
-
-</android.support.v4.widget.DrawerLayout>
+</com.siju.acexplorer.view.MainUiView>

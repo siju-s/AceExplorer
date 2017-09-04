@@ -23,10 +23,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.filesystem.groups.Category;
+import com.siju.acexplorer.model.groups.Category;
 
-import static com.siju.acexplorer.filesystem.groups.Category.FAVORITES;
-import static com.siju.acexplorer.filesystem.groups.Category.FILES;
+import static com.siju.acexplorer.model.groups.Category.FAVORITES;
+import static com.siju.acexplorer.model.groups.Category.FILES;
 
 
 public class EnhancedMenuInflater {

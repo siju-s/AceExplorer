@@ -23,10 +23,10 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.siju.acexplorer.filesystem.theme.ThemeUtils;
+import com.siju.acexplorer.theme.ThemeUtils;
 import com.siju.acexplorer.filesystem.ui.DialogBrowseFragment;
 
-import static com.siju.acexplorer.filesystem.theme.ThemeUtils.THEME_DARK;
+import static com.siju.acexplorer.theme.ThemeUtils.THEME_DARK;
 
 
 public class TransparentActivity extends AppCompatActivity {

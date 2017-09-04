@@ -18,11 +18,11 @@ package com.siju.acexplorer.filesystem.backstack;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -30,8 +30,9 @@ import android.widget.TextView;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
-import com.siju.acexplorer.filesystem.groups.Category;
-import com.siju.acexplorer.filesystem.groups.StoragesGroup;
+import com.siju.acexplorer.model.groups.Category;
+import com.siju.acexplorer.model.groups.StoragesGroup;
+import com.siju.acexplorer.storage.view.StoragesUiView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -49,11 +50,17 @@ public class NavigationInfo {
     private boolean isCurrentDirRoot;
     private String STORAGE_INTERNAL, STORAGE_ROOT, STORAGE_EXTERNAL;
     private ArrayList<String> externalSDPaths = new ArrayList<>();
+    private LinearLayout navDirectory;
+    private HorizontalScrollView scrollNavigation;
 
 
-    public NavigationInfo(Fragment fragment) {
-        this.context = fragment.getContext();
-        navigationCallback = (NavigationCallback) fragment;
+    public NavigationInfo(StoragesUiView storagesUiView, NavigationCallback navigationCallback) {
+        this.context = storagesUiView.getContext();
+        navDirectory = storagesUiView.findViewById(R.id.navButtons);
+        scrollNavigation = storagesUiView.findViewById(R.id.scrollNavigation);
+        scrollNavigation.setBackgroundColor(ContextCompat.getColor(context, R.color
+                .colorPrimary));
+        this.navigationCallback = navigationCallback;
         STORAGE_ROOT = context.getResources().getString(R.string.nav_menu_root);
         STORAGE_INTERNAL = context.getResources().getString(R.string.nav_menu_internal_storage);
         STORAGE_EXTERNAL = context.getResources().getString(R.string.nav_menu_ext_storage);
@@ -92,7 +99,7 @@ public class NavigationInfo {
     public void addHomeNavButton(boolean isHomeScreenEnabled, Category category) {
 
         if (isHomeScreenEnabled) {
-            navigationCallback.clearNavigation();
+            clearNavigation();
             ImageButton imageButton = new ImageButton(context);
             imageButton.setImageResource(R.drawable.ic_home_white);
             imageButton.setBackgroundColor(Color.parseColor("#00ffffff"));
@@ -107,14 +114,14 @@ public class NavigationInfo {
                     navigationCallback.onHomeClicked();
                 }
             });
-            navigationCallback.addViewToNavigation(imageButton);
+            addViewToNavigation(imageButton);
 
             ImageView navArrow = new ImageView(context);
             params.leftMargin = 15;
             params.rightMargin = 20;
             navArrow.setImageResource(R.drawable.ic_arrow_nav);
             navArrow.setLayoutParams(params);
-            navigationCallback.addViewToNavigation(navArrow);
+            addViewToNavigation(navArrow);
             addTitleText(category);
         } else {
             addTitleText(category);
@@ -136,7 +143,7 @@ public class NavigationInfo {
             int paddingRight = context.getResources().getDimensionPixelSize(R.dimen.padding_60);
             textView.setPadding(0, 0, paddingRight, 0);
             textView.setLayoutParams(params);
-            navigationCallback.addViewToNavigation(textView);
+            addViewToNavigation(textView);
         }
     }
 
@@ -171,7 +178,7 @@ public class NavigationInfo {
         String[] parts;
         parts = path.split(File.separator);
 
-        navigationCallback.clearNavigation();
+        clearNavigation();
         currentDir = path;
         String dir = "";
         addHomeNavButton(isHomeScreenEnabled, category);
@@ -228,9 +235,9 @@ public class NavigationInfo {
             navArrow.setImageResource(R.drawable.ic_arrow_nav);
             navArrow.setLayoutParams(layoutParams);
 
-            navigationCallback.addViewToNavigation(navArrow);
+            addViewToNavigation(navArrow);
             createNavButton(parts, dir);
-            navigationCallback.scrollNavigation();
+            scrollNavigation();
 
         }
     }
@@ -261,7 +268,7 @@ public class NavigationInfo {
                     }
                 }
             });
-            navigationCallback.addViewToNavigation(imageButton);
+            addViewToNavigation(imageButton);
 
 
         } else {
@@ -282,7 +289,7 @@ public class NavigationInfo {
                     }
                 }
             });
-            navigationCallback.addViewToNavigation(textView);
+            addViewToNavigation(textView);
 
         }
     }
@@ -293,8 +300,37 @@ public class NavigationInfo {
             navigationCallback.onNavButtonClicked(dir);
 
         }
-
     }
+
+
+    public void removeHomeFromNavPath() {
+        Logger.log(TAG, "Nav directory count=" + navDirectory.getChildCount());
+
+        for (int i = 0; i < Math.min(navDirectory.getChildCount(), 2); i++) {
+            navDirectory.removeViewAt(0);
+        }
+    }
+
+    public void addViewToNavigation(View view) {
+        navDirectory.addView(view);
+    }
+
+    public void clearNavigation() {
+        navDirectory.removeAllViews();
+    }
+
+    public void showNavigationView() {
+        scrollNavigation.setVisibility(View.VISIBLE);
+    }
+
+    public void scrollNavigation() {
+        scrollNavigation.postDelayed(new Runnable() {
+            public void run() {
+                scrollNavigation.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
+            }
+        }, 100L);
+    }
+
 
 
 }

@@ -21,7 +21,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.ContextCompat;
@@ -31,13 +30,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import com.siju.acexplorer.AceActivity;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.filesystem.theme.ThemeUtils;
+import com.siju.acexplorer.theme.ThemeUtils;
 
-import static com.siju.acexplorer.filesystem.theme.ThemeUtils.THEME_DARK;
+import static com.siju.acexplorer.theme.ThemeUtils.THEME_DARK;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -59,7 +57,8 @@ public class SettingsActivity extends AppCompatActivity {
 
         if (theme == THEME_DARK) {
             setTheme(R.style.BaseDarkTheme_Settings);
-        } else {
+        }
+        else {
             setTheme(R.style.BaseLightTheme_Settings);
         }
     }
@@ -77,23 +76,22 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
 
-    /**
-     * Set up the {@link android.app.ActionBar}, if the API is available.
-     */
     private void setupActionBar() {
         ViewGroup rootView = findViewById(R.id.action_bar_root);
-        Log.d("Settings", "setupActionBar: "+rootView);
+        Log.d("Settings", "setupActionBar: " + rootView);
         AppBarLayout bar;
         if (rootView != null) {
-            bar = (AppBarLayout) LayoutInflater.from(this).inflate(R.layout.toolbar_settings, rootView,
+            bar = (AppBarLayout) LayoutInflater.from(this).inflate(R.layout.toolbar_settings,
+                    rootView,
                     false);
             rootView.addView(bar, 0); // insert at top
             Toolbar toolbar = (Toolbar) bar.getChildAt(0);
-            toolbar.setPadding(0,getStatusBarHeight(),0,0);
+            toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
             toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
 
-            if (Build.VERSION.SDK_INT >= 21) {
-                getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color
+                        .colorPrimaryDark));
             }
 
             setSupportActionBar(toolbar);
@@ -104,15 +102,6 @@ public class SettingsActivity extends AppCompatActivity {
                 actionBar.setDisplayHomeAsUpEnabled(true);
             }
         }
-
-/*        LinearLayout root = (LinearLayout) findViewById(android.R.id.list).getParent().getParent().getParent();
-        bar = (AppBarLayout) LayoutInflater.from(this).inflate(R.layout.toolbar_settings, root,
-                false);
-        root.addView(bar, 0); // insert at top
-        Toolbar toolbar = (Toolbar) bar.getChildAt(0);
-        toolbar.setPadding(0,getStatusBarHeight(),0,0);*/
-
-
     }
 
     int getStatusBarHeight() {

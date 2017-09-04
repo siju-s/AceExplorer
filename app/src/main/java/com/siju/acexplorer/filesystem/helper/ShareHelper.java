@@ -21,12 +21,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.webkit.MimeTypeMap;
 
-import com.siju.acexplorer.filesystem.groups.Category;
+import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 
 import java.util.ArrayList;
 
-import static com.siju.acexplorer.filesystem.groups.Category.checkIfFileCategory;
+import static com.siju.acexplorer.model.groups.Category.checkIfFileCategory;
 import static com.siju.acexplorer.filesystem.helper.UriHelper.createContentUri;
 
 

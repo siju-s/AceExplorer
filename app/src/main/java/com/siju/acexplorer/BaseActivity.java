@@ -21,24 +21,26 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
-import com.siju.acexplorer.filesystem.theme.ThemeUtils;
-import com.siju.acexplorer.filesystem.theme.Themes;
+import com.siju.acexplorer.theme.Theme;
 
 
 @SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity {
 
-    private Themes currentTheme;
+    private Theme currentTheme;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
+        BaseModel baseModel = new BaseModelImpl();
+        BasePresenter basePresenter = new BasePresenterImpl(baseModel);
+        currentTheme = basePresenter.getTheme();
         setTheme();
+
         super.onCreate(savedInstanceState);
     }
 
     private void setTheme() {
-
-        currentTheme = Themes.getTheme(ThemeUtils.getTheme(this));
         switch (currentTheme) {
             case DARK:
                 setTheme(R.style.BaseDarkTheme_Dark);
@@ -50,7 +52,7 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    public Themes getCurrentTheme() {
+    public Theme getCurrentTheme() {
         return currentTheme;
     }
 

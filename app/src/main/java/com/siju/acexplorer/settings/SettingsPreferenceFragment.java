@@ -38,7 +38,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -47,24 +46,22 @@ import com.siju.acexplorer.AceActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
-import com.siju.acexplorer.filesystem.theme.ThemeUtils;
+import com.siju.acexplorer.theme.ThemeUtils;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.utils.LocaleHelper;
 
-import static com.siju.acexplorer.filesystem.theme.ThemeUtils.CURRENT_THEME;
-import static com.siju.acexplorer.filesystem.theme.ThemeUtils.PREFS_THEME;
+import static com.siju.acexplorer.theme.ThemeUtils.CURRENT_THEME;
+import static com.siju.acexplorer.theme.ThemeUtils.PREFS_THEME;
 
 
 public class SettingsPreferenceFragment extends PreferenceFragment {
 
     private final String TAG = this.getClass().getSimpleName();
-    // --Commented out by Inspection (06-11-2016 11:23 PM):private final String PREFS_PRO = "prefsPro";
-    private static final String PREFS_LANGUAGE = "prefLanguage";
-    private String mCurrentLanguage;
+    public static final String PREFS_LANGUAGE = "prefLanguage";
+    private String currentLanguage;
     private SharedPreferences mPrefs;
     private Preference updatePreference;
-    private Intent mSendIntent;
-    private int mIsTheme;
+    private int theme;
 
 
     @Override
@@ -72,13 +69,11 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_settings);
         setHasOptionsMenu(true);
-        mSendIntent = new Intent();
         mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-
 
         ListPreference langPreference = (ListPreference) findPreference(PREFS_LANGUAGE);
         ListPreference themePreference = (ListPreference) findPreference(PREFS_THEME);
-        mIsTheme = ThemeUtils.getTheme(getActivity());
+        theme = ThemeUtils.getTheme(getActivity());
         String PREFS_UPDATE = "prefsUpdate";
         updatePreference = findPreference(PREFS_UPDATE);
 
@@ -131,8 +126,8 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
 
         String value = LocaleHelper.getLanguage(getActivity());
         langPreference.setValue(value);
-        mCurrentLanguage = value;
-        Logger.log("Settings", "lang=" + mCurrentLanguage);
+        currentLanguage = value;
+        Logger.log("Settings", "lang=" + currentLanguage);
 
 
         // Bind the summaries of EditText/List/Dialog/Ringtone preferences
@@ -274,9 +269,8 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
                         if (listPreference.getKey().equals(PREFS_LANGUAGE)) {
                             Logger.log("Settings", "sBindPreferenceSummaryToValueListener -lang=" + stringValue);
 
-                            if (!stringValue.equals(mCurrentLanguage)) {
+                            if (!stringValue.equals(currentLanguage)) {
                                 LocaleHelper.setLocale(getActivity(), stringValue);
-                                getActivity().setResult(Activity.RESULT_OK, mSendIntent);
                                 restartApp();
                             }
                         }
@@ -284,9 +278,9 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
                         if (listPreference.getKey().equals(PREFS_THEME)) {
                             int theme = Integer.valueOf(stringValue);
                             mPrefs.edit().putInt(CURRENT_THEME, theme).apply();
-                            Logger.log("TAG", "Current theme=" + mIsTheme + " new theme=" + theme);
-                            if (mIsTheme != theme) {
-                                getActivity().setResult(Activity.RESULT_OK, mSendIntent);
+                            Logger.log("TAG", "Current theme=" + SettingsPreferenceFragment.this
+                                    .theme + " new theme=" + theme);
+                            if (SettingsPreferenceFragment.this.theme != theme) {
                                 restartApp();
                             }
 
@@ -365,7 +359,6 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
                                     .PREFS_HOMESCREEN, true);
                             Logger.log(TAG, "Homescreen=" + isHomeScreenEnabled);
 //                            mSendIntent.putExtra(FileConstants.PREFS_HOMESCREEN, isHomeScreenEnabled);
-                            getActivity().setResult(Activity.RESULT_OK, mSendIntent);
                             break;
 
                         case FileConstants.PREFS_DUAL_PANE:
@@ -373,7 +366,6 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
                                     .PREFS_DUAL_PANE, true);
                             Logger.log(TAG, "Dualpane=" + isDualPaneEnabledSettings);
 //                            mSendIntent.putExtra(FileConstants.PREFS_DUAL_PANE, isDualPaneEnabledSettings);
-                            getActivity().setResult(Activity.RESULT_OK, mSendIntent);
                             break;
                     }
                 }

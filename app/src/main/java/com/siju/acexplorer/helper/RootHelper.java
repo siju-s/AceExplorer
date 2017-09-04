@@ -32,7 +32,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import static com.siju.acexplorer.filesystem.FileListLoader.getFilesList;
-import static com.siju.acexplorer.filesystem.groups.Category.FILES;
+import static com.siju.acexplorer.model.groups.Category.FILES;
 
 /*import com.siju.acexplorer.helper.root.RootTools;
 import com.siju.acexplorer.helper.root.rootshell.execution.Command;*/

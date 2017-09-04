@@ -28,7 +28,7 @@ import java.util.Locale;
 
 public class LocaleHelper {
 
-    public static final String SELECTED_LANGUAGE = "prefs_lang";
+    private static final String SELECTED_LANGUAGE = "prefs_lang";
 
     public static String getLanguage(Context context) {
         return getPersistedData(context, Locale.getDefault().getLanguage());

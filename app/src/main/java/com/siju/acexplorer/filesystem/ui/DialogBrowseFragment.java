@@ -48,12 +48,13 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.filesystem.FileConstants;
-import com.siju.acexplorer.filesystem.FileListAdapter;
+import com.siju.acexplorer.storage.view.FileListAdapter;
 import com.siju.acexplorer.filesystem.FileListLoader;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.modes.ViewMode;
-import com.siju.acexplorer.filesystem.theme.ThemeUtils;
-import com.siju.acexplorer.filesystem.theme.Themes;
+import com.siju.acexplorer.storage.view.custom.DividerItemDecoration;
+import com.siju.acexplorer.theme.ThemeUtils;
+import com.siju.acexplorer.theme.Theme;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 import com.siju.acexplorer.filesystem.utils.MediaStoreHack;
 import com.siju.acexplorer.filesystem.views.FastScrollRecyclerView;
@@ -65,8 +66,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.siju.acexplorer.filesystem.groups.Category.FILES;
-import static com.siju.acexplorer.filesystem.groups.Category.PICKER;
+import static com.siju.acexplorer.model.groups.Category.FILES;
+import static com.siju.acexplorer.model.groups.Category.PICKER;
 import static com.siju.acexplorer.filesystem.helper.UriHelper.createContentUri;
 import static com.siju.acexplorer.filesystem.storage.StorageUtils.getInternalStorage;
 import static com.siju.acexplorer.filesystem.storage.StorageUtils.getStorageDirectories;
@@ -90,7 +91,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
     private boolean mIsRingtonePicker;
     private boolean isFilePicker;
     private int mRingToneType;
-    private Themes currentTheme;
+    private Theme currentTheme;
     private static final int MY_PERMISSIONS_REQUEST = 1;
     private static final int SETTINGS_REQUEST = 200;
     private MaterialDialog materialDialog;
@@ -132,7 +133,7 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
-        currentTheme = Themes.getTheme(ThemeUtils.getTheme(getContext()));
+        currentTheme = Theme.getTheme(ThemeUtils.getTheme(getContext()));
 
         initializeViews();
 

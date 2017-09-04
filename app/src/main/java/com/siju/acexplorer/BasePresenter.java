@@ -16,9 +16,7 @@
 
 package com.siju.acexplorer;
 
-import com.siju.acexplorer.model.SectionGroup;
-
-import java.util.ArrayList;
+import com.siju.acexplorer.theme.Theme;
 
 /**
  * Created by SJ on 20-01-2017.
@@ -26,5 +24,5 @@ import java.util.ArrayList;
 
 public interface BasePresenter {
 
-    ArrayList<SectionGroup> getTotalGroupData();
+    Theme getTheme();
 }

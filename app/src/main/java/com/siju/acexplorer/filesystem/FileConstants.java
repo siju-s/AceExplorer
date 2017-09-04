@@ -24,6 +24,9 @@ public class FileConstants {
     public static final String KEY_DUAL_ENABLED = "dualEnabled";
     public static final String PREFS_HOMESCREEN = "prefHomeScreen";
     public static final String PREFS_RESET = "prefsReset";
+    public static final String PREFS_FIRST_RUN = "first_app_run";
+    public static final String PREFS_VIEW_MODE = "view_mode";
+
 
     public static final String SAF_URI = "saf_uri";
 

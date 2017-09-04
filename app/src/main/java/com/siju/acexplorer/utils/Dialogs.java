@@ -28,7 +28,7 @@ import android.view.View;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.filesystem.BaseFileList;
+import com.siju.acexplorer.storage.view.BaseFileList;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.utils.FileUtils;
 

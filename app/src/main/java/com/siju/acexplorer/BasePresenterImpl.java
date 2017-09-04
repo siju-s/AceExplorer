@@ -16,30 +16,19 @@
 
 package com.siju.acexplorer;
 
-import android.content.Context;
-
-import com.siju.acexplorer.filesystem.groups.DrawerItems;
-import com.siju.acexplorer.model.SectionGroup;
-
-import java.util.ArrayList;
+import com.siju.acexplorer.theme.Theme;
 
 public class BasePresenterImpl implements BasePresenter {
-    private BaseView baseView;
-    private Context context;
-    private DrawerItems drawerItems;
+    private BaseModel baseModel;
 
 
-    public BasePresenterImpl(Context context) {
-        this.context = context;
-        if (context instanceof BaseView) {
-            this.baseView = (BaseView) context;
-        }
-        drawerItems = new DrawerItems(context);
+    BasePresenterImpl(BaseModel baseModel) {
+        this.baseModel = baseModel;
     }
 
 
     @Override
-    public ArrayList<SectionGroup> getTotalGroupData() {
-        return drawerItems.getTotalGroupData();
+    public Theme getTheme() {
+        return baseModel.getTheme();
     }
 }

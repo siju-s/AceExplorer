@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.siju.acexplorer.storage.view.StoragesUiView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_content"
@@ -114,4 +114,4 @@
             fab:fab_size="normal" />
     </FrameLayout>
 
-</android.support.design.widget.CoordinatorLayout>
+</com.siju.acexplorer.storage.view.StoragesUiView>

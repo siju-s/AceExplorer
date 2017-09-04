@@ -16,7 +16,7 @@
 
 package com.siju.acexplorer.filesystem.model;
 
-import com.siju.acexplorer.filesystem.groups.Category;
+import com.siju.acexplorer.model.groups.Category;
 
 public class BackStackModel {
 

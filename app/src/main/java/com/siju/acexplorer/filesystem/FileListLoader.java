@@ -31,7 +31,8 @@ import android.webkit.MimeTypeMap;
 
 import com.siju.acexplorer.common.Logger;
 import com.siju.acexplorer.common.SharedPreferenceWrapper;
-import com.siju.acexplorer.filesystem.groups.Category;
+import com.siju.acexplorer.home.view.HomeScreenFragment;
+import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.filesystem.model.FavInfo;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.root.RootUtils;
@@ -43,9 +44,9 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 
-import static com.siju.acexplorer.filesystem.groups.Category.FILES;
-import static com.siju.acexplorer.filesystem.groups.Category.LARGE_FILES;
-import static com.siju.acexplorer.filesystem.groups.Category.PDF;
+import static com.siju.acexplorer.model.groups.Category.FILES;
+import static com.siju.acexplorer.model.groups.Category.LARGE_FILES;
+import static com.siju.acexplorer.model.groups.Category.PDF;
 import static com.siju.acexplorer.filesystem.helper.SortHelper.sortFiles;
 import static com.siju.acexplorer.filesystem.utils.FileUtils.checkMimeType;
 import static com.siju.acexplorer.helper.RootHelper.parseFilePermission;

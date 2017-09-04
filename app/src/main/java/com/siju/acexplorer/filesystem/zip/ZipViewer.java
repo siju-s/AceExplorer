@@ -28,11 +28,11 @@ import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
 import com.github.junrar.rarfile.FileHeader;
 import com.siju.acexplorer.common.Logger;
-import com.siju.acexplorer.filesystem.BaseFileList;
+import com.siju.acexplorer.storage.view.BaseFileList;
 import com.siju.acexplorer.filesystem.FileConstants;
 import com.siju.acexplorer.filesystem.backstack.BackStackInfo;
 import com.siju.acexplorer.filesystem.backstack.NavigationInfo;
-import com.siju.acexplorer.filesystem.groups.Category;
+import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.filesystem.model.FileInfo;
 import com.siju.acexplorer.filesystem.model.ZipModel;
 import com.siju.acexplorer.filesystem.task.ExtractZipEntry;
@@ -43,8 +43,8 @@ import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static com.siju.acexplorer.filesystem.groups.Category.FILES;
-import static com.siju.acexplorer.filesystem.groups.Category.ZIP_VIEWER;
+import static com.siju.acexplorer.model.groups.Category.FILES;
+import static com.siju.acexplorer.model.groups.Category.ZIP_VIEWER;
 import static com.siju.acexplorer.filesystem.storage.StorageUtils.getInternalStorage;
 
 public class ZipViewer implements ZipElements {
@@ -309,7 +309,7 @@ public class ZipViewer implements ZipElements {
         setNavDirectory(newPath);
     }
 
-    public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
+    public Loader<ArrayList<FileInfo>> onCreateLoader(Bundle args) {
         if (inChildZip) {
             String path;
             if (zipEntry.isDirectory()) {

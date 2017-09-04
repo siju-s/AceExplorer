@@ -60,7 +60,7 @@
         <item name="android:textColorPrimary">@color/dark_text</item>
         <item name="android:textColorSecondary">@color/dark_text</item>
         <item name="android:listDivider">@null</item>
-        <item name="android:windowBackground">@color/dark_colorPrimary</item>
+        <item name="android:windowBackground">@color/dark_background</item>
     </style>
 
     <style name="BaseLightTheme.Settings">
