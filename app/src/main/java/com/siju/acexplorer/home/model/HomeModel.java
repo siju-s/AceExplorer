@@ -17,8 +17,6 @@
 package com.siju.acexplorer.home.model;
 
 import com.siju.acexplorer.billing.BillingStatus;
-import com.siju.acexplorer.filesystem.model.HomeLibraryInfo;
-import com.siju.acexplorer.filesystem.model.LibrarySortModel;
 
 import java.util.List;
 

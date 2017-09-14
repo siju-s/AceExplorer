@@ -16,17 +16,22 @@
 
 package com.siju.acexplorer.storage.presenter;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
 import com.siju.acexplorer.billing.BillingStatus;
-import com.siju.acexplorer.filesystem.model.FileInfo;
-import com.siju.acexplorer.filesystem.model.LibrarySortModel;
+import com.siju.acexplorer.home.model.LibrarySortModel;
 import com.siju.acexplorer.home.model.LoaderHelper;
+import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.groups.Category;
+import com.siju.acexplorer.storage.model.CopyData;
 import com.siju.acexplorer.storage.model.StoragesModel;
+import com.siju.acexplorer.storage.model.operations.Operations;
 import com.siju.acexplorer.storage.view.StoragesUi;
+import com.siju.acexplorer.view.dialog.DialogHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,17 +43,17 @@ public class StoragesPresenterImpl implements StoragesPresenter, StoragesUi.List
         StoragesModel.Listener, LoaderManager
                 .LoaderCallbacks<ArrayList<FileInfo>> {
 
+    private final String TAG = this.getClass().getSimpleName();
     private final int LOADER_ID = 1000;
     private final String KEY_PICKER = "picker";
+
+
     private final String KEY_PATH = "path";
-
-
     private StoragesUi storagesUi;
     private StoragesModel storagesModel;
     private LoaderManager loaderManager;
     private LoaderHelper loaderHelper;
     private Category category;
-    private final String TAG = this.getClass().getSimpleName();
 
 
     public StoragesPresenterImpl(StoragesUi storagesUi, StoragesModel storagesModel, LoaderHelper loaderHelper,
@@ -59,12 +64,9 @@ public class StoragesPresenterImpl implements StoragesPresenter, StoragesUi.List
         this.loaderManager = loaderManager;
         storagesUi.setListener(this);
         storagesModel.setListener(this);
-    }
-
-    @Override
-    public void getLibraries() {
 
     }
+
 
     @Override
     public void loadData(String currentDir, Category category, boolean isPicker) {
@@ -91,7 +93,68 @@ public class StoragesPresenterImpl implements StoragesPresenter, StoragesUi.List
     }
 
     @Override
+    public void startPasteOperation(String currentDir, boolean isMove, boolean rooted, ArrayList<FileInfo> info) {
+        storagesModel.startPasteOperation(currentDir, isMove, rooted, info);
+    }
+
+    @Override
+    public void handleSAFResult(Intent operationIntent, Uri treeUri, boolean rooted, int flags) {
+        storagesModel.handleSAFResult(operationIntent, treeUri, rooted, flags);
+    }
+
+    @Override
+    public void saveOldSAFUri(String path) {
+        storagesModel.saveOldSAFUri(path);
+    }
+
+    @Override
+    public void createDir(String currentDir, String name, boolean rooted) {
+        storagesModel.createDir(currentDir,name, rooted);
+    }
+
+    @Override
+    public void createFile(String currentDir, String name, boolean rooted) {
+        storagesModel.createFile(currentDir,name, rooted);
+    }
+
+    @Override
     public void onFilesFetched(List<FileInfo> libraries) {
+
+    }
+
+    @Override
+    public void showSAFDialog(String path, Intent data) {
+        storagesUi.showSAFDialog(path, data);
+    }
+
+    @Override
+    public void onFileExists(Operations operation, String msg) {
+        storagesUi.onFileExists(operation, msg);
+
+    }
+
+    @Override
+    public void showConflictDialog(final List<FileInfo> conflictFiles,
+                                   final String destinationDir, final boolean isMove,
+                                   final DialogHelper.PasteConflictListener pasteConflictListener) {
+        storagesUi.showConflictDialog(conflictFiles, destinationDir, isMove, pasteConflictListener);
+    }
+
+    @Override
+    public void onLowSpace() {
+       storagesUi.onLowSpace();
+    }
+
+    @Override
+    public void showPasteProgressDialog(String destinationDir, List<FileInfo> files,
+                                        List<CopyData> copyData, boolean isMove) {
+
+        storagesUi.showPasteProgressDialog(destinationDir, files, copyData, isMove);
+
+    }
+
+    @Override
+    public void onOperationFailed(Operations operation) {
 
     }
 

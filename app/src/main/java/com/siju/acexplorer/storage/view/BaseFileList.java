@@ -16,60 +16,23 @@
 
 package com.siju.acexplorer.storage.view;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.PopupMenu;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
-import android.util.SparseBooleanArray;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.google.android.gms.ads.AdView;
-import com.siju.acexplorer.DrawerListener;
+import com.siju.acexplorer.view.DrawerListener;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.common.Logger;
-import com.siju.acexplorer.common.SharedPreferenceWrapper;
-import com.siju.acexplorer.filesystem.backstack.BackStackInfo;
-import com.siju.acexplorer.filesystem.backstack.NavigationCallback;
-import com.siju.acexplorer.filesystem.backstack.NavigationInfo;
-import com.siju.acexplorer.filesystem.helper.FileOpsHelper;
-import com.siju.acexplorer.filesystem.model.FileInfo;
-import com.siju.acexplorer.filesystem.modes.ViewMode;
-import com.siju.acexplorer.filesystem.task.SearchTask;
-import com.siju.acexplorer.filesystem.views.FastScrollRecyclerView;
+import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.home.model.LoaderHelper;
-import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.storage.model.StorageModelImpl;
 import com.siju.acexplorer.storage.model.StoragesModel;
 import com.siju.acexplorer.storage.presenter.StoragesPresenter;
 import com.siju.acexplorer.storage.presenter.StoragesPresenterImpl;
-import com.siju.acexplorer.storage.view.custom.DividerItemDecoration;
-import com.siju.acexplorer.storage.view.custom.GridItemDecoration;
-import com.siju.acexplorer.theme.Theme;
-import com.siju.acexplorer.utils.Dialogs;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 
 public class BaseFileList extends Fragment {

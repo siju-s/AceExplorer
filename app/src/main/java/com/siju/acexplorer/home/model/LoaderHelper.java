@@ -20,9 +20,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
 import android.util.Log;
 
-import com.siju.acexplorer.filesystem.FileListLoader;
-import com.siju.acexplorer.filesystem.model.FileInfo;
-import com.siju.acexplorer.filesystem.storage.StorageUtils;
+import com.siju.acexplorer.model.FileListLoader;
+import com.siju.acexplorer.model.FileInfo;
+import com.siju.acexplorer.model.StorageUtils;
 import com.siju.acexplorer.model.groups.Category;
 
 import java.util.ArrayList;

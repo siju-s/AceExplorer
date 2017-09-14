@@ -70,6 +70,7 @@
     <integer name="homescreen_columns">3</integer>
     <integer name="duration_fragment_anim">350</integer>
     <dimen name="searchview_margin">5dp</dimen>
+    <dimen name="text_16">16sp</dimen>
 
 
 </resources>

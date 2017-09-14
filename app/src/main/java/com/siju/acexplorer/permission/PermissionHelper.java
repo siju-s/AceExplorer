@@ -31,7 +31,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.common.Logger;
+import com.siju.acexplorer.logging.Logger;
 
 import static com.siju.acexplorer.view.MainUiView.PERMISSIONS_REQUEST;
 

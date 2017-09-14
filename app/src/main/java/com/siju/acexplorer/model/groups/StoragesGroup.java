@@ -21,7 +21,7 @@ import android.content.Context;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.filesystem.utils.FileUtils;
+import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.model.SectionItems;
 
 import java.io.File;
@@ -29,9 +29,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.os.Environment.getRootDirectory;
-import static com.siju.acexplorer.filesystem.storage.StorageUtils.getSpaceLeft;
-import static com.siju.acexplorer.filesystem.storage.StorageUtils.getStorageDirectories;
-import static com.siju.acexplorer.filesystem.storage.StorageUtils.getTotalSpace;
+import static com.siju.acexplorer.model.StorageUtils.getSpaceLeft;
+import static com.siju.acexplorer.model.StorageUtils.getStorageDirectories;
+import static com.siju.acexplorer.model.StorageUtils.getTotalSpace;
 
 @SuppressLint("StaticFieldLeak")
 public class StoragesGroup {

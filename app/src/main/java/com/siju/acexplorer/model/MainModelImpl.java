@@ -25,8 +25,7 @@ import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.billing.BillingHelper;
 import com.siju.acexplorer.billing.BillingResultCallback;
 import com.siju.acexplorer.billing.BillingStatus;
-import com.siju.acexplorer.common.Logger;
-import com.siju.acexplorer.filesystem.FileConstants;
+import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.groups.DrawerItems;
 import com.siju.acexplorer.theme.Theme;
 import com.siju.acexplorer.theme.ThemeUtils;
@@ -34,7 +33,7 @@ import com.siju.acexplorer.utils.Utils;
 
 import java.util.ArrayList;
 
-import static com.siju.acexplorer.filesystem.FileConstants.PREFS_FIRST_RUN;
+import static com.siju.acexplorer.model.FileConstants.PREFS_FIRST_RUN;
 
 /**
  * Created by Siju on 02 September,2017

@@ -34,9 +34,9 @@ import android.view.ViewParent;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.common.Logger;
-import com.siju.acexplorer.filesystem.model.FileInfo;
-import com.siju.acexplorer.filesystem.task.PasteConflictChecker;
+import com.siju.acexplorer.logging.Logger;
+import com.siju.acexplorer.model.FileInfo;
+import com.siju.acexplorer.storage.model.task.PasteConflictChecker;
 import com.siju.acexplorer.utils.Dialogs;
 
 import java.io.File;

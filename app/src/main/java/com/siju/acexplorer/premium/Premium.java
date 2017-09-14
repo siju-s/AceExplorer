@@ -18,12 +18,13 @@ package com.siju.acexplorer.premium;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.View;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.billing.BillingHelper;
-import com.siju.acexplorer.dialog.DialogHelper;
+import com.siju.acexplorer.view.dialog.DialogHelper;
 import com.siju.acexplorer.utils.Dialogs;
 
 /**
@@ -51,7 +52,7 @@ public class Premium {
     private DialogHelper.AlertDialogListener alertDialogListener = new DialogHelper.AlertDialogListener() {
 
         @Override
-        public void onPositiveButtonClick(View view) {
+        public void onPositiveButtonClick(View view, Intent intent) {
             showPurchaseDialog();
         }
 

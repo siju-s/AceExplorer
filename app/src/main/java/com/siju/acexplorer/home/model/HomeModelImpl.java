@@ -26,17 +26,15 @@ import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.billing.BillingHelper;
 import com.siju.acexplorer.billing.BillingStatus;
-import com.siju.acexplorer.common.SharedPreferenceWrapper;
-import com.siju.acexplorer.filesystem.model.FavInfo;
-import com.siju.acexplorer.filesystem.model.HomeLibraryInfo;
-import com.siju.acexplorer.filesystem.model.LibrarySortModel;
+import com.siju.acexplorer.model.SharedPreferenceWrapper;
+import com.siju.acexplorer.model.FavInfo;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.permission.PermissionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.siju.acexplorer.filesystem.FileConstants.PREFS_FIRST_RUN;
+import static com.siju.acexplorer.model.FileConstants.PREFS_FIRST_RUN;
 import static com.siju.acexplorer.model.groups.Category.ADD;
 import static com.siju.acexplorer.model.groups.Category.AUDIO;
 import static com.siju.acexplorer.model.groups.Category.DOCS;

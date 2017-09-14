@@ -31,7 +31,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import com.siju.acexplorer.AceActivity;
+import com.siju.acexplorer.view.AceActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.theme.ThemeUtils;
 

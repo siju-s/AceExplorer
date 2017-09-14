@@ -28,7 +28,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.util.SparseBooleanArray;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -48,20 +47,17 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.common.Logger;
-import com.siju.acexplorer.filesystem.FileConstants;
-import com.siju.acexplorer.filesystem.helper.ShareHelper;
-import com.siju.acexplorer.filesystem.model.FileInfo;
-import com.siju.acexplorer.filesystem.modes.ViewMode;
-import com.siju.acexplorer.filesystem.operations.Operations;
-import com.siju.acexplorer.filesystem.root.RootUtils;
-import com.siju.acexplorer.filesystem.task.PasteConflictChecker;
-import com.siju.acexplorer.filesystem.ui.DialogBrowseFragment;
-import com.siju.acexplorer.filesystem.ui.EnhancedMenuInflater;
-import com.siju.acexplorer.filesystem.utils.FileUtils;
-import com.siju.acexplorer.helper.RootHelper;
-import com.siju.acexplorer.helper.root.RootTools;
-import com.siju.acexplorer.helper.root.rootshell.execution.Command;
+import com.siju.acexplorer.logging.Logger;
+import com.siju.acexplorer.model.FileConstants;
+import com.siju.acexplorer.model.helper.helper.ShareHelper;
+import com.siju.acexplorer.model.FileInfo;
+import com.siju.acexplorer.storage.model.ViewMode;
+import com.siju.acexplorer.storage.model.operations.Operations;
+import com.siju.acexplorer.model.root.RootUtils;
+import com.siju.acexplorer.model.helper.FileUtils;
+import com.siju.acexplorer.model.helper.RootHelper;
+import com.siju.acexplorer.model.helper.root.RootTools;
+import com.siju.acexplorer.model.helper.root.rootshell.execution.Command;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.theme.Theme;
 import com.siju.acexplorer.utils.Dialogs;
@@ -71,17 +67,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.siju.acexplorer.R.string.hide;
-import static com.siju.acexplorer.filesystem.app.AppUtils.getAppIcon;
-import static com.siju.acexplorer.filesystem.app.AppUtils.getAppIconForFolder;
-import static com.siju.acexplorer.filesystem.helper.MediaStoreHelper.removeMedia;
-import static com.siju.acexplorer.filesystem.helper.MediaStoreHelper.scanFile;
-import static com.siju.acexplorer.filesystem.helper.PermissionsHelper.parse;
-import static com.siju.acexplorer.filesystem.helper.UriHelper.getUriForCategory;
-import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_FILEPATH;
-import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_FILEPATH2;
-import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_FILES;
-import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_POSITION;
-import static com.siju.acexplorer.filesystem.operations.OperationUtils.KEY_RESULT;
+import static com.siju.acexplorer.model.helper.helper.AppUtils.getAppIcon;
+import static com.siju.acexplorer.model.helper.helper.AppUtils.getAppIconForFolder;
+import static com.siju.acexplorer.model.helper.helper.MediaStoreHelper.removeMedia;
+import static com.siju.acexplorer.model.helper.helper.MediaStoreHelper.scanFile;
+import static com.siju.acexplorer.model.helper.helper.PermissionsHelper.parse;
+import static com.siju.acexplorer.model.helper.helper.UriHelper.getUriForCategory;
+import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH;
+import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH2;
+import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES;
+import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_POSITION;
+import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_RESULT;
 import static com.siju.acexplorer.model.groups.Category.AUDIO;
 import static com.siju.acexplorer.model.groups.Category.FAVORITES;
 import static com.siju.acexplorer.model.groups.Category.FILES;
@@ -120,6 +116,7 @@ public class MenuControls implements View.OnClickListener,
     private boolean mIsMoveOperation = false;
     private MenuItem mViewItem;
     private Category category;
+    private String currentDir;
 
 
     MenuControls(Activity activity, StoragesUiView storagesUiView, Theme theme) {
@@ -133,6 +130,10 @@ public class MenuControls implements View.OnClickListener,
 
     void setCategory(Category category) {
         this.category = category;
+    }
+
+    void setCurrentDir(String currentDir) {
+        this.currentDir = currentDir;
     }
 
     private void init() {
@@ -350,7 +351,6 @@ public class MenuControls implements View.OnClickListener,
             mInfoItem.setVisible(true);
             if (selectedItemPos.size() == 1) {
 
-
                 boolean isDirectory = fileInfoList.get(selectedItemPos.keyAt(0))
                         .isDirectory();
                 String filePath = fileInfoList.get(selectedItemPos.keyAt(0))
@@ -372,7 +372,7 @@ public class MenuControls implements View.OnClickListener,
             String fileName = fileInfoList.get(selectedItemPos.keyAt(0)).getFileName();
 
             if (fileName.startsWith(".")) {
-                mHideItem.setTitle(getString(R.string.unhide));
+                mHideItem.setTitle(context.getString(R.string.unhide));
                 if (theme.equals(Theme.DARK)) {
                     mHideItem.setIcon(R.drawable.ic_unhide_white);
                 }
@@ -382,7 +382,7 @@ public class MenuControls implements View.OnClickListener,
                 }
             }
             else {
-                mHideItem.setTitle(getString(hide));
+                mHideItem.setTitle(context.getString(hide));
                 if (theme.equals(Theme.DARK)) {
                     mHideItem.setIcon(R.drawable.ic_hide_white);
                 }
@@ -402,23 +402,29 @@ public class MenuControls implements View.OnClickListener,
         EnhancedMenuInflater.inflate(activity.getMenuInflater(), bottomToolbar.getMenu(),
                 category);
         setupMenu();
-        bottomToolbar.startActionMode(new ActionModeCallback());
+        bottomToolbar.startActionMode(storagesUiView.getActionModeCallback());
         bottomToolbar.setOnMenuItemClickListener(this);
 
     }
 
+    private final ArrayList<FileInfo> copiedData = new ArrayList<>();
+    private boolean isPasteVisible;
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
 
+        List<FileInfo> fileInfoList = storagesUiView.getFileList();
+        SparseBooleanArray selectedItems = storagesUiView.getSelectedItems();
+        boolean isRooted = storagesUiView.isRooted();
+
         switch (item.getItemId()) {
             case R.id.action_cut:
-                if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
-                    FileUtils.showMessage(getActivity(), mSelectedItemPositions.size() + " " +
-                            getString(R.string.msg_cut_copy));
-                    mCopiedData.clear();
-                    for (int i = 0; i < mSelectedItemPositions.size(); i++) {
-                        mCopiedData.add(fileInfoList.get(mSelectedItemPositions.keyAt(i)));
+                if (selectedItems != null && selectedItems.size() > 0) {
+                    FileUtils.showMessage(context, selectedItems.size() + " " +
+                            context.getString(R.string.msg_cut_copy));
+                    copiedData.clear();
+                    for (int i = 0; i < selectedItems.size(); i++) {
+                        copiedData.add(fileInfoList.get(selectedItems.keyAt(i)));
                     }
                     isPasteVisible = true;
                     mIsMoveOperation = true;
@@ -427,14 +433,14 @@ public class MenuControls implements View.OnClickListener,
                 break;
             case R.id.action_copy:
 
-                if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+                if (selectedItems != null && selectedItems.size() > 0) {
                     mIsMoveOperation = false;
-                    FileUtils.showMessage(getActivity(), mSelectedItemPositions.size() + " " +
-                            getString(R.string
+                    FileUtils.showMessage(context, selectedItems.size() + " " +
+                            context.getString(R.string
                                     .msg_cut_copy));
-                    mCopiedData.clear();
-                    for (int i = 0; i < mSelectedItemPositions.size(); i++) {
-                        mCopiedData.add(fileInfoList.get(mSelectedItemPositions.keyAt(i)));
+                    copiedData.clear();
+                    for (int i = 0; i < selectedItems.size(); i++) {
+                        copiedData.add(fileInfoList.get(selectedItems.keyAt(i)));
                     }
                     isPasteVisible = true;
                     showPasteIcon();
@@ -443,62 +449,54 @@ public class MenuControls implements View.OnClickListener,
 
             case R.id.action_paste:
                 isPasteVisible = false;
-                if (mCopiedData.size() > 0) {
+                if (copiedData.size() > 0) {
                     ArrayList<FileInfo> info = new ArrayList<>();
-                    info.addAll(mCopiedData);
-                    PasteConflictChecker conflictChecker = new PasteConflictChecker(this,
-                            currentDir,
-                            mIsRootMode, mIsMoveOperation, info);
-                    conflictChecker.execute();
-                    clearSelectedPos();
-                    mCopiedData.clear();
-                    endActionMode();
+                    info.addAll(copiedData);
+                    storagesUiView.onPasteAction(mIsMoveOperation, info);
+                    copiedData.clear();
+                    storagesUiView.endActionMode();
                 }
-                break;
-
-            case R.id.action_create:
-                new Dialogs().createDirDialog(this, mIsRootMode, currentDir);
                 break;
 
             case R.id.action_delete:
 
-                if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+                if (selectedItems != null && selectedItems.size() > 0) {
                     ArrayList<FileInfo> filesToDelete = new ArrayList<>();
-                    for (int i = 0; i < mSelectedItemPositions.size(); i++) {
-                        FileInfo info = fileInfoList.get(mSelectedItemPositions.keyAt(i));
+                    for (int i = 0; i < selectedItems.size(); i++) {
+                        FileInfo info = fileInfoList.get(selectedItems.keyAt(i));
                         filesToDelete.add(info);
                     }
                     if (category.equals(FAVORITES)) {
                         removeFavorite(filesToDelete);
-                        Toast.makeText(getContext(), getString(R.string.fav_removed), Toast
+                        Toast.makeText(context, context.getString(R.string.fav_removed), Toast
                                 .LENGTH_SHORT).show();
                     }
                     else {
-                        dialogs.showDeleteDialog(this, filesToDelete, mIsRootMode);
+                        dialogs.showDeleteDialog(this, filesToDelete, isRooted);
                     }
-                    actionMode.finish();
+                    storagesUiView.finishActionMode();
                 }
                 break;
             case R.id.action_share:
-                if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+                if (selectedItems != null && selectedItems.size() > 0) {
                     ArrayList<FileInfo> filesToShare = new ArrayList<>();
-                    for (int i = 0; i < mSelectedItemPositions.size(); i++) {
-                        FileInfo info = fileInfoList.get(mSelectedItemPositions.keyAt(i));
+                    for (int i = 0; i < selectedItems.size(); i++) {
+                        FileInfo info = fileInfoList.get(selectedItems.keyAt(i));
                         if (!info.isDirectory()) {
                             filesToShare.add(info);
                         }
                     }
-                    ShareHelper.shareFiles(getActivity(), filesToShare, category);
-                    actionMode.finish();
+                    ShareHelper.shareFiles(context, filesToShare, category);
+                    storagesUiView.finishActionMode();
                 }
                 break;
 
             case R.id.action_edit:
 
-                if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
-                    final String oldFilePath = fileInfoList.get(mSelectedItemPositions.keyAt(0)).
+                if (selectedItems != null && selectedItems.size() > 0) {
+                    final String oldFilePath = fileInfoList.get(selectedItems.keyAt(0)).
                             getFilePath();
-                    int renamedPosition = mSelectedItemPositions.keyAt(0);
+                    int renamedPosition = selectedItems.keyAt(0);
                     String newFilePath = new File(oldFilePath).getParent();
                     renameDialog(oldFilePath, newFilePath, renamedPosition);
                 }
@@ -506,31 +504,31 @@ public class MenuControls implements View.OnClickListener,
 
             case R.id.action_info:
 
-                if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
-                    FileInfo fileInfo = fileInfoList.get(mSelectedItemPositions.keyAt(0));
+                if (selectedItems != null && selectedItems.size() > 0) {
+                    FileInfo fileInfo = fileInfoList.get(selectedItems.keyAt(0));
                     showInfoDialog(fileInfo);
-                    actionMode.finish();
+                    storagesUiView.finishActionMode();
                 }
                 break;
             case R.id.action_archive:
 
-                if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+                if (selectedItems != null && selectedItems.size() > 0) {
                     ArrayList<FileInfo> paths = new ArrayList<>();
-                    for (int i = 0; i < mSelectedItemPositions.size(); i++) {
-                        FileInfo info = fileInfoList.get(mSelectedItemPositions.keyAt(i));
+                    for (int i = 0; i < selectedItems.size(); i++) {
+                        FileInfo info = fileInfoList.get(selectedItems.keyAt(i));
                         paths.add(info);
                     }
                     dialogs.showCompressDialog(BaseFileList.this, currentDir, paths);
-                    actionMode.finish();
+                    storagesUiView.finishActionMode();
                 }
                 break;
             case R.id.action_fav:
 
-                if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+                if (selectedItems != null && selectedItems.size() > 0) {
                     int count = 0;
                     ArrayList<FileInfo> favList = new ArrayList<>();
-                    for (int i = 0; i < mSelectedItemPositions.size(); i++) {
-                        FileInfo info = fileInfoList.get(mSelectedItemPositions.keyAt(i));
+                    for (int i = 0; i < selectedItems.size(); i++) {
+                        FileInfo info = fileInfoList.get(selectedItems.keyAt(i));
                         // Fav option meant only for directories
                         if (info.isDirectory()) {
                             favList.add(info);
@@ -540,45 +538,45 @@ public class MenuControls implements View.OnClickListener,
 
 
                     if (count > 0) {
-                        FileUtils.showMessage(getActivity(), getString(R.string.msg_added_to_fav));
+                        FileUtils.showMessage(context, context.getString(R.string.msg_added_to_fav));
                         updateFavouritesGroup(favList);
                     }
-                    actionMode.finish();
+                    storagesUiView.finishActionMode();
                 }
                 break;
 
             case R.id.action_extract:
 
-                if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
-                    FileInfo fileInfo = fileInfoList.get(mSelectedItemPositions.keyAt(0));
+                if (selectedItems != null && selectedItems.size() > 0) {
+                    FileInfo fileInfo = fileInfoList.get(selectedItems.keyAt(0));
                     String currentFile = fileInfo.getFilePath();
                     showExtractOptions(currentFile, currentDir);
-                    actionMode.finish();
+                    storagesUiView.finishActionMode();
                 }
 
                 break;
 
             case R.id.action_hide:
 
-                if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
+                if (selectedItems != null && selectedItems.size() > 0) {
                     ArrayList<FileInfo> infoList = new ArrayList<>();
                     ArrayList<Integer> pos = new ArrayList<>();
-                    for (int i = 0; i < mSelectedItemPositions.size(); i++) {
-                        infoList.add(fileInfoList.get(mSelectedItemPositions.keyAt(i)));
-                        pos.add(mSelectedItemPositions.keyAt(i));
+                    for (int i = 0; i < selectedItems.size(); i++) {
+                        infoList.add(fileInfoList.get(selectedItems.keyAt(i)));
+                        pos.add(selectedItems.keyAt(i));
 
                     }
                     hideUnHideFiles(infoList, pos);
-                    actionMode.finish();
+                    storagesUiView.finishActionMode();
                 }
                 break;
 
             case R.id.action_permissions:
 
-                if (mSelectedItemPositions != null && mSelectedItemPositions.size() > 0) {
-                    FileInfo info = fileInfoList.get(mSelectedItemPositions.keyAt(0));
+                if (selectedItems != null && selectedItems.size() > 0) {
+                    FileInfo info = fileInfoList.get(selectedItems.keyAt(0));
                     showPermissionsDialog(info);
-                    actionMode.finish();
+                    storagesUiView.finishActionMode();
                 }
                 break;
 
@@ -602,6 +600,12 @@ public class MenuControls implements View.OnClickListener,
         return false;
     }
 
+
+
+    boolean isPasteOp() {
+        return isPasteVisible;
+    }
+
     void removeSearchTask() {
         searchHelper.removeSearchTask();
     }
@@ -610,65 +614,7 @@ public class MenuControls implements View.OnClickListener,
         bottomToolbar.setVisibility(View.GONE);
     }
 
-    /**
-     * Triggered on long press click on item
-     */
-    private final class ActionModeCallback implements ActionMode.Callback {
 
-
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            bottomToolbar.setVisibility(View.VISIBLE);
-            actionMode = mode;
-            isInSelectionMode = true;
-            MenuInflater inflater = actionMode.getMenuInflater();
-            inflater.inflate(R.menu.action_mode, menu);
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            Log.d(TAG, "onPrepareActionMode: ");
-            return false;
-        }
-
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.action_select_all:
-                    if (mSelectedItemPositions != null) {
-                        if (mSelectedItemPositions.size() < fileListAdapter.getItemCount() - 1) {
-                            toggleSelectAll(true);
-                        }
-                        else {
-                            toggleSelectAll(false);
-                        }
-                    }
-                    return true;
-                default:
-                    return false;
-            }
-
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            isInSelectionMode = false;
-            clearSelection();
-            isPasteVisible = false;
-            actionMode = null;
-            hidePasteIcon();
-            bottomToolbar.setVisibility(View.GONE);
-            mSelectedItemPositions = new SparseBooleanArray();
-            mSwipeRefreshLayout.setEnabled(true);
-            draggedData.clear();
-            // FAB should be visible only for Files Category
-            if (isFilesCategory()) {
-                showFab();
-            }
-        }
-    }
 
     boolean isSearch() {
         return searchHelper.endSearch();
@@ -989,9 +935,19 @@ public class MenuControls implements View.OnClickListener,
         fabOperation.setVisibility(View.VISIBLE);*/
     }
 
-    private void hidePasteIcon() {
+    void hidePasteIcon() {
    /*     fabOperation.setVisibility(View.GONE);
         fabCreateMenu.setVisibility(View.VISIBLE);*/
+    }
+
+    void onStartActionMode() {
+        showBottomToolbar();
+    }
+
+    void onActionModeEnd() {
+        isPasteVisible = false;
+        hidePasteIcon();
+        hideBottomToolbar();
     }
 
 
@@ -1173,5 +1129,41 @@ public class MenuControls implements View.OnClickListener,
     }
 
 
+    void showBottomToolbar() {
+        bottomToolbar.setVisibility(View.VISIBLE);
+    }
+
+    private Dialogs.DialogCallback dialogCallback = new Dialogs.DialogCallback() {
+
+        @Override
+        public void onError(int error) {
+
+        }
+
+        @Override
+        public void onPositiveButtonClick(MaterialDialog dialog, Operations operation, String fileName) {
+            if (FileUtils.isFileNameInvalid(fileName)) {
+                dialog.getInputEditText().setError(context.getResources().getString(R.string
+                        .msg_error_valid_name));
+            } else {
+
+                fileName = fileName.trim();
+                String newPath = currentDir + File.separator + fileName;
+                storagesUiView.
+                if (baseFileList.exists(newPath)) {
+                    materialDialog.getInputEditText().setError(context.getResources().getString(R.string
+                            .file_exists));
+                    return;
+                }
+                baseFileList.getFileOpHelper().mkDir(new File(newPath), isRooted);
+                dialog.dismiss();
+            }
+        }
+
+        @Override
+        public void onNegativeButtonClick(Operations operations) {
+
+        }
+    };
 
 }

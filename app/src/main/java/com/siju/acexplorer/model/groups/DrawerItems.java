@@ -23,8 +23,8 @@ import android.preference.PreferenceManager;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.common.SharedPreferenceWrapper;
-import com.siju.acexplorer.filesystem.model.FavInfo;
+import com.siju.acexplorer.model.SharedPreferenceWrapper;
+import com.siju.acexplorer.model.FavInfo;
 import com.siju.acexplorer.model.SectionGroup;
 import com.siju.acexplorer.model.SectionItems;
 
@@ -32,8 +32,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.siju.acexplorer.filesystem.FileConstants.PREFS_FIRST_RUN;
-import static com.siju.acexplorer.filesystem.storage.StorageUtils.getDownloadsDirectory;
+import static com.siju.acexplorer.model.FileConstants.PREFS_FIRST_RUN;
+import static com.siju.acexplorer.model.StorageUtils.getDownloadsDirectory;
 
 public class DrawerItems {
 

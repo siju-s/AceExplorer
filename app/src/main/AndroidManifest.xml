@@ -35,7 +35,7 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity
-            android:name=".WelcomeActivity"
+            android:name=".welcome.WelcomeActivity"
             android:theme="@style/WelcomeScreen"
             android:screenOrientation="userPortrait"
             android:configChanges="screenSize|orientation">
@@ -50,7 +50,7 @@
 
 
         <activity
-            android:name="com.siju.acexplorer.AceActivity"
+            android:name="com.siju.acexplorer.view.AceActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/app_name"
             android:theme="@style/BaseDarkTheme.Dark"
@@ -77,7 +77,7 @@
         </activity>
 
         <activity
-            android:name=".TransparentActivity"
+            android:name=".picker.TransparentActivity"
             android:theme="@style/TransparentTheme">
             <intent-filter>
                 <action android:name="android.intent.action.RINGTONE_PICKER"/>
@@ -104,12 +104,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.siju.acexplorer.filesystem.LibrarySortActivity"
+            android:name="com.siju.acexplorer.home.LibrarySortActivity"
             android:theme="@style/BaseDarkTheme.Dark"/>
 
-        <service android:name=".filesystem.task.CreateZipTask"/>
-        <service android:name=".filesystem.task.CopyService"/>
-        <service android:name=".filesystem.task.ExtractService"/>
+        <service android:name=".storage.model.task.CreateZipTask"/>
+        <service android:name=".storage.model.task.CopyService"/>
+        <service android:name=".storage.model.task.ExtractService"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

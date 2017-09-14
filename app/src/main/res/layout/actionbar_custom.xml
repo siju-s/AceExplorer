@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<com.siju.acexplorer.ui.ActionBarCustomView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.siju.acexplorer.storage.view.custom.ActionBarCustomView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/action_bar_panel"
     style="?attr/actionBarStyle"
     android:layout_width="match_parent"
@@ -42,7 +42,7 @@
         android:layout_toEndOf="@id/imgNavigationIcon">
 
 
-        <com.siju.acexplorer.common.SearchView
+        <com.siju.acexplorer.storage.view.custom.SearchView
             android:id="@+id/search_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -94,4 +94,4 @@
 
     </RelativeLayout>
     <!--<ViewStub android:id="@+id/context_stub" android:visibility="gone" android:inflatedId="@id/action_bar_context" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_toRightOf="@id/ab_icon" />-->
-</com.siju.acexplorer.ui.ActionBarCustomView>
+</com.siju.acexplorer.storage.view.custom.ActionBarCustomView>

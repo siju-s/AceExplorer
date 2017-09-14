@@ -16,12 +16,16 @@
 
 package com.siju.acexplorer.storage.model;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.siju.acexplorer.billing.BillingStatus;
-import com.siju.acexplorer.filesystem.model.FileInfo;
-import com.siju.acexplorer.filesystem.model.LibrarySortModel;
+import com.siju.acexplorer.model.FileInfo;
+import com.siju.acexplorer.storage.model.operations.Operations;
+import com.siju.acexplorer.view.dialog.DialogHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,19 +33,43 @@ import java.util.List;
  */
 public interface StoragesModel {
 
-    void getFiles();
 
     void setListener(Listener listener);
 
     BillingStatus getBillingStatus();
 
-    void reloadLibraries(List<LibrarySortModel> selectedLibs);
 
     Bundle getUserPrefs();
+
+    void startPasteOperation(String currentDir, boolean isMove, boolean rooted, ArrayList<FileInfo> info);
+
+
+    void handleSAFResult(Intent operationIntent, Uri treeUri, boolean rooted, int flags);
+
+    void saveOldSAFUri(String path);
+
+    void createDir(String currentDir, String name, boolean rooted);
+
+    void createFile(String currentDir, String name, boolean rooted);
 
 
     interface Listener {
 
         void onFilesFetched(List<FileInfo> libraries);
+
+        void showSAFDialog(String path, Intent data);
+
+        void onFileExists(Operations operation, String msg);
+
+        void showConflictDialog(final List<FileInfo> conflictFiles,
+                                final String destinationDir, final boolean isMove,
+                                final DialogHelper.PasteConflictListener pasteConflictListener);
+
+        void onLowSpace();
+
+        void showPasteProgressDialog(String destinationDir, List<FileInfo> files, List<CopyData>
+                copyData, boolean isMove);
+
+        void onOperationFailed(Operations operation);
     }
 }

@@ -25,16 +25,16 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.filesystem.task.SearchTask;
+import com.siju.acexplorer.storage.model.task.SearchTask;
 
 /**
  * Created by Siju on 04 September,2017
  */
 public class SearchHelper implements View.OnClickListener, SearchView.OnQueryTextListener,
         SearchTask.SearchHelper,
-        com.siju.acexplorer.common.SearchView.Listener {
+        com.siju.acexplorer.storage.view.custom.SearchView.Listener {
 
-    private com.siju.acexplorer.common.SearchView searchView;
+    private com.siju.acexplorer.storage.view.custom.SearchView searchView;
     private Context context;
 
     public SearchHelper(MenuControls menuControls, Context context) {
@@ -42,7 +42,7 @@ public class SearchHelper implements View.OnClickListener, SearchView.OnQueryTex
     }
 
     private void init() {
-        searchView = (com.siju.acexplorer.common.SearchView) actionBar.findViewById(R.id
+        searchView = (com.siju.acexplorer.storage.view.custom.SearchView) actionBar.findViewById(R.id
                 .search_view);
         searchView.setListener(this);
     }

@@ -19,9 +19,9 @@ package com.siju.acexplorer.home.view;
 import android.content.Intent;
 
 import com.siju.acexplorer.billing.BillingStatus;
-import com.siju.acexplorer.filesystem.model.FileInfo;
-import com.siju.acexplorer.filesystem.model.HomeLibraryInfo;
-import com.siju.acexplorer.filesystem.model.LibrarySortModel;
+import com.siju.acexplorer.model.FileInfo;
+import com.siju.acexplorer.home.model.HomeLibraryInfo;
+import com.siju.acexplorer.home.model.LibrarySortModel;
 import com.siju.acexplorer.model.groups.Category;
 
 import java.util.ArrayList;

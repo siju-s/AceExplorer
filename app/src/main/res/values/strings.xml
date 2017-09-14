@@ -210,6 +210,7 @@
     <string name="billing_unsupported">In-app purchases not supported on this device.</string>
     <string name="action_more">More</string>
     <string name="directory">Directory</string>
+    <string name="operation">Operation</string>
 
 
 </resources>

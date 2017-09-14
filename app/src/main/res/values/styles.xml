@@ -219,4 +219,13 @@
         <item name="android:fontFamily">sans-serif</item>
     </style>
 
+    <style name="EditTextStyle">
+        <item name="android:textSize">@dimen/text_16</item>
+        <item name="android:textColor">@color/color_text</item>
+        <item name="android:layout_marginLeft">@dimen/margin_16</item>
+        <item name="android:layout_marginRight">@dimen/margin_16</item>
+        <item name="android:layout_marginTop">@dimen/margin_16</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
 </resources>

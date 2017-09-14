@@ -17,13 +17,16 @@
 package com.siju.acexplorer.storage.view;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.siju.acexplorer.billing.BillingStatus;
-import com.siju.acexplorer.filesystem.model.FileInfo;
-import com.siju.acexplorer.filesystem.model.HomeLibraryInfo;
-import com.siju.acexplorer.filesystem.model.LibrarySortModel;
+import com.siju.acexplorer.home.model.LibrarySortModel;
+import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.groups.Category;
+import com.siju.acexplorer.storage.model.CopyData;
+import com.siju.acexplorer.storage.model.operations.Operations;
+import com.siju.acexplorer.view.dialog.DialogHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +44,6 @@ public interface StoragesUi {
 
     void setListener(Listener listener);
 
-    void onLibrariesFetched(List<HomeLibraryInfo> libraries);
-
     void onDataLoaded(ArrayList<FileInfo> data);
 
     void handleActivityResult(int requestCode, int resultCode, Intent intent);
@@ -55,11 +56,21 @@ public interface StoragesUi {
 
     void onViewDestroyed();
 
+    void showSAFDialog(String path, Intent data);
+
+    void onFileExists(Operations operation, String msg);
+
+    void showConflictDialog(final List<FileInfo> conflictFiles,
+                            final String destinationDir, final boolean isMove,
+                            final DialogHelper.PasteConflictListener pasteConflictListener);
+
+    void onLowSpace();
+
+    void showPasteProgressDialog(String destinationDir, List<FileInfo> files,
+                                 List<CopyData> copyData, boolean isMove);
 
 
     interface Listener {
-
-        void getLibraries();
 
         void loadData(String currentDir, Category category, boolean isPicker);
 
@@ -68,5 +79,17 @@ public interface StoragesUi {
         void reloadLibraries(List<LibrarySortModel> selectedLibs);
 
         Bundle getUserPrefs();
+
+        void startPasteOperation(String currentDir, boolean isMove, boolean rooted, ArrayList<FileInfo> info);
+
+
+        void handleSAFResult(Intent operationIntent, Uri treeUri, boolean rooted, int flags);
+
+        void saveOldSAFUri(String path);
+
+        void createDir(String currentDir, String name, boolean rooted);
+
+        void createFile(String currentDir, String name, boolean rooted);
+
     }
 }

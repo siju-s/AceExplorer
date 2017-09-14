@@ -42,12 +42,12 @@ import android.view.ViewParent;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.siju.acexplorer.AceActivity;
+import com.siju.acexplorer.view.AceActivity;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.common.Logger;
-import com.siju.acexplorer.filesystem.FileConstants;
+import com.siju.acexplorer.logging.Logger;
+import com.siju.acexplorer.model.FileConstants;
 import com.siju.acexplorer.theme.ThemeUtils;
-import com.siju.acexplorer.filesystem.utils.FileUtils;
+import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.utils.LocaleHelper;
 
 import static com.siju.acexplorer.theme.ThemeUtils.CURRENT_THEME;

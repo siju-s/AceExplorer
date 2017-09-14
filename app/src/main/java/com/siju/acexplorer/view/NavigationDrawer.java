@@ -37,9 +37,9 @@ import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.billing.BillingHelper;
 import com.siju.acexplorer.billing.BillingStatus;
-import com.siju.acexplorer.common.Logger;
-import com.siju.acexplorer.filesystem.model.FavInfo;
-import com.siju.acexplorer.filesystem.utils.FileUtils;
+import com.siju.acexplorer.logging.Logger;
+import com.siju.acexplorer.model.FavInfo;
+import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.model.SectionGroup;
 import com.siju.acexplorer.model.SectionItems;
 import com.siju.acexplorer.model.groups.DrawerGroups;
@@ -49,7 +49,7 @@ import com.siju.acexplorer.theme.Theme;
 
 import java.util.ArrayList;
 
-import static com.siju.acexplorer.filesystem.storage.StorageUtils.getDownloadsDirectory;
+import static com.siju.acexplorer.model.StorageUtils.getDownloadsDirectory;
 
 /**
  * Created by Siju on 28 August,2017

@@ -37,15 +37,15 @@ import android.widget.LinearLayout;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
-import com.siju.acexplorer.DrawerListener;
+import com.siju.acexplorer.view.DrawerListener;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.billing.BillingStatus;
-import com.siju.acexplorer.common.Logger;
-import com.siju.acexplorer.filesystem.FileConstants;
+import com.siju.acexplorer.logging.Logger;
+import com.siju.acexplorer.model.FileConstants;
 import com.siju.acexplorer.storage.view.FileList;
-import com.siju.acexplorer.filesystem.model.FileInfo;
-import com.siju.acexplorer.filesystem.model.HomeLibraryInfo;
-import com.siju.acexplorer.filesystem.model.LibrarySortModel;
+import com.siju.acexplorer.model.FileInfo;
+import com.siju.acexplorer.home.model.HomeLibraryInfo;
+import com.siju.acexplorer.home.model.LibrarySortModel;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.permission.PermissionUtils;
 import com.siju.acexplorer.theme.Theme;
@@ -54,7 +54,7 @@ import com.siju.acexplorer.theme.ThemeUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.siju.acexplorer.filesystem.FileConstants.KEY_CATEGORY;
+import static com.siju.acexplorer.model.FileConstants.KEY_CATEGORY;
 import static com.siju.acexplorer.home.view.HomeLibrary.REQUEST_CODE;
 
 /**

@@ -26,7 +26,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.siju.acexplorer.AceActivity;
 import com.siju.acexplorer.model.SectionGroup;
 import com.siju.acexplorer.theme.Theme;
 

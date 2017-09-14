@@ -21,10 +21,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.siju.acexplorer.utils.inappbilling.IabHelper;
-import com.siju.acexplorer.utils.inappbilling.IabResult;
-import com.siju.acexplorer.utils.inappbilling.Inventory;
-import com.siju.acexplorer.utils.inappbilling.Purchase;
+import com.siju.acexplorer.billing.helper.inappbilling.IabHelper;
+import com.siju.acexplorer.billing.helper.inappbilling.IabResult;
+import com.siju.acexplorer.billing.helper.inappbilling.Inventory;
+import com.siju.acexplorer.billing.helper.inappbilling.Purchase;
 
 
 public class BillingHelper {

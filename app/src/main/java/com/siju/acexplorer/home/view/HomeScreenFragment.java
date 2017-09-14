@@ -25,9 +25,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.siju.acexplorer.DrawerListener;
+import com.siju.acexplorer.view.DrawerListener;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.common.Logger;
+import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.home.model.HomeModel;
 import com.siju.acexplorer.home.model.HomeModelImpl;
 import com.siju.acexplorer.home.model.LoaderHelper;

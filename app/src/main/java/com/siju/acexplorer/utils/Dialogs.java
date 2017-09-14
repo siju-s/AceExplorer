@@ -28,16 +28,17 @@ import android.view.View;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.storage.model.operations.Operations;
 import com.siju.acexplorer.storage.view.BaseFileList;
-import com.siju.acexplorer.filesystem.model.FileInfo;
-import com.siju.acexplorer.filesystem.utils.FileUtils;
+import com.siju.acexplorer.model.FileInfo;
+import com.siju.acexplorer.model.helper.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 
 import static android.webkit.MimeTypeMap.getSingleton;
-import static com.siju.acexplorer.filesystem.helper.UriHelper.createContentUri;
-import static com.siju.acexplorer.filesystem.helper.UriHelper.grantUriPermission;
+import static com.siju.acexplorer.model.helper.helper.UriHelper.createContentUri;
+import static com.siju.acexplorer.model.helper.helper.UriHelper.grantUriPermission;
 
 public class Dialogs {
 
@@ -84,33 +85,20 @@ public class Dialogs {
         materialDialog.show();
     }
 
-    @SuppressWarnings("ConstantConditions")
-    public void createDirDialog(final BaseFileList baseFileList, final boolean isRooted, final String path) {
+    public void createDirDialog(final Context context, final DialogCallback dialogCallback) {
 
-        String title = baseFileList.getString(R.string.new_folder);
-        String texts[] = new String[]{baseFileList.getString(R.string.enter_name), "", title, baseFileList.getString(R.string
+        String title = context.getString(R.string.new_folder);
+        String texts[] = new String[]{context.getString(R.string.enter_name), "", title, baseFileList.getString(R.string
                 .create), "", baseFileList.getString(R.string.dialog_cancel)};
-        final MaterialDialog materialDialog = showEditDialog(baseFileList.getContext(), texts);
+
+
+        final MaterialDialog materialDialog = showEditDialog(context, texts);
 
         materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String fileName = materialDialog.getInputEditText().getText().toString();
-                if (FileUtils.isFileNameInvalid(fileName)) {
-                    materialDialog.getInputEditText().setError(baseFileList.getResources().getString(R.string
-                            .msg_error_valid_name));
-                    return;
-                }
-
-                fileName = fileName.trim();
-                String newPath = path + File.separator + fileName;
-                if (baseFileList.exists(newPath)) {
-                    materialDialog.getInputEditText().setError(baseFileList.getResources().getString(R.string
-                            .file_exists));
-                    return;
-                }
-                baseFileList.getFileOpHelper().mkDir(new File(newPath), isRooted);
-                materialDialog.dismiss();
+                dialogCallback.onPositiveButtonClick(materialDialog, Operations.FOLDER_CREATION, fileName);
             }
         });
 
@@ -123,6 +111,8 @@ public class Dialogs {
 
         materialDialog.show();
     }
+
+
 
 
     /**
