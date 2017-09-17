@@ -57,11 +57,11 @@
     <string name="dialog_title_paste_conflict">Det finnes fil</string>
     <string name="dialog_from_placeholder">Fra</string>
     <string name="dialog_to_placeholder">Til</string>
-    <string name="button_paste_progress">Bakgrunn</string>
+    <string name="background">Bakgrunn</string>
     <string name="dialog_delete_title">Er du sikker på at du vil slette disse filene?</string>
     <string name="msg_ok">OK</string>
     <string name="no_files">ingen filer</string>
-    <string name="msg_error_valid_name">Skriv inn et gyldig navn</string>
+    <string name="msg_error_invalid_name">Skriv inn et gyldig navn</string>
     <string name="path">Sti:</string>
     <string name="size">Størrelse:</string>
     <string name="date_modified">Dato endret:</string>

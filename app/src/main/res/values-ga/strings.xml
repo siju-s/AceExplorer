@@ -60,11 +60,11 @@
     <string name="dialog_title_paste_conflict">ann comhad</string>
     <string name="dialog_from_placeholder">ó</string>
     <string name="dialog_to_placeholder">Chun:</string>
-    <string name="button_paste_progress">cúlra</string>
+    <string name="background">cúlra</string>
     <string name="dialog_delete_title">An bhfuil tú cinnte go bhfuil tú ag iarraidh a scriosadh na comhaid seo a leanas?</string>
     <string name="msg_ok">OK</string>
     <string name="no_files">Uimh comhaid</string>
-    <string name="msg_error_valid_name">Iontráil ainm bailí</string>
+    <string name="msg_error_invalid_name">Iontráil ainm bailí</string>
     <string name="path">conair:</string>
     <string name="size">méid:</string>
     <string name="date_modified">Dáta Athraithe:</string>

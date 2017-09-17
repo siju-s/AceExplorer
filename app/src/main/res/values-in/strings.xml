@@ -56,11 +56,11 @@
     <string name="dialog_title_paste_conflict">File ada</string>
     <string name="dialog_from_placeholder">Dari</string>
     <string name="dialog_to_placeholder">Untuk</string>
-    <string name="button_paste_progress">Latar Belakang</string>
+    <string name="background">Latar Belakang</string>
     <string name="dialog_delete_title">Apakah Anda yakin ingin menghapus file-file berikut?</string>
     <string name="msg_ok">baik</string>
     <string name="no_files">Tidak ada data</string>
-    <string name="msg_error_valid_name">Masukkan nama yang valid</string>
+    <string name="msg_error_invalid_name">Masukkan nama yang valid</string>
     <string name="path">path:</string>
     <string name="size">Ukuran:</string>
     <string name="date_modified">Tanggal dimodifikasi:</string>

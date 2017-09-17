@@ -61,11 +61,11 @@
     <string name="dialog_title_paste_conflict">الملف موجود</string>
     <string name="dialog_from_placeholder">من عند</string>
     <string name="dialog_to_placeholder">إلى:</string>
-    <string name="button_paste_progress">خلفية</string>
+    <string name="background">خلفية</string>
     <string name="dialog_delete_title">هل أنت متأكد أنك تريد حذف الملفات التالية؟</string>
     <string name="msg_ok">حسنا</string>
     <string name="no_files">لا ملفات</string>
-    <string name="msg_error_valid_name">أدخل اسم صالح</string>
+    <string name="msg_error_invalid_name">أدخل اسم صالح</string>
     <string name="path">مسار:</string>
     <string name="size">حجم:</string>
     <string name="date_modified">التاريخ عدل:</string>

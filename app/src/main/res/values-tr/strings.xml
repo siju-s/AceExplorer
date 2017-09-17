@@ -57,11 +57,11 @@
     <string name="dialog_title_paste_conflict">dosya var</string>
     <string name="dialog_from_placeholder">itibaren</string>
     <string name="dialog_to_placeholder">için</string>
-    <string name="button_paste_progress">Arka fon</string>
+    <string name="background">Arka fon</string>
     <string name="dialog_delete_title">Aşağıdaki dosyaları silmek istediğinizden emin misiniz?</string>
     <string name="msg_ok">tamam</string>
     <string name="no_files">Dosya yok</string>
-    <string name="msg_error_valid_name">Geçerli bir ad girin</string>
+    <string name="msg_error_invalid_name">Geçerli bir ad girin</string>
     <string name="path">Yol:</string>
     <string name="size">Boyut:</string>
     <string name="date_modified">Değiştirilme tarihi:</string>

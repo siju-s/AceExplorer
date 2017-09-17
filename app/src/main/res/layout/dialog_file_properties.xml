@@ -199,4 +199,17 @@
         </TableLayout>
 
     </ScrollView>
+
+
+    <Button
+        android:id="@+id/buttonPositive"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginEnd="@dimen/margin_16"
+        android:layout_marginRight="@dimen/margin_16"
+        android:layout_marginTop="@dimen/margin_16"
+        android:textColor="@color/blue"
+        android:text="@string/msg_ok" />
 </LinearLayout>

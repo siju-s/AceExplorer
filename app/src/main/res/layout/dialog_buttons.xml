@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    >
+
+    <Button
+        android:id="@+id/buttonNegative"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginRight="@dimen/margin_16"
+        android:layout_marginTop="@dimen/margin_16"
+        android:layout_weight="1"
+        android:textColor="@color/blue"
+        tools:text="@string/dialog_cancel" />
+
+
+    <Button
+        android:id="@+id/buttonNeutral"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginRight="@dimen/margin_16"
+        android:layout_marginTop="@dimen/margin_16"
+        android:layout_weight="1"
+        android:textColor="@color/blue"
+        android:visibility="gone"
+        tools:text="@string/msg_ok" />
+
+
+    <Button
+        android:id="@+id/buttonPositive"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginEnd="@dimen/margin_16"
+        android:layout_marginRight="@dimen/margin_16"
+        android:layout_marginTop="@dimen/margin_16"
+        android:layout_weight="1"
+        android:textColor="@color/blue"
+        tools:text="@string/msg_ok" />
+
+
+</LinearLayout>

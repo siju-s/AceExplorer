@@ -31,7 +31,6 @@ import android.widget.Toast;
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.groups.Category;
-import com.siju.acexplorer.utils.Utils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,17 +45,18 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Locale;
 
+import static com.siju.acexplorer.model.StorageUtils.getDocumentFile;
+import static com.siju.acexplorer.model.StorageUtils.isOnExtSdCard;
 import static com.siju.acexplorer.model.groups.Category.AUDIO;
 import static com.siju.acexplorer.model.groups.Category.FILES;
 import static com.siju.acexplorer.model.groups.Category.IMAGE;
 import static com.siju.acexplorer.model.groups.Category.VIDEO;
-import static com.siju.acexplorer.model.helper.helper.UriHelper.getUriFromFile;
-import static com.siju.acexplorer.model.StorageUtils.getDocumentFile;
-import static com.siju.acexplorer.model.StorageUtils.isOnExtSdCard;
-import static com.siju.acexplorer.utils.Utils.isAtleastLollipop;
+import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastLollipop;
+import static com.siju.acexplorer.model.helper.SdkHelper.isKitkat;
+import static com.siju.acexplorer.model.helper.UriHelper.getUriFromFile;
 
 
-public class FileUtils  {
+public class FileUtils {
 
     private static final String TAG = "FileUtils";
     public static final int ACTION_NONE = 0;
@@ -163,7 +163,6 @@ public class FileUtils  {
     }
 
 
-
     /**
      * Validates file name at the time of creation
      * special reserved characters shall not be allowed in the file names
@@ -183,8 +182,6 @@ public class FileUtils  {
     public static void showMessage(Context context, String msg) {
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
     }
-
-
 
 
     public static long getFolderSize(File directory) {
@@ -210,7 +207,6 @@ public class FileUtils  {
     }
 
 
-
     public static OutputStream getOutputStream(@NonNull final File target, Context context) {
 
         OutputStream outStream = null;
@@ -226,7 +222,7 @@ public class FileUtils  {
                     if (targetDocument != null)
                         outStream =
                                 context.getContentResolver().openOutputStream(targetDocument.getUri());
-                } else if (Utils.isKitkat()) {
+                } else if (isKitkat()) {
                     // Workaround for Kitkat ext SD card
                     return getOutputStream(context, target.getPath());
                 }
@@ -326,7 +322,7 @@ public class FileUtils  {
     }
 
 
-     /**
+    /**
      * Check for a directory if it is possible to create files within this directory, either via normal writing or via
      * Storage Access Framework.
      *
@@ -391,7 +387,7 @@ public class FileUtils  {
         }
 
         // Try the Kitkat workaround.
-        if (Utils.isKitkat()) {
+        if (isKitkat()) {
             Context context = AceApplication.getAppContext();
             ContentResolver resolver = context.getContentResolver();
 
@@ -407,7 +403,6 @@ public class FileUtils  {
 
         return !file.exists();
     }
-
 
 
     public static boolean isPackageIntentUnavailable(Context context, Intent intent) {

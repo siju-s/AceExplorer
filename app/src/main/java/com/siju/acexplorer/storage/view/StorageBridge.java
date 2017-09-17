@@ -141,6 +141,23 @@ public class StorageBridge implements StoragesUi {
 
     }
 
+    @Override
+    public void onInvalidName(Operations operation) {
+        uiView.onInvalidName(operation);
+    }
+
+    @Override
+    public void dismissDialog(Operations operation) {
+        uiView.dismissDialog(operation);
+
+    }
+
+    @Override
+    public void onPermissionsFetched(ArrayList<Boolean[]> permissionList) {
+        uiView.onPermissionsFetched(permissionList);
+
+    }
+
     void loadData(String currentDir, Category category, boolean isPicker) {
         listener.loadData(currentDir, category, isPicker);
     }
@@ -173,5 +190,37 @@ public class StorageBridge implements StoragesUi {
 
     void createFile(String currentDir, String name, boolean rooted) {
         listener.createFile(currentDir,name, rooted);
+    }
+
+    public void deleteFiles(ArrayList<FileInfo> filesToDelete) {
+        listener.deleteFiles(filesToDelete);
+    }
+
+    public void onExtractPositiveClick(String currentFilePath, String newFileName, boolean isChecked,
+                                       String selectedPath) {
+        listener.onExtractPositiveClick(currentFilePath, newFileName, isChecked, selectedPath);
+
+    }
+
+    public void hideUnHideFiles(ArrayList<FileInfo> infoList, ArrayList<Integer> pos) {
+        listener.hideUnHideFiles(infoList, pos);
+    }
+
+    public void getFilePermissions(String filePath, boolean directory) {
+        listener.getFilePermissions(filePath, directory);
+
+    }
+
+    public int getSortMode() {
+        return listener.getSortMode();
+    }
+
+    public void persistSortMode(int position) {
+        listener.persistSortMode(position);
+    }
+
+    public void onCompressPosClick(String newFilePath, ArrayList<FileInfo> paths) {
+        listener.onCompressPosClick(newFilePath, paths);
+
     }
 }

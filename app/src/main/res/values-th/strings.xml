@@ -56,11 +56,11 @@
     <string name="dialog_title_paste_conflict">ไฟล์ที่มีอยู่</string>
     <string name="dialog_from_placeholder">จาก</string>
     <string name="dialog_to_placeholder">ไปยัง</string>
-    <string name="button_paste_progress">พื้นหลัง</string>
+    <string name="background">พื้นหลัง</string>
     <string name="dialog_delete_title">คุณคุณแน่ใจหรือว่าต้องการลบไฟล์ต่อไปนี้?</string>
     <string name="msg_ok">ตกลง</string>
     <string name="no_files">ไม่มีไฟล์</string>
-    <string name="msg_error_valid_name">ใส่ชื่อที่ถูกต้อง</string>
+    <string name="msg_error_invalid_name">ใส่ชื่อที่ถูกต้อง</string>
     <string name="path">เส้นทาง:</string>
     <string name="size">ขนาด:</string>
     <string name="date_modified">วันที่แก้ไข:</string>

@@ -56,11 +56,11 @@
     <string name="dialog_title_paste_conflict">File tồn tại</string>
     <string name="dialog_from_placeholder">Từ</string>
     <string name="dialog_to_placeholder">Đến</string>
-    <string name="button_paste_progress">Lý lịch</string>
+    <string name="background">Lý lịch</string>
     <string name="dialog_delete_title">Bạn có chắc chắn muốn xóa các tập tin sau đây?</string>
     <string name="msg_ok">được</string>
     <string name="no_files">không có tập tin</string>
-    <string name="msg_error_valid_name">Nhập tên hợp lệ</string>
+    <string name="msg_error_invalid_name">Nhập tên hợp lệ</string>
     <string name="path">Con đường:</string>
     <string name="size">Kích thước:</string>
     <string name="date_modified">Ngày sửa đổi:</string>

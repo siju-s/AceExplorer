@@ -69,6 +69,12 @@ public interface StoragesUi {
     void showPasteProgressDialog(String destinationDir, List<FileInfo> files,
                                  List<CopyData> copyData, boolean isMove);
 
+    void onInvalidName(Operations operation);
+
+    void dismissDialog(Operations operation);
+
+    void onPermissionsFetched(ArrayList<Boolean[]> permissionList);
+
 
     interface Listener {
 
@@ -91,5 +97,19 @@ public interface StoragesUi {
 
         void createFile(String currentDir, String name, boolean rooted);
 
+        void deleteFiles(ArrayList<FileInfo> filesToDelete);
+
+        void onExtractPositiveClick(String currentFilePath, String newFileName, boolean isChecked,
+                                    String selectedPath);
+
+        void hideUnHideFiles(ArrayList<FileInfo> infoList, ArrayList<Integer> pos);
+
+        void getFilePermissions(String filePath, boolean directory);
+
+        int getSortMode();
+
+        void persistSortMode(int position);
+
+        void onCompressPosClick(String newFilePath, ArrayList<FileInfo> paths);
     }
 }

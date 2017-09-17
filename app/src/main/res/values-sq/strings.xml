@@ -57,11 +57,11 @@
     <string name="dialog_title_paste_conflict">skedari ekziston</string>
     <string name="dialog_from_placeholder">nga</string>
     <string name="dialog_to_placeholder">Te</string>
-    <string name="button_paste_progress">Sfond</string>
+    <string name="background">Sfond</string>
     <string name="dialog_delete_title">Jeni te sigurte qe doni te fshini fotografi mëposhtme?</string>
     <string name="msg_ok">Ne rregull</string>
     <string name="no_files">Nuk ka fotografi</string>
-    <string name="msg_error_valid_name">Futni një emër të saktë</string>
+    <string name="msg_error_invalid_name">Futni një emër të saktë</string>
     <string name="path">Rrugë:</string>
     <string name="size">Size:</string>
     <string name="date_modified">Date Modified:</string>

@@ -57,11 +57,11 @@
     <string name="dialog_title_paste_conflict">lêer bestaan</string>
     <string name="dialog_from_placeholder">Van</string>
     <string name="dialog_to_placeholder">aan</string>
-    <string name="button_paste_progress">agtergrond</string>
+    <string name="background">agtergrond</string>
     <string name="dialog_delete_title">Is jy seker jy wil die volgende lêers uitwis?</string>
     <string name="msg_ok">OK</string>
     <string name="no_files">geen lêers</string>
-    <string name="msg_error_valid_name">Gee \'n geldige naam</string>
+    <string name="msg_error_invalid_name">Gee \'n geldige naam</string>
     <string name="path">pad:</string>
     <string name="size">grootte:</string>
     <string name="date_modified">Laaste opgedateer:</string>

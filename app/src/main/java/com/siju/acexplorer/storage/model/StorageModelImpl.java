@@ -35,15 +35,16 @@ import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.model.FileConstants;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.SharedPreferenceWrapper;
+import com.siju.acexplorer.model.helper.FileUtils;
+import com.siju.acexplorer.model.helper.RootHelper;
+import com.siju.acexplorer.model.helper.SdkHelper;
 import com.siju.acexplorer.model.root.RootUtils;
 import com.siju.acexplorer.permission.PermissionUtils;
 import com.siju.acexplorer.storage.model.operations.FileOpsHelper;
-import com.siju.acexplorer.storage.model.operations.OperationProgress;
 import com.siju.acexplorer.storage.model.operations.OperationUtils;
 import com.siju.acexplorer.storage.model.operations.Operations;
 import com.siju.acexplorer.storage.model.task.CopyService;
 import com.siju.acexplorer.storage.model.task.DeleteTask;
-import com.siju.acexplorer.storage.model.task.MoveFiles;
 import com.siju.acexplorer.storage.model.task.PasteConflictChecker;
 import com.siju.acexplorer.view.dialog.DialogHelper;
 
@@ -52,6 +53,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.siju.acexplorer.model.helper.MediaStoreHelper.scanFile;
+import static com.siju.acexplorer.model.helper.PermissionsHelper.parse;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH2;
@@ -166,6 +168,88 @@ public class StorageModelImpl implements StoragesModel {
         }).start();
     }
 
+    @Override
+    public void deleteFiles(ArrayList<FileInfo> filesToDelete) {
+        fileOpsHelper.deleteFiles(filesToDelete, RootUtils.isRooted(context), deleteResultCallback);
+    }
+
+    @Override
+    public void onExtractPositiveClick(String currentFilePath, String newFileName, boolean isChecked,
+                                       String selectedPath) {
+
+        if (FileUtils.isFileNameInvalid(newFileName)) {
+            listener.onInvalidName(Operations.EXTRACT);
+            return;
+        }
+
+        if (isChecked) {
+            String currentFileName = new File(currentFilePath).getName();
+            File newFile = new File(selectedPath + "/" + currentFileName);
+            File currentFile = new File(currentFilePath);
+            if (FileUtils.isFileExisting(selectedPath, newFile.getName())) {
+                listener.onFileExists(Operations.EXTRACT, context.getString(R.string
+                        .dialog_title_paste_conflict));
+                return;
+            }
+            listener.dismissDialog(Operations.EXTRACT);
+            fileOpsHelper.extractFile(currentFile, newFile);
+        }
+        else {
+            String currentDir = new File(currentFilePath).getParent();
+            File newFile = new File(currentDir + "/" + newFileName);
+            File currentFile = new File(currentFilePath);
+            if (FileUtils.isFileExisting(currentDir, newFile.getName())) {
+                listener.onFileExists(Operations.EXTRACT, context.getString(R.string
+                        .dialog_title_paste_conflict));
+                return;
+            }
+            listener.dismissDialog(Operations.EXTRACT);
+            fileOpsHelper.extractFile(currentFile, newFile);
+        }
+
+    }
+
+    @Override
+    public void onCompressPosClick(String newFilePath, ArrayList<FileInfo> paths) {
+        String newFileName = new File(newFilePath).getName();
+        if (FileUtils.isFileNameInvalid(newFileName)) {
+            listener.onInvalidName(Operations.EXTRACT);
+            return;
+        }
+
+        String currentDir = new File(newFilePath).getParent();
+        File newFile = new File(currentDir + "/" + newFileName);
+
+        if (FileUtils.isFileExisting(currentDir, newFile.getName())) {
+            listener.onFileExists(Operations.EXTRACT, context.getString(R.string
+                    .dialog_title_paste_conflict));
+            return;
+        }
+        listener.dismissDialog(Operations.COMPRESS);
+        fileOpsHelper.compressFile(new File(newFilePath), paths);
+
+    }
+
+    @Override
+    public void hideUnHideFiles(ArrayList<FileInfo> fileInfo, ArrayList<Integer> pos) {
+        for (int i = 0; i < fileInfo.size(); i++) {
+            String fileName = fileInfo.get(i).getFileName();
+            String renamedName;
+            if (fileName.startsWith(".")) {
+                renamedName = fileName.substring(1);
+            }
+            else {
+                renamedName = "." + fileName;
+            }
+            String path = fileInfo.get(i).getFilePath();
+            File oldFile = new File(path);
+            String temp = path.substring(0, path.lastIndexOf(File.separator));
+
+            File newFile = new File(temp + File.separator + renamedName);
+            FileOpsHelper.renameFile(oldFile, newFile, pos.get(i), RootUtils.isRooted(context), fileOperationCallBack);
+        }
+    }
+
 
     private boolean hasStoragePermission() {
         return PermissionUtils.hasStoragePermission();
@@ -247,7 +331,7 @@ public class StorageModelImpl implements StoragesModel {
         if (isMove) {
             moveFiles(destinationDir, files, copyData);
         } else {
-            copyFiles(destinationDir, files, copyData, false);
+            copyFiles(destinationDir, files, copyData);
         }
     }
 
@@ -348,17 +432,20 @@ public class StorageModelImpl implements StoragesModel {
         }
     };
 
-    private void copyFiles(String destinationDir, List<FileInfo> files, List<CopyData> copyData,
-                           boolean isMove) {
+    private void copyFiles(String destinationDir, List<FileInfo> files, List<CopyData> copyData) {
         if (RootUtils.isRooted(context) || new File(destinationDir).canWrite()) {
-            listener.showPasteProgressDialog(destinationDir, files, copyData, isMove);
+            listener.showPasteProgressDialog(destinationDir, files, copyData, false);
             Intent intent = new Intent(context, CopyService.class);
             intent.putParcelableArrayListExtra(OperationUtils.KEY_FILES, (ArrayList<? extends
                     Parcelable>) files);
             intent.putParcelableArrayListExtra(OperationUtils.KEY_CONFLICT_DATA,
                     (ArrayList<? extends Parcelable>) copyData);
             intent.putExtra(OperationUtils.KEY_FILEPATH, destinationDir);
-            new OperationProgress().showCopyProgressDialog(context, intent);
+            if (SdkHelper.isOreo()) {
+                context.startForegroundService(intent);
+            } else {
+                context.startService(intent);
+            }
         }
         else {
             listener.onOperationFailed(Operations.COPY);
@@ -369,14 +456,45 @@ public class StorageModelImpl implements StoragesModel {
 
     private void moveFiles(String destinationDir, final List<FileInfo> files, final List<CopyData> copyData) {
         listener.showPasteProgressDialog(destinationDir, files, copyData, true);
+        Intent intent = new Intent(context, CopyService.class);
+        intent.putParcelableArrayListExtra(OperationUtils.KEY_FILES, (ArrayList<? extends
+                Parcelable>) files);
+        intent.putParcelableArrayListExtra(OperationUtils.KEY_CONFLICT_DATA,
+                (ArrayList<? extends Parcelable>) copyData);
+        intent.putExtra(OperationUtils.KEY_FILEPATH, destinationDir);
+        if (SdkHelper.isOreo()) {
+            context.startForegroundService(intent);
+        } else {
+            context.startService(intent);
+        }
+    }
+
+    public void persistSortMode(int sortMode) {
+        sharedPreferences.edit().putInt(FileConstants.KEY_SORT_MODE, sortMode).apply();
+    }
+
+
+
+    public int getSortMode() {
+        return sharedPreferences.getInt(FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
+    }
+
+    @Override
+    public void getFilePermissions(final String filePath, final boolean isDir) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                MoveFiles moveFiles = new MoveFiles(context, files, copyData);
-                moveFiles.execute();
-            }}).start();
+                String perm = RootHelper.getPermissions(filePath, isDir);
+                ArrayList<Boolean[]> permissionList = parse(perm);
+                listener.onPermissionsFetched(permissionList);
+            }
+        }).start();
+    }
+
+    void setPermissions() {
 
     }
+
 
 
     private DeleteTask.DeleteResultCallback deleteResultCallback = new DeleteTask

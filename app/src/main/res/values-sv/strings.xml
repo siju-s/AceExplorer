@@ -57,11 +57,11 @@
     <string name="dialog_title_paste_conflict">fil existerar</string>
     <string name="dialog_from_placeholder">Från</string>
     <string name="dialog_to_placeholder">Till</string>
-    <string name="button_paste_progress">Bakgrund</string>
+    <string name="background">Bakgrund</string>
     <string name="dialog_delete_title">Är du säker på att du vill ta bort följande filer?</string>
     <string name="msg_ok">ok</string>
     <string name="no_files">Inga filer</string>
-    <string name="msg_error_valid_name">Ange ett giltigt namn</string>
+    <string name="msg_error_invalid_name">Ange ett giltigt namn</string>
     <string name="path">Väg:</string>
     <string name="size">Storlek:</string>
     <string name="date_modified">Datum ändrat:</string>

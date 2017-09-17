@@ -57,11 +57,11 @@
     <string name="dialog_title_paste_conflict">फाइल मौजूद है</string>
     <string name="dialog_from_placeholder">से</string>
     <string name="dialog_to_placeholder">सेवा मेरे:</string>
-    <string name="button_paste_progress">पृष्ठभूमि</string>
+    <string name="background">पृष्ठभूमि</string>
     <string name="dialog_delete_title">आप निम्न फ़ाइलों को हटाना चाहते हैं आप सुनिश्चित हैं?</string>
     <string name="msg_ok">ठीक</string>
     <string name="no_files">कोई फाइल नहीं</string>
-    <string name="msg_error_valid_name">एक मान्य नाम दर्ज करें</string>
+    <string name="msg_error_invalid_name">एक मान्य नाम दर्ज करें</string>
     <string name="path">पथ:</string>
     <string name="size">आकार:</string>
     <string name="date_modified">तिथि संशोधित:</string>

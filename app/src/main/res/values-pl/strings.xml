@@ -59,11 +59,11 @@
     <string name="dialog_title_paste_conflict">plik istnieje</string>
     <string name="dialog_from_placeholder">Od</string>
     <string name="dialog_to_placeholder">Do</string>
-    <string name="button_paste_progress">tło</string>
+    <string name="background">tło</string>
     <string name="dialog_delete_title">Czy na pewno chcesz usunąć następujące pliki?</string>
     <string name="msg_ok">ok</string>
     <string name="no_files">Żadnych plików</string>
-    <string name="msg_error_valid_name">Wprowadź prawidłową nazwę</string>
+    <string name="msg_error_invalid_name">Wprowadź prawidłową nazwę</string>
     <string name="path">Ścieżka:</string>
     <string name="size">Rozmiar:</string>
     <string name="date_modified">Data modyfikacji:</string>

@@ -57,11 +57,11 @@
     <string name="dialog_title_paste_conflict">υπάρχει αρχείο</string>
     <string name="dialog_from_placeholder">Από</string>
     <string name="dialog_to_placeholder">Να:</string>
-    <string name="button_paste_progress">Φόντο</string>
+    <string name="background">Φόντο</string>
     <string name="dialog_delete_title">Είστε σίγουροι ότι θέλετε να διαγράψετε τα ακόλουθα αρχεία;</string>
     <string name="msg_ok">Εντάξει</string>
     <string name="no_files">Δεν υπάρχουν αρχεία</string>
-    <string name="msg_error_valid_name">Εισάγετε ένα έγκυρο όνομα</string>
+    <string name="msg_error_invalid_name">Εισάγετε ένα έγκυρο όνομα</string>
     <string name="path">Μονοπάτι:</string>
     <string name="size">Μέγεθος:</string>
     <string name="date_modified">Ημερομηνία τροποποίησης:</string>

@@ -56,11 +56,11 @@
     <string name="dialog_title_paste_conflict">파일이 존재</string>
     <string name="dialog_from_placeholder">에서</string>
     <string name="dialog_to_placeholder">에</string>
-    <string name="button_paste_progress">배경</string>
+    <string name="background">배경</string>
     <string name="dialog_delete_title">다음 파일을 삭제 하시겠습니까?</string>
     <string name="msg_ok">승인</string>
     <string name="no_files">파일이 없습니다</string>
-    <string name="msg_error_valid_name">유효한 이름을 입력합니다</string>
+    <string name="msg_error_invalid_name">유효한 이름을 입력합니다</string>
     <string name="path">통로:</string>
     <string name="size">크기:</string>
     <string name="date_modified">날짜 수정 된 항목 :</string>

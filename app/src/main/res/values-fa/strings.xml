@@ -57,11 +57,11 @@
     <string name="dialog_title_paste_conflict">فایل وجود دارد</string>
     <string name="dialog_from_placeholder">از جانب</string>
     <string name="dialog_to_placeholder">به:</string>
-    <string name="button_paste_progress">زمینه</string>
+    <string name="background">زمینه</string>
     <string name="dialog_delete_title">آیا شما مطمئن هستید که میخواهید فایل های زیر را حذف کنید؟</string>
     <string name="msg_ok">خوب</string>
     <string name="no_files">هیچ فایلی</string>
-    <string name="msg_error_valid_name">یک نام معتبر وارد کنید</string>
+    <string name="msg_error_invalid_name">یک نام معتبر وارد کنید</string>
     <string name="path">مسیر:</string>
     <string name="size">اندازه:</string>
     <string name="date_modified">تاریخ اصلاح:</string>

@@ -57,11 +57,11 @@
     <string name="dialog_title_paste_conflict">постои датотека</string>
     <string name="dialog_from_placeholder">од</string>
     <string name="dialog_to_placeholder">До</string>
-    <string name="button_paste_progress">позадина</string>
+    <string name="background">позадина</string>
     <string name="dialog_delete_title">Дали сте сигурни дека сакате да ја избришете следните датотеки?</string>
     <string name="msg_ok">добро</string>
     <string name="no_files">Нема датотеки</string>
-    <string name="msg_error_valid_name">Внесете валидно име</string>
+    <string name="msg_error_invalid_name">Внесете валидно име</string>
     <string name="path">патека:</string>
     <string name="size">големина:</string>
     <string name="date_modified">Датум на промена:</string>

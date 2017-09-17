@@ -57,11 +57,11 @@
     <string name="dialog_title_paste_conflict">ֆայլը գոյություն ունի</string>
     <string name="dialog_from_placeholder">Ից</string>
     <string name="dialog_to_placeholder">To:</string>
-    <string name="button_paste_progress">ետին պլան</string>
+    <string name="background">ետին պլան</string>
     <string name="dialog_delete_title">Համոզված եք, որ ցանկանում եք ջնջել հետեւյալ ֆայլերը.</string>
     <string name="msg_ok">լավ</string>
     <string name="no_files">Ոչ ֆայլեր</string>
-    <string name="msg_error_valid_name">Մուտքագրեք վավերական անուն</string>
+    <string name="msg_error_invalid_name">Մուտքագրեք վավերական անուն</string>
     <string name="path">path:</string>
     <string name="size">Չափ:</string>
     <string name="date_modified">Ամսաթիվ Փոփոխված:</string>

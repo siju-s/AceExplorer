@@ -17,9 +17,9 @@
   -->
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="@dimen/dialog_file_info"
-            android:layout_height="wrap_content"
-            android:fillViewport="true">
+    android:layout_width="@dimen/dialog_file_info"
+    android:layout_height="wrap_content"
+    android:fillViewport="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -38,13 +38,13 @@
                 android:id="@+id/radioButtonCurrentPath"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/dialog_current_path"/>
+                android:text="@string/dialog_current_path" />
 
             <RadioButton
                 android:id="@+id/radioButtonSpecifyPath"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/dialog_specify_path"/>
+                android:text="@string/dialog_specify_path" />
         </RadioGroup>
 
         <Button
@@ -55,7 +55,7 @@
             android:text="@string/select_path"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <EditText
             android:id="@+id/editFileName"
@@ -63,7 +63,15 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/buttonPathSelect"
             android:layout_marginTop="5dp"
-            android:hint="@string/enter_file_name"/>
+            android:hint="@string/enter_file_name" />
+
+        <include
+            layout="@layout/dialog_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/editFileName" />
+
 
     </RelativeLayout>
+
 </ScrollView>

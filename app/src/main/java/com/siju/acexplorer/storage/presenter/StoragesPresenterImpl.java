@@ -118,6 +118,47 @@ public class StoragesPresenterImpl implements StoragesPresenter, StoragesUi.List
     }
 
     @Override
+    public void deleteFiles(ArrayList<FileInfo> filesToDelete) {
+        storagesModel.deleteFiles(filesToDelete);
+
+    }
+
+    @Override
+    public void onExtractPositiveClick(String currentFilePath, String newFileName, boolean isChecked,
+                                       String selectedPath) {
+
+      storagesModel.onExtractPositiveClick(currentFilePath, newFileName, isChecked, selectedPath);
+    }
+
+    @Override
+    public void hideUnHideFiles(ArrayList<FileInfo> infoList, ArrayList<Integer> pos) {
+        storagesModel.hideUnHideFiles(infoList, pos);
+    }
+
+    @Override
+    public void getFilePermissions(String filePath, boolean directory) {
+        storagesModel.getFilePermissions(filePath, directory);
+
+    }
+
+    @Override
+    public int getSortMode() {
+        return  storagesModel.getSortMode();
+    }
+
+    @Override
+    public void persistSortMode(int position) {
+        storagesModel.persistSortMode(position);
+
+    }
+
+    @Override
+    public void onCompressPosClick(String newFilePath, ArrayList<FileInfo> paths) {
+        storagesModel.onCompressPosClick(newFilePath, paths);
+
+    }
+
+    @Override
     public void onFilesFetched(List<FileInfo> libraries) {
 
     }
@@ -155,6 +196,23 @@ public class StoragesPresenterImpl implements StoragesPresenter, StoragesUi.List
 
     @Override
     public void onOperationFailed(Operations operation) {
+
+    }
+
+    @Override
+    public void onInvalidName(Operations operation) {
+        storagesUi.onInvalidName(operation);
+    }
+
+    @Override
+    public void dismissDialog(Operations operation) {
+        storagesUi.dismissDialog(operation);
+
+    }
+
+    @Override
+    public void onPermissionsFetched(ArrayList<Boolean[]> permissionList) {
+        storagesUi.onPermissionsFetched(permissionList);
 
     }
 

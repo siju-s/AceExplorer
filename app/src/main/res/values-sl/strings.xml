@@ -59,11 +59,11 @@
     <string name="dialog_title_paste_conflict">datoteka obstaja</string>
     <string name="dialog_from_placeholder">iz</string>
     <string name="dialog_to_placeholder">Za</string>
-    <string name="button_paste_progress">Ozadje</string>
+    <string name="background">Ozadje</string>
     <string name="dialog_delete_title">Ali ste prepričani, da želite izbrisati te datoteke?</string>
     <string name="msg_ok">v redu</string>
     <string name="no_files">ni datotek</string>
-    <string name="msg_error_valid_name">Vnesite veljavno ime</string>
+    <string name="msg_error_invalid_name">Vnesite veljavno ime</string>
     <string name="path">pot:</string>
     <string name="size">Velikost:</string>
     <string name="date_modified">Datum spremembe:</string>

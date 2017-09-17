@@ -26,17 +26,20 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.text.format.Formatter;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
+import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.model.helper.SdkHelper;
+import com.siju.acexplorer.storage.model.CopyData;
 import com.siju.acexplorer.storage.model.task.CopyService;
 import com.siju.acexplorer.storage.model.task.CreateZipTask;
 import com.siju.acexplorer.storage.model.task.ExtractService;
@@ -44,6 +47,7 @@ import com.siju.acexplorer.storage.model.task.Progress;
 import com.siju.acexplorer.utils.Dialogs;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_FAILED;
@@ -59,6 +63,7 @@ import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_COU
 import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_PROGRESS;
 import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_TOTAL;
 import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_TOTAL_PROGRESS;
+import static com.siju.acexplorer.storage.model.operations.ProgressUtils.MOVE_PROGRESS;
 import static com.siju.acexplorer.storage.model.operations.ProgressUtils.ZIP_PROGRESS;
 
 
@@ -66,7 +71,7 @@ public class OperationProgress implements Progress {
 
     private static final String TAG = "OperationProgress";
     private ProgressBar progressBarPaste;
-    private MaterialDialog progressDialog;
+    private AlertDialog progressDialog;
     private int copiedFilesSize;
     private TextView textFileName;
     private TextView textFileFromPath;
@@ -76,49 +81,62 @@ public class OperationProgress implements Progress {
     private Context mContext;
     private Intent mServiceIntent;
 
-    @SuppressWarnings("ConstantConditions")
-    public void showCopyProgressDialog(final Context context, final Intent intent) {
-        mContext = context;
-        mServiceIntent = intent;
-        if (SdkHelper.isOreo()) {
-            context.startForegroundService(mServiceIntent);
-        } else {
-            context.startService(mServiceIntent);
-        }
-        String title = context.getString(R.string.action_copy);
-        String texts[] = new String[]{title, context.getString(R.string.button_paste_progress), "",
-                context.getString(R.string.dialog_cancel)};
-        progressDialog = new Dialogs().showCustomDialog(context,
-                R.layout.dialog_progress_paste, texts);
-        progressDialog.setCancelable(false);
-        View view = progressDialog.getCustomView();
-        textFileName = (TextView) view.findViewById(R.id.textFileName);
-        textFileFromPath = (TextView) view.findViewById(R.id.textFileFromPath);
-        TextView textFileToPath = (TextView) view.findViewById(R.id.textFileToPath);
-        textFileCount = (TextView) view.findViewById(R.id.textFilesLeft);
-        textProgress = (TextView) view.findViewById(R.id.textProgressPercent);
 
-        progressBarPaste = (ProgressBar) view.findViewById(R.id.progressBarPaste);
-        copiedFileInfo = intent.getParcelableArrayListExtra(KEY_FILES);
+    public void showPasteProgress(final Context context, String destinationDir, List<FileInfo> files,
+                                  List<CopyData> copyData, boolean isMove) {
+
+        registerReceiver(context);
+        String title;
+        if (isMove) {
+            title = context.getString(R.string.move);
+        } else {
+            title = context.getString(R.string.action_copy);
+        }
+        String texts[] = new String[]{title, context.getString(R.string.background),
+                context.getString(R.string.dialog_cancel)};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View dialogView = inflater.inflate(R.layout.dialog_progress_paste, null);
+        builder.setView(dialogView);
+        builder.setCancelable(false);
+        progressDialog = builder.create();
+
+        progressDialog.setCancelable(false);
+        textFileName = progressDialog.findViewById(R.id.textFileName);
+        textFileFromPath = progressDialog.findViewById(R.id.textFileFromPath);
+        TextView textFileToPath = progressDialog.findViewById(R.id.textFileToPath);
+        textFileCount = progressDialog.findViewById(R.id.textFilesLeft);
+        textProgress = progressDialog.findViewById(R.id.textProgressPercent);
+        progressBarPaste = progressDialog.findViewById(R.id.progressBarPaste);
+
+        Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
+        Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
+
+        positiveButton.setText(texts[1]);
+        negativeButton.setText(texts[2]);
+
+        copiedFileInfo.clear();
+        copiedFileInfo.addAll(files);
         copiedFilesSize = copiedFileInfo.size();
         Logger.log("FileUtils", "Totalfiles=" + copiedFilesSize);
 
 
         textFileFromPath.setText(copiedFileInfo.get(0).getFilePath());
         textFileName.setText(copiedFileInfo.get(0).getFileName());
-        textFileToPath.setText(intent.getStringExtra(KEY_FILEPATH));
+        textFileToPath.setText(destinationDir);
         textFileCount.setText(String.format(Locale.getDefault(), "%s%d", context.getString(R.string.count_placeholder),
                 copiedFilesSize));
         textProgress.setText("0%");
 
-        progressDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
+        positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 progressDialog.dismiss();
             }
         });
 
-        progressDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
+        negativeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 stopCopyService();
@@ -127,30 +145,41 @@ public class OperationProgress implements Progress {
         });
 
         progressDialog.show();
+
     }
 
+
     public void showZipProgressDialog(final Context context, final Intent intent) {
-        mContext = context;
+/*        mContext = context;
         mServiceIntent = intent;
         context.bindService(mServiceIntent, mZipServiceConnection, Context.BIND_AUTO_CREATE);
-        context.startService(mServiceIntent);
+        context.startService(mServiceIntent);*/
         String title = context.getString(R.string.zip_progress_title);
-        String texts[] = new String[]{title, context.getString(R.string.button_paste_progress), "",
+        String texts[] = new String[]{title, context.getString(R.string.background), "",
                 context.getString(R.string.dialog_cancel)};
-        progressDialog = new Dialogs().showCustomDialog(context,
-                R.layout.dialog_progress_paste, texts);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View dialogView = inflater.inflate(R.layout.dialog_progress_paste, null);
+        builder.setView(dialogView);
+        progressDialog = builder.create();
         progressDialog.setCancelable(false);
-        View view = progressDialog.getCustomView();
-        textFileName = (TextView) view.findViewById(R.id.textFileName);
-        textFileFromPath = (TextView) view.findViewById(R.id.textFileFromPath);
-        TextView textFromPlaceHolder = (TextView) view.findViewById(R.id.textFileFromPlaceHolder);
-        (view.findViewById(R.id.textFileToPlaceHolder)).setVisibility(View.GONE);
+        textFileName =  progressDialog.findViewById(R.id.textFileName);
+        textFileFromPath =  progressDialog.findViewById(R.id.textFileFromPath);
+        TextView textFromPlaceHolder =  progressDialog.findViewById(R.id.textFileFromPlaceHolder);
+        (progressDialog.findViewById(R.id.textFileToPlaceHolder)).setVisibility(View.GONE);
 
         textFromPlaceHolder.setVisibility(View.GONE);
-        textFileCount = (TextView) view.findViewById(R.id.textFilesLeft);
-        textProgress = (TextView) view.findViewById(R.id.textProgressPercent);
+        textFileCount =  progressDialog.findViewById(R.id.textFilesLeft);
+        textProgress =  progressDialog.findViewById(R.id.textProgressPercent);
+        progressBarPaste =  progressDialog.findViewById(R.id.progressBarPaste);
 
-        progressBarPaste = (ProgressBar) view.findViewById(R.id.progressBarPaste);
+        Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
+        Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
+
+        positiveButton.setText(texts[1]);
+        negativeButton.setText(texts[2]);
+
         copiedFileInfo = intent.getParcelableArrayListExtra(KEY_FILES);
         String fileName = intent.getStringExtra(KEY_FILEPATH);
         copiedFilesSize = copiedFileInfo.size();
@@ -158,14 +187,14 @@ public class OperationProgress implements Progress {
         textFileName.setText(fileName);
         textProgress.setText("0%");
 
-        progressDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
+        positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 progressDialog.dismiss();
             }
         });
 
-        progressDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
+        negativeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 stopZipService();
@@ -178,42 +207,50 @@ public class OperationProgress implements Progress {
 
     @SuppressWarnings("ConstantConditions")
     public void showExtractProgressDialog(final Context context, final Intent intent) {
-        mContext = context;
+ /*       mContext = context;
         mServiceIntent = intent;
         context.bindService(mServiceIntent, mExtractServiceConnection, Context.BIND_AUTO_CREATE);
-        context.startService(mServiceIntent);
+        context.startService(mServiceIntent);*/
         registerReceiver(context);
         isExtractServiceAlive = true;
         String title = context.getString(R.string.extracting);
-        String texts[] = new String[]{title, context.getString(R.string.button_paste_progress), "",
+        String texts[] = new String[]{title, context.getString(R.string.background), "",
                 context.getString(R.string.dialog_cancel)};
-        progressDialog = new Dialogs().showCustomDialog(context,
-                R.layout.dialog_progress_paste, texts);
-        progressDialog.setCancelable(false);
-        View view = progressDialog.getCustomView();
-        textFileName = (TextView) view.findViewById(R.id.textFileName);
-        textFileFromPath = (TextView) view.findViewById(R.id.textFileFromPath);
-        TextView textFileToPath = (TextView) view.findViewById(R.id.textFileToPath);
-        TextView textFromPlaceHolder = (TextView) view.findViewById(R.id.textFileFromPlaceHolder);
-        textFromPlaceHolder.setVisibility(View.GONE);
-        textFileCount = (TextView) view.findViewById(R.id.textFilesLeft);
-        textProgress = (TextView) view.findViewById(R.id.textProgressPercent);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
-        progressBarPaste = (ProgressBar) view.findViewById(R.id.progressBarPaste);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View dialogView = inflater.inflate(R.layout.dialog_progress_paste, null);
+        builder.setView(dialogView);
+        progressDialog.setCancelable(false);
+        textFileName =  progressDialog.findViewById(R.id.textFileName);
+        textFileFromPath =  progressDialog.findViewById(R.id.textFileFromPath);
+        TextView textFileToPath =  progressDialog.findViewById(R.id.textFileToPath);
+        TextView textFromPlaceHolder =  progressDialog.findViewById(R.id.textFileFromPlaceHolder);
+        textFromPlaceHolder.setVisibility(View.GONE);
+        textFileCount =  progressDialog.findViewById(R.id.textFilesLeft);
+        textProgress =  progressDialog.findViewById(R.id.textProgressPercent);
+        progressBarPaste =  progressDialog.findViewById(R.id.progressBarPaste);
+
+        Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
+        Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
+
+        positiveButton.setText(texts[1]);
+        negativeButton.setText(texts[2]);
+
         textFileToPath.setText(intent.getStringExtra(KEY_FILEPATH));
         String fileName = intent.getStringExtra(KEY_FILEPATH2);
 
         textFileName.setText(fileName);
         textProgress.setText("0%");
 
-        progressDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
+        positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 progressDialog.dismiss();
             }
         });
 
-        progressDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
+        negativeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 stopExtractService();
@@ -224,10 +261,6 @@ public class OperationProgress implements Progress {
         progressDialog.show();
     }
 
-    private void stopCopyService() {
-        mContext.unbindService(mServiceConnection);
-        mContext.stopService(mServiceIntent);
-    }
 
     private void stopZipService() {
         mContext.unbindService(mZipServiceConnection);
@@ -238,7 +271,7 @@ public class OperationProgress implements Progress {
         mContext.unbindService(mExtractServiceConnection);
         mContext.stopService(mServiceIntent);
         if (isExtractServiceAlive) {
-            unRegisterReceiver(mContext);
+            unregisterReceiver(mContext);
         }
         isExtractServiceAlive = false;
 
@@ -253,7 +286,7 @@ public class OperationProgress implements Progress {
                     case EXTRACT:
                         Logger.log(TAG, "Failure broacast=" + isExtractServiceAlive);
                         if (isExtractServiceAlive) {
-                            unRegisterReceiver(mContext);
+                            unregisterReceiver(mContext);
                             progressDialog.dismiss();
                             isExtractServiceAlive = false;
                         }
@@ -263,28 +296,47 @@ public class OperationProgress implements Progress {
         }
     };
 
+    private void stopCopyService() {
+        Context context = AceApplication.getAppContext();
+        Intent intent = new Intent(context, CopyService.class);
+        context.stopService(intent);
+        unregisterReceiver(context);
+    }
+
+    private BroadcastReceiver operationProgressReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(MOVE_PROGRESS)) {
+                handleMessage(intent);
+            }
+        }
+    };
+
+    private void unregisterReceiver(Context context) {
+        context.unregisterReceiver(operationProgressReceiver);
+        context.unregisterReceiver(operationFailureReceiver);
+    }
+
+
     private void registerReceiver(Context context) {
         IntentFilter filter = new IntentFilter(ACTION_OP_FAILED);
         context.registerReceiver(operationFailureReceiver, filter);
-    }
-
-    private void unRegisterReceiver(Context context) {
-        context.unregisterReceiver(operationFailureReceiver);
+        IntentFilter filter1 = new IntentFilter(MOVE_PROGRESS);
+        context.registerReceiver(operationProgressReceiver, filter1);
     }
 
     @Override
     public void onUpdate(Intent intent) {
-        Message msg = handler.obtainMessage();
+ /*       Message msg = handler.obtainMessage();
         msg.obj = intent;
-        handler.sendMessage(msg);
+        handler.sendMessage(msg);*/
 
     }
 
 
     // Define the Handler that receives messages from the thread and update the progress
-    private final Handler handler = new Handler(Looper.getMainLooper()) {
-        public void handleMessage(Message msg) {
-            Intent intent = (Intent) msg.obj;
+//    private final Handler handler = new Handler(Looper.getMainLooper()) {
+        public void handleMessage(Intent intent) {
             int progress = intent.getIntExtra(KEY_PROGRESS, 0);
             long copiedBytes = intent.getLongExtra(KEY_COMPLETED, 0);
             long totalBytes = intent.getLongExtra(KEY_TOTAL, 0);
@@ -345,26 +397,26 @@ public class OperationProgress implements Progress {
                         }
                     }
                     break;
+                case MOVE_PROGRESS:
+                    int totalProgressPaste = intent.getIntExtra(KEY_TOTAL_PROGRESS, 0);
+                    Logger.log("FileUtils", "KEY_PROGRESS=" + progress + " KEY_TOTAL KEY_PROGRESS=" + totalProgressPaste);
+                    Logger.log("FileUtils", "Copied bytes=" + copiedBytes + " KEY_TOTAL bytes=" + totalBytes);
+                    progressBarPaste.setProgress(totalProgressPaste);
+                    textProgress.setText(String.format(Locale.getDefault(), "%d%s", totalProgressPaste, mContext.getString
+                            (R.string.percent_placeholder)));
+                    int count = (int) copiedBytes;
+                    textFileFromPath.setText(copiedFileInfo.get(count).getFilePath());
+                    textFileName.setText(copiedFileInfo.get(count).getFileName());
+                    textFileCount.setText(count + "/" + copiedFilesSize);
+                    if (progress == 100) {
+                        stopCopyService();
+                        progressDialog.dismiss();
+                    }
+                    break;
             }
         }
 
-    };
-
-
-
-
-    private final ServiceConnection mServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            CopyService.LocalBinder binder = (CopyService.LocalBinder) service;
-            CopyService mService = binder.getService();
-
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-        }
-    };
+//    };
 
 
     private final ServiceConnection mZipServiceConnection = new ServiceConnection() {

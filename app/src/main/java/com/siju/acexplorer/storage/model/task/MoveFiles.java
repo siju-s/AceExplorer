@@ -17,44 +17,95 @@
 package com.siju.acexplorer.storage.model.task;
 
 
+import android.annotation.TargetApi;
+import android.app.IntentService;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.os.Build;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 
-import com.siju.acexplorer.logging.Logger;
+import com.siju.acexplorer.R;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.storage.model.CopyData;
-import com.siju.acexplorer.storage.model.operations.OperationUtils;
-import com.siju.acexplorer.storage.model.operations.Operations;
+import com.siju.acexplorer.view.AceActivity;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH;
+import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_CONFLICT_DATA;
+import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES;
+import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_COMPLETED;
+import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_TOTAL;
+import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_TOTAL_PROGRESS;
+import static com.siju.acexplorer.storage.model.operations.ProgressUtils.MOVE_PROGRESS;
 
-public class MoveFiles extends AsyncTask<String, Void, Integer> {
-    private final List<FileInfo> filesToMove;
-    private final List<CopyData> copyData;
-    private final Context context;
-    private String destinationDir;
+public class MoveFiles extends IntentService {
+
+    private List<FileInfo> filesToMove;
+    private List<CopyData> copyData;
     private ArrayList<String> filesMovedList;
+    private NotificationManager notificationManager;
+    private NotificationCompat.Builder builder;
+    private final int NOTIFICATION_ID = 1000;
+    private final String SEPARATOR = "/";
 
-    public MoveFiles(Context context, List<FileInfo> filesToMove, List<CopyData> copyData) {
-        this.context = context;
-        this.filesToMove = filesToMove;
-        this.copyData =  copyData;
-     }
+    private Context context;
+
+    public MoveFiles(String name) {
+        super(name);
+    }
+
 
     @Override
-    protected Integer doInBackground(String... strings) {
-        destinationDir = strings[0];
-        int filesMoved = 0;
+    public void onCreate() {
+        context = getApplicationContext();
+    }
 
-        if (filesToMove.size() == 0) {
-            return 0;
+    @Override
+    protected void onHandleIntent(Intent intent) {
+        filesToMove = intent.getParcelableArrayListExtra(KEY_FILES);
+        copyData = intent.getParcelableArrayListExtra(KEY_CONFLICT_DATA);
+        String currentDir = intent.getStringExtra(KEY_FILEPATH);
+
+        Intent notificationIntent = new Intent(this, AceActivity.class);
+        notificationIntent.setAction(Intent.ACTION_MAIN);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+        builder = new NotificationCompat.Builder(context, formChannel());
+        builder.setContentIntent(pendingIntent);
+        builder.setContentTitle(getResources().getString(R.string.copying)).setSmallIcon(R
+                .drawable.ic_copy_white);
+        String channelId = getResources().getString(R.string.operation);
+        builder.setChannelId(channelId);
+        startForeground(NOTIFICATION_ID, builder.build());
+
+        moveFiles(currentDir);
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    private String formChannel() {
+        // The id of the channel.
+        String id = "ace_channel_01";
+        CharSequence name = getString(R.string.operation);
+        int importance = NotificationManager.IMPORTANCE_HIGH;
+        NotificationChannel channel = new NotificationChannel(id, name, importance);
+        notificationManager.createNotificationChannel(channel);
+        return id;
+    }
+
+    private void moveFiles(String destinationDir) {
+
+        int totalFiles = filesToMove.size();
+        if (totalFiles == 0) {
+            return;
         }
         filesMovedList = new ArrayList<>();
 
@@ -79,33 +130,39 @@ public class MoveFiles extends AsyncTask<String, Void, Integer> {
             File file = new File(path);
             File file1 = new File(f.getFilePath());
             if (file1.renameTo(file)) {
-                filesMoved++;
                 filesMovedList.add(file.getAbsolutePath());
             }
+            publishResults(fileName, totalFiles, filesMovedList.size());
         }
 
-        return filesMoved;
     }
 
-    @Override
-    public void onPostExecute(Integer count) {
-
-        if (count > 0) {
-            Intent intent = new Intent(ACTION_OP_REFRESH);
-            intent.putExtra(OperationUtils.KEY_OPERATION, Operations.CUT);
-            intent.putStringArrayListExtra(KEY_FILES, filesMovedList);
-            context.sendBroadcast(intent);
+    private void publishResults(String fileName, long total, long done) {
+        //notification
+        int progress = (int) (((float) (done / total)) * 100);
+        builder.setProgress(100, progress, false);
+        builder.setOngoing(true);
+        int title = R.string.moving;
+        builder.setContentTitle(getString(title));
+        builder.setContentText(new File(fileName).getName() + " " + FileUtils.formatSize
+                (context, done)
+                + SEPARATOR + FileUtils
+                .formatSize(context, total));
+        int id1 = NOTIFICATION_ID;
+        notificationManager.notify(id1, builder.build());
+        if (total == done) {
+            builder.setContentTitle("Move Completed");
+            builder.setContentText("");
+            builder.setProgress(0, 0, false);
+            builder.setOngoing(false);
+            builder.setAutoCancel(true);
+            notificationManager.notify(id1, builder.build());
         }
 
-        if (filesToMove.size() != count) {
-            boolean canWrite = new File(destinationDir).canWrite();
-
-            Logger.log("TAG", "File size"+ filesToMove.size()+" moved=="+count + " Can write = "+canWrite);
-            Intent copyIntent = new Intent(context, CopyService.class);
-            copyIntent.putParcelableArrayListExtra(KEY_FILES, filesToMove);
-            copyIntent.putParcelableArrayListExtra(OperationUtils.KEY_CONFLICT_DATA, copyData);
-            copyIntent.putExtra(OperationUtils.KEY_FILEPATH, destinationDir);
-            context.startService(copyIntent);
-        }
+        Intent intent = new Intent(MOVE_PROGRESS);
+        intent.putExtra(KEY_COMPLETED, done);
+        intent.putExtra(KEY_TOTAL, total);
+        intent.putExtra(KEY_TOTAL_PROGRESS, progress);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 }

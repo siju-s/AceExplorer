@@ -57,11 +57,11 @@
     <string name="dialog_title_paste_conflict">A fájl létezik</string>
     <string name="dialog_from_placeholder">Ból ből</string>
     <string name="dialog_to_placeholder">Nak nek:</string>
-    <string name="button_paste_progress">Háttér</string>
+    <string name="background">Háttér</string>
     <string name="dialog_delete_title">Biztosan törölni szeretné a következő fájlokat?</string>
     <string name="msg_ok">rendben</string>
     <string name="no_files">nincs fájl</string>
-    <string name="msg_error_valid_name">Adjon meg egy érvényes nevet</string>
+    <string name="msg_error_invalid_name">Adjon meg egy érvényes nevet</string>
     <string name="path">Pálya:</string>
     <string name="size">Méret:</string>
     <string name="date_modified">Módosítás dátuma:</string>

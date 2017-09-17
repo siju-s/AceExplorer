@@ -20,6 +20,8 @@ package com.siju.acexplorer.storage.model.operations;
 public class ProgressUtils {
 
     public static final String COPY_PROGRESS = "copy_progress_update";
+    public static final String MOVE_PROGRESS = "move_progress_update";
+
     public static final String ZIP_PROGRESS = "zip_progress_update";
     public static final String EXTRACT_PROGRESS = "extract_progress_update";
 

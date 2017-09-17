@@ -52,6 +52,21 @@ public interface StoragesModel {
 
     void createFile(String currentDir, String name, boolean rooted);
 
+    void deleteFiles(ArrayList<FileInfo> filesToDelete);
+
+    void onExtractPositiveClick(String currentFilePath, String newFileName, boolean isChecked,
+                                String selectedPath);
+
+    void hideUnHideFiles(ArrayList<FileInfo> infoList, ArrayList<Integer> pos);
+
+    void getFilePermissions(String filePath, boolean directory);
+
+    int getSortMode();
+
+    void persistSortMode(int position);
+
+    void onCompressPosClick(String newFilePath, ArrayList<FileInfo> paths);
+
 
     interface Listener {
 
@@ -71,5 +86,11 @@ public interface StoragesModel {
                 copyData, boolean isMove);
 
         void onOperationFailed(Operations operation);
+
+        void onInvalidName(Operations extract);
+
+        void dismissDialog(Operations operation);
+
+        void onPermissionsFetched(ArrayList<Boolean[]> permissionList);
     }
 }

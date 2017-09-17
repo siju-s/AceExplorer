@@ -58,11 +58,11 @@
     <string name="dialog_title_paste_conflict">file екистс</string>
     <string name="dialog_from_placeholder">од</string>
     <string name="dialog_to_placeholder">До</string>
-    <string name="button_paste_progress">позадина</string>
+    <string name="background">позадина</string>
     <string name="dialog_delete_title">Да ли сте сигурни да желите да избришете следеће фајлове?</string>
     <string name="msg_ok">ок</string>
     <string name="no_files">Но филес</string>
-    <string name="msg_error_valid_name">Унесите важећи назив</string>
+    <string name="msg_error_invalid_name">Унесите важећи назив</string>
     <string name="path">патх:</string>
     <string name="size">сизе:</string>
     <string name="date_modified">Датум измене:</string>

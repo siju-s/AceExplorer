@@ -110,6 +110,7 @@
         <service android:name=".storage.model.task.CreateZipTask"/>
         <service android:name=".storage.model.task.CopyService"/>
         <service android:name=".storage.model.task.ExtractService"/>
+        <service android:name=".storage.model.task.MoveFiles" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"

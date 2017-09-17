@@ -57,11 +57,11 @@
     <string name="dialog_title_paste_conflict">ფაილი არსებობს</string>
     <string name="dialog_from_placeholder">მდებარეობა</string>
     <string name="dialog_to_placeholder">იმისათვის, რომ</string>
-    <string name="button_paste_progress">Background</string>
+    <string name="background">Background</string>
     <string name="dialog_delete_title">დარწმუნებული ხართ, რომ გსურთ წაშალოთ შემდეგი ფაილი?</string>
     <string name="msg_ok">კარგი</string>
     <string name="no_files">ფაილები არ არის</string>
-    <string name="msg_error_valid_name">შეიყვანოთ სწორი სახელი</string>
+    <string name="msg_error_invalid_name">შეიყვანოთ სწორი სახელი</string>
     <string name="path">Path:</string>
     <string name="size">ზომა:</string>
     <string name="date_modified">თარიღი შეცვლილია:</string>

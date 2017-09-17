@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.logging.Logger;
+import com.siju.acexplorer.model.helper.SdkHelper;
 import com.siju.acexplorer.storage.model.CopyData;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.root.RootDeniedException;
@@ -41,6 +42,7 @@ import com.siju.acexplorer.model.helper.FileOperations;
 import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.utils.Utils;
 import com.stericson.RootTools.RootTools;
+import com.stericson.RootTools.execution.Command;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -247,6 +249,45 @@ public class FileOpsHelper {
         }
     }
 
+
+    public static void setPermissions(String path, boolean isDir, String permissions) {
+
+        String command = "chmod " + permissions + " " + path;
+        if (isDir) {
+            command = "chmod -R " + permissions + " \"" + path + "\"";
+        }
+        Command com = new Command(1, command) {
+            @Override
+            public void commandOutput(int i, String s) {
+                Toast.makeText(getActivity(), s, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void commandTerminated(int i, String s) {
+                Toast.makeText(getActivity(), s, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void commandCompleted(int i, int i2) {
+                Toast.makeText(getActivity(), getResources().getString(R.string
+                        .completed), Toast
+                        .LENGTH_LONG).show();
+            }
+        };
+        try {
+            RootUtils.mountRW(path);
+            RootTools.getShell(true).add(com);
+            RootUtils.mountRO(path);
+            refreshList();
+        } catch (Exception e1) {
+            Toast.makeText(getActivity(), getResources().getString(R.string.error), Toast
+                    .LENGTH_LONG)
+                    .show();
+            e1.printStackTrace();
+        }
+
+    }
+
     public void extractFile(File currentFile, File file) {
         OperationUtils.WriteMode mode = checkWriteAccessMode(file.getParentFile());
         Context context = AceApplication.getAppContext();
@@ -341,7 +382,7 @@ public class FileOpsHelper {
 
 
     public static OperationUtils.WriteMode checkWriteAccessMode(final File folder) {
-        if (Utils.isAtleastLollipop() && isOnExtSdCard(folder)) {
+        if (SdkHelper.isAtleastLollipop() && isOnExtSdCard(folder)) {
             if (!folder.exists() || !folder.isDirectory()) {
                 return OperationUtils.WriteMode.ROOT;
             }
@@ -352,7 +393,7 @@ public class FileOpsHelper {
             }
             return OperationUtils.WriteMode.INTERNAL;
         }
-        else if (Utils.isKitkat() && isOnExtSdCard(folder)) {
+        else if (SdkHelper.isKitkat() && isOnExtSdCard(folder)) {
             // Assume that Kitkat workaround works
             return OperationUtils.WriteMode.INTERNAL;
         }

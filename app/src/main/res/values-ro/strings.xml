@@ -58,11 +58,11 @@
     <string name="dialog_title_paste_conflict">fisierul exista</string>
     <string name="dialog_from_placeholder">Din</string>
     <string name="dialog_to_placeholder">La</string>
-    <string name="button_paste_progress">fundal</string>
+    <string name="background">fundal</string>
     <string name="dialog_delete_title">Sunteți sigur că doriți să ștergeți următoarele fișiere?</string>
     <string name="msg_ok">O.K</string>
     <string name="no_files">Nu există fișiere</string>
-    <string name="msg_error_valid_name">Introduceți un nume valid</string>
+    <string name="msg_error_invalid_name">Introduceți un nume valid</string>
     <string name="path">Cale:</string>
     <string name="size">Mărimea:</string>
     <string name="date_modified">Data modificata:</string>

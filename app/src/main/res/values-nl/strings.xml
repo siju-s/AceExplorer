@@ -57,11 +57,11 @@
     <string name="dialog_title_paste_conflict">Bestand bestaat</string>
     <string name="dialog_from_placeholder">Van</string>
     <string name="dialog_to_placeholder">aan:</string>
-    <string name="button_paste_progress">Achtergrond</string>
+    <string name="background">Achtergrond</string>
     <string name="dialog_delete_title">Bent u zeker dat u de volgende bestanden verwijderen?</string>
     <string name="msg_ok">OK</string>
     <string name="no_files">Geen bestanden</string>
-    <string name="msg_error_valid_name">Voer een geldige naam</string>
+    <string name="msg_error_invalid_name">Voer een geldige naam</string>
     <string name="path">Pad:</string>
     <string name="size">Grootte:</string>
     <string name="date_modified">Gewijzigd:</string>

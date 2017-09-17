@@ -57,11 +57,11 @@
     <string name="dialog_title_paste_conflict">o arquivo existe</string>
     <string name="dialog_from_placeholder">A partir de</string>
     <string name="dialog_to_placeholder">Para</string>
-    <string name="button_paste_progress">fundo</string>
+    <string name="background">fundo</string>
     <string name="dialog_delete_title">Tem certeza de que deseja excluir os seguintes arquivos?</string>
     <string name="msg_ok">Está bem</string>
     <string name="no_files">Sem arquivos</string>
-    <string name="msg_error_valid_name">Insira um nome válido</string>
+    <string name="msg_error_invalid_name">Insira um nome válido</string>
     <string name="path">Caminho:</string>
     <string name="size">Tamanho:</string>
     <string name="date_modified">Data modificada:</string>

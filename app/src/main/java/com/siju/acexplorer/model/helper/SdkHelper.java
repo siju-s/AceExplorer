@@ -24,4 +24,20 @@ public class SdkHelper {
     public static boolean isOreo() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
     }
+
+    public static boolean isAtleastMarsh() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+    }
+
+    public static boolean isAtleastNougat() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
+    }
+
+    public static boolean isKitkat() {
+        return Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT;
+    }
+
+    public static boolean isAtleastLollipop() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+    }
 }

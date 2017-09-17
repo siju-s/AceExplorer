@@ -45,7 +45,7 @@ public class UriHelper {
 
     public static Uri createContentUri(Context context, String path) {
 
-        if (Utils.isAtleastNougat()) {
+        if (SdkHelper.isAtleastNougat()) {
             String authority = context.getPackageName() + ".fileprovider";
             return FileProvider.getUriForFile(context, authority, new File(path));
         } else {
@@ -56,7 +56,7 @@ public class UriHelper {
     public static void grantUriPermission(Context context, Intent intent, Uri uri) {
         PackageManager packageManager = context.getPackageManager();
         if (intent.resolveActivity(packageManager) != null) {
-            if (Utils.isAtleastLollipop()) {
+            if (SdkHelper.isAtleastLollipop()) {
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             } else {
                 List<ResolveInfo> resInfoList = packageManager.queryIntentActivities(intent, PackageManager

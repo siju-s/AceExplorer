@@ -56,11 +56,11 @@
     <string name="dialog_title_paste_conflict">文件已存在</string>
     <string name="dialog_from_placeholder">從</string>
     <string name="dialog_to_placeholder">至</string>
-    <string name="button_paste_progress">背景</string>
+    <string name="background">背景</string>
     <string name="dialog_delete_title">您確定要刪除以下文件嗎？</string>
     <string name="msg_ok">好</string>
     <string name="no_files">沒有文件</string>
-    <string name="msg_error_valid_name">輸入有效的名稱</string>
+    <string name="msg_error_invalid_name">輸入有效的名稱</string>
     <string name="path">路徑：</string>
     <string name="size">尺寸：</string>
     <string name="date_modified">修改日期：</string>
