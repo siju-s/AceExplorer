@@ -28,11 +28,13 @@ import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.helper.SdkHelper;
+import com.siju.acexplorer.permission.PermissionResultCallback;
 import com.siju.acexplorer.storage.model.CopyData;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.root.RootDeniedException;
 import com.siju.acexplorer.model.root.RootOperations;
 import com.siju.acexplorer.model.root.RootUtils;
+import com.siju.acexplorer.storage.model.StorageModelImpl;
 import com.siju.acexplorer.storage.model.task.CopyService;
 import com.siju.acexplorer.storage.model.task.CreateZipTask;
 import com.siju.acexplorer.storage.model.task.DeleteTask;
@@ -250,7 +252,8 @@ public class FileOpsHelper {
     }
 
 
-    public static void setPermissions(String path, boolean isDir, String permissions) {
+    public static void setPermissions(String path, boolean isDir, String permissions, StorageModelImpl.PermissionResultCallback
+                                      permissionResultCallback) {
 
         String command = "chmod " + permissions + " " + path;
         if (isDir) {
@@ -259,30 +262,23 @@ public class FileOpsHelper {
         Command com = new Command(1, command) {
             @Override
             public void commandOutput(int i, String s) {
-                Toast.makeText(getActivity(), s, Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void commandTerminated(int i, String s) {
-                Toast.makeText(getActivity(), s, Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void commandCompleted(int i, int i2) {
-                Toast.makeText(getActivity(), getResources().getString(R.string
-                        .completed), Toast
-                        .LENGTH_LONG).show();
             }
         };
         try {
             RootUtils.mountRW(path);
             RootTools.getShell(true).add(com);
             RootUtils.mountRO(path);
-            refreshList();
+            permissionResultCallback.onPermissionsSet();
         } catch (Exception e1) {
-            Toast.makeText(getActivity(), getResources().getString(R.string.error), Toast
-                    .LENGTH_LONG)
-                    .show();
+           permissionResultCallback.onError();
             e1.printStackTrace();
         }
 

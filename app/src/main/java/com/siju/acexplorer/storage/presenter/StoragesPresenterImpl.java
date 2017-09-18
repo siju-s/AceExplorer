@@ -25,6 +25,7 @@ import android.support.v4.content.Loader;
 import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.home.model.LibrarySortModel;
 import com.siju.acexplorer.home.model.LoaderHelper;
+import com.siju.acexplorer.model.FavInfo;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.storage.model.CopyData;
@@ -159,6 +160,24 @@ public class StoragesPresenterImpl implements StoragesPresenter, StoragesUi.List
     }
 
     @Override
+    public void setPermissions(String path, boolean isDir, String permissions) {
+        storagesModel.setPermissions(path, isDir, permissions);
+
+    }
+
+    @Override
+    public void saveSettingsOnExit(int gridCols, int viewMode) {
+        storagesModel.saveSettingsOnExit(gridCols, viewMode);
+
+    }
+
+    @Override
+    public void updateFavorites(ArrayList<FavInfo> favInfoArrayList) {
+        storagesModel.updateFavorites(favInfoArrayList);
+
+    }
+
+    @Override
     public void onFilesFetched(List<FileInfo> libraries) {
 
     }
@@ -214,6 +233,16 @@ public class StoragesPresenterImpl implements StoragesPresenter, StoragesUi.List
     public void onPermissionsFetched(ArrayList<Boolean[]> permissionList) {
         storagesUi.onPermissionsFetched(permissionList);
 
+    }
+
+    @Override
+    public void onPermissionSetError() {
+        storagesUi.onPermissionSetError();
+    }
+
+    @Override
+    public void onPermissionsSet() {
+     storagesUi.onPermissionsSet();
     }
 
     @Override

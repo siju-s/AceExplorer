@@ -29,6 +29,7 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -89,7 +90,6 @@ import com.siju.acexplorer.storage.view.custom.DividerItemDecoration;
 import com.siju.acexplorer.storage.view.custom.GridItemDecoration;
 import com.siju.acexplorer.storage.view.custom.recyclerview.FastScrollRecyclerView;
 import com.siju.acexplorer.theme.Theme;
-import com.siju.acexplorer.utils.Dialogs;
 import com.siju.acexplorer.utils.Utils;
 import com.siju.acexplorer.view.DrawerListener;
 import com.siju.acexplorer.view.dialog.DialogHelper;
@@ -112,8 +112,6 @@ import static com.siju.acexplorer.model.helper.UriHelper.getUriForCategory;
 import static com.siju.acexplorer.model.helper.UriHelper.grantUriPermission;
 import static com.siju.acexplorer.model.helper.ViewHelper.openWith;
 import static com.siju.acexplorer.model.helper.ViewHelper.viewFile;
-import static com.siju.acexplorer.model.helper.helper.MediaStoreHelper.scanFile;
-import static com.siju.acexplorer.model.helper.helper.ViewHelper.viewFile;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_RELOAD_LIST;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH;
@@ -141,7 +139,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     private Category category;
     private int viewMode = ViewMode.LIST;
     private boolean isZipViewer;
-    private SharedPreferenceWrapper sharedPreferenceWrapper;
     private TextView mTextEmpty;
     private boolean mIsDualModeEnabled;
     private boolean isDragStarted;
@@ -162,7 +159,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     private SharedPreferences preferences;
     private int mCurrentOrientation;
     private final boolean mIsRootMode = true;
-    private Dialogs dialogs;
     private boolean shouldStopAnimation = true;
     private DividerItemDecoration mDividerItemDecoration;
     private GridItemDecoration mGridItemDecoration;
@@ -252,7 +248,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     void initialize() {
-        sharedPreferenceWrapper = new SharedPreferenceWrapper();
+        preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         dragHelper = new DragHelper(getContext());
         setTheme();
         fileList.setOnDragListener(dragHelper.getDragEventListener());
@@ -262,7 +258,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         checkBillingStatus();
         registerReceivers();
 
-        dialogs = new Dialogs();
         navigationInfo = new NavigationInfo(this, this);
         backStackInfo = new BackStackInfo();
 
@@ -512,6 +507,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     };
 
 
+    private String extension;
     private void handleItemClick(int position) {
         if (position >= fileInfoList.size() || position == RecyclerView.NO_POSITION) {
             return;
@@ -522,8 +518,9 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             case VIDEO:
             case IMAGE:
             case DOCS:
+                this.extension = fileInfoList.get(position).getExtension().toLowerCase();
                 viewFile(getContext(), fileInfoList.get(position).getFilePath(),
-                        fileInfoList.get(position).getExtension(), alertDialogListener);
+                        extension, alertDialogListener);
                 break;
             case FILES:
             case DOWNLOADS:
@@ -560,7 +557,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     private void onFileClicked(int position) {
         String filePath = fileInfoList.get(position).getFilePath();
-        String extension = fileInfoList.get(position).getExtension();
+        extension = fileInfoList.get(position).getExtension().toLowerCase();
 
         if (!isZipMode() && isZipViewable(filePath)) {
             openZipViewer(filePath);
@@ -1100,7 +1097,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         return viewMode;
     }
 
-    int switchView() {
+    void switchView() {
         if (viewMode == ViewMode.LIST) {
             viewMode = ViewMode.GRID;
         } else {
@@ -1236,27 +1233,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
 
-    @Override
-    public void onPreExecute() {
-        mSwipeRefreshLayout.setRefreshing(true);
-    }
-
-    @Override
-    public void onPostExecute() {
-        mSwipeRefreshLayout.setRefreshing(false);
-    }
-
-    @Override
-    public void onProgressUpdate(FileInfo val) {
-        addSearchResult(val);
-    }
-
-    @Override
-    public void onCancelled() {
-        mSwipeRefreshLayout.setRefreshing(false);
-
-    }
-
     ActionModeCallback getActionModeCallback() {
         return new ActionModeCallback();
     }
@@ -1275,7 +1251,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         String texts[] = new String[]{title, getContext().getString(R.string.enter_name), getContext
                 ().getString(R.string
                 .create), getContext().getString(R.string.dialog_cancel)};
-        DialogHelper.showInputDialog(getContext(), texts, Operations.FOLDER_CREATION, ,
+        DialogHelper.showInputDialog(getContext(), texts, Operations.FOLDER_CREATION, null,
                 dialogListener);
     }
 
@@ -1283,7 +1259,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         String title = getContext().getString(R.string.new_file);
         String texts[] = new String[]{title, getContext().getString(R.string.enter_name), getContext
                 ().getString(R.string.create), getContext().getString(R.string.dialog_cancel)};
-        DialogHelper.showInputDialog(getContext(), texts, Operations.FILE_CREATION, , dialogListener);
+        DialogHelper.showInputDialog(getContext(), texts, Operations.FILE_CREATION,null , dialogListener);
     }
 
     void showRenameDialog(String text) {
@@ -1419,6 +1395,22 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     public void onCompressPosClick(Dialog dialog, Operations operation, String newFileName, String extension, ArrayList<FileInfo> paths) {
         String newFilePath = currentDir + File.separator + newFileName + extension;
         bridge.onCompressPosClick(newFilePath, paths);
+    }
+
+    public void onPermissionSetError() {
+        Toast.makeText(getContext(), getContext().getString(R.string.error), Toast.LENGTH_SHORT).show();
+    }
+
+    public void onPermissionsSet() {
+        refreshList();
+    }
+
+    public void setPermissions(String path, boolean isDir, String permissions) {
+        bridge.setPermissions(path, isDir, permissions);
+    }
+
+    public void removeHomeFromNavPath() {
+        navigationInfo.removeHomeFromNavPath();
     }
 
 
@@ -1566,10 +1558,9 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             FavInfo favInfo = new FavInfo();
             favInfo.setFileName(name);
             favInfo.setFilePath(path);
-            SharedPreferenceWrapper sharedPreferenceWrapper = new SharedPreferenceWrapper();
-            sharedPreferenceWrapper.addFavorite(getActivity(), favInfo);
             favInfoArrayList.add(favInfo);
         }
+        bridge.updateFavorites(favInfoArrayList);
 
 //        aceActivity.updateFavourites(favInfoArrayList);
     }
@@ -1676,8 +1667,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     public void onViewDestroyed() {
         fileList.stopScroll();
         if (!mInstanceStateExists) {
-            preferences.edit().putInt(FileConstants.KEY_GRID_COLUMNS, gridCols).apply();
-            sharedPreferenceWrapper.savePrefs(getActivity(), viewMode);
+            bridge.saveSettingsOnExit(gridCols, viewMode);
         }
         menuControls.removeSearchTask();
 
@@ -1697,10 +1687,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     private DialogHelper.DialogCallback dialogListener = new DialogHelper.DialogCallback() {
 
-        @Override
-        public void onError(int error) {
-
-        }
 
         @Override
         public void onPositiveButtonClick(Dialog dialog, Operations operation, String name) {
@@ -1729,6 +1715,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
                 String mimeType = getSingleton().getMimeTypeFromExtension(extension);
                 intent.setData(uri);
+                extension = null;
 
                 if (mimeType != null) {
                     grantUriPermission(getContext(), intent, uri);

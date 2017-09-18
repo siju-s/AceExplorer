@@ -21,6 +21,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import com.siju.acexplorer.billing.BillingStatus;
+import com.siju.acexplorer.model.FavInfo;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.storage.model.operations.Operations;
 import com.siju.acexplorer.view.dialog.DialogHelper;
@@ -67,6 +68,12 @@ public interface StoragesModel {
 
     void onCompressPosClick(String newFilePath, ArrayList<FileInfo> paths);
 
+    void setPermissions(String path, boolean isDir, String permissions);
+
+    void saveSettingsOnExit(int gridCols, int viewMode);
+
+    void updateFavorites(ArrayList<FavInfo> favInfoArrayList);
+
 
     interface Listener {
 
@@ -92,5 +99,9 @@ public interface StoragesModel {
         void dismissDialog(Operations operation);
 
         void onPermissionsFetched(ArrayList<Boolean[]> permissionList);
+
+        void onPermissionSetError();
+
+        void onPermissionsSet();
     }
 }

@@ -24,6 +24,7 @@ import android.support.v4.app.Fragment;
 import android.view.ViewGroup;
 
 import com.siju.acexplorer.billing.BillingStatus;
+import com.siju.acexplorer.model.FavInfo;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.storage.model.CopyData;
@@ -103,7 +104,7 @@ public class StorageBridge implements StoragesUi {
 
     @Override
     public void onViewDestroyed() {
-
+        uiView.onViewDestroyed();
     }
 
     @Override
@@ -126,7 +127,7 @@ public class StorageBridge implements StoragesUi {
     public void showConflictDialog(final List<FileInfo> conflictFiles,
                                    final String destinationDir, final boolean isMove,
                                    final DialogHelper.PasteConflictListener pasteConflictListener) {
-       uiView.showConflictDialog(conflictFiles, destinationDir, isMove, pasteConflictListener);
+        uiView.showConflictDialog(conflictFiles, destinationDir, isMove, pasteConflictListener);
 
     }
 
@@ -158,6 +159,62 @@ public class StorageBridge implements StoragesUi {
 
     }
 
+    @Override
+    public void onPermissionsSet() {
+        fragment.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                uiView.onPermissionsSet();
+            }
+        });
+    }
+
+    @Override
+    public void onPermissionSetError() {
+        fragment.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                uiView.onPermissionSetError();
+            }
+        });
+    }
+
+    @Override
+    public void refreshList() {
+        uiView.refreshList();
+    }
+
+    @Override
+    public boolean isFabExpanded() {
+        return uiView.isFabExpanded();
+    }
+
+    @Override
+    public void collapseFab() {
+        uiView.collapseFab();
+
+    }
+
+    @Override
+    public void showDualPane() {
+        uiView.showDualPane();
+    }
+
+    @Override
+    public void reloadList(String directory, Category category) {
+        uiView.reloadList(directory, category);
+    }
+
+    @Override
+    public void removeHomeFromNavPath() {
+        uiView.removeHomeFromNavPath();
+    }
+
+    @Override
+    public void refreshSpan() {
+        uiView.refreshSpan();
+    }
+
     void loadData(String currentDir, Category category, boolean isPicker) {
         listener.loadData(currentDir, category, isPicker);
     }
@@ -184,12 +241,12 @@ public class StorageBridge implements StoragesUi {
         listener.saveOldSAFUri(path);
     }
 
-     void createDir(String currentDir, String name, boolean rooted) {
-         listener.createDir(currentDir,name, rooted);
-     }
+    void createDir(String currentDir, String name, boolean rooted) {
+        listener.createDir(currentDir, name, rooted);
+    }
 
     void createFile(String currentDir, String name, boolean rooted) {
-        listener.createFile(currentDir,name, rooted);
+        listener.createFile(currentDir, name, rooted);
     }
 
     public void deleteFiles(ArrayList<FileInfo> filesToDelete) {
@@ -221,6 +278,19 @@ public class StorageBridge implements StoragesUi {
 
     public void onCompressPosClick(String newFilePath, ArrayList<FileInfo> paths) {
         listener.onCompressPosClick(newFilePath, paths);
+
+    }
+
+    public void setPermissions(String path, boolean isDir, String permissions) {
+        listener.setPermissions(path, isDir, permissions);
+    }
+
+    public void saveSettingsOnExit(int gridCols, int viewMode) {
+        listener.saveSettingsOnExit(gridCols, viewMode);
+    }
+
+    public void updateFavorites(ArrayList<FavInfo> favInfoArrayList) {
+        listener.updateFavorites(favInfoArrayList);
 
     }
 }

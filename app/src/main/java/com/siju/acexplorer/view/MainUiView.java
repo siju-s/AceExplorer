@@ -415,7 +415,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     public void removeFavourites(ArrayList<FavInfo> favList) {
         navigationDrawer.removeFavourites(favList);
         if (isHomeScreenEnabled && mHomeScreenFragment != null) {
-//            mHomeScreenFragment.removeFavorites(favList.size());
+            mHomeScreenFragment.removeFavorites(favList.size());
         }
     }
 

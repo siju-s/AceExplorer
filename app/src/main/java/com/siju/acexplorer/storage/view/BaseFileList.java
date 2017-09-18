@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.view.DrawerListener;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.logging.Logger;
@@ -42,7 +43,6 @@ public class BaseFileList extends Fragment {
     private StoragesPresenter storagesPresenter;
     private StoragesUi storagesUi;
     private StoragesModel storagesModel;
-    private DrawerListener drawerListener;
 
     @Override
     public View onCreateView(
@@ -79,18 +79,13 @@ public class BaseFileList extends Fragment {
         storagesUi.updateFavoritesCount(size);
     }
 
-    public void setDrawerListener(DrawerListener drawerListener) {
-        this.drawerListener = drawerListener;
-    }
-
-
     public boolean onBackPressed() {
         return storagesUi.onBackPress();
     }
 
 
     public void onPermissionGranted() {
-        refreshList();
+        storagesUi.refreshList();
     }
 
 
@@ -122,4 +117,34 @@ public class BaseFileList extends Fragment {
     }
 
 
+    public void performVoiceSearch(String query) {
+    }
+
+    public boolean isFabExpanded() {
+        return storagesUi.isFabExpanded();
+    }
+
+    public void collapseFab() {
+        storagesUi.collapseFab();
+    }
+
+    public void reloadList(String directory, Category category) {
+        storagesUi.reloadList(directory, category);
+    }
+
+    public void refreshList() {
+        storagesUi.refreshList();
+    }
+
+    public void removeHomeFromNavPath() {
+        storagesUi.removeHomeFromNavPath();
+    }
+
+    public void refreshSpan() {
+        storagesUi.refreshSpan();
+    }
+
+    public void showDualPane() {
+        storagesUi.showDualPane();
+    }
 }

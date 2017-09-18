@@ -22,6 +22,7 @@ import android.os.Bundle;
 
 import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.home.model.LibrarySortModel;
+import com.siju.acexplorer.model.FavInfo;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.storage.model.CopyData;
@@ -75,6 +76,24 @@ public interface StoragesUi {
 
     void onPermissionsFetched(ArrayList<Boolean[]> permissionList);
 
+    void onPermissionsSet();
+
+    void onPermissionSetError();
+
+    void refreshList();
+
+    boolean isFabExpanded();
+
+    void collapseFab();
+
+    void showDualPane();
+
+    void reloadList(String directory, Category category);
+
+    void removeHomeFromNavPath();
+
+    void refreshSpan();
+
 
     interface Listener {
 
@@ -111,5 +130,11 @@ public interface StoragesUi {
         void persistSortMode(int position);
 
         void onCompressPosClick(String newFilePath, ArrayList<FileInfo> paths);
+
+        void setPermissions(String path, boolean isDir, String permissions);
+
+        void saveSettingsOnExit(int gridCols, int viewMode);
+
+        void updateFavorites(ArrayList<FavInfo> favInfoArrayList);
     }
 }

@@ -29,7 +29,6 @@ import android.widget.TextView;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.logging.Logger;
-import com.siju.acexplorer.utils.Dialogs;
 import com.siju.acexplorer.view.dialog.DialogHelper;
 
 import java.util.ArrayList;

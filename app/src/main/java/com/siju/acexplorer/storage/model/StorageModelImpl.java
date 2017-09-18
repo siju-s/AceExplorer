@@ -32,6 +32,7 @@ import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.billing.BillingHelper;
 import com.siju.acexplorer.billing.BillingStatus;
+import com.siju.acexplorer.model.FavInfo;
 import com.siju.acexplorer.model.FileConstants;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.SharedPreferenceWrapper;
@@ -193,8 +194,7 @@ public class StorageModelImpl implements StoragesModel {
             }
             listener.dismissDialog(Operations.EXTRACT);
             fileOpsHelper.extractFile(currentFile, newFile);
-        }
-        else {
+        } else {
             String currentDir = new File(currentFilePath).getParent();
             File newFile = new File(currentDir + "/" + newFileName);
             File currentFile = new File(currentFilePath);
@@ -237,8 +237,7 @@ public class StorageModelImpl implements StoragesModel {
             String renamedName;
             if (fileName.startsWith(".")) {
                 renamedName = fileName.substring(1);
-            }
-            else {
+            } else {
                 renamedName = "." + fileName;
             }
             String path = fileInfo.get(i).getFilePath();
@@ -292,8 +291,7 @@ public class StorageModelImpl implements StoragesModel {
                         intent.putExtra(OperationUtils.KEY_OPERATION, operation);
                         context.sendBroadcast(intent);
                         scanFile(context, file.getAbsolutePath());
-                    }
-                    else {
+                    } else {
                         Toast.makeText(context, R.string.msg_operation_failed,
                                 Toast.LENGTH_SHORT).show();
                     }
@@ -314,8 +312,7 @@ public class StorageModelImpl implements StoragesModel {
                         intent.putExtra(KEY_FILEPATH, oldFile.getAbsolutePath());
                         intent.putExtra(KEY_FILEPATH2, newFile.getAbsolutePath());
                         context.sendBroadcast(intent);
-                    }
-                    else {
+                    } else {
                         Toast.makeText(context, R.string.msg_operation_failed,
                                 Toast.LENGTH_SHORT).show();
                     }
@@ -341,7 +338,7 @@ public class StorageModelImpl implements StoragesModel {
         switch (mode) {
             case EXTERNAL:
                 Operations operation = isMove ? Operations.CUT : Operations.COPY;
-                fileOpsHelper.formSAFIntentMoveCopy(destinationDir, (ArrayList<FileInfo>)files, (ArrayList<CopyData>) copyData, operation);
+                fileOpsHelper.formSAFIntentMoveCopy(destinationDir, (ArrayList<FileInfo>) files, (ArrayList<CopyData>) copyData, operation);
                 break;
             case ROOT:
             case INTERNAL:
@@ -350,7 +347,7 @@ public class StorageModelImpl implements StoragesModel {
         }
     }
 
-    private List<FileInfo> files ;
+    private List<FileInfo> files;
     private List<CopyData> copyData = new ArrayList<>();
 
     private DialogHelper.PasteConflictListener pasteConflictListener = new DialogHelper
@@ -364,8 +361,7 @@ public class StorageModelImpl implements StoragesModel {
             if (isChecked) {
                 files.removeAll(conflictFiles);
                 isEnd = true;
-            }
-            else {
+            } else {
                 files.remove(conflictFiles.get(0));
                 conflictFiles.remove(0);
                 if (conflictFiles.size() == 0) {
@@ -446,8 +442,7 @@ public class StorageModelImpl implements StoragesModel {
             } else {
                 context.startService(intent);
             }
-        }
-        else {
+        } else {
             listener.onOperationFailed(Operations.COPY);
             Toast.makeText(context, context.getString(R.string.msg_operation_failed),
                     Toast.LENGTH_SHORT).show();
@@ -474,7 +469,6 @@ public class StorageModelImpl implements StoragesModel {
     }
 
 
-
     public int getSortMode() {
         return sharedPreferences.getInt(FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
     }
@@ -491,11 +485,28 @@ public class StorageModelImpl implements StoragesModel {
         }).start();
     }
 
-    void setPermissions() {
-
+    @Override
+    public void setPermissions(final String path, final boolean isDir, final String permissions) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                FileOpsHelper.setPermissions(path, isDir, permissions, permissionResultCallback);
+            }
+        }).start();
     }
 
+    @Override
+    public void saveSettingsOnExit(int gridCols, int viewMode) {
 
+        sharedPreferences.edit().putInt(FileConstants.KEY_GRID_COLUMNS, gridCols).apply();
+        sharedPreferenceWrapper.savePrefs(context, viewMode);
+    }
+
+    @Override
+    public void updateFavorites(ArrayList<FavInfo> favInfoArrayList) {
+        SharedPreferenceWrapper sharedPreferenceWrapper = new SharedPreferenceWrapper();
+        sharedPreferenceWrapper.addFavorites(context, favInfoArrayList);
+    }
 
     private DeleteTask.DeleteResultCallback deleteResultCallback = new DeleteTask
             .DeleteResultCallback() {
@@ -529,5 +540,24 @@ public class StorageModelImpl implements StoragesModel {
                     StorageModelImpl.this.checkWriteMode(destinationDir, files, copyData, isMove);
                 }
             };
+
+    private PermissionResultCallback permissionResultCallback = new PermissionResultCallback() {
+        @Override
+        public void onError() {
+            listener.onPermissionSetError();
+        }
+
+        @Override
+        public void onPermissionsSet() {
+            listener.onPermissionsSet();
+        }
+    };
+
+    public interface PermissionResultCallback {
+
+        void onError();
+
+        void onPermissionsSet();
+    }
 
 }

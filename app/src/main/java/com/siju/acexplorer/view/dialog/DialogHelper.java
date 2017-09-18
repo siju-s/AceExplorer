@@ -41,7 +41,6 @@ import com.siju.acexplorer.model.FileConstants;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.storage.model.operations.Operations;
-import com.siju.acexplorer.utils.Dialogs;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -943,7 +942,8 @@ public class DialogHelper {
 
     public interface CompressDialogListener {
 
-        void onPositiveButtonClick(Dialog dialog, Operations operation, String newFileName, String extension, ArrayList<FileInfo> paths);
+        void onPositiveButtonClick(Dialog dialog, Operations operation, String newFileName,
+                                   String extension, ArrayList<FileInfo> paths);
 
         void onNegativeButtonClick(Operations operation);
 

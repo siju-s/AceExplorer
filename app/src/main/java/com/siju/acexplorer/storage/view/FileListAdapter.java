@@ -40,21 +40,21 @@ import com.bumptech.glide.Glide;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileConstants;
-import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.model.FileInfo;
+import com.siju.acexplorer.model.groups.Category;
+import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.storage.model.ViewMode;
 import com.siju.acexplorer.theme.ThemeUtils;
-import com.siju.acexplorer.model.helper.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 
-import static com.siju.acexplorer.model.helper.helper.AppUtils.getAppIcon;
-import static com.siju.acexplorer.model.helper.helper.AppUtils.getAppIconForFolder;
 import static com.siju.acexplorer.model.groups.Category.AUDIO;
 import static com.siju.acexplorer.model.groups.Category.IMAGE;
 import static com.siju.acexplorer.model.groups.Category.PICKER;
 import static com.siju.acexplorer.model.groups.Category.VIDEO;
+import static com.siju.acexplorer.model.helper.AppUtils.getAppIcon;
+import static com.siju.acexplorer.model.helper.AppUtils.getAppIconForFolder;
 
 
 public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

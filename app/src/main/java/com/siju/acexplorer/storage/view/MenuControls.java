@@ -477,7 +477,8 @@ public class MenuControls implements View.OnClickListener,
 
 
             case R.id.action_view:
-                int mode = storagesUiView.switchView();
+                storagesUiView.switchView();
+                int mode = storagesUiView.getViewMode();
                 updateMenuTitle(mode);
                 break;
 
@@ -614,6 +615,7 @@ public class MenuControls implements View.OnClickListener,
 
         @Override
         public void onPositiveButtonClick(String path, boolean isDir, String permissions) {
+            storagesUiView.setPermissions(path, isDir, permissions);
 
         }
     };
