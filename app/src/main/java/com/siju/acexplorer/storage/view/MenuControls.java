@@ -18,17 +18,19 @@ package com.siju.acexplorer.storage.view;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.SparseBooleanArray;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,7 +58,8 @@ import static com.siju.acexplorer.model.groups.Category.FILES;
  */
 public class MenuControls implements View.OnClickListener,
         Toolbar.OnMenuItemClickListener,
-        PopupMenu.OnMenuItemClickListener {
+        PopupMenu.OnMenuItemClickListener,
+        android.support.v7.widget.SearchView.OnQueryTextListener {
 
     private final String TAG = this.getClass().getSimpleName();
 
@@ -69,7 +72,7 @@ public class MenuControls implements View.OnClickListener,
     private TextView toolbarTitle;
     private ImageButton imgOverflow;
     private Toolbar bottomToolbar;
-    private SearchHelper searchHelper;
+//    private SearchHelper searchHelper;
     private MenuItem mPasteItem;
     private MenuItem cancelItem;
     private MenuItem createItem;
@@ -84,6 +87,8 @@ public class MenuControls implements View.OnClickListener,
     private MenuItem mViewItem;
     private Category category;
     private String currentDir;
+    private android.support.v7.widget.SearchView searchView;
+    private MenuItem searchItem;
 
 
     MenuControls(Activity activity, StoragesUiView storagesUiView, Theme theme) {
@@ -110,16 +115,18 @@ public class MenuControls implements View.OnClickListener,
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                aceActivity.openDrawer();
+             storagesUiView.openDrawer();
             }
         });
-        searchHelper = new SearchHelper(this, context);
+//        searchHelper = new SearchHelper(this, context, actionBar);
 
     }
 
+    private View actionBar;
+
     private void setToolbar() {
-        View actionBar = LayoutInflater.from(context).inflate(R.layout.actionbar_custom, null);
-        toolbar.addView(actionBar);
+//        actionBar = LayoutInflater.from(context).inflate(R.layout.actionbar_custom, null);
+//        toolbar.addView(actionBar);
         toolbar.setTitle(R.string.app_name);
 
         imgNavigationIcon = actionBar.findViewById(R.id.imgNavigationIcon);
@@ -142,7 +149,7 @@ public class MenuControls implements View.OnClickListener,
                 toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay);
                 bottomToolbar.setPopupTheme(R.style.AppTheme_PopupOverlay);
                 toolbarTitle.setTextColor(ContextCompat.getColor(context, R.color.white));
-                searchHelper.setSearchHintColor();
+//                searchHelper.setSearchHintColor();
                 break;
         }
     }
@@ -175,11 +182,11 @@ public class MenuControls implements View.OnClickListener,
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.imgNavigationIcon:
-                if (searchHelper.isExpanded()) {
-                    searchHelper.disableSearch();
-                } else {
-//                    aceActivity.openDrawer();
-                }
+//                if (searchHelper.isExpanded()) {
+//                    searchHelper.disableSearch();
+//                } else {
+////                    aceActivity.openDrawer();
+//                }
                 break;
             case R.id.imgButtonOverflow:
                 showOptionsPopup(imgOverflow);
@@ -346,7 +353,7 @@ public class MenuControls implements View.OnClickListener,
                 if (copiedData.size() > 0) {
                     ArrayList<FileInfo> info = new ArrayList<>();
                     info.addAll(copiedData);
-                    storagesUiView.onPasteAction(mIsMoveOperation, info);
+                    storagesUiView.onPasteAction(mIsMoveOperation, info, currentDir);
                     copiedData.clear();
                     storagesUiView.endActionMode();
                 }
@@ -497,7 +504,7 @@ public class MenuControls implements View.OnClickListener,
     }
 
     void removeSearchTask() {
-        searchHelper.removeSearchTask();
+//        searchHelper.removeSearchTask();
     }
 
     void hideBottomToolbar() {
@@ -506,7 +513,8 @@ public class MenuControls implements View.OnClickListener,
 
 
     boolean isSearch() {
-        return searchHelper.endSearch();
+//        return searchHelper.endSearch();
+        return false;
     }
 
 
@@ -636,5 +644,79 @@ public class MenuControls implements View.OnClickListener,
 
     public void onPermissionsFetched(ArrayList<Boolean[]> permissionList) {
         DialogHelper.showPermissionsDialog(context, currentDir, isDirectory, permissionList, permissionDialogListener);
+    }
+
+    public void onSearchExpanded() {
+        toolbarTitle.setVisibility(View.GONE);
+        imgNavigationIcon.setImageResource(R.drawable.ic_up_arrow);
+
+    }
+
+    public void onSearchClosed() {
+        toolbarTitle.setVisibility(View.VISIBLE);
+        imgNavigationIcon.setImageResource(R.drawable.ic_drawer);
+    }
+
+    void performVoiceSearch(String query) {
+        searchView.setQuery(query, false);
+    }
+
+    void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.file_base, menu);
+        searchItem = menu.findItem(R.id.action_search);
+        searchView = (android.support.v7.widget.SearchView) MenuItemCompat.getActionView(searchItem);
+        setupSearchView();
+    }
+
+    private void setupSearchView() {
+        // Disable full screen keyboard in landscape
+        searchView.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
+        searchView.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
+        searchView.setOnQueryTextListener(this);
+
+        SearchManager searchManager = (SearchManager) context.getSystemService(Context.SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(storagesUiView.getActivity().getComponentName()));
+/*        searchView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent event) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN)) {
+                    // Perform action on key press
+                    mainActivityHelper.search(searchViewEditText.getText().toString());
+                    hideSearchView();
+                    return true;
+                }
+                return false;
+            }
+        });*/
+    }
+
+    public void hideSearchView() {
+        searchItem.collapseActionView();
+//        searchView.onActionViewCollapsed();
+    }
+
+
+//    private  SearchTask searchTask;
+
+    @Override
+    public boolean onQueryTextChange(String query) {
+
+        storagesUiView.onQueryTextChange(query);
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+/*        if (!query.isEmpty()) {
+            if (searchTask == null) {
+                searchTask = new SearchTask(this,query,mFilePath);
+
+            }
+            else {
+                searchTask.execute(query);
+            }
+        }
+        hideSearchView();*/
+        return false;
     }
 }

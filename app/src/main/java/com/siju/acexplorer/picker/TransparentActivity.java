@@ -25,7 +25,7 @@ import android.util.Log;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.theme.ThemeUtils;
-import com.siju.acexplorer.storage.view.DialogBrowseFragment;
+import com.siju.acexplorer.storage.modules.picker.view.DialogBrowseFragment;
 
 import static com.siju.acexplorer.theme.ThemeUtils.THEME_DARK;
 

@@ -96,12 +96,27 @@ public class HomeBridge implements HomeView {
 
     @Override
     public void updateFavoritesCount(int size) {
-        uiView.updateFavoritesCount(size);
+        uiView.removeFavorite(size);
     }
 
     @Override
     public void init() {
         uiView.initialize();
+    }
+
+    @Override
+    public void removeFavorites(int size) {
+        uiView.removeFavorite(size);
+    }
+
+    @Override
+    public void onPermissionGranted() {
+        uiView.onPermissionGranted();
+    }
+
+    @Override
+    public void showDualMode() {
+        uiView.setDualMode();
     }
 
     void getLibraries() {

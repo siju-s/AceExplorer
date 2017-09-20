@@ -38,6 +38,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastMarsh;
+
 
 public class StorageUtils {
 
@@ -106,7 +108,7 @@ public class StorageUtils {
             final String[] rawSecondaryStorages = rawSecondaryStoragesStr.split(File.pathSeparator);
             Collections.addAll(paths, rawSecondaryStorages);
         }
-        if (Utils.isAtleastMarsh())
+        if (isAtleastMarsh())
             paths.clear();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             String pathList[] = getExtSdCardPaths();

@@ -27,14 +27,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.siju.acexplorer.base.view.BaseActivity;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.filesystem.OnStartDragListener;
+import com.siju.acexplorer.base.view.BaseActivity;
+import com.siju.acexplorer.home.model.LibrarySortModel;
 import com.siju.acexplorer.model.FileConstants;
 import com.siju.acexplorer.model.SharedPreferenceWrapper;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.storage.view.custom.helper.SimpleItemTouchHelperCallback;
-import com.siju.acexplorer.home.model.LibrarySortModel;
 
 import java.util.ArrayList;
 

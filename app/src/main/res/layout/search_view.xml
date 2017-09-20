@@ -38,4 +38,13 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:src="@drawable/ic_search_white" />
+
+    <ImageButton
+        android:id="@+id/voiceSearch"
+        style="@style/ActionButton"
+        android:background="@null"
+        android:layout_marginTop="@dimen/searchview_margin"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/ic_voice_search" />
 </merge>

@@ -60,6 +60,7 @@ import com.siju.acexplorer.permission.PermissionResultCallback;
 import com.siju.acexplorer.permission.PermissionUtils;
 import com.siju.acexplorer.premium.Premium;
 import com.siju.acexplorer.premium.PremiumUtils;
+import com.siju.acexplorer.storage.view.StoragesUiView;
 import com.siju.acexplorer.theme.Theme;
 import com.siju.acexplorer.utils.LocaleHelper;
 import com.stericson.RootTools.RootTools;
@@ -86,7 +87,7 @@ import static com.siju.acexplorer.theme.ThemeUtils.PREFS_THEME;
 /**
  * Created by Siju on 02 September,2017
  */
-public class MainUiView extends DrawerLayout implements PermissionResultCallback, DrawerListener {
+public class MainUiView extends DrawerLayout implements PermissionResultCallback, DrawerListener, StoragesUiView.FavoriteOperation {
 
     public static final int PERMISSIONS_REQUEST = 100;
 
@@ -346,7 +347,10 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     private final BroadcastReceiver localeListener = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent != null && intent.getAction().equals(Intent.ACTION_LOCALE_CHANGED)) {
+            if (intent == null || intent.getAction() == null) {
+                return;
+            }
+            if (intent.getAction().equals(Intent.ACTION_LOCALE_CHANGED)) {
                 restartApp(true);
             }
         }
@@ -393,6 +397,8 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         if (fragment == null || fragment instanceof HomeScreenFragment) {
             FileList baseFileList = new FileList();
             baseFileList.setArguments(args);
+            baseFileList.setFavoriteListener(this);
+            baseFileList.setDrawerListener(this);
             ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim
                     .enter_from_right, R.anim
                     .exit_to_left);
@@ -405,14 +411,16 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         }
     }
 
-    public void updateFavourites(ArrayList<FavInfo> favList) {
+    @Override
+    public void updateFavorites(ArrayList<FavInfo> favList) {
         navigationDrawer.updateFavourites(favList);
         if (isHomeScreenEnabled && mHomeScreenFragment != null) {
             mHomeScreenFragment.updateFavoritesCount(favList.size());
         }
     }
 
-    public void removeFavourites(ArrayList<FavInfo> favList) {
+    @Override
+    public void removeFavorites(ArrayList<FavInfo> favList) {
         navigationDrawer.removeFavourites(favList);
         if (isHomeScreenEnabled && mHomeScreenFragment != null) {
             mHomeScreenFragment.removeFavorites(favList.size());
@@ -602,7 +610,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id
                 .main_container);
         if (fragment instanceof HomeScreenFragment) {
-//            ((HomeScreenFragment) fragment).onPermissionGranted();
+            ((HomeScreenFragment) fragment).onPermissionGranted();
         }
         else {
             ((BaseFileList) fragment).onPermissionGranted();
@@ -615,7 +623,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     }
 
 
-    public void onCreateContextMenu(ContextMenu menu, View v,
+    public void onCreateContextMenu(ContextMenu menu,
                                     ContextMenu.ContextMenuInfo menuInfo) {
 
         if (menuInfo instanceof ExpandableListView.ExpandableListContextMenuInfo) {
@@ -656,7 +664,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
                 FavInfo favInfo = navigationDrawer.removeFavorite(groupPos, childPos);
                 sharedPreferenceWrapper.removeFavorite(getContext(), favInfo);
                 if (isHomeScreenEnabled && mHomeScreenFragment != null) {
-//                    mHomeScreenFragment.removeFavorites(1);
+                    mHomeScreenFragment.removeFavorites(1);
                 }
         }
     }
@@ -676,7 +684,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
                     createDualFragment();
                 }
                 else {
-//                    ((HomeScreenFragment) fragment).setDualMode(true);
+                    ((HomeScreenFragment) fragment).showDualMode();
                 }
             }
             else {
@@ -741,4 +749,9 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     public void onDrawerIconClicked() {
         openDrawer();
     }
+
+
+
+
+
 }

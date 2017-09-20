@@ -18,14 +18,12 @@ package com.siju.acexplorer.premium;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.View;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.billing.BillingHelper;
 import com.siju.acexplorer.view.dialog.DialogHelper;
-import com.siju.acexplorer.utils.Dialogs;
 
 /**
  * Created by Siju on 29 August,2017
@@ -34,16 +32,15 @@ public class Premium {
     private Activity context;
 
     public Premium(Activity activity) {
-        this.context = context;
+        this.context = activity;
     }
 
     public void showPremiumDialog() {
-        int color = new Dialogs().getCurrentThemePrimary(context);
 
         String text[] = {context.getString(R.string.unlock_full_version),
-                          context.getString(R.string.full_version_buy_ask),
-                         context.getString(R.string.yes),
-                         context.getString(R.string.no)};
+                context.getString(R.string.full_version_buy_ask),
+                context.getString(R.string.yes),
+                context.getString(R.string.no)};
 
         DialogHelper.showAlertDialog(context, text, alertDialogListener);
     }
@@ -52,7 +49,7 @@ public class Premium {
     private DialogHelper.AlertDialogListener alertDialogListener = new DialogHelper.AlertDialogListener() {
 
         @Override
-        public void onPositiveButtonClick(View view, Intent intent) {
+        public void onPositiveButtonClick(View view) {
             showPurchaseDialog();
         }
 
@@ -60,6 +57,11 @@ public class Premium {
         public void onNegativeButtonClick(View view) {
             optOutPremiumDialog();
 
+        }
+
+        @Override
+        public void onNeutralButtonClick(View view) {
+            //do-nothing
         }
     };
 

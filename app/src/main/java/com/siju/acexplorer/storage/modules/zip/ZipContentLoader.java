@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package com.siju.acexplorer.storage.model.zip;
+package com.siju.acexplorer.storage.modules.zip;
 
 import android.content.Context;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 
 import com.github.junrar.Archive;
@@ -27,11 +26,10 @@ import com.github.junrar.exception.RarException;
 import com.github.junrar.rarfile.FileHeader;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileConstants;
-import com.siju.acexplorer.model.groups.Category;
-import com.siju.acexplorer.model.helper.helper.SortHelper;
 import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.storage.model.ZipModel;
+import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.model.helper.RootHelper;
+import com.siju.acexplorer.storage.model.ZipModel;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -47,7 +45,8 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import static com.siju.acexplorer.model.groups.Category.COMPRESSED;
-import static com.siju.acexplorer.model.helper.helper.SortHelper.comparatorByNameZip;
+import static com.siju.acexplorer.model.helper.SortHelper.comparatorByNameZip;
+import static com.siju.acexplorer.model.helper.SortHelper.comparatorByNameZip1;
 
 
 public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
@@ -58,7 +57,6 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private boolean showHidden;
     private final Category category;
     private String mZipPath;
-    private Fragment mFragment;
     private boolean mInParentZip;
     private int mSortMode;
     private String outputDir;
@@ -80,12 +78,10 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private ZipViewer zipViewer;
 
 
-    ZipContentLoader(Fragment fragment, ZipViewer zipViewer, String path, Category category, String zipPath) {
-        super(fragment.getContext());
+    ZipContentLoader(Context context, ZipViewer zipViewer, String path, Category category, String zipPath) {
+        super(context);
         Logger.log(TAG, "Zip" + "dir=" + zipPath);
         mPath = path;
-        Context context = fragment.getContext();
-        mFragment = fragment;
         this.category = category;
         showHidden = PreferenceManager.getDefaultSharedPreferences(context).getBoolean
                 (FileConstants.PREFS_HIDDEN, false);
@@ -99,9 +95,9 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     }
 
 
-    ZipContentLoader(Fragment fragment, String path, String outputDir, String fileName,
+    ZipContentLoader(Context context, String path, String outputDir, String fileName,
                      ZipEntry zipEntry) {
-        super(fragment.getContext());
+        super(context);
         this.isZipFormat = true;
         this.outputDir = outputDir;
         category = Category.ZIP_VIEWER;
@@ -116,7 +112,6 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             mZipPath = mZipPath.substring(0, mZipPath.length() - 1);
         }
         mPath = path;
-        mFragment = fragment;
         this.fileName = fileName;
         this.entry = zipEntry;
     }
@@ -159,7 +154,6 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
         if (fileInfoList != null) {
             fileInfoList = null;
-            mFragment = null;
         }
     }
 
@@ -182,10 +176,12 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     }
 
     private void fetchZipContents() {
-        if (mPath.endsWith("rar"))
+        if (mPath.endsWith("rar")) {
             getRarContents(mZipPath, mPath);
-        else
+        }
+        else {
             getZipContents(mZipPath, mPath);
+        }
     }
 
     private void unzip() {
@@ -310,7 +306,7 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             e.printStackTrace();
         }
 
-        Collections.sort(elements, SortHelper.comparatorByNameZip1);
+        Collections.sort(elements, comparatorByNameZip1);
 
         zipViewer.setZipData(elements);
         for (ZipModel model : elements) {

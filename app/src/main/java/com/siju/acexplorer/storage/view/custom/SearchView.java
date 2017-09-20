@@ -50,6 +50,7 @@ import com.siju.acexplorer.R;
 
 public class SearchView extends RelativeLayout {
     private ImageButton searchIcon;
+    private ImageButton voiceSearchIcon;
     private AutoCompleteTextView autoCompleteTextView;
     private Listener listener;
     private Animator animator;
@@ -122,7 +123,7 @@ public class SearchView extends RelativeLayout {
     @SuppressLint({"WrongViewCast"})
     private void init(AttributeSet attributeSet) {
         LayoutInflater.from(getContext()).inflate(R.layout.search_view, this);
-        this.autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.input);
+        this.autoCompleteTextView =  findViewById(R.id.input);
         this.autoCompleteTextView.addTextChangedListener(this.i);
         this.autoCompleteTextView.setOnEditorActionListener(new OnEditorActionListener() {
 
@@ -136,8 +137,10 @@ public class SearchView extends RelativeLayout {
                 return true;
             }
         });
-        this.searchIcon = (ImageButton) findViewById(R.id.search);
+        this.searchIcon =  findViewById(R.id.search);
         this.searchIcon.setOnClickListener(onClickListener);
+        voiceSearchIcon = findViewById(R.id.voiceSearch);
+        voiceSearchIcon.setOnClickListener(onClickListener);
     }
 
     public AutoCompleteTextView getInput() {

@@ -921,6 +921,49 @@ public class DialogHelper {
     }
 
 
+    public static void showDragDialog(Context context, final ArrayList<FileInfo> filesToPaste, final String
+            destinationDir,
+                                          final DragDialogListener dragDialogListener) {
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View dialogView = inflater.inflate(R.layout.dialog_drag, null);
+        builder.setView(dialogView);
+
+        final AlertDialog alertDialog = builder.create();
+
+        final RadioButton radioButtonCopy =  alertDialog.findViewById(R.id
+                .radioCopy);
+
+        final TextView textMessage = alertDialog.findViewById(R.id.textMessage);
+
+        textMessage.setText(context.getString(R.string.dialog_to_placeholder) + " " + destinationDir);
+
+        Button positiveButton = alertDialog.findViewById(R.id.buttonPositive);
+        Button negativeButton = alertDialog.findViewById(R.id.buttonNegative);
+
+        positiveButton.setOnClickListener(new View
+                .OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.dismiss();
+                dragDialogListener.onPositiveButtonClick(filesToPaste, destinationDir,
+                        !radioButtonCopy.isChecked());
+            }
+        });
+
+        negativeButton.setOnClickListener(new View
+                .OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.dismiss();
+            }
+        });
+
+        alertDialog.show();
+    }
+
 
 
     public interface ExtractDialogListener {
@@ -986,6 +1029,12 @@ public class DialogHelper {
 
         void onNeutralButtonClick(Dialog dialog, Operations operation, List<FileInfo> conflictFiles,
                                   String destinationDir, boolean isMove, boolean isChecked);
+    }
+
+    public interface DragDialogListener {
+
+        void onPositiveButtonClick(ArrayList<FileInfo> filesToPaste, String destinationDir, boolean isMove);
+
     }
 
 

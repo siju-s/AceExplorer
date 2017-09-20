@@ -298,8 +298,8 @@ public class HomeUiView extends CoordinatorLayout {
 
     }
 
-    public void setDualMode(boolean value) {
-        isDualModeActive = value;
+    public void setDualMode() {
+        isDualModeActive = true;
     }
 
     @Override
@@ -331,7 +331,7 @@ public class HomeUiView extends CoordinatorLayout {
     }
 
 
-    public void updateFavoritesCount(int size) {
+    public void removeFavorite(int size) {
         library.updateFavoritesCount(size);
     }
 

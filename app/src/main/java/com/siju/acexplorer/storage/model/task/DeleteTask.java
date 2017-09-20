@@ -17,24 +17,16 @@
 package com.siju.acexplorer.storage.model.task;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 import android.os.Process;
 
-import com.siju.acexplorer.R;
 import com.siju.acexplorer.model.FileInfo;
+import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.model.root.RootDeniedException;
 import com.siju.acexplorer.model.root.RootUtils;
-import com.siju.acexplorer.model.helper.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH;
-import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES;
-import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION;
-import static com.siju.acexplorer.storage.model.operations.Operations.DELETE;
 
 public class DeleteTask {
 
@@ -68,60 +60,44 @@ public class DeleteTask {
     }
 
 
-      public void delete() {
-          new Thread(new Runnable() {
-              @Override
-              public void run() {
-                  Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+    public void delete() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
 
 
-          int deletedCount = 0;
-          totalFiles = fileList.size();
+                int deletedCount = 0;
+                totalFiles = fileList.size();
 
-          for (int i = 0; i < totalFiles; i++) {
-              String path = fileList.get(i).getFilePath();
-              boolean isDeleted = FileUtils.deleteFile(new File(path));
+                for (int i = 0; i < totalFiles; i++) {
+                    String path = fileList.get(i).getFilePath();
+                    boolean isDeleted = FileUtils.deleteFile(new File(path));
 
-              if (!isDeleted) {
-                  if (mIsRootMode) {
-                      try {
-                          RootUtils.mountRW(path);
-                          RootUtils.delete(path);
-                          RootUtils.mountRO(path);
-                          deletedFilesList.add(fileList.get(i));
-                          deletedCount++;
-                      } catch (RootDeniedException e) {
-                          e.printStackTrace();
-                      }
-                  }
+                    if (!isDeleted) {
+                        if (mIsRootMode) {
+                            try {
+                                RootUtils.mountRW(path);
+                                RootUtils.delete(path);
+                                RootUtils.mountRO(path);
+                                deletedFilesList.add(fileList.get(i));
+                                deletedCount++;
+                            } catch (RootDeniedException e) {
+                                e.printStackTrace();
+                            }
+                        }
 
-              } else {
-                  deletedFilesList.add(fileList.get(i));
-                  deletedCount++;
-              }
-          }
-          if (deleteResultCallback != null) {
-              deleteResultCallback.onFileDeleted(deletedCount, deletedFilesList, mShowToast);
-          }
-              }
-          }).start();
+                    } else {
+                        deletedFilesList.add(fileList.get(i));
+                        deletedCount++;
+                    }
+                }
+                if (deleteResultCallback != null) {
+                    deleteResultCallback.onFileDeleted(totalFiles, deletedFilesList, mShowToast);
+                }
+            }
+        }).start();
 
-          Intent intent = new Intent(ACTION_OP_REFRESH);
-          Bundle bundle = new Bundle();
-          bundle.putSerializable(KEY_OPERATION, DELETE);
-          bundle.putParcelableArrayList(KEY_FILES, deletedFilesList);
-          intent.putExtras(bundle);
-          mContext.sendBroadcast(intent);
-          if (mShowToast) {
-              if (deletedCount != 0) {
-                  FileUtils.showMessage(mContext, mContext.getResources().getQuantityString(R.plurals.number_of_files,
-                          deletedCount, deletedCount) + " " + mContext.getString(R.string.msg_delete_success));
-              }
-
-              if (totalFiles != deletedCount) {
-                  FileUtils.showMessage(mContext, mContext.getString(R.string.msg_delete_failure));
-              }
-          }
-      }
+    }
 
 }

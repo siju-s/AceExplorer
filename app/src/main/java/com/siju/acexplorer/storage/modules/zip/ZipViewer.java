@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.siju.acexplorer.storage.model.zip;
+package com.siju.acexplorer.storage.modules.zip;
 
 
 import android.content.SharedPreferences;
@@ -27,15 +27,17 @@ import android.support.v4.content.Loader;
 import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
 import com.github.junrar.rarfile.FileHeader;
+import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.logging.Logger;
-import com.siju.acexplorer.storage.view.BaseFileList;
 import com.siju.acexplorer.model.FileConstants;
-import com.siju.acexplorer.storage.model.backstack.BackStackInfo;
-import com.siju.acexplorer.storage.model.backstack.NavigationInfo;
-import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.model.FileInfo;
+import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.storage.model.ZipModel;
+import com.siju.acexplorer.storage.model.backstack.BackStackInfo;
+import com.siju.acexplorer.storage.model.backstack.NavigationCallback;
+import com.siju.acexplorer.storage.model.backstack.NavigationInfo;
 import com.siju.acexplorer.storage.model.task.ExtractZipEntry;
+import com.siju.acexplorer.storage.view.StoragesUiView;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,15 +45,15 @@ import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import static com.siju.acexplorer.model.StorageUtils.getInternalStorage;
 import static com.siju.acexplorer.model.groups.Category.FILES;
 import static com.siju.acexplorer.model.groups.Category.ZIP_VIEWER;
-import static com.siju.acexplorer.model.StorageUtils.getInternalStorage;
 
-public class ZipViewer implements ZipElements {
+public class ZipViewer implements ZipElements, NavigationCallback {
 
     private final String TAG = this.getClass().getSimpleName();
     private final int LOADER_ID = 1000;
-    private Fragment context;
+    private Fragment fragment;
     private NavigationInfo navigationInfo;
     private BackStackInfo backStackInfo;
     private String currentDir = null;
@@ -64,6 +66,17 @@ public class ZipViewer implements ZipElements {
     private final ArrayList<FileHeader> rarChildren = new ArrayList<>();
     private boolean isHomeScreenEnabled;
     private Category category = FILES;
+    private StoragesUiView storagesUiView;
+
+    @Override
+    public void onHomeClicked() {
+        storagesUiView.onHomeClicked();
+    }
+
+    @Override
+    public void onNavButtonClicked(String dir) {
+        storagesUiView.onNavButtonClicked(dir);
+    }
 
 
     enum ZipFormats {
@@ -89,12 +102,13 @@ public class ZipViewer implements ZipElements {
     }
 
 
-    public ZipViewer(Fragment fragment, String path) {
-        context = fragment;
+    public ZipViewer(StoragesUiView storagesUiView, Fragment fragment, String path) {
+        this.storagesUiView = storagesUiView;
+        this.fragment = fragment;
         zipParentPath = zipPath = path;
-        navigationInfo = new NavigationInfo(fragment);
+        navigationInfo = new NavigationInfo(storagesUiView, this);
         backStackInfo = new BackStackInfo();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(fragment.getContext());
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(AceApplication.getAppContext());
         isHomeScreenEnabled = preferences.getBoolean(FileConstants.PREFS_HOMESCREEN, true);
         setNavDirectory(path);
         backStackInfo.addToBackStack(path, category);
@@ -105,13 +119,13 @@ public class ZipViewer implements ZipElements {
     }
 
     private void reloadList() {
-        context.getLoaderManager().restartLoader(LOADER_ID, null, (LoaderManager
-                .LoaderCallbacks<ArrayList<FileInfo>>) context);
+        fragment.getLoaderManager().restartLoader(LOADER_ID, null, (LoaderManager
+                .LoaderCallbacks<ArrayList<FileInfo>>) fragment);
     }
 
     private String createCacheDirExtract() {
         String cacheTempDir = ".tmp";
-        File cacheDir = context.getActivity().getExternalCacheDir();
+        File cacheDir = fragment.getActivity().getExternalCacheDir();
         if (cacheDir == null) return null;
         File file = new File(cacheDir.getParent(), cacheTempDir);
 
@@ -165,7 +179,7 @@ public class ZipViewer implements ZipElements {
     public void endZipMode() {
         currentDir = null;
         zipChildren.clear();
-        ((BaseFileList) context).endZipMode();
+        storagesUiView.endZipMode();
         clearCache();
         reloadList();
         setNavDirectory(getInternalStorage());
@@ -238,8 +252,8 @@ public class ZipViewer implements ZipElements {
                         zipFile = new ZipFile(zipParentPath);
                     }
                     zipEntry1 = zipEntry;
-                    new ExtractZipEntry(zipFile, cacheDirPath,
-                            context, name, zipEntry1)
+                    new ExtractZipEntry(fragment, zipFile, cacheDirPath,
+                            name, zipEntry1)
                             .execute();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -254,8 +268,8 @@ public class ZipViewer implements ZipElements {
 
                 try {
                     Archive rarFile = new Archive(new File(zipParentPath));
-                    new ExtractZipEntry(rarFile, cacheDirPath,
-                            context, name, fileHeader)
+                    new ExtractZipEntry(fragment, rarFile, cacheDirPath,
+                            name, fileHeader)
                             .execute();
 
                 } catch (IOException | RarException e) {
@@ -317,15 +331,15 @@ public class ZipViewer implements ZipElements {
             } else {
                 path = zipParentPath;
             }
-            return new ZipContentLoader(context, path, createCacheDirExtract(),
+            return new ZipContentLoader(fragment.getContext(), path, createCacheDirExtract(),
                     zipEntryFileName, zipEntry);
         }
-        return new ZipContentLoader(context, this, zipPath, ZIP_VIEWER, currentDir);
+        return new ZipContentLoader(fragment.getContext(), this, zipPath, ZIP_VIEWER, currentDir);
     }
 
 
     public void onLoadFinished(Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
-        ((BaseFileList) context).onZipContentsLoaded(data);
+        storagesUiView.onZipContentsLoaded(data);
     }
 
 

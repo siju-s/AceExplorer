@@ -25,33 +25,28 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
-import android.view.ViewParent;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.storage.model.task.PasteConflictChecker;
-import com.siju.acexplorer.utils.Dialogs;
+import com.siju.acexplorer.view.dialog.DialogHelper;
 
-import java.io.File;
 import java.util.ArrayList;
 
 /**
  * Created by Siju on 04 September,2017
  */
-public class DragHelper {
+class DragHelper {
     private final String TAG = this.getClass().getSimpleName();
     private Context context;
     private DragEventListener dragEventListener;
+    private StoragesUiView storagesUiView;
 
-    DragHelper(Context context) {
+    DragHelper(Context context, StoragesUiView storagesUiView) {
         this.context = context;
+        this.storagesUiView = storagesUiView;
         dragEventListener = new DragEventListener();
     }
 
@@ -84,12 +79,11 @@ public class DragHelper {
     }
 
 
-
     MyDragShadowBuilder getDragShadowBuilder(View view, int count) {
         return new MyDragShadowBuilder(view, count);
     }
 
-    public View.OnDragListener getDragEventListener() {
+    View.OnDragListener getDragEventListener() {
         return dragEventListener;
     }
 
@@ -150,57 +144,10 @@ public class DragHelper {
         }
     }
 
-    private void showDragDialog(final ArrayList<FileInfo> sourcePaths, final String
+    void showDragDialog(final ArrayList<FileInfo> sourcePaths, final String
             destinationDir) {
 
-        int color = new Dialogs().getCurrentThemePrimary(getActivity());
-        boolean canWrite = new File(destinationDir).canWrite();
-        Logger.log(TAG, "Can write=" + canWrite);
-
-        final MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
-        CharSequence items[] = new String[]{getString(R.string.action_copy), getString(R.string
-                .move)};
-        builder.title(getString(R.string.drag));
-        builder.content(getString(R.string.dialog_to_placeholder) + " " + destinationDir);
-        builder.positiveText(getString(R.string.msg_ok));
-        builder.positiveColor(color);
-        builder.items(items);
-        builder.negativeText(getString(R.string.dialog_cancel));
-        builder.negativeColor(color);
-        builder.itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
-            @Override
-            public boolean onSelection(MaterialDialog dialog, View itemView, int position,
-                                       CharSequence text) {
-
-                final boolean isMoveOperation = position == 1;
-                ArrayList<FileInfo> info = new ArrayList<>();
-                info.addAll(sourcePaths);
-                PasteConflictChecker conflictChecker = new PasteConflictChecker(BaseFileList
-                        .this, destinationDir,
-                        mIsRootMode, isMoveOperation, info);
-                conflictChecker.execute();
-                clearSelectedPos();
-                if (actionMode != null) {
-                    actionMode.finish();
-                }
-                return true;
-            }
-        });
-
-        final MaterialDialog materialDialog = builder.build();
-
-        materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View
-                .OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (actionMode != null) {
-                    actionMode.finish();
-                }
-                materialDialog.dismiss();
-            }
-        });
-
-        materialDialog.show();
+        DialogHelper.showDragDialog(context, sourcePaths, destinationDir, dragDialogListener);
     }
 
 
@@ -208,14 +155,10 @@ public class DragHelper {
 
         int oldPos = -1;
 
-        // This is the method that the system calls when it dispatches a drag event to the
-        // listener.
         public boolean onDrag(View v, DragEvent event) {
 
-            // Defines a variable to store the action type for the incoming event
             final int action = event.getAction();
 
-            // Handles each of the expected events
             switch (action) {
 
                 case DragEvent.ACTION_DRAG_STARTED:
@@ -225,10 +168,7 @@ public class DragHelper {
                     // Determines if this View can accept the dragged data
                     if (event.getClipDescription().hasMimeType(ClipDescription
                             .MIMETYPE_TEXT_INTENT)) {
-
-                        // returns true to indicate that the View can accept the dragged data.
                         return true;
-
                     }
 
                     // Returns false. During the current drag and drop operation, this View will
@@ -240,170 +180,22 @@ public class DragHelper {
                     return true;
 
                 case DragEvent.ACTION_DRAG_LOCATION:
-
-                    View onTopOf = recyclerViewFileList.findChildViewUnder(event.getX(), event
-                            .getY());
-                    int newPos = recyclerViewFileList.getChildAdapterPosition(onTopOf);
-//                    Log.d(TAG, "DRag location --pos=" + newPos);
-
-                    if (oldPos != newPos && newPos != RecyclerView.NO_POSITION) {
-/*                        int visiblePos = ((LinearLayoutManager) layoutManager)
-.findLastVisibleItemPosition();
-                        if (newPos + 2 >= visiblePos) {
-                            ((LinearLayoutManager) layoutManager).scrollToPosition(newPos + 1);
-                        }
-//                        recyclerViewFileList.smoothScrollToPosition(newPos+2);
-                        Logger.log(TAG, "drag old pos=" + oldPos + "new pos=" + newPos+"Last " +
-                                "visible="+visiblePos);*/
-                        // For scroll up
-                        if (oldPos != RecyclerView.NO_POSITION && newPos < oldPos) {
-                            int changedPos = newPos - 2;
-                            Logger.log(TAG, "drag Location old pos=" + oldPos + "new pos=" +
-                                    newPos +
-                                    "changed pos=" + changedPos);
-                            if (changedPos >= 0) {
-                                recyclerViewFileList.smoothScrollToPosition(changedPos);
-                            }
-                        }
-                        else {
-                            int changedPos = newPos + 2;
-                            // For scroll down
-                            if (changedPos < fileInfoList.size()) {
-                                recyclerViewFileList.smoothScrollToPosition(newPos + 2);
-                            }
-                            Logger.log(TAG, "drag Location old pos=" + oldPos + "new pos=" +
-                                    newPos +
-                                    "changed pos=" + changedPos);
-
-                        }
-                        oldPos = newPos;
-                        fileListAdapter.setDraggedPos(newPos);
-                    }
+                    storagesUiView.onDragLocationEvent(event, oldPos);
                     // Ignore the event
                     return true;
 
                 case DragEvent.ACTION_DRAG_EXITED:
                     Log.d(TAG, "DRag exit");
-                    fileListAdapter.clearDragPos();
-                    draggedData = new ArrayList<>();
+                    storagesUiView.onDragExit();
                     return true;
 
                 case DragEvent.ACTION_DROP:
 //                    Log.d(TAG,"DRag drop"+pos);
-
-                    View top = recyclerViewFileList.findChildViewUnder(event.getX(), event.getY());
-                    int position = recyclerViewFileList.getChildAdapterPosition(top);
-                    Logger.log(TAG, "DROP new pos=" + position);
-                    fileListAdapter.clearDragPos();
-                    @SuppressWarnings("unchecked")
-                    ArrayList<FileInfo> draggedFiles = (ArrayList<FileInfo>) event.getLocalState();
-                    ArrayList<String> paths = new ArrayList<>();
-
-                  /*  ArrayList<FileInfo> paths = dragData.getParcelableArrayListExtra(FileConstants
-                            .KEY_PATH);*/
-
-                    String destinationDir;
-                    if (position != -1) {
-                        destinationDir = fileInfoList.get(position).getFilePath();
-                    }
-                    else {
-                        destinationDir = currentDir;
-                    }
-
-                    for (FileInfo info : draggedFiles) {
-                        paths.add(info.getFilePath());
-                    }
-
-                    String sourceParent = new File(draggedFiles.get(0).getFilePath()).getParent();
-                    if (!new File(destinationDir).isDirectory()) {
-                        destinationDir = new File(destinationDir).getParent();
-                    }
-
-                    boolean value = destinationDir.equals(sourceParent);
-                    Logger.log(TAG, "Source parent=" + sourceParent + " " + value);
-
-
-                    if (!paths.contains(destinationDir)) {
-                        if (!destinationDir.equals(sourceParent)) {
-                            Logger.log(TAG, "Source parent=" + sourceParent + " Dest=" +
-                                    destinationDir);
-                            showDragDialog(draggedFiles, destinationDir);
-                        }
-                        else {
-                            final boolean isMoveOperation = false;
-                            ArrayList<FileInfo> info = new ArrayList<>();
-                            info.addAll(draggedFiles);
-                            PasteConflictChecker conflictChecker = new PasteConflictChecker
-                                    (BaseFileList.this,
-                                            destinationDir, mIsRootMode, isMoveOperation, info);
-                            conflictChecker.execute();
-                            clearSelectedPos();
-                            Logger.log(TAG, "Source=" + draggedFiles.get(0) + "Dest=" +
-                                    destinationDir);
-                            actionMode.finish();
-                        }
-                    }
-
-                    draggedData = new ArrayList<>();
+                    storagesUiView.onDragDropEvent(event);
                     return true;
 
                 case DragEvent.ACTION_DRAG_ENDED:
-
-                    View top1 = recyclerViewFileList.findChildViewUnder(event.getX(), event.getY());
-                    int position1 = recyclerViewFileList.getChildAdapterPosition(top1);
-                    @SuppressWarnings("unchecked")
-                    ArrayList<FileInfo> dragPaths = (ArrayList<FileInfo>) event.getLocalState();
-
-
-                    Logger.log(TAG, "DRAG END new pos=" + position1);
-                    Logger.log(TAG, "DRAG END Local state=" + dragPaths);
-                    Logger.log(TAG, "DRAG END result=" + event.getResult());
-                    Logger.log(TAG, "DRAG END currentDirSingle=" + mLastSinglePaneDir);
-                    Log.d(TAG, "DRag end");
-                    fileListAdapter.clearDragPos();
-                    if (!event.getResult() && position1 == RecyclerView.NO_POSITION) {
-                        ViewParent parent1 = v.getParent().getParent();
-
-                        if (((View) parent1).getId() == R.id.frame_container_dual) {
-                            Logger.log(TAG, "DRAG END parent dual =" + true);
-/*                            FileListDualFragment dualPaneFragment = (FileListDualFragment)
-                                    getFragmentManager()
-                                            .findFragmentById(R
-                                                    .id.frame_container_dual);
-                            Logger.log(TAG, "DRAG END Dual dir=" + mLastDualPaneDir);
-
-//                            Logger.log(TAG, "Source=" + draggedData.get(0) + "Dest=" +
-mLastDualPaneDir);
-                            if (dualPaneFragment != null && new File(mLastDualPaneDir).list()
-                            .length == 0 &&
-                                    dragPaths.size() != 0) {
-//                                if (!destinationDir.equals(paths.get(0))) {
-                                showDragDialog(dragPaths, mLastDualPaneDir);
-//                                }
-                            }*/
-                        }
-                        else {
-                            Logger.log(TAG, "DRAG END parent dual =" + false);
-                            BaseFileList singlePaneFragment = (BaseFileList)
-                                    getFragmentManager()
-                                            .findFragmentById(R
-                                                    .id.main_container);
-                            Logger.log(TAG, "DRAG END single dir=" + mLastSinglePaneDir);
-
-//                            Logger.log(TAG, "Source=" + draggedData.get(0) + "Dest=" +
-// mLastDualPaneDir);
-                            if (singlePaneFragment != null && new File(mLastSinglePaneDir).list()
-                                    .length == 0 &&
-                                    dragPaths.size() != 0) {
-//                                if (!destinationDir.equals(paths.get(0))) {
-                                showDragDialog(dragPaths, mLastSinglePaneDir);
-//                                }
-                            }
-                        }
-
-                    }
-                    draggedData = new ArrayList<>();
-                    // returns true; the value is ignored.
+                    storagesUiView.onDragEnded(v, event);
                     return true;
 
                 // An unknown action type was received.
@@ -415,4 +207,11 @@ mLastDualPaneDir);
             return false;
         }
     }
+
+    private DialogHelper.DragDialogListener dragDialogListener = new DialogHelper.DragDialogListener() {
+        @Override
+        public void onPositiveButtonClick(ArrayList<FileInfo> filesToPaste, String destinationDir, boolean isMove) {
+            storagesUiView.onPasteAction(isMove, filesToPaste, destinationDir);
+        }
+    };
 }

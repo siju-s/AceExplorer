@@ -19,6 +19,8 @@ package com.siju.acexplorer.storage.view;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 
 import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.home.model.LibrarySortModel;
@@ -48,8 +50,6 @@ public interface StoragesUi {
     void onDataLoaded(ArrayList<FileInfo> data);
 
     void handleActivityResult(int requestCode, int resultCode, Intent intent);
-
-    void updateFavoritesCount(int size);
 
     void init();
 
@@ -93,6 +93,10 @@ public interface StoragesUi {
     void removeHomeFromNavPath();
 
     void refreshSpan();
+
+    void performVoiceSearch(String query);
+
+    void onCreateOptionsMenu(Menu menu, MenuInflater inflater);
 
 
     interface Listener {

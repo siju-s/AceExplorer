@@ -84,7 +84,7 @@ public class MainBridge implements MainUi {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo
             menuInfo) {
-        uiView.onCreateContextMenu(menu, v, menuInfo);
+        uiView.onCreateContextMenu(menu, menuInfo);
     }
 
     @Override

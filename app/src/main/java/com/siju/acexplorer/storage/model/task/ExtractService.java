@@ -35,7 +35,7 @@ import com.siju.acexplorer.view.AceActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.helper.FileUtils;
-import com.siju.acexplorer.storage.model.zip.ZipUtils;
+import com.siju.acexplorer.storage.modules.zip.ZipUtils;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -144,7 +144,7 @@ public class ExtractService extends Service {
         long copiedbytes = 0, totalbytes = 0;
 
         private void createDir(File dir) {
-            mkdir(dir, context);
+            mkdir(dir);
         }
 
         AsyncTask asyncTask;

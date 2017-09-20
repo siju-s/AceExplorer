@@ -21,6 +21,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -34,6 +36,7 @@ import com.siju.acexplorer.storage.model.StorageModelImpl;
 import com.siju.acexplorer.storage.model.StoragesModel;
 import com.siju.acexplorer.storage.presenter.StoragesPresenter;
 import com.siju.acexplorer.storage.presenter.StoragesPresenterImpl;
+import com.siju.acexplorer.view.MainUiView;
 
 
 public class BaseFileList extends Fragment {
@@ -58,7 +61,7 @@ public class BaseFileList extends Fragment {
         Logger.log(TAG, "onActivityCreated" + savedInstanceState);
 
         LinearLayout linearLayout = getActivity().findViewById(R.id.home_base);
-        storagesUi = new StorageBridge(this, linearLayout, drawerListener);
+        storagesUi = new StorageBridge(this, linearLayout, favListener, drawerListener);
         storagesModel = new StorageModelImpl();
         LoaderHelper loaderHelper = new LoaderHelper(this);
 
@@ -75,9 +78,6 @@ public class BaseFileList extends Fragment {
         super.onDestroy();
     }
 
-    public void updateFavoritesCount(int size) {
-        storagesUi.updateFavoritesCount(size);
-    }
 
     public boolean onBackPressed() {
         return storagesUi.onBackPress();
@@ -116,8 +116,14 @@ public class BaseFileList extends Fragment {
         super.onDestroyView();
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        storagesUi.onCreateOptionsMenu(menu, inflater);
+    }
 
     public void performVoiceSearch(String query) {
+      storagesUi.performVoiceSearch(query);
     }
 
     public boolean isFabExpanded() {
@@ -146,5 +152,15 @@ public class BaseFileList extends Fragment {
 
     public void showDualPane() {
         storagesUi.showDualPane();
+    }
+
+    private StoragesUiView.FavoriteOperation favListener;
+    public void setFavoriteListener(StoragesUiView.FavoriteOperation favoriteListener) {
+        this.favListener = favoriteListener;
+    }
+    private DrawerListener drawerListener;
+
+    public void setDrawerListener(DrawerListener drawerListener) {
+        this.drawerListener = drawerListener;
     }
 }

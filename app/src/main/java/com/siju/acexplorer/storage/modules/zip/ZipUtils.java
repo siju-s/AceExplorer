@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.siju.acexplorer.storage.model.zip;
+package com.siju.acexplorer.storage.modules.zip;
 
 
 public class ZipUtils {

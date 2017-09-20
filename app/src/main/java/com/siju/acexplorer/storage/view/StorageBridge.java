@@ -21,6 +21,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.ViewGroup;
 
 import com.siju.acexplorer.billing.BillingStatus;
@@ -30,6 +32,7 @@ import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.storage.model.CopyData;
 import com.siju.acexplorer.storage.model.operations.Operations;
 import com.siju.acexplorer.view.DrawerListener;
+import com.siju.acexplorer.view.MainUiView;
 import com.siju.acexplorer.view.dialog.DialogHelper;
 
 import java.util.ArrayList;
@@ -45,12 +48,14 @@ public class StorageBridge implements StoragesUi {
     private Listener listener;
     private Fragment fragment;
 
-    StorageBridge(Fragment fragment, ViewGroup parent, DrawerListener drawerListener) {
+    StorageBridge(Fragment fragment, ViewGroup parent, StoragesUiView.FavoriteOperation favListener,
+                  DrawerListener drawerListener) {
         this.context = parent.getContext();
         this.fragment = fragment;
         uiView = StoragesUiView.inflate(parent);
         uiView.setBridgeRef(this);
         uiView.setFragment(fragment);
+        uiView.setFavListener(favListener);
         uiView.setDrawerListener(drawerListener);
         parent.addView(uiView);
     }
@@ -87,10 +92,6 @@ public class StorageBridge implements StoragesUi {
         uiView.handleActivityResult(requestCode, resultCode, intent);
     }
 
-    @Override
-    public void updateFavoritesCount(int size) {
-        uiView.updateFavoritesCount(size);
-    }
 
     @Override
     public void init() {
@@ -213,6 +214,17 @@ public class StorageBridge implements StoragesUi {
     @Override
     public void refreshSpan() {
         uiView.refreshSpan();
+    }
+
+    @Override
+    public void performVoiceSearch(String query) {
+        uiView.performVoiceSearch(query);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        uiView.onCreateOptionsMenu(menu, inflater);
+
     }
 
     void loadData(String currentDir, Category category, boolean isPicker) {

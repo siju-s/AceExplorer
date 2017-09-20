@@ -35,8 +35,9 @@ import java.nio.channels.FileChannel;
 
 import static com.siju.acexplorer.model.StorageUtils.getDocumentFile;
 import static com.siju.acexplorer.model.StorageUtils.isOnExtSdCard;
-import static com.siju.acexplorer.utils.Utils.isAtleastLollipop;
-import static com.siju.acexplorer.utils.Utils.isKitkat;
+import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastLollipop;
+import static com.siju.acexplorer.model.helper.SdkHelper.isKitkat;
+
 
 public class FileOperations {
 

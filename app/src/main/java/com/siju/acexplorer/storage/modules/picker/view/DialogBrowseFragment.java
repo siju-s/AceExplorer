@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.siju.acexplorer.storage.view;
+package com.siju.acexplorer.storage.modules.picker.view;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -24,13 +23,9 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -43,22 +38,24 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.model.FileConstants;
-import com.siju.acexplorer.model.helper.FileUtils;
-import com.siju.acexplorer.model.helper.MediaStoreHack;
+import com.siju.acexplorer.home.model.LoaderHelper;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.model.FileListLoader;
-import com.siju.acexplorer.permission.PermissionUtils;
+import com.siju.acexplorer.model.helper.FileUtils;
+import com.siju.acexplorer.model.helper.MediaStoreHack;
+import com.siju.acexplorer.permission.PermissionHelper;
+import com.siju.acexplorer.permission.PermissionResultCallback;
 import com.siju.acexplorer.storage.model.ViewMode;
+import com.siju.acexplorer.storage.modules.picker.model.PickerModel;
+import com.siju.acexplorer.storage.modules.picker.model.PickerModelImpl;
+import com.siju.acexplorer.storage.modules.picker.presenter.PickerPresenter;
+import com.siju.acexplorer.storage.modules.picker.presenter.PickerPresenterImpl;
+import com.siju.acexplorer.storage.view.FileListAdapter;
 import com.siju.acexplorer.storage.view.custom.DividerItemDecoration;
 import com.siju.acexplorer.storage.view.custom.recyclerview.FastScrollRecyclerView;
 import com.siju.acexplorer.theme.Theme;
 import com.siju.acexplorer.theme.ThemeUtils;
-import com.siju.acexplorer.utils.Dialogs;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -66,40 +63,40 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.siju.acexplorer.model.StorageUtils.getInternalStorage;
-import static com.siju.acexplorer.model.StorageUtils.getStorageDirectories;
 import static com.siju.acexplorer.model.groups.Category.FILES;
 import static com.siju.acexplorer.model.groups.Category.PICKER;
-import static com.siju.acexplorer.model.helper.helper.UriHelper.createContentUri;
+import static com.siju.acexplorer.model.helper.UriHelper.createContentUri;
 
 
-public class DialogBrowseFragment extends DialogFragment implements LoaderManager.LoaderCallbacks<ArrayList<FileInfo>> {
+public class DialogBrowseFragment extends DialogFragment implements
+        PickerUi,
+        PermissionResultCallback {
 
     private final String TAG = this.getClass().getSimpleName();
     private FastScrollRecyclerView recyclerViewFileList;
     private View root;
-    private final int LOADER_ID = 1000;
     private FileListAdapter fileListAdapter;
     private ArrayList<FileInfo> fileInfoList;
     private ArrayList<FileInfo> storagesInfoList;
     private ImageButton mImageButtonBack;
-    private TextView mTextCurrentPath;
+    private TextView textCurrentPath;
     private TextView mTitle;
-    private Button mButtonOk;
-    private Button mButtonCancel;
-    private String mCurrentPath;
-    private boolean mIsRingtonePicker;
+    private Button okButton;
+    private Button cancelButton;
+    private String currentPath;
+    private boolean isRingtonePicker;
     private boolean isFilePicker;
     private int mRingToneType;
     private Theme currentTheme;
     private static final int MY_PERMISSIONS_REQUEST = 1;
-    private static final int SETTINGS_REQUEST = 200;
-    private MaterialDialog materialDialog;
     private boolean mIsBackPressed;
     private LinearLayoutManager llm;
     private final HashMap<String, Bundle> scrollPosition = new HashMap<>();
     private TextView mTextEmpty;
-    private List<String> mStoragesList = new ArrayList<>();
+    private List<String> storagesList = new ArrayList<>();
     private boolean mInStoragesList;
+    private PermissionHelper permissionHelper;
+    private PickerPresenter pickerPresenter;
 
 
     @NonNull
@@ -108,14 +105,10 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
         return new Dialog(getActivity(), getTheme()) {
             @Override
             public void onBackPressed() {
-                if (checkIfRootDir())
+                if (checkIfRootDir()) {
                     reloadData();
-                else {
-                    getActivity().setResult(AppCompatActivity.RESULT_CANCELED, null);
-                    if (mIsRingtonePicker)
-                        getActivity().finish();
-                    else
-                        getDialog().dismiss();
+                } else {
+                    exitPicker();
                 }
             }
         };
@@ -139,24 +132,33 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
         if (getArguments() != null) {
             if (getArguments().getBoolean("ringtone_picker")) {
                 mTitle.setText(getString(R.string.dialog_title_picker));
-                mButtonOk.setVisibility(View.GONE);
-                mIsRingtonePicker = true;
+                okButton.setVisibility(View.GONE);
+                isRingtonePicker = true;
                 mRingToneType = getArguments().getInt("ringtone_type");
             } else if (getArguments().getBoolean("file_picker")) {
-                mButtonOk.setVisibility(View.GONE);
+                okButton.setVisibility(View.GONE);
                 isFilePicker = true;
             }
         }
 
+        PickerModel pickerModel = new PickerModelImpl();
+        pickerPresenter = new PickerPresenterImpl(this, pickerModel, new LoaderHelper(this),
+                getActivity().getSupportLoaderManager());
+
         loadStoragesList();
 
-        mCurrentPath = getInternalStorage();
-        mTextCurrentPath.setText(mCurrentPath);
+        currentPath = getInternalStorage();
+        textCurrentPath.setText(currentPath);
+
         recyclerViewFileList.setItemAnimator(new DefaultItemAnimator());
         fileListAdapter = new FileListAdapter(getContext(), fileInfoList, FILES, ViewMode.LIST);
         recyclerViewFileList.setAdapter(fileListAdapter);
 
+        setListeners();
+        setupPermissions();
+    }
 
+    private void setListeners() {
         fileListAdapter.setOnItemClickListener(new FileListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
@@ -164,17 +166,17 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
                 if (file.isDirectory()) {
                     mInStoragesList = false;
                     computeScroll();
-                    mCurrentPath = file.getAbsolutePath();
-                    mTextCurrentPath.setText(mCurrentPath);
-                    refreshList(mCurrentPath);
+                    currentPath = file.getAbsolutePath();
+                    textCurrentPath.setText(currentPath);
+                    refreshList(currentPath);
                 } else if (mInStoragesList) {
                     mInStoragesList = false;
                     File storagesFile = new File(fileInfoList.get(position).getFilePath());
-                    mCurrentPath = storagesFile.getAbsolutePath();
-                    mTextCurrentPath.setText(mCurrentPath);
-                    refreshList(mCurrentPath);
+                    currentPath = storagesFile.getAbsolutePath();
+                    textCurrentPath.setText(currentPath);
+                    refreshList(currentPath);
                 } else {
-                    if (mIsRingtonePicker) {
+                    if (isRingtonePicker) {
                         Intent intent = new Intent();
                         Uri mediaStoreUri = MediaStoreHack.getCustomRingtoneUri(getActivity().getContentResolver(),
                                 file.getAbsolutePath(), mRingToneType);
@@ -202,27 +204,21 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
             }
         });
 
-        mButtonOk.setOnClickListener(new View.OnClickListener() {
+        okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 Intent intent = new Intent();
-                intent.putExtra("PATH", mCurrentPath);
+                intent.putExtra("PATH", currentPath);
                 getTargetFragment().onActivityResult(getTargetRequestCode(), AppCompatActivity.RESULT_OK, intent);
                 getDialog().dismiss();
             }
         });
 
-        mButtonCancel.setOnClickListener(new View.OnClickListener() {
+        cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Logger.log(TAG, "cancel");
-                getActivity().setResult(AppCompatActivity.RESULT_CANCELED, null);
-                if (mIsRingtonePicker)
-                    getActivity().finish();
-                else
-                    getDialog().dismiss();
-
+                exitPicker();
             }
         });
 
@@ -231,10 +227,10 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
             @Override
             public void onClick(View view) {
                 mIsBackPressed = true;
-                if (mStoragesList.contains(mCurrentPath)) {
+                if (storagesList.contains(currentPath)) {
                     if (!mInStoragesList) {
                         mInStoragesList = true;
-                        mTextCurrentPath.setText("");
+                        textCurrentPath.setText("");
                         fileInfoList = storagesInfoList;
                         fileListAdapter.setStopAnimation(true);
                         fileListAdapter.updateAdapter(fileInfoList);
@@ -242,47 +238,168 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
                     }
                 } else {
                     mInStoragesList = false;
-                    mCurrentPath = new File(mCurrentPath).getParent();
-                    mTextCurrentPath.setText(mCurrentPath);
-                    refreshList(mCurrentPath);
+                    currentPath = new File(currentPath).getParent();
+                    textCurrentPath.setText(currentPath);
+                    refreshList(currentPath);
                 }
 
 
             }
         });
 
-        if (PermissionUtils.isAtLeastM() && !PermissionUtils.hasRequiredPermissions()) {
-            requestPermission();
-        } else {
-            loadData();
-        }
         getDialog().setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
                 Logger.log(TAG, "Cancel");
-                getActivity().setResult(AppCompatActivity.RESULT_CANCELED, null);
-                if (mIsRingtonePicker)
-                    getActivity().finish();
-                else
-                    getDialog().dismiss();
+                exitPicker();
             }
         });
+    }
 
+    private void setupPermissions() {
+        permissionHelper = new PermissionHelper(getActivity(), this);
+        permissionHelper.checkPermissions();
+    }
 
+    private void exitPicker() {
+        getActivity().setResult(AppCompatActivity.RESULT_CANCELED, null);
+        if (isRingtonePicker) {
+            getActivity().finish();
+        } else {
+            getDialog().dismiss();
+        }
     }
 
     private boolean checkIfRootDir() {
-        return !mCurrentPath.equals(getInternalStorage());
+        return !currentPath.equals(getInternalStorage());
     }
 
 
     private void loadStoragesList() {
-        mStoragesList = getStorageDirectories();
+        pickerPresenter.getStoragesList();
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[]
+                                                   grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST:
+                permissionHelper.onPermissionResult();
+                break;
+        }
+    }
+
+
+    @Override
+    public void onResume() {
+        permissionHelper.onResume();
+        super.onResume();
+    }
+
+
+    private void initializeViews() {
+        recyclerViewFileList = root.findViewById(R.id.recyclerViewFileList);
+        recyclerViewFileList.setHasFixedSize(true);
+        llm = new LinearLayoutManager(getActivity());
+        recyclerViewFileList.setLayoutManager(llm);
+        SwipeRefreshLayout mSwipeRefreshLayout = root.findViewById(R.id.swipeRefreshLayout);
+        mSwipeRefreshLayout.setEnabled(false);
+        mTextEmpty = root.findViewById(R.id.textEmpty);
+        mImageButtonBack = root.findViewById(R.id.imageButtonBack);
+        textCurrentPath = root.findViewById(R.id.textPath);
+        okButton = root.findViewById(R.id.buttonOk);
+        cancelButton = root.findViewById(R.id.buttonCancel);
+        mTitle = root.findViewById(R.id.textDialogTitle);
+
+    }
+
+    private void refreshList(String path) {
+        pickerPresenter.loadData(path, isRingtonePicker);
+        fileInfoList = new ArrayList<>();
+        if (fileListAdapter != null) {
+            fileListAdapter.clearList();
+        }
+    }
+
+    private void reloadData() {
+        mIsBackPressed = true;
+        currentPath = new File(currentPath).getParent();
+        textCurrentPath.setText(currentPath);
+        refreshList(currentPath);
+    }
+
+    private void computeScroll() {
+        View vi = recyclerViewFileList.getChildAt(0);
+        int top = (vi == null) ? 0 : vi.getTop();
+        int index = llm.findFirstVisibleItemPosition();
+
+        Bundle b = new Bundle();
+        b.putInt("index", index);
+        b.putInt("top", top);
+        scrollPosition.put(currentPath, b);
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        fileListAdapter.setStopAnimation(false);
+        getActivity().setResult(AppCompatActivity.RESULT_OK, null);
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onPermissionGranted(String[] permissionName) {
+        refreshList(currentPath);
+    }
+
+    @Override
+    public void onPermissionDeclined(String[] permissionName) {
+
+    }
+
+    @Override
+    public void onDataLoaded(ArrayList<FileInfo> data) {
+        if (data != null) {
+            Log.d("TAG", "on onLoadFinished--" + data.size());
+            fileInfoList = data;
+            fileListAdapter.setStopAnimation(true);
+            fileListAdapter.updateAdapter(fileInfoList);
+            recyclerViewFileList.setAdapter(fileListAdapter);
+            recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), currentTheme));
+            if (!data.isEmpty()) {
+                if (mIsBackPressed) {
+                    Log.d("TEST", "on onLoadFinished scrollpos--" + scrollPosition.entrySet());
+
+                    if (scrollPosition.containsKey(currentPath)) {
+                        Bundle b = scrollPosition.get(currentPath);
+                        llm.scrollToPositionWithOffset(b.getInt("index"), b.getInt("top"));
+                    }
+                    mIsBackPressed = false;
+                }
+                recyclerViewFileList.stopScroll();
+                mTextEmpty.setVisibility(View.GONE);
+            } else {
+                mTextEmpty.setText(getString(R.string.no_music));
+                mTextEmpty.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+    @Override
+    public void setListener(Listener listener) {
+
+    }
+
+    @Override
+    public void onStoragesFetched(List<String> storagesList) {
+        this.storagesList = storagesList;
         storagesInfoList = new ArrayList<>();
         String STORAGE_INTERNAL, STORAGE_EXTERNAL;
         STORAGE_INTERNAL = getResources().getString(R.string.nav_menu_internal_storage);
         STORAGE_EXTERNAL = getResources().getString(R.string.nav_menu_ext_storage);
-        for (String path : mStoragesList) {
+        for (String path : this.storagesList) {
             File file = new File(path);
             int icon;
             String name;
@@ -302,208 +419,4 @@ public class DialogBrowseFragment extends DialogFragment implements LoaderManage
             }
         }
     }
-
-    private void loadData() {
-
-        Bundle args = new Bundle();
-        getLoaderManager().initLoader(LOADER_ID, args, this);
-    }
-
-    /**
-     * Brings up the Permission Dialog
-     */
-    private void requestPermission() {
-        Log.d(TAG, "Permission dialog");
-        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission
-                .WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST);
-    }
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[]
-                                                   grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST:
-
-                if (PermissionUtils.hasRequiredPermissions()) {
-                    // Permission granted
-                    Log.d(TAG, "Permission granted");
-                    loadData();
-                } else {
-                    showRationale();
-                }
-        }
-    }
-
-
-    private void showRationale() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission
-                .WRITE_EXTERNAL_STORAGE)) {
-            createRationaleDialog(false);
-        } else {
-            createRationaleDialog(true);
-        }
-
-    }
-
-    private void createRationaleDialog(final boolean showSettings) {
-        String title = getString(R.string.need_permission);
-        String texts[] = new String[]{title, getString(R.string.action_grant), "", getString(R.string
-                .dialog_cancel)};
-        if (showSettings) {
-            texts[1] = getString(R.string.action_settings);
-        }
-
-        materialDialog = new Dialogs().showDialog(getActivity(), texts);
-        materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                materialDialog.dismiss();
-                if (showSettings) {
-                    Intent intent = new Intent();
-                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                    Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
-                    intent.setData(uri);
-                    startActivityForResult(intent, SETTINGS_REQUEST);
-                } else
-                    requestPermission();
-            }
-        });
-
-        materialDialog.getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                materialDialog.dismiss();
-            }
-        });
-
-        materialDialog.show();
-
-
-    }
-
-    @Override
-    public void onResume() {
-
-        if (materialDialog != null && materialDialog.isShowing()) {
-            if (PermissionUtils.hasRequiredPermissions()) {
-                materialDialog.dismiss();
-                loadData();
-            }
-        }
-        super.onResume();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == SETTINGS_REQUEST) {
-            // User clicked the Setting button and we have permissions,setup the data
-            if (PermissionUtils.hasRequiredPermissions()) {
-                loadData();
-            } else {
-                // User clicked the Setting button and we don't permissions,show snackbar again
-                createRationaleDialog(true);
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    private void initializeViews() {
-        recyclerViewFileList = (FastScrollRecyclerView) root.findViewById(R.id.recyclerViewFileList);
-        recyclerViewFileList.setHasFixedSize(true);
-        llm = new LinearLayoutManager(getActivity());
-        recyclerViewFileList.setLayoutManager(llm);
-        SwipeRefreshLayout mSwipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipeRefreshLayout);
-        mSwipeRefreshLayout.setEnabled(false);
-        mTextEmpty = (TextView) root.findViewById(R.id.textEmpty);
-        mImageButtonBack = (ImageButton) root.findViewById(R.id.imageButtonBack);
-        mTextCurrentPath = (TextView) root.findViewById(R.id.textPath);
-        mButtonOk = (Button) root.findViewById(R.id.buttonOk);
-        mButtonCancel = (Button) root.findViewById(R.id.buttonCancel);
-        mTitle = (TextView) root.findViewById(R.id.textDialogTitle);
-
-    }
-
-    private void refreshList(String path) {
-        Bundle args = new Bundle();
-        args.putString(FileConstants.KEY_PATH, path);
-        getLoaderManager().restartLoader(LOADER_ID, args, this);
-    }
-
-    private void reloadData() {
-        mIsBackPressed = true;
-        mCurrentPath = new File(mCurrentPath).getParent();
-        mTextCurrentPath.setText(mCurrentPath);
-        refreshList(mCurrentPath);
-    }
-
-    private void computeScroll() {
-        View vi = recyclerViewFileList.getChildAt(0);
-        int top = (vi == null) ? 0 : vi.getTop();
-        int index = llm.findFirstVisibleItemPosition();
-
-        Bundle b = new Bundle();
-        b.putInt("index", index);
-        b.putInt("top", top);
-        scrollPosition.put(mCurrentPath, b);
-    }
-
-
-    @Override
-    public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
-        fileInfoList = new ArrayList<>();
-        if (fileListAdapter != null) {
-            fileListAdapter.clearList();
-        }
-        String path;
-        if (args != null) {
-            path = args.getString(FileConstants.KEY_PATH, getInternalStorage());
-        } else {
-            path = getInternalStorage();
-        }
-        return new FileListLoader(this, path, FILES, mIsRingtonePicker);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
-        if (data != null) {
-            Log.d("TAG", "on onLoadFinished--" + data.size());
-            fileInfoList = data;
-            fileListAdapter.setStopAnimation(true);
-            fileListAdapter.updateAdapter(fileInfoList);
-            recyclerViewFileList.setAdapter(fileListAdapter);
-            recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), currentTheme));
-            if (!data.isEmpty()) {
-                if (mIsBackPressed) {
-                    Log.d("TEST", "on onLoadFinished scrollpos--" + scrollPosition.entrySet());
-
-                    if (scrollPosition.containsKey(mCurrentPath)) {
-                        Bundle b = scrollPosition.get(mCurrentPath);
-                        llm.scrollToPositionWithOffset(b.getInt("index"), b.getInt("top"));
-                    }
-                    mIsBackPressed = false;
-                }
-                recyclerViewFileList.stopScroll();
-                mTextEmpty.setVisibility(View.GONE);
-            } else {
-                mTextEmpty.setText(getString(R.string.no_music));
-                mTextEmpty.setVisibility(View.VISIBLE);
-            }
-        }
-
-    }
-
-    @Override
-    public void onLoaderReset(Loader<ArrayList<FileInfo>> loader) {
-
-    }
-
-    @Override
-    public void onDestroyView() {
-        fileListAdapter.setStopAnimation(false);
-        getActivity().setResult(AppCompatActivity.RESULT_OK, null);
-        super.onDestroyView();
-    }
-
 }

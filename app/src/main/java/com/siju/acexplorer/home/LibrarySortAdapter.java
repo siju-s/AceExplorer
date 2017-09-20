@@ -29,7 +29,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.filesystem.OnStartDragListener;
 import com.siju.acexplorer.storage.view.custom.helper.ItemTouchHelperViewHolder;
 import com.siju.acexplorer.home.model.LibrarySortModel;
 import com.siju.acexplorer.storage.view.custom.helper.ItemTouchHelperAdapter;

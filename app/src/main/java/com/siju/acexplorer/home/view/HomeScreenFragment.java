@@ -25,14 +25,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.siju.acexplorer.view.DrawerListener;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.home.model.HomeModel;
 import com.siju.acexplorer.home.model.HomeModelImpl;
 import com.siju.acexplorer.home.model.LoaderHelper;
 import com.siju.acexplorer.home.presenter.HomePresenter;
 import com.siju.acexplorer.home.presenter.HomePresenterImpl;
+import com.siju.acexplorer.logging.Logger;
+import com.siju.acexplorer.view.DrawerListener;
 
 public class HomeScreenFragment extends Fragment {
 
@@ -100,5 +100,18 @@ public class HomeScreenFragment extends Fragment {
 
     public void setDrawerListener(DrawerListener drawerListener) {
         this.drawerListener = drawerListener;
+    }
+
+    public void removeFavorites(int size) {
+        homeView.removeFavorites(size);
+    }
+
+    public void onPermissionGranted() {
+        homeView.onPermissionGranted();
+    }
+
+
+     public void showDualMode() {
+        homeView.showDualMode();
     }
 }

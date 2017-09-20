@@ -17,8 +17,8 @@
 package com.siju.acexplorer.storage.model.task;
 
 
+import android.content.Context;
 import android.os.AsyncTask;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import com.github.junrar.Archive;
@@ -35,12 +35,14 @@ import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static com.siju.acexplorer.model.helper.helper.ViewHelper.viewFile;
+import static com.siju.acexplorer.model.helper.ViewHelper.viewFile;
 
+
+// TODO: 20/09/17 Convert this to IntentService
 public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
     private final String outputDir;
     private ZipFile zipFile;
-    private final Fragment fragment;
+    private final Context context;
     private final String fileName;
     private final boolean zip;
     private ZipEntry entry;
@@ -48,22 +50,22 @@ public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
     private FileHeader header;
     private File output;
 
-    public ExtractZipEntry(ZipFile zipFile, String outputDir, Fragment fragment, String fileName,
+    public ExtractZipEntry(Context context, ZipFile zipFile, String outputDir, String fileName,
                            ZipEntry zipEntry) {
+        this.context = context;
         this.zip = true;
         this.outputDir = outputDir;
         this.zipFile = zipFile;
-        this.fragment = fragment;
         this.fileName = fileName;
         this.entry = zipEntry;
     }
 
-    public ExtractZipEntry(Archive rar, String outputDir, Fragment fragment, String fileName,
+    public ExtractZipEntry(Context context, Archive rar, String outputDir, String fileName,
                            FileHeader fileHeader) {
         this.zip = false;
         this.outputDir = outputDir;
         this.rar = rar;
-        this.fragment = fragment;
+        this.context = context;
         this.fileName = fileName;
         this.header = fileHeader;
     }
@@ -89,7 +91,7 @@ public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
         RootHelper.runAndWait(cmd);
         String outputPath = output.getPath();
         String extension = outputPath.substring(outputPath.lastIndexOf(".") + 1, outputPath.length());
-        viewFile(fragment, outputPath, extension);
+        viewFile(context, outputPath, extension);
 
     }
 

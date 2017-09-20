@@ -70,6 +70,8 @@ public class PermissionHelper {
     public void checkPermissions() {
         if (!PermissionUtils.hasRequiredPermissions()) {
             requestPermission();
+        } else {
+            permissionCallback.onPermissionGranted(permissions);
         }
     }
 

@@ -49,6 +49,12 @@ public interface HomeView {
 
     void init();
 
+    void removeFavorites(int size);
+
+    void onPermissionGranted();
+
+    void showDualMode();
+
 
     interface Listener {
 

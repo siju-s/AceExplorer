@@ -29,13 +29,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.webkit.MimeTypeMap;
 
-import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.home.view.HomeScreenFragment;
+import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.groups.Category;
-import com.siju.acexplorer.model.root.RootUtils;
 import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.model.helper.RootHelper;
 import com.siju.acexplorer.model.helper.root.RootTools;
+import com.siju.acexplorer.model.root.RootUtils;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -44,9 +44,9 @@ import java.util.ArrayList;
 import static com.siju.acexplorer.model.groups.Category.FILES;
 import static com.siju.acexplorer.model.groups.Category.LARGE_FILES;
 import static com.siju.acexplorer.model.groups.Category.PDF;
-import static com.siju.acexplorer.model.helper.helper.SortHelper.sortFiles;
 import static com.siju.acexplorer.model.helper.FileUtils.checkMimeType;
 import static com.siju.acexplorer.model.helper.RootHelper.parseFilePermission;
+import static com.siju.acexplorer.model.helper.SortHelper.sortFiles;
 
 
 public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
@@ -197,7 +197,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
     }
 
-    private static ArrayList<FileInfo> getNonRootedList(File file,boolean showHidden,
+    private static ArrayList<FileInfo> getNonRootedList(File file, boolean showHidden,
                                                         boolean isRingtonePicker) {
 
         ArrayList<FileInfo> fileInfoArrayList = new ArrayList<>();
@@ -457,7 +457,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
     /**
      * Fetch all the docs from device
-     *
      *
      * @return Files
      */

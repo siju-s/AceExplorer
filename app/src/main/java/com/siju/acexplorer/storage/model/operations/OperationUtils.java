@@ -23,6 +23,8 @@ import java.io.File;
 import static com.siju.acexplorer.model.StorageUtils.isOnExtSdCard;
 import static com.siju.acexplorer.model.helper.FileUtils.isFileNonWritable;
 import static com.siju.acexplorer.model.helper.FileUtils.isWritable;
+import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastLollipop;
+import static com.siju.acexplorer.model.helper.SdkHelper.isKitkat;
 
 public class OperationUtils {
 
@@ -39,6 +41,8 @@ public class OperationUtils {
     public static final String ACTION_OP_FAILED = "failed";
     public static final String KEY_RESULT = "result";
     public static final String KEY_MOVE = "move";
+    public static final String KEY_COUNT = "count";
+    public static final String KEY_SHOW_RESULT = "show_result";
 
 
     public enum WriteMode {
@@ -51,7 +55,7 @@ public class OperationUtils {
     public static WriteMode checkFolder(final String f) {
         if (f == null) return WriteMode.ROOT;
         File folder = new File(f);
-        if (Utils.isAtleastLollipop() && isOnExtSdCard(folder)) {
+        if (isAtleastLollipop() && isOnExtSdCard(folder)) {
             if (!folder.exists() || !folder.isDirectory()) {
                 return WriteMode.ROOT;
             }
@@ -61,7 +65,7 @@ public class OperationUtils {
                 return WriteMode.EXTERNAL;
             }
             return WriteMode.INTERNAL;
-        } else if (Utils.isKitkat() && isOnExtSdCard(folder)) {
+        } else if (isKitkat() && isOnExtSdCard(folder)) {
             // Assume that Kitkat workaround works
             return WriteMode.INTERNAL;
         } else if (isWritable(new File(folder, "DummyFile"))) {

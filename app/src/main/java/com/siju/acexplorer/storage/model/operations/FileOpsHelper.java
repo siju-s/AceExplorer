@@ -19,7 +19,6 @@ package com.siju.acexplorer.storage.model.operations;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
@@ -27,28 +26,27 @@ import android.widget.Toast;
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.logging.Logger;
-import com.siju.acexplorer.model.helper.SdkHelper;
-import com.siju.acexplorer.permission.PermissionResultCallback;
-import com.siju.acexplorer.storage.model.CopyData;
 import com.siju.acexplorer.model.FileInfo;
+import com.siju.acexplorer.model.helper.FileOperations;
+import com.siju.acexplorer.model.helper.FileUtils;
+import com.siju.acexplorer.model.helper.SdkHelper;
 import com.siju.acexplorer.model.root.RootDeniedException;
 import com.siju.acexplorer.model.root.RootOperations;
 import com.siju.acexplorer.model.root.RootUtils;
+import com.siju.acexplorer.storage.model.CopyData;
 import com.siju.acexplorer.storage.model.StorageModelImpl;
-import com.siju.acexplorer.storage.model.task.CopyService;
 import com.siju.acexplorer.storage.model.task.CreateZipTask;
 import com.siju.acexplorer.storage.model.task.DeleteTask;
 import com.siju.acexplorer.storage.model.task.ExtractService;
-import com.siju.acexplorer.storage.model.task.MoveFiles;
-import com.siju.acexplorer.model.helper.FileOperations;
-import com.siju.acexplorer.model.helper.FileUtils;
-import com.siju.acexplorer.utils.Utils;
 import com.stericson.RootTools.RootTools;
 import com.stericson.RootTools.execution.Command;
 
 import java.io.File;
 import java.util.ArrayList;
 
+import static com.siju.acexplorer.model.StorageUtils.isOnExtSdCard;
+import static com.siju.acexplorer.model.helper.FileOperations.renameFolder;
+import static com.siju.acexplorer.model.root.RootOperations.renameRoot;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_CONFLICT_DATA;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH2;
@@ -58,9 +56,6 @@ import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_PO
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.WriteMode.INTERNAL;
 import static com.siju.acexplorer.storage.model.operations.Operations.FILE_CREATION;
 import static com.siju.acexplorer.storage.model.operations.Operations.FOLDER_CREATION;
-import static com.siju.acexplorer.model.root.RootOperations.renameRoot;
-import static com.siju.acexplorer.model.StorageUtils.isOnExtSdCard;
-import static com.siju.acexplorer.model.helper.FileOperations.renameFolder;
 
 
 public class FileOpsHelper {
@@ -151,8 +146,7 @@ public class FileOpsHelper {
                 Log.d(TAG, "doInBackground: exists=" + exists);
                 if (exists) {
                     fileOperationCallBack.exists(FILE_CREATION);
-                }
-                else {
+                } else {
                     boolean result = FileOperations.mkfile(file);
                     if (!result && isRoot) {
                         try {
@@ -217,8 +211,7 @@ public class FileOpsHelper {
                         .getName());
                 if (exists1) {
                     fileOperationCallBack.exists(Operations.RENAME);
-                }
-                else {
+                } else {
                     boolean result1 = renameFolder(oldFile, newFile);
                     boolean fileCreated1 = !oldFile.exists() && newFile.exists();
                     Logger.log(TAG, "Rename--filexists=" + fileCreated1 + "MODE=" + INTERNAL +
@@ -253,7 +246,7 @@ public class FileOpsHelper {
 
 
     public static void setPermissions(String path, boolean isDir, String permissions, StorageModelImpl.PermissionResultCallback
-                                      permissionResultCallback) {
+            permissionResultCallback) {
 
         String command = "chmod " + permissions + " " + path;
         if (isDir) {
@@ -278,7 +271,7 @@ public class FileOpsHelper {
             RootUtils.mountRO(path);
             permissionResultCallback.onPermissionsSet();
         } catch (Exception e1) {
-           permissionResultCallback.onError();
+            permissionResultCallback.onError();
             e1.printStackTrace();
         }
 
@@ -290,14 +283,12 @@ public class FileOpsHelper {
         if (mode == OperationUtils.WriteMode.EXTERNAL) {
             formSAFIntentExtract(file.getAbsolutePath(), Operations.EXTRACT, currentFile
                     .getAbsolutePath());
-        }
-        else if (mode == OperationUtils.WriteMode.INTERNAL) {
+        } else if (mode == OperationUtils.WriteMode.INTERNAL) {
             Intent intent = new Intent(context, ExtractService.class);
             intent.putExtra(KEY_FILEPATH, currentFile.getPath());
             intent.putExtra(KEY_FILEPATH2, file.getAbsolutePath());
             new OperationProgress().showExtractProgressDialog(context, intent);
-        }
-        else {
+        } else {
             Toast.makeText(context, R.string.msg_operation_failed, Toast
                     .LENGTH_SHORT).show();
         }
@@ -309,14 +300,12 @@ public class FileOpsHelper {
 
         if (mode == OperationUtils.WriteMode.EXTERNAL) {
             formSAFIntentCompress(newFile.getAbsolutePath(), files, Operations.COMPRESS);
-        }
-        else if (mode == OperationUtils.WriteMode.INTERNAL) {
+        } else if (mode == OperationUtils.WriteMode.INTERNAL) {
             Intent zipIntent = new Intent(context, CreateZipTask.class);
             zipIntent.putExtra(KEY_FILEPATH, newFile.getAbsolutePath());
             zipIntent.putParcelableArrayListExtra(KEY_FILES, files);
             new OperationProgress().showZipProgressDialog(context, zipIntent);
-        }
-        else {
+        } else {
             Toast.makeText(context, R.string.msg_operation_failed, Toast
                     .LENGTH_SHORT).show();
         }
@@ -388,24 +377,21 @@ public class FileOpsHelper {
                 return OperationUtils.WriteMode.EXTERNAL;
             }
             return OperationUtils.WriteMode.INTERNAL;
-        }
-        else if (SdkHelper.isKitkat() && isOnExtSdCard(folder)) {
+        } else if (SdkHelper.isKitkat() && isOnExtSdCard(folder)) {
             // Assume that Kitkat workaround works
             return OperationUtils.WriteMode.INTERNAL;
-        }
-        else if (FileUtils.isWritable(new File(folder, "DummyFile"))) {
+        } else if (FileUtils.isWritable(new File(folder, "DummyFile"))) {
             return OperationUtils.WriteMode.INTERNAL;
-        }
-        else {
+        } else {
             return OperationUtils.WriteMode.ROOT;
         }
     }
 
 
     public void handleSAFOpResult(Intent intent, boolean isRooted, FileOperationCallBack
-            fileOperationCallBack, DeleteTask.DeleteResultCallback deleteResultCallback) {
+            fileOperationCallBack, DeleteTask.DeleteResultCallback deleteResultCallback,
+                                  StorageModelImpl storageModel) {
         Operations operation = (Operations) intent.getSerializableExtra(KEY_OPERATION);
-        Context context = AceApplication.getAppContext();
 
         switch (operation) {
 
@@ -418,15 +404,11 @@ public class FileOpsHelper {
 
             case COPY:
 
-                Intent copyIntent = new Intent(context, CopyService.class);
                 ArrayList<FileInfo> copiedFiles = intent.getParcelableArrayListExtra(KEY_FILES);
                 ArrayList<CopyData> copyData = intent.getParcelableArrayListExtra
                         (KEY_CONFLICT_DATA);
                 String destinationPath = intent.getStringExtra(KEY_FILEPATH);
-                copyIntent.putParcelableArrayListExtra(KEY_FILES, copiedFiles);
-                copyIntent.putParcelableArrayListExtra(KEY_CONFLICT_DATA, copyData);
-                copyIntent.putExtra(KEY_FILEPATH, destinationPath);
-                new OperationProgress().showCopyProgressDialog(context, copyIntent);
+                storageModel.startPasteOperation(destinationPath, copiedFiles, copyData, false);
                 break;
 
             case CUT:
@@ -434,8 +416,7 @@ public class FileOpsHelper {
                 ArrayList<CopyData> moveData = intent.getParcelableArrayListExtra
                         (KEY_CONFLICT_DATA);
                 String destinationMovePath = intent.getStringExtra(KEY_FILEPATH);
-                new MoveFiles(context, movedFiles, moveData).executeOnExecutor
-                        (AsyncTask.THREAD_POOL_EXECUTOR, destinationMovePath);
+                storageModel.startPasteOperation(destinationMovePath, movedFiles, moveData, true);
                 break;
 
             case FOLDER_CREATION:

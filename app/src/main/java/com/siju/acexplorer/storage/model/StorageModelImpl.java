@@ -56,10 +56,14 @@ import java.util.List;
 import static com.siju.acexplorer.model.helper.MediaStoreHelper.scanFile;
 import static com.siju.acexplorer.model.helper.PermissionsHelper.parse;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH;
+import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_COUNT;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH2;
+import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_POSITION;
+import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_SHOW_RESULT;
+import static com.siju.acexplorer.storage.model.operations.Operations.DELETE;
 import static com.siju.acexplorer.storage.model.operations.Operations.RENAME;
 
 /**
@@ -137,7 +141,7 @@ public class StorageModelImpl implements StoragesModel {
             context.getContentResolver().takePersistableUriPermission(treeUri,
                     flags);
             fileOpsHelper.handleSAFOpResult(operationIntent, rooted, fileOperationCallBack,
-                    deleteResultCallback);
+                    deleteResultCallback, this);
         }
 
     }
@@ -322,7 +326,7 @@ public class StorageModelImpl implements StoragesModel {
     };
 
 
-    private void startPasteOperation(String destinationDir, List<FileInfo> files, List<CopyData> copyData,
+    public void startPasteOperation(String destinationDir, List<FileInfo> files, List<CopyData> copyData,
                                      boolean isMove) {
 
         if (isMove) {
@@ -513,8 +517,15 @@ public class StorageModelImpl implements StoragesModel {
 
 
         @Override
-        public void onFileDeleted(int deletedCount, List<FileInfo> fileList, boolean showToast) {
-
+        public void onFileDeleted(int totalFiles, List<FileInfo> deletedFiles, boolean showToast) {
+            Intent intent = new Intent(ACTION_OP_REFRESH);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(KEY_OPERATION, DELETE);
+            bundle.putParcelableArrayList(KEY_FILES, (ArrayList<? extends Parcelable>) deletedFiles);
+            intent.putExtra(KEY_COUNT, totalFiles);
+            intent.putExtra(KEY_SHOW_RESULT, showToast);
+            intent.putExtras(bundle);
+            context.sendBroadcast(intent);
         }
     };
 
