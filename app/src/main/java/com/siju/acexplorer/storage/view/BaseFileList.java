@@ -27,25 +27,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.siju.acexplorer.model.groups.Category;
-import com.siju.acexplorer.view.DrawerListener;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.home.model.LoaderHelper;
+import com.siju.acexplorer.logging.Logger;
+import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.storage.model.StorageModelImpl;
 import com.siju.acexplorer.storage.model.StoragesModel;
-import com.siju.acexplorer.storage.presenter.StoragesPresenter;
 import com.siju.acexplorer.storage.presenter.StoragesPresenterImpl;
-import com.siju.acexplorer.view.MainUiView;
+import com.siju.acexplorer.view.DrawerListener;
 
 
 public class BaseFileList extends Fragment {
 
     private final String TAG = this.getClass().getSimpleName();
 
-    private StoragesPresenter storagesPresenter;
     private StoragesUi storagesUi;
-    private StoragesModel storagesModel;
 
     @Override
     public View onCreateView(
@@ -62,10 +58,10 @@ public class BaseFileList extends Fragment {
 
         LinearLayout linearLayout = getActivity().findViewById(R.id.home_base);
         storagesUi = new StorageBridge(this, linearLayout, favListener, drawerListener);
-        storagesModel = new StorageModelImpl();
+        StoragesModel storagesModel = new StorageModelImpl();
         LoaderHelper loaderHelper = new LoaderHelper(this);
 
-        storagesPresenter = new StoragesPresenterImpl(storagesUi, storagesModel, loaderHelper,
+        new StoragesPresenterImpl(storagesUi, storagesModel, loaderHelper,
                 getActivity().getSupportLoaderManager());
 
         storagesUi.init();
@@ -123,7 +119,7 @@ public class BaseFileList extends Fragment {
     }
 
     public void performVoiceSearch(String query) {
-      storagesUi.performVoiceSearch(query);
+        storagesUi.performVoiceSearch(query);
     }
 
     public boolean isFabExpanded() {
@@ -155,12 +151,18 @@ public class BaseFileList extends Fragment {
     }
 
     private StoragesUiView.FavoriteOperation favListener;
+
     public void setFavoriteListener(StoragesUiView.FavoriteOperation favoriteListener) {
         this.favListener = favoriteListener;
     }
+
     private DrawerListener drawerListener;
 
     public void setDrawerListener(DrawerListener drawerListener) {
         this.drawerListener = drawerListener;
+    }
+
+    public void setPremium() {
+        storagesUi.setPremium();
     }
 }

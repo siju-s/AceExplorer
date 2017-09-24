@@ -17,12 +17,17 @@
 package com.siju.acexplorer.storage.modules.zip;
 
 
+import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.view.View;
 
 import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
@@ -38,6 +43,7 @@ import com.siju.acexplorer.storage.model.backstack.NavigationCallback;
 import com.siju.acexplorer.storage.model.backstack.NavigationInfo;
 import com.siju.acexplorer.storage.model.task.ExtractZipEntry;
 import com.siju.acexplorer.storage.view.StoragesUiView;
+import com.siju.acexplorer.view.dialog.DialogHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,9 +51,13 @@ import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import static android.webkit.MimeTypeMap.getSingleton;
 import static com.siju.acexplorer.model.StorageUtils.getInternalStorage;
 import static com.siju.acexplorer.model.groups.Category.FILES;
 import static com.siju.acexplorer.model.groups.Category.ZIP_VIEWER;
+import static com.siju.acexplorer.model.helper.UriHelper.createContentUri;
+import static com.siju.acexplorer.model.helper.UriHelper.grantUriPermission;
+import static com.siju.acexplorer.model.helper.ViewHelper.openWith;
 
 public class ZipViewer implements ZipElements, NavigationCallback {
 
@@ -252,8 +262,8 @@ public class ZipViewer implements ZipElements, NavigationCallback {
                         zipFile = new ZipFile(zipParentPath);
                     }
                     zipEntry1 = zipEntry;
-                    new ExtractZipEntry(fragment, zipFile, cacheDirPath,
-                            name, zipEntry1)
+                    new ExtractZipEntry(zipFile, cacheDirPath,
+                            name, zipEntry1, alertDialogListener)
                             .execute();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -268,8 +278,8 @@ public class ZipViewer implements ZipElements, NavigationCallback {
 
                 try {
                     Archive rarFile = new Archive(new File(zipParentPath));
-                    new ExtractZipEntry(fragment, rarFile, cacheDirPath,
-                            name, fileHeader)
+                    new ExtractZipEntry(rarFile, cacheDirPath,
+                            name, fileHeader, alertDialogListener)
                             .execute();
 
                 } catch (IOException | RarException e) {
@@ -346,4 +356,36 @@ public class ZipViewer implements ZipElements, NavigationCallback {
     public void onLoaderReset(Loader<ArrayList<FileInfo>> loader) {
 
     }
+
+    // Dialog for SAF
+    private DialogHelper.AlertDialogListener alertDialogListener = new DialogHelper
+            .AlertDialogListener() {
+
+        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+        @Override
+        public void onPositiveButtonClick(View view) {
+            Uri uri = createContentUri(fragment.getContext(), currentDir);
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_INSTALL_PACKAGE);
+
+            String mimeType = getSingleton().getMimeTypeFromExtension("apk");
+            intent.setData(uri);
+
+            if (mimeType != null) {
+                grantUriPermission(fragment.getContext(), intent, uri);
+            } else {
+                openWith(uri, fragment.getContext());
+            }
+        }
+
+        @Override
+        public void onNegativeButtonClick(View view) {
+            storagesUiView.openZipViewer(currentDir);
+        }
+
+        @Override
+        public void onNeutralButtonClick(View view) {
+
+        }
+    };
 }

@@ -893,7 +893,7 @@ public class DialogHelper {
         buttonPathSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                extractDialogListener.onSelectButtonClick();
+                extractDialogListener.onSelectButtonClick(buttonPathSelect);
             }
         });
 
@@ -970,7 +970,7 @@ public class DialogHelper {
 
         void onPositiveButtonClick(Dialog dialog , String currentFile, String newFileName, boolean isChecked);
 
-        void onSelectButtonClick();
+        void onSelectButtonClick(Button path);
 
 
     }

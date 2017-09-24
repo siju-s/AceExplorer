@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.siju.acexplorer.billing.helper.inappbilling;
+package com.siju.acexplorer.billing.helper;
 
 import java.util.ArrayList;
 import java.util.HashMap;

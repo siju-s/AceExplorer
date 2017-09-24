@@ -17,15 +17,16 @@
 package com.siju.acexplorer.storage.model.task;
 
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
 import com.github.junrar.rarfile.FileHeader;
+import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.helper.RootHelper;
+import com.siju.acexplorer.view.dialog.DialogHelper;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -38,36 +39,36 @@ import java.util.zip.ZipFile;
 import static com.siju.acexplorer.model.helper.ViewHelper.viewFile;
 
 
-// TODO: 20/09/17 Convert this to IntentService
 public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
     private final String outputDir;
     private ZipFile zipFile;
-    private final Context context;
     private final String fileName;
     private final boolean zip;
     private ZipEntry entry;
     private Archive rar;
     private FileHeader header;
     private File output;
+    private DialogHelper.AlertDialogListener alertDialogListener;
 
-    public ExtractZipEntry(Context context, ZipFile zipFile, String outputDir, String fileName,
-                           ZipEntry zipEntry) {
-        this.context = context;
+    public ExtractZipEntry(ZipFile zipFile, String outputDir, String fileName,
+                           ZipEntry zipEntry, DialogHelper.AlertDialogListener alertDialogListener) {
         this.zip = true;
         this.outputDir = outputDir;
         this.zipFile = zipFile;
         this.fileName = fileName;
         this.entry = zipEntry;
+        this.alertDialogListener = alertDialogListener;
     }
 
-    public ExtractZipEntry(Context context, Archive rar, String outputDir, String fileName,
-                           FileHeader fileHeader) {
+    public ExtractZipEntry(Archive rar, String outputDir, String fileName,
+                           FileHeader fileHeader, DialogHelper.AlertDialogListener alertDialogListener) {
         this.zip = false;
         this.outputDir = outputDir;
         this.rar = rar;
-        this.context = context;
         this.fileName = fileName;
         this.header = fileHeader;
+        this.alertDialogListener = alertDialogListener;
+
     }
 
     @Override
@@ -91,7 +92,7 @@ public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
         RootHelper.runAndWait(cmd);
         String outputPath = output.getPath();
         String extension = outputPath.substring(outputPath.lastIndexOf(".") + 1, outputPath.length());
-        viewFile(context, outputPath, extension);
+        viewFile(AceApplication.getAppContext(), outputPath, extension, alertDialogListener);
 
     }
 
@@ -141,5 +142,7 @@ public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
         FileOutputStream fileOutputStream = new FileOutputStream(output);
         zipfile.extractFile(header, fileOutputStream);
     }
+
+
 
 }

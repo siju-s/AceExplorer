@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.view.ViewGroup;
 
+import com.siju.acexplorer.storage.view.StoragesUiView;
 import com.siju.acexplorer.view.DrawerListener;
 import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.model.FileInfo;
@@ -41,13 +42,15 @@ public class HomeBridge implements HomeView {
     private HomeView.Listener listener;
     private Fragment fragment;
 
-    HomeBridge(Fragment fragment, ViewGroup parent, DrawerListener drawerListener) {
+    HomeBridge(Fragment fragment, ViewGroup parent, DrawerListener drawerListener,
+               StoragesUiView.FavoriteOperation favListener) {
         this.context = parent.getContext();
         this.fragment = fragment;
         uiView = HomeUiView.inflate(parent);
         uiView.setBridgeRef(this);
         uiView.setFragment(fragment);
         uiView.setDrawerListener(drawerListener);
+        uiView.setFavListener(favListener);
         parent.addView(uiView);
     }
 
@@ -117,6 +120,11 @@ public class HomeBridge implements HomeView {
     @Override
     public void showDualMode() {
         uiView.setDualMode();
+    }
+
+    @Override
+    public void setPremium() {
+        uiView.setPremium();
     }
 
     void getLibraries() {

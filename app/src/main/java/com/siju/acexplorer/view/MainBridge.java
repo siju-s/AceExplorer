@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,10 +42,11 @@ public class MainBridge implements MainUi {
     private MainUi.Listener listener;
     private AppCompatActivity activity;
 
-    public MainBridge(AppCompatActivity activity, ViewGroup parent) {
+    MainBridge(AppCompatActivity activity, ViewGroup parent) {
         this.context = parent.getContext();
         this.activity = activity;
         uiView = MainUiView.inflate(parent);
+        Log.d("MainBridge", "aft inflate: ");
         uiView.setActivity(activity);
         uiView.setBridgeRef(this);
         parent.addView(uiView);
@@ -119,13 +121,12 @@ public class MainBridge implements MainUi {
     }
 
     @Override
-    public void handleActivityResult(int requestCode, int resultCode, Intent intent) {
-        uiView.handleActivityResult(requestCode, resultCode, intent);
+    public boolean handleActivityResult(int requestCode, int resultCode, Intent intent) {
+        return uiView.handleActivityResult(requestCode, resultCode, intent);
     }
 
     @Override
     public void passActivityResult(int requestCode, int resultCode, Intent intent) {
-
     }
 
     @Override

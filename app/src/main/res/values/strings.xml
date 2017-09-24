@@ -211,6 +211,7 @@
     <string name="action_more">More</string>
     <string name="directory">Directory</string>
     <string name="operation">Operation</string>
+    <string name="extract_complete">Extract completed</string>
 
 
 </resources>

@@ -35,7 +35,7 @@ import com.siju.acexplorer.model.root.RootOperations;
 import com.siju.acexplorer.model.root.RootUtils;
 import com.siju.acexplorer.storage.model.CopyData;
 import com.siju.acexplorer.storage.model.StorageModelImpl;
-import com.siju.acexplorer.storage.model.task.CreateZipTask;
+import com.siju.acexplorer.storage.model.task.CreateZipService;
 import com.siju.acexplorer.storage.model.task.DeleteTask;
 import com.siju.acexplorer.storage.model.task.ExtractService;
 import com.stericson.RootTools.RootTools;
@@ -301,7 +301,7 @@ public class FileOpsHelper {
         if (mode == OperationUtils.WriteMode.EXTERNAL) {
             formSAFIntentCompress(newFile.getAbsolutePath(), files, Operations.COMPRESS);
         } else if (mode == OperationUtils.WriteMode.INTERNAL) {
-            Intent zipIntent = new Intent(context, CreateZipTask.class);
+            Intent zipIntent = new Intent(context, CreateZipService.class);
             zipIntent.putExtra(KEY_FILEPATH, newFile.getAbsolutePath());
             zipIntent.putParcelableArrayListExtra(KEY_FILES, files);
             new OperationProgress().showZipProgressDialog(context, zipIntent);

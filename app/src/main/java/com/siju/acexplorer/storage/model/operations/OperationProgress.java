@@ -17,12 +17,9 @@
 package com.siju.acexplorer.storage.model.operations;
 
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
-import android.os.IBinder;
 import android.support.v7.app.AlertDialog;
 import android.text.format.Formatter;
 import android.view.LayoutInflater;
@@ -37,7 +34,7 @@ import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.storage.model.CopyData;
 import com.siju.acexplorer.storage.model.task.CopyService;
-import com.siju.acexplorer.storage.model.task.CreateZipTask;
+import com.siju.acexplorer.storage.model.task.CreateZipService;
 import com.siju.acexplorer.storage.model.task.ExtractService;
 import com.siju.acexplorer.storage.model.task.Progress;
 
@@ -207,7 +204,6 @@ public class OperationProgress implements Progress {
         context.bindService(mServiceIntent, mExtractServiceConnection, Context.BIND_AUTO_CREATE);
         context.startService(mServiceIntent);*/
         registerReceiver(context);
-        isExtractServiceAlive = true;
         String title = context.getString(R.string.extracting);
         String texts[] = new String[]{title, context.getString(R.string.background), "",
                 context.getString(R.string.dialog_cancel)};
@@ -258,17 +254,17 @@ public class OperationProgress implements Progress {
 
 
     private void stopZipService() {
-        mContext.unbindService(mZipServiceConnection);
-        mContext.stopService(mServiceIntent);
+        Context context = AceApplication.getAppContext();
+        Intent intent = new Intent(context, CreateZipService.class);
+        context.stopService(intent);
+        unregisterReceiver(context);
     }
 
     private void stopExtractService() {
-        mContext.unbindService(mExtractServiceConnection);
-        mContext.stopService(mServiceIntent);
-        if (isExtractServiceAlive) {
-            unregisterReceiver(mContext);
-        }
-        isExtractServiceAlive = false;
+        Context context = AceApplication.getAppContext();
+        Intent intent = new Intent(context, ExtractService.class);
+        context.stopService(intent);
+        unregisterReceiver(context);
 
     }
 
@@ -279,12 +275,12 @@ public class OperationProgress implements Progress {
                 Operations operation = (Operations) intent.getSerializableExtra(KEY_OPERATION);
                 switch (operation) {
                     case EXTRACT:
-                        Logger.log(TAG, "Failure broacast=" + isExtractServiceAlive);
-                        if (isExtractServiceAlive) {
+//                        Logger.log(TAG, "Failure broacast=" + isExtractServiceAlive);
+//                        if (isExtractServiceAlive) {
                             unregisterReceiver(mContext);
                             progressDialog.dismiss();
-                            isExtractServiceAlive = false;
-                        }
+//                            isExtractServiceAlive = false;
+//                        }
                         break;
                 }
             }
@@ -414,32 +410,5 @@ public class OperationProgress implements Progress {
 //    };
 
 
-    private final ServiceConnection mZipServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            CreateZipTask.LocalBinder binder = (CreateZipTask.LocalBinder) service;
-            CreateZipTask mService = binder.getService();
-            mService.registerProgressListener(OperationProgress.this);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-        }
-    };
-
-
-    private boolean isExtractServiceAlive;
-    private final ServiceConnection mExtractServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            ExtractService.LocalBinder binder = (ExtractService.LocalBinder) service;
-            ExtractService mService = binder.getService();
-            mService.registerProgressListener(OperationProgress.this);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-        }
-    };
 
 }

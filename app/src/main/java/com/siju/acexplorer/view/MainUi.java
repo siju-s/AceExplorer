@@ -46,7 +46,7 @@ public interface MainUi {
     void onPermissionResult(int requestCode, @NonNull String[] permissions,
                             @NonNull int[] grantResults);
 
-    void handleActivityResult(int requestCode, int resultCode, Intent intent);
+    boolean handleActivityResult(int requestCode, int resultCode, Intent intent);
 
     void passActivityResult(int requestCode, int resultCode, Intent intent);
 

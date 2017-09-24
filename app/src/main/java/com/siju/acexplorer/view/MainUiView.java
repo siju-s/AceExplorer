@@ -87,7 +87,8 @@ import static com.siju.acexplorer.theme.ThemeUtils.PREFS_THEME;
 /**
  * Created by Siju on 02 September,2017
  */
-public class MainUiView extends DrawerLayout implements PermissionResultCallback, DrawerListener, StoragesUiView.FavoriteOperation {
+public class MainUiView extends DrawerLayout implements PermissionResultCallback, DrawerListener,
+        StoragesUiView.FavoriteOperation {
 
     public static final int PERMISSIONS_REQUEST = 100;
 
@@ -104,7 +105,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
 
     private PermissionHelper permissionHelper;
     private NavigationDrawer navigationDrawer;
-    private HomeScreenFragment mHomeScreenFragment;
+    private HomeScreenFragment homeScreenFragment;
 
     private final int MENU_FAVOURITES = 1;
     private int mCurrentOrientation;
@@ -163,8 +164,10 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     }
 
     void initialize() {
+        Log.d(TAG, "initialize: ");
         currentTheme = bridge.getCurrentTheme();
         navigationDrawer = new NavigationDrawer(activity,this, currentTheme);
+        Log.d(TAG, "initialize: After drawer");
         setupPermissions();
     }
 
@@ -254,6 +257,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
 
 
     private void displayMainScreen(boolean isHomeScreenEnabled) {
+        Log.d(TAG, "displayMainScreen: ");
         if (isHomeScreenEnabled) {
             displayHomeScreen();
         }
@@ -274,12 +278,14 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         }
     }
 
-    void handleActivityResult(int requestCode, int resultCode, Intent intent) {
+    boolean handleActivityResult(int requestCode, int resultCode, Intent intent) {
 
         if (!BillingHelper.getInstance().onActivityResult(requestCode, resultCode, intent)) {
             navigationDrawer.onActivityResult(requestCode, resultCode, intent);
-            // TODO: 02/09/17 Need to pass to activity using super?
-//            bridge.passActivityResult(requestCode, resultCode, intent);
+            return false;
+
+        } else {
+            return true;
         }
     }
 
@@ -375,12 +381,13 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         args.putBoolean(FileConstants.KEY_HOME, true);
         args.putBoolean(PREFS_FIRST_RUN, isFirstRun);
         args.putBoolean(FileConstants.KEY_DUAL_ENABLED, isDualModeActive);
-        mHomeScreenFragment = new HomeScreenFragment();
-        mHomeScreenFragment.setArguments(args);
-        mHomeScreenFragment.setDrawerListener(this);
-        ft.replace(R.id.main_container, mHomeScreenFragment);
+        homeScreenFragment = new HomeScreenFragment();
+        homeScreenFragment.setArguments(args);
+        homeScreenFragment.setDrawerListener(this);
+        homeScreenFragment.setFavListener(this);
+        ft.replace(R.id.main_container, homeScreenFragment);
         ft.addToBackStack(null);
-        Logger.log(TAG, "initialScreenSetup");
+        Logger.log(TAG, "displayHomeScreen");
         ft.commitAllowingStateLoss();
     }
 
@@ -405,6 +412,8 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
             ft.replace(R.id.main_container, baseFileList, directory);
             ft.addToBackStack(null);
             ft.commit();
+            Logger.log(TAG, "displayFileList");
+
         }
         else {
             ((BaseFileList) fragment).reloadList(directory, category);
@@ -414,16 +423,16 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     @Override
     public void updateFavorites(ArrayList<FavInfo> favList) {
         navigationDrawer.updateFavourites(favList);
-        if (isHomeScreenEnabled && mHomeScreenFragment != null) {
-            mHomeScreenFragment.updateFavoritesCount(favList.size());
+        if (isHomeScreenEnabled && homeScreenFragment != null) {
+            homeScreenFragment.updateFavoritesCount(favList.size());
         }
     }
 
     @Override
     public void removeFavorites(ArrayList<FavInfo> favList) {
         navigationDrawer.removeFavourites(favList);
-        if (isHomeScreenEnabled && mHomeScreenFragment != null) {
-            mHomeScreenFragment.removeFavorites(favList.size());
+        if (isHomeScreenEnabled && homeScreenFragment != null) {
+            homeScreenFragment.removeFavorites(favList.size());
         }
     }
 
@@ -609,6 +618,9 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     public void onPermissionGranted(String[] permissionName) {
         Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id
                 .main_container);
+        if (fragment == null) {
+            return;
+        }
         if (fragment instanceof HomeScreenFragment) {
             ((HomeScreenFragment) fragment).onPermissionGranted();
         }
@@ -663,8 +675,8 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
             case MENU_FAVOURITES:
                 FavInfo favInfo = navigationDrawer.removeFavorite(groupPos, childPos);
                 sharedPreferenceWrapper.removeFavorite(getContext(), favInfo);
-                if (isHomeScreenEnabled && mHomeScreenFragment != null) {
-                    mHomeScreenFragment.removeFavorites(1);
+                if (isHomeScreenEnabled && homeScreenFragment != null) {
+                    homeScreenFragment.removeFavorites(1);
                 }
         }
     }
@@ -735,6 +747,13 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
 
     public void onPremiumVersion() {
         navigationDrawer.setPremium();
+        Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id
+                .main_container);
+        if (fragment instanceof HomeScreenFragment) {
+            ((HomeScreenFragment)fragment).setPremium();
+        } else {
+            ((BaseFileList)fragment).setPremium();
+        }
     }
 
     public void getTotalGroupData() {

@@ -37,6 +37,7 @@ import android.widget.LinearLayout;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
+import com.siju.acexplorer.storage.view.StoragesUiView;
 import com.siju.acexplorer.view.DrawerListener;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.billing.BillingStatus;
@@ -72,8 +73,8 @@ public class HomeUiView extends CoordinatorLayout {
     private Fragment fragment;
     private HomeBridge bridge;
     private HomeLibrary library;
-    private HomeStorages storages;
     private DrawerListener drawerListener;
+    private StoragesUiView.FavoriteOperation favListener;
 
     public HomeUiView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -99,6 +100,7 @@ public class HomeUiView extends CoordinatorLayout {
         setTheme();
     }
 
+    @SuppressWarnings("ConstantConditions")
     private void setupToolbar() {
         getActivity().setSupportActionBar(toolbar);
         getActivity().getSupportActionBar().setHomeButtonEnabled(true);
@@ -108,6 +110,10 @@ public class HomeUiView extends CoordinatorLayout {
 
     public void setFragment(Fragment fragment) {
         this.fragment = fragment;
+    }
+
+    public Fragment getFragment() {
+        return fragment;
     }
 
     private AppCompatActivity getActivity() {
@@ -122,7 +128,7 @@ public class HomeUiView extends CoordinatorLayout {
         setupToolbar();
 
         library = new HomeLibrary(getActivity(), this, theme);
-        storages = new HomeStorages(this, theme);
+        new HomeStorages(this, theme);
 
         checkBillingStatus();
         initializeListeners();
@@ -291,6 +297,8 @@ public class HomeUiView extends CoordinatorLayout {
 //        aceActivity.addToBackStack(path, categoryId);
 
         FileList baseFileList = new FileList();
+        baseFileList.setDrawerListener(drawerListener);
+        baseFileList.setFavoriteListener(favListener);
         baseFileList.setArguments(args);
         ft.replace(R.id.main_container, baseFileList);
         ft.addToBackStack(null);
@@ -337,6 +345,10 @@ public class HomeUiView extends CoordinatorLayout {
 
     public void setDrawerListener(DrawerListener drawerListener) {
         this.drawerListener = drawerListener;
+    }
+
+    public void setFavListener(StoragesUiView.FavoriteOperation favListener) {
+        this.favListener = favListener;
     }
 
 

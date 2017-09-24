@@ -58,6 +58,7 @@ public class LoaderHelper {
     }
 
     public Loader<ArrayList<FileInfo>> createLoader(String path, Category category, boolean isPicker) {
+        Log.d(this.getClass().getSimpleName(), "createLoader: "+path);
         return new FileListLoader(fragment, path, category, isPicker);
     }
 }

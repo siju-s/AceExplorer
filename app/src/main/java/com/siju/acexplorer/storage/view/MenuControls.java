@@ -22,6 +22,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -31,6 +32,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -72,7 +74,7 @@ public class MenuControls implements View.OnClickListener,
     private TextView toolbarTitle;
     private ImageButton imgOverflow;
     private Toolbar bottomToolbar;
-//    private SearchHelper searchHelper;
+    //    private SearchHelper searchHelper;
     private MenuItem mPasteItem;
     private MenuItem cancelItem;
     private MenuItem createItem;
@@ -115,7 +117,7 @@ public class MenuControls implements View.OnClickListener,
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-             storagesUiView.openDrawer();
+                storagesUiView.openDrawer();
             }
         });
 //        searchHelper = new SearchHelper(this, context, actionBar);
@@ -124,17 +126,23 @@ public class MenuControls implements View.OnClickListener,
 
     private View actionBar;
 
+    @SuppressWarnings("ConstantConditions")
     private void setToolbar() {
 //        actionBar = LayoutInflater.from(context).inflate(R.layout.actionbar_custom, null);
 //        toolbar.addView(actionBar);
         toolbar.setTitle(R.string.app_name);
+        ((AppCompatActivity) activity).setSupportActionBar(toolbar);
+        ((AppCompatActivity) activity).getSupportActionBar().setHomeButtonEnabled(true);
+        ((AppCompatActivity) activity).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) activity).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_drawer);
 
-        imgNavigationIcon = actionBar.findViewById(R.id.imgNavigationIcon);
+
+/*        imgNavigationIcon = actionBar.findViewById(R.id.imgNavigationIcon);
         toolbarTitle = actionBar.findViewById(R.id.toolbarTitle);
         imgNavigationIcon.setOnClickListener(this);
         imgOverflow = actionBar.findViewById(R.id.imgButtonOverflow);
-        imgOverflow.setOnClickListener(this);
-    }
+        imgOverflow.setOnClickListener(this);*/
+}
 
     private void setTheme(Theme theme) {
         this.theme = theme;
@@ -588,8 +596,9 @@ public class MenuControls implements View.OnClickListener,
         }
 
         @Override
-        public void onSelectButtonClick() {
-            storagesUiView.showSelectPathDialog();
+        public void onSelectButtonClick(Button pathButton) {
+            storagesUiView.showSelectPathDialog(pathButton);
+
         }
     };
 

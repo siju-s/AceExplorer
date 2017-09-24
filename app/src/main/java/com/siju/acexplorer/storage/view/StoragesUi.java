@@ -98,6 +98,8 @@ public interface StoragesUi {
 
     void onCreateOptionsMenu(Menu menu, MenuInflater inflater);
 
+    void setPremium();
+
 
     interface Listener {
 

@@ -124,6 +124,7 @@ class HomeLibrary implements View.OnClickListener {
         libraryContainer.removeAllViews();
         TableRow tableRow = new TableRow(context);
         int pos = 0;
+        Log.d(TAG, "inflateLibraryItem: "+homeLibraryInfoArrayList.size());
         for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
 
             RelativeLayout libraryItemContainer = (RelativeLayout) View.inflate(context, R.layout
@@ -366,7 +367,7 @@ class HomeLibrary implements View.OnClickListener {
             }
             else if (data.get(0).getCategory().equals(homeLibraryInfoArrayList.get(i).getCategory
                     ())) {
-                Log.d(TAG, "on onLoadFinished--category=" + id + "size=" + data.get(0).getCount());
+                Log.d(TAG, "onDataLoaded--category=" + id + "Count=" + data.get(0).getCount());
                 homeLibraryInfoArrayList.get(i).setCount(data.get(0).getCount());
                 updateCount(i, data.get(0).getCount());
 
@@ -387,7 +388,7 @@ class HomeLibrary implements View.OnClickListener {
             Category category = (Category) tag;
             if (isAddCategory(category)) {
                 Intent intent = new Intent(context, LibrarySortActivity.class);
-                activity.startActivityForResult(intent, REQUEST_CODE);
+                homeUiView.getFragment().startActivityForResult(intent, REQUEST_CODE);
             }
             else if (category.equals(DOWNLOADS)) {
                 homeUiView.loadFileList(StorageUtils.getDownloadsDirectory(), category);
@@ -395,7 +396,6 @@ class HomeLibrary implements View.OnClickListener {
             else {
                 homeUiView.loadFileList(null, category);
             }
-
         }
     }
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.siju.acexplorer.billing.helper.inappbilling;
+package com.siju.acexplorer.billing.helper;
 
 // This code was converted from code at http://iharder.sourceforge.net/base64/
 // Lots of extraneous features were removed.

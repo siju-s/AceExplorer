@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.siju.acexplorer.billing.helper.inappbilling;
+package com.siju.acexplorer.billing.helper;
 
 /**
  * Represents the result of an in-app billing operation.

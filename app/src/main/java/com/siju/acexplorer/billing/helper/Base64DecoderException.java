@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.siju.acexplorer.billing.helper.inappbilling;
+package com.siju.acexplorer.billing.helper;
 
 /**
  * Exception thrown when encountering an invalid Base64 input character.

@@ -100,7 +100,7 @@ public class StorageBridge implements StoragesUi {
 
     @Override
     public boolean onBackPress() {
-        return false;
+        return uiView.onBackPressed();
     }
 
     @Override
@@ -225,6 +225,11 @@ public class StorageBridge implements StoragesUi {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         uiView.onCreateOptionsMenu(menu, inflater);
 
+    }
+
+    @Override
+    public void setPremium() {
+        uiView.setPremium();
     }
 
     void loadData(String currentDir, Category category, boolean isPicker) {

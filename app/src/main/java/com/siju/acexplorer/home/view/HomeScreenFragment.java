@@ -29,19 +29,18 @@ import com.siju.acexplorer.R;
 import com.siju.acexplorer.home.model.HomeModel;
 import com.siju.acexplorer.home.model.HomeModelImpl;
 import com.siju.acexplorer.home.model.LoaderHelper;
-import com.siju.acexplorer.home.presenter.HomePresenter;
 import com.siju.acexplorer.home.presenter.HomePresenterImpl;
 import com.siju.acexplorer.logging.Logger;
+import com.siju.acexplorer.storage.view.StoragesUiView;
 import com.siju.acexplorer.view.DrawerListener;
 
 public class HomeScreenFragment extends Fragment {
 
     private final String TAG = this.getClass().getSimpleName();
 
-    private HomePresenter homePresenter;
     private HomeView homeView;
-    private HomeModel homeModel;
     private DrawerListener drawerListener;
+    private StoragesUiView.FavoriteOperation favListener;
 
     @Override
     public View onCreateView(
@@ -57,11 +56,11 @@ public class HomeScreenFragment extends Fragment {
         Logger.log(TAG, "onActivityCreated" + savedInstanceState);
 
         LinearLayout linearLayout = getActivity().findViewById(R.id.home_base);
-        homeView = new HomeBridge(this, linearLayout, drawerListener);
-        homeModel = new HomeModelImpl();
+        homeView = new HomeBridge(this, linearLayout, drawerListener, favListener);
+        HomeModel homeModel = new HomeModelImpl();
         LoaderHelper loaderHelper = new LoaderHelper(this);
 
-        homePresenter = new HomePresenterImpl(homeView, homeModel, loaderHelper,
+        new HomePresenterImpl(homeView, homeModel, loaderHelper,
                 getActivity().getSupportLoaderManager());
 
         homeView.init();
@@ -102,6 +101,10 @@ public class HomeScreenFragment extends Fragment {
         this.drawerListener = drawerListener;
     }
 
+    public void setFavListener(StoragesUiView.FavoriteOperation favoriteListener) {
+        this.favListener = favoriteListener;
+    }
+
     public void removeFavorites(int size) {
         homeView.removeFavorites(size);
     }
@@ -111,7 +114,11 @@ public class HomeScreenFragment extends Fragment {
     }
 
 
-     public void showDualMode() {
+    public void showDualMode() {
         homeView.showDualMode();
+    }
+
+    public void setPremium() {
+        homeView.setPremium();
     }
 }

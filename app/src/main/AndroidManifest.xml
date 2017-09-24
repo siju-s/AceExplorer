@@ -107,7 +107,7 @@
             android:name="com.siju.acexplorer.home.LibrarySortActivity"
             android:theme="@style/BaseDarkTheme.Dark"/>
 
-        <service android:name=".storage.model.task.CreateZipTask"/>
+        <service android:name=".storage.model.task.CreateZipService"/>
         <service android:name=".storage.model.task.CopyService"/>
         <service android:name=".storage.model.task.ExtractService"/>
         <service android:name=".storage.model.task.MoveFiles" />

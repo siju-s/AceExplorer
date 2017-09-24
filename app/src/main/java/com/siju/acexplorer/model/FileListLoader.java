@@ -27,6 +27,7 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.siju.acexplorer.home.view.HomeScreenFragment;
@@ -86,8 +87,9 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         if (mMountUnmountReceiver == null) {
             mMountUnmountReceiver = new MountUnmountReceiver(this);
         }
-        if (takeContentChanged() || fileInfoList == null)
+        if (takeContentChanged() || fileInfoList == null) {
             forceLoad();
+        }
     }
 
     @Override
@@ -178,7 +180,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     }
 
     private void fetchFiles() {
-
+        Log.d(TAG, "fetchFiles: "+currentDir);
         fileInfoList = getFilesList(currentDir,
                 isRooted, mShowHidden, mIsRingtonePicker);
         fileInfoList = sortFiles(fileInfoList, mSortMode);

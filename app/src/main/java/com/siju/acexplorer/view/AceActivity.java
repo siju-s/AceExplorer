@@ -55,6 +55,7 @@ public class AceActivity extends BaseActivity {
 
         LinearLayout linearLayout = findViewById(R.id.base);
         mainUi = new MainBridge(this, linearLayout);
+        Log.d(TAG, "onCreate: AFTER mainUi");
         mainModel = new MainModelImpl();
         mainPresenter = new MainPresenterImpl(mainUi, mainModel);
 
@@ -100,12 +101,9 @@ public class AceActivity extends BaseActivity {
         Log.d(TAG, "handleActivityResult(" + requestCode + "," + resultCode + ","
                 + intent);
 
-        mainUi.handleActivityResult(requestCode, resultCode, intent);
-//
-//        if (!BillingHelper.getInstance().handleActivityResult(requestCode, resultCode, intent)) {
-//            navigationDrawer.handleActivityResult(requestCode, resultCode, intent);
-//            super.handleActivityResult(requestCode, resultCode, intent);
-//        }
+        if (!mainUi.handleActivityResult(requestCode, resultCode, intent)) {
+            super.onActivityResult(requestCode, resultCode, intent);
+        }
     }
 
 

@@ -75,12 +75,12 @@ public class StoragesPresenterImpl implements StoragesPresenter, StoragesUi.List
         Bundle args = new Bundle();
         args.putString(KEY_PATH, currentDir);
         args.putBoolean(KEY_PICKER, isPicker);
-        loaderManager.initLoader(LOADER_ID, null, this);
+        loaderManager.restartLoader(LOADER_ID, args, this);
     }
 
     @Override
     public BillingStatus checkBillingStatus() {
-        return null;
+        return storagesModel.getBillingStatus();
     }
 
     @Override

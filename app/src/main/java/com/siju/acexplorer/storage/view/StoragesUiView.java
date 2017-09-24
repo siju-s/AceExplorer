@@ -192,15 +192,13 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     public static StoragesUiView inflate(ViewGroup parent) {
         return (StoragesUiView) LayoutInflater.from(parent.getContext()).inflate(R.layout.main_list,
-                parent,
-                false);
+                parent, false);
     }
 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
         initializeViews();
-
     }
 
     private void initializeViews() {
@@ -815,9 +813,9 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             return false;
         } else {
             removeFileFragment();
-  /*          if (!isHomeScreenEnabled) {
+            if (!isHomeScreenEnabled) {
                 getActivity().finish();
-            }*/
+            }
             return true;
         }
     }
@@ -982,6 +980,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
 
     public void reloadList(String path, Category category) {
+        Log.d(TAG, "reloadList: "+path);
         currentDir = path;
         this.category = category;
         if (shouldShowPathNavigation()) {
@@ -1211,6 +1210,9 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         if (fileListAdapter != null) {
             fileListAdapter.clearList();
         }
+        if (!hasStoragePermission()) {
+            return;
+        }
         mSwipeRefreshLayout.setRefreshing(true);
         if (isZipMode()) {
             zipViewer.onCreateLoader(null);
@@ -1345,7 +1347,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
 
-    public void showSelectPathDialog() {
+    public void showSelectPathDialog(Button buttonPathSelect) {
+        this.buttonPathSelect = buttonPathSelect;
         DialogBrowseFragment dialogFragment = new DialogBrowseFragment();
         dialogFragment.setTargetFragment(fragment, DIALOG_FRAGMENT);
         dialogFragment.setStyle(DialogBrowseFragment.STYLE_NORMAL, getThemeStyle());
