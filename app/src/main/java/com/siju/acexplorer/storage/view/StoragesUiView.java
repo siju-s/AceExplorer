@@ -112,7 +112,6 @@ import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastNougat;
 import static com.siju.acexplorer.model.helper.UriHelper.createContentUri;
 import static com.siju.acexplorer.model.helper.UriHelper.getUriForCategory;
 import static com.siju.acexplorer.model.helper.UriHelper.grantUriPermission;
-import static com.siju.acexplorer.model.helper.ViewHelper.openWith;
 import static com.siju.acexplorer.model.helper.ViewHelper.viewFile;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_RELOAD_LIST;
@@ -124,6 +123,7 @@ import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OP
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_POSITION;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_RESULT;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_SHOW_RESULT;
+import static com.siju.acexplorer.view.dialog.DialogHelper.openWith;
 
 /**
  * Created by Siju on 02 September,2017
@@ -980,7 +980,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
 
     public void reloadList(String path, Category category) {
-        Log.d(TAG, "reloadList: "+path);
+        Log.d(TAG, "reloadList: " + path);
         currentDir = path;
         this.category = category;
         if (shouldShowPathNavigation()) {
@@ -1838,7 +1838,15 @@ mLastDualPaneDir);
 
         @Override
         public void onPositiveButtonClick(Dialog dialog, Operations operation, String name) {
-            bridge.createDir(currentDir, name, isRooted());
+            dialog.dismiss();
+            switch (operation) {
+                case FOLDER_CREATION:
+                    bridge.createDir(currentDir, name, isRooted());
+                    break;
+                case FILE_CREATION:
+                    bridge.createFile(currentDir, name, isRooted());
+                    break;
+            }
         }
 
         @Override

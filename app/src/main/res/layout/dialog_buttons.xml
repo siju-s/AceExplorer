@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    >
+    android:orientation="horizontal">
 
     <Button
         android:id="@+id/buttonNegative"
@@ -16,7 +15,8 @@
         android:layout_marginTop="@dimen/margin_16"
         android:layout_weight="1"
         android:textColor="@color/blue"
-        tools:text="@string/dialog_cancel" />
+        tools:text="@string/dialog_cancel"
+        android:layout_marginEnd="@dimen/margin_16" />
 
 
     <Button
@@ -30,7 +30,8 @@
         android:layout_weight="1"
         android:textColor="@color/blue"
         android:visibility="gone"
-        tools:text="@string/msg_ok" />
+        tools:text="@string/msg_ok"
+        android:layout_marginEnd="@dimen/margin_16" />
 
 
     <Button

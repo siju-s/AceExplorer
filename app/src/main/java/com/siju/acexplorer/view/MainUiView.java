@@ -334,7 +334,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
             else {
                 boolean isHome = ((BaseFileList) fragment).onBackPressed();
                 if (isHome) {
-                    toggleDualPaneVisibility(false);
+                    hideDualPane();
                     return true;
                 }
             }
@@ -618,6 +618,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     public void onPermissionGranted(String[] permissionName) {
         Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id
                 .main_container);
+        Log.d(TAG, "onPermissionGranted: "+fragment);
         if (fragment == null) {
             return;
         }

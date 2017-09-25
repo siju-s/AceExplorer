@@ -18,12 +18,18 @@ package com.siju.acexplorer.view.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AlertDialog;
 import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -51,6 +57,7 @@ import static com.siju.acexplorer.model.groups.Category.IMAGE;
 import static com.siju.acexplorer.model.groups.Category.VIDEO;
 import static com.siju.acexplorer.model.helper.AppUtils.getAppIcon;
 import static com.siju.acexplorer.model.helper.AppUtils.getAppIconForFolder;
+import static com.siju.acexplorer.model.helper.UriHelper.grantUriPermission;
 
 /**
  * Created by Siju on 29 August,2017
@@ -962,6 +969,69 @@ public class DialogHelper {
         });
 
         alertDialog.show();
+    }
+
+    public static void openWith(final Uri uri, final Context context) {
+
+        //Initializing a bottom sheet
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
+        View sheetView = LayoutInflater.from(context).inflate(R.layout.dialog_open_as, null);
+        bottomSheetDialog.setContentView(sheetView);
+
+        ArrayList<String> items = new ArrayList<>();
+        items.add(context.getString(R.string.text));
+        items.add(context.getString(R.string.image));
+        items.add(context.getString(R.string.audio));
+        items.add(context.getString(R.string.other));
+
+
+        TextView textTitle = sheetView.findViewById(R.id.textTitle);
+        ListView listView = sheetView.findViewById(R.id.listOpenAs);
+
+        textTitle.setText(context.getString(R.string.open_as));
+
+        ArrayAdapter<String> itemsAdapter =
+                new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, items) {
+
+                    @NonNull
+                    @Override
+                    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                        TextView textView = (TextView) super.getView(position, convertView, parent);
+                        textView.setTextColor(Color.BLACK);
+                        return textView;
+                    }
+                };
+
+        listView.setAdapter(itemsAdapter);
+
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                switch (position) {
+                    case 0:
+                        intent.setDataAndType(uri, "text/*");
+                        break;
+                    case 1:
+                        intent.setDataAndType(uri, "image/*");
+                        break;
+                    case 2:
+                        intent.setDataAndType(uri, "video/*");
+                        break;
+                    case 3:
+                        intent.setDataAndType(uri, "audio/*");
+                        break;
+                    case 4:
+                        intent.setDataAndType(uri, "*/*");
+                        break;
+                }
+                grantUriPermission(context, intent, uri);
+                bottomSheetDialog.dismiss();
+            }
+        });
+        bottomSheetDialog.show();
+
     }
 
 

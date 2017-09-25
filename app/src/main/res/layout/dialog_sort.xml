@@ -31,7 +31,8 @@
             android:layout_marginTop="@dimen/margin_16"
             android:layout_weight="1"
             android:textColor="@color/blue"
-            tools:text="@string/dialog_cancel" />
+            tools:text="@string/dialog_cancel"
+            android:layout_marginEnd="@dimen/margin_16" />
 
 
         <Button

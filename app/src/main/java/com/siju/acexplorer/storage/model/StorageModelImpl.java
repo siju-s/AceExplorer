@@ -64,6 +64,8 @@ import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OP
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_POSITION;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_SHOW_RESULT;
 import static com.siju.acexplorer.storage.model.operations.Operations.DELETE;
+import static com.siju.acexplorer.storage.model.operations.Operations.FILE_CREATION;
+import static com.siju.acexplorer.storage.model.operations.Operations.FOLDER_CREATION;
 import static com.siju.acexplorer.storage.model.operations.Operations.RENAME;
 
 /**
@@ -77,6 +79,7 @@ public class StorageModelImpl implements StoragesModel {
     private SharedPreferenceWrapper sharedPreferenceWrapper;
     private Listener listener;
     private FileOpsHelper fileOpsHelper;
+    private final String EXT_TXT = ".txt";
 
 
     public StorageModelImpl() {
@@ -154,6 +157,10 @@ public class StorageModelImpl implements StoragesModel {
     @Override
     public void createDir(String currentDir, String name, final boolean rooted) {
         final File file = new File(currentDir + File.separator + name);
+        if (file.exists()) {
+            listener.onFileExists(FOLDER_CREATION, context.getString(R.string.file_exists));
+            return;
+        }
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -164,7 +171,11 @@ public class StorageModelImpl implements StoragesModel {
 
     @Override
     public void createFile(String currentDir, String name, final boolean rooted) {
-        final File file = new File(currentDir + File.separator + name);
+        final File file = new File(currentDir + File.separator + name + EXT_TXT);
+        if (file.exists()) {
+            listener.onFileExists(FILE_CREATION, context.getString(R.string.file_exists));
+            return;
+        }
         new Thread(new Runnable() {
             @Override
             public void run() {

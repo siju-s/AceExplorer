@@ -64,7 +64,8 @@
             android:layout_alignParentRight="true"
             tools:text="@string/action_rename"
             android:layout_marginRight="@dimen/margin_16"
-            android:textColor="@color/colorPrimary" />
+            android:textColor="@color/colorPrimary"
+            android:layout_marginEnd="@dimen/margin_16" />
 
         <Button
             android:id="@+id/buttonNegative"
@@ -75,7 +76,8 @@
             android:layout_marginStart="@dimen/margin_16"
             android:layout_marginLeft="@dimen/margin_16"
             android:layout_toLeftOf="@+id/buttonPositive"
-            android:textColor="@color/color_text" />
+            android:textColor="@color/color_text"
+            android:layout_toStartOf="@+id/buttonPositive" />
 
 
     </RelativeLayout>

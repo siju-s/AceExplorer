@@ -62,8 +62,6 @@ public class AceActivity extends BaseActivity {
         mainUi.init();
         mainPresenter.getUserPreferences();
         mainPresenter.getBillingStatus();
-
-        mainUi.onEnter();
     }
 
     @Override

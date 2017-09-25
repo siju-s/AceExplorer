@@ -39,8 +39,6 @@ public interface MainUi {
 
     void passUserPrefs(Bundle userPrefs);
 
-    void onEnter();
-
     void onExit();
 
     void onPermissionResult(int requestCode, @NonNull String[] permissions,

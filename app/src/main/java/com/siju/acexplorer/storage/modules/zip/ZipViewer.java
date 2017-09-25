@@ -57,7 +57,7 @@ import static com.siju.acexplorer.model.groups.Category.FILES;
 import static com.siju.acexplorer.model.groups.Category.ZIP_VIEWER;
 import static com.siju.acexplorer.model.helper.UriHelper.createContentUri;
 import static com.siju.acexplorer.model.helper.UriHelper.grantUriPermission;
-import static com.siju.acexplorer.model.helper.ViewHelper.openWith;
+import static com.siju.acexplorer.view.dialog.DialogHelper.openWith;
 
 public class ZipViewer implements ZipElements, NavigationCallback {
 

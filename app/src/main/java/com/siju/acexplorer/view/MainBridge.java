@@ -68,10 +68,6 @@ public class MainBridge implements MainUi {
         uiView.passUserPrefs(userPrefs);
     }
 
-    @Override
-    public void onEnter() {
-
-    }
 
     @Override
     public void onExit() {
