@@ -21,6 +21,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.home.model.LibrarySortModel;
@@ -97,6 +98,8 @@ public interface StoragesUi {
     void performVoiceSearch(String query);
 
     void onCreateOptionsMenu(Menu menu, MenuInflater inflater);
+
+    void onOptionsItemSelected(MenuItem menuItem);
 
     void setPremium();
 

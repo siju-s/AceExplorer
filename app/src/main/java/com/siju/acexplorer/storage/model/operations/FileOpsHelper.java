@@ -207,7 +207,7 @@ public class FileOpsHelper {
                 fileOperationCallBack.launchSAF(Operations.RENAME, oldFile, newFile, position);
                 break;
             case INTERNAL:
-                boolean exists1 = FileUtils.isFileExisting(newFile.getAbsolutePath(), newFile
+                boolean exists1 = FileUtils.isFileExisting(oldFile.getParent(), newFile
                         .getName());
                 if (exists1) {
                     fileOperationCallBack.exists(Operations.RENAME);

@@ -65,7 +65,6 @@ public class StoragesPresenterImpl implements StoragesPresenter, StoragesUi.List
         this.loaderManager = loaderManager;
         storagesUi.setListener(this);
         storagesModel.setListener(this);
-
     }
 
 

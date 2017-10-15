@@ -27,7 +27,7 @@
 
     <item
         android:id="@+id/action_create"
-        android:icon="@drawable/ic_fab_folder"
+        android:icon="@drawable/ic_folder"
         android:orderInCategory="2"
         android:title="@string/create"
         app:showAsAction="ifRoom"/>

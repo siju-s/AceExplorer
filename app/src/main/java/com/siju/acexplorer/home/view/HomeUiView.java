@@ -106,6 +106,7 @@ public class HomeUiView extends CoordinatorLayout {
         getActivity().getSupportActionBar().setHomeButtonEnabled(true);
         getActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getActivity().getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_drawer);
+        drawerListener.syncDrawer();
     }
 
     public void setFragment(Fragment fragment) {
@@ -258,6 +259,7 @@ public class HomeUiView extends CoordinatorLayout {
 
 
     public void onDataLoaded(int id, List<FileInfo> data) {
+        Log.d(TAG, "onDataLoaded: "+id);
         if (data != null && data.size() > 0) {
             library.onDataLoaded(id, data);
         }
@@ -316,7 +318,6 @@ public class HomeUiView extends CoordinatorLayout {
         super.onConfigurationChanged(newConfig);
         library.onOrientationChanged(newConfig.orientation);
         Logger.log(TAG, "onConfigurationChanged " + newConfig.orientation);
-
     }
 
 
@@ -333,7 +334,9 @@ public class HomeUiView extends CoordinatorLayout {
         if (hasStoragePermission()) {
             for (int i = 0; i < libraries.size(); i++) {
                 Category category = libraries.get(i).getCategory();
-                bridge.loadData(category);
+                if (!category.equals(Category.ADD)) {
+                    bridge.loadData(category);
+                }
             }
         }
     }

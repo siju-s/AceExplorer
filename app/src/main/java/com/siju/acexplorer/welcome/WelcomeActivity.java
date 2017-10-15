@@ -65,10 +65,10 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void initializeViews() {
-        viewPager = (ViewPager) findViewById(R.id.view_pager);
-        dotsLayout = (LinearLayout) findViewById(R.id.layoutDots);
-        btnSkip = (Button) findViewById(R.id.btn_skip);
-        btnNext = (Button) findViewById(R.id.btn_next);
+        viewPager =  findViewById(R.id.view_pager);
+        dotsLayout =  findViewById(R.id.layoutDots);
+        btnSkip =  findViewById(R.id.buttonSkip);
+        btnNext =  findViewById(R.id.buttonNext);
 
         btnNext.setOnClickListener(this);
         btnSkip.setOnClickListener(this);
@@ -129,7 +129,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.btn_next:
+            case R.id.buttonNext:
                 int current = viewPager.getCurrentItem();
                 if (current + 1 < dotsCount) {
                     // move to next screen
@@ -138,7 +138,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
                     launchHomeScreen();
                 }
                 break;
-            case R.id.btn_skip:
+            case R.id.buttonSkip:
                 launchHomeScreen();
                 break;
         }

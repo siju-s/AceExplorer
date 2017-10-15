@@ -42,6 +42,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 
+import static com.siju.acexplorer.model.groups.Category.FAVORITES;
 import static com.siju.acexplorer.model.groups.Category.FILES;
 import static com.siju.acexplorer.model.groups.Category.LARGE_FILES;
 import static com.siju.acexplorer.model.groups.Category.PDF;
@@ -299,6 +300,10 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private void fetchFavorites() {
         SharedPreferenceWrapper wrapper = new SharedPreferenceWrapper();
         ArrayList<FavInfo> favList = wrapper.getFavorites(getContext());
+        if (isHomeFragment()) {
+            fileInfoList.add(new FileInfo(category, favList.size()));
+            return;
+        }
         for (FavInfo favInfo : favList) {
             String path = favInfo.getFilePath();
             File file = new File(path);
@@ -332,6 +337,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             fileInfoList.add(fileInfo);
         }
         fileInfoList = sortFiles(fileInfoList, mSortMode);
+        Log.d(TAG, "fetchFavorites: "+fileInfoList.size());
+
     }
 
 

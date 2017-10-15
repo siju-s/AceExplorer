@@ -330,7 +330,7 @@ public class NavigationDrawer implements View.OnClickListener {
         drawerGenericAdapter.setPremium();
     }
 
-    public void syncDrawerState() {
+    void syncDrawerState() {
         drawerToggle.syncState();
     }
 

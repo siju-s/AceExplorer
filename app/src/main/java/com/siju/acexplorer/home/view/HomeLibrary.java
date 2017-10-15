@@ -140,6 +140,7 @@ class HomeLibrary implements View.OnClickListener {
             else {
                 textCount.setVisibility(View.VISIBLE);
             }
+
             libraryItemContainer.setPadding(0, 0, spacing, 0);
  /*           RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) 
  imageLibrary.getLayoutParams();

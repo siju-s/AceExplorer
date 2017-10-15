@@ -175,6 +175,7 @@ public class HomeModelImpl implements HomeModel {
 
     private void addSavedLibraries() {
         ArrayList<LibrarySortModel> savedLibraries = sharedPreferenceWrapper.getLibraries(context);
+        homeLibraryInfoArrayList.clear();
         for (int i = 0; i < savedLibraries.size(); i++) {
             Category category = savedLibraries.get(i).getCategory();
             int resourceId = getResourceIdForCategory(category);

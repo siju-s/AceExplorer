@@ -37,7 +37,7 @@ import java.util.List;
  */
 public class HomeBridge implements HomeView {
 
-    private HomeUiView uiView;
+    private HomeUiView homeUiView;
     private Context context;
     private HomeView.Listener listener;
     private Fragment fragment;
@@ -46,29 +46,29 @@ public class HomeBridge implements HomeView {
                StoragesUiView.FavoriteOperation favListener) {
         this.context = parent.getContext();
         this.fragment = fragment;
-        uiView = HomeUiView.inflate(parent);
-        uiView.setBridgeRef(this);
-        uiView.setFragment(fragment);
-        uiView.setDrawerListener(drawerListener);
-        uiView.setFavListener(favListener);
-        parent.addView(uiView);
+        homeUiView = HomeUiView.inflate(parent);
+        homeUiView.setBridgeRef(this);
+        homeUiView.setFragment(fragment);
+        homeUiView.setDrawerListener(drawerListener);
+        homeUiView.setFavListener(favListener);
+        parent.addView(homeUiView);
     }
 
 
 
     @Override
     public void onPause() {
-        uiView.onPause();
+        homeUiView.onPause();
     }
 
     @Override
     public void onResume() {
-      uiView.onResume();
+      homeUiView.onResume();
     }
 
     @Override
     public void onExit() {
-      uiView.onDestroy();
+      homeUiView.onDestroy();
     }
 
     @Override
@@ -81,7 +81,7 @@ public class HomeBridge implements HomeView {
         fragment.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                uiView.onLibrariesFetched(libraries);
+                homeUiView.onLibrariesFetched(libraries);
             }
         });
 
@@ -89,42 +89,42 @@ public class HomeBridge implements HomeView {
 
     @Override
     public void onDataLoaded(int id, ArrayList<FileInfo> data) {
-        uiView.onDataLoaded(id, data);
+        homeUiView.onDataLoaded(id, data);
     }
 
     @Override
     public void handleActivityResult(int requestCode, int resultCode, Intent intent) {
-        uiView.handleActivityResult(requestCode, resultCode, intent);
+        homeUiView.handleActivityResult(requestCode, resultCode, intent);
     }
 
     @Override
     public void updateFavoritesCount(int size) {
-        uiView.removeFavorite(size);
+        homeUiView.removeFavorite(size);
     }
 
     @Override
     public void init() {
-        uiView.initialize();
+        homeUiView.initialize();
     }
 
     @Override
     public void removeFavorites(int size) {
-        uiView.removeFavorite(size);
+        homeUiView.removeFavorite(size);
     }
 
     @Override
     public void onPermissionGranted() {
-        uiView.onPermissionGranted();
+        homeUiView.onPermissionGranted();
     }
 
     @Override
     public void showDualMode() {
-        uiView.setDualMode();
+        homeUiView.setDualMode();
     }
 
     @Override
     public void setPremium() {
-        uiView.setPremium();
+        homeUiView.setPremium();
     }
 
     void getLibraries() {

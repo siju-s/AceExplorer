@@ -76,6 +76,7 @@ public class HomeStorages implements View.OnClickListener {
     private void initializeStorageGroup() {
         storagesList = new ArrayList<>();
         storagesList = StoragesGroup.getInstance().getStoragesList();
+        Log.d(this.getClass().getSimpleName(), "initializeStorageGroup: "+storagesList.size());
     }
 
 

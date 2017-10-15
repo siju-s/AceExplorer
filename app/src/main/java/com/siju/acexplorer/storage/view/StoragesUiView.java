@@ -253,9 +253,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         dragHelper = new DragHelper(getContext(), this);
         setTheme();
         fileList.setOnDragListener(dragHelper.getDragEventListener());
-        menuControls = new MenuControls(getActivity(), this, currentTheme);
-        menuControls.setCategory(category);
-        menuControls.setCurrentDir(currentDir);
         checkBillingStatus();
         registerReceivers();
 
@@ -265,6 +262,9 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         mCurrentOrientation = getResources().getConfiguration().orientation;
         getPreferences();
         getArgs();
+        menuControls = new MenuControls(getActivity(), this, currentTheme);
+        menuControls.setCategory(category);
+        menuControls.setCurrentDir(currentDir);
         setupList();
         if (shouldShowPathNavigation()) {
             navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled, category);
@@ -754,6 +754,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 }
             case FOLDER_CREATION:
             case FILE_CREATION:
+                dialog.dismiss();
                 boolean isSuccess = intent.getBooleanExtra(KEY_RESULT, true);
 
                 if (!isSuccess) {
@@ -790,9 +791,11 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                     () - 1);
             Category currentCategory = backStackInfo.getCategoryAtPosition(backStackInfo
                     .getBackStack().size() - 1);
+            category = currentCategory;
+            this.currentDir = currentDir;
+
             if (checkIfFileCategory(currentCategory)) {
 //                navigationInfo.setInitialDir();
-                category = currentCategory;
                 if (shouldShowPathNavigation()) {
                     navigationInfo.setInitialDir(currentDir);
                     navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled,
@@ -801,11 +804,11 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                     navigationInfo.addHomeNavButton(isHomeScreenEnabled, currentCategory);
                 }
             } else {
+                navigationInfo.addHomeNavButton(isHomeScreenEnabled, currentCategory);
                 hideFab();
             }
-            this.currentDir = currentDir;
             refreshList();
-            menuControls.setTitleForCategory(currentCategory);
+//            menuControls.setTitleForCategory(currentCategory);
             if (currentCategory.equals(FILES)) {
                 showFab();
             }
@@ -983,6 +986,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         Log.d(TAG, "reloadList: " + path);
         currentDir = path;
         this.category = category;
+        menuControls.setCategory(category);
+        menuControls.setCurrentDir(currentDir);
         if (shouldShowPathNavigation()) {
             navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled, category);
         } else {
@@ -1235,7 +1240,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         return mIsRootMode;
     }
 
-    private void showCreateDirDialog() {
+    void showCreateDirDialog() {
         String title = getContext().getString(R.string.new_folder);
         String texts[] = new String[]{title, getContext().getString(R.string.enter_name), getContext
                 ().getString(R.string
@@ -1361,6 +1366,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     public void onInvalidName(Operations operation) {
         switch (operation) {
             case EXTRACT:
+            case FILE_CREATION:
+            case FOLDER_CREATION:
                 final EditText editText = dialog.findViewById(R.id.editFileName);
                 editText.setError(getContext().getString(R.string.msg_error_invalid_name));
                 break;
@@ -1416,6 +1423,10 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menuControls.onCreateOptionsMenu(menu, inflater);
 
+    }
+
+    public void onOptionsItemSelected(MenuItem menuItem) {
+        menuControls.onOptionsSelectedMenu(menuItem);
     }
 
     public void onQueryTextChange(String query) {
@@ -1563,6 +1574,10 @@ mLastDualPaneDir);
 
         }
         draggedData = new ArrayList<>();
+    }
+
+    public void syncDrawer() {
+        drawerListener.syncDrawer();
     }
 
 
@@ -1838,7 +1853,7 @@ mLastDualPaneDir);
 
         @Override
         public void onPositiveButtonClick(Dialog dialog, Operations operation, String name) {
-            dialog.dismiss();
+            StoragesUiView.this.dialog = dialog;
             switch (operation) {
                 case FOLDER_CREATION:
                     bridge.createDir(currentDir, name, isRooted());

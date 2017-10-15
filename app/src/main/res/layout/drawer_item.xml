@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,15 +15,16 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginTop="5dp"
-                android:paddingEnd="@dimen/drawer_item_margin"
-                android:paddingLeft="@dimen/drawer_item_margin"
-                android:paddingRight="@dimen/drawer_item_margin"
-                android:paddingStart="@dimen/drawer_item_margin">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawerChildItem"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="5dp"
+    android:layout_marginTop="5dp"
+    android:paddingEnd="@dimen/drawer_item_margin"
+    android:paddingLeft="@dimen/drawer_item_margin"
+    android:paddingRight="@dimen/drawer_item_margin"
+    android:paddingStart="@dimen/drawer_item_margin">
 
     <ImageView
         android:id="@+id/imageDrawerItem"
@@ -35,7 +35,7 @@
         android:layout_marginLeft="@dimen/drawer_item_margin"
         android:layout_marginStart="@dimen/drawer_item_margin"
         android:scaleType="centerCrop"
-        tools:ignore="ContentDescription"/>
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/textFirstLine"
@@ -44,9 +44,9 @@
         android:layout_marginLeft="@dimen/drawer_item_text_margin"
         android:layout_marginStart="@dimen/drawer_item_text_margin"
         android:layout_marginTop="6dp"
-        android:layout_toRightOf="@+id/imageDrawerItem"
         android:layout_toEndOf="@+id/imageDrawerItem"
-        android:textSize="14sp"/>
+        android:layout_toRightOf="@+id/imageDrawerItem"
+        android:textSize="14sp" />
 
 
     <ProgressBar
@@ -60,7 +60,7 @@
         android:layout_toEndOf="@+id/imageDrawerItem"
         android:layout_toRightOf="@+id/imageDrawerItem"
         android:max="100"
-        android:visibility="visible"/>
+        android:visibility="visible" />
 
 
     <TextView
@@ -75,7 +75,7 @@
         android:layout_toRightOf="@id/imageDrawerItem"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textSize="12sp"/>
+        android:textSize="12sp" />
 
 
 </RelativeLayout>

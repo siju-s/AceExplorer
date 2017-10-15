@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.ViewGroup;
 
 import com.siju.acexplorer.billing.BillingStatus;
@@ -32,7 +33,6 @@ import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.storage.model.CopyData;
 import com.siju.acexplorer.storage.model.operations.Operations;
 import com.siju.acexplorer.view.DrawerListener;
-import com.siju.acexplorer.view.MainUiView;
 import com.siju.acexplorer.view.dialog.DialogHelper;
 
 import java.util.ArrayList;
@@ -128,7 +128,12 @@ public class StorageBridge implements StoragesUi {
     public void showConflictDialog(final List<FileInfo> conflictFiles,
                                    final String destinationDir, final boolean isMove,
                                    final DialogHelper.PasteConflictListener pasteConflictListener) {
-        uiView.showConflictDialog(conflictFiles, destinationDir, isMove, pasteConflictListener);
+        fragment.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                uiView.showConflictDialog(conflictFiles, destinationDir, isMove, pasteConflictListener);
+            }
+        });
 
     }
 
@@ -225,6 +230,11 @@ public class StorageBridge implements StoragesUi {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         uiView.onCreateOptionsMenu(menu, inflater);
 
+    }
+
+    @Override
+    public void onOptionsItemSelected(MenuItem menuItem) {
+        uiView.onOptionsItemSelected(menuItem);
     }
 
     @Override

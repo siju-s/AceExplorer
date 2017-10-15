@@ -22,4 +22,6 @@ package com.siju.acexplorer.view;
 public interface DrawerListener {
 
     void onDrawerIconClicked();
+
+    void syncDrawer();
 }

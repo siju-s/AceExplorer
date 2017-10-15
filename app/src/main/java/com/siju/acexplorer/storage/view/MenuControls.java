@@ -108,6 +108,7 @@ public class MenuControls implements View.OnClickListener,
 
     void setCurrentDir(String currentDir) {
         this.currentDir = currentDir;
+        Log.d(TAG, "setCurrentDir: "+currentDir);
     }
 
     private void init() {
@@ -135,6 +136,7 @@ public class MenuControls implements View.OnClickListener,
         ((AppCompatActivity) activity).getSupportActionBar().setHomeButtonEnabled(true);
         ((AppCompatActivity) activity).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity) activity).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_drawer);
+        storagesUiView.syncDrawer();
 
 
 /*        imgNavigationIcon = actionBar.findViewById(R.id.imgNavigationIcon);
@@ -146,17 +148,17 @@ public class MenuControls implements View.OnClickListener,
 
     private void setTheme(Theme theme) {
         this.theme = theme;
+        bottomToolbar.setBackgroundColor(ContextCompat.getColor(context, R.color
+                .colorPrimary));
         switch (theme) {
             case DARK:
-                bottomToolbar.setBackgroundColor(ContextCompat.getColor(context, R.color
-                        .colorPrimary));
                 toolbar.setPopupTheme(R.style.Dark_AppTheme_PopupOverlay);
                 bottomToolbar.setPopupTheme(R.style.Dark_AppTheme_PopupOverlay);
                 break;
             case LIGHT:
                 toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay);
                 bottomToolbar.setPopupTheme(R.style.AppTheme_PopupOverlay);
-                toolbarTitle.setTextColor(ContextCompat.getColor(context, R.color.white));
+//                toolbarTitle.setTextColor(ContextCompat.getColor(context, R.color.white));
 //                searchHelper.setSearchHintColor();
                 break;
         }
@@ -188,7 +190,7 @@ public class MenuControls implements View.OnClickListener,
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
+     /*   switch (view.getId()) {
             case R.id.imgNavigationIcon:
 //                if (searchHelper.isExpanded()) {
 //                    searchHelper.disableSearch();
@@ -199,7 +201,7 @@ public class MenuControls implements View.OnClickListener,
             case R.id.imgButtonOverflow:
                 showOptionsPopup(imgOverflow);
                 break;
-        }
+        }*/
     }
 
     private void showOptionsPopup(View view) {
@@ -321,7 +323,7 @@ public class MenuControls implements View.OnClickListener,
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-
+        Log.d(TAG, "onMenuItemClick: "+item);
         List<FileInfo> fileInfoList = storagesUiView.getFileList();
         SparseBooleanArray selectedItems = storagesUiView.getSelectedItems();
         boolean isRooted = storagesUiView.isRooted();
@@ -445,7 +447,6 @@ public class MenuControls implements View.OnClickListener,
                         }
                     }
 
-
                     if (count > 0) {
                         FileUtils.showMessage(context, context.getString(R.string.msg_added_to_fav));
                         storagesUiView.updateFavouritesGroup(favList);
@@ -490,15 +491,12 @@ public class MenuControls implements View.OnClickListener,
                 }
                 break;
 
-
-            case R.id.action_view:
-                storagesUiView.switchView();
-                int mode = storagesUiView.getViewMode();
-                updateMenuTitle(mode);
+            case R.id.action_create:
+                storagesUiView.showCreateDirDialog();
                 break;
 
-            case R.id.action_sort:
-                showSortDialog();
+            case R.id.action_cancel:
+                storagesUiView.finishActionMode();
                 break;
         }
         return false;
@@ -508,6 +506,7 @@ public class MenuControls implements View.OnClickListener,
 
 
     boolean isPasteOp() {
+        Log.d(TAG, "isPasteOp: "+isPasteVisible);
         return isPasteVisible;
     }
 
@@ -674,7 +673,23 @@ public class MenuControls implements View.OnClickListener,
         inflater.inflate(R.menu.file_base, menu);
         searchItem = menu.findItem(R.id.action_search);
         searchView = (android.support.v7.widget.SearchView) MenuItemCompat.getActionView(searchItem);
+        mViewItem = menu.findItem(R.id.action_view);
         setupSearchView();
+    }
+
+    void onOptionsSelectedMenu(MenuItem menuItem) {
+
+        switch (menuItem.getItemId()) {
+            case R.id.action_view:
+                storagesUiView.switchView();
+                int mode = storagesUiView.getViewMode();
+                updateMenuTitle(mode);
+                break;
+
+            case R.id.action_sort:
+                showSortDialog();
+                break;
+        }
     }
 
     private void setupSearchView() {

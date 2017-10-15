@@ -22,7 +22,7 @@
 
 
     <EditText
-        android:id="@+id/editTextName"
+        android:id="@+id/editFileName"
         style="@style/EditTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

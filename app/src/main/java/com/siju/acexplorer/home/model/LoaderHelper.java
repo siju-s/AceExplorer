@@ -46,6 +46,7 @@ public class LoaderHelper {
             case 3:
             case 4:
             case 7:
+            case 8:
             case 9:
             case 10:
             case 11:

@@ -156,6 +156,12 @@ public class StorageModelImpl implements StoragesModel {
 
     @Override
     public void createDir(String currentDir, String name, final boolean rooted) {
+
+        if (FileUtils.isFileNameInvalid(name)) {
+            listener.onInvalidName(Operations.FOLDER_CREATION);
+            return;
+        }
+
         final File file = new File(currentDir + File.separator + name);
         if (file.exists()) {
             listener.onFileExists(FOLDER_CREATION, context.getString(R.string.file_exists));
@@ -171,7 +177,14 @@ public class StorageModelImpl implements StoragesModel {
 
     @Override
     public void createFile(String currentDir, String name, final boolean rooted) {
+
+        if (FileUtils.isFileNameInvalid(name)) {
+            listener.onInvalidName(Operations.FILE_CREATION);
+            return;
+        }
+
         final File file = new File(currentDir + File.separator + name + EXT_TXT);
+
         if (file.exists()) {
             listener.onFileExists(FILE_CREATION, context.getString(R.string.file_exists));
             return;
@@ -386,7 +399,7 @@ public class StorageModelImpl implements StoragesModel {
 
             if (isEnd) {
                 dialog.dismiss();
-                checkWriteMode(destinationDir, files, copyData, isMove);
+//                checkWriteMode(destinationDir, files, copyData, isMove);
             } else {
                 listener.showConflictDialog(conflictFiles, destinationDir, isMove,
                         this);

@@ -123,33 +123,24 @@ public class DialogHelper {
     /**
      * @param fileInfo Paths to delete
      */
-    public static void showDeleteDialog(final Context context, final ArrayList<FileInfo> fileInfo, final DeleteDialogListener deleteDialogListener) {
+    public static void showDeleteDialog(final Context context, final ArrayList<FileInfo> fileInfo,
+                                        final DeleteDialogListener deleteDialogListener) {
         String title = context.getString(R.string.dialog_delete_title);
         String texts[] = new String[]{title, context.getString(R.string.msg_ok), "", context.getString(R.string
                 .dialog_cancel)};
 
-        ArrayList<String> items = new ArrayList<>();
-        for (int i = 0; i < fileInfo.size(); i++) {
-            String path = fileInfo.get(i).getFilePath();
-            items.add(path);
-            if (i == 9 && fileInfo.size() > 10) {
-                int rem = fileInfo.size() - 10;
-                items.add("+" + rem + " " + context.getString(R.string.more));
-                break;
-            }
-        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
-        View dialogView = inflater.inflate(R.layout.dialog_open_as, null);
+        View dialogView = inflater.inflate(R.layout.dialog_delete, null);
         builder.setView(dialogView);
         builder.setCancelable(true);
 
         final AlertDialog alertDialog = builder.create();
 
 
-        TextView textTitle = alertDialog.findViewById(R.id.textTitle);
-        ListView listView = alertDialog.findViewById(R.id.listOpenAs);
+        TextView textTitle = dialogView.findViewById(R.id.textTitle);
+        TextView textItems = dialogView.findViewById(R.id.textDeleteItems);
         Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
         Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
 
@@ -157,11 +148,19 @@ public class DialogHelper {
         positiveButton.setText(texts[1]);
         negativeButton.setText(texts[3]);
 
-        ArrayAdapter<String> itemsAdapter =
-                new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, items);
 
-        listView.setAdapter(itemsAdapter);
+        StringBuilder items = new StringBuilder();
+        for (int i = 0; i < fileInfo.size(); i++) {
+            String path = fileInfo.get(i).getFilePath();
+            items.append(path).append('\n');
+            if (i == 9 && fileInfo.size() > 10) {
+                int rem = fileInfo.size() - 10;
+                items.append("+" + rem + " " + context.getString(R.string.more));
+                break;
+            }
+        }
 
+        textItems.setText(items);
 
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -199,8 +198,8 @@ public class DialogHelper {
         final AlertDialog alertDialog = builder.create();
 
 
-        TextView textTitle = alertDialog.findViewById(R.id.textTitle);
-        final ListView listView = alertDialog.findViewById(R.id.listSortOptions);
+        TextView textTitle = dialogView.findViewById(R.id.textTitle);
+        final ListView listView = dialogView.findViewById(R.id.listSortOptions);
         Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
         Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
 
@@ -261,7 +260,7 @@ public class DialogHelper {
 
         TextView title = dialogView.findViewById(R.id.textTitle);
         TextView msg = dialogView.findViewById(R.id.textMessage);
-        final EditText inputText = dialogView.findViewById(R.id.editTextName);
+        final EditText inputText = dialogView.findViewById(R.id.editFileName);
 
         Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
         Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
@@ -473,14 +472,14 @@ public class DialogHelper {
 
         final AlertDialog dialog = builder.create();
 
-        final CheckBox checkBox = dialog.findViewById(R.id.checkBox);
-        ImageView icon = dialog.findViewById(R.id.imageFileIcon);
-        TextView textFileName = dialog.findViewById(R.id.textFileName);
-        TextView textFileDate = dialog.findViewById(R.id.textFileDate);
-        TextView textFileSize = dialog.findViewById(R.id.textFileSize);
-        Button positiveButton = dialog.findViewById(R.id.buttonSkip);
-        Button negativeButton = dialog.findViewById(R.id.buttonReplace);
-        Button neutralButton = dialog.findViewById(R.id.buttonKeepBoth);
+        final CheckBox checkBox = dialogView.findViewById(R.id.checkBox);
+        ImageView icon = dialogView.findViewById(R.id.imageFileIcon);
+        TextView textFileName = dialogView.findViewById(R.id.textFileName);
+        TextView textFileDate = dialogView.findViewById(R.id.textFileDate);
+        TextView textFileSize = dialogView.findViewById(R.id.textFileSize);
+        Button positiveButton = dialogView.findViewById(R.id.buttonSkip);
+        Button negativeButton = dialogView.findViewById(R.id.buttonReplace);
+        Button neutralButton = dialogView.findViewById(R.id.buttonKeepBoth);
 
 
         String fileName = conflictFiles.get(0).getFileName();
@@ -561,18 +560,18 @@ public class DialogHelper {
 
         final AlertDialog alertDialog = builder.create();
 
-        final CheckBox readown =  alertDialog.findViewById(R.id.creadown);
-        final CheckBox readgroup =  alertDialog.findViewById(R.id.creadgroup);
-        final CheckBox readother =  alertDialog.findViewById(R.id.creadother);
-        final CheckBox writeown =  alertDialog.findViewById(R.id.cwriteown);
-        final CheckBox writegroup =  alertDialog.findViewById(R.id.cwritegroup);
-        final CheckBox writeother =  alertDialog.findViewById(R.id.cwriteother);
-        final CheckBox exeown =  alertDialog.findViewById(R.id.cexeown);
-        final CheckBox exegroup =  alertDialog.findViewById(R.id.cexegroup);
-        final CheckBox exeother =  alertDialog.findViewById(R.id.cexeother);
+        final CheckBox readown =  dialogView.findViewById(R.id.creadown);
+        final CheckBox readgroup =  dialogView.findViewById(R.id.creadgroup);
+        final CheckBox readother =  dialogView.findViewById(R.id.creadother);
+        final CheckBox writeown =  dialogView.findViewById(R.id.cwriteown);
+        final CheckBox writegroup =  dialogView.findViewById(R.id.cwritegroup);
+        final CheckBox writeother =  dialogView.findViewById(R.id.cwriteother);
+        final CheckBox exeown =  dialogView.findViewById(R.id.cexeown);
+        final CheckBox exegroup =  dialogView.findViewById(R.id.cexegroup);
+        final CheckBox exeother =  dialogView.findViewById(R.id.cexeother);
 
-        Button positiveButton = alertDialog.findViewById(R.id.buttonPositive);
-        Button negativeButton = alertDialog.findViewById(R.id.buttonNegative);
+        Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
+        Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
 
         final Boolean[] read = permissions.get(0);
         final Boolean[] write = permissions.get(1);
@@ -657,21 +656,21 @@ public class DialogHelper {
 
         final AlertDialog alertDialog = builder.create();
 
-        ImageView imageFileIcon =  alertDialog.findViewById(R.id.imageFileIcon);
-        TextView textFileName =  alertDialog.findViewById(R.id.textFileName);
-        TextView textPath =  alertDialog.findViewById(R.id.textPath);
-        TextView textFileSize =  alertDialog.findViewById(R.id.textFileSize);
-        TextView textDateModified =  alertDialog.findViewById(R.id.textDateModified);
-        TextView textHidden =  alertDialog.findViewById(R.id.textHidden);
-        TextView textReadable =  alertDialog.findViewById(R.id.textReadable);
-        TextView textWriteable =  alertDialog.findViewById(R.id.textWriteable);
-        TextView textHiddenPlaceHolder =  alertDialog.findViewById(R.id.textHiddenPlaceHolder);
-        TextView textReadablePlaceHolder =  alertDialog.findViewById(R.id
+        ImageView imageFileIcon =  dialogView.findViewById(R.id.imageFileIcon);
+        TextView textFileName =  dialogView.findViewById(R.id.textFileName);
+        TextView textPath =  dialogView.findViewById(R.id.textPath);
+        TextView textFileSize =  dialogView.findViewById(R.id.textFileSize);
+        TextView textDateModified =  dialogView.findViewById(R.id.textDateModified);
+        TextView textHidden =  dialogView.findViewById(R.id.textHidden);
+        TextView textReadable =  dialogView.findViewById(R.id.textReadable);
+        TextView textWriteable =  dialogView.findViewById(R.id.textWriteable);
+        TextView textHiddenPlaceHolder =  dialogView.findViewById(R.id.textHiddenPlaceHolder);
+        TextView textReadablePlaceHolder =  dialogView.findViewById(R.id
                 .textReadablePlaceHolder);
-        TextView textWriteablePlaceHolder =  alertDialog.findViewById(R.id
+        TextView textWriteablePlaceHolder =  dialogView.findViewById(R.id
                 .textWriteablePlaceHolder);
-        TextView textMD5 =  alertDialog.findViewById(R.id.textMD5);
-        TextView textMD5Placeholder =  alertDialog.findViewById(R.id.textMD5PlaceHolder);
+        TextView textMD5 =  dialogView.findViewById(R.id.textMD5);
+        TextView textMD5Placeholder =  dialogView.findViewById(R.id.textMD5PlaceHolder);
 
         String path = fileInfo.getFilePath();
         String fileName = fileInfo.getFileName();
@@ -772,7 +771,7 @@ public class DialogHelper {
             }
         }
 
-        Button positiveButton = alertDialog.findViewById(R.id.buttonPositive);
+        Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
 
         positiveButton.setOnClickListener(new View
                 .OnClickListener() {
@@ -811,7 +810,7 @@ public class DialogHelper {
 
         TextView titleText = dialogView.findViewById(R.id.textTitle);
         TextView msg = dialogView.findViewById(R.id.textMessage);
-        final EditText inputText = dialogView.findViewById(R.id.editTextName);
+        final EditText inputText = dialogView.findViewById(R.id.editFileName);
 
         Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
         Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
@@ -879,11 +878,11 @@ public class DialogHelper {
 
         final AlertDialog alertDialog = builder.create();
 
-        final RadioButton radioButtonSpecify =  alertDialog.findViewById(R.id
+        final RadioButton radioButtonSpecify =  dialogView.findViewById(R.id
                 .radioButtonSpecifyPath);
-        final Button buttonPathSelect =  alertDialog.findViewById(R.id.buttonPathSelect);
-        RadioGroup radioGroupPath =  alertDialog.findViewById(R.id.radioGroupPath);
-        final EditText editFileName =  alertDialog.findViewById(R.id.editFileName);
+        final Button buttonPathSelect =  dialogView.findViewById(R.id.buttonPathSelect);
+        RadioGroup radioGroupPath =  dialogView.findViewById(R.id.radioGroupPath);
+        final EditText editFileName =  dialogView.findViewById(R.id.editFileName);
         editFileName.setText(currentFileName);
         radioGroupPath.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -904,8 +903,8 @@ public class DialogHelper {
             }
         });
 
-        Button positiveButton = alertDialog.findViewById(R.id.buttonPositive);
-        Button negativeButton = alertDialog.findViewById(R.id.buttonNegative);
+        Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
+        Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
 
         positiveButton.setOnClickListener(new View
                 .OnClickListener() {
@@ -940,15 +939,15 @@ public class DialogHelper {
 
         final AlertDialog alertDialog = builder.create();
 
-        final RadioButton radioButtonCopy =  alertDialog.findViewById(R.id
+        final RadioButton radioButtonCopy =  dialogView.findViewById(R.id
                 .radioCopy);
 
-        final TextView textMessage = alertDialog.findViewById(R.id.textMessage);
+        final TextView textMessage = dialogView.findViewById(R.id.textMessage);
 
         textMessage.setText(context.getString(R.string.dialog_to_placeholder) + " " + destinationDir);
 
-        Button positiveButton = alertDialog.findViewById(R.id.buttonPositive);
-        Button negativeButton = alertDialog.findViewById(R.id.buttonNegative);
+        Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
+        Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
 
         positiveButton.setOnClickListener(new View
                 .OnClickListener() {

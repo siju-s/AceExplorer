@@ -69,7 +69,7 @@ public class OperationProgress implements Progress {
     private TextView textFileFromPath;
     private TextView textFileCount;
     private TextView textProgress;
-    private ArrayList<FileInfo> copiedFileInfo;
+    private ArrayList<FileInfo> copiedFileInfo = new ArrayList<>();
     private Context mContext;
     private Intent mServiceIntent;
 
@@ -95,12 +95,12 @@ public class OperationProgress implements Progress {
         progressDialog = builder.create();
 
         progressDialog.setCancelable(false);
-        textFileName = progressDialog.findViewById(R.id.textFileName);
-        textFileFromPath = progressDialog.findViewById(R.id.textFileFromPath);
-        TextView textFileToPath = progressDialog.findViewById(R.id.textFileToPath);
-        textFileCount = progressDialog.findViewById(R.id.textFilesLeft);
-        textProgress = progressDialog.findViewById(R.id.textProgressPercent);
-        progressBarPaste = progressDialog.findViewById(R.id.progressBarPaste);
+        textFileName = dialogView.findViewById(R.id.textFileName);
+        textFileFromPath = dialogView.findViewById(R.id.textFileFromPath);
+        TextView textFileToPath = dialogView.findViewById(R.id.textFileToPath);
+        textFileCount = dialogView.findViewById(R.id.textFilesLeft);
+        textProgress = dialogView.findViewById(R.id.textProgressPercent);
+        progressBarPaste = dialogView.findViewById(R.id.progressBarPaste);
 
         Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
         Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
@@ -156,15 +156,15 @@ public class OperationProgress implements Progress {
         builder.setView(dialogView);
         progressDialog = builder.create();
         progressDialog.setCancelable(false);
-        textFileName = progressDialog.findViewById(R.id.textFileName);
-        textFileFromPath = progressDialog.findViewById(R.id.textFileFromPath);
-        TextView textFromPlaceHolder = progressDialog.findViewById(R.id.textFileFromPlaceHolder);
-        (progressDialog.findViewById(R.id.textFileToPlaceHolder)).setVisibility(View.GONE);
+        textFileName = dialogView.findViewById(R.id.textFileName);
+        textFileFromPath = dialogView.findViewById(R.id.textFileFromPath);
+        TextView textFromPlaceHolder = dialogView.findViewById(R.id.textFileFromPlaceHolder);
+        (dialogView.findViewById(R.id.textFileToPlaceHolder)).setVisibility(View.GONE);
 
         textFromPlaceHolder.setVisibility(View.GONE);
-        textFileCount = progressDialog.findViewById(R.id.textFilesLeft);
-        textProgress = progressDialog.findViewById(R.id.textProgressPercent);
-        progressBarPaste = progressDialog.findViewById(R.id.progressBarPaste);
+        textFileCount = dialogView.findViewById(R.id.textFilesLeft);
+        textProgress = dialogView.findViewById(R.id.textProgressPercent);
+        progressBarPaste = dialogView.findViewById(R.id.progressBarPaste);
 
         Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
         Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
@@ -213,14 +213,14 @@ public class OperationProgress implements Progress {
         View dialogView = inflater.inflate(R.layout.dialog_progress_paste, null);
         builder.setView(dialogView);
         progressDialog.setCancelable(false);
-        textFileName = progressDialog.findViewById(R.id.textFileName);
-        textFileFromPath = progressDialog.findViewById(R.id.textFileFromPath);
-        TextView textFileToPath = progressDialog.findViewById(R.id.textFileToPath);
-        TextView textFromPlaceHolder = progressDialog.findViewById(R.id.textFileFromPlaceHolder);
+        textFileName = dialogView.findViewById(R.id.textFileName);
+        textFileFromPath = dialogView.findViewById(R.id.textFileFromPath);
+        TextView textFileToPath = dialogView.findViewById(R.id.textFileToPath);
+        TextView textFromPlaceHolder = dialogView.findViewById(R.id.textFileFromPlaceHolder);
         textFromPlaceHolder.setVisibility(View.GONE);
-        textFileCount = progressDialog.findViewById(R.id.textFilesLeft);
-        textProgress = progressDialog.findViewById(R.id.textProgressPercent);
-        progressBarPaste = progressDialog.findViewById(R.id.progressBarPaste);
+        textFileCount = dialogView.findViewById(R.id.textFilesLeft);
+        textProgress = dialogView.findViewById(R.id.textProgressPercent);
+        progressBarPaste = dialogView.findViewById(R.id.progressBarPaste);
 
         Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
         Button negativeButton = dialogView.findViewById(R.id.buttonNegative);

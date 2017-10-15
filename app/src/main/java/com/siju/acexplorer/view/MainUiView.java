@@ -770,8 +770,10 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         openDrawer();
     }
 
-
-
+    @Override
+    public void syncDrawer() {
+        navigationDrawer.syncDrawerState();
+    }
 
 
 }

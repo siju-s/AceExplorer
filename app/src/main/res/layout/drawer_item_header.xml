@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,10 +15,11 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawerHeaderItem"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
 
 
     <TextView
@@ -31,7 +31,7 @@
         android:layout_marginTop="@dimen/padding_10"
         android:textSize="14sp"
         android:textStyle="bold"
-        tools:ignore="RelativeOverlap"/>
+        tools:ignore="RelativeOverlap" />
 
     <ImageView
         android:id="@+id/imageExpand"
@@ -45,6 +45,6 @@
         android:paddingLeft="@dimen/drawer_item_margin"
         android:paddingRight="@dimen/drawer_item_margin"
         android:paddingStart="@dimen/drawer_item_margin"
-        android:src="@drawable/ic_expand_more_black"/>
+        android:src="@drawable/ic_expand_more_black" />
 
 </RelativeLayout>
