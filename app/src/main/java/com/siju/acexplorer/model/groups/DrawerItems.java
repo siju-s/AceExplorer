@@ -88,26 +88,26 @@ public class DrawerItems {
     }
 
     private void initializeFavouritesGroup() {
-
-        addDefaultFavorites();
-        addSavedFavorites();
-        populateDrawerItems(new SectionGroup(drawerListHeaders.get(1), favouritesGroupChild));
-    }
-
-    private void addDefaultFavorites() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences
                 (context);
         boolean isFirstRun = sharedPreferences.getBoolean(PREFS_FIRST_RUN, true);
         if (isFirstRun) {
-            String path = getDownloadsDirectory();
-            favouritesGroupChild.add(new SectionItems(DOWNLOADS, path, R.drawable.ic_download,
-                    getDownloadsDirectory(), 0));
-            FavInfo favInfo = new FavInfo();
-            favInfo.setFileName(DOWNLOADS);
-            favInfo.setFilePath(path);
-            sharedPreferenceWrapper.addFavorite(context, favInfo);
-
+            addDefaultFavorites();
+        } else {
+            addSavedFavorites();
         }
+        populateDrawerItems(new SectionGroup(drawerListHeaders.get(1), favouritesGroupChild));
+    }
+
+    private void addDefaultFavorites() {
+
+        String path = getDownloadsDirectory();
+        favouritesGroupChild.add(new SectionItems(DOWNLOADS, path, R.drawable.ic_download,
+                getDownloadsDirectory(), 0));
+        FavInfo favInfo = new FavInfo();
+        favInfo.setFileName(DOWNLOADS);
+        favInfo.setFilePath(path);
+        sharedPreferenceWrapper.addFavorite(context, favInfo);
     }
 
     private void addSavedFavorites() {

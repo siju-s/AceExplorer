@@ -24,6 +24,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -89,7 +90,7 @@ public class MenuControls implements View.OnClickListener,
     private MenuItem mViewItem;
     private Category category;
     private String currentDir;
-    private android.support.v7.widget.SearchView searchView;
+    private SearchView searchView;
     private MenuItem searchItem;
 
 
@@ -108,7 +109,7 @@ public class MenuControls implements View.OnClickListener,
 
     void setCurrentDir(String currentDir) {
         this.currentDir = currentDir;
-        Log.d(TAG, "setCurrentDir: "+currentDir);
+        Log.d(TAG, "setCurrentDir: " + currentDir);
     }
 
     private void init() {
@@ -144,7 +145,7 @@ public class MenuControls implements View.OnClickListener,
         imgNavigationIcon.setOnClickListener(this);
         imgOverflow = actionBar.findViewById(R.id.imgButtonOverflow);
         imgOverflow.setOnClickListener(this);*/
-}
+    }
 
     private void setTheme(Theme theme) {
         this.theme = theme;
@@ -164,30 +165,6 @@ public class MenuControls implements View.OnClickListener,
         }
     }
 
-
-    void setTitleForCategory(Category category) {
-        switch (category) {
-            case FILES:
-                toolbar.setTitle(context.getString(R.string.app_name));
-                break;
-            case AUDIO:
-                toolbar.setTitle(context.getString(R.string.nav_menu_music));
-                break;
-            case VIDEO:
-                toolbar.setTitle(context.getString(R.string.nav_menu_video));
-                break;
-            case IMAGE:
-                toolbar.setTitle(context.getString(R.string.nav_menu_image));
-                break;
-            case DOCS:
-                toolbar.setTitle(context.getString(R.string.nav_menu_docs));
-                break;
-            default:
-                toolbar.setTitle(context.getString(R.string.app_name));
-        }
-    }
-
-
     @Override
     public void onClick(View view) {
      /*   switch (view.getId()) {
@@ -204,7 +181,7 @@ public class MenuControls implements View.OnClickListener,
         }*/
     }
 
-    private void showOptionsPopup(View view) {
+    /*private void showOptionsPopup(View view) {
         PopupMenu popupMenu = new PopupMenu(context, view);
         MenuInflater inflater = popupMenu.getMenuInflater();
         inflater.inflate(R.menu.file_base, popupMenu.getMenu());
@@ -212,7 +189,7 @@ public class MenuControls implements View.OnClickListener,
         updateMenuTitle(storagesUiView.getViewMode());
         popupMenu.setOnMenuItemClickListener(this);
         popupMenu.show();
-    }
+    }*/
 
 
     private void setupMenu() {
@@ -323,7 +300,7 @@ public class MenuControls implements View.OnClickListener,
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        Log.d(TAG, "onMenuItemClick: "+item);
+        Log.d(TAG, "onMenuItemClick: " + item);
         List<FileInfo> fileInfoList = storagesUiView.getFileList();
         SparseBooleanArray selectedItems = storagesUiView.getSelectedItems();
         boolean isRooted = storagesUiView.isRooted();
@@ -407,8 +384,8 @@ public class MenuControls implements View.OnClickListener,
                     final String oldFilePath = fileInfoList.get(selectedItems.keyAt(0)).
                             getFilePath();
                     int renamedPosition = selectedItems.keyAt(0);
-                    String newFilePath = new File(oldFilePath).getParent();
-                    renameDialog(oldFilePath, newFilePath, renamedPosition);
+                    String parent = new File(oldFilePath).getParent();
+                    renameDialog(oldFilePath, parent, renamedPosition);
                 }
                 break;
 
@@ -506,7 +483,7 @@ public class MenuControls implements View.OnClickListener,
 
 
     boolean isPasteOp() {
-        Log.d(TAG, "isPasteOp: "+isPasteVisible);
+        Log.d(TAG, "isPasteOp: " + isPasteVisible);
         return isPasteVisible;
     }
 
@@ -525,22 +502,18 @@ public class MenuControls implements View.OnClickListener,
     }
 
 
-    private void renameDialog(final String oldFilePath, final String newFilePath, final int
+    private void renameDialog(final String oldFilePath, final String parentDir, final int
             position) {
-        String fileName = oldFilePath.substring(oldFilePath.lastIndexOf("/") + 1, oldFilePath
-                .length());
-        boolean file = false;
-        String extension = null;
+        String fileName;
         if (new File(oldFilePath).isFile()) {
-            String[] tokens = fileName.split("\\.(?=[^\\.]+$)");
-            fileName = tokens[0];
-            extension = tokens[1];
-            file = true;
+            fileName = oldFilePath.substring(oldFilePath.lastIndexOf("/") + 1, oldFilePath
+                    .lastIndexOf("."));
+        } else {
+            fileName = oldFilePath.substring(oldFilePath.lastIndexOf("/") + 1, oldFilePath
+                    .length());
         }
-        final boolean isFile = file;
-        final String ext = extension;
 
-        storagesUiView.showRenameDialog(fileName);
+        storagesUiView.showRenameDialog(oldFilePath, fileName, position);
         storagesUiView.finishActionMode();
     }
 
@@ -556,7 +529,7 @@ public class MenuControls implements View.OnClickListener,
         fabOperation.setVisibility(View.VISIBLE);*/
     }
 
-    void hidePasteIcon() {
+    private void hidePasteIcon() {
    /*     fabOperation.setVisibility(View.GONE);
         fabCreateMenu.setVisibility(View.VISIBLE);*/
     }
@@ -670,9 +643,10 @@ public class MenuControls implements View.OnClickListener,
     }
 
     void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.d(TAG, "onCreateOptionsMenu: " + menu);
         inflater.inflate(R.menu.file_base, menu);
         searchItem = menu.findItem(R.id.action_search);
-        searchView = (android.support.v7.widget.SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView = (android.support.v7.widget.SearchView) searchItem.getActionView();
         mViewItem = menu.findItem(R.id.action_view);
         setupSearchView();
     }

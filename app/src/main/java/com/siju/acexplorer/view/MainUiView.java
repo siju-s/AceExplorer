@@ -88,7 +88,8 @@ import static com.siju.acexplorer.theme.ThemeUtils.PREFS_THEME;
  * Created by Siju on 02 September,2017
  */
 public class MainUiView extends DrawerLayout implements PermissionResultCallback, DrawerListener,
-        StoragesUiView.FavoriteOperation {
+        StoragesUiView.FavoriteOperation, SharedPreferences.OnSharedPreferenceChangeListener
+       {
 
     public static final int PERMISSIONS_REQUEST = 100;
 
@@ -177,7 +178,8 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     }
 
     private void unregisterReceivers() {
-        preferences.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
+        Log.d(TAG, "unregisterReceivers: ");
+        preferences.unregisterOnSharedPreferenceChangeListener(this);
         navigationDrawer.unregisterContextMenu();
         context.unregisterReceiver(localeListener);
 
@@ -210,8 +212,8 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
 
     private void initPreferences() {
         preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        preferences.registerOnSharedPreferenceChangeListener(this);
         sharedPreferenceWrapper = new SharedPreferenceWrapper();
-        preferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
     }
 
     /**
@@ -333,6 +335,8 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
             }
             else {
                 boolean isHome = ((BaseFileList) fragment).onBackPressed();
+                Fragment fragment1 = fragmentManager.findFragmentById(R.id.main_container);
+                Log.d(TAG, "handleBackPress: "+fragment1);
                 if (isHome) {
                     hideDualPane();
                     return true;
@@ -344,7 +348,6 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
             // Remove HomeScreen Frag & Exit App
             Logger.log(TAG, "Onbackpress--ELSE=");
             activity.finish();
-//            super.onBackPressed();
         }
         return false;
     }
@@ -409,6 +412,9 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
             ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim
                     .enter_from_right, R.anim
                     .exit_to_left);
+//            ft.hide(fragment);
+//            ft.add(R.id.main_container, baseFileList, directory);
+
             ft.replace(R.id.main_container, baseFileList, directory);
             ft.addToBackStack(null);
             ft.commit();
@@ -598,18 +604,13 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
                     createDualFragment();
                 }
                 break;
-
-            case PREFS_RESET:
-                resetFavouritesGroup();
-                break;
         }
 
         preferenceKey = null;
     }
 
 
-    private void resetFavouritesGroup() {
-        navigationDrawer.resetFavouritesGroup();
+    void resetFavoritesData() {
         sharedPreferenceWrapper.resetFavourites(getContext());
     }
 
@@ -714,16 +715,17 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     }
 
 
-    private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = new
+   /* private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = new
             SharedPreferences.OnSharedPreferenceChangeListener() {
 
 
                 @Override
                 public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String
                         key) {
+                    Log.d(TAG, "onSharedPreferenceChanged: "+key);
                     preferenceKey = key;
                 }
-            };
+            };*/
 
     private String preferenceKey;
 
@@ -776,4 +778,9 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     }
 
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        Log.d(TAG, "onSharedPreferenceChanged: "+key);
+        preferenceKey = key;
+    }
 }

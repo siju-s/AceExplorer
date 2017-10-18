@@ -302,10 +302,13 @@ public class HomeUiView extends CoordinatorLayout {
         baseFileList.setDrawerListener(drawerListener);
         baseFileList.setFavoriteListener(favListener);
         baseFileList.setArguments(args);
+        ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
+                .exit_to_left);
+//        ft.add(R.id.main_container, baseFileList);
+//        ft.hide(fragment);
         ft.replace(R.id.main_container, baseFileList);
         ft.addToBackStack(null);
         ft.commit();
-
     }
 
     public void setDualMode() {

@@ -38,9 +38,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_CONFLICT_DATA;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES;
+import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION;
+import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_RESULT;
+import static com.siju.acexplorer.storage.model.operations.Operations.COPY;
+import static com.siju.acexplorer.storage.model.operations.Operations.CUT;
 import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_COMPLETED;
 import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_TOTAL;
 import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_TOTAL_PROGRESS;
@@ -58,13 +63,14 @@ public class MoveFiles extends IntentService {
 
     private Context context;
 
-    public MoveFiles(String name) {
-        super(name);
+    public MoveFiles() {
+        super("MoveFiles");
     }
 
 
     @Override
     public void onCreate() {
+        super.onCreate();
         context = getApplicationContext();
     }
 
@@ -73,6 +79,7 @@ public class MoveFiles extends IntentService {
         filesToMove = intent.getParcelableArrayListExtra(KEY_FILES);
         copyData = intent.getParcelableArrayListExtra(KEY_CONFLICT_DATA);
         String currentDir = intent.getStringExtra(KEY_FILEPATH);
+        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         Intent notificationIntent = new Intent(this, AceActivity.class);
         notificationIntent.setAction(Intent.ACTION_MAIN);
@@ -81,8 +88,8 @@ public class MoveFiles extends IntentService {
 
         builder = new NotificationCompat.Builder(context, formChannel());
         builder.setContentIntent(pendingIntent);
-        builder.setContentTitle(getResources().getString(R.string.copying)).setSmallIcon(R
-                .drawable.ic_copy_white);
+        builder.setContentTitle(getResources().getString(R.string.moving)).setSmallIcon(R
+                .drawable.ic_cut_white);
         String channelId = getResources().getString(R.string.operation);
         builder.setChannelId(channelId);
         startForeground(NOTIFICATION_ID, builder.build());
@@ -134,7 +141,7 @@ public class MoveFiles extends IntentService {
             }
             publishResults(fileName, totalFiles, filesMovedList.size());
         }
-
+        sendCompletedResult();
     }
 
     private void publishResults(String fileName, long total, long done) {
@@ -164,5 +171,13 @@ public class MoveFiles extends IntentService {
         intent.putExtra(KEY_TOTAL, total);
         intent.putExtra(KEY_TOTAL_PROGRESS, progress);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
+    private void sendCompletedResult() {
+        Intent intent = new Intent(ACTION_OP_REFRESH);
+        intent.putExtra(KEY_RESULT, filesMovedList.size() != 0);
+        intent.putExtra(KEY_OPERATION, CUT);
+        intent.putStringArrayListExtra(KEY_FILES, filesMovedList);
+        sendBroadcast(intent);
     }
 }

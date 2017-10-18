@@ -27,6 +27,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AlertDialog;
 import android.text.format.Formatter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,7 +73,7 @@ public class DialogHelper {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
-        View dialogView = inflater.inflate(R.layout.rename_dialog, null);
+        View dialogView = inflater.inflate(R.layout.dialog_rename, null);
         builder.setView(dialogView);
         builder.setCancelable(false);
 
@@ -199,32 +200,25 @@ public class DialogHelper {
 
 
         TextView textTitle = dialogView.findViewById(R.id.textTitle);
-        final ListView listView = dialogView.findViewById(R.id.listSortOptions);
+        final RadioGroup radioGroup = dialogView.findViewById(R.id.radioGroupSort);
         Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
         Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
 
         textTitle.setText(title);
         positiveButton.setText(texts[1]);
         negativeButton.setText(texts[3]);
-
-        ArrayAdapter<String> itemsAdapter =
-                new ArrayAdapter<>(context, R.layout.sort_options);
-
-        listView.setAdapter(itemsAdapter);
-
-        final int[] position = new int[1];
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                position[0] = i;
-            }
-        });
-
+        Log.d(TAG, "showSortDialog: "+radioGroup + " sort:"+sortMode);
+        View radioButton = radioGroup.getChildAt(sortMode);
+        radioGroup.check(radioButton.getId());
 
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                view.setTag(position[0]);
+                int radioButtonID = radioGroup.getCheckedRadioButtonId();
+                View radioButton = radioGroup.findViewById(radioButtonID);
+                int index = radioGroup.indexOfChild(radioButton);
+                Log.d(TAG, "onClick: "+index);
+                view.setTag(index);
                 alertDialogListener.onPositiveButtonClick(view);
                 alertDialog.dismiss();
             }
@@ -252,7 +246,7 @@ public class DialogHelper {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
-        View dialogView = inflater.inflate(R.layout.rename_dialog, null);
+        View dialogView = inflater.inflate(R.layout.dialog_rename, null);
         builder.setView(dialogView);
         builder.setCancelable(false);
 
@@ -802,7 +796,7 @@ public class DialogHelper {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
-        View dialogView = inflater.inflate(R.layout.rename_dialog, null);
+        View dialogView = inflater.inflate(R.layout.dialog_rename, null);
         builder.setView(dialogView);
         builder.setCancelable(false);
 

@@ -20,8 +20,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.text.format.Formatter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -36,6 +38,7 @@ import com.siju.acexplorer.storage.model.CopyData;
 import com.siju.acexplorer.storage.model.task.CopyService;
 import com.siju.acexplorer.storage.model.task.CreateZipService;
 import com.siju.acexplorer.storage.model.task.ExtractService;
+import com.siju.acexplorer.storage.model.task.MoveFiles;
 import com.siju.acexplorer.storage.model.task.Progress;
 
 import java.util.ArrayList;
@@ -76,7 +79,7 @@ public class OperationProgress implements Progress {
 
     public void showPasteProgress(final Context context, String destinationDir, List<FileInfo> files,
                                   List<CopyData> copyData, boolean isMove) {
-
+        mContext = context;
         registerReceiver(context);
         String title;
         if (isMove) {
@@ -142,6 +145,8 @@ public class OperationProgress implements Progress {
 
 
     public void showZipProgressDialog(final Context context, final Intent intent) {
+        mContext = context;
+
 /*        mContext = context;
         mServiceIntent = intent;
         context.bindService(mServiceIntent, mZipServiceConnection, Context.BIND_AUTO_CREATE);
@@ -199,6 +204,8 @@ public class OperationProgress implements Progress {
 
     @SuppressWarnings("ConstantConditions")
     public void showExtractProgressDialog(final Context context, final Intent intent) {
+        mContext = context;
+
  /*       mContext = context;
         mServiceIntent = intent;
         context.bindService(mServiceIntent, mExtractServiceConnection, Context.BIND_AUTO_CREATE);
@@ -271,6 +278,7 @@ public class OperationProgress implements Progress {
     private BroadcastReceiver operationFailureReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "operationFailureReceiver : onReceive: ");
             if (intent.getAction().equals(ACTION_OP_FAILED)) {
                 Operations operation = (Operations) intent.getSerializableExtra(KEY_OPERATION);
                 switch (operation) {
@@ -288,8 +296,17 @@ public class OperationProgress implements Progress {
     };
 
     private void stopCopyService() {
+        Log.d(TAG, "stopCopyService: ");
         Context context = AceApplication.getAppContext();
         Intent intent = new Intent(context, CopyService.class);
+        context.stopService(intent);
+        unregisterReceiver(context);
+    }
+
+    private void stopMoveService() {
+        Log.d(TAG, "stopMoveService: ");
+        Context context = AceApplication.getAppContext();
+        Intent intent = new Intent(context, MoveFiles.class);
         context.stopService(intent);
         unregisterReceiver(context);
     }
@@ -297,23 +314,31 @@ public class OperationProgress implements Progress {
     private BroadcastReceiver operationProgressReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(MOVE_PROGRESS)) {
-                handleMessage(intent);
+            Log.d(TAG, "onReceive: "+intent.getAction());
+            if (intent == null || intent.getAction() == null) {
+                return;
             }
+            handleMessage(intent);
         }
     };
 
     private void unregisterReceiver(Context context) {
-        context.unregisterReceiver(operationProgressReceiver);
-        context.unregisterReceiver(operationFailureReceiver);
+        Log.d(TAG, "unregisterReceiver: ");
+        LocalBroadcastManager.getInstance(context).unregisterReceiver(operationProgressReceiver);
+//        context.unregisterReceiver(operationFailureReceiver);
     }
 
 
     private void registerReceiver(Context context) {
+        Log.d(TAG, "registerReceiver: ");
         IntentFilter filter = new IntentFilter(ACTION_OP_FAILED);
-        context.registerReceiver(operationFailureReceiver, filter);
-        IntentFilter filter1 = new IntentFilter(MOVE_PROGRESS);
-        context.registerReceiver(operationProgressReceiver, filter1);
+//        context.registerReceiver(operationFailureReceiver, filter);
+        
+        IntentFilter filter1 = new IntentFilter(COPY_PROGRESS);
+        filter1.addAction(MOVE_PROGRESS);
+        filter1.addAction(EXTRACT_PROGRESS);
+        filter1.addAction(ZIP_PROGRESS);
+        LocalBroadcastManager.getInstance(context).registerReceiver(operationProgressReceiver, filter1);
     }
 
     @Override
@@ -327,7 +352,7 @@ public class OperationProgress implements Progress {
 
     // Define the Handler that receives messages from the thread and update the progress
 //    private final Handler handler = new Handler(Looper.getMainLooper()) {
-    public void handleMessage(Intent intent) {
+    private void handleMessage(Intent intent) {
         int progress = intent.getIntExtra(KEY_PROGRESS, 0);
         long copiedBytes = intent.getLongExtra(KEY_COMPLETED, 0);
         long totalBytes = intent.getLongExtra(KEY_TOTAL, 0);
@@ -396,16 +421,18 @@ public class OperationProgress implements Progress {
                 textProgress.setText(String.format(Locale.getDefault(), "%d%s", totalProgressPaste, mContext.getString
                         (R.string.percent_placeholder)));
                 int count = (int) copiedBytes;
-                textFileFromPath.setText(copiedFileInfo.get(count).getFilePath());
-                textFileName.setText(copiedFileInfo.get(count).getFileName());
+                textFileFromPath.setText(copiedFileInfo.get(count - 1).getFilePath());
+                textFileName.setText(copiedFileInfo.get(count - 1).getFileName());
                 textFileCount.setText(count + "/" + copiedFilesSize);
-                if (progress == 100) {
-                    stopCopyService();
+                if (totalProgressPaste == 100) {
+                    stopMoveService();
                     progressDialog.dismiss();
                 }
                 break;
         }
     }
+
+
 
 //    };
 

@@ -46,6 +46,7 @@ import com.siju.acexplorer.storage.model.operations.OperationUtils;
 import com.siju.acexplorer.storage.model.operations.Operations;
 import com.siju.acexplorer.storage.model.task.CopyService;
 import com.siju.acexplorer.storage.model.task.DeleteTask;
+import com.siju.acexplorer.storage.model.task.MoveFiles;
 import com.siju.acexplorer.storage.model.task.PasteConflictChecker;
 import com.siju.acexplorer.view.dialog.DialogHelper;
 
@@ -370,7 +371,7 @@ public class StorageModelImpl implements StoragesModel {
                 break;
             case ROOT:
             case INTERNAL:
-                startPasteOperation(destinationDir, this.files, this.copyData, isMove);
+                startPasteOperation(destinationDir, files, copyData, isMove);
                 break;
         }
     }
@@ -479,7 +480,7 @@ public class StorageModelImpl implements StoragesModel {
 
     private void moveFiles(String destinationDir, final List<FileInfo> files, final List<CopyData> copyData) {
         listener.showPasteProgressDialog(destinationDir, files, copyData, true);
-        Intent intent = new Intent(context, CopyService.class);
+        Intent intent = new Intent(context, MoveFiles.class);
         intent.putParcelableArrayListExtra(OperationUtils.KEY_FILES, (ArrayList<? extends
                 Parcelable>) files);
         intent.putParcelableArrayListExtra(OperationUtils.KEY_CONFLICT_DATA,
@@ -534,6 +535,35 @@ public class StorageModelImpl implements StoragesModel {
     public void updateFavorites(ArrayList<FavInfo> favInfoArrayList) {
         SharedPreferenceWrapper sharedPreferenceWrapper = new SharedPreferenceWrapper();
         sharedPreferenceWrapper.addFavorites(context, favInfoArrayList);
+    }
+
+    @Override
+    public void renameFile(final String filePath, final String parentDir, String name, final int position, final boolean rooted) {
+        if (FileUtils.isFileNameInvalid(name)) {
+            listener.onInvalidName(Operations.RENAME);
+            return;
+        }
+
+        String extension = null;
+        boolean isFile = false;
+        if (new File(filePath).isFile()) {
+            extension = filePath.substring(filePath.lastIndexOf(".") , filePath.length());
+            isFile = true;
+        }
+        String newFilePath;
+        if (isFile) {
+            newFilePath = parentDir + File.separator + name + extension;
+        } else {
+            newFilePath = parentDir + File.separator + name;
+        }
+        final File newFile = new File(newFilePath);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                FileOpsHelper.renameFile(new File(filePath), newFile, position, rooted, fileOperationCallBack);
+            }
+        }).start();
     }
 
     private DeleteTask.DeleteResultCallback deleteResultCallback = new DeleteTask

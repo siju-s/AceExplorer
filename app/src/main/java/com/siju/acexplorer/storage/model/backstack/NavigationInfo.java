@@ -98,8 +98,8 @@ public class NavigationInfo {
 
     public void addHomeNavButton(boolean isHomeScreenEnabled, Category category) {
 
+        clearNavigation();
         if (isHomeScreenEnabled) {
-            clearNavigation();
             ImageButton imageButton = new ImageButton(context);
             imageButton.setImageResource(R.drawable.ic_home_white);
             imageButton.setBackgroundColor(Color.parseColor("#00ffffff"));
@@ -140,8 +140,10 @@ public class NavigationInfo {
             textView.setText(title);
             textView.setTextColor(ContextCompat.getColor(context, R.color.navButtons));
             textView.setTextSize(19);
+            int paddingLeft = context.getResources().getDimensionPixelSize(R.dimen.padding_10);
+
             int paddingRight = context.getResources().getDimensionPixelSize(R.dimen.padding_60);
-            textView.setPadding(0, 0, paddingRight, 0);
+            textView.setPadding(paddingLeft, 0, paddingRight, 0);
             textView.setLayoutParams(params);
             addViewToNavigation(textView);
         }

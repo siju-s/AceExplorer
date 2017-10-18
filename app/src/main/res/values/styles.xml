@@ -204,9 +204,9 @@
 
     <style name="DialogTitle">
         <item name="android:textSize">20sp</item>
+        <item name="android:layout_marginTop">@dimen/margin_16</item>
         <item name="android:layout_marginLeft">@dimen/margin_16</item>
         <item name="android:layout_marginRight">@dimen/margin_16</item>
-        <item name="android:fontFamily">sans-serif</item>
     </style>
 
     <style name="DialogMessage">
@@ -225,6 +225,26 @@
         <item name="android:layout_marginRight">@dimen/margin_16</item>
         <item name="android:layout_marginTop">@dimen/margin_16</item>
         <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="RadioButtonTextStyle">
+        <item name="android:textSize">@dimen/text_16</item>
+        <item name="android:layout_marginLeft">@dimen/margin_16</item>
+        <item name="android:layout_marginRight">@dimen/margin_16</item>
+        <item name="android:layout_marginTop">@dimen/margin_16</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="DialogPositiveButton" parent="Base.Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/blue</item>
+        <item name="android:layout_marginLeft">@dimen/margin_16</item>
+        <item name="android:layout_marginRight">@dimen/margin_16</item>
+    </style>
+
+    <style name="DialogNegativeButton" parent="Base.Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/blue</item>
+        <item name="android:layout_marginLeft">@dimen/margin_16</item>
+        <item name="android:layout_marginRight">@dimen/margin_16</item>
     </style>
 
 </resources>

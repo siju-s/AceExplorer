@@ -74,6 +74,8 @@ public interface StoragesModel {
 
     void updateFavorites(ArrayList<FavInfo> favInfoArrayList);
 
+    void renameFile(String filePath, String newFilePath, String name, int position, boolean rooted);
+
 
     interface Listener {
 

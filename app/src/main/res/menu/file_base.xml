@@ -24,22 +24,19 @@
         android:icon="@drawable/ic_paste_white"
         android:title="@string/action_paste"
         android:visible="false"
-        android:orderInCategory="100"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search_white"
         android:title="@string/action_search"
-        android:orderInCategory="200"
         app:actionViewClass="android.support.v7.widget.SearchView"
-        app:showAsAction="collapseActionView|ifRoom" />
+        app:showAsAction="collapseActionView|always" />
 
 
     <item
         android:id="@+id/action_view"
         android:title="@string/action_view_grid"
-        android:orderInCategory="300"
         app:showAsAction="never" />
 
 
@@ -47,7 +44,6 @@
         android:id="@+id/action_sort"
         android:title="@string/action_sort"
         app:showAsAction="never"
-        android:orderInCategory="400"
         />
 
 

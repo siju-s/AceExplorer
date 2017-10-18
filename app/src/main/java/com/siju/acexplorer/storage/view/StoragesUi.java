@@ -145,5 +145,7 @@ public interface StoragesUi {
         void saveSettingsOnExit(int gridCols, int viewMode);
 
         void updateFavorites(ArrayList<FavInfo> favInfoArrayList);
+
+        void renameFile(String filePath, String newFilePath, String name, int position, boolean rooted);
     }
 }

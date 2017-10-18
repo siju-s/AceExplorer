@@ -177,6 +177,11 @@ public class StoragesPresenterImpl implements StoragesPresenter, StoragesUi.List
     }
 
     @Override
+    public void renameFile(String filePath, String newFilePath, String name, int position, boolean rooted) {
+        storagesModel.renameFile(filePath, newFilePath, name, position, rooted);
+    }
+
+    @Override
     public void onFilesFetched(List<FileInfo> libraries) {
 
     }

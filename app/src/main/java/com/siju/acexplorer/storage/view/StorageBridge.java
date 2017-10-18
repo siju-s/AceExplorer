@@ -43,7 +43,7 @@ import java.util.List;
  */
 public class StorageBridge implements StoragesUi {
 
-    private StoragesUiView uiView;
+    private StoragesUiView storagesUiView;
     private Context context;
     private Listener listener;
     private Fragment fragment;
@@ -52,28 +52,28 @@ public class StorageBridge implements StoragesUi {
                   DrawerListener drawerListener) {
         this.context = parent.getContext();
         this.fragment = fragment;
-        uiView = StoragesUiView.inflate(parent);
-        uiView.setBridgeRef(this);
-        uiView.setFragment(fragment);
-        uiView.setFavListener(favListener);
-        uiView.setDrawerListener(drawerListener);
-        parent.addView(uiView);
+        storagesUiView = StoragesUiView.inflate(parent);
+        storagesUiView.setBridgeRef(this);
+        storagesUiView.setFragment(fragment);
+        storagesUiView.setFavListener(favListener);
+        storagesUiView.setDrawerListener(drawerListener);
+        parent.addView(storagesUiView);
     }
 
 
     @Override
     public void onPause() {
-        uiView.onPause();
+        storagesUiView.onPause();
     }
 
     @Override
     public void onResume() {
-        uiView.onResume();
+        storagesUiView.onResume();
     }
 
     @Override
     public void onExit() {
-        uiView.onDestroy();
+        storagesUiView.onDestroy();
     }
 
     @Override
@@ -84,33 +84,38 @@ public class StorageBridge implements StoragesUi {
 
     @Override
     public void onDataLoaded(ArrayList<FileInfo> data) {
-        uiView.onDataLoaded(data);
+        storagesUiView.onDataLoaded(data);
     }
 
     @Override
     public void handleActivityResult(int requestCode, int resultCode, Intent intent) {
-        uiView.handleActivityResult(requestCode, resultCode, intent);
+        storagesUiView.handleActivityResult(requestCode, resultCode, intent);
     }
 
 
     @Override
     public void init() {
-        uiView.initialize();
+        storagesUiView.initialize();
     }
 
     @Override
     public boolean onBackPress() {
-        return uiView.onBackPressed();
+        return storagesUiView.onBackPressed();
     }
 
     @Override
     public void onViewDestroyed() {
-        uiView.onViewDestroyed();
+        storagesUiView.onViewDestroyed();
     }
 
     @Override
-    public void showSAFDialog(String path, Intent data) {
-        uiView.showSAFDialog(path, data);
+    public void showSAFDialog(final String path, final Intent data) {
+        fragment.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                storagesUiView.showSAFDialog(path, data);
+            }
+        });
 
     }
 
@@ -119,7 +124,7 @@ public class StorageBridge implements StoragesUi {
         fragment.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                uiView.onFileExists(operation, msg);
+                storagesUiView.onFileExists(operation, msg);
             }
         });
     }
@@ -131,7 +136,7 @@ public class StorageBridge implements StoragesUi {
         fragment.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                uiView.showConflictDialog(conflictFiles, destinationDir, isMove, pasteConflictListener);
+                storagesUiView.showConflictDialog(conflictFiles, destinationDir, isMove, pasteConflictListener);
             }
         });
 
@@ -143,25 +148,46 @@ public class StorageBridge implements StoragesUi {
     }
 
     @Override
-    public void showPasteProgressDialog(String destinationDir, List<FileInfo> files, List<CopyData> copyData, boolean isMove) {
-        uiView.showPasteProgressDialog(destinationDir, files, copyData, isMove);
+    public void showPasteProgressDialog(final String destinationDir, final List<FileInfo> files,
+                                        final List<CopyData> copyData, final boolean isMove) {
+        fragment.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                storagesUiView.showPasteProgressDialog(destinationDir, files, copyData, isMove);
+            }
+        });
 
     }
 
     @Override
-    public void onInvalidName(Operations operation) {
-        uiView.onInvalidName(operation);
+    public void onInvalidName(final Operations operation) {
+        fragment.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                storagesUiView.onInvalidName(operation);
+            }
+        });
     }
 
     @Override
-    public void dismissDialog(Operations operation) {
-        uiView.dismissDialog(operation);
+    public void dismissDialog(final Operations operation) {
+        fragment.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                storagesUiView.dismissDialog(operation);
+            }
+        });
 
     }
 
     @Override
-    public void onPermissionsFetched(ArrayList<Boolean[]> permissionList) {
-        uiView.onPermissionsFetched(permissionList);
+    public void onPermissionsFetched(final ArrayList<Boolean[]> permissionList) {
+        fragment.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                storagesUiView.onPermissionsFetched(permissionList);
+            }
+        });
 
     }
 
@@ -170,7 +196,7 @@ public class StorageBridge implements StoragesUi {
         fragment.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                uiView.onPermissionsSet();
+                storagesUiView.onPermissionsSet();
             }
         });
     }
@@ -180,67 +206,69 @@ public class StorageBridge implements StoragesUi {
         fragment.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                uiView.onPermissionSetError();
+                storagesUiView.onPermissionSetError();
             }
         });
     }
 
     @Override
     public void refreshList() {
-        uiView.refreshList();
+        storagesUiView.refreshList();
     }
 
     @Override
     public boolean isFabExpanded() {
-        return uiView.isFabExpanded();
+        return storagesUiView.isFabExpanded();
     }
 
     @Override
     public void collapseFab() {
-        uiView.collapseFab();
+        storagesUiView.collapseFab();
 
     }
 
     @Override
     public void showDualPane() {
-        uiView.showDualPane();
+        storagesUiView.showDualPane();
     }
 
     @Override
     public void reloadList(String directory, Category category) {
-        uiView.reloadList(directory, category);
+        storagesUiView.reloadList(directory, category);
     }
 
     @Override
     public void removeHomeFromNavPath() {
-        uiView.removeHomeFromNavPath();
+        storagesUiView.removeHomeFromNavPath();
     }
 
     @Override
     public void refreshSpan() {
-        uiView.refreshSpan();
+        storagesUiView.refreshSpan();
     }
 
     @Override
     public void performVoiceSearch(String query) {
-        uiView.performVoiceSearch(query);
+        storagesUiView.performVoiceSearch(query);
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        uiView.onCreateOptionsMenu(menu, inflater);
+        storagesUiView.onCreateOptionsMenu(menu, inflater);
 
     }
 
     @Override
     public void onOptionsItemSelected(MenuItem menuItem) {
-        uiView.onOptionsItemSelected(menuItem);
+        storagesUiView.onOptionsItemSelected(menuItem);
     }
 
     @Override
     public void setPremium() {
-        uiView.setPremium();
+        storagesUiView.setPremium();
     }
+
+
 
     void loadData(String currentDir, Category category, boolean isPicker) {
         listener.loadData(currentDir, category, isPicker);
@@ -276,34 +304,34 @@ public class StorageBridge implements StoragesUi {
         listener.createFile(currentDir, name, rooted);
     }
 
-    public void deleteFiles(ArrayList<FileInfo> filesToDelete) {
+    void deleteFiles(ArrayList<FileInfo> filesToDelete) {
         listener.deleteFiles(filesToDelete);
     }
 
-    public void onExtractPositiveClick(String currentFilePath, String newFileName, boolean isChecked,
+    void onExtractPositiveClick(String currentFilePath, String newFileName, boolean isChecked,
                                        String selectedPath) {
         listener.onExtractPositiveClick(currentFilePath, newFileName, isChecked, selectedPath);
 
     }
 
-    public void hideUnHideFiles(ArrayList<FileInfo> infoList, ArrayList<Integer> pos) {
+    void hideUnHideFiles(ArrayList<FileInfo> infoList, ArrayList<Integer> pos) {
         listener.hideUnHideFiles(infoList, pos);
     }
 
-    public void getFilePermissions(String filePath, boolean directory) {
+    void getFilePermissions(String filePath, boolean directory) {
         listener.getFilePermissions(filePath, directory);
 
     }
 
-    public int getSortMode() {
+    int getSortMode() {
         return listener.getSortMode();
     }
 
-    public void persistSortMode(int position) {
+    void persistSortMode(int position) {
         listener.persistSortMode(position);
     }
 
-    public void onCompressPosClick(String newFilePath, ArrayList<FileInfo> paths) {
+    void onCompressPosClick(String newFilePath, ArrayList<FileInfo> paths) {
         listener.onCompressPosClick(newFilePath, paths);
 
     }
@@ -312,12 +340,17 @@ public class StorageBridge implements StoragesUi {
         listener.setPermissions(path, isDir, permissions);
     }
 
-    public void saveSettingsOnExit(int gridCols, int viewMode) {
+    void saveSettingsOnExit(int gridCols, int viewMode) {
         listener.saveSettingsOnExit(gridCols, viewMode);
     }
 
-    public void updateFavorites(ArrayList<FavInfo> favInfoArrayList) {
+    void updateFavorites(ArrayList<FavInfo> favInfoArrayList) {
         listener.updateFavorites(favInfoArrayList);
 
+    }
+
+    void renameFile(String filePath, String parentDir, String name, int position,
+                           boolean rooted) {
+        listener.renameFile(filePath, parentDir, name, position, rooted);
     }
 }

@@ -27,7 +27,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:text="12"
-        android:maxLines="1" />
+        android:maxLines="1"
+        android:inputType="none" />
 
 
     <RelativeLayout

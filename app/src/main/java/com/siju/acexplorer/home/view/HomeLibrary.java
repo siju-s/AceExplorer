@@ -115,7 +115,7 @@ class HomeLibrary implements View.OnClickListener {
         // .getInteger(R.integer.homescreen_columns);
 //        gridColumns = Math.min(gridColumns,homeLibraryInfoArrayList.size());
         spacing = (width - gridColumns * libWidth) / gridColumns;
-        Logger.log(TAG, "Grid columns=" + gridColumns + " width=" + width + " liub size=" + 
+        Logger.log(TAG, "Grid columns=" + gridColumns + " width=" + width + " liub size=" +
                 libWidth + "space=" +
                 spacing);
     }
@@ -124,11 +124,11 @@ class HomeLibrary implements View.OnClickListener {
         libraryContainer.removeAllViews();
         TableRow tableRow = new TableRow(context);
         int pos = 0;
-        Log.d(TAG, "inflateLibraryItem: "+homeLibraryInfoArrayList.size());
+        Log.d(TAG, "inflateLibraryItem: " + homeLibraryInfoArrayList.size());
         for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
 
             RelativeLayout libraryItemContainer = (RelativeLayout) View.inflate(context, R.layout
-                            .library_item, null);
+                    .library_item, null);
             ImageView imageLibrary = libraryItemContainer.findViewById(R.id.imageLibrary);
             TextView textLibraryName = libraryItemContainer.findViewById(R.id.textLibrary);
             TextView textCount = libraryItemContainer.findViewById(R.id.textCount);
@@ -136,8 +136,7 @@ class HomeLibrary implements View.OnClickListener {
             textLibraryName.setText(homeLibraryInfoArrayList.get(i).getCategoryName());
             if (homeLibraryInfoArrayList.get(i).getCategory().equals(ADD)) {
                 textCount.setVisibility(View.GONE);
-            }
-            else {
+            } else {
                 textCount.setVisibility(View.VISIBLE);
             }
 
@@ -152,8 +151,7 @@ class HomeLibrary implements View.OnClickListener {
                 libraryContainer.addView(tableRow);
                 tableRow = new TableRow(context);
                 pos = 0;
-            }
-            else {
+            } else {
                 tableRow.addView(libraryItemContainer);
                 pos++;
             }
@@ -232,8 +230,7 @@ class HomeLibrary implements View.OnClickListener {
                                     .colorPrimary));
 
             }
-        }
-        else {
+        } else {
             switch (category) {
                 case AUDIO:
                     ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
@@ -300,13 +297,11 @@ class HomeLibrary implements View.OnClickListener {
     }
 
 
-
     private String roundOffCount(int count) {
         String roundedCount;
         if (count > MAX_LIMIT_ROUND_COUNT) {
             roundedCount = MAX_LIMIT_ROUND_COUNT + "+";
-        }
-        else {
+        } else {
             roundedCount = "" + count;
         }
         return roundedCount;
@@ -314,7 +309,7 @@ class HomeLibrary implements View.OnClickListener {
 
     void setLibraries(List<HomeLibraryInfo> libraries) {
         this.homeLibraryInfoArrayList = libraries;
-        Log.d(TAG, "setLibraries: "+libraries.size());
+        Log.d(TAG, "setLibraries: " + libraries.size());
         inflateLibraryItem();
     }
 
@@ -324,12 +319,11 @@ class HomeLibrary implements View.OnClickListener {
         int childIndex;
         if (index < gridColumns) {
             childIndex = index;
-        }
-        else {
+        } else {
             childIndex = (index % gridColumns);
         }
         RelativeLayout container = (RelativeLayout) tableRow.getChildAt(childIndex);
-        TextView textCount = (TextView) container.findViewById(R.id.textCount);
+        TextView textCount = container.findViewById(R.id.textCount);
         textCount.setText(roundOffCount(count));
 
     }
@@ -359,25 +353,19 @@ class HomeLibrary implements View.OnClickListener {
 
     void onDataLoaded(int id, List<FileInfo> data) {
         for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
-
-            if (id == DOWNLOADS.getValue() &&
-                    id == homeLibraryInfoArrayList.get(i).getCategory().getValue()) {
-
-                homeLibraryInfoArrayList.get(i).setCount(data.size());
-                updateCount(i, data.size());
-            }
-            else if (data.get(0).getCategory().equals(homeLibraryInfoArrayList.get(i).getCategory
-                    ())) {
-                Log.d(TAG, "onDataLoaded--category=" + id + "Count=" + data.get(0).getCount());
-                homeLibraryInfoArrayList.get(i).setCount(data.get(0).getCount());
-                updateCount(i, data.get(0).getCount());
-
+            int categoryId = homeLibraryInfoArrayList.get(i).getCategory().getValue();
+            Log.d(TAG, "onDataLoaded: "+homeLibraryInfoArrayList.get(i).getCategory());
+            if (id == categoryId) {
+                int count;
+                if (id == DOWNLOADS.getValue()) {
+                    count = data.size();
+                } else {
+                    count = data.get(0).getCount();
+                }
+                homeLibraryInfoArrayList.get(i).setCount(count);
+                updateCount(i, count);
             }
         }
-    }
-
-    private void refreshLibraryData(ArrayList<LibrarySortModel> selectedLibs) {
-
     }
 
 
@@ -390,12 +378,12 @@ class HomeLibrary implements View.OnClickListener {
             if (isAddCategory(category)) {
                 Intent intent = new Intent(context, LibrarySortActivity.class);
                 homeUiView.getFragment().startActivityForResult(intent, REQUEST_CODE);
-            }
-            else if (category.equals(DOWNLOADS)) {
-                homeUiView.loadFileList(StorageUtils.getDownloadsDirectory(), category);
-            }
-            else {
-                homeUiView.loadFileList(null, category);
+            } else {
+                String path = null;
+                if (category.equals(DOWNLOADS)) {
+                    path = StorageUtils.getDownloadsDirectory();
+                }
+                homeUiView.loadFileList(path, category);
             }
         }
     }

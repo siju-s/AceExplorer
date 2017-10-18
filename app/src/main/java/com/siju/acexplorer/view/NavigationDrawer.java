@@ -57,7 +57,7 @@ import static com.siju.acexplorer.model.StorageUtils.getDownloadsDirectory;
 public class NavigationDrawer implements View.OnClickListener {
 
     private final String TAG = this.getClass().getSimpleName();
-    private static final int PREFS_REQUEST = 1000;
+    private static final int SETTINGS_REQUEST = 1000;
     private static final int REQUEST_INVITE = 4000;
 
     private Activity activity;
@@ -222,7 +222,7 @@ public class NavigationDrawer implements View.OnClickListener {
                 final int exit_anim = android.R.anim.fade_out;
                 activity.overridePendingTransition(enter_anim, exit_anim);
                 activity.startActivityForResult(intent1,
-                        PREFS_REQUEST);
+                        SETTINGS_REQUEST);
                 expandableListView.setSelection(0);
                 drawerLayout.closeDrawer(drawerPane);
                 break;
@@ -294,7 +294,7 @@ public class NavigationDrawer implements View.OnClickListener {
         return favInfo;
     }
 
-    void resetFavouritesGroup() {
+    private void resetFavouritesGroup() {
 
         for (int i = favouritesGroupChild.size() - 1; i >= 0; i--) {
             if (!favouritesGroupChild.get(i).getSecondLine().equalsIgnoreCase
@@ -321,6 +321,10 @@ public class NavigationDrawer implements View.OnClickListener {
                     Toast.makeText(context, context.getString(R.string.app_invite_failed), Toast
                             .LENGTH_SHORT).show();
                 }
+                break;
+            case SETTINGS_REQUEST:
+                resetFavouritesGroup();
+                uiView.resetFavoritesData();
                 break;
         }
     }

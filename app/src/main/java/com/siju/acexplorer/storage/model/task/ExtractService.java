@@ -74,12 +74,13 @@ public class ExtractService extends IntentService {
     private long copiedbytes = 0, totalbytes = 0;
 
 
-    public ExtractService(String name) {
-        super(name);
+    public ExtractService() {
+        super("ExtractService");
     }
 
     @Override
     public void onCreate() {
+        super.onCreate();
         context = getApplicationContext();
     }
 

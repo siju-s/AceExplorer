@@ -89,6 +89,7 @@ public class FileOpsHelper {
 
         if (file.exists()) {
             fileOperationCallBack.exists(FOLDER_CREATION);
+            return;
         }
 
         OperationUtils.WriteMode mode = OperationUtils.checkFolder(file.getParent());
@@ -131,6 +132,7 @@ public class FileOpsHelper {
 
         if (file.exists()) {
             fileOperationCallBack.exists(FILE_CREATION);
+            return;
         }
 
         OperationUtils.WriteMode mode = OperationUtils.checkFolder(file.getParent());
@@ -180,6 +182,7 @@ public class FileOpsHelper {
         Logger.log(TAG, "Rename--oldFile=" + oldFile + " new file=" + newFile);
         if (newFile.exists()) {
             fileOperationCallBack.exists(Operations.RENAME);
+            return;
         }
 
         OperationUtils.WriteMode mode = OperationUtils.checkFolder(oldFile.getParent());

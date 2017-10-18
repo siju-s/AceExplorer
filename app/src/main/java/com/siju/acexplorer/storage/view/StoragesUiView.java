@@ -183,6 +183,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     private DrawerListener drawerListener;
     private MenuControls menuControls;
     private DragHelper dragHelper;
+    private int position;
+    private String filePath;
 
 
     public StoragesUiView(Context context, AttributeSet attrs) {
@@ -429,7 +431,47 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             }
         });
 
-        fileList.setOnTouchListener(touchListener);
+        fileList.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                int event = motionEvent.getActionMasked();
+
+                if (shouldStopAnimation) {
+                    stopAnimation();
+                    shouldStopAnimation = false;
+                }
+
+                if (isDragStarted && event == MotionEvent.ACTION_UP) {
+                    isDragStarted = false;
+                } else if (isDragStarted && event == MotionEvent.ACTION_MOVE && mLongPressedTime !=
+                        0) {
+                    long timeElapsed = System.currentTimeMillis() - mLongPressedTime;
+                    Logger.log(TAG, "On item touch time Elapsed" + timeElapsed);
+
+                    if (timeElapsed > 1000) {
+                        mLongPressedTime = 0;
+                        isDragStarted = false;
+                        Logger.log(TAG, "On touch drag path size=" + draggedData.size());
+                        if (draggedData.size() > 0) {
+                            Intent intent = new Intent();
+                            intent.putParcelableArrayListExtra(FileConstants.KEY_PATH, draggedData);
+                            ClipData data = ClipData.newIntent("", intent);
+                            int count = fileListAdapter.getSelectedCount();
+                            View.DragShadowBuilder shadowBuilder = dragHelper.getDragShadowBuilder
+                                    (mItemView, count);
+                            if (isAtleastNougat()) {
+                                view.startDragAndDrop(data, shadowBuilder, draggedData, 0);
+                            } else {
+                                view.startDrag(data, shadowBuilder, draggedData, 0);
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+        });
+
+
     }
 
     private void setupFab() {
@@ -459,47 +501,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             }
         });
     }
-
-    private View.OnTouchListener touchListener = new OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            int event = motionEvent.getActionMasked();
-
-            if (shouldStopAnimation) {
-                stopAnimation();
-                shouldStopAnimation = false;
-            }
-
-            if (isDragStarted && event == MotionEvent.ACTION_UP) {
-                isDragStarted = false;
-            } else if (isDragStarted && event == MotionEvent.ACTION_MOVE && mLongPressedTime !=
-                    0) {
-                long timeElapsed = System.currentTimeMillis() - mLongPressedTime;
-//                    Logger.log(TAG, "On item touch time Elapsed" + timeElapsed);
-
-                if (timeElapsed > 1000) {
-                    mLongPressedTime = 0;
-                    isDragStarted = false;
-                    Logger.log(TAG, "On touch drag path size=" + draggedData.size());
-                    if (draggedData.size() > 0) {
-                        Intent intent = new Intent();
-                        intent.putParcelableArrayListExtra(FileConstants.KEY_PATH, draggedData);
-                        ClipData data = ClipData.newIntent("", intent);
-                        int count = fileListAdapter.getSelectedCount();
-                        View.DragShadowBuilder shadowBuilder = dragHelper.getDragShadowBuilder
-                                (mItemView, count);
-                        if (isAtleastNougat()) {
-                            view.startDragAndDrop(data, shadowBuilder, draggedData, 0);
-                        } else {
-                            view.startDrag(data, shadowBuilder, draggedData, 0);
-                        }
-                    }
-                }
-            }
-            return false;
-        }
-
-    };
 
 
     private String extension;
@@ -678,6 +679,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             if (action == null) {
                 return;
             }
+            Log.d(TAG, "onReceive: " + action);
             if (action.equals(ACTION_RELOAD_LIST)) {
                 calculateScroll();
                 String path = intent.getStringExtra(KEY_FILEPATH);
@@ -687,6 +689,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 }
                 refreshList();
             } else if (action.equals(ACTION_OP_REFRESH)) {
+
                 Bundle bundle = intent.getExtras();
                 Operations operation = (Operations) bundle.getSerializable(KEY_OPERATION);
                 onOperationResult(intent, operation);
@@ -728,7 +731,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 break;
 
             case RENAME:
-
+                dialog.dismiss();
                 final int position = intent.getIntExtra(KEY_POSITION, -1);
                 String oldFile = intent.getStringExtra(KEY_FILEPATH);
                 String newFile = intent.getStringExtra(KEY_FILEPATH2);
@@ -752,6 +755,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                         scanFile(getActivity().getApplicationContext(), path);
                     }
                 }
+                refreshList();
+                break;
             case FOLDER_CREATION:
             case FILE_CREATION:
                 dialog.dismiss();
@@ -1256,10 +1261,12 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         DialogHelper.showInputDialog(getContext(), texts, Operations.FILE_CREATION, null, dialogListener);
     }
 
-    void showRenameDialog(String text) {
+    void showRenameDialog(String oldFilePath, String text, int position) {
+        this.filePath = oldFilePath;
+        this.position = position;
         String title = getContext().getString(R.string.action_rename);
         String texts[] = new String[]{title, getContext().getString(R.string.enter_name), getContext
-                ().getString(R.string.create), getContext().getString(R.string.dialog_cancel)};
+                ().getString(R.string.action_rename), getContext().getString(R.string.dialog_cancel)};
         DialogHelper.showInputDialog(getContext(), texts, Operations.RENAME, text, dialogListener);
     }
 
@@ -1296,20 +1303,15 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     public void onFileExists(Operations operation, String msg) {
-        FileUtils.showMessage(getContext(), msg);
         switch (operation) {
             case FOLDER_CREATION:
-                showCreateDirDialog();
-                break;
-
             case FILE_CREATION:
-                showCreateFileDialog();
-                break;
-
             case EXTRACT:
+            case RENAME:
                 final EditText editText = dialog.findViewById(R.id.editFileName);
                 editText.setError(getContext().getString(R.string.file_exists));
                 break;
+
 
         }
 
@@ -1323,6 +1325,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     public void showPasteProgressDialog(String destinationDir, List<FileInfo> files,
                                         List<CopyData> copyData, boolean isMove) {
+        Log.d(TAG, "showPasteProgressDialog: " + files.size());
         new OperationProgress().showPasteProgress(getContext(), destinationDir, files, copyData, isMove);
     }
 
@@ -1860,6 +1863,9 @@ mLastDualPaneDir);
                     break;
                 case FILE_CREATION:
                     bridge.createFile(currentDir, name, isRooted());
+                    break;
+                case RENAME:
+                    bridge.renameFile(filePath, currentDir, name, position, isRooted());
                     break;
             }
         }

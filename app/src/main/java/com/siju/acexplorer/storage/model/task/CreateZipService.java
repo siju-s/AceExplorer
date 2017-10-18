@@ -70,12 +70,13 @@ public class CreateZipService extends IntentService {
     private ZipOutputStream zipOutputStream;
     private String name;
 
-    public CreateZipService(String name) {
-        super(name);
+    public CreateZipService() {
+        super("CreateZipService");
     }
 
     @Override
     public void onCreate() {
+        super.onCreate();
         context = getApplicationContext();
     }
 

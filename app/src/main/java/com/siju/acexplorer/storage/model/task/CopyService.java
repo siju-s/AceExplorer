@@ -89,13 +89,14 @@ public class CopyService extends IntentService {
     private boolean move;
     private boolean calculatingTotalSize;
 
-    public CopyService(String name) {
-        super(name);
+    public CopyService() {
+        super("CopyService");
     }
 
 
     @Override
     public void onCreate() {
+        super.onCreate();
         context = getApplicationContext();
         isRooted = RootUtils.isRooted(context);
     }
