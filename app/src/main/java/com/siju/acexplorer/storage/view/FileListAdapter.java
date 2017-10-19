@@ -565,14 +565,14 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         FileListViewHolder(View itemView) {
             super(itemView);
-            container = (RelativeLayout) itemView.findViewById(R.id.container_list);
-            textFileName = (TextView) itemView
+            container =  itemView.findViewById(R.id.container_list);
+            textFileName =  itemView
                     .findViewById(R.id.textFolderName);
-            imageIcon = (ImageView) itemView.findViewById(R.id.imageIcon);
-            imageThumbIcon = (ImageView) itemView.findViewById(R.id.imageThumbIcon);
-            textNoOfFileOrSize = (TextView) itemView.findViewById(R.id.textSecondLine);
+            imageIcon =  itemView.findViewById(R.id.imageIcon);
+            imageThumbIcon =  itemView.findViewById(R.id.imageThumbIcon);
+            textNoOfFileOrSize =  itemView.findViewById(R.id.textSecondLine);
             if (mViewMode == ViewMode.LIST) {
-                textFileModifiedDate = (TextView) itemView.findViewById(R.id.textDate);
+                textFileModifiedDate = itemView.findViewById(R.id.textDate);
             }
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);

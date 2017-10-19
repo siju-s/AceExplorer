@@ -16,6 +16,7 @@
 
 package com.siju.acexplorer.storage.presenter;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -219,7 +220,7 @@ public class StoragesPresenterImpl implements StoragesPresenter, StoragesUi.List
 
     @Override
     public void onOperationFailed(Operations operation) {
-
+       storagesUi.onOperationFailed(operation);
     }
 
     @Override
@@ -247,6 +248,17 @@ public class StoragesPresenterImpl implements StoragesPresenter, StoragesUi.List
     @Override
     public void onPermissionsSet() {
      storagesUi.onPermissionsSet();
+    }
+
+    @Override
+    public void showZipProgressDialog(Intent zipIntent) {
+        storagesUi.showZipProgressDialog(zipIntent);
+
+    }
+
+    @Override
+    public void showExtractDialog(Intent intent) {
+        storagesUi.showExtractDialog(intent);
     }
 
     @Override

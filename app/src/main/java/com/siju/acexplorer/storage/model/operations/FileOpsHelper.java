@@ -280,39 +280,7 @@ public class FileOpsHelper {
 
     }
 
-    public void extractFile(File currentFile, File file) {
-        OperationUtils.WriteMode mode = checkWriteAccessMode(file.getParentFile());
-        Context context = AceApplication.getAppContext();
-        if (mode == OperationUtils.WriteMode.EXTERNAL) {
-            formSAFIntentExtract(file.getAbsolutePath(), Operations.EXTRACT, currentFile
-                    .getAbsolutePath());
-        } else if (mode == OperationUtils.WriteMode.INTERNAL) {
-            Intent intent = new Intent(context, ExtractService.class);
-            intent.putExtra(KEY_FILEPATH, currentFile.getPath());
-            intent.putExtra(KEY_FILEPATH2, file.getAbsolutePath());
-            new OperationProgress().showExtractProgressDialog(context, intent);
-        } else {
-            Toast.makeText(context, R.string.msg_operation_failed, Toast
-                    .LENGTH_SHORT).show();
-        }
-    }
 
-    public void compressFile(File newFile, ArrayList<FileInfo> files) {
-        OperationUtils.WriteMode mode = checkWriteAccessMode(newFile.getParentFile());
-        Context context = AceApplication.getAppContext();
-
-        if (mode == OperationUtils.WriteMode.EXTERNAL) {
-            formSAFIntentCompress(newFile.getAbsolutePath(), files, Operations.COMPRESS);
-        } else if (mode == OperationUtils.WriteMode.INTERNAL) {
-            Intent zipIntent = new Intent(context, CreateZipService.class);
-            zipIntent.putExtra(KEY_FILEPATH, newFile.getAbsolutePath());
-            zipIntent.putParcelableArrayListExtra(KEY_FILES, files);
-            new OperationProgress().showZipProgressDialog(context, zipIntent);
-        } else {
-            Toast.makeText(context, R.string.msg_operation_failed, Toast
-                    .LENGTH_SHORT).show();
-        }
-    }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void formSAFIntentCreation(String path, Operations operations) {
@@ -322,7 +290,7 @@ public class FileOpsHelper {
         safDialogListener.showDialog(path, operationIntent);
     }
 
-    private void formSAFIntentExtract(String path, Operations operations, String newFile) {
+    public void formSAFIntentExtract(String path, Operations operations, String newFile) {
         formSAFIntentRename(path, operations, newFile, 0);
     }
 
@@ -338,7 +306,7 @@ public class FileOpsHelper {
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void formSAFIntentCompress(String path, ArrayList<FileInfo> files, Operations
+    public void formSAFIntentCompress(String path, ArrayList<FileInfo> files, Operations
             operations) {
         Intent operationIntent = new Intent(OPERATION_INTENT);
         operationIntent.putExtra(KEY_FILEPATH, path);
@@ -443,13 +411,13 @@ public class FileOpsHelper {
             case EXTRACT:
                 String oldFilePath1 = intent.getStringExtra(KEY_FILEPATH);
                 String newFilePath1 = intent.getStringExtra(KEY_FILEPATH2);
-                extractFile(new File(oldFilePath1), new File(newFilePath1));
+                storageModel.extractFile(new File(oldFilePath1), new File(newFilePath1));
                 break;
 
             case COMPRESS:
                 ArrayList<FileInfo> compressedFiles = intent.getParcelableArrayListExtra(KEY_FILES);
                 String destinationCompressPath = intent.getStringExtra(KEY_FILEPATH);
-                compressFile(new File(destinationCompressPath), compressedFiles);
+                storageModel.compressFile(new File(destinationCompressPath), compressedFiles);
                 break;
         }
     }

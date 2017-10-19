@@ -126,7 +126,7 @@ public class DialogBrowseFragment extends DialogFragment implements
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
         currentTheme = Theme.getTheme(ThemeUtils.getTheme(getContext()));
-
+        Log.d(TAG, "onActivityCreated: ");
         initializeViews();
 
         if (getArguments() != null) {
@@ -162,6 +162,7 @@ public class DialogBrowseFragment extends DialogFragment implements
         fileListAdapter.setOnItemClickListener(new FileListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
+                Log.d(TAG, "onItemClick: "+" fileList:"+fileInfoList.size());
                 File file = new File(fileInfoList.get(position).getFilePath());
                 if (file.isDirectory()) {
                     mInStoragesList = false;
@@ -226,6 +227,7 @@ public class DialogBrowseFragment extends DialogFragment implements
         mImageButtonBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d(TAG, "onClick: ");
                 mIsBackPressed = true;
                 if (storagesList.contains(currentPath)) {
                     if (!mInStoragesList) {
@@ -316,14 +318,16 @@ public class DialogBrowseFragment extends DialogFragment implements
     }
 
     private void refreshList(String path) {
-        pickerPresenter.loadData(path, isRingtonePicker);
         fileInfoList = new ArrayList<>();
         if (fileListAdapter != null) {
             fileListAdapter.clearList();
         }
+        Log.d(TAG, "refreshList: "+path);
+        pickerPresenter.loadData(path, isRingtonePicker);
     }
 
     private void reloadData() {
+        Log.d(TAG, "reloadData: "+fileInfoList.size());
         mIsBackPressed = true;
         currentPath = new File(currentPath).getParent();
         textCurrentPath.setText(currentPath);
@@ -351,6 +355,7 @@ public class DialogBrowseFragment extends DialogFragment implements
 
     @Override
     public void onPermissionGranted(String[] permissionName) {
+        Log.d(TAG, "onPermissionGranted: ");
         refreshList(currentPath);
     }
 
@@ -362,8 +367,8 @@ public class DialogBrowseFragment extends DialogFragment implements
     @Override
     public void onDataLoaded(ArrayList<FileInfo> data) {
         if (data != null) {
-            Log.d("TAG", "on onLoadFinished--" + data.size());
             fileInfoList = data;
+            Log.d("TAG", "on onLoadFinished--" + fileInfoList.size() + " this:"+DialogBrowseFragment.this);
             fileListAdapter.setStopAnimation(true);
             fileListAdapter.updateAdapter(fileInfoList);
             recyclerViewFileList.setAdapter(fileListAdapter);

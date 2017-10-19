@@ -811,7 +811,7 @@ public class DialogHelper {
 
         titleText.setText(title);
         inputText.setText(zipName);
-        positiveButton.setText(context.getString(R.string.background));
+        positiveButton.setText(context.getString(R.string.create));
         negativeButton.setText(context.getString(R.string.dialog_cancel));
 
 
@@ -862,8 +862,7 @@ public class DialogHelper {
 
         final String currentFileName = currentFilePath.substring(currentFilePath.lastIndexOf("/")
                 + 1, currentFilePath.lastIndexOf("."));
-        String texts[] = new String[]{context.getString(R.string.extract), context.getString(R.string.extract),
-                "", context.getString(R.string.dialog_cancel)};
+        String texts[] = new String[]{context.getString(R.string.extract),  context.getString(R.string.dialog_cancel)};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -900,12 +899,16 @@ public class DialogHelper {
         Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
         Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
 
+        positiveButton.setText(texts[0]);
+        negativeButton.setText(texts[1]);
+
         positiveButton.setOnClickListener(new View
                 .OnClickListener() {
             @Override
             public void onClick(View view) {
                 String fileName = editFileName.getText().toString();
-                extractDialogListener.onPositiveButtonClick(alertDialog, currentFilePath, fileName, radioButtonSpecify.isChecked());
+                extractDialogListener.onPositiveButtonClick(alertDialog, currentFilePath, fileName,
+                        radioButtonSpecify.isChecked());
             }
         });
 

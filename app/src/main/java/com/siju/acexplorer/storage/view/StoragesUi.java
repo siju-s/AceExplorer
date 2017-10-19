@@ -16,6 +16,7 @@
 
 package com.siju.acexplorer.storage.view;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -102,6 +103,12 @@ public interface StoragesUi {
     void onOptionsItemSelected(MenuItem menuItem);
 
     void setPremium();
+
+    void showZipProgressDialog(Intent zipIntent);
+
+    void onOperationFailed(Operations operation);
+
+    void showExtractDialog(Intent intent);
 
 
     interface Listener {

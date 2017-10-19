@@ -26,6 +26,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.siju.acexplorer.AceApplication;
@@ -42,10 +43,13 @@ import com.siju.acexplorer.model.helper.SdkHelper;
 import com.siju.acexplorer.model.root.RootUtils;
 import com.siju.acexplorer.permission.PermissionUtils;
 import com.siju.acexplorer.storage.model.operations.FileOpsHelper;
+import com.siju.acexplorer.storage.model.operations.OperationProgress;
 import com.siju.acexplorer.storage.model.operations.OperationUtils;
 import com.siju.acexplorer.storage.model.operations.Operations;
 import com.siju.acexplorer.storage.model.task.CopyService;
+import com.siju.acexplorer.storage.model.task.CreateZipService;
 import com.siju.acexplorer.storage.model.task.DeleteTask;
+import com.siju.acexplorer.storage.model.task.ExtractService;
 import com.siju.acexplorer.storage.model.task.MoveFiles;
 import com.siju.acexplorer.storage.model.task.PasteConflictChecker;
 import com.siju.acexplorer.view.dialog.DialogHelper;
@@ -56,6 +60,7 @@ import java.util.List;
 
 import static com.siju.acexplorer.model.helper.MediaStoreHelper.scanFile;
 import static com.siju.acexplorer.model.helper.PermissionsHelper.parse;
+import static com.siju.acexplorer.storage.model.operations.FileOpsHelper.checkWriteAccessMode;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_COUNT;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH;
@@ -64,7 +69,9 @@ import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FI
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_POSITION;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_SHOW_RESULT;
+import static com.siju.acexplorer.storage.model.operations.Operations.COMPRESS;
 import static com.siju.acexplorer.storage.model.operations.Operations.DELETE;
+import static com.siju.acexplorer.storage.model.operations.Operations.EXTRACT;
 import static com.siju.acexplorer.storage.model.operations.Operations.FILE_CREATION;
 import static com.siju.acexplorer.storage.model.operations.Operations.FOLDER_CREATION;
 import static com.siju.acexplorer.storage.model.operations.Operations.RENAME;
@@ -211,43 +218,57 @@ public class StorageModelImpl implements StoragesModel {
             listener.onInvalidName(Operations.EXTRACT);
             return;
         }
-
+        File newFile, currentFile;
         if (isChecked) {
-            String currentFileName = new File(currentFilePath).getName();
-            File newFile = new File(selectedPath + "/" + currentFileName);
-            File currentFile = new File(currentFilePath);
-            if (FileUtils.isFileExisting(selectedPath, newFile.getName())) {
-                listener.onFileExists(Operations.EXTRACT, context.getString(R.string
-                        .dialog_title_paste_conflict));
-                return;
-            }
-            listener.dismissDialog(Operations.EXTRACT);
-            fileOpsHelper.extractFile(currentFile, newFile);
+            newFile = new File(selectedPath + File.separator + newFileName);
         } else {
-            String currentDir = new File(currentFilePath).getParent();
-            File newFile = new File(currentDir + "/" + newFileName);
-            File currentFile = new File(currentFilePath);
-            if (FileUtils.isFileExisting(currentDir, newFile.getName())) {
-                listener.onFileExists(Operations.EXTRACT, context.getString(R.string
-                        .dialog_title_paste_conflict));
-                return;
-            }
-            listener.dismissDialog(Operations.EXTRACT);
-            fileOpsHelper.extractFile(currentFile, newFile);
+            selectedPath = new File(currentFilePath).getParent();
+            newFile = new File(selectedPath + File.separator + newFileName);
         }
 
+        if (FileUtils.isFileExisting(selectedPath, newFile.getName())) {
+            listener.onFileExists(Operations.EXTRACT, context.getString(R.string
+                    .dialog_title_paste_conflict));
+            return;
+        }
+        listener.dismissDialog(Operations.EXTRACT);
+        currentFile = new File(currentFilePath);
+        extractFile(currentFile, newFile);
+    }
+
+
+    public void extractFile(File currentFile, File file) {
+        OperationUtils.WriteMode mode = checkWriteAccessMode(file.getParentFile());
+        Context context = AceApplication.getAppContext();
+        if (mode == OperationUtils.WriteMode.EXTERNAL) {
+            fileOpsHelper.formSAFIntentExtract(file.getAbsolutePath(), Operations.EXTRACT, currentFile
+                    .getAbsolutePath());
+        } else if (mode == OperationUtils.WriteMode.INTERNAL) {
+            Intent intent = new Intent(context, ExtractService.class);
+            intent.putExtra(KEY_FILEPATH, currentFile.getPath());
+            intent.putExtra(KEY_FILEPATH2, file.getAbsolutePath());
+            listener.showExtractDialog(intent);
+            if (SdkHelper.isOreo()) {
+                context.startForegroundService(intent);
+            } else {
+                context.startService(intent);
+            }
+        } else {
+            listener.onOperationFailed(EXTRACT);
+        }
     }
 
     @Override
     public void onCompressPosClick(String newFilePath, ArrayList<FileInfo> paths) {
-        String newFileName = new File(newFilePath).getName();
+        File newFile = new File(newFilePath);
+        String newFileName = newFile.getName();
         if (FileUtils.isFileNameInvalid(newFileName)) {
             listener.onInvalidName(Operations.EXTRACT);
             return;
         }
 
-        String currentDir = new File(newFilePath).getParent();
-        File newFile = new File(currentDir + "/" + newFileName);
+        String currentDir = newFile.getParent();
+        Log.d(TAG, "onCompressPosClick: "+newFilePath);
 
         if (FileUtils.isFileExisting(currentDir, newFile.getName())) {
             listener.onFileExists(Operations.EXTRACT, context.getString(R.string
@@ -255,8 +276,29 @@ public class StorageModelImpl implements StoragesModel {
             return;
         }
         listener.dismissDialog(Operations.COMPRESS);
-        fileOpsHelper.compressFile(new File(newFilePath), paths);
+        compressFile(newFile, paths);
 
+    }
+
+    public void compressFile(File newFile, ArrayList<FileInfo> files) {
+        OperationUtils.WriteMode mode = checkWriteAccessMode(newFile.getParentFile());
+        Context context = AceApplication.getAppContext();
+
+        if (mode == OperationUtils.WriteMode.EXTERNAL) {
+            fileOpsHelper.formSAFIntentCompress(newFile.getAbsolutePath(), files, Operations.COMPRESS);
+        } else if (mode == OperationUtils.WriteMode.INTERNAL) {
+            Intent zipIntent = new Intent(context, CreateZipService.class);
+            zipIntent.putExtra(KEY_FILEPATH, newFile.getAbsolutePath());
+            zipIntent.putParcelableArrayListExtra(KEY_FILES, files);
+            listener.showZipProgressDialog(zipIntent);
+            if (SdkHelper.isOreo()) {
+                context.startForegroundService(zipIntent);
+            } else {
+                context.startService(zipIntent);
+            }
+        } else {
+            listener.onOperationFailed(COMPRESS);
+        }
     }
 
     @Override
@@ -361,13 +403,14 @@ public class StorageModelImpl implements StoragesModel {
         }
     }
 
-    private void checkWriteMode(String destinationDir, List<FileInfo> files, List<CopyData> copyData, boolean isMove) {
-        OperationUtils.WriteMode mode = FileOpsHelper.checkWriteAccessMode(new File
+    private void checkPasteWriteMode(String destinationDir, List<FileInfo> files, List<CopyData> copyData, boolean isMove) {
+        OperationUtils.WriteMode mode = checkWriteAccessMode(new File
                 (destinationDir));
         switch (mode) {
             case EXTERNAL:
                 Operations operation = isMove ? Operations.CUT : Operations.COPY;
-                fileOpsHelper.formSAFIntentMoveCopy(destinationDir, (ArrayList<FileInfo>) files, (ArrayList<CopyData>) copyData, operation);
+                fileOpsHelper.formSAFIntentMoveCopy(destinationDir, (ArrayList<FileInfo>) files,
+                        (ArrayList<CopyData>) copyData, operation);
                 break;
             case ROOT:
             case INTERNAL:
@@ -400,7 +443,6 @@ public class StorageModelImpl implements StoragesModel {
 
             if (isEnd) {
                 dialog.dismiss();
-//                checkWriteMode(destinationDir, files, copyData, isMove);
             } else {
                 listener.showConflictDialog(conflictFiles, destinationDir, isMove,
                         this);
@@ -423,7 +465,7 @@ public class StorageModelImpl implements StoragesModel {
 
             if (isEnd) {
                 dialog.dismiss();
-                checkWriteMode(destinationDir, files, copyData, isMove);
+                checkPasteWriteMode(destinationDir, files, copyData, isMove);
             } else {
                 listener.showConflictDialog(conflictFiles, destinationDir, isMove,
                         this);
@@ -449,7 +491,7 @@ public class StorageModelImpl implements StoragesModel {
 
             if (isEnd) {
                 dialog.dismiss();
-                checkWriteMode(destinationDir, files, copyData, isMove);
+                checkPasteWriteMode(destinationDir, files, copyData, isMove);
             } else {
                 listener.showConflictDialog(conflictFiles, destinationDir, isMove,
                         this);
@@ -602,7 +644,7 @@ public class StorageModelImpl implements StoragesModel {
 
                 @Override
                 public void checkWriteMode(String destinationDir, List<FileInfo> files, boolean isMove) {
-                    StorageModelImpl.this.checkWriteMode(destinationDir, files, copyData, isMove);
+                    StorageModelImpl.this.checkPasteWriteMode(destinationDir, files, copyData, isMove);
                 }
             };
 

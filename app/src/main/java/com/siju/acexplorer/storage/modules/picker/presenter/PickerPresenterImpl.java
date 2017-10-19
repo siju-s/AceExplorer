@@ -56,7 +56,6 @@ public class PickerPresenterImpl implements PickerPresenter, LoaderManager
         this.loaderManager = loaderManager;
 //        pickerUi.setListener(this);
         pickerModel.setListener(this);
-
     }
 
 
@@ -65,7 +64,7 @@ public class PickerPresenterImpl implements PickerPresenter, LoaderManager
         Bundle args = new Bundle();
         args.putString(KEY_PATH, path);
         args.putBoolean(KEY_PICKER, isRingtonePicker);
-        loaderManager.initLoader(LOADER_ID, null, this);
+        loaderManager.restartLoader(LOADER_ID, args, this);
     }
 
     @Override

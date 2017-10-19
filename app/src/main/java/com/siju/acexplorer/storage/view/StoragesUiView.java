@@ -731,7 +731,9 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 break;
 
             case RENAME:
-                dialog.dismiss();
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
                 final int position = intent.getIntExtra(KEY_POSITION, -1);
                 String oldFile = intent.getStringExtra(KEY_FILEPATH);
                 String newFile = intent.getStringExtra(KEY_FILEPATH2);
@@ -1351,6 +1353,9 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                                        boolean isChecked) {
 
         this.dialog = dialog;
+        if (mSelectedPath == null) {
+            mSelectedPath = currentDir;
+        }
         bridge.onExtractPositiveClick(currentFilePath, newFileName, isChecked, mSelectedPath);
     }
 
@@ -1390,7 +1395,9 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         return bridge.getSortMode();
     }
 
-    public void onCompressPosClick(Dialog dialog, Operations operation, String newFileName, String extension, ArrayList<FileInfo> paths) {
+    public void onCompressPosClick(Dialog dialog, Operations operation, String newFileName,
+                                   String extension, ArrayList<FileInfo> paths) {
+        this.dialog = dialog;
         String newFilePath = currentDir + File.separator + newFileName + extension;
         bridge.onCompressPosClick(newFilePath, paths);
     }
@@ -1581,6 +1588,19 @@ mLastDualPaneDir);
 
     public void syncDrawer() {
         drawerListener.syncDrawer();
+    }
+
+    public void showZipProgressDialog(Intent zipIntent) {
+        new OperationProgress().showZipProgressDialog(getContext(), zipIntent);
+    }
+
+    public void onOperationFailed(Operations operation) {
+        Toast.makeText(getContext(), R.string.msg_operation_failed, Toast
+                .LENGTH_SHORT).show();
+    }
+
+    public void showExtractDialog(Intent intent) {
+        new OperationProgress().showExtractProgressDialog(getContext(), intent);
     }
 
 

@@ -29,6 +29,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.Formatter;
+import android.util.Log;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.model.FileInfo;
@@ -210,6 +211,7 @@ public class CreateZipService extends IntentService {
                 (context, done) + "/" + Formatter.formatFileSize(context, total));
         int id1 = NOTIFICATION_ID;
         notificationManager.notify(id1, builder.build());
+        //Log.d("CreateZip", "publishResults: progress:"+i + " total:"+total);
         if (i == 100 || total == 0) {
             builder.setContentTitle("Zip completed");
             builder.setContentText("");
@@ -236,7 +238,7 @@ public class CreateZipService extends IntentService {
         Intent intent = new Intent(OperationUtils.ACTION_RELOAD_LIST);
         intent.putExtra(KEY_OPERATION, COMPRESS);
         intent.putExtra(KEY_FILEPATH, name);
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+        sendBroadcast(intent);
         try {
             notificationManager.cancel(id1);
         } catch (Exception e) {

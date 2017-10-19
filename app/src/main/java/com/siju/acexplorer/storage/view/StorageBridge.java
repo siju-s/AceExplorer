@@ -268,6 +268,20 @@ public class StorageBridge implements StoragesUi {
         storagesUiView.setPremium();
     }
 
+    @Override
+    public void showZipProgressDialog(Intent zipIntent) {
+        storagesUiView.showZipProgressDialog(zipIntent);
+    }
+
+    @Override
+    public void onOperationFailed(Operations operation) {
+        storagesUiView.onOperationFailed(operation);
+    }
+
+    @Override
+    public void showExtractDialog(Intent intent) {
+        storagesUiView.showExtractDialog(intent);
+    }
 
 
     void loadData(String currentDir, Category category, boolean isPicker) {

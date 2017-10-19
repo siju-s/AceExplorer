@@ -16,6 +16,7 @@
 
 package com.siju.acexplorer.storage.model;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -105,5 +106,9 @@ public interface StoragesModel {
         void onPermissionSetError();
 
         void onPermissionsSet();
+
+        void showZipProgressDialog(Intent zipIntent);
+
+        void showExtractDialog(Intent intent);
     }
 }

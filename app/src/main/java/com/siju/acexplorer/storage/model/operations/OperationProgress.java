@@ -146,14 +146,9 @@ public class OperationProgress implements Progress {
 
     public void showZipProgressDialog(final Context context, final Intent intent) {
         mContext = context;
-
-/*        mContext = context;
-        mServiceIntent = intent;
-        context.bindService(mServiceIntent, mZipServiceConnection, Context.BIND_AUTO_CREATE);
-        context.startService(mServiceIntent);*/
+        registerReceiver(context);
         String title = context.getString(R.string.zip_progress_title);
-        String texts[] = new String[]{title, context.getString(R.string.background), "",
-                context.getString(R.string.dialog_cancel)};
+        String texts[] = new String[]{title, context.getString(R.string.background), context.getString(R.string.dialog_cancel)};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -205,20 +200,17 @@ public class OperationProgress implements Progress {
     @SuppressWarnings("ConstantConditions")
     public void showExtractProgressDialog(final Context context, final Intent intent) {
         mContext = context;
-
- /*       mContext = context;
-        mServiceIntent = intent;
-        context.bindService(mServiceIntent, mExtractServiceConnection, Context.BIND_AUTO_CREATE);
-        context.startService(mServiceIntent);*/
         registerReceiver(context);
+
         String title = context.getString(R.string.extracting);
-        String texts[] = new String[]{title, context.getString(R.string.background), "",
-                context.getString(R.string.dialog_cancel)};
+        String texts[] = new String[]{title, context.getString(R.string.background),  context.getString(R.string.dialog_cancel)};
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
         LayoutInflater inflater = LayoutInflater.from(context);
         View dialogView = inflater.inflate(R.layout.dialog_progress_paste, null);
         builder.setView(dialogView);
+        progressDialog = builder.create();
+
         progressDialog.setCancelable(false);
         textFileName = dialogView.findViewById(R.id.textFileName);
         textFileFromPath = dialogView.findViewById(R.id.textFileFromPath);
