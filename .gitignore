@@ -1,6 +1,7 @@
 ## Built application files
 #*.apk
 app/release/
+app/app-release-unaligned.apk
 
 
 # Files for the ART/Dalvik VM
@@ -46,6 +47,7 @@ app/app.iml___jb_tmp___
 # Uncomment the following line if you do not want to check your keystore files in.
 #*.jks
 keystore.properties
+fabric.properties
 
 # External native build folder generated in Android Studio 2.2 and later
 .externalNativeBuild
