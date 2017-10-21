@@ -18,8 +18,10 @@ package com.siju.acexplorer.model.helper;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import java.io.File;
 
@@ -28,22 +30,18 @@ import java.io.File;
 public class MediaStoreHelper {
 
 
+    private static final String TAG = "MediaStoreHelper";
+
     public static void scanFile(Context context, String path) {
 
-        Intent intent =
-                new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        intent.setData(UriHelper.createContentUri(context, path));
-        context.sendBroadcast(intent);
-
-
-/*        MediaScannerConnection.scanFile(context,
+        MediaScannerConnection.scanFile(context,
                 new String[]{path}, null,
                 new MediaScannerConnection.OnScanCompletedListener() {
                     public void onScanCompleted(String path, Uri uri) {
                         Log.i(TAG, "Scanned " + path + ":");
                         Log.i(TAG, "-> uri=" + uri);
                     }
-                });*/
+                });
     }
 
     public static void removeMedia(Context context, File file, int category) {

@@ -34,7 +34,26 @@ apply plugin: 'io.fabric'
 repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
+
+// Create a variable called keystorePropertiesFile, and initialize it to your
+// keystore.properties file, in the rootProject folder.
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+
+// Initialize a new Properties() object called keystoreProperties.
+def keystoreProperties = new Properties()
+
+// Load your keystore.properties file into the keystoreProperties object.
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
+    signingConfigs {
+        config {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
     compileSdkVersion rootProject.compileSdkVersion
     buildToolsVersion rootProject.buildToolsVersion
     defaultConfig {
@@ -42,10 +61,12 @@ android {
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
         versionCode 8
-        versionName "1.0.1_build3"
+        versionName "1.0.1_build4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField 'boolean', 'ENABLE_CRASHLYTICS', 'true'
+        manifestPlaceholders = [HOCKEYAPP_APP_ID: "6e3fff2516744f00829ba1b9dad936b1"]
     }
+
     dexOptions {
         maxProcessCount 2
         javaMaxHeapSize "8g"
@@ -78,30 +99,28 @@ android {
 //                    output.outputFile = new File("Ace_" + defaultConfig.versionName)
 //                }
 //            }
+            signingConfig signingConfigs.config
             return true
 
         }
     }
-
     lintOptions {
         checkReleaseBuilds false
         abortOnError false
     }
-
     buildToolsVersion '26.0.2'
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:' + rootProject.supportLibVersion;
-    implementation 'com.android.support:recyclerview-v7:' + rootProject.supportLibVersion;
-    implementation 'com.android.support:design:' + rootProject.supportLibVersion;
+    implementation 'com.android.support:appcompat-v7:' + rootProject.supportLibVersion
+    implementation 'com.android.support:recyclerview-v7:' + rootProject.supportLibVersion
+    implementation 'com.android.support:design:' + rootProject.supportLibVersion
     implementation 'com.github.bumptech.glide:glide:3.7.0'
     implementation 'com.getbase:floatingactionbutton:1.10.1'
     implementation 'com.google.code.gson:gson:2.8.0'
     implementation 'io.github.kobakei:ratethisapp:1.1.0'
     implementation 'org.apache.commons:commons-compress:1.12'
-
     implementation 'com.github.junrar:junrar:0.7'
     implementation('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
         transitive = true;
@@ -111,6 +130,6 @@ dependencies {
     testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
     implementation 'com.google.firebase:firebase-ads:11.4.2'
     implementation 'com.google.firebase:firebase-invites:11.4.2'
-
+    implementation 'net.hockeyapp.android:HockeySDK:5.0.3'
 }
 apply plugin: 'com.google.gms.google-services'

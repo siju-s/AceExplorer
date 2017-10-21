@@ -1,0 +1,25 @@
+# More documentation about how to customize your build
+# can be found here:
+# https://docs.fastlane.tools
+fastlane_version "1.109.0"
+
+# This value helps us track success metrics for Fastfiles
+# we automatically generate. Feel free to remove this line
+# once you get things running smoothly!
+generated_fastfile_id "0d2e0ff6-6abf-432b-a2ca-228bd5399a90"
+
+default_platform :android
+
+# Fastfile actions accept additional configuration, but
+# don't worry, fastlane will prompt you for required
+# info which you can add here later
+lane :beta do
+  # build the release variant
+  gradle(task: "assembleRelease")
+
+  # upload to Beta by Crashlytics
+  crashlytics(
+    api_token: "d34cf3ffdd00d6e0d7b3e85d558c4fa01210a6f1",
+    build_secret: "e61cbd26d2a5943cbda9e3c988af24ab21d176820524fc91d8ca7aded9c92546"
+  )
+end

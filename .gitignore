@@ -1,5 +1,6 @@
-# Built application files
-*.apk
+## Built application files
+#*.apk
+app/release/
 
 
 # Files for the ART/Dalvik VM
@@ -32,15 +33,19 @@ captures/
 
 # Intellij
 *.iml
+app/app.iml___jb_tmp___
 .idea/workspace.xml
 .idea/tasks.xml
 .idea/gradle.xml
 .idea/dictionaries
 .idea/libraries
+.idea/checkstyle-idea.xml
+.idea/findbugs-idea.xml
 
 # Keystore files
 # Uncomment the following line if you do not want to check your keystore files in.
 #*.jks
+keystore.properties
 
 # External native build folder generated in Android Studio 2.2 and later
 .externalNativeBuild
