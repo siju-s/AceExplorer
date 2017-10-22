@@ -125,7 +125,6 @@
             android:name="io.fabric.ApiKey"
             android:value="d34cf3ffdd00d6e0d7b3e85d558c4fa01210a6f1"/>
 
-        <meta-data android:name="net.hockeyapp.android.appIdentifier" android:value="${HOCKEYAPP_APP_ID}" />
     </application>
 
 </manifest>

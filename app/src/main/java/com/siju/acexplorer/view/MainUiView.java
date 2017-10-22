@@ -285,7 +285,6 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         if (!BillingHelper.getInstance().onActivityResult(requestCode, resultCode, intent)) {
             navigationDrawer.onActivityResult(requestCode, resultCode, intent);
             return false;
-
         } else {
             return true;
         }

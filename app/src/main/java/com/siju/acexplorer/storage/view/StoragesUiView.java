@@ -75,6 +75,7 @@ import com.siju.acexplorer.model.FileConstants;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.SharedPreferenceWrapper;
 import com.siju.acexplorer.model.groups.Category;
+import com.siju.acexplorer.model.groups.StoragesGroup;
 import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.permission.PermissionUtils;
 import com.siju.acexplorer.storage.model.BackStackModel;
@@ -103,6 +104,7 @@ import java.util.List;
 
 import static android.webkit.MimeTypeMap.getSingleton;
 import static com.siju.acexplorer.model.FileConstants.ADS;
+import static com.siju.acexplorer.model.StorageUtils.getInternalStorage;
 import static com.siju.acexplorer.model.groups.Category.DOWNLOADS;
 import static com.siju.acexplorer.model.groups.Category.FILES;
 import static com.siju.acexplorer.model.groups.Category.checkIfFileCategory;
@@ -152,7 +154,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     private String mLastSinglePaneDir;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private ActionMode actionMode;
     private SparseBooleanArray mSelectedItemPositions = new SparseBooleanArray();
 
     private String mSelectedPath;
@@ -185,6 +186,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     private DragHelper dragHelper;
     private int position;
     private String filePath;
+    private boolean isActionModeActive;
 
 
     public StoragesUiView(Context context, AttributeSet attrs) {
@@ -386,7 +388,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         fileListAdapter.setOnItemClickListener(new FileListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                if (actionMode != null && !menuControls.isPasteOp()) {
+                if (isActionModeActive() && !menuControls.isPasteOp()) {
                     itemClickActionMode(position, false);
                 } else {
                     handleItemClick(position);
@@ -405,7 +407,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                     itemClickActionMode(position, true);
                     mLongPressedTime = System.currentTimeMillis();
 
-                    if (actionMode != null && fileListAdapter.getSelectedCount() >= 1) {
+                    if (isActionModeActive && fileListAdapter.getSelectedCount() >= 1) {
                         mSwipeRefreshLayout.setEnabled(false);
                         mItemView = view;
                         isDragStarted = true;
@@ -440,6 +442,11 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                     stopAnimation();
                     shouldStopAnimation = false;
                 }
+
+                if (!isDragStarted) {
+                    return false;
+                }
+                Log.d(TAG, "onTouch: "+event + "Drag:"+isDragStarted);
 
                 if (isDragStarted && event == MotionEvent.ACTION_UP) {
                     isDragStarted = false;
@@ -782,6 +789,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             return true;
         } else if (isZipMode()) {
             zipViewer.onBackPressed();
+        } else if(isActionModeActive() && !menuControls.isPasteOp()) {
+            menuControls.endActionMode();
         } else {
             return backOperation();
         }
@@ -800,6 +809,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                     .getBackStack().size() - 1);
             category = currentCategory;
             this.currentDir = currentDir;
+            menuControls.setCategory(category);
+            menuControls.setCurrentDir(currentDir);
 
             if (checkIfFileCategory(currentCategory)) {
 //                navigationInfo.setInitialDir();
@@ -926,23 +937,23 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         fileListAdapter.toggleSelection(position, isLongPress);
 
         boolean hasCheckedItems = fileListAdapter.getSelectedCount() > 0;
-        ActionMode actionMode = getActionMode();
-        if (hasCheckedItems && actionMode == null) {
+        if (hasCheckedItems && !isActionModeActive) {
             // there are some selected items, start the actionMode
 //            aceActivity.updateDrawerIcon(true);
 
             startActionMode();
-        } else if (!hasCheckedItems && actionMode != null) {
+        } else if (!hasCheckedItems && isActionModeActive) {
             // there no selected items, finish the actionMode
 //            mActionModeCallback.endActionMode();
-            actionMode.finish();
+//            actionMode.finish();
+            endActionMode();
         }
-        if (getActionMode() != null) {
+        if (isActionModeActive) {
             FileInfo fileInfo = fileInfoList.get(position);
             toggleDragData(fileInfo);
             SparseBooleanArray checkedItemPos = fileListAdapter.getSelectedItemPositions();
             setSelectedItemPos(checkedItemPos);
-            this.actionMode.setTitle(String.valueOf(fileListAdapter
+            menuControls.setToolbarText(String.valueOf(fileListAdapter
                     .getSelectedCount()) + " selected");
         }
     }
@@ -971,20 +982,20 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     // 1 Extra for Footer since {#getItemCount has footer
     // TODO Remove this 1 when if footer removed in future
-    private void toggleSelectAll(boolean selectAll) {
+    void toggleSelectAll(boolean selectAll) {
         fileListAdapter.clearSelection();
         for (int i = 0; i < fileListAdapter.getItemCount() - 1; i++) {
             fileListAdapter.toggleSelectAll(i, selectAll);
         }
         SparseBooleanArray checkedItemPos = fileListAdapter.getSelectedItemPositions();
         setSelectedItemPos(checkedItemPos);
-        actionMode.setTitle(String.valueOf(fileListAdapter.getSelectedCount()) + " " +
+        menuControls.setToolbarText(String.valueOf(fileListAdapter.getSelectedCount()) + " " +
                 getResources().getString
                         (R.string.selected));
         fileListAdapter.notifyDataSetChanged();
     }
 
-    private void clearSelection() {
+    void clearSelection() {
         fileListAdapter.removeSelection();
     }
 
@@ -993,6 +1004,9 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         Log.d(TAG, "reloadList: " + path);
         currentDir = path;
         this.category = category;
+        if (isFilesCategory()) {
+            navigationInfo.setInitialDir(path);
+        }
         menuControls.setCategory(category);
         menuControls.setCurrentDir(currentDir);
         if (shouldShowPathNavigation()) {
@@ -1001,6 +1015,9 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             navigationInfo.addHomeNavButton(isHomeScreenEnabled, category);
         }
         backStackInfo.addToBackStack(path, category);
+        if (isActionModeActive() && (checkIfLibraryCategory(category) || !menuControls.isPasteOp())) {
+            menuControls.endActionMode();
+        }
         refreshList();
     }
 
@@ -1233,11 +1250,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         }
     }
 
-
-    ActionModeCallback getActionModeCallback() {
-        return new ActionModeCallback();
-    }
-
     SparseBooleanArray getSelectedItems() {
         return mSelectedItemPositions;
     }
@@ -1280,6 +1292,9 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     private boolean isSAFShown;
 
     public void showSAFDialog(String path, Intent intent) {
+        if (dialog != null) {
+            dialog.dismiss();
+        }
         operationIntent = intent;
         isSAFShown = true;
         String title = getContext().getString(R.string.needsaccess);
@@ -1296,7 +1311,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     private void triggerStorageAccessFramework() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
         if (getActivity().getPackageManager().resolveActivity(intent, 0) != null) {
-            getActivity().startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE),
+            fragment.startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE),
                     SAF_REQUEST);
         } else {
             Toast.makeText(getContext(), getContext().getString(R.string.msg_error_not_supported)
@@ -1518,7 +1533,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 clearSelectedPos();
                 Logger.log(TAG, "Source=" + draggedFiles.get(0) + "Dest=" +
                         destinationDir);
-                actionMode.finish();
+                menuControls.endActionMode();
             }
         }
 
@@ -1603,63 +1618,16 @@ mLastDualPaneDir);
         new OperationProgress().showExtractProgressDialog(getContext(), intent);
     }
 
-
-    /**
-     * Triggered on long press click on item
-     */
-    private final class ActionModeCallback implements ActionMode.Callback {
-
-
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            menuControls.onStartActionMode();
-            actionMode = mode;
-            isInSelectionMode = true;
-            MenuInflater inflater = actionMode.getMenuInflater();
-            inflater.inflate(R.menu.action_mode, menu);
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            Log.d(TAG, "onPrepareActionMode: ");
-            return false;
-        }
-
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.action_select_all:
-                    if (mSelectedItemPositions != null) {
-                        if (mSelectedItemPositions.size() < fileListAdapter.getItemCount() - 1) {
-                            toggleSelectAll(true);
-                        } else {
-                            toggleSelectAll(false);
-                        }
-                    }
-                    return true;
-                default:
-                    return false;
-            }
-
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            isInSelectionMode = false;
-            clearSelection();
-            actionMode = null;
-            menuControls.onActionModeEnd();
-            mSelectedItemPositions = new SparseBooleanArray();
-            mSwipeRefreshLayout.setEnabled(true);
-            draggedData.clear();
-            // FAB should be visible only for Files Category
-            if (isFilesCategory()) {
-                showFab();
+    public void onSelectAllClicked() {
+        if (mSelectedItemPositions != null) {
+            if (mSelectedItemPositions.size() < fileListAdapter.getItemCount() - 1) {
+                toggleSelectAll(true);
+            } else {
+                toggleSelectAll(false);
             }
         }
     }
+
 
     private boolean isInitialSearch;
 
@@ -1679,22 +1647,20 @@ mLastDualPaneDir);
     }
 
     private void startActionMode() {
+        isActionModeActive = true;
         hideFab();
+        isInSelectionMode = true;
         menuControls.startActionMode();
     }
 
-    private ActionMode getActionMode() {
-        return actionMode;
-    }
-
-    void finishActionMode() {
-        actionMode.finish();
+    boolean isActionModeActive() {
+        return isActionModeActive;
     }
 
 
     @Override
     public void onHomeClicked() {
-        endActionMode();
+        menuControls.endActionMode();
         removeFileFragment();
         getActivity().onBackPressed();
     }
@@ -1815,15 +1781,18 @@ mLastDualPaneDir);
     }
 
     public void endActionMode() {
+
+        isActionModeActive = false;
         isInSelectionMode = false;
+        clearSelection();
         clearSelectedPos();
-        if (actionMode != null) {
-            actionMode.finish();
-        }
-        actionMode = null;
         menuControls.hideBottomToolbar();
         mSwipeRefreshLayout.setEnabled(true);
         draggedData.clear();
+        // FAB should be visible only for Files Category
+        if (isFilesCategory()) {
+            showFab();
+        }
     }
 
     public boolean isInSelectionMode() {
@@ -1862,7 +1831,7 @@ mLastDualPaneDir);
         }
     }
 
-    private void clearSelectedPos() {
+    void clearSelectedPos() {
         mSelectedItemPositions = new SparseBooleanArray();
     }
 
@@ -1896,7 +1865,7 @@ mLastDualPaneDir);
         }
     };
 
-    // Dialog for SAF
+    // Dialog for SAF and APK dialog
     private DialogHelper.AlertDialogListener alertDialogListener = new DialogHelper
             .AlertDialogListener() {
 
@@ -1927,16 +1896,18 @@ mLastDualPaneDir);
             if (isSAFShown) {
                 Toast.makeText(getContext(), getContext().getString(R.string.error), Toast
                         .LENGTH_SHORT).show();
-            } else {
-                openZipViewer(currentDir);
             }
         }
 
         @Override
         public void onNeutralButtonClick(View view) {
-
+            openZipViewer(currentDir);
         }
     };
+
+    public void endDrag() {
+        isDragStarted = false;
+    }
 
     public interface FavoriteOperation {
         void updateFavorites(ArrayList<FavInfo> favList);

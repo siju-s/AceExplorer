@@ -212,6 +212,7 @@
     <string name="directory">Directory</string>
     <string name="operation">Operation</string>
     <string name="extract_complete">Extract completed</string>
+    <string name="clipboard">%d in clipboard</string>
 
 
 </resources>

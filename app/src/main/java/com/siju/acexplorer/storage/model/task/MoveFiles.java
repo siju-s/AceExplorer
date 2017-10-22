@@ -19,6 +19,7 @@ package com.siju.acexplorer.storage.model.task;
 
 import android.annotation.TargetApi;
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -38,6 +39,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.siju.acexplorer.model.helper.SdkHelper.isOreo;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_CONFLICT_DATA;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH;
@@ -60,6 +62,7 @@ public class MoveFiles extends IntentService {
     private NotificationCompat.Builder builder;
     private final int NOTIFICATION_ID = 1000;
     private final String SEPARATOR = "/";
+    private final String CHANNEL_ID = "operation";
 
     private Context context;
 
@@ -86,26 +89,29 @@ public class MoveFiles extends IntentService {
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
-        builder = new NotificationCompat.Builder(context, formChannel());
+        createChannelId();
+        builder = new NotificationCompat.Builder(context, CHANNEL_ID);
         builder.setContentIntent(pendingIntent);
         builder.setContentTitle(getResources().getString(R.string.moving)).setSmallIcon(R
                 .drawable.ic_cut_white);
-        String channelId = getResources().getString(R.string.operation);
-        builder.setChannelId(channelId);
-        startForeground(NOTIFICATION_ID, builder.build());
+        builder.setOnlyAlertOnce(true);
+        builder.setDefaults(0);
+
+        Notification notification = builder.build();
+        startForeground(NOTIFICATION_ID, notification);
+        notificationManager.notify(NOTIFICATION_ID , notification);
 
         moveFiles(currentDir);
     }
 
     @TargetApi(Build.VERSION_CODES.O)
-    private String formChannel() {
-        // The id of the channel.
-        String id = "ace_channel_01";
-        CharSequence name = getString(R.string.operation);
-        int importance = NotificationManager.IMPORTANCE_HIGH;
-        NotificationChannel channel = new NotificationChannel(id, name, importance);
-        notificationManager.createNotificationChannel(channel);
-        return id;
+    private void createChannelId() {
+        if (isOreo()) {
+            CharSequence name = getString(R.string.operation);
+            int importance = NotificationManager.IMPORTANCE_LOW;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
     private void moveFiles(String destinationDir) {

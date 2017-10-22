@@ -38,7 +38,7 @@ public class MediaStoreHelper {
                 new String[]{path}, null,
                 new MediaScannerConnection.OnScanCompletedListener() {
                     public void onScanCompleted(String path, Uri uri) {
-                        Log.i(TAG, "Scanned " + path + ":");
+                        Log.i(TAG, "Scanned " + path);
                         Log.i(TAG, "-> uri=" + uri);
                     }
                 });

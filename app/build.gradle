@@ -64,7 +64,6 @@ android {
         versionName "1.0.1_build4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField 'boolean', 'ENABLE_CRASHLYTICS', 'true'
-        manifestPlaceholders = [HOCKEYAPP_APP_ID: "6e3fff2516744f00829ba1b9dad936b1"]
     }
 
     dexOptions {
@@ -123,13 +122,12 @@ dependencies {
     implementation 'org.apache.commons:commons-compress:1.12'
     implementation 'com.github.junrar:junrar:0.7'
     implementation('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
-        transitive = true;
+        transitive = true
     }
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
     testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
     implementation 'com.google.firebase:firebase-ads:11.4.2'
     implementation 'com.google.firebase:firebase-invites:11.4.2'
-    implementation 'net.hockeyapp.android:HockeySDK:5.0.3'
 }
 apply plugin: 'com.google.gms.google-services'

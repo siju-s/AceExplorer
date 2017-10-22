@@ -21,7 +21,6 @@ import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.SearchView;
@@ -86,7 +85,7 @@ public class MenuControls implements View.OnClickListener,
     private MenuItem mExtractItem;
     private MenuItem mHideItem;
     private MenuItem mPermissionItem;
-    private boolean mIsMoveOperation = false;
+    private boolean isMoveOperation = false;
     private MenuItem mViewItem;
     private Category category;
     private String currentDir;
@@ -116,10 +115,15 @@ public class MenuControls implements View.OnClickListener,
         bottomToolbar = storagesUiView.findViewById(R.id.toolbar_bottom);
         toolbar = storagesUiView.findViewById(R.id.toolbar);
         setToolbar();
+        toolbar.setOnMenuItemClickListener(this);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                storagesUiView.openDrawer();
+                if (storagesUiView.isActionModeActive()) {
+                    endActionMode();
+                } else {
+                    storagesUiView.openDrawer();
+                }
             }
         });
 //        searchHelper = new SearchHelper(this, context, actionBar);
@@ -284,15 +288,27 @@ public class MenuControls implements View.OnClickListener,
 
     void startActionMode() {
 
-//        toggleDummyView(true);
+        setupActionModeToolbar();
         bottomToolbar.inflateMenu(R.menu.action_mode_bottom);
         bottomToolbar.getMenu().clear();
         EnhancedMenuInflater.inflate(activity.getMenuInflater(), bottomToolbar.getMenu(),
                 category);
         setupMenu();
-        bottomToolbar.startActionMode(storagesUiView.getActionModeCallback());
         bottomToolbar.setOnMenuItemClickListener(this);
+        showBottomToolbar();
+    }
 
+    private void setupActionModeToolbar() {
+        toolbar.getMenu().clear();
+        toolbar.inflateMenu(R.menu.action_mode);
+        toolbar.setNavigationIcon(R.drawable.ic_up_arrow);
+    }
+
+    private void clearActionModeToolbar() {
+        toolbar.getMenu().clear();
+        toolbar.inflateMenu(R.menu.file_base);
+        toolbar.setNavigationIcon(R.drawable.ic_drawer);
+        setToolbarText(context.getString(R.string.app_name));
     }
 
     private final ArrayList<FileInfo> copiedData = new ArrayList<>();
@@ -308,30 +324,15 @@ public class MenuControls implements View.OnClickListener,
         switch (item.getItemId()) {
             case R.id.action_cut:
                 if (selectedItems != null && selectedItems.size() > 0) {
-                    FileUtils.showMessage(context, selectedItems.size() + " " +
-                            context.getString(R.string.msg_cut_copy));
-                    copiedData.clear();
-                    for (int i = 0; i < selectedItems.size(); i++) {
-                        copiedData.add(fileInfoList.get(selectedItems.keyAt(i)));
-                    }
-                    isPasteVisible = true;
-                    mIsMoveOperation = true;
-                    showPasteIcon();
+                    isMoveOperation = true;
+                    onCutCopyOp(selectedItems, fileInfoList);
                 }
                 break;
-            case R.id.action_copy:
 
+            case R.id.action_copy:
                 if (selectedItems != null && selectedItems.size() > 0) {
-                    mIsMoveOperation = false;
-                    FileUtils.showMessage(context, selectedItems.size() + " " +
-                            context.getString(R.string
-                                    .msg_cut_copy));
-                    copiedData.clear();
-                    for (int i = 0; i < selectedItems.size(); i++) {
-                        copiedData.add(fileInfoList.get(selectedItems.keyAt(i)));
-                    }
-                    isPasteVisible = true;
-                    showPasteIcon();
+                    isMoveOperation = false;
+                    onCutCopyOp(selectedItems, fileInfoList);
                 }
                 break;
 
@@ -340,9 +341,9 @@ public class MenuControls implements View.OnClickListener,
                 if (copiedData.size() > 0) {
                     ArrayList<FileInfo> info = new ArrayList<>();
                     info.addAll(copiedData);
-                    storagesUiView.onPasteAction(mIsMoveOperation, info, currentDir);
+                    storagesUiView.onPasteAction(isMoveOperation, info, currentDir);
                     copiedData.clear();
-                    storagesUiView.endActionMode();
+                    endActionMode();
                 }
                 break;
 
@@ -361,9 +362,11 @@ public class MenuControls implements View.OnClickListener,
                     } else {
                         DialogHelper.showDeleteDialog(context, filesToDelete, deleteDialogListener);
                     }
-                    storagesUiView.finishActionMode();
+                    endActionMode();
+
                 }
                 break;
+
             case R.id.action_share:
                 if (selectedItems != null && selectedItems.size() > 0) {
                     ArrayList<FileInfo> filesToShare = new ArrayList<>();
@@ -374,7 +377,7 @@ public class MenuControls implements View.OnClickListener,
                         }
                     }
                     ShareHelper.shareFiles(context, filesToShare, category);
-                    storagesUiView.finishActionMode();
+                    endActionMode();
                 }
                 break;
 
@@ -386,6 +389,7 @@ public class MenuControls implements View.OnClickListener,
                     int renamedPosition = selectedItems.keyAt(0);
                     String parent = new File(oldFilePath).getParent();
                     renameDialog(oldFilePath, parent, renamedPosition);
+                    endActionMode();
                 }
                 break;
 
@@ -394,9 +398,10 @@ public class MenuControls implements View.OnClickListener,
                 if (selectedItems != null && selectedItems.size() > 0) {
                     FileInfo fileInfo = fileInfoList.get(selectedItems.keyAt(0));
                     DialogHelper.showInfoDialog(context, fileInfo, category.equals(FILES));
-                    storagesUiView.finishActionMode();
+                    endActionMode();
                 }
                 break;
+
             case R.id.action_archive:
 
                 if (selectedItems != null && selectedItems.size() > 0) {
@@ -406,7 +411,7 @@ public class MenuControls implements View.OnClickListener,
                         paths.add(info);
                     }
                     DialogHelper.showCompressDialog(context, currentDir, paths, compressDialogListener);
-                    storagesUiView.finishActionMode();
+                    endActionMode();
                 }
                 break;
 
@@ -428,7 +433,7 @@ public class MenuControls implements View.OnClickListener,
                         FileUtils.showMessage(context, context.getString(R.string.msg_added_to_fav));
                         storagesUiView.updateFavouritesGroup(favList);
                     }
-                    storagesUiView.finishActionMode();
+                    endActionMode();
                 }
                 break;
 
@@ -438,7 +443,7 @@ public class MenuControls implements View.OnClickListener,
                     FileInfo fileInfo = fileInfoList.get(selectedItems.keyAt(0));
                     String currentFile = fileInfo.getFilePath();
                     DialogHelper.showExtractOptions(context, currentFile, currentDir, extractDialogListener);
-                    storagesUiView.finishActionMode();
+                    endActionMode();
                 }
 
                 break;
@@ -454,17 +459,16 @@ public class MenuControls implements View.OnClickListener,
 
                     }
                     storagesUiView.hideUnHideFiles(infoList, pos);
-                    storagesUiView.finishActionMode();
+                    endActionMode();
                 }
                 break;
 
             case R.id.action_permissions:
-
                 if (selectedItems != null && selectedItems.size() > 0) {
                     FileInfo info = fileInfoList.get(selectedItems.keyAt(0));
                     isDirectory = info.isDirectory();
                     storagesUiView.getPermissions(info.getFilePath(), isDirectory);
-                    storagesUiView.finishActionMode();
+                    endActionMode();
                 }
                 break;
 
@@ -473,18 +477,42 @@ public class MenuControls implements View.OnClickListener,
                 break;
 
             case R.id.action_cancel:
-                storagesUiView.finishActionMode();
+                endActionMode();
+                break;
+
+            case R.id.action_select_all:
+                storagesUiView.onSelectAllClicked();
                 break;
         }
         return false;
+    }
+
+    private void clearSelection() {
+        storagesUiView.clearSelection();
+        storagesUiView.clearSelectedPos();
     }
 
     private boolean isDirectory;
 
 
     boolean isPasteOp() {
-        Log.d(TAG, "isPasteOp: " + isPasteVisible);
         return isPasteVisible;
+    }
+
+    private void onCutCopyOp(SparseBooleanArray selectedItems, List<FileInfo> fileInfoList) {
+        FileUtils.showMessage(context, selectedItems.size() + " " +
+                context.getString(R.string
+                        .msg_cut_copy));
+        copiedData.clear();
+        for (int i = 0; i < selectedItems.size(); i++) {
+            copiedData.add(fileInfoList.get(selectedItems.keyAt(i)));
+        }
+        isPasteVisible = true;
+        hideSelectAll();
+        showPasteIcon();
+        setToolbarText(String.format(context.getString(R.string.clipboard), copiedData.size()));
+        clearSelection();
+        storagesUiView.endDrag();
     }
 
     void removeSearchTask() {
@@ -514,7 +542,6 @@ public class MenuControls implements View.OnClickListener,
         }
 
         storagesUiView.showRenameDialog(oldFilePath, fileName, position);
-        storagesUiView.finishActionMode();
     }
 
 
@@ -529,6 +556,10 @@ public class MenuControls implements View.OnClickListener,
         fabOperation.setVisibility(View.VISIBLE);*/
     }
 
+    private void hideSelectAll() {
+        toolbar.getMenu().findItem(R.id.action_select_all).setVisible(false);
+    }
+
     private void hidePasteIcon() {
    /*     fabOperation.setVisibility(View.GONE);
         fabCreateMenu.setVisibility(View.VISIBLE);*/
@@ -538,10 +569,12 @@ public class MenuControls implements View.OnClickListener,
         showBottomToolbar();
     }
 
-    void onActionModeEnd() {
+    void endActionMode() {
         isPasteVisible = false;
         hidePasteIcon();
         hideBottomToolbar();
+        clearActionModeToolbar();
+        storagesUiView.endActionMode();
     }
 
     private void updateMenuTitle(int viewMode) {
@@ -716,5 +749,9 @@ public class MenuControls implements View.OnClickListener,
         }
         hideSearchView();*/
         return false;
+    }
+
+    public void setToolbarText(String text) {
+        toolbar.setTitle(text);
     }
 }

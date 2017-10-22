@@ -37,7 +37,6 @@ import com.siju.acexplorer.presenter.MainPresenter;
 import com.siju.acexplorer.presenter.MainPresenterImpl;
 import com.siju.acexplorer.utils.LocaleHelper;
 
-import net.hockeyapp.android.UpdateManager;
 
 
 public class AceActivity extends BaseActivity {
@@ -64,7 +63,6 @@ public class AceActivity extends BaseActivity {
         mainUi.init();
         mainPresenter.getUserPreferences();
         mainPresenter.getBillingStatus();
-        checkForHockeyAppUpdates();
     }
 
     @Override
@@ -107,11 +105,7 @@ public class AceActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        unregisterHockeyManagers();
-    }
+
 
     @Override
     public void onBackPressed() {
@@ -125,7 +119,6 @@ public class AceActivity extends BaseActivity {
         Logger.log(TAG, "onDestroy");
         mainUi.onExit();
         super.onDestroy();
-        unregisterHockeyManagers();
     }
 
 
@@ -147,13 +140,6 @@ public class AceActivity extends BaseActivity {
         mainUi.onContextItemSelected(item);
         return super.onContextItemSelected(item);
     }
-    private void checkForHockeyAppUpdates() {
-        // Remove this for store builds!
-        UpdateManager.register(this);
-    }
 
-    private void unregisterHockeyManagers() {
-        UpdateManager.unregister();
-    }
 }
 

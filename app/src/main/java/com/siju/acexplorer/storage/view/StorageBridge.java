@@ -274,8 +274,13 @@ public class StorageBridge implements StoragesUi {
     }
 
     @Override
-    public void onOperationFailed(Operations operation) {
-        storagesUiView.onOperationFailed(operation);
+    public void onOperationFailed(final Operations operation) {
+        fragment.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                storagesUiView.onOperationFailed(operation);
+            }
+        });
     }
 
     @Override
@@ -323,7 +328,7 @@ public class StorageBridge implements StoragesUi {
     }
 
     void onExtractPositiveClick(String currentFilePath, String newFileName, boolean isChecked,
-                                       String selectedPath) {
+                                String selectedPath) {
         listener.onExtractPositiveClick(currentFilePath, newFileName, isChecked, selectedPath);
 
     }
@@ -364,7 +369,7 @@ public class StorageBridge implements StoragesUi {
     }
 
     void renameFile(String filePath, String parentDir, String name, int position,
-                           boolean rooted) {
+                    boolean rooted) {
         listener.renameFile(filePath, parentDir, name, position, rooted);
     }
 }

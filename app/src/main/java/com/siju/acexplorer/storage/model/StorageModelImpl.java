@@ -500,7 +500,7 @@ public class StorageModelImpl implements StoragesModel {
     };
 
     private void copyFiles(String destinationDir, List<FileInfo> files, List<CopyData> copyData) {
-        if (RootUtils.isRooted(context) || new File(destinationDir).canWrite()) {
+        if (RootUtils.isRooted(context) || !FileUtils.isFileNonWritable(new File(destinationDir))) {
             listener.showPasteProgressDialog(destinationDir, files, copyData, false);
             Intent intent = new Intent(context, CopyService.class);
             intent.putParcelableArrayListExtra(OperationUtils.KEY_FILES, (ArrayList<? extends

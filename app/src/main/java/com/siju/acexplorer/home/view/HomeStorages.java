@@ -82,6 +82,7 @@ public class HomeStorages implements View.OnClickListener {
 
     private void inflateStoragesItem() {
         storagesContainer.removeAllViews();
+        Log.d("HomeStorages", "inflateStoragesItem: "+storagesList.size());
 
         for (int i = 0; i < storagesList.size(); i++) {
             RelativeLayout storageItemContainer = (RelativeLayout) View.inflate(context, R.layout.storage_item,
@@ -99,7 +100,6 @@ public class HomeStorages implements View.OnClickListener {
             progressBarSpace.setProgress(storagesList.get(i).getProgress());
 
             storagesContainer.addView(storageItemContainer);
-            Log.d(this.getClass().getSimpleName(), "inflateStoragesItem: "+storageItemContainer);
             storageItemContainer.setOnClickListener(this);
             storageItemContainer.setTag(storagesList.get(i).getPath());
             if (i + 1 == storagesList.size()) {

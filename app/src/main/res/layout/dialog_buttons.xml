@@ -30,7 +30,8 @@
         android:layout_weight="1"
         android:textColor="@color/blue"
         android:visibility="gone"
-        tools:text="@string/msg_ok"
+        tools:visibility="visible"
+        tools:text="@string/view"
         android:layout_marginEnd="@dimen/margin_16" />
 
 
@@ -45,7 +46,7 @@
         android:layout_marginTop="@dimen/margin_16"
         android:layout_weight="1"
         android:textColor="@color/blue"
-        tools:text="@string/msg_ok" />
+        tools:text="@string/install" />
 
 
 </LinearLayout>

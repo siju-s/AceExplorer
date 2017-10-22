@@ -52,9 +52,10 @@ public class ViewHelper {
         }
         String ext = extension.toLowerCase();
 
-        String texts[] = new String[]{context.getString(R.string.package_installer), context.getString(R.string
-                .install), context.getString(R.string.dialog_cancel), context.getString(R.string.view),
-                context.getString(R.string.package_installer_content)};
+        String texts[] = new String[]{context.getString(R.string.package_installer),
+                context.getString(R.string.package_installer_content),
+                context.getString(R.string.install), context.getString(R.string.dialog_cancel), context.getString(R.string.view),
+                };
 
         if (ext.equals("apk")) {
             DialogHelper.showAlertDialog(context, texts, alertDialogListener);
