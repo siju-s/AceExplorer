@@ -91,6 +91,8 @@ public class MenuControls implements View.OnClickListener,
     private String currentDir;
     private SearchView searchView;
     private MenuItem searchItem;
+    private final ArrayList<FileInfo> copiedData = new ArrayList<>();
+    private boolean isPasteVisible;
 
 
     MenuControls(Activity activity, StoragesUiView storagesUiView, Theme theme) {
@@ -306,13 +308,10 @@ public class MenuControls implements View.OnClickListener,
 
     private void clearActionModeToolbar() {
         toolbar.getMenu().clear();
-        toolbar.inflateMenu(R.menu.file_base);
+        inflateMenu();
         toolbar.setNavigationIcon(R.drawable.ic_drawer);
         setToolbarText(context.getString(R.string.app_name));
     }
-
-    private final ArrayList<FileInfo> copiedData = new ArrayList<>();
-    private boolean isPasteVisible;
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
@@ -322,6 +321,17 @@ public class MenuControls implements View.OnClickListener,
         boolean isRooted = storagesUiView.isRooted();
 
         switch (item.getItemId()) {
+
+            case R.id.action_view:
+                storagesUiView.switchView();
+                int mode = storagesUiView.getViewMode();
+                updateMenuTitle(mode);
+                break;
+
+            case R.id.action_sort:
+                showSortDialog();
+                break;
+
             case R.id.action_cut:
                 if (selectedItems != null && selectedItems.size() > 0) {
                     isMoveOperation = true;
@@ -656,7 +666,7 @@ public class MenuControls implements View.OnClickListener,
     };
 
 
-    public void onPermissionsFetched(ArrayList<Boolean[]> permissionList) {
+    void onPermissionsFetched(ArrayList<Boolean[]> permissionList) {
         DialogHelper.showPermissionsDialog(context, currentDir, isDirectory, permissionList, permissionDialogListener);
     }
 
@@ -677,27 +687,21 @@ public class MenuControls implements View.OnClickListener,
 
     void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         Log.d(TAG, "onCreateOptionsMenu: " + menu);
-        inflater.inflate(R.menu.file_base, menu);
-        searchItem = menu.findItem(R.id.action_search);
+//        inflater.inflate(R.menu.file_base, menu);
+
+    }
+
+    private void inflateMenu() {
+        toolbar.inflateMenu(R.menu.file_base);
+        searchItem = toolbar.getMenu().findItem(R.id.action_search);
         searchView = (android.support.v7.widget.SearchView) searchItem.getActionView();
-        mViewItem = menu.findItem(R.id.action_view);
+        mViewItem = toolbar.getMenu().findItem(R.id.action_view);
         setupSearchView();
     }
 
     void onOptionsSelectedMenu(MenuItem menuItem) {
-
-        switch (menuItem.getItemId()) {
-            case R.id.action_view:
-                storagesUiView.switchView();
-                int mode = storagesUiView.getViewMode();
-                updateMenuTitle(mode);
-                break;
-
-            case R.id.action_sort:
-                showSortDialog();
-                break;
-        }
-    }
+        //no-op
+     }
 
     private void setupSearchView() {
         // Disable full screen keyboard in landscape

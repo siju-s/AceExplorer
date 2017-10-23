@@ -98,7 +98,7 @@
     <string name="extracting">Ekstrahujący..</string>
     <string name="dialog_current_path">Bieżąca ścieżka</string>
     <string name="dialog_specify_path">Określ ścieżkę</string>
-    <string name="select_path">Wybierz ścieżkę</string>
+    <string name="browse">Wybierz ścieżkę</string>
     <string name="enter_file_name">Wpisz nazwę pliku</string>
     <string name="extract">Wyciąg</string>
     <string name="dialog_title_browse">Wybierz folder,</string>

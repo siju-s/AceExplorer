@@ -44,7 +44,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseBooleanArray;
-import android.view.ActionMode;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -75,7 +74,6 @@ import com.siju.acexplorer.model.FileConstants;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.SharedPreferenceWrapper;
 import com.siju.acexplorer.model.groups.Category;
-import com.siju.acexplorer.model.groups.StoragesGroup;
 import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.permission.PermissionUtils;
 import com.siju.acexplorer.storage.model.BackStackModel;
@@ -104,7 +102,6 @@ import java.util.List;
 
 import static android.webkit.MimeTypeMap.getSingleton;
 import static com.siju.acexplorer.model.FileConstants.ADS;
-import static com.siju.acexplorer.model.StorageUtils.getInternalStorage;
 import static com.siju.acexplorer.model.groups.Category.DOWNLOADS;
 import static com.siju.acexplorer.model.groups.Category.FILES;
 import static com.siju.acexplorer.model.groups.Category.checkIfFileCategory;
@@ -187,6 +184,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     private int position;
     private String filePath;
     private boolean isActionModeActive;
+    private boolean showHidden;
 
 
     public StoragesUiView(Context context, AttributeSet attrs) {
@@ -675,6 +673,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     public void endZipMode() {
         isZipViewer = false;
         zipViewer = null;
+        refreshList();
     }
 
 
@@ -747,12 +746,18 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 int type = fileInfoList.get(position).getType();
                 removeMedia(getActivity(), new File(oldFile), type);
                 scanFile(getActivity().getApplicationContext(), newFile);
-                fileInfoList.get(position).setFilePath(newFile);
-                fileInfoList.get(position).setFileName(new File(newFile).getName());
+
                 fileListAdapter.setStopAnimation(true);
                 Logger.log(TAG, "Position changed=" + position);
-                scanFile(getActivity().getApplicationContext(), newFile);
-                fileListAdapter.notifyItemChanged(position);
+                if (!showHidden && new File(newFile).getName().startsWith(".")) {
+                    fileInfoList.remove(position);
+                    fileListAdapter.setList(fileInfoList);
+                    fileListAdapter.notifyItemRemoved(position);
+                } else {
+                    fileInfoList.get(position).setFilePath(newFile);
+                    fileInfoList.get(position).setFileName(new File(newFile).getName());
+                    fileListAdapter.notifyItemChanged(position);
+                }
                 break;
 
             case CUT:
@@ -1067,7 +1072,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
             if (!data.isEmpty()) {
 
-                Log.d("TEST", "on onLoadFinished scrollpos--" + scrollPosition.entrySet());
+                Log.d(TAG, "on onLoadFinished scrollpos--" + scrollPosition.entrySet());
                 getScrolledPosition();
                 fileList.stopScroll();
                 mTextEmpty.setVisibility(View.GONE);
@@ -1172,6 +1177,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         Bundle bundle = bridge.getUserPrefs();
         gridCols = bundle.getInt(FileConstants.KEY_GRID_COLUMNS, 0);
         isHomeScreenEnabled = bundle.getBoolean(FileConstants.PREFS_HOMESCREEN, true);
+        showHidden = bundle.getBoolean(FileConstants.PREFS_HIDDEN, false);
         viewMode = bundle.getInt(FileConstants.PREFS_VIEW_MODE, ViewMode.LIST);
     }
 
@@ -1234,7 +1240,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     public void refreshList() {
-        Log.d(TAG, "onCreateLoader: ");
+        Log.d(TAG, "loadData: ");
         fileInfoList = new ArrayList<>();
         if (fileListAdapter != null) {
             fileListAdapter.clearList();
@@ -1244,7 +1250,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         }
         mSwipeRefreshLayout.setRefreshing(true);
         if (isZipMode()) {
-            zipViewer.onCreateLoader(null);
+            zipViewer.loadData();
         } else {
             bridge.loadData(currentDir, category, false);
         }
@@ -1455,6 +1461,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     public void onQueryTextChange(String query) {
+        Log.d(TAG, "onQueryTextChange: "+query);
         fileListAdapter.filter(query);
     }
 
@@ -1907,6 +1914,10 @@ mLastDualPaneDir);
 
     public void endDrag() {
         isDragStarted = false;
+    }
+
+    public void setHidden(boolean showHidden) {
+        this.showHidden = showHidden;
     }
 
     public interface FavoriteOperation {

@@ -21,37 +21,7 @@
         android:layout_margin="@dimen/margin_16"
         />
 
-
-    <LinearLayout
-        android:id="@+id/buttons"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/margin_16"
-        android:orientation="horizontal" >
-
-        <Button
-            android:id="@+id/buttonNegative"
-            style="@style/DialogNegativeButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            tools:text="@string/dialog_cancel" />
-
-
-        <Button
-            android:id="@+id/buttonPositive"
-            style="@style/DialogPositiveButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:textColor="@color/blue"
-            tools:text="@string/msg_ok" />
-
-
-    </LinearLayout>
-
+    <include layout="@layout/dialog_buttons"/>
 
 
 </LinearLayout>

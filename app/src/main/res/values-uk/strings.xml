@@ -98,7 +98,7 @@
     <string name="extracting">Розпакування ..</string>
     <string name="dialog_current_path">Поточний шлях</string>
     <string name="dialog_specify_path">вкажіть шлях</string>
-    <string name="select_path">Виберіть шлях</string>
+    <string name="browse">Виберіть шлях</string>
     <string name="enter_file_name">Введіть ім\'я файлу</string>
     <string name="extract">екстракт</string>
     <string name="dialog_title_browse">Виберіть папку</string>

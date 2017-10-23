@@ -97,7 +97,7 @@
     <string name="extracting">Издвајање ..</string>
     <string name="dialog_current_path">Струјни</string>
     <string name="dialog_specify_path">Наведите путању</string>
-    <string name="select_path">Избор путања</string>
+    <string name="browse">Избор путања</string>
     <string name="enter_file_name">Унесите назив датотеке</string>
     <string name="extract">екстракт</string>
     <string name="dialog_title_browse">Изаберите фасциклу</string>

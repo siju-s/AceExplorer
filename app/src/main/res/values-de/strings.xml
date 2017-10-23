@@ -97,7 +97,7 @@
     <string name="extracting">Extrahieren ..</string>
     <string name="dialog_current_path">Aktueller Pfad</string>
     <string name="dialog_specify_path">Geben Sie den Pfad</string>
-    <string name="select_path">Wählen Sie den Pfad</string>
+    <string name="browse">Wählen Sie den Pfad</string>
     <string name="enter_file_name">Geben Sie den Dateinamen</string>
     <string name="extract">Extrakt</string>
     <string name="dialog_title_browse">Wähle einen Ordner</string>

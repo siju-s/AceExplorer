@@ -57,26 +57,21 @@
 
         <Button
             android:id="@+id/buttonPositive"
-            style="?android:attr/buttonBarButtonStyle"
+            style="@style/DialogPositiveButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             tools:text="@string/action_rename"
-            android:layout_marginRight="@dimen/margin_16"
-            android:textColor="@color/colorPrimary"
-            android:layout_marginEnd="@dimen/margin_16" />
+             />
 
         <Button
             android:id="@+id/buttonNegative"
-            style="?android:attr/buttonBarButtonStyle"
+            style="@style/DialogNegativeButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="@string/dialog_cancel"
-            android:layout_marginStart="@dimen/margin_16"
-            android:layout_marginLeft="@dimen/margin_16"
             android:layout_toLeftOf="@+id/buttonPositive"
-            android:textColor="@color/color_text"
             android:layout_toStartOf="@+id/buttonPositive" />
 
 

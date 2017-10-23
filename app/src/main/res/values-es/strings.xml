@@ -97,7 +97,7 @@
     <string name="extracting">La extracción ..</string>
     <string name="dialog_current_path">Trayectoria de corriente</string>
     <string name="dialog_specify_path">especificar la ruta</string>
-    <string name="select_path">Seleccionar ruta</string>
+    <string name="browse">Seleccionar ruta</string>
     <string name="enter_file_name">Introducir nombre del archivo</string>
     <string name="extract">Extraer</string>
     <string name="dialog_title_browse">Elegir la carpeta</string>

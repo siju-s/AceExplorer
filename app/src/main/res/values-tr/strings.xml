@@ -96,7 +96,7 @@
     <string name="extracting">Ayıklanıyor ..</string>
     <string name="dialog_current_path">Geçerli yol</string>
     <string name="dialog_specify_path">yolu belirtin</string>
-    <string name="select_path">seç yolu</string>
+    <string name="browse">seç yolu</string>
     <string name="enter_file_name">Dosya adını girin</string>
     <string name="extract">özüt</string>
     <string name="dialog_title_browse">klasörü seçin</string>

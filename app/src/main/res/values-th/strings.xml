@@ -95,7 +95,7 @@
     <string name="extracting">สกัด ..</string>
     <string name="dialog_current_path">เส้นทางปัจจุบัน</string>
     <string name="dialog_specify_path">ระบุเส้นทาง</string>
-    <string name="select_path">เลือกเส้นทาง</string>
+    <string name="browse">เลือกเส้นทาง</string>
     <string name="enter_file_name">ป้อนชื่อไฟล์</string>
     <string name="extract">สารสกัด</string>
     <string name="dialog_title_browse">เลือกโฟลเดอร์</string>

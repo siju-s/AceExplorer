@@ -100,7 +100,7 @@
     <string name="extracting">Bhaint ..</string>
     <string name="dialog_current_path">cosán atá ann faoi láthair</string>
     <string name="dialog_specify_path">sonraigh cosán</string>
-    <string name="select_path">Roghnaigh cosán</string>
+    <string name="browse">Roghnaigh cosán</string>
     <string name="enter_file_name">Iontráil ainm an chomhaid</string>
     <string name="extract">sliocht</string>
     <string name="dialog_title_browse">Roghnaigh fillteán</string>

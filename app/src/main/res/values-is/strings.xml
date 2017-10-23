@@ -96,7 +96,7 @@
     <string name="extracting">Útdráttur ..</string>
     <string name="dialog_current_path">Núverandi Slóð</string>
     <string name="dialog_specify_path">tilgreina slóð</string>
-    <string name="select_path">Veldu Slóð</string>
+    <string name="browse">Veldu Slóð</string>
     <string name="enter_file_name">Sláðu inn skráarnafnið</string>
     <string name="extract">þykkni</string>
     <string name="dialog_title_browse">Veldu möppu</string>

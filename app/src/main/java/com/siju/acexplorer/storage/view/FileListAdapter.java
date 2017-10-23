@@ -95,6 +95,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         clear();
         if (fileInfos != null) {
             this.fileInfoArrayList = fileInfos;
+            clearList();
             fileInfoArrayListCopy.addAll(fileInfos);
             offset = 0;
             mStopAnimation = !mIsAnimNeeded;
@@ -111,6 +112,10 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         fileInfoArrayList.add(fileInfo);
         notifyDataSetChanged();
 //        notifyItemChanged(getItemCount());
+    }
+
+    void setList(ArrayList<FileInfo> fileList) {
+        this.fileInfoArrayList = fileList;
     }
 
     void clear() {

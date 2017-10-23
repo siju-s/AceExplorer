@@ -110,6 +110,8 @@ public interface StoragesUi {
 
     void showExtractDialog(Intent intent);
 
+    void setHidden(boolean showHidden);
+
 
     interface Listener {
 

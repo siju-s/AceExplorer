@@ -174,4 +174,8 @@ public class BaseFileList extends Fragment {
     public void setPremium() {
         storagesUi.setPremium();
     }
+
+    public void setHidden(boolean showHidden) {
+        storagesUi.setHidden(showHidden);
+    }
 }

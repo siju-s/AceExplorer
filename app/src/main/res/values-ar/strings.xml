@@ -101,7 +101,7 @@
     <string name="extracting">استخراج ..</string>
     <string name="dialog_current_path">المسار الحالي</string>
     <string name="dialog_specify_path">تحديد المسار</string>
-    <string name="select_path">حدد مسار</string>
+    <string name="browse">حدد مسار</string>
     <string name="enter_file_name">أدخل اسم الملف</string>
     <string name="extract">استخراج</string>
     <string name="dialog_title_browse">اختيار مجلد</string>

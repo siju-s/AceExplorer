@@ -118,9 +118,11 @@ public class StorageModelImpl implements StoragesModel {
         boolean isHomeScreenEnabled = sharedPreferences.getBoolean(FileConstants
                 .PREFS_HOMESCREEN, true);
         int viewMode = sharedPreferenceWrapper.getViewMode(context);
+        boolean showHidden = sharedPreferences.getBoolean(FileConstants.PREFS_HIDDEN, false);
         bundle.putInt(FileConstants.KEY_GRID_COLUMNS, gridCols);
         bundle.putBoolean(FileConstants.PREFS_HOMESCREEN, isHomeScreenEnabled);
         bundle.putInt(FileConstants.PREFS_VIEW_MODE, viewMode);
+        bundle.putBoolean(FileConstants.PREFS_HIDDEN, showHidden);
         return bundle;
     }
 
@@ -178,6 +180,7 @@ public class StorageModelImpl implements StoragesModel {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                listener.dismissDialog(FOLDER_CREATION);
                 FileOpsHelper.mkDir(file, rooted, fileOperationCallBack);
             }
         }).start();
@@ -200,6 +203,7 @@ public class StorageModelImpl implements StoragesModel {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                listener.dismissDialog(FOLDER_CREATION);
                 FileOpsHelper.mkFile(file, rooted, fileOperationCallBack);
             }
         }).start();

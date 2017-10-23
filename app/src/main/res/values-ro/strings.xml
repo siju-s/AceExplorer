@@ -97,7 +97,7 @@
     <string name="extracting">Extracting ..</string>
     <string name="dialog_current_path">cale de curent</string>
     <string name="dialog_specify_path">specificaţi calea</string>
-    <string name="select_path">Selectați calea</string>
+    <string name="browse">Selectați calea</string>
     <string name="enter_file_name">Introdu numele de fișier</string>
     <string name="extract">Extrage</string>
     <string name="dialog_title_browse">alegeţi un dosar</string>

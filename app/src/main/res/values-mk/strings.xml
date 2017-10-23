@@ -96,7 +96,7 @@
     <string name="extracting">Вадење ..</string>
     <string name="dialog_current_path">сегашната патека</string>
     <string name="dialog_specify_path">Одредете патека</string>
-    <string name="select_path">Избери патека</string>
+    <string name="browse">Избери патека</string>
     <string name="enter_file_name">Внесете име на датотека</string>
     <string name="extract">екстракт</string>
     <string name="dialog_title_browse">Изберете папка</string>

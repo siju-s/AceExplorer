@@ -79,29 +79,35 @@
         android:layout_height="wrap_content"
         android:text="@string/paste_conflict_remember" />
 
-    <LinearLayout
+    <include
+        layout="@layout/dialog_buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="15dp">
+        android:layout_margin="15dp" />
 
-        <Button
-            android:id="@+id/buttonReplace"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"
-            android:text="@string/dialog_replace" />
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="15dp">-->
 
-        <Button
-            android:id="@+id/buttonSkip"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"
-            android:text="@string/dialog_skip" />
+        <!--<Button-->
+            <!--android:id="@+id/buttonReplace"-->
+            <!--style="?android:attr/buttonBarButtonStyle"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="0.5"-->
+            <!--android:text="@string/dialog_replace" />-->
+
+        <!--<Button-->
+            <!--android:id="@+id/buttonSkip"-->
+            <!--style="?android:attr/buttonBarButtonStyle"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="0.5"-->
+            <!--android:text="@string/dialog_skip" />-->
 
 
-    </LinearLayout>
+    <!--</LinearLayout>-->
 
     <Button
         android:id="@+id/buttonKeepBoth"

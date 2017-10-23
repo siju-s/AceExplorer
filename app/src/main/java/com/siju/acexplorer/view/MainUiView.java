@@ -532,6 +532,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
            /* BaseFileList dualPaneFragment = (FileListDualFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.frame_container_dual);*/
                     if (fragment instanceof BaseFileList) {
+                        ((BaseFileList) fragment).setHidden(showHidden);
                         ((BaseFileList) fragment).refreshList();
                     }
      /*       if (dualPaneFragment != null) {

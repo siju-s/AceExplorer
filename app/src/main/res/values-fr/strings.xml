@@ -97,7 +97,7 @@
     <string name="extracting">Extraction ..</string>
     <string name="dialog_current_path">chemin d\'accès actuel</string>
     <string name="dialog_specify_path">Indiquez le chemin</string>
-    <string name="select_path">Sélectionnez le chemin</string>
+    <string name="browse">Sélectionnez le chemin</string>
     <string name="enter_file_name">Entrez le nom de fichier</string>
     <string name="extract">Extrait</string>
     <string name="dialog_title_browse">Choisissez le dossier</string>

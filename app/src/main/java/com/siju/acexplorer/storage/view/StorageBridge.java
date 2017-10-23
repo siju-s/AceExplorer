@@ -288,6 +288,11 @@ public class StorageBridge implements StoragesUi {
         storagesUiView.showExtractDialog(intent);
     }
 
+    @Override
+    public void setHidden(boolean showHidden) {
+        storagesUiView.setHidden(showHidden);
+    }
+
 
     void loadData(String currentDir, Category category, boolean isPicker) {
         listener.loadData(currentDir, category, isPicker);

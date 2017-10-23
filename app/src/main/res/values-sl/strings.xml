@@ -98,7 +98,7 @@
     <string name="extracting">Črpanje ..</string>
     <string name="dialog_current_path">pot toka</string>
     <string name="dialog_specify_path">določite pot</string>
-    <string name="select_path">Izberite pot</string>
+    <string name="browse">Izberite pot</string>
     <string name="enter_file_name">Vnesite ime datoteke</string>
     <string name="extract">izvleček</string>
     <string name="dialog_title_browse">Izberite mapo</string>

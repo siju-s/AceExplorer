@@ -98,7 +98,7 @@
     <string name="extracting">Izvlačenje ..</string>
     <string name="dialog_current_path">Trenutno put</string>
     <string name="dialog_specify_path">Navedite stazu</string>
-    <string name="select_path">Odaberi put</string>
+    <string name="browse">Odaberi put</string>
     <string name="enter_file_name">Unesite naziv datoteke</string>
     <string name="extract">Ekstrakt</string>
     <string name="dialog_title_browse">Odaberite mapu</string>

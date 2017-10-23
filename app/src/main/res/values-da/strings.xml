@@ -97,7 +97,7 @@
     <string name="extracting">Udpakning ..</string>
     <string name="dialog_current_path">Aktuel vej</string>
     <string name="dialog_specify_path">Angiv stien</string>
-    <string name="select_path">Vælg sti</string>
+    <string name="browse">Vælg sti</string>
     <string name="enter_file_name">Indtast filnavn</string>
     <string name="extract">Uddrag</string>
     <string name="dialog_title_browse">Vælg mappe</string>

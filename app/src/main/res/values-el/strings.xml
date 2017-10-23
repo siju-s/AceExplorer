@@ -97,7 +97,7 @@
     <string name="extracting">Εξαγωγή ..</string>
     <string name="dialog_current_path">τρέχουσα διαδρομή</string>
     <string name="dialog_specify_path">Καθορίστε τη διαδρομή</string>
-    <string name="select_path">Επιλέξτε διαδρομή</string>
+    <string name="browse">Επιλέξτε διαδρομή</string>
     <string name="enter_file_name">Πληκτρολογήστε το όνομα του αρχείου</string>
     <string name="extract">Εκχύλισμα</string>
     <string name="dialog_title_browse">Επιλέξτε το φάκελο</string>

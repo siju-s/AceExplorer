@@ -95,7 +95,7 @@
     <string name="extracting">Trích xuất ..</string>
     <string name="dialog_current_path">đường dẫn hiện tại</string>
     <string name="dialog_specify_path">Chỉ định đường dẫn</string>
-    <string name="select_path">Chọn con đường</string>
+    <string name="browse">Chọn con đường</string>
     <string name="enter_file_name">Nhập tên tập tin</string>
     <string name="extract">Trích xuất</string>
     <string name="dialog_title_browse">Chọn thư mục</string>

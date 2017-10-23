@@ -21,42 +21,11 @@
         android:layout_margin="@dimen/margin_16"
         android:gravity="center_horizontal" />
 
-    <LinearLayout
-        android:id="@+id/buttons"
+    <include
+        android:id="@+id/layoutButtons"
+        layout="@layout/dialog_buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textDeleteItems"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/buttonNegative"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginEnd="@dimen/margin_16"
-            android:layout_marginRight="@dimen/margin_16"
-            android:layout_marginTop="@dimen/margin_16"
-            android:layout_weight="1"
-            android:textColor="@color/blue"
-            tools:text="@string/dialog_cancel" />
-
-
-        <Button
-            android:id="@+id/buttonPositive"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginEnd="@dimen/margin_16"
-            android:layout_marginRight="@dimen/margin_16"
-            android:layout_marginTop="@dimen/margin_16"
-            android:layout_weight="1"
-            android:textColor="@color/blue"
-            tools:text="@string/msg_ok" />
-
-
-    </LinearLayout>
-
+        android:layout_below="@id/textDeleteItems" />
 
 </RelativeLayout>

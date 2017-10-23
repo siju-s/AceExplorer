@@ -95,7 +95,7 @@
     <string name="extracting">적출..</string>
     <string name="dialog_current_path">현재 경로</string>
     <string name="dialog_specify_path">경로를 지정</string>
-    <string name="select_path">경로 선택</string>
+    <string name="browse">경로 선택</string>
     <string name="enter_file_name">파일 이름을 입력</string>
     <string name="extract">추출하다</string>
     <string name="dialog_title_browse">폴더를 선택</string>

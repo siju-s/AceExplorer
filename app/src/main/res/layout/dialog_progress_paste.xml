@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +17,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_margin="@dimen/margin_16"
     android:orientation="vertical">
 
 
@@ -65,10 +64,10 @@
             android:layout_margin="15dp"
             android:layout_toEndOf="@+id/textFileToPlaceHolder"
             android:layout_toRightOf="@+id/textFileToPlaceHolder"
-            android:paddingLeft="10dp"
-            android:paddingStart="10dp"
-            android:paddingRight="10dp"
             android:paddingEnd="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingStart="10dp"
             android:textStyle="bold" />
 
         <TextView
@@ -86,8 +85,8 @@
             android:id="@+id/textProgressPercent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
             android:layout_below="@+id/progressBarPaste"
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
@@ -102,43 +101,11 @@
             android:layout_alignStart="@+id/textFilesLeft"
             android:layout_below="@+id/textFileToPlaceHolder"
             android:layout_marginBottom="20dp"
-            android:max="100"
-            android:progressDrawable="@drawable/custom_progress" />
+            android:max="100" />
 
     </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/buttonNegative"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginRight="@dimen/margin_16"
-            android:layout_marginTop="@dimen/margin_16"
-            android:layout_weight="1"
-            android:textColor="@color/blue"
-            tools:text="@string/dialog_cancel"
-            android:layout_marginEnd="@dimen/margin_16" />
+    <include layout="@layout/dialog_buttons" />
 
 
-        <Button
-            android:id="@+id/buttonPositive"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginEnd="@dimen/margin_16"
-            android:layout_marginRight="@dimen/margin_16"
-            android:layout_marginTop="@dimen/margin_16"
-            android:layout_weight="1"
-            android:textColor="@color/blue"
-            tools:text="@string/background" />
-
-
-    </LinearLayout>
 </LinearLayout>

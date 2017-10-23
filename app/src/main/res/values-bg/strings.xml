@@ -97,7 +97,7 @@
     <string name="extracting">Извличане ..</string>
     <string name="dialog_current_path">Текущ път</string>
     <string name="dialog_specify_path">Посочете пътя</string>
-    <string name="select_path">Избор на път</string>
+    <string name="browse">Избор на път</string>
     <string name="enter_file_name">Въведете името на файла</string>
     <string name="extract">Екстракт</string>
     <string name="dialog_title_browse">Изберете папка</string>

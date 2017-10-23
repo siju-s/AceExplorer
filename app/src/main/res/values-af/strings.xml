@@ -97,7 +97,7 @@
     <string name="extracting">Uittreksels van ..</string>
     <string name="dialog_current_path">Huidige pad</string>
     <string name="dialog_specify_path">spesifiseer pad</string>
-    <string name="select_path">Kies pad</string>
+    <string name="browse">Kies pad</string>
     <string name="enter_file_name">Gee lêernaam</string>
     <string name="extract">uittreksel</string>
     <string name="dialog_title_browse">kies die gids</string>

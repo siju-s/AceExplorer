@@ -20,6 +20,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.content.AsyncTaskLoader;
+import android.util.Log;
 
 import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
@@ -53,7 +54,7 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private final String TAG = this.getClass().getSimpleName();
     private ArrayList<FileInfo> fileInfoList;
 
-    private final String mPath;
+    private final String parentZip;
     private boolean showHidden;
     private final Category category;
     private String mZipPath;
@@ -78,10 +79,11 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private ZipViewer zipViewer;
 
 
-    ZipContentLoader(Context context, ZipViewer zipViewer, String path, Category category, String zipPath) {
+    ZipContentLoader(Context context, ZipViewer zipViewer, String parentZipPath, Category category,
+                     String zipPath) {
         super(context);
-        Logger.log(TAG, "Zip" + "dir=" + zipPath);
-        mPath = path;
+        Logger.log(TAG, "Parent zip:" + parentZipPath + "dir:" + zipPath);
+        parentZip = parentZipPath;
         this.category = category;
         showHidden = PreferenceManager.getDefaultSharedPreferences(context).getBoolean
                 (FileConstants.PREFS_HIDDEN, false);
@@ -111,7 +113,7 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         if (mZipPath.endsWith("/")) {
             mZipPath = mZipPath.substring(0, mZipPath.length() - 1);
         }
-        mPath = path;
+        parentZip = path;
         this.fileName = fileName;
         this.entry = zipEntry;
     }
@@ -122,8 +124,9 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             deliverResult(fileInfoList);
         }
 
-        if (takeContentChanged() || fileInfoList == null)
+        if (takeContentChanged() || fileInfoList == null) {
             forceLoad();
+        }
     }
 
     @Override
@@ -176,11 +179,11 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     }
 
     private void fetchZipContents() {
-        if (mPath.endsWith("rar")) {
-            getRarContents(mZipPath, mPath);
+        if (parentZip.endsWith("rar")) {
+            getRarContents(mZipPath, parentZip);
         }
         else {
-            getZipContents(mZipPath, mPath);
+            getZipContents(mZipPath, parentZip);
         }
     }
 
@@ -209,7 +212,7 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private void getZipContents(String dir, String parentZipPath) {
         ZipFile zipfile;
         ArrayList<ZipModel> elements = new ArrayList<>();
-
+        Log.d(TAG, "getZipContents: parentZip:"+parentZipPath + " dir:"+dir);
         try {
 //            if (totalZipList.size() == 0 || entry != null) {
             if (new File(parentZipPath).canRead()) {
@@ -238,13 +241,13 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 File file = new File(entry.getName());
                 if (dir == null || dir.trim().length() == 0) {
                     String y = entry.getName();
-                    System.out.println("entry name==" + y);
+//                    System.out.println("entry name==" + y);
 
               /*      if (y.startsWith(File.separator))
                         y = y.substring(1, y.length());*/
                     if (file.getParent() == null || file.getParent().length() == 0 || file.getParent().equals(File
                             .separator)) {
-                        System.out.println("entry if isdir==" + entry.isDirectory() + "y=" + y);
+//                        System.out.println("entry if isdir==" + entry.isDirectory() + "y=" + y);
                         if (!strings.contains(y)) {
                             elements.add(new ZipModel(new ZipEntry(y), entry.getTime(), entry.getSize(),
                                     entry.isDirectory()));
@@ -260,7 +263,7 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                         if (slash) {
                             path = "/" + path;
                         }
-                        System.out.println("entry else path==" + path);
+//                        System.out.println("entry else path==" + path);
                         ZipModel zipObj;
                         if (!strings.contains(path)) {
                             zipObj = new ZipModel(new ZipEntry(path), entry.getTime(), entry
@@ -271,7 +274,7 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                     }
                 } else {
                     String y = entry.getName();
-                    System.out.println("ZIP ITEM==" + y + "dir=" + dir);
+//                    System.out.println("ZIP ITEM==" + y + "dir=" + dir);
                 /*    if (y.startsWith(File.separator))
                         y = y.substring(1, y.length());*/
 
@@ -285,11 +288,11 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                     } else {
                         if (y.startsWith(dir + File.separator) && y.length() > dir.length() + 1) {
                             String path1 = y.substring(dir.length() + 1, y.length());
-                            System.out.println("path1==" + path1);
+//                            System.out.println("path1==" + path1);
 
                             int index = dir.length() + 1 + path1.indexOf(File.separator);
                             String path = y.substring(0, index + 1);
-                            System.out.println("path==" + path);
+//                            System.out.println("path==" + path);
 
                             if (!strings.contains(path)) {
                                 ZipModel zipObj = new ZipModel(new ZipEntry(y.substring(0, index + 1)), entry.getTime
@@ -322,7 +325,7 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                     String modelName = zipmodel.getEntry().getName();
                     if (modelName.startsWith(File.separator))
                         modelName = modelName.substring(1, modelName.length());
-                    System.out.println("SIJU --Dir true--modelname" + modelName + " name=" + name);
+//                    System.out.println("SIJU --Dir true--modelname" + modelName + " name=" + name);
 
                     if (modelName.startsWith(name)) {
                         count++;

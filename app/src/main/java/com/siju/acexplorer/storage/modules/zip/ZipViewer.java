@@ -27,6 +27,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.View;
 
 import com.github.junrar.Archive;
@@ -59,7 +60,8 @@ import static com.siju.acexplorer.model.helper.UriHelper.createContentUri;
 import static com.siju.acexplorer.model.helper.UriHelper.grantUriPermission;
 import static com.siju.acexplorer.view.dialog.DialogHelper.openWith;
 
-public class ZipViewer implements ZipElements, NavigationCallback {
+public class ZipViewer implements NavigationCallback,
+        LoaderManager.LoaderCallbacks<ArrayList<FileInfo>>{
 
     private final String TAG = this.getClass().getSimpleName();
     private final int LOADER_ID = 1000;
@@ -124,13 +126,13 @@ public class ZipViewer implements ZipElements, NavigationCallback {
         backStackInfo.addToBackStack(path, category);
     }
 
-    public void setZipData(ArrayList<ZipModel> zipData) {
+    void setZipData(ArrayList<ZipModel> zipData) {
         zipChildren = zipData;
+        Log.d(TAG, "setZipData: "+zipChildren.size());
     }
 
     private void reloadList() {
-        fragment.getLoaderManager().restartLoader(LOADER_ID, null, (LoaderManager
-                .LoaderCallbacks<ArrayList<FileInfo>>) fragment);
+        fragment.getLoaderManager().restartLoader(LOADER_ID, null, this);
     }
 
     private String createCacheDirExtract() {
@@ -171,6 +173,7 @@ public class ZipViewer implements ZipElements, NavigationCallback {
             }
             Logger.log(TAG, "checkZipMode--currentzipdir AFT=" + currentDir);
             reloadList();
+            Log.d(TAG, "checkZipMode: zipChildren:"+zipChildren.size());
             String newPath;
             if (currentDir == null || currentDir.equals(File.separator)) {
                 newPath = zipParentPath;
@@ -181,17 +184,17 @@ public class ZipViewer implements ZipElements, NavigationCallback {
                     newPath = zipParentPath + currentDir;
                 }
             }
+
             setNavDirectory(newPath);
             return false;
         }
     }
 
-    public void endZipMode() {
+    private void endZipMode() {
         currentDir = null;
         zipChildren.clear();
         storagesUiView.endZipMode();
         clearCache();
-        reloadList();
         setNavDirectory(getInternalStorage());
     }
 
@@ -333,7 +336,14 @@ public class ZipViewer implements ZipElements, NavigationCallback {
         setNavDirectory(newPath);
     }
 
-    public Loader<ArrayList<FileInfo>> onCreateLoader(Bundle args) {
+    public void loadData() {
+        Log.d(TAG, "loadData: ");
+       fragment.getLoaderManager().restartLoader(LOADER_ID, null, this);
+    }
+
+
+    @Override
+    public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
         if (inChildZip) {
             String path;
             if (zipEntry.isDirectory()) {
@@ -347,12 +357,13 @@ public class ZipViewer implements ZipElements, NavigationCallback {
         return new ZipContentLoader(fragment.getContext(), this, zipPath, ZIP_VIEWER, currentDir);
     }
 
-
+    @Override
     public void onLoadFinished(Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
         storagesUiView.onZipContentsLoaded(data);
     }
 
 
+    @Override
     public void onLoaderReset(Loader<ArrayList<FileInfo>> loader) {
 
     }

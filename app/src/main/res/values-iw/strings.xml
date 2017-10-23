@@ -99,7 +99,7 @@
     <string name="extracting">חילוץ ..</string>
     <string name="dialog_current_path">נתיב נוכחי</string>
     <string name="dialog_specify_path">ציין נתיב</string>
-    <string name="select_path">בחר נתיב</string>
+    <string name="browse">בחר נתיב</string>
     <string name="enter_file_name">הזן שם קובץ</string>
     <string name="extract">לחלץ</string>
     <string name="dialog_title_browse">בחר תיקייה</string>

@@ -456,7 +456,6 @@ public class DialogHelper {
                 .dialog_keep_both), context.getString(R
                 .string.dialog_replace)};
 
-        int counter = 0;
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -471,10 +470,13 @@ public class DialogHelper {
         TextView textFileName = dialogView.findViewById(R.id.textFileName);
         TextView textFileDate = dialogView.findViewById(R.id.textFileDate);
         TextView textFileSize = dialogView.findViewById(R.id.textFileSize);
-        Button positiveButton = dialogView.findViewById(R.id.buttonSkip);
-        Button negativeButton = dialogView.findViewById(R.id.buttonReplace);
+
+        Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
+        Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
         Button neutralButton = dialogView.findViewById(R.id.buttonKeepBoth);
 
+        positiveButton.setText(texts[1]);
+        negativeButton.setText(texts[3]);
 
         String fileName = conflictFiles.get(0).getFileName();
         textFileName.setText(fileName);

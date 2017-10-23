@@ -96,7 +96,7 @@
     <string name="extracting">Trekke ..</string>
     <string name="dialog_current_path">Nåværende bane</string>
     <string name="dialog_specify_path">angi banen</string>
-    <string name="select_path">Velg bane</string>
+    <string name="browse">Velg bane</string>
     <string name="enter_file_name">Skriv inn filnavnet</string>
     <string name="extract">Ekstrakt</string>
     <string name="dialog_title_browse">Velg mappe</string>

@@ -97,7 +97,7 @@
     <string name="extracting">Het halen van ..</string>
     <string name="dialog_current_path">Huidig ​​pad</string>
     <string name="dialog_specify_path">Geef het pad</string>
-    <string name="select_path">Selecteer pad</string>
+    <string name="browse">Selecteer pad</string>
     <string name="enter_file_name">Voer bestandsnaam</string>
     <string name="extract">Extract</string>
     <string name="dialog_title_browse">Kies map</string>

@@ -97,7 +97,7 @@
     <string name="extracting">Արտահանվում է ..</string>
     <string name="dialog_current_path">Ընթացիկ ուղին</string>
     <string name="dialog_specify_path">նշեք ուղին</string>
-    <string name="select_path">Ընտրել ուղին</string>
+    <string name="browse">Ընտրել ուղին</string>
     <string name="enter_file_name">Մուտքագրեք ֆայլի անունը</string>
     <string name="extract">քաղվածք</string>
     <string name="dialog_title_browse">Ընտրեք թղթապանակը</string>

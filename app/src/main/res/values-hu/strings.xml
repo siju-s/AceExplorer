@@ -97,7 +97,7 @@
     <string name="extracting">Kitermelésével ..</string>
     <string name="dialog_current_path">aktuális útvonal</string>
     <string name="dialog_specify_path">meg az elérési utat</string>
-    <string name="select_path">útvonal kiválasztása</string>
+    <string name="browse">útvonal kiválasztása</string>
     <string name="enter_file_name">Írja fájlnevet</string>
     <string name="extract">Kivonat</string>
     <string name="dialog_title_browse">Válassz mappát</string>

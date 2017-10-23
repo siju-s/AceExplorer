@@ -49,10 +49,11 @@
 
         <Button
             android:id="@+id/buttonPathSelect"
+            style="?attr/buttonBarButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/radioGroupPath"
-            android:text="@string/select_path"
+            android:text="@string/browse"
             android:textSize="14sp"
             android:textStyle="bold"
             android:visibility="gone" />

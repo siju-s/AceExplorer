@@ -97,7 +97,7 @@
     <string name="extracting">استخراج ..</string>
     <string name="dialog_current_path">مسیر فعلی</string>
     <string name="dialog_specify_path">تعیین مسیر</string>
-    <string name="select_path">انتخاب مسیر</string>
+    <string name="browse">انتخاب مسیر</string>
     <string name="enter_file_name">نام فایل را وارد کنید</string>
     <string name="extract">استخراج کردن</string>
     <string name="dialog_title_browse">انتخاب پوشه</string>

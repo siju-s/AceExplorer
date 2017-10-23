@@ -95,7 +95,7 @@
     <string name="extracting">解凍..</string>
     <string name="dialog_current_path">電流路</string>
     <string name="dialog_specify_path">パスを指定します</string>
-    <string name="select_path">パスを選択します</string>
+    <string name="browse">パスを選択します</string>
     <string name="enter_file_name">ファイル名を入力します。</string>
     <string name="extract">エキス</string>
     <string name="dialog_title_browse">フォルダを選択します</string>

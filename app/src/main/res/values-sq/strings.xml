@@ -96,7 +96,7 @@
     <string name="extracting">Nxjerrjen ..</string>
     <string name="dialog_current_path">rruga e tanishme</string>
     <string name="dialog_specify_path">specifikoni shtegun</string>
-    <string name="select_path">Zgjidh rruga</string>
+    <string name="browse">Zgjidh rruga</string>
     <string name="enter_file_name">Shkruani emrin e file</string>
     <string name="extract">ekstrakt</string>
     <string name="dialog_title_browse">zgjidhni dosjen</string>

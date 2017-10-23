@@ -311,10 +311,12 @@ public class DialogBrowseFragment extends DialogFragment implements
         mTextEmpty = root.findViewById(R.id.textEmpty);
         mImageButtonBack = root.findViewById(R.id.imageButtonBack);
         textCurrentPath = root.findViewById(R.id.textPath);
-        okButton = root.findViewById(R.id.buttonOk);
-        cancelButton = root.findViewById(R.id.buttonCancel);
+        okButton = root.findViewById(R.id.buttonPositive);
+        cancelButton = root.findViewById(R.id.buttonNegative);
         mTitle = root.findViewById(R.id.textDialogTitle);
 
+        okButton.setText(getString(R.string.msg_ok));
+        cancelButton.setText(getString(R.string.dialog_cancel));
     }
 
     private void refreshList(String path) {

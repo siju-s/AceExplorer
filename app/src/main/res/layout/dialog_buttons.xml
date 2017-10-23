@@ -7,46 +7,36 @@
 
     <Button
         android:id="@+id/buttonNegative"
-        style="?android:attr/buttonBarButtonStyle"
+        style="@style/DialogNegativeButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginRight="@dimen/margin_16"
-        android:layout_marginTop="@dimen/margin_16"
         android:layout_weight="1"
-        android:textColor="@color/blue"
         tools:text="@string/dialog_cancel"
-        android:layout_marginEnd="@dimen/margin_16" />
+         />
 
 
     <Button
         android:id="@+id/buttonNeutral"
-        style="?android:attr/buttonBarButtonStyle"
+        style="@style/DialogNeutralButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginRight="@dimen/margin_16"
-        android:layout_marginTop="@dimen/margin_16"
         android:layout_weight="1"
-        android:textColor="@color/blue"
         android:visibility="gone"
-        tools:visibility="visible"
+        tools:visibility="gone"
         tools:text="@string/view"
-        android:layout_marginEnd="@dimen/margin_16" />
+        />
 
 
     <Button
         android:id="@+id/buttonPositive"
-        style="?android:attr/buttonBarButtonStyle"
+        style="@style/DialogPositiveButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginEnd="@dimen/margin_16"
-        android:layout_marginRight="@dimen/margin_16"
-        android:layout_marginTop="@dimen/margin_16"
         android:layout_weight="1"
-        android:textColor="@color/blue"
-        tools:text="@string/install" />
+        tools:text="@string/msg_ok" />
 
 
 </LinearLayout>

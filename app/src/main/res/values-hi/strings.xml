@@ -97,7 +97,7 @@
     <string name="extracting">निकालने ..</string>
     <string name="dialog_current_path">वर्तमान पथ</string>
     <string name="dialog_specify_path">पथ निर्दिष्ट करें</string>
-    <string name="select_path">पथ का चयन करें</string>
+    <string name="browse">पथ का चयन करें</string>
     <string name="enter_file_name">फ़ाइल नाम दर्ज करें</string>
     <string name="extract">उद्धरण</string>
     <string name="dialog_title_browse">फोल्डर को चुनो</string>

@@ -96,7 +96,7 @@
     <string name="extracting">მოპოვების ..</string>
     <string name="dialog_current_path">აქტუალური გზაზე</string>
     <string name="dialog_specify_path">მიუთითეთ გზაზე</string>
-    <string name="select_path">აირჩიეთ გზას</string>
+    <string name="browse">აირჩიეთ გზას</string>
     <string name="enter_file_name">შეიყვანეთ ფაილის სახელი</string>
     <string name="extract">ამონაწერი</string>
     <string name="dialog_title_browse">აირჩიეთ ფოლდერი</string>

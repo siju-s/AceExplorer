@@ -95,7 +95,7 @@
     <string name="extracting">提取..</string>
     <string name="dialog_current_path">当前路径</string>
     <string name="dialog_specify_path">指定路径</string>
-    <string name="select_path">选择路径</string>
+    <string name="browse">选择路径</string>
     <string name="enter_file_name">输入文件名</string>
     <string name="extract">提取</string>
     <string name="dialog_title_browse">选择文件夹</string>

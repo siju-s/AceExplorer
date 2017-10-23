@@ -104,7 +104,6 @@
     <string name="extracting">Extracting..</string>
     <string name="dialog_current_path">Current path</string>
     <string name="dialog_specify_path">Specify path</string>
-    <string name="select_path">Select path</string>
     <string name="enter_file_name">Enter file name</string>
     <string name="extract">Extract</string>
     <string name="dialog_title_browse">Choose folder</string>
@@ -206,6 +205,7 @@
     <string name="app_invite_msg">Try this cool file manager !!</string>
     <string name="app_invite_failed">Sending invite failed.</string>
     <!-- Start for 1.0.1 update -->
+    <string name="browse">Browse</string>
     <string name="msg_error_unrooted">Root access denied.</string>
     <string name="billing_unsupported">In-app purchases not supported on this device.</string>
     <string name="action_more">More</string>
