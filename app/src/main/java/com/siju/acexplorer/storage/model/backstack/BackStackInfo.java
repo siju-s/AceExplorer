@@ -16,6 +16,8 @@
 
 package com.siju.acexplorer.storage.model.backstack;
 
+import android.util.Log;
+
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.storage.model.BackStackModel;
@@ -44,6 +46,7 @@ public class BackStackInfo {
 
     public void removeEntryAtIndex(int index) {
         backStack.remove(index);
+        Log.d(TAG, "removeEntryAtIndex: "+backStack.size());
     }
 
     public String getDirAtPosition(int index) {

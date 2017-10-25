@@ -37,13 +37,8 @@ import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileConstants;
 import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.storage.model.ZipModel;
-import com.siju.acexplorer.storage.model.backstack.BackStackInfo;
-import com.siju.acexplorer.storage.model.backstack.NavigationCallback;
-import com.siju.acexplorer.storage.model.backstack.NavigationInfo;
 import com.siju.acexplorer.storage.model.task.ExtractZipEntry;
-import com.siju.acexplorer.storage.view.StoragesUiView;
 import com.siju.acexplorer.view.dialog.DialogHelper;
 
 import java.io.File;
@@ -60,36 +55,26 @@ import static com.siju.acexplorer.model.helper.UriHelper.createContentUri;
 import static com.siju.acexplorer.model.helper.UriHelper.grantUriPermission;
 import static com.siju.acexplorer.view.dialog.DialogHelper.openWith;
 
-public class ZipViewer implements NavigationCallback,
-        LoaderManager.LoaderCallbacks<ArrayList<FileInfo>>{
+public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileInfo>> {
 
-    private final String TAG = this.getClass().getSimpleName();
-    private final int LOADER_ID = 1000;
-    private Fragment fragment;
-    private NavigationInfo navigationInfo;
-    private BackStackInfo backStackInfo;
-    private String currentDir = null;
-    private String zipParentPath;
-    private String zipPath;
-    private boolean inChildZip;
-    private ZipEntry zipEntry = null;
-    private String zipEntryFileName;
-    private ArrayList<ZipModel> zipChildren = new ArrayList<>();
+    private final String TAG       = this.getClass().getSimpleName();
+    private final int    LOADER_ID = 1000;
+
+    private       ArrayList<ZipModel>   zipChildren = new ArrayList<>();
     private final ArrayList<FileHeader> rarChildren = new ArrayList<>();
-    private boolean isHomeScreenEnabled;
-    private Category category = FILES;
-    private StoragesUiView storagesUiView;
 
-    @Override
-    public void onHomeClicked() {
-        storagesUiView.onHomeClicked();
-    }
+    private Fragment fragment;
 
-    @Override
-    public void onNavButtonClicked(String dir) {
-        storagesUiView.onNavButtonClicked(dir);
-    }
+    private ZipEntry zipEntry;
 
+    private String  currentDir;
+    private String  zipParentPath;
+    private String  zipPath;
+    private boolean inChildZip;
+
+    private String          zipEntryFileName;
+    private boolean         isHomeScreenEnabled;
+    private ZipCommunicator zipCommunicator;
 
     enum ZipFormats {
         ZIP,
@@ -114,21 +99,19 @@ public class ZipViewer implements NavigationCallback,
     }
 
 
-    public ZipViewer(StoragesUiView storagesUiView, Fragment fragment, String path) {
-        this.storagesUiView = storagesUiView;
+    public ZipViewer(ZipCommunicator zipCommunicator, Fragment fragment, String path) {
         this.fragment = fragment;
+        this.zipCommunicator = zipCommunicator;
         zipParentPath = zipPath = path;
-        navigationInfo = new NavigationInfo(storagesUiView, this);
-        backStackInfo = new BackStackInfo();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(AceApplication.getAppContext());
         isHomeScreenEnabled = preferences.getBoolean(FileConstants.PREFS_HOMESCREEN, true);
         setNavDirectory(path);
-        backStackInfo.addToBackStack(path, category);
+        zipCommunicator.addToBackStack(path, FILES);
     }
 
     void setZipData(ArrayList<ZipModel> zipData) {
         zipChildren = zipData;
-        Log.d(TAG, "setZipData: "+zipChildren.size());
+        Log.d(TAG, "setZipData: " + zipChildren.size());
     }
 
     private void reloadList() {
@@ -138,7 +121,9 @@ public class ZipViewer implements NavigationCallback,
     private String createCacheDirExtract() {
         String cacheTempDir = ".tmp";
         File cacheDir = fragment.getActivity().getExternalCacheDir();
-        if (cacheDir == null) return null;
+        if (cacheDir == null) {
+            return null;
+        }
         File file = new File(cacheDir.getParent(), cacheTempDir);
 
         if (!file.exists()) {
@@ -160,11 +145,13 @@ public class ZipViewer implements NavigationCallback,
         return null;
     }
 
-    private boolean checkZipMode() {
+    private String newPath;
+
+    private void checkZipMode() {
         if (currentDir == null || currentDir.length() == 0) {
             endZipMode();
-            return true;
         } else {
+            zipCommunicator.removeZipScrollPos(newPath);
             inChildZip = false;
             Logger.log(TAG, "checkZipMode--currentzipdir B4=" + currentDir);
             currentDir = new File(currentDir).getParent();
@@ -173,27 +160,25 @@ public class ZipViewer implements NavigationCallback,
             }
             Logger.log(TAG, "checkZipMode--currentzipdir AFT=" + currentDir);
             reloadList();
-            Log.d(TAG, "checkZipMode: zipChildren:"+zipChildren.size());
-            String newPath;
+            Log.d(TAG, "checkZipMode: zipChildren:" + zipChildren.size());
             if (currentDir == null || currentDir.equals(File.separator)) {
                 newPath = zipParentPath;
             } else {
-                if (currentDir.startsWith(File.separator)) {
-                    newPath = zipParentPath + File.separator + currentDir;
-                } else {
-                    newPath = zipParentPath + currentDir;
-                }
+//                if (currentDir.startsWith(File.separator)) {
+                newPath = zipParentPath + File.separator + currentDir;
+//                } else {
+//                    newPath = zipParentPath + currentDir;
+//                }
             }
-
             setNavDirectory(newPath);
-            return false;
         }
     }
 
     private void endZipMode() {
         currentDir = null;
         zipChildren.clear();
-        storagesUiView.endZipMode();
+        zipCommunicator.removeZipScrollPos(zipParentPath);
+        zipCommunicator.endZipMode();
         clearCache();
         setNavDirectory(getInternalStorage());
     }
@@ -204,42 +189,23 @@ public class ZipViewer implements NavigationCallback,
             File[] files = new File(path).listFiles();
 
             if (files != null) {
-                for (File file : files)
+                for (File file : files) {
                     //noinspection ResultOfMethodCallIgnored
                     file.delete();
+                }
             }
         }
     }
 
 
-    public boolean isInZipMode(String path) {
-        if (currentDir == null || currentDir.length() == 0 || !path.contains(zipParentPath)) {
-            endZipMode();
-            return true;
-        } else if (path.equals(zipParentPath)) {
-            currentDir = null;
-            reloadList();
-            setNavDirectory(path);
-            return false;
-        } else {
-            String newPath = path.substring(zipParentPath.length() + 1, path.length());
-            Logger.log(TAG, "New zip path=" + newPath);
-            currentDir = newPath;
-            reloadList();
-            setNavDirectory(path);
-            return false;
-        }
-    }
-
     private void setNavDirectory(String path) {
-        navigationInfo.setNavDirectory(path, isHomeScreenEnabled, FILES);
-
+        zipCommunicator.setNavDirectory(path, isHomeScreenEnabled, FILES);
     }
 
     public void onFileClicked(int position) {
         if (zipParentPath.endsWith(".zip")) {
             String name = zipChildren.get(position).getName().substring(zipChildren.get(position)
-                    .getName().lastIndexOf("/") + 1);
+                                                                                .getName().lastIndexOf("/") + 1);
 
             ZipEntry zipEntry = zipChildren.get(position).getEntry();
             ZipEntry zipEntry1 = new ZipEntry(zipEntry);
@@ -266,7 +232,7 @@ public class ZipViewer implements NavigationCallback,
                     }
                     zipEntry1 = zipEntry;
                     new ExtractZipEntry(zipFile, cacheDirPath,
-                            name, zipEntry1, alertDialogListener)
+                                        name, zipEntry1, alertDialogListener)
                             .execute();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -282,7 +248,7 @@ public class ZipViewer implements NavigationCallback,
                 try {
                     Archive rarFile = new Archive(new File(zipParentPath));
                     new ExtractZipEntry(rarFile, cacheDirPath,
-                            name, fileHeader, alertDialogListener)
+                                        name, fileHeader, alertDialogListener)
                             .execute();
 
                 } catch (IOException | RarException e) {
@@ -295,26 +261,22 @@ public class ZipViewer implements NavigationCallback,
     }
 
     public void onDirectoryClicked(int position) {
+
         String name = zipChildren.get(position).getName();
-        if (name.startsWith("/")) name = name.substring(1, name.length());
+        if (name.startsWith("/")) {
+            name = name.substring(1, name.length());
+        }
         String name1 = name.substring(0, name.length() - 1); // 2 so that / doesnt come
         zipEntry = zipChildren.get(position).getEntry();
         zipEntryFileName = name1;
         Logger.log(TAG, "handleItemClick--entry=" + zipEntry + " dir=" + zipEntry.isDirectory()
                 + "name=" + zipEntryFileName);
+        zipCommunicator.calculateZipScroll(zipParentPath + File.separator + zipEntryFileName);
         viewZipContents(position);
     }
 
     public void onBackPressed() {
         checkZipMode();
-/*        if (!checkZipMode()) {
-            backStackInfo.removeEntryAtIndex(backStackInfo.getBackStack().size() - 1);
-            int backStackSize = backStackInfo.getBackStack().size();
-            String currentDir = backStackInfo.getDirAtPosition(backStackInfo.getBackStack().size() - 1);
-            Category currentCategory = backStackInfo.getCategoryAtPosition(backStackInfo.getBackStack().size() - 1);
-            reloadList();
-            navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled, currentCategory);
-        }*/
     }
 
 
@@ -326,19 +288,23 @@ public class ZipViewer implements NavigationCallback,
             currentDir = zipChildren.get(position).getName();
         }
 
-        reloadList();
-        String newPath;
         if (currentDir.startsWith(File.separator)) {
             newPath = zipParentPath + currentDir;
         } else {
             newPath = zipParentPath + File.separator + currentDir;
         }
+
+        Log.d(TAG, "viewZipContents: newpath:" + newPath);
+        if (newPath.endsWith(File.separator)) {
+            newPath = newPath.substring(0, newPath.length() - 1);
+        }
+        reloadList();
         setNavDirectory(newPath);
     }
 
     public void loadData() {
         Log.d(TAG, "loadData: ");
-       fragment.getLoaderManager().restartLoader(LOADER_ID, null, this);
+        fragment.getLoaderManager().restartLoader(LOADER_ID, null, this);
     }
 
 
@@ -352,14 +318,15 @@ public class ZipViewer implements NavigationCallback,
                 path = zipParentPath;
             }
             return new ZipContentLoader(fragment.getContext(), path, createCacheDirExtract(),
-                    zipEntryFileName, zipEntry);
+                                        zipEntryFileName, zipEntry);
         }
         return new ZipContentLoader(fragment.getContext(), this, zipPath, ZIP_VIEWER, currentDir);
     }
 
     @Override
     public void onLoadFinished(Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
-        storagesUiView.onZipContentsLoaded(data);
+        Log.d(TAG, "onLoadFinished: " + data.size());
+        zipCommunicator.onZipContentsLoaded(data);
     }
 
 
@@ -370,7 +337,8 @@ public class ZipViewer implements NavigationCallback,
 
     // Dialog for SAF
     private DialogHelper.AlertDialogListener alertDialogListener = new DialogHelper
-            .AlertDialogListener() {
+            .AlertDialogListener()
+    {
 
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         @Override
@@ -391,7 +359,7 @@ public class ZipViewer implements NavigationCallback,
 
         @Override
         public void onNegativeButtonClick(View view) {
-            storagesUiView.openZipViewer(currentDir);
+            zipCommunicator.openZipViewer(currentDir);
         }
 
         @Override

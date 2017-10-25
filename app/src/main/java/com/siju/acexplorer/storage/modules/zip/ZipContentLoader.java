@@ -70,7 +70,6 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private boolean isRooted;
     private String mCurrentZipDir;
     public ArrayList<ZipModel> totalZipList = new ArrayList<>();
-    private ZipElements zipElements;
 
     public Archive mArchive;
     public final ArrayList<FileHeader> totalRarList = new ArrayList<>();

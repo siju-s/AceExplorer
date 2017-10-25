@@ -16,11 +16,25 @@
 
 package com.siju.acexplorer.storage.modules.zip;
 
-import com.siju.acexplorer.storage.model.ZipModel;
+import com.siju.acexplorer.model.FileInfo;
+import com.siju.acexplorer.model.groups.Category;
 
 import java.util.ArrayList;
 
 
-public interface ZipElements {
-    void setZipData(ArrayList<ZipModel> zipData);
+public interface ZipCommunicator {
+
+    void removeZipScrollPos(String newPath);
+
+    void endZipMode();
+
+    void calculateZipScroll(String dir);
+
+    void onZipContentsLoaded(ArrayList<FileInfo> data);
+
+    void openZipViewer(String currentDir);
+
+    void setNavDirectory(String path, boolean isHomeScreenEnabled, Category category);
+
+    void addToBackStack(String path, Category category);
 }

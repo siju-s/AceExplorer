@@ -85,6 +85,7 @@ import com.siju.acexplorer.storage.model.backstack.NavigationInfo;
 import com.siju.acexplorer.storage.model.operations.OperationProgress;
 import com.siju.acexplorer.storage.model.operations.Operations;
 import com.siju.acexplorer.storage.modules.picker.view.DialogBrowseFragment;
+import com.siju.acexplorer.storage.modules.zip.ZipCommunicator;
 import com.siju.acexplorer.storage.modules.zip.ZipViewer;
 import com.siju.acexplorer.storage.view.custom.CustomGridLayoutManager;
 import com.siju.acexplorer.storage.view.custom.CustomLayoutManager;
@@ -545,10 +546,10 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     private void onDirectoryClicked(int position) {
-        calculateScroll();
         if (isZipMode()) {
             zipViewer.onDirectoryClicked(position);
         } else {
+            calculateScroll(currentDir);
             String path = fileInfoList.get(position).getFilePath();
             category = FILES;
             reloadList(path, category);
@@ -664,15 +665,9 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     private ZipViewer zipViewer;
 
     public void openZipViewer(String path) {
-        calculateScroll();
+        calculateScroll(currentDir);
         isZipViewer = true;
-        zipViewer = new ZipViewer(this, fragment, path);
-        refreshList();
-    }
-
-    public void endZipMode() {
-        isZipViewer = false;
-        zipViewer = null;
+        zipViewer = new ZipViewer(zipCommunicator, fragment, path);
         refreshList();
     }
 
@@ -687,7 +682,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             }
             Log.d(TAG, "onReceive: " + action);
             if (action.equals(ACTION_RELOAD_LIST)) {
-                calculateScroll();
+                calculateScroll(currentDir);
                 String path = intent.getStringExtra(KEY_FILEPATH);
                 Logger.log(TAG, "New zip PAth=" + path);
                 if (path != null) {
@@ -963,7 +958,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         }
     }
 
-    private void calculateScroll() {
+    private void calculateScroll(String currentDir) {
         View vi = fileList.getChildAt(0);
         int top = (vi == null) ? 0 : vi.getTop();
         int position;
@@ -1087,6 +1082,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     private void getScrolledPosition() {
+        Log.d(TAG, "getScrolledPosition: currentDir:"+currentDir + " scrollPos:"+scrollPosition.size());
         if (currentDir != null && scrollPosition.containsKey(currentDir)) {
             Bundle b = scrollPosition.get(currentDir);
             if (viewMode == ViewMode.LIST) {
@@ -1102,8 +1098,9 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     private void putScrolledPosition(String path, Bundle position) {
-        Log.d(TAG, "putScrolledPosition: " + path);
+        Log.d(TAG, "putScrolledPosition: " + path + " pos:"+position);
         scrollPosition.put(path, position);
+        Log.d(TAG, "putScrolledPosition: scrollSize:"+scrollPosition.size());
     }
 
     private void removeScrolledPos(String path) {
@@ -1114,9 +1111,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         scrollPosition.remove(path);
     }
 
-    public void onZipContentsLoaded(ArrayList<FileInfo> fileInfoList) {
-        onDataLoaded(fileInfoList);
-    }
 
     int getViewMode() {
         return viewMode;
@@ -1816,7 +1810,6 @@ mLastDualPaneDir);
             refreshSpan();
         }
         Logger.log(TAG, "onConfigurationChanged " + newConfig.orientation);
-
     }
 
 
@@ -1920,10 +1913,56 @@ mLastDualPaneDir);
         this.showHidden = showHidden;
     }
 
+
     public interface FavoriteOperation {
         void updateFavorites(ArrayList<FavInfo> favList);
 
         void removeFavorites(ArrayList<FavInfo> favList);
     }
+
+    private ZipCommunicator zipCommunicator = new ZipCommunicator() {
+
+        @Override
+        public void removeZipScrollPos(String newPath) {
+            if (newPath == null) {
+                return;
+            }
+            Log.d(TAG, "removeScrolledPos: " + newPath);
+            scrollPosition.remove(newPath);
+        }
+
+        @Override
+        public void endZipMode() {
+            isZipViewer = false;
+            zipViewer = null;
+            backStackInfo.removeEntryAtIndex(backStackInfo.getBackStack().size() - 1);
+            refreshList();
+        }
+
+        @Override
+        public void calculateZipScroll(String dir) {
+            calculateScroll(dir);
+        }
+
+        @Override
+        public void onZipContentsLoaded(ArrayList<FileInfo> data) {
+            onDataLoaded(data);
+        }
+
+        @Override
+        public void openZipViewer(String currentDir) {
+             StoragesUiView.this.openZipViewer(currentDir);
+        }
+
+        @Override
+        public void setNavDirectory(String path, boolean isHomeScreenEnabled, Category category) {
+            navigationInfo.setNavDirectory(path, isHomeScreenEnabled, category);
+        }
+
+        @Override
+        public void addToBackStack(String path, Category category) {
+            backStackInfo.addToBackStack(path, category);
+        }
+    };
 
 }
