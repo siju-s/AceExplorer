@@ -43,7 +43,6 @@ import com.siju.acexplorer.model.helper.SdkHelper;
 import com.siju.acexplorer.model.root.RootUtils;
 import com.siju.acexplorer.permission.PermissionUtils;
 import com.siju.acexplorer.storage.model.operations.FileOpsHelper;
-import com.siju.acexplorer.storage.model.operations.OperationProgress;
 import com.siju.acexplorer.storage.model.operations.OperationUtils;
 import com.siju.acexplorer.storage.model.operations.Operations;
 import com.siju.acexplorer.storage.model.task.CopyService;
@@ -580,7 +579,12 @@ public class StorageModelImpl implements StoragesModel {
     @Override
     public void updateFavorites(ArrayList<FavInfo> favInfoArrayList) {
         SharedPreferenceWrapper sharedPreferenceWrapper = new SharedPreferenceWrapper();
-        sharedPreferenceWrapper.addFavorites(context, favInfoArrayList);
+        int count = sharedPreferenceWrapper.addFavorites(context, favInfoArrayList);
+        if (count == 0) {
+            listener.onFavExists();
+        } else {
+            listener.onFavAdded(count);
+        }
     }
 
     @Override

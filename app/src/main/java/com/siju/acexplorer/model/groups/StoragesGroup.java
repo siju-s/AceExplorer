@@ -18,6 +18,7 @@ package com.siju.acexplorer.model.groups;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.util.Log;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
@@ -95,6 +96,7 @@ public class StoragesGroup {
     private void addStorages() {
 
         List<String> storagePaths = getStorageDirectories();
+        Log.d("StoragesGroup", "addStorages: storageSize:"+storagesList.size() + "fetched:"+storagePaths.size());
         externalSDPaths = new ArrayList<>();
 
         for (String path : storagePaths) {

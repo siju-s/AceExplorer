@@ -16,7 +16,6 @@
 
 package com.siju.acexplorer.storage.view;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -111,6 +110,10 @@ public interface StoragesUi {
     void showExtractDialog(Intent intent);
 
     void setHidden(boolean showHidden);
+
+    void onFavAdded(int count);
+
+    void onFavExists();
 
 
     interface Listener {

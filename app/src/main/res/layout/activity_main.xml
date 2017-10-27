@@ -14,8 +14,7 @@
   ~ limitations under the License.
   -->
 
-<com.siju.acexplorer.view.MainUiView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.siju.acexplorer.view.MainUiView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
@@ -47,12 +46,12 @@
                 android:id="@+id/expandListDrawer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_above="@+id/divider"
                 android:layout_below="@+id/header"
                 android:layout_gravity="start"
                 android:divider="@null"
                 android:fitsSystemWindows="true"
                 android:groupIndicator="@null"
-                android:layout_above="@+id/divider"
                 android:scrollbars="none" />
 
             <View

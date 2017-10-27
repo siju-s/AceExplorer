@@ -70,17 +70,22 @@ public class SharedPreferenceWrapper {
         }
     }
 
-    public void addFavorites(Context context, ArrayList<FavInfo> favInfoArrayList) {
+    public int addFavorites(Context context, ArrayList<FavInfo> favInfoArrayList) {
 
         List<FavInfo> favorites = getFavorites(context);
-        if (favorites == null)
+        if (favorites == null) {
             favorites = new ArrayList<>();
+        }
+        int count = 0;
         for (FavInfo favInfo : favInfoArrayList) {
             if (!favorites.contains(favInfo)) {
                 favorites.add(favInfo);
+                count ++;
             }
         }
+
         saveFavorites(context, favorites);
+        return count;
     }
 
     public void removeFavorite(Context context, FavInfo favInfo) {

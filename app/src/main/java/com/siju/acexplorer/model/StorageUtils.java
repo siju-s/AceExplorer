@@ -29,15 +29,17 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.siju.acexplorer.AceApplication;
-import com.siju.acexplorer.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
+import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastKitkat;
 import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastMarsh;
 
 
@@ -61,7 +63,7 @@ public class StorageUtils {
     public static List<String> getStorageDirectories() {
 
         // Final set of paths
-        final ArrayList<String> paths = new ArrayList<>();
+        final Set<String> paths = new HashSet<>();
         // Primary physical SD-CARD (not emulated)
         final String rawExternalStorage = System.getenv("EXTERNAL_STORAGE");
         // All Secondary SD-CARDs (all exclude primary) separated by ":"
@@ -108,26 +110,26 @@ public class StorageUtils {
             final String[] rawSecondaryStorages = rawSecondaryStoragesStr.split(File.pathSeparator);
             Collections.addAll(paths, rawSecondaryStorages);
         }
-        if (isAtleastMarsh())
+        if (isAtleastMarsh()) {
             paths.clear();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        }
+        if (isAtleastKitkat()) {
             String pathList[] = getExtSdCardPaths();
-            for (String path : pathList) {
-                if (!paths.contains(path))
-                    paths.add(path);
-            }
+            Collections.addAll(paths, pathList);
         }
 
         File usb = getUsbDrive();
-        if (usb != null && !paths.contains(usb.getPath())) paths.add(usb.getPath());
-        return paths;
+        if (usb != null) {
+            paths.add(usb.getPath());
+        }
+        return new ArrayList<>(paths);
     }
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private static String[] getExtSdCardPaths() {
         Context context = AceApplication.getAppContext();
-        List<String> paths = new ArrayList<>();
+        Set<String> paths = new HashSet<>();
         for (File file : context.getExternalFilesDirs("external")) {
             if (file != null) {
                 int index = file.getAbsolutePath().lastIndexOf("/Android/data");
@@ -169,15 +171,16 @@ public class StorageUtils {
         } catch (Exception ignored) {
         }
         parent = new File("/mnt/sdcard/usbStorage");
-        if (parent.exists() && parent.canExecute())
+        if (parent.exists() && parent.canExecute()) {
             return (parent);
+        }
         parent = new File("/mnt/sdcard/usb_storage");
-        if (parent.exists() && parent.canExecute())
+        if (parent.exists() && parent.canExecute()) {
             return parent;
+        }
 
         return null;
     }
-
 
 
     /**
@@ -232,9 +235,11 @@ public class StorageUtils {
         String relativePath = null;
         try {
             String fullPath = file.getCanonicalPath();
-            if (!baseFolder.equals(fullPath))
+            if (!baseFolder.equals(fullPath)) {
                 relativePath = fullPath.substring(baseFolder.length() + 1);
-            else originalDirectory = true;
+            } else {
+                originalDirectory = true;
+            }
         } catch (IOException e) {
             return null;
         } catch (Exception f) {
@@ -244,14 +249,18 @@ public class StorageUtils {
         String as = PreferenceManager.getDefaultSharedPreferences(context).getString(FileConstants.SAF_URI, null);
 
         Uri treeUri = null;
-        if (as != null) treeUri = Uri.parse(as);
+        if (as != null) {
+            treeUri = Uri.parse(as);
+        }
         if (treeUri == null) {
             return null;
         }
 
         // start with root of SD card and then parse through document tree.
         DocumentFile document = DocumentFile.fromTreeUri(context, treeUri);
-        if (originalDirectory) return document;
+        if (originalDirectory) {
+            return document;
+        }
         String[] parts = relativePath.split("/");
         for (int i = 0; i < parts.length; i++) {
             DocumentFile nextDocument = document.findFile(parts[i]);

@@ -19,6 +19,7 @@ package com.siju.acexplorer.home.view;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.ViewGroup;
 
 import com.siju.acexplorer.storage.view.StoragesUiView;
@@ -46,7 +47,9 @@ public class HomeBridge implements HomeView {
                StoragesUiView.FavoriteOperation favListener) {
         this.context = parent.getContext();
         this.fragment = fragment;
+        long time = System.currentTimeMillis();
         homeUiView = HomeUiView.inflate(parent);
+        Log.d("HomeBridge", "Time taken: "+(System.currentTimeMillis() - time));
         homeUiView.setBridgeRef(this);
         homeUiView.setFragment(fragment);
         homeUiView.setDrawerListener(drawerListener);

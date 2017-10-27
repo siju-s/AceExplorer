@@ -16,6 +16,7 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/homescreen_storage_margin"
@@ -46,7 +47,7 @@
         android:layout_below="@+id/textStorage"
         android:layout_marginLeft="@dimen/margin_16"
         android:layout_marginStart="@dimen/margin_16"
-        android:progress="50"
+        tools:progress="50"
         android:layout_toEndOf="@+id/imageStorage"
         android:layout_toRightOf="@+id/imageStorage"
         android:max="100"/>

@@ -180,8 +180,7 @@ class DragHelper {
                     return true;
 
                 case DragEvent.ACTION_DRAG_LOCATION:
-                    storagesUiView.onDragLocationEvent(event, oldPos);
-                    // Ignore the event
+                    oldPos = storagesUiView.onDragLocationEvent(event, oldPos);
                     return true;
 
                 case DragEvent.ACTION_DRAG_EXITED:
@@ -190,7 +189,6 @@ class DragHelper {
                     return true;
 
                 case DragEvent.ACTION_DROP:
-//                    Log.d(TAG,"DRag drop"+pos);
                     storagesUiView.onDragDropEvent(event);
                     return true;
 

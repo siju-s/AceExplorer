@@ -705,8 +705,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
                 ArrayList<FileInfo> deletedFilesList = intent.getParcelableArrayListExtra
                         (KEY_FILES);
-
                 for (FileInfo info : deletedFilesList) {
+                    Log.d(TAG, "onOperationResult: path:"+info.getFilePath());
                     scanFile(getActivity().getApplicationContext(), info.getFilePath());
                 }
                 int totalFiles = intent.getIntExtra(KEY_COUNT, 0);
@@ -724,7 +724,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 }
 
                 Uri uri = getUriForCategory(category);
-                getContext().getContentResolver().notifyChange(uri, null);
+//                getContext().getContentResolver().notifyChange(uri, null);
                 fileInfoList.removeAll(deletedFilesList);
                 fileListAdapter.setStopAnimation(true);
                 fileListAdapter.updateAdapter(fileInfoList);
@@ -989,10 +989,14 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         }
         SparseBooleanArray checkedItemPos = fileListAdapter.getSelectedItemPositions();
         setSelectedItemPos(checkedItemPos);
-        menuControls.setToolbarText(String.valueOf(fileListAdapter.getSelectedCount()) + " " +
-                getResources().getString
-                        (R.string.selected));
-        fileListAdapter.notifyDataSetChanged();
+        int count = fileListAdapter.getSelectedCount();
+        if (count == 0) {
+            menuControls.endActionMode();
+        } else {
+            menuControls.setToolbarText(String.valueOf(fileListAdapter.getSelectedCount()) + " " +
+                                                getResources().getString(R.string.selected));
+            fileListAdapter.notifyDataSetChanged();
+        }
     }
 
     void clearSelection() {
@@ -1459,10 +1463,12 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         fileListAdapter.filter(query);
     }
 
-    public void onDragLocationEvent(DragEvent event, int oldPos) {
+    public int onDragLocationEvent(DragEvent event, int oldPos) {
         View onTopOf = fileList.findChildViewUnder(event.getX(), event
                 .getY());
         int newPos = fileList.getChildAdapterPosition(onTopOf);
+        Log.d(TAG, "onDragLocationEvent: pos:"+newPos);
+
 
         if (oldPos != newPos && newPos != RecyclerView.NO_POSITION) {
             // For scroll up
@@ -1488,6 +1494,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             oldPos = newPos;
             fileListAdapter.setDraggedPos(newPos);
         }
+        return oldPos;
     }
 
     public void onDragDropEvent(DragEvent event) {
@@ -1527,6 +1534,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 Logger.log(TAG, "Source parent=" + sourceParent + " Dest=" +
                         destinationDir);
                 dragHelper.showDragDialog(draggedFiles, destinationDir);
+                menuControls.endActionMode();
             } else {
                 ArrayList<FileInfo> info = new ArrayList<>();
                 info.addAll(draggedFiles);
@@ -1911,6 +1919,15 @@ mLastDualPaneDir);
 
     public void setHidden(boolean showHidden) {
         this.showHidden = showHidden;
+    }
+
+    public void onFavAdded(int count) {
+        FileUtils.showMessage(getContext(), String.format(getContext().getString(R.string.msg_added_fav),
+                                                          count));
+    }
+
+    public void onFavExists() {
+        FileUtils.showMessage(getContext(), getContext().getString(R.string.fav_exists));
     }
 
 

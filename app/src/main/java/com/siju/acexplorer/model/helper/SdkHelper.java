@@ -37,6 +37,10 @@ public class SdkHelper {
         return Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT;
     }
 
+    public static boolean isAtleastKitkat() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+    }
+
     public static boolean isAtleastLollipop() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }

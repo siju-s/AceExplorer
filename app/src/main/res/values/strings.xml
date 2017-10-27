@@ -29,7 +29,7 @@
     <string name="nav_menu_image">Images</string>
     <string name="nav_menu_docs">Documents</string>
     <string name="nav_header_storages">Storages</string>
-    <string name="nav_header_favourites">Favourites</string>
+    <string name="nav_header_favourites">Favorites</string>
     <string name="nav_header_collections">Library</string>
     <string name="nav_header_others">Others</string>
     <string name="msg_free">free of</string>
@@ -213,6 +213,9 @@
     <string name="operation">Operation</string>
     <string name="extract_complete">Extract completed</string>
     <string name="clipboard">%d in clipboard</string>
+    <string name="fav_exists">Favorite already exists.</string>
+    <string name="msg_added_fav">%d item(s) added to Favorites.</string>
+
 
 
 </resources>

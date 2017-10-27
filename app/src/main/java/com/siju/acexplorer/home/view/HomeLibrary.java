@@ -32,16 +32,14 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.home.LibrarySortActivity;
-import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.home.model.HomeLibraryInfo;
-import com.siju.acexplorer.home.model.LibrarySortModel;
+import com.siju.acexplorer.logging.Logger;
+import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.StorageUtils;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.theme.Theme;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.siju.acexplorer.model.groups.Category.ADD;

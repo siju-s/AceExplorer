@@ -117,6 +117,7 @@ public class MenuControls implements View.OnClickListener,
         bottomToolbar = storagesUiView.findViewById(R.id.toolbar_bottom);
         toolbar = storagesUiView.findViewById(R.id.toolbar);
         setToolbar();
+        inflateBaseMenu();
         toolbar.setOnMenuItemClickListener(this);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -308,7 +309,7 @@ public class MenuControls implements View.OnClickListener,
 
     private void clearActionModeToolbar() {
         toolbar.getMenu().clear();
-        inflateMenu();
+        inflateBaseMenu();
         toolbar.setNavigationIcon(R.drawable.ic_drawer);
         setToolbarText(context.getString(R.string.app_name));
     }
@@ -440,7 +441,6 @@ public class MenuControls implements View.OnClickListener,
                     }
 
                     if (count > 0) {
-                        FileUtils.showMessage(context, context.getString(R.string.msg_added_to_fav));
                         storagesUiView.updateFavouritesGroup(favList);
                     }
                     endActionMode();
@@ -687,15 +687,19 @@ public class MenuControls implements View.OnClickListener,
 
     void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         Log.d(TAG, "onCreateOptionsMenu: " + menu);
-//        inflater.inflate(R.menu.file_base, menu);
-
+        inflater.inflate(R.menu.file_base, menu);
+        setupMenuItems(menu);
     }
 
-    private void inflateMenu() {
+    private void inflateBaseMenu() {
         toolbar.inflateMenu(R.menu.file_base);
-        searchItem = toolbar.getMenu().findItem(R.id.action_search);
+        setupMenuItems(toolbar.getMenu());
+    }
+
+    private void setupMenuItems(Menu menu) {
+        searchItem = menu.findItem(R.id.action_search);
         searchView = (android.support.v7.widget.SearchView) searchItem.getActionView();
-        mViewItem = toolbar.getMenu().findItem(R.id.action_view);
+        mViewItem = menu.findItem(R.id.action_view);
         setupSearchView();
     }
 

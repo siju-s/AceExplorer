@@ -16,7 +16,6 @@
 
 package com.siju.acexplorer.storage.presenter;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -259,6 +258,16 @@ public class StoragesPresenterImpl implements StoragesPresenter, StoragesUi.List
     @Override
     public void showExtractDialog(Intent intent) {
         storagesUi.showExtractDialog(intent);
+    }
+
+    @Override
+    public void onFavExists() {
+        storagesUi.onFavExists();
+    }
+
+    @Override
+    public void onFavAdded(int count) {
+       storagesUi.onFavAdded(count);
     }
 
     @Override

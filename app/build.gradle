@@ -93,11 +93,11 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-//            applicationVariants.all { variant ->
-//                variant.outputs.all {
-//                    output.outputFile = new File("Ace_" + defaultConfig.versionName)
-//                }
-//            }
+            applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "Ace_" + defaultConfig.versionName
+                }
+            }
             signingConfig signingConfigs.config
             return true
 
@@ -129,5 +129,6 @@ dependencies {
     testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
     implementation 'com.google.firebase:firebase-ads:11.4.2'
     implementation 'com.google.firebase:firebase-invites:11.4.2'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
 }
 apply plugin: 'com.google.gms.google-services'

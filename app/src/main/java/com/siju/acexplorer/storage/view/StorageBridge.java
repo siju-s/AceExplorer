@@ -44,9 +44,9 @@ import java.util.List;
 public class StorageBridge implements StoragesUi {
 
     private StoragesUiView storagesUiView;
-    private Context context;
-    private Listener listener;
-    private Fragment fragment;
+    private Context        context;
+    private Listener       listener;
+    private Fragment       fragment;
 
     StorageBridge(Fragment fragment, ViewGroup parent, StoragesUiView.FavoriteOperation favListener,
                   DrawerListener drawerListener) {
@@ -291,6 +291,27 @@ public class StorageBridge implements StoragesUi {
     @Override
     public void setHidden(boolean showHidden) {
         storagesUiView.setHidden(showHidden);
+    }
+
+    @Override
+    public void onFavAdded(final int count) {
+        fragment.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                storagesUiView.onFavAdded(count);
+            }
+        });
+
+    }
+
+    @Override
+    public void onFavExists() {
+        fragment.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                storagesUiView.onFavExists();
+            }
+        });
     }
 
 

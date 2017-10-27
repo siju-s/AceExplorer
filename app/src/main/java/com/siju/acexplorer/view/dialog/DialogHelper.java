@@ -927,8 +927,7 @@ public class DialogHelper {
 
 
     public static void showDragDialog(Context context, final ArrayList<FileInfo> filesToPaste, final String
-            destinationDir,
-                                          final DragDialogListener dragDialogListener) {
+            destinationDir, final DragDialogListener dragDialogListener) {
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -943,10 +942,13 @@ public class DialogHelper {
 
         final TextView textMessage = dialogView.findViewById(R.id.textMessage);
 
-        textMessage.setText(context.getString(R.string.dialog_to_placeholder) + " " + destinationDir);
+        textMessage.setText(String.format("%s %s", context.getString(R.string.dialog_to_placeholder), destinationDir));
 
         Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
         Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
+
+        positiveButton.setText(context.getString(R.string.msg_ok));
+        negativeButton.setText(context.getString(R.string.dialog_cancel));
 
         positiveButton.setOnClickListener(new View
                 .OnClickListener() {
