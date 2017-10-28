@@ -86,7 +86,7 @@ public interface StoragesModel {
         void onFileExists(Operations operation, String msg);
 
         void showConflictDialog(final List<FileInfo> conflictFiles,
-                                final String destinationDir, final boolean isMove,
+                                List<FileInfo> destFiles, final String destinationDir, final boolean isMove,
                                 final DialogHelper.PasteConflictListener pasteConflictListener);
 
         void onLowSpace();

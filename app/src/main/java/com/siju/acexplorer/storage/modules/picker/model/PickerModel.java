@@ -12,6 +12,10 @@ public interface PickerModel {
 
     void setListener(Listener listener);
 
+    void saveLastRingtoneDir(String currentPath);
+
+    String getLastSavedRingtoneDir();
+
 
     interface Listener {
 

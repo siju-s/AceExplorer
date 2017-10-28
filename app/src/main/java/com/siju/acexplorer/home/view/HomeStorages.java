@@ -75,6 +75,7 @@ public class HomeStorages implements View.OnClickListener {
 
     private void initializeStorageGroup() {
         storagesList = new ArrayList<>();
+        Log.d(this.getClass().getSimpleName(), "initializeStorageGroup: ");
         storagesList = StoragesGroup.getInstance().getStoragesList();
         Log.d(this.getClass().getSimpleName(), "initializeStorageGroup: "+storagesList.size());
     }
@@ -90,8 +91,8 @@ public class HomeStorages implements View.OnClickListener {
             ProgressBar progressBarSpace =  storageItemContainer
                     .findViewById(R.id.progressBarSD);
             ImageView imageStorage =  storageItemContainer.findViewById(R.id.imageStorage);
-            TextView textStorage =  storageItemContainer.findViewById(R.id.textStorage);
-            TextView textSpace =  storageItemContainer.findViewById(R.id.textSpace);
+            TextView textStorage =  storageItemContainer.findViewById(R.id.textStorageName);
+            TextView textSpace =  storageItemContainer.findViewById(R.id.textStorageSpace);
             View homeStoragesDivider = storageItemContainer.findViewById(R.id.home_storages_divider);
 
             imageStorage.setImageResource(storagesList.get(i).getIcon());

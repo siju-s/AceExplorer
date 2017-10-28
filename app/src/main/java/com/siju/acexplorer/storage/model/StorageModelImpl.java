@@ -429,8 +429,9 @@ public class StorageModelImpl implements StoragesModel {
             .PasteConflictListener() {
 
         @Override
-        public void onPositiveButtonClick(Dialog dialog, Operations operation, List<FileInfo>
-                conflictFiles, String destinationDir, boolean isMove, boolean isChecked) {
+        public void onPositiveButtonClick(Dialog dialog, Operations operation, List
+                <FileInfo> destFiles, List<FileInfo>
+                                                  conflictFiles, String destinationDir, boolean isMove, boolean isChecked) {
 
             boolean isEnd = false;
             if (isChecked) {
@@ -447,14 +448,15 @@ public class StorageModelImpl implements StoragesModel {
             if (isEnd) {
                 dialog.dismiss();
             } else {
-                listener.showConflictDialog(conflictFiles, destinationDir, isMove,
-                        this);
+                listener.showConflictDialog(conflictFiles, destFiles, destinationDir, isMove,
+                                            this);
             }
 
         }
 
         @Override
         public void onNegativeButtonClick(Dialog dialog, Operations operation, List<FileInfo>
+                destFiles, List<FileInfo>
                 conflictFiles, String destinationDir, boolean isMove, boolean isChecked) {
             boolean isEnd = false;
             if (isChecked) {
@@ -470,13 +472,14 @@ public class StorageModelImpl implements StoragesModel {
                 dialog.dismiss();
                 checkPasteWriteMode(destinationDir, files, copyData, isMove);
             } else {
-                listener.showConflictDialog(conflictFiles, destinationDir, isMove,
-                        this);
+                listener.showConflictDialog(conflictFiles, destFiles, destinationDir, isMove,
+                                            this);
             }
         }
 
         @Override
         public void onNeutralButtonClick(Dialog dialog, Operations operation, List<FileInfo>
+                destFiles, List<FileInfo>
                 conflictFiles, String destinationDir, boolean isMove, boolean isChecked) {
             boolean isEnd = false;
             if (isChecked) {
@@ -496,8 +499,8 @@ public class StorageModelImpl implements StoragesModel {
                 dialog.dismiss();
                 checkPasteWriteMode(destinationDir, files, copyData, isMove);
             } else {
-                listener.showConflictDialog(conflictFiles, destinationDir, isMove,
-                        this);
+                listener.showConflictDialog(conflictFiles, destFiles, destinationDir, isMove,
+                                            this);
             }
         }
     };
@@ -639,9 +642,9 @@ public class StorageModelImpl implements StoragesModel {
 
                 @Override
                 public void showConflictDialog(ArrayList<FileInfo> files, final List<FileInfo>
-                        conflictFiles, final String destinationDir, final boolean isMove) {
+                        conflictFiles, List<FileInfo> destFiles, final String destinationDir, final boolean isMove) {
                     StorageModelImpl.this.files = files;
-                    listener.showConflictDialog(conflictFiles, destinationDir, isMove,
+                    listener.showConflictDialog(conflictFiles, destFiles, destinationDir, isMove,
                             pasteConflictListener);
                 }
 

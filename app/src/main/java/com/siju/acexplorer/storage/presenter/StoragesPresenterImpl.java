@@ -199,9 +199,9 @@ public class StoragesPresenterImpl implements StoragesPresenter, StoragesUi.List
 
     @Override
     public void showConflictDialog(final List<FileInfo> conflictFiles,
-                                   final String destinationDir, final boolean isMove,
+                                   List<FileInfo> destFiles, final String destinationDir, final boolean isMove,
                                    final DialogHelper.PasteConflictListener pasteConflictListener) {
-        storagesUi.showConflictDialog(conflictFiles, destinationDir, isMove, pasteConflictListener);
+        storagesUi.showConflictDialog(conflictFiles, destFiles, destinationDir, isMove, pasteConflictListener);
     }
 
     @Override

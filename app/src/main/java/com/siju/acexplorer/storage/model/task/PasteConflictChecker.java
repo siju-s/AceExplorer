@@ -33,8 +33,10 @@ import static com.siju.acexplorer.model.StorageUtils.getInternalStorage;
 
 public class PasteConflictChecker {
 
-    private final ArrayList<FileInfo> files;
+    private final ArrayList<FileInfo> totalFiles;
     private final ArrayList<FileInfo> conflictFiles = new ArrayList<>();
+    private final ArrayList<FileInfo> destFiles = new ArrayList<>();
+
     private boolean rootmode;
     private final String destinationDir;
     private boolean isMove = false;
@@ -47,7 +49,7 @@ public class PasteConflictChecker {
         destinationDir = currentDir;
         this.rootmode = rootMode;
         this.isMove = isMoveOperation;
-        this.files = files;
+        this.totalFiles = files;
     }
 
 
@@ -63,9 +65,9 @@ public class PasteConflictChecker {
         if (isRootDir || f.getFreeSpace() >= totalBytes) {
             findConflictFiles();
             if (conflictFiles.size() == 0) {
-                pasteResultCallback.checkWriteMode(destinationDir, files, isMove);
+                pasteResultCallback.checkWriteMode(destinationDir, totalFiles, isMove);
             } else {
-                pasteResultCallback.showConflictDialog(files, conflictFiles, destinationDir, isMove);
+                pasteResultCallback.showConflictDialog(totalFiles, conflictFiles, destFiles, destinationDir, isMove);
             }
         }
         else {
@@ -76,8 +78,8 @@ public class PasteConflictChecker {
 
     private long calculateSize() {
         long totalBytes = 0;
-        for (int i = 0; i < files.size(); i++) {
-            FileInfo f1 = files.get(i);
+        for (int i = 0; i < totalFiles.size(); i++) {
+            FileInfo f1 = totalFiles.get(i);
 
             if (f1.isDirectory()) {
                 totalBytes = totalBytes + FileUtils.getFolderSize(new File(f1.getFilePath()));
@@ -106,9 +108,10 @@ public class PasteConflictChecker {
                 rootmode, true, false);
 
         for (FileInfo fileInfo : listFiles) {
-            for (FileInfo copiedFiles : files) {
+            for (FileInfo copiedFiles : totalFiles) {
                 if (copiedFiles.getFileName().equals(fileInfo.getFileName())) {
                     conflictFiles.add(copiedFiles);
+                    destFiles.add(fileInfo);
                 }
             }
         }
@@ -120,7 +123,7 @@ public class PasteConflictChecker {
 
         Logger.log("TAG", "Counter=" + counter + " conflict size=" + conflictFiles.size());
         if (counter == conflictFiles.size() || conflictFiles.size() == 0) {
-            if (files != null && files.size() != 0) {
+            if (totalFiles != null && totalFiles.size() != 0) {
                 checkWriteMode();
             }
             else {
@@ -144,7 +147,7 @@ public class PasteConflictChecker {
 
     public interface PasteResultCallback {
         void showConflictDialog(ArrayList<FileInfo> files, final List<FileInfo> conflictFiles,
-                                final String destinationDir, final boolean isMove);
+                                List<FileInfo> destFiles, final String destinationDir, final boolean isMove);
 
         void onLowSpace();
 

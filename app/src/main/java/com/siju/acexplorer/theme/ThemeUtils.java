@@ -25,6 +25,7 @@ public class ThemeUtils {
     public static final String CURRENT_THEME = "theme";
     public static final int THEME_LIGHT = Theme.LIGHT.getValue();
     public static final int THEME_DARK = Theme.DARK.getValue();
+    private int currentTheme = -1;
 
     public static boolean isDarkTheme(Context context) {
 
@@ -36,4 +37,7 @@ public class ThemeUtils {
         return PreferenceManager.getDefaultSharedPreferences(context)
                 .getInt(CURRENT_THEME, THEME_DARK);
     }
+
+
+
 }

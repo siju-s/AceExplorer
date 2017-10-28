@@ -65,39 +65,66 @@ import java.util.List;
 import static com.siju.acexplorer.model.StorageUtils.getInternalStorage;
 import static com.siju.acexplorer.model.groups.Category.FILES;
 import static com.siju.acexplorer.model.groups.Category.PICKER;
+import static com.siju.acexplorer.model.groups.StoragesGroup.STORAGE_EMULATED_0;
+import static com.siju.acexplorer.model.groups.StoragesGroup.STORAGE_EMULATED_LEGACY;
+import static com.siju.acexplorer.model.groups.StoragesGroup.STORAGE_SDCARD1;
 import static com.siju.acexplorer.model.helper.UriHelper.createContentUri;
 
 
 public class DialogBrowseFragment extends DialogFragment implements
-        PickerUi,
-        PermissionResultCallback {
+                                                         PickerUi,
+                                                         PermissionResultCallback
+{
 
     private final String TAG = this.getClass().getSimpleName();
-    private FastScrollRecyclerView recyclerViewFileList;
-    private View root;
-    private FileListAdapter fileListAdapter;
+
+    private static final int    MY_PERMISSIONS_REQUEST = 1;
+    private static final String RINGTONE_PICKER        = "ringtone_picker";
+    private static final String FILE_PICKER            = "file_picker";
+    private static final String RINGTONE_TYPE          = "ringtone_type";
+    private static final String INDEX                  = "index";
+    private static final String TOP                    = "top";
+
+    private FastScrollRecyclerView fileList;
+    private View                   root;
+    private ImageButton            backButton;
+    private TextView               textCurrentPath;
+    private TextView               title;
+    private Button                 okButton;
+    private Button                 cancelButton;
+    private LinearLayoutManager    layoutManager;
+    private TextView               textEmpty;
+
     private ArrayList<FileInfo> fileInfoList;
     private ArrayList<FileInfo> storagesInfoList;
-    private ImageButton mImageButtonBack;
-    private TextView textCurrentPath;
-    private TextView mTitle;
-    private Button okButton;
-    private Button cancelButton;
-    private String currentPath;
+
+    private final HashMap<String, Bundle> scrollPosition = new HashMap<>();
+    private       List<String>            storagesList   = new ArrayList<>();
+
+    private String  currentPath;
+    private int     ringToneType;
     private boolean isRingtonePicker;
     private boolean isFilePicker;
-    private int mRingToneType;
-    private Theme currentTheme;
-    private static final int MY_PERMISSIONS_REQUEST = 1;
-    private boolean mIsBackPressed;
-    private LinearLayoutManager llm;
-    private final HashMap<String, Bundle> scrollPosition = new HashMap<>();
-    private TextView mTextEmpty;
-    private List<String> storagesList = new ArrayList<>();
-    private boolean mInStoragesList;
-    private PermissionHelper permissionHelper;
-    private PickerPresenter pickerPresenter;
+    private boolean isBackPressed;
+    private boolean isStoragesList;
 
+    private FileListAdapter  fileListAdapter;
+    private PermissionHelper permissionHelper;
+    private PickerPresenter  pickerPresenter;
+    private Theme            currentTheme;
+
+
+    public static DialogBrowseFragment getNewInstance(int theme, boolean isRingtonePicker,
+                                                      int ringtoneType) {
+        DialogBrowseFragment dialogFragment = new DialogBrowseFragment();
+        dialogFragment.setStyle(DialogFragment.STYLE_NORMAL, theme);
+        Bundle args = new Bundle();
+        args.putBoolean(RINGTONE_PICKER, isRingtonePicker);
+        args.putBoolean(FILE_PICKER, !isRingtonePicker);
+        args.putInt(RINGTONE_TYPE, ringtoneType);
+        dialogFragment.setArguments(args);
+        return dialogFragment;
+    }
 
     @NonNull
     @Override
@@ -130,12 +157,12 @@ public class DialogBrowseFragment extends DialogFragment implements
         initializeViews();
 
         if (getArguments() != null) {
-            if (getArguments().getBoolean("ringtone_picker")) {
-                mTitle.setText(getString(R.string.dialog_title_picker));
+            if (getArguments().getBoolean(RINGTONE_PICKER)) {
+                title.setText(getString(R.string.dialog_title_picker));
                 okButton.setVisibility(View.GONE);
                 isRingtonePicker = true;
-                mRingToneType = getArguments().getInt("ringtone_type");
-            } else if (getArguments().getBoolean("file_picker")) {
+                ringToneType = getArguments().getInt(RINGTONE_TYPE);
+            } else if (getArguments().getBoolean(FILE_PICKER)) {
                 okButton.setVisibility(View.GONE);
                 isFilePicker = true;
             }
@@ -143,16 +170,25 @@ public class DialogBrowseFragment extends DialogFragment implements
 
         PickerModel pickerModel = new PickerModelImpl();
         pickerPresenter = new PickerPresenterImpl(this, pickerModel, new LoaderHelper(this),
-                getActivity().getSupportLoaderManager());
+                                                  getActivity().getSupportLoaderManager());
 
         loadStoragesList();
 
-        currentPath = getInternalStorage();
+        if (isRingtonePicker) {
+            String path = pickerPresenter.getLastSavedRingtoneDir();
+            if (path != null && new File(path).exists()) {
+                currentPath = path;
+            } else {
+                currentPath = getInternalStorage();
+            }
+        } else {
+            currentPath = getInternalStorage();
+        }
         textCurrentPath.setText(currentPath);
 
-        recyclerViewFileList.setItemAnimator(new DefaultItemAnimator());
+        fileList.setItemAnimator(new DefaultItemAnimator());
         fileListAdapter = new FileListAdapter(getContext(), fileInfoList, FILES, ViewMode.LIST);
-        recyclerViewFileList.setAdapter(fileListAdapter);
+        fileList.setAdapter(fileListAdapter);
 
         setListeners();
         setupPermissions();
@@ -162,16 +198,16 @@ public class DialogBrowseFragment extends DialogFragment implements
         fileListAdapter.setOnItemClickListener(new FileListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                Log.d(TAG, "onItemClick: "+" fileList:"+fileInfoList.size());
+                Log.d(TAG, "onItemClick: " + " fileList:" + fileInfoList.size());
                 File file = new File(fileInfoList.get(position).getFilePath());
                 if (file.isDirectory()) {
-                    mInStoragesList = false;
+                    isStoragesList = false;
                     computeScroll();
                     currentPath = file.getAbsolutePath();
                     textCurrentPath.setText(currentPath);
                     refreshList(currentPath);
-                } else if (mInStoragesList) {
-                    mInStoragesList = false;
+                } else if (isStoragesList) {
+                    isStoragesList = false;
                     File storagesFile = new File(fileInfoList.get(position).getFilePath());
                     currentPath = storagesFile.getAbsolutePath();
                     textCurrentPath.setText(currentPath);
@@ -180,14 +216,15 @@ public class DialogBrowseFragment extends DialogFragment implements
                     if (isRingtonePicker) {
                         Intent intent = new Intent();
                         Uri mediaStoreUri = MediaStoreHack.getCustomRingtoneUri(getActivity().getContentResolver(),
-                                file.getAbsolutePath(), mRingToneType);
+                                                                                file.getAbsolutePath(), ringToneType);
                         System.out.println(mediaStoreUri + "\t" + FileUtils.getMimeType(file) + "type=" +
-                                mRingToneType);
+                                                   ringToneType);
 
                         if (mediaStoreUri != null) {
-                            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, mRingToneType);
+                            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, ringToneType);
                             intent.putExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI, mediaStoreUri);
                             intent.setData(mediaStoreUri);
+                            pickerPresenter.saveLastRingtoneDir(currentPath);
                             fileListAdapter.setStopAnimation(false);
                             getActivity().setResult(Activity.RESULT_OK, intent);
                         } else {
@@ -224,22 +261,22 @@ public class DialogBrowseFragment extends DialogFragment implements
         });
 
 
-        mImageButtonBack.setOnClickListener(new View.OnClickListener() {
+        backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "onClick: ");
-                mIsBackPressed = true;
+                isBackPressed = true;
                 if (storagesList.contains(currentPath)) {
-                    if (!mInStoragesList) {
-                        mInStoragesList = true;
+                    if (!isStoragesList) {
+                        isStoragesList = true;
                         textCurrentPath.setText("");
                         fileInfoList = storagesInfoList;
                         fileListAdapter.setStopAnimation(true);
                         fileListAdapter.updateAdapter(fileInfoList);
-                        recyclerViewFileList.setAdapter(fileListAdapter);
+                        fileList.setAdapter(fileListAdapter);
                     }
                 } else {
-                    mInStoragesList = false;
+                    isStoragesList = false;
                     currentPath = new File(currentPath).getParent();
                     textCurrentPath.setText(currentPath);
                     refreshList(currentPath);
@@ -302,18 +339,18 @@ public class DialogBrowseFragment extends DialogFragment implements
 
 
     private void initializeViews() {
-        recyclerViewFileList = root.findViewById(R.id.recyclerViewFileList);
-        recyclerViewFileList.setHasFixedSize(true);
-        llm = new LinearLayoutManager(getActivity());
-        recyclerViewFileList.setLayoutManager(llm);
+        fileList = root.findViewById(R.id.recyclerViewFileList);
+        fileList.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(getActivity());
+        fileList.setLayoutManager(layoutManager);
         SwipeRefreshLayout mSwipeRefreshLayout = root.findViewById(R.id.swipeRefreshLayout);
         mSwipeRefreshLayout.setEnabled(false);
-        mTextEmpty = root.findViewById(R.id.textEmpty);
-        mImageButtonBack = root.findViewById(R.id.imageButtonBack);
+        textEmpty = root.findViewById(R.id.textEmpty);
+        backButton = root.findViewById(R.id.imageButtonBack);
         textCurrentPath = root.findViewById(R.id.textPath);
         okButton = root.findViewById(R.id.buttonPositive);
         cancelButton = root.findViewById(R.id.buttonNegative);
-        mTitle = root.findViewById(R.id.textDialogTitle);
+        title = root.findViewById(R.id.textDialogTitle);
 
         okButton.setText(getString(R.string.msg_ok));
         cancelButton.setText(getString(R.string.dialog_cancel));
@@ -324,26 +361,26 @@ public class DialogBrowseFragment extends DialogFragment implements
         if (fileListAdapter != null) {
             fileListAdapter.clearList();
         }
-        Log.d(TAG, "refreshList: "+path);
+        Log.d(TAG, "refreshList: " + path);
         pickerPresenter.loadData(path, isRingtonePicker);
     }
 
     private void reloadData() {
-        Log.d(TAG, "reloadData: "+fileInfoList.size());
-        mIsBackPressed = true;
+        Log.d(TAG, "reloadData: " + fileInfoList.size());
+        isBackPressed = true;
         currentPath = new File(currentPath).getParent();
         textCurrentPath.setText(currentPath);
         refreshList(currentPath);
     }
 
     private void computeScroll() {
-        View vi = recyclerViewFileList.getChildAt(0);
+        View vi = fileList.getChildAt(0);
         int top = (vi == null) ? 0 : vi.getTop();
-        int index = llm.findFirstVisibleItemPosition();
+        int index = layoutManager.findFirstVisibleItemPosition();
 
         Bundle b = new Bundle();
-        b.putInt("index", index);
-        b.putInt("top", top);
+        b.putInt(INDEX, index);
+        b.putInt(TOP, top);
         scrollPosition.put(currentPath, b);
     }
 
@@ -370,26 +407,26 @@ public class DialogBrowseFragment extends DialogFragment implements
     public void onDataLoaded(ArrayList<FileInfo> data) {
         if (data != null) {
             fileInfoList = data;
-            Log.d("TAG", "on onLoadFinished--" + fileInfoList.size() + " this:"+DialogBrowseFragment.this);
+            Log.d("TAG", "on onLoadFinished--" + fileInfoList.size() + " this:" + DialogBrowseFragment.this);
             fileListAdapter.setStopAnimation(true);
             fileListAdapter.updateAdapter(fileInfoList);
-            recyclerViewFileList.setAdapter(fileListAdapter);
-            recyclerViewFileList.addItemDecoration(new DividerItemDecoration(getActivity(), currentTheme));
+            fileList.setAdapter(fileListAdapter);
+            fileList.addItemDecoration(new DividerItemDecoration(getActivity(), currentTheme));
             if (!data.isEmpty()) {
-                if (mIsBackPressed) {
+                if (isBackPressed) {
                     Log.d("TEST", "on onLoadFinished scrollpos--" + scrollPosition.entrySet());
 
                     if (scrollPosition.containsKey(currentPath)) {
                         Bundle b = scrollPosition.get(currentPath);
-                        llm.scrollToPositionWithOffset(b.getInt("index"), b.getInt("top"));
+                        layoutManager.scrollToPositionWithOffset(b.getInt(INDEX), b.getInt(TOP));
                     }
-                    mIsBackPressed = false;
+                    isBackPressed = false;
                 }
-                recyclerViewFileList.stopScroll();
-                mTextEmpty.setVisibility(View.GONE);
+                fileList.stopScroll();
+                textEmpty.setVisibility(View.GONE);
             } else {
-                mTextEmpty.setText(getString(R.string.no_music));
-                mTextEmpty.setVisibility(View.VISIBLE);
+                textEmpty.setText(getString(R.string.no_music));
+                textEmpty.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -410,11 +447,11 @@ public class DialogBrowseFragment extends DialogFragment implements
             File file = new File(path);
             int icon;
             String name;
-            if ("/storage/emulated/legacy".equals(path) || "/storage/emulated/0".equals(path)) {
+            if (STORAGE_EMULATED_LEGACY.equals(path) || STORAGE_EMULATED_0.equals(path)) {
                 name = STORAGE_INTERNAL;
                 icon = R.drawable.ic_phone_white;
 
-            } else if ("/storage/sdcard1".equals(path)) {
+            } else if (STORAGE_SDCARD1.equals(path)) {
                 name = STORAGE_EXTERNAL;
                 icon = R.drawable.ic_ext_white;
             } else {

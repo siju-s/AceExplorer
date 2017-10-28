@@ -36,6 +36,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -48,6 +49,8 @@ import com.siju.acexplorer.model.FileConstants;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.storage.model.operations.Operations;
+import com.siju.acexplorer.view.ConflictFileInfo;
+import com.siju.acexplorer.view.PasteConflictAdapter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -449,7 +452,7 @@ public class DialogHelper {
     }
 
     public static void showConflictDialog(Context context, final List<FileInfo> conflictFiles,
-                                          final String destinationDir, final boolean isMove,
+                                          final List<FileInfo> destFiles, final String destinationDir, final boolean isMove,
                                           final PasteConflictListener pasteConflictListener) {
         String texts[] = new String[]{context.getString(R.string.dialog_title_paste_conflict),
                 context.getString(R.string.dialog_skip), context.getString(R.string
@@ -465,32 +468,41 @@ public class DialogHelper {
 
         final AlertDialog dialog = builder.create();
 
-        final CheckBox checkBox = dialogView.findViewById(R.id.checkBox);
-        ImageView icon = dialogView.findViewById(R.id.imageFileIcon);
-        TextView textFileName = dialogView.findViewById(R.id.textFileName);
-        TextView textFileDate = dialogView.findViewById(R.id.textFileDate);
-        TextView textFileSize = dialogView.findViewById(R.id.textFileSize);
+        final GridView gridView = dialogView.findViewById(R.id.gridFiles);
 
+        List<ConflictFileInfo> fileInfoList = new ArrayList<>();
+
+        String sourcePath = conflictFiles.get(0).getFilePath();
+        String sourceFileName = conflictFiles.get(0).getFileName();
+        File sourceFile = new File(sourcePath);
+        long date = sourceFile.lastModified();
+        String sourceFileDate = FileUtils.convertDate(date);
+        long size = sourceFile.length();
+        String sourceFileSize = Formatter.formatFileSize(context, size);
+
+        fileInfoList.add(new ConflictFileInfo(sourceFileName, sourcePath, sourceFileDate, sourceFileSize));
+
+
+        String destFileName = destFiles.get(0).getFileName();
+        String destPath = destFiles.get(0).getFilePath();
+        File destFile = new File(destFiles.get(0).getFilePath());
+        long destFileDate = destFile.lastModified();
+        String destFileModifiedDate = FileUtils.convertDate(destFileDate);
+        long destSize = destFile.length();
+        String destFileSize = Formatter.formatFileSize(context, destSize);
+
+        fileInfoList.add(new ConflictFileInfo(destFileName, destPath, destFileModifiedDate, destFileSize));
+        PasteConflictAdapter pasteConflictAdapter = new PasteConflictAdapter(context, fileInfoList);
+        gridView.setAdapter(pasteConflictAdapter);
+
+
+        final CheckBox checkBox = dialogView.findViewById(R.id.checkBox);
         Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
         Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
         Button neutralButton = dialogView.findViewById(R.id.buttonKeepBoth);
 
         positiveButton.setText(texts[1]);
         negativeButton.setText(texts[3]);
-
-        String fileName = conflictFiles.get(0).getFileName();
-        textFileName.setText(fileName);
-        File sourceFile = new File(conflictFiles.get(0).getFilePath());
-        long date = sourceFile.lastModified();
-        String fileModifiedDate = FileUtils.convertDate(date);
-        long size = sourceFile.length();
-        String fileSize = Formatter.formatFileSize(context, size);
-        textFileDate.setText(fileModifiedDate);
-        textFileSize.setText(fileSize);
-        Drawable drawable = getAppIcon(context, conflictFiles.get(0).getFilePath());
-        if (drawable != null) {
-            icon.setImageDrawable(drawable);
-        }
 
         // POSITIVE BUTTON ->SKIP   NEGATIVE ->REPLACE    NEUTRAL ->KEEP BOTH
         if (sourceFile.getParent().equals(destinationDir)) {
@@ -512,8 +524,8 @@ public class DialogHelper {
             @Override
             public void onClick(View view) {
 
-                pasteConflictListener.onPositiveButtonClick(dialog, Operations.COPY, conflictFiles, destinationDir,
-                        isMove, checkBox.isChecked());
+                pasteConflictListener.onPositiveButtonClick(dialog, Operations.COPY, destFiles, conflictFiles, destinationDir,
+                                                            isMove, checkBox.isChecked());
 
             }
         });
@@ -522,7 +534,7 @@ public class DialogHelper {
                 .OnClickListener() {
             @Override
             public void onClick(View view) {
-                pasteConflictListener.onNegativeButtonClick(dialog, Operations.COPY, conflictFiles, destinationDir,
+                pasteConflictListener.onNegativeButtonClick(dialog, Operations.COPY, destFiles, conflictFiles, destinationDir,
                         isMove, checkBox.isChecked());
             }
         });
@@ -531,7 +543,7 @@ public class DialogHelper {
                 .OnClickListener() {
             @Override
             public void onClick(View view) {
-                pasteConflictListener.onNeutralButtonClick(dialog, Operations.COPY, conflictFiles, destinationDir,
+                pasteConflictListener.onNeutralButtonClick(dialog, Operations.COPY, destFiles, conflictFiles, destinationDir,
                         isMove, checkBox.isChecked());
             }
         });
@@ -1091,13 +1103,13 @@ public class DialogHelper {
     public interface PasteConflictListener {
 
 
-        void onPositiveButtonClick(Dialog dialog, Operations operation, List<FileInfo> conflictFiles,
+        void onPositiveButtonClick(Dialog dialog, Operations operation, List<FileInfo> destFiles, List<FileInfo> conflictFiles,
                                    String destinationDir, boolean isMove, boolean isChecked);
 
-        void onNegativeButtonClick(Dialog dialog, Operations operation, List<FileInfo> conflictFiles,
+        void onNegativeButtonClick(Dialog dialog, Operations operation, List<FileInfo> destFiles, List<FileInfo> conflictFiles,
                                    String destinationDir, boolean isMove, boolean isChecked);
 
-        void onNeutralButtonClick(Dialog dialog, Operations operation, List<FileInfo> conflictFiles,
+        void onNeutralButtonClick(Dialog dialog, Operations operation, List<FileInfo> destFiles, List<FileInfo> conflictFiles,
                                   String destinationDir, boolean isMove, boolean isChecked);
     }
 

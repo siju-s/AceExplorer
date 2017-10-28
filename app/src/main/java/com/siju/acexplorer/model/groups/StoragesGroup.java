@@ -37,17 +37,20 @@ import static com.siju.acexplorer.model.StorageUtils.getTotalSpace;
 @SuppressLint("StaticFieldLeak")
 public class StoragesGroup {
 
-    private static Context context;
+    public static final String STORAGE_EMULATED_LEGACY = "/storage/emulated/legacy";
+    public static final String STORAGE_EMULATED_0      = "/storage/emulated/0";
+    public static final String STORAGE_SDCARD1         = "/storage/sdcard1";
+
+    private static Context       context;
     private static StoragesGroup storagesGroup;
+
     private ArrayList<SectionItems> totalStorages;
     private ArrayList<SectionItems> storagesList = new ArrayList<>();
     private ArrayList<String> externalSDPaths;
+
     private String STORAGE_ROOT;
     private String STORAGE_INTERNAL;
     private String STORAGE_EXTERNAL;
-    private final String legacyPath = "/storage/emulated/legacy";
-    private final String storagePath = "/storage/emulated/0";
-    private final String sdCardPath = "/storage/sdcard1";
 
 
     public static StoragesGroup getInstance() {
@@ -96,18 +99,18 @@ public class StoragesGroup {
     private void addStorages() {
 
         List<String> storagePaths = getStorageDirectories();
-        Log.d("StoragesGroup", "addStorages: storageSize:"+storagesList.size() + "fetched:"+storagePaths.size());
+        Log.d("StoragesGroup", "addStorages: storageSize:" + storagesList.size() + "fetched:" + storagePaths.size());
         externalSDPaths = new ArrayList<>();
 
         for (String path : storagePaths) {
             File file = new File(path);
             int icon;
             String name;
-            if (legacyPath.equals(path) || storagePath.equals(path)) {
+            if (STORAGE_EMULATED_LEGACY.equals(path) || STORAGE_EMULATED_0.equals(path)) {
                 name = STORAGE_INTERNAL;
                 icon = R.drawable.ic_phone_white;
 
-            } else if (sdCardPath.equals(path)) {
+            } else if (STORAGE_SDCARD1.equals(path)) {
                 name = STORAGE_EXTERNAL;
                 icon = R.drawable.ic_ext_white;
                 externalSDPaths.add(path);

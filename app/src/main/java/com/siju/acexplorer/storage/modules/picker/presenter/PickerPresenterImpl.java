@@ -72,6 +72,15 @@ public class PickerPresenterImpl implements PickerPresenter, LoaderManager
         pickerModel.getStoragesList();
     }
 
+    @Override
+    public void saveLastRingtoneDir(String currentPath) {
+        pickerModel.saveLastRingtoneDir(currentPath);
+    }
+
+    @Override
+    public String getLastSavedRingtoneDir() {
+        return pickerModel.getLastSavedRingtoneDir();
+    }
 
 
     @Override

@@ -131,12 +131,12 @@ public class StorageBridge implements StoragesUi {
 
     @Override
     public void showConflictDialog(final List<FileInfo> conflictFiles,
-                                   final String destinationDir, final boolean isMove,
+                                   final List<FileInfo> destFiles, final String destinationDir, final boolean isMove,
                                    final DialogHelper.PasteConflictListener pasteConflictListener) {
         fragment.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                storagesUiView.showConflictDialog(conflictFiles, destinationDir, isMove, pasteConflictListener);
+                storagesUiView.showConflictDialog(conflictFiles, destFiles, destinationDir, isMove, pasteConflictListener);
             }
         });
 

@@ -30,7 +30,7 @@
         android:src="@drawable/ic_storage_white"/>
 
     <TextView
-        android:id="@+id/textStorage"
+        android:id="@+id/textStorageName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/margin_16"
@@ -44,7 +44,7 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textStorage"
+        android:layout_below="@+id/textStorageName"
         android:layout_marginLeft="@dimen/margin_16"
         android:layout_marginStart="@dimen/margin_16"
         tools:progress="50"
@@ -53,7 +53,7 @@
         android:max="100"/>
 
     <TextView
-        android:id="@+id/textSpace"
+        android:id="@+id/textStorageSpace"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -67,7 +67,7 @@
         android:background="@color/white"
         android:visibility="gone"
         android:layout_marginBottom="@dimen/padding_5"
-        android:layout_below="@+id/textSpace"/>
+        android:layout_below="@+id/textStorageSpace"/>
 
 
 </RelativeLayout>

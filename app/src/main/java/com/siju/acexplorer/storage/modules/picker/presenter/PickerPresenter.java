@@ -9,4 +9,7 @@ public interface PickerPresenter {
 
     void getStoragesList();
 
+    void saveLastRingtoneDir(String currentPath);
+
+    String getLastSavedRingtoneDir();
 }

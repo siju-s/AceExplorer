@@ -139,9 +139,6 @@ class HomeLibrary implements View.OnClickListener {
             }
 
             libraryItemContainer.setPadding(0, 0, spacing, 0);
- /*           RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) 
- imageLibrary.getLayoutParams();
-            layoutParams.setMargins(0,0,spacing,0);*/
             textCount.setText(roundOffCount(homeLibraryInfoArrayList.get(i).getCount()));
             int j = i + 1;
             if (j % gridColumns == 0) {
@@ -160,7 +157,7 @@ class HomeLibrary implements View.OnClickListener {
         if (pos != 0) {
             libraryContainer.addView(tableRow);
         }
-
+        Log.d(TAG, "inflateLibraryItem Completed: " + homeLibraryInfoArrayList.size());
     }
 
     private void changeColor(View itemView, Category category) {

@@ -215,7 +215,8 @@
     <string name="clipboard">%d in clipboard</string>
     <string name="fav_exists">Favorite already exists.</string>
     <string name="msg_added_fav">%d item(s) added to Favorites.</string>
-
+    <string name="header_source">Source</string>
+    <string name="header_destination">Destination</string>
 
 
 </resources>

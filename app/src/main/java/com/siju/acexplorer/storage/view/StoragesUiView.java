@@ -1339,9 +1339,10 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     public void showConflictDialog(final List<FileInfo> conflictFiles,
-                                   final String destinationDir, final boolean isMove,
+                                   List<FileInfo> destFiles, final String destinationDir, final boolean isMove,
                                    final DialogHelper.PasteConflictListener pasteConflictListener) {
-        DialogHelper.showConflictDialog(getContext(), conflictFiles, destinationDir, isMove, pasteConflictListener);
+        DialogHelper.showConflictDialog(getContext(), conflictFiles, destFiles , destinationDir, isMove, pasteConflictListener);
+
     }
 
     public void showPasteProgressDialog(String destinationDir, List<FileInfo> files,
