@@ -71,6 +71,7 @@ public class HomeModelImpl implements HomeModel {
 
     @Override
     public void reloadLibraries(final List<LibrarySortModel> selectedLibs) {
+        Log.d(TAG, "reloadLibraries: ");
         final List<HomeLibraryInfo> tempLibraryInfoArrayList = new ArrayList<>();
         tempLibraryInfoArrayList.addAll(homeLibraryInfoArrayList);
         homeLibraryInfoArrayList = new ArrayList<>();

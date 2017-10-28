@@ -24,11 +24,10 @@ import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.siju.acexplorer.R;
@@ -51,22 +50,20 @@ import static com.siju.acexplorer.model.groups.Category.FAVORITES;
  */
 class HomeLibrary implements View.OnClickListener {
 
-    private final String TAG = this.getClass().getSimpleName();
-    static final int REQUEST_CODE = 1000;
+    private final String TAG                   = this.getClass().getSimpleName();
+    static final  int    LIBSORT_REQUEST_CODE  = 1000;
+    private final int    MAX_LIMIT_ROUND_COUNT = 99999;
 
-    private final int MAX_LIMIT_ROUND_COUNT = 99999;
-    private HomeUiView homeUiView;
-    private TableLayout libraryContainer;
-    private LinearLayout layoutLibrary;
-    private Context context;
+    private HomeUiView            homeUiView;
+    private GridLayout            libraryContainer;
+    private LinearLayout          layoutLibrary;
+    private Activity              activity;
+    private Context               context;
     private List<HomeLibraryInfo> homeLibraryInfoArrayList;
-    private List<HomeLibraryInfo> tempLibraryInfoArrayList;
-    private int spacing;
-    private int gridColumns;
-    private Activity activity;
-    private Theme theme;
-    private int currentOrientation;
-
+    private int                   spacing;
+    private int                   gridColumns;
+    private Theme                 theme;
+    private int                   currentOrientation;
 
     HomeLibrary(Activity activity, HomeUiView homeUiView, Theme theme) {
         this.activity = activity;
@@ -96,10 +93,10 @@ class HomeLibrary implements View.OnClickListener {
         currentOrientation = context.getResources().getConfiguration().orientation;
         setGridColumns();
         homeUiView.getLibraries();
-
     }
 
     private void setGridColumns() {
+        libraryContainer.removeAllViews();
         DisplayMetrics metrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
@@ -109,20 +106,16 @@ class HomeLibrary implements View.OnClickListener {
                 context.getResources().getDimensionPixelSize(R.dimen.padding_5);
 
         gridColumns = context.getResources().getInteger(R.integer.homescreen_columns);//width / 
-        // libWidth;//getResources()
-        // .getInteger(R.integer.homescreen_columns);
-//        gridColumns = Math.min(gridColumns,homeLibraryInfoArrayList.size());
         spacing = (width - gridColumns * libWidth) / gridColumns;
         Logger.log(TAG, "Grid columns=" + gridColumns + " width=" + width + " liub size=" +
                 libWidth + "space=" +
                 spacing);
+        libraryContainer.setColumnCount(gridColumns);
     }
 
     private void inflateLibraryItem() {
-        libraryContainer.removeAllViews();
-        TableRow tableRow = new TableRow(context);
-        int pos = 0;
         Log.d(TAG, "inflateLibraryItem: " + homeLibraryInfoArrayList.size());
+
         for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
 
             RelativeLayout libraryItemContainer = (RelativeLayout) View.inflate(context, R.layout
@@ -140,22 +133,10 @@ class HomeLibrary implements View.OnClickListener {
 
             libraryItemContainer.setPadding(0, 0, spacing, 0);
             textCount.setText(roundOffCount(homeLibraryInfoArrayList.get(i).getCount()));
-            int j = i + 1;
-            if (j % gridColumns == 0) {
-                tableRow.addView(libraryItemContainer);
-                libraryContainer.addView(tableRow);
-                tableRow = new TableRow(context);
-                pos = 0;
-            } else {
-                tableRow.addView(libraryItemContainer);
-                pos++;
-            }
+            libraryContainer.addView(libraryItemContainer);
             libraryItemContainer.setOnClickListener(this);
             libraryItemContainer.setTag(homeLibraryInfoArrayList.get(i).getCategory());
             changeColor(imageLibrary, homeLibraryInfoArrayList.get(i).getCategory());
-        }
-        if (pos != 0) {
-            libraryContainer.addView(tableRow);
         }
         Log.d(TAG, "inflateLibraryItem Completed: " + homeLibraryInfoArrayList.size());
     }
@@ -308,23 +289,20 @@ class HomeLibrary implements View.OnClickListener {
         inflateLibraryItem();
     }
 
+    List<HomeLibraryInfo> getLibraries() {
+        return homeLibraryInfoArrayList;
+    }
+
     private void updateCount(int index, int count) {
 
-        TableRow tableRow = (TableRow) libraryContainer.getChildAt((index / gridColumns));
-        int childIndex;
-        if (index < gridColumns) {
-            childIndex = index;
-        } else {
-            childIndex = (index % gridColumns);
-        }
-        RelativeLayout container = (RelativeLayout) tableRow.getChildAt(childIndex);
+        Log.d(TAG, "updateCount: childIndex:" + index);
+        RelativeLayout container = (RelativeLayout) libraryContainer.getChildAt(index);
         TextView textCount = container.findViewById(R.id.textCount);
         textCount.setText(roundOffCount(count));
-
     }
 
 
-    public void updateFavoritesCount(int count) {
+    void updateFavoritesCount(int count) {
         for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
             if (isFavoritesCategory(homeLibraryInfoArrayList.get(i).getCategory())) {
                 int count1 = homeLibraryInfoArrayList.get(i).getCount();
@@ -349,7 +327,7 @@ class HomeLibrary implements View.OnClickListener {
     void onDataLoaded(int id, List<FileInfo> data) {
         for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
             int categoryId = homeLibraryInfoArrayList.get(i).getCategory().getValue();
-            Log.d(TAG, "onDataLoaded: "+homeLibraryInfoArrayList.get(i).getCategory());
+            Log.d(TAG, "onDataLoaded: " + homeLibraryInfoArrayList.get(i).getCategory());
             if (id == categoryId) {
                 int count;
                 if (id == DOWNLOADS.getValue()) {
@@ -372,7 +350,7 @@ class HomeLibrary implements View.OnClickListener {
             Category category = (Category) tag;
             if (isAddCategory(category)) {
                 Intent intent = new Intent(context, LibrarySortActivity.class);
-                homeUiView.getFragment().startActivityForResult(intent, REQUEST_CODE);
+                homeUiView.getFragment().startActivityForResult(intent, LIBSORT_REQUEST_CODE);
             } else {
                 String path = null;
                 if (category.equals(DOWNLOADS)) {

@@ -60,8 +60,8 @@ android {
         applicationId "com.siju.acexplorer"
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
-        versionCode 8
-        versionName "1.0.1_build4"
+        versionCode 10
+        versionName "1.0.1_build6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField 'boolean', 'ENABLE_CRASHLYTICS', 'true'
     }
@@ -93,11 +93,11 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            applicationVariants.all { variant ->
-                variant.outputs.all {
-                    outputFileName = "Ace_" + defaultConfig.versionName
-                }
-            }
+//            applicationVariants.all { variant ->
+//                variant.outputs.all {
+//                    outputFileName = "Ace_" + defaultConfig.versionName
+//                }
+//            }
             signingConfig signingConfigs.config
             return true
 

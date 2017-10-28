@@ -20,11 +20,11 @@ import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.siju.acexplorer.R;
@@ -41,9 +41,9 @@ import static com.siju.acexplorer.model.groups.Category.FILES;
  */
 public class HomeStorages implements View.OnClickListener {
 
-    private HomeUiView homeUiView;
-    private LinearLayout layoutStorages;
-    private TableLayout storagesContainer;
+    private HomeUiView              homeUiView;
+    private LinearLayout            layoutStorages;
+    private GridLayout              storagesContainer;
     private ArrayList<SectionItems> storagesList;
 
     private Context context;
@@ -87,7 +87,7 @@ public class HomeStorages implements View.OnClickListener {
 
         for (int i = 0; i < storagesList.size(); i++) {
             RelativeLayout storageItemContainer = (RelativeLayout) View.inflate(context, R.layout.storage_item,
-                    null);
+                                                                                null);
             ProgressBar progressBarSpace =  storageItemContainer
                     .findViewById(R.id.progressBarSD);
             ImageView imageStorage =  storageItemContainer.findViewById(R.id.imageStorage);

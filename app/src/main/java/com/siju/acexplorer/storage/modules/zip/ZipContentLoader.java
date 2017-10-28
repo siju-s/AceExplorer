@@ -222,6 +222,7 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                     totalZipList.add(new ZipModel(entry, entry.getTime(), entry.getSize(), entry
                             .isDirectory()));
                 }
+                zipfile.close();
             } else {
                 totalZipList = new ArrayList<>();
                 ZipEntry zipEntry;
@@ -232,6 +233,7 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                     totalZipList.add(new ZipModel(zipEntry, zipEntry.getTime(), zipEntry.getSize(), zipEntry
                             .isDirectory()));
                 }
+                zipfile1.close();
             }
 
             ArrayList<String> strings = new ArrayList<>();

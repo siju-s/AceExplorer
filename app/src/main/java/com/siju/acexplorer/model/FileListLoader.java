@@ -42,7 +42,6 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 
-import static com.siju.acexplorer.model.groups.Category.FAVORITES;
 import static com.siju.acexplorer.model.groups.Category.FILES;
 import static com.siju.acexplorer.model.groups.Category.LARGE_FILES;
 import static com.siju.acexplorer.model.groups.Category.PDF;
@@ -264,6 +263,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             if (cursor.moveToFirst()) {
                 if (isHomeFragment()) {
                     fileInfoList.add(new FileInfo(category, cursor.getCount()));
+                    cursor.close();
                     return;
                 }
                 do {
@@ -355,6 +355,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             if (cursor.moveToFirst()) {
                 if (isHomeFragment()) {
                     fileInfoList.add(new FileInfo(category, cursor.getCount()));
+                    cursor.close();
                     return;
                 }
                 do {
@@ -393,6 +394,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             if (cursor.moveToFirst()) {
                 if (isHomeFragment()) {
                     fileInfoList.add(new FileInfo(category, cursor.getCount()));
+                    cursor.close();
                     return;
                 }
                 do {
@@ -433,6 +435,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             if (cursor.moveToFirst()) {
                 if (isHomeFragment()) {
                     fileInfoList.add(new FileInfo(category, cursor.getCount()));
+                    cursor.close();
                     return;
                 }
                 do {
@@ -540,6 +543,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 if (isHomeFragment()) {
                     fileInfoList.clear();
                     fileInfoList.add(new FileInfo(category, cursor.getCount()));
+                    cursor.close();
                     return;
                 }
                 do {

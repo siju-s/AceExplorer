@@ -1289,6 +1289,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     public void onPasteAction(boolean isMove, ArrayList<FileInfo> info, String destinationDir) {
+        menuControls.endActionMode();
         bridge.startPasteOperation(destinationDir, isMove, isRooted(), info);
     }
 
@@ -1535,15 +1536,12 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 Logger.log(TAG, "Source parent=" + sourceParent + " Dest=" +
                         destinationDir);
                 dragHelper.showDragDialog(draggedFiles, destinationDir);
-                menuControls.endActionMode();
             } else {
                 ArrayList<FileInfo> info = new ArrayList<>();
                 info.addAll(draggedFiles);
                 onPasteAction(false, info, destinationDir);
-                clearSelectedPos();
                 Logger.log(TAG, "Source=" + draggedFiles.get(0) + "Dest=" +
                         destinationDir);
-                menuControls.endActionMode();
             }
         }
 

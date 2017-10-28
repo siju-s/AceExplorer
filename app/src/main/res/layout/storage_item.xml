@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,17 +16,17 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/homescreen_storage_margin"
-                android:orientation="horizontal">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/homescreen_storage_margin"
+    android:orientation="horizontal">
 
     <ImageView
         android:id="@+id/imageStorage"
         android:layout_width="55dp"
         android:layout_height="55dp"
         android:contentDescription="@string/img_accessibility_storage_icon"
-        android:src="@drawable/ic_storage_white"/>
+        tools:src="@drawable/ic_storage_white" />
 
     <TextView
         android:id="@+id/textStorageName"
@@ -37,7 +36,7 @@
         android:layout_marginStart="@dimen/margin_16"
         android:layout_toEndOf="@+id/imageStorage"
         android:layout_toRightOf="@+id/imageStorage"
-        android:text="@string/nav_menu_internal_storage"/>
+        tools:text="@string/nav_menu_internal_storage" />
 
     <ProgressBar
         android:id="@+id/progressBarSD"
@@ -47,10 +46,10 @@
         android:layout_below="@+id/textStorageName"
         android:layout_marginLeft="@dimen/margin_16"
         android:layout_marginStart="@dimen/margin_16"
-        tools:progress="50"
         android:layout_toEndOf="@+id/imageStorage"
         android:layout_toRightOf="@+id/imageStorage"
-        android:max="100"/>
+        android:max="100"
+        tools:progress="50" />
 
     <TextView
         android:id="@+id/textStorageSpace"
@@ -58,16 +57,16 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@id/progressBarSD"/>
+        android:layout_below="@id/progressBarSD" />
 
     <View
         android:id="@+id/home_storages_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/white"
-        android:visibility="gone"
+        android:layout_below="@+id/textStorageSpace"
         android:layout_marginBottom="@dimen/padding_5"
-        android:layout_below="@+id/textStorageSpace"/>
+        android:background="@color/white"
+        android:visibility="gone" />
 
 
 </RelativeLayout>

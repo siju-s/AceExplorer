@@ -74,7 +74,7 @@
                     android:background="@color/colorPrimaryDark" />
 
 
-                <TableLayout
+                <GridLayout
                     android:id="@+id/libraryContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
@@ -110,14 +110,11 @@
                     android:layout_marginTop="2dp"
                     android:background="@color/colorPrimaryDark" />
 
-                <TableLayout
+                <GridLayout
                     android:id="@+id/storagesContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/card_margin">
-
-                    <include layout="@layout/storage_item" />
-                </TableLayout>
+                    android:layout_margin="@dimen/card_margin"/>
 
             </LinearLayout>
 

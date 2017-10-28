@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,23 +15,24 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp">
 
     <ImageView
         android:id="@+id/imageLibrary"
         android:layout_width="@dimen/home_library_width"
         android:layout_height="@dimen/home_library_width"
-        android:layout_marginLeft="@dimen/drawer_item_margin"
-        android:layout_marginStart="@dimen/drawer_item_margin"
-        android:layout_marginRight="@dimen/drawer_item_margin"
         android:layout_marginEnd="@dimen/drawer_item_margin"
+        android:layout_marginLeft="@dimen/drawer_item_margin"
+        android:layout_marginRight="@dimen/drawer_item_margin"
+        android:layout_marginStart="@dimen/drawer_item_margin"
         android:layout_marginTop="5dp"
         android:background="@drawable/circle"
         android:contentDescription="@string/img_accessibility_icon_lib"
         android:scaleType="centerInside"
-        android:src="@drawable/ic_library_images"/>
+        android:src="@drawable/ic_library_images" />
 
     <TextView
         android:id="@+id/textCount"
@@ -47,19 +47,19 @@
         android:minHeight="25dp"
         android:minWidth="25dp"
         android:textColor="@color/white"
-        android:textSize="@dimen/library_count_font_size"/>
+        android:textSize="@dimen/library_count_font_size" />
 
     <TextView
         android:id="@+id/textLibrary"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageLibrary"
-        android:layout_marginLeft="@dimen/drawer_item_margin"
-        android:layout_marginStart="@dimen/drawer_item_margin"
-        android:layout_marginRight="@dimen/drawer_item_margin"
+        android:layout_centerHorizontal="true"
         android:layout_marginEnd="@dimen/drawer_item_margin"
+        android:layout_marginLeft="@dimen/drawer_item_margin"
+        android:layout_marginRight="@dimen/drawer_item_margin"
+        android:layout_marginStart="@dimen/drawer_item_margin"
         android:layout_marginTop="3dp"
-        android:gravity="center"
-        />
+        tools:text="Images" />
 
 </RelativeLayout>

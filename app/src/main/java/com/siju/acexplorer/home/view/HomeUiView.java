@@ -56,7 +56,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.siju.acexplorer.model.FileConstants.KEY_CATEGORY;
-import static com.siju.acexplorer.home.view.HomeLibrary.REQUEST_CODE;
+import static com.siju.acexplorer.home.view.HomeLibrary.LIBSORT_REQUEST_CODE;
 
 /**
  * Created by Siju on 02 September,2017
@@ -186,16 +186,40 @@ public class HomeUiView extends CoordinatorLayout {
     }
 
     void getLibraries() {
+        Log.d(TAG, "getLibraries: ");
         bridge.getLibraries();
     }
 
 
     public void onPermissionGranted() {
-        getLibraries();
+        Log.d(TAG, "onPermissionGranted: ");
+        List<HomeLibraryInfo> libraryInfoList = library.getLibraries();
+        if (libraryInfoList == null) {
+            getLibraries();
+        } else {
+            loadData(libraryInfoList);
+        }
+    }
+
+    private void loadData(List<HomeLibraryInfo> libraries) {
+        if (hasStoragePermission()) {
+            for (int i = 0; i < libraries.size(); i++) {
+                Category category = libraries.get(i).getCategory();
+                if (!category.equals(Category.ADD)) {
+                    bridge.loadData(category);
+                }
+            }
+        }
+    }
+
+    public void onLibrariesFetched(List<HomeLibraryInfo> libraries) {
+        Log.d(TAG, "onLibrariesFetched: "+libraries.size());
+        library.setLibraries(libraries);
+        loadData(libraries);
     }
 
 
-    private boolean hasStoragePermission() {
+    boolean hasStoragePermission() {
         return PermissionUtils.hasStoragePermission();
     }
 
@@ -204,7 +228,6 @@ public class HomeUiView extends CoordinatorLayout {
         if (adviewLayout.getChildCount() != 0) {
             adviewLayout.removeView(mAdView);
         }
-
     }
 
     private void showAds() {
@@ -268,7 +291,7 @@ public class HomeUiView extends CoordinatorLayout {
 
     public void handleActivityResult(int requestCode, int resultCode, Intent data) {
         Logger.log(TAG, "OnActivityREsult==" + resultCode);
-        if (requestCode == REQUEST_CODE && resultCode == AppCompatActivity.RESULT_OK) {
+        if (requestCode == LIBSORT_REQUEST_CODE && resultCode == AppCompatActivity.RESULT_OK) {
             ArrayList<LibrarySortModel> selectedLibs = data.getParcelableArrayListExtra
                     (FileConstants.KEY_LIB_SORTLIST);
             if (selectedLibs != null) {
@@ -287,16 +310,6 @@ public class HomeUiView extends CoordinatorLayout {
         args.putBoolean(FileConstants.KEY_PREMIUM, isPremium);
         args.putString(FileConstants.KEY_PATH, path);
         args.putBoolean(FileConstants.KEY_DUAL_ENABLED, isDualModeActive);
-
-/*        String path = null;
-        if (categoryId == FileConstants
-                .CATEGORY.DOWNLOADS.getValue()) {
-            path = FileUtils.getDownloadsDirectory().getAbsolutePath();
-            args.putString(FileConstants.KEY_PATH, path);
-        }*/
-//        aceActivity.setCurrentCategory(categoryId);
-//        aceActivity.setIsFromHomePage();
-//        aceActivity.addToBackStack(path, categoryId);
 
         FileList baseFileList = new FileList();
         baseFileList.setDrawerListener(drawerListener);
@@ -327,20 +340,6 @@ public class HomeUiView extends CoordinatorLayout {
     public void onDestroy() {
         if (mAdView != null) {
             mAdView.destroy();
-        }
-    }
-
-
-    public void onLibrariesFetched(List<HomeLibraryInfo> libraries) {
-        Log.d(TAG, "onLibrariesFetched: "+libraries.size());
-        library.setLibraries(libraries);
-        if (hasStoragePermission()) {
-            for (int i = 0; i < libraries.size(); i++) {
-                Category category = libraries.get(i).getCategory();
-                if (!category.equals(Category.ADD)) {
-                    bridge.loadData(category);
-                }
-            }
         }
     }
 

@@ -495,7 +495,6 @@ public class DialogHelper {
         PasteConflictAdapter pasteConflictAdapter = new PasteConflictAdapter(context, fileInfoList);
         gridView.setAdapter(pasteConflictAdapter);
 
-
         final CheckBox checkBox = dialogView.findViewById(R.id.checkBox);
         Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
         Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
@@ -523,10 +522,8 @@ public class DialogHelper {
                 .OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 pasteConflictListener.onPositiveButtonClick(dialog, Operations.COPY, destFiles, conflictFiles, destinationDir,
                                                             isMove, checkBox.isChecked());
-
             }
         });
 
