@@ -43,7 +43,7 @@ import android.widget.FrameLayout;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.ads.AdHelper;
-import com.siju.acexplorer.billing.BillingHelper;
+import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.home.view.HomeScreenFragment;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FavInfo;
@@ -280,13 +280,8 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     }
 
     boolean handleActivityResult(int requestCode, int resultCode, Intent intent) {
-
-        if (!BillingHelper.getInstance().onActivityResult(requestCode, resultCode, intent)) {
-            navigationDrawer.onActivityResult(requestCode, resultCode, intent);
-            return false;
-        } else {
-            return true;
-        }
+        navigationDrawer.onActivityResult(requestCode, resultCode, intent);
+        return false;
     }
 
 
@@ -297,7 +292,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         } catch (IOException e) {
             e.printStackTrace();
         }
-        BillingHelper.getInstance().disposeBilling();
+        BillingManager.getInstance().destroy();
     }
 
 

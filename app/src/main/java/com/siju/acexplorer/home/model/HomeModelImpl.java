@@ -24,10 +24,10 @@ import android.util.Log;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.billing.BillingHelper;
+import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.billing.BillingStatus;
-import com.siju.acexplorer.model.SharedPreferenceWrapper;
 import com.siju.acexplorer.model.FavInfo;
+import com.siju.acexplorer.model.SharedPreferenceWrapper;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.permission.PermissionUtils;
 
@@ -66,7 +66,8 @@ public class HomeModelImpl implements HomeModel {
 
     @Override
     public BillingStatus getBillingStatus() {
-        return BillingHelper.getInstance().getInAppBillingStatus();
+        return BillingManager.getInstance().getInAppBillingStatus();
+//        return BillingHelper.getInstance().getInAppBillingStatus();
     }
 
     @Override

@@ -20,9 +20,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
+import com.android.billingclient.api.BillingClient;
+import com.android.billingclient.api.Purchase;
 import com.siju.acexplorer.AceApplication;
-import com.siju.acexplorer.billing.BillingHelper;
+import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.billing.BillingResultCallback;
 import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.logging.Logger;
@@ -32,13 +35,16 @@ import com.siju.acexplorer.theme.ThemeUtils;
 import com.siju.acexplorer.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.siju.acexplorer.model.FileConstants.PREFS_FIRST_RUN;
 
 /**
  * Created by Siju on 02 September,2017
  */
-public class MainModelImpl implements MainModel, BillingResultCallback, DrawerItems.DrawerItemsCallback {
+public class MainModelImpl implements MainModel, BillingResultCallback, DrawerItems.DrawerItemsCallback,
+                                      BillingManager.BillingUpdatesListener
+{
 
     private final String TAG = this.getClass().getSimpleName();
     private MainModel.Listener listener;
@@ -76,7 +82,8 @@ public class MainModelImpl implements MainModel, BillingResultCallback, DrawerIt
 
     @Override
     public void getBillingStatus() {
-        BillingHelper.getInstance().setupBilling(AceApplication.getAppContext(), this);
+//        BillingHelper.getInstance().setupBilling(AceApplication.getAppContext(), this);
+        BillingManager.getInstance().setupBilling(this);
     }
 
     @Override
@@ -117,5 +124,36 @@ public class MainModelImpl implements MainModel, BillingResultCallback, DrawerIt
     @Override
     public void onTotalGroupDataFetched(ArrayList<SectionGroup> totalData) {
         listener.onTotalGroupDataFetched(totalData);
+    }
+
+    @Override
+    public void onBillingClientSetupFinished() {
+
+    }
+
+    @Override
+    public void onConsumeFinished(String token, int result) {
+
+    }
+
+    @Override
+    public void onPurchasesUpdated(List<Purchase> purchases) {
+        Log.d(TAG, "onPurchasesUpdated: "+purchases);
+        int billingResponse = BillingManager.getInstance().getBillingClientResponseCode();
+        if (billingResponse == BillingClient.BillingResponse.BILLING_UNAVAILABLE ||
+                billingResponse == BillingClient.BillingResponse.FEATURE_NOT_SUPPORTED) {
+                listener.onBillingUnSupported();
+        } else if (purchases.size() == 0) {
+            listener.onFreeVersion();
+        } else {
+            for (Purchase purchase : purchases) {
+                if (purchase.getSku().equals(BillingManager.SKU_REMOVE_ADS)) {
+                    listener.onPremiumVersion();
+                    break;
+                }
+            }
+        }
+
+
     }
 }

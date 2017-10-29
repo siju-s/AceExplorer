@@ -16,6 +16,7 @@
 
 package com.siju.acexplorer.view.dialog;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -67,63 +68,10 @@ import static com.siju.acexplorer.model.helper.UriHelper.grantUriPermission;
 /**
  * Created by Siju on 29 August,2017
  */
+@SuppressLint("InflateParams")
 public class DialogHelper {
 
     private static final String TAG = "DialogHelper";
-
-   /* public static void showRenameDialog(final Context context, String name,
-                                        String [] text,
-                                        final int position, final DialogListener dialogListener) {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View dialogView = inflater.inflate(R.layout.dialog_rename, null);
-        builder.setView(dialogView);
-        builder.setCancelable(false);
-
-        final AlertDialog alertDialog = builder.create();
-
-        TextView title = (TextView) dialogView.findViewById(R.id.textTitle);
-        TextView msg = (TextView) dialogView.findViewById(R.id.textMessage);
-        final EditText inputText = (EditText) dialogView.findViewById(R.id.editTextName);
-
-        Button positiveButton = (Button) dialogView.findViewById(R.id.buttonPositive);
-        Button negativeButton = (Button) dialogView.findViewById(R.id.buttonNegative);
-
-        title.setText(context.getString(R.string.txt_edit_marker_rename_title));
-        msg.setText(context.getString(R.string.txt_edit_marker_rename_message));
-        positiveButton.setText(context.getString(R.string.txt_rename_action));
-        negativeButton.setText(context.getString(R.string.txt_cancel_action));
-        inputText.setText(name);
-
-        positiveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String name = inputText.getText().toString().trim();
-
-                if (name.isEmpty()) {
-                    dialogListener.onErrorInvalidName();
-                } else {
-                    v.setTag(position);
-                    dialogListener.onPositiveButtonClick(v, name);
-                    alertDialog.dismiss();
-                }
-            }
-        });
-
-        negativeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogListener.onNegativeButtonClick(v);
-                alertDialog.dismiss();
-            }
-        });
-
-        alertDialog.show();
-    }
-
-
-    */
 
     /**
      * @param fileInfo Paths to delete
@@ -131,8 +79,9 @@ public class DialogHelper {
     public static void showDeleteDialog(final Context context, final ArrayList<FileInfo> fileInfo,
                                         final DeleteDialogListener deleteDialogListener) {
         String title = context.getString(R.string.dialog_delete_title);
-        String texts[] = new String[]{title, context.getString(R.string.msg_ok), "", context.getString(R.string
-                .dialog_cancel)};
+        String texts[] = new String[]{title, context.getString(R.string.msg_ok), "", context
+                .getString(R.string
+                                   .dialog_cancel)};
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -160,7 +109,7 @@ public class DialogHelper {
             items.append(path).append('\n');
             if (i == 9 && fileInfo.size() > 10) {
                 int rem = fileInfo.size() - 10;
-                items.append("+" + rem + " " + context.getString(R.string.more));
+                items.append("+").append(rem).append(" ").append(context.getString(R.string.more));
                 break;
             }
         }
@@ -188,10 +137,12 @@ public class DialogHelper {
     /**
      * @param fileInfo Paths to delete
      */
-    public static void showSortDialog(final Context context, int sortMode, final AlertDialogListener alertDialogListener) {
+    public static void showSortDialog(final Context context, int sortMode, final
+    AlertDialogListener alertDialogListener) {
         String title = context.getString(R.string.action_sort);
-        String texts[] = new String[]{title, context.getString(R.string.msg_ok), "", context.getString(R.string
-                .dialog_cancel)};
+        String texts[] = new String[]{title, context.getString(R.string.msg_ok), "", context
+                .getString(R.string
+                                   .dialog_cancel)};
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -211,7 +162,7 @@ public class DialogHelper {
         textTitle.setText(title);
         positiveButton.setText(texts[1]);
         negativeButton.setText(texts[3]);
-        Log.d(TAG, "showSortDialog: "+radioGroup + " sort:"+sortMode);
+        Log.d(TAG, "showSortDialog: " + radioGroup + " sort:" + sortMode);
         View radioButton = radioGroup.getChildAt(sortMode);
         radioGroup.check(radioButton.getId());
 
@@ -221,7 +172,7 @@ public class DialogHelper {
                 int radioButtonID = radioGroup.getCheckedRadioButtonId();
                 View radioButton = radioGroup.findViewById(radioButtonID);
                 int index = radioGroup.indexOfChild(radioButton);
-                Log.d(TAG, "onClick: "+index);
+                Log.d(TAG, "onClick: " + index);
                 view.setTag(index);
                 alertDialogListener.onPositiveButtonClick(view);
                 alertDialog.dismiss();
@@ -359,58 +310,9 @@ public class DialogHelper {
                 .LayoutParams.WRAP_CONTENT);
     }
 
-    /**
-     * @param context
-     * @param text           0->title, 1->msg, 2->Positive button 3->Negative button
-     * @param dialogListener
-     */
-    public static void showCustomDialog(final Context context, String text[],
-                                        int resourceId,
-                                        final AlertDialogListener dialogListener) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View dialogView = inflater.inflate(resourceId, null);
-        builder.setView(dialogView);
-        builder.setCancelable(false);
-
-        final AlertDialog alertDialog = builder.create();
-
-        TextView title = dialogView.findViewById(R.id.textTitle);
-        TextView msg = dialogView.findViewById(R.id.textMessage);
-
-        Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
-        Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
-
-        title.setText(text[0]);
-        msg.setText(text[1]);
-        positiveButton.setText(text[2]);
-
-
-        positiveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogListener.onPositiveButtonClick(v);
-                alertDialog.dismiss();
-            }
-        });
-
-        if (text.length > 3) {
-            negativeButton.setVisibility(View.VISIBLE);
-            negativeButton.setText(text[3]);
-            negativeButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialogListener.onNegativeButtonClick(v);
-                    alertDialog.dismiss();
-                }
-            });
-        }
-
-        alertDialog.show();
-    }
-
-    public static void showSAFDialog(Context context, int resourceId, String[] text, final AlertDialogListener dialogListener) {
+    public static void showSAFDialog(Context context, int resourceId, String[] text, final
+    AlertDialogListener dialogListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
         View dialogView = inflater.inflate(resourceId, null);
@@ -455,12 +357,13 @@ public class DialogHelper {
     }
 
     public static void showConflictDialog(Context context, final List<FileInfo> conflictFiles,
-                                          final List<FileInfo> destFiles, final String destinationDir, final boolean isMove,
+                                          final List<FileInfo> destFiles, final String
+                                                  destinationDir, final boolean isMove,
                                           final PasteConflictListener pasteConflictListener) {
         String texts[] = new String[]{context.getString(R.string.dialog_title_paste_conflict),
                 context.getString(R.string.dialog_skip), context.getString(R.string
-                .dialog_keep_both), context.getString(R
-                .string.dialog_replace)};
+                                                                                   .dialog_keep_both), context.getString(R
+                                                                                                                                 .string.dialog_replace)};
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -483,7 +386,8 @@ public class DialogHelper {
         long size = sourceFile.length();
         String sourceFileSize = Formatter.formatFileSize(context, size);
 
-        fileInfoList.add(new ConflictFileInfo(sourceFileName, sourcePath, sourceFileDate, sourceFileSize));
+        fileInfoList.add(new ConflictFileInfo(sourceFileName, sourcePath, sourceFileDate,
+                                              sourceFileSize));
 
 
         String destFileName = destFiles.get(0).getFileName();
@@ -494,7 +398,8 @@ public class DialogHelper {
         long destSize = destFile.length();
         String destFileSize = Formatter.formatFileSize(context, destSize);
 
-        fileInfoList.add(new ConflictFileInfo(destFileName, destPath, destFileModifiedDate, destFileSize));
+        fileInfoList.add(new ConflictFileInfo(destFileName, destPath, destFileModifiedDate,
+                                              destFileSize));
         PasteConflictAdapter pasteConflictAdapter = new PasteConflictAdapter(context, fileInfoList);
         gridView.setAdapter(pasteConflictAdapter);
 
@@ -522,29 +427,35 @@ public class DialogHelper {
 
 
         positiveButton.setOnClickListener(new View
-                .OnClickListener() {
+                .OnClickListener()
+        {
             @Override
             public void onClick(View view) {
-                pasteConflictListener.onPositiveButtonClick(dialog, Operations.COPY, destFiles, conflictFiles, destinationDir,
+                pasteConflictListener.onPositiveButtonClick(dialog, Operations.COPY, destFiles,
+                                                            conflictFiles, destinationDir,
                                                             isMove, checkBox.isChecked());
             }
         });
 
         negativeButton.setOnClickListener(new View
-                .OnClickListener() {
+                .OnClickListener()
+        {
             @Override
             public void onClick(View view) {
-                pasteConflictListener.onNegativeButtonClick(dialog, Operations.COPY, destFiles, conflictFiles, destinationDir,
-                        isMove, checkBox.isChecked());
+                pasteConflictListener.onNegativeButtonClick(dialog, Operations.COPY, destFiles,
+                                                            conflictFiles, destinationDir,
+                                                            isMove, checkBox.isChecked());
             }
         });
 
         neutralButton.setOnClickListener(new View
-                .OnClickListener() {
+                .OnClickListener()
+        {
             @Override
             public void onClick(View view) {
-                pasteConflictListener.onNeutralButtonClick(dialog, Operations.COPY, destFiles, conflictFiles, destinationDir,
-                        isMove, checkBox.isChecked());
+                pasteConflictListener.onNeutralButtonClick(dialog, Operations.COPY, destFiles,
+                                                           conflictFiles, destinationDir,
+                                                           isMove, checkBox.isChecked());
             }
         });
 
@@ -553,12 +464,10 @@ public class DialogHelper {
     }
 
 
-
-    public static void showPermissionsDialog(Context context, final String path, final boolean isDir, final ArrayList<Boolean[]> permissions,
-                                       final PermissionDialogListener permissionDialogListener) {
-
-        String texts[] = new String[]{context.getString(R.string.permissions), context.getString(R.string.msg_ok),
-                "", context.getString(R.string.dialog_cancel)};
+    public static void showPermissionsDialog(Context context, final String path, final boolean
+            isDir, final ArrayList<Boolean[]> permissions,
+                                             final PermissionDialogListener
+                                                     permissionDialogListener) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -568,15 +477,15 @@ public class DialogHelper {
 
         final AlertDialog alertDialog = builder.create();
 
-        final CheckBox readown =  dialogView.findViewById(R.id.creadown);
-        final CheckBox readgroup =  dialogView.findViewById(R.id.creadgroup);
-        final CheckBox readother =  dialogView.findViewById(R.id.creadother);
-        final CheckBox writeown =  dialogView.findViewById(R.id.cwriteown);
-        final CheckBox writegroup =  dialogView.findViewById(R.id.cwritegroup);
-        final CheckBox writeother =  dialogView.findViewById(R.id.cwriteother);
-        final CheckBox exeown =  dialogView.findViewById(R.id.cexeown);
-        final CheckBox exegroup =  dialogView.findViewById(R.id.cexegroup);
-        final CheckBox exeother =  dialogView.findViewById(R.id.cexeother);
+        final CheckBox readown = dialogView.findViewById(R.id.creadown);
+        final CheckBox readgroup = dialogView.findViewById(R.id.creadgroup);
+        final CheckBox readother = dialogView.findViewById(R.id.creadother);
+        final CheckBox writeown = dialogView.findViewById(R.id.cwriteown);
+        final CheckBox writegroup = dialogView.findViewById(R.id.cwritegroup);
+        final CheckBox writeother = dialogView.findViewById(R.id.cwriteother);
+        final CheckBox exeown = dialogView.findViewById(R.id.cexeown);
+        final CheckBox exegroup = dialogView.findViewById(R.id.cexegroup);
+        final CheckBox exeother = dialogView.findViewById(R.id.cexeother);
 
         Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
         Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
@@ -596,9 +505,9 @@ public class DialogHelper {
         exeother.setChecked(exe[2]);
 
 
-
         positiveButton.setOnClickListener(new View
-                .OnClickListener() {
+                .OnClickListener()
+        {
             @Override
             public void onClick(View v) {
                 alertDialog.dismiss();
@@ -655,8 +564,6 @@ public class DialogHelper {
 
 
     public static void showInfoDialog(Context context, FileInfo fileInfo, boolean isFileCategory) {
-        String title = context.getString(R.string.properties);
-        String texts[] = new String[]{title, context.getString(R.string.msg_ok), "", null};
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
         View dialogView = inflater.inflate(R.layout.dialog_file_properties, null);
@@ -664,29 +571,28 @@ public class DialogHelper {
 
         final AlertDialog alertDialog = builder.create();
 
-        ImageView imageFileIcon =  dialogView.findViewById(R.id.imageFileIcon);
-        TextView textFileName =  dialogView.findViewById(R.id.textFileName);
-        TextView textPath =  dialogView.findViewById(R.id.textPath);
-        TextView textFileSize =  dialogView.findViewById(R.id.textFileSize);
-        TextView textDateModified =  dialogView.findViewById(R.id.textDateModified);
-        TextView textHidden =  dialogView.findViewById(R.id.textHidden);
-        TextView textReadable =  dialogView.findViewById(R.id.textReadable);
-        TextView textWriteable =  dialogView.findViewById(R.id.textWriteable);
-        TextView textHiddenPlaceHolder =  dialogView.findViewById(R.id.textHiddenPlaceHolder);
-        TextView textReadablePlaceHolder =  dialogView.findViewById(R.id
-                .textReadablePlaceHolder);
-        TextView textWriteablePlaceHolder =  dialogView.findViewById(R.id
-                .textWriteablePlaceHolder);
-        TextView textMD5 =  dialogView.findViewById(R.id.textMD5);
-        TextView textMD5Placeholder =  dialogView.findViewById(R.id.textMD5PlaceHolder);
+        ImageView imageFileIcon = dialogView.findViewById(R.id.imageFileIcon);
+        TextView textFileName = dialogView.findViewById(R.id.textFileName);
+        TextView textPath = dialogView.findViewById(R.id.textPath);
+        TextView textFileSize = dialogView.findViewById(R.id.textFileSize);
+        TextView textDateModified = dialogView.findViewById(R.id.textDateModified);
+        TextView textHidden = dialogView.findViewById(R.id.textHidden);
+        TextView textReadable = dialogView.findViewById(R.id.textReadable);
+        TextView textWriteable = dialogView.findViewById(R.id.textWriteable);
+        TextView textHiddenPlaceHolder = dialogView.findViewById(R.id.textHiddenPlaceHolder);
+        TextView textReadablePlaceHolder = dialogView.findViewById(R.id
+                                                                           .textReadablePlaceHolder);
+        TextView textWriteablePlaceHolder = dialogView.findViewById(R.id
+                                                                            .textWriteablePlaceHolder);
+        TextView textMD5 = dialogView.findViewById(R.id.textMD5);
+        TextView textMD5Placeholder = dialogView.findViewById(R.id.textMD5PlaceHolder);
 
         String path = fileInfo.getFilePath();
         String fileName = fileInfo.getFileName();
         String fileDate;
         if (isFileCategory) {
             fileDate = FileUtils.convertDate(fileInfo.getDate());
-        }
-        else {
+        } else {
             fileDate = FileUtils.convertDate(fileInfo.getDate() * 1000);
         }
         boolean isDirectory = fileInfo.isDirectory();
@@ -695,16 +601,14 @@ public class DialogHelper {
             int childFileListSize = (int) fileInfo.getSize();
             if (childFileListSize == 0) {
                 fileNoOrSize = context.getString(R.string.empty);
-            }
-            else if (childFileListSize == -1) {
+            } else if (childFileListSize == -1) {
                 fileNoOrSize = "";
-            }
-            else {
+            } else {
                 fileNoOrSize = context.getResources().getQuantityString(R.plurals.number_of_files,
-                        childFileListSize, childFileListSize);
+                                                                        childFileListSize,
+                                                                        childFileListSize);
             }
-        }
-        else {
+        } else {
             long size = fileInfo.getSize();
             fileNoOrSize = Formatter.formatFileSize(context, size);
         }
@@ -726,8 +630,7 @@ public class DialogHelper {
             textReadable.setVisibility(View.GONE);
             textWriteable.setVisibility(View.GONE);
             textHidden.setVisibility(View.GONE);
-        }
-        else {
+        } else {
             String yes = context.getString(R.string.yes);
             String no = context.getString(R.string.no);
 
@@ -742,12 +645,10 @@ public class DialogHelper {
             Drawable apkIcon = getAppIconForFolder(context, fileName);
             if (apkIcon != null) {
                 imageFileIcon.setImageDrawable(apkIcon);
-            }
-            else {
+            } else {
                 imageFileIcon.setImageResource(R.drawable.ic_folder);
             }
-        }
-        else {
+        } else {
             if (isFileCategory) {
                 String md5 = FileUtils.getFastHash(path);
                 textMD5.setText(md5);
@@ -759,21 +660,18 @@ public class DialogHelper {
                 Uri videoUri = Uri.fromFile(new File(path));
                 Glide.with(context).load(videoUri).apply(options.placeholder(R.drawable.ic_movie))
                         .into(imageFileIcon);
-            }
-            else if (fileInfo.getType() == IMAGE.getValue()) {
+            } else if (fileInfo.getType() == IMAGE.getValue()) {
                 Uri imageUri = Uri.fromFile(new File(path));
                 Glide.with(context).load(imageUri).apply(options
-                        .placeholder(R.drawable.ic_image_default))
+                                                                 .placeholder(R.drawable
+                                                                                      .ic_image_default))
                         .into(imageFileIcon);
-            }
-            else if (fileInfo.getType() == AUDIO.getValue()) {
+            } else if (fileInfo.getType() == AUDIO.getValue()) {
                 imageFileIcon.setImageResource(R.drawable.ic_music_default);
-            }
-            else if (fileInfo.getExtension().equals(FileConstants.APK_EXTENSION)) {
+            } else if (fileInfo.getExtension().equals(FileConstants.APK_EXTENSION)) {
                 Drawable apkIcon = getAppIcon(context, path);
                 imageFileIcon.setImageDrawable(apkIcon);
-            }
-            else {
+            } else {
                 imageFileIcon.setImageResource(R.drawable.ic_doc_white);
             }
         }
@@ -781,7 +679,8 @@ public class DialogHelper {
         Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
 
         positiveButton.setOnClickListener(new View
-                .OnClickListener() {
+                .OnClickListener()
+        {
             @Override
             public void onClick(View view) {
                 alertDialog.dismiss();
@@ -793,7 +692,8 @@ public class DialogHelper {
     }
 
 
-    public static void showCompressDialog(Context context, final String currentDir, final ArrayList<FileInfo>
+    public static void showCompressDialog(Context context, final String currentDir, final
+    ArrayList<FileInfo>
             paths, final CompressDialogListener dialogListener) {
 
         final String ext = ".zip";
@@ -832,7 +732,8 @@ public class DialogHelper {
             @Override
             public void onClick(View v) {
                 String name = inputText.getText().toString().trim();
-                dialogListener.onPositiveButtonClick(alertDialog, Operations.COMPRESS, name, ext, paths);
+                dialogListener.onPositiveButtonClick(alertDialog, Operations.COMPRESS, name, ext,
+                                                     paths);
 
             }
         });
@@ -845,37 +746,17 @@ public class DialogHelper {
             }
         });
 
-/*
-        materialDialog.getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String fileName = materialDialog.getInputEditText().getText().toString();
-                if (FileUtils.isFileNameInvalid(fileName)) {
-                    materialDialog.getInputEditText().setError(baseFileList.getResources().getString(R.string
-                            .msg_error_invalid_name));
-                    return;
-                }
-                String newFilePath = currentDir + "/" + fileName + ext;
-
-                if (FileUtils.isFileExisting(currentDir, fileName + ext)) {
-                    materialDialog.getInputEditText().setError(baseFileList.getResources().getString(R.string
-                            .dialog_title_paste_conflict));
-                    return;
-                }
-                baseFileList.getFileOpHelper().compressFile(new File(newFilePath), paths);
-                materialDialog.dismiss();
-            }
-        });*/
-
         alertDialog.show();
     }
 
-    public static void showExtractOptions(Context context, final String currentFilePath, final String currentDir,
-                                    final ExtractDialogListener extractDialogListener) {
+    public static void showExtractOptions(Context context, final String currentFilePath, final
+    String currentDir,
+                                          final ExtractDialogListener extractDialogListener) {
 
         final String currentFileName = currentFilePath.substring(currentFilePath.lastIndexOf("/")
-                + 1, currentFilePath.lastIndexOf("."));
-        String texts[] = new String[]{context.getString(R.string.extract),  context.getString(R.string.dialog_cancel)};
+                                                                         + 1, currentFilePath
+                                                                         .lastIndexOf("."));
+        String texts[] = new String[]{context.getString(R.string.extract), context.getString(R.string.dialog_cancel)};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -884,19 +765,18 @@ public class DialogHelper {
 
         final AlertDialog alertDialog = builder.create();
 
-        final RadioButton radioButtonSpecify =  dialogView.findViewById(R.id
-                .radioButtonSpecifyPath);
-        final Button buttonPathSelect =  dialogView.findViewById(R.id.buttonPathSelect);
-        RadioGroup radioGroupPath =  dialogView.findViewById(R.id.radioGroupPath);
-        final EditText editFileName =  dialogView.findViewById(R.id.editFileName);
+        final RadioButton radioButtonSpecify = dialogView.findViewById(R.id
+                                                                               .radioButtonSpecifyPath);
+        final Button buttonPathSelect = dialogView.findViewById(R.id.buttonPathSelect);
+        RadioGroup radioGroupPath = dialogView.findViewById(R.id.radioGroupPath);
+        final EditText editFileName = dialogView.findViewById(R.id.editFileName);
         editFileName.setText(currentFileName);
         radioGroupPath.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
                 if (checkedId == R.id.radioButtonCurrentPath) {
                     buttonPathSelect.setVisibility(View.GONE);
-                }
-                else {
+                } else {
                     buttonPathSelect.setVisibility(View.VISIBLE);
                 }
             }
@@ -916,17 +796,19 @@ public class DialogHelper {
         negativeButton.setText(texts[1]);
 
         positiveButton.setOnClickListener(new View
-                .OnClickListener() {
+                .OnClickListener()
+        {
             @Override
             public void onClick(View view) {
                 String fileName = editFileName.getText().toString();
                 extractDialogListener.onPositiveButtonClick(alertDialog, currentFilePath, fileName,
-                        radioButtonSpecify.isChecked());
+                                                            radioButtonSpecify.isChecked());
             }
         });
 
         negativeButton.setOnClickListener(new View
-                .OnClickListener() {
+                .OnClickListener()
+        {
             @Override
             public void onClick(View view) {
                 alertDialog.dismiss();
@@ -937,8 +819,10 @@ public class DialogHelper {
     }
 
 
-    public static void showDragDialog(Context context, final ArrayList<FileInfo> filesToPaste, final String
-            destinationDir, final DragDialogListener dragDialogListener) {
+    public static void showDragDialog(Context context, final ArrayList<FileInfo> filesToPaste,
+                                      final String
+                                              destinationDir, final DragDialogListener
+                                              dragDialogListener) {
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -948,8 +832,8 @@ public class DialogHelper {
 
         final AlertDialog alertDialog = builder.create();
 
-        final RadioButton radioButtonCopy =  dialogView.findViewById(R.id
-                .radioCopy);
+        final RadioButton radioButtonCopy = dialogView.findViewById(R.id
+                                                                            .radioCopy);
 
         final TextView textMessage = dialogView.findViewById(R.id.textMessage);
 
@@ -962,17 +846,19 @@ public class DialogHelper {
         negativeButton.setText(context.getString(R.string.dialog_cancel));
 
         positiveButton.setOnClickListener(new View
-                .OnClickListener() {
+                .OnClickListener()
+        {
             @Override
             public void onClick(View view) {
                 alertDialog.dismiss();
                 dragDialogListener.onPositiveButtonClick(filesToPaste, destinationDir,
-                        !radioButtonCopy.isChecked());
+                                                         !radioButtonCopy.isChecked());
             }
         });
 
         negativeButton.setOnClickListener(new View
-                .OnClickListener() {
+                .OnClickListener()
+        {
             @Override
             public void onClick(View view) {
                 alertDialog.dismiss();
@@ -1006,7 +892,8 @@ public class DialogHelper {
 
                     @NonNull
                     @Override
-                    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                    public View getView(int position, @Nullable View convertView, @NonNull
+                            ViewGroup parent) {
                         TextView textView = (TextView) super.getView(position, convertView, parent);
                         textView.setTextColor(Color.BLACK);
                         return textView;
@@ -1046,10 +933,10 @@ public class DialogHelper {
     }
 
 
-
     public interface ExtractDialogListener {
 
-        void onPositiveButtonClick(Dialog dialog , String currentFile, String newFileName, boolean isChecked);
+        void onPositiveButtonClick(Dialog dialog, String currentFile, String newFileName, boolean
+                isChecked);
 
         void onSelectButtonClick(Button path);
 
@@ -1102,19 +989,23 @@ public class DialogHelper {
     public interface PasteConflictListener {
 
 
-        void onPositiveButtonClick(Dialog dialog, Operations operation, List<FileInfo> destFiles, List<FileInfo> conflictFiles,
+        void onPositiveButtonClick(Dialog dialog, Operations operation, List<FileInfo> destFiles,
+                                   List<FileInfo> conflictFiles,
                                    String destinationDir, boolean isMove, boolean isChecked);
 
-        void onNegativeButtonClick(Dialog dialog, Operations operation, List<FileInfo> destFiles, List<FileInfo> conflictFiles,
+        void onNegativeButtonClick(Dialog dialog, Operations operation, List<FileInfo> destFiles,
+                                   List<FileInfo> conflictFiles,
                                    String destinationDir, boolean isMove, boolean isChecked);
 
-        void onNeutralButtonClick(Dialog dialog, Operations operation, List<FileInfo> destFiles, List<FileInfo> conflictFiles,
+        void onNeutralButtonClick(Dialog dialog, Operations operation, List<FileInfo> destFiles,
+                                  List<FileInfo> conflictFiles,
                                   String destinationDir, boolean isMove, boolean isChecked);
     }
 
     public interface DragDialogListener {
 
-        void onPositiveButtonClick(ArrayList<FileInfo> filesToPaste, String destinationDir, boolean isMove);
+        void onPositiveButtonClick(ArrayList<FileInfo> filesToPaste, String destinationDir,
+                                   boolean isMove);
 
     }
 

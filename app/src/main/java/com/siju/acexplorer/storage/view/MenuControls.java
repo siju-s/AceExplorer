@@ -117,7 +117,6 @@ public class MenuControls implements View.OnClickListener,
         bottomToolbar = storagesUiView.findViewById(R.id.toolbar_bottom);
         toolbar = storagesUiView.findViewById(R.id.toolbar);
         setToolbar();
-        inflateBaseMenu();
         toolbar.setOnMenuItemClickListener(this);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -211,6 +210,7 @@ public class MenuControls implements View.OnClickListener,
         // Dont show Fav and Archive option for Non file mode
         if (!category.equals(FILES)) {
             mArchiveItem.setVisible(false);
+            mExtractItem.setVisible(false);
             mFavItem.setVisible(false);
             mHideItem.setVisible(false);
         }

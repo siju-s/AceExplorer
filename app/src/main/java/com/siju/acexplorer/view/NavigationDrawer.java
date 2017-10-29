@@ -35,14 +35,14 @@ import android.widget.Toast;
 
 import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.billing.BillingHelper;
+import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FavInfo;
-import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.model.SectionGroup;
 import com.siju.acexplorer.model.SectionItems;
 import com.siju.acexplorer.model.groups.DrawerGroups;
+import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.premium.Premium;
 import com.siju.acexplorer.settings.SettingsActivity;
 import com.siju.acexplorer.theme.Theme;
@@ -181,7 +181,7 @@ public class NavigationDrawer implements View.OnClickListener {
 
         switch (position) {
             case 0:
-                if (BillingHelper.getInstance().getInAppBillingStatus().equals(BillingStatus
+                if (BillingManager.getInstance().getInAppBillingStatus().equals(BillingStatus
                         .UNSUPPORTED)) {
 
                     Toast.makeText(context, context.getString(R.string.billing_unsupported), Toast

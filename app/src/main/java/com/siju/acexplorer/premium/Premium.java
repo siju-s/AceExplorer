@@ -21,8 +21,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.View;
 
+import com.android.billingclient.api.BillingClient;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.billing.BillingHelper;
+import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.view.dialog.DialogHelper;
 
 /**
@@ -65,7 +66,9 @@ public class Premium {
     };
 
     private void showPurchaseDialog() {
-        BillingHelper.getInstance().launchPurchaseFlow(context);
+//        BillingHelper.getInstance().launchPurchaseFlow(context);
+        BillingManager.getInstance().initiatePurchaseFlow(BillingManager.SKU_REMOVE_ADS,
+                                                          BillingClient.SkuType.INAPP);
     }
 
 

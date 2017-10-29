@@ -31,7 +31,7 @@ import android.widget.Toast;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.billing.BillingHelper;
+import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.model.FavInfo;
 import com.siju.acexplorer.model.FileConstants;
@@ -106,7 +106,7 @@ public class StorageModelImpl implements StoragesModel {
 
     @Override
     public BillingStatus getBillingStatus() {
-        return BillingHelper.getInstance().getInAppBillingStatus();
+        return BillingManager.getInstance().getInAppBillingStatus();
     }
 
 

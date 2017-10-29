@@ -30,6 +30,7 @@ import android.widget.LinearLayout;
 import com.kobakei.ratethisapp.RateThisApp;
 import com.siju.acexplorer.base.view.BaseActivity;
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.MainModel;
 import com.siju.acexplorer.model.MainModelImpl;
@@ -62,6 +63,9 @@ public class AceActivity extends BaseActivity {
 
         mainUi.init();
         mainPresenter.getUserPreferences();
+
+        BillingManager billingManager = BillingManager.getInstance();
+        billingManager.setContext(this);
         mainPresenter.getBillingStatus();
     }
 
