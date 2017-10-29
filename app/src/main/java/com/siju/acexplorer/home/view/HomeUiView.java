@@ -214,6 +214,10 @@ public class HomeUiView extends CoordinatorLayout {
 
     public void onLibrariesFetched(List<HomeLibraryInfo> libraries) {
         Log.d(TAG, "onLibrariesFetched: "+libraries.size());
+        if (reload) {
+            library.clearViews();
+            reload = false;
+        }
         library.setLibraries(libraries);
         loadData(libraries);
     }
@@ -295,11 +299,13 @@ public class HomeUiView extends CoordinatorLayout {
             ArrayList<LibrarySortModel> selectedLibs = data.getParcelableArrayListExtra
                     (FileConstants.KEY_LIB_SORTLIST);
             if (selectedLibs != null) {
+                reload = true;
                 bridge.reloadLibraries(selectedLibs);
             }
         }
     }
 
+    private boolean reload;
 
     void loadFileList(String path, Category category) {
         FragmentTransaction ft = getActivity().getSupportFragmentManager()

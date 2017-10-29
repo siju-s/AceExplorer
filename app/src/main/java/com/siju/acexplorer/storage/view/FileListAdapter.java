@@ -37,6 +37,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileConstants;
@@ -49,46 +52,46 @@ import com.siju.acexplorer.theme.ThemeUtils;
 import java.io.File;
 import java.util.ArrayList;
 
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 import static com.siju.acexplorer.model.groups.Category.AUDIO;
 import static com.siju.acexplorer.model.groups.Category.IMAGE;
 import static com.siju.acexplorer.model.groups.Category.PICKER;
 import static com.siju.acexplorer.model.groups.Category.VIDEO;
-import static com.siju.acexplorer.model.helper.AppUtils.getAppIcon;
 import static com.siju.acexplorer.model.helper.AppUtils.getAppIconForFolder;
 
 
 public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private Context mContext;
+    private Context context;
     private ArrayList<FileInfo> fileInfoArrayList = new ArrayList<>();
     private SparseBooleanArray mSelectedItemsIds;
     private final SparseBooleanArray mAnimatedPos = new SparseBooleanArray();
     boolean mStopAnimation;
-    private OnItemClickListener mItemClickListener;
+    private OnItemClickListener     mItemClickListener;
     private OnItemLongClickListener mOnItemLongClickListener;
-    private Category category;
+    private Category                category;
     private final Uri mAudioUri = Uri.parse("content://media/external/audio/albumart");
     private final int mViewMode;
     private final ArrayList<FileInfo> fileInfoArrayListCopy = new ArrayList<>();
-    private int draggedPos = -1;
+    private       int                 draggedPos            = -1;
     private final int mAnimation;
-    private int offset = 0;
+    private int     offset        = 0;
     private boolean mIsAnimNeeded = true;
     private final boolean mIsThemeDark;
-    private static final int TYPE_ITEM = 1;
+    private static final int TYPE_ITEM   = 1;
     private static final int TYPE_FOOTER = 2;
 
 
-    public FileListAdapter(Context mContext, ArrayList<FileInfo>
+    public FileListAdapter(Context context, ArrayList<FileInfo>
             fileInfoArrayList, Category category, int viewMode) {
 
-        this.mContext = mContext;
+        this.context = context;
         this.fileInfoArrayList = fileInfoArrayList;
         mSelectedItemsIds = new SparseBooleanArray();
         this.category = category;
         this.mViewMode = viewMode;
         mAnimation = R.anim.fade_in_top;
-        mIsThemeDark = ThemeUtils.isDarkTheme(mContext);
+        mIsThemeDark = ThemeUtils.isDarkTheme(context);
     }
 
     public void updateAdapter(ArrayList<FileInfo> fileInfos) {
@@ -178,15 +181,16 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
         if (viewType == TYPE_FOOTER) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_footer, parent, false);
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_footer,
+                                                                      parent, false);
             return new FooterViewHolder(v);
         }
         if (mViewMode == ViewMode.LIST) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_list_item,
-                    parent, false);
+                                                                    parent, false);
         } else {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_grid_item,
-                    parent, false);
+                                                                    parent, false);
         }
 
         return new FileListViewHolder(view);
@@ -197,8 +201,9 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-        if (mContext == null) return;
-
+        if (context == null) {
+            return;
+        }
         if (holder instanceof FileListViewHolder) {
             FileListViewHolder fileListViewHolder = (FileListViewHolder) holder;
 
@@ -210,13 +215,13 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             int color;
 //        Log.d("TAG","OnBindviewholder mIsThemeDark="+mIsThemeDark);
             if (mIsThemeDark) {
-                color = ContextCompat.getColor(mContext, R.color.dark_actionModeItemSelected);
+                color = ContextCompat.getColor(context, R.color.dark_actionModeItemSelected);
             } else {
-                color = ContextCompat.getColor(mContext, R.color.actionModeItemSelected);
+                color = ContextCompat.getColor(context, R.color.actionModeItemSelected);
             }
 
             fileListViewHolder.itemView.setBackgroundColor(mSelectedItemsIds.get(position) ? color :
-                    Color.TRANSPARENT);
+                                                                   Color.TRANSPARENT);
 
             if (!mSelectedItemsIds.get(position)) {
                 if (position == draggedPos) {
@@ -246,7 +251,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private void animate(FileListViewHolder fileListViewHolder) {
         fileListViewHolder.container.clearAnimation();
-        Animation localAnimation = AnimationUtils.loadAnimation(mContext, mAnimation);
+        Animation localAnimation = AnimationUtils.loadAnimation(context, mAnimation);
         localAnimation.setStartOffset(this.offset);
         fileListViewHolder.container.startAnimation(localAnimation);
         this.offset += 30;
@@ -290,21 +295,22 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             String fileNoOrSize;
             if (isDirectory) {
                 if (fileInfoArrayList.get(position).isRootMode()) {
-                    fileNoOrSize = mContext.getString(R.string.directory);
+                    fileNoOrSize = context.getString(R.string.directory);
                 } else {
                     int childFileListSize = (int) fileInfoArrayList.get(position).getSize();
                     if (childFileListSize == 0) {
-                        fileNoOrSize = mContext.getResources().getString(R.string.empty);
+                        fileNoOrSize = context.getResources().getString(R.string.empty);
                     } else if (childFileListSize == -1) {
                         fileNoOrSize = "";
                     } else {
-                        fileNoOrSize = mContext.getResources().getQuantityString(R.plurals.number_of_files,
-                                childFileListSize, childFileListSize);
+                        fileNoOrSize = context.getResources().getQuantityString(R.plurals
+                                                                                        .number_of_files,
+                                                                                childFileListSize, childFileListSize);
                     }
                 }
             } else {
                 long size = fileInfoArrayList.get(position).getSize();
-                fileNoOrSize = Formatter.formatFileSize(mContext, size);
+                fileNoOrSize = Formatter.formatFileSize(context, size);
             }
 
 
@@ -314,12 +320,14 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
             fileListViewHolder.textNoOfFileOrSize.setText(fileNoOrSize);
 
-            displayThumb(fileListViewHolder, fileInfoArrayList.get(position).getCategory(), position);
+            displayThumb(fileListViewHolder, fileInfoArrayList.get(position).getCategory(),
+                         position);
         }
 
     }
 
-    private void displayThumb(FileListViewHolder fileListViewHolder, Category category, int position) {
+    private void displayThumb(FileListViewHolder fileListViewHolder, Category category, int
+            position) {
 
         String filePath = fileInfoArrayList.get(position).getFilePath();
         String fileName = fileInfoArrayList.get(position).getFileName();
@@ -337,7 +345,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             case ZIP_VIEWER:
                 if (isDirectory) {
                     fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_folder_white);
-                    Drawable apkIcon = getAppIconForFolder(mContext, fileName);
+                    Drawable apkIcon = getAppIconForFolder(context, fileName);
                     if (apkIcon != null) {
                         fileListViewHolder.imageThumbIcon.setVisibility(View.VISIBLE);
                         fileListViewHolder.imageThumbIcon.setImageDrawable(apkIcon);
@@ -382,9 +390,10 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             case AUDIO:
                 Uri uri = ContentUris.withAppendedId(mAudioUri, fileInfoArrayList.get(position)
                         .getBucketId());
-                Glide.with(mContext).load(uri).centerCrop()
-                        .placeholder(R.drawable.ic_music_default)
-                        .crossFade(2)
+                RequestOptions options = new RequestOptions()
+                        .centerCrop()
+                        .placeholder(R.drawable.ic_music_default);
+                Glide.with(context).load(uri).apply(options)
                         .into(fileListViewHolder.imageIcon);
                 break;
 
@@ -406,19 +415,23 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 
     private void displayVideoThumb(FileListViewHolder fileListViewHolder, String path) {
-        // For videos group
         Uri videoUri = Uri.fromFile(new File(path));
-        Glide.with(mContext).load(videoUri).centerCrop()
-                .placeholder(R.drawable.ic_movie)
-                .crossFade(2)
+        RequestOptions options = new RequestOptions()
+                .centerCrop()
+                .placeholder(R.drawable.ic_movie);
+
+        Glide.with(context).load(videoUri)
+                .apply(options)
                 .into(fileListViewHolder.imageIcon);
     }
 
     private void displayImageThumb(FileListViewHolder fileListViewHolder, String path) {
         Uri imageUri = Uri.fromFile(new File(path));
-        Glide.with(mContext).load(imageUri).centerCrop()
-                .crossFade(2)
-                .placeholder(R.drawable.ic_image_default)
+        RequestOptions options = new RequestOptions()
+                .centerCrop()
+                .placeholder(R.drawable.ic_image_default);
+        Glide.with(context).load(imageUri).transition(withCrossFade(2))
+                .apply(options)
                 .into(fileListViewHolder.imageIcon);
     }
 
@@ -426,8 +439,18 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             path) {
         switch (extension) {
             case FileConstants.APK_EXTENSION:
-                Drawable apkIcon = getAppIcon(mContext, path);
-                fileListViewHolder.imageIcon.setImageDrawable(apkIcon);
+                RequestOptions options = new RequestOptions()
+                        .centerCrop()
+                        .placeholder(R.drawable.ic_apk_green)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE); // cannot disk cache
+                // ApplicationInfo, nor Drawables
+
+                Glide.with(context)
+                        .as(Drawable.class)
+                        .apply(options.dontAnimate().dontTransform().priority(Priority.LOW))
+                        .load(path)
+                        .into(fileListViewHolder.imageIcon);
+
                 break;
             case FileConstants.EXT_DOC:
             case FileConstants.EXT_DOCX:
@@ -467,8 +490,9 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         String selection = MediaStore.Audio.Media.DATA + " = ?";
         String[] selectionArgs = new String[]{path};
 
-        Cursor cursor = mContext.getContentResolver().query(uri, projection, selection, selectionArgs,
-                null);
+        Cursor cursor = context.getContentResolver().query(uri, projection, selection,
+                                                           selectionArgs,
+                                                           null);
 
         if (cursor != null) {
             if (cursor.moveToFirst()) {
@@ -477,8 +501,11 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 //                Logger.log("Adapter", "displayAudioAlbumArt=" + albumId);
                 Uri newUri = ContentUris.withAppendedId(mAudioUri, albumId);
-                Glide.with(mContext).load(newUri).centerCrop()
-                        .placeholder(R.drawable.ic_music_default)
+                RequestOptions options = new RequestOptions()
+                        .centerCrop()
+                        .placeholder(R.drawable.ic_music_default);
+                Glide.with(context).load(newUri)
+                        .apply(options)
                         .into(fileListViewHolder.imageIcon);
             }
             cursor.close();
@@ -498,10 +525,11 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 
     void toggleSelectAll(int position, boolean selectAll) {
-        if (selectAll)
+        if (selectAll) {
             mSelectedItemsIds.put(position, true);
-        else
+        } else {
             mSelectedItemsIds = new SparseBooleanArray();
+        }
     }
 
     void clearSelection() {
@@ -558,24 +586,26 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
 
-    private class FileListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
-            View.OnLongClickListener {
+    private class FileListViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener,
+                       View.OnLongClickListener
+    {
         final TextView textFileName;
         TextView textFileModifiedDate;
-        final TextView textNoOfFileOrSize;
-        final ImageView imageIcon;
-        final ImageView imageThumbIcon;
+        final TextView       textNoOfFileOrSize;
+        final ImageView      imageIcon;
+        final ImageView      imageThumbIcon;
         final RelativeLayout container;
 
 
         FileListViewHolder(View itemView) {
             super(itemView);
-            container =  itemView.findViewById(R.id.container_list);
-            textFileName =  itemView
+            container = itemView.findViewById(R.id.container_list);
+            textFileName = itemView
                     .findViewById(R.id.textFolderName);
-            imageIcon =  itemView.findViewById(R.id.imageIcon);
-            imageThumbIcon =  itemView.findViewById(R.id.imageThumbIcon);
-            textNoOfFileOrSize =  itemView.findViewById(R.id.textSecondLine);
+            imageIcon = itemView.findViewById(R.id.imageIcon);
+            imageThumbIcon = itemView.findViewById(R.id.imageThumbIcon);
+            textNoOfFileOrSize = itemView.findViewById(R.id.textSecondLine);
             if (mViewMode == ViewMode.LIST) {
                 textFileModifiedDate = itemView.findViewById(R.id.textDate);
             }
@@ -602,7 +632,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    private class FooterViewHolder extends RecyclerView.ViewHolder {
+    private static class FooterViewHolder extends RecyclerView.ViewHolder {
 
         FooterViewHolder(View itemView) {
             super(itemView);
@@ -610,7 +640,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     void onDetach() {
-        mContext = null;
+        context = null;
     }
 
 

@@ -15,6 +15,7 @@
  */
 
 package com.siju.acexplorer.model.helper;
+
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -30,23 +31,40 @@ public class AppUtils {
     public static Drawable getAppIcon(Context context, String url) {
 
 
-        Drawable icon;
+        Drawable icon = null;
         try {
-            PackageInfo packageInfo = context.getPackageManager().getPackageArchiveInfo(url, PackageManager
-                    .GET_ACTIVITIES);
-            if (packageInfo == null)
-                return ContextCompat.getDrawable(context, R.drawable.ic_apk_green);
-            ApplicationInfo appInfo = packageInfo.applicationInfo;
-            appInfo.sourceDir = url;
-            appInfo.publicSourceDir = url;
+            ApplicationInfo appInfo = getAppInfo(context, url);
 
-            icon = appInfo.loadIcon(context.getPackageManager());
+            if (appInfo != null) {
+                icon = appInfo.loadIcon(context.getPackageManager());
+            }
+//            Log.d("AppUtils", "getAppIcon: icon:"+icon);
             return icon;
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             return ContextCompat.getDrawable(context, R.drawable.ic_apk_green);
 
         }
+    }
+
+    public static ApplicationInfo getAppInfo(Context context, String path) {
+        ApplicationInfo appInfo;
+        try {
+            PackageInfo packageInfo = context.getPackageManager().getPackageArchiveInfo(path,
+                                                                                        PackageManager
+                                                                                                .GET_ACTIVITIES);
+            if (packageInfo == null) {
+                return null;
+            }
+            appInfo = packageInfo.applicationInfo;
+            appInfo.sourceDir = path;
+            appInfo.publicSourceDir = path;
+        } catch (Exception e) {
+//            e.printStackTrace();
+            return null;
+
+        }
+        return appInfo;
     }
 
     public static Drawable getAppIconForFolder(Context context, String packageName) {

@@ -115,7 +115,7 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:' + rootProject.supportLibVersion
     implementation 'com.android.support:recyclerview-v7:' + rootProject.supportLibVersion
     implementation 'com.android.support:design:' + rootProject.supportLibVersion
-    implementation 'com.github.bumptech.glide:glide:3.7.0'
+    implementation 'com.github.bumptech.glide:glide:4.2.0'
     implementation 'com.getbase:floatingactionbutton:1.10.1'
     implementation 'com.google.code.gson:gson:2.8.0'
     implementation 'io.github.kobakei:ratethisapp:1.1.0'
@@ -130,5 +130,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-ads:11.4.2'
     implementation 'com.google.firebase:firebase-invites:11.4.2'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.2.0'
 }
 apply plugin: 'com.google.gms.google-services'

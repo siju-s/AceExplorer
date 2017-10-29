@@ -214,6 +214,7 @@
         <item name="android:layout_marginLeft">@dimen/margin_16</item>
         <item name="android:layout_marginRight">@dimen/margin_16</item>
         <item name="android:layout_marginTop">@dimen/margin_16</item>
+        <item name="android:layout_marginBottom">@dimen/margin_16</item>
         <item name="android:fontFamily">sans-serif</item>
     </style>
 
@@ -241,8 +242,8 @@
     </style>
 
     <style name="DialogNegativeButton" parent="Base.Widget.AppCompat.Button.ButtonBar.AlertDialog">
-        <item name="android:textColor">@color/color_text</item>
-        <item name="android:layout_marginLeft">@dimen/margin_16</item>
+        <item name="android:textColor">@color/blue</item>
+        <!--<item name="android:layout_marginLeft">@dimen/margin_16</item>-->
         <item name="android:layout_marginRight">@dimen/margin_16</item>
     </style>
 

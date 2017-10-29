@@ -27,18 +27,20 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.siju.acexplorer.R;
 
 class WelcomePagerAdapter extends PagerAdapter {
 
-    private final Context mContext;
-    private final int[] mResources;
+    private final Context  mContext;
+    private final int[]    mResources;
     private final String[] mHeaderText;
     private final String[] mText;
-    private final int[] bgColors;
+    private final int[]    bgColors;
 
 
-    WelcomePagerAdapter(Context mContext, int[] mResources, String[] headerText, String[] text, int[] colors) {
+    WelcomePagerAdapter(Context mContext, int[] mResources, String[] headerText, String[] text,
+                        int[] colors) {
         this.mContext = mContext;
         this.mResources = mResources;
         mHeaderText = headerText;
@@ -59,18 +61,18 @@ class WelcomePagerAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        View itemView = LayoutInflater.from(mContext).inflate(R.layout.intro_pager_item, container, false);
+        View itemView = LayoutInflater.from(mContext).inflate(R.layout.intro_pager_item,
+                                                              container, false);
 
-        ImageView imageView = (ImageView) itemView.findViewById(R.id.imageIntro);
-        TextView textHeader = (TextView) itemView.findViewById(R.id.textIntroHeader);
-        TextView textContent = (TextView) itemView.findViewById(R.id.textIntro);
+        ImageView imageView = itemView.findViewById(R.id.imageIntro);
+        TextView textHeader = itemView.findViewById(R.id.textIntroHeader);
+        TextView textContent = itemView.findViewById(R.id.textIntro);
         itemView.setBackgroundColor(bgColors[position]);
         textHeader.setText(mHeaderText[position]);
         textContent.setText(mText[position]);
 
         Glide.with(mContext).load(mResources[position])
-                .asGif()
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC))
                 .into(imageView);
 
         container.addView(itemView);

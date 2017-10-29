@@ -44,6 +44,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.model.FileConstants;
 import com.siju.acexplorer.model.FileInfo;
@@ -354,6 +355,8 @@ public class DialogHelper {
         }
 
         alertDialog.show();
+        alertDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup
+                .LayoutParams.WRAP_CONTENT);
     }
 
     /**
@@ -749,19 +752,18 @@ public class DialogHelper {
                 String md5 = FileUtils.getFastHash(path);
                 textMD5.setText(md5);
             }
+            RequestOptions options = new RequestOptions()
+                    .centerCrop();
 
             if (fileInfo.getType() == VIDEO.getValue()) {
                 Uri videoUri = Uri.fromFile(new File(path));
-                Glide.with(context).load(videoUri).centerCrop()
-                        .placeholder(R.drawable.ic_movie)
-                        .crossFade(2)
+                Glide.with(context).load(videoUri).apply(options.placeholder(R.drawable.ic_movie))
                         .into(imageFileIcon);
             }
             else if (fileInfo.getType() == IMAGE.getValue()) {
                 Uri imageUri = Uri.fromFile(new File(path));
-                Glide.with(context).load(imageUri).centerCrop()
-                        .crossFade(2)
-                        .placeholder(R.drawable.ic_image_default)
+                Glide.with(context).load(imageUri).apply(options
+                        .placeholder(R.drawable.ic_image_default))
                         .into(imageFileIcon);
             }
             else if (fileInfo.getType() == AUDIO.getValue()) {

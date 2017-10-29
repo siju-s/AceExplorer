@@ -377,4 +377,8 @@ class HomeLibrary implements View.OnClickListener {
             inflateLibraryItem();
         }
     }
+
+    void clearViews() {
+        libraryContainer.removeAllViews();
+    }
 }

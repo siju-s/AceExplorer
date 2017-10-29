@@ -56,7 +56,6 @@ public class Premium {
         @Override
         public void onNegativeButtonClick(View view) {
             optOutPremiumDialog();
-
         }
 
         @Override
