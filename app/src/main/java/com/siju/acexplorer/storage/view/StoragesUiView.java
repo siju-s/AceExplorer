@@ -110,7 +110,6 @@ import static com.siju.acexplorer.model.helper.MediaStoreHelper.removeMedia;
 import static com.siju.acexplorer.model.helper.MediaStoreHelper.scanFile;
 import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastNougat;
 import static com.siju.acexplorer.model.helper.UriHelper.createContentUri;
-import static com.siju.acexplorer.model.helper.UriHelper.getUriForCategory;
 import static com.siju.acexplorer.model.helper.UriHelper.grantUriPermission;
 import static com.siju.acexplorer.model.helper.ViewHelper.viewFile;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH;
@@ -722,9 +721,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                         FileUtils.showMessage(getContext(), getResources().getString(R.string.msg_delete_failure));
                     }
                 }
-
-                Uri uri = getUriForCategory(category);
-//                getContext().getContentResolver().notifyChange(uri, null);
                 fileInfoList.removeAll(deletedFilesList);
                 fileListAdapter.setStopAnimation(true);
                 fileListAdapter.updateAdapter(fileInfoList);
@@ -738,8 +734,15 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 final int position = intent.getIntExtra(KEY_POSITION, -1);
                 String oldFile = intent.getStringExtra(KEY_FILEPATH);
                 String newFile = intent.getStringExtra(KEY_FILEPATH2);
-                int type = fileInfoList.get(position).getType();
-                removeMedia(getActivity(), new File(oldFile), type);
+                Category category = fileInfoList.get(position).getCategory();
+                int type;
+                if (category.equals(FILES)) {
+                    type = fileInfoList.get(position).getType();
+                } else {
+                    type = category.getValue();
+                }
+
+                removeMedia(getActivity(), oldFile, type);
                 scanFile(getActivity().getApplicationContext(), newFile);
 
                 fileListAdapter.setStopAnimation(true);

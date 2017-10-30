@@ -32,8 +32,9 @@ import java.util.Set;
  * Handles all the interactions with Play Store (via Billing library), maintains connection to
  * it through BillingClient and caches temporary states/data if needed
  */
+@SuppressWarnings("WeakerAccess")
 public class BillingManager implements PurchasesUpdatedListener {
-    public static final String SKU_REMOVE_ADS = "com.siju.acexplorer.pro";
+    public static final String SKU_REMOVE_ADS = "com.siju.acexplorer.pro"; //"android.test.purchased";
 
     private static BillingManager billingInstance;
     private boolean inappBillingSupported = true;
@@ -183,7 +184,7 @@ public class BillingManager implements PurchasesUpdatedListener {
      */
     public void destroy() {
         Log.d(TAG, "Destroying the manager.");
-
+        mActivity = null;
         if (mBillingClient != null && mBillingClient.isReady()) {
             mBillingClient.endConnection();
             mBillingClient = null;
@@ -231,6 +232,7 @@ public class BillingManager implements PurchasesUpdatedListener {
             public void onConsumeResponse(@BillingResponse int responseCode, String purchaseToken) {
                 // If billing service was disconnected, we try to reconnect 1 time
                 // (feel free to introduce your retry policy here).
+
                 mBillingUpdatesListener.onConsumeFinished(purchaseToken, responseCode);
             }
         };
@@ -361,6 +363,7 @@ public class BillingManager implements PurchasesUpdatedListener {
                             + purchasesResult.getResponseCode());
                 }
                 onQueryPurchasesFinished(purchasesResult);
+//                consumeAsync(purchasesResult.getPurchasesList().get(0).getPurchaseToken());
             }
         };
 

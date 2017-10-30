@@ -18,9 +18,12 @@ package com.siju.acexplorer.storage.model.task;
 
 import android.content.Context;
 import android.os.Process;
+import android.util.Log;
 
 import com.siju.acexplorer.model.FileInfo;
+import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.model.helper.FileUtils;
+import com.siju.acexplorer.model.helper.MediaStoreHelper;
 import com.siju.acexplorer.model.root.RootDeniedException;
 import com.siju.acexplorer.model.root.RootUtils;
 
@@ -28,7 +31,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.siju.acexplorer.model.groups.Category.FILES;
+
 public class DeleteTask {
+
 
     private int totalFiles;
     private final ArrayList<FileInfo> deletedFilesList = new ArrayList<>();
@@ -92,6 +98,7 @@ public class DeleteTask {
                         deletedCount++;
                     }
                 }
+                deleteFromMediaStore(deletedFilesList);
                 if (deleteResultCallback != null) {
                     deleteResultCallback.onFileDeleted(totalFiles, deletedFilesList, mShowToast);
                 }
@@ -99,5 +106,24 @@ public class DeleteTask {
         }).start();
 
     }
+
+    private static final String TAG = "DeleteTask";
+
+    private void deleteFromMediaStore(ArrayList<FileInfo> deletedFilesList) {
+        for (int i = 0; i < deletedFilesList.size() ; i++) {
+            FileInfo fileInfo = deletedFilesList.get(i);
+            Category category = fileInfo.getCategory();
+            int type;
+            if (category.equals(FILES)) {
+                type = fileInfo.getType();
+            } else {
+                type = category.getValue();
+            }
+            Log.d(TAG, "deleteFromMediaStore: Type:"+type);
+            int deleted = MediaStoreHelper.removeMedia(mContext, fileInfo.getFilePath(), type);
+            Log.d(TAG, "deleteFromMediaStore: deleted:"+deleted);
+        }
+    }
+
 
 }

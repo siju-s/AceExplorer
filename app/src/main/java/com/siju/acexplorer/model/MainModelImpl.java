@@ -133,12 +133,14 @@ public class MainModelImpl implements MainModel, BillingResultCallback, DrawerIt
 
     @Override
     public void onConsumeFinished(String token, int result) {
-
+        Log.d(TAG, "onConsumeFinished: purchaseTOken:"+token + " result:"+result);
+        if (result == BillingClient.BillingResponse.OK) {
+            listener.onFreeVersion();
+        }
     }
 
     @Override
     public void onPurchasesUpdated(List<Purchase> purchases) {
-        Log.d(TAG, "onPurchasesUpdated: "+purchases);
         int billingResponse = BillingManager.getInstance().getBillingClientResponseCode();
         if (billingResponse == BillingClient.BillingResponse.BILLING_UNAVAILABLE ||
                 billingResponse == BillingClient.BillingResponse.FEATURE_NOT_SUPPORTED) {
@@ -147,6 +149,7 @@ public class MainModelImpl implements MainModel, BillingResultCallback, DrawerIt
             listener.onFreeVersion();
         } else {
             for (Purchase purchase : purchases) {
+                Log.d(TAG, "onPurchasesUpdated: sku:"+purchase.getSku());
                 if (purchase.getSku().equals(BillingManager.SKU_REMOVE_ADS)) {
                     listener.onPremiumVersion();
                     break;

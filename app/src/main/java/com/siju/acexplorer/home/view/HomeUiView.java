@@ -286,7 +286,7 @@ public class HomeUiView extends CoordinatorLayout {
 
 
     public void onDataLoaded(int id, List<FileInfo> data) {
-        Log.d(TAG, "onDataLoaded: "+id);
+//        Log.d(TAG, "onDataLoaded: "+id);
         if (data != null && data.size() > 0) {
             library.onDataLoaded(id, data);
         }

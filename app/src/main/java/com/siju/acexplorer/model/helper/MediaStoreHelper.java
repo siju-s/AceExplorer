@@ -17,14 +17,10 @@
 package com.siju.acexplorer.model.helper;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.Intent;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
-
-import java.io.File;
-
 
 
 public class MediaStoreHelper {
@@ -44,32 +40,33 @@ public class MediaStoreHelper {
                 });
     }
 
-    public static void removeMedia(Context context, File file, int category) {
+    public static int removeMedia(Context context, String path, int category) {
         ContentResolver resolver = context.getContentResolver();
-        String path = file.getAbsolutePath();
+        int deleted = 0;
         switch (category) {
             case 1:
                 Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-                resolver.delete(musicUri, MediaStore.Audio.Media.DATA + "=?", new String[]{path});
+                deleted = resolver.delete(musicUri, MediaStore.Audio.Media.DATA + "=?", new String[]{path});
                 break;
 
             case 2:
                 Uri videoUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-                resolver.delete(videoUri, MediaStore.Video.Media.DATA + "=?", new String[]{path});
+                deleted = resolver.delete(videoUri, MediaStore.Video.Media.DATA + "=?", new String[]{path});
                 break;
 
             case 3:
                 Uri imageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                resolver.delete(imageUri, MediaStore.Images.Media.DATA + "=?", new String[]{path});
+                deleted = resolver.delete(imageUri, MediaStore.Images.Media.DATA + "=?", new String[]{path});
                 break;
 
             case 4:
                 Uri filesUri = MediaStore.Files.getContentUri("external");
-                resolver.delete(filesUri, MediaStore.Files.FileColumns.DATA + "=?", new String[]{path});
+                deleted = resolver.delete(filesUri, MediaStore.Files.FileColumns.DATA + "=?", new String[]{path});
                 break;
             default:
                 break;
         }
+        return deleted;
     }
 
 }

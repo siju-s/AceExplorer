@@ -327,7 +327,6 @@ class HomeLibrary implements View.OnClickListener {
     void onDataLoaded(int id, List<FileInfo> data) {
         for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
             int categoryId = homeLibraryInfoArrayList.get(i).getCategory().getValue();
-            Log.d(TAG, "onDataLoaded: " + homeLibraryInfoArrayList.get(i).getCategory());
             if (id == categoryId) {
                 int count;
                 if (id == DOWNLOADS.getValue()) {
