@@ -61,7 +61,7 @@ public class HomePresenterImpl implements HomePresenter,
     public void loadData(Category category) {
         Bundle args = new Bundle();
         args.putSerializable(KEY_CATEGORY, category);
-        Log.d(TAG, "loadData: Category:"+category.getValue());
+//        Log.d(TAG, "loadData: Category:"+category.getValue());
         loaderManager.restartLoader(category.getValue(), args, this);
     }
 

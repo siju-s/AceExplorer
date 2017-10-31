@@ -131,14 +131,14 @@ class HomeLibrary implements View.OnClickListener {
                 textCount.setVisibility(View.VISIBLE);
             }
 
-            libraryItemContainer.setPadding(0, 0, spacing, 0);
             textCount.setText(roundOffCount(homeLibraryInfoArrayList.get(i).getCount()));
             libraryContainer.addView(libraryItemContainer);
+            GridLayout.LayoutParams layoutParams = (GridLayout.LayoutParams) libraryItemContainer.getLayoutParams();
+            layoutParams.rightMargin = spacing;
             libraryItemContainer.setOnClickListener(this);
             libraryItemContainer.setTag(homeLibraryInfoArrayList.get(i).getCategory());
             changeColor(imageLibrary, homeLibraryInfoArrayList.get(i).getCategory());
         }
-        Log.d(TAG, "inflateLibraryItem Completed: " + homeLibraryInfoArrayList.size());
     }
 
     private void changeColor(View itemView, Category category) {
@@ -295,7 +295,6 @@ class HomeLibrary implements View.OnClickListener {
 
     private void updateCount(int index, int count) {
 
-        Log.d(TAG, "updateCount: childIndex:" + index);
         RelativeLayout container = (RelativeLayout) libraryContainer.getChildAt(index);
         TextView textCount = container.findViewById(R.id.textCount);
         textCount.setText(roundOffCount(count));

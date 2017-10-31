@@ -987,7 +987,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     // TODO Remove this 1 when if footer removed in future
     void toggleSelectAll(boolean selectAll) {
         fileListAdapter.clearSelection();
-        for (int i = 0; i < fileListAdapter.getItemCount() - 1; i++) {
+        for (int i = 0; i < fileListAdapter.getItemCount(); i++) {
             fileListAdapter.toggleSelectAll(i, selectAll);
         }
         SparseBooleanArray checkedItemPos = fileListAdapter.getSelectedItemPositions();
