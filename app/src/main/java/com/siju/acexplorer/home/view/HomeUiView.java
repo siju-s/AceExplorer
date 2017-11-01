@@ -133,6 +133,7 @@ public class HomeUiView extends CoordinatorLayout {
 
         checkBillingStatus();
         initializeListeners();
+        isDualModeActive = bridge.getDualModeState();
     }
 
     private void checkBillingStatus() {

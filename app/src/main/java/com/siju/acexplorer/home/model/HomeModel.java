@@ -33,6 +33,8 @@ public interface HomeModel {
 
     void reloadLibraries(List<LibrarySortModel> selectedLibs);
 
+    boolean getDualModeState();
+
 
     interface Listener {
 

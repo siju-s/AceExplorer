@@ -111,6 +111,11 @@ public class MainBridge implements MainUi {
     }
 
     @Override
+    public void showDualFrame() {
+        uiView.showDualFrame();
+    }
+
+    @Override
     public void onPermissionResult(int requestCode, @NonNull String[] permissions, @NonNull int[]
             grantResults) {
         uiView.handlePermissionResult(requestCode);

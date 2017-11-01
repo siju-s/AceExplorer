@@ -51,19 +51,20 @@ public class BaseFileList extends Fragment {
         return inflater.inflate(R.layout.home_base, container, false);
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
         Logger.log(TAG, "onActivityCreated" + savedInstanceState);
 
-        LinearLayout linearLayout = getActivity().findViewById(R.id.home_base);
+        LinearLayout linearLayout = getView().findViewById(R.id.home_base);
         storagesUi = new StorageBridge(this, linearLayout, favListener, drawerListener);
         StoragesModel storagesModel = new StorageModelImpl();
         LoaderHelper loaderHelper = new LoaderHelper(this);
 
         new StoragesPresenterImpl(storagesUi, storagesModel, loaderHelper,
-                getActivity().getSupportLoaderManager());
+                getLoaderManager());
 
         storagesUi.init();
     }

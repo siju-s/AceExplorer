@@ -145,5 +145,8 @@ public class AceActivity extends BaseActivity {
         return super.onContextItemSelected(item);
     }
 
+    public void showDualFrame() {
+        mainUi.showDualFrame();
+    }
 }
 

@@ -145,4 +145,8 @@ public class HomeBridge implements HomeView {
     void reloadLibraries(List<LibrarySortModel> selectedLibs) {
         listener.reloadLibraries(selectedLibs);
     }
+
+    public boolean getDualModeState() {
+        return listener.getDualModeState();
+    }
 }

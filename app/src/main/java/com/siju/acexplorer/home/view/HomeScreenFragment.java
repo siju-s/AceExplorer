@@ -49,13 +49,14 @@ public class HomeScreenFragment extends Fragment {
         return inflater.inflate(R.layout.home_base, container, false);
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(false);
         Logger.log(TAG, "onActivityCreated" + savedInstanceState);
 
-        LinearLayout linearLayout = getActivity().findViewById(R.id.home_base);
+        LinearLayout linearLayout = getView().findViewById(R.id.home_base);
         homeView = new HomeBridge(this, linearLayout, drawerListener, favListener);
         HomeModel homeModel = new HomeModelImpl();
         LoaderHelper loaderHelper = new LoaderHelper(this);

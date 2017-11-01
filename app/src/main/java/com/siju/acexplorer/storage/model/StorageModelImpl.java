@@ -366,8 +366,7 @@ public class StorageModelImpl implements StoragesModel {
                         context.sendBroadcast(intent);
                         scanFile(context, file.getAbsolutePath());
                     } else {
-                        Toast.makeText(context, R.string.msg_operation_failed,
-                                Toast.LENGTH_SHORT).show();
+                        listener.onOperationFailed(operation);
                     }
                     break;
             }

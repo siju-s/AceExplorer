@@ -212,10 +212,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 .colorPrimaryDark};
         mSwipeRefreshLayout.setColorSchemeResources(colorResIds);
         mSwipeRefreshLayout.setDistanceToTriggerSync(500);
-
-//        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         frameLayoutFab = findViewById(R.id.frameLayoutFab);
-//        aceActivity.syncDrawerState();
         fabCreateMenu = findViewById(R.id.fabCreate);
         fabCreateFolder = findViewById(R.id.fabCreateFolder);
         fabCreateFile = findViewById(R.id.fabCreateFile);
@@ -505,6 +502,97 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 frameLayoutFab.setOnTouchListener(null);
             }
         });
+    }
+
+    /**
+     * Show dual pane in Landscape mode
+     */
+    public void showDualPane() {
+        // For Files category only, show dual pane
+        mIsDualModeEnabled = true;
+        refreshSpan();
+    }
+
+    private void getPreferences() {
+        Bundle bundle = bridge.getUserPrefs();
+        gridCols = bundle.getInt(FileConstants.KEY_GRID_COLUMNS, 0);
+        isHomeScreenEnabled = bundle.getBoolean(FileConstants.PREFS_HOMESCREEN, true);
+        showHidden = bundle.getBoolean(FileConstants.PREFS_HIDDEN, false);
+        viewMode = bundle.getInt(FileConstants.PREFS_VIEW_MODE, ViewMode.LIST);
+    }
+
+    private void getArgs() {
+        if (getArguments() != null) {
+            currentDir = getArguments().getString(FileConstants.KEY_PATH);
+            category = (Category) getArguments().getSerializable(FileConstants.KEY_CATEGORY);
+            isZipViewer = getArguments().getBoolean(FileConstants.KEY_ZIP, false);
+            mIsDualModeEnabled = getArguments().getBoolean(FileConstants.KEY_DUAL_ENABLED, false);
+
+            if (checkIfLibraryCategory(category)) {
+                hideFab();
+            } else {
+                showFab();
+            }
+            navigationInfo.showNavigationView();
+            if (shouldShowPathNavigation()) {
+                navigationInfo.setInitialDir(currentDir);
+            }
+            mLastSinglePaneDir = currentDir;
+        }
+    }
+
+    private Bundle getArguments() {
+        return fragment.getArguments();
+    }
+
+    private void createDualFrag() {
+        if (mIsDualModeEnabled && fragment instanceof FileList) {
+            bridge.showDualFrame();
+            showDualPane();
+        }
+    }
+
+    private boolean checkIfLibraryCategory(Category category) {
+        return !category.equals(FILES);
+    }
+
+    public void showFab() {
+        frameLayoutFab.setVisibility(View.VISIBLE);
+    }
+
+    public void hideFab() {
+        frameLayoutFab.setVisibility(View.GONE);
+    }
+
+
+    private void setupList() {
+        fileList.setHasFixedSize(true);
+        if (viewMode == ViewMode.LIST) {
+            layoutManager = new CustomLayoutManager(getActivity());
+            fileList.setLayoutManager(layoutManager);
+        } else {
+            refreshSpan();
+        }
+        fileList.setItemAnimator(new DefaultItemAnimator());
+        fileListAdapter = new FileListAdapter(getContext(), fileInfoList,
+                                              category, viewMode);
+    }
+
+    public void refreshList() {
+        Log.d(TAG, "loadData: "+this);
+        fileInfoList = new ArrayList<>();
+        if (fileListAdapter != null) {
+            fileListAdapter.clearList();
+        }
+        if (!hasStoragePermission()) {
+            return;
+        }
+        mSwipeRefreshLayout.setRefreshing(true);
+        if (isZipMode()) {
+            zipViewer.loadData();
+        } else {
+            bridge.loadData(currentDir, category, false);
+        }
     }
 
 
@@ -1164,98 +1252,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     }
 
-    /**
-     * Show dual pane in Landscape mode
-     */
-    public void showDualPane() {
-
-        // For Files category only, show dual pane
-        mIsDualModeEnabled = true;
-        refreshSpan();
-    }
-
-    private void getPreferences() {
-        Bundle bundle = bridge.getUserPrefs();
-        gridCols = bundle.getInt(FileConstants.KEY_GRID_COLUMNS, 0);
-        isHomeScreenEnabled = bundle.getBoolean(FileConstants.PREFS_HOMESCREEN, true);
-        showHidden = bundle.getBoolean(FileConstants.PREFS_HIDDEN, false);
-        viewMode = bundle.getInt(FileConstants.PREFS_VIEW_MODE, ViewMode.LIST);
-    }
-
-    private void getArgs() {
-        if (getArguments() != null) {
-            currentDir = getArguments().getString(FileConstants.KEY_PATH);
-            category = (Category) getArguments().getSerializable(FileConstants.KEY_CATEGORY);
-            isZipViewer = getArguments().getBoolean(FileConstants.KEY_ZIP, false);
-            mIsDualModeEnabled = getArguments().getBoolean(FileConstants.KEY_DUAL_ENABLED, false);
-
-            if (checkIfLibraryCategory(category)) {
-                hideFab();
-            } else {
-                showFab();
-            }
-            navigationInfo.showNavigationView();
-            if (shouldShowPathNavigation()) {
-                navigationInfo.setInitialDir(currentDir);
-            }
-            mLastSinglePaneDir = currentDir;
-        }
-    }
-
-    private Bundle getArguments() {
-        return fragment.getArguments();
-    }
-
-    private void createDualFrag() {
-        if (mIsDualModeEnabled && fragment instanceof FileList) {
-//            aceActivity.toggleDualPaneVisibility(true);
-            showDualPane();
-//            aceActivity.createDualFragment();
-        }
-    }
-
-    private boolean checkIfLibraryCategory(Category category) {
-        return !category.equals(FILES);
-    }
-
-    public void showFab() {
-        frameLayoutFab.setVisibility(View.VISIBLE);
-    }
-
-    public void hideFab() {
-        frameLayoutFab.setVisibility(View.GONE);
-    }
-
-
-    private void setupList() {
-        fileList.setHasFixedSize(true);
-        if (viewMode == ViewMode.LIST) {
-            layoutManager = new CustomLayoutManager(getActivity());
-            fileList.setLayoutManager(layoutManager);
-        } else {
-            refreshSpan();
-        }
-        fileList.setItemAnimator(new DefaultItemAnimator());
-        fileListAdapter = new FileListAdapter(getContext(), fileInfoList,
-                category, viewMode);
-    }
-
-    public void refreshList() {
-        Log.d(TAG, "loadData: ");
-        fileInfoList = new ArrayList<>();
-        if (fileListAdapter != null) {
-            fileListAdapter.clearList();
-        }
-        if (!hasStoragePermission()) {
-            return;
-        }
-        mSwipeRefreshLayout.setRefreshing(true);
-        if (isZipMode()) {
-            zipViewer.loadData();
-        } else {
-            bridge.loadData(currentDir, category, false);
-        }
-    }
 
     SparseBooleanArray getSelectedItems() {
         return mSelectedItemPositions;

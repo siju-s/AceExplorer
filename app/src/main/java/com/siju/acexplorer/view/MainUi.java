@@ -70,6 +70,8 @@ public interface MainUi {
 
     void init();
 
+    void showDualFrame();
+
     interface Listener {
 
         void getTotalGroupData();

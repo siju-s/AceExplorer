@@ -32,6 +32,7 @@ import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.storage.model.CopyData;
 import com.siju.acexplorer.storage.model.operations.Operations;
+import com.siju.acexplorer.view.AceActivity;
 import com.siju.acexplorer.view.DrawerListener;
 import com.siju.acexplorer.view.dialog.DialogHelper;
 
@@ -397,5 +398,9 @@ public class StorageBridge implements StoragesUi {
     void renameFile(String filePath, String parentDir, String name, int position,
                     boolean rooted) {
         listener.renameFile(filePath, parentDir, name, position, rooted);
+    }
+
+    public void showDualFrame() {
+        ((AceActivity)fragment.getActivity()).showDualFrame();
     }
 }

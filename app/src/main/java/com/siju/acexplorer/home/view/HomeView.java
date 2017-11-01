@@ -57,7 +57,6 @@ public interface HomeView {
 
     void setPremium();
 
-
     interface Listener {
 
         void getLibraries();
@@ -67,5 +66,7 @@ public interface HomeView {
         BillingStatus checkBillingStatus();
 
         void reloadLibraries(List<LibrarySortModel> selectedLibs);
+
+        boolean getDualModeState();
     }
 }

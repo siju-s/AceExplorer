@@ -34,6 +34,7 @@ import com.siju.acexplorer.permission.PermissionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.siju.acexplorer.model.FileConstants.PREFS_DUAL_PANE;
 import static com.siju.acexplorer.model.FileConstants.PREFS_FIRST_RUN;
 import static com.siju.acexplorer.model.groups.Category.ADD;
 import static com.siju.acexplorer.model.groups.Category.AUDIO;
@@ -106,6 +107,11 @@ public class HomeModelImpl implements HomeModel {
             }
         }).start();
 
+    }
+
+    @Override
+    public boolean getDualModeState() {
+        return sharedPreferences.getBoolean(PREFS_DUAL_PANE, false);
     }
 
 
