@@ -55,7 +55,7 @@
     <string name="dialog_replace">Заменити</string>
     <string name="dialog_keep_both">Држи обе датотеке</string>
     <string name="dialog_cancel">отказати</string>
-    <string name="dialog_title_paste_conflict">file екистс</string>
+    <string name="msg_file_exists">file екистс</string>
     <string name="dialog_from_placeholder">од</string>
     <string name="dialog_to_placeholder">До</string>
     <string name="background">позадина</string>

@@ -54,7 +54,7 @@
     <string name="dialog_replace">vervang</string>
     <string name="dialog_keep_both">Hou beide lêers</string>
     <string name="dialog_cancel">kanselleer</string>
-    <string name="dialog_title_paste_conflict">lêer bestaan</string>
+    <string name="msg_file_exists">lêer bestaan</string>
     <string name="dialog_from_placeholder">Van</string>
     <string name="dialog_to_placeholder">aan</string>
     <string name="background">agtergrond</string>

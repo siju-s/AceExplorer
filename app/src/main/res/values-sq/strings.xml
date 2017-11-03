@@ -54,7 +54,7 @@
     <string name="dialog_replace">zëvendësoj</string>
     <string name="dialog_keep_both">Mbajtur dy fotografi</string>
     <string name="dialog_cancel">anuloj</string>
-    <string name="dialog_title_paste_conflict">skedari ekziston</string>
+    <string name="msg_file_exists">skedari ekziston</string>
     <string name="dialog_from_placeholder">nga</string>
     <string name="dialog_to_placeholder">Te</string>
     <string name="background">Sfond</string>

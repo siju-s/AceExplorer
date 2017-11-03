@@ -53,7 +53,7 @@
     <string name="dialog_replace">바꾸다</string>
     <string name="dialog_keep_both">두 파일을 보관</string>
     <string name="dialog_cancel">취소하다</string>
-    <string name="dialog_title_paste_conflict">파일이 존재</string>
+    <string name="msg_file_exists">파일이 존재</string>
     <string name="dialog_from_placeholder">에서</string>
     <string name="dialog_to_placeholder">에</string>
     <string name="background">배경</string>

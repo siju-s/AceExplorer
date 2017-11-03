@@ -26,19 +26,22 @@
         style="@style/DialogTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/file_exists" />
+        android:text="@string/msg_file_exists" />
 
-    <GridView
-        android:id="@+id/gridFiles"
+    <ListView
+        android:id="@+id/listFiles"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_16"
+        android:layout_marginStart="@dimen/margin_16"
         android:layout_marginTop="@dimen/padding_5"
-        android:numColumns="2" />
+        android:divider="@null" />
 
     <CheckBox
         android:id="@+id/checkBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_16"
         android:text="@string/paste_conflict_remember" />
 
     <include
@@ -50,7 +53,7 @@
 
     <Button
         android:id="@+id/buttonKeepBoth"
-        style="?android:attr/buttonBarButtonStyle"
+        style="@style/DialogNeutralButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

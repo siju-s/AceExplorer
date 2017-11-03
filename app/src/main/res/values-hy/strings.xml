@@ -54,7 +54,7 @@
     <string name="dialog_replace">փոխարինել</string>
     <string name="dialog_keep_both">Պահպանեք երկու ֆայլեր</string>
     <string name="dialog_cancel">վերացնել</string>
-    <string name="dialog_title_paste_conflict">ֆայլը գոյություն ունի</string>
+    <string name="msg_file_exists">ֆայլը գոյություն ունի</string>
     <string name="dialog_from_placeholder">Ից</string>
     <string name="dialog_to_placeholder">To:</string>
     <string name="background">ետին պլան</string>

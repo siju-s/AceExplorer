@@ -53,7 +53,7 @@
     <string name="dialog_replace">แทนที่</string>
     <string name="dialog_keep_both">เก็บไฟล์ทั้งสอง</string>
     <string name="dialog_cancel">ยกเลิก</string>
-    <string name="dialog_title_paste_conflict">ไฟล์ที่มีอยู่</string>
+    <string name="msg_file_exists">ไฟล์ที่มีอยู่</string>
     <string name="dialog_from_placeholder">จาก</string>
     <string name="dialog_to_placeholder">ไปยัง</string>
     <string name="background">พื้นหลัง</string>

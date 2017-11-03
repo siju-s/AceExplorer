@@ -54,7 +54,7 @@
     <string name="dialog_replace">Cserélje</string>
     <string name="dialog_keep_both">Tartsa mindkét fájlt</string>
     <string name="dialog_cancel">Megszünteti</string>
-    <string name="dialog_title_paste_conflict">A fájl létezik</string>
+    <string name="msg_file_exists">A fájl létezik</string>
     <string name="dialog_from_placeholder">Ból ből</string>
     <string name="dialog_to_placeholder">Nak nek:</string>
     <string name="background">Háttér</string>

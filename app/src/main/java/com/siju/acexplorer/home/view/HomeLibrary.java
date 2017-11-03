@@ -114,7 +114,7 @@ class HomeLibrary implements View.OnClickListener {
     }
 
     private void inflateLibraryItem() {
-        Log.d(TAG, "inflateLibraryItem: " + homeLibraryInfoArrayList.size());
+        Log.d(TAG, "inflateLibraryItem: " + homeLibraryInfoArrayList.size()); // TODO: 02/11/17 NPE here in dual mode when orientation change from LAND->PORT
 
         for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
 

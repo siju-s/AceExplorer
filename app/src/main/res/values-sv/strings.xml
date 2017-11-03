@@ -54,7 +54,7 @@
     <string name="dialog_replace">Byta ut</string>
     <string name="dialog_keep_both">Håll båda filerna</string>
     <string name="dialog_cancel">Annullera</string>
-    <string name="dialog_title_paste_conflict">fil existerar</string>
+    <string name="msg_file_exists">fil existerar</string>
     <string name="dialog_from_placeholder">Från</string>
     <string name="dialog_to_placeholder">Till</string>
     <string name="background">Bakgrund</string>

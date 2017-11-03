@@ -21,7 +21,6 @@ import android.os.Process;
 import android.util.Log;
 
 import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.model.helper.MediaStoreHelper;
 import com.siju.acexplorer.model.root.RootDeniedException;
@@ -30,8 +29,6 @@ import com.siju.acexplorer.model.root.RootUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.siju.acexplorer.model.groups.Category.FILES;
 
 public class DeleteTask {
 
@@ -112,15 +109,9 @@ public class DeleteTask {
     private void deleteFromMediaStore(ArrayList<FileInfo> deletedFilesList) {
         for (int i = 0; i < deletedFilesList.size() ; i++) {
             FileInfo fileInfo = deletedFilesList.get(i);
-            Category category = fileInfo.getCategory();
-            int type;
-            if (category.equals(FILES)) {
-                type = fileInfo.getType();
-            } else {
-                type = category.getValue();
-            }
-            Log.d(TAG, "deleteFromMediaStore: Type:"+type);
-            int deleted = MediaStoreHelper.removeMedia(mContext, fileInfo.getFilePath(), type);
+            int category = fileInfo.getCategory().getValue();
+            Log.d(TAG, "deleteFromMediaStore: category:"+category);
+            int deleted = MediaStoreHelper.removeMedia(mContext, fileInfo.getFilePath(), category);
             Log.d(TAG, "deleteFromMediaStore: deleted:"+deleted);
         }
     }

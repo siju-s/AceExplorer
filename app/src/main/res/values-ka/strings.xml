@@ -54,7 +54,7 @@
     <string name="dialog_replace">ჩანაცვლება</string>
     <string name="dialog_keep_both">შენარჩუნება ორივე ფაილი</string>
     <string name="dialog_cancel">გაუქმება</string>
-    <string name="dialog_title_paste_conflict">ფაილი არსებობს</string>
+    <string name="msg_file_exists">ფაილი არსებობს</string>
     <string name="dialog_from_placeholder">მდებარეობა</string>
     <string name="dialog_to_placeholder">იმისათვის, რომ</string>
     <string name="background">Background</string>

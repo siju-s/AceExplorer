@@ -53,7 +53,7 @@
     <string name="dialog_replace">Thay thế</string>
     <string name="dialog_keep_both">Giữ cả hai tập tin</string>
     <string name="dialog_cancel">hủy bỏ</string>
-    <string name="dialog_title_paste_conflict">File tồn tại</string>
+    <string name="msg_file_exists">File tồn tại</string>
     <string name="dialog_from_placeholder">Từ</string>
     <string name="dialog_to_placeholder">Đến</string>
     <string name="background">Lý lịch</string>

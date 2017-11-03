@@ -54,7 +54,7 @@
     <string name="dialog_replace">değiştirmek</string>
     <string name="dialog_keep_both">Her iki dosyaları tutmak</string>
     <string name="dialog_cancel">İptal etmek</string>
-    <string name="dialog_title_paste_conflict">dosya var</string>
+    <string name="msg_file_exists">dosya var</string>
     <string name="dialog_from_placeholder">itibaren</string>
     <string name="dialog_to_placeholder">için</string>
     <string name="background">Arka fon</string>

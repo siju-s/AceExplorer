@@ -53,7 +53,7 @@
     <string name="dialog_replace">置き換える</string>
     <string name="dialog_keep_both">両方のファイルを保管してください</string>
     <string name="dialog_cancel">キャンセル</string>
-    <string name="dialog_title_paste_conflict">ファイルが存在しています</string>
+    <string name="msg_file_exists">ファイルが存在しています</string>
     <string name="dialog_from_placeholder">から</string>
     <string name="dialog_to_placeholder">に</string>
     <string name="background">バックグラウンド</string>

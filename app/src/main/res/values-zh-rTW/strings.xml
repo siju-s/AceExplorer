@@ -53,7 +53,7 @@
     <string name="dialog_replace">更換</string>
     <string name="dialog_keep_both">保留這兩個文件</string>
     <string name="dialog_cancel">取消</string>
-    <string name="dialog_title_paste_conflict">文件已存在</string>
+    <string name="msg_file_exists">文件已存在</string>
     <string name="dialog_from_placeholder">從</string>
     <string name="dialog_to_placeholder">至</string>
     <string name="background">背景</string>

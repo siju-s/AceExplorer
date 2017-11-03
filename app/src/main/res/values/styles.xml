@@ -236,13 +236,13 @@
     </style>
 
     <style name="DialogPositiveButton" parent="Base.Widget.AppCompat.Button.ButtonBar.AlertDialog">
-        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textColor">@color/blue</item>
         <item name="android:layout_marginLeft">@dimen/margin_16</item>
         <item name="android:layout_marginRight">@dimen/margin_16</item>
     </style>
 
     <style name="DialogNegativeButton" parent="Base.Widget.AppCompat.Button.ButtonBar.AlertDialog">
-        <item name="android:textColor">@color/blue</item>
+        <item name="android:textColor">@color/colorAccent</item>
         <!--<item name="android:layout_marginLeft">@dimen/margin_16</item>-->
         <item name="android:layout_marginRight">@dimen/margin_16</item>
     </style>

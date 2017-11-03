@@ -56,7 +56,7 @@
     <string name="dialog_replace">замещать</string>
     <string name="dialog_keep_both">Держите оба файла</string>
     <string name="dialog_cancel">Отмена</string>
-    <string name="dialog_title_paste_conflict">Файл существует</string>
+    <string name="msg_file_exists">Файл существует</string>
     <string name="dialog_from_placeholder">Из</string>
     <string name="dialog_to_placeholder">к</string>
     <string name="background">Задний план</string>

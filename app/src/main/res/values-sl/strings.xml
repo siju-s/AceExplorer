@@ -56,7 +56,7 @@
     <string name="dialog_replace">Zamenjati</string>
     <string name="dialog_keep_both">Naj bo tako datotek</string>
     <string name="dialog_cancel">Prekliči</string>
-    <string name="dialog_title_paste_conflict">datoteka obstaja</string>
+    <string name="msg_file_exists">datoteka obstaja</string>
     <string name="dialog_from_placeholder">iz</string>
     <string name="dialog_to_placeholder">Za</string>
     <string name="background">Ozadje</string>

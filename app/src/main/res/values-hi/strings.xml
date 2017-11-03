@@ -54,7 +54,7 @@
     <string name="dialog_replace">की जगह</string>
     <string name="dialog_keep_both">दोनों फ़ाइलों रखें</string>
     <string name="dialog_cancel">रद्द करना</string>
-    <string name="dialog_title_paste_conflict">फाइल मौजूद है</string>
+    <string name="msg_file_exists">फाइल मौजूद है</string>
     <string name="dialog_from_placeholder">से</string>
     <string name="dialog_to_placeholder">सेवा मेरे:</string>
     <string name="background">पृष्ठभूमि</string>

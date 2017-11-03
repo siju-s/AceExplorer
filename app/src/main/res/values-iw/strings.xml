@@ -56,7 +56,7 @@
     <string name="dialog_replace">החלף</string>
     <string name="dialog_keep_both">שמור את שני הקבצים</string>
     <string name="dialog_cancel">לְבַטֵל</string>
-    <string name="dialog_title_paste_conflict">הקובץ קיים</string>
+    <string name="msg_file_exists">הקובץ קיים</string>
     <string name="dialog_from_placeholder">מ</string>
     <string name="dialog_to_placeholder">ל:</string>
     <string name="background">רקע</string>

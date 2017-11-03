@@ -58,7 +58,7 @@
     <string name="dialog_replace">يحل محل</string>
     <string name="dialog_keep_both">حافظ على كلا الملفين</string>
     <string name="dialog_cancel">إلغاء</string>
-    <string name="dialog_title_paste_conflict">الملف موجود</string>
+    <string name="msg_file_exists">الملف موجود</string>
     <string name="dialog_from_placeholder">من عند</string>
     <string name="dialog_to_placeholder">إلى:</string>
     <string name="background">خلفية</string>

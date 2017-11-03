@@ -53,7 +53,7 @@
     <string name="dialog_replace">Menggantikan</string>
     <string name="dialog_keep_both">Menjaga kedua file</string>
     <string name="dialog_cancel">Membatalkan</string>
-    <string name="dialog_title_paste_conflict">File ada</string>
+    <string name="msg_file_exists">File ada</string>
     <string name="dialog_from_placeholder">Dari</string>
     <string name="dialog_to_placeholder">Untuk</string>
     <string name="background">Latar Belakang</string>

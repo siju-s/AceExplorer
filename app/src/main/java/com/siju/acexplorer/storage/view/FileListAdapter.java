@@ -16,13 +16,9 @@
 
 package com.siju.acexplorer.storage.view;
 
-import android.content.ContentUris;
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.Formatter;
@@ -36,28 +32,18 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.Priority;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.logging.Logger;
-import com.siju.acexplorer.model.FileConstants;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.storage.model.ViewMode;
 import com.siju.acexplorer.theme.ThemeUtils;
 
-import java.io.File;
 import java.util.ArrayList;
 
-import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
-import static com.siju.acexplorer.model.groups.Category.AUDIO;
-import static com.siju.acexplorer.model.groups.Category.IMAGE;
 import static com.siju.acexplorer.model.groups.Category.PICKER;
-import static com.siju.acexplorer.model.groups.Category.VIDEO;
-import static com.siju.acexplorer.model.helper.AppUtils.getAppIconForFolder;
+import static com.siju.acexplorer.utils.ThumbnailUtils.displayThumb;
 
 
 public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -277,27 +263,26 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     private void setViewByCategory(FileListViewHolder fileListViewHolder, int position) {
+        FileInfo fileInfo = fileInfoArrayList.get(position);
 
-        if (fileInfoArrayList.get(position).getType() == PICKER.getValue()) {
-            FileInfo fileInfo = fileInfoArrayList.get(position);
+        if (fileInfo.getCategory().equals(PICKER)) {
             fileListViewHolder.imageIcon.setImageResource(fileInfo.getIcon());
             fileListViewHolder.textFileName.setText(fileInfo.getFileName());
         } else {
-
-            String fileName = fileInfoArrayList.get(position).getFileName();
+            String fileName = fileInfo.getFileName();
             String fileDate;
             if (Category.checkIfFileCategory(category)) {
-                fileDate = FileUtils.convertDate(fileInfoArrayList.get(position).getDate());
+                fileDate = FileUtils.convertDate(fileInfo.getDate());
             } else {
-                fileDate = FileUtils.convertDate(fileInfoArrayList.get(position).getDate() * 1000);
+                fileDate = FileUtils.convertDate(fileInfo.getDate() * 1000);
             }
-            boolean isDirectory = fileInfoArrayList.get(position).isDirectory();
+            boolean isDirectory = fileInfo.isDirectory();
             String fileNoOrSize;
             if (isDirectory) {
-                if (fileInfoArrayList.get(position).isRootMode()) {
+                if (fileInfo.isRootMode()) {
                     fileNoOrSize = context.getString(R.string.directory);
                 } else {
-                    int childFileListSize = (int) fileInfoArrayList.get(position).getSize();
+                    int childFileListSize = (int) fileInfo.getSize();
                     if (childFileListSize == 0) {
                         fileNoOrSize = context.getResources().getString(R.string.empty);
                     } else if (childFileListSize == -1) {
@@ -309,7 +294,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     }
                 }
             } else {
-                long size = fileInfoArrayList.get(position).getSize();
+                long size = fileInfo.getSize();
                 fileNoOrSize = Formatter.formatFileSize(context, size);
             }
 
@@ -320,199 +305,12 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
             fileListViewHolder.textNoOfFileOrSize.setText(fileNoOrSize);
 
-            displayThumb(fileListViewHolder, fileInfoArrayList.get(position).getCategory(),
-                         position);
+            displayThumb(context, fileInfo, fileInfo.getCategory(), fileListViewHolder.imageIcon,
+                         fileListViewHolder.imageThumbIcon);
         }
 
     }
 
-    private void displayThumb(FileListViewHolder fileListViewHolder, Category category, int
-            position) {
-
-        String filePath = fileInfoArrayList.get(position).getFilePath();
-        String fileName = fileInfoArrayList.get(position).getFileName();
-        boolean isDirectory = fileInfoArrayList.get(position).isDirectory();
-
-        switch (category) {
-
-            case FILES:
-            case DOWNLOADS:
-            case COMPRESSED:
-            case FAVORITES:
-            case PDF:
-            case APPS:
-            case LARGE_FILES:
-            case ZIP_VIEWER:
-                if (isDirectory) {
-                    fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_folder_white);
-                    Drawable apkIcon = getAppIconForFolder(context, fileName);
-                    if (apkIcon != null) {
-                        fileListViewHolder.imageThumbIcon.setVisibility(View.VISIBLE);
-                        fileListViewHolder.imageThumbIcon.setImageDrawable(apkIcon);
-                    } else {
-                        fileListViewHolder.imageThumbIcon.setVisibility(View.GONE);
-                        fileListViewHolder.imageThumbIcon.setImageDrawable(null);
-                    }
-
-                } else {
-                    fileListViewHolder.imageThumbIcon.setVisibility(View.GONE);
-                    fileListViewHolder.imageThumbIcon.setImageDrawable(null);
-
-                    int type = fileInfoArrayList.get(position).getType();
-                    fileListViewHolder.imageIcon.setImageDrawable(null);
-//                        Logger.log("TAG", "Adpater path=" + filePath + "position=" + position);
-//                        if (updateItems) {
-                    // If Image or Video file, load thumbnail
-                    if (type == IMAGE.getValue()) {
-                        displayImageThumb(fileListViewHolder, filePath);
-                    } else if (type == VIDEO.getValue()) {
-                        displayVideoThumb(fileListViewHolder, filePath);
-                    } else if (type == AUDIO.getValue()) {
-                        displayAudioAlbumArt(fileListViewHolder, fileInfoArrayList.get(position)
-                                .getFilePath());
-                    } else {
-                        String extension = fileInfoArrayList.get(position).getExtension();
-                        if (extension != null) {
-                            changeFileIcon(fileListViewHolder, extension.toLowerCase(), filePath);
-                        } else {
-                            fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_doc_white);
-                        }
-                    }
-
-
-                }
-                if (fileName.startsWith(".")) {
-                    fileListViewHolder.imageIcon.setColorFilter(Color.argb(200, 255, 255, 255));
-                } else {
-                    fileListViewHolder.imageIcon.clearColorFilter();
-                }
-                break;
-            case AUDIO:
-                Uri uri = ContentUris.withAppendedId(mAudioUri, fileInfoArrayList.get(position)
-                        .getBucketId());
-                RequestOptions options = new RequestOptions()
-                        .centerCrop()
-                        .placeholder(R.drawable.ic_music_default);
-                Glide.with(context).load(uri).apply(options)
-                        .into(fileListViewHolder.imageIcon);
-                break;
-
-            case VIDEO:
-                displayVideoThumb(fileListViewHolder, filePath);
-                break;
-
-            case IMAGE: // For images group
-                displayImageThumb(fileListViewHolder, filePath);
-                break;
-            case DOCS: // For docs group
-                String extension = fileInfoArrayList.get(position).getExtension();
-                extension = extension.toLowerCase();
-                changeFileIcon(fileListViewHolder, extension, null);
-                break;
-
-        }
-    }
-
-
-    private void displayVideoThumb(FileListViewHolder fileListViewHolder, String path) {
-        Uri videoUri = Uri.fromFile(new File(path));
-        RequestOptions options = new RequestOptions()
-                .centerCrop()
-                .placeholder(R.drawable.ic_movie);
-
-        Glide.with(context).load(videoUri)
-                .apply(options)
-                .into(fileListViewHolder.imageIcon);
-    }
-
-    private void displayImageThumb(FileListViewHolder fileListViewHolder, String path) {
-        Uri imageUri = Uri.fromFile(new File(path));
-        RequestOptions options = new RequestOptions()
-                .centerCrop()
-                .placeholder(R.drawable.ic_image_default);
-        Glide.with(context).load(imageUri).transition(withCrossFade(2))
-                .apply(options)
-                .into(fileListViewHolder.imageIcon);
-    }
-
-    private void changeFileIcon(FileListViewHolder fileListViewHolder, String extension, String
-            path) {
-        switch (extension) {
-            case FileConstants.APK_EXTENSION:
-                RequestOptions options = new RequestOptions()
-                        .centerCrop()
-                        .placeholder(R.drawable.ic_apk_green)
-                        .diskCacheStrategy(DiskCacheStrategy.NONE); // cannot disk cache
-                // ApplicationInfo, nor Drawables
-
-                Glide.with(context)
-                        .as(Drawable.class)
-                        .apply(options.dontAnimate().dontTransform().priority(Priority.LOW))
-                        .load(path)
-                        .into(fileListViewHolder.imageIcon);
-
-                break;
-            case FileConstants.EXT_DOC:
-            case FileConstants.EXT_DOCX:
-                fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_doc);
-                break;
-            case FileConstants.EXT_XLS:
-            case FileConstants.EXT_XLXS:
-            case FileConstants.EXT_CSV:
-                fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_xls);
-                break;
-            case FileConstants.EXT_PPT:
-            case FileConstants.EXT_PPTX:
-                fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_ppt);
-                break;
-            case FileConstants.EXT_PDF:
-                fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_pdf);
-                break;
-            case FileConstants.EXT_TEXT:
-                fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_txt);
-                break;
-            case FileConstants.EXT_HTML:
-                fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_html);
-                break;
-            case FileConstants.EXT_ZIP:
-                fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_file_zip);
-                break;
-            default:
-                fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_doc_white);
-                break;
-        }
-    }
-
-    private void displayAudioAlbumArt(FileListViewHolder fileListViewHolder, String path) {
-        fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_music_default);
-        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        String[] projection = new String[]{MediaStore.Audio.Media.ALBUM_ID};
-        String selection = MediaStore.Audio.Media.DATA + " = ?";
-        String[] selectionArgs = new String[]{path};
-
-        Cursor cursor = context.getContentResolver().query(uri, projection, selection,
-                                                           selectionArgs,
-                                                           null);
-
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                int albumIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID);
-                long albumId = cursor.getLong(albumIdIndex);
-
-//                Logger.log("Adapter", "displayAudioAlbumArt=" + albumId);
-                Uri newUri = ContentUris.withAppendedId(mAudioUri, albumId);
-                RequestOptions options = new RequestOptions()
-                        .centerCrop()
-                        .placeholder(R.drawable.ic_music_default);
-                Glide.with(context).load(newUri)
-                        .apply(options)
-                        .into(fileListViewHolder.imageIcon);
-            }
-            cursor.close();
-        } else {
-            fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_music_default);
-        }
-    }
 
     void toggleSelection(int position, boolean isLongPress) {
         if (isLongPress) {

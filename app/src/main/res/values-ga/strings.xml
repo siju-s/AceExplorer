@@ -57,7 +57,7 @@
     <string name="dialog_replace">Ionadaigh</string>
     <string name="dialog_keep_both">Coinnigh an dá comhaid</string>
     <string name="dialog_cancel">Cealaigh</string>
-    <string name="dialog_title_paste_conflict">ann comhad</string>
+    <string name="msg_file_exists">ann comhad</string>
     <string name="dialog_from_placeholder">ó</string>
     <string name="dialog_to_placeholder">Chun:</string>
     <string name="background">cúlra</string>

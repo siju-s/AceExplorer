@@ -54,7 +54,7 @@
     <string name="dialog_replace">جایگزین کردن</string>
     <string name="dialog_keep_both">هر دو فایل نگه دارید</string>
     <string name="dialog_cancel">لغو کردن</string>
-    <string name="dialog_title_paste_conflict">فایل وجود دارد</string>
+    <string name="msg_file_exists">فایل وجود دارد</string>
     <string name="dialog_from_placeholder">از جانب</string>
     <string name="dialog_to_placeholder">به:</string>
     <string name="background">زمینه</string>

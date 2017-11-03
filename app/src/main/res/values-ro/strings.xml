@@ -55,7 +55,7 @@
     <string name="dialog_replace">A inlocui</string>
     <string name="dialog_keep_both">Păstrați ambele fișiere</string>
     <string name="dialog_cancel">Anulare</string>
-    <string name="dialog_title_paste_conflict">fisierul exista</string>
+    <string name="msg_file_exists">fisierul exista</string>
     <string name="dialog_from_placeholder">Din</string>
     <string name="dialog_to_placeholder">La</string>
     <string name="background">fundal</string>

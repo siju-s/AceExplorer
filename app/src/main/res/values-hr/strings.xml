@@ -55,7 +55,7 @@
     <string name="dialog_replace">Zamijeniti</string>
     <string name="dialog_keep_both">Držite obje datoteke</string>
     <string name="dialog_cancel">Otkazati</string>
-    <string name="dialog_title_paste_conflict">datoteka postoji</string>
+    <string name="msg_file_exists">datoteka postoji</string>
     <string name="dialog_from_placeholder">Iz</string>
     <string name="dialog_to_placeholder">Do:</string>
     <string name="background">pozadina</string>

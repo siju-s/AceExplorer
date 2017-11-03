@@ -54,7 +54,7 @@
     <string name="dialog_replace">Erstatte</string>
     <string name="dialog_keep_both">Hold begge filer</string>
     <string name="dialog_cancel">Ophæve</string>
-    <string name="dialog_title_paste_conflict">Fil eksisterer</string>
+    <string name="msg_file_exists">Fil eksisterer</string>
     <string name="dialog_from_placeholder">Fra</string>
     <string name="dialog_to_placeholder">Til:</string>
     <string name="background">Baggrund</string>

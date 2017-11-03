@@ -54,7 +54,7 @@
     <string name="dialog_replace">Skipta</string>
     <string name="dialog_keep_both">Halda bæði skrár</string>
     <string name="dialog_cancel">Hætta</string>
-    <string name="dialog_title_paste_conflict">skráin er til</string>
+    <string name="msg_file_exists">skráin er til</string>
     <string name="dialog_from_placeholder">frá</string>
     <string name="dialog_to_placeholder">til</string>
     <string name="background">bakgrunnur</string>

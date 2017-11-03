@@ -431,6 +431,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         fileList.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
+
+
                 int event = motionEvent.getActionMasked();
 
                 if (shouldStopAnimation) {
@@ -448,15 +450,16 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 } else if (isDragStarted && event == MotionEvent.ACTION_MOVE && mLongPressedTime !=
                         0) {
                     long timeElapsed = System.currentTimeMillis() - mLongPressedTime;
-                    Logger.log(TAG, "On item touch time Elapsed" + timeElapsed);
+//                    Logger.log(TAG, "On item touch time Elapsed" + timeElapsed);
 
                     if (timeElapsed > 1000) {
                         mLongPressedTime = 0;
                         isDragStarted = false;
-                        Logger.log(TAG, "On touch drag path size=" + draggedData.size());
+//                        Logger.log(TAG, "On touch drag path size=" + draggedData.size());
                         if (draggedData.size() > 0) {
                             Intent intent = new Intent();
                             intent.putParcelableArrayListExtra(FileConstants.KEY_PATH, draggedData);
+                            intent.putExtra(FileConstants.KEY_CATEGORY, category.getValue());
                             ClipData data = ClipData.newIntent("", intent);
                             int count = fileListAdapter.getSelectedCount();
                             View.DragShadowBuilder shadowBuilder = dragHelper.getDragShadowBuilder
@@ -469,9 +472,14 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                         }
                     }
                 }
+                if (motionEvent.getAction() == MotionEvent.ACTION_UP || motionEvent.getAction() == MotionEvent.ACTION_CANCEL) {
+                    view.performClick();
+                }
                 return false;
             }
         });
+
+
 
 
     }
@@ -823,14 +831,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 String oldFile = intent.getStringExtra(KEY_FILEPATH);
                 String newFile = intent.getStringExtra(KEY_FILEPATH2);
                 Category category = fileInfoList.get(position).getCategory();
-                int type;
-                if (category.equals(FILES)) {
-                    type = fileInfoList.get(position).getType();
-                } else {
-                    type = category.getValue();
-                }
 
-                removeMedia(getActivity(), oldFile, type);
+                removeMedia(getActivity(), oldFile, category.getValue());
                 scanFile(getActivity().getApplicationContext(), newFile);
 
                 fileListAdapter.setStopAnimation(true);
@@ -874,10 +876,15 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         }
     }
 
+    /**
+     *
+     * @return false to avoid call to super.onBackPressed()
+     */
     public boolean onBackPressed() {
 
         if (menuControls.isSearch()) {
-            return true;
+            menuControls.endSearch();
+            return false;
         } else if (isZipMode()) {
             zipViewer.onBackPressed();
         } else if(isActionModeActive() && !menuControls.isPasteOp()) {
@@ -1287,9 +1294,9 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         DialogHelper.showInputDialog(getContext(), texts, Operations.RENAME, text, dialogListener);
     }
 
-    public void onPasteAction(boolean isMove, ArrayList<FileInfo> info, String destinationDir) {
+    public void onPasteAction(boolean isMove, ArrayList<FileInfo> filesToPaste, String destinationDir) {
         menuControls.endActionMode();
-        bridge.startPasteOperation(destinationDir, isMove, isRooted(), info);
+        bridge.startPasteOperation(destinationDir, isMove, isRooted(), filesToPaste);
     }
 
     private Intent operationIntent;
@@ -1330,10 +1337,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             case EXTRACT:
             case RENAME:
                 final EditText editText = dialog.findViewById(R.id.editFileName);
-                editText.setError(getContext().getString(R.string.file_exists));
+                editText.setError(getContext().getString(R.string.msg_file_exists));
                 break;
-
-
         }
 
     }
@@ -1465,11 +1470,9 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     public int onDragLocationEvent(DragEvent event, int oldPos) {
-        View onTopOf = fileList.findChildViewUnder(event.getX(), event
-                .getY());
+        View onTopOf = fileList.findChildViewUnder(event.getX(), event.getY());
         int newPos = fileList.getChildAdapterPosition(onTopOf);
         Log.d(TAG, "onDragLocationEvent: pos:"+newPos);
-
 
         if (oldPos != newPos && newPos != RecyclerView.NO_POSITION) {
             // For scroll up
@@ -1499,6 +1502,10 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     public void onDragDropEvent(DragEvent event) {
+        if (!category.equals(FILES)) {
+            Toast.makeText(getContext(), getResources().getString(R.string.error_unsupported), Toast.LENGTH_SHORT).show();
+            return;
+        }
         View top = fileList.findChildViewUnder(event.getX(), event.getY());
         int position = fileList.getChildAdapterPosition(top);
         Logger.log(TAG, "DROP new pos=" + position);
@@ -1533,14 +1540,14 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         if (!paths.contains(destinationDir)) {
             if (!destinationDir.equals(sourceParent)) {
                 Logger.log(TAG, "Source parent=" + sourceParent + " Dest=" +
-                        destinationDir);
+                        destinationDir +  "draggedFiles:"+draggedFiles.size());
                 dragHelper.showDragDialog(draggedFiles, destinationDir);
             } else {
                 ArrayList<FileInfo> info = new ArrayList<>();
                 info.addAll(draggedFiles);
-                onPasteAction(false, info, destinationDir);
                 Logger.log(TAG, "Source=" + draggedFiles.get(0) + "Dest=" +
                         destinationDir);
+                onPasteAction(false, info, destinationDir);
             }
         }
 
@@ -1553,38 +1560,40 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     public void onDragEnded(View view, DragEvent event) {
+
         View top1 = fileList.findChildViewUnder(event.getX(), event.getY());
         int position1 = fileList.getChildAdapterPosition(top1);
+        Log.d(TAG, "onDragEnded: "+category + " result:"+event.getResult() + " position:"+position1);
+
         @SuppressWarnings("unchecked")
         ArrayList<FileInfo> dragPaths = (ArrayList<FileInfo>) event.getLocalState();
 
 
-        Logger.log(TAG, "DRAG END new pos=" + position1);
-        Logger.log(TAG, "DRAG END Local state=" + dragPaths);
-        Logger.log(TAG, "DRAG END result=" + event.getResult());
-        Logger.log(TAG, "DRAG END currentDirSingle=" + mLastSinglePaneDir);
-        Log.d(TAG, "DRag end");
+//        Logger.log(TAG, "DRAG END new pos=" + position1);
+//        Logger.log(TAG, "DRAG END Local state=" + dragPaths);
+//        Logger.log(TAG, "DRAG END result=" + event.getResult());
+//        Logger.log(TAG, "DRAG END currentDirSingle=" + mLastSinglePaneDir);
+//        Log.d(TAG, "DRag end");
         fileListAdapter.clearDragPos();
         if (!event.getResult() && position1 == RecyclerView.NO_POSITION) {
+
+            ClipData.Item item = event.getClipData().getItemAt(0);
+            Intent intent = item.getIntent();
+            if (intent == null) {
+                menuControls.endActionMode();
+                return;
+            }
+            int dragCategory = intent.getIntExtra(FileConstants.KEY_CATEGORY, 0);
+            Log.d(TAG, "onDragEnded: category:"+category + " dropcat:"+dragCategory);
+
+            if (dragCategory == FILES.getValue() && !category.equals(FILES)) {
+                Toast.makeText(getContext(), "Not supported", Toast.LENGTH_SHORT).show();
+                return;
+            }
             ViewParent parent1 = view.getParent().getParent();
 
             if (((View) parent1).getId() == R.id.frame_container_dual) {
                 Logger.log(TAG, "DRAG END parent dual =" + true);
-/*                            FileListDualFragment dualPaneFragment = (FileListDualFragment)
-                                    getFragmentManager()
-                                            .findFragmentById(R
-                                                    .id.frame_container_dual);
-                            Logger.log(TAG, "DRAG END Dual dir=" + mLastDualPaneDir);
-
-//                            Logger.log(TAG, "Source=" + draggedData.get(0) + "Dest=" +
-mLastDualPaneDir);
-                            if (dualPaneFragment != null && new File(mLastDualPaneDir).list()
-                            .length == 0 &&
-                                    dragPaths.size() != 0) {
-//                                if (!destinationDir.equals(paths.get(0))) {
-                                showDragDialog(dragPaths, mLastDualPaneDir);
-//                                }
-                            }*/
             } else {
                 Logger.log(TAG, "DRAG END parent dual =" + false);
                 BaseFileList singlePaneFragment = (BaseFileList)
@@ -1593,8 +1602,6 @@ mLastDualPaneDir);
                                         .id.main_container);
                 Logger.log(TAG, "DRAG END single dir=" + mLastSinglePaneDir);
 
-//                            Logger.log(TAG, "Source=" + draggedData.get(0) + "Dest=" +
-// mLastDualPaneDir);
                 if (singlePaneFragment != null && new File(mLastSinglePaneDir).list()
                         .length == 0 &&
                         dragPaths.size() != 0) {
@@ -1605,6 +1612,7 @@ mLastDualPaneDir);
             }
 
         }
+        menuControls.endActionMode();
         draggedData = new ArrayList<>();
     }
 
@@ -1636,27 +1644,11 @@ mLastDualPaneDir);
     }
 
 
-    private boolean isInitialSearch;
-
-    private void addSearchResult(FileInfo fileInfo) {
-        // initially clearing the array for new result set
-        if (!isInitialSearch) {
-            fileInfoList.clear();
-            fileListAdapter.clear();
-
-        }
-        isInitialSearch = true;
-        fileInfoList.add(fileInfo);
-        fileListAdapter.updateSearchResult(fileInfo);
-        stopAnimation();
-//        aceActivity.addToBackStack(currentDir, mCategory);
-
-    }
-
     private void startActionMode() {
         isActionModeActive = true;
         hideFab();
         isInSelectionMode = true;
+        draggedData.clear();
         menuControls.startActionMode();
     }
 
@@ -1789,21 +1781,17 @@ mLastDualPaneDir);
 
     public void endActionMode() {
 
+        isDragStarted = false;
         isActionModeActive = false;
         isInSelectionMode = false;
         clearSelection();
         clearSelectedPos();
         menuControls.hideBottomToolbar();
         mSwipeRefreshLayout.setEnabled(true);
-        draggedData.clear();
         // FAB should be visible only for Files Category
         if (isFilesCategory()) {
             showFab();
         }
-    }
-
-    public boolean isInSelectionMode() {
-        return isInSelectionMode;
     }
 
 
@@ -1830,7 +1818,6 @@ mLastDualPaneDir);
         if (!mInstanceStateExists) {
             bridge.saveSettingsOnExit(gridCols, viewMode);
         }
-        menuControls.removeSearchTask();
 
         if (fileListAdapter != null) {
             fileListAdapter.onDetach();

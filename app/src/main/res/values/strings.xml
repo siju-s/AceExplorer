@@ -57,7 +57,7 @@
     <string name="dialog_replace">Replace</string>
     <string name="dialog_keep_both">Keep both files</string>
     <string name="dialog_cancel">Cancel</string>
-    <string name="dialog_title_paste_conflict">File exists</string>
+    <string name="msg_file_exists">File exists</string>
     <string name="dialog_from_placeholder">From</string>
     <string name="dialog_to_placeholder">To</string>
     <string name="background">Background</string>
@@ -141,7 +141,6 @@
     <string name="image">Image</string>
     <string name="audio">Audio</string>
     <string name="other">Other</string>
-    <string name="file_exists">File already exists</string>
     <string name="create">Create</string>
     <string name="zip_progress_title">Creating zip</string>
     <string name="needsaccess">Write Access Required</string>
@@ -217,6 +216,9 @@
     <string name="msg_added_fav">%d item(s) added to Favorites.</string>
     <string name="header_source">Source</string>
     <string name="header_destination">Destination</string>
+    <string name="error_unsupported">Not supported</string>
+    <string name="copy_path">Copy path</string>
+    <string name="text_copied_clipboard">Copied to clipboard.</string>
 
 
 </resources>

@@ -21,29 +21,30 @@ import android.os.Parcelable;
 
 import com.siju.acexplorer.model.groups.Category;
 
-import static android.R.attr.type;
 
+@SuppressWarnings("unused")
 public class FileInfo implements Parcelable {
 
     private Category category;
-    private String fileName;
-    private String filePath;
-    private String fileDate;
-    private String noOfFilesOrSize;
-    private boolean isDirectory;
-    private String extension;
-    private long id = -1;
+    private String   fileName;
+    private String   filePath;
+    private String   fileDate;
+    private String   noOfFilesOrSize;
+    private String   extension;
+    private String   permissions;
+    private long     date;
+    private long     size;
+    private boolean  isDirectory;
+    private boolean  isRootMode;
+    private int      count;
+    private int      icon;
+
+    private long id       = -1;
     private long bucketId = -1;
-    private String permissions;
-    private long date;
-    private long size;
-    private boolean isRootMode;
-
-    private int count;
-    private int icon;
 
 
-    public FileInfo(Category category, String fileName, String filePath, long fileDate, long noOfFilesOrSize, boolean isDirectory,
+    public FileInfo(Category category, String fileName, String filePath, long fileDate, long
+            noOfFilesOrSize, boolean isDirectory,
                     String extension, String permissions, boolean rootMode) {
         this.fileName = fileName;
         this.filePath = filePath;
@@ -57,14 +58,16 @@ public class FileInfo implements Parcelable {
     }
 
     // Used for apk
-    public FileInfo(Category category, long id, String fileName, String filePath, long fileDate, long size,
+    public FileInfo(Category category, long id, String fileName, String filePath, long fileDate,
+                    long size,
                     String extension) {
         this(category, fileName, filePath, fileDate, size, false, extension, null, false);
         this.id = id;
     }
 
 
-    public FileInfo(Category category, long id, long bucketId, String fileName, String filePath, long fileDate, long size,
+    public FileInfo(Category category, long id, long bucketId, String fileName, String filePath,
+                    long fileDate, long size,
                     String extension) {
         this(category, id, fileName, filePath, fileDate, size, extension);
         this.bucketId = bucketId;
@@ -83,6 +86,11 @@ public class FileInfo implements Parcelable {
         this.count = count;
     }
 
+
+    public FileInfo(Category category, String filePath) {
+        this.category = category;
+        this.filePath = filePath;
+    }
 
     private FileInfo(Parcel in) {
         category = (Category) in.readSerializable();
@@ -120,9 +128,15 @@ public class FileInfo implements Parcelable {
     }
 
     public boolean equals(Object obj) {
-        if (obj == null) return false;
-        if (obj == this) return true;
-        if (!(obj instanceof FileInfo)) return false;
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof FileInfo)) {
+            return false;
+        }
         FileInfo o = (FileInfo) obj;
         return o.filePath.equals(this.filePath);
     }
@@ -144,73 +158,46 @@ public class FileInfo implements Parcelable {
         return icon;
     }
 
-// --Commented out by Inspection START (06-11-2016 11:23 PM):
-//    public void setIcon(int icon) {
-//        this.icon = icon;
-//    }
-// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
+    public void setIcon(int icon) {
+        this.icon = icon;
+    }
 
     public Category getCategory() {
         return category;
     }
 
-// --Commented out by Inspection START (06-11-2016 11:23 PM):
-//    public void setCategoryId(int categoryId) {
-//        this.categoryId = categoryId;
-//    }
-// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
 
     public int getCount() {
         return count;
     }
 
-// --Commented out by Inspection START (06-11-2016 11:23 PM):
-//    public void setCount(int count) {
-//        this.count = count;
-//    }
-// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
+    public void setCount(int count) {
+        this.count = count;
+    }
 
     public long getBucketId() {
         return bucketId;
     }
 
-// --Commented out by Inspection START (06-11-2016 11:23 PM):
-//    public void setBucketId(long bucketId) {
-//        this.bucketId = bucketId;
-//    }
-// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
-
-// --Commented out by Inspection START (06-11-2016 11:23 PM):
-//    public long getId() {
-//        return id;
-//    }
-// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
-
-// --Commented out by Inspection START (06-11-2016 11:23 PM):
-//    public void setId(long id) {
-//        this.id = id;
-//    }
-// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
-
-    public int getType() {
-        return type;
+    public void setBucketId(long bucketId) {
+        this.bucketId = bucketId;
     }
 
-// --Commented out by Inspection START (06-11-2016 11:23 PM):
-//    public void setType(int type) {
-//        this.type = type;
-//    }
-// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getExtension() {
         return extension;
     }
 
-// --Commented out by Inspection START (06-11-2016 11:23 PM):
-//    public void setExtension(String extension) {
-//        this.extension = extension;
-//    }
-// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
+    public void setExtension(String extension) {
+        this.extension = extension;
+    }
 
     public String getFileName() {
         return fileName;
@@ -228,80 +215,54 @@ public class FileInfo implements Parcelable {
         this.filePath = filePath;
     }
 
-// --Commented out by Inspection START (06-11-2016 11:23 PM):
-//    public String getFileDate() {
-//        return fileDate;
-//    }
-// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
+    public String getFileDate() {
+        return fileDate;
+    }
 
-// --Commented out by Inspection START (06-11-2016 11:23 PM):
-//    public void setDate(long date) {
-//        this.date = date;
-//    }
-// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
+    public void setDate(long date) {
+        this.date = date;
+    }
 
     public long getSize() {
         return size;
     }
 
-// --Commented out by Inspection START (06-11-2016 11:23 PM):
-//    public void setSize(long size) {
-//        this.size = size;
-//    }
-// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
+    public void setSize(long size) {
+        this.size = size;
+    }
 
     public long getDate() {
         return date;
     }
 
-// --Commented out by Inspection START (06-11-2016 11:23 PM):
-//    public void setFileDate(String fileDate) {
-//        this.fileDate = fileDate;
-//    }
-// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
+    public void setFileDate(String fileDate) {
+        this.fileDate = fileDate;
+    }
 
 
     public String getNoOfFilesOrSize() {
         return noOfFilesOrSize;
     }
 
-// --Commented out by Inspection START (06-11-2016 11:23 PM):
-//    public void setNoOfFilesOrSize(String noOfFilesOrSize) {
-//        this.noOfFilesOrSize = noOfFilesOrSize;
-//    }
-// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
-
-// --Commented out by Inspection START (06-11-2016 11:23 PM):
-//    public String getMimeType() {
-//        return mimeType;
-//    }
-// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
-
-// --Commented out by Inspection START (06-11-2016 11:23 PM):
-//    public void setMimeType(String mimeType) {
-//        this.mimeType = mimeType;
-//    }
-// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
+    public void setNoOfFilesOrSize(String noOfFilesOrSize) {
+        this.noOfFilesOrSize = noOfFilesOrSize;
+    }
 
     public boolean isDirectory() {
         return isDirectory;
     }
 
-// --Commented out by Inspection START (06-11-2016 11:23 PM):
-//    public void setDirectory(boolean directory) {
-//        isDirectory = directory;
-//    }
-// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
+    public void setDirectory(boolean directory) {
+        isDirectory = directory;
+    }
 
     public String getPermissions() {
         return permissions;
     }
 
-// --Commented out by Inspection START (06-11-2016 11:23 PM):
-//    public void setPermissions(String permissions) {
-//        this.permissions = permissions;
-//    }
-// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
+    public void setPermissions(String permissions) {
+        this.permissions = permissions;
+    }
 
     @Override
     public int describeContents() {

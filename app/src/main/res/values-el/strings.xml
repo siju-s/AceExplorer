@@ -54,7 +54,7 @@
     <string name="dialog_replace">Αντικαθιστώ</string>
     <string name="dialog_keep_both">Κρατήστε και τα δύο αρχεία</string>
     <string name="dialog_cancel">Ματαίωση</string>
-    <string name="dialog_title_paste_conflict">υπάρχει αρχείο</string>
+    <string name="msg_file_exists">υπάρχει αρχείο</string>
     <string name="dialog_from_placeholder">Από</string>
     <string name="dialog_to_placeholder">Να:</string>
     <string name="background">Φόντο</string>

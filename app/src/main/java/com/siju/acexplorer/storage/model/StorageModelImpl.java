@@ -173,7 +173,7 @@ public class StorageModelImpl implements StoragesModel {
 
         final File file = new File(currentDir + File.separator + name);
         if (file.exists()) {
-            listener.onFileExists(FOLDER_CREATION, context.getString(R.string.file_exists));
+            listener.onFileExists(FOLDER_CREATION, context.getString(R.string.msg_file_exists));
             return;
         }
         new Thread(new Runnable() {
@@ -196,7 +196,7 @@ public class StorageModelImpl implements StoragesModel {
         final File file = new File(currentDir + File.separator + name + EXT_TXT);
 
         if (file.exists()) {
-            listener.onFileExists(FILE_CREATION, context.getString(R.string.file_exists));
+            listener.onFileExists(FILE_CREATION, context.getString(R.string.msg_file_exists));
             return;
         }
         new Thread(new Runnable() {
@@ -231,7 +231,7 @@ public class StorageModelImpl implements StoragesModel {
 
         if (FileUtils.isFileExisting(selectedPath, newFile.getName())) {
             listener.onFileExists(Operations.EXTRACT, context.getString(R.string
-                    .dialog_title_paste_conflict));
+                    .msg_file_exists));
             return;
         }
         listener.dismissDialog(Operations.EXTRACT);
@@ -275,7 +275,7 @@ public class StorageModelImpl implements StoragesModel {
 
         if (FileUtils.isFileExisting(currentDir, newFile.getName())) {
             listener.onFileExists(Operations.EXTRACT, context.getString(R.string
-                    .dialog_title_paste_conflict));
+                    .msg_file_exists));
             return;
         }
         listener.dismissDialog(Operations.COMPRESS);
@@ -341,7 +341,7 @@ public class StorageModelImpl implements StoragesModel {
 
         @Override
         public void exists(Operations operation) {
-            listener.onFileExists(operation, context.getString(R.string.file_exists));
+            listener.onFileExists(operation, context.getString(R.string.msg_file_exists));
         }
 
         @Override

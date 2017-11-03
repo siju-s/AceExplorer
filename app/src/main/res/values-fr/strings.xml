@@ -54,7 +54,7 @@
     <string name="dialog_replace">Remplacer</string>
     <string name="dialog_keep_both">Gardez les deux fichiers</string>
     <string name="dialog_cancel">Annuler</string>
-    <string name="dialog_title_paste_conflict">le fichier existe</string>
+    <string name="msg_file_exists">le fichier existe</string>
     <string name="dialog_from_placeholder">De</string>
     <string name="dialog_to_placeholder">À:</string>
     <string name="background">Contexte</string>

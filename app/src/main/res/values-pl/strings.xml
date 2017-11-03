@@ -56,7 +56,7 @@
     <string name="dialog_replace">Zastąpić</string>
     <string name="dialog_keep_both">Trzymaj oba pliki</string>
     <string name="dialog_cancel">Anuluj</string>
-    <string name="dialog_title_paste_conflict">plik istnieje</string>
+    <string name="msg_file_exists">plik istnieje</string>
     <string name="dialog_from_placeholder">Od</string>
     <string name="dialog_to_placeholder">Do</string>
     <string name="background">tło</string>

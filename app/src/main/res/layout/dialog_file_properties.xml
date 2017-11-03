@@ -17,8 +17,8 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
@@ -34,7 +34,7 @@
             android:layout_width="@dimen/dialog_image"
             android:layout_height="@dimen/dialog_image"
             android:src="@drawable/ic_folder"
-            tools:ignore="ContentDescription"/>
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:id="@+id/textFileName"
@@ -201,12 +201,5 @@
     </ScrollView>
 
 
-    <Button
-        android:id="@+id/buttonPositive"
-        style="@style/DialogPositiveButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/margin_16"
-        android:text="@string/msg_ok" />
+    <include layout="@layout/dialog_buttons" />
 </LinearLayout>
