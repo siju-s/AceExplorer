@@ -534,6 +534,10 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
         hideBottomToolbar();
         clearActionModeToolbar();
         storagesUiView.endActionMode();
+        if (isSearchActive()) {
+            isSearchActive = false;
+            storagesUiView.refreshList();
+        }
     }
 
     private void updateMenuTitle(int viewMode) {
@@ -585,9 +589,18 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
         searchView.setQuery(query, false);
     }
 
+    private boolean isSearchActive() {
+        return isSearchActive;
+    }
+    private boolean isSearchActive;
+
 
     @Override
     public boolean onQueryTextChange(String query) {
+        if (storagesUiView.isActionModeActive()) {
+            return true;
+        }
+        isSearchActive = !query.isEmpty();
         storagesUiView.onQueryTextChange(query);
         return true;
     }
@@ -595,6 +608,7 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
     @Override
     public boolean onQueryTextSubmit(String query) {
         hideSearchView();
+        isSearchActive = false;
         return false;
     }
 

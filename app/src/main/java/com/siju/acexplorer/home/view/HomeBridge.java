@@ -49,7 +49,6 @@ public class HomeBridge implements HomeView {
         this.fragment = fragment;
         long time = System.currentTimeMillis();
         homeUiView = HomeUiView.inflate(parent);
-        Log.d("HomeBridge", "Time taken: "+(System.currentTimeMillis() - time));
         homeUiView.setBridgeRef(this);
         homeUiView.setFragment(fragment);
         homeUiView.setDrawerListener(drawerListener);

@@ -34,12 +34,10 @@ public class AppIconDecoder implements ResourceDecoder<ApplicationInfo, Drawable
     @Override
     public Resource<Drawable> decode(ApplicationInfo applicationInfo, int width, int height, Options
             options) throws IOException {
-//        Log.d("AppIconDecoder", "decode: " + applicationInfo);
         if (applicationInfo == null) {
             return null;
         }
         Drawable icon = applicationInfo.loadIcon(context.getPackageManager());
-//        Log.d("AppIconDecoder", "decode: " + icon);
 
         return new DrawableResource<Drawable>(icon) {
 

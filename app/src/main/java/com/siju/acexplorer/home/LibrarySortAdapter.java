@@ -16,9 +16,7 @@
 
 package com.siju.acexplorer.home;
 
-import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -29,9 +27,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.storage.view.custom.helper.ItemTouchHelperViewHolder;
 import com.siju.acexplorer.home.model.LibrarySortModel;
 import com.siju.acexplorer.storage.view.custom.helper.ItemTouchHelperAdapter;
+import com.siju.acexplorer.storage.view.custom.helper.ItemTouchHelperViewHolder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,7 +66,7 @@ class LibrarySortAdapter extends RecyclerView.Adapter<LibrarySortAdapter.Library
         librarySortViewHolder.imageSort.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent event) {
-                if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
+                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
                     mDragStartListener.onStartDrag(librarySortViewHolder);
                 }
                 return false;
@@ -83,7 +81,6 @@ class LibrarySortAdapter extends RecyclerView.Adapter<LibrarySortAdapter.Library
             public void onClick(View view) {
 
                 boolean isChecked = model.isChecked();
-                Log.d("TAG", "Text clicked==" + isChecked);
                 model.setChecked(!isChecked);
                 librarySortViewHolder.checkBox.setChecked(!isChecked);
             }
@@ -92,7 +89,6 @@ class LibrarySortAdapter extends RecyclerView.Adapter<LibrarySortAdapter.Library
         librarySortViewHolder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton button, boolean isChecked) {
-                Log.d("TAG", "Checkbox clicked==" + isChecked);
                 model.setChecked(isChecked);
             }
         });

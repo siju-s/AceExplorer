@@ -19,7 +19,6 @@ package com.siju.acexplorer.storage.model.operations;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
-import android.util.Log;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.logging.Logger;
@@ -111,7 +110,6 @@ public class FileOpsHelper {
                 break;
             case INTERNAL:
                 boolean result1 = FileOperations.mkdir(file);
-                Log.d(TAG, "mkDir: fileOperationCallBack:"+fileOperationCallBack);
                 fileOperationCallBack.opCompleted(FOLDER_CREATION, file, result1);
                 break;
 
@@ -141,7 +139,6 @@ public class FileOpsHelper {
                     e.printStackTrace();
                     fileOperationCallBack.opCompleted(FILE_CREATION, file, false);
                 }
-                Log.d(TAG, "doInBackground: exists=" + exists);
                 if (exists) {
                     fileOperationCallBack.exists(FILE_CREATION);
                 } else {
@@ -173,11 +170,11 @@ public class FileOpsHelper {
     }
 
 
-    public static void renameFile(final File oldFile, final File newFile, final int position,
+    public static void renameFile(Operations operation, final File oldFile, final File newFile, final int position,
                                   boolean isRooted, FileOperationCallBack fileOperationCallBack) {
         Logger.log(TAG, "Rename--oldFile=" + oldFile + " new file=" + newFile);
         if (newFile.exists()) {
-            fileOperationCallBack.exists(Operations.RENAME);
+            fileOperationCallBack.exists(operation);
             return;
         }
 
@@ -199,23 +196,23 @@ public class FileOpsHelper {
                         result = true;
                     }
                 }
-                fileOperationCallBack.opCompleted(Operations.RENAME, oldFile, newFile, position,
+                fileOperationCallBack.opCompleted(operation, oldFile, newFile, position,
                         result);
                 break;
             case EXTERNAL:
-                fileOperationCallBack.launchSAF(Operations.RENAME, oldFile, newFile, position);
+                fileOperationCallBack.launchSAF(operation, oldFile, newFile, position);
                 break;
             case INTERNAL:
                 boolean exists1 = FileUtils.isFileExisting(oldFile.getParent(), newFile
                         .getName());
                 if (exists1) {
-                    fileOperationCallBack.exists(Operations.RENAME);
+                    fileOperationCallBack.exists(operation);
                 } else {
                     boolean result1 = renameFolder(oldFile, newFile);
                     boolean fileCreated1 = !oldFile.exists() && newFile.exists();
                     Logger.log(TAG, "Rename--filexists=" + fileCreated1 + "MODE=" + INTERNAL +
                             "result==" + result1);
-                    fileOperationCallBack.opCompleted(Operations.RENAME, oldFile, newFile,
+                    fileOperationCallBack.opCompleted(operation, oldFile, newFile,
                             position, result1);
                 }
                 break;
@@ -400,8 +397,8 @@ public class FileOpsHelper {
                 String oldFilePath = intent.getStringExtra(KEY_FILEPATH);
                 String newFilePath = intent.getStringExtra(KEY_FILEPATH2);
                 int position = intent.getIntExtra(KEY_POSITION, INVALID_POS);
-                renameFile(new File(oldFilePath), new File(newFilePath),
-                        position, isRooted, fileOperationCallBack);
+                renameFile(operation, new File(oldFilePath),
+                             new File(newFilePath), position, isRooted, fileOperationCallBack);
                 break;
 
             case EXTRACT:

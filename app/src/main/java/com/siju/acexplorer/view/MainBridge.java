@@ -46,7 +46,6 @@ public class MainBridge implements MainUi {
         this.context = parent.getContext();
         this.activity = activity;
         uiView = MainUiView.inflate(parent);
-        Log.d("MainBridge", "aft inflate: ");
         uiView.setActivity(activity);
         uiView.setBridgeRef(this);
         parent.addView(uiView);

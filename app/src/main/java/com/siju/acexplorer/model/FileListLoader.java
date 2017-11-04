@@ -180,7 +180,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     }
 
     private void fetchFiles() {
-        Log.d(TAG, "fetchFiles: "+currentDir);
         fileInfoList = getFilesList(currentDir,
                 isRooted, mShowHidden, mIsRingtonePicker);
         fileInfoList = sortFiles(fileInfoList, mSortMode);

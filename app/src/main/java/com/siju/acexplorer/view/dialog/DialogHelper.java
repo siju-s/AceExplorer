@@ -155,7 +155,6 @@ public class DialogHelper {
         textTitle.setText(title);
         positiveButton.setText(texts[1]);
         negativeButton.setText(texts[3]);
-        Log.d(TAG, "showSortDialog: " + radioGroup + " sort:" + sortMode);
         View radioButton = radioGroup.getChildAt(sortMode);
         radioGroup.check(radioButton.getId());
 
@@ -165,7 +164,6 @@ public class DialogHelper {
                 int radioButtonID = radioGroup.getCheckedRadioButtonId();
                 View radioButton = radioGroup.findViewById(radioButtonID);
                 int index = radioGroup.indexOfChild(radioButton);
-                Log.d(TAG, "onClick: " + index);
                 view.setTag(index);
                 alertDialogListener.onPositiveButtonClick(view);
                 alertDialog.dismiss();

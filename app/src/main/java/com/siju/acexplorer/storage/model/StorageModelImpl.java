@@ -319,7 +319,8 @@ public class StorageModelImpl implements StoragesModel {
             String temp = path.substring(0, path.lastIndexOf(File.separator));
 
             File newFile = new File(temp + File.separator + renamedName);
-            FileOpsHelper.renameFile(oldFile, newFile, pos.get(i), RootUtils.isRooted(context), fileOperationCallBack);
+            FileOpsHelper.renameFile(Operations.HIDE, oldFile, newFile, pos.get(i), RootUtils.isRooted(context), fileOperationCallBack);
+
         }
     }
 
@@ -379,6 +380,7 @@ public class StorageModelImpl implements StoragesModel {
                                 boolean success) {
             switch (operation) {
                 case RENAME:
+                case HIDE:
                     if (success) {
                         Intent intent = new Intent(ACTION_OP_REFRESH);
                         intent.putExtra(KEY_OPERATION, RENAME);
@@ -614,7 +616,7 @@ public class StorageModelImpl implements StoragesModel {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                FileOpsHelper.renameFile(new File(filePath), newFile, position, rooted, fileOperationCallBack);
+                FileOpsHelper.renameFile(RENAME, new File(filePath), newFile, position, rooted, fileOperationCallBack);
             }
         }).start();
     }

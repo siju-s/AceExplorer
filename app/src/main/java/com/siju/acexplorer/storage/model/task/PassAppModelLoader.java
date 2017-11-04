@@ -24,7 +24,6 @@ public class PassAppModelLoader implements ModelLoader<String, ApplicationInfo> 
     @Override
     public LoadData<ApplicationInfo> buildLoadData(String path, int width,
                                                    int height, Options options) {
-//        Log.d(this.getClass().getSimpleName(), "buildLoadData: " + path);
         return new LoadData<>(new CustomKey(path), new CastingDataFetcher(path));
     }
 
@@ -63,7 +62,6 @@ public class PassAppModelLoader implements ModelLoader<String, ApplicationInfo> 
 
         @Override
         public void loadData(Priority priority, DataCallback<? super ApplicationInfo> callback) {
-//            Log.d("CastingDataFetcher", "loadData: " + callback);
             ApplicationInfo applicationInfo = AppUtils.getAppInfo(AceApplication.getAppContext(),
                                                                   path);
             callback.onDataReady(applicationInfo);

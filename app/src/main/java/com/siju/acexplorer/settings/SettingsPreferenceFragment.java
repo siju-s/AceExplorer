@@ -16,7 +16,6 @@
 
 package com.siju.acexplorer.settings;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -42,13 +41,13 @@ import android.view.ViewParent;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.siju.acexplorer.view.AceActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileConstants;
-import com.siju.acexplorer.theme.ThemeUtils;
 import com.siju.acexplorer.model.helper.FileUtils;
+import com.siju.acexplorer.theme.ThemeUtils;
 import com.siju.acexplorer.utils.LocaleHelper;
+import com.siju.acexplorer.view.AceActivity;
 
 import static com.siju.acexplorer.theme.ThemeUtils.CURRENT_THEME;
 import static com.siju.acexplorer.theme.ThemeUtils.PREFS_THEME;
@@ -155,7 +154,6 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
         super.onPreferenceTreeClick(preferenceScreen, preference);
-        Log.d(this.getClass().getSimpleName(), "On prefernce tree-" + preference);
 
         // If the user has clicked on a preference screen, set up the screen
         if (preference instanceof PreferenceScreen) {
@@ -248,7 +246,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object value) {
                     String stringValue = value.toString();
-                    Log.d("TAG", "On prefs chnage");
+                    Log.d("Settings", "On prefs chnage");
 
 
                     if (preference instanceof ListPreference) {

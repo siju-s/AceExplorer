@@ -307,7 +307,7 @@ public class OperationProgress implements Progress {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG, "onReceive: "+intent.getAction());
-            if (intent == null || intent.getAction() == null) {
+            if (intent.getAction() == null) {
                 return;
             }
             handleMessage(intent);

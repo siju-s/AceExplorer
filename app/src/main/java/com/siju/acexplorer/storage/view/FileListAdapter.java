@@ -96,13 +96,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         Logger.log("SIJU", "updateAdapter--animated=" + mStopAnimation);
     }
 
-    void updateSearchResult(FileInfo fileInfo) {
-        Logger.log("Adapter", "Count=" + getItemCount());
-        fileInfoArrayList.add(fileInfo);
-        notifyDataSetChanged();
-//        notifyItemChanged(getItemCount());
-    }
-
     void setList(ArrayList<FileInfo> fileList) {
         this.fileInfoArrayList = fileList;
     }
@@ -360,7 +353,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return mSelectedItemsIds;
     }
 
-
     void filter(String text) {
         if (text.isEmpty()) {
             if (fileInfoArrayList != null) {
@@ -380,6 +372,10 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 fileInfoArrayList.addAll(result);
             }
         }
+        if (searchCallback != null) {
+            searchCallback.updateList(fileInfoArrayList);
+        }
+
         notifyDataSetChanged();
     }
 
@@ -428,6 +424,16 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
             return true;
         }
+    }
+
+    private SearchCallback searchCallback;
+
+    public void setSearchCallback(SearchCallback searchCallback) {
+        this.searchCallback = searchCallback;
+    }
+
+    interface SearchCallback {
+        void updateList(ArrayList<FileInfo> fileList);
     }
 
     private static class FooterViewHolder extends RecyclerView.ViewHolder {

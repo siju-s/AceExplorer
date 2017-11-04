@@ -71,7 +71,7 @@
         android:layout_below="@+id/textStorageSpace"
         android:layout_marginBottom="@dimen/padding_5"
         android:layout_marginTop="@dimen/padding_5"
-        android:background="@color/white"
+        android:background="@color/colorPrimary"
         android:visibility="gone" />
 
 

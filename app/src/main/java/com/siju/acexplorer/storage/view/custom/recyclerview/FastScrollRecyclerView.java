@@ -98,6 +98,11 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
         handleTouchEvent(ev);
     }
 
+    @Override
+    public boolean performClick() {
+        return super.performClick();
+    }
+
     /**
      * Handles the touch event and determines whether to show the fast scroller (or updates it if
      * it is already showing).

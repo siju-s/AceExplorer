@@ -93,6 +93,7 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // Commented since Beta Crashlytics looks for name "app-release.apk" to auto upload build
 //            applicationVariants.all { variant ->
 //                variant.outputs.all {
 //                    outputFileName = "Ace_" + defaultConfig.versionName

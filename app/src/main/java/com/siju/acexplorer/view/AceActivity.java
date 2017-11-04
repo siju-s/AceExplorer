@@ -53,11 +53,9 @@ public class AceActivity extends BaseActivity {
         LocaleHelper.setLanguage(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.base);
-        Logger.log(TAG, "onCreate");
 
         LinearLayout linearLayout = findViewById(R.id.base);
         mainUi = new MainBridge(this, linearLayout);
-        Log.d(TAG, "onCreate: AFTER mainUi");
         mainModel = new MainModelImpl();
         mainPresenter = new MainPresenterImpl(mainUi, mainModel);
 
