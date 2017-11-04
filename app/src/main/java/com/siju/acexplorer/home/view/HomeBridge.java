@@ -126,6 +126,11 @@ public class HomeBridge implements HomeView {
     }
 
     @Override
+    public void hideDualPane() {
+        homeUiView.hideDualPane();
+    }
+
+    @Override
     public void setPremium() {
         homeUiView.setPremium();
     }

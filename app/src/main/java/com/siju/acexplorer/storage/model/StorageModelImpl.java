@@ -357,6 +357,7 @@ public class StorageModelImpl implements StoragesModel {
 
         @Override
         public void opCompleted(Operations operation, File file, boolean success) {
+            Log.d(TAG, "opCompleted: "+operation);
             switch (operation) {
                 case FILE_CREATION:
                 case FOLDER_CREATION:

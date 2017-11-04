@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -157,6 +158,15 @@ public class BaseFileList extends Fragment {
 
     public void showDualPane() {
         storagesUi.showDualPane();
+    }
+
+    public void hideDualPane() {
+        Fragment fragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
+        if (fragment != null) {
+            FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.remove(fragment).commitAllowingStateLoss();
+        }
+//        storagesUi.hideDualPane();
     }
 
     private StoragesUiView.FavoriteOperation favListener;

@@ -55,6 +55,8 @@ public interface HomeView {
 
     void showDualMode();
 
+    void hideDualPane();
+
     void setPremium();
 
     interface Listener {

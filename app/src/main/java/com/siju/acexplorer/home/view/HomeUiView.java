@@ -363,6 +363,7 @@ public class HomeUiView extends CoordinatorLayout {
         this.favListener = favListener;
     }
 
-
-
+    public void hideDualPane() {
+        isDualModeActive = false;
+    }
 }

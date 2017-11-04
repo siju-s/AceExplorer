@@ -328,6 +328,11 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     private void registerReceivers() {
         IntentFilter intentFilter = new IntentFilter(ADS);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(adsReceiver, intentFilter);
+        if (!mInstanceStateExists) {
+            IntentFilter filter = new IntentFilter(ACTION_RELOAD_LIST);
+            filter.addAction(ACTION_OP_REFRESH);
+            getActivity().registerReceiver(mReloadListReceiver, filter);
+        }
     }
 
 
@@ -682,18 +687,9 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     public void onPause() {
         pauseAds();
-        Logger.log(TAG, "OnPause");
-        if (!mInstanceStateExists) {
-            getActivity().unregisterReceiver(mReloadListReceiver);
-        }
     }
 
     public void onResume() {
-        if (!mInstanceStateExists) {
-            IntentFilter intentFilter = new IntentFilter(ACTION_RELOAD_LIST);
-            intentFilter.addAction(ACTION_OP_REFRESH);
-            getActivity().registerReceiver(mReloadListReceiver, intentFilter);
-        }
         resumeAds();
     }
 
@@ -719,9 +715,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                     Log.d(TAG, "tree uri=" + treeUri + " old uri=" + oldUri);
                     bridge.handleSAFResult(operationIntent, treeUri, isRooted(), intent.getFlags());
 
-                }
-                // If not confirmed SAF, or if still not writable, then revert settings.
-                else {
+                } else {
+                    // If not confirmed SAF, or if still not writable, then revert settings.
                     if (oldUri != null) {
                         bridge.saveOldSAFUri(oldUri.toString());
                     }
@@ -794,6 +789,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     };
 
     void onOperationResult(Intent intent, Operations operation) {
+        Log.d(TAG, "onOperationResult: "+operation);
 
         switch (operation) {
             case DELETE:
@@ -956,7 +952,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     private boolean shouldShowPathNavigation() {
         return category.equals(FILES) || category.equals(DOWNLOADS);
-
     }
 
 
@@ -1472,7 +1467,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     public int onDragLocationEvent(DragEvent event, int oldPos) {
         View onTopOf = fileList.findChildViewUnder(event.getX(), event.getY());
         int newPos = fileList.getChildAdapterPosition(onTopOf);
-        Log.d(TAG, "onDragLocationEvent: pos:"+newPos);
+//        Log.d(TAG, "onDragLocationEvent: pos:"+newPos);
 
         if (oldPos != newPos && newPos != RecyclerView.NO_POSITION) {
             // For scroll up
@@ -1811,6 +1806,10 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         if (mAdView != null) {
             mAdView.destroy();
         }
+        if (!mInstanceStateExists) {
+            Logger.log(TAG, "onDestroy UNREGISTER");
+            getActivity().unregisterReceiver(mReloadListReceiver);
+        }
     }
 
     public void onViewDestroyed() {
@@ -1826,6 +1825,27 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     void clearSelectedPos() {
         mSelectedItemPositions = new SparseBooleanArray();
+    }
+
+
+    public void endDrag() {
+        isDragStarted = false;
+    }
+
+    public void setHidden(boolean showHidden) {
+        this.showHidden = showHidden;
+    }
+
+    public void onFavAdded(int count) {
+        FileUtils.showMessage(getContext(), String.format(getContext().getString(R.string.msg_added_fav),
+                                                          count));
+    }
+
+    public void onFavExists() {
+        FileUtils.showMessage(getContext(), getContext().getString(R.string.fav_exists));
+    }
+
+    public void hideDualPane() {
     }
 
 
@@ -1898,22 +1918,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         }
     };
 
-    public void endDrag() {
-        isDragStarted = false;
-    }
-
-    public void setHidden(boolean showHidden) {
-        this.showHidden = showHidden;
-    }
-
-    public void onFavAdded(int count) {
-        FileUtils.showMessage(getContext(), String.format(getContext().getString(R.string.msg_added_fav),
-                                                          count));
-    }
-
-    public void onFavExists() {
-        FileUtils.showMessage(getContext(), getContext().getString(R.string.fav_exists));
-    }
 
 
     public interface FavoriteOperation {

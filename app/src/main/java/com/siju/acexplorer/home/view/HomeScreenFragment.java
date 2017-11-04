@@ -119,6 +119,10 @@ public class HomeScreenFragment extends Fragment {
         homeView.showDualMode();
     }
 
+    public void hideDualPane() {
+        homeView.hideDualPane();
+    }
+
     public void setPremium() {
         homeView.setPremium();
     }

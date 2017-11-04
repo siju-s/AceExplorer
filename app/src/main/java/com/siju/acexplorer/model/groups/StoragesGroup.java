@@ -39,7 +39,10 @@ public class StoragesGroup {
 
     public static final String STORAGE_EMULATED_LEGACY = "/storage/emulated/legacy";
     public static final String STORAGE_EMULATED_0      = "/storage/emulated/0";
+    public static final String STORAGE_SDCARD0         = "/storage/sdcard0";
     public static final String STORAGE_SDCARD1         = "/storage/sdcard1";
+    public static final String ANDROID_DATA            = "/Android/data";
+
 
     private static Context       context;
     private static StoragesGroup storagesGroup;

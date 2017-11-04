@@ -110,11 +110,12 @@
                     android:layout_marginTop="2dp"
                     android:background="@color/colorPrimaryDark" />
 
-                <GridLayout
+                <LinearLayout
                     android:id="@+id/storagesContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/card_margin"/>
+                    android:orientation="vertical"
+                    />
 
             </LinearLayout>
 

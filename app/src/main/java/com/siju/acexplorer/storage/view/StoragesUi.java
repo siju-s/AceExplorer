@@ -115,6 +115,8 @@ public interface StoragesUi {
 
     void onFavExists();
 
+    void hideDualPane();
+
 
     interface Listener {
 

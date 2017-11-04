@@ -354,9 +354,8 @@ public class DialogHelper {
                                                   destinationDir, final boolean isMove,
                                           final PasteConflictListener pasteConflictListener) {
         String texts[] = new String[]{context.getString(R.string.msg_file_exists),
-                context.getString(R.string.dialog_skip), context.getString(R.string
-                                                                                   .dialog_keep_both), context.getString(R
-                                                                                                                                 .string.dialog_replace)};
+                context.getString(R.string.dialog_skip), context.getString(R.string.dialog_keep_both),
+                context.getString(R.string.dialog_replace)};
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);

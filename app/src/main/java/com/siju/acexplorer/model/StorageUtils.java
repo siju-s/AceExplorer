@@ -34,11 +34,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 
+import static com.siju.acexplorer.model.groups.StoragesGroup.ANDROID_DATA;
+import static com.siju.acexplorer.model.groups.StoragesGroup.STORAGE_SDCARD0;
+import static com.siju.acexplorer.model.groups.StoragesGroup.STORAGE_SDCARD1;
 import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastKitkat;
 import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastMarsh;
 
@@ -63,7 +64,7 @@ public class StorageUtils {
     public static List<String> getStorageDirectories() {
 
         // Final set of paths
-        final Set<String> paths = new HashSet<>();
+        final List<String> paths = new ArrayList<>();
         // Primary physical SD-CARD (not emulated)
         final String rawExternalStorage = System.getenv("EXTERNAL_STORAGE");
         // All Secondary SD-CARDs (all exclude primary) separated by ":"
@@ -74,7 +75,7 @@ public class StorageUtils {
             // Device has physical external storage; use plain paths.
             if (TextUtils.isEmpty(rawExternalStorage)) {
                 // EXTERNAL_STORAGE undefined; falling back to default.
-                paths.add("/storage/sdcard0");
+                paths.add(STORAGE_SDCARD0);
             } else {
                 paths.add(rawExternalStorage);
             }
@@ -119,7 +120,7 @@ public class StorageUtils {
         }
 
         File usb = getUsbDrive();
-        if (usb != null) {
+        if (usb != null && !paths.contains(usb.getPath())) {
             paths.add(usb.getPath());
         }
         return new ArrayList<>(paths);
@@ -129,10 +130,10 @@ public class StorageUtils {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private static String[] getExtSdCardPaths() {
         Context context = AceApplication.getAppContext();
-        Set<String> paths = new HashSet<>();
+        List<String> paths = new ArrayList<>();
         for (File file : context.getExternalFilesDirs("external")) {
             if (file != null) {
-                int index = file.getAbsolutePath().lastIndexOf("/Android/data");
+                int index = file.getAbsolutePath().lastIndexOf(ANDROID_DATA);
                 if (index < 0) {
                     Log.w("FileUtils", "Unexpected external file dir: " + file.getAbsolutePath());
                 } else {
@@ -149,9 +150,9 @@ public class StorageUtils {
             }
         }
 
-        File file = new File("/storage/sdcard1");
+        File file = new File(STORAGE_SDCARD1);
         if (file.exists() && file.canExecute() && !paths.contains(file.getAbsolutePath())) {
-            paths.add("/storage/sdcard1");
+            paths.add(STORAGE_SDCARD1);
         }
         return paths.toArray(new String[0]);
     }

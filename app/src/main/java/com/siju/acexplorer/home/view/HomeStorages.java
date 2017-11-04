@@ -20,7 +20,6 @@ import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
-import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -43,7 +42,7 @@ public class HomeStorages implements View.OnClickListener {
 
     private HomeUiView              homeUiView;
     private LinearLayout            layoutStorages;
-    private GridLayout              storagesContainer;
+    private LinearLayout            storagesContainer;
     private ArrayList<SectionItems> storagesList;
 
     private Context context;
@@ -105,6 +104,8 @@ public class HomeStorages implements View.OnClickListener {
             storageItemContainer.setTag(storagesList.get(i).getPath());
             if (i + 1 == storagesList.size()) {
                 homeStoragesDivider.setVisibility(View.GONE);
+            } else {
+                homeStoragesDivider.setVisibility(View.VISIBLE);
             }
 
         }

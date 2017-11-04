@@ -563,19 +563,24 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
                                                                                                       .main_container);
                     hideDualPane();
                     if (fragment instanceof BaseFileList) {
+                        ((BaseFileList) fragment).hideDualPane();
                         ((BaseFileList) fragment).refreshSpan(); // For changing the no of
-                        // columns in
-                        // non-dual mode
+                        // columns in non-dual mode
+                    } else {
+                        ((HomeScreenFragment) fragment).hideDualPane();
                     }
-
+                    isDualPaneEnabled = false;
                     isDualModeActive = false;
                 } else {
+                    isDualPaneEnabled = true;
                     checkScreenOrientation();
                     Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id
                                                                                                       .main_container);
                     if (fragment instanceof BaseFileList) {
                         showDualPane();
                         ((BaseFileList) fragment).showDualPane();
+                    } else {
+                        ((HomeScreenFragment) fragment).showDualMode();
                     }
                     createDualFragment();
                 }

@@ -17,14 +17,11 @@
 package com.siju.acexplorer.storage.model.operations;
 
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.siju.acexplorer.AceApplication;
-import com.siju.acexplorer.R;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.helper.FileOperations;
@@ -35,9 +32,7 @@ import com.siju.acexplorer.model.root.RootOperations;
 import com.siju.acexplorer.model.root.RootUtils;
 import com.siju.acexplorer.storage.model.CopyData;
 import com.siju.acexplorer.storage.model.StorageModelImpl;
-import com.siju.acexplorer.storage.model.task.CreateZipService;
 import com.siju.acexplorer.storage.model.task.DeleteTask;
-import com.siju.acexplorer.storage.model.task.ExtractService;
 import com.stericson.RootTools.RootTools;
 import com.stericson.RootTools.execution.Command;
 
@@ -116,6 +111,7 @@ public class FileOpsHelper {
                 break;
             case INTERNAL:
                 boolean result1 = FileOperations.mkdir(file);
+                Log.d(TAG, "mkDir: fileOperationCallBack:"+fileOperationCallBack);
                 fileOperationCallBack.opCompleted(FOLDER_CREATION, file, result1);
                 break;
 
