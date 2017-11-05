@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.net.Uri;
 
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.view.dialog.DialogHelper;
 
@@ -47,6 +48,7 @@ public class ViewHelper {
         Intent intent = new Intent(Intent.ACTION_VIEW);
 
         if (extension == null) {
+            Analytics.getLogger().openAsDialogShown();
             openWith(uri, context);
             return;
         }
@@ -64,8 +66,10 @@ public class ViewHelper {
             Logger.log(TAG, " uri==" + uri + "MIME=" + mimeType);
             intent.setDataAndType(uri, mimeType);
             if (mimeType != null) {
+                Analytics.getLogger().openFile();
                 grantUriPermission(context, intent, uri);
             } else {
+                Analytics.getLogger().openAsDialogShown();
                 openWith(uri, context);
             }
         }

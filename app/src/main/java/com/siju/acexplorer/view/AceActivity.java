@@ -20,6 +20,7 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -28,6 +29,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.kobakei.ratethisapp.RateThisApp;
+import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.base.view.BaseActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.billing.BillingManager;
@@ -38,6 +40,7 @@ import com.siju.acexplorer.presenter.MainPresenter;
 import com.siju.acexplorer.presenter.MainPresenterImpl;
 import com.siju.acexplorer.utils.LocaleHelper;
 
+import static com.siju.acexplorer.settings.SettingsPreferenceFragment.PREFS_ANALYTICS;
 
 
 public class AceActivity extends BaseActivity {
@@ -53,6 +56,11 @@ public class AceActivity extends BaseActivity {
         LocaleHelper.setLanguage(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.base);
+
+        boolean sendAnalytics = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PREFS_ANALYTICS, true);
+        Analytics.getLogger().sendAnalytics(sendAnalytics);
+        Analytics.getLogger().register(this);
+        Analytics.getLogger().reportDeviceName();
 
         LinearLayout linearLayout = findViewById(R.id.base);
         mainUi = new MainBridge(this, linearLayout);

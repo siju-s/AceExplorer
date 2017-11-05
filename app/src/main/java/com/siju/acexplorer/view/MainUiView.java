@@ -43,6 +43,7 @@ import android.widget.FrameLayout;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.ads.AdHelper;
+import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.home.view.HomeScreenFragment;
 import com.siju.acexplorer.logging.Logger;
@@ -711,6 +712,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         isHomeScreenEnabled = userPrefs.getBoolean(FileConstants.PREFS_HOMESCREEN, true);
         isDualPaneEnabled = userPrefs.getBoolean(FileConstants.PREFS_DUAL_PANE, false);
         isFirstRun = userPrefs.getBoolean(PREFS_FIRST_RUN, true);
+        Analytics.getLogger().dualPaneState(isDualPaneEnabled);
         setupInitialData();
     }
 

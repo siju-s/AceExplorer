@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.logging.Logger;
@@ -167,6 +168,7 @@ public class NavigationDrawer implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.imageInvite:
+                Analytics.getLogger().appInviteClicked();
                 Intent inviteIntent = new AppInviteInvitation.IntentBuilder(context.getString(R
                         .string.app_invite_title))
                         .setMessage(context.getString(R.string.app_invite_msg))
@@ -181,6 +183,7 @@ public class NavigationDrawer implements View.OnClickListener {
 
         switch (position) {
             case 0:
+                Analytics.getLogger().unlockFullClicked();
                 if (BillingManager.getInstance().getInAppBillingStatus().equals(BillingStatus
                         .UNSUPPORTED)) {
 
@@ -193,6 +196,7 @@ public class NavigationDrawer implements View.OnClickListener {
                 }
                 break;
             case 1: // Rate us
+                Analytics.getLogger().rateUsClicked();
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 // Try Google play
                 intent.setData(Uri
@@ -217,6 +221,7 @@ public class NavigationDrawer implements View.OnClickListener {
                 drawerLayout.closeDrawer(drawerPane);
                 break;
             case 2: // Settings
+                Analytics.getLogger().settingsDisplayed();
                 Intent intent1 = new Intent(activity, SettingsActivity.class);
                 final int enter_anim = android.R.anim.fade_in;
                 final int exit_anim = android.R.anim.fade_out;
@@ -236,6 +241,7 @@ public class NavigationDrawer implements View.OnClickListener {
     private void onDrawerItemClick(int groupPos, int childPos) {
         String path = totalGroupData.get(groupPos).getmChildItems().get(childPos).getPath();
         Log.d(TAG, "onDrawerItemClick: " + path);
+        Analytics.getLogger().drawerItemClicked();
         displaySelectedGroup(groupPos, childPos, path);
         drawerLayout.closeDrawer(drawerPane);
     }
@@ -307,10 +313,11 @@ public class NavigationDrawer implements View.OnClickListener {
 
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+    void onActivityResult(int requestCode, int resultCode, Intent intent) {
         switch (requestCode) {
             case REQUEST_INVITE:
                 if (resultCode == Activity.RESULT_OK) {
+                    Analytics.getLogger().appInviteResult(true);
                     // Get the invitation IDs of all sent messages
                     String[] ids = AppInviteInvitation.getInvitationIds(resultCode, intent);
                     for (String id : ids) {
@@ -318,6 +325,7 @@ public class NavigationDrawer implements View.OnClickListener {
                     }
                 }
                 else {
+                    Analytics.getLogger().appInviteResult(false);
                     Toast.makeText(context, context.getString(R.string.app_invite_failed), Toast
                             .LENGTH_SHORT).show();
                 }

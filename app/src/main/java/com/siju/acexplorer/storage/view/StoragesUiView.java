@@ -66,6 +66,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.base.view.BaseActivity;
 import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.logging.Logger;
@@ -720,12 +721,13 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 Uri oldUri = uriString != null ? Uri.parse(uriString) : null;
 
                 if (resultCode == Activity.RESULT_OK) {
-
+                    Analytics.getLogger().SAFResult(true);
                     Uri treeUri = intent.getData();
                     Log.d(TAG, "tree uri=" + treeUri + " old uri=" + oldUri);
                     bridge.handleSAFResult(operationIntent, treeUri, isRooted(), intent.getFlags());
 
                 } else {
+                    Analytics.getLogger().SAFResult(false);
                     // If not confirmed SAF, or if still not writable, then revert settings.
                     if (oldUri != null) {
                         bridge.saveOldSAFUri(oldUri.toString());
@@ -765,6 +767,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     private ZipViewer zipViewer;
 
     public void openZipViewer(String path) {
+        String extension = path.substring(path.lastIndexOf("."), path.length());
+        Analytics.getLogger().zipViewer(extension);
         calculateScroll(currentDir);
         isZipViewer = true;
         zipViewer = new ZipViewer(zipCommunicator, fragment, path);
@@ -1017,10 +1021,12 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         Log.d(TAG, "onClick: ");
         switch (view.getId()) {
             case R.id.fabCreateFile:
+                Analytics.getLogger().operationClicked(Analytics.Logger.EV_FAB);
                 showCreateFileDialog();
                 fabCreateMenu.collapse();
                 break;
             case R.id.fabCreateFolder:
+                Analytics.getLogger().operationClicked(Analytics.Logger.EV_FAB);
                 showCreateDirDialog();
                 fabCreateMenu.collapse();
                 break;
@@ -1318,6 +1324,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         if (dialog != null) {
             dialog.dismiss();
         }
+        Analytics.getLogger().SAFShown();
         operationIntent = intent;
         isSAFShown = true;
         String title = getContext().getString(R.string.needsaccess);
@@ -1363,6 +1370,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                                    List<FileInfo> destFiles, final String destinationDir, final
                                    boolean isMove,
                                    final DialogHelper.PasteConflictListener pasteConflictListener) {
+        Analytics.getLogger().conflictDialogShown();
         DialogHelper.showConflictDialog(getContext(), conflictFiles, destFiles, destinationDir,
                                         isMove, pasteConflictListener);
 
@@ -1472,6 +1480,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     public void performVoiceSearch(String query) {
+        Analytics.getLogger().searchClicked(true);
         menuControls.performVoiceSearch(query);
     }
 

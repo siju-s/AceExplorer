@@ -27,7 +27,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AlertDialog;
 import android.text.format.Formatter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +43,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.storage.model.operations.Operations;
@@ -648,6 +648,7 @@ public class DialogHelper {
         neutralButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Analytics.getLogger().pathCopied();
                 Clipboard.copyTextToClipBoard(context, path);
                 Toast.makeText(context, context.getString(R.string.text_copied_clipboard), Toast
                         .LENGTH_SHORT).show();

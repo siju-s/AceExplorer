@@ -25,6 +25,7 @@ import android.util.Log;
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.Purchase;
 import com.siju.acexplorer.AceApplication;
+import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.billing.BillingResultCallback;
 import com.siju.acexplorer.billing.BillingStatus;
@@ -42,13 +43,15 @@ import static com.siju.acexplorer.model.FileConstants.PREFS_FIRST_RUN;
 /**
  * Created by Siju on 02 September,2017
  */
-public class MainModelImpl implements MainModel, BillingResultCallback, DrawerItems.DrawerItemsCallback,
+public class MainModelImpl implements MainModel,
+                                      BillingResultCallback,
+                                      DrawerItems.DrawerItemsCallback,
                                       BillingManager.BillingUpdatesListener
 {
 
     private final String TAG = this.getClass().getSimpleName();
     private MainModel.Listener listener;
-    private Context context;
+    private Context            context;
 
     public MainModelImpl() {
         context = AceApplication.getAppContext();
@@ -70,12 +73,13 @@ public class MainModelImpl implements MainModel, BillingResultCallback, DrawerIt
         }
         boolean isHomeScreenEnabled = preferences.getBoolean(FileConstants.PREFS_HOMESCREEN, true);
         boolean isDualPaneEnabled = preferences.getBoolean(FileConstants.PREFS_DUAL_PANE,
-                isTablet);
+                                                           isTablet);
 
         Bundle bundle = new Bundle();
         bundle.putBoolean(FileConstants.PREFS_HOMESCREEN, isHomeScreenEnabled);
         bundle.putBoolean(FileConstants.PREFS_DUAL_PANE, isDualPaneEnabled);
         bundle.putBoolean(PREFS_FIRST_RUN, isFirstRun);
+        Analytics.getLogger().userTheme(getTheme().toString());
 // TODO: 02/09/17 Where to set IS_FIRST_RUN to true??
         listener.passUserPrefs(bundle);
     }
@@ -101,8 +105,6 @@ public class MainModelImpl implements MainModel, BillingResultCallback, DrawerIt
         DrawerItems drawerItems = new DrawerItems();
         drawerItems.getTotalGroupData(this);
     }
-
-
 
 
     @Override
@@ -133,7 +135,7 @@ public class MainModelImpl implements MainModel, BillingResultCallback, DrawerIt
 
     @Override
     public void onConsumeFinished(String token, int result) {
-        Log.d(TAG, "onConsumeFinished: purchaseTOken:"+token + " result:"+result);
+        Log.d(TAG, "onConsumeFinished: purchaseTOken:" + token + " result:" + result);
         if (result == BillingClient.BillingResponse.OK) {
             listener.onFreeVersion();
         }
@@ -144,13 +146,16 @@ public class MainModelImpl implements MainModel, BillingResultCallback, DrawerIt
         int billingResponse = BillingManager.getInstance().getBillingClientResponseCode();
         if (billingResponse == BillingClient.BillingResponse.BILLING_UNAVAILABLE ||
                 billingResponse == BillingClient.BillingResponse.FEATURE_NOT_SUPPORTED) {
-                listener.onBillingUnSupported();
+            Analytics.getLogger().setInAppStatus(-1);
+            listener.onBillingUnSupported();
         } else if (purchases.size() == 0) {
+            Analytics.getLogger().setInAppStatus(0);
             listener.onFreeVersion();
         } else {
             for (Purchase purchase : purchases) {
-                Log.d(TAG, "onPurchasesUpdated: sku:"+purchase.getSku());
+                Log.d(TAG, "onPurchasesUpdated: sku:" + purchase.getSku());
                 if (purchase.getSku().equals(BillingManager.SKU_REMOVE_ADS)) {
+                    Analytics.getLogger().setInAppStatus(1);
                     listener.onPremiumVersion();
                     break;
                 }

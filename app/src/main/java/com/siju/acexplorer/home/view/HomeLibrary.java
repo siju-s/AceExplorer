@@ -31,6 +31,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.home.LibrarySortActivity;
 import com.siju.acexplorer.home.model.HomeLibraryInfo;
 import com.siju.acexplorer.logging.Logger;
@@ -39,6 +40,7 @@ import com.siju.acexplorer.model.StorageUtils;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.theme.Theme;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.siju.acexplorer.model.groups.Category.ADD;
@@ -115,6 +117,7 @@ class HomeLibrary implements View.OnClickListener {
 
     private void inflateLibraryItem() {
         Log.d(TAG, "inflateLibraryItem: " + homeLibraryInfoArrayList.size()); // TODO: 02/11/17 NPE here in dual mode when orientation change from LAND->PORT
+        List<String> libNames = new ArrayList<>();
 
         for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
 
@@ -130,7 +133,7 @@ class HomeLibrary implements View.OnClickListener {
             } else {
                 textCount.setVisibility(View.VISIBLE);
             }
-
+            libNames.add(homeLibraryInfoArrayList.get(i).getCategoryName());
             textCount.setText(roundOffCount(homeLibraryInfoArrayList.get(i).getCount()));
             libraryContainer.addView(libraryItemContainer);
             GridLayout.LayoutParams layoutParams = (GridLayout.LayoutParams) libraryItemContainer.getLayoutParams();
@@ -139,6 +142,7 @@ class HomeLibrary implements View.OnClickListener {
             libraryItemContainer.setTag(homeLibraryInfoArrayList.get(i).getCategory());
             changeColor(imageLibrary, homeLibraryInfoArrayList.get(i).getCategory());
         }
+        Analytics.getLogger().homeLibsDisplayed(homeLibraryInfoArrayList.size(), libNames);
     }
 
     private void changeColor(View itemView, Category category) {
@@ -347,6 +351,7 @@ class HomeLibrary implements View.OnClickListener {
 
             Category category = (Category) tag;
             if (isAddCategory(category)) {
+                Analytics.getLogger().addLibClicked();
                 Intent intent = new Intent(context, LibrarySortActivity.class);
                 homeUiView.getFragment().startActivityForResult(intent, LIBSORT_REQUEST_CODE);
             } else {

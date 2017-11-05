@@ -117,6 +117,7 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:' + rootProject.supportLibVersion
     implementation 'com.android.support:design:' + rootProject.supportLibVersion
     implementation 'com.github.bumptech.glide:glide:4.2.0'
+    implementation 'com.google.firebase:firebase-core:11.4.2'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.2.0'
 
     implementation 'com.getbase:floatingactionbutton:1.10.1'

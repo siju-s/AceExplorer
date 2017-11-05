@@ -30,6 +30,7 @@ import android.view.DragEvent;
 import android.view.View;
 
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.view.dialog.DialogHelper;
 
@@ -147,6 +148,7 @@ class DragHelper {
     void showDragDialog(final ArrayList<FileInfo> sourcePaths, final String
             destinationDir) {
 
+        Analytics.getLogger().dragDialogShown();
         DialogHelper.showDragDialog(context, sourcePaths, destinationDir, dragDialogListener);
     }
 

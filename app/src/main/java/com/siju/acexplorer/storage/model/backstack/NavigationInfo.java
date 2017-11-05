@@ -29,6 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.model.groups.StoragesGroup;
@@ -111,6 +112,7 @@ public class NavigationInfo {
             imageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    Analytics.getLogger().navBarClicked(true);
                     navigationCallback.onHomeClicked();
                 }
             });
@@ -299,6 +301,7 @@ public class NavigationInfo {
     private void navButtonOnClick(final String dir) {
         Logger.log(TAG, "Dir=" + dir + " currentDir=" + currentDir);
         if (!currentDir.equals(dir)) {
+            Analytics.getLogger().navBarClicked(false);
             navigationCallback.onNavButtonClicked(dir);
 
         }

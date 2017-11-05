@@ -39,6 +39,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.home.model.LoaderHelper;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileInfo;
@@ -158,11 +159,13 @@ public class DialogBrowseFragment extends DialogFragment implements
 
         if (getArguments() != null) {
             if (getArguments().getBoolean(RINGTONE_PICKER)) {
+                Analytics.getLogger().pickerShown(true);
                 title.setText(getString(R.string.dialog_title_picker));
                 okButton.setVisibility(View.GONE);
                 isRingtonePicker = true;
                 ringToneType = getArguments().getInt(RINGTONE_TYPE);
             } else if (getArguments().getBoolean(FILE_PICKER)) {
+                Analytics.getLogger().pickerShown(false);
                 okButton.setVisibility(View.GONE);
                 isFilePicker = true;
             }

@@ -27,11 +27,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.model.SectionItems;
 import com.siju.acexplorer.model.groups.StoragesGroup;
 import com.siju.acexplorer.theme.Theme;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.siju.acexplorer.model.groups.Category.FILES;
 
@@ -80,10 +82,12 @@ public class HomeStorages implements View.OnClickListener {
     }
 
 
+
+
     private void inflateStoragesItem() {
         storagesContainer.removeAllViews();
         Log.d("HomeStorages", "inflateStoragesItem: "+storagesList.size());
-
+        List<String> pathNames = new ArrayList<>();
         for (int i = 0; i < storagesList.size(); i++) {
             RelativeLayout storageItemContainer = (RelativeLayout) View.inflate(context, R.layout.storage_item,
                                                                                 null);
@@ -95,6 +99,7 @@ public class HomeStorages implements View.OnClickListener {
             View homeStoragesDivider = storageItemContainer.findViewById(R.id.home_storages_divider);
 
             imageStorage.setImageResource(storagesList.get(i).getIcon());
+            pathNames.add(storagesList.get(i).getPath());
             textStorage.setText(storagesList.get(i).getFirstLine());
             textSpace.setText(storagesList.get(i).getSecondLine());
             progressBarSpace.setProgress(storagesList.get(i).getProgress());
@@ -109,11 +114,12 @@ public class HomeStorages implements View.OnClickListener {
             }
 
         }
+        Analytics.getLogger().homeStorageDisplayed(storagesList.size(), pathNames);
     }
 
     @Override
     public void onClick(View view) {
-        Object tag = view.getTag();
-        homeUiView.loadFileList((String) tag, FILES);
+        String tag = (String) view.getTag();
+        homeUiView.loadFileList(tag, FILES);
     }
 }

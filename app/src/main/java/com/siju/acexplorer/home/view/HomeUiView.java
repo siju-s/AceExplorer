@@ -37,6 +37,7 @@ import android.widget.LinearLayout;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
+import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.storage.view.StoragesUiView;
 import com.siju.acexplorer.view.DrawerListener;
 import com.siju.acexplorer.R;
@@ -57,6 +58,7 @@ import java.util.List;
 
 import static com.siju.acexplorer.model.FileConstants.KEY_CATEGORY;
 import static com.siju.acexplorer.home.view.HomeLibrary.LIBSORT_REQUEST_CODE;
+import static com.siju.acexplorer.model.groups.StoragesGroup.STORAGE_EMULATED_0;
 
 /**
  * Created by Siju on 02 September,2017
@@ -309,6 +311,15 @@ public class HomeUiView extends CoordinatorLayout {
     private boolean reload;
 
     void loadFileList(String path, Category category) {
+        if (path == null) {
+            Analytics.getLogger().libDisplayed(category.name());
+        } else {
+            if (path.equals(STORAGE_EMULATED_0)) {
+                Analytics.getLogger().storageDisplayed();
+            } else {
+                Analytics.getLogger().extStorageDisplayed();
+            }
+        }
         FragmentTransaction ft = getActivity().getSupportFragmentManager()
                 .beginTransaction();
         Bundle args = new Bundle();

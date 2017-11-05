@@ -62,6 +62,13 @@
         android:layout="@layout/prefs_settings_item"
         android:title="@string/pref_title_check_update" />
 
+    <CheckBoxPreference
+        android:key="prefsAnalytics"
+        android:defaultValue="true"
+        android:layout="@layout/prefs_checkbox"
+        android:title="@string/analytics_text"
+        android:summary="@string/analytics_summary"/>
+
 
     <PreferenceScreen
         android:key="container"

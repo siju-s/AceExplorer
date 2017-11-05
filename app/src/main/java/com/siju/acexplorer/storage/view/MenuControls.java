@@ -36,6 +36,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.model.helper.FileUtils;
@@ -288,6 +289,7 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
             case R.id.action_view:
                 storagesUiView.switchView();
                 int mode = storagesUiView.getViewMode();
+                Analytics.getLogger().switchView(mode == ViewMode.LIST);
                 updateMenuTitle(mode);
                 break;
 
@@ -298,6 +300,7 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
             case R.id.action_cut:
                 if (selectedItems != null && selectedItems.size() > 0) {
                     isMoveOperation = true;
+                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_CUT);
                     onCutCopyOp(selectedItems, fileInfoList);
                 }
                 break;
@@ -305,6 +308,7 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
             case R.id.action_copy:
                 if (selectedItems != null && selectedItems.size() > 0) {
                     isMoveOperation = false;
+                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_COPY);
                     onCutCopyOp(selectedItems, fileInfoList);
                 }
                 break;
@@ -312,6 +316,7 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
             case R.id.action_paste:
                 isPasteVisible = false;
                 if (copiedData.size() > 0) {
+                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_PASTE);
                     ArrayList<FileInfo> info = new ArrayList<>();
                     info.addAll(copiedData);
                     storagesUiView.onPasteAction(isMoveOperation, info, currentDir);
@@ -329,10 +334,12 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
                         filesToDelete.add(info);
                     }
                     if (category.equals(FAVORITES)) {
+                        Analytics.getLogger().operationClicked(Analytics.Logger.EV_DELETE_FAV);
                         storagesUiView.removeFavorite(filesToDelete);
                         Toast.makeText(context, context.getString(R.string.fav_removed), Toast
                                 .LENGTH_SHORT).show();
                     } else {
+                        Analytics.getLogger().operationClicked(Analytics.Logger.EV_DELETE);
                         DialogHelper.showDeleteDialog(context, filesToDelete, deleteDialogListener);
                     }
                     endActionMode();
@@ -342,6 +349,7 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
 
             case R.id.action_share:
                 if (selectedItems != null && selectedItems.size() > 0) {
+                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_SHARE);
                     ArrayList<FileInfo> filesToShare = new ArrayList<>();
                     for (int i = 0; i < selectedItems.size(); i++) {
                         FileInfo info = fileInfoList.get(selectedItems.keyAt(i));
@@ -357,6 +365,7 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
             case R.id.action_edit:
 
                 if (selectedItems != null && selectedItems.size() > 0) {
+                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_RENAME);
                     final String oldFilePath = fileInfoList.get(selectedItems.keyAt(0)).
                             getFilePath();
                     int renamedPosition = selectedItems.keyAt(0);
@@ -369,6 +378,7 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
             case R.id.action_info:
 
                 if (selectedItems != null && selectedItems.size() > 0) {
+                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_PROPERTIES);
                     FileInfo fileInfo = fileInfoList.get(selectedItems.keyAt(0));
                     DialogHelper.showInfoDialog(context, fileInfo, category.equals(FILES));
                     endActionMode();
@@ -378,6 +388,7 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
             case R.id.action_archive:
 
                 if (selectedItems != null && selectedItems.size() > 0) {
+                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_ARCHIVE);
                     ArrayList<FileInfo> paths = new ArrayList<>();
                     for (int i = 0; i < selectedItems.size(); i++) {
                         FileInfo info = fileInfoList.get(selectedItems.keyAt(i));
@@ -392,6 +403,7 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
             case R.id.action_fav:
 
                 if (selectedItems != null && selectedItems.size() > 0) {
+                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_ADD_FAV);
                     int count = 0;
                     ArrayList<FileInfo> favList = new ArrayList<>();
                     for (int i = 0; i < selectedItems.size(); i++) {
@@ -413,6 +425,7 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
             case R.id.action_extract:
 
                 if (selectedItems != null && selectedItems.size() > 0) {
+                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_EXTRACT);
                     FileInfo fileInfo = fileInfoList.get(selectedItems.keyAt(0));
                     String currentFile = fileInfo.getFilePath();
                     DialogHelper.showExtractOptions(context, currentFile, currentDir,
@@ -425,6 +438,7 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
             case R.id.action_hide:
 
                 if (selectedItems != null && selectedItems.size() > 0) {
+                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_HIDE);
                     ArrayList<FileInfo> infoList = new ArrayList<>();
                     ArrayList<Integer> pos = new ArrayList<>();
                     for (int i = 0; i < selectedItems.size(); i++) {
@@ -439,6 +453,7 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
 
             case R.id.action_permissions:
                 if (selectedItems != null && selectedItems.size() > 0) {
+                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_PERMISSIONS);
                     FileInfo info = fileInfoList.get(selectedItems.keyAt(0));
                     isDirectory = info.isDirectory();
                     storagesUiView.getPermissions(info.getFilePath(), isDirectory);
@@ -579,6 +594,18 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
         SearchManager searchManager = (SearchManager) context.getSystemService(Context.SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(storagesUiView.getActivity()
                                                                              .getComponentName()));
+        searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                Analytics.getLogger().searchClicked(false);
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                return true;
+            }
+        });
     }
 
     private void hideSearchView() {

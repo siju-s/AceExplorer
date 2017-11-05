@@ -42,6 +42,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileConstants;
 import com.siju.acexplorer.model.helper.FileUtils;
@@ -57,6 +58,8 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
 
     private final String TAG = this.getClass().getSimpleName();
     public static final String PREFS_LANGUAGE = "prefLanguage";
+    public static final String PREFS_ANALYTICS = "prefsAnalytics";
+
     private String currentLanguage;
     private SharedPreferences mPrefs;
     private Preference updatePreference;
@@ -86,24 +89,21 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         }
 
 
-       /* CheckBoxPreference preference = (CheckBoxPreference) findPreference("prefDualPane");
-
-
-        preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object o) {
-                String value = o.toString();
-                Logger.log("Settings", "Dualpane=" + value);
-                getActivity().setResult(Activity.RESULT_OK, null);
-                return true;
-            }
-        });*/
-
         CheckBoxPreference hiddenPreference = (CheckBoxPreference) findPreference("prefHidden");
         hiddenPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 getActivity().setResult(Activity.RESULT_OK, null);
+                return true;
+            }
+        });
+
+
+        CheckBoxPreference analyticsPreference = (CheckBoxPreference) findPreference(PREFS_ANALYTICS);
+        analyticsPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+           @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Analytics.getLogger().sendAnalytics((Boolean) newValue);
                 return true;
             }
         });
@@ -157,8 +157,8 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
 
         // If the user has clicked on a preference screen, set up the screen
         if (preference instanceof PreferenceScreen) {
+            Analytics.getLogger().aboutDisplayed();
             setupActionBar((PreferenceScreen) preference);
-
         }
 
         return false;

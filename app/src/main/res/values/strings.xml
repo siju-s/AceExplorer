@@ -219,6 +219,8 @@
     <string name="error_unsupported">Not supported</string>
     <string name="copy_path">Copy path</string>
     <string name="text_copied_clipboard">Copied to clipboard.</string>
+    <string name="analytics_text">Send analytics</string>
+    <string name="analytics_summary">Help us improve app by sending anonymous usage data.</string>
 
 
 </resources>
