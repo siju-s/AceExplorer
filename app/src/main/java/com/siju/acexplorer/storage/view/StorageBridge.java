@@ -175,7 +175,7 @@ public class StorageBridge implements StoragesUi {
         fragment.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                storagesUiView.dismissDialog(operation);
+                storagesUiView.dismissDialog();
             }
         });
 

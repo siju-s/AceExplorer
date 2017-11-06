@@ -14,6 +14,7 @@
   ~ limitations under the License.
   -->
 
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -69,10 +70,9 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@+id/textStorageSpace"
-        android:layout_marginBottom="@dimen/padding_5"
+        android:layout_marginBottom="@dimen/padding_10"
         android:layout_marginTop="@dimen/padding_5"
         android:background="@color/colorPrimary"
         android:visibility="gone" />
-
 
 </RelativeLayout>

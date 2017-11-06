@@ -18,6 +18,7 @@ package com.siju.acexplorer.home.view;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -43,7 +44,7 @@ import static com.siju.acexplorer.model.groups.Category.FILES;
 public class HomeStorages implements View.OnClickListener {
 
     private HomeUiView              homeUiView;
-    private LinearLayout            layoutStorages;
+    private CardView                layoutStorages;
     private LinearLayout            storagesContainer;
     private ArrayList<SectionItems> storagesList;
 
@@ -59,17 +60,17 @@ public class HomeStorages implements View.OnClickListener {
     private void setTheme(Theme theme) {
         switch (theme) {
             case DARK:
-                layoutStorages.setBackgroundColor(ContextCompat.getColor(context, R.color.dark_background));
+                layoutStorages.setCardBackgroundColor(ContextCompat.getColor(context, R.color.dark_home_card_bg));
                 break;
             case LIGHT:
-                layoutStorages.setBackgroundColor(ContextCompat.getColor(context, R.color.light_home_lib));
+                layoutStorages.setCardBackgroundColor(ContextCompat.getColor(context, R.color.light_home_card_bg));
                 break;
         }
     }
 
     private void init() {
         storagesContainer =  homeUiView.findViewById(R.id.storagesContainer);
-        layoutStorages =  homeUiView.findViewById(R.id.layoutStorages);
+        layoutStorages =  homeUiView.findViewById(R.id.cardViewStorages);
         initializeStorageGroup();
         inflateStoragesItem();
     }
@@ -82,15 +83,13 @@ public class HomeStorages implements View.OnClickListener {
     }
 
 
-
-
     private void inflateStoragesItem() {
         storagesContainer.removeAllViews();
         Log.d("HomeStorages", "inflateStoragesItem: "+storagesList.size());
         List<String> pathNames = new ArrayList<>();
         for (int i = 0; i < storagesList.size(); i++) {
             RelativeLayout storageItemContainer = (RelativeLayout) View.inflate(context, R.layout.storage_item,
-                                                                                null);
+                                                                          null);
             ProgressBar progressBarSpace =  storageItemContainer
                     .findViewById(R.id.progressBarSD);
             ImageView imageStorage =  storageItemContainer.findViewById(R.id.imageStorage);

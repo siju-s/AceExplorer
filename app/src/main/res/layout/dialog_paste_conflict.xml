@@ -32,31 +32,9 @@
         android:id="@+id/listFiles"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_16"
-        android:layout_marginStart="@dimen/margin_16"
         android:layout_marginTop="@dimen/padding_5"
+        android:layout_marginBottom="@dimen/padding_5"
         android:divider="@null" />
 
-    <CheckBox
-        android:id="@+id/checkBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_16"
-        android:text="@string/paste_conflict_remember" />
-
-    <include
-        layout="@layout/dialog_buttons"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp" />
-
-
-    <Button
-        android:id="@+id/buttonKeepBoth"
-        style="@style/DialogNeutralButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/dialog_keep_both" />
 
 </LinearLayout>

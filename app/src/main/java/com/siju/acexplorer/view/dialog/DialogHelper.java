@@ -365,6 +365,8 @@ public class DialogHelper {
         final AlertDialog dialog = builder.create();
 
         final ListView listView = dialogView.findViewById(R.id.listFiles);
+        View footerView = inflater.inflate(R.layout.paste_conflict_footer, null, false);
+        listView.addFooterView(footerView);
 
         List<FileInfo> fileInfoList = new ArrayList<>();
 
@@ -377,10 +379,10 @@ public class DialogHelper {
         PasteConflictAdapter pasteConflictAdapter = new PasteConflictAdapter(context, fileInfoList);
         listView.setAdapter(pasteConflictAdapter);
 
-        final CheckBox checkBox = dialogView.findViewById(R.id.checkBox);
-        Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
-        Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
-        Button neutralButton = dialogView.findViewById(R.id.buttonKeepBoth);
+        final CheckBox checkBox = footerView.findViewById(R.id.checkBox);
+        Button positiveButton = footerView.findViewById(R.id.buttonPositive);
+        Button negativeButton = footerView.findViewById(R.id.buttonNegative);
+        Button neutralButton = footerView.findViewById(R.id.buttonKeepBoth);
 
         positiveButton.setText(texts[1]);
         negativeButton.setText(texts[3]);

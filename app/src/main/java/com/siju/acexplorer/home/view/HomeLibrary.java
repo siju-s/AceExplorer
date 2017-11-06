@@ -21,12 +21,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.GridLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -58,7 +58,7 @@ class HomeLibrary implements View.OnClickListener {
 
     private HomeUiView            homeUiView;
     private GridLayout            libraryContainer;
-    private LinearLayout          layoutLibrary;
+    private CardView              layoutLibrary;
     private Activity              activity;
     private Context               context;
     private List<HomeLibraryInfo> homeLibraryInfoArrayList;
@@ -79,19 +79,19 @@ class HomeLibrary implements View.OnClickListener {
         this.theme = theme;
         switch (theme) {
             case DARK:
-                layoutLibrary.setBackgroundColor(ContextCompat.getColor(context, R.color
-                        .dark_background));
+                layoutLibrary.setCardBackgroundColor(ContextCompat.getColor(context, R.color
+                        .dark_home_card_bg));
                 break;
             case LIGHT:
-                layoutLibrary.setBackgroundColor(ContextCompat.getColor(context, R.color
-                        .light_home_lib));
+                layoutLibrary.setCardBackgroundColor(ContextCompat.getColor(context, R.color
+                        .light_home_card_bg));
                 break;
         }
     }
 
     private void init() {
         libraryContainer = homeUiView.findViewById(R.id.libraryContainer);
-        layoutLibrary = homeUiView.findViewById(R.id.layoutLibrary);
+        layoutLibrary = homeUiView.findViewById(R.id.cardViewLibrary);
         currentOrientation = context.getResources().getConfiguration().orientation;
         setGridColumns();
         homeUiView.getLibraries();

@@ -319,6 +319,7 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_PASTE);
                     ArrayList<FileInfo> info = new ArrayList<>();
                     info.addAll(copiedData);
+                    Log.d(TAG, "onMenuItemClick: CurrentDir:"+currentDir);
                     storagesUiView.onPasteAction(isMoveOperation, info, currentDir);
                     copiedData.clear();
                     endActionMode();

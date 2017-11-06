@@ -152,9 +152,7 @@ public class DialogBrowseFragment extends DialogFragment implements
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
         currentTheme = Theme.getTheme(ThemeUtils.getTheme(getContext()));
-        Log.d(TAG, "onActivityCreated: ");
         initializeViews();
 
         if (getArguments() != null) {

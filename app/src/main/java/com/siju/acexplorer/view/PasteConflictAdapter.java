@@ -1,6 +1,8 @@
 package com.siju.acexplorer.view;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,8 @@ import android.widget.TextView;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.helper.FileUtils;
+import com.siju.acexplorer.theme.Theme;
+import com.siju.acexplorer.theme.ThemeUtils;
 
 import java.io.File;
 import java.util.List;
@@ -26,10 +30,12 @@ public class PasteConflictAdapter extends BaseAdapter {
 
     private List<FileInfo> conflictFileInfoList;
     private Context        context;
+    private Theme          theme;
 
     public PasteConflictAdapter(Context context, List<FileInfo> conflictFileInfoList) {
         this.context = context;
         this.conflictFileInfoList = conflictFileInfoList;
+        this.theme = Theme.getTheme(ThemeUtils.getTheme(context));
     }
 
 
@@ -66,6 +72,17 @@ public class PasteConflictAdapter extends BaseAdapter {
             fileInfoHolder.headerText.setText(context.getString(R.string.header_destination));
         }
 
+        switch (theme) {
+            case DARK:
+                fileInfoHolder.cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color
+                        .dark_home_card_bg));
+                break;
+            case LIGHT:
+                fileInfoHolder.cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color
+                        .light_home_card_bg));
+                break;
+        }
+
         FileInfo conflictFileInfo = conflictFileInfoList.get(position);
         String filePath = conflictFileInfo.getFilePath();
 
@@ -87,6 +104,7 @@ public class PasteConflictAdapter extends BaseAdapter {
 
 
     private static class FileInfoHolder {
+        CardView cardView;
         ImageView imageIcon;
         TextView  headerText;
         TextView  titleText;
@@ -95,6 +113,7 @@ public class PasteConflictAdapter extends BaseAdapter {
         TextView  pathText;
 
         FileInfoHolder(View view) {
+            cardView = view.findViewById(R.id.cardView);
             imageIcon = view.findViewById(R.id.imageFileIcon);
             headerText = view.findViewById(R.id.header);
             titleText = view.findViewById(R.id.textFileName);

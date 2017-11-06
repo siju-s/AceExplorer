@@ -179,7 +179,7 @@ public class HomeUiView extends CoordinatorLayout {
         switch (theme) {
             case DARK:
                 nestedScrollViewHome.setBackgroundColor(ContextCompat.getColor(getContext(), R
-                        .color.dark_home_bg));
+                        .color.dark_background));
                 break;
             case LIGHT:
                 nestedScrollViewHome.setBackgroundColor(ContextCompat.getColor(getContext(), R

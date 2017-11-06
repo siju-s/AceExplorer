@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/dialog_paste_conflict_width"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/margin_16"
+    android:orientation="vertical">
+
+    <CheckBox
+        android:id="@+id/checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_16"
+        android:text="@string/paste_conflict_remember" />
+
+    <include
+        layout="@layout/dialog_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp" />
+
+
+    <Button
+        android:id="@+id/buttonKeepBoth"
+        style="@style/DialogNeutralButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/dialog_keep_both" />
+</LinearLayout>

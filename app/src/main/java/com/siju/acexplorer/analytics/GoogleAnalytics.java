@@ -247,7 +247,7 @@ public class GoogleAnalytics implements Analytics.Logger {
 
     @Override
     public void logEvent(String event, Bundle params) {
-        if (sendAnalytics && !BuildConfig.DEBUG) {
+        if (sendAnalytics && BuildConfig.FLAVOR.equals("prod")) {
             firebaseAnalytics.logEvent(event, params);
         }
     }
@@ -255,7 +255,7 @@ public class GoogleAnalytics implements Analytics.Logger {
 
     @Override
     public void logEvent(String event) {
-        if (sendAnalytics & !BuildConfig.DEBUG) {
+        if (sendAnalytics & BuildConfig.FLAVOR.equals("prod")) {
             firebaseAnalytics.logEvent(event, null);
         }
     }

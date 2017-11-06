@@ -34,6 +34,34 @@ apply plugin: 'io.fabric'
 repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
+// Auto generate VERSION_CODE & VERSION_NAME
+def versionPropsFile = file('version.properties')
+def code = 1;
+def versionMajor = 1
+def versionMinor = 0
+def versionPatch = 1
+def versionBuild = 0
+
+
+if (versionPropsFile.canRead()) {
+    Properties versionProps = new Properties()
+
+    versionProps.load(new FileInputStream(versionPropsFile))
+    List<String> runTasks = gradle.startParameter.getTaskNames();
+    def value = 0
+    for (String item : runTasks)
+        if (item.contains("assembleRelease")) {
+            value = 1;
+        }
+    code = Integer.parseInt(versionProps['VERSION_CODE']).intValue() + value
+    versionBuild = versionProps['VERSION_BUILD'].toInteger() + value
+    versionProps['VERSION_CODE']=code.toString()
+    versionProps['VERSION_BUILD']=versionBuild.toString()
+    versionProps.store(versionPropsFile.newWriter(), null)
+}
+else {
+    throw new GradleException("Could not read version.properties!")
+}
 
 // Create a variable called keystorePropertiesFile, and initialize it to your
 // keystore.properties file, in the rootProject folder.
@@ -60,8 +88,8 @@ android {
         applicationId "com.siju.acexplorer"
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
-        versionCode 11
-        versionName "1.0.1_build7"
+        versionCode code
+        versionName "${versionMajor}.${versionMinor}.${versionPatch} (build${versionBuild})"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField 'boolean', 'ENABLE_CRASHLYTICS', 'true'
     }
@@ -104,6 +132,15 @@ android {
 
         }
     }
+    flavorDimensions "dimen"
+    productFlavors {
+        dev {
+            applicationIdSuffix ".dev"
+        }
+        prod {
+
+        }
+    }
     lintOptions {
         checkReleaseBuilds false
         abortOnError false
@@ -119,7 +156,6 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.2.0'
     implementation 'com.google.firebase:firebase-core:11.4.2'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.2.0'
-
     implementation 'com.getbase:floatingactionbutton:1.10.1'
     implementation 'com.google.code.gson:gson:2.8.0'
     implementation 'io.github.kobakei:ratethisapp:1.1.0'
@@ -135,5 +171,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-invites:11.4.2'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'com.android.billingclient:billing:1.0'
+    implementation 'com.android.support:cardview-v7:' + rootProject.supportLibVersion
 }
 apply plugin: 'com.google.gms.google-services'

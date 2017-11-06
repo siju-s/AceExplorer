@@ -72,6 +72,7 @@
     <dimen name="searchview_margin">5dp</dimen>
     <dimen name="text_16">16sp</dimen>
     <dimen name="home_storage_icon_size">55dp</dimen>
+    <dimen name="card_home_radius">5dp</dimen>
 
 
 </resources>

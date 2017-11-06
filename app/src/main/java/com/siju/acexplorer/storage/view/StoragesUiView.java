@@ -834,9 +834,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 break;
 
             case RENAME:
-                if (dialog != null) {
-                    dialog.dismiss();
-                }
+                dismissDialog();
                 final int position = intent.getIntExtra(KEY_POSITION, -1);
                 String oldFile = intent.getStringExtra(KEY_FILEPATH);
                 String newFile = intent.getStringExtra(KEY_FILEPATH2);
@@ -871,7 +869,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 break;
             case FOLDER_CREATION:
             case FILE_CREATION:
-                dialog.dismiss();
+                dismissDialog();
                 boolean isSuccess = intent.getBooleanExtra(KEY_RESULT, true);
 
                 if (!isSuccess) {
@@ -1321,9 +1319,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     private boolean isSAFShown;
 
     public void showSAFDialog(String path, Intent intent) {
-        if (dialog != null) {
-            dialog.dismiss();
-        }
+        dismissDialog();
         Analytics.getLogger().SAFShown();
         operationIntent = intent;
         isSAFShown = true;
@@ -1434,8 +1430,10 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         }
     }
 
-    public void dismissDialog(Operations operation) {
-        dialog.dismiss();
+    public void dismissDialog() {
+        if (dialog != null) {
+            dialog.dismiss();
+        }
     }
 
     public void onPermissionsFetched(ArrayList<Boolean[]> permissionList) {
@@ -1695,6 +1693,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             zipViewer.onBackPressed();
         } else {
             currentDir = dir;
+            menuControls.setCurrentDir(currentDir);
             int position = 0;
             ArrayList<BackStackModel> backStack = backStackInfo.getBackStack();
             for (int i = 0; i < backStack.size(); i++) {

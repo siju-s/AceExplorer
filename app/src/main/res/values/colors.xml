@@ -27,16 +27,18 @@
     <color name="fabButtonText">#727272</color>
 
     <!-- Light Theme -->
-    <color name="light_home_bg">#D0D3D4</color>
+    <color name="light_home_card_bg">#f2f2f2</color>
     <color name="light_home_lib">#F5F5F5</color>
     <color name="light_background">#F5F5F5</color>
     <color name="dark_separator">#77000000</color>
+    <color name="light_home_bg">#d8d8d8</color>
 
 
     <!-- Dark Theme -->
     <color name="dark_text">#ffffff</color>
     <color name="dark_home_bg">#3D3D3D</color>
     <color name="dark_background">#292929</color>
+    <color name="dark_home_card_bg">#333333</color>
     <color name="dark_actionModeItemSelected">#33ffffff</color>
     <color name="dark_divider">#80262626</color>
     <color name="dark_overlay">#595959</color>
