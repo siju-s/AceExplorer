@@ -30,7 +30,7 @@
         android:layout_marginTop="5dp"
         android:background="@drawable/circle"
         android:contentDescription="@string/img_accessibility_icon_lib"
-        android:scaleType="centerInside"
+        android:scaleType="center"
         android:src="@drawable/ic_library_images" />
 
     <TextView
@@ -47,6 +47,19 @@
         android:minWidth="25dp"
         android:textColor="@color/white"
         android:textSize="@dimen/library_count_font_size" />
+
+    <ImageView
+        android:id="@+id/imageDone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/imageLibrary"
+        android:layout_marginStart="@dimen/padding_5"
+        android:background="@null"
+        android:scaleType="center"
+        android:visibility="gone"
+        android:src="@drawable/ic_done_white"
+        android:layout_marginLeft="@dimen/padding_5"
+        android:layout_alignStart="@id/imageLibrary" />
 
     <TextView
         android:id="@+id/textLibrary"

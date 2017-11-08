@@ -19,25 +19,26 @@ package com.siju.acexplorer.home.view;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.GradientDrawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
-import android.util.DisplayMetrics;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.View;
-import android.widget.GridLayout;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.widget.ImageButton;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.home.LibrarySortActivity;
 import com.siju.acexplorer.home.model.HomeLibraryInfo;
-import com.siju.acexplorer.logging.Logger;
+import com.siju.acexplorer.home.model.LibrarySortModel;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.StorageUtils;
 import com.siju.acexplorer.model.groups.Category;
+import com.siju.acexplorer.storage.view.custom.helper.SimpleItemTouchHelperCallback;
 import com.siju.acexplorer.theme.Theme;
 
 import java.util.ArrayList;
@@ -50,33 +51,31 @@ import static com.siju.acexplorer.model.groups.Category.FAVORITES;
 /**
  * Created by Siju on 03 September,2017
  */
-class HomeLibrary implements View.OnClickListener {
+class HomeLibrary {
 
-    private final String TAG                   = this.getClass().getSimpleName();
-    static final  int    LIBSORT_REQUEST_CODE  = 1000;
-    private final int    MAX_LIMIT_ROUND_COUNT = 99999;
+    private final String TAG                  = this.getClass().getSimpleName();
+    static final  int    LIBSORT_REQUEST_CODE = 1000;
 
-    private HomeUiView            homeUiView;
-    private GridLayout            libraryContainer;
-    private CardView              layoutLibrary;
-    private Activity              activity;
-    private Context               context;
-    private List<HomeLibraryInfo> homeLibraryInfoArrayList;
-    private int                   spacing;
-    private int                   gridColumns;
-    private Theme                 theme;
-    private int                   currentOrientation;
+    private HomeUiView     homeUiView;
+    private RecyclerView   libraryList;
+    private CardView       layoutLibrary;
+    private Context        context;
+    private HomeLibAdapter homeLibAdapter;
+    private List<HomeLibraryInfo> homeLibraryInfoArrayList = new ArrayList<>();
+    private Theme       theme;
+    private int         currentOrientation;
+    private boolean     isActionModeActive;
+    private ImageButton deleteButton;
+
 
     HomeLibrary(Activity activity, HomeUiView homeUiView, Theme theme) {
-        this.activity = activity;
         this.homeUiView = homeUiView;
         this.context = homeUiView.getContext();
+        this.theme = theme;
         init();
-        setTheme(theme);
     }
 
     private void setTheme(Theme theme) {
-        this.theme = theme;
         switch (theme) {
             case DARK:
                 layoutLibrary.setCardBackgroundColor(ContextCompat.getColor(context, R.color
@@ -90,202 +89,153 @@ class HomeLibrary implements View.OnClickListener {
     }
 
     private void init() {
-        libraryContainer = homeUiView.findViewById(R.id.libraryContainer);
+        libraryList = homeUiView.findViewById(R.id.libraryContainer);
         layoutLibrary = homeUiView.findViewById(R.id.cardViewLibrary);
+        setTheme(theme);
+        deleteButton = homeUiView.findViewById(R.id.deleteButton);
+        if (theme == Theme.LIGHT) {
+            deleteButton.setImageResource(R.drawable.ic_delete_black);
+        } else {
+            deleteButton.setImageResource(R.drawable.ic_delete_white);
+        }
         currentOrientation = context.getResources().getConfiguration().orientation;
-        setGridColumns();
+        initList();
+        setListeners();
         homeUiView.getLibraries();
     }
 
+    private void initList() {
+        libraryList.setItemAnimator(new DefaultItemAnimator());
+        libraryList.setHasFixedSize(true);
+        libraryList.setNestedScrollingEnabled(false);
+        homeLibAdapter = new HomeLibAdapter(context, homeLibraryInfoArrayList, theme);
+        homeLibAdapter.setHasStableIds(true);
+        libraryList.getItemAnimator().setChangeDuration(0);
+        setGridColumns();
+
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(homeLibAdapter);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(libraryList);
+        libraryList.setAdapter(homeLibAdapter);
+
+    }
+
+    private void setListeners() {
+        homeLibAdapter.setOnItemClickListener(new HomeLibAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                if (isActionModeActive()) {
+                    itemClickActionMode(position, false);
+                } else {
+                    handleItemClick(position);
+                }
+
+            }
+        });
+
+        homeLibAdapter.setOnItemLongClickListener(new HomeLibAdapter.OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(View view, int position) {
+                itemClickActionMode(position, true);
+            }
+        });
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SparseBooleanArray sparseBooleanArray = homeLibAdapter.getSelectedItemPositions();
+                List<HomeLibraryInfo> fileInfoList = new ArrayList<>();
+                for (int i = 0; i < sparseBooleanArray.size(); i++) {
+                    fileInfoList.add(homeLibraryInfoArrayList.get(sparseBooleanArray.keyAt(i)));
+                }
+                homeLibraryInfoArrayList.removeAll(fileInfoList);
+                homeLibAdapter.notifyDataSetChanged();
+                endActionMode();
+                reloadAftDelete();
+            }
+        });
+    }
+
+    private void reloadAftDelete() {
+        List<LibrarySortModel> sortModelList = new ArrayList<>();
+        for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
+            Category category = homeLibraryInfoArrayList.get(i).getCategory();
+            if (category.equals(ADD)) {
+                continue;
+            }
+            LibrarySortModel model = new LibrarySortModel();
+            model.setChecked(true);
+            model.setCategory(category);
+            model.setLibraryName(homeLibraryInfoArrayList.get(i).getCategoryName());
+            sortModelList.add(model);
+        }
+        homeUiView.reloadLibs(sortModelList);
+    }
+
+    private void handleItemClick(int position) {
+        Category category = homeLibraryInfoArrayList.get(position).getCategory();
+        if (isAddCategory(category)) {
+            Analytics.getLogger().addLibClicked();
+            Intent intent = new Intent(context, LibrarySortActivity.class);
+            homeUiView.getFragment().startActivityForResult(intent, LIBSORT_REQUEST_CODE);
+        } else {
+            String path = null;
+            if (category.equals(DOWNLOADS)) {
+                path = StorageUtils.getDownloadsDirectory();
+            }
+            homeUiView.loadFileList(path, category);
+        }
+    }
+
+    private void itemClickActionMode(int position, boolean isLongPress) {
+        if (position == homeLibraryInfoArrayList.size() - 1) {
+            return;
+        }
+        homeLibAdapter.toggleSelection(position, isLongPress);
+
+        boolean hasCheckedItems = homeLibAdapter.getSelectedCount() > 0;
+        if (hasCheckedItems && !isActionModeActive) {
+            startActionMode();
+        } else if (!hasCheckedItems && isActionModeActive) {
+            endActionMode();
+        }
+    }
+
+    private void startActionMode() {
+        isActionModeActive = true;
+        deleteButton.setVisibility(View.VISIBLE);
+    }
+
+    private void endActionMode() {
+        deleteButton.setVisibility(View.GONE);
+        isActionModeActive = false;
+        homeLibAdapter.clearSelection();
+    }
+
+    private boolean isActionModeActive() {
+        return isActionModeActive;
+    }
+
+
     private void setGridColumns() {
-        libraryContainer.removeAllViews();
-        DisplayMetrics metrics = new DisplayMetrics();
-        activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-
-        int width = metrics.widthPixels;
-        int libWidth = context.getResources().getDimensionPixelSize(R.dimen.home_library_width) +
-                2 * context.getResources().getDimensionPixelSize(R.dimen.drawer_item_margin) +
-                context.getResources().getDimensionPixelSize(R.dimen.padding_5);
-
-        gridColumns = context.getResources().getInteger(R.integer.homescreen_columns);//width / 
-        spacing = (width - gridColumns * libWidth) / gridColumns;
-        Logger.log(TAG, "Grid columns=" + gridColumns + " width=" + width + " liub size=" +
-                libWidth + "space=" +
-                spacing);
-        libraryContainer.setColumnCount(gridColumns);
+        int gridColumns = context.getResources().getInteger(R.integer.homescreen_columns);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(context, gridColumns);
+        Log.d(TAG, "setGridColumns: " + gridColumns);
+        libraryList.setLayoutManager(gridLayoutManager);
     }
 
     private void inflateLibraryItem() {
-        Log.d(TAG, "inflateLibraryItem: " + homeLibraryInfoArrayList.size()); // TODO: 02/11/17 NPE here in dual mode when orientation change from LAND->PORT
+        Log.d(TAG, "inflateLibraryItem: " + homeLibraryInfoArrayList.size()); // TODO: 02/11/17
+        // NPE here in dual mode when orientation change from LAND->PORT
         List<String> libNames = new ArrayList<>();
-
-        for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
-
-            RelativeLayout libraryItemContainer = (RelativeLayout) View.inflate(context, R.layout
-                    .library_item, null);
-            ImageView imageLibrary = libraryItemContainer.findViewById(R.id.imageLibrary);
-            TextView textLibraryName = libraryItemContainer.findViewById(R.id.textLibrary);
-            TextView textCount = libraryItemContainer.findViewById(R.id.textCount);
-            imageLibrary.setImageResource(homeLibraryInfoArrayList.get(i).getResourceId());
-            textLibraryName.setText(homeLibraryInfoArrayList.get(i).getCategoryName());
-            if (homeLibraryInfoArrayList.get(i).getCategory().equals(ADD)) {
-                textCount.setVisibility(View.GONE);
-            } else {
-                textCount.setVisibility(View.VISIBLE);
-            }
-            libNames.add(homeLibraryInfoArrayList.get(i).getCategoryName());
-            textCount.setText(roundOffCount(homeLibraryInfoArrayList.get(i).getCount()));
-            libraryContainer.addView(libraryItemContainer);
-            GridLayout.LayoutParams layoutParams = (GridLayout.LayoutParams) libraryItemContainer.getLayoutParams();
-            layoutParams.rightMargin = spacing;
-            libraryItemContainer.setOnClickListener(this);
-            libraryItemContainer.setTag(homeLibraryInfoArrayList.get(i).getCategory());
-            changeColor(imageLibrary, homeLibraryInfoArrayList.get(i).getCategory());
+        for (HomeLibraryInfo libraryInfo : homeLibraryInfoArrayList) {
+            libNames.add(libraryInfo.getCategoryName());
         }
+
+        homeLibAdapter.updateAdapter(homeLibraryInfoArrayList);
         Analytics.getLogger().homeLibsDisplayed(homeLibraryInfoArrayList.size(), libNames);
     }
 
-    private void changeColor(View itemView, Category category) {
-        if (theme == Theme.DARK) {
-            switch (category) {
-                case AUDIO:
-                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
-                            (context, R.color
-                                    .audio_bg_dark));
-                    break;
-                case VIDEO:
-                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
-                            (context, R.color
-                                    .video_bg_dark));
-                    break;
-                case IMAGE:
-                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
-                            (context, R.color
-                                    .image_bg_dark));
-                    break;
-                case DOCS:
-                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
-                            (context, R.color
-                                    .docs_bg_dark));
-                    break;
-                case DOWNLOADS:
-                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
-                            (context, R.color
-                                    .downloads_bg_dark));
-                    break;
-                case ADD:
-                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
-                            (context, R.color
-                                    .add_bg_dark));
-                    break;
-                case COMPRESSED:
-                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
-                            (context, R.color
-                                    .compressed_bg_dark));
-                    break;
-                case FAVORITES:
-                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
-                            (context, R.color
-                                    .fav_bg_dark));
-                    break;
-                case PDF:
-                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
-                            (context, R.color
-                                    .pdf_bg_dark));
-                    break;
-                case APPS:
-                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
-                            (context, R.color
-                                    .apps_bg_dark));
-                    break;
-                case LARGE_FILES:
-                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
-                            (context, R.color
-                                    .large_files_bg_dark));
-                    break;
-
-                default:
-                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
-                            (context, R.color
-                                    .colorPrimary));
-
-            }
-        } else {
-            switch (category) {
-                case AUDIO:
-                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
-                            (context, R.color
-                                    .audio_bg));
-                    break;
-                case VIDEO:
-                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
-                            (context, R.color
-                                    .video_bg));
-                    break;
-                case IMAGE:
-                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
-                            (context, R.color
-                                    .image_bg));
-                    break;
-                case DOCS:
-                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
-                            (context, R.color
-                                    .docs_bg));
-                    break;
-                case DOWNLOADS:
-                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
-                            (context, R.color
-                                    .downloads_bg));
-                    break;
-                case ADD:
-                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
-                            (context, R.color
-                                    .add_bg));
-                    break;
-                case COMPRESSED:
-                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
-                            (context, R.color
-                                    .compressed_bg));
-                    break;
-                case FAVORITES:
-                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
-                            (context, R.color
-                                    .fav_bg));
-                    break;
-                case PDF:
-                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
-                            (context, R.color
-                                    .pdf_bg));
-                    break;
-                case APPS:
-                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
-                            (context, R.color
-                                    .apps_bg));
-                    break;
-                case LARGE_FILES:
-                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
-                            (context, R.color
-                                    .large_files_bg));
-                    break;
-
-                default:
-                    ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
-                            (context, R.color
-                                    .colorPrimary));
-            }
-        }
-    }
-
-
-    private String roundOffCount(int count) {
-        String roundedCount;
-        if (count > MAX_LIMIT_ROUND_COUNT) {
-            roundedCount = MAX_LIMIT_ROUND_COUNT + "+";
-        } else {
-            roundedCount = "" + count;
-        }
-        return roundedCount;
-    }
 
     void setLibraries(List<HomeLibraryInfo> libraries) {
         this.homeLibraryInfoArrayList = libraries;
@@ -297,31 +247,11 @@ class HomeLibrary implements View.OnClickListener {
         return homeLibraryInfoArrayList;
     }
 
-    private void updateCount(int index, int count) {
-
-        RelativeLayout container = (RelativeLayout) libraryContainer.getChildAt(index);
-        TextView textCount = container.findViewById(R.id.textCount);
-        textCount.setText(roundOffCount(count));
-    }
-
 
     void updateFavoritesCount(int count) {
         for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
             if (isFavoritesCategory(homeLibraryInfoArrayList.get(i).getCategory())) {
-                int count1 = homeLibraryInfoArrayList.get(i).getCount();
-                homeLibraryInfoArrayList.get(i).setCount(count1 + count);
-                updateCount(i, count1 + count);
-                break;
-            }
-        }
-    }
-
-    public void removeFavorites(int count) {
-        for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
-            if (isFavoritesCategory(homeLibraryInfoArrayList.get(i).getCategory())) {
-                int count1 = homeLibraryInfoArrayList.get(i).getCount();
-                homeLibraryInfoArrayList.get(i).setCount(count1 - count);
-                updateCount(i, count1 - count);
+                homeLibAdapter.updateFavCount(i, count);
                 break;
             }
         }
@@ -337,29 +267,7 @@ class HomeLibrary implements View.OnClickListener {
                 } else {
                     count = data.get(0).getCount();
                 }
-                homeLibraryInfoArrayList.get(i).setCount(count);
-                updateCount(i, count);
-            }
-        }
-    }
-
-
-    @Override
-    public void onClick(View view) {
-        Object tag = view.getTag();
-        if (tag instanceof Category) {
-
-            Category category = (Category) tag;
-            if (isAddCategory(category)) {
-                Analytics.getLogger().addLibClicked();
-                Intent intent = new Intent(context, LibrarySortActivity.class);
-                homeUiView.getFragment().startActivityForResult(intent, LIBSORT_REQUEST_CODE);
-            } else {
-                String path = null;
-                if (category.equals(DOWNLOADS)) {
-                    path = StorageUtils.getDownloadsDirectory();
-                }
-                homeUiView.loadFileList(path, category);
+                homeLibAdapter.updateCount(i, count);
             }
         }
     }
@@ -381,7 +289,4 @@ class HomeLibrary implements View.OnClickListener {
         }
     }
 
-    void clearViews() {
-        libraryContainer.removeAllViews();
-    }
 }

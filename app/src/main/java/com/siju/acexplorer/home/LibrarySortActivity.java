@@ -67,12 +67,12 @@ public class LibrarySortActivity extends BaseActivity implements OnStartDragList
         sharedPreferenceWrapper = new SharedPreferenceWrapper();
         initConstants();
         initializeLibraries();
-        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         mToolbar.setTitle(getString(R.string.nav_header_collections));
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        RecyclerView mRecyclerViewLibrarySort = (RecyclerView) findViewById(R.id.recyclerViewLibrarySort);
+        RecyclerView mRecyclerViewLibrarySort =  findViewById(R.id.recyclerViewLibrarySort);
         LibrarySortAdapter mSortAdapter = new LibrarySortAdapter(this, totalLibraries);
 
         mRecyclerViewLibrarySort.setHasFixedSize(true);

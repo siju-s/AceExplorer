@@ -217,10 +217,6 @@ public class HomeUiView extends CoordinatorLayout {
 
     public void onLibrariesFetched(List<HomeLibraryInfo> libraries) {
         Log.d(TAG, "onLibrariesFetched: "+libraries.size());
-        if (reload) {
-            library.clearViews();
-            reload = false;
-        }
         library.setLibraries(libraries);
         loadData(libraries);
     }
@@ -293,6 +289,10 @@ public class HomeUiView extends CoordinatorLayout {
         if (data != null && data.size() > 0) {
             library.onDataLoaded(id, data);
         }
+    }
+
+    void reloadLibs(List<LibrarySortModel> selectedLibs) {
+        bridge.reloadLibraries(selectedLibs);
     }
 
 

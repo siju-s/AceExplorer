@@ -37,14 +37,12 @@
         android:id="@+id/scrollLayoutHome"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="@dimen/padding_10"
+        android:fitsSystemWindows="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fitsSystemWindows="true"
-            android:layout_marginTop="@dimen/padding_10"
             android:orientation="vertical">
 
             <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -55,49 +53,64 @@
                 android:layout_margin="@dimen/padding_10"
                 card_view:cardCornerRadius="@dimen/card_home_radius">
 
-            <LinearLayout
-                android:id="@+id/layoutLibrary"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/textLibrary"
+                <RelativeLayout
+                    android:id="@+id/layoutLibrary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/margin_16"
-                    android:layout_marginLeft="@dimen/margin_16"
-                    android:layout_marginRight="@dimen/margin_16"
-                    android:layout_marginStart="@dimen/margin_16"
-                    android:text="@string/nav_header_collections"
-                    android:textAllCaps="true"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:orientation="vertical">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:layout_marginBottom="2dp"
-                    android:layout_marginTop="2dp"
-                    android:background="@color/colorPrimaryDark" />
+                    <TextView
+                        android:id="@+id/textLibrary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/margin_16"
+                        android:layout_marginLeft="@dimen/margin_16"
+                        android:layout_marginRight="@dimen/margin_16"
+                        android:layout_marginStart="@dimen/margin_16"
+                        android:text="@string/nav_header_collections"
+                        android:textAllCaps="true"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <ImageButton
+                        android:id="@+id/deleteButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginEnd="@dimen/padding_5"
+                        android:layout_marginRight="@dimen/padding_5"
+                        android:background="@null"
+                        android:visibility="gone"
+                        android:src="@drawable/ic_delete_white" />
+
+                    <View
+                        android:id="@+id/dividerLib"
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:layout_below="@id/textLibrary"
+                        android:layout_marginBottom="2dp"
+                        android:layout_marginTop="2dp"
+                        android:background="@color/colorPrimaryDark" />
 
 
-                <GridLayout
-                    android:id="@+id/libraryContainer"
-                    android:layout_width="match_parent"
-                    android:layout_marginBottom="@dimen/margin_16"
-                    android:layout_marginTop="@dimen/margin_16"
-                    android:layout_height="wrap_content" />
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/libraryContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/dividerLib"
+                        android:layout_marginBottom="@dimen/margin_16"
+                        android:layout_marginTop="@dimen/margin_16" />
 
-            </LinearLayout>
+                </RelativeLayout>
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:card_view="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/cardViewStorages"
-                android:layout_below="@+id/cardViewLibrary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/cardViewLibrary"
                 android:layout_margin="@dimen/padding_10"
                 card_view:cardCornerRadius="@dimen/card_home_radius">
 
