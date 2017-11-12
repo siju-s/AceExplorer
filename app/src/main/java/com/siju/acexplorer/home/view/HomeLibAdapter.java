@@ -74,7 +74,8 @@ public class HomeLibAdapter extends RecyclerView.Adapter<HomeLibAdapter.HomeLibH
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
-        if (toPosition == homeLibraryInfoArrayList.size() - 1) {
+        int addPos = homeLibraryInfoArrayList.size() - 1;
+        if (fromPosition == addPos || toPosition == addPos) {
             return;
         }
         Log.d("HomeLibAdapter", "onItemMove: " + mSelectedItemsIds);

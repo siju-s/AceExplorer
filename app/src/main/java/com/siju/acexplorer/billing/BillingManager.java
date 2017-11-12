@@ -409,16 +409,22 @@ public class BillingManager implements PurchasesUpdatedListener {
      * </p>
      */
     private boolean verifyValidSignature(String signedData, String signature) {
-        String base64EncodedPublicKey =
-                "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAomGBqi0dGhyE1KphvTxc6K3OXsTsWEcAdLNsg22Un" +
-                        "/6VJakiajmZMBODktRggHlUgWDZZvFZCw2so53U++pVHRfyevKIbP7" +
-                        "/eIkB7mtlartsbOkD3yGQCUVxE1kQ3Olum1CYv7DqBQC4J9h9q22ApcGIfkZq6Os3Jm7vKmuzHHLKN63yWQS1FuwwcLAmpSN2EOX4Has4eElrgZoySu4qv5SOooOJS27Y4fzzxToQX5T50tO9dG+NYKrLmPK4yL5JGB5E3UD0I8vNLD/Wj2qPBE1tiYbjHHeX3PrF9lJhXtZs9uiMnMzox6dxW9+VmPYxNuMXakXrURGfpgaWGK00ZQIDAQAB";
+        String key = getNativeKey();
         try {
-            return Security.verifyPurchase(base64EncodedPublicKey, signedData, signature);
+            return Security.verifyPurchase(key, signedData, signature);
         } catch (IOException e) {
             Log.e(TAG, "Got an exception trying to validate a purchase: " + e);
             return false;
         }
     }
+
+    static {
+        System.loadLibrary("keys");
+    }
+
+    public native String getNativeKey();
+
+
+
 }
 

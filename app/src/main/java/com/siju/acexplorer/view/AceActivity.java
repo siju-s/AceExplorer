@@ -29,9 +29,9 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.kobakei.ratethisapp.RateThisApp;
+import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.base.view.BaseActivity;
-import com.siju.acexplorer.R;
 import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.MainModel;

@@ -149,7 +149,7 @@ class HomeLibrary {
                     fileInfoList.add(homeLibraryInfoArrayList.get(sparseBooleanArray.keyAt(i)));
                 }
                 homeLibraryInfoArrayList.removeAll(fileInfoList);
-                homeLibAdapter.notifyDataSetChanged();
+                homeLibAdapter.updateAdapter(homeLibraryInfoArrayList);
                 endActionMode();
                 reloadAftDelete();
             }

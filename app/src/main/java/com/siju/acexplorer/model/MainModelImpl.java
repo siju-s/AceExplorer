@@ -25,6 +25,7 @@ import android.util.Log;
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.Purchase;
 import com.siju.acexplorer.AceApplication;
+import com.siju.acexplorer.BuildConfig;
 import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.billing.BillingResultCallback;
@@ -144,6 +145,10 @@ public class MainModelImpl implements MainModel,
     @Override
     public void onPurchasesUpdated(List<Purchase> purchases) {
         int billingResponse = BillingManager.getInstance().getBillingClientResponseCode();
+        if (BuildConfig.FLAVOR.equals("dev")) {
+            listener.onPremiumVersion();
+            return;
+        }
         if (billingResponse == BillingClient.BillingResponse.BILLING_UNAVAILABLE ||
                 billingResponse == BillingClient.BillingResponse.FEATURE_NOT_SUPPORTED) {
             Analytics.getLogger().setInAppStatus(-1);

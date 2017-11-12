@@ -15,7 +15,7 @@ default_platform :android
 # info which you can add here later
 lane :beta do
   # build the release variant
-  gradle(task: "assembleRelease")
+  gradle(task: 'assemble', build_type: 'Release', flavor: 'dev')
 
   # upload to Beta by Crashlytics
   crashlytics(
