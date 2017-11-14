@@ -320,6 +320,11 @@ public class StorageBridge implements StoragesUi {
         storagesUiView.hideDualPane();
     }
 
+    @Override
+    public void addHomeNavPath() {
+        storagesUiView.addHomeNavPath();
+    }
+
 
     void loadData(String currentDir, Category category, boolean isPicker) {
         listener.loadData(currentDir, category, isPicker);

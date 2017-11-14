@@ -152,6 +152,10 @@ public class BaseFileList extends Fragment {
         storagesUi.removeHomeFromNavPath();
     }
 
+    public void addHomeNavPath() {
+        storagesUi.addHomeNavPath();
+    }
+
     public void refreshSpan() {
         storagesUi.refreshSpan();
     }

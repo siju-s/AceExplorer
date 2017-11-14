@@ -39,14 +39,15 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.siju.acexplorer.model.FileConstants.KEY_CATEGORY;
 import static com.siju.acexplorer.model.helper.SdkHelper.isOreo;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_CONFLICT_DATA;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES;
+import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OLD_FILES;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_RESULT;
-import static com.siju.acexplorer.storage.model.operations.Operations.COPY;
 import static com.siju.acexplorer.storage.model.operations.Operations.CUT;
 import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_COMPLETED;
 import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_TOTAL;
@@ -58,6 +59,8 @@ public class MoveFiles extends IntentService {
     private List<FileInfo> filesToMove;
     private List<CopyData> copyData;
     private ArrayList<String> filesMovedList;
+    private ArrayList<String> oldFileList;
+    private ArrayList<Integer> categories;
     private NotificationManager notificationManager;
     private NotificationCompat.Builder builder;
     private final int NOTIFICATION_ID = 1000;
@@ -121,29 +124,33 @@ public class MoveFiles extends IntentService {
             return;
         }
         filesMovedList = new ArrayList<>();
+        oldFileList = new ArrayList<>();
+        categories = new ArrayList<>();
 
-        for (FileInfo f : filesToMove) {
+        for (FileInfo fileInfo : filesToMove) {
             int action = FileUtils.ACTION_NONE;
 
             if (copyData != null) {
                 for (CopyData copyData1 : copyData) {
-                    if (copyData1.getFilePath().equals(f.getFilePath())) {
+                    if (copyData1.getFilePath().equals(fileInfo.getFilePath())) {
                         action = copyData1.getAction();
                         break;
                     }
                 }
             }
-            String fileName = f.getFileName();
+            String fileName = fileInfo.getFileName();
             String path = destinationDir + "/" + fileName;
             if (action == FileUtils.ACTION_KEEP) {
                 String fileNameWithoutExt = fileName.substring(0, fileName.
                         lastIndexOf("."));
-                path = destinationDir + "/" + fileNameWithoutExt + "(2)" + "." + f.getExtension();
+                path = destinationDir + "/" + fileNameWithoutExt + "(2)" + "." + fileInfo.getExtension();
             }
-            File file = new File(path);
-            File file1 = new File(f.getFilePath());
-            if (file1.renameTo(file)) {
-                filesMovedList.add(file.getAbsolutePath());
+            File newFile = new File(path);
+            File oldFile = new File(fileInfo.getFilePath());
+            if (oldFile.renameTo(newFile)) {
+                oldFileList.add(fileInfo.getFilePath());
+                filesMovedList.add(newFile.getAbsolutePath());
+                categories.add(fileInfo.getCategory().getValue());
             }
             publishResults(fileName, totalFiles, filesMovedList.size());
         }
@@ -184,6 +191,8 @@ public class MoveFiles extends IntentService {
         intent.putExtra(KEY_RESULT, filesMovedList.size() != 0);
         intent.putExtra(KEY_OPERATION, CUT);
         intent.putStringArrayListExtra(KEY_FILES, filesMovedList);
+        intent.putStringArrayListExtra(KEY_OLD_FILES, oldFileList);
+        intent.putIntegerArrayListExtra(KEY_CATEGORY, categories);
         sendBroadcast(intent);
     }
 }

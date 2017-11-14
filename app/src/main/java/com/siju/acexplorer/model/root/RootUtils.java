@@ -21,18 +21,21 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.siju.acexplorer.logging.Logger;
+import com.siju.acexplorer.model.StorageUtils;
+import com.siju.acexplorer.model.groups.StoragesGroup;
 import com.siju.acexplorer.model.helper.RootHelper;
 import com.stericson.RootTools.RootTools;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 
 public class RootUtils {
-    public static final String DATA_APP_DIR = "/data/app";
-    private static final String LS = "ls -lAnH \"%\" --color=never";
-    private static final String LSDIR = "ls -land \"%\" --color=never";
-    public static final String SYSTEM_APP_DIR = "/system/app";
-    public static final String PREFS_ROOTED = "is_rooted";
+    public static final  String DATA_APP_DIR   = "/data/app";
+    private static final String LS             = "ls -lAnH \"%\" --color=never";
+    private static final String LSDIR          = "ls -land \"%\" --color=never";
+    public static final  String SYSTEM_APP_DIR = "/system/app";
+    public static final  String PREFS_ROOTED   = "is_rooted";
     private static final Pattern mLsPattern;
 
     static {
@@ -47,6 +50,20 @@ public class RootUtils {
     public static void setRooted(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         preferences.edit().putBoolean(PREFS_ROOTED, true).apply();
+    }
+
+    public static boolean isRootDir(String path) {
+        List<String> extSDPaths = StoragesGroup.getInstance().getExternalSDList();
+        boolean isPathOnExt = false;
+        if (extSDPaths != null) {
+            for(String extSD: extSDPaths) {
+                if (path.startsWith(extSD)) {
+                    isPathOnExt = true;
+                    break;
+                }
+            }
+        }
+        return !path.startsWith(StorageUtils.getInternalStorage()) && !isPathOnExt;
     }
 
 
@@ -91,7 +108,9 @@ public class RootUtils {
      * @throws RootDeniedException
      */
     public static void chmod(String path, int octalNotation) throws RootDeniedException {
-        if (!RootTools.isAccessGiven()) throw new RootDeniedException();
+        if (!RootTools.isAccessGiven()) {
+            throw new RootDeniedException();
+        }
         String command = "chmod %s %s";
         Object[] args = new Object[2];
         args[0] = octalNotation;
@@ -100,7 +119,9 @@ public class RootUtils {
     }
 
     public static void mountRW(String path) throws RootDeniedException {
-        if (!RootTools.isAccessGiven()) throw new RootDeniedException();
+        if (!RootTools.isAccessGiven()) {
+            throw new RootDeniedException();
+        }
         String str = "mount -o %s,remount %s";
         String mountPoint = "/";
         if (path.startsWith("/system")) {
@@ -114,12 +135,14 @@ public class RootUtils {
         RootHelper.runAndWait(cmd);
     }
 
-    public static boolean fileExists(String path , boolean isDir) throws RootDeniedException{
-        return RootTools.exists(path,isDir);
+    public static boolean fileExists(String path, boolean isDir) throws RootDeniedException {
+        return RootTools.exists(path, isDir);
     }
 
     public static void mountRO(String path) throws RootDeniedException {
-        if (!RootTools.isAccessGiven()) throw new RootDeniedException();
+        if (!RootTools.isAccessGiven()) {
+            throw new RootDeniedException();
+        }
         String str = "mount -o %s,remount %s";
         String mountPoint = "/";
         if (path.startsWith("/system")) {

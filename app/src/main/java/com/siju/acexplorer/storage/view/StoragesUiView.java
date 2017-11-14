@@ -104,6 +104,7 @@ import java.util.List;
 
 import static android.webkit.MimeTypeMap.getSingleton;
 import static com.siju.acexplorer.model.FileConstants.ADS;
+import static com.siju.acexplorer.model.FileConstants.KEY_CATEGORY;
 import static com.siju.acexplorer.model.groups.Category.DOWNLOADS;
 import static com.siju.acexplorer.model.groups.Category.FILES;
 import static com.siju.acexplorer.model.groups.Category.checkIfFileCategory;
@@ -119,6 +120,7 @@ import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_CO
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH2;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES;
+import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OLD_FILES;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_POSITION;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_RESULT;
@@ -254,6 +256,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     void initialize() {
+        Log.d(TAG, "initialize: "+this);
         preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         dragHelper = new DragHelper(getContext(), this);
         setTheme();
@@ -332,6 +335,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
 
     private void registerReceivers() {
+        Log.d(TAG, "registerReceivers: "+this);
         IntentFilter intentFilter = new IntentFilter(ADS);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(adsReceiver, intentFilter);
         if (!mInstanceStateExists) {
@@ -841,6 +845,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 Category category = fileInfoList.get(position).getCategory();
 
                 removeMedia(getActivity(), oldFile, category.getValue());
+//                Uri insertUri = insertMedia(getContext(), newFile, category.getValue());
+//                Log.d(TAG, "onOperationResult: NewUri:"+insertUri);
                 scanFile(getActivity().getApplicationContext(), newFile);
 
                 fileListAdapter.setStopAnimation(true);
@@ -857,6 +863,23 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 break;
 
             case CUT:
+                ArrayList<String> movedFiles = intent.getStringArrayListExtra(KEY_FILES);
+                ArrayList<String> oldFiles = intent.getStringArrayListExtra(KEY_OLD_FILES);
+                ArrayList<Integer> categories = intent.getIntegerArrayListExtra(KEY_CATEGORY);
+
+                if (oldFiles != null) {
+                    for (int i = 0 ; i < oldFiles.size() ; i++) {
+                        removeMedia(getActivity(), oldFiles.get(i), categories.get(i));
+                    }
+                }
+
+                if (movedFiles != null) {
+                    for (String path : movedFiles) {
+                        scanFile(getActivity().getApplicationContext(), path);
+                    }
+                }
+                refreshList();
+                break;
             case COPY:
                 ArrayList<String> copiedFiles = intent.getStringArrayListExtra(KEY_FILES);
 
@@ -1466,6 +1489,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     public void removeHomeFromNavPath() {
+        isHomeScreenEnabled = false;
         navigationInfo.removeHomeFromNavPath();
     }
 
@@ -1621,8 +1645,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 Logger.log(TAG, "DRAG END parent dual =" + false);
                 BaseFileList singlePaneFragment = (BaseFileList)
                         fragment.getFragmentManager()
-                                .findFragmentById(R
-                                                          .id.main_container);
+                                .findFragmentById(R.id.main_container);
                 Logger.log(TAG, "DRAG END single dir=" + mLastSinglePaneDir);
 
                 if (singlePaneFragment != null && new File(mLastSinglePaneDir).list()
@@ -1689,6 +1712,9 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     @Override
     public void onNavButtonClicked(String dir) {
 
+        if (isActionModeActive()) {
+            menuControls.endActionMode();
+        }
         if (isZipMode()) {
             zipViewer.onBackPressed();
         } else {
@@ -1875,7 +1901,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                     bridge.createFile(currentDir, name, isRooted());
                     break;
                 case RENAME:
-                    bridge.renameFile(filePath, currentDir, name, position, isRooted());
+                    bridge.renameFile(filePath, new File(filePath).getParent(), name, position, isRooted());
                     break;
             }
         }
@@ -1926,6 +1952,12 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             openZipViewer(currentDir);
         }
     };
+
+    public void addHomeNavPath() {
+//        navigationInfo.addHomeNavButton(true, category);
+        isHomeScreenEnabled = true;
+        navigationInfo.setNavDirectory(currentDir, true, category);
+    }
 
 
     public interface FavoriteOperation {

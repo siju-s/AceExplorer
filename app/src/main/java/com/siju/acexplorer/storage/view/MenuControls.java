@@ -41,6 +41,7 @@ import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.model.helper.ShareHelper;
+import com.siju.acexplorer.model.root.RootUtils;
 import com.siju.acexplorer.storage.model.ViewMode;
 import com.siju.acexplorer.storage.model.operations.Operations;
 import com.siju.acexplorer.theme.Theme;
@@ -217,13 +218,15 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
                 String filePath = fileInfoList.get(selectedItemPos.keyAt(0))
                         .getFilePath();
 
-                boolean isRoot = fileInfoList.get(selectedItemPos.keyAt(0)).isRootMode();
+                boolean isRoot = RootUtils.isRootDir(filePath);
                 if (FileUtils.isFileCompressed(filePath)) {
                     mExtractItem.setVisible(true);
                     mArchiveItem.setVisible(false);
                 }
                 if (isRoot) {
                     mPermissionItem.setVisible(true);
+                    mExtractItem.setVisible(false);
+                    mArchiveItem.setVisible(false);
                 }
                 if (!isDirectory) {
                     mFavItem.setVisible(false);
@@ -282,7 +285,6 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
         Log.d(TAG, "onMenuItemClick: " + item);
         List<FileInfo> fileInfoList = storagesUiView.getFileList();
         SparseBooleanArray selectedItems = storagesUiView.getSelectedItems();
-        boolean isRooted = storagesUiView.isRooted();
 
         switch (item.getItemId()) {
 

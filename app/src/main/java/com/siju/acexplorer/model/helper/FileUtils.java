@@ -58,10 +58,10 @@ import static com.siju.acexplorer.model.helper.UriHelper.getUriFromFile;
 
 public class FileUtils {
 
-    private static final String TAG = "FileUtils";
-    public static final int ACTION_NONE = 0;
-    public static final int ACTION_KEEP = 3;
-    private static final HashMap<String, String> MIME_TYPES = new HashMap<>();
+    private static final String                  TAG         = "FileUtils";
+    public static final  int                     ACTION_NONE = 0;
+    public static final  int                     ACTION_KEEP = 3;
+    private static final HashMap<String, String> MIME_TYPES  = new HashMap<>();
 
 
     static {
@@ -151,8 +151,9 @@ public class FileUtils {
 
 
     public static String getAbsolutePath(File file) {
-        if (file == null)
+        if (file == null) {
             return null;
+        }
         return file.getAbsolutePath();
     }
 
@@ -189,10 +190,11 @@ public class FileUtils {
         try {
             for (File file : directory.listFiles()) {
 
-                if (file.isFile())
+                if (file.isFile()) {
                     length += file.length();
-                else
+                } else {
                     length += getFolderSize(file);
+                }
             }
         } catch (Exception ignored) {
         }
@@ -219,9 +221,10 @@ public class FileUtils {
                 if (isAtleastLollipop()) {
                     // Storage Access Framework
                     DocumentFile targetDocument = getDocumentFile(target, false);
-                    if (targetDocument != null)
+                    if (targetDocument != null) {
                         outStream =
                                 context.getContentResolver().openOutputStream(targetDocument.getUri());
+                    }
                 } else if (isKitkat()) {
                     // Workaround for Kitkat ext SD card
                     return getOutputStream(context, target.getPath());
@@ -242,8 +245,9 @@ public class FileUtils {
      * @return true if the file is writable.
      */
     public static boolean isWritable(final File file) {
-        if (file == null)
+        if (file == null) {
             return false;
+        }
         boolean isExisting = file.exists();
 
         try {
@@ -283,7 +287,9 @@ public class FileUtils {
     public static Category checkMimeType(String extension) {
 
         Category value = FILES;
-        if (extension == null) return FILES;
+        if (extension == null) {
+            return FILES;
+        }
         extension = extension.toLowerCase(); // necessary
         String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
 
@@ -310,14 +316,16 @@ public class FileUtils {
 
         if (extension != null && !extension.isEmpty()) {
             final String extensionLowerCase = extension.toLowerCase(Locale
-                    .getDefault());
+                                                                            .getDefault());
             final MimeTypeMap mime = MimeTypeMap.getSingleton();
             type = mime.getMimeTypeFromExtension(extensionLowerCase);
             if (type == null) {
                 type = MIME_TYPES.get(extensionLowerCase);
             }
         }
-        if (type == null) type = "*/*";
+        if (type == null) {
+            type = "*/*";
+        }
         return type;
     }
 
@@ -332,8 +340,9 @@ public class FileUtils {
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public static boolean isFileNonWritable(final File folder) {
         // Verify that this is a directory.
-        if (folder == null)
+        if (folder == null) {
             return false;
+        }
         if (!folder.exists() || !folder.isDirectory()) {
             return false;
         }
@@ -376,8 +385,9 @@ public class FileUtils {
     public static boolean deleteFile(@NonNull final File file) {
         // First try the normal deletion.
         boolean fileDelete = deleteFilesInFolder(file);
-        if (file.delete() || fileDelete)
+        if (file.delete() || fileDelete) {
             return true;
+        }
 
         // Try with Storage Access Framework.
         if (isAtleastLollipop() && isOnExtSdCard(file)) {
@@ -393,7 +403,9 @@ public class FileUtils {
 
             try {
                 Uri uri = getUriFromFile(file.getAbsolutePath(), context);
-                if (uri != null) resolver.delete(uri, null, null);
+                if (uri != null) {
+                    resolver.delete(uri, null, null);
+                }
                 return !file.exists();
             } catch (Exception e) {
                 Logger.log(TAG, "Error when deleting file " + file.getAbsolutePath());
@@ -426,8 +438,9 @@ public class FileUtils {
      */
     private static boolean deleteFilesInFolder(final File folder) {
         boolean totalSuccess = true;
-        if (folder == null)
+        if (folder == null) {
             return false;
+        }
         if (folder.isDirectory()) {
             if (folder.listFiles() != null) {
                 for (File child : folder.listFiles()) {
@@ -435,12 +448,14 @@ public class FileUtils {
                 }
             }
 
-            if (!folder.delete())
+            if (!folder.delete()) {
                 totalSuccess = false;
+            }
         } else {
 
-            if (!folder.delete())
+            if (!folder.delete()) {
                 totalSuccess = false;
+            }
         }
         return totalSuccess;
     }
@@ -450,7 +465,9 @@ public class FileUtils {
         File file = new File(currentDir);
         String[] list = file.list();
         for (String aList : list) {
-            if (fileName.equals(aList)) return true;
+            if (fileName.equals(aList)) {
+                return true;
+            }
         }
         return false;
     }

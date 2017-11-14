@@ -52,7 +52,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.siju.acexplorer.model.helper.FileOperations.mkdir;
-import static com.siju.acexplorer.model.helper.MediaStoreHelper.scanFile;
 import static com.siju.acexplorer.model.helper.SdkHelper.isOreo;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_CONFLICT_DATA;
@@ -72,25 +71,25 @@ import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_TOT
 
 public class CopyService extends IntentService {
 
-    private final int NOTIFICATION_ID = 1000;
-    private final String SEPARATOR = "/";
+    private final int    NOTIFICATION_ID = 1000;
+    private final String SEPARATOR       = "/";
+    private final String CHANNEL_ID      = "operation";
 
-    private Context context;
-    private NotificationManager notificationManager;
+
+    private Context                    context;
+    private NotificationManager        notificationManager;
     private NotificationCompat.Builder builder;
 
     private final ArrayList<String> filesToMediaIndex = new ArrayList<>();
-    private final List<FileInfo> failedFiles = new ArrayList<>();
+    private final List<FileInfo>    failedFiles       = new ArrayList<>();
     private List<FileInfo> files;
     private List<CopyData> copyData;
 
     private long totalBytes = 0L, copiedBytes = 0L;
-    private int count = 0;
+    private int     count     = 0;
     private boolean isSuccess = true;
-    private boolean isRooted;
     private boolean move;
     private boolean calculatingTotalSize;
-    private final String CHANNEL_ID = "operation";
 
     public CopyService() {
         super("CopyService");
@@ -101,11 +100,15 @@ public class CopyService extends IntentService {
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
-        isRooted = RootUtils.isRooted(context);
     }
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
+
+        if (intent == null) {
+            Log.e(this.getClass().getSimpleName(), "Null intent");
+            return;
+        }
 
         files = intent.getParcelableArrayListExtra(KEY_FILES);
         copyData = intent.getParcelableArrayListExtra(KEY_CONFLICT_DATA);
@@ -122,15 +125,14 @@ public class CopyService extends IntentService {
         createChannelId();
         builder = new NotificationCompat.Builder(context, CHANNEL_ID);
         builder.setContentIntent(pendingIntent);
-        builder.setContentTitle(getResources().getString(R.string.copying)).setSmallIcon(R
-                .drawable.ic_copy_white);
+        builder.setContentTitle(getResources().getString(R.string.copying)).setSmallIcon(R.drawable.ic_copy_white);
         builder.setOnlyAlertOnce(true);
         builder.setDefaults(0);
 
         Notification notification = builder.build();
         startForeground(NOTIFICATION_ID, notification);
         // Issue the notification.
-        notificationManager.notify(NOTIFICATION_ID , notification);
+        notificationManager.notify(NOTIFICATION_ID, notification);
         checkWriteMode(currentDir);
     }
 
@@ -158,14 +160,14 @@ public class CopyService extends IntentService {
 
                         if (!new File(files.get(i).getFilePath()).canRead()) {
                             copyRoot(files.get(i).getFilePath(), files.get(i).getFileName(),
-                                    currentDir);
+                                     currentDir);
                             continue;
                         }
                         FileInfo destFile = new FileInfo(sourceFile.getCategory(), sourceFile
                                 .getFileName(),
-                                sourceFile.getFilePath(), sourceFile.getDate(), sourceFile
-                                .getSize(), sourceFile.isDirectory(),
-                                sourceFile.getExtension(), sourceFile.getPermissions(), false);
+                                                         sourceFile.getFilePath(), sourceFile.getDate(), sourceFile
+                                                                 .getSize(), sourceFile.isDirectory(),
+                                                         sourceFile.getExtension(), sourceFile.getPermissions(), false);
                         int action = FileUtils.ACTION_NONE;
                         if (copyData != null) {
                             for (CopyData copyData1 : copyData) {
@@ -195,13 +197,21 @@ public class CopyService extends IntentService {
                         Log.e("Copy", "Got exception checkout");
 
                         failedFiles.add(files.get(i));
-                        for (int j = i + 1; j < files.size(); j++) failedFiles.add(files.get(j));
+                        for (int j = i + 1; j < files.size(); j++) {
+                            failedFiles.add(files.get(j));
+                        }
+                        Intent intent = new Intent(ACTION_OP_REFRESH);
+                        intent.putExtra(KEY_RESULT, false);
+                        intent.putExtra(KEY_OPERATION, move ? CUT : COPY);
+                        intent.putStringArrayListExtra(KEY_FILES, filesToMediaIndex);
+                        sendBroadcast(intent);
                         break;
                     }
                 }
                 break;
 
             case ROOT:
+                totalBytes = files.size();
                 for (int i = 0; i < files.size(); i++) {
                     String path = files.get(i).getFilePath();
                     String name = files.get(i).getFileName();
@@ -212,6 +222,7 @@ public class CopyService extends IntentService {
                         failedFiles.add(files.get(i));
                     }
                 }
+                publishCompletionResult();
                 break;
         }
         deleteCopiedFiles();
@@ -225,8 +236,7 @@ public class CopyService extends IntentService {
             FileInfo f1 = (files.get(i));
             if (f1.isDirectory()) {
                 totalBytes = totalBytes + FileUtils.getFolderSize(new File(f1.getFilePath()));
-            }
-            else {
+            } else {
                 totalBytes = totalBytes + new File(f1.getFilePath()).length();
             }
         }
@@ -236,24 +246,29 @@ public class CopyService extends IntentService {
     }
 
 
+    private void publishCompletionResult() {
+        Intent intent = new Intent(ACTION_OP_REFRESH);
+        intent.putExtra(KEY_RESULT, isSuccess);
+        intent.putExtra(KEY_OPERATION, move ? CUT : COPY);
+        intent.putStringArrayListExtra(KEY_FILES, filesToMediaIndex);
+        sendBroadcast(intent);
+    }
+
     void copyRoot(String path, String name, String destinationPath) {
         String targetPath = destinationPath + File.separator + name;
         try {
-            // TODO: 04-01-2017 This causes the phone to brick. Fix it ASAP.
             RootUtils.mountRW(destinationPath);
-//                    RootUtils.mountOwnerRW(destinationPath);
-//                    if (!move)
-
             RootUtils.copy(path, targetPath);
             RootUtils.mountRO(destinationPath);
-//                    else if (move) RootUtils.move(path, targetPath);
+            if (FileUtils.isMediaScanningRequired(FileUtils.getMimeType(new File(targetPath)))) {
+                filesToMediaIndex.add(targetPath);
+            }
+            copiedBytes++;
+            calculateProgress(name);
         } catch (RootDeniedException e) {
-//                    failedFiles.add(sourceFile);
+            isSuccess = false;
             e.printStackTrace();
         }
-//                if (result) {
-        scanFile(context, destinationPath + SEPARATOR + name);
-//                }
     }
 
     private void startCopy(final FileInfo sourceFile, final FileInfo targetFile, final boolean move)
@@ -261,15 +276,10 @@ public class CopyService extends IntentService {
         Log.i("Copy", sourceFile.getFilePath());
         if (sourceFile.isDirectory()) {
             copyDirectory(sourceFile, targetFile, move);
-        }
-        else {
+        } else {
             copyFiles(sourceFile, targetFile);
         }
-        Intent intent = new Intent(ACTION_OP_REFRESH);
-        intent.putExtra(KEY_RESULT, isSuccess);
-        intent.putExtra(KEY_OPERATION, move ? CUT : COPY);
-        intent.putStringArrayListExtra(KEY_FILES, filesToMediaIndex);
-        sendBroadcast(intent);
+        publishCompletionResult();
     }
 
     private void copyDirectory(final FileInfo sourceFile, final FileInfo targetFile, boolean
@@ -288,13 +298,13 @@ public class CopyService extends IntentService {
 //                    targetFile.setFileDate(sourceFile.lastModified());
 
         ArrayList<FileInfo> filePaths = FileListLoader.getFilesList(sourceFile.getFilePath(),
-                false, true, false);
+                                                                    false, true, false);
         for (FileInfo file : filePaths) {
 
             FileInfo destFile = new FileInfo(sourceFile.getCategory(), sourceFile.getFileName
                     (), sourceFile.getFilePath(),
-                    sourceFile.getDate(), sourceFile.getSize(), sourceFile.isDirectory(),
-                    sourceFile.getExtension(), sourceFile.getPermissions(), false);
+                                             sourceFile.getDate(), sourceFile.getSize(), sourceFile.isDirectory(),
+                                             sourceFile.getExtension(), sourceFile.getPermissions(), false);
             destFile.setFilePath(targetFile.getFilePath() + SEPARATOR + file.getFileName());
             startCopy(file, destFile, move);
         }
@@ -305,16 +315,12 @@ public class CopyService extends IntentService {
             intent.putExtra(KEY_TOTAL, totalBytes);
             intent.putExtra(KEY_COUNT, 1);
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-/*                        if (mProgressListener != null) {
-                            mProgressListener.onUpdate(intent);
-                            if (totalBytes == 0) mProgressListener = null;
-                        }*/
         }
 
     }
 
     private void copyFiles(final FileInfo sourceFile, final FileInfo targetFile) throws
-            IOException {
+                                                                                 IOException {
         long size = new File(sourceFile.getFilePath()).length();
 
         Logger.log("Copy", "target file=" + targetFile.getFilePath());
@@ -377,14 +383,6 @@ public class CopyService extends IntentService {
             int p1 = (int) ((copiedBytes / (float) totalBytes) * 100);
             intent.putExtra(KEY_TOTAL_PROGRESS, p1);
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-/*
-            if (mProgressListener != null) {
-                mProgressListener.onUpdate(intent);
-                if (copiedBytes == totalBytes) {
-                    mProgressListener = null;
-                }
-            }
-*/
         }
         in.close();
         out.close();
@@ -414,7 +412,7 @@ public class CopyService extends IntentService {
         builder.setContentTitle(getString(title));
         builder.setContentText(new File(fileName).getName() + " " + FileUtils.formatSize
                 (context, done)
-                + SEPARATOR + FileUtils
+                                       + SEPARATOR + FileUtils
                 .formatSize(context, total));
         int id1 = NOTIFICATION_ID;
         notificationManager.notify(id1, builder.build());
@@ -436,14 +434,6 @@ public class CopyService extends IntentService {
         intent.putExtra(KEY_TOTAL, totalBytes);
         intent.putExtra(KEY_TOTAL_PROGRESS, p1);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-
-/*            if (mProgressListener != null) {
-                mProgressListener.onUpdate(intent);
-            }
-
-            if (copiedBytes == totalBytes) {
-                mProgressListener = null;
-            }*/
     }
 
     private void publishCompletedResult(int id1) {
@@ -476,8 +466,7 @@ public class CopyService extends IntentService {
                 return b;
             }
             return RootHelper.fileExists(newFileInfo.getFilePath());
-        }
-        else {
+        } else {
             String parent = new File(oldFileInfo.getFilePath()).getParent();
             ArrayList<FileInfo> baseFiles = FileListLoader.getFilesList(parent, true, true, false);
             int i = -1;
@@ -515,20 +504,11 @@ public class CopyService extends IntentService {
             }
             Logger.log("Copy", "todel" + toDelete.size());
 
-            DeleteTask deleteTask = new DeleteTask(context, isRooted, toDelete);
+            DeleteTask deleteTask = new DeleteTask(context, toDelete);
             deleteTask.setmShowToast();
             deleteTask.delete();
         }
     }
-
-
-/*    private Progress mProgressListener;
-
-
-    public void registerProgressListener(Progress progress) {
-        mProgressListener = progress;
-    }*/
-
 
     @Override
     public void onDestroy() {

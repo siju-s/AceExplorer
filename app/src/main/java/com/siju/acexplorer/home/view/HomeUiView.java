@@ -135,7 +135,7 @@ public class HomeUiView extends CoordinatorLayout {
 
         checkBillingStatus();
         initializeListeners();
-        isDualModeActive = bridge.getDualModeState();
+        isDualModeActive = bridge.getDualModeState() && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
     }
 
     private void checkBillingStatus() {

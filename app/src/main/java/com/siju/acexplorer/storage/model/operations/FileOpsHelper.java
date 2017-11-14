@@ -179,7 +179,7 @@ public class FileOpsHelper {
         }
 
         OperationUtils.WriteMode mode = OperationUtils.checkFolder(oldFile.getParent());
-        Logger.log(TAG, "Rename--mode=" + mode);
+        Logger.log(TAG, "Rename--mode=" + mode + " op:"+operation);
 
         switch (mode) {
             case ROOT:
@@ -233,7 +233,7 @@ public class FileOpsHelper {
                 break;
             case INTERNAL:
             case ROOT:
-                DeleteTask deleteTask = new DeleteTask(AceApplication.getAppContext(), isRooted, files);
+                DeleteTask deleteTask = new DeleteTask(AceApplication.getAppContext(), files);
                 deleteTask.setDeleteResultCallback(deleteResultCallback);
                 deleteTask.delete();
                 break;
@@ -361,7 +361,7 @@ public class FileOpsHelper {
 
             case DELETE:
                 ArrayList<FileInfo> files = intent.getParcelableArrayListExtra(KEY_FILES);
-                DeleteTask deleteTask = new DeleteTask(AceApplication.getAppContext(), isRooted, files);
+                DeleteTask deleteTask = new DeleteTask(AceApplication.getAppContext(), files);
                 deleteTask.setDeleteResultCallback(deleteResultCallback);
                 deleteTask.delete();
                 break;

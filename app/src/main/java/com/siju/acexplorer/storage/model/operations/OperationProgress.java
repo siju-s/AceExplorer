@@ -67,14 +67,14 @@ public class OperationProgress implements Progress {
     private static final String TAG = "OperationProgress";
     private ProgressBar progressBarPaste;
     private AlertDialog progressDialog;
-    private int copiedFilesSize;
-    private TextView textFileName;
-    private TextView textFileFromPath;
-    private TextView textFileCount;
-    private TextView textProgress;
+    private int         copiedFilesSize;
+    private TextView    textFileName;
+    private TextView    textFileFromPath;
+    private TextView    textFileCount;
+    private TextView    textProgress;
     private ArrayList<FileInfo> copiedFileInfo = new ArrayList<>();
     private Context mContext;
-    private Intent mServiceIntent;
+    private Intent  mServiceIntent;
 
 
     public void showPasteProgress(final Context context, String destinationDir, List<FileInfo> files,
@@ -121,7 +121,7 @@ public class OperationProgress implements Progress {
         textFileName.setText(copiedFileInfo.get(0).getFileName());
         textFileToPath.setText(destinationDir);
         textFileCount.setText(String.format(Locale.getDefault(), "%s%d", context.getString(R.string.count_placeholder),
-                copiedFilesSize));
+                                            copiedFilesSize));
         textProgress.setText("0%");
 
         positiveButton.setOnClickListener(new View.OnClickListener() {
@@ -203,7 +203,7 @@ public class OperationProgress implements Progress {
         registerReceiver(context);
 
         String title = context.getString(R.string.extracting);
-        String texts[] = new String[]{title, context.getString(R.string.background),  context.getString(R.string.dialog_cancel)};
+        String texts[] = new String[]{title, context.getString(R.string.background), context.getString(R.string.dialog_cancel)};
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -277,8 +277,8 @@ public class OperationProgress implements Progress {
                     case EXTRACT:
 //                        Logger.log(TAG, "Failure broacast=" + isExtractServiceAlive);
 //                        if (isExtractServiceAlive) {
-                            unregisterReceiver(mContext);
-                            progressDialog.dismiss();
+                        unregisterReceiver(mContext);
+                        progressDialog.dismiss();
 //                            isExtractServiceAlive = false;
 //                        }
                         break;
@@ -306,10 +306,10 @@ public class OperationProgress implements Progress {
     private BroadcastReceiver operationProgressReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "onReceive: "+intent.getAction());
-            if (intent.getAction() == null) {
+            if (intent == null || intent.getAction() == null) {
                 return;
             }
+            Log.d(TAG, "onReceive: " + intent.getAction());
             handleMessage(intent);
         }
     };
@@ -325,7 +325,7 @@ public class OperationProgress implements Progress {
         Log.d(TAG, "registerReceiver: ");
         IntentFilter filter = new IntentFilter(ACTION_OP_FAILED);
 //        context.registerReceiver(operationFailureReceiver, filter);
-        
+
         IntentFilter filter1 = new IntentFilter(COPY_PROGRESS);
         filter1.addAction(MOVE_PROGRESS);
         filter1.addAction(EXTRACT_PROGRESS);
@@ -345,6 +345,9 @@ public class OperationProgress implements Progress {
     // Define the Handler that receives messages from the thread and update the progress
 //    private final Handler handler = new Handler(Looper.getMainLooper()) {
     private void handleMessage(Intent intent) {
+        if (intent.getAction() == null) {
+            return;
+        }
         int progress = intent.getIntExtra(KEY_PROGRESS, 0);
         long copiedBytes = intent.getLongExtra(KEY_COMPLETED, 0);
         long totalBytes = intent.getLongExtra(KEY_TOTAL, 0);
@@ -352,8 +355,8 @@ public class OperationProgress implements Progress {
         switch (intent.getAction()) {
             case ZIP_PROGRESS:
                 progressBarPaste.setProgress(progress);
-                textFileCount.setText(Formatter.formatFileSize
-                        (mContext, copiedBytes) + "/" + Formatter.formatFileSize(mContext, totalBytes));
+                textFileCount.setText(String.format("%s/%s", Formatter.formatFileSize
+                        (mContext, copiedBytes), Formatter.formatFileSize(mContext, totalBytes)));
                 textProgress.setText(String.format(Locale.getDefault(), "%d%s", progress, mContext.getString
                         (R.string.percent_placeholder)));
 
@@ -366,8 +369,8 @@ public class OperationProgress implements Progress {
             case EXTRACT_PROGRESS:
                 Logger.log(TAG, "Progress=" + progress + "Operation=" + EXTRACT_PROGRESS);
                 progressBarPaste.setProgress(progress);
-                textFileCount.setText(Formatter.formatFileSize
-                        (mContext, copiedBytes) + "/" + Formatter.formatFileSize(mContext, totalBytes));
+                textFileCount.setText(String.format("%s/%s", Formatter.formatFileSize
+                        (mContext, copiedBytes), Formatter.formatFileSize(mContext, totalBytes)));
                 textProgress.setText(String.format(Locale.getDefault(), "%d%s", progress, mContext.getString
                         (R.string.percent_placeholder)));
 
@@ -390,7 +393,7 @@ public class OperationProgress implements Progress {
                 progressBarPaste.setProgress(totalProgress);
                 textProgress.setText(String.format(Locale.getDefault(), "%d%s", totalProgress, mContext.getString
                         (R.string
-                                .percent_placeholder)));
+                                 .percent_placeholder)));
                 if (progress == 100 || totalBytes == copiedBytes) {
                     int count = intent.getIntExtra(KEY_COUNT, 1);
                     Logger.log("FileUtils", "KEY_COUNT=" + count);
@@ -401,7 +404,7 @@ public class OperationProgress implements Progress {
                         int newCount = count + 1;
                         textFileFromPath.setText(copiedFileInfo.get(count).getFilePath());
                         textFileName.setText(copiedFileInfo.get(count).getFileName());
-                        textFileCount.setText(newCount + "/" + copiedFilesSize);
+                        textFileCount.setText(String.format(Locale.getDefault(), "%d/%d", newCount, copiedFilesSize));
                     }
                 }
                 break;
@@ -415,7 +418,7 @@ public class OperationProgress implements Progress {
                 int count = (int) copiedBytes;
                 textFileFromPath.setText(copiedFileInfo.get(count - 1).getFilePath());
                 textFileName.setText(copiedFileInfo.get(count - 1).getFileName());
-                textFileCount.setText(count + "/" + copiedFilesSize);
+                textFileCount.setText(String.format(Locale.getDefault(), "%d/%d", count, copiedFilesSize));
                 if (totalProgressPaste == 100) {
                     stopMoveService();
                     progressDialog.dismiss();
@@ -423,11 +426,4 @@ public class OperationProgress implements Progress {
                 break;
         }
     }
-
-
-
-//    };
-
-
-
 }

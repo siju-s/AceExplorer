@@ -46,6 +46,7 @@ import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.helper.FileUtils;
+import com.siju.acexplorer.model.helper.root.RootTools;
 import com.siju.acexplorer.storage.model.operations.Operations;
 import com.siju.acexplorer.utils.Clipboard;
 import com.siju.acexplorer.view.PasteConflictAdapter;
@@ -380,6 +381,9 @@ public class DialogHelper {
         listView.setAdapter(pasteConflictAdapter);
 
         final CheckBox checkBox = footerView.findViewById(R.id.checkBox);
+        if (conflictFiles.size() == 1) {
+            checkBox.setVisibility(View.GONE);
+        }
         Button positiveButton = footerView.findViewById(R.id.buttonPositive);
         Button negativeButton = footerView.findViewById(R.id.buttonNegative);
         Button neutralButton = footerView.findViewById(R.id.buttonKeepBoth);
@@ -466,6 +470,9 @@ public class DialogHelper {
         Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
         Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
 
+        positiveButton.setText(context.getString(R.string.msg_ok));
+        negativeButton.setText(context.getString(R.string.dialog_cancel));
+
         final Boolean[] read = permissions.get(0);
         final Boolean[] write = permissions.get(1);
         final Boolean[] exe = permissions.get(2);
@@ -487,6 +494,9 @@ public class DialogHelper {
             @Override
             public void onClick(View v) {
                 alertDialog.dismiss();
+                if (!RootTools.isAccessGiven()) {
+                    return;
+                }
                 int a = 0, b = 0, c = 0;
                 if (readown.isChecked()) {
                     a = 4;

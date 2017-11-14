@@ -23,6 +23,7 @@ import android.util.Log;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.model.helper.MediaStoreHelper;
+import com.siju.acexplorer.model.helper.root.RootTools;
 import com.siju.acexplorer.model.root.RootDeniedException;
 import com.siju.acexplorer.model.root.RootUtils;
 
@@ -36,14 +37,12 @@ public class DeleteTask {
     private int totalFiles;
     private final ArrayList<FileInfo> deletedFilesList = new ArrayList<>();
     private final Context mContext;
-    private final boolean mIsRootMode;
     private ArrayList<FileInfo> fileList = new ArrayList<>();
     private boolean mShowToast = true;
 
 
-    public DeleteTask(Context context, boolean rootMode, ArrayList<FileInfo> fileList) {
+    public DeleteTask(Context context, ArrayList<FileInfo> fileList) {
         mContext = context;
-        mIsRootMode = rootMode;
         this.fileList = fileList;
     }
 
@@ -69,8 +68,6 @@ public class DeleteTask {
             public void run() {
                 Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
 
-
-                int deletedCount = 0;
                 totalFiles = fileList.size();
 
                 for (int i = 0; i < totalFiles; i++) {
@@ -78,13 +75,13 @@ public class DeleteTask {
                     boolean isDeleted = FileUtils.deleteFile(new File(path));
 
                     if (!isDeleted) {
-                        if (mIsRootMode) {
+                        boolean isRootMode = RootTools.isAccessGiven();
+                        if (isRootMode) {
                             try {
                                 RootUtils.mountRW(path);
                                 RootUtils.delete(path);
                                 RootUtils.mountRO(path);
                                 deletedFilesList.add(fileList.get(i));
-                                deletedCount++;
                             } catch (RootDeniedException e) {
                                 e.printStackTrace();
                             }
@@ -92,7 +89,6 @@ public class DeleteTask {
 
                     } else {
                         deletedFilesList.add(fileList.get(i));
-                        deletedCount++;
                     }
                 }
                 deleteFromMediaStore(deletedFilesList);

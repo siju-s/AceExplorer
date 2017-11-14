@@ -117,6 +117,8 @@ public interface StoragesUi {
 
     void hideDualPane();
 
+    void addHomeNavPath();
+
 
     interface Listener {
 

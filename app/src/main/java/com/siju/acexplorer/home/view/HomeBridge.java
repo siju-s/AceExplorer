@@ -19,16 +19,15 @@ package com.siju.acexplorer.home.view;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.ViewGroup;
 
-import com.siju.acexplorer.storage.view.StoragesUiView;
-import com.siju.acexplorer.view.DrawerListener;
 import com.siju.acexplorer.billing.BillingStatus;
-import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.home.model.HomeLibraryInfo;
 import com.siju.acexplorer.home.model.LibrarySortModel;
+import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.groups.Category;
+import com.siju.acexplorer.storage.view.StoragesUiView;
+import com.siju.acexplorer.view.DrawerListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +46,6 @@ public class HomeBridge implements HomeView {
                StoragesUiView.FavoriteOperation favListener) {
         this.context = parent.getContext();
         this.fragment = fragment;
-        long time = System.currentTimeMillis();
         homeUiView = HomeUiView.inflate(parent);
         homeUiView.setBridgeRef(this);
         homeUiView.setFragment(fragment);

@@ -316,21 +316,22 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         } else if (fragment instanceof BaseFileList) {
             if (((BaseFileList) fragment).isFabExpanded()) {
                 ((BaseFileList) fragment).collapseFab();
-            } else if (mIsHomePageRemoved) {
-                if (backStackEntryCount != 0) {
-                    activity.finish();
-                }
-            } else if (isHomePageAdded) {
-                displayHomeScreen();
-                frameDualPane.setVisibility(View.GONE);
-                viewSeparator.setVisibility(View.GONE);
-                isHomePageAdded = false;
-            } else {
+            }  else {
                 boolean isHome = ((BaseFileList) fragment).onBackPressed();
-                Fragment fragment1 = fragmentManager.findFragmentById(R.id.main_container);
-                Log.d(TAG, "handleBackPress: " + fragment1);
+                Log.d(TAG, "handleBackPress: isHome" + isHome);
                 if (isHome) {
                     hideDualPane();
+                    if (mIsHomePageRemoved) {
+                        if (backStackEntryCount != 0) {
+                            activity.finish();
+                        }
+                    } else if (isHomePageAdded) {
+                        displayHomeScreen();
+                        frameDualPane.setVisibility(View.GONE);
+                        viewSeparator.setVisibility(View.GONE);
+                        isHomePageAdded = false;
+                        return false;
+                    }
                     return true;
                 }
             }
@@ -531,6 +532,8 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
                     Logger.log(TAG, "OnPrefschanged PREFS_HOMESCREEN" + this.isHomeScreenEnabled);
                     Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id
                                                                                                       .main_container);
+                    Fragment dualFragment = activity.getSupportFragmentManager().findFragmentById(R.id
+                                                                                                      .frame_container_dual);
                     // If homescreen disabled
                     if (!isHomeScreenEnabled) {
 
@@ -540,12 +543,22 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
                             mIsHomePageRemoved = true;
                         } else {
                             ((BaseFileList) fragment).removeHomeFromNavPath();
+                            if (isDualModeActive && dualFragment != null) {
+                                ((DualPaneList) dualFragment).removeHomeFromNavPath();
+                            }
                             // Set a flag so that it can be removed on backPress
                             mIsHomePageRemoved = true;
                             isHomePageAdded = false;
                         }
 
                     } else {
+                        if (fragment instanceof BaseFileList) {
+                            ((BaseFileList) fragment).addHomeNavPath();
+                        }
+
+                        if (isDualModeActive && dualFragment != null) {
+                            ((DualPaneList) dualFragment).addHomeNavPath();
+                        }
                         // Clearing the flags necessary as user can click checkbox multiple times
                         isHomePageAdded = true;
                         mIsHomePageRemoved = false;

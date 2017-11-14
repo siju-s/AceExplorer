@@ -16,8 +16,6 @@
 
 package com.siju.acexplorer.storage.model.operations;
 
-import com.siju.acexplorer.utils.Utils;
-
 import java.io.File;
 
 import static com.siju.acexplorer.model.StorageUtils.isOnExtSdCard;
@@ -34,6 +32,7 @@ public class OperationUtils {
     public static final String KEY_FILEPATH2 = "filepath2";
     public static final String KEY_OPERATION = "operation";
     public static final String KEY_FILES = "op_files";
+    public static final String KEY_OLD_FILES = "old_op_files";
     public static final String KEY_POSITION = "pos";
     public static final String KEY_CONFLICT_DATA = "conflict_data";
     public static final String ACTION_OP_REFRESH = "refresh";

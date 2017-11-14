@@ -27,7 +27,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
@@ -40,6 +39,7 @@ import com.siju.acexplorer.model.SharedPreferenceWrapper;
 import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.model.helper.RootHelper;
 import com.siju.acexplorer.model.helper.SdkHelper;
+import com.siju.acexplorer.model.helper.root.RootTools;
 import com.siju.acexplorer.model.root.RootUtils;
 import com.siju.acexplorer.permission.PermissionUtils;
 import com.siju.acexplorer.storage.model.operations.FileOpsHelper;
@@ -320,7 +320,6 @@ public class StorageModelImpl implements StoragesModel {
 
             File newFile = new File(temp + File.separator + renamedName);
             FileOpsHelper.renameFile(Operations.HIDE, oldFile, newFile, pos.get(i), RootUtils.isRooted(context), fileOperationCallBack);
-
         }
     }
 
@@ -378,10 +377,13 @@ public class StorageModelImpl implements StoragesModel {
         @Override
         public void opCompleted(Operations operation, File oldFile, File newFile, int position,
                                 boolean success) {
+            Log.d(TAG, "opCompleted: "+operation + " result:"+success);
             switch (operation) {
                 case RENAME:
                 case HIDE:
                     if (success) {
+                        sharedPreferenceWrapper.updateFavorite(context, oldFile.getAbsolutePath(),
+                                                               newFile.getAbsolutePath());
                         Intent intent = new Intent(ACTION_OP_REFRESH);
                         intent.putExtra(KEY_OPERATION, RENAME);
                         intent.putExtra(KEY_POSITION, position);
@@ -389,8 +391,7 @@ public class StorageModelImpl implements StoragesModel {
                         intent.putExtra(KEY_FILEPATH2, newFile.getAbsolutePath());
                         context.sendBroadcast(intent);
                     } else {
-                        Toast.makeText(context, R.string.msg_operation_failed,
-                                Toast.LENGTH_SHORT).show();
+                        listener.onOperationFailed(operation);
                     }
                     break;
             }
@@ -508,7 +509,7 @@ public class StorageModelImpl implements StoragesModel {
     };
 
     private void copyFiles(String destinationDir, List<FileInfo> files, List<CopyData> copyData) {
-        if (RootUtils.isRooted(context) || !FileUtils.isFileNonWritable(new File(destinationDir))) {
+        if (RootUtils.isRooted(context) || RootTools.isAccessGiven() || !FileUtils.isFileNonWritable(new File(destinationDir))) {
             listener.showPasteProgressDialog(destinationDir, files, copyData, false);
             Intent intent = new Intent(context, CopyService.class);
             intent.putParcelableArrayListExtra(OperationUtils.KEY_FILES, (ArrayList<? extends
@@ -523,8 +524,6 @@ public class StorageModelImpl implements StoragesModel {
             }
         } else {
             listener.onOperationFailed(Operations.COPY);
-            Toast.makeText(context, context.getString(R.string.msg_operation_failed),
-                    Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -554,7 +553,7 @@ public class StorageModelImpl implements StoragesModel {
 
     @Override
     public void getFilePermissions(final String filePath, final boolean isDir) {
-        new Thread(new Runnable() {
+        new Thread( new Runnable() {
             @Override
             public void run() {
                 String perm = RootHelper.getPermissions(filePath, isDir);
@@ -627,6 +626,7 @@ public class StorageModelImpl implements StoragesModel {
 
         @Override
         public void onFileDeleted(int totalFiles, List<FileInfo> deletedFiles, boolean showToast) {
+            Log.d(TAG, "onFileDeleted: ");
             Intent intent = new Intent(ACTION_OP_REFRESH);
             Bundle bundle = new Bundle();
             bundle.putSerializable(KEY_OPERATION, DELETE);

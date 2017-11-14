@@ -18,6 +18,7 @@ package com.siju.acexplorer.model;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.siju.acexplorer.logging.Logger;
@@ -222,4 +223,25 @@ public class SharedPreferenceWrapper {
     }
 
 
+    public void updateFavorite(Context context, String oldFile, String newFile) {
+        ArrayList<FavInfo> favList = getFavorites(context);
+        Log.d("SharedWrapper", "updateFavorite: "+favList.size());
+        FavInfo fav = null;
+        FavInfo newFavInfo = null;
+        for (FavInfo favInfo : favList) {
+            if (favInfo.getFilePath().equals(oldFile)) {
+                fav = favInfo;
+                newFavInfo = favInfo;
+                newFavInfo.setFilePath(newFile);
+                break;
+            }
+        }
+        if (fav != null) {
+            favList.remove(fav);
+            favList.add(newFavInfo);
+            Log.d("SharedWrapper", "updateFavorite NEW: "+favList.size() + " newFavInfo:"+newFavInfo.getFilePath());
+            saveFavorites(context, favList);
+        }
+
+    }
 }
