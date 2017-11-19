@@ -28,11 +28,16 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.helper.FileUtils;
+import com.siju.acexplorer.model.root.RootDeniedException;
+import com.siju.acexplorer.model.root.RootUtils;
 import com.siju.acexplorer.storage.model.CopyData;
+import com.siju.acexplorer.storage.model.operations.OperationUtils;
 import com.siju.acexplorer.view.AceActivity;
 
 import java.io.File;
@@ -40,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.siju.acexplorer.model.FileConstants.KEY_CATEGORY;
+import static com.siju.acexplorer.model.helper.FileUtils.checkMimeType;
 import static com.siju.acexplorer.model.helper.SdkHelper.isOreo;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_CONFLICT_DATA;
@@ -56,18 +62,22 @@ import static com.siju.acexplorer.storage.model.operations.ProgressUtils.MOVE_PR
 
 public class MoveFiles extends IntentService {
 
-    private List<FileInfo> filesToMove;
-    private List<CopyData> copyData;
-    private ArrayList<String> filesMovedList;
-    private ArrayList<String> oldFileList;
-    private ArrayList<Integer> categories;
-    private NotificationManager notificationManager;
-    private NotificationCompat.Builder builder;
-    private final int NOTIFICATION_ID = 1000;
-    private final String SEPARATOR = "/";
-    private final String CHANNEL_ID = "operation";
+    private static final String TAG = "MoveFiles";
 
-    private Context context;
+    private Context                    context;
+    private NotificationManager        notificationManager;
+    private NotificationCompat.Builder builder;
+
+    private List<FileInfo>     filesToMove;
+    private List<CopyData>     copyData;
+    private ArrayList<String>  filesMovedList;
+    private ArrayList<String>  oldFileList;
+    private ArrayList<Integer> categories;
+
+    private final int    NOTIFICATION_ID = 1000;
+    private final String SEPARATOR       = "/";
+    private final String CHANNEL_ID      = "operation";
+
 
     public MoveFiles() {
         super("MoveFiles");
@@ -84,7 +94,7 @@ public class MoveFiles extends IntentService {
     protected void onHandleIntent(Intent intent) {
         filesToMove = intent.getParcelableArrayListExtra(KEY_FILES);
         copyData = intent.getParcelableArrayListExtra(KEY_CONFLICT_DATA);
-        String currentDir = intent.getStringExtra(KEY_FILEPATH);
+        String destDir = intent.getStringExtra(KEY_FILEPATH);
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         Intent notificationIntent = new Intent(this, AceActivity.class);
@@ -95,16 +105,15 @@ public class MoveFiles extends IntentService {
         createChannelId();
         builder = new NotificationCompat.Builder(context, CHANNEL_ID);
         builder.setContentIntent(pendingIntent);
-        builder.setContentTitle(getResources().getString(R.string.moving)).setSmallIcon(R
-                .drawable.ic_cut_white);
+        builder.setContentTitle(getResources().getString(R.string.moving)).setSmallIcon(R.drawable.ic_cut_white);
         builder.setOnlyAlertOnce(true);
         builder.setDefaults(0);
 
         Notification notification = builder.build();
         startForeground(NOTIFICATION_ID, notification);
-        notificationManager.notify(NOTIFICATION_ID , notification);
+        notificationManager.notify(NOTIFICATION_ID, notification);
 
-        moveFiles(currentDir);
+        checkWriteMode(destDir);
     }
 
     @TargetApi(Build.VERSION_CODES.O)
@@ -117,67 +126,115 @@ public class MoveFiles extends IntentService {
         }
     }
 
-    private void moveFiles(String destinationDir) {
-
+    void checkWriteMode(final String destinationDir) {
         int totalFiles = filesToMove.size();
         if (totalFiles == 0) {
+            sendCompletedResult();
             return;
         }
         filesMovedList = new ArrayList<>();
         oldFileList = new ArrayList<>();
         categories = new ArrayList<>();
+        OperationUtils.WriteMode mode = OperationUtils.checkFolder(destinationDir);
+        switch (mode) {
+            case INTERNAL:
+                for (int i = 0; i < filesToMove.size(); i++) {
+                    FileInfo sourceFile = filesToMove.get(i);
+                    String sourcePath = sourceFile.getFilePath();
+                    Log.d(TAG, "checkWriteMode: source:" + sourcePath);
+                    try {
 
-        for (FileInfo fileInfo : filesToMove) {
-            int action = FileUtils.ACTION_NONE;
+                        if (!new File(sourcePath).canRead()) {
+                            moveRoot(sourcePath, sourceFile.getFileName(),
+                                     destinationDir);
+                            continue;
+                        }
 
-            if (copyData != null) {
-                for (CopyData copyData1 : copyData) {
-                    if (copyData1.getFilePath().equals(fileInfo.getFilePath())) {
-                        action = copyData1.getAction();
+                        int action = FileUtils.ACTION_NONE;
+
+                        if (copyData != null) {
+                            for (CopyData copyData1 : copyData) {
+                                if (copyData1.getFilePath().equals(sourcePath)) {
+                                    action = copyData1.getAction();
+                                    break;
+                                }
+                            }
+                        }
+                        String fileName = sourceFile.getFileName();
+                        String destPath = destinationDir + SEPARATOR + fileName;
+                        if (action == FileUtils.ACTION_KEEP) {
+                            String fileNameWithoutExt = fileName.substring(0, fileName.
+                                    lastIndexOf("."));
+                            destPath = destinationDir + "/" + fileNameWithoutExt + "(1)" + "." + sourceFile.getExtension();
+                        }
+                        Logger.log("MoveFiles", "Execute-Dest file path=" + destPath);
+
+                        moveFiles(sourcePath, fileName, destPath);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
                         break;
                     }
                 }
-            }
-            String fileName = fileInfo.getFileName();
-            String path = destinationDir + "/" + fileName;
-            if (action == FileUtils.ACTION_KEEP) {
-                String fileNameWithoutExt = fileName.substring(0, fileName.
-                        lastIndexOf("."));
-                path = destinationDir + "/" + fileNameWithoutExt + "(2)" + "." + fileInfo.getExtension();
-            }
-            File newFile = new File(path);
-            File oldFile = new File(fileInfo.getFilePath());
+                break;
+
+            case ROOT:
+                for (int i = 0; i < filesToMove.size(); i++) {
+                    String path = filesToMove.get(i).getFilePath();
+                    String name = filesToMove.get(i).getFileName();
+                    moveRoot(path, name, destinationDir);
+                }
+                sendCompletedResult();
+                break;
+        }
+    }
+
+    private void moveFiles(String sourcePath, String fileName, String destinationPath) {
+
+        for (FileInfo fileInfo : filesToMove) {
+            File newFile = new File(destinationPath);
+            File oldFile = new File(sourcePath);
             if (oldFile.renameTo(newFile)) {
                 oldFileList.add(fileInfo.getFilePath());
                 filesMovedList.add(newFile.getAbsolutePath());
                 categories.add(fileInfo.getCategory().getValue());
             }
-            publishResults(fileName, totalFiles, filesMovedList.size());
+            publishResults(fileName, filesToMove.size(), filesMovedList.size());
         }
         sendCompletedResult();
     }
 
+    private void moveRoot(String path, String name, String destinationPath) {
+        String targetPath;
+        if (destinationPath.equals(File.separator)) {
+            targetPath = destinationPath + name;
+        } else {
+            targetPath = destinationPath + File.separator + name;
+        }
+        try {
+            RootUtils.mountRW(destinationPath);
+            RootUtils.move(path, targetPath);
+            RootUtils.mountRO(destinationPath);
+            oldFileList.add(path);
+            filesMovedList.add(targetPath);
+            String extension = name.substring(name.lastIndexOf(".") + 1);
+            int category = checkMimeType(extension).getValue();
+            categories.add(category);
+            publishResults(name, filesToMove.size(), filesMovedList.size());
+        } catch (RootDeniedException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void publishResults(String fileName, long total, long done) {
-        //notification
         int progress = (int) (((float) (done / total)) * 100);
         builder.setProgress(100, progress, false);
         builder.setOngoing(true);
         int title = R.string.moving;
         builder.setContentTitle(getString(title));
         builder.setContentText(new File(fileName).getName() + " " + FileUtils.formatSize
-                (context, done)
-                + SEPARATOR + FileUtils
-                .formatSize(context, total));
-        int id1 = NOTIFICATION_ID;
-        notificationManager.notify(id1, builder.build());
-        if (total == done) {
-            builder.setContentTitle("Move Completed");
-            builder.setContentText("");
-            builder.setProgress(0, 0, false);
-            builder.setOngoing(false);
-            builder.setAutoCancel(true);
-            notificationManager.notify(id1, builder.build());
-        }
+                (context, done) + SEPARATOR + FileUtils.formatSize(context, total));
+        notificationManager.notify(NOTIFICATION_ID, builder.build());
 
         Intent intent = new Intent(MOVE_PROGRESS);
         intent.putExtra(KEY_COMPLETED, done);
@@ -187,6 +244,12 @@ public class MoveFiles extends IntentService {
     }
 
     private void sendCompletedResult() {
+        builder.setContentTitle(getString(R.string.move_complete));
+        builder.setProgress(0, 0, false);
+        builder.setOngoing(false);
+        builder.setAutoCancel(true);
+        notificationManager.notify(NOTIFICATION_ID, builder.build());
+
         Intent intent = new Intent(ACTION_OP_REFRESH);
         intent.putExtra(KEY_RESULT, filesMovedList.size() != 0);
         intent.putExtra(KEY_OPERATION, CUT);

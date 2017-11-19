@@ -24,7 +24,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -42,7 +41,7 @@ import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FavInfo;
 import com.siju.acexplorer.model.SectionGroup;
 import com.siju.acexplorer.model.SectionItems;
-import com.siju.acexplorer.model.groups.DrawerGroups;
+import com.siju.acexplorer.model.groups.DrawerGroup;
 import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.premium.Premium;
 import com.siju.acexplorer.settings.SettingsActivity;
@@ -55,32 +54,37 @@ import static com.siju.acexplorer.model.StorageUtils.getDownloadsDirectory;
 /**
  * Created by Siju on 28 August,2017
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class NavigationDrawer implements View.OnClickListener {
 
-    private final String TAG = this.getClass().getSimpleName();
-    private static final int SETTINGS_REQUEST = 1000;
-    private static final int REQUEST_INVITE = 4000;
+    private final        String TAG                       = this.getClass().getSimpleName();
+    private static final int    SETTINGS_REQUEST          = 1000;
+    private static final int    REQUEST_INVITE            = 4000;
+    private static final String PLAYSTORE_URL             = "https://play.google.com/store/apps/details?id=";
+    static               int    DRAWER_HEADER_STORAGE_POS = 0;
+    static               int    DRAWER_HEADER_FAV_POS     = 1;
+
 
     private Activity activity;
-    private Context context;
+    private Context  context;
 
-    private DrawerLayout drawerLayout;
-    private NavigationView drawerPane;
-    private ExpandableListView expandableListView;
+    private DrawerLayout          drawerLayout;
+    private NavigationView        drawerPane;
+    private ExpandableListView    expandableListView;
     private ExpandableListAdapter expandableListAdapter;
-    private DrawerGenericAdapter drawerGenericAdapter;
-    private ImageView imageInvite;
+    private DrawerGenericAdapter  drawerGenericAdapter;
+    private ImageView             imageInvite;
     private ActionBarDrawerToggle drawerToggle;
-    private ListView genericList;
+    private ListView              genericList;
 
-    private ArrayList<SectionGroup> totalGroupData = new ArrayList<>();
-    private ArrayList<SectionItems> favouritesGroupChild = new ArrayList<>();
-    private boolean isPremium;
+    private ArrayList<SectionGroup> totalGroupData      = new ArrayList<>();
+    private ArrayList<SectionItems> favoritesGroupChild = new ArrayList<>();
+    private boolean    isPremium;
     private MainUiView uiView;
 
 
     NavigationDrawer(Activity activity, MainUiView uiView, Theme theme) {
-        this.context = activity.getBaseContext();
+        this.context = uiView.getContext();
         this.activity = activity;
         this.uiView = uiView;
         init();
@@ -102,12 +106,12 @@ public class NavigationDrawer implements View.OnClickListener {
     private void setTheme(Theme theme) {
         switch (theme) {
             case DARK:
-                drawerPane.setBackgroundColor(ContextCompat.getColor(context, R
-                        .color.dark_background));
+                drawerPane.setBackgroundColor(ContextCompat.getColor(context, R.
+                        color.dark_background));
                 break;
             case LIGHT:
-                drawerPane.setBackgroundColor(ContextCompat.getColor(context, R
-                        .color.light_background));
+                drawerPane.setBackgroundColor(ContextCompat.getColor(context, R.
+                        color.light_background));
                 break;
         }
     }
@@ -115,7 +119,8 @@ public class NavigationDrawer implements View.OnClickListener {
     private void initListeners() {
         drawerToggle = new ActionBarDrawerToggle(activity, drawerLayout, R.string
                 .navigation_drawer_open, R.string
-                .navigation_drawer_close) {
+                                                         .navigation_drawer_close)
+        {
 
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
@@ -144,7 +149,7 @@ public class NavigationDrawer implements View.OnClickListener {
         genericList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                onClick(isPremium ? position + 1 : position);
+                onGenericItemClick(isPremium ? position + 1 : position);
             }
         });
 
@@ -170,7 +175,7 @@ public class NavigationDrawer implements View.OnClickListener {
             case R.id.imageInvite:
                 Analytics.getLogger().appInviteClicked();
                 Intent inviteIntent = new AppInviteInvitation.IntentBuilder(context.getString(R
-                        .string.app_invite_title))
+                                                                                                      .string.app_invite_title))
                         .setMessage(context.getString(R.string.app_invite_msg))
                         .build();
                 activity.startActivityForResult(inviteIntent, REQUEST_INVITE);
@@ -179,18 +184,17 @@ public class NavigationDrawer implements View.OnClickListener {
         }
     }
 
-    private void onClick(int position) {
+    private void onGenericItemClick(int position) {
 
         switch (position) {
             case 0:
                 Analytics.getLogger().unlockFullClicked();
                 if (BillingManager.getInstance().getInAppBillingStatus().equals(BillingStatus
-                        .UNSUPPORTED)) {
+                                                                                        .UNSUPPORTED)) {
 
                     Toast.makeText(context, context.getString(R.string.billing_unsupported), Toast
                             .LENGTH_SHORT).show();
-                }
-                else {
+                } else {
                     Premium premium = new Premium(activity);
                     premium.showPremiumDialog();
                 }
@@ -200,22 +204,19 @@ public class NavigationDrawer implements View.OnClickListener {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 // Try Google play
                 intent.setData(Uri
-                        .parse("market://details?id=" + context.getPackageName()));
+                                       .parse("market://details?id=" + context.getPackageName()));
                 if (FileUtils.isPackageIntentUnavailable(context, intent)) {
                     // Market (Google play) app seems not installed,
                     // let's try to open a webbrowser
-                    intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=" +
-                            context.getPackageName()));
+                    intent.setData(Uri.parse(PLAYSTORE_URL + context.getPackageName()));
                     if (FileUtils.isPackageIntentUnavailable(context, intent)) {
                         Toast.makeText(context,
-                                context.getString(R.string.msg_error_not_supported),
-                                Toast.LENGTH_SHORT).show();
-                    }
-                    else {
+                                       context.getString(R.string.msg_error_not_supported),
+                                       Toast.LENGTH_SHORT).show();
+                    } else {
                         startActivity(intent);
                     }
-                }
-                else {
+                } else {
                     startActivity(intent);
                 }
                 drawerLayout.closeDrawer(drawerPane);
@@ -226,8 +227,7 @@ public class NavigationDrawer implements View.OnClickListener {
                 final int enter_anim = android.R.anim.fade_in;
                 final int exit_anim = android.R.anim.fade_out;
                 activity.overridePendingTransition(enter_anim, exit_anim);
-                activity.startActivityForResult(intent1,
-                        SETTINGS_REQUEST);
+                activity.startActivityForResult(intent1, SETTINGS_REQUEST);
                 expandableListView.setSelection(0);
                 drawerLayout.closeDrawer(drawerPane);
                 break;
@@ -240,18 +240,17 @@ public class NavigationDrawer implements View.OnClickListener {
 
     private void onDrawerItemClick(int groupPos, int childPos) {
         String path = totalGroupData.get(groupPos).getmChildItems().get(childPos).getPath();
-        Log.d(TAG, "onDrawerItemClick: " + path);
         Analytics.getLogger().drawerItemClicked();
         displaySelectedGroup(groupPos, childPos, path);
         drawerLayout.closeDrawer(drawerPane);
     }
 
     private void displaySelectedGroup(int groupPos, int childPos, String path) {
-        DrawerGroups drawerGroups = DrawerGroups.getGroupFromPos(groupPos);
-        switch (drawerGroups) {
+        DrawerGroup drawerGroup = DrawerGroup.getGroupFromPos(groupPos);
+        switch (drawerGroup) {
             case STORAGE:
             case FAVORITES:
-                uiView.onStorageItemClicked(groupPos, path);
+                uiView.onStorageItemClicked(path);
                 break;
             case LIBRARY:
                 uiView.onLibraryItemClicked(childPos + 1);
@@ -259,30 +258,28 @@ public class NavigationDrawer implements View.OnClickListener {
         }
     }
 
-    void updateFavourites(ArrayList<FavInfo> favInfoArrayList) {
+    void updateFavorites(ArrayList<FavInfo> favInfoArrayList) {
         for (int i = 0; i < favInfoArrayList.size(); i++) {
             SectionItems favItem = new SectionItems(favInfoArrayList.get(i).getFileName(),
-                    favInfoArrayList.get(i)
-                            .getFilePath(), R.drawable.ic_fav_folder, favInfoArrayList.get(i)
-                    .getFilePath
-                            (), 0);
-            if (!favouritesGroupChild.contains(favItem)) {
-                favouritesGroupChild.add(favItem);
+                                                    favInfoArrayList.get(i)
+                                                            .getFilePath(), R.drawable.ic_fav_folder, favInfoArrayList.get(i)
+                                                            .getFilePath(), 0, null, null);
+            if (!favoritesGroupChild.contains(favItem)) {
+                favoritesGroupChild.add(favItem);
             }
         }
         expandableListAdapter.notifyDataSetChanged();
 
     }
 
-    void removeFavourites(ArrayList<FavInfo> favInfoArrayList) {
+    void removeFavorites(ArrayList<FavInfo> favInfoArrayList) {
         for (int i = 0; i < favInfoArrayList.size(); i++) {
             SectionItems favItem = new SectionItems(favInfoArrayList.get(i).getFileName(),
-                    favInfoArrayList.get(i)
-                            .getFilePath(), R.drawable.ic_fav_folder, favInfoArrayList.get(i)
-                    .getFilePath
-                            (), 0);
-            if (favouritesGroupChild.contains(favItem)) {
-                favouritesGroupChild.remove(favItem);
+                                                    favInfoArrayList.get(i)
+                                                            .getFilePath(), R.drawable.ic_fav_folder, favInfoArrayList.get(i)
+                                                            .getFilePath(), 0, null, null);
+            if (favoritesGroupChild.contains(favItem)) {
+                favoritesGroupChild.remove(favItem);
             }
         }
         expandableListAdapter.notifyDataSetChanged();
@@ -295,17 +292,17 @@ public class NavigationDrawer implements View.OnClickListener {
         FavInfo favInfo = new FavInfo();
         favInfo.setFileName(name);
         favInfo.setFilePath(path);
-        favouritesGroupChild.remove(childPos);
+        favoritesGroupChild.remove(childPos);
         expandableListAdapter.notifyDataSetChanged();
         return favInfo;
     }
 
     private void resetFavouritesGroup() {
 
-        for (int i = favouritesGroupChild.size() - 1; i >= 0; i--) {
-            if (!favouritesGroupChild.get(i).getSecondLine().equalsIgnoreCase
+        for (int i = favoritesGroupChild.size() - 1; i >= 0; i--) {
+            if (!favoritesGroupChild.get(i).getSecondLine().equalsIgnoreCase
                     (getDownloadsDirectory())) {
-                favouritesGroupChild.remove(i);
+                favoritesGroupChild.remove(i);
             }
         }
         expandableListAdapter.notifyDataSetChanged();
@@ -323,8 +320,7 @@ public class NavigationDrawer implements View.OnClickListener {
                     for (String id : ids) {
                         Logger.log(TAG, "handleActivityResult: sent invitation " + id);
                     }
-                }
-                else {
+                } else {
                     Analytics.getLogger().appInviteResult(false);
                     Toast.makeText(context, context.getString(R.string.app_invite_failed), Toast
                             .LENGTH_SHORT).show();
@@ -352,9 +348,9 @@ public class NavigationDrawer implements View.OnClickListener {
 
     void onTotalGroupDataFetched(ArrayList<SectionGroup> totalData) {
         totalGroupData = totalData;
-        favouritesGroupChild = totalGroupData.get(1).getmChildItems();
+        favoritesGroupChild = totalGroupData.get(1).getmChildItems();
         expandableListAdapter = new ExpandableListAdapter(context, totalGroupData);
         expandableListView.setAdapter(expandableListAdapter);
-        expandableListView.expandGroup(0);
+        expandableListView.expandGroup(DRAWER_HEADER_STORAGE_POS);
     }
 }

@@ -16,9 +16,7 @@
 
 package com.siju.acexplorer.view;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -38,7 +36,6 @@ import com.siju.acexplorer.model.MainModel;
 import com.siju.acexplorer.model.MainModelImpl;
 import com.siju.acexplorer.presenter.MainPresenter;
 import com.siju.acexplorer.presenter.MainPresenterImpl;
-import com.siju.acexplorer.utils.LocaleHelper;
 
 import static com.siju.acexplorer.settings.SettingsPreferenceFragment.PREFS_ANALYTICS;
 
@@ -48,24 +45,23 @@ public class AceActivity extends BaseActivity {
     private final String TAG = this.getClass().getSimpleName();
 
     private MainUi mainUi;
-    private MainPresenter mainPresenter;
-    private MainModel mainModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        LocaleHelper.setLanguage(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.base);
 
-        boolean sendAnalytics = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PREFS_ANALYTICS, true);
+        boolean sendAnalytics = PreferenceManager.getDefaultSharedPreferences(this).
+                getBoolean(PREFS_ANALYTICS, true);
         Analytics.getLogger().sendAnalytics(sendAnalytics);
         Analytics.getLogger().register(this);
         Analytics.getLogger().reportDeviceName();
 
         LinearLayout linearLayout = findViewById(R.id.base);
         mainUi = new MainBridge(this, linearLayout);
-        mainModel = new MainModelImpl();
-        mainPresenter = new MainPresenterImpl(mainUi, mainModel);
+        MainModel mainModel = new MainModelImpl();
+        MainPresenter mainPresenter = new MainPresenterImpl(mainUi, mainModel);
 
         mainUi.init();
         mainPresenter.getUserPreferences();
@@ -83,7 +79,6 @@ public class AceActivity extends BaseActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        Log.d(TAG, "onRequestPermissionsResult: "+grantResults);
         mainUi.onPermissionResult(requestCode, permissions, grantResults);
     }
 
@@ -103,10 +98,8 @@ public class AceActivity extends BaseActivity {
         super.onResume();
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        // Called when user returns from the settings screen
         Log.d(TAG, "handleActivityResult(" + requestCode + "," + resultCode + ","
                 + intent);
 
@@ -114,7 +107,6 @@ public class AceActivity extends BaseActivity {
             super.onActivityResult(requestCode, resultCode, intent);
         }
     }
-
 
 
     @Override
@@ -154,5 +146,8 @@ public class AceActivity extends BaseActivity {
     public void showDualFrame() {
         mainUi.showDualFrame();
     }
-}
 
+    public void setDualPaneFocusState(boolean isDualPaneInFocus) {
+        mainUi.setDualPaneFocusState(isDualPaneInFocus);
+    }
+}

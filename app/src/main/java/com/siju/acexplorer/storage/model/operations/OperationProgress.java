@@ -16,6 +16,7 @@
 
 package com.siju.acexplorer.storage.model.operations;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -34,7 +35,6 @@ import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.storage.model.CopyData;
 import com.siju.acexplorer.storage.model.task.CopyService;
 import com.siju.acexplorer.storage.model.task.CreateZipService;
 import com.siju.acexplorer.storage.model.task.ExtractService;
@@ -45,11 +45,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_FAILED;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH2;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES;
-import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_RESULT;
 import static com.siju.acexplorer.storage.model.operations.ProgressUtils.COPY_PROGRESS;
 import static com.siju.acexplorer.storage.model.operations.ProgressUtils.EXTRACT_PROGRESS;
@@ -74,11 +72,11 @@ public class OperationProgress implements Progress {
     private TextView    textProgress;
     private ArrayList<FileInfo> copiedFileInfo = new ArrayList<>();
     private Context mContext;
-    private Intent  mServiceIntent;
 
 
+    @SuppressLint("InflateParams")
     public void showPasteProgress(final Context context, String destinationDir, List<FileInfo> files,
-                                  List<CopyData> copyData, boolean isMove) {
+                                  boolean isMove) {
         mContext = context;
         registerReceiver(context);
         String title;
@@ -143,7 +141,7 @@ public class OperationProgress implements Progress {
 
     }
 
-
+    @SuppressLint("InflateParams")
     public void showZipProgressDialog(final Context context, final Intent intent) {
         mContext = context;
         registerReceiver(context);
@@ -197,7 +195,7 @@ public class OperationProgress implements Progress {
         progressDialog.show();
     }
 
-    @SuppressWarnings("ConstantConditions")
+    @SuppressLint("InflateParams")
     public void showExtractProgressDialog(final Context context, final Intent intent) {
         mContext = context;
         registerReceiver(context);
@@ -267,25 +265,25 @@ public class OperationProgress implements Progress {
 
     }
 
-    private BroadcastReceiver operationFailureReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "operationFailureReceiver : onReceive: ");
-            if (intent.getAction().equals(ACTION_OP_FAILED)) {
-                Operations operation = (Operations) intent.getSerializableExtra(KEY_OPERATION);
-                switch (operation) {
-                    case EXTRACT:
-//                        Logger.log(TAG, "Failure broacast=" + isExtractServiceAlive);
-//                        if (isExtractServiceAlive) {
-                        unregisterReceiver(mContext);
-                        progressDialog.dismiss();
-//                            isExtractServiceAlive = false;
-//                        }
-                        break;
-                }
-            }
-        }
-    };
+//    private BroadcastReceiver operationFailureReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            Log.d(TAG, "operationFailureReceiver : onReceive: ");
+//            if (intent.getAction().equals(ACTION_OP_FAILED)) {
+//                Operations operation = (Operations) intent.getSerializableExtra(KEY_OPERATION);
+//                switch (operation) {
+//                    case EXTRACT:
+////                        Logger.log(TAG, "Failure broacast=" + isExtractServiceAlive);
+////                        if (isExtractServiceAlive) {
+//                        unregisterReceiver(mContext);
+//                        progressDialog.dismiss();
+////                            isExtractServiceAlive = false;
+////                        }
+//                        break;
+//                }
+//            }
+//        }
+//    };
 
     private void stopCopyService() {
         Log.d(TAG, "stopCopyService: ");
@@ -323,7 +321,7 @@ public class OperationProgress implements Progress {
 
     private void registerReceiver(Context context) {
         Log.d(TAG, "registerReceiver: ");
-        IntentFilter filter = new IntentFilter(ACTION_OP_FAILED);
+//        IntentFilter filter = new IntentFilter(ACTION_OP_FAILED);
 //        context.registerReceiver(operationFailureReceiver, filter);
 
         IntentFilter filter1 = new IntentFilter(COPY_PROGRESS);
@@ -411,14 +409,14 @@ public class OperationProgress implements Progress {
             case MOVE_PROGRESS:
                 int totalProgressPaste = intent.getIntExtra(KEY_TOTAL_PROGRESS, 0);
                 Logger.log("FileUtils", "KEY_PROGRESS=" + progress + " KEY_TOTAL KEY_PROGRESS=" + totalProgressPaste);
-                Logger.log("FileUtils", "Copied bytes=" + copiedBytes + " KEY_TOTAL bytes=" + totalBytes);
+                Logger.log("FileUtils", "Copied files=" + copiedBytes + " KEY_TOTAL files=" + totalBytes);
                 progressBarPaste.setProgress(totalProgressPaste);
                 textProgress.setText(String.format(Locale.getDefault(), "%d%s", totalProgressPaste, mContext.getString
                         (R.string.percent_placeholder)));
-                int count = (int) copiedBytes;
-                textFileFromPath.setText(copiedFileInfo.get(count - 1).getFilePath());
-                textFileName.setText(copiedFileInfo.get(count - 1).getFileName());
-                textFileCount.setText(String.format(Locale.getDefault(), "%d/%d", count, copiedFilesSize));
+                int movedCount = (int) copiedBytes;
+                textFileFromPath.setText(copiedFileInfo.get(movedCount - 1).getFilePath());
+                textFileName.setText(copiedFileInfo.get(movedCount - 1).getFileName());
+                textFileCount.setText(String.format(Locale.getDefault(), "%d/%d", movedCount, copiedFilesSize));
                 if (totalProgressPaste == 100) {
                     stopMoveService();
                     progressDialog.dismiss();

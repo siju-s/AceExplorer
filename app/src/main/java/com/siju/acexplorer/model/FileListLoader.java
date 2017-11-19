@@ -53,15 +53,15 @@ import static com.siju.acexplorer.model.helper.SortHelper.sortFiles;
 public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
     private final String TAG = this.getClass().getSimpleName();
-    private       Fragment             mFragment;
-    private       MountUnmountReceiver mMountUnmountReceiver;
+    private       Fragment             fragment;
+    private       MountUnmountReceiver mountUnmountReceiver;
     private final Category             category;
 
     private ArrayList<FileInfo> fileInfoList;
 
     private final String  currentDir;
     private       boolean showHidden;
-    private       int     mSortMode;
+    private       int     sortMode;
     private       boolean isRingtonePicker;
     private       boolean isRooted;
 
@@ -72,9 +72,9 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         this.category = category;
         showHidden = PreferenceManager.getDefaultSharedPreferences(fragment.getContext()).getBoolean
                 (FileConstants.PREFS_HIDDEN, false);
-        mSortMode = PreferenceManager.getDefaultSharedPreferences(fragment.getContext()).getInt(
+        sortMode = PreferenceManager.getDefaultSharedPreferences(fragment.getContext()).getInt(
                 FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
-        mFragment = fragment;
+        this.fragment = fragment;
         this.isRingtonePicker = isRingtonePicker;
     }
 
@@ -85,8 +85,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             deliverResult(fileInfoList);
         }
 
-        if (mMountUnmountReceiver == null) {
-            mMountUnmountReceiver = new MountUnmountReceiver(this);
+        if (mountUnmountReceiver == null) {
+            mountUnmountReceiver = new MountUnmountReceiver(this);
         }
         if (takeContentChanged() || fileInfoList == null) {
             forceLoad();
@@ -120,11 +120,11 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         onStopLoading();
 
         fileInfoList = null;
-        mFragment = null;
+        fragment = null;
 
-        if (mMountUnmountReceiver != null) {
-            getContext().unregisterReceiver(mMountUnmountReceiver);
-            mMountUnmountReceiver = null;
+        if (mountUnmountReceiver != null) {
+            getContext().unregisterReceiver(mountUnmountReceiver);
+            mountUnmountReceiver = null;
         }
     }
 
@@ -135,7 +135,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     }
 
     private boolean isHomeFragment() {
-        return mFragment instanceof HomeScreenFragment;
+        return fragment instanceof HomeScreenFragment;
     }
 
 
@@ -181,9 +181,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     }
 
     private void fetchFiles() {
-        fileInfoList = getFilesList(currentDir,
-                                    isRooted, showHidden, isRingtonePicker);
-        fileInfoList = sortFiles(fileInfoList, mSortMode);
+        fileInfoList = getFilesList(currentDir, isRooted, showHidden, isRingtonePicker);
+        fileInfoList = sortFiles(fileInfoList, sortMode);
     }
 
     public static ArrayList<FileInfo> getFilesList(String path, boolean root,
@@ -196,7 +195,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             fileInfoArrayList = RootHelper.getRootedList(path, root, showHidden);
         }
         return fileInfoArrayList;
-
     }
 
     private static ArrayList<FileInfo> getNonRootedList(File file, boolean showHidden,
@@ -236,7 +234,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 }
 
                 long date = file1.lastModified();
-//                    String fileModifiedDate = convertDate(date);
 
                 FileInfo fileInfo = new FileInfo(category, file1.getName(), filePath, date, size,
                                                  isDirectory, extension, parseFilePermission(file1), false);
@@ -294,7 +291,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
             Logger.log(this.getClass().getSimpleName(), "Apk list size=" + fileInfoList.size());
             if (fileInfoList.size() != 0) {
-                fileInfoList = sortFiles(fileInfoList, mSortMode);
+                fileInfoList = sortFiles(fileInfoList, sortMode);
             }
         }
 
@@ -336,9 +333,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                                              true, null, parseFilePermission(new File(path)), false);
             fileInfoList.add(fileInfo);
         }
-        fileInfoList = sortFiles(fileInfoList, mSortMode);
+        fileInfoList = sortFiles(fileInfoList, sortMode);
         Log.d(TAG, "fetchFavorites: " + fileInfoList.size());
-
     }
 
 
@@ -384,7 +380,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             }
             cursor.close();
             if (fileInfoList.size() != 0) {
-                fileInfoList = sortFiles(fileInfoList, mSortMode);
+                fileInfoList = sortFiles(fileInfoList, sortMode);
             }
         }
     }
@@ -432,7 +428,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             Logger.log(this.getClass().getSimpleName(), "Size = " + fileInfoList.size() + "END Time Taken" +
                     timetaken);
             if (fileInfoList.size() != 0) {
-                fileInfoList = sortFiles(fileInfoList, mSortMode);
+                fileInfoList = sortFiles(fileInfoList, sortMode);
             }
         }
     }
@@ -474,7 +470,7 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             }
             cursor.close();
             if (fileInfoList.size() != 0) {
-                fileInfoList = sortFiles(fileInfoList, mSortMode);
+                fileInfoList = sortFiles(fileInfoList, sortMode);
             }
         }
     }
@@ -584,27 +580,26 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             }
             cursor.close();
             if (fileInfoList.size() != 0) {
-                fileInfoList = sortFiles(fileInfoList, mSortMode);
+                fileInfoList = sortFiles(fileInfoList, sortMode);
             }
         }
     }
 
     private static class MountUnmountReceiver extends BroadcastReceiver {
 
-        final FileListLoader mLoader;
+        final FileListLoader loader;
 
         MountUnmountReceiver(FileListLoader loader) {
-            mLoader = loader;
+            this.loader = loader;
             IntentFilter filter = new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
             filter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
             filter.addDataScheme("file");
-            mLoader.getContext().registerReceiver(this, filter);
+            this.loader.getContext().registerReceiver(this, filter);
         }
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            mLoader.onContentChanged();
-
+            loader.onContentChanged();
         }
     }
 }

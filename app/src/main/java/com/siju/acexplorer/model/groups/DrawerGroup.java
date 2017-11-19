@@ -16,7 +16,11 @@
 
 package com.siju.acexplorer.model.groups;
 
-public enum DrawerGroups {
+import android.content.Context;
+
+import com.siju.acexplorer.R;
+
+public enum DrawerGroup {
 
     STORAGE(0),
     FAVORITES(1),
@@ -25,7 +29,7 @@ public enum DrawerGroups {
 
     private final int value;
 
-    DrawerGroups(int value) {
+    DrawerGroup(int value) {
         this.value = value;
     }
 
@@ -34,7 +38,7 @@ public enum DrawerGroups {
         return value;
     }
 
-    public static DrawerGroups getGroupFromPos(int position) {
+    public static DrawerGroup getGroupFromPos(int position) {
         switch (position) {
             case 0:
                 return STORAGE;
@@ -48,6 +52,17 @@ public enum DrawerGroups {
         return STORAGE;
     }
 
+    public static String getDrawerGroupName(Context context, DrawerGroup group) {
+        switch (group) {
+            case STORAGE:
+                return context.getString(R.string.nav_header_storages);
+            case FAVORITES:
+                return context.getString(R.string.nav_header_favourites);
+            case LIBRARY:
+                return context.getString(R.string.nav_header_collections);
+        }
+        return null;
+    }
 
 
 }

@@ -1,9 +1,5 @@
 package com.siju.acexplorer.billing;
 
-/**
- * Created by sj on 29/10/17.
- */
-
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
@@ -32,15 +28,13 @@ import java.util.Set;
  * Handles all the interactions with Play Store (via Billing library), maintains connection to
  * it through BillingClient and caches temporary states/data if needed
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class BillingManager implements PurchasesUpdatedListener {
     public static final String SKU_REMOVE_ADS = "com.siju.acexplorer.pro"; //"android.test.purchased";
 
     private static BillingManager billingInstance;
     private boolean inappBillingSupported = true;
     private boolean isPremium = true;
-    private BillingResultCallback billingResultCallback;
-
 
     // Default value of mBillingClientResponseCode until BillingManager was not yeat initialized
     public static final int BILLING_MANAGER_NOT_INITIALIZED  = -1;
@@ -57,26 +51,13 @@ public class BillingManager implements PurchasesUpdatedListener {
 
     private BillingUpdatesListener mBillingUpdatesListener;
 
-    private Activity mActivity;
+    private Activity activity;
 
     private final List<Purchase> mPurchases = new ArrayList<>();
 
     private Set<String> mTokensToBeConsumed;
 
     private int mBillingClientResponseCode = BILLING_MANAGER_NOT_INITIALIZED;
-
-    /* BASE_64_ENCODED_PUBLIC_KEY should be YOUR APPLICATION'S PUBLIC KEY
-     * (that you got from the Google Play developer console). This is not your
-     * developer public key, it's the *app-specific* public key.
-     *
-     * Instead of just storing the entire literal string here embedded in the
-     * program,  construct the key at runtime from pieces or
-     * use bit manipulation (for example, XOR with some other string) to hide
-     * the actual key.  The key itself is not secret information, but we don't
-     * want to make it easy for an attacker to replace the public key with one
-     * of their own and then fake messages from the server.
-     */
-    private static final String BASE_64_ENCODED_PUBLIC_KEY = "CONSTRUCT_YOUR_KEY_AND_PLACE_IT_HERE";
 
     /**
      * Listener to the updates that happen when purchases list was updated or consumption of the
@@ -108,13 +89,13 @@ public class BillingManager implements PurchasesUpdatedListener {
 
 
     public void setContext(Activity activity) {
-        mActivity = activity;
+        this.activity = activity;
     }
 
     public void setupBilling(final BillingUpdatesListener updatesListener) {
         Log.d(TAG, "Creating Billing client.");
         mBillingUpdatesListener = updatesListener;
-        mBillingClient = BillingClient.newBuilder(mActivity).setListener(this).build();
+        mBillingClient = BillingClient.newBuilder(activity).setListener(this).build();
 
         Log.d(TAG, "Starting setup.");
 
@@ -160,6 +141,7 @@ public class BillingManager implements PurchasesUpdatedListener {
     /**
      * Start a purchase or subscription replace flow
      */
+    @SuppressWarnings("SameParameterValue")
     public void initiatePurchaseFlow(final String skuId, final ArrayList<String> oldSkus,
                                      final @SkuType String billingType) {
         Runnable purchaseFlowRequest = new Runnable() {
@@ -168,7 +150,7 @@ public class BillingManager implements PurchasesUpdatedListener {
                 Log.d(TAG, "Launching in-app purchase flow. Replace old SKU? " + (oldSkus != null));
                 BillingFlowParams purchaseParams = BillingFlowParams.newBuilder()
                         .setSku(skuId).setType(billingType).setOldSkus(oldSkus).build();
-                mBillingClient.launchBillingFlow(mActivity, purchaseParams);
+                mBillingClient.launchBillingFlow(activity, purchaseParams);
             }
         };
 
@@ -176,7 +158,7 @@ public class BillingManager implements PurchasesUpdatedListener {
     }
 
     public Context getContext() {
-        return mActivity;
+        return activity;
     }
 
     /**
@@ -184,7 +166,7 @@ public class BillingManager implements PurchasesUpdatedListener {
      */
     public void destroy() {
         Log.d(TAG, "Destroying the manager.");
-        mActivity = null;
+        activity = null;
         if (mBillingClient != null && mBillingClient.isReady()) {
             mBillingClient.endConnection();
             mBillingClient = null;
@@ -283,7 +265,6 @@ public class BillingManager implements PurchasesUpdatedListener {
 
         Log.d(TAG, "Got a verified purchase: " + purchase);
         isPremium = purchase.getSku().equals(SKU_REMOVE_ADS);
-//        billingResultCallback.onBillingResult(getBillingClientResponseCode());
 
         Log.d(TAG, "User has " + (isPremium ? "REMOVED ADS" : "NOT REMOVED ADS"));
         mPurchases.add(purchase);

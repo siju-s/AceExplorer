@@ -11,9 +11,6 @@ import com.siju.acexplorer.BuildConfig;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Created by sj on 04/11/17.
- */
 
 public class GoogleAnalytics implements Analytics.Logger {
 

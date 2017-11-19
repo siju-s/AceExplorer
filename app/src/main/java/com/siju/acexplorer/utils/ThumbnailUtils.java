@@ -24,10 +24,6 @@ import java.io.File;
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 import static com.siju.acexplorer.model.helper.AppUtils.getAppIconForFolder;
 
-/**
- * Created by sj on 03/11/17.
- */
-
 public class ThumbnailUtils {
 
     private static final Uri mAudioUri = Uri.parse("content://media/external/audio/albumart");
@@ -106,7 +102,7 @@ public class ThumbnailUtils {
     }
 
 
-    public static void displayVideoThumb(Context context, ImageView imageIcon, String path) {
+    private static void displayVideoThumb(Context context, ImageView imageIcon, String path) {
         Uri videoUri = Uri.fromFile(new File(path));
         RequestOptions options = new RequestOptions()
                 .centerCrop()
@@ -117,7 +113,7 @@ public class ThumbnailUtils {
                 .into(imageIcon);
     }
 
-    public static void displayImageThumb(Context context, ImageView imageIcon, String path) {
+    private static void displayImageThumb(Context context, ImageView imageIcon, String path) {
         Uri imageUri = Uri.fromFile(new File(path));
         RequestOptions options = new RequestOptions()
                 .centerCrop()
@@ -127,7 +123,7 @@ public class ThumbnailUtils {
                 .into(imageIcon);
     }
 
-    public static void displayAudioAlbumArt(Context context, long bucketId, ImageView imageIcon,
+    private static void displayAudioAlbumArt(Context context, long bucketId, ImageView imageIcon,
                                             String path) {
         if (bucketId != -1) {
             Uri uri = ContentUris.withAppendedId(mAudioUri, bucketId);
@@ -168,7 +164,7 @@ public class ThumbnailUtils {
         }
     }
 
-    public static void changeFileIcon(Context context, ImageView imageIcon, String extension, String
+    private static void changeFileIcon(Context context, ImageView imageIcon, String extension, String
             path) {
         switch (extension) {
             case FileConstants.APK_EXTENSION:

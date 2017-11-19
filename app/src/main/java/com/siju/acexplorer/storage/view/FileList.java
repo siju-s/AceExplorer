@@ -17,6 +17,20 @@
 package com.siju.acexplorer.storage.view;
 
 
+import android.os.Bundle;
+
+import com.siju.acexplorer.model.FileConstants;
+import com.siju.acexplorer.model.groups.Category;
 
 public class FileList extends BaseFileList {
+
+    public static FileList newInstance(String path, Category category, boolean isDualMode) {
+        Bundle args = new Bundle();
+        args.putString(FileConstants.KEY_PATH, path);
+        args.putSerializable(FileConstants.KEY_CATEGORY, category);
+        args.putBoolean(FileConstants.KEY_DUAL_ENABLED, isDualMode);
+        FileList fileList = new FileList();
+        fileList.setArguments(args);
+        return fileList;
+    }
 }

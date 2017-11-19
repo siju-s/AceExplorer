@@ -17,6 +17,7 @@
 package com.siju.acexplorer.base.view;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -27,12 +28,19 @@ import com.siju.acexplorer.base.model.BaseModelImpl;
 import com.siju.acexplorer.base.presenter.BasePresenter;
 import com.siju.acexplorer.base.presenter.BasePresenterImpl;
 import com.siju.acexplorer.theme.Theme;
+import com.siju.acexplorer.utils.LocaleHelper;
 
 
 @SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity {
 
+
     private Theme currentTheme;
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleHelper.setLanguage(newBase));
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,12 +56,11 @@ public class BaseActivity extends AppCompatActivity {
     private void setTheme() {
         switch (currentTheme) {
             case DARK:
-                setTheme(R.style.BaseDarkTheme_Dark);
+                setTheme(R.style.BaseDarkTheme);
                 break;
             case LIGHT:
-                setTheme(R.style.BaseLightTheme_Light);
+                setTheme(R.style.BaseLightTheme);
                 break;
-
         }
     }
 

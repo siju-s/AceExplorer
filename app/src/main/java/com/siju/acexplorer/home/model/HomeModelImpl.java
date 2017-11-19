@@ -187,8 +187,9 @@ public class HomeModelImpl implements HomeModel {
         for (int i = 0; i < savedLibraries.size(); i++) {
             Category category = savedLibraries.get(i).getCategory();
             int resourceId = getResourceIdForCategory(category);
-            addToLibrary(new HomeLibraryInfo(category, savedLibraries.get(i).getLibraryName(),
-                    resourceId,
+            String name = savedLibraries.get(i).getLibraryName();//getCategoryName(context, category);
+            Log.d(TAG, "addSavedLibraries: "+name);
+            addToLibrary(new HomeLibraryInfo(category, name, resourceId,
                     COUNT_ZERO));
         }
     }
@@ -222,7 +223,10 @@ public class HomeModelImpl implements HomeModel {
     }
 
 
+
+
     private void addPlusCategory() {
+        Log.d(TAG, "addPlusCategory: "+labels[5]);
         addToLibrary(new HomeLibraryInfo(ADD, labels[5], getResourceIdForCategory(ADD),
                 COUNT_ZERO));
     }

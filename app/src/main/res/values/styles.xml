@@ -17,7 +17,7 @@
 <resources>
 
 
-    <style name="BaseLightTheme">
+    <style name="BaseLightTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -29,22 +29,16 @@
         <item name="drawerArrowStyle">@style/DrawerIconStyle</item>
     </style>
 
-    <style name="BaseDarkTheme">
+    <style name="BaseDarkTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@color/colorPrimary</item>
         <item name="android:actionModeBackground">@color/colorPrimary</item>
         <item name="drawerArrowStyle">@style/DrawerIconStyle</item>
     </style>
 
-
-    <style name="BaseLightTheme.Light" />
-
-    <style name="BaseDarkTheme.Dark" />
 
     <style name="DrawerIconStyle" parent="Widget.AppCompat.DrawerArrowToggle">
         <item name="color">@android:color/white</item>
@@ -62,7 +56,6 @@
         <item name="windowActionBar">false</item>
         <item name="android:windowBackground">@color/dark_background</item>
         <item name="windowNoTitle">true</item>
-        <item name="android:windowFullscreen">true</item>
     </style>
 
     <style name="ToolbarTitle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">

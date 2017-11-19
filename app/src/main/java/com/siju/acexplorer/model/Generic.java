@@ -19,6 +19,7 @@ package com.siju.acexplorer.model;
 /**
  * Created by Siju on 28 August,2017
  */
+@SuppressWarnings("unused")
 public class Generic {
     private int resourceId;
     private String text;

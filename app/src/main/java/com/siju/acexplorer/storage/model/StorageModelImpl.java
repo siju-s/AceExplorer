@@ -382,8 +382,8 @@ public class StorageModelImpl implements StoragesModel {
                 case RENAME:
                 case HIDE:
                     if (success) {
-                        sharedPreferenceWrapper.updateFavorite(context, oldFile.getAbsolutePath(),
-                                                               newFile.getAbsolutePath());
+                        sharedPreferenceWrapper.updateFavoritePath(context, oldFile.getAbsolutePath(),
+                                                                   newFile.getAbsolutePath());
                         Intent intent = new Intent(ACTION_OP_REFRESH);
                         intent.putExtra(KEY_OPERATION, RENAME);
                         intent.putExtra(KEY_POSITION, position);

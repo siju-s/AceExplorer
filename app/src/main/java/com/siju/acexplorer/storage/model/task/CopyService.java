@@ -255,7 +255,12 @@ public class CopyService extends IntentService {
     }
 
     void copyRoot(String path, String name, String destinationPath) {
-        String targetPath = destinationPath + File.separator + name;
+        String targetPath;
+        if (destinationPath.equals(File.separator)) {
+            targetPath = destinationPath + name;
+        } else {
+            targetPath = destinationPath + File.separator + name;
+        }
         try {
             RootUtils.mountRW(destinationPath);
             RootUtils.copy(path, targetPath);

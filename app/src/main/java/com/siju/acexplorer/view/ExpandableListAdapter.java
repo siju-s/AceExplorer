@@ -18,7 +18,6 @@ package com.siju.acexplorer.view;
 
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,23 +27,30 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.theme.ThemeUtils;
 import com.siju.acexplorer.model.SectionGroup;
 import com.siju.acexplorer.model.SectionItems;
+import com.siju.acexplorer.model.StorageUtils;
+import com.siju.acexplorer.model.groups.Category;
+import com.siju.acexplorer.model.groups.DrawerGroup;
+import com.siju.acexplorer.theme.ThemeUtils;
 
 import java.util.ArrayList;
 
+import static com.siju.acexplorer.model.StorageUtils.StorageType.EXTERNAL;
+import static com.siju.acexplorer.view.NavigationDrawer.DRAWER_HEADER_FAV_POS;
+import static com.siju.acexplorer.view.NavigationDrawer.DRAWER_HEADER_STORAGE_POS;
+
 class ExpandableListAdapter extends BaseExpandableListAdapter {
 
-    private final Context mContext;
+    private final Context                 context;
     private final ArrayList<SectionGroup> groups;
-    private final boolean mIsDarkTheme;
+    private final boolean                 isDarkTheme;
 
 
     ExpandableListAdapter(Context context, ArrayList<SectionGroup> groups) {
-        this.mContext = context;
+        this.context = context;
         this.groups = groups;
-        mIsDarkTheme = ThemeUtils.isDarkTheme(context);
+        isDarkTheme = ThemeUtils.isDarkTheme(context);
     }
 
     @Override
@@ -67,34 +73,44 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
         View view = convertView;
         ChildViewHolder childViewHolder;
         if (view == null) {
-            LayoutInflater layoutInflater = (LayoutInflater) this.mContext
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = layoutInflater.inflate(R.layout.drawer_item, parent, false);
+            view = LayoutInflater.from(context).inflate(R.layout.drawer_item, parent, false);
             childViewHolder = new ChildViewHolder();
-            childViewHolder.image = (ImageView) view.findViewById(R.id.imageDrawerItem);
-            childViewHolder.textFirstLine = (TextView) view.findViewById(R.id.textFirstLine);
-            childViewHolder.textSecondLine = (TextView) view.findViewById(R.id.textSecondLine);
-            childViewHolder.progressBar = (ProgressBar) view.findViewById(R.id.progressBarSD);
+            childViewHolder.image = view.findViewById(R.id.imageDrawerItem);
+            childViewHolder.textFirstLine = view.findViewById(R.id.textFirstLine);
+            childViewHolder.textSecondLine = view.findViewById(R.id.textSecondLine);
+            childViewHolder.progressBar = view.findViewById(R.id.progressBarSD);
             view.setTag(childViewHolder);
         } else {
             childViewHolder = (ChildViewHolder) view.getTag();
         }
 
+        Category category = child.getCategory();
+        StorageUtils.StorageType storageType = child.getStorageType();
+        String text;
+        if (storageType != null && !storageType.equals(EXTERNAL)) {
+            text = StorageUtils.StorageType.getStorageText(context, storageType);
+        } else if (category != null) {
+            text = Category.getCategoryName(context, category);
+        } else {
+            text = child.getFirstLine();
+        }
         childViewHolder.image.setBackgroundResource(child.getIcon());
-        childViewHolder.textFirstLine.setText(child.getFirstLine());
+        childViewHolder.image.setContentDescription(text);
+        childViewHolder.textFirstLine.setText(text);
 
-        if (groupPosition == 0 || groupPosition == 1) {
-            if (groupPosition == 0) {
-                childViewHolder.progressBar.setVisibility(View.VISIBLE);
-                childViewHolder.progressBar.setProgress(child.getProgress());
-            } else {
-                childViewHolder.progressBar.setVisibility(View.GONE);
-            }
+        if (groupPosition == DRAWER_HEADER_STORAGE_POS) {
+            childViewHolder.progressBar.setVisibility(View.VISIBLE);
+            childViewHolder.progressBar.setProgress(child.getProgress());
             childViewHolder.textSecondLine.setText(child.getSecondLine());
+
+        } else if (groupPosition == DRAWER_HEADER_FAV_POS) {
+            childViewHolder.progressBar.setVisibility(View.GONE);
+            childViewHolder.textSecondLine.setText(child.getSecondLine());
+
         } else {
             childViewHolder.progressBar.setVisibility(View.GONE);
-            childViewHolder.textFirstLine.setPadding(0,mContext.getResources().getDimensionPixelSize(R.dimen
-                    .padding_5),0,0);
+            childViewHolder.textFirstLine.setPadding(0, context.getResources().
+                    getDimensionPixelSize(R.dimen.padding_5), 0, 0);
             childViewHolder.textSecondLine.setText("");
         }
         return view;
@@ -129,46 +145,43 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
         View view = convertView;
         GroupViewHolder holder;
         if (view == null) {
-            LayoutInflater infalInflater = (LayoutInflater) this.mContext
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = infalInflater.inflate(R.layout.drawer_item_header, parent, false);
+            view = LayoutInflater.from(context).inflate(R.layout.drawer_item_header, parent, false);
             holder = new GroupViewHolder();
-            holder.textHeader = (TextView) view.findViewById(R.id.textDrawerHeaders);
-            holder.imageArrow = (ImageView) view.findViewById(R.id.imageExpand);
+            holder.textHeader = view.findViewById(R.id.textDrawerHeaders);
+            holder.imageArrow = view.findViewById(R.id.imageExpand);
             view.setTag(holder);
         } else {
             holder = (GroupViewHolder) view.getTag();
         }
 
         if (isExpanded) {
-            if (mIsDarkTheme) {
+            if (isDarkTheme) {
                 holder.imageArrow.setImageResource(R.drawable.ic_expand_less_white);
             } else {
                 holder.imageArrow.setImageResource(R.drawable.ic_expand_less_black);
             }
         } else {
-            if (mIsDarkTheme) {
+            if (isDarkTheme) {
                 holder.imageArrow.setImageResource(R.drawable.ic_expand_more_white);
             } else {
                 holder.imageArrow.setImageResource(R.drawable.ic_expand_more_black);
             }
         }
-        holder.textHeader.setTypeface(null, Typeface.BOLD);
-        holder.textHeader.setText(group.getmHeader());
+        holder.textHeader.setText(DrawerGroup.getDrawerGroupName(context, group.getGroups()));
 
         return view;
     }
 
 
     private static class GroupViewHolder {
-        TextView textHeader;
+        TextView  textHeader;
         ImageView imageArrow;
     }
 
     private static class ChildViewHolder {
-        ImageView image;
-        TextView textFirstLine;
-        TextView textSecondLine;
+        ImageView   image;
+        TextView    textFirstLine;
+        TextView    textSecondLine;
         ProgressBar progressBar;
     }
 

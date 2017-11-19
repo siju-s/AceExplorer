@@ -410,7 +410,7 @@ public class StorageBridge implements StoragesUi {
         listener.renameFile(filePath, parentDir, name, position, rooted);
     }
 
-    public void showDualFrame() {
+    void showDualFrame() {
         ((AceActivity)fragment.getActivity()).showDualFrame();
     }
 }

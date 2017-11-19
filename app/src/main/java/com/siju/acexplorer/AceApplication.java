@@ -21,6 +21,7 @@ import android.content.Context;
 import android.os.StrictMode;
 
 import com.crashlytics.android.Crashlytics;
+import com.siju.acexplorer.utils.LocaleHelper;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -30,8 +31,26 @@ public class AceApplication extends Application {
     private static Context appContext;
 
     @Override
+    protected void attachBaseContext(Context context) {
+        super.attachBaseContext(LocaleHelper.setLanguage(context));
+    }
+
+    @Override
     public void onCreate() {
         super.onCreate();
+        setStrictMode();
+        appContext = this;
+        if (BuildConfig.ENABLE_CRASHLYTICS) {
+            Fabric.with(this, new Crashlytics());
+        }
+        setupLeakCanary();
+    }
+
+    public static Context getAppContext() {
+        return appContext;
+    }
+
+    private void setStrictMode() {
         if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll()
                                                .penaltyLog().build());
@@ -41,21 +60,15 @@ public class AceApplication extends Application {
                                            .penaltyLog()
                                            .build());
         }
-        appContext = this;
-        if (BuildConfig.ENABLE_CRASHLYTICS) {
-            Fabric.with(this, new Crashlytics());
-        }
-/*        if (LeakCanary.isInAnalyzerProcess(this)) {
+    }
+
+    private void setupLeakCanary() {
+        /*        if (LeakCanary.isInAnalyzerProcess(this)) {
             // This process is dedicated to LeakCanary for heap analysis.
             // You should not init your app in this process.
             return;
         }
         LeakCanary.install(this);*/
-
-        Factory.setInstance(this);
     }
 
-    public static Context getAppContext() {
-        return appContext;
-    }
 }

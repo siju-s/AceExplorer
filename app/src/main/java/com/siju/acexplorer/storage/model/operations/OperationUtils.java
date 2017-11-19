@@ -26,22 +26,22 @@ import static com.siju.acexplorer.model.helper.SdkHelper.isKitkat;
 
 public class OperationUtils {
 
-    public static final String ACTION_SAF = "ACTION_SAF";
-    public static final String KEY_FILENAME = "filename";
-    public static final String KEY_FILEPATH = "filepath";
-    public static final String KEY_FILEPATH2 = "filepath2";
-    public static final String KEY_OPERATION = "operation";
-    public static final String KEY_FILES = "op_files";
-    public static final String KEY_OLD_FILES = "old_op_files";
-    public static final String KEY_POSITION = "pos";
-    public static final String KEY_CONFLICT_DATA = "conflict_data";
-    public static final String ACTION_OP_REFRESH = "refresh";
+    public static final String ACTION_SAF         = "ACTION_SAF";
+    public static final String KEY_FILENAME       = "filename";
+    public static final String KEY_FILEPATH       = "filepath";
+    public static final String KEY_FILEPATH2      = "filepath2";
+    public static final String KEY_OPERATION      = "operation";
+    public static final String KEY_FILES          = "op_files";
+    public static final String KEY_OLD_FILES      = "old_op_files";
+    public static final String KEY_POSITION       = "pos";
+    public static final String KEY_CONFLICT_DATA  = "conflict_data";
+    public static final String ACTION_OP_REFRESH  = "refresh";
     public static final String ACTION_RELOAD_LIST = "reload";
-    public static final String ACTION_OP_FAILED = "failed";
-    public static final String KEY_RESULT = "result";
-    public static final String KEY_MOVE = "move";
-    public static final String KEY_COUNT = "count";
-    public static final String KEY_SHOW_RESULT = "show_result";
+    public static final String ACTION_OP_FAILED   = "failed";
+    public static final String KEY_RESULT         = "result";
+    public static final String KEY_MOVE           = "move";
+    public static final String KEY_COUNT          = "count";
+    public static final String KEY_SHOW_RESULT    = "show_result";
 
 
     public enum WriteMode {
@@ -51,9 +51,11 @@ public class OperationUtils {
     }
 
 
-    public static WriteMode checkFolder(final String f) {
-        if (f == null) return WriteMode.ROOT;
-        File folder = new File(f);
+    public static WriteMode checkFolder(final String directory) {
+        if (directory == null) {
+            return WriteMode.ROOT;
+        }
+        File folder = new File(directory);
         if (isAtleastLollipop() && isOnExtSdCard(folder)) {
             if (!folder.exists() || !folder.isDirectory()) {
                 return WriteMode.ROOT;

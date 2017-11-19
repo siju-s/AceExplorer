@@ -47,14 +47,17 @@ import static com.siju.acexplorer.model.groups.Category.IMAGE;
 import static com.siju.acexplorer.model.groups.Category.LARGE_FILES;
 import static com.siju.acexplorer.model.groups.Category.PDF;
 import static com.siju.acexplorer.model.groups.Category.VIDEO;
+import static com.siju.acexplorer.model.groups.Category.getCategoryName;
 
 public class LibrarySortActivity extends BaseActivity implements OnStartDragListener {
-    private ItemTouchHelper mItemTouchHelper;
+    private ItemTouchHelper         itemTouchHelper;
     private SharedPreferenceWrapper sharedPreferenceWrapper;
-    private ArrayList<LibrarySortModel> savedLibraries = new ArrayList<>();
+
+    private       ArrayList<LibrarySortModel> savedLibraries = new ArrayList<>();
     private final ArrayList<LibrarySortModel> totalLibraries = new ArrayList<>();
-    private int mResourceIds[];
-    private String mLabels[];
+
+    private int      resourceIds[];
+    private String   mLabels[];
     private Category categories[];
 
 
@@ -67,43 +70,43 @@ public class LibrarySortActivity extends BaseActivity implements OnStartDragList
         sharedPreferenceWrapper = new SharedPreferenceWrapper();
         initConstants();
         initializeLibraries();
-        Toolbar mToolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
-        mToolbar.setTitle(getString(R.string.nav_header_collections));
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle(getString(R.string.app_name));
+        setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        RecyclerView mRecyclerViewLibrarySort =  findViewById(R.id.recyclerViewLibrarySort);
+        RecyclerView libSortList = findViewById(R.id.libSortList);
         LibrarySortAdapter mSortAdapter = new LibrarySortAdapter(this, totalLibraries);
 
-        mRecyclerViewLibrarySort.setHasFixedSize(true);
+        libSortList.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setAutoMeasureEnabled(false);
-        mRecyclerViewLibrarySort.setLayoutManager(llm);
-        mRecyclerViewLibrarySort.setAdapter(mSortAdapter);
+        libSortList.setLayoutManager(llm);
+        libSortList.setAdapter(mSortAdapter);
 
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mSortAdapter);
-        mItemTouchHelper = new ItemTouchHelper(callback);
-        mItemTouchHelper.attachToRecyclerView(mRecyclerViewLibrarySort);
+        itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(libSortList);
     }
 
     private void initConstants() {
-        mResourceIds = new int[]{R.drawable.ic_library_images, R.drawable.ic_library_music,
+        resourceIds = new int[]{R.drawable.ic_library_images, R.drawable.ic_library_music,
                 R.drawable.ic_library_videos, R.drawable.ic_library_docs,
                 R.drawable.ic_library_downloads,
                 R.drawable.ic_library_compressed, R.drawable.ic_library_favorite,
                 R.drawable.ic_library_pdf, R.drawable.ic_library_apk, R.drawable.ic_library_large};
         // No Add Label to be shown
         mLabels = new String[]{getString(R.string
-                .nav_menu_image), getString(R.string
-                .nav_menu_music), getString(R.string
-                .nav_menu_video), getString(R.string
-                .home_docs), getString(R.string
-                .downloads), getString(R.string
-                .compressed), getString(R.string
-                .nav_header_favourites), getString(R.string
-                .pdf), getString(R.string
-                .apk), getString(R.string
-                .library_large)};
+                                                 .nav_menu_image), getString(R.string
+                                                                                     .nav_menu_music), getString(R.string
+                                                                                                                         .nav_menu_video), getString(R.string
+                                                                                                                                                             .home_docs), getString(R.string
+                                                                                                                                                                                            .downloads), getString(R.string
+                                                                                                                                                                                                                           .compressed), getString(R.string
+                                                                                                                                                                                                                                                           .nav_header_favourites), getString(R.string
+                                                                                                                                                                                                                                                                                                      .pdf), getString(R.string
+                                                                                                                                                                                                                                                                                                                               .apk), getString(R.string
+                                                                                                                                                                                                                                                                                                                                                        .library_large)};
         categories = new Category[]{IMAGE,
                 AUDIO,
                 VIDEO,
@@ -121,12 +124,13 @@ public class LibrarySortActivity extends BaseActivity implements OnStartDragList
         savedLibraries = sharedPreferenceWrapper.getLibraries(this);
         if (savedLibraries != null) {
             for (int j = 0; j < savedLibraries.size(); j++) {
-                totalLibraries.add(new LibrarySortModel(savedLibraries.get(j).getCategory(),
-                        savedLibraries.get(j).getLibraryName()));
+                Category category = savedLibraries.get(j).getCategory();
+                String name = getCategoryName(this, category);
+                totalLibraries.add(new LibrarySortModel(category, name));
             }
         }
 
-        for (int i = 0; i < mResourceIds.length; i++) {
+        for (int i = 0; i < resourceIds.length; i++) {
             LibrarySortModel model = new LibrarySortModel(categories[i], mLabels[i]);
             if (!totalLibraries.contains(model)) {
                 model.setChecked(false);
@@ -138,7 +142,7 @@ public class LibrarySortActivity extends BaseActivity implements OnStartDragList
 
     @Override
     public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
-        mItemTouchHelper.startDrag(viewHolder);
+        itemTouchHelper.startDrag(viewHolder);
     }
 
     @Override
@@ -163,7 +167,7 @@ public class LibrarySortActivity extends BaseActivity implements OnStartDragList
                 }
                 Intent dataIntent = new Intent();
                 dataIntent.putParcelableArrayListExtra(FileConstants.KEY_LIB_SORTLIST,
-                        savedLibraries);
+                                                       savedLibraries);
                 setResult(RESULT_OK, dataIntent);
                 finish();
                 break;

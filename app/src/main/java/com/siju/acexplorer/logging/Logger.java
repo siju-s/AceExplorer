@@ -29,6 +29,8 @@ public class Logger {
      * @param msg
      */
     public static void log(String tag, String msg) {
-        if (BuildConfig.DEBUG) Log.d(tag, msg);
+        if (BuildConfig.DEBUG) {
+            Log.d(tag, msg);
+        }
     }
 }

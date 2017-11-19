@@ -18,9 +18,6 @@ package com.siju.acexplorer.base.presenter;
 
 import com.siju.acexplorer.theme.Theme;
 
-/**
- * Created by SJ on 20-01-2017.
- */
 
 public interface BasePresenter {
 

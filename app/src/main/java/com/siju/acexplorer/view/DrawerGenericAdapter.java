@@ -37,6 +37,7 @@ public class DrawerGenericAdapter extends BaseAdapter {
 
     private Context context;
     private List<Generic> generics = new ArrayList<>();
+    private Generic unlockItem;
 
     DrawerGenericAdapter(Context context) {
         this.context = context;
@@ -45,14 +46,16 @@ public class DrawerGenericAdapter extends BaseAdapter {
 
 
     private void addGenericList() {
-        generics.add(new Generic(R.drawable.ic_unlock_full, context.getString(R.string.unlock_full_version)));
+        unlockItem = new Generic(R.drawable.ic_unlock_full, context.getString(R.string.unlock_full_version));
+        generics.add(unlockItem);
         generics.add(new Generic(R.drawable.ic_rate_white, context.getString(R.string.rate_us)));
         generics.add(new Generic(R.drawable.ic_settings_white, context.getString(R.string.action_settings)));
     }
 
     void setPremium() {
-        generics.remove(0);
-        notifyDataSetChanged();
+        if (generics.remove(unlockItem)) {
+            notifyDataSetChanged();
+        }
     }
 
 
@@ -75,23 +78,24 @@ public class DrawerGenericAdapter extends BaseAdapter {
     public View getView(int position, View view, ViewGroup parent) {
         ViewHolder holder;
         if (view == null) {
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.drawer_generic_item, parent, false);
+            view = LayoutInflater.from(context).inflate(R.layout.drawer_generic_item, parent, false);
             holder = new ViewHolder();
             holder.text = view.findViewById(R.id.textDrawerItem);
             holder.image = view.findViewById(R.id.imageDrawerItem);
             view.setTag(holder);
         }
         holder = (ViewHolder) view.getTag();
-        holder.text.setText(generics.get(position).getText());
+        String text = generics.get(position).getText();
+        holder.text.setText(text);
         holder.image.setImageResource(generics.get(position).getResourceId());
+        holder.image.setContentDescription(text);
 
         return view;
     }
 
     private static class ViewHolder {
 
-        private TextView text;
+        private TextView  text;
         private ImageView image;
 
     }

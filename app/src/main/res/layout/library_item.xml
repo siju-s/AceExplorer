@@ -68,6 +68,6 @@
         android:layout_below="@+id/imageLibrary"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="3dp"
-        tools:text="Images" />
+        tools:text="@string/nav_menu_image" />
 
 </RelativeLayout>

@@ -19,19 +19,20 @@ package com.siju.acexplorer.permission;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.support.v4.content.ContextCompat;
 
-import com.siju.acexplorer.Factory;
+import com.siju.acexplorer.AceApplication;
 
 import java.util.Hashtable;
 
+import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastMarsh;
+
 public class PermissionUtils {
-    private static final String[] sRequiredPermissions = new String[] {
-            // Required to read existing SMS threads
+    private static final String[]                   REQD_PERMISSIONS = new String[]{
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
-    private static final Hashtable<String, Integer> sPermissions = new Hashtable<>();
+    private static final Hashtable<String, Integer> permissions      = new Hashtable<>();
 
-    /** Does the app have the minimum set of permissions required to operate. */
     public static boolean hasRequiredPermissions() {
         return hasPermissions();
     }
@@ -40,9 +41,9 @@ public class PermissionUtils {
         return hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 
-    /** Does the app have all the specified permissions */
+
     private static boolean hasPermissions() {
-        for (final String permission : PermissionUtils.sRequiredPermissions) {
+        for (final String permission : PermissionUtils.REQD_PERMISSIONS) {
             if (!hasPermission(permission)) {
                 return false;
             }
@@ -51,29 +52,21 @@ public class PermissionUtils {
     }
 
     private static boolean hasPermission(final String permission) {
-        if (PermissionUtils.isAtLeastM()) {
+        if (isAtleastMarsh()) {
             // It is safe to cache the PERMISSION_GRANTED result as the process gets killed if the
             // user revokes the permission setting. However, PERMISSION_DENIED should not be
             // cached as the process does not get killed if the user enables the permission setting.
-            if (!sPermissions.containsKey(permission)
-                    || sPermissions.get(permission) == PackageManager.PERMISSION_DENIED) {
-                final Context context = Factory.get();
-                final int permissionState = context.checkSelfPermission(permission);
-                sPermissions.put(permission, permissionState);
+            if (!permissions.containsKey(permission)
+                    || permissions.get(permission) == PackageManager.PERMISSION_DENIED) {
+                final Context context = AceApplication.getAppContext();
+                final int permissionState = ContextCompat.checkSelfPermission(context, permission);
+                permissions.put(permission, permissionState);
             }
-            return sPermissions.get(permission) == PackageManager.PERMISSION_GRANTED;
+            return permissions.get(permission) == PackageManager.PERMISSION_GRANTED;
         } else {
             return true;
         }
     }
 
 
-
-    /**
-     * @return True if the version of Android that we're running on is at least M
-     *  (API level 23).
-     */
-    public static boolean isAtLeastM() {
-        return android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M;
-    }
 }

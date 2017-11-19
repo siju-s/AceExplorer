@@ -22,10 +22,6 @@ import java.util.List;
 
 import static com.siju.acexplorer.utils.ThumbnailUtils.displayThumb;
 
-/**
- * Created by sj on 28/10/17.
- */
-
 public class PasteConflictAdapter extends BaseAdapter {
 
     private List<FileInfo> conflictFileInfoList;
@@ -104,7 +100,7 @@ public class PasteConflictAdapter extends BaseAdapter {
 
 
     private static class FileInfoHolder {
-        CardView cardView;
+        CardView  cardView;
         ImageView imageIcon;
         TextView  headerText;
         TextView  titleText;

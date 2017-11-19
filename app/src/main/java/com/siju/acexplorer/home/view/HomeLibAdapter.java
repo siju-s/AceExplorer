@@ -22,10 +22,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.siju.acexplorer.model.groups.Category.ADD;
+import static com.siju.acexplorer.model.groups.Category.getCategoryName;
 
-/**
- * Created by sj on 07/11/17.
- */
 
 public class HomeLibAdapter extends RecyclerView.Adapter<HomeLibAdapter.HomeLibHolder>
         implements ItemTouchHelperAdapter
@@ -119,8 +117,10 @@ public class HomeLibAdapter extends RecyclerView.Adapter<HomeLibAdapter.HomeLibH
 
         homeLibHolder.imageLibrary.setImageResource(homeLibraryInfoArrayList.get(position)
                                                             .getResourceId());
-        homeLibHolder.textLibraryName.setText(homeLibraryInfoArrayList.get(position)
-                                                      .getCategoryName());
+        String name = getCategoryName(context, homeLibraryInfoArrayList.get(position)
+                .getCategory());
+
+        homeLibHolder.textLibraryName.setText(name);
         if (homeLibraryInfoArrayList.get(position).getCategory().equals(ADD)) {
             homeLibHolder.textCount.setVisibility(View.GONE);
         } else {

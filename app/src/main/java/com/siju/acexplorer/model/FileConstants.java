@@ -17,6 +17,7 @@
 package com.siju.acexplorer.model;
 
 
+@SuppressWarnings("WeakerAccess")
 public class FileConstants {
 
     public static final String PREFS_HIDDEN = "prefHidden";

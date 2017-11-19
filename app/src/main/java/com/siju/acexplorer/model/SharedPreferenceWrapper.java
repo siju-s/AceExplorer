@@ -18,11 +18,10 @@ package com.siju.acexplorer.model;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.google.gson.Gson;
-import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.home.model.LibrarySortModel;
+import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.storage.model.ViewMode;
 
 import java.util.ArrayList;
@@ -35,36 +34,28 @@ import static com.siju.acexplorer.model.StorageUtils.getDownloadsDirectory;
 public class SharedPreferenceWrapper {
 
     private static final String PREFS_NAME = "PREFS";
-    private static final String FAVORITES = "Product_Favorite";
-    private static final String LIBRARIES = "Library";
+    private static final String FAVORITES  = "Product_Favorite";
+    private static final String LIBRARIES  = "Library";
 
     private static final String PREFS_VIEW_MODE = "view-mode";
 
-    public SharedPreferenceWrapper() {
-        super();
-    }
 
-    // This four methods are used for maintaining favorites.
     private void saveFavorites(Context context, List<FavInfo> favorites) {
         SharedPreferences settings;
         SharedPreferences.Editor editor;
-
-        settings = context.getSharedPreferences(PREFS_NAME,
-                Context.MODE_PRIVATE);
+        settings = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         editor = settings.edit();
-
         Gson gson = new Gson();
         String jsonFavorites = gson.toJson(favorites);
-
         editor.putString(FAVORITES, jsonFavorites);
-
         editor.apply();
     }
 
     public void addFavorite(Context context, FavInfo favInfo) {
         List<FavInfo> favorites = getFavorites(context);
-        if (favorites == null)
+        if (favorites == null) {
             favorites = new ArrayList<>();
+        }
         if (!favorites.contains(favInfo)) {
             favorites.add(favInfo);
             saveFavorites(context, favorites);
@@ -81,20 +72,25 @@ public class SharedPreferenceWrapper {
         for (FavInfo favInfo : favInfoArrayList) {
             if (!favorites.contains(favInfo)) {
                 favorites.add(favInfo);
-                count ++;
+                count++;
             }
         }
-
-        saveFavorites(context, favorites);
+        if (count != 0) {
+            saveFavorites(context, favorites);
+        }
         return count;
     }
 
-    public void removeFavorite(Context context, FavInfo favInfo) {
+    public boolean removeFavorite(Context context, FavInfo favInfo) {
         ArrayList<FavInfo> favorites = getFavorites(context);
+        boolean isDeleted = false;
         if (favorites != null) {
-            favorites.remove(favInfo);
-            saveFavorites(context, favorites);
+            if (favorites.remove(favInfo)) {
+                isDeleted = true;
+                saveFavorites(context, favorites);
+            }
         }
+        return isDeleted;
     }
 
     /**
@@ -111,13 +107,6 @@ public class SharedPreferenceWrapper {
                     favorites.remove(i);
                 }
             }
-
-           /* for (FavInfo info : favorites) {
-                if (!info.getFilePath().equalsIgnoreCase(FileUtils.getDownloadsDirectory()
-                .getAbsolutePath())) {
-                    favorites.remove(info);
-                }
-            }*/
             saveFavorites(context, favorites);
         }
     }
@@ -127,12 +116,12 @@ public class SharedPreferenceWrapper {
         ArrayList<FavInfo> favorites = new ArrayList<>();
 
         settings = context.getSharedPreferences(PREFS_NAME,
-                Context.MODE_PRIVATE);
+                                                Context.MODE_PRIVATE);
         if (settings.contains(FAVORITES)) {
             String jsonFavorites = settings.getString(FAVORITES, null);
             Gson gson = new Gson();
             FavInfo[] favoriteItems = gson.fromJson(jsonFavorites,
-                    FavInfo[].class);
+                                                    FavInfo[].class);
             favorites.addAll(Arrays.asList(favoriteItems));
         }
 
@@ -141,8 +130,9 @@ public class SharedPreferenceWrapper {
 
     public void addLibrary(Context context, LibrarySortModel librarySortModel) {
         List<LibrarySortModel> libraries = getLibraries(context);
-        if (libraries == null)
+        if (libraries == null) {
             libraries = new ArrayList<>();
+        }
         if (!libraries.contains(librarySortModel)) {
             libraries.add(librarySortModel);
             saveLibrary(context, libraries);
@@ -157,14 +147,13 @@ public class SharedPreferenceWrapper {
         ArrayList<LibrarySortModel> libraries = new ArrayList<>();
 
         settings = context.getSharedPreferences(PREFS_NAME,
-                Context.MODE_PRIVATE);
+                                                Context.MODE_PRIVATE);
         if (settings.contains(LIBRARIES)) {
             String jsonFavorites = settings.getString(LIBRARIES, null);
             Gson gson = new Gson();
             LibrarySortModel[] libItems = gson.fromJson(jsonFavorites,
-                    LibrarySortModel[].class);
+                                                        LibrarySortModel[].class);
             libraries.addAll(Arrays.asList(libItems));
-
         }
 
         return libraries;
@@ -174,8 +163,8 @@ public class SharedPreferenceWrapper {
         SharedPreferences sharedPreferences;
         SharedPreferences.Editor editor;
 
-        sharedPreferences = context.getSharedPreferences(PREFS_NAME,
-                Context.MODE_PRIVATE);
+        sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+
         editor = sharedPreferences.edit();
         editor.putInt(PREFS_VIEW_MODE, viewMode);
         editor.apply();
@@ -186,7 +175,7 @@ public class SharedPreferenceWrapper {
         SharedPreferences.Editor editor;
 
         settings = context.getSharedPreferences(PREFS_NAME,
-                Context.MODE_PRIVATE);
+                                                Context.MODE_PRIVATE);
         editor = settings.edit();
 
         Gson gson = new Gson();
@@ -198,22 +187,12 @@ public class SharedPreferenceWrapper {
     }
 
 
-// --Commented out by Inspection START (06-11-2016 11:08 PM):
-//    public void removeLibrary(Context context, LibrarySortModel librarySortModel) {
-//        ArrayList<LibrarySortModel> libraries = getLibraries(context);
-//        if (libraries != null) {
-//            libraries.remove(librarySortModel);
-//            saveLibrary(context, libraries);
-//        }
-//    }
-// --Commented out by Inspection STOP (06-11-2016 11:08 PM)
-
     public int getViewMode(Context context) {
         SharedPreferences sharedPreferences;
         int mode;
 
         sharedPreferences = context.getSharedPreferences(PREFS_NAME,
-                Context.MODE_PRIVATE);
+                                                         Context.MODE_PRIVATE);
         if (sharedPreferences.contains(PREFS_VIEW_MODE)) {
             mode = sharedPreferences.getInt(PREFS_VIEW_MODE, ViewMode.LIST);
         } else {
@@ -223,9 +202,9 @@ public class SharedPreferenceWrapper {
     }
 
 
-    public void updateFavorite(Context context, String oldFile, String newFile) {
+    public void updateFavoritePath(Context context, String oldFile, String newFile) {
         ArrayList<FavInfo> favList = getFavorites(context);
-        Log.d("SharedWrapper", "updateFavorite: "+favList.size());
+        Logger.log("SharedWrapper", "updateFavoritePath: " + favList.size());
         FavInfo fav = null;
         FavInfo newFavInfo = null;
         for (FavInfo favInfo : favList) {
@@ -239,7 +218,7 @@ public class SharedPreferenceWrapper {
         if (fav != null) {
             favList.remove(fav);
             favList.add(newFavInfo);
-            Log.d("SharedWrapper", "updateFavorite NEW: "+favList.size() + " newFavInfo:"+newFavInfo.getFilePath());
+            Logger.log("SharedWrapper", "updateFavoritePath NEW: " + favList.size() + " newFavInfo:" + newFavInfo.getFilePath());
             saveFavorites(context, favList);
         }
 

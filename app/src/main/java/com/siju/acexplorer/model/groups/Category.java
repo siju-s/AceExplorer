@@ -16,6 +16,10 @@
 
 package com.siju.acexplorer.model.groups;
 
+import android.content.Context;
+
+import com.siju.acexplorer.R;
+
 public enum Category {
     FILES(0),
     AUDIO(1),
@@ -84,5 +88,33 @@ public enum Category {
                 category.equals(DOWNLOADS) ||
                 category.equals(FAVORITES) ||
                 category.equals(LARGE_FILES);
+    }
+
+    public static String getCategoryName(Context context, Category categoryId) {
+        switch (categoryId) {
+            case AUDIO:
+                return context.getString(R.string.audio);
+            case VIDEO:
+                return context.getString(R.string.nav_menu_video);
+            case IMAGE:
+                return context.getString(R.string.nav_menu_image);
+            case DOCS:
+                return context.getString(R.string.nav_menu_docs);
+            case DOWNLOADS:
+                return context.getString(R.string.downloads);
+            case ADD:
+                return context.getString(R.string.home_add);
+            case COMPRESSED:
+                return context.getString(R.string.compressed);
+            case FAVORITES:
+                return context.getString(R.string.nav_header_favourites);
+            case PDF:
+                return context.getString(R.string.pdf);
+            case APPS:
+                return context.getString(R.string.apk);
+            case LARGE_FILES:
+                return context.getString(R.string.library_large);
+        }
+        return context.getString(R.string.audio);
     }
 }

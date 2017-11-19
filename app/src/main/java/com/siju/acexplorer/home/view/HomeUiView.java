@@ -98,6 +98,7 @@ public class HomeUiView extends CoordinatorLayout {
     private void init() {
         nestedScrollViewHome = findViewById(R.id.scrollLayoutHome);
         toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle(getResources().getString(R.string.app_name));
 
         setTheme();
     }

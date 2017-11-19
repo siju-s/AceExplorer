@@ -56,14 +56,14 @@ import static com.siju.acexplorer.theme.ThemeUtils.PREFS_THEME;
 
 public class SettingsPreferenceFragment extends PreferenceFragment {
 
-    private final String TAG = this.getClass().getSimpleName();
-    public static final String PREFS_LANGUAGE = "prefLanguage";
+    private final       String TAG             = this.getClass().getSimpleName();
+    public static final String PREFS_LANGUAGE  = "prefLanguage";
     public static final String PREFS_ANALYTICS = "prefsAnalytics";
 
-    private String currentLanguage;
+    private String            currentLanguage;
     private SharedPreferences mPrefs;
-    private Preference updatePreference;
-    private int theme;
+    private Preference        updatePreference;
+    private int               theme;
 
 
     @Override
@@ -83,7 +83,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         Preference version = findPreference(PREFS_VERSION);
         try {
             version.setSummary(getActivity().getPackageManager()
-                    .getPackageInfo(getActivity().getPackageName(), 0).versionName);
+                                       .getPackageInfo(getActivity().getPackageName(), 0).versionName);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -101,7 +101,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
 
         CheckBoxPreference analyticsPreference = (CheckBoxPreference) findPreference(PREFS_ANALYTICS);
         analyticsPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-           @Override
+            @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 Analytics.getLogger().sendAnalytics((Boolean) newValue);
                 return true;
@@ -179,7 +179,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         }
         bar = (AppBarLayout) LayoutInflater.from(getActivity()).inflate(R.layout.toolbar_settings, root,
 
-                false);
+                                                                        false);
         root.addView(bar, 0);
         Toolbar toolbar = (Toolbar) bar.getChildAt(0);
         toolbar.setTitle(preferenceScreen.getTitle());
@@ -190,8 +190,8 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
 
         if (Build.VERSION.SDK_INT >= 21) {
             getActivity().getWindow().setStatusBarColor(ContextCompat.getColor(getActivity(),
-                    R.color
-                            .colorPrimaryDark));
+                                                                               R.color
+                                                                                       .colorPrimaryDark));
 
         }
 
@@ -213,17 +213,17 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
                         Intent intent = new Intent(Intent.ACTION_VIEW);
                         // Try Google play
                         intent.setData(Uri
-                                .parse("market://details?id=" + getActivity().getPackageName()));
+                                               .parse("market://details?id=" + getActivity().getPackageName()));
 
                         if (FileUtils.isPackageIntentUnavailable(getActivity(), intent)) {
                             // Market (Google play) app seems not installed,
                             // let's try to open a webbrowser
                             intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=" +
-                                    getActivity().getPackageName()));
+                                                             getActivity().getPackageName()));
                             if (FileUtils.isPackageIntentUnavailable(getActivity(), intent)) {
                                 Toast.makeText(getActivity(),
-                                        getString(R.string.msg_error_not_supported),
-                                        Toast.LENGTH_SHORT).show();
+                                               getString(R.string.msg_error_not_supported),
+                                               Toast.LENGTH_SHORT).show();
                             } else {
                                 startActivity(intent);
                             }
@@ -266,6 +266,10 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
 
                             if (!stringValue.equals(currentLanguage)) {
                                 LocaleHelper.setLocale(getActivity(), stringValue);
+//                                Process.killProcess(Process.myPid());
+//                                Intent i = new Intent(getActivity(), WelcomeActivity.class);
+//                                startActivity(i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+//                                System.exit(0);
                                 restartApp();
                             }
                         }
@@ -308,16 +312,17 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         // Trigger the listener immediately with the preference's
         // current value.
         sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                PreferenceManager
-                        .getDefaultSharedPreferences(preference.getContext())
-                        .getString(preference.getKey(), ""));
+                                                                 PreferenceManager
+                                                                         .getDefaultSharedPreferences(preference.getContext())
+                                                                         .getString(preference.getKey(), ""));
     }
 
 
     private void restartApp() {
         Activity activity = getActivity();
-        if (activity == null)
+        if (activity == null) {
             return;
+        }
         final int enter_anim = android.R.anim.fade_in;
         final int exit_anim = android.R.anim.fade_out;
         activity.overridePendingTransition(enter_anim, exit_anim);
@@ -351,14 +356,14 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
                     switch (key) {
                         case FileConstants.PREFS_HOMESCREEN:
                             boolean isHomeScreenEnabled = prefs.getBoolean(FileConstants
-                                    .PREFS_HOMESCREEN, true);
+                                                                                   .PREFS_HOMESCREEN, true);
                             Logger.log(TAG, "Homescreen=" + isHomeScreenEnabled);
 //                            mSendIntent.putExtra(FileConstants.PREFS_HOMESCREEN, isHomeScreenEnabled);
                             break;
 
                         case FileConstants.PREFS_DUAL_PANE:
                             boolean isDualPaneEnabledSettings = mPrefs.getBoolean(FileConstants
-                                    .PREFS_DUAL_PANE, true);
+                                                                                          .PREFS_DUAL_PANE, true);
                             Logger.log(TAG, "Dualpane=" + isDualPaneEnabledSettings);
 //                            mSendIntent.putExtra(FileConstants.PREFS_DUAL_PANE, isDualPaneEnabledSettings);
                             break;

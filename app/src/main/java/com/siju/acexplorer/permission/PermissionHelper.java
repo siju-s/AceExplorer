@@ -25,7 +25,6 @@ import android.net.Uri;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -37,18 +36,20 @@ import static com.siju.acexplorer.view.MainUiView.PERMISSIONS_REQUEST;
 
 
 public class PermissionHelper {
-    private static final String TAG = "PermissionHelper";
-    private final int SETTINGS_REQUEST = 1000;
-    private final Activity context;
-    private Dialog permissionDialog;
-    private String permissions[] = new String[]{Manifest.permission
+    private static final String TAG              = "PermissionHelper";
+    private final        int    SETTINGS_REQUEST = 1000;
+
+    private final Activity                 context;
+    private       PermissionResultCallback permissionCallback;
+    private       Dialog                   permissionDialog;
+
+    private String REQD_PERMISSIONS[] = new String[]{Manifest.permission
             .WRITE_EXTERNAL_STORAGE};
-    private PermissionResultCallback permissionCallback;
 
 
     public PermissionHelper(@NonNull Activity context, PermissionResultCallback permissionCallback) {
         this.context = context;
-        this.permissionCallback =  permissionCallback;
+        this.permissionCallback = permissionCallback;
     }
 
 
@@ -62,7 +63,7 @@ public class PermissionHelper {
         if (permissionDialog != null && permissionDialog.isShowing()) {
             if (PermissionUtils.hasRequiredPermissions()) {
                 permissionDialog.dismiss();
-                permissionCallback.onPermissionGranted(permissions);
+                permissionCallback.onPermissionGranted(REQD_PERMISSIONS);
             }
         }
     }
@@ -71,29 +72,26 @@ public class PermissionHelper {
         if (!PermissionUtils.hasRequiredPermissions()) {
             requestPermission();
         } else {
-            permissionCallback.onPermissionGranted(permissions);
+            permissionCallback.onPermissionGranted(REQD_PERMISSIONS);
         }
     }
 
     private void requestPermission() {
         Logger.log(TAG, "requestPermission");
-        ActivityCompat.requestPermissions(context, permissions, PERMISSIONS_REQUEST);
+        ActivityCompat.requestPermissions(context, REQD_PERMISSIONS, PERMISSIONS_REQUEST);
     }
 
     public void onPermissionResult() {
         if (PermissionUtils.hasRequiredPermissions()) {
             Logger.log(TAG, "Permission granted");
-            permissionCallback.onPermissionGranted(permissions);
+            permissionCallback.onPermissionGranted(REQD_PERMISSIONS);
             dismissRationaleDialog();
-        }
-        else {
+        } else {
             showRationale();
         }
     }
 
     private void showRationale() {
-        Log.d(TAG, "showRationale");
-
         final boolean showSettings;
         Button buttonGrant;
         TextView textViewPermissionHint;
@@ -109,15 +107,15 @@ public class PermissionHelper {
         permissionDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                Log.d(TAG, "Rationale dismiss");
+                Logger.log(TAG, "Rationale dismiss");
                 if (!PermissionUtils.hasRequiredPermissions()) {
                     permissionDialog.dismiss();
                     context.finish();
                 }
             }
         });
-        buttonGrant = (Button) permissionDialog.findViewById(R.id.buttonGrant);
-        textViewPermissionHint = (TextView) permissionDialog.findViewById(R.id.textPermissionHint);
+        buttonGrant = permissionDialog.findViewById(R.id.buttonGrant);
+        textViewPermissionHint = permissionDialog.findViewById(R.id.textPermissionHint);
         if (showSettings) {
             buttonGrant.setText(R.string.action_settings);
             textViewPermissionHint.setVisibility(View.VISIBLE);
@@ -127,8 +125,7 @@ public class PermissionHelper {
             public void onClick(View v) {
                 if (!showSettings) {
                     requestPermission();
-                }
-                else {
+                } else {
                     Intent intent = new Intent();
                     intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                     Uri uri = Uri.fromParts("package", context.getPackageName(), null);

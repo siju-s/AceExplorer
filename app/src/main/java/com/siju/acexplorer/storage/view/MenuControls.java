@@ -397,7 +397,7 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
                         FileInfo info = fileInfoList.get(selectedItems.keyAt(i));
                         paths.add(info);
                     }
-                    DialogHelper.showCompressDialog(context, currentDir, paths,
+                    DialogHelper.showCompressDialog(context, paths,
                                                     compressDialogListener);
                     endActionMode();
                 }
@@ -431,7 +431,7 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_EXTRACT);
                     FileInfo fileInfo = fileInfoList.get(selectedItems.keyAt(0));
                     String currentFile = fileInfo.getFilePath();
-                    DialogHelper.showExtractOptions(context, currentFile, currentDir,
+                    DialogHelper.showExtractOptions(context, currentFile,
                                                     extractDialogListener);
                     endActionMode();
                 }

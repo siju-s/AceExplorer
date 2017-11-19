@@ -36,34 +36,43 @@ repositories {
 }
 
 def supportLibVersion = rootProject.supportLibVersion
-def firebaseVersion =  rootProject.firebaseVersion
+def firebaseVersion = rootProject.firebaseVersion
 
 // Auto generate VERSION_CODE & VERSION_NAME
 def versionPropsFile = file('version.properties')
-def code = 1;
+def code = 1
 def versionMajor = 1
 def versionMinor = 0
 def versionPatch = 1
-def versionBuild = 0
+def version
+def devReleaseTask = "assembleDevRelease"
+def prodReleaseTask = "assembleProdRelease"
 
 
 if (versionPropsFile.canRead()) {
     Properties versionProps = new Properties()
-
     versionProps.load(new FileInputStream(versionPropsFile))
-    List<String> runTasks = gradle.startParameter.getTaskNames();
-    def value = 0
-    for (String item : runTasks)
-        if (item.contains("assembleDevRelease") || item.contains("assembleProdRelease")) {
-            value = 1;
+    List<String> runTasks = gradle.startParameter.getTaskNames()
+    def isRelease = false
+    for (String item : runTasks) {
+        if (item.contains(devReleaseTask) || item.contains(prodReleaseTask)) {
+            isRelease = true
+            break
         }
-    code = Integer.parseInt(versionProps['VERSION_CODE']).intValue() + value
-    versionBuild = versionProps['VERSION_BUILD'].toInteger() + value
-    versionProps['VERSION_CODE']=code.toString()
-    versionProps['VERSION_BUILD']=versionBuild.toString()
-    versionProps.store(versionPropsFile.newWriter(), null)
-}
-else {
+    }
+    code = versionProps['VERSION_CODE'].toInteger()
+    def versionBuild = versionProps['VERSION_BUILD'].toInteger()
+    version = versionProps['VERSION_NAME'].toString()
+    if (isRelease) {
+        code++
+        versionBuild++
+        versionProps['VERSION_CODE'] = code.toString()
+        versionProps['VERSION_BUILD'] = versionBuild.toString()
+        version = new StringBuilder().append(versionMajor).append(".").append(versionMinor).append(".").
+                append(versionPatch).append(".").append("build").append(versionBuild).toString()
+        versionProps.store(versionPropsFile.newWriter(), null)
+    }
+} else {
     throw new GradleException("Could not read version.properties!")
 }
 
@@ -93,7 +102,7 @@ android {
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
         versionCode code
-        versionName "${versionMajor}.${versionMinor}.${versionPatch} (build${versionBuild})"
+        versionName version
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField 'boolean', 'ENABLE_CRASHLYTICS', 'true'
     }
@@ -147,7 +156,6 @@ android {
             applicationIdSuffix ".dev"
         }
         prod {
-
         }
     }
     lintOptions {

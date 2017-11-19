@@ -52,7 +52,7 @@ import com.siju.acexplorer.model.FileConstants;
 import com.siju.acexplorer.model.SectionGroup;
 import com.siju.acexplorer.model.SharedPreferenceWrapper;
 import com.siju.acexplorer.model.groups.Category;
-import com.siju.acexplorer.model.groups.DrawerGroups;
+import com.siju.acexplorer.model.groups.DrawerGroup;
 import com.siju.acexplorer.permission.PermissionHelper;
 import com.siju.acexplorer.permission.PermissionResultCallback;
 import com.siju.acexplorer.permission.PermissionUtils;
@@ -70,7 +70,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import static com.siju.acexplorer.model.FileConstants.KEY_CATEGORY;
 import static com.siju.acexplorer.model.FileConstants.PREFS_DUAL_PANE;
 import static com.siju.acexplorer.model.FileConstants.PREFS_FIRST_RUN;
 import static com.siju.acexplorer.model.FileConstants.PREFS_HIDDEN;
@@ -90,13 +89,12 @@ import static com.siju.acexplorer.theme.ThemeUtils.PREFS_THEME;
 public class MainUiView extends DrawerLayout implements PermissionResultCallback,
                                                         DrawerListener,
                                                         StoragesUiView.FavoriteOperation,
-                                                        SharedPreferences
-                                                                .OnSharedPreferenceChangeListener
+                                                        SharedPreferences.OnSharedPreferenceChangeListener
 {
 
-    public static final int PERMISSIONS_REQUEST = 100;
-
     private final String TAG = this.getClass().getSimpleName();
+
+    public static final int PERMISSIONS_REQUEST = 100;
 
     private SharedPreferenceWrapper sharedPreferenceWrapper;
 
@@ -111,14 +109,15 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     private NavigationDrawer   navigationDrawer;
     private HomeScreenFragment homeScreenFragment;
 
-    private final int MENU_FAVOURITES = 1;
-    private int     mCurrentOrientation;
+    private final int MENU_FAVORITES = 1;
+    private int     currentOrientation;
     private boolean isHomeScreenEnabled;
     private boolean showHidden;
     private boolean isHomePageAdded;
-    private boolean isDualModeActive;
+    private boolean canDualModeBeAct;
     private boolean isDualPaneEnabled;
-    private boolean mIsHomePageRemoved;
+    private boolean isDualPaneInFocus;
+    private boolean isHomePageRemoved;
     private Theme   currentTheme;
     private boolean isFirstRun;
 
@@ -130,9 +129,8 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     }
 
     public static MainUiView inflate(ViewGroup parent) {
-        return (MainUiView) LayoutInflater.from(parent.getContext()).inflate(R.layout
-                                                                                     .activity_main, parent,
-                                                                             false);
+        return (MainUiView) LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_main,
+                                                                             parent, false);
     }
 
     @Override
@@ -154,13 +152,20 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         viewSeparator = findViewById(R.id.viewSeparator);
     }
 
-    public void setActivity(AppCompatActivity activity) {
-        this.activity = activity;
+    private void registerReceivers() {
+        IntentFilter filter = new IntentFilter(Intent.ACTION_LOCALE_CHANGED);
+        context.registerReceiver(localeListener, filter);
     }
 
-    private void setupPermissions() {
-        permissionHelper = new PermissionHelper(activity, this);
-        permissionHelper.checkPermissions();
+    private void unregisterReceivers() {
+        preferences.unregisterOnSharedPreferenceChangeListener(this);
+        navigationDrawer.unregisterContextMenu();
+        context.unregisterReceiver(localeListener);
+
+    }
+
+    public void setActivity(AppCompatActivity activity) {
+        this.activity = activity;
     }
 
     public void setBridgeRef(MainBridge mainBridge) {
@@ -168,24 +173,14 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     }
 
     void initialize() {
-        Log.d(TAG, "initialize: ");
         currentTheme = bridge.getCurrentTheme();
         navigationDrawer = new NavigationDrawer(activity, this, currentTheme);
-        Log.d(TAG, "initialize: After drawer");
         setupPermissions();
     }
 
-    private void registerReceivers() {
-        IntentFilter filter = new IntentFilter(Intent.ACTION_LOCALE_CHANGED);
-        context.registerReceiver(localeListener, filter);
-    }
-
-    private void unregisterReceivers() {
-        Log.d(TAG, "unregisterReceivers: ");
-        preferences.unregisterOnSharedPreferenceChangeListener(this);
-        navigationDrawer.unregisterContextMenu();
-        context.unregisterReceiver(localeListener);
-
+    private void setupPermissions() {
+        permissionHelper = new PermissionHelper(activity, this);
+        permissionHelper.checkPermissions();
     }
 
     void handleIntent(Intent intent) {
@@ -223,10 +218,10 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
      * Checks if orientation is landscape when app is run 1st time to enable Dual Panel
      */
     private void checkScreenOrientation() {
-        mCurrentOrientation = getResources().getConfiguration().orientation;
-        if (mCurrentOrientation == Configuration.ORIENTATION_LANDSCAPE
+        currentOrientation = getResources().getConfiguration().orientation;
+        if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE
                 && isDualPaneEnabled) {
-            isDualModeActive = true;
+            canDualModeBeAct = true;
         }
     }
 
@@ -253,7 +248,6 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
             if (PermissionUtils.hasRequiredPermissions()) {
                 displayFileList(null, category);
             }
-
             isHomePageAdded = true;
             return true;
         }
@@ -262,17 +256,55 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
 
 
     private void displayMainScreen(boolean isHomeScreenEnabled) {
-        Log.d(TAG, "displayMainScreen: ");
         if (isHomeScreenEnabled) {
             displayHomeScreen();
         } else {
             displayFileList(getInternalStorage(), FILES);
-            if (isDualModeActive) {
+            if (canDualModeBeAct) {
                 showDualPane();
             }
         }
     }
 
+
+    private void displayHomeScreen() {
+        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+        homeScreenFragment = HomeScreenFragment.newInstance(isFirstRun, canDualModeBeAct);
+        homeScreenFragment.setDrawerListener(this);
+        homeScreenFragment.setFavListener(this);
+        ft.replace(R.id.main_container, homeScreenFragment);
+        ft.addToBackStack(null);
+        Logger.log(TAG, "displayHomeScreen");
+        ft.commitAllowingStateLoss();
+    }
+
+    private void displayFileList(String path, Category category) {
+
+        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+        Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main_container);
+        Fragment dualFragment = activity.getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
+
+
+        if (fragment == null || fragment instanceof HomeScreenFragment) {
+            FileList baseFileList = FileList.newInstance(path, category, canDualModeBeAct);
+            baseFileList.setFavoriteListener(this);
+            baseFileList.setDrawerListener(this);
+            ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.
+                    enter_from_right, R.anim.exit_to_left);
+//            ft.hide(fragment);
+//            ft.add(R.id.main_container, baseFileList, directory);
+            ft.replace(R.id.main_container, baseFileList, path);
+            ft.addToBackStack(null);
+            ft.commit();
+            Logger.log(TAG, "displayFileList");
+        } else {
+            if (isDualPaneInFocus) {
+                ((BaseFileList) dualFragment).reloadList(path, category);
+            } else {
+                ((BaseFileList) fragment).reloadList(path, category);
+            }
+        }
+    }
 
     void handlePermissionResult(int requestCode) {
         switch (requestCode) {
@@ -281,6 +313,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
                 break;
         }
     }
+
 
     boolean handleActivityResult(int requestCode, int resultCode, Intent intent) {
         navigationDrawer.onActivityResult(requestCode, resultCode, intent);
@@ -300,42 +333,20 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
 
 
     boolean handleBackPress() {
-        FragmentManager fragmentManager = activity.getSupportFragmentManager();
-        int backStackEntryCount = fragmentManager.getBackStackEntryCount();
 
-        Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id
-                                                                                          .main_container);
+        Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main_container);
+        Fragment dualFragment = activity.getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
 
         Logger.log(TAG, "Onbackpress--fragment=" + fragment + " " +
-                "mHomePageRemoved=" + mIsHomePageRemoved + "home added=" + isHomePageAdded + " " +
-                "backstack=" + backStackEntryCount);
+                "mHomePageRemoved=" + isHomePageRemoved + "home added=" + isHomePageAdded + " isDualInFocus:" + isDualPaneInFocus);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else if (isDualPaneInFocus) {
+            return onStoragePaneBackPress(dualFragment);
         } else if (fragment instanceof BaseFileList) {
-            if (((BaseFileList) fragment).isFabExpanded()) {
-                ((BaseFileList) fragment).collapseFab();
-            }  else {
-                boolean isHome = ((BaseFileList) fragment).onBackPressed();
-                Log.d(TAG, "handleBackPress: isHome" + isHome);
-                if (isHome) {
-                    hideDualPane();
-                    if (mIsHomePageRemoved) {
-                        if (backStackEntryCount != 0) {
-                            activity.finish();
-                        }
-                    } else if (isHomePageAdded) {
-                        displayHomeScreen();
-                        frameDualPane.setVisibility(View.GONE);
-                        viewSeparator.setVisibility(View.GONE);
-                        isHomePageAdded = false;
-                        return false;
-                    }
-                    return true;
-                }
-            }
-
+            return onStoragePaneBackPress(fragment);
         } else {
             // Remove HomeScreen Frag & Exit App
             Logger.log(TAG, "Onbackpress--ELSE=");
@@ -344,6 +355,34 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         return false;
     }
 
+    private boolean onStoragePaneBackPress(Fragment fragment) {
+        FragmentManager fragmentManager = activity.getSupportFragmentManager();
+        int backStackEntryCount = fragmentManager.getBackStackEntryCount();
+        Log.d(TAG, "onStoragePaneBackPress: fragbackStack:" + backStackEntryCount);
+
+        if (((BaseFileList) fragment).isFabExpanded()) {
+            ((BaseFileList) fragment).collapseFab();
+        } else {
+            boolean isHome = ((BaseFileList) fragment).onBackPressed();
+            Log.d(TAG, "handleBackPress: isHome" + isHome);
+            if (isHome) {
+                hideDualPane();
+                if (isHomePageRemoved) {
+                    if (backStackEntryCount != 0) {
+                        activity.finish();
+                    }
+                } else if (isHomePageAdded) {
+                    displayHomeScreen();
+                    frameDualPane.setVisibility(View.GONE);
+                    viewSeparator.setVisibility(View.GONE);
+                    isHomePageAdded = false;
+                    return false;
+                }
+                return true;
+            }
+        }
+        return false;
+    }
 
     private final BroadcastReceiver localeListener = new BroadcastReceiver() {
         @Override
@@ -370,56 +409,9 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
 
     }
 
-    private void displayHomeScreen() {
-        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
-        Bundle args = new Bundle();
-        args.putBoolean(FileConstants.KEY_HOME, true);
-        args.putBoolean(PREFS_FIRST_RUN, isFirstRun);
-        args.putBoolean(FileConstants.KEY_DUAL_ENABLED, isDualModeActive);
-        homeScreenFragment = new HomeScreenFragment();
-        homeScreenFragment.setArguments(args);
-        homeScreenFragment.setDrawerListener(this);
-        homeScreenFragment.setFavListener(this);
-        ft.replace(R.id.main_container, homeScreenFragment);
-        ft.addToBackStack(null);
-        Logger.log(TAG, "displayHomeScreen");
-        ft.commitAllowingStateLoss();
-    }
-
-    private void displayFileList(String directory, Category category) {
-
-        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
-        Bundle args = new Bundle();
-        args.putString(FileConstants.KEY_PATH, directory);
-        args.putSerializable(FileConstants.KEY_CATEGORY, category);
-        args.putBoolean(FileConstants.KEY_DUAL_ENABLED, isDualModeActive);
-
-        Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id
-                                                                                          .main_container);
-        if (fragment == null || fragment instanceof HomeScreenFragment) {
-            FileList baseFileList = new FileList();
-            baseFileList.setArguments(args);
-            baseFileList.setFavoriteListener(this);
-            baseFileList.setDrawerListener(this);
-            ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim
-                    .enter_from_right, R.anim
-                                           .exit_to_left);
-//            ft.hide(fragment);
-//            ft.add(R.id.main_container, baseFileList, directory);
-
-            ft.replace(R.id.main_container, baseFileList, directory);
-            ft.addToBackStack(null);
-            ft.commit();
-            Logger.log(TAG, "displayFileList");
-
-        } else {
-            ((BaseFileList) fragment).reloadList(directory, category);
-        }
-    }
-
     @Override
     public void updateFavorites(ArrayList<FavInfo> favList) {
-        navigationDrawer.updateFavourites(favList);
+        navigationDrawer.updateFavorites(favList);
         if (isHomeScreenEnabled && homeScreenFragment != null) {
             homeScreenFragment.updateFavoritesCount(favList.size());
         }
@@ -427,14 +419,14 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
 
     @Override
     public void removeFavorites(ArrayList<FavInfo> favList) {
-        navigationDrawer.removeFavourites(favList);
+        navigationDrawer.removeFavorites(favList);
         if (isHomeScreenEnabled && homeScreenFragment != null) {
             homeScreenFragment.removeFavorites(favList.size());
         }
     }
 
 
-    void onStorageItemClicked(int groupPos, String path) {
+    void onStorageItemClicked(String path) {
 /*        initializeStartingDirectory();
         checkIfFavIsRootDir(groupPos);*/
         displayFileList(path, FILES);
@@ -447,7 +439,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
 
 
     void showDualPane() {
-        if (isDualModeActive) {
+        if (canDualModeBeAct) {
             frameDualPane.setVisibility(View.VISIBLE);
             viewSeparator.setVisibility(View.VISIBLE);
         }
@@ -456,154 +448,19 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     private void hideDualPane() {
         frameDualPane.setVisibility(View.GONE);
         viewSeparator.setVisibility(View.GONE);
+        isDualPaneInFocus = false;
     }
 
 
     public void createDualFragment() {
         FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
         String internalStoragePath = getInternalStorage();
-        Bundle args = new Bundle();
-        args.putString(FileConstants.KEY_PATH, internalStoragePath);
-        args.putSerializable(KEY_CATEGORY, FILES);
-        args.putBoolean(FileConstants.KEY_DUAL_ENABLED, true);
-
-        DualPaneList dualFragment = new DualPaneList();
-        dualFragment.setArguments(args);
+        DualPaneList dualFragment = DualPaneList.newInstance(internalStoragePath, FILES, true);
         dualFragment.setFavoriteListener(this);
         dualFragment.setDrawerListener(this);
         ft.replace(R.id.frame_container_dual, dualFragment);
         ft.commit();
     }
-
-    void onPreferenceChange() {
-        Log.d(TAG, "onPreferenceChange: " + preferenceKey);
-
-        if (preferenceKey == null) {
-            return;
-        }
-        switch (preferenceKey) {
-            case PREFS_THEME:
-                String value = preferences.getString(PREFS_THEME, "");
-                int themePos = Integer.valueOf(value);
-                Theme theme = Theme.getTheme(themePos);
-                if (!theme.equals(currentTheme)) {
-                    currentTheme = theme;
-                    preferences.edit().putInt(CURRENT_THEME, currentTheme.getValue()).apply();
-                    restartApp(false);
-                }
-                break;
-            case PREFS_LANGUAGE:
-
-                String language = preferences.getString(PREFS_LANGUAGE, Locale
-                        .getDefault().getLanguage());
-                LocaleHelper.setLocale(getContext(), language);
-                restartApp(false);
-                break;
-
-            case PREFS_HIDDEN:
-                boolean showHidden = preferences.getBoolean(FileConstants.PREFS_HIDDEN, false);
-
-                if (showHidden != this.showHidden) {
-                    this.showHidden = showHidden;
-                    Logger.log(TAG, "OnPrefschanged PREFS_HIDDEN" + this.showHidden);
-                    Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id
-                                                                                                      .main_container);
-
-           /* BaseFileList dualPaneFragment = (FileListDualFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.frame_container_dual);*/
-                    if (fragment instanceof BaseFileList) {
-                        ((BaseFileList) fragment).setHidden(showHidden);
-                        ((BaseFileList) fragment).refreshList();
-                    }
-     /*       if (dualPaneFragment != null) {
-                dualPaneFragment.refreshList();
-            }*/
-                }
-                break;
-            case PREFS_HOMESCREEN:
-
-                boolean isHomeScreenEnabled = preferences.getBoolean(FileConstants
-                                                                             .PREFS_HOMESCREEN,
-                                                                     true);
-
-                if (isHomeScreenEnabled != this.isHomeScreenEnabled) {
-
-                    this.isHomeScreenEnabled = isHomeScreenEnabled;
-                    Logger.log(TAG, "OnPrefschanged PREFS_HOMESCREEN" + this.isHomeScreenEnabled);
-                    Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id
-                                                                                                      .main_container);
-                    Fragment dualFragment = activity.getSupportFragmentManager().findFragmentById(R.id
-                                                                                                      .frame_container_dual);
-                    // If homescreen disabled
-                    if (!isHomeScreenEnabled) {
-
-                        // If user on Home page, replace it with BaseFileList
-                        if (fragment instanceof HomeScreenFragment) {
-                            displayFileList(getInternalStorage(), FILES);
-                            mIsHomePageRemoved = true;
-                        } else {
-                            ((BaseFileList) fragment).removeHomeFromNavPath();
-                            if (isDualModeActive && dualFragment != null) {
-                                ((DualPaneList) dualFragment).removeHomeFromNavPath();
-                            }
-                            // Set a flag so that it can be removed on backPress
-                            mIsHomePageRemoved = true;
-                            isHomePageAdded = false;
-                        }
-
-                    } else {
-                        if (fragment instanceof BaseFileList) {
-                            ((BaseFileList) fragment).addHomeNavPath();
-                        }
-
-                        if (isDualModeActive && dualFragment != null) {
-                            ((DualPaneList) dualFragment).addHomeNavPath();
-                        }
-                        // Clearing the flags necessary as user can click checkbox multiple times
-                        isHomePageAdded = true;
-                        mIsHomePageRemoved = false;
-                    }
-                }
-                break;
-
-            case PREFS_DUAL_PANE:
-                boolean isDualPaneEnabledSettings = preferences.getBoolean(FileConstants
-                                                                                   .PREFS_DUAL_PANE, false);
-
-                Logger.log(TAG, "OnPrefschanged PREFS_DUAL_PANE" + isDualPaneEnabledSettings);
-
-                if (!isDualPaneEnabledSettings) {
-                    Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id
-                                                                                                      .main_container);
-                    hideDualPane();
-                    if (fragment instanceof BaseFileList) {
-                        ((BaseFileList) fragment).hideDualPane();
-                        ((BaseFileList) fragment).refreshSpan(); // For changing the no of
-                        // columns in non-dual mode
-                    } else {
-                        ((HomeScreenFragment) fragment).hideDualPane();
-                    }
-                    isDualPaneEnabled = false;
-                    isDualModeActive = false;
-                } else {
-                    isDualPaneEnabled = true;
-                    checkScreenOrientation();
-                    Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id
-                                                                                                      .main_container);
-                    if (fragment instanceof BaseFileList) {
-                        showDualPane();
-                        ((BaseFileList) fragment).showDualPane();
-                    } else {
-                        ((HomeScreenFragment) fragment).showDualMode();
-                    }
-                    createDualFragment();
-                }
-                break;
-        }
-
-        preferenceKey = null;
-    }
-
 
     void resetFavoritesData() {
         sharedPreferenceWrapper.resetFavourites(getContext());
@@ -612,9 +469,9 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
 
     @Override
     public void onPermissionGranted(String[] permissionName) {
-        Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id
-                                                                                          .main_container);
-        Log.d(TAG, "onPermissionGranted: " + fragment);
+        Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main_container);
+
+        Logger.log(TAG, "onPermissionGranted: " + fragment);
         if (fragment == null) {
             return;
         }
@@ -645,10 +502,10 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
                     ExpandableListView.getPackedPositionGroup(info.packedPosition);
 
             // Only for Favorites
-            if (group == DrawerGroups.FAVORITES.getValue()) {
+            if (group == DrawerGroup.FAVORITES.getValue()) {
                 // Only create a context menu for child items
                 if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-                    menu.add(0, MENU_FAVOURITES, 0, getContext().getString(R.string.delete_fav));
+                    menu.add(0, MENU_FAVORITES, 0, getContext().getString(R.string.delete_fav));
                 }
             }
         }
@@ -668,7 +525,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         }
 
         switch (menuItem.getItemId()) {
-            case MENU_FAVOURITES:
+            case MENU_FAVORITES:
                 FavInfo favInfo = navigationDrawer.removeFavorite(groupPos, childPos);
                 sharedPreferenceWrapper.removeFavorite(getContext(), favInfo);
                 if (isHomeScreenEnabled && homeScreenFragment != null) {
@@ -680,12 +537,12 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         Logger.log(TAG, "onConfigurationChanged" + newConfig.orientation);
-        if (mCurrentOrientation != newConfig.orientation) {
-            mCurrentOrientation = newConfig.orientation;
-            Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id
-                                                                                              .main_container);
+        if (currentOrientation != newConfig.orientation) {
+            currentOrientation = newConfig.orientation;
+            Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main_container);
+
             if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE && isDualPaneEnabled) {
-                isDualModeActive = true;
+                canDualModeBeAct = true;
                 if (fragment instanceof BaseFileList) {
                     showDualPane();
                     ((BaseFileList) fragment).showDualPane();
@@ -694,7 +551,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
                     ((HomeScreenFragment) fragment).showDualMode();
                 }
             } else {
-                isDualModeActive = false;
+                canDualModeBeAct = false;
                 hideDualPane();
             }
         }
@@ -706,20 +563,6 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         navigationDrawer.openDrawer();
     }
 
-
-   /* private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = new
-            SharedPreferences.OnSharedPreferenceChangeListener() {
-
-
-                @Override
-                public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String
-                        key) {
-                    Log.d(TAG, "onSharedPreferenceChanged: "+key);
-                    preferenceKey = key;
-                }
-            };*/
-
-    private String preferenceKey;
 
     public void passUserPrefs(Bundle userPrefs) {
         isHomeScreenEnabled = userPrefs.getBoolean(FileConstants.PREFS_HOMESCREEN, true);
@@ -743,12 +586,19 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
 
     public void onPremiumVersion() {
         navigationDrawer.setPremium();
-        Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id
-                                                                                          .main_container);
+        Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main_container);
+        Fragment dualFragment = activity.getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
+
+        if (fragment == null) {
+            return;
+        }
         if (fragment instanceof HomeScreenFragment) {
             ((HomeScreenFragment) fragment).setPremium();
         } else {
             ((BaseFileList) fragment).setPremium();
+            if (canDualModeBeAct && dualFragment != null) {
+                ((BaseFileList) dualFragment).setPremium();
+            }
         }
     }
 
@@ -771,14 +621,149 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     }
 
 
+    private String preferenceKey;
+
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        Log.d(TAG, "onSharedPreferenceChanged: " + key);
+        Logger.log(TAG, "onSharedPreferenceChanged: " + key);
         preferenceKey = key;
+    }
+
+    void onPreferenceChange() {
+        Logger.log(TAG, "onPreferenceChange: " + preferenceKey);
+
+        if (preferenceKey == null) {
+            return;
+        }
+        switch (preferenceKey) {
+            case PREFS_THEME:
+                String value = preferences.getString(PREFS_THEME, "");
+                int themePos = Integer.valueOf(value);
+                Theme theme = Theme.getTheme(themePos);
+                if (!theme.equals(currentTheme)) {
+                    currentTheme = theme;
+                    preferences.edit().putInt(CURRENT_THEME, currentTheme.getValue()).apply();
+                    restartApp(false);
+                }
+                break;
+            case PREFS_LANGUAGE:
+
+                String language = preferences.getString(PREFS_LANGUAGE, Locale
+                        .getDefault().getLanguage());
+                LocaleHelper.setLocale(getContext(), language);
+                restartApp(false);
+                break;
+
+            case PREFS_HIDDEN:
+                boolean showHidden = preferences.getBoolean(FileConstants.PREFS_HIDDEN, false);
+
+                if (showHidden != this.showHidden) {
+                    this.showHidden = showHidden;
+                    Logger.log(TAG, "OnPrefschanged PREFS_HIDDEN" + this.showHidden);
+                    Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main_container);
+
+                    Fragment dualPaneFragment = activity.getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
+                    if (fragment instanceof BaseFileList) {
+                        ((BaseFileList) fragment).setHidden(showHidden);
+                        ((BaseFileList) fragment).refreshList();
+                    }
+
+                    if (canDualModeBeAct && dualPaneFragment != null) {
+                        ((BaseFileList) dualPaneFragment).setHidden(showHidden);
+                        ((BaseFileList) dualPaneFragment).refreshList();
+                    }
+                }
+                break;
+            case PREFS_HOMESCREEN:
+
+                boolean isHomeScreenEnabled = preferences.getBoolean(FileConstants.PREFS_HOMESCREEN,
+                                                                     true);
+
+
+                if (isHomeScreenEnabled != this.isHomeScreenEnabled) {
+
+                    this.isHomeScreenEnabled = isHomeScreenEnabled;
+                    Logger.log(TAG, "OnPrefschanged PREFS_HOMESCREEN" + this.isHomeScreenEnabled);
+                    Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main_container);
+
+                    Fragment dualFragment = activity.getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
+
+                    // If homescreen disabled
+                    if (!isHomeScreenEnabled) {
+
+                        // If user on Home page, replace it with BaseFileList
+                        if (fragment instanceof HomeScreenFragment) {
+                            displayFileList(getInternalStorage(), FILES);
+                            isHomePageRemoved = true;
+                        } else {
+                            ((BaseFileList) fragment).removeHomeFromNavPath();
+                            if (canDualModeBeAct && dualFragment != null) {
+                                ((DualPaneList) dualFragment).removeHomeFromNavPath();
+                            }
+                            // Set a flag so that it can be removed on backPress
+                            isHomePageRemoved = true;
+                            isHomePageAdded = false;
+                        }
+
+                    } else {
+                        if (fragment instanceof BaseFileList) {
+                            ((BaseFileList) fragment).addHomeNavPath();
+                        }
+
+                        if (canDualModeBeAct && dualFragment != null) {
+                            ((DualPaneList) dualFragment).addHomeNavPath();
+                        }
+                        // Clearing the flags necessary as user can click checkbox multiple times
+                        isHomePageAdded = true;
+                        isHomePageRemoved = false;
+                    }
+                }
+                break;
+
+            case PREFS_DUAL_PANE:
+                boolean isDualPaneEnabledSettings = preferences.getBoolean(FileConstants
+                                                                                   .PREFS_DUAL_PANE, false);
+
+                Logger.log(TAG, "OnPrefschanged PREFS_DUAL_PANE" + isDualPaneEnabledSettings);
+
+                if (!isDualPaneEnabledSettings) {
+                    Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main_container);
+
+                    hideDualPane();
+                    if (fragment instanceof BaseFileList) {
+                        ((BaseFileList) fragment).hideDualPane();
+                        ((BaseFileList) fragment).refreshSpan(); // For changing the no of
+                        // columns in non-dual mode
+                    } else {
+                        ((HomeScreenFragment) fragment).hideDualPane();
+                    }
+                    isDualPaneEnabled = false;
+                    canDualModeBeAct = false;
+                } else {
+                    isDualPaneEnabled = true;
+                    checkScreenOrientation();
+                    Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main_container);
+
+                    if (fragment instanceof BaseFileList) {
+                        showDualPane();
+                        ((BaseFileList) fragment).showDualPane();
+                    } else {
+                        ((HomeScreenFragment) fragment).showDualMode();
+                    }
+                    createDualFragment();
+                }
+                break;
+        }
+
+        preferenceKey = null;
     }
 
     public void showDualFrame() {
         showDualPane();
         createDualFragment();
+    }
+
+    public void setDualPaneFocusState(boolean state) {
+        isDualPaneInFocus = state;
     }
 }

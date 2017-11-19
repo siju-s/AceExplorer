@@ -62,6 +62,7 @@ import static com.siju.acexplorer.utils.ThumbnailUtils.displayThumb;
 /**
  * Created by Siju on 29 August,2017
  */
+@SuppressWarnings("ConstantConditions")
 @SuppressLint("InflateParams")
 public class DialogHelper {
 
@@ -672,9 +673,8 @@ public class DialogHelper {
     }
 
 
-    public static void showCompressDialog(Context context, final String currentDir, final
-    ArrayList<FileInfo>
-            paths, final CompressDialogListener dialogListener) {
+    public static void showCompressDialog(Context context, final ArrayList<FileInfo> paths,
+                                          final CompressDialogListener dialogListener) {
 
         final String ext = ".zip";
         String fileName = paths.get(0).getFileName();
@@ -729,8 +729,7 @@ public class DialogHelper {
         alertDialog.show();
     }
 
-    public static void showExtractOptions(Context context, final String currentFilePath, final
-    String currentDir,
+    public static void showExtractOptions(Context context, final String currentFilePath,
                                           final ExtractDialogListener extractDialogListener) {
 
         final String currentFileName = currentFilePath.substring(currentFilePath.lastIndexOf("/")

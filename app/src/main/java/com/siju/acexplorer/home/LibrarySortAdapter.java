@@ -34,25 +34,25 @@ import com.siju.acexplorer.storage.view.custom.helper.ItemTouchHelperViewHolder;
 import java.util.ArrayList;
 import java.util.Collections;
 
-
 class LibrarySortAdapter extends RecyclerView.Adapter<LibrarySortAdapter.LibrarySortViewHolder>
-        implements ItemTouchHelperAdapter {
+        implements ItemTouchHelperAdapter
+{
 
-    private final OnStartDragListener mDragStartListener;
+    private final OnStartDragListener dragStartListener;
     private ArrayList<LibrarySortModel> totalLibraries = new ArrayList<>();
 
 
     LibrarySortAdapter(OnStartDragListener dragStartListener,
                        ArrayList<LibrarySortModel> models) {
 
-        mDragStartListener = dragStartListener;
+        this.dragStartListener = dragStartListener;
         totalLibraries = models;
     }
 
     @Override
     public LibrarySortViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.library_sort_item,
-                parent, false);
+                                                                     parent, false);
         return new LibrarySortViewHolder(view);
     }
 
@@ -67,13 +67,12 @@ class LibrarySortAdapter extends RecyclerView.Adapter<LibrarySortAdapter.Library
             @Override
             public boolean onTouch(View view, MotionEvent event) {
                 if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-                    mDragStartListener.onStartDrag(librarySortViewHolder);
+                    dragStartListener.onStartDrag(librarySortViewHolder);
                 }
                 return false;
             }
         });
 
-        //if true, your checkbox will be selected, else unselected
         librarySortViewHolder.checkBox.setChecked(model.isChecked());
 
         librarySortViewHolder.textLibrary.setOnClickListener(new View.OnClickListener() {
@@ -99,7 +98,6 @@ class LibrarySortAdapter extends RecyclerView.Adapter<LibrarySortAdapter.Library
 
     @Override
     public int getItemCount() {
-
         if (totalLibraries == null) {
             return 0;
         } else {
@@ -120,18 +118,19 @@ class LibrarySortAdapter extends RecyclerView.Adapter<LibrarySortAdapter.Library
     }
 
     class LibrarySortViewHolder extends RecyclerView.ViewHolder implements
-            ItemTouchHelperViewHolder {
+                                                                ItemTouchHelperViewHolder
+    {
         final ImageView imageSort;
-        final TextView textLibrary;
-        final CheckBox checkBox;
+        final TextView  textLibrary;
+        final CheckBox  checkBox;
 
 
         LibrarySortViewHolder(View itemView) {
             super(itemView);
-            textLibrary = (TextView) itemView
+            textLibrary = itemView
                     .findViewById(R.id.textLibrary);
-            imageSort = (ImageView) itemView.findViewById(R.id.imageSort);
-            checkBox = (CheckBox) itemView.findViewById(R.id.checkbox);
+            imageSort = itemView.findViewById(R.id.imageSort);
+            checkBox = itemView.findViewById(R.id.checkbox);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

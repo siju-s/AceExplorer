@@ -94,6 +94,7 @@ import com.siju.acexplorer.storage.view.custom.DividerItemDecoration;
 import com.siju.acexplorer.storage.view.custom.GridItemDecoration;
 import com.siju.acexplorer.storage.view.custom.recyclerview.FastScrollRecyclerView;
 import com.siju.acexplorer.theme.Theme;
+import com.siju.acexplorer.view.AceActivity;
 import com.siju.acexplorer.view.DrawerListener;
 import com.siju.acexplorer.view.dialog.DialogHelper;
 
@@ -106,6 +107,7 @@ import static android.webkit.MimeTypeMap.getSingleton;
 import static com.siju.acexplorer.model.FileConstants.ADS;
 import static com.siju.acexplorer.model.FileConstants.KEY_CATEGORY;
 import static com.siju.acexplorer.model.groups.Category.DOWNLOADS;
+import static com.siju.acexplorer.model.groups.Category.FAVORITES;
 import static com.siju.acexplorer.model.groups.Category.FILES;
 import static com.siju.acexplorer.model.groups.Category.checkIfFileCategory;
 import static com.siju.acexplorer.model.helper.MediaStoreHelper.removeMedia;
@@ -661,6 +663,9 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     private void onDirectoryClicked(int position) {
+        boolean isDualPaneInFocus = fragment instanceof DualPaneList;
+        ((AceActivity)getActivity()).setDualPaneFocusState(isDualPaneInFocus);
+
         if (isZipMode()) {
             zipViewer.onDirectoryClicked(position);
         } else {
@@ -832,9 +837,9 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                     }
                 }
                 fileInfoList.removeAll(deletedFilesList);
+                removeFavorite(deletedFilesList);
                 fileListAdapter.setStopAnimation(true);
                 fileListAdapter.updateAdapter(fileInfoList);
-
                 break;
 
             case RENAME:
@@ -843,6 +848,10 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 String oldFile = intent.getStringExtra(KEY_FILEPATH);
                 String newFile = intent.getStringExtra(KEY_FILEPATH2);
                 Category category = fileInfoList.get(position).getCategory();
+
+                if (!oldFile.equals(fileInfoList.get(position).getFilePath())) {
+                    return;
+                }
 
                 removeMedia(getActivity(), oldFile, category.getValue());
 //                Uri insertUri = insertMedia(getContext(), newFile, category.getValue());
@@ -1007,13 +1016,10 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
      */
     private void removeFileFragment() {
 
-        Fragment fragment = getActivity().getSupportFragmentManager().findFragmentById(R.id
-                                                                                               .main_container);
         Fragment dualFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id
                                                                                                    .frame_container_dual);
-
         backStackInfo.clearBackStack();
-        Logger.log(TAG, "RemoveFragmentFromBackStack--frag=" + fragment);
+        Logger.log(TAG, "RemoveFragmentFromBackStack--dualFragment=" + dualFragment);
 
         if (dualFragment != null) {
             FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
@@ -1398,7 +1404,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     public void showPasteProgressDialog(String destinationDir, List<FileInfo> files,
                                         List<CopyData> copyData, boolean isMove) {
         Log.d(TAG, "showPasteProgressDialog: " + files.size());
-        new OperationProgress().showPasteProgress(getContext(), destinationDir, files, copyData,
+        new OperationProgress().showPasteProgress(getContext(), destinationDir, files,
                                                   isMove);
     }
 
@@ -1712,7 +1718,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     @Override
     public void onNavButtonClicked(String dir) {
 
-        if (isActionModeActive()) {
+        if (isActionModeActive() && !menuControls.isPasteOp()) {
             menuControls.endActionMode();
         }
         if (isZipMode()) {
@@ -1741,12 +1747,11 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     private int getThemeStyle() {
         switch (currentTheme) {
             case DARK:
-                return R.style.BaseDarkTheme_Dark;
+                return R.style.BaseDarkTheme;
             case LIGHT:
-                return R.style.BaseLightTheme_Light;
+                return R.style.BaseLightTheme;
         }
-        return R.style.BaseDarkTheme_Dark;
-
+        return R.style.BaseDarkTheme;
     }
 
 
@@ -1767,6 +1772,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     void removeFavorite(ArrayList<FileInfo> fileInfoList) {
         ArrayList<FavInfo> favInfoArrayList = new ArrayList<>();
+        SharedPreferenceWrapper sharedPreferenceWrapper = new SharedPreferenceWrapper();
         for (int i = 0; i < fileInfoList.size(); i++) {
             FileInfo info = fileInfoList.get(i);
             String name = info.getFileName();
@@ -1774,11 +1780,13 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             FavInfo favInfo = new FavInfo();
             favInfo.setFileName(name);
             favInfo.setFilePath(path);
-            SharedPreferenceWrapper sharedPreferenceWrapper = new SharedPreferenceWrapper();
-            sharedPreferenceWrapper.removeFavorite(getActivity(), favInfo);
-            favInfoArrayList.add(favInfo);
+            if (sharedPreferenceWrapper.removeFavorite(getActivity(), favInfo)) {
+                favInfoArrayList.add(favInfo);
+            }
         }
-        refreshList();
+        if (category.equals(FAVORITES)) {
+            refreshList();
+        }
         favoriteListener.removeFavorites(favInfoArrayList);
     }
 

@@ -23,10 +23,10 @@ import android.preference.PreferenceManager;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.model.SharedPreferenceWrapper;
 import com.siju.acexplorer.model.FavInfo;
 import com.siju.acexplorer.model.SectionGroup;
 import com.siju.acexplorer.model.SectionItems;
+import com.siju.acexplorer.model.SharedPreferenceWrapper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,6 +34,9 @@ import java.util.List;
 
 import static com.siju.acexplorer.model.FileConstants.PREFS_FIRST_RUN;
 import static com.siju.acexplorer.model.StorageUtils.getDownloadsDirectory;
+import static com.siju.acexplorer.model.groups.DrawerGroup.FAVORITES;
+import static com.siju.acexplorer.model.groups.DrawerGroup.LIBRARY;
+import static com.siju.acexplorer.model.groups.DrawerGroup.STORAGE;
 
 public class DrawerItems {
 
@@ -44,9 +47,9 @@ public class DrawerItems {
     private String DOCS;
 
     private Context context;
-    private final ArrayList<SectionGroup> totalGroupData = new ArrayList<>();
-    private final ArrayList<SectionItems> favouritesGroupChild = new ArrayList<>();
-    private SharedPreferenceWrapper sharedPreferenceWrapper = new SharedPreferenceWrapper();
+    private final ArrayList<SectionGroup> totalGroupData          = new ArrayList<>();
+    private final ArrayList<SectionItems> favouritesGroupChild    = new ArrayList<>();
+    private       SharedPreferenceWrapper sharedPreferenceWrapper = new SharedPreferenceWrapper();
     private List<String> drawerListHeaders;
 
 
@@ -84,7 +87,7 @@ public class DrawerItems {
 
     private void initializeStorageGroup() {
         populateDrawerItems(new SectionGroup(drawerListHeaders.get(0), StoragesGroup.getInstance().
-                getStorageGroupData()));
+                getStorageGroupData(), STORAGE));
     }
 
     private void initializeFavouritesGroup() {
@@ -96,14 +99,14 @@ public class DrawerItems {
         } else {
             addSavedFavorites();
         }
-        populateDrawerItems(new SectionGroup(drawerListHeaders.get(1), favouritesGroupChild));
+        populateDrawerItems(new SectionGroup(drawerListHeaders.get(1), favouritesGroupChild, FAVORITES));
     }
 
     private void addDefaultFavorites() {
 
         String path = getDownloadsDirectory();
         favouritesGroupChild.add(new SectionItems(DOWNLOADS, path, R.drawable.ic_download,
-                getDownloadsDirectory(), 0));
+                                                  getDownloadsDirectory(), 0, null, null));
         FavInfo favInfo = new FavInfo();
         favInfo.setFileName(DOWNLOADS);
         favInfo.setFilePath(path);
@@ -117,9 +120,9 @@ public class DrawerItems {
             for (int i = 0; i < savedFavourites.size(); i++) {
                 String savedPath = savedFavourites.get(i).getFilePath();
                 favouritesGroupChild.add(new SectionItems(savedFavourites.get(i).getFileName(),
-                        savedPath, R.drawable
-                        .ic_fav_folder,
-                        savedPath, 0));
+                                                          savedPath, R.drawable
+                                                                  .ic_fav_folder,
+                                                          savedPath, 0, null, null));
             }
         }
     }
@@ -130,15 +133,19 @@ public class DrawerItems {
 
     private void initializeLibraryGroup() {
 
-        populateDrawerItems(new SectionGroup(drawerListHeaders.get(2), addLibraryItems()));
+        populateDrawerItems(new SectionGroup(drawerListHeaders.get(2), addLibraryItems(), LIBRARY));
     }
 
     private ArrayList<SectionItems> addLibraryItems() {
         ArrayList<SectionItems> libraryGroupChild = new ArrayList<>();
-        libraryGroupChild.add(new SectionItems(MUSIC, null, R.drawable.ic_music_white, null, 0));
-        libraryGroupChild.add(new SectionItems(VIDEO, null, R.drawable.ic_video_white, null, 0));
-        libraryGroupChild.add(new SectionItems(IMAGES, null, R.drawable.ic_photos_white, null, 0));
-        libraryGroupChild.add(new SectionItems(DOCS, null, R.drawable.ic_file_white, null, 0));
+        libraryGroupChild.add(new SectionItems(MUSIC, null, R.drawable.ic_music_white,
+                                               null, 0, Category.AUDIO, null));
+        libraryGroupChild.add(new SectionItems(VIDEO, null, R.drawable.ic_video_white,
+                                               null, 0, Category.VIDEO, null));
+        libraryGroupChild.add(new SectionItems(IMAGES, null, R.drawable.ic_photos_white,
+                                               null, 0, Category.IMAGE, null));
+        libraryGroupChild.add(new SectionItems(DOCS, null, R.drawable.ic_file_white,
+                                               null, 0, Category.DOCS, null));
         return libraryGroupChild;
     }
 

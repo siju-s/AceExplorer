@@ -50,10 +50,6 @@
         <item name="drawerArrowStyle">@style/DrawerIconStyle</item>
     </style>
 
-    <style name="BaseLightTheme.Light" />
-
-    <style name="BaseDarkTheme.Dark" />
-
 
     <style name="BaseDarkTheme.Settings">
         <item name="windowActionModeOverlay">false</item>

@@ -66,6 +66,7 @@ public class FileInfo implements Parcelable {
     }
 
 
+    // For Images, Audio, Video
     public FileInfo(Category category, long id, long bucketId, String fileName, String filePath,
                     long fileDate, long size,
                     String extension) {
@@ -73,7 +74,7 @@ public class FileInfo implements Parcelable {
         this.bucketId = bucketId;
     }
 
-
+    // For DialogPicker
     public FileInfo(Category category, String fileName, String filePath, int icon) {
         this.fileName = fileName;
         this.filePath = filePath;
@@ -81,15 +82,10 @@ public class FileInfo implements Parcelable {
         this.category = category;
     }
 
+    // For HomeLib count
     public FileInfo(Category category, int count) {
         this.category = category;
         this.count = count;
-    }
-
-
-    public FileInfo(Category category, String filePath) {
-        this.category = category;
-        this.filePath = filePath;
     }
 
     private FileInfo(Parcel in) {

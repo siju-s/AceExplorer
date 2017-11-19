@@ -16,12 +16,10 @@
 
 package com.siju.acexplorer.view;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,18 +30,14 @@ import com.siju.acexplorer.theme.Theme;
 
 import java.util.ArrayList;
 
-/**
- * Created by Siju on 02 September,2017
- */
+
 public class MainBridge implements MainUi {
 
-    private MainUiView uiView;
-    private Context context;
-    private MainUi.Listener listener;
+    private MainUiView        uiView;
+    private MainUi.Listener   listener;
     private AppCompatActivity activity;
 
     MainBridge(AppCompatActivity activity, ViewGroup parent) {
-        this.context = parent.getContext();
         this.activity = activity;
         uiView = MainUiView.inflate(parent);
         uiView.setActivity(activity);
@@ -112,6 +106,11 @@ public class MainBridge implements MainUi {
     @Override
     public void showDualFrame() {
         uiView.showDualFrame();
+    }
+
+    @Override
+    public void setDualPaneFocusState(boolean isDualPaneInFocus) {
+        uiView.setDualPaneFocusState(isDualPaneInFocus);
     }
 
     @Override

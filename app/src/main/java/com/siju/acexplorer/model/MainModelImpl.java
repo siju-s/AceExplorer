@@ -28,8 +28,6 @@ import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.BuildConfig;
 import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.billing.BillingManager;
-import com.siju.acexplorer.billing.BillingResultCallback;
-import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.groups.DrawerItems;
 import com.siju.acexplorer.theme.Theme;
@@ -45,7 +43,6 @@ import static com.siju.acexplorer.model.FileConstants.PREFS_FIRST_RUN;
  * Created by Siju on 02 September,2017
  */
 public class MainModelImpl implements MainModel,
-                                      BillingResultCallback,
                                       DrawerItems.DrawerItemsCallback,
                                       BillingManager.BillingUpdatesListener
 {
@@ -62,8 +59,9 @@ public class MainModelImpl implements MainModel,
     public void getUserSettings() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         boolean isTablet = false;
-        boolean isFirstRun = true;
-        if (preferences.getBoolean(PREFS_FIRST_RUN, true)) {
+        boolean isFirstRun = preferences.getBoolean(PREFS_FIRST_RUN, true);
+
+        if (isFirstRun) {
             preferences.edit().putInt(FileConstants.KEY_SORT_MODE, FileConstants
                     .KEY_SORT_NAME).apply();
             isTablet = Utils.isTablet(context);
@@ -81,13 +79,11 @@ public class MainModelImpl implements MainModel,
         bundle.putBoolean(FileConstants.PREFS_DUAL_PANE, isDualPaneEnabled);
         bundle.putBoolean(PREFS_FIRST_RUN, isFirstRun);
         Analytics.getLogger().userTheme(getTheme().toString());
-// TODO: 02/09/17 Where to set IS_FIRST_RUN to true??
         listener.passUserPrefs(bundle);
     }
 
     @Override
     public void getBillingStatus() {
-//        BillingHelper.getInstance().setupBilling(AceApplication.getAppContext(), this);
         BillingManager.getInstance().setupBilling(this);
     }
 
@@ -105,23 +101,6 @@ public class MainModelImpl implements MainModel,
     public void getTotalGroupData() {
         DrawerItems drawerItems = new DrawerItems();
         drawerItems.getTotalGroupData(this);
-    }
-
-
-    @Override
-    public void onBillingResult(BillingStatus billingStatus) {
-        switch (billingStatus) {
-            case UNSUPPORTED:
-                listener.onBillingUnSupported();
-                break;
-            case FREE:
-                listener.onFreeVersion();
-                break;
-            case PREMIUM:
-                listener.onPremiumVersion();
-                break;
-
-        }
     }
 
     @Override
@@ -166,7 +145,6 @@ public class MainModelImpl implements MainModel,
                 }
             }
         }
-
 
     }
 }

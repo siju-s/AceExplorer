@@ -16,37 +16,46 @@
 
 package com.siju.acexplorer.model;
 
+import com.siju.acexplorer.model.groups.DrawerGroup;
+
 import java.util.ArrayList;
 
+@SuppressWarnings("unused")
 public class SectionGroup {
-    private final String mHeader;
-    private final ArrayList<SectionItems> mChildItems;
+    private String                  mHeader;
+    private ArrayList<SectionItems> mChildItems;
+    private DrawerGroup             groups;
 
-    public SectionGroup(String mHeader, ArrayList<SectionItems> mChildItems) {
 
+    public SectionGroup(String mHeader, ArrayList<SectionItems> mChildItems, DrawerGroup drawerGroup) {
+        this.groups = drawerGroup;
         this.mHeader = mHeader;
         this.mChildItems = mChildItems;
+    }
+
+    public DrawerGroup getGroups() {
+        return groups;
+    }
+
+    public void setGroups(DrawerGroup groups) {
+        this.groups = groups;
     }
 
     public String getmHeader() {
         return mHeader;
     }
 
-// --Commented out by Inspection START (06-11-2016 11:07 PM):
-//    public void setmHeader(String mHeader) {
-//        this.mHeader = mHeader;
-//    }
-// --Commented out by Inspection STOP (06-11-2016 11:07 PM)
+    public void setmHeader(String mHeader) {
+        this.mHeader = mHeader;
+    }
 
     public ArrayList<SectionItems> getmChildItems() {
         return mChildItems;
     }
 
-// --Commented out by Inspection START (06-11-2016 11:07 PM):
-//    public void setmChildItems(ArrayList<SectionItems> mChildItems) {
-//        this.mChildItems = mChildItems;
-//    }
-// --Commented out by Inspection STOP (06-11-2016 11:07 PM)
+    public void setmChildItems(ArrayList<SectionItems> mChildItems) {
+        this.mChildItems = mChildItems;
+    }
 
 
 }

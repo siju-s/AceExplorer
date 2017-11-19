@@ -17,8 +17,7 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
 
     <TextView
@@ -28,6 +27,7 @@
         android:layout_below="@+id/imagePermissionRationale"
         android:gravity="center"
         android:textColor="@color/white"
+        android:textSize="15sp"
         android:text="@string/permission_request" />
 
     <TextView
@@ -44,8 +44,8 @@
 
     <Button
         android:id="@+id/buttonGrant"
-        style="@style/DialogPositiveButton"
-        android:layout_width="wrap_content"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/textPermissionHint"
         android:layout_centerHorizontal="true"
@@ -59,6 +59,6 @@
         android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"
         android:contentDescription="@string/img_accessibility_permission"
-        android:src="@drawable/permission_rationale_dark" />
+        android:src="@drawable/permission_rationale" />
 
 </RelativeLayout>

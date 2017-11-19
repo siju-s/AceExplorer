@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,16 +14,13 @@
   ~ limitations under the License.
   -->
 
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    >
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
 
     <LinearLayout
@@ -37,25 +33,19 @@
             android:layout_height="wrap_content"
             android:theme="@style/AppTheme.AppBarOverlay">
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:theme="?attr/actionBarStyle"
-                app:popupTheme="@style/AppTheme.PopupOverlay"/>
+            <include layout="@layout/toolbar" />
 
         </android.support.design.widget.AppBarLayout>
 
         <!--<Button-->
-            <!--android:id="@+id/resetButton"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:text="Reset"-->
-            <!--android:layout_height="wrap_content" />-->
+        <!--android:id="@+id/resetButton"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:text="Reset"-->
+        <!--android:layout_height="wrap_content" />-->
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerViewLibrarySort"
+            android:id="@+id/libSortList"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
+            android:layout_height="match_parent" />
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

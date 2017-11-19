@@ -31,8 +31,11 @@ import com.siju.acexplorer.home.model.HomeModelImpl;
 import com.siju.acexplorer.home.model.LoaderHelper;
 import com.siju.acexplorer.home.presenter.HomePresenterImpl;
 import com.siju.acexplorer.logging.Logger;
+import com.siju.acexplorer.model.FileConstants;
 import com.siju.acexplorer.storage.view.StoragesUiView;
 import com.siju.acexplorer.view.DrawerListener;
+
+import static com.siju.acexplorer.model.FileConstants.PREFS_FIRST_RUN;
 
 public class HomeScreenFragment extends Fragment {
 
@@ -41,6 +44,16 @@ public class HomeScreenFragment extends Fragment {
     private HomeView homeView;
     private DrawerListener drawerListener;
     private StoragesUiView.FavoriteOperation favListener;
+
+    public static HomeScreenFragment newInstance(boolean isFirstRun, boolean isDualMode) {
+        Bundle args = new Bundle();
+        args.putBoolean(FileConstants.KEY_HOME, true);
+        args.putBoolean(PREFS_FIRST_RUN, isFirstRun);
+        args.putBoolean(FileConstants.KEY_DUAL_ENABLED, isDualMode);
+        HomeScreenFragment homeScreenFragment = new HomeScreenFragment();
+        homeScreenFragment.setArguments(args);
+        return homeScreenFragment;
+    }
 
     @Override
     public View onCreateView(

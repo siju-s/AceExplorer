@@ -5,10 +5,6 @@ import android.os.Bundle;
 
 import java.util.List;
 
-/**
- * Created by sj on 04/11/17.
- */
-
 public class Analytics {
 
 

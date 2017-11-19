@@ -32,26 +32,26 @@ import com.siju.acexplorer.R;
 
 class WelcomePagerAdapter extends PagerAdapter {
 
-    private final Context  mContext;
-    private final int[]    mResources;
-    private final String[] mHeaderText;
-    private final String[] mText;
+    private final Context  context;
+    private final int[]    resources;
+    private final String[] headerText;
+    private final String[] text;
     private final int[]    bgColors;
 
 
-    WelcomePagerAdapter(Context mContext, int[] mResources, String[] headerText, String[] text,
+    WelcomePagerAdapter(Context context, int[] resources, String[] headerText, String[] text,
                         int[] colors) {
-        this.mContext = mContext;
-        this.mResources = mResources;
-        mHeaderText = headerText;
-        mText = text;
+        this.context = context;
+        this.resources = resources;
+        this.headerText = headerText;
+        this.text = text;
         bgColors = colors;
 
     }
 
     @Override
     public int getCount() {
-        return mResources.length;
+        return resources.length;
     }
 
     @Override
@@ -61,17 +61,17 @@ class WelcomePagerAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        View itemView = LayoutInflater.from(mContext).inflate(R.layout.intro_pager_item,
-                                                              container, false);
+        View itemView = LayoutInflater.from(context).inflate(R.layout.intro_pager_item,
+                                                             container, false);
 
         ImageView imageView = itemView.findViewById(R.id.imageIntro);
         TextView textHeader = itemView.findViewById(R.id.textIntroHeader);
         TextView textContent = itemView.findViewById(R.id.textIntro);
         itemView.setBackgroundColor(bgColors[position]);
-        textHeader.setText(mHeaderText[position]);
-        textContent.setText(mText[position]);
+        textHeader.setText(headerText[position]);
+        textContent.setText(text[position]);
 
-        Glide.with(mContext).load(mResources[position])
+        Glide.with(context).load(resources[position])
                 .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC))
                 .into(imageView);
 

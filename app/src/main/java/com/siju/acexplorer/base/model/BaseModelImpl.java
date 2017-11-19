@@ -22,9 +22,7 @@ import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.theme.Theme;
 import com.siju.acexplorer.theme.ThemeUtils;
 
-/**
- * Created by Siju on 02 September,2017
- */
+
 public class BaseModelImpl implements BaseModel {
 
     private Context context;

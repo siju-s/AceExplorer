@@ -22,14 +22,18 @@ import android.util.Log;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.model.SectionItems;
+import com.siju.acexplorer.model.StorageUtils;
+import com.siju.acexplorer.model.helper.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import static android.os.Environment.getRootDirectory;
+import static com.siju.acexplorer.model.StorageUtils.StorageType.EXTERNAL;
+import static com.siju.acexplorer.model.StorageUtils.StorageType.INTERNAL;
+import static com.siju.acexplorer.model.StorageUtils.StorageType.ROOT;
 import static com.siju.acexplorer.model.StorageUtils.getSpaceLeft;
 import static com.siju.acexplorer.model.StorageUtils.getStorageDirectories;
 import static com.siju.acexplorer.model.StorageUtils.getTotalSpace;
@@ -96,7 +100,7 @@ public class StoragesGroup {
         int leftProgressRoot = (int) (((float) spaceLeftRoot / totalSpaceRoot) * 100);
         int progressRoot = 100 - leftProgressRoot;
         totalStorages.add(new SectionItems(STORAGE_ROOT, storageSpace(spaceLeftRoot, totalSpaceRoot), R.drawable
-                .ic_root_white, FileUtils.getAbsolutePath(rootDir), progressRoot));
+                .ic_root_white, FileUtils.getAbsolutePath(rootDir), progressRoot, null, ROOT));
     }
 
     private void addStorages() {
@@ -104,7 +108,7 @@ public class StoragesGroup {
         List<String> storagePaths = getStorageDirectories();
         Log.d("StoragesGroup", "addStorages: storageSize:" + storagesList.size() + "fetched:" + storagePaths.size());
         externalSDPaths = new ArrayList<>();
-
+        StorageUtils.StorageType storageType;
         for (String path : storagePaths) {
             File file = new File(path);
             int icon;
@@ -112,14 +116,17 @@ public class StoragesGroup {
             if (STORAGE_EMULATED_LEGACY.equals(path) || STORAGE_EMULATED_0.equals(path)) {
                 name = STORAGE_INTERNAL;
                 icon = R.drawable.ic_phone_white;
+                storageType = INTERNAL;
 
             } else if (STORAGE_SDCARD1.equals(path)) {
                 name = STORAGE_EXTERNAL;
                 icon = R.drawable.ic_ext_white;
+                storageType = EXTERNAL;
                 externalSDPaths.add(path);
             } else {
                 name = file.getName();
                 icon = R.drawable.ic_ext_white;
+                storageType = EXTERNAL;
                 externalSDPaths.add(path);
             }
             if (!file.isDirectory() || file.canExecute()) {
@@ -128,7 +135,7 @@ public class StoragesGroup {
                 int leftProgress = (int) (((float) spaceLeft / totalSpace) * 100);
                 int progress = 100 - leftProgress;
                 String spaceText = storageSpace(spaceLeft, totalSpace);
-                storagesList.add(new SectionItems(name, spaceText, icon, path, progress));
+                storagesList.add(new SectionItems(name, spaceText, icon, path, progress, null, storageType));
             }
         }
     }

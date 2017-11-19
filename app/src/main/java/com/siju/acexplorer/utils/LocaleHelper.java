@@ -16,35 +16,27 @@
 
 package com.siju.acexplorer.utils;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.os.Build;
+import android.os.LocaleList;
 import android.preference.PreferenceManager;
 
+import com.siju.acexplorer.logging.Logger;
+
 import java.util.Locale;
+
+import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastAPI17;
+import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastNougat;
 
 public class LocaleHelper {
 
     private static final String SELECTED_LANGUAGE = "prefs_lang";
+    private static final String TAG                  = "LocaleHelper";
 
     public static String getLanguage(Context context) {
         return getPersistedData(context, Locale.getDefault().getLanguage());
-    }
-
-    public static void setLocale(Context context, String language) {
-        persist(context, language);
-        updateResources(context, language);
-    }
-
-    public static void setLanguage(Context context) {
-        String currentLanguage = getLanguage(context);
-
-        if (!currentLanguage.equals(Locale.getDefault().getLanguage())) {
-            setLocale(context, currentLanguage);
-        }
     }
 
     private static String getPersistedData(Context context, String defaultLanguage) {
@@ -52,46 +44,50 @@ public class LocaleHelper {
         return preferences.getString(SELECTED_LANGUAGE, defaultLanguage);
     }
 
+    public static Context setLanguage(Context context) {
+        String currentLanguage = getLanguage(context);
+        Logger.log(TAG, "setLanguage: current:"+currentLanguage + " defult:"+Locale.getDefault().getLanguage());
+
+        context = setLocale(context, currentLanguage);
+        return context;
+    }
+
+    public static Context setLocale(Context context, String language) {
+        persist(context, language);
+        return updateResources(context, language);
+    }
+
+
     private static void persist(Context context, String language) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = preferences.edit();
-
+        Logger.log(TAG, "persist: "+language);
         editor.putString(SELECTED_LANGUAGE, language);
         editor.apply();
     }
 
-    private static void updateResources(Context context, String language) {
+    private static Context updateResources(Context context, String language) {
         Locale locale = new Locale(language);
-        Locale.setDefault(locale);
+        Logger.log(TAG, "updateResources: "+language);
 
         Resources resources = context.getResources();
-
-        Configuration configuration = resources.getConfiguration();
-/*        if (Utils.isAtleastNougat()) {
-            setSystemLocale(configuration, locale);
-            context.createConfigurationContext(configuration);
-        }else{
-
-
-        }*/
-        setSystemLocaleLegacy(configuration, locale);
-        //noinspection deprecation
-        resources.updateConfiguration(configuration, resources.getDisplayMetrics());
+        Configuration config = resources.getConfiguration();
+        if (isAtleastNougat()) {
+            config.setLocale(locale);
+            LocaleList localeList = new LocaleList(locale);
+            LocaleList.setDefault(localeList);
+            config.setLocales(localeList);
+            context = context.createConfigurationContext(config);
+        }
+        else if (isAtleastAPI17()) {
+            config.setLocale(locale);
+            context = context.createConfigurationContext(config);
+        } else {
+            config.locale = locale;
+            resources.updateConfiguration(config, resources.getDisplayMetrics());
+        }
+        return context;
 
     }
-
-    @TargetApi(Build.VERSION_CODES.N)
-    private static void setSystemLocale(Configuration config, Locale locale){
-        config.setLocale(locale);
-    }
-
-    @SuppressWarnings("deprecation")
-    private static void setSystemLocaleLegacy(Configuration config, Locale locale){
-        config.locale = locale;
-    }
-
-
-
-
 
 }

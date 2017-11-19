@@ -29,12 +29,15 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.siju.acexplorer.AceApplication;
+import com.siju.acexplorer.R;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import static com.siju.acexplorer.model.groups.StoragesGroup.ANDROID_DATA;
@@ -48,13 +51,28 @@ public class StorageUtils {
 
     private final static Pattern DIR_SEPARATOR = Pattern.compile("/");
 
+    public enum StorageType {
+        ROOT,
+        INTERNAL,
+        EXTERNAL;
+
+
+        public static String getStorageText(Context context, StorageType storageType) {
+            switch (storageType) {
+                case ROOT:
+                    return context.getString(R.string.nav_menu_root);
+                case INTERNAL:
+                    return context.getString(R.string.nav_menu_internal_storage);
+                default:
+                    return context.getString(R.string.nav_menu_internal_storage);
+
+            }
+        }
+    }
+
 
     public static String getDownloadsDirectory() {
         return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
-    }
-
-    public static String getRootDirectory() {
-        return Environment.getRootDirectory().getAbsolutePath();
     }
 
     public static String getInternalStorage() {
@@ -64,7 +82,7 @@ public class StorageUtils {
     public static List<String> getStorageDirectories() {
 
         // Final set of paths
-        final List<String> paths = new ArrayList<>();
+        final Set<String> paths = new LinkedHashSet<>();
         // Primary physical SD-CARD (not emulated)
         final String rawExternalStorage = System.getenv("EXTERNAL_STORAGE");
         // All Secondary SD-CARDs (all exclude primary) separated by ":"

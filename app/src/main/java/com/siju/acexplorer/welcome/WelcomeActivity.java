@@ -32,13 +32,14 @@ import com.siju.acexplorer.utils.PrefManager;
 import com.siju.acexplorer.view.AceActivity;
 
 public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener,
-        ViewPager.OnPageChangeListener {
+                                                                  ViewPager.OnPageChangeListener
+{
 
-    private ViewPager viewPager;
+    private ViewPager    viewPager;
     private LinearLayout dotsLayout;
-    private Button btnSkip, btnNext;
+    private Button       skipButton, nextButton;
     private PrefManager prefManager;
-    private int dotsCount;
+    private int         dotsCount;
     private ImageView[] dots;
     private final int[] mImageResources = {
             R.raw.library,
@@ -47,13 +48,12 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
             R.raw.theme
     };
 
-    private WelcomePagerAdapter mAdapter;
+    private WelcomePagerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prefManager = new PrefManager(this);
-        Logger.log("WelcomeAct", "CALLED");
 
         if (!prefManager.isFirstTimeLaunch()) {
             launchHomeScreen();
@@ -65,13 +65,13 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void initializeViews() {
-        viewPager =  findViewById(R.id.view_pager);
-        dotsLayout =  findViewById(R.id.layoutDots);
-        btnSkip =  findViewById(R.id.buttonSkip);
-        btnNext =  findViewById(R.id.buttonNext);
+        viewPager = findViewById(R.id.view_pager);
+        dotsLayout = findViewById(R.id.layoutDots);
+        skipButton = findViewById(R.id.buttonSkip);
+        nextButton = findViewById(R.id.buttonNext);
 
-        btnNext.setOnClickListener(this);
-        btnSkip.setOnClickListener(this);
+        nextButton.setOnClickListener(this);
+        skipButton.setOnClickListener(this);
 
         String[] headerText = {getString(R.string.slide_1_title),
                 getString(R.string.slide_2_title),
@@ -86,8 +86,8 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
                 ContextCompat.getColor(this, R.color.bg_screen2),
                 ContextCompat.getColor(this, R.color.bg_screen3),
                 ContextCompat.getColor(this, R.color.bg_screen4)};
-        mAdapter = new WelcomePagerAdapter(this, mImageResources, headerText, text, bgColors);
-        viewPager.setAdapter(mAdapter);
+        adapter = new WelcomePagerAdapter(this, mImageResources, headerText, text, bgColors);
+        viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(0);
         viewPager.addOnPageChangeListener(this);
         addBottomDots();
@@ -95,9 +95,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
 
 
     private void addBottomDots() {
-
-
-        dotsCount = mAdapter.getCount();
+        dotsCount = adapter.getCount();
         dots = new ImageView[dotsCount];
 
         for (int i = 0; i < dotsCount; i++) {
@@ -160,11 +158,11 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
                 .intro_selecteditem));
 
         if (position + 1 == dotsCount) {
-            btnNext.setText(getString(R.string.start));
-            btnSkip.setVisibility(View.GONE);
+            nextButton.setText(getString(R.string.start));
+            skipButton.setVisibility(View.GONE);
         } else {
-            btnNext.setText(getString(R.string.next));
-            btnSkip.setVisibility(View.VISIBLE);
+            nextButton.setText(getString(R.string.next));
+            skipButton.setVisibility(View.VISIBLE);
         }
     }
 

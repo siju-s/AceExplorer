@@ -18,6 +18,7 @@ package com.siju.acexplorer.settings;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,13 +32,20 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import com.siju.acexplorer.view.AceActivity;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.theme.ThemeUtils;
+import com.siju.acexplorer.utils.LocaleHelper;
+import com.siju.acexplorer.view.AceActivity;
 
 import static com.siju.acexplorer.theme.ThemeUtils.THEME_DARK;
 
 public class SettingsActivity extends AppCompatActivity {
+
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleHelper.setLanguage(newBase));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

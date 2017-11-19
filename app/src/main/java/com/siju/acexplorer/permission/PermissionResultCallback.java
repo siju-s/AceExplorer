@@ -16,10 +16,8 @@
 
 package com.siju.acexplorer.permission;
 
-/**
- * Created by SJ on 19-01-2017.
- */
 
+@SuppressWarnings("unused")
 public interface PermissionResultCallback {
 
     void onPermissionGranted(String[] permissionName);

@@ -30,12 +30,14 @@ import android.widget.TextView;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.model.SectionItems;
+import com.siju.acexplorer.model.StorageUtils;
 import com.siju.acexplorer.model.groups.StoragesGroup;
 import com.siju.acexplorer.theme.Theme;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.siju.acexplorer.model.StorageUtils.StorageType.EXTERNAL;
 import static com.siju.acexplorer.model.groups.Category.FILES;
 
 /**
@@ -98,7 +100,14 @@ public class HomeStorages implements View.OnClickListener {
 
             imageStorage.setImageResource(storagesList.get(i).getIcon());
             pathNames.add(storagesList.get(i).getPath());
-            textStorage.setText(storagesList.get(i).getFirstLine());
+            StorageUtils.StorageType storageType = storagesList.get(i).getStorageType();
+            Log.d("HomeStorages", "storageType: "+storageType);
+
+            if (storageType.equals(EXTERNAL)) {
+                textStorage.setText(storagesList.get(i).getFirstLine());
+            } else {
+                textStorage.setText(StorageUtils.StorageType.getStorageText(context, storageType));
+            }
             textSpace.setText(storagesList.get(i).getSecondLine());
             progressBarSpace.setProgress(storagesList.get(i).getProgress());
 

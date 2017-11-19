@@ -72,6 +72,8 @@ public interface MainUi {
 
     void showDualFrame();
 
+    void setDualPaneFocusState(boolean isDualPaneInFocus);
+
     interface Listener {
 
         void getTotalGroupData();
