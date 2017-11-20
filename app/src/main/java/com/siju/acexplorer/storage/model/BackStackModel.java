@@ -20,7 +20,7 @@ import com.siju.acexplorer.model.groups.Category;
 
 public class BackStackModel {
 
-    private final String filePath;
+    private final String   filePath;
     private final Category category;
 
     public BackStackModel(String filePath, Category category) {
@@ -37,9 +37,15 @@ public class BackStackModel {
     }
 
     public boolean equals(Object obj) {
-        if (obj == null) return false;
-        if (obj == this) return true;
-        if (!(obj instanceof BackStackModel)) return false;
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof BackStackModel)) {
+            return false;
+        }
         BackStackModel o = (BackStackModel) obj;
         return o.filePath != null && o.filePath.equals(this.filePath);
     }

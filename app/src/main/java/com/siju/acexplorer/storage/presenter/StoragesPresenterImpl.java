@@ -23,7 +23,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
 import com.siju.acexplorer.billing.BillingStatus;
-import com.siju.acexplorer.home.model.LibrarySortModel;
 import com.siju.acexplorer.home.model.LoaderHelper;
 import com.siju.acexplorer.model.FavInfo;
 import com.siju.acexplorer.model.FileInfo;
@@ -40,25 +39,27 @@ import java.util.List;
 /**
  * Created by Siju on 04 September,2017
  */
-public class StoragesPresenterImpl implements StoragesPresenter, StoragesUi.Listener,
-        StoragesModel.Listener, LoaderManager
-                .LoaderCallbacks<ArrayList<FileInfo>> {
+@SuppressWarnings("FieldCanBeLocal")
+public class StoragesPresenterImpl implements StoragesUi.Listener,
+                                              StoragesModel.Listener,
+                                              LoaderManager
+                                                      .LoaderCallbacks<ArrayList<FileInfo>>
+{
 
-    private final String TAG = this.getClass().getSimpleName();
-    private final int LOADER_ID = 1000;
+    private final int    LOADER_ID  = 1000;
     private final String KEY_PICKER = "picker";
 
 
     private final String KEY_PATH = "path";
-    private StoragesUi storagesUi;
+    private StoragesUi    storagesUi;
     private StoragesModel storagesModel;
     private LoaderManager loaderManager;
-    private LoaderHelper loaderHelper;
-    private Category category;
+    private LoaderHelper  loaderHelper;
+    private Category      category;
 
 
     public StoragesPresenterImpl(StoragesUi storagesUi, StoragesModel storagesModel, LoaderHelper loaderHelper,
-                             LoaderManager loaderManager) {
+                                 LoaderManager loaderManager) {
         this.storagesUi = storagesUi;
         this.storagesModel = storagesModel;
         this.loaderHelper = loaderHelper;
@@ -69,22 +70,17 @@ public class StoragesPresenterImpl implements StoragesPresenter, StoragesUi.List
 
 
     @Override
-    public void loadData(String currentDir, Category category, boolean isPicker) {
+    public void loadData(String currentDir, Category category) {
         this.category = category;
         Bundle args = new Bundle();
         args.putString(KEY_PATH, currentDir);
-        args.putBoolean(KEY_PICKER, isPicker);
+        args.putBoolean(KEY_PICKER, false);
         loaderManager.restartLoader(LOADER_ID, args, this);
     }
 
     @Override
     public BillingStatus checkBillingStatus() {
         return storagesModel.getBillingStatus();
-    }
-
-    @Override
-    public void reloadLibraries(List<LibrarySortModel> selectedLibs) {
-
     }
 
     @Override
@@ -109,12 +105,12 @@ public class StoragesPresenterImpl implements StoragesPresenter, StoragesUi.List
 
     @Override
     public void createDir(String currentDir, String name, boolean rooted) {
-        storagesModel.createDir(currentDir,name, rooted);
+        storagesModel.createDir(currentDir, name, rooted);
     }
 
     @Override
     public void createFile(String currentDir, String name, boolean rooted) {
-        storagesModel.createFile(currentDir,name, rooted);
+        storagesModel.createFile(currentDir, name, rooted);
     }
 
     @Override
@@ -127,7 +123,7 @@ public class StoragesPresenterImpl implements StoragesPresenter, StoragesUi.List
     public void onExtractPositiveClick(String currentFilePath, String newFileName, boolean isChecked,
                                        String selectedPath) {
 
-      storagesModel.onExtractPositiveClick(currentFilePath, newFileName, isChecked, selectedPath);
+        storagesModel.onExtractPositiveClick(currentFilePath, newFileName, isChecked, selectedPath);
     }
 
     @Override
@@ -143,7 +139,7 @@ public class StoragesPresenterImpl implements StoragesPresenter, StoragesUi.List
 
     @Override
     public int getSortMode() {
-        return  storagesModel.getSortMode();
+        return storagesModel.getSortMode();
     }
 
     @Override
@@ -182,11 +178,6 @@ public class StoragesPresenterImpl implements StoragesPresenter, StoragesUi.List
     }
 
     @Override
-    public void onFilesFetched(List<FileInfo> libraries) {
-
-    }
-
-    @Override
     public void showSAFDialog(String path, Intent data) {
         storagesUi.showSAFDialog(path, data);
     }
@@ -206,7 +197,7 @@ public class StoragesPresenterImpl implements StoragesPresenter, StoragesUi.List
 
     @Override
     public void onLowSpace() {
-       storagesUi.onLowSpace();
+        storagesUi.onLowSpace();
     }
 
     @Override
@@ -219,7 +210,7 @@ public class StoragesPresenterImpl implements StoragesPresenter, StoragesUi.List
 
     @Override
     public void onOperationFailed(Operations operation) {
-       storagesUi.onOperationFailed(operation);
+        storagesUi.onOperationFailed(operation);
     }
 
     @Override
@@ -246,7 +237,7 @@ public class StoragesPresenterImpl implements StoragesPresenter, StoragesUi.List
 
     @Override
     public void onPermissionsSet() {
-     storagesUi.onPermissionsSet();
+        storagesUi.onPermissionsSet();
     }
 
     @Override
@@ -267,7 +258,7 @@ public class StoragesPresenterImpl implements StoragesPresenter, StoragesUi.List
 
     @Override
     public void onFavAdded(int count) {
-       storagesUi.onFavAdded(count);
+        storagesUi.onFavAdded(count);
     }
 
     @Override
@@ -278,7 +269,7 @@ public class StoragesPresenterImpl implements StoragesPresenter, StoragesUi.List
 
     @Override
     public void onLoadFinished(Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
-         storagesUi.onDataLoaded(data);
+        storagesUi.onDataLoaded(data);
     }
 
     @Override

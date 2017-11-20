@@ -16,8 +16,6 @@
 
 package com.siju.acexplorer.storage.model.backstack;
 
-import android.util.Log;
-
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.storage.model.BackStackModel;
@@ -28,8 +26,6 @@ import java.util.ArrayList;
 public class BackStackInfo {
     private final ArrayList<BackStackModel> backStack = new ArrayList<>();
     private static final String TAG = "BackStackInfo";
-
-    private Category category;
 
     public void addToBackStack(String path, Category category) {
         backStack.add(new BackStackModel(path, category));
@@ -46,7 +42,7 @@ public class BackStackInfo {
 
     public void removeEntryAtIndex(int index) {
         backStack.remove(index);
-        Log.d(TAG, "removeEntryAtIndex: "+backStack.size());
+        Logger.log(TAG, "removeEntryAtIndex: "+backStack.size());
     }
 
     public String getDirAtPosition(int index) {

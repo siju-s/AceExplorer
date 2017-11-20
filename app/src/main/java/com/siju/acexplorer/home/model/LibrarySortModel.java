@@ -21,12 +21,12 @@ import android.os.Parcelable;
 
 import com.siju.acexplorer.model.groups.Category;
 
-public class LibrarySortModel implements Parcelable{
-    private String libraryName;
-    private boolean isChecked;
+public class LibrarySortModel implements Parcelable {
+    private String   libraryName;
+    private boolean  isChecked;
     private Category category;
 
-    public LibrarySortModel(Category category,String libraryName) {
+    public LibrarySortModel(Category category, String libraryName) {
         this.category = category;
         this.libraryName = libraryName;
         this.isChecked = true;
@@ -37,9 +37,15 @@ public class LibrarySortModel implements Parcelable{
     }
 
     public boolean equals(Object obj) {
-        if (obj == null) return false;
-        if (obj == this) return true;
-        if (!(obj instanceof LibrarySortModel)) return false;
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof LibrarySortModel)) {
+            return false;
+        }
         LibrarySortModel o = (LibrarySortModel) obj;
         return o.category.equals(this.category);
     }

@@ -21,31 +21,10 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
-
-import com.siju.acexplorer.R;
 
 
 public class AppUtils {
 
-    public static Drawable getAppIcon(Context context, String url) {
-
-
-        Drawable icon = null;
-        try {
-            ApplicationInfo appInfo = getAppInfo(context, url);
-
-            if (appInfo != null) {
-                icon = appInfo.loadIcon(context.getPackageManager());
-            }
-//            Log.d("AppUtils", "getAppIcon: icon:"+icon);
-            return icon;
-        } catch (Exception e) {
-//            e.printStackTrace();
-            return ContextCompat.getDrawable(context, R.drawable.ic_apk_green);
-
-        }
-    }
 
     public static ApplicationInfo getAppInfo(Context context, String path) {
         ApplicationInfo appInfo;
@@ -60,9 +39,7 @@ public class AppUtils {
             appInfo.sourceDir = path;
             appInfo.publicSourceDir = path;
         } catch (Exception e) {
-//            e.printStackTrace();
             return null;
-
         }
         return appInfo;
     }

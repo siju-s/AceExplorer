@@ -42,7 +42,7 @@ public class OpenSourceDialogPreference extends DialogPreference {
 
     @Override
     protected void onBindDialogView(View view) {
-        WebView webView = (WebView) view.findViewById(R.id.webViewLicense);
+        WebView webView = view.findViewById(R.id.webViewLicense);
         webView.loadUrl("file:///android_asset/open_source_licenses.html");
         super.onBindDialogView(view);
     }

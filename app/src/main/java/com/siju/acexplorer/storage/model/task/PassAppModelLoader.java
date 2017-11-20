@@ -1,8 +1,5 @@
 package com.siju.acexplorer.storage.model.task;
 
-/**
- * Created by sj on 29/10/17.
- */
 
 import android.content.pm.ApplicationInfo;
 import android.support.annotation.NonNull;

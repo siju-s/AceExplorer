@@ -79,8 +79,6 @@ public interface StoragesModel {
 
     interface Listener {
 
-        void onFilesFetched(List<FileInfo> libraries);
-
         void showSAFDialog(String path, Intent data);
 
         void onFileExists(Operations operation, String msg);

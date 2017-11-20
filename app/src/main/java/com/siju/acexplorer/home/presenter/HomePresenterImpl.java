@@ -21,7 +21,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
 import com.siju.acexplorer.billing.BillingStatus;
-import com.siju.acexplorer.home.model.HomeLibraryInfo;
+import com.siju.acexplorer.home.types.HomeLibraryInfo;
 import com.siju.acexplorer.home.model.HomeModel;
 import com.siju.acexplorer.home.model.LibrarySortModel;
 import com.siju.acexplorer.home.model.LoaderHelper;
@@ -37,14 +37,16 @@ import static com.siju.acexplorer.model.FileConstants.KEY_CATEGORY;
 /**
  * Created by Siju on 02 September,2017
  */
-public class HomePresenterImpl implements HomePresenter,
-        LoaderManager.LoaderCallbacks<ArrayList<FileInfo>>, HomeView.Listener, HomeModel.Listener {
+public class HomePresenterImpl implements
+                               LoaderManager.LoaderCallbacks<ArrayList<FileInfo>>,
+                               HomeView.Listener,
+                               HomeModel.Listener
+{
 
-    private HomeView homeView;
-    private HomeModel homeModel;
+    private HomeView      homeView;
+    private HomeModel     homeModel;
     private LoaderManager loaderManager;
-    private LoaderHelper loaderHelper;
-    private final String TAG = this.getClass().getSimpleName();
+    private LoaderHelper  loaderHelper;
 
     public HomePresenterImpl(HomeView homeView, HomeModel homeModel, LoaderHelper loaderHelper,
                              LoaderManager loaderManager) {

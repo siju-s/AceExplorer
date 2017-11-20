@@ -39,12 +39,6 @@ public class MainPresenterImpl implements MainPresenter, MainUi.Listener, MainMo
         mainModel.setListener(this);
     }
 
-
-    @Override
-    public void setListener(Listener listener) {
-
-    }
-
     @Override
     public void getUserPreferences() {
         mainModel.getUserSettings();

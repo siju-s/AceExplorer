@@ -20,7 +20,6 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.storage.modules.picker.view.DialogBrowseFragment;
@@ -30,7 +29,6 @@ import static com.siju.acexplorer.theme.ThemeUtils.THEME_DARK;
 
 
 public class TransparentActivity extends AppCompatActivity {
-    private final String TAG = this.getClass().getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +79,6 @@ public class TransparentActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "On activity result");
         finish();
     }
 }

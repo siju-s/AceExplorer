@@ -16,27 +16,14 @@
 
 package com.siju.acexplorer.presenter;
 
-import android.os.Bundle;
-
 /**
  * Created by Siju on 02 September,2017
  */
 public interface MainPresenter {
 
 
-    void setListener(Listener listener);
-
     void getUserPreferences();
 
     void getBillingStatus();
 
-
-    interface Listener {
-
-        void onUserPrefsFetched(Bundle preferences);
-
-        void onBillingStatusFetched();
-
-        void onAppShortcut(boolean isShortcut);
-    }
 }

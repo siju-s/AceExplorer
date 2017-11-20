@@ -16,8 +16,6 @@
 
 package com.siju.acexplorer.storage.model.task;
 
-import android.content.Context;
-
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.FileListLoader;
@@ -40,12 +38,10 @@ public class PasteConflictChecker {
     private boolean rootmode;
     private final String destinationDir;
     private boolean isMove = false;
-    private Context context;
 
 
-    public PasteConflictChecker(Context context, String currentDir, boolean
+    public PasteConflictChecker(String currentDir, boolean
             rootMode, boolean isMoveOperation, ArrayList<FileInfo> files) {
-        this.context = context;
         destinationDir = currentDir;
         this.rootmode = rootMode;
         this.isMove = isMoveOperation;

@@ -29,17 +29,11 @@ import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.model.groups.Category;
-import com.siju.acexplorer.utils.Utils;
 
 import java.io.File;
 import java.util.List;
 
 import static com.siju.acexplorer.model.helper.FileUtils.showMessage;
-
-/**
- * Created by SJ on 27-01-2017.
- */
 
 public class UriHelper {
 
@@ -74,33 +68,13 @@ public class UriHelper {
         }
     }
 
-    public static Uri getUriForCategory(Category category) {
-        switch (category) {
-            case FILES:
-            case DOCS:
-            case DOWNLOADS:
-            case COMPRESSED:
-            case PDF:
-            case APPS:
-            case LARGE_FILES:
-                return MediaStore.Files.getContentUri("external");
-            case AUDIO:
-                return MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-            case VIDEO:
-                return MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-            case IMAGE:
-                return MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        }
-        return MediaStore.Files.getContentUri("external");
 
-    }
-
-    public static Uri getUriFromFile(final String path, Context context) {
+    static Uri getUriFromFile(final String path, Context context) {
         ContentResolver resolver = context.getContentResolver();
 
         Cursor filecursor = resolver.query(MediaStore.Files.getContentUri("external"),
-                new String[]{BaseColumns._ID}, MediaStore.MediaColumns.DATA + " = ?",
-                new String[]{path}, MediaStore.MediaColumns.DATE_ADDED + " desc");
+                                           new String[]{BaseColumns._ID}, MediaStore.MediaColumns.DATA + " = ?",
+                                           new String[]{path}, MediaStore.MediaColumns.DATE_ADDED + " desc");
 
         if (filecursor != null) {
             filecursor.moveToFirst();

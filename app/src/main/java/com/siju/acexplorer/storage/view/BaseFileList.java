@@ -119,12 +119,10 @@ public class BaseFileList extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
         super.onCreateOptionsMenu(menu, inflater);
-        storagesUi.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        storagesUi.onOptionsItemSelected(item);
         return super.onOptionsItemSelected(item);
     }
 
@@ -170,7 +168,6 @@ public class BaseFileList extends Fragment {
             FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
             fragmentTransaction.remove(fragment).commitAllowingStateLoss();
         }
-//        storagesUi.hideDualPane();
     }
 
     private StoragesUiView.FavoriteOperation favListener;

@@ -26,7 +26,7 @@ import static com.siju.acexplorer.model.helper.AppUtils.getAppIconForFolder;
 
 public class ThumbnailUtils {
 
-    private static final Uri mAudioUri = Uri.parse("content://media/external/audio/albumart");
+    private static final Uri AUDIO_URI = Uri.parse("content://media/external/audio/albumart");
 
     public static void displayThumb(Context context, FileInfo fileInfo, Category category, ImageView
             imageIcon, ImageView imageThumbIcon) {
@@ -126,7 +126,7 @@ public class ThumbnailUtils {
     private static void displayAudioAlbumArt(Context context, long bucketId, ImageView imageIcon,
                                             String path) {
         if (bucketId != -1) {
-            Uri uri = ContentUris.withAppendedId(mAudioUri, bucketId);
+            Uri uri = ContentUris.withAppendedId(AUDIO_URI, bucketId);
             RequestOptions options = new RequestOptions()
                     .centerCrop()
                     .placeholder(R.drawable.ic_music_default);
@@ -149,7 +149,7 @@ public class ThumbnailUtils {
 
                     long albumId = cursor.getLong(albumIdIndex);
 
-                    Uri newUri = ContentUris.withAppendedId(mAudioUri, albumId);
+                    Uri newUri = ContentUris.withAppendedId(AUDIO_URI, albumId);
                     RequestOptions options = new RequestOptions()
                             .centerCrop()
                             .placeholder(R.drawable.ic_music_default);

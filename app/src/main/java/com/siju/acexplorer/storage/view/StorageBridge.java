@@ -125,7 +125,7 @@ public class StorageBridge implements StoragesUi {
         fragment.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                storagesUiView.onFileExists(operation, msg);
+                storagesUiView.onFileExists(operation);
             }
         });
     }
@@ -154,7 +154,7 @@ public class StorageBridge implements StoragesUi {
         fragment.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                storagesUiView.showPasteProgressDialog(destinationDir, files, copyData, isMove);
+                storagesUiView.showPasteProgressDialog(destinationDir, files, isMove);
             }
         });
 
@@ -253,16 +253,6 @@ public class StorageBridge implements StoragesUi {
         storagesUiView.performVoiceSearch(query);
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        storagesUiView.onCreateOptionsMenu(menu, inflater);
-
-    }
-
-    @Override
-    public void onOptionsItemSelected(MenuItem menuItem) {
-        storagesUiView.onOptionsItemSelected(menuItem);
-    }
 
     @Override
     public void setPremium() {
@@ -315,10 +305,6 @@ public class StorageBridge implements StoragesUi {
         });
     }
 
-    @Override
-    public void hideDualPane() {
-        storagesUiView.hideDualPane();
-    }
 
     @Override
     public void addHomeNavPath() {
@@ -326,8 +312,8 @@ public class StorageBridge implements StoragesUi {
     }
 
 
-    void loadData(String currentDir, Category category, boolean isPicker) {
-        listener.loadData(currentDir, category, isPicker);
+    void loadData(String currentDir, Category category) {
+        listener.loadData(currentDir, category);
     }
 
     BillingStatus checkBillingStatus() {

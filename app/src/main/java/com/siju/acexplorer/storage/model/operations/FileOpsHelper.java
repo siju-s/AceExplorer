@@ -54,9 +54,10 @@ import static com.siju.acexplorer.storage.model.operations.Operations.FOLDER_CRE
 
 public class FileOpsHelper {
 
-    private static final String TAG = "FileOpsHelper";
+    private static final String TAG              = "FileOpsHelper";
     private static final String OPERATION_INTENT = "operation_intent";
-    private final int INVALID_POS = -1;
+    @SuppressWarnings("FieldCanBeLocal")
+    private final        int    INVALID_POS      = -1;
 
 
     public interface FileOperationCallBack {
@@ -89,20 +90,31 @@ public class FileOpsHelper {
         OperationUtils.WriteMode mode = OperationUtils.checkFolder(file.getParent());
         switch (mode) {
             case ROOT:
-                boolean result = FileOperations.mkdir(file);
-                if (!result && isRoot) {
-                    try {
-                        String parentPath = file.getParent();
-                        RootUtils.mountRW(parentPath);
-                        RootUtils.mkDir(file.getAbsolutePath());
-                        result = true;
-                        RootUtils.mountRO(parentPath);
-                    } catch (RootDeniedException e) {
-                        result = false;
-                        Logger.log(TAG, file.getAbsolutePath());
-                    }
+                boolean exists = false;
+                try {
+                    exists = RootOperations.fileExists(file.getAbsolutePath(), true);
+                } catch (RootDeniedException e) {
+                    e.printStackTrace();
+                    fileOperationCallBack.opCompleted(FILE_CREATION, file, false);
                 }
-                fileOperationCallBack.opCompleted(FOLDER_CREATION, file, result);
+                if (exists) {
+                    fileOperationCallBack.exists(FILE_CREATION);
+                } else {
+                    boolean result = FileOperations.mkdir(file);
+                    if (!result && RootTools.isAccessGiven()) {
+                        try {
+                            String parentPath = file.getParent();
+                            RootUtils.mountRW(parentPath);
+                            RootUtils.mkDir(file.getAbsolutePath());
+                            result = true;
+                            RootUtils.mountRO(parentPath);
+                        } catch (RootDeniedException e) {
+                            result = false;
+                            Logger.log(TAG, file.getAbsolutePath());
+                        }
+                    }
+                    fileOperationCallBack.opCompleted(FOLDER_CREATION, file, result);
+                }
                 break;
 
             case EXTERNAL:
@@ -134,7 +146,7 @@ public class FileOpsHelper {
             case ROOT:
                 boolean exists = false;
                 try {
-                    exists = RootOperations.fileExists(file.getAbsolutePath(), true);
+                    exists = RootOperations.fileExists(file.getAbsolutePath(), false);
                 } catch (RootDeniedException e) {
                     e.printStackTrace();
                     fileOperationCallBack.opCompleted(FILE_CREATION, file, false);

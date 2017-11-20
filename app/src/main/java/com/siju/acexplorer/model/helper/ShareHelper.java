@@ -46,7 +46,6 @@ public class ShareHelper {
 
         for (FileInfo info : fileInfo) {
             Uri uri = UriHelper.createContentUri(context, info.getFilePath());
-            System.out.println("shareuri==" + uri);
             files.add(uri);
         }
 

@@ -28,7 +28,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -86,7 +85,6 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void setupActionBar() {
         ViewGroup rootView = findViewById(R.id.action_bar_root);
-        Log.d("Settings", "setupActionBar: " + rootView);
         AppBarLayout bar;
         if (rootView != null) {
             bar = (AppBarLayout) LayoutInflater.from(this).inflate(R.layout.toolbar_settings,

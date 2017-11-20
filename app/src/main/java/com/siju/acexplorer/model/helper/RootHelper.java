@@ -18,9 +18,8 @@ package com.siju.acexplorer.model.helper;
 
 import android.util.Log;
 
-import com.siju.acexplorer.storage.model.BaseFile;
 import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.model.root.RootDeniedException;
+import com.siju.acexplorer.storage.model.BaseFile;
 import com.stericson.RootTools.RootTools;
 import com.stericson.RootTools.execution.Command;
 
@@ -34,89 +33,27 @@ import java.util.Locale;
 import static com.siju.acexplorer.model.FileListLoader.getFilesList;
 import static com.siju.acexplorer.model.groups.Category.FILES;
 
-/*import com.siju.acexplorer.model.helper.root.RootTools;
-import com.siju.acexplorer.model.helper.root.rootshell.execution.Command;*/
-
 public class RootHelper {
 
-    /**
-     * Runs the command and stores output in a list. The listener is set on the caller thread,
-     * thus any code run in callback must be thread safe.
-     * Command is run from the root context (u:r:SuperSU0)
-     *
-     * @param cmd the command
-     * @return a list of results. Null only if the command passed is a blocking call or no output is
-     * there for the command passed
-     * @throws RootDeniedException
-     */
-   /* public static ArrayList<String> runShellCommand(String cmd) throws RootDeniedException {
-        if (!Shell.SU.available()) throw new RootDeniedException();
-        final ArrayList<String> result = new ArrayList<>();
+    private static final String TAG = "RootHelper";
 
-        // setting STDOUT listener so as to avoid extra buffer and possible memory loss by superuser
-        AceActivity.shellInteractive.addCommand(cmd, 0, new Shell.OnCommandResultListener() {
-            @Override
-            public void onCommandResult(int commandCode, int exitCode, List<String> output) {
-
-                for (String line : output) {
-                    result.add(line);
-                }
-            }
-        });
-        AceActivity.shellInteractive.waitForIdle();
-        return result;
-    }
-
-    *//**
-     * Runs the command and stores output in a list. The listener is set on the caller thread,
-     * thus any code run in callback must be thread safe.
-     * Command is run from superuser context (u:r:SuperSU0)
-     *
-     * @param cmd      the command
-     * @param callback
-     * @return a list of results. Null only if the command passed is a blocking call or no output is
-     * there for the command passed
-     * @throws RootDeniedException
-     *//*
-    public static void runShellCommand(String cmd, Shell.OnCommandResultListener callback)
-            throws RootDeniedException {
-        if (!Shell.SU.available()) throw new RootDeniedException();
-        AceActivity.shellInteractive.addCommand(cmd, 0, callback);
-    }
-
-    *//**
-     * Runs the command and stores output in a list. The listener is set on the caller thread,
-     * thus any code run in callback must be thread safe.
-     * Command is run from a third-party level context (u:r:init_shell0)
-     * Not callback supported as the shell is not interactive
-     *
-     * @param cmd the command
-     * @return a list of results. Null only if the command passed is a blocking call or no output is
-     * there for the command passed
-     * @throws RootDeniedException
-     *//*
-    public static List<String> runNonRootShellCommand(String cmd) {
-        return Shell.SH.run(cmd);
-    }*/
-
-     private static final String TAG = "RootHelper";
     public static void runAndWait(String cmd) {
 
         Command c = new Command(0, cmd) {
             @Override
             public void commandOutput(int i, String s) {
-                Log.d(TAG, "commandOutput: i="+i+ " s="+s);
+                Log.d(TAG, "commandOutput: i=" + i + " s=" + s);
 
             }
 
             @Override
             public void commandTerminated(int i, String s) {
-                Log.d(TAG, "commandTerminated: i="+i+ " s="+s);
+                Log.d(TAG, "commandTerminated: i=" + i + " s=" + s);
             }
 
             @Override
             public void commandCompleted(int i, int i2) {
-                Log.d(TAG, "commandCompleted: i="+i+ " i2="+i2);
+                Log.d(TAG, "commandCompleted: i=" + i + " i2=" + i2);
             }
         };
         try {
@@ -176,8 +113,9 @@ public class RootHelper {
                     if (!cmd.isFinished()) {
                         cmd.wait(2000);
                         t += 2000;
-                        if (t != -1 && t >= time)
+                        if (t != -1 && t >= time) {
                             return true;
+                        }
 
                     }
                 } catch (InterruptedException e) {
@@ -194,7 +132,7 @@ public class RootHelper {
         return true;
     }
 
-    public static String getCommandLineString(String input) {
+    private static String getCommandLineString(String input) {
         return input.replaceAll(UNIX_ESCAPE_EXPRESSION, "\\\\$1");
     }
 
@@ -216,9 +154,8 @@ public class RootHelper {
     }
 
 
-
     public static ArrayList<FileInfo> getRootedList(String path, boolean root,
-                                                     boolean showHidden) {
+                                                    boolean showHidden) {
         ArrayList<FileInfo> fileInfoArrayList = new ArrayList<>();
 
         String hidden = " ";
@@ -235,7 +172,7 @@ public class RootHelper {
             if (ls != null) {
                 for (int i = 0; i < ls.size(); i++) {
                     String file1 = ls.get(i);
-                    if (!file1.contains("Permission denied"))
+                    if (!file1.contains("Permission denied")) {
                         try {
                             BaseFile array = parseName(file1);
                             if (array != null) {
@@ -250,15 +187,18 @@ public class RootHelper {
                                 boolean isDirectory;
                                 if (array.getLink().trim().length() > 0) {
                                     isDirectory = isDirectory(array.getLink(), true, 0);
-                                } else isDirectory = isDirectory(array);
+                                } else {
+                                    isDirectory = isDirectory(array);
+                                }
                                 long size1 = array.getSize();
                                 fileInfoArrayList.add(new FileInfo(FILES, name, path1,
-                                        array.getDate(), size1, isDirectory, null,
-                                        array.getPermission(), true));
+                                                                   array.getDate(), size1, isDirectory, null,
+                                                                   array.getPermission(), true));
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+                    }
                 }
             }
         }
@@ -307,9 +247,14 @@ public class RootHelper {
 
     private static BaseFile parseName(String line) {
         boolean linked = false;
-        String name = "", link = "", size = "-1", date = "";
+        StringBuilder name = new StringBuilder();
+        StringBuilder link = new StringBuilder();
+        String size = "-1";
+        String date = "";
         String[] array = line.split(" ");
-        if (array.length < 6) return null;
+        if (array.length < 6) {
+            return null;
+        }
         for (String anArray : array) {
             if (anArray.contains("->") && array[0].startsWith("l")) {
                 linked = true;
@@ -322,17 +267,17 @@ public class RootHelper {
         }
         if (!linked) {
             for (int i = p + 1; i < array.length; i++) {
-                name = name + " " + array[i];
+                name.append(" ").append(array[i]);
             }
-            name = name.trim();
+            name = new StringBuilder(name.toString().trim());
         } else {
             int q = getLinkPosition(array);
             for (int i = p + 1; i < q; i++) {
-                name = name + " " + array[i];
+                name.append(" ").append(array[i]);
             }
-            name = name.trim();
+            name = new StringBuilder(name.toString().trim());
             for (int i = q + 1; i < array.length; i++) {
-                link = link + " " + array[i];
+                link.append(" ").append(array[i]);
             }
         }
         long Size = (size == null || size.trim().length() == 0) ? -1 : Long.parseLong(size);
@@ -340,12 +285,12 @@ public class RootHelper {
             ParsePosition pos = new ParsePosition(0);
             SimpleDateFormat simpledateformat = new SimpleDateFormat("yyyy-MM-dd | HH:mm", Locale.getDefault());
             Date stringDate = simpledateformat.parse(date, pos);
-            BaseFile baseFile = new BaseFile(name, array[0], stringDate.getTime(), Size);
-            baseFile.setLink(link);
+            BaseFile baseFile = new BaseFile(name.toString(), array[0], stringDate.getTime(), Size);
+            baseFile.setLink(link.toString());
             return baseFile;
         } else {
-            BaseFile baseFile = new BaseFile(name, array[0], new File("/").lastModified(), Size);
-            baseFile.setLink(link);
+            BaseFile baseFile = new BaseFile(name.toString(), array[0], new File("/").lastModified(), Size);
+            baseFile.setLink(link.toString());
             return baseFile;
         }
 
@@ -353,14 +298,18 @@ public class RootHelper {
 
     private static int getLinkPosition(String[] array) {
         for (int i = 0; i < array.length; i++) {
-            if (array[i].contains("->")) return i;
+            if (array[i].contains("->")) {
+                return i;
+            }
         }
         return 0;
     }
 
     private static int getColonPosition(String[] array) {
         for (int i = 0; i < array.length; i++) {
-            if (array[i].contains(":")) return i;
+            if (array[i].contains(":")) {
+                return i;
+            }
         }
         return -1;
     }
@@ -371,19 +320,27 @@ public class RootHelper {
         String parentFile = file.getParent();
         if (parentFile != null && parentFile.length() > 1) {
             ArrayList<String> ls = runAndWait1("ls -la " + parentFile, root);
-            if (ls == null) return file.isDirectory();
+            if (ls == null) {
+                return file.isDirectory();
+            }
             for (String s : ls) {
                 if (contains(s.split(" "), name)) {
                     try {
                         BaseFile path = parseName(s);
-                        if (path == null) return file.isDirectory();
-                        if (path.getPermission().trim().startsWith("d")) return true;
-                        else if (path.getPermission().trim().startsWith("l")) {
-                            if (count > 5)
+                        if (path == null) {
+                            return file.isDirectory();
+                        }
+                        if (path.getPermission().trim().startsWith("d")) {
+                            return true;
+                        } else if (path.getPermission().trim().startsWith("l")) {
+                            if (count > 5) {
                                 return file.isDirectory();
-                            else
+                            } else {
                                 return isDirectory(path.getLink().trim(), root, ++count);
-                        } else return file.isDirectory();
+                            }
+                        } else {
+                            return file.isDirectory();
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -403,7 +360,9 @@ public class RootHelper {
     private static boolean contains(String[] a, String name) {
         for (String s : a) {
             Log.e("checking", s);
-            if (s.equals(name)) return true;
+            if (s.equals(name)) {
+                return true;
+            }
         }
         return false;
     }

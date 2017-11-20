@@ -28,11 +28,11 @@ public class PremiumUtils {
     private static final String TAG = PremiumUtils.class.getSimpleName();
 
     private static final boolean DEBUG = false;
-    public static final String PREF_NAME = "PremiumUtils";
+    static final String PREF_NAME = "PremiumUtils";
     private static final String KEY_INSTALL_DATE = "install_date";
     private static final String KEY_LAUNCH_TIMES = "launch_times";
     private static final String KEY_ASK_LATER_DATE = "ask_later_date";
-    public static final String KEY_OPT_OUT = "opt_out";
+    static final String KEY_OPT_OUT = "opt_out";
 
     private static boolean mOptOut = false;
     private static Date mInstallDate = new Date();

@@ -19,12 +19,8 @@ package com.siju.acexplorer.storage.view;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 
 import com.siju.acexplorer.billing.BillingStatus;
-import com.siju.acexplorer.home.model.LibrarySortModel;
 import com.siju.acexplorer.model.FavInfo;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.groups.Category;
@@ -97,10 +93,6 @@ public interface StoragesUi {
 
     void performVoiceSearch(String query);
 
-    void onCreateOptionsMenu(Menu menu, MenuInflater inflater);
-
-    void onOptionsItemSelected(MenuItem menuItem);
-
     void setPremium();
 
     void showZipProgressDialog(Intent zipIntent);
@@ -115,18 +107,14 @@ public interface StoragesUi {
 
     void onFavExists();
 
-    void hideDualPane();
-
     void addHomeNavPath();
 
 
     interface Listener {
 
-        void loadData(String currentDir, Category category, boolean isPicker);
+        void loadData(String currentDir, Category category);
 
         BillingStatus checkBillingStatus();
-
-        void reloadLibraries(List<LibrarySortModel> selectedLibs);
 
         Bundle getUserPrefs();
 

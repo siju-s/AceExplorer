@@ -39,7 +39,6 @@ import com.siju.acexplorer.storage.model.task.CopyService;
 import com.siju.acexplorer.storage.model.task.CreateZipService;
 import com.siju.acexplorer.storage.model.task.ExtractService;
 import com.siju.acexplorer.storage.model.task.MoveFiles;
-import com.siju.acexplorer.storage.model.task.Progress;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +59,7 @@ import static com.siju.acexplorer.storage.model.operations.ProgressUtils.MOVE_PR
 import static com.siju.acexplorer.storage.model.operations.ProgressUtils.ZIP_PROGRESS;
 
 
-public class OperationProgress implements Progress {
+public class OperationProgress {
 
     private static final String TAG = "OperationProgress";
     private ProgressBar progressBarPaste;
@@ -329,14 +328,6 @@ public class OperationProgress implements Progress {
         filter1.addAction(EXTRACT_PROGRESS);
         filter1.addAction(ZIP_PROGRESS);
         LocalBroadcastManager.getInstance(context).registerReceiver(operationProgressReceiver, filter1);
-    }
-
-    @Override
-    public void onUpdate(Intent intent) {
- /*       Message msg = handler.obtainMessage();
-        msg.obj = intent;
-        handler.sendMessage(msg);*/
-
     }
 
 

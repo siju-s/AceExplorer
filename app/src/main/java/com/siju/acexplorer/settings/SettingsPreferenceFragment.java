@@ -61,7 +61,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
     public static final String PREFS_ANALYTICS = "prefsAnalytics";
 
     private String            currentLanguage;
-    private SharedPreferences mPrefs;
+    private SharedPreferences preferences;
     private Preference        updatePreference;
     private int               theme;
 
@@ -71,7 +71,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_settings);
         setHasOptionsMenu(true);
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         ListPreference langPreference = (ListPreference) findPreference(PREFS_LANGUAGE);
         ListPreference themePreference = (ListPreference) findPreference(PREFS_THEME);
@@ -141,13 +141,13 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
     @Override
     public void onResume() {
         super.onResume();
-        mPrefs.registerOnSharedPreferenceChangeListener(mListener);
+        preferences.registerOnSharedPreferenceChangeListener(mListener);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mPrefs.unregisterOnSharedPreferenceChangeListener(mListener);
+        preferences.unregisterOnSharedPreferenceChangeListener(mListener);
 
     }
 
@@ -276,7 +276,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
 
                         if (listPreference.getKey().equals(PREFS_THEME)) {
                             int theme = Integer.valueOf(stringValue);
-                            mPrefs.edit().putInt(CURRENT_THEME, theme).apply();
+                            preferences.edit().putInt(CURRENT_THEME, theme).apply();
                             Logger.log("TAG", "Current theme=" + SettingsPreferenceFragment.this
                                     .theme + " new theme=" + theme);
                             if (SettingsPreferenceFragment.this.theme != theme) {
@@ -362,7 +362,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
                             break;
 
                         case FileConstants.PREFS_DUAL_PANE:
-                            boolean isDualPaneEnabledSettings = mPrefs.getBoolean(FileConstants
+                            boolean isDualPaneEnabledSettings = preferences.getBoolean(FileConstants
                                                                                           .PREFS_DUAL_PANE, true);
                             Logger.log(TAG, "Dualpane=" + isDualPaneEnabledSettings);
 //                            mSendIntent.putExtra(FileConstants.PREFS_DUAL_PANE, isDualPaneEnabledSettings);

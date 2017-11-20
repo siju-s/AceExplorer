@@ -16,7 +16,6 @@
 
 package com.siju.acexplorer.home.view;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.ContextCompat;
@@ -33,8 +32,8 @@ import android.widget.ImageButton;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.home.LibrarySortActivity;
-import com.siju.acexplorer.home.model.HomeLibraryInfo;
 import com.siju.acexplorer.home.model.LibrarySortModel;
+import com.siju.acexplorer.home.types.HomeLibraryInfo;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.StorageUtils;
 import com.siju.acexplorer.model.groups.Category;
@@ -68,7 +67,7 @@ class HomeLibrary {
     private ImageButton deleteButton;
 
 
-    HomeLibrary(Activity activity, HomeUiView homeUiView, Theme theme) {
+    HomeLibrary(HomeUiView homeUiView, Theme theme) {
         this.homeUiView = homeUiView;
         this.context = homeUiView.getContext();
         this.theme = theme;

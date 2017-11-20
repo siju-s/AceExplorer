@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package com.siju.acexplorer.home.model;
+package com.siju.acexplorer.home.types;
 
 import com.siju.acexplorer.model.groups.Category;
 
+@SuppressWarnings("unused")
 public class HomeLibraryInfo {
 
-    private final String categoryName;
-    private final int resourceId;
+    private String categoryName;
+    private int resourceId;
     private int count;
     private Category category;
 
@@ -46,21 +47,17 @@ public class HomeLibraryInfo {
         return categoryName;
     }
 
-// --Commented out by Inspection START (06-11-2016 11:23 PM):
-//    public void setCategoryName(String categoryName) {
-//        this.categoryName = categoryName;
-//    }
-// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
 
     public int getResourceId() {
         return resourceId;
     }
 
-// --Commented out by Inspection START (06-11-2016 11:23 PM):
-//    public void setResourceId(int resourceId) {
-//        this.resourceId = resourceId;
-//    }
-// --Commented out by Inspection STOP (06-11-2016 11:23 PM)
+    public void setResourceId(int resourceId) {
+        this.resourceId = resourceId;
+    }
 
     public int getCount() {
         return count;

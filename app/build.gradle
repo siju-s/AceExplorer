@@ -47,6 +47,7 @@ def versionPatch = 1
 def version
 def devReleaseTask = "assembleDevRelease"
 def prodReleaseTask = "assembleProdRelease"
+def genericRelease = "assembleRelease"
 
 
 if (versionPropsFile.canRead()) {
@@ -55,7 +56,7 @@ if (versionPropsFile.canRead()) {
     List<String> runTasks = gradle.startParameter.getTaskNames()
     def isRelease = false
     for (String item : runTasks) {
-        if (item.contains(devReleaseTask) || item.contains(prodReleaseTask)) {
+        if (item.contains(devReleaseTask) || item.contains(prodReleaseTask) || item.contains(genericRelease)) {
             isRelease = true
             break
         }
@@ -70,6 +71,7 @@ if (versionPropsFile.canRead()) {
         versionProps['VERSION_BUILD'] = versionBuild.toString()
         version = new StringBuilder().append(versionMajor).append(".").append(versionMinor).append(".").
                 append(versionPatch).append(".").append("build").append(versionBuild).toString()
+        versionProps['VERSION_NAME'] = version
         versionProps.store(versionPropsFile.newWriter(), null)
     }
 } else {

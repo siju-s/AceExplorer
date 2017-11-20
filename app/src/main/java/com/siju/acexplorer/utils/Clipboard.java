@@ -8,10 +8,6 @@ import com.siju.acexplorer.R;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
 
-/**
- * Created by sj on 03/11/17.
- */
-
 public class Clipboard {
 
     public static void copyTextToClipBoard(Context context, String text) {

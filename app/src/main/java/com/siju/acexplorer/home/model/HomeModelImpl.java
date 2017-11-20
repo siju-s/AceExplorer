@@ -26,6 +26,7 @@ import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.billing.BillingStatus;
+import com.siju.acexplorer.home.types.HomeLibraryInfo;
 import com.siju.acexplorer.model.FavInfo;
 import com.siju.acexplorer.model.SharedPreferenceWrapper;
 import com.siju.acexplorer.model.groups.Category;
@@ -51,14 +52,37 @@ public class HomeModelImpl implements HomeModel {
 
     private final String TAG = this.getClass().getSimpleName();
     private final int COUNT_ZERO = 0;
-    private Context context;
-    private int resourceIds[];
-    private String labels[];
-    private Category categories[];
-    private SharedPreferences sharedPreferences;
+    private Context                 context;
+    private int                     resourceIds[];
+    private String                  labels[];
+    private Category                categories[];
+    private SharedPreferences       sharedPreferences;
     private SharedPreferenceWrapper sharedPreferenceWrapper;
-    private List<HomeLibraryInfo> homeLibraryInfoArrayList;
-    private HomeModel.Listener listener;
+    private List<HomeLibraryInfo>   homeLibraryInfoArrayList;
+    private HomeModel.Listener      listener;
+
+    public HomeModelImpl() {
+        this.context = AceApplication.getAppContext();
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        sharedPreferenceWrapper = new SharedPreferenceWrapper();
+        homeLibraryInfoArrayList = new ArrayList<>();
+        initConstants();
+    }
+
+    private void initConstants() {
+        resourceIds = new int[]{R.drawable.ic_library_images, R.drawable.ic_library_music,
+                R.drawable.ic_library_videos, R.drawable.ic_library_docs,
+                R.drawable.ic_library_downloads, R.drawable.ic_library_add};
+        labels = new String[]{context.getString(R.string
+                                                        .nav_menu_image), context.getString(R.string
+                                                                                                    .nav_menu_music), context.getString(R.string
+                                                                                                                                                .nav_menu_video), context.getString(R.string
+                                                                                                                                                                                            .home_docs), context.getString(R.string
+                                                                                                                                                                                                                                   .downloads), context.getString(R.string
+                                                                                                                                                                                                                                                                          .home_add)};
+        categories = new Category[]{IMAGE, AUDIO, VIDEO,
+                DOCS, DOWNLOADS, ADD};
+    }
 
     @Override
     public void setListener(HomeModel.Listener listener) {
@@ -68,12 +92,11 @@ public class HomeModelImpl implements HomeModel {
     @Override
     public BillingStatus getBillingStatus() {
         return BillingManager.getInstance().getInAppBillingStatus();
-//        return BillingHelper.getInstance().getInAppBillingStatus();
     }
+
 
     @Override
     public void reloadLibraries(final List<LibrarySortModel> selectedLibs) {
-        Log.d(TAG, "reloadLibraries: ");
         final List<HomeLibraryInfo> tempLibraryInfoArrayList = new ArrayList<>();
         tempLibraryInfoArrayList.addAll(homeLibraryInfoArrayList);
         homeLibraryInfoArrayList = new ArrayList<>();
@@ -97,9 +120,7 @@ public class HomeModelImpl implements HomeModel {
                         }
                     }
                     homeLibraryInfoArrayList.add(new HomeLibraryInfo(category, categoryName,
-                            resourceId,
-
-                            count));
+                            resourceId, count));
                 }
                 addPlusCategory();
                 sharedPreferenceWrapper.saveLibrary(context, selectedLibs);
@@ -112,30 +133,6 @@ public class HomeModelImpl implements HomeModel {
     @Override
     public boolean getDualModeState() {
         return sharedPreferences.getBoolean(PREFS_DUAL_PANE, false);
-    }
-
-
-    public HomeModelImpl() {
-        this.context = AceApplication.getAppContext();
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        sharedPreferenceWrapper = new SharedPreferenceWrapper();
-        homeLibraryInfoArrayList = new ArrayList<>();
-        initConstants();
-    }
-
-    private void initConstants() {
-        resourceIds = new int[]{R.drawable.ic_library_images, R.drawable.ic_library_music,
-                R.drawable.ic_library_videos, R.drawable.ic_library_docs,
-                R.drawable.ic_library_downloads, R.drawable.ic_library_add};
-        labels = new String[]{context.getString(R.string
-                .nav_menu_image), context.getString(R.string
-                .nav_menu_music), context.getString(R.string
-                .nav_menu_video), context.getString(R.string
-                .home_docs), context.getString(R.string
-                .downloads), context.getString(R.string
-                .home_add)};
-        categories = new Category[]{IMAGE, AUDIO, VIDEO,
-                DOCS, DOWNLOADS, ADD};
     }
 
 
@@ -160,7 +157,6 @@ public class HomeModelImpl implements HomeModel {
                 if (hasStoragePermission()) {
                     setupFavorites();
                 }
-
                 listener.onLibrariesFetched(homeLibraryInfoArrayList);
             }
         }).start();
@@ -188,7 +184,6 @@ public class HomeModelImpl implements HomeModel {
             Category category = savedLibraries.get(i).getCategory();
             int resourceId = getResourceIdForCategory(category);
             String name = savedLibraries.get(i).getLibraryName();//getCategoryName(context, category);
-            Log.d(TAG, "addSavedLibraries: "+name);
             addToLibrary(new HomeLibraryInfo(category, name, resourceId,
                     COUNT_ZERO));
         }
@@ -222,11 +217,7 @@ public class HomeModelImpl implements HomeModel {
         return 0;
     }
 
-
-
-
     private void addPlusCategory() {
-        Log.d(TAG, "addPlusCategory: "+labels[5]);
         addToLibrary(new HomeLibraryInfo(ADD, labels[5], getResourceIdForCategory(ADD),
                 COUNT_ZERO));
     }

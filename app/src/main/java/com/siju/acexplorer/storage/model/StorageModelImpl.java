@@ -41,7 +41,6 @@ import com.siju.acexplorer.model.helper.RootHelper;
 import com.siju.acexplorer.model.helper.SdkHelper;
 import com.siju.acexplorer.model.helper.root.RootTools;
 import com.siju.acexplorer.model.root.RootUtils;
-import com.siju.acexplorer.permission.PermissionUtils;
 import com.siju.acexplorer.storage.model.operations.FileOpsHelper;
 import com.siju.acexplorer.storage.model.operations.OperationUtils;
 import com.siju.acexplorer.storage.model.operations.Operations;
@@ -78,6 +77,7 @@ import static com.siju.acexplorer.storage.model.operations.Operations.RENAME;
 /**
  * Created by Siju on 02 September,2017
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class StorageModelImpl implements StoragesModel {
 
     private final String TAG = this.getClass().getSimpleName();
@@ -132,8 +132,8 @@ public class StorageModelImpl implements StoragesModel {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                PasteConflictChecker conflictChecker = new PasteConflictChecker(context, currentDir,
-                        rooted, isMove, info);
+                PasteConflictChecker conflictChecker = new PasteConflictChecker(currentDir,
+                                                                                rooted, isMove, info);
                 conflictChecker.setListener(pasteResultCallback);
                 conflictChecker.execute();
             }
@@ -321,11 +321,6 @@ public class StorageModelImpl implements StoragesModel {
             File newFile = new File(temp + File.separator + renamedName);
             FileOpsHelper.renameFile(Operations.HIDE, oldFile, newFile, pos.get(i), RootUtils.isRooted(context), fileOperationCallBack);
         }
-    }
-
-
-    private boolean hasStoragePermission() {
-        return PermissionUtils.hasStoragePermission();
     }
 
 

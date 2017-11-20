@@ -117,7 +117,7 @@ class LibrarySortAdapter extends RecyclerView.Adapter<LibrarySortAdapter.Library
         notifyItemMoved(fromPosition, toPosition);
     }
 
-    class LibrarySortViewHolder extends RecyclerView.ViewHolder implements
+    static class LibrarySortViewHolder extends RecyclerView.ViewHolder implements
                                                                 ItemTouchHelperViewHolder
     {
         final ImageView imageSort;

@@ -16,14 +16,13 @@
 
 package com.siju.acexplorer.home.view;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.view.ViewGroup;
 
 import com.siju.acexplorer.billing.BillingStatus;
-import com.siju.acexplorer.home.model.HomeLibraryInfo;
 import com.siju.acexplorer.home.model.LibrarySortModel;
+import com.siju.acexplorer.home.types.HomeLibraryInfo;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.storage.view.StoragesUiView;
@@ -37,14 +36,12 @@ import java.util.List;
  */
 public class HomeBridge implements HomeView {
 
-    private HomeUiView homeUiView;
-    private Context context;
+    private HomeUiView        homeUiView;
     private HomeView.Listener listener;
-    private Fragment fragment;
+    private Fragment          fragment;
 
     HomeBridge(Fragment fragment, ViewGroup parent, DrawerListener drawerListener,
                StoragesUiView.FavoriteOperation favListener) {
-        this.context = parent.getContext();
         this.fragment = fragment;
         homeUiView = HomeUiView.inflate(parent);
         homeUiView.setBridgeRef(this);
@@ -55,7 +52,6 @@ public class HomeBridge implements HomeView {
     }
 
 
-
     @Override
     public void onPause() {
         homeUiView.onPause();
@@ -63,12 +59,12 @@ public class HomeBridge implements HomeView {
 
     @Override
     public void onResume() {
-      homeUiView.onResume();
+        homeUiView.onResume();
     }
 
     @Override
     public void onExit() {
-      homeUiView.onDestroy();
+        homeUiView.onDestroy();
     }
 
     @Override
@@ -148,7 +144,7 @@ public class HomeBridge implements HomeView {
         listener.reloadLibraries(selectedLibs);
     }
 
-    public boolean getDualModeState() {
+    boolean getDualModeState() {
         return listener.getDualModeState();
     }
 }

@@ -23,9 +23,9 @@ import com.siju.acexplorer.model.helper.FileUtils;
 
 public class CopyData implements Parcelable {
     private final String filePath;
-    private final int action;
+    private final int    action;
 
-    public CopyData(String filePath) {
+    CopyData(String filePath) {
         this.filePath = filePath;
         this.action = FileUtils.ACTION_KEEP;
     }
@@ -49,9 +49,15 @@ public class CopyData implements Parcelable {
 
 
     public boolean equals(Object obj) {
-        if (obj == null) return false;
-        if (obj == this) return true;
-        if (!(obj instanceof CopyData)) return false;
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof CopyData)) {
+            return false;
+        }
         CopyData o = (CopyData) obj;
         return o.filePath.equals(this.filePath);
     }

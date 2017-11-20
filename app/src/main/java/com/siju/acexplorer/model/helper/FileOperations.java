@@ -67,7 +67,7 @@ public class FileOperations {
 
             DocumentFile document = getDocumentFile(source, true);
 
-            Log.d(TAG, " Document uri in rename=" + document);
+            Logger.log(TAG, " Document uri in rename=" + document);
             if (document != null && document.renameTo(target.getName())) {
                 return true;
             }

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.home.model.HomeLibraryInfo;
+import com.siju.acexplorer.home.types.HomeLibraryInfo;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.storage.view.custom.helper.ItemTouchHelperAdapter;
 import com.siju.acexplorer.theme.Theme;
@@ -76,7 +75,6 @@ public class HomeLibAdapter extends RecyclerView.Adapter<HomeLibAdapter.HomeLibH
         if (fromPosition == addPos || toPosition == addPos) {
             return;
         }
-        Log.d("HomeLibAdapter", "onItemMove: " + mSelectedItemsIds);
         Collections.swap(homeLibraryInfoArrayList, fromPosition, toPosition);
         mSelectedItemsIds.delete(fromPosition);
         mSelectedItemsIds.put(toPosition, true);

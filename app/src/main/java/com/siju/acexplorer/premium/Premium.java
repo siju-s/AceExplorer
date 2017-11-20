@@ -66,7 +66,6 @@ public class Premium {
     };
 
     private void showPurchaseDialog() {
-//        BillingHelper.getInstance().launchPurchaseFlow(context);
         BillingManager.getInstance().initiatePurchaseFlow(BillingManager.SKU_REMOVE_ADS,
                                                           BillingClient.SkuType.INAPP);
     }

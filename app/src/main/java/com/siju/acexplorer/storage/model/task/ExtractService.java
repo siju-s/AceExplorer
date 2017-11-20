@@ -89,7 +89,10 @@ public class ExtractService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-
+        if (intent == null) {
+            Log.e(this.getClass().getSimpleName(), "Null intent");
+            return;
+        }
         String file = intent.getStringExtra(KEY_FILEPATH);
         String newFile = intent.getStringExtra(KEY_FILEPATH2);
 

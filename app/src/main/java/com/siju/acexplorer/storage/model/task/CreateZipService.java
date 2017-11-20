@@ -87,7 +87,10 @@ public class CreateZipService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-
+        if (intent == null) {
+            Log.e(this.getClass().getSimpleName(), "Null intent");
+            return;
+        }
         name = intent.getStringExtra(KEY_FILEPATH);
         ArrayList<FileInfo> zipFiles = intent.getParcelableArrayListExtra(KEY_FILES);
         File zipName = new File(name);

@@ -18,7 +18,6 @@ package com.siju.acexplorer.storage.view;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.Formatter;
@@ -48,24 +47,25 @@ import static com.siju.acexplorer.utils.ThumbnailUtils.displayThumb;
 
 public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private static final int TYPE_ITEM   = 1;
+    private static final int TYPE_FOOTER = 2;
     private Context context;
-    private ArrayList<FileInfo> fileInfoArrayList = new ArrayList<>();
-    private SparseBooleanArray mSelectedItemsIds;
-    private final SparseBooleanArray mAnimatedPos = new SparseBooleanArray();
-    boolean mStopAnimation;
+
+    private       ArrayList<FileInfo> fileInfoArrayList     = new ArrayList<>();
+    private final ArrayList<FileInfo> fileInfoArrayListCopy = new ArrayList<>();
+    private final SparseBooleanArray  mAnimatedPos          = new SparseBooleanArray();
+    private SparseBooleanArray      mSelectedItemsIds;
     private OnItemClickListener     mItemClickListener;
     private OnItemLongClickListener mOnItemLongClickListener;
     private Category                category;
-    private final Uri mAudioUri = Uri.parse("content://media/external/audio/albumart");
+
     private final int mViewMode;
-    private final ArrayList<FileInfo> fileInfoArrayListCopy = new ArrayList<>();
-    private       int                 draggedPos            = -1;
+    private int draggedPos = -1;
     private final int mAnimation;
-    private int     offset        = 0;
+    private int offset = 0;
+    boolean mStopAnimation;
     private boolean mIsAnimNeeded = true;
     private final boolean mIsThemeDark;
-    private static final int TYPE_ITEM   = 1;
-    private static final int TYPE_FOOTER = 2;
 
 
     public FileListAdapter(Context context, ArrayList<FileInfo>
@@ -100,7 +100,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.fileInfoArrayList = fileList;
     }
 
-    void clear() {
+    private void clear() {
         fileInfoArrayList = new ArrayList<>();
     }
 
@@ -217,16 +217,8 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemViewType(int position) {
-/*        if (isPositionFooter(position)) {
-            return TYPE_FOOTER;
-        }*/
         return TYPE_ITEM;
     }
-
-    private boolean isPositionFooter(int position) {
-        return position == fileInfoArrayList.size();
-    }
-
 
     private void animate(FileListViewHolder fileListViewHolder) {
         fileListViewHolder.container.clearAnimation();
@@ -428,7 +420,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private SearchCallback searchCallback;
 
-    public void setSearchCallback(SearchCallback searchCallback) {
+    void setSearchCallback(SearchCallback searchCallback) {
         this.searchCallback = searchCallback;
     }
 

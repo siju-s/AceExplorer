@@ -24,7 +24,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 
 public class CustomGridLayoutManager extends GridLayoutManager {
-    // --Commented out by Inspection (06-11-2016 11:23 PM):private final String TAG = this.getClass().getSimpleName();
     private static final float MILLISECONDS_PER_INCH = 500f;
 
     public CustomGridLayoutManager(Context context, int spanCount) {

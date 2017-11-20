@@ -73,8 +73,6 @@ public class ViewHelper {
                 openWith(uri, context);
             }
         }
-
     }
-
 
 }

@@ -4,9 +4,6 @@ import com.bumptech.glide.load.Key;
 
 import java.security.MessageDigest;
 
-/**
- * Created by sj on 29/10/17.
- */
 
 public class CustomKey implements Key {
 

@@ -16,7 +16,6 @@
 
 package com.siju.acexplorer.model.helper;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -73,40 +72,4 @@ public class MediaStoreHelper {
         }
         return deleted;
     }
-
-    public static Uri insertMedia(Context context, String path, int category) {
-        ContentResolver resolver = context.getContentResolver();
-        Uri newUri ;
-        Uri filesUri;
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(MediaStore.MediaColumns.DATA, path);
-
-        switch (category) {
-            case 1:
-                Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-                newUri = resolver.insert(musicUri, contentValues);
-                break;
-
-            case 2:
-                Uri videoUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-                newUri = resolver.insert(videoUri, contentValues);
-                break;
-
-            case 3:
-                Uri imageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                newUri = resolver.insert(imageUri, contentValues);
-                break;
-
-            case 4:
-                filesUri = MediaStore.Files.getContentUri("external");
-                newUri = resolver.insert(filesUri, contentValues);
-                break;
-            default:
-                filesUri = MediaStore.Files.getContentUri("external");
-                newUri = resolver.insert(filesUri, contentValues);
-                break;
-        }
-        return newUri;
-    }
-
 }

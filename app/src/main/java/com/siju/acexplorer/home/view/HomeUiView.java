@@ -46,7 +46,7 @@ import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileConstants;
 import com.siju.acexplorer.storage.view.FileList;
 import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.home.model.HomeLibraryInfo;
+import com.siju.acexplorer.home.types.HomeLibraryInfo;
 import com.siju.acexplorer.home.model.LibrarySortModel;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.permission.PermissionUtils;
@@ -68,14 +68,14 @@ public class HomeUiView extends CoordinatorLayout {
     private final String TAG = this.getClass().getSimpleName();
     private AdView mAdView;
     private boolean isPremium = true;
-    private NestedScrollView nestedScrollViewHome;
-    private Theme theme;
-    private Toolbar toolbar;
-    private boolean isDualModeActive;
-    private Fragment fragment;
-    private HomeBridge bridge;
-    private HomeLibrary library;
-    private DrawerListener drawerListener;
+    private NestedScrollView                 nestedScrollViewHome;
+    private Theme                            theme;
+    private Toolbar                          toolbar;
+    private boolean                          isDualModeActive;
+    private Fragment                         fragment;
+    private HomeBridge                       bridge;
+    private HomeLibrary                      library;
+    private DrawerListener                   drawerListener;
     private StoragesUiView.FavoriteOperation favListener;
 
     public HomeUiView(Context context, AttributeSet attrs) {
@@ -85,8 +85,7 @@ public class HomeUiView extends CoordinatorLayout {
 
     public static HomeUiView inflate(ViewGroup parent) {
         return (HomeUiView) LayoutInflater.from(parent.getContext()).inflate(R.layout.homescreen,
-                parent,
-                false);
+                                                                             parent,  false);
     }
 
     @Override
@@ -99,7 +98,6 @@ public class HomeUiView extends CoordinatorLayout {
         nestedScrollViewHome = findViewById(R.id.scrollLayoutHome);
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(getResources().getString(R.string.app_name));
-
         setTheme();
     }
 
@@ -131,7 +129,7 @@ public class HomeUiView extends CoordinatorLayout {
     void initialize() {
         setupToolbar();
 
-        library = new HomeLibrary(getActivity(), this, theme);
+        library = new HomeLibrary(this, theme);
         new HomeStorages(this, theme);
 
         checkBillingStatus();
@@ -141,7 +139,7 @@ public class HomeUiView extends CoordinatorLayout {
 
     private void checkBillingStatus() {
         BillingStatus billingStatus = bridge.checkBillingStatus();
-        Log.d(TAG, "checkBillingStatus: "+billingStatus);
+        Log.d(TAG, "checkBillingStatus: " + billingStatus);
         switch (billingStatus) {
             case PREMIUM:
                 onPremiumVersion();
@@ -217,7 +215,7 @@ public class HomeUiView extends CoordinatorLayout {
     }
 
     public void onLibrariesFetched(List<HomeLibraryInfo> libraries) {
-        Log.d(TAG, "onLibrariesFetched: "+libraries.size());
+        Log.d(TAG, "onLibrariesFetched: " + libraries.size());
         library.setLibraries(libraries);
         loadData(libraries);
     }
@@ -249,8 +247,7 @@ public class HomeUiView extends CoordinatorLayout {
             // Add the AdView to the view hierarchy. The view will have no size until the ad is
             // loaded.
             adviewLayout.addView(mAdView);
-        }
-        else {
+        } else {
             ((LinearLayout) mAdView.getParent()).removeAllViews();
             adviewLayout.addView(mAdView);
             // Reload Ad if necessary.  Loaded ads are lost when the activity is paused.
@@ -303,13 +300,11 @@ public class HomeUiView extends CoordinatorLayout {
             ArrayList<LibrarySortModel> selectedLibs = data.getParcelableArrayListExtra
                     (FileConstants.KEY_LIB_SORTLIST);
             if (selectedLibs != null) {
-                reload = true;
                 bridge.reloadLibraries(selectedLibs);
             }
         }
     }
 
-    private boolean reload;
 
     void loadFileList(String path, Category category) {
         if (path == null) {

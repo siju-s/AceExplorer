@@ -28,7 +28,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -372,8 +371,7 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
                     final String oldFilePath = fileInfoList.get(selectedItems.keyAt(0)).
                             getFilePath();
                     int renamedPosition = selectedItems.keyAt(0);
-                    String parent = new File(oldFilePath).getParent();
-                    renameDialog(oldFilePath, parent, renamedPosition);
+                    renameDialog(oldFilePath, renamedPosition);
                     endActionMode();
                 }
                 break;
@@ -521,7 +519,7 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
     }
 
 
-    private void renameDialog(final String oldFilePath, final String parentDir, final int
+    private void renameDialog(final String oldFilePath, final int
             position) {
         String fileName;
         if (new File(oldFilePath).isFile()) {
@@ -573,17 +571,6 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
         bottomToolbar.setVisibility(View.VISIBLE);
     }
 
-    void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.d(TAG, "onCreateOptionsMenu: " + menu);
-//        inflater.inflate(R.menu.file_base, menu);
-//        setupMenuItems(menu);
-    }
-
-
-    void onOptionsSelectedMenu(MenuItem menuItem) {
-        //no-op
-    }
-
     void setToolbarText(String text) {
         toolbar.setTitle(text);
     }
@@ -595,8 +582,10 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
         searchView.setOnQueryTextListener(this);
 
         SearchManager searchManager = (SearchManager) context.getSystemService(Context.SEARCH_SERVICE);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(storagesUiView.getActivity()
-                                                                             .getComponentName()));
+        if (searchManager != null) {
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(storagesUiView.getActivity()
+                                                                                 .getComponentName()));
+        }
         searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
@@ -708,7 +697,7 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
         @Override
         public void onPositiveButtonClick(Dialog dialog, Operations operation, String
                 newFileName, String extension, ArrayList<FileInfo> paths) {
-            storagesUiView.onCompressPosClick(dialog, operation, newFileName, extension, paths);
+            storagesUiView.onCompressPosClick(dialog, newFileName, extension, paths);
         }
 
         @Override

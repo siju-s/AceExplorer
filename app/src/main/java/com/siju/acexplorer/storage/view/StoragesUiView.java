@@ -16,6 +16,7 @@
 
 package com.siju.acexplorer.storage.view;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
@@ -46,9 +47,6 @@ import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,7 +76,6 @@ import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.permission.PermissionUtils;
 import com.siju.acexplorer.storage.model.BackStackModel;
-import com.siju.acexplorer.storage.model.CopyData;
 import com.siju.acexplorer.storage.model.ViewMode;
 import com.siju.acexplorer.storage.model.backstack.BackStackInfo;
 import com.siju.acexplorer.storage.model.backstack.NavigationCallback;
@@ -132,6 +129,7 @@ import static com.siju.acexplorer.view.dialog.DialogHelper.openWith;
 /**
  * Created by Siju on 02 September,2017
  */
+@SuppressLint("ClickableViewAccessibility")
 public class StoragesUiView extends CoordinatorLayout implements View.OnClickListener,
                                                                  NavigationCallback,
                                                                  FileListAdapter.SearchCallback
@@ -175,7 +173,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     private MenuControls        menuControls;
     private DragHelper          dragHelper;
 
-    private boolean isInSelectionMode;
     private boolean isHomeScreenEnabled;
     private int     position;
     private String  filePath;
@@ -507,6 +504,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 .OnFloatingActionsMenuUpdateListener()
         {
 
+            @SuppressLint("ClickableViewAccessibility")
             @Override
             public void onMenuExpanded() {
                 frameLayoutFab.getBackground().setAlpha(240);
@@ -615,7 +613,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         if (isZipMode()) {
             zipViewer.loadData();
         } else {
-            bridge.loadData(currentDir, category, false);
+            bridge.loadData(currentDir, category);
         }
     }
 
@@ -805,7 +803,10 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             } else if (action.equals(ACTION_OP_REFRESH)) {
 
                 Bundle bundle = intent.getExtras();
-                Operations operation = (Operations) bundle.getSerializable(KEY_OPERATION);
+                Operations operation = null;
+                if (bundle != null) {
+                    operation = (Operations) bundle.getSerializable(KEY_OPERATION);
+                }
                 onOperationResult(intent, operation);
             }
         }
@@ -1181,17 +1182,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         return isZipViewer;
     }
 
-    public void resetZipMode() {
-        isZipViewer = false;
-    }
-
-
-    public void onReset() {
-        // Clear the data in the adapter.
-        Log.d(TAG, "onLoaderReset: ");
-        fileListAdapter.updateAdapter(null);
-    }
-
     void onDataLoaded(ArrayList<FileInfo> data) {
         mSwipeRefreshLayout.setRefreshing(false);
 
@@ -1374,7 +1364,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         }
     }
 
-    public void onFileExists(Operations operation, String msg) {
+    public void onFileExists(Operations operation) {
         switch (operation) {
             case FOLDER_CREATION:
             case FILE_CREATION:
@@ -1402,7 +1392,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     public void showPasteProgressDialog(String destinationDir, List<FileInfo> files,
-                                        List<CopyData> copyData, boolean isMove) {
+                                        boolean isMove) {
         Log.d(TAG, "showPasteProgressDialog: " + files.size());
         new OperationProgress().showPasteProgress(getContext(), destinationDir, files,
                                                   isMove);
@@ -1474,7 +1464,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         return bridge.getSortMode();
     }
 
-    public void onCompressPosClick(Dialog dialog, Operations operation, String newFileName,
+    public void onCompressPosClick(Dialog dialog, String newFileName,
                                    String extension, ArrayList<FileInfo> paths) {
         this.dialog = dialog;
         String newFilePath = currentDir + File.separator + newFileName + extension;
@@ -1510,15 +1500,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     public void performVoiceSearch(String query) {
         Analytics.getLogger().searchClicked(true);
         menuControls.performVoiceSearch(query);
-    }
-
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menuControls.onCreateOptionsMenu(menu, inflater);
-
-    }
-
-    public void onOptionsItemSelected(MenuItem menuItem) {
-        menuControls.onOptionsSelectedMenu(menuItem);
     }
 
     public void onQueryTextChange(String query) {
@@ -1674,6 +1655,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         new OperationProgress().showZipProgressDialog(getContext(), zipIntent);
     }
 
+    @SuppressWarnings("unused")
     public void onOperationFailed(Operations operation) {
         Toast.makeText(getContext(), R.string.msg_operation_failed, Toast
                 .LENGTH_SHORT).show();
@@ -1697,7 +1679,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     private void startActionMode() {
         isActionModeActive = true;
         hideFab();
-        isInSelectionMode = true;
         draggedData.clear();
         menuControls.startActionMode();
     }
@@ -1820,7 +1801,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
         isDragStarted = false;
         isActionModeActive = false;
-        isInSelectionMode = false;
         clearSelection();
         clearSelectedPos();
         menuControls.hideBottomToolbar();

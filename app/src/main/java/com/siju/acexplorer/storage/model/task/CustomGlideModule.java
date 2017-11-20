@@ -9,10 +9,6 @@ import com.bumptech.glide.Registry;
 import com.bumptech.glide.annotation.GlideModule;
 import com.bumptech.glide.module.AppGlideModule;
 
-/**
- * Created by sj on 29/10/17.
- */
-
 @GlideModule
 public class CustomGlideModule extends AppGlideModule {
 

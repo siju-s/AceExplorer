@@ -44,15 +44,15 @@ import static com.siju.acexplorer.model.StorageUtils.getInternalStorage;
 
 public class NavigationInfo {
     private static final String TAG = "NavigationInfo";
+    private Context              context;
+    private LinearLayout         navDirectory;
+    private HorizontalScrollView scrollNavigation;
+    private NavigationCallback   navigationCallback;
+    private ArrayList<String> externalSDPaths = new ArrayList<>();
     private String currentDir;
     private String initialDir = getInternalStorage();
-    private Context context;
-    private NavigationCallback navigationCallback;
     private boolean isCurrentDirRoot;
-    private String STORAGE_INTERNAL, STORAGE_ROOT, STORAGE_EXTERNAL;
-    private ArrayList<String> externalSDPaths = new ArrayList<>();
-    private LinearLayout navDirectory;
-    private HorizontalScrollView scrollNavigation;
+    private String  STORAGE_INTERNAL, STORAGE_ROOT, STORAGE_EXTERNAL;
 
 
     public NavigationInfo(StoragesUiView storagesUiView, NavigationCallback navigationCallback) {
@@ -88,14 +88,14 @@ public class NavigationInfo {
 
     }
 
-    private void checkIfFavIsRootDir() {
-
-        if (!currentDir.contains(getInternalStorage()) && !externalSDPaths.contains
-                (currentDir)) {
-            isCurrentDirRoot = true;
-            initialDir = File.separator;
-        }
-    }
+//    private void checkIfFavIsRootDir() {
+//
+//        if (!currentDir.contains(getInternalStorage()) && !externalSDPaths.contains
+//                (currentDir)) {
+//            isCurrentDirRoot = true;
+//            initialDir = File.separator;
+//        }
+//    }
 
     public void addHomeNavButton(boolean isHomeScreenEnabled, Category category) {
 
@@ -186,7 +186,7 @@ public class NavigationInfo {
         currentDir = path;
         String dir = "";
         addHomeNavButton(isHomeScreenEnabled, category);
-        Log.d(TAG, "setNavDirectory: initialDir:"+initialDir);
+        Log.d(TAG, "setNavDirectory: initialDir:" + initialDir);
         // If root dir , parts will be 0
         if (parts.length == 0) {
 
@@ -218,7 +218,7 @@ public class NavigationInfo {
 
     private void setNavDir(String dir, String parts) {
 
-        Log.d(TAG, "setNavDir: "+dir);
+        Log.d(TAG, "setNavDir: " + dir);
 
 
         int WRAP_CONTENT = LinearLayout.LayoutParams.WRAP_CONTENT;
@@ -233,7 +233,7 @@ public class NavigationInfo {
         } else {
             ImageView navArrow = new ImageView(context);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(WRAP_CONTENT,
-                    WRAP_CONTENT);
+                                                                                   WRAP_CONTENT);
             layoutParams.leftMargin = 20;
             layoutParams.gravity = Gravity.CENTER_VERTICAL;
             navArrow.setImageResource(R.drawable.ic_arrow_nav);
@@ -316,11 +316,11 @@ public class NavigationInfo {
         }
     }
 
-    public void addViewToNavigation(View view) {
+    private void addViewToNavigation(View view) {
         navDirectory.addView(view);
     }
 
-    public void clearNavigation() {
+    private void clearNavigation() {
         navDirectory.removeAllViews();
     }
 
@@ -328,14 +328,13 @@ public class NavigationInfo {
         scrollNavigation.setVisibility(View.VISIBLE);
     }
 
-    public void scrollNavigation() {
+    private void scrollNavigation() {
         scrollNavigation.postDelayed(new Runnable() {
             public void run() {
                 scrollNavigation.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
             }
         }, 100L);
     }
-
 
 
 }

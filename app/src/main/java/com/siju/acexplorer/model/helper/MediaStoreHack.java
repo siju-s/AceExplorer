@@ -110,9 +110,11 @@ public class MediaStoreHack {
         ContentResolver resolver = context.getContentResolver();
 
         Cursor filecursor = resolver.query(MediaStore.Files.getContentUri("external"),
-                new String[]{BaseColumns._ID}, MediaStore.MediaColumns.DATA + " = ?",
-                new String[]{path}, MediaStore.MediaColumns.DATE_ADDED + " desc");
-        if (filecursor == null) return null;
+                                           new String[]{BaseColumns._ID}, MediaStore.MediaColumns.DATA + " = ?",
+                                           new String[]{path}, MediaStore.MediaColumns.DATE_ADDED + " desc");
+        if (filecursor == null) {
+            return null;
+        }
         filecursor.moveToFirst();
 
         if (filecursor.isAfterLast()) {
@@ -135,7 +137,7 @@ public class MediaStoreHack {
         String uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI.toString();
         Uri parse;
         Cursor query = contentResolver.query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                new String[]{MediaStore.Audio.Media._ID, musicType}, "_data=?", new String[]{path}, null);
+                                             new String[]{MediaStore.Audio.Media._ID, musicType}, "_data=?", new String[]{path}, null);
         if (query != null) {
             try {
                 if (query.getCount() != 0) {
@@ -200,7 +202,7 @@ public class MediaStoreHack {
         };
         final ContentResolver contentResolver = context.getContentResolver();
         Cursor cursor = contentResolver.query(filesUri, ALBUM_PROJECTION,
-                MediaStore.MediaColumns.DATA + "=?", selectionArgs, null);
+                                              MediaStore.MediaColumns.DATA + "=?", selectionArgs, null);
         if (cursor == null || !cursor.moveToFirst()) {
             if (cursor != null) {
                 cursor.close();
@@ -273,12 +275,16 @@ public class MediaStoreHack {
                 }
             } finally {
                 try {
-                    if (out != null) out.close();
+                    if (out != null) {
+                        out.close();
+                    }
                 } catch (IOException ignored) {
 
                 }
                 try {
-                    if (in != null) in.close();
+                    if (in != null) {
+                        in.close();
+                    }
                 } catch (IOException ignored) {
 
                 }
@@ -292,28 +298,6 @@ public class MediaStoreHack {
         if (file.exists()) {
             return file.isDirectory();
         }
-/*
-        ContentValues values;
-        Uri uri;
-        Uri filesUri =  MediaStore.Files.getContentUri("external");
-        Uri imagesUri  = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-
-        // Create a media database entry for the directory. This step will not actually cause the directory to be
-        created.
-        values = new ContentValues();
-        values.put(MediaStore.Files.FileColumns.DATA, file.getAbsolutePath());
-        final ContentResolver contentResolver = context.getContentResolver();
-        contentResolver.insert(filesUri, values);
-
-        // Create an entry for a temporary image file within the created directory.
-        // This step actually causes the creation of the directory.
-        values = new ContentValues();
-        values.put(MediaStore.Files.FileColumns.DATA, file.getAbsolutePath() + "/temp.jpg");
-        uri = contentResolver.insert(imagesUri, values);
-
-        // Delete the temporary entry.
-        contentResolver.delete(uri, null, null);*/
-
         final File tmpFile = new File(file, ".MediaWriteTemp");
         Context context = AceApplication.getAppContext();
         final int albumId = getTemporaryAlbumId(context);
@@ -330,8 +314,9 @@ public class MediaStoreHack {
         }
         try {
             final ParcelFileDescriptor fd = contentResolver.openFileDescriptor(albumUri, "r");
-            if (fd != null)
+            if (fd != null) {
                 fd.close();
+            }
         } catch (SecurityException e) { //TODO find solution to remove this
             e.printStackTrace();
         } finally {
