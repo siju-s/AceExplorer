@@ -34,23 +34,33 @@ import com.siju.acexplorer.utils.LocaleHelper;
 @SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity {
 
-
     private Theme currentTheme;
 
     @Override
     protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(LocaleHelper.setLanguage(newBase));
-    }
-
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-
         BaseModel baseModel = new BaseModelImpl();
         BasePresenter basePresenter = new BasePresenterImpl(baseModel);
         currentTheme = basePresenter.getTheme();
-        setTheme();
+        Context context = LocaleHelper.setLanguage(newBase, getThemeId());
+        super.attachBaseContext(LocaleHelper.setLanguage(context, 0));
+    }
 
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        setTheme();
         super.onCreate(savedInstanceState);
+    }
+
+
+    private int getThemeId() {
+        switch (currentTheme) {
+            case DARK:
+               return R.style.BaseDarkTheme;
+            case LIGHT:
+                return R.style.BaseLightTheme;
+        }
+        return R.style.BaseDarkTheme;
     }
 
     private void setTheme() {

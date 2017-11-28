@@ -99,7 +99,7 @@ public class StoragesGroup {
         long totalSpaceRoot = getTotalSpace(systemDir);
         int leftProgressRoot = (int) (((float) spaceLeftRoot / totalSpaceRoot) * 100);
         int progressRoot = 100 - leftProgressRoot;
-        totalStorages.add(new SectionItems(STORAGE_ROOT, storageSpace(spaceLeftRoot, totalSpaceRoot), R.drawable
+        totalStorages.add(new SectionItems(null, storageSpace(spaceLeftRoot, totalSpaceRoot), R.drawable
                 .ic_root_white, FileUtils.getAbsolutePath(rootDir), progressRoot, null, ROOT));
     }
 
@@ -108,18 +108,17 @@ public class StoragesGroup {
         List<String> storagePaths = getStorageDirectories();
         Log.d("StoragesGroup", "addStorages: storageSize:" + storagesList.size() + "fetched:" + storagePaths.size());
         externalSDPaths = new ArrayList<>();
+        storagesList = new ArrayList<>();
         StorageUtils.StorageType storageType;
         for (String path : storagePaths) {
             File file = new File(path);
             int icon;
-            String name;
+            String name = null;
             if (STORAGE_EMULATED_LEGACY.equals(path) || STORAGE_EMULATED_0.equals(path)) {
-                name = STORAGE_INTERNAL;
                 icon = R.drawable.ic_phone_white;
                 storageType = INTERNAL;
 
             } else if (STORAGE_SDCARD1.equals(path)) {
-                name = STORAGE_EXTERNAL;
                 icon = R.drawable.ic_ext_white;
                 storageType = EXTERNAL;
                 externalSDPaths.add(path);
@@ -153,7 +152,7 @@ public class StoragesGroup {
 
     private String storageSpace(long spaceLeft, long totalSpace) {
         Context context = AceApplication.getAppContext();
-        String freePlaceholder = " " + context.getResources().getString(R.string.msg_free) + " ";
+        String freePlaceholder = "/"; //" " + context.getResources().getString(R.string.msg_free) + " ";
         return FileUtils.formatSize(context, spaceLeft) + freePlaceholder +
                 FileUtils.formatSize(context, totalSpace);
     }

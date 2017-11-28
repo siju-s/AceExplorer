@@ -37,27 +37,28 @@ import android.widget.LinearLayout;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
-import com.siju.acexplorer.analytics.Analytics;
-import com.siju.acexplorer.storage.view.StoragesUiView;
-import com.siju.acexplorer.view.DrawerListener;
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.billing.BillingStatus;
+import com.siju.acexplorer.home.model.LibrarySortModel;
+import com.siju.acexplorer.home.types.HomeLibraryInfo;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileConstants;
-import com.siju.acexplorer.storage.view.FileList;
 import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.home.types.HomeLibraryInfo;
-import com.siju.acexplorer.home.model.LibrarySortModel;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.permission.PermissionUtils;
+import com.siju.acexplorer.storage.view.FileList;
+import com.siju.acexplorer.storage.view.StoragesUiView;
 import com.siju.acexplorer.theme.Theme;
 import com.siju.acexplorer.theme.ThemeUtils;
+import com.siju.acexplorer.view.AceActivity;
+import com.siju.acexplorer.view.DrawerListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.siju.acexplorer.model.FileConstants.KEY_CATEGORY;
 import static com.siju.acexplorer.home.view.HomeLibrary.LIBSORT_REQUEST_CODE;
+import static com.siju.acexplorer.model.FileConstants.KEY_CATEGORY;
 import static com.siju.acexplorer.model.groups.StoragesGroup.STORAGE_EMULATED_0;
 
 /**
@@ -134,7 +135,8 @@ public class HomeUiView extends CoordinatorLayout {
 
         checkBillingStatus();
         initializeListeners();
-        isDualModeActive = bridge.getDualModeState() && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+        isDualModeActive = bridge.getDualModeState() && getResources().getConfiguration().orientation
+                == Configuration.ORIENTATION_LANDSCAPE;
     }
 
     private void checkBillingStatus() {
@@ -151,6 +153,9 @@ public class HomeUiView extends CoordinatorLayout {
         }
     }
 
+    Configuration getConfiguration() {
+        return ((AceActivity)getActivity()).getConfiguration();
+    }
 
     private void initializeListeners() {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -342,12 +347,11 @@ public class HomeUiView extends CoordinatorLayout {
         isDualModeActive = true;
     }
 
-    @Override
-    public void onConfigurationChanged(final Configuration newConfig) {
 
+    public void onConfigChanged(final Configuration newConfig) {
+        Logger.log(TAG, "onConfigChanged " + newConfig.orientation);
         super.onConfigurationChanged(newConfig);
-        library.onOrientationChanged(newConfig.orientation);
-        Logger.log(TAG, "onConfigurationChanged " + newConfig.orientation);
+        library.onOrientationChanged(newConfig);
     }
 
 

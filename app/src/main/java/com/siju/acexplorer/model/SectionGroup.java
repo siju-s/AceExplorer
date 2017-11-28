@@ -27,9 +27,8 @@ public class SectionGroup {
     private DrawerGroup             groups;
 
 
-    public SectionGroup(String mHeader, ArrayList<SectionItems> mChildItems, DrawerGroup drawerGroup) {
+    public SectionGroup(ArrayList<SectionItems> mChildItems, DrawerGroup drawerGroup) {
         this.groups = drawerGroup;
-        this.mHeader = mHeader;
         this.mChildItems = mChildItems;
     }
 

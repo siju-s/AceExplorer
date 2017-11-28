@@ -17,6 +17,7 @@
 package com.siju.acexplorer.view;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -111,6 +112,11 @@ public class MainBridge implements MainUi {
     @Override
     public void setDualPaneFocusState(boolean isDualPaneInFocus) {
         uiView.setDualPaneFocusState(isDualPaneInFocus);
+    }
+
+    @Override
+    public void onConfigChanged(Configuration newConfig) {
+        uiView.onConfigChanged(newConfig);
     }
 
     @Override

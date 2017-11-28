@@ -17,6 +17,7 @@
 package com.siju.acexplorer.utils;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -30,10 +31,19 @@ import java.util.Locale;
 import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastAPI17;
 import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastNougat;
 
-public class LocaleHelper {
+public class LocaleHelper extends ContextWrapper {
+
 
     private static final String SELECTED_LANGUAGE = "prefs_lang";
     private static final String TAG                  = "LocaleHelper";
+
+//    public LocaleHelper(Context base, int theme) {
+//        super(base, theme);
+//    }
+
+    public LocaleHelper(Context base) {
+        super(base);
+    }
 
     public static String getLanguage(Context context) {
         return getPersistedData(context, Locale.getDefault().getLanguage());
@@ -44,7 +54,7 @@ public class LocaleHelper {
         return preferences.getString(SELECTED_LANGUAGE, defaultLanguage);
     }
 
-    public static Context setLanguage(Context context) {
+    public static Context setLanguage(Context context, int theme) {
         String currentLanguage = getLanguage(context);
         Logger.log(TAG, "setLanguage: current:"+currentLanguage + " defult:"+Locale.getDefault().getLanguage());
 
@@ -89,5 +99,6 @@ public class LocaleHelper {
         return context;
 
     }
+
 
 }

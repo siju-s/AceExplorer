@@ -17,6 +17,7 @@
 package com.siju.acexplorer.home.view;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -100,8 +101,13 @@ public class HomeScreenFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        homeView.onConfigChanged(newConfig);
+        super.onConfigurationChanged(newConfig);
+    }
+
+     @Override
     public void onDestroy() {
         homeView.onExit();
         super.onDestroy();

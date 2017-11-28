@@ -18,6 +18,7 @@ package com.siju.acexplorer.home.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -39,6 +40,7 @@ import com.siju.acexplorer.model.StorageUtils;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.storage.view.custom.helper.SimpleItemTouchHelperCallback;
 import com.siju.acexplorer.theme.Theme;
+import com.siju.acexplorer.utils.ConfigurationHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,7 +99,7 @@ class HomeLibrary {
         } else {
             deleteButton.setImageResource(R.drawable.ic_delete_white);
         }
-        currentOrientation = context.getResources().getConfiguration().orientation;
+        currentOrientation = homeUiView.getConfiguration().orientation;
         initList();
         setListeners();
         homeUiView.getLibraries();
@@ -110,7 +112,7 @@ class HomeLibrary {
         homeLibAdapter = new HomeLibAdapter(context, homeLibraryInfoArrayList, theme);
         homeLibAdapter.setHasStableIds(true);
         libraryList.getItemAnimator().setChangeDuration(0);
-        setGridColumns();
+        setGridColumns(homeUiView.getConfiguration());
 
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(homeLibAdapter);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
@@ -216,8 +218,8 @@ class HomeLibrary {
     }
 
 
-    private void setGridColumns() {
-        int gridColumns = context.getResources().getInteger(R.integer.homescreen_columns);
+    private void setGridColumns(Configuration configuration) {
+        int gridColumns = ConfigurationHelper.getHomeGridCols(configuration);//context.getResources().getInteger(R.integer.homescreen_columns);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(context, gridColumns);
         Log.d(TAG, "setGridColumns: " + gridColumns);
         libraryList.setLayoutManager(gridLayoutManager);
@@ -280,10 +282,12 @@ class HomeLibrary {
         return category.equals(FAVORITES);
     }
 
-    void onOrientationChanged(int orientation) {
+    void onOrientationChanged(Configuration configuration) {
+        int orientation = configuration.orientation;
+        Log.d(TAG, "onOrientationChanged: old:"+currentOrientation + " neew:"+orientation);
         if (currentOrientation != orientation) {
             currentOrientation = orientation;
-            setGridColumns();
+            setGridColumns(configuration);
             inflateLibraryItem();
         }
     }

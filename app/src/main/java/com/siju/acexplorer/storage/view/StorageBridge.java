@@ -18,12 +18,10 @@ package com.siju.acexplorer.storage.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.ViewGroup;
 
 import com.siju.acexplorer.billing.BillingStatus;
@@ -244,8 +242,13 @@ public class StorageBridge implements StoragesUi {
     }
 
     @Override
+    public void onConfigChanged(Configuration configuration) {
+        storagesUiView.onConfigurationChanged(configuration);
+    }
+
+    @Override
     public void refreshSpan() {
-        storagesUiView.refreshSpan();
+        storagesUiView.changeGridCols();
     }
 
     @Override
@@ -388,7 +391,6 @@ public class StorageBridge implements StoragesUi {
 
     void updateFavorites(ArrayList<FavInfo> favInfoArrayList) {
         listener.updateFavorites(favInfoArrayList);
-
     }
 
     void renameFile(String filePath, String parentDir, String name, int position,

@@ -17,6 +17,7 @@
 package com.siju.acexplorer.storage.view;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -47,6 +48,8 @@ public interface StoragesUi {
     void onDataLoaded(ArrayList<FileInfo> data);
 
     void handleActivityResult(int requestCode, int resultCode, Intent intent);
+
+    void onConfigChanged(Configuration configuration);
 
     void init();
 

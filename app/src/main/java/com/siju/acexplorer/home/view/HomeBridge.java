@@ -17,6 +17,7 @@
 package com.siju.acexplorer.home.view;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.support.v4.app.Fragment;
 import android.view.ViewGroup;
 
@@ -126,6 +127,11 @@ public class HomeBridge implements HomeView {
     @Override
     public void setPremium() {
         homeUiView.setPremium();
+    }
+
+    @Override
+    public void onConfigChanged(Configuration newConfig) {
+        homeUiView.onConfigChanged(newConfig);
     }
 
     void getLibraries() {

@@ -21,7 +21,6 @@ import android.content.Context;
 import android.os.StrictMode;
 
 import com.crashlytics.android.Crashlytics;
-import com.siju.acexplorer.utils.LocaleHelper;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -30,10 +29,6 @@ public class AceApplication extends Application {
 
     private static Context appContext;
 
-    @Override
-    protected void attachBaseContext(Context context) {
-        super.attachBaseContext(LocaleHelper.setLanguage(context));
-    }
 
     @Override
     public void onCreate() {

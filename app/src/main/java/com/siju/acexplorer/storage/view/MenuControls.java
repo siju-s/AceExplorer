@@ -131,6 +131,8 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
     }
 
 
+
+
     @SuppressWarnings("ConstantConditions")
     private void setToolbar() {
         toolbar.setTitle(R.string.app_name);
@@ -580,6 +582,7 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
         searchView.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
         searchView.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         searchView.setOnQueryTextListener(this);
+        searchView.setMaxWidth(Integer.MAX_VALUE);
 
         SearchManager searchManager = (SearchManager) context.getSystemService(Context.SEARCH_SERVICE);
         if (searchManager != null) {

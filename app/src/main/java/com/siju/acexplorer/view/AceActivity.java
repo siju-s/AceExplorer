@@ -17,6 +17,7 @@
 package com.siju.acexplorer.view;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -149,5 +150,19 @@ public class AceActivity extends BaseActivity {
 
     public void setDualPaneFocusState(boolean isDualPaneInFocus) {
         mainUi.setDualPaneFocusState(isDualPaneInFocus);
+    }
+
+    private Configuration configuration;
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        Log.d("Ace", "onConfigChanged: "+newConfig.orientation);
+        configuration = newConfig;
+        mainUi.onConfigChanged(newConfig);
+        super.onConfigurationChanged(newConfig);
+    }
+
+    public Configuration getConfiguration() {
+        Log.d("Ace", "getConfiguration: configuration:"+configuration);
+        return configuration != null ? configuration : getResources().getConfiguration();
     }
 }

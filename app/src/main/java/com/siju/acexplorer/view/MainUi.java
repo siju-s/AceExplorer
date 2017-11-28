@@ -17,6 +17,7 @@
 package com.siju.acexplorer.view;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.ContextMenu;
@@ -73,6 +74,8 @@ public interface MainUi {
     void showDualFrame();
 
     void setDualPaneFocusState(boolean isDualPaneInFocus);
+
+    void onConfigChanged(Configuration newConfig);
 
     interface Listener {
 

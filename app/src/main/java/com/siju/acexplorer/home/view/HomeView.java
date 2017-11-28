@@ -17,6 +17,7 @@
 package com.siju.acexplorer.home.view;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 
 import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.model.FileInfo;
@@ -58,6 +59,8 @@ public interface HomeView {
     void hideDualPane();
 
     void setPremium();
+
+    void onConfigChanged(Configuration newConfig);
 
     interface Listener {
 

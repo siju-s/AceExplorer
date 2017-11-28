@@ -34,9 +34,11 @@ import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.model.groups.DrawerGroup;
 import com.siju.acexplorer.theme.ThemeUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import static com.siju.acexplorer.model.StorageUtils.StorageType.EXTERNAL;
+import static com.siju.acexplorer.model.StorageUtils.getStorageSpaceText;
 import static com.siju.acexplorer.view.NavigationDrawer.DRAWER_HEADER_FAV_POS;
 import static com.siju.acexplorer.view.NavigationDrawer.DRAWER_HEADER_STORAGE_POS;
 
@@ -90,7 +92,11 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
         if (storageType != null && !storageType.equals(EXTERNAL)) {
             text = StorageUtils.StorageType.getStorageText(context, storageType);
         } else if (category != null) {
-            text = Category.getCategoryName(context, category);
+            if (category.equals(Category.FAVORITES)) {
+                text = new File(child.getSecondLine()).getName();
+            } else {
+                text = Category.getCategoryName(context, category);
+            }
         } else {
             text = child.getFirstLine();
         }
@@ -101,7 +107,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
         if (groupPosition == DRAWER_HEADER_STORAGE_POS) {
             childViewHolder.progressBar.setVisibility(View.VISIBLE);
             childViewHolder.progressBar.setProgress(child.getProgress());
-            childViewHolder.textSecondLine.setText(child.getSecondLine());
+            childViewHolder.textSecondLine.setText(getStorageSpaceText(context, child.getSecondLine()));
 
         } else if (groupPosition == DRAWER_HEADER_FAV_POS) {
             childViewHolder.progressBar.setVisibility(View.GONE);

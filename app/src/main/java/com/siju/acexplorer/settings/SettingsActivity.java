@@ -31,6 +31,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.theme.ThemeUtils;
 import com.siju.acexplorer.utils.LocaleHelper;
@@ -39,16 +40,17 @@ import com.siju.acexplorer.view.AceActivity;
 import static com.siju.acexplorer.theme.ThemeUtils.THEME_DARK;
 
 public class SettingsActivity extends AppCompatActivity {
-
+    private int currentTheme;
 
     @Override
     protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(LocaleHelper.setLanguage(newBase));
+        checkTheme();
+        super.attachBaseContext(LocaleHelper.setLanguage(newBase, getThemeId()));
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        checkTheme();
+        setAppTheme();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pref_holder);
         PreferenceManager.setDefaultValues(this, R.xml.pref_settings, false);
@@ -60,13 +62,24 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void checkTheme() {
-        int theme = ThemeUtils.getTheme(this);
+        currentTheme = ThemeUtils.getTheme(AceApplication.getAppContext());
 
-        if (theme == THEME_DARK) {
+    }
+    private void setAppTheme() {
+        if (currentTheme == THEME_DARK) {
             setTheme(R.style.BaseDarkTheme_Settings);
         }
         else {
             setTheme(R.style.BaseLightTheme_Settings);
+        }
+    }
+
+    private int getThemeId() {
+        if (currentTheme == THEME_DARK) {
+            return R.style.BaseDarkTheme_Settings;
+        }
+        else {
+            return R.style.BaseLightTheme_Settings;
         }
     }
 

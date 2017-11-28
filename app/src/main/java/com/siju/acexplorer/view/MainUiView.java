@@ -267,44 +267,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     }
 
 
-    private void displayHomeScreen() {
-        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
-        homeScreenFragment = HomeScreenFragment.newInstance(isFirstRun, canDualModeBeAct);
-        homeScreenFragment.setDrawerListener(this);
-        homeScreenFragment.setFavListener(this);
-        ft.replace(R.id.main_container, homeScreenFragment);
-        ft.addToBackStack(null);
-        Logger.log(TAG, "displayHomeScreen");
-        ft.commitAllowingStateLoss();
-    }
-
-    private void displayFileList(String path, Category category) {
-
-        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
-        Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main_container);
-        Fragment dualFragment = activity.getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
-
-
-        if (fragment == null || fragment instanceof HomeScreenFragment) {
-            FileList baseFileList = FileList.newInstance(path, category, canDualModeBeAct);
-            baseFileList.setFavoriteListener(this);
-            baseFileList.setDrawerListener(this);
-            ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.
-                    enter_from_right, R.anim.exit_to_left);
-//            ft.hide(fragment);
-//            ft.add(R.id.main_container, baseFileList, directory);
-            ft.replace(R.id.main_container, baseFileList, path);
-            ft.addToBackStack(null);
-            ft.commit();
-            Logger.log(TAG, "displayFileList");
-        } else {
-            if (isDualPaneInFocus) {
-                ((BaseFileList) dualFragment).reloadList(path, category);
-            } else {
-                ((BaseFileList) fragment).reloadList(path, category);
-            }
-        }
-    }
+ 
 
     void handlePermissionResult(int requestCode) {
         switch (requestCode) {
@@ -407,6 +370,53 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
             activity.startActivity(activity.getIntent());
         }
 
+    }
+
+    private void displayHomeScreen() {
+        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+        Bundle args = new Bundle();
+        args.putBoolean(FileConstants.KEY_HOME, true);
+        args.putBoolean(PREFS_FIRST_RUN, isFirstRun);
+        args.putBoolean(FileConstants.KEY_DUAL_ENABLED, canDualModeBeAct);
+        homeScreenFragment = new HomeScreenFragment();
+        homeScreenFragment.setArguments(args);
+        homeScreenFragment.setDrawerListener(this);
+        homeScreenFragment.setFavListener(this);
+        ft.replace(R.id.main_container, homeScreenFragment);
+        ft.addToBackStack(null);
+        Logger.log(TAG, "displayHomeScreen");
+        ft.commitAllowingStateLoss();
+    }
+
+    private void displayFileList(String directory, Category category) {
+
+        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+        Bundle args = new Bundle();
+        args.putString(FileConstants.KEY_PATH, directory);
+        args.putSerializable(FileConstants.KEY_CATEGORY, category);
+        args.putBoolean(FileConstants.KEY_DUAL_ENABLED, canDualModeBeAct);
+
+        Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id
+                                                                                          .main_container);
+        if (fragment == null || fragment instanceof HomeScreenFragment) {
+            FileList baseFileList = new FileList();
+            baseFileList.setArguments(args);
+            baseFileList.setFavoriteListener(this);
+            baseFileList.setDrawerListener(this);
+            ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim
+                    .enter_from_right, R.anim
+                                           .exit_to_left);
+//            ft.hide(fragment);
+//            ft.add(R.id.main_container, baseFileList, directory);
+
+            ft.replace(R.id.main_container, baseFileList, directory);
+            ft.addToBackStack(null);
+            ft.commit();
+            Logger.log(TAG, "displayFileList");
+
+        } else {
+            ((BaseFileList) fragment).reloadList(directory, category);
+        }
     }
 
     @Override
@@ -534,9 +544,14 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         }
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        Logger.log(TAG, "onConfigurationChanged" + newConfig.orientation);
+//    @Override
+//    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+//        Log.d(TAG, "onSizeChanged: ");
+//        super.onSizeChanged(w, h, oldw, oldh);
+//    }
+
+    public void onConfigChanged(Configuration newConfig) {
+        Logger.log(TAG, "onConfigChanged" + newConfig.orientation);
         if (currentOrientation != newConfig.orientation) {
             currentOrientation = newConfig.orientation;
             Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main_container);
@@ -554,7 +569,10 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
                 canDualModeBeAct = false;
                 hideDualPane();
             }
-        }
+            fragment.onConfigurationChanged(newConfig);
+          }
+
+
         super.onConfigurationChanged(newConfig);
     }
 

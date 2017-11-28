@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.siju.acexplorer.model.StorageUtils.StorageType.EXTERNAL;
+import static com.siju.acexplorer.model.StorageUtils.getStorageSpaceText;
 import static com.siju.acexplorer.model.groups.Category.FILES;
 
 /**
@@ -108,7 +109,7 @@ public class HomeStorages implements View.OnClickListener {
             } else {
                 textStorage.setText(StorageUtils.StorageType.getStorageText(context, storageType));
             }
-            textSpace.setText(storagesList.get(i).getSecondLine());
+            textSpace.setText(getStorageSpaceText(context, storagesList.get(i).getSecondLine()));
             progressBarSpace.setProgress(storagesList.get(i).getProgress());
 
             storagesContainer.addView(storageItemContainer);

@@ -91,6 +91,7 @@ import com.siju.acexplorer.storage.view.custom.DividerItemDecoration;
 import com.siju.acexplorer.storage.view.custom.GridItemDecoration;
 import com.siju.acexplorer.storage.view.custom.recyclerview.FastScrollRecyclerView;
 import com.siju.acexplorer.theme.Theme;
+import com.siju.acexplorer.utils.ConfigurationHelper;
 import com.siju.acexplorer.view.AceActivity;
 import com.siju.acexplorer.view.DrawerListener;
 import com.siju.acexplorer.view.dialog.DialogHelper;
@@ -266,7 +267,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         navigationInfo = new NavigationInfo(this, this);
         backStackInfo = new BackStackInfo();
 
-        mCurrentOrientation = getResources().getConfiguration().orientation;
+        mCurrentOrientation = ((AceActivity)getActivity()).getConfiguration().orientation;
         getPreferences();
         getArgs();
         menuControls = new MenuControls(getActivity(), this, currentTheme);
@@ -531,7 +532,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     public void showDualPane() {
         // For Files category only, show dual pane
         mIsDualModeEnabled = true;
-        refreshSpan();
+        refreshSpan(((AceActivity)getActivity()).getConfiguration());
     }
 
     private void getPreferences() {
@@ -592,7 +593,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             layoutManager = new CustomLayoutManager(getActivity());
             fileList.setLayoutManager(layoutManager);
         } else {
-            refreshSpan();
+            refreshSpan(((AceActivity)getActivity()).getConfiguration());
         }
         fileList.setItemAnimator(new DefaultItemAnimator());
         fileListAdapter = new FileListAdapter(getContext(), fileInfoList,
@@ -1263,7 +1264,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             fileList.setLayoutManager(layoutManager);
 
         } else {
-            refreshSpan();
+            refreshSpan(((AceActivity)getActivity()).getConfiguration());
         }
 
         shouldStopAnimation = true;
@@ -1774,14 +1775,17 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     private StoragesUiView.FavoriteOperation favoriteListener;
 
+    void changeGridCols() {
+        refreshSpan(((AceActivity)getActivity()).getConfiguration());
+    }
 
-    public void refreshSpan() {
+    public void refreshSpan(Configuration configuration) {
         if (viewMode == ViewMode.GRID) {
             if (mCurrentOrientation == Configuration.ORIENTATION_PORTRAIT || !mIsDualModeEnabled ||
                     checkIfLibraryCategory(category)) {
-                gridCols = getResources().getInteger(R.integer.grid_columns);
+                gridCols = ConfigurationHelper.getStorageGridCols(configuration);
             } else {
-                gridCols = getResources().getInteger(R.integer.grid_columns_dual);
+                gridCols = ConfigurationHelper.getStorageDualGridCols(configuration);
             }
             Log.d(TAG, "Refresh span--columns=" + gridCols + "category=" + category + " dual " +
                     "mode=" +
@@ -1814,13 +1818,12 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     @Override
     public void onConfigurationChanged(final Configuration newConfig) {
-
         super.onConfigurationChanged(newConfig);
+        Logger.log(TAG, "onConfigChanged " + newConfig.orientation);
         if (mCurrentOrientation != newConfig.orientation) {
             mCurrentOrientation = newConfig.orientation;
-            refreshSpan();
+            refreshSpan(newConfig);
         }
-        Logger.log(TAG, "onConfigurationChanged " + newConfig.orientation);
     }
 
 

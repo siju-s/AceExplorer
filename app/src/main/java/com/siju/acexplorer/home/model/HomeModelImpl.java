@@ -50,11 +50,12 @@ import static com.siju.acexplorer.model.groups.Category.VIDEO;
  */
 public class HomeModelImpl implements HomeModel {
 
-    private final String TAG = this.getClass().getSimpleName();
-    private final int COUNT_ZERO = 0;
-    private Context                 context;
-    private int                     resourceIds[];
-    private String                  labels[];
+    private final String TAG        = this.getClass().getSimpleName();
+    private final int    COUNT_ZERO = 0;
+    private Context context;
+    private int     resourceIds[];
+    private String labels[] = new String[]{"Images", "Audio", "Videos", "Docs",
+            "Downloads", "Add"};
     private Category                categories[];
     private SharedPreferences       sharedPreferences;
     private SharedPreferenceWrapper sharedPreferenceWrapper;
@@ -73,13 +74,6 @@ public class HomeModelImpl implements HomeModel {
         resourceIds = new int[]{R.drawable.ic_library_images, R.drawable.ic_library_music,
                 R.drawable.ic_library_videos, R.drawable.ic_library_docs,
                 R.drawable.ic_library_downloads, R.drawable.ic_library_add};
-        labels = new String[]{context.getString(R.string
-                                                        .nav_menu_image), context.getString(R.string
-                                                                                                    .nav_menu_music), context.getString(R.string
-                                                                                                                                                .nav_menu_video), context.getString(R.string
-                                                                                                                                                                                            .home_docs), context.getString(R.string
-                                                                                                                                                                                                                                   .downloads), context.getString(R.string
-                                                                                                                                                                                                                                                                          .home_add)};
         categories = new Category[]{IMAGE, AUDIO, VIDEO,
                 DOCS, DOWNLOADS, ADD};
     }
@@ -120,7 +114,7 @@ public class HomeModelImpl implements HomeModel {
                         }
                     }
                     homeLibraryInfoArrayList.add(new HomeLibraryInfo(category, categoryName,
-                            resourceId, count));
+                                                                     resourceId, count));
                 }
                 addPlusCategory();
                 sharedPreferenceWrapper.saveLibrary(context, selectedLibs);
@@ -148,8 +142,7 @@ public class HomeModelImpl implements HomeModel {
 
                 if (isFirstRun) {
                     addDefaultLibraries();
-                }
-                else {
+                } else {
                     addSavedLibraries();
                     addPlusCategory();
                 }
@@ -185,7 +178,7 @@ public class HomeModelImpl implements HomeModel {
             int resourceId = getResourceIdForCategory(category);
             String name = savedLibraries.get(i).getLibraryName();//getCategoryName(context, category);
             addToLibrary(new HomeLibraryInfo(category, name, resourceId,
-                    COUNT_ZERO));
+                                             COUNT_ZERO));
         }
     }
 
@@ -219,7 +212,7 @@ public class HomeModelImpl implements HomeModel {
 
     private void addPlusCategory() {
         addToLibrary(new HomeLibraryInfo(ADD, labels[5], getResourceIdForCategory(ADD),
-                COUNT_ZERO));
+                                         COUNT_ZERO));
     }
 
     private void addToLibrary(HomeLibraryInfo homeLibraryInfo) {

@@ -70,6 +70,13 @@ public class StorageUtils {
         }
     }
 
+    public static String getStorageSpaceText(Context context, String text) {
+        String arr[] = text.split("/");
+        String spaceText = arr[0] +  " " + context.getResources().getString(R.string.msg_free) +
+                " " + arr[1];
+        return spaceText;
+    }
+
 
     public static String getDownloadsDirectory() {
         return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
