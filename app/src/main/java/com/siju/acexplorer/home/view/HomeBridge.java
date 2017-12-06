@@ -96,7 +96,7 @@ public class HomeBridge implements HomeView {
 
     @Override
     public void updateFavoritesCount(int size) {
-        homeUiView.removeFavorite(size);
+        homeUiView.updateFavoriteCount(size);
     }
 
     @Override

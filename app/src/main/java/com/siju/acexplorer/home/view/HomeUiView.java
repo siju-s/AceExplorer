@@ -363,7 +363,7 @@ public class HomeUiView extends CoordinatorLayout {
 
 
     public void removeFavorite(int size) {
-        library.updateFavoritesCount(size);
+        library.removeFavorites(size);
     }
 
     public void setDrawerListener(DrawerListener drawerListener) {
@@ -377,4 +377,9 @@ public class HomeUiView extends CoordinatorLayout {
     public void hideDualPane() {
         isDualModeActive = false;
     }
+
+    public void updateFavoriteCount(int size) {
+        library.updateFavoritesCount(size);
+    }
+
 }

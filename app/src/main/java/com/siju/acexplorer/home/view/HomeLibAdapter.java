@@ -63,6 +63,11 @@ public class HomeLibAdapter extends RecyclerView.Adapter<HomeLibAdapter.HomeLibH
         updateCount(index, count1 + count);
     }
 
+    void removeFav(int index, int count) {
+        int count1 = homeLibraryInfoArrayList.get(index).getCount();
+        updateCount(index, count1 - count);
+    }
+
     @Override
     public void onItemDismiss(int position) {
         homeLibraryInfoArrayList.remove(position);

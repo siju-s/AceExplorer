@@ -258,6 +258,15 @@ class HomeLibrary {
         }
     }
 
+    void removeFavorites(int count) {
+        for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
+            if (isFavoritesCategory(homeLibraryInfoArrayList.get(i).getCategory())) {
+                homeLibAdapter.removeFav(i, count);
+                break;
+            }
+        }
+    }
+
     void onDataLoaded(int id, List<FileInfo> data) {
         for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
             int categoryId = homeLibraryInfoArrayList.get(i).getCategory().getValue();

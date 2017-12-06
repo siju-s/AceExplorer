@@ -154,7 +154,7 @@ public class NavigationInfo {
     private String getTitleForCategory(Category category) {
         switch (category) {
             case AUDIO:
-                return context.getString(R.string.nav_menu_music);
+                return context.getString(R.string.audio);
             case VIDEO:
                 return context.getString(R.string.nav_menu_video);
             case IMAGE:

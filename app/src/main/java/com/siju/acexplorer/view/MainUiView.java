@@ -555,7 +555,8 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         if (currentOrientation != newConfig.orientation) {
             currentOrientation = newConfig.orientation;
             Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main_container);
-
+             isDualPaneEnabled = preferences.getBoolean(FileConstants
+                                                                .PREFS_DUAL_PANE, false);
             if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE && isDualPaneEnabled) {
                 canDualModeBeAct = true;
                 if (fragment instanceof BaseFileList) {
