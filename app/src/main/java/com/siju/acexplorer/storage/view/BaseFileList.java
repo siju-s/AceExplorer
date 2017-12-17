@@ -170,6 +170,7 @@ public class BaseFileList extends Fragment {
     }
 
     public void hideDualPane() {
+        storagesUi.hideDualPane();
         Fragment fragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
         if (fragment != null) {
             FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
@@ -195,5 +196,9 @@ public class BaseFileList extends Fragment {
 
     public void setHidden(boolean showHidden) {
         storagesUi.setHidden(showHidden);
+    }
+
+    public void switchView(int viewMode) {
+        storagesUi.switchView(viewMode);
     }
 }

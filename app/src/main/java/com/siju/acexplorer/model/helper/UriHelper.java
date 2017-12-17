@@ -62,6 +62,7 @@ public class UriHelper {
                             Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 }
             }
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         } else {
             showMessage(context, context.getString(R.string.msg_error_not_supported));

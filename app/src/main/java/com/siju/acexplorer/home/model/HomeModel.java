@@ -36,6 +36,8 @@ public interface HomeModel {
 
     boolean getDualModeState();
 
+    void saveLibs(List<LibrarySortModel> librarySortModels);
+
 
     interface Listener {
 

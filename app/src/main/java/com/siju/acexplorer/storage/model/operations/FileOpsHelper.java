@@ -65,11 +65,11 @@ public class FileOpsHelper {
 
         void launchSAF(Operations operation, File file);
 
-        void launchSAF(Operations operation, File oldFile, File newFile, int position);
+        void launchSAF(Operations operation, File oldFile, File newFile);
 
         void opCompleted(Operations operation, File file, boolean result);
 
-        void opCompleted(Operations operation, File oldFile, File newFile, int position, boolean
+        void opCompleted(Operations operation, File oldFile, File newFile, boolean
                 result);
 
     }
@@ -182,7 +182,7 @@ public class FileOpsHelper {
     }
 
 
-    public static void renameFile(Operations operation, final File oldFile, final File newFile, final int position,
+    public static void renameFile(Operations operation, final File oldFile, final File newFile,
                                   boolean isRooted, FileOperationCallBack fileOperationCallBack) {
         Logger.log(TAG, "Rename--oldFile=" + oldFile + " new file=" + newFile);
         if (newFile.exists()) {
@@ -208,11 +208,11 @@ public class FileOpsHelper {
                         result = true;
                     }
                 }
-                fileOperationCallBack.opCompleted(operation, oldFile, newFile, position,
+                fileOperationCallBack.opCompleted(operation, oldFile, newFile,
                         result);
                 break;
             case EXTERNAL:
-                fileOperationCallBack.launchSAF(operation, oldFile, newFile, position);
+                fileOperationCallBack.launchSAF(operation, oldFile, newFile);
                 break;
             case INTERNAL:
                 boolean exists1 = FileUtils.isFileExisting(oldFile.getParent(), newFile
@@ -225,7 +225,7 @@ public class FileOpsHelper {
                     Logger.log(TAG, "Rename--filexists=" + fileCreated1 + "MODE=" + INTERNAL +
                             "result==" + result1);
                     fileOperationCallBack.opCompleted(operation, oldFile, newFile,
-                            position, result1);
+                            result1);
                 }
                 break;
         }
@@ -296,16 +296,14 @@ public class FileOpsHelper {
     }
 
     public void formSAFIntentExtract(String path, Operations operations, String newFile) {
-        formSAFIntentRename(path, operations, newFile, 0);
+        formSAFIntentRename(path, operations, newFile);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public void formSAFIntentRename(String path, Operations operations, String newFile, int
-            position) {
+    public void formSAFIntentRename(String path, Operations operations, String newFile) {
         Intent operationIntent = new Intent(OPERATION_INTENT);
         operationIntent.putExtra(KEY_FILEPATH, path);
         operationIntent.putExtra(KEY_FILEPATH2, newFile);
-        operationIntent.putExtra(KEY_POSITION, position);
         operationIntent.putExtra(KEY_OPERATION, operations);
         safDialogListener.showDialog(path, operationIntent);
     }
@@ -410,7 +408,7 @@ public class FileOpsHelper {
                 String newFilePath = intent.getStringExtra(KEY_FILEPATH2);
                 int position = intent.getIntExtra(KEY_POSITION, INVALID_POS);
                 renameFile(operation, new File(oldFilePath),
-                             new File(newFilePath), position, isRooted, fileOperationCallBack);
+                             new File(newFilePath), isRooted, fileOperationCallBack);
                 break;
 
             case EXTRACT:

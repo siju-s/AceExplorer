@@ -70,8 +70,9 @@ public class HomeLibAdapter extends RecyclerView.Adapter<HomeLibAdapter.HomeLibH
 
     @Override
     public void onItemDismiss(int position) {
-        homeLibraryInfoArrayList.remove(position);
-        notifyItemRemoved(position);
+        // We don't have swipe to delete feature
+//        homeLibraryInfoArrayList.remove(position);
+//        notifyItemRemoved(position);
     }
 
     @Override
@@ -84,6 +85,10 @@ public class HomeLibAdapter extends RecyclerView.Adapter<HomeLibAdapter.HomeLibH
         mSelectedItemsIds.delete(fromPosition);
         mSelectedItemsIds.put(toPosition, true);
         notifyItemMoved(fromPosition, toPosition);
+    }
+
+    List<HomeLibraryInfo> getList() {
+        return homeLibraryInfoArrayList;
     }
 
 

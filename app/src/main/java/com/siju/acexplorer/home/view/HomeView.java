@@ -73,5 +73,7 @@ public interface HomeView {
         void reloadLibraries(List<LibrarySortModel> selectedLibs);
 
         boolean getDualModeState();
+
+        void saveLibs(List<LibrarySortModel> librarySortModels);
     }
 }

@@ -128,6 +128,7 @@ public class AceActivity extends BaseActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
+        Log.d(TAG, "onRestart: ");
         mainUi.onPreferenceChange();
     }
 
@@ -164,5 +165,11 @@ public class AceActivity extends BaseActivity {
     public Configuration getConfiguration() {
         Log.d("Ace", "getConfiguration: configuration:"+configuration);
         return configuration != null ? configuration : getResources().getConfiguration();
+    }
+
+    public void switchView(int viewMode, boolean isDual) {
+        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            mainUi.switchView(viewMode, isDual);
+        }
     }
 }

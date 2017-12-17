@@ -423,8 +423,6 @@ public class FileUtils {
 
     public static boolean isFileCompressed(String filePath) {
         return filePath.toLowerCase().endsWith(".zip") ||
-                filePath.toLowerCase().endsWith(".apk") ||
-                filePath.toLowerCase().endsWith(".jar") ||
                 filePath.toLowerCase().endsWith(".tar") ||
                 filePath.toLowerCase().endsWith(".tar.gz") ||
                 filePath.toLowerCase().endsWith(".rar");

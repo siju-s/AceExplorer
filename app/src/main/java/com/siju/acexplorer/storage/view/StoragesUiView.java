@@ -122,7 +122,6 @@ import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FI
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OLD_FILES;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION;
-import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_POSITION;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_RESULT;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_SHOW_RESULT;
 import static com.siju.acexplorer.view.dialog.DialogHelper.openWith;
@@ -132,67 +131,66 @@ import static com.siju.acexplorer.view.dialog.DialogHelper.openWith;
  */
 @SuppressLint("ClickableViewAccessibility")
 public class StoragesUiView extends CoordinatorLayout implements View.OnClickListener,
-                                                                 NavigationCallback,
-                                                                 FileListAdapter.SearchCallback
-{
+        NavigationCallback,
+        FileListAdapter.SearchCallback {
 
-    private final        String  TAG             = this.getClass().getSimpleName();
-    private static final int     DIALOG_FRAGMENT = 5000;
-    public static final  int     SAF_REQUEST     = 2000;
-    private final        boolean isRootMode      = true;
+    private final String TAG = this.getClass().getSimpleName();
+    private static final int DIALOG_FRAGMENT = 5000;
+    public static final int SAF_REQUEST = 2000;
+    private final boolean isRootMode = true;
 
-    private       ArrayList<FileInfo>     draggedData            = new ArrayList<>();
-    private       SparseBooleanArray      mSelectedItemPositions = new SparseBooleanArray();
-    private final HashMap<String, Bundle> scrollPosition         = new HashMap<>();
+    private ArrayList<FileInfo> draggedData = new ArrayList<>();
+    private SparseBooleanArray mSelectedItemPositions = new SparseBooleanArray();
+    private final HashMap<String, Bundle> scrollPosition = new HashMap<>();
 
-    private Fragment                   fragment;
-    private CoordinatorLayout          mMainLayout;
-    private FastScrollRecyclerView     fileList;
-    private TextView                   mTextEmpty;
-    private View                       mItemView;
+    private Fragment fragment;
+    private CoordinatorLayout mMainLayout;
+    private FastScrollRecyclerView fileList;
+    private TextView mTextEmpty;
+    private View mItemView;
     private RecyclerView.LayoutManager layoutManager;
-    private SwipeRefreshLayout         mSwipeRefreshLayout;
-    private Button                     buttonPathSelect;
-    private DividerItemDecoration      mDividerItemDecoration;
-    private GridItemDecoration         mGridItemDecoration;
-    private AdView                     mAdView;
-    private FloatingActionsMenu        fabCreateMenu;
-    private FloatingActionButton       fabCreateFolder;
-    private FloatingActionButton       fabCreateFile;
-    private FloatingActionButton       fabOperation;
-    private FrameLayout                frameLayoutFab;
-    private SharedPreferences          preferences;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private Button buttonPathSelect;
+    private DividerItemDecoration dividerItemDecoration;
+    private GridItemDecoration mGridItemDecoration;
+    private AdView mAdView;
+    private FloatingActionsMenu fabCreateMenu;
+    private FloatingActionButton fabCreateFolder;
+    private FloatingActionButton fabCreateFile;
+    private FloatingActionButton fabOperation;
+    private FrameLayout frameLayoutFab;
+    private SharedPreferences preferences;
 
-    private StorageBridge       bridge;
-    private FileListAdapter     fileListAdapter;
+    private StorageBridge bridge;
+    private FileListAdapter fileListAdapter;
     private ArrayList<FileInfo> fileInfoList;
-    private Category            category;
-    private NavigationInfo      navigationInfo;
-    private BackStackInfo       backStackInfo;
-    private Theme               currentTheme;
-    private DrawerListener      drawerListener;
-    private MenuControls        menuControls;
-    private DragHelper          dragHelper;
+    private Category category;
+    private NavigationInfo navigationInfo;
+    private BackStackInfo backStackInfo;
+    private Theme currentTheme;
+    private DrawerListener drawerListener;
+    private MenuControls menuControls;
+    private DragHelper dragHelper;
 
     private boolean isHomeScreenEnabled;
-    private int     position;
-    private String  filePath;
-    private String  currentDir;
+    private String filePath;
+    private String currentDir;
     private boolean isActionModeActive;
     private boolean showHidden;
     private boolean mIsDualModeEnabled;
     private boolean isDragStarted;
-    private long    mLongPressedTime;
+    private long mLongPressedTime;
     private int viewMode = ViewMode.LIST;
     private boolean isZipViewer;
     private boolean shouldStopAnimation = true;
-    private boolean isPremium           = true;
+    private boolean isPremium = true;
 
-    private int     gridCols;
-    private String  mLastSinglePaneDir;
+    private int gridCols;
+    private String mLastSinglePaneDir;
     private boolean mInstanceStateExists;
-    private int     mCurrentOrientation;
-    private String  mSelectedPath;
+    private int mCurrentOrientation;
+    private String mSelectedPath;
+    private FileInfo fileInfo;
 
 
     public StoragesUiView(Context context, AttributeSet attrs) {
@@ -202,7 +200,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     public static StoragesUiView inflate(ViewGroup parent) {
         return (StoragesUiView) LayoutInflater.from(parent.getContext()).inflate(R.layout.main_list,
-                                                                                 parent, false);
+                parent, false);
     }
 
     @Override
@@ -256,7 +254,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     void initialize() {
-        Log.d(TAG, "initialize: "+this);
+        Log.d(TAG, "initialize: " + this);
         preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         dragHelper = new DragHelper(getContext(), this);
         setTheme();
@@ -267,7 +265,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         navigationInfo = new NavigationInfo(this, this);
         backStackInfo = new BackStackInfo();
 
-        mCurrentOrientation = ((AceActivity)getActivity()).getConfiguration().orientation;
+        mCurrentOrientation = ((AceActivity) getActivity()).getConfiguration().orientation;
         getPreferences();
         getArgs();
         menuControls = new MenuControls(getActivity(), this, currentTheme);
@@ -335,7 +333,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
 
     private void registerReceivers() {
-        Log.d(TAG, "registerReceivers: "+this);
+        Log.d(TAG, "registerReceivers: " + this);
         IntentFilter intentFilter = new IntentFilter(ADS);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(adsReceiver, intentFilter);
         if (!mInstanceStateExists) {
@@ -458,14 +456,13 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 if (!isDragStarted) {
                     return false;
                 }
-                Log.d(TAG, "onTouch: " + event + "Drag:" + isDragStarted);
 
                 if (isDragStarted && event == MotionEvent.ACTION_UP) {
                     isDragStarted = false;
                 } else if (isDragStarted && event == MotionEvent.ACTION_MOVE && mLongPressedTime !=
                         0) {
                     long timeElapsed = System.currentTimeMillis() - mLongPressedTime;
-//                    Logger.log(TAG, "On item touch time Elapsed" + timeElapsed);
+                    Logger.log(TAG, "On item touch time Elapsed" + timeElapsed);
 
                     if (timeElapsed > 1000) {
                         mLongPressedTime = 0;
@@ -502,8 +499,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         fabOperation.setOnClickListener(this);
 
         fabCreateMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu
-                .OnFloatingActionsMenuUpdateListener()
-        {
+                .OnFloatingActionsMenuUpdateListener() {
 
             @SuppressLint("ClickableViewAccessibility")
             @Override
@@ -532,7 +528,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     public void showDualPane() {
         // For Files category only, show dual pane
         mIsDualModeEnabled = true;
-        refreshSpan(((AceActivity)getActivity()).getConfiguration());
+        refreshSpan(((AceActivity) getActivity()).getConfiguration());
     }
 
     private void getPreferences() {
@@ -568,6 +564,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     private void createDualFrag() {
+        Log.d(TAG, "createDualFrag: " + mIsDualModeEnabled);
         if (mIsDualModeEnabled && fragment instanceof FileList) {
             bridge.showDualFrame();
             showDualPane();
@@ -593,11 +590,11 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             layoutManager = new CustomLayoutManager(getActivity());
             fileList.setLayoutManager(layoutManager);
         } else {
-            refreshSpan(((AceActivity)getActivity()).getConfiguration());
+            refreshSpan(((AceActivity) getActivity()).getConfiguration());
         }
         fileList.setItemAnimator(new DefaultItemAnimator());
         fileListAdapter = new FileListAdapter(getContext(), fileInfoList,
-                                              category, viewMode);
+                category, viewMode);
         fileListAdapter.setSearchCallback(this);
     }
 
@@ -639,7 +636,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             case DOCS:
                 this.extension = fileInfoList.get(position).getExtension().toLowerCase();
                 viewFile(getContext(), fileInfoList.get(position).getFilePath(),
-                         extension, alertDialogListener);
+                        extension, alertDialogListener);
                 break;
             case FILES:
             case DOWNLOADS:
@@ -663,7 +660,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     private void onDirectoryClicked(int position) {
         boolean isDualPaneInFocus = fragment instanceof DualPaneList;
-        ((AceActivity)getActivity()).setDualPaneFocusState(isDualPaneInFocus);
+        ((AceActivity) getActivity()).setDualPaneFocusState(isDualPaneInFocus);
 
         if (isZipMode()) {
             zipViewer.onDirectoryClicked(position);
@@ -685,6 +682,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             if (isZipMode()) {
                 zipViewer.onFileClicked(position);
             } else {
+                this.filePath = filePath;
                 viewFile(getContext(), filePath, extension, alertDialogListener);
             }
         }
@@ -742,8 +740,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                     }
 
                     Toast.makeText(getContext(), getResources().getString(R.string
-                                                                                  .access_denied_external),
-                                   Toast.LENGTH_LONG).show();
+                                    .access_denied_external),
+                            Toast.LENGTH_LONG).show();
                 }
         }
     }
@@ -752,17 +750,17 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
         switch (viewMode) {
             case ViewMode.LIST:
-                if (mDividerItemDecoration == null) {
-                    mDividerItemDecoration = new DividerItemDecoration(getActivity(), currentTheme);
+                if (dividerItemDecoration == null) {
+                    dividerItemDecoration = new DividerItemDecoration(getActivity(), currentTheme);
                 } else {
-                    fileList.removeItemDecoration(mDividerItemDecoration);
+                    fileList.removeItemDecoration(dividerItemDecoration);
                 }
-                fileList.addItemDecoration(mDividerItemDecoration);
+                fileList.addItemDecoration(dividerItemDecoration);
                 break;
             case ViewMode.GRID:
                 if (mGridItemDecoration == null) {
                     mGridItemDecoration = new GridItemDecoration(getContext(), currentTheme,
-                                                                 gridCols);
+                            gridCols);
                 } else {
                     fileList.removeItemDecoration(mGridItemDecoration);
                 }
@@ -830,8 +828,9 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 if (intent.getBooleanExtra(KEY_SHOW_RESULT, false)) {
 
                     if (deletedCount != 0) {
-                        FileUtils.showMessage(getContext(), getResources().getQuantityString(R.plurals.number_of_files,
-                                                                                             deletedCount, deletedCount) + " " + getResources().getString(R.string.msg_delete_success));
+                        FileUtils.showMessage(getContext(), getResources().getQuantityString(R.
+                                plurals.number_of_files, deletedCount, deletedCount) + " " +
+                                getResources().getString(R.string.msg_delete_success));
                     }
 
                     if (totalFiles != deletedCount) {
@@ -846,11 +845,13 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
             case RENAME:
                 dismissDialog();
-                final int position = intent.getIntExtra(KEY_POSITION, -1);
                 String oldFile = intent.getStringExtra(KEY_FILEPATH);
                 String newFile = intent.getStringExtra(KEY_FILEPATH2);
+                int position = fileInfoList.indexOf(fileInfo);
+                if (position == -1) {
+                    return;
+                }
                 Category category = fileInfoList.get(position).getCategory();
-
                 if (!oldFile.equals(fileInfoList.get(position).getFilePath())) {
                     return;
                 }
@@ -879,7 +880,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 ArrayList<Integer> categories = intent.getIntegerArrayListExtra(KEY_CATEGORY);
 
                 if (oldFiles != null) {
-                    for (int i = 0 ; i < oldFiles.size() ; i++) {
+                    for (int i = 0; i < oldFiles.size(); i++) {
                         removeMedia(getActivity(), oldFiles.get(i), categories.get(i));
                     }
                 }
@@ -933,6 +934,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         } else {
             return backOperation();
         }
+
         return false;
     }
 
@@ -945,9 +947,9 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             String currentDir = backStackInfo.getDirAtPosition(backStackInfo.getBackStack().size
                     () - 1);
             Category currentCategory = backStackInfo.getCategoryAtPosition(backStackInfo
-                                                                                   .getBackStack
-                                                                                           ()
-                                                                                   .size() - 1);
+                    .getBackStack
+                            ()
+                    .size() - 1);
             category = currentCategory;
             this.currentDir = currentDir;
             menuControls.setCategory(category);
@@ -958,7 +960,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 if (shouldShowPathNavigation()) {
                     navigationInfo.setInitialDir(currentDir);
                     navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled,
-                                                   currentCategory);
+                            currentCategory);
                 } else {
                     navigationInfo.addHomeNavButton(isHomeScreenEnabled, currentCategory);
                 }
@@ -974,7 +976,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
             return false;
         } else {
-            removeFileFragment();
+            removeDualFileFragment();
             if (!isHomeScreenEnabled) {
                 getActivity().finish();
             }
@@ -1016,10 +1018,10 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
      * 1. If homescreen enabled, returns to home screen
      * 2. If homescreen disabled, exits the app
      */
-    private void removeFileFragment() {
+    private void removeDualFileFragment() {
 
-        Fragment dualFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id
-                                                                                                   .frame_container_dual);
+        Fragment dualFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
+
         backStackInfo.clearBackStack();
         Logger.log(TAG, "RemoveFragmentFromBackStack--dualFragment=" + dualFragment);
 
@@ -1027,7 +1029,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
             ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim
                     .enter_from_right, R.anim
-                                           .exit_to_left);
+                    .exit_to_left);
             ft.remove(dualFragment);
             ft.commitAllowingStateLoss();
         }
@@ -1073,19 +1075,16 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     private void itemClickActionMode(int position, boolean isLongPress) {
+        Log.d(TAG, "itemClickActionMode: ");
         fileListAdapter.toggleSelection(position, isLongPress);
 
         boolean hasCheckedItems = fileListAdapter.getSelectedCount() > 0;
         if (hasCheckedItems && !isActionModeActive) {
             // there are some selected items, start the actionMode
-//            aceActivity.updateDrawerIcon(true);
-
             startActionMode();
         } else if (!hasCheckedItems && isActionModeActive) {
             // there no selected items, finish the actionMode
-//            mActionModeCallback.endActionMode();
-//            actionMode.finish();
-            endActionMode();
+            menuControls.endActionMode();
         }
         if (isActionModeActive) {
             FileInfo fileInfo = fileInfoList.get(position);
@@ -1093,7 +1092,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             SparseBooleanArray checkedItemPos = fileListAdapter.getSelectedItemPositions();
             setSelectedItemPos(checkedItemPos);
             menuControls.setToolbarText(String.valueOf(fileListAdapter
-                                                               .getSelectedCount()) + " selected");
+                    .getSelectedCount()) + " selected");
         }
     }
 
@@ -1118,9 +1117,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         menuControls.setupMenuVisibility(selectedItemPos);
     }
 
-
-    // 1 Extra for Footer since {#getItemCount has footer
-    // TODO Remove this 1 when if footer removed in future
     void toggleSelectAll(boolean selectAll) {
         fileListAdapter.clearSelection();
         for (int i = 0; i < fileListAdapter.getItemCount(); i++) {
@@ -1133,7 +1129,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             menuControls.endActionMode();
         } else {
             menuControls.setToolbarText(String.valueOf(fileListAdapter.getSelectedCount()) + " " +
-                                                getResources().getString(R.string.selected));
+                    getResources().getString(R.string.selected));
             fileListAdapter.notifyDataSetChanged();
         }
     }
@@ -1144,11 +1140,16 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
 
     public void reloadList(String path, Category category) {
-        Log.d(TAG, "reloadList: " + path);
+        Log.d(TAG, "reloadList: " + path + " backstack:" + backStackInfo);
         currentDir = path;
         this.category = category;
-        if (isFilesCategory()) {
+        if (shouldShowPathNavigation()) {
             navigationInfo.setInitialDir(path);
+        }
+        if (checkIfLibraryCategory(category)) {
+            hideFab();
+        } else {
+            showFab();
         }
         menuControls.setCategory(category);
         menuControls.setCurrentDir(currentDir);
@@ -1222,11 +1223,11 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             if (viewMode == ViewMode.LIST) {
                 ((LinearLayoutManager) layoutManager).scrollToPositionWithOffset(b.getInt
                         (FileConstants
-                                 .KEY_POSITION), b.getInt(FileConstants.KEY_OFFSET));
+                                .KEY_POSITION), b.getInt(FileConstants.KEY_OFFSET));
             } else {
                 ((GridLayoutManager) layoutManager).scrollToPositionWithOffset(b.getInt
                         (FileConstants
-                                 .KEY_POSITION), b.getInt(FileConstants.KEY_OFFSET));
+                                .KEY_POSITION), b.getInt(FileConstants.KEY_OFFSET));
             }
         }
     }
@@ -1250,7 +1251,15 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         return viewMode;
     }
 
+    void passViewMode() {
+        Log.d(TAG, "passViewMode: "+mIsDualModeEnabled);
+        if (mIsDualModeEnabled) {
+            ((AceActivity)getActivity()).switchView(viewMode, !(fragment instanceof DualPaneList));
+        }
+    }
+
     void switchView() {
+        Log.d(TAG, "switchView: "+this + " viewMode:"+viewMode);
         if (viewMode == ViewMode.LIST) {
             viewMode = ViewMode.GRID;
         } else {
@@ -1258,13 +1267,15 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         }
         fileListAdapter = null;
         fileList.setHasFixedSize(true);
+        bridge.saveSettingsOnExit(gridCols, viewMode);
+
 
         if (viewMode == ViewMode.LIST) {
             layoutManager = new CustomLayoutManager(getActivity());
             fileList.setLayoutManager(layoutManager);
 
         } else {
-            refreshSpan(((AceActivity)getActivity()).getConfiguration());
+            refreshSpan(((AceActivity) getActivity()).getConfiguration());
         }
 
         shouldStopAnimation = true;
@@ -1277,14 +1288,14 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             if (mGridItemDecoration != null) {
                 fileList.removeItemDecoration(mGridItemDecoration);
             }
-            if (mDividerItemDecoration == null) {
-                mDividerItemDecoration = new DividerItemDecoration(getActivity(), currentTheme);
+            if (dividerItemDecoration == null) {
+                dividerItemDecoration = new DividerItemDecoration(getActivity(), currentTheme);
             }
-            mDividerItemDecoration.setOrientation();
-            fileList.addItemDecoration(mDividerItemDecoration);
+            dividerItemDecoration.setOrientation();
+            fileList.addItemDecoration(dividerItemDecoration);
         } else {
-            if (mDividerItemDecoration != null) {
-                fileList.removeItemDecoration(mDividerItemDecoration);
+            if (dividerItemDecoration != null) {
+                fileList.removeItemDecoration(dividerItemDecoration);
             }
             addItemDecoration();
         }
@@ -1307,9 +1318,9 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         String title = getContext().getString(R.string.new_folder);
         String texts[] = new String[]{title, getContext().getString(R.string.enter_name), getContext
                 ().getString(R.string
-                                     .create), getContext().getString(R.string.dialog_cancel)};
+                .create), getContext().getString(R.string.dialog_cancel)};
         DialogHelper.showInputDialog(getContext(), texts, Operations.FOLDER_CREATION, null,
-                                     dialogListener);
+                dialogListener);
     }
 
     private void showCreateFileDialog() {
@@ -1317,12 +1328,11 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         String texts[] = new String[]{title, getContext().getString(R.string.enter_name), getContext
                 ().getString(R.string.create), getContext().getString(R.string.dialog_cancel)};
         DialogHelper.showInputDialog(getContext(), texts, Operations.FILE_CREATION, null,
-                                     dialogListener);
+                dialogListener);
     }
 
-    void showRenameDialog(String oldFilePath, String text, int position) {
-        this.filePath = oldFilePath;
-        this.position = position;
+    void showRenameDialog(FileInfo fileInfo, String text) {
+        this.fileInfo = fileInfo;
         String title = getContext().getString(R.string.action_rename);
         String texts[] = new String[]{title, getContext().getString(R.string.enter_name), getContext
                 ().getString(R.string.action_rename), getContext().getString(R.string.dialog_cancel)};
@@ -1335,7 +1345,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         bridge.startPasteOperation(destinationDir, isMove, isRooted(), filesToPaste);
     }
 
-    private Intent  operationIntent;
+    private Intent operationIntent;
     private boolean isSAFShown;
 
     public void showSAFDialog(String path, Intent intent) {
@@ -1345,11 +1355,11 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         isSAFShown = true;
         String title = getContext().getString(R.string.needsaccess);
         String texts[] = new String[]{title, getContext().getString(R.string
-                                                                            .needs_access_summary, path),
+                .needs_access_summary, path),
                 getContext().getString(R.string.open), getContext().getString(R.string
-                                                                                      .dialog_cancel)};
+                .dialog_cancel)};
         DialogHelper.showSAFDialog(getContext(), R.layout.dialog_saf,
-                                   texts, alertDialogListener);
+                texts, alertDialogListener);
     }
 
 
@@ -1358,7 +1368,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
         if (getActivity().getPackageManager().resolveActivity(intent, 0) != null) {
             fragment.startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE),
-                                            SAF_REQUEST);
+                    SAF_REQUEST);
         } else {
             Toast.makeText(getContext(), getContext().getString(R.string.msg_error_not_supported)
                     , Toast.LENGTH_LONG).show();
@@ -1376,7 +1386,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 break;
             case HIDE:
                 Toast.makeText(getContext(), getContext().getString(R.string.msg_file_exists),
-                               Toast.LENGTH_SHORT).show();
+                        Toast.LENGTH_SHORT).show();
                 break;
         }
 
@@ -1388,7 +1398,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                                    final DialogHelper.PasteConflictListener pasteConflictListener) {
         Analytics.getLogger().conflictDialogShown();
         DialogHelper.showConflictDialog(getContext(), conflictFiles, destFiles, destinationDir,
-                                        isMove, pasteConflictListener);
+                isMove, pasteConflictListener);
 
     }
 
@@ -1396,7 +1406,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                                         boolean isMove) {
         Log.d(TAG, "showPasteProgressDialog: " + files.size());
         new OperationProgress().showPasteProgress(getContext(), destinationDir, files,
-                                                  isMove);
+                isMove);
     }
 
     public void deleteFiles(ArrayList<FileInfo> filesToDelete) {
@@ -1543,13 +1553,12 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     public void onDragDropEvent(DragEvent event) {
         if (!category.equals(FILES)) {
             Toast.makeText(getContext(), getResources().getString(R.string.error_unsupported),
-                           Toast.LENGTH_SHORT).show();
+                    Toast.LENGTH_SHORT).show();
             return;
         }
         View top = fileList.findChildViewUnder(event.getX(), event.getY());
         int position = fileList.getChildAdapterPosition(top);
-        Logger.log(TAG, "DROP new pos=" + position);
-        fileListAdapter.clearDragPos();
+        Logger.log(TAG, "DROP new pos=" + position + " this:" + StoragesUiView.this + "fileListSize:"+fileList.getAdapter().getItemCount());
         @SuppressWarnings("unchecked")
         ArrayList<FileInfo> draggedFiles = (ArrayList<FileInfo>) event.getLocalState();
         ArrayList<String> paths = new ArrayList<>();
@@ -1591,12 +1600,12 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             }
         }
 
-        draggedData = new ArrayList<>();
+//        draggedData = new ArrayList<>();
     }
 
     public void onDragExit() {
-        fileListAdapter.clearDragPos();
-        draggedData = new ArrayList<>();
+//        fileListAdapter.clearDragPos();
+//        draggedData = new ArrayList<>();
     }
 
     public void onDragEnded(View view, DragEvent event) {
@@ -1604,15 +1613,16 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         View top1 = fileList.findChildViewUnder(event.getX(), event.getY());
         int position1 = fileList.getChildAdapterPosition(top1);
         Log.d(TAG, "onDragEnded: " + category + " result:" + event.getResult() + " position:" +
-                position1);
+                position1 + " this:" + StoragesUiView.this);
 
-        @SuppressWarnings("unchecked")
-        ArrayList<FileInfo> dragPaths = (ArrayList<FileInfo>) event.getLocalState();
-
-        fileListAdapter.clearDragPos();
         if (!event.getResult() && position1 == RecyclerView.NO_POSITION) {
 
-            ClipData.Item item = event.getClipData().getItemAt(0);
+            ClipData clipData = event.getClipData();
+            if (clipData == null) {
+                menuControls.endActionMode();
+                return;
+            }
+            ClipData.Item item = clipData.getItemAt(0);
             Intent intent = item.getIntent();
             if (intent == null) {
                 menuControls.endActionMode();
@@ -1635,6 +1645,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                         fragment.getFragmentManager()
                                 .findFragmentById(R.id.main_container);
                 Logger.log(TAG, "DRAG END single dir=" + mLastSinglePaneDir);
+                @SuppressWarnings("unchecked")
+                ArrayList<FileInfo> dragPaths = (ArrayList<FileInfo>) event.getLocalState();
 
                 if (singlePaneFragment != null && new File(mLastSinglePaneDir).list()
                         .length == 0 &&
@@ -1645,7 +1657,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
         }
         menuControls.endActionMode();
-        draggedData = new ArrayList<>();
+//        draggedData = new ArrayList<>();
     }
 
     public void syncDrawer() {
@@ -1668,7 +1680,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     public void onSelectAllClicked() {
         if (mSelectedItemPositions != null) {
-            if (mSelectedItemPositions.size() < fileListAdapter.getItemCount() - 1) {
+            if (mSelectedItemPositions.size() < fileListAdapter.getItemCount()) {
                 toggleSelectAll(true);
             } else {
                 toggleSelectAll(false);
@@ -1679,9 +1691,26 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     private void startActionMode() {
         isActionModeActive = true;
+        clearSelectedPos();
         hideFab();
         draggedData.clear();
         menuControls.startActionMode();
+    }
+
+    public void endActionMode() {
+        int selectedItems = fileListAdapter.getSelectedCount();
+        Log.d(TAG, "endActionMode: " + this + " sel item count:" + selectedItems);
+        isDragStarted = false;
+        isActionModeActive = false;
+        if (selectedItems > 0) {
+            fileListAdapter.clearDragPos();
+            fileListAdapter.removeSelection();
+        }
+        mSwipeRefreshLayout.setEnabled(true);
+        // FAB should be visible only for Files Category
+        if (isFilesCategory()) {
+            showFab();
+        }
     }
 
     boolean isActionModeActive() {
@@ -1692,7 +1721,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     @Override
     public void onHomeClicked() {
         menuControls.endActionMode();
-        removeFileFragment();
+        removeDualFileFragment();
         getActivity().onBackPressed();
     }
 
@@ -1704,7 +1733,9 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             menuControls.endActionMode();
         }
         if (isZipMode()) {
-            zipViewer.onBackPressed();
+            currentDir = dir;
+            menuControls.setCurrentDir(currentDir);
+            zipViewer.onBackPressed(currentDir);
         } else {
             currentDir = dir;
             menuControls.setCurrentDir(currentDir);
@@ -1776,13 +1807,13 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     private StoragesUiView.FavoriteOperation favoriteListener;
 
     void changeGridCols() {
-        refreshSpan(((AceActivity)getActivity()).getConfiguration());
+        refreshSpan(((AceActivity) getActivity()).getConfiguration());
     }
 
     public void refreshSpan(Configuration configuration) {
+        Log.d(TAG, "refreshSpan: orientation:" + configuration.orientation);
         if (viewMode == ViewMode.GRID) {
-            if (mCurrentOrientation == Configuration.ORIENTATION_PORTRAIT || !mIsDualModeEnabled ||
-                    checkIfLibraryCategory(category)) {
+            if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT || !mIsDualModeEnabled) {
                 gridCols = ConfigurationHelper.getStorageGridCols(configuration);
             } else {
                 gridCols = ConfigurationHelper.getStorageDualGridCols(configuration);
@@ -1799,20 +1830,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     private boolean isFilesCategory() {
         return category.equals(FILES);
-    }
-
-    public void endActionMode() {
-
-        isDragStarted = false;
-        isActionModeActive = false;
-        clearSelection();
-        clearSelectedPos();
-        menuControls.hideBottomToolbar();
-        mSwipeRefreshLayout.setEnabled(true);
-        // FAB should be visible only for Files Category
-        if (isFilesCategory()) {
-            showFab();
-        }
     }
 
 
@@ -1863,7 +1880,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     public void onFavAdded(int count) {
         FileUtils.showMessage(getContext(), String.format(getContext().getString(R.string.msg_added_fav),
-                                                          count));
+                count));
     }
 
     public void onFavExists() {
@@ -1871,6 +1888,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     public void hideDualPane() {
+        mIsDualModeEnabled = false;
     }
 
 
@@ -1892,7 +1910,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                     bridge.createFile(currentDir, name, isRooted());
                     break;
                 case RENAME:
-                    bridge.renameFile(filePath, new File(filePath).getParent(), name, position, isRooted());
+                    String filePath = fileInfo.getFilePath();
+                    bridge.renameFile(filePath, new File(filePath).getParent(), name, isRooted());
                     break;
             }
         }
@@ -1905,8 +1924,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     // Dialog for SAF and APK dialog
     private DialogHelper.AlertDialogListener alertDialogListener = new DialogHelper
-            .AlertDialogListener()
-    {
+            .AlertDialogListener() {
 
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         @Override
@@ -1914,7 +1932,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             if (isSAFShown) {
                 triggerStorageAccessFramework();
             } else {
-                Uri uri = createContentUri(getContext(), currentDir);
+                Uri uri = createContentUri(getContext(), filePath);
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_INSTALL_PACKAGE);
 
@@ -1940,7 +1958,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
         @Override
         public void onNeutralButtonClick(View view) {
-            openZipViewer(currentDir);
+            openZipViewer(filePath);
         }
     };
 
@@ -1948,6 +1966,12 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 //        navigationInfo.addHomeNavButton(true, category);
         isHomeScreenEnabled = true;
         navigationInfo.setNavDirectory(currentDir, true, category);
+    }
+
+    public void setViewMode(int viewMode) {
+        this.viewMode = viewMode;
+        menuControls.updateMenuTitle(viewMode == ViewMode.LIST ? ViewMode.GRID : ViewMode.LIST);
+        switchView();
     }
 
 
@@ -1970,10 +1994,36 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
         @Override
         public void endZipMode() {
+            Log.d(TAG, "endZipMode: " + backStackInfo);
             isZipViewer = false;
             zipViewer = null;
-            backStackInfo.removeEntryAtIndex(backStackInfo.getBackStack().size() - 1);
+            ArrayList<BackStackModel> backStack = backStackInfo.getBackStack();
+            int backStackSize = backStack.size();
+            // If home clicked, backstack will be cleared already
+            if (backStackSize == 0) {
+                return;
+            }
+            int position = 0;
+            if (currentDir == null) {
+                position = backStackSize - 2;
+            } else {
+                for (int i = 0; i < backStackSize; i++) {
+                    if (currentDir.equals(backStack.get(i).getFilePath())) {
+                        position = i;
+                        break;
+                    }
+                }
+            }
+            for (int j = backStackSize - 1; j > position; j--) {
+                backStackInfo.removeEntryAtIndex(j);
+            }
+
             refreshList();
+            if (shouldShowPathNavigation()) {
+                navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled, category);
+            } else {
+                navigationInfo.addHomeNavButton(isHomeScreenEnabled, category);
+            }
         }
 
         @Override
@@ -1999,6 +2049,16 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         @Override
         public void addToBackStack(String path, Category category) {
             backStackInfo.addToBackStack(path, category);
+        }
+
+        @Override
+        public void removeFromBackStack() {
+            backStackInfo.removeEntryAtIndex(backStackInfo.getBackStack().size() - 1);
+        }
+
+        @Override
+        public void setInitialDir(String path) {
+            navigationInfo.setInitialDir(path);
         }
     };
 

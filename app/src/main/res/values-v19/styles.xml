@@ -209,7 +209,7 @@
     </style>
 
     <style name="DialogMessage">
-        <item name="android:textSize">13sp</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:layout_marginLeft">@dimen/margin_16</item>
         <item name="android:layout_marginRight">@dimen/margin_16</item>
         <item name="android:layout_marginTop">@dimen/margin_16</item>

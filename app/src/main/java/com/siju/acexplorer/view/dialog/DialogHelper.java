@@ -19,6 +19,7 @@ package com.siju.acexplorer.view.dialog;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -27,6 +28,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AlertDialog;
 import android.text.format.Formatter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -132,52 +134,47 @@ public class DialogHelper {
     /**
      * @param fileInfo Paths to delete
      */
-    public static void showSortDialog(final Context context, int sortMode, final
-    AlertDialogListener alertDialogListener) {
+    public static void showSortDialog(final Context context, final int sortMode, final
+    SortDialogListener sortDialogListener) {
         String title = context.getString(R.string.action_sort);
         String texts[] = new String[]{title, context.getString(R.string.msg_ok), "", context
-                .getString(R.string
-                                   .dialog_cancel)};
+                .getString(R.string.dialog_cancel)};
 
+        final CharSequence options[] = {context.getString(R.string.sort_name),
+                context.getString(R.string.sort_name_desc),
+                context.getString(R.string.sort_type),
+                context.getString(R.string.sort_type_desc),
+                context.getString(R.string.sort_size),
+                context.getString(R.string.sort_size_desc),
+                context.getString(R.string.sort_date),
+                context.getString(R.string.sort_date_desc)};
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View dialogView = inflater.inflate(R.layout.dialog_sort, null);
-        builder.setView(dialogView);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title);
         builder.setCancelable(true);
 
+        final int[] selectedPos = {sortMode};
+        builder.setSingleChoiceItems(options, sortMode, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                selectedPos[0] = which;
+            }
+        });
+        builder.setPositiveButton(texts[1], new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                sortDialogListener.onPositiveButtonClick(selectedPos[0]);
+                dialog.dismiss();
+            }
+        });
+
+        builder.setNegativeButton(texts[3], new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+             dialog.dismiss();
+            }
+        });
         final AlertDialog alertDialog = builder.create();
-
-
-        TextView textTitle = dialogView.findViewById(R.id.textTitle);
-        final RadioGroup radioGroup = dialogView.findViewById(R.id.radioGroupSort);
-        Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
-        Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
-
-        textTitle.setText(title);
-        positiveButton.setText(texts[1]);
-        negativeButton.setText(texts[3]);
-        View radioButton = radioGroup.getChildAt(sortMode);
-        radioGroup.check(radioButton.getId());
-
-        positiveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int radioButtonID = radioGroup.getCheckedRadioButtonId();
-                View radioButton = radioGroup.findViewById(radioButtonID);
-                int index = radioGroup.indexOfChild(radioButton);
-                view.setTag(index);
-                alertDialogListener.onPositiveButtonClick(view);
-                alertDialog.dismiss();
-            }
-        });
-
-        negativeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                alertDialog.dismiss();
-            }
-        });
 
         alertDialog.show();
     }
@@ -397,13 +394,17 @@ public class DialogHelper {
             if (isMove) {
                 neutralButton.setEnabled(false);
                 negativeButton.setEnabled(false);
+                neutralButton.setAlpha(0.7f);
+                negativeButton.setAlpha(0.7f);
             } else {
                 negativeButton.setEnabled(false);
+                negativeButton.setAlpha(0.7f);
             }
         }
 
         if (new File(conflictFiles.get(0).getFilePath()).isDirectory()) {
             neutralButton.setEnabled(false);
+            neutralButton.setAlpha(0.5f);
         }
 
 
@@ -803,7 +804,7 @@ public class DialogHelper {
                                               destinationDir, final DragDialogListener
                                               dragDialogListener) {
 
-
+        Log.d(TAG, "showDragDialog: destDir:"+destinationDir+ "filesToPaste:"+filesToPaste.size());
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
         View dialogView = inflater.inflate(R.layout.dialog_drag, null);
@@ -946,6 +947,14 @@ public class DialogHelper {
         void onNegativeButtonClick(View view);
 
         void onNeutralButtonClick(View view);
+
+    }
+
+    public interface SortDialogListener {
+
+        void onPositiveButtonClick(int position);
+
+        void onNegativeButtonClick(View view);
 
     }
 

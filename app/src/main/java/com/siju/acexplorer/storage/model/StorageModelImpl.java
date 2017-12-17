@@ -65,7 +65,6 @@ import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FI
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH2;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION;
-import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_POSITION;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_SHOW_RESULT;
 import static com.siju.acexplorer.storage.model.operations.Operations.COMPRESS;
 import static com.siju.acexplorer.storage.model.operations.Operations.DELETE;
@@ -319,7 +318,7 @@ public class StorageModelImpl implements StoragesModel {
             String temp = path.substring(0, path.lastIndexOf(File.separator));
 
             File newFile = new File(temp + File.separator + renamedName);
-            FileOpsHelper.renameFile(Operations.HIDE, oldFile, newFile, pos.get(i), RootUtils.isRooted(context), fileOperationCallBack);
+            FileOpsHelper.renameFile(Operations.HIDE, oldFile, newFile, RootUtils.isRooted(context), fileOperationCallBack);
         }
     }
 
@@ -345,9 +344,9 @@ public class StorageModelImpl implements StoragesModel {
         }
 
         @Override
-        public void launchSAF(Operations operation, File oldFile, File newFile, int position) {
+        public void launchSAF(Operations operation, File oldFile, File newFile) {
             fileOpsHelper.formSAFIntentRename(oldFile.getAbsolutePath(), operation, newFile
-                    .getAbsolutePath(), position);
+                    .getAbsolutePath());
         }
 
         @Override
@@ -370,7 +369,7 @@ public class StorageModelImpl implements StoragesModel {
         }
 
         @Override
-        public void opCompleted(Operations operation, File oldFile, File newFile, int position,
+        public void opCompleted(Operations operation, File oldFile, File newFile,
                                 boolean success) {
             Log.d(TAG, "opCompleted: "+operation + " result:"+success);
             switch (operation) {
@@ -381,7 +380,6 @@ public class StorageModelImpl implements StoragesModel {
                                                                    newFile.getAbsolutePath());
                         Intent intent = new Intent(ACTION_OP_REFRESH);
                         intent.putExtra(KEY_OPERATION, RENAME);
-                        intent.putExtra(KEY_POSITION, position);
                         intent.putExtra(KEY_FILEPATH, oldFile.getAbsolutePath());
                         intent.putExtra(KEY_FILEPATH2, newFile.getAbsolutePath());
                         context.sendBroadcast(intent);
@@ -587,7 +585,7 @@ public class StorageModelImpl implements StoragesModel {
     }
 
     @Override
-    public void renameFile(final String filePath, final String parentDir, String name, final int position, final boolean rooted) {
+    public void renameFile(final String filePath, final String parentDir, String name, final boolean rooted) {
         if (FileUtils.isFileNameInvalid(name)) {
             listener.onInvalidName(Operations.RENAME);
             return;
@@ -610,7 +608,7 @@ public class StorageModelImpl implements StoragesModel {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                FileOpsHelper.renameFile(RENAME, new File(filePath), newFile, position, rooted, fileOperationCallBack);
+                FileOpsHelper.renameFile(RENAME, new File(filePath), newFile, rooted, fileOperationCallBack);
             }
         }).start();
     }

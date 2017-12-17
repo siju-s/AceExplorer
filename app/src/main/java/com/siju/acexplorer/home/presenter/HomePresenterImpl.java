@@ -81,6 +81,11 @@ public class HomePresenterImpl implements
         return homeModel.getDualModeState();
     }
 
+    @Override
+    public void saveLibs(List<LibrarySortModel> librarySortModels) {
+        homeModel.saveLibs(librarySortModels);
+    }
+
 
     @Override
     public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {

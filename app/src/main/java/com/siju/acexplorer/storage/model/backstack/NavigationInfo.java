@@ -69,6 +69,7 @@ public class NavigationInfo {
     }
 
     public void setInitialDir(String currentDir) {
+        Log.d(TAG, "setInitialDir: "+currentDir);
         if (currentDir.contains(getInternalStorage())) {
             initialDir = getInternalStorage();
             isCurrentDirRoot = false;

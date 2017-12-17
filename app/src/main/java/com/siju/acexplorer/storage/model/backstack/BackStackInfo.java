@@ -29,7 +29,7 @@ public class BackStackInfo {
 
     public void addToBackStack(String path, Category category) {
         backStack.add(new BackStackModel(path, category));
-        Logger.log(TAG, "Back stack--size=" + backStack.size() + " Path=" + path + "Category=" + category);
+        Logger.log(TAG, "addToBackStack--size=" + backStack.size() + " Path=" + path + "Category=" + category);
     }
 
     public void clearBackStack() {
@@ -41,8 +41,8 @@ public class BackStackInfo {
     }
 
     public void removeEntryAtIndex(int index) {
+        Logger.log(TAG, "removeEntryAtIndex: "+backStack.size() + " path:"+backStack.get(index));
         backStack.remove(index);
-        Logger.log(TAG, "removeEntryAtIndex: "+backStack.size());
     }
 
     public String getDirAtPosition(int index) {

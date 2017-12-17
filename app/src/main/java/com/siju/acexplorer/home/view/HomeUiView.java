@@ -321,6 +321,8 @@ public class HomeUiView extends CoordinatorLayout {
                 Analytics.getLogger().extStorageDisplayed();
             }
         }
+        getDualModeState();
+        Log.d(TAG, "loadFileList: dualState:"+isDualModeActive);
         FragmentTransaction ft = getActivity().getSupportFragmentManager()
                 .beginTransaction();
         Bundle args = new Bundle();
@@ -347,6 +349,12 @@ public class HomeUiView extends CoordinatorLayout {
         isDualModeActive = true;
     }
 
+
+    private boolean getDualModeState() {
+        Log.d(TAG, "getDualModeState: orientation:"+((AceActivity)getActivity()).getConfiguration().orientation);
+        return isDualModeActive = bridge.getDualModeState() && ((AceActivity)getActivity()).getConfiguration().orientation
+                == Configuration.ORIENTATION_LANDSCAPE;
+    }
 
     public void onConfigChanged(final Configuration newConfig) {
         Logger.log(TAG, "onConfigChanged " + newConfig.orientation);
@@ -382,4 +390,7 @@ public class HomeUiView extends CoordinatorLayout {
         library.updateFavoritesCount(size);
     }
 
+    public void saveLibs(List<LibrarySortModel> librarySortModels) {
+        bridge.saveLibs(librarySortModels);
+    }
 }

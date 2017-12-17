@@ -55,10 +55,6 @@ public class StoragesGroup {
     private ArrayList<SectionItems> storagesList = new ArrayList<>();
     private ArrayList<String> externalSDPaths;
 
-    private String STORAGE_ROOT;
-    private String STORAGE_INTERNAL;
-    private String STORAGE_EXTERNAL;
-
 
     public static StoragesGroup getInstance() {
         if (storagesGroup == null) {
@@ -69,20 +65,12 @@ public class StoragesGroup {
     }
 
 
-    private void initConstants() {
-        STORAGE_ROOT = context.getResources().getString(R.string.nav_menu_root);
-        STORAGE_INTERNAL = context.getResources().getString(R.string.nav_menu_internal_storage);
-        STORAGE_EXTERNAL = context.getResources().getString(R.string.nav_menu_ext_storage);
-    }
-
-
     private void clearStoragesList() {
         totalStorages = new ArrayList<>();
         storagesList = new ArrayList<>();
     }
 
     ArrayList<SectionItems> getStorageGroupData() {
-        initConstants();
         clearStoragesList();
         addRootDir();
         addStorages();
@@ -103,7 +91,7 @@ public class StoragesGroup {
                 .ic_root_white, FileUtils.getAbsolutePath(rootDir), progressRoot, null, ROOT));
     }
 
-    private void addStorages() {
+    private synchronized void addStorages() {
 
         List<String> storagePaths = getStorageDirectories();
         Log.d("StoragesGroup", "addStorages: storageSize:" + storagesList.size() + "fetched:" + storagePaths.size());
@@ -151,7 +139,6 @@ public class StoragesGroup {
     }
 
     private String storageSpace(long spaceLeft, long totalSpace) {
-        Context context = AceApplication.getAppContext();
         String freePlaceholder = "/"; //" " + context.getResources().getString(R.string.msg_free) + " ";
         return FileUtils.formatSize(context, spaceLeft) + freePlaceholder +
                 FileUtils.formatSize(context, totalSpace);

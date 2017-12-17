@@ -348,6 +348,7 @@ public class OperationProgress {
                         (mContext, copiedBytes), Formatter.formatFileSize(mContext, totalBytes)));
                 textProgress.setText(String.format(Locale.getDefault(), "%d%s", progress, mContext.getString
                         (R.string.percent_placeholder)));
+                Logger.log("FileUtils", "KEY_PROGRESS=" + progress + "Copied bytes=" + copiedBytes + " KEY_TOTAL bytes=" + totalBytes);
 
                 if (progress == 100 || totalBytes == copiedBytes) {
                     stopZipService();
@@ -405,9 +406,11 @@ public class OperationProgress {
                 textProgress.setText(String.format(Locale.getDefault(), "%d%s", totalProgressPaste, mContext.getString
                         (R.string.percent_placeholder)));
                 int movedCount = (int) copiedBytes;
-                textFileFromPath.setText(copiedFileInfo.get(movedCount - 1).getFilePath());
-                textFileName.setText(copiedFileInfo.get(movedCount - 1).getFileName());
-                textFileCount.setText(String.format(Locale.getDefault(), "%d/%d", movedCount, copiedFilesSize));
+                if (movedCount != 0) {
+                    textFileFromPath.setText(copiedFileInfo.get(movedCount - 1).getFilePath());
+                    textFileName.setText(copiedFileInfo.get(movedCount - 1).getFileName());
+                    textFileCount.setText(String.format(Locale.getDefault(), "%d/%d", movedCount, copiedFilesSize));
+                }
                 if (totalProgressPaste == 100) {
                     stopMoveService();
                     progressDialog.dismiss();

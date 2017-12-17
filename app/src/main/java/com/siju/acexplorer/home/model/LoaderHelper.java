@@ -18,10 +18,9 @@ package com.siju.acexplorer.home.model;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
-import android.util.Log;
 
-import com.siju.acexplorer.model.FileListLoader;
 import com.siju.acexplorer.model.FileInfo;
+import com.siju.acexplorer.model.FileListLoader;
 import com.siju.acexplorer.model.StorageUtils;
 import com.siju.acexplorer.model.groups.Category;
 
@@ -39,7 +38,7 @@ public class LoaderHelper {
     }
 
     public Loader<ArrayList<FileInfo>> createLoader(Category category, int id) {
-        Log.d("LoaderHelper", "createLoader: Category:"+category + " id:"+id);
+//        Log.d("LoaderHelper", "createLoader: Category:"+category + " id:"+id);
         switch (id) {
             case 1:
             case 2:
@@ -59,7 +58,7 @@ public class LoaderHelper {
     }
 
     public Loader<ArrayList<FileInfo>> createLoader(String path, Category category, boolean isPicker) {
-        Log.d(this.getClass().getSimpleName(), "createLoader: "+path);
+//        Log.d(this.getClass().getSimpleName(), "createLoader: "+path);
         return new FileListLoader(fragment, path, category, isPicker);
     }
 }

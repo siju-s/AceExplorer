@@ -18,14 +18,12 @@ package com.siju.acexplorer.storage.model.task;
 
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
 import com.github.junrar.rarfile.FileHeader;
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.logging.Logger;
-import com.siju.acexplorer.model.helper.RootHelper;
 import com.siju.acexplorer.view.dialog.DialogHelper;
 
 import java.io.BufferedInputStream;
@@ -87,9 +85,9 @@ public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
 
-        String cmd = "chmod 777 " + output.getPath();
-        Log.d("change permissions", cmd);
-        RootHelper.runAndWait(cmd);
+//        String cmd = "chmod 777 " + output.getPath();
+//        Log.d("change permissions", cmd);
+//        RootHelper.runAndWait(cmd);
         String outputPath = output.getPath();
         String extension = outputPath.substring(outputPath.lastIndexOf(".") + 1, outputPath.length());
         viewFile(AceApplication.getAppContext(), outputPath, extension, alertDialogListener);
@@ -142,7 +140,6 @@ public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
         FileOutputStream fileOutputStream = new FileOutputStream(output);
         zipfile.extractFile(header, fileOutputStream);
     }
-
 
 
 }

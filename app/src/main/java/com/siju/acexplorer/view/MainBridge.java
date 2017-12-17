@@ -120,6 +120,11 @@ public class MainBridge implements MainUi {
     }
 
     @Override
+    public void switchView(int viewMode, boolean isDual) {
+        uiView.switchView(viewMode, isDual);
+    }
+
+    @Override
     public void onPermissionResult(int requestCode, @NonNull String[] permissions, @NonNull int[]
             grantResults) {
         uiView.handlePermissionResult(requestCode);

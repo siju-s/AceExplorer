@@ -60,8 +60,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private ArrayList<FileInfo> fileInfoList;
 
     private final String  currentDir;
-    private       boolean showHidden;
     private       int     sortMode;
+    private       boolean showHidden;
     private       boolean isRingtonePicker;
     private       boolean isRooted;
 

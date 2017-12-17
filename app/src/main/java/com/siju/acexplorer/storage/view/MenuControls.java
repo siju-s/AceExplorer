@@ -161,16 +161,6 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
     }
 
 
-    void startActionMode() {
-
-        setupActionModeToolbar();
-        bottomToolbar.getMenu().clear();
-        EnhancedMenuInflater.inflate(activity.getMenuInflater(), bottomToolbar.getMenu(),
-                                     category);
-        setupMenu();
-        bottomToolbar.setOnMenuItemClickListener(this);
-        showBottomToolbar();
-    }
 
     private void setupMenu() {
         Menu menu = bottomToolbar.getMenu();
@@ -277,6 +267,7 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
         searchItem = menu.findItem(R.id.action_search);
         searchView = (android.support.v7.widget.SearchView) searchItem.getActionView();
         mViewItem = menu.findItem(R.id.action_view);
+        updateMenuTitle(storagesUiView.getViewMode());
         setupSearchView();
     }
 
@@ -290,6 +281,7 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
         switch (item.getItemId()) {
 
             case R.id.action_view:
+                storagesUiView.passViewMode();
                 storagesUiView.switchView();
                 int mode = storagesUiView.getViewMode();
                 Analytics.getLogger().switchView(mode == ViewMode.LIST);
@@ -370,10 +362,7 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
 
                 if (selectedItems != null && selectedItems.size() > 0) {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_RENAME);
-                    final String oldFilePath = fileInfoList.get(selectedItems.keyAt(0)).
-                            getFilePath();
-                    int renamedPosition = selectedItems.keyAt(0);
-                    renameDialog(oldFilePath, renamedPosition);
+                    renameDialog(fileInfoList.get(selectedItems.keyAt(0)));
                     endActionMode();
                 }
                 break;
@@ -521,8 +510,8 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
     }
 
 
-    private void renameDialog(final String oldFilePath, final int
-            position) {
+    private void renameDialog(FileInfo fileInfo) {
+        String oldFilePath = fileInfo.getFilePath();
         String fileName;
         if (new File(oldFilePath).isFile()) {
             fileName = oldFilePath.substring(oldFilePath.lastIndexOf("/") + 1, oldFilePath
@@ -532,7 +521,7 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
                     .length());
         }
 
-        storagesUiView.showRenameDialog(oldFilePath, fileName, position);
+        storagesUiView.showRenameDialog(fileInfo, fileName);
     }
 
 
@@ -544,6 +533,17 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
 
     private void hideSelectAll() {
         toolbar.getMenu().findItem(R.id.action_select_all).setVisible(false);
+    }
+
+    void startActionMode() {
+
+        setupActionModeToolbar();
+        bottomToolbar.getMenu().clear();
+        EnhancedMenuInflater.inflate(activity.getMenuInflater(), bottomToolbar.getMenu(),
+                category);
+        setupMenu();
+        bottomToolbar.setOnMenuItemClickListener(this);
+        showBottomToolbar();
     }
 
 
@@ -558,14 +558,14 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
         }
     }
 
-    private void updateMenuTitle(int viewMode) {
+    void updateMenuTitle(int viewMode) {
         mViewItem.setTitle(viewMode == ViewMode.LIST ? R.string.action_view_grid : R.string
                 .action_view_list);
     }
 
 
     private void showSortDialog() {
-        DialogHelper.showSortDialog(context, storagesUiView.getSortMode(), alertDialogListener);
+        DialogHelper.showSortDialog(context, storagesUiView.getSortMode(), sortDialogListener);
     }
 
 
@@ -653,22 +653,18 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
     };
 
 
-    private DialogHelper.AlertDialogListener alertDialogListener = new DialogHelper
-            .AlertDialogListener()
+    private DialogHelper.SortDialogListener sortDialogListener = new DialogHelper
+            .SortDialogListener()
     {
 
         @Override
-        public void onPositiveButtonClick(View view) {
-            storagesUiView.sortFiles((int) view.getTag());
+        public void onPositiveButtonClick(int position) {
+            storagesUiView.sortFiles(position);
+
         }
 
         @Override
         public void onNegativeButtonClick(View view) {
-
-        }
-
-        @Override
-        public void onNeutralButtonClick(View view) {
 
         }
     };

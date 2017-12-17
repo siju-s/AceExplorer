@@ -77,6 +77,8 @@ public interface MainUi {
 
     void onConfigChanged(Configuration newConfig);
 
+    void switchView(int viewMode, boolean isDual);
+
     interface Listener {
 
         void getTotalGroupData();

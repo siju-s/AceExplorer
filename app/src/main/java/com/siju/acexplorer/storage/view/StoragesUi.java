@@ -112,6 +112,10 @@ public interface StoragesUi {
 
     void addHomeNavPath();
 
+    void hideDualPane();
+
+    void switchView(int viewMode);
+
 
     interface Listener {
 
@@ -153,6 +157,6 @@ public interface StoragesUi {
 
         void updateFavorites(ArrayList<FavInfo> favInfoArrayList);
 
-        void renameFile(String filePath, String newFilePath, String name, int position, boolean rooted);
+        void renameFile(String filePath, String newFilePath, String name, boolean rooted);
     }
 }

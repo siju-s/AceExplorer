@@ -19,10 +19,10 @@ package com.siju.acexplorer.model.helper;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
-import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.view.dialog.DialogHelper;
 
 import static android.webkit.MimeTypeMap.getSingleton;
@@ -59,11 +59,11 @@ public class ViewHelper {
                 context.getString(R.string.install), context.getString(R.string.dialog_cancel), context.getString(R.string.view),
                 };
 
-        if (ext.equals("apk")) {
+        if ("apk".equals(ext)) {
             DialogHelper.showAlertDialog(context, texts, alertDialogListener);
         } else {
             String mimeType = getSingleton().getMimeTypeFromExtension(ext);
-            Logger.log(TAG, " uri==" + uri + "MIME=" + mimeType);
+            Log.d(TAG, " uri==" + uri + "MIME=" + mimeType);
             intent.setDataAndType(uri, mimeType);
             if (mimeType != null) {
                 Analytics.getLogger().openFile();

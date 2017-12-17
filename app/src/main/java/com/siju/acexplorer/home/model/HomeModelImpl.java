@@ -129,6 +129,11 @@ public class HomeModelImpl implements HomeModel {
         return sharedPreferences.getBoolean(PREFS_DUAL_PANE, false);
     }
 
+    @Override
+    public void saveLibs(List<LibrarySortModel> librarySortModels) {
+        sharedPreferenceWrapper.saveLibrary(context, librarySortModels);
+    }
+
 
     @Override
     public void getLibraries() {

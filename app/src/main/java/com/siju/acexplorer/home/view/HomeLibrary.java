@@ -158,6 +158,10 @@ class HomeLibrary {
     }
 
     private void reloadAftDelete() {
+        homeUiView.reloadLibs(formLibSortList());
+    }
+
+    private List<LibrarySortModel> formLibSortList() {
         List<LibrarySortModel> sortModelList = new ArrayList<>();
         for (int i = 0; i < homeLibraryInfoArrayList.size(); i++) {
             Category category = homeLibraryInfoArrayList.get(i).getCategory();
@@ -170,7 +174,12 @@ class HomeLibrary {
             model.setLibraryName(homeLibraryInfoArrayList.get(i).getCategoryName());
             sortModelList.add(model);
         }
-        homeUiView.reloadLibs(sortModelList);
+        return sortModelList;
+    }
+
+    void saveLibs() {
+        homeLibraryInfoArrayList = homeLibAdapter.getList();
+        homeUiView.saveLibs(formLibSortList());
     }
 
     private void handleItemClick(int position) {
@@ -211,6 +220,7 @@ class HomeLibrary {
         deleteButton.setVisibility(View.GONE);
         isActionModeActive = false;
         homeLibAdapter.clearSelection();
+        saveLibs();
     }
 
     private boolean isActionModeActive() {

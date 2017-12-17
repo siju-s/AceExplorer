@@ -37,4 +37,8 @@ public interface ZipCommunicator {
     void setNavDirectory(String path, boolean isHomeScreenEnabled, Category category);
 
     void addToBackStack(String path, Category category);
+
+    void removeFromBackStack();
+
+    void setInitialDir(String path);
 }

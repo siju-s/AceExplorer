@@ -173,8 +173,8 @@ public class StoragesPresenterImpl implements StoragesUi.Listener,
     }
 
     @Override
-    public void renameFile(String filePath, String newFilePath, String name, int position, boolean rooted) {
-        storagesModel.renameFile(filePath, newFilePath, name, position, rooted);
+    public void renameFile(String filePath, String newFilePath, String name, boolean rooted) {
+        storagesModel.renameFile(filePath, newFilePath, name, rooted);
     }
 
     @Override

@@ -153,4 +153,8 @@ public class HomeBridge implements HomeView {
     boolean getDualModeState() {
         return listener.getDualModeState();
     }
+
+    void saveLibs(List<LibrarySortModel> librarySortModels) {
+        listener.saveLibs(librarySortModels);
+    }
 }

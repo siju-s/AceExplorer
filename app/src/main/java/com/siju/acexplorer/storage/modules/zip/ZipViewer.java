@@ -48,7 +48,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import static android.webkit.MimeTypeMap.getSingleton;
-import static com.siju.acexplorer.model.StorageUtils.getInternalStorage;
 import static com.siju.acexplorer.model.groups.Category.FILES;
 import static com.siju.acexplorer.model.groups.Category.ZIP_VIEWER;
 import static com.siju.acexplorer.model.helper.UriHelper.createContentUri;
@@ -103,8 +102,10 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
         this.fragment = fragment;
         this.zipCommunicator = zipCommunicator;
         zipParentPath = zipPath = path;
+        Log.d(TAG, "ZipViewer: zipParent:"+zipParentPath);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(AceApplication.getAppContext());
         isHomeScreenEnabled = preferences.getBoolean(FileConstants.PREFS_HOMESCREEN, true);
+        zipCommunicator.setInitialDir(path);
         setNavDirectory(path);
         zipCommunicator.addToBackStack(path, FILES);
     }
@@ -147,10 +148,12 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
 
     private String newPath;
 
-    private void checkZipMode() {
-        if (currentDir == null || currentDir.length() == 0) {
+    private void checkZipMode(String dir) {
+        Log.d(TAG, "checkZipMode: "+dir + " zipParentDir:"+zipParentPath);
+        if (currentDir == null || currentDir.length() == 0 || !dir.contains(zipParentPath)) {
             endZipMode();
         } else {
+            zipCommunicator.removeFromBackStack();
             zipCommunicator.removeZipScrollPos(newPath);
             inChildZip = false;
             Logger.log(TAG, "checkZipMode--currentzipdir B4=" + currentDir);
@@ -180,7 +183,7 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
         zipCommunicator.removeZipScrollPos(zipParentPath);
         zipCommunicator.endZipMode();
         clearCache();
-        setNavDirectory(getInternalStorage());
+//        setNavDirectory(getInternalStorage());
     }
 
     private void clearCache() {
@@ -276,7 +279,17 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
     }
 
     public void onBackPressed() {
-        checkZipMode();
+        String path = currentDir;
+        if (currentDir != null) {
+            path = zipParentPath + File.separator + currentDir;
+        }
+        Log.d(TAG, "onBackPressed: currentDir:"+currentDir + " fullPath:"+path);
+        checkZipMode(path);
+    }
+
+    public void onBackPressed(String dir) {
+        Log.d(TAG, "onBackPressed: dir:"+dir);
+        checkZipMode(dir);
     }
 
 
@@ -299,6 +312,7 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
             newPath = newPath.substring(0, newPath.length() - 1);
         }
         reloadList();
+        zipCommunicator.addToBackStack(newPath, FILES);
         setNavDirectory(newPath);
     }
 

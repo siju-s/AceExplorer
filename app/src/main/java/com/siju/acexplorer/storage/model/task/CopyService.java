@@ -180,11 +180,15 @@ public class CopyService extends IntentService {
                         String fileName = files.get(i).getFileName();
                         String path = currentDir + SEPARATOR + fileName;
                         if (action == FileUtils.ACTION_KEEP) {
-                            String fileNameWithoutExt = fileName.substring(0, fileName.
-                                    lastIndexOf("."));
-                            path = currentDir + SEPARATOR + fileNameWithoutExt + "(2)" + "." + files
-                                    .get(i)
-                                    .getExtension();
+                            if (new File(path).isDirectory()) {
+                                path = currentDir + SEPARATOR + fileName + "(2)";
+                            } else {
+                                String fileNameWithoutExt = fileName.substring(0, fileName.
+                                        lastIndexOf("."));
+                                path = currentDir + SEPARATOR + fileNameWithoutExt + "(2)" + "." + files
+                                        .get(i)
+                                        .getExtension();
+                            }
                         }
                         destFile.setFilePath(path);
                         Logger.log("CopyService", "Execute-Dest file path=" + destFile

@@ -244,14 +244,23 @@ public class MoveFiles extends IntentService {
     }
 
     private void sendCompletedResult() {
+        boolean isMoveSuccess = filesMovedList.size() == filesToMove.size();
         builder.setContentTitle(getString(R.string.move_complete));
         builder.setProgress(0, 0, false);
         builder.setOngoing(false);
         builder.setAutoCancel(true);
         notificationManager.notify(NOTIFICATION_ID, builder.build());
 
+        if (!isMoveSuccess) {
+            Intent intent = new Intent(MOVE_PROGRESS);
+            intent.putExtra(KEY_COMPLETED, 0L);
+            intent.putExtra(KEY_TOTAL, (long)filesToMove.size());
+            intent.putExtra(KEY_TOTAL_PROGRESS, 100);
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+        }
+
         Intent intent = new Intent(ACTION_OP_REFRESH);
-        intent.putExtra(KEY_RESULT, filesMovedList.size() != 0);
+        intent.putExtra(KEY_RESULT, isMoveSuccess);
         intent.putExtra(KEY_OPERATION, CUT);
         intent.putStringArrayListExtra(KEY_FILES, filesMovedList);
         intent.putStringArrayListExtra(KEY_OLD_FILES, oldFileList);

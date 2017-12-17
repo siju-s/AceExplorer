@@ -232,6 +232,16 @@ public class StorageBridge implements StoragesUi {
     }
 
     @Override
+    public void hideDualPane() {
+        storagesUiView.hideDualPane();
+    }
+
+    @Override
+    public void switchView(int viewMode) {
+        storagesUiView.setViewMode(viewMode);
+    }
+
+    @Override
     public void reloadList(String directory, Category category) {
         storagesUiView.reloadList(directory, category);
     }
@@ -393,9 +403,9 @@ public class StorageBridge implements StoragesUi {
         listener.updateFavorites(favInfoArrayList);
     }
 
-    void renameFile(String filePath, String parentDir, String name, int position,
+    void renameFile(String filePath, String parentDir, String name,
                     boolean rooted) {
-        listener.renameFile(filePath, parentDir, name, position, rooted);
+        listener.renameFile(filePath, parentDir, name, rooted);
     }
 
     void showDualFrame() {
