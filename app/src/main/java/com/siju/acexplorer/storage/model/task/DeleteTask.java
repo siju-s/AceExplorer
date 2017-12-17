@@ -21,6 +21,7 @@ import android.os.Process;
 import android.util.Log;
 
 import com.siju.acexplorer.model.FileInfo;
+import com.siju.acexplorer.model.StorageUtils;
 import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.model.helper.MediaStoreHelper;
 import com.siju.acexplorer.model.helper.root.RootTools;
@@ -75,6 +76,11 @@ public class DeleteTask {
                     boolean isDeleted = FileUtils.deleteFile(new File(path));
 
                     if (!isDeleted) {
+                        boolean isRootDir = StorageUtils.isRootDirectory(path);
+                        if (!isRootDir) {
+                            deleteResultCallback.onFileDeleted(totalFiles, deletedFilesList, mShowToast);
+                            return;
+                        }
                         boolean isRootMode = RootTools.isAccessGiven();
                         if (isRootMode) {
                             try {

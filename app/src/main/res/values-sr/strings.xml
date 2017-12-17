@@ -97,7 +97,6 @@
     <string name="extracting">Издвајање ..</string>
     <string name="dialog_current_path">Струјни</string>
     <string name="dialog_specify_path">Наведите путању</string>
-    <string name="browse">Избор путања</string>
     <string name="enter_file_name">Унесите назив датотеке</string>
     <string name="extract">екстракт</string>
     <string name="dialog_title_browse">Изаберите фасциклу</string>
@@ -133,7 +132,6 @@
     <string name="image">Слика</string>
     <string name="audio">звучни</string>
     <string name="other">други</string>
-    <string name="file_exists">Датотека већ постоји</string>
     <string name="create">створити</string>
     <string name="zip_progress_title">kreiranje рар</string>
     <string name="needsaccess">Врите тражени приступ</string>
@@ -187,4 +185,23 @@
 	<string name="app_invite_title">апп позвати</string>
     <string name="app_invite_msg">Покушајте ово кул филе манагер !!</string>
     <string name="app_invite_failed">Слање инвите није успело.</string>
+
+    <string name="browse">Прегледајте</string>
+    <string name="msg_error_unrooted">Приступ корена одбијен.</string>
+    <string name="billing_unsupported">Куповине у апликацији које нису подржане на овом уређају.</string>
+    <string name="action_more">Више</string>
+    <string name="directory">Именик</string>
+    <string name="operation">Операција</string>
+    <string name="extract_complete">Екстракт је завршен</string>
+    <string name="clipboard">%d д у клипборду</string>
+    <string name="fav_exists">Фаворит већ постоји.</string>
+    <string name="msg_added_fav">%d д ставки додати у Фаворитес.</string>
+    <string name="header_source">Извор</string>
+    <string name="header_destination">Дестинација</string>
+    <string name="error_unsupported">Није подржан</string>
+    <string name="copy_path">Копирај пут</string>
+    <string name="text_copied_clipboard">Копиран у клипборд.</string>
+    <string name="analytics_text">Пошаљите анализу</string>
+    <string name="analytics_summary">Помозите нам да побољшамо апликацију слањем анонимних података о коришћењу.</string>
+    <string name="move_complete">Мове Цомплетед</string>
 </resources>

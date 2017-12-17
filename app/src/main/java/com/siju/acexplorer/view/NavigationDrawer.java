@@ -117,8 +117,7 @@ public class NavigationDrawer implements View.OnClickListener {
     }
 
     private void initListeners() {
-        drawerToggle = new ActionBarDrawerToggle(activity, drawerLayout, R.string
-                .navigation_drawer_open, R.string
+        drawerToggle = new ActionBarDrawerToggle(activity, drawerLayout, R.string.navigation_drawer_open, R.string
                                                          .navigation_drawer_close)
         {
 

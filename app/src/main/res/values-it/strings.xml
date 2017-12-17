@@ -96,7 +96,6 @@
     <string name="extracting">Estrazione ..</string>
     <string name="dialog_current_path">percorso corrente</string>
     <string name="dialog_specify_path">specificare il percorso</string>
-    <string name="browse">Selezionare il percorso</string>
     <string name="enter_file_name">Nome del file</string>
     <string name="extract">Estratto</string>
     <string name="dialog_title_browse">Scegliete la cartella</string>
@@ -132,7 +131,6 @@
     <string name="image">Immagine</string>
     <string name="audio">Audio</string>
     <string name="other">Altro</string>
-    <string name="file_exists">Il file esiste già</string>
     <string name="create">Creare</string>
     <string name="zip_progress_title">Creazione di zip</string>
     <string name="needsaccess">Scrivi accesso richiesto</string>
@@ -186,4 +184,23 @@
 	<string name="app_invite_title">App invito</string>
     <string name="app_invite_msg">Prova questo file manager fresco !!</string>
     <string name="app_invite_failed">L\'invio di invitare fallito.</string>
+
+    <string name="browse">Navigare</string>
+    <string name="msg_error_unrooted">Accesso di root negato.</string>
+    <string name="billing_unsupported">Gli acquisti in-app non sono supportati su questo dispositivo.</string>
+    <string name="action_more">Di Più</string>
+    <string name="directory">elenco</string>
+    <string name="operation">operazione</string>
+    <string name="extract_complete">Estratto completato</string>
+    <string name="clipboard">%d negli appunti</string>
+    <string name="fav_exists">Il preferito esiste già.</string>
+    <string name="msg_added_fav">%d articolo / i aggiunto ai preferiti.</string>
+    <string name="header_source">fonte</string>
+    <string name="header_destination">Destinazione</string>
+    <string name="error_unsupported">Non supportato</string>
+    <string name="copy_path">Copia percorso</string>
+    <string name="text_copied_clipboard">Copiato negli appunti.</string>
+    <string name="analytics_text">Invia analisi</string>
+    <string name="analytics_summary">Aiutaci a migliorare l\'app inviando dati di utilizzo anonimi.</string>
+    <string name="move_complete">Sposta completato</string>
 </resources>

@@ -50,6 +50,7 @@ import static com.siju.acexplorer.model.helper.SortHelper.comparatorByNameZip;
 import static com.siju.acexplorer.model.helper.SortHelper.comparatorByNameZip1;
 
 
+@SuppressWarnings("FieldCanBeLocal")
 public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private final String TAG = this.getClass().getSimpleName();
     private ArrayList<FileInfo> fileInfoList;
@@ -69,11 +70,10 @@ public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private FileHeader header;
     private boolean isRooted;
     private String mCurrentZipDir;
-    public ArrayList<ZipModel> totalZipList = new ArrayList<>();
+    private ArrayList<ZipModel> totalZipList = new ArrayList<>();
 
-    public Archive mArchive;
-    public final ArrayList<FileHeader> totalRarList = new ArrayList<>();
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+    private Archive mArchive;
+    private final ArrayList<FileHeader> totalRarList = new ArrayList<>();
     private final ArrayList<FileHeader> rarChildren = new ArrayList<>();
     private ZipViewer zipViewer;
 

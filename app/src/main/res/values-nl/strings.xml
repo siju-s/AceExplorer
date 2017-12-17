@@ -97,7 +97,6 @@
     <string name="extracting">Het halen van ..</string>
     <string name="dialog_current_path">Huidig ​​pad</string>
     <string name="dialog_specify_path">Geef het pad</string>
-    <string name="browse">Selecteer pad</string>
     <string name="enter_file_name">Voer bestandsnaam</string>
     <string name="extract">Extract</string>
     <string name="dialog_title_browse">Kies map</string>
@@ -133,7 +132,6 @@
     <string name="image">Beeld</string>
     <string name="audio">audio</string>
     <string name="other">anders</string>
-    <string name="file_exists">Bestand bestaat al</string>
     <string name="create">creëren</string>
     <string name="zip_progress_title">Het creëren zip</string>
     <string name="needsaccess">Schrijf Access Required</string>
@@ -185,4 +183,23 @@
 	<string name="app_invite_title">App uitnodigen</string>
     <string name="app_invite_msg">Probeer deze coole file manager !!</string>
     <string name="app_invite_failed">Het versturen van uitnodiging is mislukt.</string>
+
+    <string name="browse">Blader</string>
+    <string name="msg_error_unrooted">Toegang geweigerd.</string>
+    <string name="billing_unsupported">In-app-aankopen worden niet ondersteund op dit apparaat.</string>
+    <string name="action_more">Meer</string>
+    <string name="directory">directory</string>
+    <string name="operation">Operatie</string>
+    <string name="extract_complete">Extract voltooid</string>
+    <string name="clipboard">%d op het klembord</string>
+    <string name="fav_exists">Favoriet bestaat al</string>
+    <string name="msg_added_fav">%d item (s) toegevoegd aan Favorieten.</string>
+    <string name="header_source">Bron</string>
+    <string name="header_destination">Bestemming</string>
+    <string name="error_unsupported">Niet ondersteund</string>
+    <string name="copy_path">Pad kopiëren</string>
+    <string name="text_copied_clipboard">Gekopieerd naar het klembord.</string>
+    <string name="analytics_text">Verstuur analytics</string>
+    <string name="analytics_summary">Help ons de app te verbeteren door anonieme gebruiksgegevens te verzenden.</string>
+    <string name="move_complete">Verplaats voltooid</string>
 </resources>

@@ -96,7 +96,6 @@
     <string name="extracting">მოპოვების ..</string>
     <string name="dialog_current_path">აქტუალური გზაზე</string>
     <string name="dialog_specify_path">მიუთითეთ გზაზე</string>
-    <string name="browse">აირჩიეთ გზას</string>
     <string name="enter_file_name">შეიყვანეთ ფაილის სახელი</string>
     <string name="extract">ამონაწერი</string>
     <string name="dialog_title_browse">აირჩიეთ ფოლდერი</string>
@@ -132,7 +131,6 @@
     <string name="image">Image</string>
     <string name="audio">აუდიო</string>
     <string name="other">სხვა</string>
-    <string name="file_exists">ფაილი უკვე არსებობს</string>
     <string name="create">შექმნა</string>
     <string name="zip_progress_title">შექმნა zip</string>
     <string name="needsaccess">დაწერეთ წვდომა საჭირო</string>
@@ -186,4 +184,23 @@
 	 <string name="app_invite_title">app მოიწვიოს</string>
     <string name="app_invite_msg">სცადეთ ამ მაგარი ფაილ მენეჯერი !!</string>
     <string name="app_invite_failed">გაგზავნის მოიწვიოს ვერ მოხერხდა.</string>
+
+    <string name="browse">იხილე</string>
+    <string name="msg_error_unrooted">Root წვდომა უარყო.</string>
+    <string name="billing_unsupported">აპს-შიდა შესყიდვები ამ მოწყობილობაზე არ არის მხარდაჭერილი.</string>
+    <string name="action_more">სხვა</string>
+    <string name="directory">დირექტორია</string>
+    <string name="operation">ოპერაცია</string>
+    <string name="extract_complete">ამოღება დასრულებულია</string>
+    <string name="clipboard">%d ბუფერში</string>
+    <string name="fav_exists">საყვარელი უკვე არსებობს.</string>
+    <string name="msg_added_fav">%d პუნქტი (s) დაემატა ფავორიტებს.</string>
+    <string name="header_source">წყარო</string>
+    <string name="header_destination">დანიშნულება</string>
+    <string name="error_unsupported">არ არის მხარდაჭერილი</string>
+    <string name="copy_path">დააკოპირეთ გზა</string>
+    <string name="text_copied_clipboard">გადაწერა ბუფერში.</string>
+    <string name="analytics_text">გააგზავნე ანალიტიკა</string>
+    <string name="analytics_summary">ადემანის გამოყენების მონაცემების გასაგზავნად აპლიკაციის გასაუმჯობესებლად.</string>
+    <string name="move_complete">გადატანა დასრულდა</string>
 </resources>

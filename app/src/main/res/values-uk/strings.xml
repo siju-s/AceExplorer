@@ -98,7 +98,6 @@
     <string name="extracting">Розпакування ..</string>
     <string name="dialog_current_path">Поточний шлях</string>
     <string name="dialog_specify_path">вкажіть шлях</string>
-    <string name="browse">Виберіть шлях</string>
     <string name="enter_file_name">Введіть ім\'я файлу</string>
     <string name="extract">екстракт</string>
     <string name="dialog_title_browse">Виберіть папку</string>
@@ -134,7 +133,6 @@
     <string name="image">зображення</string>
     <string name="audio">аудіо</string>
     <string name="other">Інший</string>
-    <string name="file_exists">Файл вже існує</string>
     <string name="create">створити</string>
     <string name="zip_progress_title">Створення поштового індексу</string>
     <string name="needsaccess">Написати Потрібно доступ</string>
@@ -188,4 +186,23 @@
 	<string name="app_invite_title">App запросити</string>
     <string name="app_invite_msg">Спробуйте цей прохолодний файловий менеджер !!</string>
     <string name="app_invite_failed">Відправка запросить не вдалося.</string>
+
+    <string name="browse">Перегляньте</string>
+    <string name="msg_error_unrooted">Керований доступ відхилено.</string>
+    <string name="billing_unsupported">Покупки через додаток не підтримуються на цьому пристрої.</string>
+    <string name="action_more">Більше</string>
+    <string name="directory">Довідник</string>
+    <string name="operation">Операція</string>
+    <string name="extract_complete">Витяг виконано</string>
+    <string name="clipboard">%d у буфері обміну</string>
+    <string name="fav_exists">Улюблений вже існує.</string>
+    <string name="msg_added_fav">%d елементів додано до вибраного.</string>
+    <string name="header_source">Джерело</string>
+    <string name="header_destination">Місце призначення</string>
+    <string name="error_unsupported">Не підтримується</string>
+    <string name="copy_path">Копіювати шлях</string>
+    <string name="text_copied_clipboard">Скопійовано в буфер обміну.</string>
+    <string name="analytics_text">Надіслати аналітику</string>
+    <string name="analytics_summary">Допоможіть нам покращити додаток, надіславши анонімні дані про використання.</string>
+    <string name="move_complete">Перемістити завершено</string>
 </resources>

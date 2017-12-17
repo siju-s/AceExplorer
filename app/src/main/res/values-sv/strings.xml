@@ -96,7 +96,6 @@
     <string name="extracting">Extrahering ..</string>
     <string name="dialog_current_path">strömbana</string>
     <string name="dialog_specify_path">ange sökvägen</string>
-    <string name="browse">Välj sökväg</string>
     <string name="enter_file_name">Ange filnamn</string>
     <string name="extract">Extrahera</string>
     <string name="dialog_title_browse">Välj mapp</string>
@@ -132,7 +131,6 @@
     <string name="image">Bild</string>
     <string name="audio">Audio</string>
     <string name="other">Andra</string>
-    <string name="file_exists">filen finns redan</string>
     <string name="create">Skapa</string>
     <string name="zip_progress_title">skapa zip</string>
     <string name="needsaccess">Skriv Åtkomst krävs</string>
@@ -185,4 +183,23 @@
 	<string name="app_invite_title">app inbjuder</string>
     <string name="app_invite_msg">Prova denna häftiga filhanterare !!</string>
     <string name="app_invite_failed">Skicka inbjudan misslyckades.</string>
+
+    <string name="browse">Bläddra</string>
+    <string name="msg_error_unrooted">Root access nekas.</string>
+    <string name="billing_unsupported">Inköp i appen stöds inte på den här enheten.</string>
+    <string name="action_more">Mer</string>
+    <string name="directory">Directory</string>
+    <string name="operation">Drift</string>
+    <string name="extract_complete">Extrakt färdigställd</string>
+    <string name="clipboard">%d i Urklipp</string>
+    <string name="fav_exists">Favorit finns redan.</string>
+    <string name="msg_added_fav">%d objekt (er) läggas till i Favoriter.</string>
+    <string name="header_source">Källa</string>
+    <string name="header_destination">Destination</string>
+    <string name="error_unsupported">Stöds inte</string>
+    <string name="copy_path">Kopiera sökvägen</string>
+    <string name="text_copied_clipboard">Kopieras till Urklipp.</string>
+    <string name="analytics_text">Skicka analys</string>
+    <string name="analytics_summary">Hjälp oss att förbättra appen genom att skicka anonyma användningsuppgifter.</string>
+    <string name="move_complete">Flytta slutfört</string>
 </resources>

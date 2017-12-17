@@ -95,7 +95,6 @@
     <string name="extracting">提取..</string>
     <string name="dialog_current_path">当前路径</string>
     <string name="dialog_specify_path">指定路径</string>
-    <string name="browse">选择路径</string>
     <string name="enter_file_name">输入文件名</string>
     <string name="extract">提取</string>
     <string name="dialog_title_browse">选择文件夹</string>
@@ -131,7 +130,6 @@
     <string name="image">图片</string>
     <string name="audio">音频</string>
     <string name="other">其他</string>
-    <string name="file_exists">文件已存在</string>
     <string name="create">创建</string>
     <string name="zip_progress_title">创建zip</string>
     <string name="needsaccess">需要写访问</string>
@@ -184,4 +182,23 @@
 	<string name="app_invite_title">应用程式邀请</string>
     <string name="app_invite_msg">尝试这个酷文件管理器！</string>
     <string name="app_invite_failed">发送邀请失败。</string>
+
+    <string name="browse">浏览</string>
+    <string name="msg_error_unrooted">根访问被拒绝。</string>
+    <string name="billing_unsupported">此设备不支持应用内购买。</string>
+    <string name="action_more">更多</string>
+    <string name="directory">目录</string>
+    <string name="operation">手术</string>
+    <string name="extract_complete">提取完成</string>
+    <string name="clipboard">%d在剪贴板中</string>
+    <string name="fav_exists">收藏已存在。</string>
+    <string name="msg_added_fav">%d个项目添加到收藏夹。</string>
+    <string name="header_source">资源</string>
+    <string name="header_destination">目的地</string>
+    <string name="error_unsupported">不支持</string>
+    <string name="copy_path">复制路径</string>
+    <string name="text_copied_clipboard">复制到剪贴板。</string>
+    <string name="analytics_text">发送分析</string>
+    <string name="analytics_summary">通过发送匿名使用数据帮助我们改进应用程序。</string>
+    <string name="move_complete">移动完成</string>
 </resources>

@@ -69,6 +69,9 @@ class LibrarySortAdapter extends RecyclerView.Adapter<LibrarySortAdapter.Library
                 if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
                     dragStartListener.onStartDrag(librarySortViewHolder);
                 }
+                if (event.getActionMasked() == MotionEvent.ACTION_UP) {
+                    view.performClick();
+                }
                 return false;
             }
         });

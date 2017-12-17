@@ -98,7 +98,6 @@
     <string name="extracting">Izvlačenje ..</string>
     <string name="dialog_current_path">Trenutno put</string>
     <string name="dialog_specify_path">Navedite stazu</string>
-    <string name="browse">Odaberi put</string>
     <string name="enter_file_name">Unesite naziv datoteke</string>
     <string name="extract">Ekstrakt</string>
     <string name="dialog_title_browse">Odaberite mapu</string>
@@ -134,7 +133,6 @@
     <string name="image">Slika</string>
     <string name="audio">zvučni</string>
     <string name="other">drugo</string>
-    <string name="file_exists">Datoteka već postoji</string>
     <string name="create">Stvoriti</string>
     <string name="zip_progress_title">Izrada zip</string>
     <string name="needsaccess">Napišite Potreban je pristup</string>
@@ -186,4 +184,23 @@
 	<string name="app_invite_title">aplikacija pozvati</string>
     <string name="app_invite_msg">Probajte ovu cool upravitelj datoteka !!</string>
     <string name="app_invite_failed">Slanje pozivnica nije uspjelo.</string>
+
+    <string name="browse">pretraživati</string>
+    <string name="msg_error_unrooted">Pristup rootu je odbijen.</string>
+    <string name="billing_unsupported">Kupnje putem aplikacije nisu podržane na ovom uređaju.</string>
+    <string name="action_more">Više</string>
+    <string name="directory">Imenik</string>
+    <string name="operation">operacija</string>
+    <string name="extract_complete">Izvršen je završetak</string>
+    <string name="clipboard">%d u međuspremnik</string>
+    <string name="fav_exists">Omiljeni već postoji.</string>
+    <string name="msg_added_fav">%d stavke dodane Favorites (Favoriti).</string>
+    <string name="header_source">Izvor</string>
+    <string name="header_destination">Odredište</string>
+    <string name="error_unsupported">Nije podržano</string>
+    <string name="copy_path">Kopiraj put</string>
+    <string name="text_copied_clipboard">Kopirano je u međuspremnik.</string>
+    <string name="analytics_text">Pošaljite analitiku</string>
+    <string name="analytics_summary">Pomozite nam da poboljšamo aplikaciju slanjem anonimnih podataka o upotrebi.</string>
+    <string name="move_complete">Premjesti dovršeno</string>
 </resources>

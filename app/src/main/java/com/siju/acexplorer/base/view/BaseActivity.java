@@ -41,8 +41,8 @@ public class BaseActivity extends AppCompatActivity {
         BaseModel baseModel = new BaseModelImpl();
         BasePresenter basePresenter = new BasePresenterImpl(baseModel);
         currentTheme = basePresenter.getTheme();
-        Context context = LocaleHelper.setLanguage(newBase, getThemeId());
-        super.attachBaseContext(LocaleHelper.setLanguage(context, 0));
+        Context context = LocaleHelper.setLanguage(newBase);
+        super.attachBaseContext(LocaleHelper.setLanguage(context));
     }
 
 
@@ -50,17 +50,6 @@ public class BaseActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         setTheme();
         super.onCreate(savedInstanceState);
-    }
-
-
-    private int getThemeId() {
-        switch (currentTheme) {
-            case DARK:
-               return R.style.BaseDarkTheme;
-            case LIGHT:
-                return R.style.BaseLightTheme;
-        }
-        return R.style.BaseDarkTheme;
     }
 
     private void setTheme() {

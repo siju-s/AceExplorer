@@ -16,11 +16,19 @@
 
 <resources>
 
+    <style name="WelcomeScreen" parent="Theme.AppCompat.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
 
-    <style name="BaseLightTheme" parent="Theme.AppCompat.NoActionBar">
+
+    <style name="BaseLightTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@color/colorPrimary</item>
         <item name="android:actionModeBackground">@color/colorPrimary</item>
@@ -31,35 +39,48 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@color/colorPrimary</item>
         <item name="android:actionModeBackground">@color/colorPrimary</item>
         <item name="drawerArrowStyle">@style/DrawerIconStyle</item>
     </style>
 
+    <style name="BaseLightTheme.Settings">
+        <item name="windowActionModeOverlay">false</item>
+        <item name="android:textColorPrimary">@color/dark_gray</item>
+        <item name="android:textColorSecondary">@color/dark_gray</item>
+        <item name="android:listDivider">@null</item>
+        <item name="android:textColor">@color/dark_gray</item>
+    </style>
+
+    <style name="BaseDarkTheme.Settings">
+        <item name="windowActionModeOverlay">false</item>
+        <item name="android:textColorPrimary">@color/dark_text</item>
+        <item name="android:textColorSecondary">@color/dark_text</item>
+        <item name="android:listDivider">@null</item>
+    </style>
 
     <style name="DrawerIconStyle" parent="Widget.AppCompat.DrawerArrowToggle">
         <item name="color">@android:color/white</item>
     </style>
 
-
-    <style name="WelcomeScreen" parent="Theme.AppCompat.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-    </style>
-
-
-    <style name="PermissionDialog" parent="Theme.AppCompat.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="android:windowBackground">@color/dark_background</item>
-        <item name="windowNoTitle">true</item>
+    <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorControlNormal">@color/white</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     </style>
 
     <style name="ToolbarTitle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">18sp</item>
     </style>
 
+    <style name="PermissionDialog" parent="Theme.AppCompat.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="android:windowBackground">@color/dark_background</item>
+        <item name="windowNoTitle">true</item>
+    </style>
 
     <style name="TransparentTheme" parent="Theme.AppCompat.Light.Dialog">
         <item name="windowNoTitle">true</item>
@@ -85,18 +106,6 @@
     </style>
 
 
-    <style name="AppThemeSettings" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
-
-    <style name="AppThemeSettings.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
@@ -108,94 +117,12 @@
         <item name="android:textColor">@color/fabButtonText</item>
     </style>
 
-    <style name="SettingsTheme.AppCompat" parent="Theme.AppCompat.Light.NoActionBar">
-        <!--<item name="android:actionBarStyle">@style/MyActionBar</item>-->
-        <item name="android:listDivider">@null</item>
-
-    </style>
-
-    <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
-        <item name="android:background">@color/colorPrimary</item>
-    </style>
-
-    <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.Light">
-        <item name="colorControlNormal">@color/white</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-    </style>
-
-
-    <style name="AppTheme.SettingsTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:textColorSecondary">#000000</item>
-        <item name="colorControlNormal">#ffffffff</item>
-        <item name="android:listDivider">@null</item>
-    </style>
-
-    <style name="AppTheme.SettingsTheme.Toolbar" parent="AppTheme.SettingsTheme">
-        <item name="android:textColorPrimary">#ffffffff</item>
-    </style>
-
-    <style name="Theme.Transparent" parent="@style/Theme.AppCompat.Light.Dialog">
-        <item name="android:windowNoTitle">true</item>
-        <!--<item name="android:windowIsTranslucent">true</item>-->
-        <!--<item name="android:windowBackground">@android:color/transparent</item>-->
-        <!--&lt;!&ndash;<item name="android:windowContentOverlay">@null</item>&ndash;&gt;-->
-        <!--<item name="android:windowNoTitle">true</item>-->
-        <!--&lt;!&ndash;<item name="android:windowIsFloating">true</item>&ndash;&gt;-->
-        <!--<item name="android:backgroundDimEnabled">false</item>-->
-    </style>
-
-    <style name="BaseDarkTheme.Settings">
-        <!--<item name="android:background">@color/dark_colorPrimary</item>-->
-        <!--<item name="android:textColor">@color/dark_text</item>-->
-        <item name="windowActionModeOverlay">false</item>
-        <item name="android:textColorPrimary">@color/dark_text</item>
-        <item name="android:textColorSecondary">@color/dark_text</item>
-        <item name="android:listDivider">@null</item>
-        <!--<item name="android:textColorAlertDialogListItem">@color/white</item>-->
-        <!--<item name="android:alertDialogTheme">@style/Theme.MyDialog</item>-->
-
-    </style>
-
-
-    <style name="BaseLightTheme.Settings">
-        <item name="windowActionModeOverlay">false</item>
-        <item name="android:textColorSecondary">@color/dark_gray</item>
-        <item name="android:listDivider">@null</item>
-        <item name="android:textColorPrimary">@color/dark_gray</item>
-        <!--<item name="android:textColor">@color/dark_gray</item>-->
-    </style>
-
-    <style name="DialogTheme" parent="AlertDialog.AppCompat">
-
-    </style>
-    
-    <style name="ProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
-        <item name="colorAccent">@color/colorPrimary</item>
-    </style>
-
-    <style name="MRadioButton.Purple" parent="Widget.AppCompat.CompoundButton.RadioButton">
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="colorControlHighlight">@color/colorPrimary</item>
-        <item name="android:colorPressedHighlight">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorControlActivated">@color/colorPrimary</item>
-        <item name="colorControlNormal">@color/dark_background</item>
-    </style>
 
     <style name="checkBoxStyle" parent="Base.Theme.AppCompat">
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColorSecondary">@color/colorAccent</item>
     </style>
 
-    <style name="ActionButton">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
 
     <style name="DialogTitle">
         <item name="android:textSize">20sp</item>
@@ -216,14 +143,6 @@
     <style name="EditTextStyle">
         <item name="android:textSize">@dimen/text_16</item>
         <item name="android:textColor">@color/color_text</item>
-        <item name="android:layout_marginLeft">@dimen/margin_16</item>
-        <item name="android:layout_marginRight">@dimen/margin_16</item>
-        <item name="android:layout_marginTop">@dimen/margin_16</item>
-        <item name="android:fontFamily">sans-serif</item>
-    </style>
-
-    <style name="RadioButtonTextStyle">
-        <item name="android:textSize">@dimen/text_16</item>
         <item name="android:layout_marginLeft">@dimen/margin_16</item>
         <item name="android:layout_marginRight">@dimen/margin_16</item>
         <item name="android:layout_marginTop">@dimen/margin_16</item>

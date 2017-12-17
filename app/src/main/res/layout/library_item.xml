@@ -59,6 +59,7 @@
         android:visibility="gone"
         android:src="@drawable/ic_done_white"
         android:layout_marginLeft="@dimen/padding_5"
+        android:contentDescription="@string/msg_ok"
         android:layout_alignStart="@id/imageLibrary" />
 
     <TextView

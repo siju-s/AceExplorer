@@ -95,7 +95,6 @@
     <string name="extracting">적출..</string>
     <string name="dialog_current_path">현재 경로</string>
     <string name="dialog_specify_path">경로를 지정</string>
-    <string name="browse">경로 선택</string>
     <string name="enter_file_name">파일 이름을 입력</string>
     <string name="extract">추출하다</string>
     <string name="dialog_title_browse">폴더를 선택</string>
@@ -131,7 +130,6 @@
     <string name="image">영상</string>
     <string name="audio">오디오</string>
     <string name="other">다른</string>
-    <string name="file_exists">파일이 이미 존재합니다</string>
     <string name="create">몹시 떠들어 대다</string>
     <string name="zip_progress_title">만들기 지퍼</string>
     <string name="needsaccess">액세스 필수 쓰기</string>
@@ -184,4 +182,23 @@
 	<string name="app_invite_title">앱 초대</string>
     <string name="app_invite_msg">이 멋진 파일 관리자를 사용해보십시오 !!</string>
     <string name="app_invite_failed">초대장 보내기가 실패했습니다.</string>
+
+    <string name="browse">검색</string>
+    <string name="msg_error_unrooted">루트 액세스가 거부되었습니다.</string>
+    <string name="billing_unsupported">이 기기에서 지원되지 않는 인앱 구매입니다.</string>
+    <string name="action_more">더</string>
+    <string name="directory">예배 규칙서</string>
+    <string name="operation">조작</string>
+    <string name="extract_complete">추출 완료</string>
+    <string name="clipboard">클립 보드에 %d 개</string>
+    <string name="fav_exists">즐겨 찾기가 이미 있습니다.</string>
+    <string name="msg_added_fav">%d 개의 항목이 즐겨 찾기에 추가되었습니다.</string>
+    <string name="header_source">출처</string>
+    <string name="header_destination">목적지</string>
+    <string name="error_unsupported">지원되지 않음</string>
+    <string name="copy_path">경로 복사</string>
+    <string name="text_copied_clipboard">클립 보드에 복사되었습니다.</string>
+    <string name="analytics_text">애널리틱스 보내기</string>
+    <string name="analytics_summary">익명의 사용 데이터를 보내 앱을 개선 할 수 있도록 도와주세요.</string>
+    <string name="move_complete">완료 완료</string>
 </resources>

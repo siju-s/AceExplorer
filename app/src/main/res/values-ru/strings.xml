@@ -98,7 +98,6 @@
     <string name="extracting">Распаковка ..</string>
     <string name="dialog_current_path">Текущий путь</string>
     <string name="dialog_specify_path">Укажите путь</string>
-    <string name="browse">Выберите путь</string>
     <string name="enter_file_name">Введите имя файла</string>
     <string name="extract">экстракт</string>
     <string name="dialog_title_browse">Выберите папку</string>
@@ -134,7 +133,6 @@
     <string name="image">Образ</string>
     <string name="audio">аудио</string>
     <string name="other">Другие</string>
-    <string name="file_exists">Файл уже существует</string>
     <string name="create">Создайте</string>
     <string name="zip_progress_title">Создание почтового индекса</string>
     <string name="needsaccess">Написать Требуется доступ</string>
@@ -188,4 +186,23 @@
 	<string name="app_invite_title">App пригласить</string>
     <string name="app_invite_msg">Попробуйте этот прохладный файловый менеджер !!</string>
     <string name="app_invite_failed">Отправка пригласит не удалось.</string>
+
+    <string name="browse">Просматривать</string>
+    <string name="msg_error_unrooted">Запрет доступа к корням.</string>
+    <string name="billing_unsupported">Покупки в приложении не поддерживаются на этом устройстве.</string>
+    <string name="action_more">Больше</string>
+    <string name="directory">каталог</string>
+    <string name="operation">операция</string>
+    <string name="extract_complete">Экстракт завершен</string>
+    <string name="clipboard">%d в буфере обмена</string>
+    <string name="fav_exists">Фаворит уже существует.</string>
+    <string name="msg_added_fav">%d элементов добавлено в Избранное.</string>
+    <string name="header_source">Источник</string>
+    <string name="header_destination">Место назначения</string>
+    <string name="error_unsupported">Не поддерживается</string>
+    <string name="copy_path">Копировать путь</string>
+    <string name="text_copied_clipboard">Скопировано в буфер обмена.</string>
+    <string name="analytics_text">Отправить аналитику</string>
+    <string name="analytics_summary">Помогите нам улучшить приложение, отправив данные анонимного использования.</string>
+    <string name="move_complete">Переместить завершено</string>
 </resources>

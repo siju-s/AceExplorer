@@ -97,7 +97,6 @@
     <string name="extracting">Kitermelésével ..</string>
     <string name="dialog_current_path">aktuális útvonal</string>
     <string name="dialog_specify_path">meg az elérési utat</string>
-    <string name="browse">útvonal kiválasztása</string>
     <string name="enter_file_name">Írja fájlnevet</string>
     <string name="extract">Kivonat</string>
     <string name="dialog_title_browse">Válassz mappát</string>
@@ -133,7 +132,6 @@
     <string name="image">Kép</string>
     <string name="audio">Hang</string>
     <string name="other">Más</string>
-    <string name="file_exists">A fájl már létezik</string>
     <string name="create">Teremt</string>
     <string name="zip_progress_title">létrehozása zip</string>
     <string name="needsaccess">Írja hozzáférés szükséges</string>
@@ -185,4 +183,23 @@
 	<string name="app_invite_title">App meghívja</string>
     <string name="app_invite_msg">Próbáld ki ezt a hűvös fájlkezelő !!</string>
     <string name="app_invite_failed">Küldés meghívás sikertelen.</string>
+
+    <string name="browse">Böngésszen</string>
+    <string name="msg_error_unrooted">A root hozzáférés megtagadva.</string>
+    <string name="billing_unsupported">Az eszközön nem támogatott alkalmazáson belüli vásárlások.</string>
+    <string name="action_more">Több</string>
+    <string name="directory">Könyvtár</string>
+    <string name="operation">Művelet</string>
+    <string name="extract_complete">Kivonat kész</string>
+    <string name="clipboard">%d a vágólapra</string>
+    <string name="fav_exists">Már létezik a kedvenc.</string>
+    <string name="msg_added_fav">%d elem lett hozzáadva a Kedvencekhez.</string>
+    <string name="header_source">Forrás</string>
+    <string name="header_destination">Rendeltetési hely</string>
+    <string name="error_unsupported">Nem támogatott</string>
+    <string name="copy_path">Másolási útvonal</string>
+    <string name="text_copied_clipboard">Másolva a vágólapra.</string>
+    <string name="analytics_text">Analitika küldése</string>
+    <string name="analytics_summary">Segítsen nekünk az alkalmazás tökéletesítésével névtelen használati adatok megadásával.</string>
+    <string name="move_complete">Áthelyezés befejeződött</string>
 </resources>

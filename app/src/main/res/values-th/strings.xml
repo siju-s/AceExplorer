@@ -95,7 +95,6 @@
     <string name="extracting">สกัด ..</string>
     <string name="dialog_current_path">เส้นทางปัจจุบัน</string>
     <string name="dialog_specify_path">ระบุเส้นทาง</string>
-    <string name="browse">เลือกเส้นทาง</string>
     <string name="enter_file_name">ป้อนชื่อไฟล์</string>
     <string name="extract">สารสกัด</string>
     <string name="dialog_title_browse">เลือกโฟลเดอร์</string>
@@ -131,7 +130,6 @@
     <string name="image">ภาพ</string>
     <string name="audio">เสียง</string>
     <string name="other">อื่น ๆ</string>
-    <string name="file_exists">ไฟล์ที่มีอยู่แล้ว</string>
     <string name="create">สร้าง</string>
     <string name="zip_progress_title">สร้างไปรษณีย์</string>
     <string name="needsaccess">ต้องใช้การเข้าถึงการเขียน</string>
@@ -185,4 +183,23 @@
 	<string name="app_invite_title">App เชิญ</string>
     <string name="app_invite_msg">ลองจัดการไฟล์เย็นนี้ !!</string>
     <string name="app_invite_failed">ส่งเชิญล้มเหลว</string>
+
+    <string name="browse">หมวด</string>
+    <string name="msg_error_unrooted">การเข้าถึงรากถูกปฏิเสธ</string>
+    <string name="billing_unsupported">การซื้อในแอปไม่ได้รับการสนับสนุนบนอุปกรณ์นี้</string>
+    <string name="action_more">มากกว่า</string>
+    <string name="directory">ไดเรกทอรี</string>
+    <string name="operation">การทำงาน</string>
+    <string name="extract_complete">สารสกัดสมบูรณ์</string>
+    <string name="clipboard">%d ในคลิปบอร์ด</string>
+    <string name="fav_exists">รายการโปรดมีอยู่แล้ว</string>
+    <string name="msg_added_fav">เพิ่ม%d รายการลงในรายการโปรดแล้ว</string>
+    <string name="header_source">แหล่ง</string>
+    <string name="header_destination">ปลายทาง</string>
+    <string name="error_unsupported">ไม่สนับสนุน</string>
+    <string name="copy_path">คัดลอกเส้นทาง</string>
+    <string name="text_copied_clipboard">คัดลอกไปยังคลิปบอร์ดแล้ว</string>
+    <string name="analytics_text">ส่งการวิเคราะห์</string>
+    <string name="analytics_summary">ช่วยเราปรับปรุงแอปด้วยการส่งข้อมูลการใช้งานที่ไม่ระบุตัวตน</string>
+    <string name="move_complete">ย้ายเสร็จแล้ว</string>
 </resources>

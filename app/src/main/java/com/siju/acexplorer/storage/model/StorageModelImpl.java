@@ -39,7 +39,6 @@ import com.siju.acexplorer.model.SharedPreferenceWrapper;
 import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.model.helper.RootHelper;
 import com.siju.acexplorer.model.helper.SdkHelper;
-import com.siju.acexplorer.model.helper.root.RootTools;
 import com.siju.acexplorer.model.root.RootUtils;
 import com.siju.acexplorer.storage.model.operations.FileOpsHelper;
 import com.siju.acexplorer.storage.model.operations.OperationUtils;
@@ -502,7 +501,7 @@ public class StorageModelImpl implements StoragesModel {
     };
 
     private void copyFiles(String destinationDir, List<FileInfo> files, List<CopyData> copyData) {
-        if (RootUtils.isRooted(context) || RootTools.isAccessGiven() || !FileUtils.isFileNonWritable(new File(destinationDir))) {
+        if (!FileUtils.isFileNonWritable(new File(destinationDir))) {
             listener.showPasteProgressDialog(destinationDir, files, copyData, false);
             Intent intent = new Intent(context, CopyService.class);
             intent.putParcelableArrayListExtra(OperationUtils.KEY_FILES, (ArrayList<? extends

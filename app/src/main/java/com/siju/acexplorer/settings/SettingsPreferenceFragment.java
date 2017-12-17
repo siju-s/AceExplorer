@@ -266,10 +266,6 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
 
                             if (!stringValue.equals(currentLanguage)) {
                                 LocaleHelper.setLocale(getActivity(), stringValue);
-//                                Process.killProcess(Process.myPid());
-//                                Intent i = new Intent(getActivity(), WelcomeActivity.class);
-//                                startActivity(i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
-//                                System.exit(0);
                                 restartApp();
                             }
                         }

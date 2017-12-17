@@ -16,12 +16,6 @@
   -->
 
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <array name="expand_headers">
-        <item name="item1">@string/nav_header_storages</item>
-        <item name="item2">@string/nav_header_favourites</item>
-        <item name="item3">@string/nav_header_collections</item>
-        <item name="item4">@string/nav_header_others</item>
-    </array>
 
     <string-array name="pref_themes">
         <item>@string/pref_subs_light</item>

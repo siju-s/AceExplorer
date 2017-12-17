@@ -98,7 +98,6 @@
     <string name="extracting">Črpanje ..</string>
     <string name="dialog_current_path">pot toka</string>
     <string name="dialog_specify_path">določite pot</string>
-    <string name="browse">Izberite pot</string>
     <string name="enter_file_name">Vnesite ime datoteke</string>
     <string name="extract">izvleček</string>
     <string name="dialog_title_browse">Izberite mapo</string>
@@ -134,7 +133,6 @@
     <string name="image">Image</string>
     <string name="audio">Audio</string>
     <string name="other">Ostalo</string>
-    <string name="file_exists">Datoteka že obstaja</string>
     <string name="create">ustvarjanje</string>
     <string name="zip_progress_title">ustvarjanje zip</string>
     <string name="needsaccess">Napiši Dostopne</string>
@@ -187,4 +185,23 @@
 	<string name="app_invite_title">App povabi</string>
     <string name="app_invite_msg">Poskusite to kul upravitelj datotek !!</string>
     <string name="app_invite_failed">Pošiljanje povabila ni uspelo.</string>
+
+    <string name="browse">Brskaj</string>
+    <string name="msg_error_unrooted">Dostop Root je zavrnjen.</string>
+    <string name="billing_unsupported">Nakupi v aplikaciji, ki niso podprti v tej napravi.</string>
+    <string name="action_more">Več</string>
+    <string name="directory">Imenik</string>
+    <string name="operation">Delovanje</string>
+    <string name="extract_complete">Izvleček končan</string>
+    <string name="clipboard">%d v odložišču</string>
+    <string name="fav_exists">Najljubši že obstaja.</string>
+    <string name="msg_added_fav">%d elementov, dodanih v mapo Priljubljene.</string>
+    <string name="header_source">Vir</string>
+    <string name="header_destination">Namembni kraj</string>
+    <string name="error_unsupported">Ne podpira</string>
+    <string name="copy_path">Kopiraj pot</string>
+    <string name="text_copied_clipboard">Kopirano v odložišče.</string>
+    <string name="analytics_text">Pošljite analitiko</string>
+    <string name="analytics_summary">Pomagajte nam izboljšati aplikacijo s pošiljanjem anonimnih podatkov o uporabi.</string>
+    <string name="move_complete">Premakni Dokončano</string>
 </resources>

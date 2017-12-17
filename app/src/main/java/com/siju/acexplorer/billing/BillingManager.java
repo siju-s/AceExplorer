@@ -318,6 +318,9 @@ public class BillingManager implements PurchasesUpdatedListener {
             @Override
             public void run() {
                 long time = System.currentTimeMillis();
+                if (mBillingClient == null) {
+                    return;
+                }
                 PurchasesResult purchasesResult = mBillingClient.queryPurchases(SkuType.INAPP);
                 Log.i(TAG, "Querying purchases elapsed time: " + (System.currentTimeMillis() - time)
                         + "ms");

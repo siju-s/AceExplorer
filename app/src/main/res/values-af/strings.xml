@@ -97,7 +97,6 @@
     <string name="extracting">Uittreksels van ..</string>
     <string name="dialog_current_path">Huidige pad</string>
     <string name="dialog_specify_path">spesifiseer pad</string>
-    <string name="browse">Kies pad</string>
     <string name="enter_file_name">Gee lêernaam</string>
     <string name="extract">uittreksel</string>
     <string name="dialog_title_browse">kies die gids</string>
@@ -133,7 +132,6 @@
     <string name="image">Image</string>
     <string name="audio">Audio</string>
     <string name="other">ander</string>
-    <string name="file_exists">Lêer bestaan ​​reeds</string>
     <string name="create">Skep</string>
     <string name="zip_progress_title">Die skep zip</string>
     <string name="needsaccess">Skryf Toegang Vereiste</string>
@@ -185,4 +183,23 @@
 	<string name="app_invite_title">app nooi</string>
     <string name="app_invite_msg">Probeer hierdie oulike lêerbestuurder !!</string>
     <string name="app_invite_failed">Stuur nooi misluk.</string>
+
+    <string name="browse">Snuffel</string>
+    <string name="msg_error_unrooted">Wortel toegang geweier.</string>
+    <string name="billing_unsupported">Inprogram-aankope word nie op hierdie toestel ondersteun nie.</string>
+    <string name="action_more">meer</string>
+    <string name="directory">Gids</string>
+    <string name="operation">operasie</string>
+    <string name="extract_complete">Uittreksel voltooi</string>
+    <string name="clipboard">%d in knipbord</string>
+    <string name="fav_exists">Gunsteling bestaan reeds.</string>
+    <string name="msg_added_fav">%d item (s) bygevoeg aan gunstelinge.</string>
+    <string name="header_source">Bron</string>
+    <string name="header_destination">bestemming</string>
+    <string name="error_unsupported">Nie ondersteun nie</string>
+    <string name="copy_path">Kopieer pad</string>
+    <string name="text_copied_clipboard">Kopieer na knipbord.</string>
+    <string name="analytics_text">Stuur analise</string>
+    <string name="analytics_summary">Help ons om die program te verbeter deur anonieme gebruiksdata te stuur.</string>
+    <string name="move_complete">Skuif voltooi</string>
 </resources>

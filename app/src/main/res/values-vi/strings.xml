@@ -95,7 +95,6 @@
     <string name="extracting">Trích xuất ..</string>
     <string name="dialog_current_path">đường dẫn hiện tại</string>
     <string name="dialog_specify_path">Chỉ định đường dẫn</string>
-    <string name="browse">Chọn con đường</string>
     <string name="enter_file_name">Nhập tên tập tin</string>
     <string name="extract">Trích xuất</string>
     <string name="dialog_title_browse">Chọn thư mục</string>
@@ -131,7 +130,6 @@
     <string name="image">hình ảnh</string>
     <string name="audio">âm thanh</string>
     <string name="other">khác</string>
-    <string name="file_exists">Tập tin đã tồn tại</string>
     <string name="create">Tạo nên</string>
     <string name="zip_progress_title">tạo zip</string>
     <string name="needsaccess">Viết yêu cầu truy cập</string>
@@ -184,4 +182,23 @@
 	<string name="app_invite_title">App mời</string>
     <string name="app_invite_msg">Hãy thử trình quản lý file mát này !!</string>
     <string name="app_invite_failed">Gửi mời thất bại.</string>
+
+    <string name="browse">Duyệt</string>
+    <string name="msg_error_unrooted">Truy cập gốc bị từ chối.</string>
+    <string name="billing_unsupported">Mua hàng trong ứng dụng không được hỗ trợ trên thiết bị này.</string>
+    <string name="action_more">Hơn</string>
+    <string name="directory">Danh mục</string>
+    <string name="operation">Hoạt động</string>
+    <string name="extract_complete">Trích xuất hoàn tất</string>
+    <string name="clipboard">%d trong khay nhớ tạm</string>
+    <string name="fav_exists">Yêu thích đã tồn tại.</string>
+    <string name="msg_added_fav">%d mục được thêm vào Mục yêu thích.</string>
+    <string name="header_source">Nguồn</string>
+    <string name="header_destination">Nơi Đến</string>
+    <string name="error_unsupported">Không được hỗ trợ</string>
+    <string name="copy_path">Sao chép đường dẫn</string>
+    <string name="text_copied_clipboard">Sao chép vào clipboard.</string>
+    <string name="analytics_text">Gửi phân tích</string>
+    <string name="analytics_summary">Giúp chúng tôi cải tiến ứng dụng bằng cách gửi dữ liệu sử dụng ẩn danh.</string>
+    <string name="move_complete">Di chuyển đã hoàn thành</string>
 	</resources>

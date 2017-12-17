@@ -98,7 +98,6 @@
     <string name="extracting">Ekstrahujący..</string>
     <string name="dialog_current_path">Bieżąca ścieżka</string>
     <string name="dialog_specify_path">Określ ścieżkę</string>
-    <string name="browse">Wybierz ścieżkę</string>
     <string name="enter_file_name">Wpisz nazwę pliku</string>
     <string name="extract">Wyciąg</string>
     <string name="dialog_title_browse">Wybierz folder,</string>
@@ -134,7 +133,6 @@
     <string name="image">Obraz</string>
     <string name="audio">Audio</string>
     <string name="other">Inny</string>
-    <string name="file_exists">plik już istnieje</string>
     <string name="create">Stwórz</string>
     <string name="zip_progress_title">Tworzenie zip</string>
     <string name="needsaccess">Napisz wymagany dostęp</string>
@@ -188,4 +186,23 @@
 	<string name="app_invite_title">App zaprosić</string>
     <string name="app_invite_msg">Spróbuj tego chłodnego menedżera plików !!</string>
     <string name="app_invite_failed">Wysyłanie zaprosić niepowodzeniem.</string>
+
+    <string name="browse">Paść się</string>
+    <string name="msg_error_unrooted">Odmowa dostępu root.</string>
+    <string name="billing_unsupported">Zakupy w aplikacji nie są obsługiwane na tym urządzeniu.</string>
+    <string name="action_more">Jeszcze</string>
+    <string name="directory">Informator</string>
+    <string name="operation">Operacja</string>
+    <string name="extract_complete">Wyciąg zakończony</string>
+    <string name="clipboard">%d w schowku</string>
+    <string name="fav_exists">Ulubione już istnieje.</string>
+    <string name="msg_added_fav">%d element (ów) został dodany do Ulubionych.</string>
+    <string name="header_source">Źródło</string>
+    <string name="header_destination">przeznaczenie</string>
+    <string name="error_unsupported">Nieobsługiwany</string>
+    <string name="copy_path">Skopiuj ścieżkę</string>
+    <string name="text_copied_clipboard">Skopiowane do schowka.</string>
+    <string name="analytics_text">Wyślij analitykę</string>
+    <string name="analytics_summary">Pomóż nam ulepszyć aplikację, wysyłając anonimowe dane o użytkowaniu.</string>
+    <string name="move_complete">Przenieś zakończone</string>
 </resources>

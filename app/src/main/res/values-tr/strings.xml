@@ -96,7 +96,6 @@
     <string name="extracting">Ayıklanıyor ..</string>
     <string name="dialog_current_path">Geçerli yol</string>
     <string name="dialog_specify_path">yolu belirtin</string>
-    <string name="browse">seç yolu</string>
     <string name="enter_file_name">Dosya adını girin</string>
     <string name="extract">özüt</string>
     <string name="dialog_title_browse">klasörü seçin</string>
@@ -132,7 +131,6 @@
     <string name="image">görüntü</string>
     <string name="audio">Ses</string>
     <string name="other">Diğer</string>
-    <string name="file_exists">dosya zaten mevcut</string>
     <string name="create">yaratmak</string>
     <string name="zip_progress_title">oluşturma zip</string>
     <string name="needsaccess">Erişim Gerekli yaz</string>
@@ -185,4 +183,23 @@
 	<string name="app_invite_title">Uygulama davetiyesi</string>
     <string name="app_invite_msg">Bu harika dosya yöneticisini deneyin !!</string>
     <string name="app_invite_failed">Davetiye gönderilemedi.</string>
+
+    <string name="browse">Araştır</string>
+    <string name="msg_error_unrooted">Kök erişimi reddedildi.</string>
+    <string name="billing_unsupported">Uygulama içi satın alma işlemleri bu cihazda desteklenmiyor.</string>
+    <string name="action_more">Daha</string>
+    <string name="directory">rehber</string>
+    <string name="operation">Operasyon</string>
+    <string name="extract_complete">Ayıklanan tamamlandı</string>
+    <string name="clipboard">%d panoya</string>
+    <string name="fav_exists">Favori zaten var.</string>
+    <string name="msg_added_fav">%d madde (ler) Favorilere eklendi.</string>
+    <string name="header_source">Kaynak</string>
+    <string name="header_destination">Hedef</string>
+    <string name="error_unsupported">Desteklenmiyor</string>
+    <string name="copy_path">Yolu kopyala</string>
+    <string name="text_copied_clipboard">Panoya kopyalandı.</string>
+    <string name="analytics_text">Analiz gönder</string>
+    <string name="analytics_summary">Anonim kullanım verileri göndererek uygulamayı iyileştirmemize yardımcı olun.</string>
+    <string name="move_complete">Tamamlandı Taşı</string>
 </resources>

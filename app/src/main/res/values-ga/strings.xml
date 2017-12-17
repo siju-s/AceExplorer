@@ -100,7 +100,6 @@
     <string name="extracting">Bhaint ..</string>
     <string name="dialog_current_path">cosán atá ann faoi láthair</string>
     <string name="dialog_specify_path">sonraigh cosán</string>
-    <string name="browse">Roghnaigh cosán</string>
     <string name="enter_file_name">Iontráil ainm an chomhaid</string>
     <string name="extract">sliocht</string>
     <string name="dialog_title_browse">Roghnaigh fillteán</string>
@@ -136,7 +135,6 @@
     <string name="image">Íomha</string>
     <string name="audio">Fuaime</string>
     <string name="other">Eile</string>
-    <string name="file_exists">Comhad ann cheana</string>
     <string name="create">Cruthaigh</string>
     <string name="zip_progress_title">zip Cruthú</string>
     <string name="needsaccess">Scríobh Rochtain Teastáil</string>
@@ -188,4 +186,23 @@
 	<string name="app_invite_title">app cuireadh</string>
     <string name="app_invite_msg">Bain triail as an bainisteoir comhad fionnuar !!</string>
     <string name="app_invite_failed">Seoladh iarraidh dhuine theip.</string>
+
+    <string name="browse">Brabhsáil</string>
+    <string name="msg_error_unrooted">Diúltaíodh root rochtana.</string>
+    <string name="billing_unsupported">Ní cheadaítear ceannaigh in-app ar an ngléas seo.</string>
+    <string name="action_more">Níos mó</string>
+    <string name="directory">Eolaire</string>
+    <string name="operation">Oibríocht</string>
+    <string name="extract_complete">Sliocht críochnaithe</string>
+    <string name="clipboard">%d sa gearrthaisce</string>
+    <string name="fav_exists">Is fearr leat cheana féin.</string>
+    <string name="msg_added_fav">%d mír (í) curtha le Favorites.</string>
+    <string name="header_source">Foinse</string>
+    <string name="header_destination">Ceann Scríbe</string>
+    <string name="error_unsupported">Gan tacaíocht</string>
+    <string name="copy_path">Cosán cóipeála</string>
+    <string name="text_copied_clipboard">Cóipeáil chuig gearrthaisce.</string>
+    <string name="analytics_text">Seol anailísí</string>
+    <string name="analytics_summary">Cabhraigh linn feabhas a chur ar an app trí shonraí úsáide gan ainm a sheoladh.</string>
+    <string name="move_complete">Bog Críochnaithe</string>
 </resources>

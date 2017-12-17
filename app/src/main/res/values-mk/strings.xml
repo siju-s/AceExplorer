@@ -96,7 +96,6 @@
     <string name="extracting">Вадење ..</string>
     <string name="dialog_current_path">сегашната патека</string>
     <string name="dialog_specify_path">Одредете патека</string>
-    <string name="browse">Избери патека</string>
     <string name="enter_file_name">Внесете име на датотека</string>
     <string name="extract">екстракт</string>
     <string name="dialog_title_browse">Изберете папка</string>
@@ -132,7 +131,6 @@
     <string name="image">слика</string>
     <string name="audio">Аудио</string>
     <string name="other">други</string>
-    <string name="file_exists">Датотеката веќе постои</string>
     <string name="create">Креирајте</string>
     <string name="zip_progress_title">креирање на zip</string>
     <string name="needsaccess">Напиши потребен пристап</string>
@@ -186,4 +184,23 @@
 	<string name="app_invite_title">стан покани</string>
     <string name="app_invite_msg">Се обиде овој кул менаџер на датотеки !!</string>
     <string name="app_invite_failed">Испраќањето не успеа покани.</string>
+
+    <string name="browse">Прегледај</string>
+    <string name="msg_error_unrooted">Пристапот до root е одбиен.</string>
+    <string name="billing_unsupported">Купувањата во апликација не се поддржани на овој уред.</string>
+    <string name="action_more">Повеќе</string>
+    <string name="directory">Директориум</string>
+    <string name="operation">Операција</string>
+    <string name="extract_complete">Екстракт заврши</string>
+    <string name="clipboard">%d во таблата со исечоци</string>
+    <string name="fav_exists">Омилена веќе постои.</string>
+    <string name="msg_added_fav">додадени се%d елементи во Омилени.</string>
+    <string name="header_source">Извор</string>
+    <string name="header_destination">Дестинација</string>
+    <string name="error_unsupported">Не се поддржани</string>
+    <string name="copy_path">Копирај патека</string>
+    <string name="text_copied_clipboard">Копирано на таблата со исечоци.</string>
+    <string name="analytics_text">Испрати аналитика</string>
+    <string name="analytics_summary">Помогнете ни да ја подобриме апликацијата со испраќање анонимни податоци за користење.</string>
+    <string name="move_complete">Помести го завршено</string>
 </resources>

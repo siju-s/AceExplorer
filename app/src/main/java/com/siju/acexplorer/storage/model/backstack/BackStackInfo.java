@@ -41,7 +41,7 @@ public class BackStackInfo {
     }
 
     public void removeEntryAtIndex(int index) {
-        Logger.log(TAG, "removeEntryAtIndex: "+backStack.size() + " path:"+backStack.get(index));
+        Logger.log(TAG, "removeEntryAtIndex: "+ index + "backstackSize:" + backStack.size() + " path:"+backStack.get(index).getFilePath());
         backStack.remove(index);
     }
 

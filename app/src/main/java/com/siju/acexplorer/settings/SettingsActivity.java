@@ -45,7 +45,7 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void attachBaseContext(Context newBase) {
         checkTheme();
-        super.attachBaseContext(LocaleHelper.setLanguage(newBase, getThemeId()));
+        super.attachBaseContext(LocaleHelper.setLanguage(newBase));
     }
 
     @Override
@@ -71,15 +71,6 @@ public class SettingsActivity extends AppCompatActivity {
         }
         else {
             setTheme(R.style.BaseLightTheme_Settings);
-        }
-    }
-
-    private int getThemeId() {
-        if (currentTheme == THEME_DARK) {
-            return R.style.BaseDarkTheme_Settings;
-        }
-        else {
-            return R.style.BaseLightTheme_Settings;
         }
     }
 

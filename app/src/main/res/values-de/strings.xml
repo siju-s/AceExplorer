@@ -97,7 +97,6 @@
     <string name="extracting">Extrahieren ..</string>
     <string name="dialog_current_path">Aktueller Pfad</string>
     <string name="dialog_specify_path">Geben Sie den Pfad</string>
-    <string name="browse">Wählen Sie den Pfad</string>
     <string name="enter_file_name">Geben Sie den Dateinamen</string>
     <string name="extract">Extrakt</string>
     <string name="dialog_title_browse">Wähle einen Ordner</string>
@@ -133,7 +132,6 @@
     <string name="image">Image</string>
     <string name="audio">Audio</string>
     <string name="other">Andere</string>
-    <string name="file_exists">Die Datei existiert bereits</string>
     <string name="create">Erstellen</string>
     <string name="zip_progress_title">Erstellen zip</string>
     <string name="needsaccess">Schreiben Sie Zugang erforderlich</string>
@@ -185,4 +183,23 @@
 	<string name="app_invite_title">App einladen</string>
     <string name="app_invite_msg">Versuchen Sie diese coole Datei-Manager!</string>
     <string name="app_invite_failed">Einladung fehlgeschlagen.</string>
+
+    <string name="browse">Durchsuche</string>
+    <string name="msg_error_unrooted">Root-Zugriff verweigert.</string>
+    <string name="billing_unsupported">In-App-Käufe werden auf diesem Gerät nicht unterstützt.</string>
+    <string name="action_more">Mehr</string>
+    <string name="directory">Verzeichnis</string>
+    <string name="operation">Betrieb</string>
+    <string name="extract_complete">Auszug vervollständigt</string>
+    <string name="clipboard">%d in der Zwischenablage</string>
+    <string name="fav_exists">Favorit existiert bereits.</string>
+    <string name="msg_added_fav">%d Element (e) wurde zu den Favoriten hinzugefügt.</string>
+    <string name="header_source">Quelle</string>
+    <string name="header_destination">Ziel</string>
+    <string name="error_unsupported">Nicht unterstützt</string>
+    <string name="copy_path">Pfad kopieren</string>
+    <string name="text_copied_clipboard">In die Zwischenablage kopiert.</string>
+    <string name="analytics_text">Analyse senden</string>
+    <string name="analytics_summary">Helfen Sie uns, die App zu verbessern, indem Sie anonyme Nutzungsdaten senden.</string>
+    <string name="move_complete">Umzug abgeschlossen</string>
 </resources>

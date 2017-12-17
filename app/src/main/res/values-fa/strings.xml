@@ -97,7 +97,6 @@
     <string name="extracting">استخراج ..</string>
     <string name="dialog_current_path">مسیر فعلی</string>
     <string name="dialog_specify_path">تعیین مسیر</string>
-    <string name="browse">انتخاب مسیر</string>
     <string name="enter_file_name">نام فایل را وارد کنید</string>
     <string name="extract">استخراج کردن</string>
     <string name="dialog_title_browse">انتخاب پوشه</string>
@@ -133,7 +132,6 @@
     <string name="image">تصویر</string>
     <string name="audio">سمعی</string>
     <string name="other">دیگر</string>
-    <string name="file_exists">فایل از قبل موجود میباشد</string>
     <string name="create">ايجاد كردن</string>
     <string name="zip_progress_title">ایجاد فایل های فشرده</string>
     <string name="needsaccess">ارسال دسترسی مورد نیاز</string>
@@ -185,4 +183,23 @@
 	<string name="app_invite_title">برنامه دعوت</string>
     <string name="app_invite_msg">سعی کنید این مدیر فایل سرد!</string>
     <string name="app_invite_failed">در حال ارسال دعوت شکست خورده است.</string>
+
+    <string name="browse">مرور کردن</string>
+    <string name="msg_error_unrooted">دسترسی ریشه انکار شد</string>
+    <string name="billing_unsupported">خریدهای برنامه در این دستگاه پشتیبانی نمی شوند.</string>
+    <string name="action_more">بیشتر</string>
+    <string name="directory">دایرکتوری</string>
+    <string name="operation">عمل</string>
+    <string name="extract_complete">استخراج تکمیل شده</string>
+    <string name="clipboard">%d در کلیپ بورد</string>
+    <string name="fav_exists">مورد علاقه در حال حاضر وجود دارد.</string>
+    <string name="msg_added_fav">%d مورد (ها) به موارد دلخواه اضافه شده است.</string>
+    <string name="header_source">منبع</string>
+    <string name="header_destination">مقصد</string>
+    <string name="error_unsupported">پشتیبانی نشده</string>
+    <string name="copy_path">مسیر کپی کنید</string>
+    <string name="text_copied_clipboard">کپی به کلیپ بورد</string>
+    <string name="analytics_text">ارسال تجزیه و تحلیل</string>
+    <string name="analytics_summary">با ارسال دادههای استفاده ناشناس از ما برای بهبود برنامه کمک بگیرید.</string>
+    <string name="move_complete">حرکت کامل شده است</string>
 	</resources>

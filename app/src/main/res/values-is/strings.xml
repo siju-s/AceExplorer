@@ -96,7 +96,6 @@
     <string name="extracting">Útdráttur ..</string>
     <string name="dialog_current_path">Núverandi Slóð</string>
     <string name="dialog_specify_path">tilgreina slóð</string>
-    <string name="browse">Veldu Slóð</string>
     <string name="enter_file_name">Sláðu inn skráarnafnið</string>
     <string name="extract">þykkni</string>
     <string name="dialog_title_browse">Veldu möppu</string>
@@ -132,7 +131,6 @@
     <string name="image">Mynd</string>
     <string name="audio">Audio</string>
     <string name="other">Annað</string>
-    <string name="file_exists">Skrá þegar til staðar</string>
     <string name="create">Búa</string>
     <string name="zip_progress_title">búa til Zip</string>
     <string name="needsaccess">Skrifaðu aðgang þarf</string>
@@ -185,4 +183,23 @@
 	<string name="app_invite_title">app bjóða</string>
     <string name="app_invite_msg">Prófaðu þetta flott skráastjóri !!</string>
     <string name="app_invite_failed">Sending Boðskort mistókst.</string>
+
+    <string name="browse">Skoða</string>
+    <string name="msg_error_unrooted">Aðgangur að rótum hafnað.</string>
+    <string name="billing_unsupported">Kaup í forritum er ekki studd á þessu tæki.</string>
+    <string name="action_more">Meira</string>
+    <string name="directory">Skrá</string>
+    <string name="operation">Aðgerð</string>
+    <string name="extract_complete">Útdráttur lokið</string>
+    <string name="clipboard">%d í klemmuspjaldinu</string>
+    <string name="fav_exists">Uppáhalds er þegar til.</string>
+    <string name="msg_added_fav">%d atriði (s) bætt við Favorites.</string>
+    <string name="header_source">Heimild</string>
+    <string name="header_destination">Áfangastaður</string>
+    <string name="error_unsupported">Ekki stutt</string>
+    <string name="copy_path">Afrita slóð</string>
+    <string name="text_copied_clipboard">Afritað á klemmuspjald.</string>
+    <string name="analytics_text">Senda greiningar</string>
+    <string name="analytics_summary">Hjálpaðu okkur að bæta forritið með því að senda nafnlausa notkunarupplýsingar.</string>
+    <string name="move_complete">Færa lokið</string>
 </resources>

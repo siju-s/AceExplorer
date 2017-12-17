@@ -97,7 +97,6 @@
     <string name="extracting">निकालने ..</string>
     <string name="dialog_current_path">वर्तमान पथ</string>
     <string name="dialog_specify_path">पथ निर्दिष्ट करें</string>
-    <string name="browse">पथ का चयन करें</string>
     <string name="enter_file_name">फ़ाइल नाम दर्ज करें</string>
     <string name="extract">उद्धरण</string>
     <string name="dialog_title_browse">फोल्डर को चुनो</string>
@@ -133,7 +132,6 @@
     <string name="image">छवि</string>
     <string name="audio">ऑडियो</string>
     <string name="other">अन्य</string>
-    <string name="file_exists">फ़ाइल पहले से ही मौजूद है</string>
     <string name="create">सर्जन करना</string>
     <string name="zip_progress_title">बनाना ज़िप</string>
     <string name="needsaccess">प्रवेश के लिए आवश्यक लिखें</string>
@@ -185,4 +183,23 @@
 	<string name="app_invite_title">अनुप्रयोग को आमंत्रित</string>
     <string name="app_invite_msg">इस शांत फ़ाइल प्रबंधक की कोशिश !!</string>
     <string name="app_invite_failed">भेजा जा रहा है विफल रहे आमंत्रित करते हैं।</string>
+
+    <string name="browse">ब्राउज</string>
+    <string name="msg_error_unrooted">रूट एक्सेस से इनकार किया गया</string>
+    <string name="billing_unsupported">इस डिवाइस पर इन-ऐप खरीदारी समर्थित नहीं हैं</string>
+    <string name="action_more">अधिक</string>
+    <string name="directory">निर्देशिका</string>
+    <string name="operation">ऑपरेशन</string>
+    <string name="extract_complete">निकालें पूरा हुआ</string>
+    <string name="clipboard">क्लिपबोर्ड में %d</string>
+    <string name="fav_exists">पसंदीदा पहले से मौजूद है</string>
+    <string name="msg_added_fav">%d आइटम पसंदीदा में जोड़े गए</string>
+    <string name="header_source">स्रोत</string>
+    <string name="header_destination">गंतव्य</string>
+    <string name="error_unsupported">समर्थित नहीं</string>
+    <string name="copy_path">पथ कॉपी करें</string>
+    <string name="text_copied_clipboard">क्लिपबोर्ड पर नकल।</string>
+    <string name="analytics_text">विश्लेषिकी भेजें</string>
+    <string name="analytics_summary">अनाम उपयोग डेटा भेजकर एप्लिकेशन को बेहतर बनाने में हमारी सहायता करें।</string>
+    <string name="move_complete">स्थानांतरित करें</string>
  </resources>

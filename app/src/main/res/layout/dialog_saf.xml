@@ -35,7 +35,8 @@
         android:src="@drawable/sd_operate_step"
         android:paddingTop="@dimen/margin_16"
         android:layout_gravity="center_horizontal"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        tools:ignore="ContentDescription" />
 
 
     <TextView

@@ -95,7 +95,6 @@
     <string name="extracting">解凍..</string>
     <string name="dialog_current_path">電流路</string>
     <string name="dialog_specify_path">パスを指定します</string>
-    <string name="browse">パスを選択します</string>
     <string name="enter_file_name">ファイル名を入力します。</string>
     <string name="extract">エキス</string>
     <string name="dialog_title_browse">フォルダを選択します</string>
@@ -131,7 +130,6 @@
     <string name="image">画像</string>
     <string name="audio">オーディオ</string>
     <string name="other">他の</string>
-    <string name="file_exists">ファイルが既に存在します</string>
     <string name="create">作ります</string>
     <string name="zip_progress_title">zipファイルを作成します</string>
     <string name="needsaccess">アクセス必須書きます</string>
@@ -184,4 +182,23 @@
 	 <string name="app_invite_title">アプリを招待する</string>
     <string name="app_invite_msg">このクールなファイルマネージャを試してみてください！</string>
     <string name="app_invite_failed">招待を送信できませんでした。</string>
+
+    <string name="browse">ブラウズ</string>
+    <string name="msg_error_unrooted">ルートアクセスが拒否されました。</string>
+    <string name="billing_unsupported">このデバイスでサポートされていないアプリ内購入。</string>
+    <string name="action_more">もっと</string>
+    <string name="directory">ディレクトリ</string>
+    <string name="operation">操作</string>
+    <string name="extract_complete">抽出が完了しました</string>
+    <string name="clipboard">クリップボードの%d</string>
+    <string name="fav_exists">お気に入りは既に存在します。</string>
+    <string name="msg_added_fav">アイテム%d個がお気に入りに追加されました。</string>
+    <string name="header_source">ソース</string>
+    <string name="header_destination">先</string>
+    <string name="error_unsupported">サポートされていません</string>
+    <string name="copy_path">コピーパス</string>
+    <string name="text_copied_clipboard">クリップボードにコピーされました。</string>
+    <string name="analytics_text">アナリティクスの送信</string>
+    <string name="analytics_summary">匿名の利用状況データを送信してアプリを改善するのに役立ちます。</string>
+    <string name="move_complete">完了した移動</string>
 </resources>

@@ -181,6 +181,7 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
         currentDir = null;
         zipChildren.clear();
         zipCommunicator.removeZipScrollPos(zipParentPath);
+        zipCommunicator.removeFromBackStack();
         zipCommunicator.endZipMode();
         clearCache();
 //        setNavDirectory(getInternalStorage());

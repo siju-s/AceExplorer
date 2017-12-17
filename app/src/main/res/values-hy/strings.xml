@@ -97,7 +97,6 @@
     <string name="extracting">Արտահանվում է ..</string>
     <string name="dialog_current_path">Ընթացիկ ուղին</string>
     <string name="dialog_specify_path">նշեք ուղին</string>
-    <string name="browse">Ընտրել ուղին</string>
     <string name="enter_file_name">Մուտքագրեք ֆայլի անունը</string>
     <string name="extract">քաղվածք</string>
     <string name="dialog_title_browse">Ընտրեք թղթապանակը</string>
@@ -133,7 +132,6 @@
     <string name="image">պատկեր</string>
     <string name="audio">Աուդիո</string>
     <string name="other">այլ</string>
-    <string name="file_exists">Ֆայլ արդեն գոյություն ունի</string>
     <string name="create">ստեղծել</string>
     <string name="zip_progress_title">Ստեղծվում ZIP</string>
     <string name="needsaccess">Գրեք Access Պահանջվում</string>
@@ -185,4 +183,23 @@
 	<string name="app_invite_title">App հրավիրում</string>
     <string name="app_invite_msg">Փորձեք այս առաջնակարգ ֆայլ մենեջերի !!</string>
     <string name="app_invite_failed">Ուղարկում հրավիրել ձախողվեց:</string>
+
+    <string name="browse">Փնտրել</string>
+    <string name="msg_error_unrooted">Արմատային մուտքն արգելված է:</string>
+    <string name="billing_unsupported">Ներկառուցված գնումները չեն աջակցվում այս սարքում:</string>
+    <string name="action_more">Ավելին</string>
+    <string name="directory">Տեղեկատու</string>
+    <string name="operation">Օպերացիա</string>
+    <string name="extract_complete">Քաղվածքը ավարտված է</string>
+    <string name="clipboard">%d ընդգրկույթում</string>
+    <string name="fav_exists">Սիրված արդեն գոյություն ունի:</string>
+    <string name="msg_added_fav">%d կետ (ներ) ը ավելացվել է Ընտրվածներին:</string>
+    <string name="header_source">Աղբյուրը</string>
+    <string name="header_destination">Նպատակը</string>
+    <string name="error_unsupported">Չի ապահովվում</string>
+    <string name="copy_path">Պատճենեք պատճենը</string>
+    <string name="text_copied_clipboard">Պատճենված է clipboard:</string>
+    <string name="analytics_text">Վերլուծություն ուղարկեք</string>
+    <string name="analytics_summary">Օգնեք մեզ բարելավել ծրագիրը `ուղարկելով անանուն օգտագործման տվյալները:</string>
+    <string name="move_complete">Տեղափոխումը ավարտվեց</string>
 </resources>

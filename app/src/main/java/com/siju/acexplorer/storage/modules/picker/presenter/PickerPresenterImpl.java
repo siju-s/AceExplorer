@@ -32,6 +32,7 @@ import java.util.List;
 /**
  * Created by Siju on 04 September,2017
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class PickerPresenterImpl implements PickerPresenter, LoaderManager
                 .LoaderCallbacks<ArrayList<FileInfo>>,PickerModel.Listener {
 

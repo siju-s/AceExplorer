@@ -101,7 +101,6 @@
     <string name="extracting">استخراج ..</string>
     <string name="dialog_current_path">المسار الحالي</string>
     <string name="dialog_specify_path">تحديد المسار</string>
-    <string name="browse">حدد مسار</string>
     <string name="enter_file_name">أدخل اسم الملف</string>
     <string name="extract">استخراج</string>
     <string name="dialog_title_browse">اختيار مجلد</string>
@@ -137,7 +136,6 @@
     <string name="image">صورة</string>
     <string name="audio">سمعي</string>
     <string name="other">آخر</string>
-    <string name="file_exists">الملف موجود مسبقا</string>
     <string name="create">خلق</string>
     <string name="zip_progress_title">خلق البريدي</string>
     <string name="needsaccess">إرسال الوصول المطلوبة</string>
@@ -190,4 +188,23 @@
 	<string name="app_invite_title">التطبيق دعوة</string>
     <string name="app_invite_msg">حاول هذا المدير ملف بارد !!</string>
     <string name="app_invite_failed">مع المدعوين فشل الإرسال.</string>
+
+    <string name="browse">تصفح</string>
+    <string name="msg_error_unrooted">تم رفض وصول الجذر.</string>
+    <string name="billing_unsupported">عمليات الشراء داخل التطبيق غير معتمدة على هذا الجهاز.</string>
+    <string name="action_more">أكثر من</string>
+    <string name="directory">دليل</string>
+    <string name="operation">عملية</string>
+    <string name="extract_complete">اكتمل الاستخراج</string>
+    <string name="clipboard">%d في الحافظة</string>
+    <string name="fav_exists">المفضلة موجود بالفعل.</string>
+    <string name="msg_added_fav"> تمت الإضافة إلى المفضلة %d</string>
+    <string name="header_source">مصدر</string>
+    <string name="header_destination">المكان المقصود</string>
+    <string name="error_unsupported">غير معتمد</string>
+    <string name="copy_path">نسخ المسار</string>
+    <string name="text_copied_clipboard">نسخ إلى الحافظة.</string>
+    <string name="analytics_text">إرسال تحليلات</string>
+    <string name="analytics_summary">مساعدتنا على تحسين التطبيق عن طريق إرسال بيانات الاستخدام المجهول.</string>
+    <string name="move_complete">اكتمل النقل</string>
 </resources>

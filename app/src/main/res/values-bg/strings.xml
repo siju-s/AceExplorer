@@ -97,7 +97,6 @@
     <string name="extracting">Извличане ..</string>
     <string name="dialog_current_path">Текущ път</string>
     <string name="dialog_specify_path">Посочете пътя</string>
-    <string name="browse">Избор на път</string>
     <string name="enter_file_name">Въведете името на файла</string>
     <string name="extract">Екстракт</string>
     <string name="dialog_title_browse">Изберете папка</string>
@@ -133,7 +132,6 @@
     <string name="image">Изображение</string>
     <string name="audio">звуков</string>
     <string name="other">друг</string>
-    <string name="file_exists">Файлът вече съществува</string>
     <string name="create">създавам</string>
     <string name="zip_progress_title">Създаване цип</string>
     <string name="needsaccess">Напиши Задължително Access</string>
@@ -185,4 +183,23 @@
 	<string name="app_invite_title">App покани</string>
     <string name="app_invite_msg">Опитайте тази готина файлов мениджър !!</string>
     <string name="app_invite_failed">Изпращането не покани.</string>
+
+    <string name="browse">паса</string>
+    <string name="msg_error_unrooted">Достъпът до корен е отказан.</string>
+    <string name="billing_unsupported">Покупките в приложение не се поддържат на това устройство.</string>
+    <string name="action_more">| Повече ▼</string>
+    <string name="directory">указател</string>
+    <string name="operation">операция</string>
+    <string name="extract_complete">Екстрактът е завършен</string>
+    <string name="clipboard">%d в клипборда</string>
+    <string name="fav_exists">Любими вече съществува.</string>
+    <string name="msg_added_fav">%d елемент (и), добавен в Любими.</string>
+    <string name="header_source">източник</string>
+    <string name="header_destination">Дестинация</string>
+    <string name="error_unsupported">Не се поддържа</string>
+    <string name="copy_path">Копиране на пътя</string>
+    <string name="text_copied_clipboard">Копирано в клипборда.</string>
+    <string name="analytics_text">Изпратете аналитични данни</string>
+    <string name="analytics_summary">Помогнете ни да подобрим приложението, като изпратите анонимни данни за използването.</string>
+    <string name="move_complete">Преместване завършено</string>
 </resources>

@@ -96,7 +96,6 @@
     <string name="extracting">Nxjerrjen ..</string>
     <string name="dialog_current_path">rruga e tanishme</string>
     <string name="dialog_specify_path">specifikoni shtegun</string>
-    <string name="browse">Zgjidh rruga</string>
     <string name="enter_file_name">Shkruani emrin e file</string>
     <string name="extract">ekstrakt</string>
     <string name="dialog_title_browse">zgjidhni dosjen</string>
@@ -132,7 +131,6 @@
     <string name="image">imazh</string>
     <string name="audio">Audio</string>
     <string name="other">tjetër</string>
-    <string name="file_exists">Skedari ekziston</string>
     <string name="create">krijoj</string>
     <string name="zip_progress_title">Krijimi zip</string>
     <string name="needsaccess">Shkruaj qasjen e kërkuar</string>
@@ -186,4 +184,23 @@
 	<string name="app_invite_title">App ftojë</string>
     <string name="app_invite_msg">Provoni këtë menaxher ftohtë skedarëve !!</string>
     <string name="app_invite_failed">Dërgimi ftojë dështuar.</string>
+
+    <string name="browse">shfletoj</string>
+    <string name="msg_error_unrooted">Qasja rrënjësore u mohua.</string>
+    <string name="billing_unsupported">Blerjet në aplikacion nuk janë të mbështetura në këtë pajisje.</string>
+    <string name="action_more">më shumë</string>
+    <string name="directory">drejtori</string>
+    <string name="operation">operacion</string>
+    <string name="extract_complete">Ekstrakti i përfunduar</string>
+    <string name="clipboard">%d në clipboard</string>
+    <string name="fav_exists">Preferenca tashmë ekziston.</string>
+    <string name="msg_added_fav">%d pika u shtua te Preferencat.</string>
+    <string name="header_source">burim</string>
+    <string name="header_destination">destinacion</string>
+    <string name="error_unsupported">Nuk mbështetet</string>
+    <string name="copy_path">Kopjo rrugën</string>
+    <string name="text_copied_clipboard">Kopjohet në clipboard.</string>
+    <string name="analytics_text">Dërgo analytics</string>
+    <string name="analytics_summary">Na ndihmoni të përmirësojmë aplikacionin duke dërguar të dhëna anonime të përdorimit.</string>
+    <string name="move_complete">Lëvizja e përfunduar</string>
 </resources>

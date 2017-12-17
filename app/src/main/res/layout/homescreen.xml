@@ -82,6 +82,7 @@
                         android:layout_marginRight="@dimen/padding_5"
                         android:background="@null"
                         android:visibility="gone"
+                        android:contentDescription="@string/action_delete"
                         android:src="@drawable/ic_delete_white" />
 
                     <View

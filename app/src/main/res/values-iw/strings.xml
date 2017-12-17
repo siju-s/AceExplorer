@@ -99,7 +99,6 @@
     <string name="extracting">חילוץ ..</string>
     <string name="dialog_current_path">נתיב נוכחי</string>
     <string name="dialog_specify_path">ציין נתיב</string>
-    <string name="browse">בחר נתיב</string>
     <string name="enter_file_name">הזן שם קובץ</string>
     <string name="extract">לחלץ</string>
     <string name="dialog_title_browse">בחר תיקייה</string>
@@ -135,7 +134,6 @@
     <string name="image">תמונה</string>
     <string name="audio">שֶׁמַע</string>
     <string name="other">אַחֵר</string>
-    <string name="file_exists">הקובץ כבר קיים</string>
     <string name="create">לִיצוֹר</string>
     <string name="zip_progress_title">zip יצירה</string>
     <string name="needsaccess">כתוב נדרשת גישה</string>
@@ -187,4 +185,23 @@
 	<string name="app_invite_title">App מזמין</string>
     <string name="app_invite_msg">נסה מנהל קבצים מגניב !!</string>
     <string name="app_invite_failed">שליחת מזמינים נכשלה.</string>
+
+    <string name="browse">לְדַפדֵף</string>
+    <string name="msg_error_unrooted">הגישה לשורש נדחתה.</string>
+    <string name="billing_unsupported">רכישות מתוך היישום אינן נתמכות במכשיר זה.</string>
+    <string name="action_more">יותר</string>
+    <string name="directory">מַדרִיך</string>
+    <string name="operation">מבצע</string>
+    <string name="extract_complete">החילוץ הושלם</string>
+    <string name="clipboard">%d בלוח</string>
+    <string name="fav_exists">מועדף כבר קיים.</string>
+    <string name="msg_added_fav">%d פריטים נוספו למועדפים.</string>
+    <string name="header_source">מָקוֹר</string>
+    <string name="header_destination">יַעַד</string>
+    <string name="error_unsupported">אינו נתמך</string>
+    <string name="copy_path">נתיב העתק</string>
+    <string name="text_copied_clipboard">הועתק ללוח.</string>
+    <string name="analytics_text">שלח ניתוח נתונים</string>
+    <string name="analytics_summary">עזור לנו לשפר את האפליקציה על ידי שליחת נתוני שימוש אנונימיים.</string>
+    <string name="move_complete">העבר הושלם</string>
 </resources>

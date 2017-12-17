@@ -37,9 +37,6 @@ public class LocaleHelper extends ContextWrapper {
     private static final String SELECTED_LANGUAGE = "prefs_lang";
     private static final String TAG                  = "LocaleHelper";
 
-//    public LocaleHelper(Context base, int theme) {
-//        super(base, theme);
-//    }
 
     public LocaleHelper(Context base) {
         super(base);
@@ -54,11 +51,12 @@ public class LocaleHelper extends ContextWrapper {
         return preferences.getString(SELECTED_LANGUAGE, defaultLanguage);
     }
 
-    public static Context setLanguage(Context context, int theme) {
+    public static Context setLanguage(Context context) {
         String currentLanguage = getLanguage(context);
         Logger.log(TAG, "setLanguage: current:"+currentLanguage + " defult:"+Locale.getDefault().getLanguage());
-
-        context = setLocale(context, currentLanguage);
+        if (!currentLanguage.equals(Locale.getDefault().getLanguage())) {
+            context = setLocale(context, currentLanguage);
+        }
         return context;
     }
 

@@ -97,7 +97,6 @@
     <string name="extracting">Εξαγωγή ..</string>
     <string name="dialog_current_path">τρέχουσα διαδρομή</string>
     <string name="dialog_specify_path">Καθορίστε τη διαδρομή</string>
-    <string name="browse">Επιλέξτε διαδρομή</string>
     <string name="enter_file_name">Πληκτρολογήστε το όνομα του αρχείου</string>
     <string name="extract">Εκχύλισμα</string>
     <string name="dialog_title_browse">Επιλέξτε το φάκελο</string>
@@ -133,7 +132,6 @@
     <string name="image">Εικόνα</string>
     <string name="audio">ήχου</string>
     <string name="other">Άλλα</string>
-    <string name="file_exists">Το αρχείο υπάρχει ήδη</string>
     <string name="create">Δημιουργώ</string>
     <string name="zip_progress_title">δημιουργία zip</string>
     <string name="needsaccess">Γράψτε Απαιτείται πρόσβαση</string>
@@ -186,4 +184,23 @@
 	<string name="app_invite_title">App προσκαλούν</string>
     <string name="app_invite_msg">Δοκιμάστε αυτό το δροσερό διαχειριστή αρχείων !!</string>
     <string name="app_invite_failed">Η αποστολή απέτυχε Πρόσκληση.</string>
+
+    <string name="browse">Ξεφυλλίζω</string>
+    <string name="msg_error_unrooted">Η πρόσβαση στην ρίζα απορρίφθηκε.</string>
+    <string name="billing_unsupported">Οι αγορές εντός εφαρμογής δεν υποστηρίζονται σε αυτήν τη συσκευή.</string>
+    <string name="action_more">Περισσότερο</string>
+    <string name="directory">Ευρετήριο</string>
+    <string name="operation">Λειτουργία</string>
+    <string name="extract_complete">Το απόσπασμα ολοκληρώθηκε</string>
+    <string name="clipboard">%d στο πρόχειρο</string>
+    <string name="fav_exists">Το αγαπημένο υπάρχει ήδη.</string>
+    <string name="msg_added_fav">%d αντικείμενα που προστέθηκαν στα Αγαπημένα.</string>
+    <string name="header_source">Πηγή</string>
+    <string name="header_destination">Προορισμός</string>
+    <string name="error_unsupported">Δεν υποστηρίζεται</string>
+    <string name="copy_path">Διαδρομή αντιγραφής</string>
+    <string name="text_copied_clipboard">Αντιγραφή στο πρόχειρο.</string>
+    <string name="analytics_text">Αποστολή αναλυτικών στοιχείων</string>
+    <string name="analytics_summary">Βοηθήστε μας να βελτιώσουμε την εφαρμογή αποστέλλοντας ανώνυμα δεδομένα χρήσης.</string>
+    <string name="move_complete">Μετακίνηση Ολοκληρώθηκε</string>
 </resources>

@@ -97,7 +97,6 @@
     <string name="extracting">La extracción ..</string>
     <string name="dialog_current_path">Trayectoria de corriente</string>
     <string name="dialog_specify_path">especificar la ruta</string>
-    <string name="browse">Seleccionar ruta</string>
     <string name="enter_file_name">Introducir nombre del archivo</string>
     <string name="extract">Extraer</string>
     <string name="dialog_title_browse">Elegir la carpeta</string>
@@ -133,7 +132,6 @@
     <string name="image">Imagen</string>
     <string name="audio">Audio</string>
     <string name="other">Otro</string>
-    <string name="file_exists">El archivo ya existe</string>
     <string name="create">Crear</string>
     <string name="zip_progress_title">Creación postal</string>
     <string name="needsaccess">El acceso de escritura Requerido</string>
@@ -185,4 +183,23 @@
 	 <string name="app_invite_title">Invitación a la aplicación</string>
     <string name="app_invite_msg">¡Intente este encargado fresco del archivo !!</string>
     <string name="app_invite_failed">Error al enviar la invitación.</string>
+
+    <string name="browse">Vistazo</string>
+    <string name="msg_error_unrooted">Root access denied.</string>
+    <string name="billing_unsupported">Compras en la aplicación no admitidas en este dispositivo.</string>
+    <string name="action_more">Más</string>
+    <string name="directory">Directorio</string>
+    <string name="operation">Operación</string>
+    <string name="extract_complete">Extracto completado</string>
+    <string name="clipboard">%d en el portapapeles</string>
+    <string name="fav_exists">Favorito ya existe</string>
+    <string name="msg_added_fav">%d elemento (s) agregado a Favoritos.</string>
+    <string name="header_source">Fuente</string>
+    <string name="header_destination">Destino</string>
+    <string name="error_unsupported">No soportado</string>
+    <string name="copy_path">Copiar ruta</string>
+    <string name="text_copied_clipboard">Copiado al portapapeles.</string>
+    <string name="analytics_text">Enviar análisis</string>
+    <string name="analytics_summary">Ayúdenos a mejorar la aplicación enviando datos de uso anónimos.</string>
+    <string name="move_complete">Mover completado</string>
 </resources>

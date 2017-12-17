@@ -192,14 +192,14 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
         if (holder instanceof FileListViewHolder) {
             FileListViewHolder fileListViewHolder = (FileListViewHolder) holder;
-            Log.d(TAG, "onBindViewHolder: b4"+position);
+//            Log.d(TAG, "onBindViewHolder: b4"+position);
 
             if (!mStopAnimation && !mAnimatedPos.get(position)) {
                 animate(fileListViewHolder);
                 mAnimatedPos.put(position, true);
             }
 
-            Log.d(TAG, "onBindViewHolder: "+position);
+//            Log.d(TAG, "onBindViewHolder: "+position);
             int color;
             if (mIsThemeDark) {
                 color = ContextCompat.getColor(context, R.color.dark_actionModeItemSelected);

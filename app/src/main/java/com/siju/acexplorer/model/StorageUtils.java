@@ -30,6 +30,7 @@ import android.util.Log;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.model.groups.StoragesGroup;
 
 import java.io.File;
 import java.io.IOException;
@@ -311,6 +312,21 @@ public class StorageUtils {
 
     public static long getTotalSpace(File file) {
         return file.getTotalSpace();
+    }
+
+    public static boolean isRootDirectory(String path) {
+        if (path.contains(getInternalStorage())) {
+            return false;
+        } else if (StoragesGroup.getInstance().getExternalSDList().size() > 0) {
+            for (String extPath : StoragesGroup.getInstance().getExternalSDList()) {
+                if (path.contains(extPath)) {
+                    return false;
+                }
+            }
+            return false;
+        } else {
+            return true;
+        }
     }
 
 }

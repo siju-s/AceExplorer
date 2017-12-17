@@ -97,7 +97,6 @@
     <string name="extracting">Udpakning ..</string>
     <string name="dialog_current_path">Aktuel vej</string>
     <string name="dialog_specify_path">Angiv stien</string>
-    <string name="browse">Vælg sti</string>
     <string name="enter_file_name">Indtast filnavn</string>
     <string name="extract">Uddrag</string>
     <string name="dialog_title_browse">Vælg mappe</string>
@@ -133,7 +132,6 @@
     <string name="image">Billede</string>
     <string name="audio">Lyd</string>
     <string name="other">Andre</string>
-    <string name="file_exists">Fil findes allerede</string>
     <string name="create">Skabe</string>
     <string name="zip_progress_title">Oprettelse zip</string>
     <string name="needsaccess">Skriv Access Påkrævet</string>
@@ -185,4 +183,23 @@
 	<string name="app_invite_title">App invitere</string>
     <string name="app_invite_msg">Prøv denne cool filhåndtering !!</string>
     <string name="app_invite_failed">Sender invitere mislykkedes.</string>
+
+    <string name="browse">Gennemse</string>
+    <string name="msg_error_unrooted">Root adgang nægtet.</string>
+    <string name="billing_unsupported">Køber i appen understøttes ikke på denne enhed.</string>
+    <string name="action_more">Mere</string>
+    <string name="directory">Vejviser</string>
+    <string name="operation">Operation</string>
+    <string name="extract_complete">Uddrag afsluttet</string>
+    <string name="clipboard">%d i udklipsholder</string>
+    <string name="fav_exists">Favorit eksisterer allerede.</string>
+    <string name="msg_added_fav">%d element (er) tilføjet til Favoritter.</string>
+    <string name="header_source">Kilde</string>
+    <string name="header_destination">Bestemmelsessted</string>
+    <string name="error_unsupported">Ikke understøttet</string>
+    <string name="copy_path">Kopier sti</string>
+    <string name="text_copied_clipboard">Kopieret til udklipsholder.</string>
+    <string name="analytics_text">Send analytics</string>
+    <string name="analytics_summary">Hjælp os med at forbedre appen ved at sende anonyme brugsdata.</string>
+    <string name="move_complete">Flyt færdig</string>
 </resources>

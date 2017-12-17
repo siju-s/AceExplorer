@@ -96,7 +96,6 @@
     <string name="extracting">Extraindo ..</string>
     <string name="dialog_current_path">Caminho atual</string>
     <string name="dialog_specify_path">Especificar caminho</string>
-    <string name="browse">Selecionar caminho</string>
     <string name="enter_file_name">Insira o nome do arquivo</string>
     <string name="extract">Extrair</string>
     <string name="dialog_title_browse">Escolher pasta</string>
@@ -132,7 +131,6 @@
     <string name="image">Imagem</string>
     <string name="audio">Áudio</string>
     <string name="other">De outros</string>
-    <string name="file_exists">O arquivo já existe</string>
     <string name="create">Crio</string>
     <string name="zip_progress_title">Criando zip</string>
     <string name="needsaccess">Necessário acesso de gravação</string>
@@ -186,4 +184,23 @@
 	<string name="app_invite_title">Convite à aplicação</string>
     <string name="app_invite_msg">Experimente este gerenciador de arquivos cool !!</string>
     <string name="app_invite_failed">Falha ao enviar convite.</string>
+
+    <string name="browse">Squeaky toy</string>
+    <string name="msg_error_unrooted">Acesso de raiz negado.</string>
+    <string name="billing_unsupported">Compras no aplicativo não suportadas neste dispositivo.</string>
+    <string name="action_more">Mais</string>
+    <string name="directory">Diretório</string>
+    <string name="operation">Operação</string>
+    <string name="extract_complete">Extracto concluído</string>
+    <string name="clipboard">%d na área de transferência</string>
+    <string name="fav_exists">O favorito já existe.</string>
+    <string name="msg_added_fav">%d item (s) adicionado (s) aos Favoritos.</string>
+    <string name="header_source">Fonte</string>
+    <string name="header_destination">Destino</string>
+    <string name="error_unsupported">Não suportado</string>
+    <string name="copy_path">Caminho de cópia</string>
+    <string name="text_copied_clipboard">Copiado para a área de transferência.</string>
+    <string name="analytics_text">Enviar análise</string>
+    <string name="analytics_summary">Ajude-nos a melhorar o aplicativo enviando dados de uso anônimos.</string>
+    <string name="move_complete">Mover concluído</string>
 </resources>

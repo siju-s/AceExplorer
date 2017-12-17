@@ -97,7 +97,6 @@
     <string name="extracting">Extracting ..</string>
     <string name="dialog_current_path">cale de curent</string>
     <string name="dialog_specify_path">specificaţi calea</string>
-    <string name="browse">Selectați calea</string>
     <string name="enter_file_name">Introdu numele de fișier</string>
     <string name="extract">Extrage</string>
     <string name="dialog_title_browse">alegeţi un dosar</string>
@@ -133,7 +132,6 @@
     <string name="image">Imagine</string>
     <string name="audio">Audio</string>
     <string name="other">Alte</string>
-    <string name="file_exists">Fisierul există deja</string>
     <string name="create">Crea</string>
     <string name="zip_progress_title">crearea de zip</string>
     <string name="needsaccess">Este necesar accesul scrie</string>
@@ -187,4 +185,23 @@
 	<string name="app_invite_title">aplicaţia invitați</string>
     <string name="app_invite_msg">Încercați acest manager de fișiere se răcească !!</string>
     <string name="app_invite_failed">Trimiterea de invitație a eșuat.</string>
+
+    <string name="browse">Naviga</string>
+    <string name="msg_error_unrooted">Accesul rădăcină a fost respins.</string>
+    <string name="billing_unsupported">Achizițiile în aplicație nu sunt acceptate pe acest dispozitiv.</string>
+    <string name="action_more">Mai Mult</string>
+    <string name="directory">Director</string>
+    <string name="operation">operație</string>
+    <string name="extract_complete">Extrasul a fost finalizat</string>
+    <string name="clipboard">%d în clipboard</string>
+    <string name="fav_exists">Favorite există deja.</string>
+    <string name="msg_added_fav">Elemente%d au fost adăugate la Preferințe.</string>
+    <string name="header_source">Sursă</string>
+    <string name="header_destination">Destinaţie</string>
+    <string name="error_unsupported">Nu sunt acceptate</string>
+    <string name="copy_path">Calea de copiere</string>
+    <string name="text_copied_clipboard">Copiat în clipboard.</string>
+    <string name="analytics_text">Trimiteți analize</string>
+    <string name="analytics_summary">Ajutați-ne să îmbunătățim aplicația trimițând date de utilizare anonime.</string>
+    <string name="move_complete">Mută complet</string>
 </resources>

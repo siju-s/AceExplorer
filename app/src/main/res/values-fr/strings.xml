@@ -97,7 +97,6 @@
     <string name="extracting">Extraction ..</string>
     <string name="dialog_current_path">chemin d\'accès actuel</string>
     <string name="dialog_specify_path">Indiquez le chemin</string>
-    <string name="browse">Sélectionnez le chemin</string>
     <string name="enter_file_name">Entrez le nom de fichier</string>
     <string name="extract">Extrait</string>
     <string name="dialog_title_browse">Choisissez le dossier</string>
@@ -133,7 +132,6 @@
     <string name="image">image</string>
     <string name="audio">Audio</string>
     <string name="other">Autre</string>
-    <string name="file_exists">Le fichier existe déjà</string>
     <string name="create">Créer</string>
     <string name="zip_progress_title">Création zip</string>
     <string name="needsaccess">Accès en écriture requis</string>
@@ -186,4 +184,23 @@
 	<string name="app_invite_title">Invitation à l\'application</string>
     <string name="app_invite_msg">Essayez ce gestionnaire de fichiers cool!</string>
     <string name="app_invite_failed">Échec de l\'envoi de l\'invitation.</string>
+
+    <string name="browse">Feuilleter</string>
+    <string name="msg_error_unrooted">Accès root refusé.</string>
+    <string name="billing_unsupported">Les achats intégrés ne sont pas pris en charge sur cet appareil.</string>
+    <string name="action_more">Plus</string>
+    <string name="directory">Annuaire</string>
+    <string name="operation">Opération</string>
+    <string name="extract_complete">Extrait terminé</string>
+    <string name="clipboard">%d dans le presse-papiers</string>
+    <string name="fav_exists">Le favori existe déjà.</string>
+    <string name="msg_added_fav">%d élément (s) ajouté aux favoris.</string>
+    <string name="header_source">La source</string>
+    <string name="header_destination">Destination</string>
+    <string name="error_unsupported">Non supporté</string>
+    <string name="copy_path">Copier le chemin</string>
+    <string name="text_copied_clipboard">Copié dans le presse-papier.</string>
+    <string name="analytics_text">Envoyer des analyses</string>
+    <string name="analytics_summary">Aidez-nous à améliorer l\'application en envoyant des données d\'utilisation anonymes.</string>
+    <string name="move_complete">Déplacer Terminé</string>
 </resources>

@@ -95,7 +95,6 @@
     <string name="extracting">Penggalian ..</string>
     <string name="dialog_current_path">jalan saat ini</string>
     <string name="dialog_specify_path">Tentukan path</string>
-    <string name="browse">Pilih path</string>
     <string name="enter_file_name">Masukkan nama file</string>
     <string name="extract">Ekstrak</string>
     <string name="dialog_title_browse">Pilih folder</string>
@@ -131,7 +130,6 @@
     <string name="image">Gambar</string>
     <string name="audio">Audio</string>
     <string name="other">Lain</string>
-    <string name="file_exists">File sudah ada</string>
     <string name="create">Membuat</string>
     <string name="zip_progress_title">membuat zip</string>
     <string name="needsaccess">Menulis Access Diperlukan</string>
@@ -185,4 +183,23 @@
 	<string name="app_invite_title">App mengundang</string>
     <string name="app_invite_msg">Coba file manager ini keren !!</string>
     <string name="app_invite_failed">Mengirim mengundang gagal.</string>
+
+    <string name="browse">Jelajahi</string>
+    <string name="msg_error_unrooted">Akses root ditolak</string>
+    <string name="billing_unsupported">Pembelian dalam aplikasi tidak didukung di perangkat ini.</string>
+    <string name="action_more">Lebih</string>
+    <string name="directory">Direktori</string>
+    <string name="operation">Operasi</string>
+    <string name="extract_complete">Ekstrak selesai</string>
+    <string name="clipboard">%d di clipboard</string>
+    <string name="fav_exists">Favorit sudah ada</string>
+    <string name="msg_added_fav">%d item ditambahkan ke Favorit.</string>
+    <string name="header_source">Sumber</string>
+    <string name="header_destination">Tujuan</string>
+    <string name="error_unsupported">Tidak didukung</string>
+    <string name="copy_path">Salin jalan</string>
+    <string name="text_copied_clipboard">Disalin ke clipboard</string>
+    <string name="analytics_text">Kirim analytics</string>
+    <string name="analytics_summary">Bantu kami memperbaiki aplikasi dengan mengirimkan data penggunaan anonim.</string>
+    <string name="move_complete">Pindahkan Selesai</string>
 </resources>

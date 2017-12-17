@@ -457,9 +457,9 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                     return false;
                 }
 
-                if (isDragStarted && event == MotionEvent.ACTION_UP) {
+                if (event == MotionEvent.ACTION_UP) {
                     isDragStarted = false;
-                } else if (isDragStarted && event == MotionEvent.ACTION_MOVE && mLongPressedTime !=
+                } else if (event == MotionEvent.ACTION_MOVE && mLongPressedTime !=
                         0) {
                     long timeElapsed = System.currentTimeMillis() - mLongPressedTime;
                     Logger.log(TAG, "On item touch time Elapsed" + timeElapsed);
@@ -1733,9 +1733,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             menuControls.endActionMode();
         }
         if (isZipMode()) {
-            currentDir = dir;
-            menuControls.setCurrentDir(currentDir);
-            zipViewer.onBackPressed(currentDir);
+            menuControls.setCurrentDir(dir);
+            zipViewer.onBackPressed(dir);
         } else {
             currentDir = dir;
             menuControls.setCurrentDir(currentDir);
@@ -1994,7 +1993,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
         @Override
         public void endZipMode() {
-            Log.d(TAG, "endZipMode: " + backStackInfo);
+            Log.d(TAG, "endZipMode->currentDir:" + currentDir);
             isZipViewer = false;
             zipViewer = null;
             ArrayList<BackStackModel> backStack = backStackInfo.getBackStack();
