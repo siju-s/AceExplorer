@@ -149,9 +149,9 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
     private String newPath;
 
     private void checkZipMode(String dir) {
-        Log.d(TAG, "checkZipMode: "+dir + " zipParentDir:"+zipParentPath);
-        if (currentDir == null || currentDir.length() == 0 || !dir.contains(zipParentPath)) {
-            endZipMode();
+        Log.d(TAG, "checkZipMode: currentDir:"+currentDir + " dir:"+dir + " zipParentDir:"+zipParentPath );
+        if (currentDir == null || currentDir.length() == 0 || dir == null || !dir.contains(zipParentPath)) {
+            endZipMode(dir);
         } else {
             zipCommunicator.removeFromBackStack();
             zipCommunicator.removeZipScrollPos(newPath);
@@ -177,14 +177,13 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
         }
     }
 
-    private void endZipMode() {
+    private void endZipMode(String dir) {
         currentDir = null;
         zipChildren.clear();
         zipCommunicator.removeZipScrollPos(zipParentPath);
         zipCommunicator.removeFromBackStack();
-        zipCommunicator.endZipMode();
+        zipCommunicator.endZipMode(dir);
         clearCache();
-//        setNavDirectory(getInternalStorage());
     }
 
     private void clearCache() {

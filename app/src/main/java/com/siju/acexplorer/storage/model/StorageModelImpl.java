@@ -63,6 +63,7 @@ import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_CO
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH2;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES;
+import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OLD_FILES;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_SHOW_RESULT;
 import static com.siju.acexplorer.storage.model.operations.Operations.COMPRESS;
@@ -70,6 +71,7 @@ import static com.siju.acexplorer.storage.model.operations.Operations.DELETE;
 import static com.siju.acexplorer.storage.model.operations.Operations.EXTRACT;
 import static com.siju.acexplorer.storage.model.operations.Operations.FILE_CREATION;
 import static com.siju.acexplorer.storage.model.operations.Operations.FOLDER_CREATION;
+import static com.siju.acexplorer.storage.model.operations.Operations.HIDE;
 import static com.siju.acexplorer.storage.model.operations.Operations.RENAME;
 
 /**
@@ -131,7 +133,7 @@ public class StorageModelImpl implements StoragesModel {
             @Override
             public void run() {
                 PasteConflictChecker conflictChecker = new PasteConflictChecker(currentDir,
-                                                                                rooted, isMove, info);
+                        rooted, isMove, info);
                 conflictChecker.setListener(pasteResultCallback);
                 conflictChecker.execute();
             }
@@ -269,7 +271,7 @@ public class StorageModelImpl implements StoragesModel {
         }
 
         String currentDir = newFile.getParent();
-        Log.d(TAG, "onCompressPosClick: "+newFilePath);
+        Log.d(TAG, "onCompressPosClick: " + newFilePath);
 
         if (FileUtils.isFileExisting(currentDir, newFile.getName())) {
             listener.onFileExists(Operations.EXTRACT, context.getString(R.string
@@ -302,9 +304,12 @@ public class StorageModelImpl implements StoragesModel {
         }
     }
 
+    private FileInfo fileInfo;
+
     @Override
     public void hideUnHideFiles(ArrayList<FileInfo> fileInfo, ArrayList<Integer> pos) {
         for (int i = 0; i < fileInfo.size(); i++) {
+            this.fileInfo = fileInfo.get(i);
             String fileName = fileInfo.get(i).getFileName();
             String renamedName;
             if (fileName.startsWith(".")) {
@@ -317,7 +322,8 @@ public class StorageModelImpl implements StoragesModel {
             String temp = path.substring(0, path.lastIndexOf(File.separator));
 
             File newFile = new File(temp + File.separator + renamedName);
-            FileOpsHelper.renameFile(Operations.HIDE, oldFile, newFile, RootUtils.isRooted(context), fileOperationCallBack);
+            FileOpsHelper.renameFile(Operations.HIDE, oldFile, newFile, RootUtils.isRooted(context),
+                    fileOperationCallBack);
         }
     }
 
@@ -350,7 +356,7 @@ public class StorageModelImpl implements StoragesModel {
 
         @Override
         public void opCompleted(Operations operation, File file, boolean success) {
-            Log.d(TAG, "opCompleted: "+operation);
+            Log.d(TAG, "opCompleted: " + operation);
             switch (operation) {
                 case FILE_CREATION:
                 case FOLDER_CREATION:
@@ -370,15 +376,18 @@ public class StorageModelImpl implements StoragesModel {
         @Override
         public void opCompleted(Operations operation, File oldFile, File newFile,
                                 boolean success) {
-            Log.d(TAG, "opCompleted: "+operation + " result:"+success);
+            Log.d(TAG, "opCompleted: " + operation + " result:" + success);
             switch (operation) {
                 case RENAME:
                 case HIDE:
                     if (success) {
                         sharedPreferenceWrapper.updateFavoritePath(context, oldFile.getAbsolutePath(),
-                                                                   newFile.getAbsolutePath());
+                                newFile.getAbsolutePath());
                         Intent intent = new Intent(ACTION_OP_REFRESH);
-                        intent.putExtra(KEY_OPERATION, RENAME);
+                        intent.putExtra(KEY_OPERATION, operation);
+                        if (operation.equals(HIDE)) {
+                            intent.putExtra(KEY_OLD_FILES, fileInfo);
+                        }
                         intent.putExtra(KEY_FILEPATH, oldFile.getAbsolutePath());
                         intent.putExtra(KEY_FILEPATH2, newFile.getAbsolutePath());
                         context.sendBroadcast(intent);
@@ -392,7 +401,7 @@ public class StorageModelImpl implements StoragesModel {
 
 
     public void startPasteOperation(String destinationDir, List<FileInfo> files, List<CopyData> copyData,
-                                     boolean isMove) {
+                                    boolean isMove) {
 
         if (isMove) {
             moveFiles(destinationDir, files, copyData);
@@ -444,7 +453,7 @@ public class StorageModelImpl implements StoragesModel {
                 dialog.dismiss();
             } else {
                 listener.showConflictDialog(conflictFiles, destFiles, destinationDir, isMove,
-                                            this);
+                        this);
             }
 
         }
@@ -452,7 +461,7 @@ public class StorageModelImpl implements StoragesModel {
         @Override
         public void onNegativeButtonClick(Dialog dialog, Operations operation, List<FileInfo>
                 destFiles, List<FileInfo>
-                conflictFiles, String destinationDir, boolean isMove, boolean isChecked) {
+                                                  conflictFiles, String destinationDir, boolean isMove, boolean isChecked) {
             boolean isEnd = false;
             if (isChecked) {
                 isEnd = true;
@@ -468,14 +477,14 @@ public class StorageModelImpl implements StoragesModel {
                 checkPasteWriteMode(destinationDir, files, copyData, isMove);
             } else {
                 listener.showConflictDialog(conflictFiles, destFiles, destinationDir, isMove,
-                                            this);
+                        this);
             }
         }
 
         @Override
         public void onNeutralButtonClick(Dialog dialog, Operations operation, List<FileInfo>
-                destFiles, List<FileInfo>
-                conflictFiles, String destinationDir, boolean isMove, boolean isChecked) {
+                destFiles, List<FileInfo> conflictFiles, String destinationDir, boolean isMove,
+                                         boolean isChecked) {
             boolean isEnd = false;
             if (isChecked) {
                 for (FileInfo fileInfo : conflictFiles) {
@@ -495,7 +504,7 @@ public class StorageModelImpl implements StoragesModel {
                 checkPasteWriteMode(destinationDir, files, copyData, isMove);
             } else {
                 listener.showConflictDialog(conflictFiles, destFiles, destinationDir, isMove,
-                                            this);
+                        this);
             }
         }
     };
@@ -545,7 +554,7 @@ public class StorageModelImpl implements StoragesModel {
 
     @Override
     public void getFilePermissions(final String filePath, final boolean isDir) {
-        new Thread( new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 String perm = RootHelper.getPermissions(filePath, isDir);
@@ -593,7 +602,7 @@ public class StorageModelImpl implements StoragesModel {
         String extension = null;
         boolean isFile = false;
         if (new File(filePath).isFile()) {
-            extension = filePath.substring(filePath.lastIndexOf(".") , filePath.length());
+            extension = filePath.substring(filePath.lastIndexOf("."), filePath.length());
             isFile = true;
         }
         String newFilePath;

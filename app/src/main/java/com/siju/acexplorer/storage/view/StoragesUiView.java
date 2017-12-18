@@ -124,6 +124,7 @@ import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OL
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_RESULT;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_SHOW_RESULT;
+import static com.siju.acexplorer.storage.model.operations.Operations.HIDE;
 import static com.siju.acexplorer.view.dialog.DialogHelper.openWith;
 
 /**
@@ -191,6 +192,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     private int mCurrentOrientation;
     private String mSelectedPath;
     private FileInfo fileInfo;
+    private boolean homeClicked;
 
 
     public StoragesUiView(Context context, AttributeSet attrs) {
@@ -844,9 +846,16 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 break;
 
             case RENAME:
+            case HIDE:
                 dismissDialog();
                 String oldFile = intent.getStringExtra(KEY_FILEPATH);
                 String newFile = intent.getStringExtra(KEY_FILEPATH2);
+                if (operation.equals(HIDE)) {
+                    fileInfo = intent.getParcelableExtra(KEY_OLD_FILES);
+                }
+                if (fileInfo == null) {
+                    return;
+                }
                 int position = fileInfoList.indexOf(fileInfo);
                 if (position == -1) {
                     return;
@@ -873,7 +882,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                     fileListAdapter.notifyItemChanged(position);
                 }
                 break;
-
             case CUT:
                 ArrayList<String> movedFiles = intent.getStringArrayListExtra(KEY_FILES);
                 ArrayList<String> oldFiles = intent.getStringArrayListExtra(KEY_OLD_FILES);
@@ -928,7 +936,12 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             menuControls.endSearch();
             return false;
         } else if (isZipMode()) {
-            zipViewer.onBackPressed();
+            if (homeClicked) {
+                zipViewer.onBackPressed(null);
+                return true;
+            } else {
+                zipViewer.onBackPressed();
+            }
         } else if (isActionModeActive() && !menuControls.isPasteOp()) {
             menuControls.endActionMode();
         } else {
@@ -1423,7 +1436,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     public void hideUnHideFiles(ArrayList<FileInfo> infoList, ArrayList<Integer> pos) {
-
         bridge.hideUnHideFiles(infoList, pos);
     }
 
@@ -1702,10 +1714,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         Log.d(TAG, "endActionMode: " + this + " sel item count:" + selectedItems);
         isDragStarted = false;
         isActionModeActive = false;
-        if (selectedItems > 0) {
-            fileListAdapter.clearDragPos();
-            fileListAdapter.removeSelection();
-        }
+        fileListAdapter.clearDragPos();
+        fileListAdapter.removeSelection();
         mSwipeRefreshLayout.setEnabled(true);
         // FAB should be visible only for Files Category
         if (isFilesCategory()) {
@@ -1720,6 +1730,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     @Override
     public void onHomeClicked() {
+        homeClicked = true;
         menuControls.endActionMode();
         removeDualFileFragment();
         getActivity().onBackPressed();
@@ -1992,8 +2003,11 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         }
 
         @Override
-        public void endZipMode() {
-            Log.d(TAG, "endZipMode->currentDir:" + currentDir);
+        public void endZipMode(String dir) {
+            Log.d(TAG, "endZipMode->currentDir:" + currentDir + "dir:"+dir);
+            if (dir != null && dir.length() != 0) {
+                currentDir = dir;
+            }
             isZipViewer = false;
             zipViewer = null;
             ArrayList<BackStackModel> backStack = backStackInfo.getBackStack();

@@ -46,7 +46,6 @@ import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FI
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH2;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION;
-import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_POSITION;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.WriteMode.INTERNAL;
 import static com.siju.acexplorer.storage.model.operations.Operations.FILE_CREATION;
 import static com.siju.acexplorer.storage.model.operations.Operations.FOLDER_CREATION;
@@ -404,9 +403,9 @@ public class FileOpsHelper {
                 break;
 
             case RENAME:
+            case HIDE:
                 String oldFilePath = intent.getStringExtra(KEY_FILEPATH);
                 String newFilePath = intent.getStringExtra(KEY_FILEPATH2);
-                int position = intent.getIntExtra(KEY_POSITION, INVALID_POS);
                 renameFile(operation, new File(oldFilePath),
                              new File(newFilePath), isRooted, fileOperationCallBack);
                 break;

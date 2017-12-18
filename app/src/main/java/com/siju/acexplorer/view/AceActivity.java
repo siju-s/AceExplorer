@@ -168,6 +168,7 @@ public class AceActivity extends BaseActivity {
     }
 
     public void switchView(int viewMode, boolean isDual) {
+        configuration = getConfiguration();
         if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             mainUi.switchView(viewMode, isDual);
         }

@@ -651,7 +651,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         preferenceKeySet.add(key);
     }
 
-    void onPreferenceChange() {
+    synchronized void onPreferenceChange() {
         Logger.log(TAG, "onPreferenceChange: " + preferenceKeySet.size());
 
         if (preferenceKeySet.size() == 0) {

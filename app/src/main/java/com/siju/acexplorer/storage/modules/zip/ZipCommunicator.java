@@ -26,7 +26,7 @@ public interface ZipCommunicator {
 
     void removeZipScrollPos(String newPath);
 
-    void endZipMode();
+    void endZipMode(String dir);
 
     void calculateZipScroll(String dir);
 

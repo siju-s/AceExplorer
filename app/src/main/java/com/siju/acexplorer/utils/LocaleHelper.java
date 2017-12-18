@@ -53,9 +53,11 @@ public class LocaleHelper extends ContextWrapper {
 
     public static Context setLanguage(Context context) {
         String currentLanguage = getLanguage(context);
-        Logger.log(TAG, "setLanguage: current:"+currentLanguage + " defult:"+Locale.getDefault().getLanguage());
+        Logger.log(TAG, "setLanguage: current:"+currentLanguage + " default:"+Locale.getDefault().getLanguage());
         if (!currentLanguage.equals(Locale.getDefault().getLanguage())) {
             context = setLocale(context, currentLanguage);
+        } else {
+            context = updateResources(context, currentLanguage);
         }
         return context;
     }
