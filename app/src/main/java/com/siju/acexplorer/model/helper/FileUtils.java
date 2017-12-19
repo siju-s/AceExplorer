@@ -203,7 +203,6 @@ public class FileUtils {
 
 
     public static boolean isMediaScanningRequired(String mimeType) {
-        Logger.log(TAG, "Mime type=" + mimeType);
         return mimeType != null && (mimeType.startsWith("audio") ||
                 mimeType.startsWith("video") || mimeType.startsWith("image"));
     }

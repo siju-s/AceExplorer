@@ -204,14 +204,10 @@ public class CopyService extends IntentService {
                         for (int j = i + 1; j < files.size(); j++) {
                             failedFiles.add(files.get(j));
                         }
-                        Intent intent = new Intent(ACTION_OP_REFRESH);
-                        intent.putExtra(KEY_RESULT, false);
-                        intent.putExtra(KEY_OPERATION, move ? CUT : COPY);
-                        intent.putStringArrayListExtra(KEY_FILES, filesToMediaIndex);
-                        sendBroadcast(intent);
                         break;
                     }
                 }
+                publishCompletionResult();
                 break;
 
             case ROOT:
@@ -251,6 +247,7 @@ public class CopyService extends IntentService {
 
 
     private void publishCompletionResult() {
+        endNotification(NOTIFICATION_ID);
         Intent intent = new Intent(ACTION_OP_REFRESH);
         intent.putExtra(KEY_RESULT, isSuccess);
         intent.putExtra(KEY_OPERATION, move ? CUT : COPY);
@@ -288,7 +285,6 @@ public class CopyService extends IntentService {
         } else {
             copyFiles(sourceFile, targetFile);
         }
-        publishCompletionResult();
     }
 
     private void copyDirectory(final FileInfo sourceFile, final FileInfo targetFile, boolean
@@ -392,6 +388,7 @@ public class CopyService extends IntentService {
             int p1 = (int) ((copiedBytes / (float) totalBytes) * 100);
             intent.putExtra(KEY_TOTAL_PROGRESS, p1);
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
         }
         in.close();
         out.close();
@@ -425,27 +422,30 @@ public class CopyService extends IntentService {
                 .formatSize(context, total));
         int id1 = NOTIFICATION_ID;
         notificationManager.notify(id1, builder.build());
-        if (p1 == 100 || total == 0 || totalBytes == copiedBytes) {
-            builder.setContentTitle("Copy completed");
-            if (move) {
-                builder.setContentTitle("Move Completed");
-            }
-            builder.setContentText("");
-            builder.setProgress(0, 0, false);
-            builder.setOngoing(false);
-            builder.setAutoCancel(true);
-            notificationManager.notify(id1, builder.build());
-            publishCompletedResult(id1);
-        }
-
         Intent intent = new Intent(COPY_PROGRESS);
         intent.putExtra(KEY_COMPLETED, copiedBytes);
         intent.putExtra(KEY_TOTAL, totalBytes);
         intent.putExtra(KEY_TOTAL_PROGRESS, p1);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
+        if (p1 == 100 || total == 0 || totalBytes == copiedBytes) {
+            endNotification(id1);
+        }
+
+
     }
 
-    private void publishCompletedResult(int id1) {
+    private void endNotification(int id1) {
+        Log.d("CopyService", "endNotification: ");
+        builder.setContentTitle("Copy completed");
+        if (move) {
+            builder.setContentTitle("Move Completed");
+        }
+        builder.setContentText("");
+        builder.setProgress(0, 0, false);
+        builder.setOngoing(false);
+        builder.setAutoCancel(true);
+        notificationManager.notify(id1, builder.build());
         try {
             notificationManager.cancel(id1);
         } catch (Exception e) {

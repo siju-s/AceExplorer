@@ -20,7 +20,6 @@ import android.content.Context;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
 
 
 public class MediaStoreHelper {
@@ -34,8 +33,8 @@ public class MediaStoreHelper {
                 new String[]{path}, null,
                 new MediaScannerConnection.OnScanCompletedListener() {
                     public void onScanCompleted(String path, Uri uri) {
-                        Log.i(TAG, "Scanned " + path);
-                        Log.i(TAG, "-> uri=" + uri);
+//                        Log.i(TAG, "Scanned " + path);
+//                        Log.i(TAG, "-> uri=" + uri);
                     }
                 });
     }

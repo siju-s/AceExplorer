@@ -246,7 +246,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     void setDraggedPos(int pos) {
         draggedPos = pos;
-        notifyItemChanged(pos);
+        notifyDataSetChanged();
     }
 
     void clearDragPos() {

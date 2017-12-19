@@ -378,15 +378,15 @@ public class OperationProgress {
                     return;
                 }
                 int totalProgress = intent.getIntExtra(KEY_TOTAL_PROGRESS, 0);
-                Logger.log("FileUtils", "KEY_PROGRESS=" + progress + " KEY_TOTAL KEY_PROGRESS=" + totalProgress);
-                Logger.log("FileUtils", "Copied bytes=" + copiedBytes + " KEY_TOTAL bytes=" + totalBytes);
+                Logger.log(TAG, "KEY_PROGRESS=" + progress + " KEY_TOTAL KEY_PROGRESS=" + totalProgress);
+                Logger.log(TAG, "Copied bytes=" + copiedBytes + " KEY_TOTAL bytes=" + totalBytes);
                 progressBarPaste.setProgress(totalProgress);
                 textProgress.setText(String.format(Locale.getDefault(), "%d%s", totalProgress, mContext.getString
                         (R.string
                                  .percent_placeholder)));
                 if (progress == 100 || totalBytes == copiedBytes) {
                     int count = intent.getIntExtra(KEY_COUNT, 1);
-                    Logger.log("FileUtils", "KEY_COUNT=" + count);
+                    Logger.log(TAG, "KEY_COUNT=" + count);
                     if (count == copiedFilesSize || copiedBytes == totalBytes) {
                         stopCopyService();
                         progressDialog.dismiss();
