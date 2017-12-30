@@ -58,10 +58,10 @@ import static com.siju.acexplorer.model.helper.UriHelper.getUriFromFile;
 
 public class FileUtils {
 
-    private static final String                  TAG         = "FileUtils";
-    public static final  int                     ACTION_NONE = 0;
-    public static final  int                     ACTION_KEEP = 3;
-    private static final HashMap<String, String> MIME_TYPES  = new HashMap<>();
+    private static final String TAG = "FileUtils";
+    public static final int ACTION_NONE = 0;
+    public static final int ACTION_KEEP = 3;
+    private static final HashMap<String, String> MIME_TYPES = new HashMap<>();
 
 
     static {
@@ -315,7 +315,7 @@ public class FileUtils {
 
         if (extension != null && !extension.isEmpty()) {
             final String extensionLowerCase = extension.toLowerCase(Locale
-                                                                            .getDefault());
+                    .getDefault());
             final MimeTypeMap mime = MimeTypeMap.getSingleton();
             type = mime.getMimeTypeFromExtension(extensionLowerCase);
             if (type == null) {
@@ -430,29 +430,25 @@ public class FileUtils {
     /**
      * Delete all files in a folder.
      *
-     * @param folder the folder
+     * @param file the folder
      * @return true if successful.
      */
-    private static boolean deleteFilesInFolder(final File folder) {
-        boolean totalSuccess = true;
-        if (folder == null) {
+    private static boolean deleteFilesInFolder(final File file) {
+        boolean totalSuccess;
+        if (file == null) {
             return false;
         }
-        if (folder.isDirectory()) {
-            if (folder.listFiles() != null) {
-                for (File child : folder.listFiles()) {
+        String path = file.getAbsolutePath();
+        if (file.isDirectory()) {
+            if (file.listFiles() != null) {
+                for (File child : file.listFiles()) {
                     deleteFilesInFolder(child);
                 }
             }
-
-            if (!folder.delete()) {
-                totalSuccess = false;
-            }
-        } else {
-
-            if (!folder.delete()) {
-                totalSuccess = false;
-            }
+        }
+        totalSuccess = file.delete();
+        if (totalSuccess) {
+            MediaStoreHelper.removeMedia(AceApplication.getAppContext(), path, 0);
         }
         return totalSuccess;
     }
@@ -489,6 +485,17 @@ public class FileUtils {
             // No extension.
             return "";
         }
+    }
+
+    static String getFileNameWithoutExt(String filePath) {
+        File file = new File(filePath);
+        String fileName;
+        if (file.isFile()) {
+            fileName = filePath.substring(filePath.lastIndexOf("/") + 1 , filePath.lastIndexOf("."));
+        } else {
+            fileName = file.getName();
+        }
+        return fileName;
     }
 
     public static String formatSize(Context context, long sizeInBytes) {

@@ -2,6 +2,8 @@ package com.siju.acexplorer.billing;
 
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Log;
+
 import com.android.billingclient.util.BillingHelper;
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -53,6 +55,7 @@ public class Security {
      * is invalid
      */
     static PublicKey generatePublicKey(String encodedPublicKey) throws IOException {
+        Log.d(TAG, "SIJU-->generatePublicKey: "+encodedPublicKey);
         try {
             byte[] decodedKey = Base64.decode(encodedPublicKey, Base64.DEFAULT);
             KeyFactory keyFactory = KeyFactory.getInstance(KEY_FACTORY_ALGORITHM);

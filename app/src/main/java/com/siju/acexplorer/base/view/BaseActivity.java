@@ -42,7 +42,7 @@ public class BaseActivity extends AppCompatActivity {
         BasePresenter basePresenter = new BasePresenterImpl(baseModel);
         currentTheme = basePresenter.getTheme();
         Context context = LocaleHelper.setLanguage(newBase);
-        super.attachBaseContext(LocaleHelper.setLanguage(context));
+        super.attachBaseContext(context);
     }
 
 

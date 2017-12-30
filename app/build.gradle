@@ -186,7 +186,7 @@ dependencies {
     implementation 'io.github.kobakei:ratethisapp:1.1.0'
     implementation 'org.apache.commons:commons-compress:1.12'
     implementation 'com.github.junrar:junrar:0.7'
-    implementation('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+    implementation('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
         transitive = true
     }
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5'

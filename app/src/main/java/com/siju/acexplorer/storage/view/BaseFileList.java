@@ -85,7 +85,9 @@ public class BaseFileList extends Fragment {
 
 
     public void onPermissionGranted() {
-        storagesUi.refreshList();
+        if (storagesUi != null) {
+            storagesUi.refreshList();
+        }
     }
 
 

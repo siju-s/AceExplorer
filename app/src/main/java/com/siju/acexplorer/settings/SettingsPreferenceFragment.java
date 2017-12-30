@@ -246,7 +246,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object value) {
                     String stringValue = value.toString();
-                    Log.d("Settings", "On prefs chnage");
+                    Log.d("Settings", "On prefs chnage:"+preference);
 
 
                     if (preference instanceof ListPreference) {

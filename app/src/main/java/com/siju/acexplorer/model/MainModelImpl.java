@@ -36,8 +36,10 @@ import com.siju.acexplorer.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static com.siju.acexplorer.model.FileConstants.PREFS_FIRST_RUN;
+import static com.siju.acexplorer.settings.SettingsPreferenceFragment.PREFS_LANGUAGE;
 
 /**
  * Created by Siju on 02 September,2017
@@ -73,11 +75,14 @@ public class MainModelImpl implements MainModel,
         boolean isHomeScreenEnabled = preferences.getBoolean(FileConstants.PREFS_HOMESCREEN, true);
         boolean isDualPaneEnabled = preferences.getBoolean(FileConstants.PREFS_DUAL_PANE,
                                                            isTablet);
+        String language = preferences.getString(PREFS_LANGUAGE, Locale.getDefault().getLanguage());
 
         Bundle bundle = new Bundle();
         bundle.putBoolean(FileConstants.PREFS_HOMESCREEN, isHomeScreenEnabled);
         bundle.putBoolean(FileConstants.PREFS_DUAL_PANE, isDualPaneEnabled);
         bundle.putBoolean(PREFS_FIRST_RUN, isFirstRun);
+        bundle.putString(PREFS_LANGUAGE, language);
+
         Analytics.getLogger().userTheme(getTheme().toString());
         listener.passUserPrefs(bundle);
     }

@@ -30,6 +30,7 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
@@ -63,6 +64,7 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
+import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.base.view.BaseActivity;
@@ -110,6 +112,7 @@ import static com.siju.acexplorer.model.groups.Category.FILES;
 import static com.siju.acexplorer.model.groups.Category.checkIfFileCategory;
 import static com.siju.acexplorer.model.helper.MediaStoreHelper.removeMedia;
 import static com.siju.acexplorer.model.helper.MediaStoreHelper.scanFile;
+import static com.siju.acexplorer.model.helper.MediaStoreHelper.updateMedia;
 import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastNougat;
 import static com.siju.acexplorer.model.helper.UriHelper.createContentUri;
 import static com.siju.acexplorer.model.helper.UriHelper.grantUriPermission;
@@ -192,7 +195,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     private int mCurrentOrientation;
     private String mSelectedPath;
     private FileInfo fileInfo;
-    private boolean homeClicked;
+    private boolean isHomeClicked;
 
 
     public StoragesUiView(Context context, AttributeSet attrs) {
@@ -849,7 +852,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             case HIDE:
                 dismissDialog();
                 String oldFile = intent.getStringExtra(KEY_FILEPATH);
-                String newFile = intent.getStringExtra(KEY_FILEPATH2);
+                final String newFile = intent.getStringExtra(KEY_FILEPATH2);
                 if (operation.equals(HIDE)) {
                     fileInfo = intent.getParcelableExtra(KEY_OLD_FILES);
                 }
@@ -860,15 +863,14 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 if (position == -1) {
                     return;
                 }
-                Category category = fileInfoList.get(position).getCategory();
+                final Category category = fileInfoList.get(position).getCategory();
                 if (!oldFile.equals(fileInfoList.get(position).getFilePath())) {
                     return;
                 }
 
-                removeMedia(getActivity(), oldFile, category.getValue());
-//                Uri insertUri = insertMedia(getContext(), newFile, category.getValue());
+                removeMedia(AceApplication.getAppContext(), oldFile, category.getValue());
 //                Log.d(TAG, "onOperationResult: NewUri:"+insertUri);
-                scanFile(getActivity().getApplicationContext(), newFile);
+                scanFile(AceApplication.getAppContext(), newFile);
 
                 fileListAdapter.setStopAnimation(true);
                 Logger.log(TAG, "Position changed=" + position);
@@ -881,6 +883,12 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                     fileInfoList.get(position).setFileName(new File(newFile).getName());
                     fileListAdapter.notifyItemChanged(position);
                 }
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateMedia(AceApplication.getAppContext(), newFile, category.getValue());
+                    }
+                }, 1000); // Intentional delay to let mediascanner index file first and then lets change the title
                 break;
             case CUT:
                 ArrayList<String> movedFiles = intent.getStringArrayListExtra(KEY_FILES);
@@ -936,7 +944,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             menuControls.endSearch();
             return false;
         } else if (isZipMode()) {
-            if (homeClicked) {
+            if (isHomeClicked) {
                 zipViewer.onBackPressed(null);
                 return true;
             } else {
@@ -999,8 +1007,11 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     private boolean checkIfBackStackExists() {
         int backStackSize = backStackInfo.getBackStack().size();
-        Logger.log(TAG, "checkIfBackStackExists --size=" + backStackSize);
+        Logger.log(TAG, "checkIfBackStackExists --size=" + backStackSize + "homeCLicked:"+ isHomeClicked);
 
+        if (isHomeClicked) {
+            return false;
+        }
 
         if (backStackSize == 1) {
             backStackInfo.clearBackStack();
@@ -1730,15 +1741,21 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     @Override
     public void onHomeClicked() {
-        homeClicked = true;
+        boolean isDualPaneInFocus = fragment instanceof DualPaneList;
+        ((AceActivity) getActivity()).setDualPaneFocusState(isDualPaneInFocus);
+
+        isHomeClicked = true;
         menuControls.endActionMode();
-        removeDualFileFragment();
+        //removeDualFileFragment();
         getActivity().onBackPressed();
     }
 
 
     @Override
     public void onNavButtonClicked(String dir) {
+        boolean isDualPaneInFocus = fragment instanceof DualPaneList;
+        ((AceActivity) getActivity()).setDualPaneFocusState(isDualPaneInFocus);
+
 
         if (isActionModeActive() && !menuControls.isPasteOp()) {
             menuControls.endActionMode();

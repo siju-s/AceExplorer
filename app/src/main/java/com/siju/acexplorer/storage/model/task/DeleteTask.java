@@ -88,6 +88,7 @@ public class DeleteTask {
                                 RootUtils.delete(path);
                                 RootUtils.mountRO(path);
                                 deletedFilesList.add(fileList.get(i));
+                                deleteFromMediaStore(deletedFilesList);
                             } catch (RootDeniedException e) {
                                 e.printStackTrace();
                             }
@@ -97,7 +98,6 @@ public class DeleteTask {
                         deletedFilesList.add(fileList.get(i));
                     }
                 }
-                deleteFromMediaStore(deletedFilesList);
                 if (deleteResultCallback != null) {
                     deleteResultCallback.onFileDeleted(totalFiles, deletedFilesList, mShowToast);
                 }

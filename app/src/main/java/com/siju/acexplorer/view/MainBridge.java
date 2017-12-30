@@ -140,8 +140,8 @@ public class MainBridge implements MainUi {
     }
 
     @Override
-    public void onPreferenceChange() {
-        uiView.onPreferenceChange();
+    public void checkForPreferenceChanges() {
+        uiView.checkForPreferenceChanges();
     }
 
     @Override

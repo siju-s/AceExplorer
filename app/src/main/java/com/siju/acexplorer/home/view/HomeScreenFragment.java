@@ -130,7 +130,9 @@ public class HomeScreenFragment extends Fragment {
     }
 
     public void onPermissionGranted() {
-        homeView.onPermissionGranted();
+        if (homeView != null) {
+            homeView.onPermissionGranted();
+        }
     }
 
 

@@ -129,7 +129,7 @@ public class AceActivity extends BaseActivity {
     protected void onRestart() {
         super.onRestart();
         Log.d(TAG, "onRestart: ");
-        mainUi.onPreferenceChange();
+        mainUi.checkForPreferenceChanges();
     }
 
     @Override

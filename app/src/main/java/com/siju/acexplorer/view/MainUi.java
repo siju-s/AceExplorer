@@ -49,7 +49,7 @@ public interface MainUi {
 
     void passActivityResult(int requestCode, int resultCode, Intent intent);
 
-    void onPreferenceChange();
+    void checkForPreferenceChanges();
 
     void onForeground();
 
