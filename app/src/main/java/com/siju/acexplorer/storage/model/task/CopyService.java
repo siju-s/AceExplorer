@@ -147,7 +147,7 @@ public class CopyService extends IntentService {
     }
 
 
-    void checkWriteMode(final String currentDir) {
+    private void checkWriteMode(final String currentDir) {
 
         OperationUtils.WriteMode mode = OperationUtils.checkFolder(currentDir);
         switch (mode) {
@@ -229,7 +229,7 @@ public class CopyService extends IntentService {
     }
 
 
-    void getTotalBytes(final List<FileInfo> files) {
+    private void getTotalBytes(final List<FileInfo> files) {
         calculatingTotalSize = true;
         long totalBytes = 0L;
         for (int i = 0; i < files.size(); i++) {
@@ -255,7 +255,7 @@ public class CopyService extends IntentService {
         sendBroadcast(intent);
     }
 
-    void copyRoot(String path, String name, String destinationPath) {
+    private void copyRoot(String path, String name, String destinationPath) {
         String targetPath;
         if (destinationPath.equals(File.separator)) {
             targetPath = destinationPath + name;
@@ -351,11 +351,11 @@ public class CopyService extends IntentService {
 
     }
 
-    long time = System.nanoTime() / 500000000;
+    private long time = System.nanoTime() / 500000000;
 
 
-    void copy(BufferedInputStream in, BufferedOutputStream out, long size, String name,
-              String targetPath) throws IOException {
+    private void copy(BufferedInputStream in, BufferedOutputStream out, long size, String name,
+                      String targetPath) throws IOException {
         long fileBytes = 0L;
         final int buffer = 2048; //2 KB
         byte[] data = new byte[2048];

@@ -73,8 +73,12 @@ public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... zipEntries) {
 
         try {
-            if (zip) unzipEntry(zipFile, entry, outputDir);
-            else unzipRAREntry(rar, header, outputDir);
+            if (zip) {
+                unzipEntry(zipFile, entry, outputDir);
+            }
+            else {
+                unzipRAREntry(rar, header, outputDir);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -137,8 +141,20 @@ public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
             throws IOException, RarException {
 
         output = new File(outputDir + "/" + header.getFileNameString().trim());
-        FileOutputStream fileOutputStream = new FileOutputStream(output);
-        zipfile.extractFile(header, fileOutputStream);
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = new FileOutputStream(output);
+            zipfile.extractFile(header, fileOutputStream);
+
+        } finally {
+            try {
+                if (fileOutputStream != null) {
+                    fileOutputStream.close();
+                }
+            } catch (IOException e) {
+                //closing quietly
+            }
+        }
     }
 
 

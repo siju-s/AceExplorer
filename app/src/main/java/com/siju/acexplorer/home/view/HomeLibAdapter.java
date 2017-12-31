@@ -28,7 +28,7 @@ public class HomeLibAdapter extends RecyclerView.Adapter<HomeLibAdapter.HomeLibH
         implements ItemTouchHelperAdapter
 {
     @SuppressWarnings("FieldCanBeLocal")
-    private final int MAX_LIMIT_ROUND_COUNT = 99999;
+    private static final int MAX_LIMIT_ROUND_COUNT = 99999;
     private Context                 context;
     private OnItemClickListener     mItemClickListener;
     private OnItemLongClickListener mOnItemLongClickListener;

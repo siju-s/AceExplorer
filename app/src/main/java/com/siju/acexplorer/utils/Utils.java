@@ -17,7 +17,6 @@
 package com.siju.acexplorer.utils;
 
 import android.content.Context;
-import android.os.Build;
 
 import com.siju.acexplorer.R;
 

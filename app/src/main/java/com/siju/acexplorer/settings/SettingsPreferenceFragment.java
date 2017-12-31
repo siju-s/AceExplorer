@@ -271,7 +271,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
                         }
 
                         if (listPreference.getKey().equals(PREFS_THEME)) {
-                            int theme = Integer.valueOf(stringValue);
+                            int theme = Integer.parseInt(stringValue);
                             preferences.edit().putInt(CURRENT_THEME, theme).apply();
                             Logger.log("TAG", "Current theme=" + SettingsPreferenceFragment.this
                                     .theme + " new theme=" + theme);

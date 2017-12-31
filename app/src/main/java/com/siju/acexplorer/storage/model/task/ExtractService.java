@@ -149,7 +149,7 @@ public class ExtractService extends IntentService {
         Logger.log("ExtractService", "ZIp file=" + zipFilePath + "new file=" + newFile);
     }
 
-    void extract(File archive, String destinationPath) {
+    private void extract(File archive, String destinationPath) {
         try {
             ArrayList<ZipEntry> arrayList = new ArrayList<>();
             ZipFile zipfile = new ZipFile(archive);
@@ -180,7 +180,7 @@ public class ExtractService extends IntentService {
 
     }
 
-    void extractTar(File archive, String destinationPath) {
+    private void extractTar(File archive, String destinationPath) {
         try {
             ArrayList<TarArchiveEntry> archiveEntries = new ArrayList<>();
             TarArchiveInputStream inputStream;
@@ -222,7 +222,7 @@ public class ExtractService extends IntentService {
 
     }
 
-    void extractRar(File archive, String destinationPath) {
+    private void extractRar(File archive, String destinationPath) {
         try {
             ArrayList<FileHeader> arrayList = new ArrayList<>();
             Archive zipfile = new Archive(archive);
@@ -300,7 +300,7 @@ public class ExtractService extends IntentService {
     }
 
 
-    void calculateProgress(final String name, final long
+    private void calculateProgress(final String name, final long
             copiedbytes, final long totalbytes) {
 
         int progress = (int) ((copiedbytes / (float) totalbytes) * 100);
@@ -308,7 +308,7 @@ public class ExtractService extends IntentService {
 
     }
 
-    long time = System.nanoTime() / 500000000;
+    private long time = System.nanoTime() / 500000000;
 
     private void unzipEntry(ZipFile zipfile, ZipEntry entry, String outputDir)
             throws Exception {

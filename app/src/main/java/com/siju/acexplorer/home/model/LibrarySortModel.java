@@ -36,6 +36,7 @@ public class LibrarySortModel implements Parcelable {
 
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -48,6 +49,11 @@ public class LibrarySortModel implements Parcelable {
         }
         LibrarySortModel o = (LibrarySortModel) obj;
         return o.category.equals(this.category);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
     public Category getCategory() {

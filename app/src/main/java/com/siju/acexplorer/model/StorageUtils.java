@@ -73,9 +73,8 @@ public class StorageUtils {
 
     public static String getStorageSpaceText(Context context, String text) {
         String arr[] = text.split("/");
-        String spaceText = arr[0] +  " " + context.getResources().getString(R.string.msg_free) +
+        return arr[0] + " " + context.getResources().getString(R.string.msg_free) +
                 " " + arr[1];
-        return spaceText;
     }
 
 
@@ -189,13 +188,13 @@ public class StorageUtils {
         File parent;
         parent = new File("/storage");
 
-        try {
-            for (File f : parent.listFiles()) {
+        File[] files = parent.listFiles();
+        if (files != null) {
+            for (File f : files) {
                 if (f.exists() && f.getName().toLowerCase().contains("usb") && f.canExecute()) {
                     return f;
                 }
             }
-        } catch (Exception ignored) {
         }
         parent = new File("/mnt/sdcard/usbStorage");
         if (parent.exists() && parent.canExecute()) {
@@ -323,7 +322,7 @@ public class StorageUtils {
                     return false;
                 }
             }
-            return false;
+            return true;
         } else {
             return true;
         }

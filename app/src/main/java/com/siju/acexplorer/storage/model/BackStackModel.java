@@ -36,6 +36,7 @@ public class BackStackModel {
         return category;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -48,5 +49,10 @@ public class BackStackModel {
         }
         BackStackModel o = (BackStackModel) obj;
         return o.filePath != null && o.filePath.equals(this.filePath);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

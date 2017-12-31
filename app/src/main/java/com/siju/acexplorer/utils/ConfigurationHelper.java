@@ -56,17 +56,17 @@ public class ConfigurationHelper {
         int orientation = configuration.orientation;
         Log.d("ConfigHelper", "getHomeGridCols: "+sw + " orientation:"+orientation);
         int columns;
-        if (sw >= 600) {
+        if (sw >= 720) {
            if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-               columns = COL_600DP_LAND.getValue();
+               columns = COL_720DP_LAND.getValue();
            } else {
-               columns = COL_600DP.getValue();
+               columns = COL_720DP.getValue();
            }
-        } else if (sw >= 720) {
+        } else if (sw >= 600) {
             if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                columns = COL_720DP_LAND.getValue();
+                columns = COL_600DP_LAND.getValue();
             } else {
-                columns = COL_720DP.getValue();
+                columns = COL_600DP.getValue();
             }
         } else {
             if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -82,17 +82,17 @@ public class ConfigurationHelper {
         int sw = configuration.smallestScreenWidthDp;
         int orientation = configuration.orientation;
         int columns;
-        if (sw >= 600) {
-            if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                columns = StorageGridColumns.COL_600DP_LAND.getValue();
-            } else {
-                columns = StorageGridColumns.COL_600DP.getValue();
-            }
-        } else if (sw >= 720) {
+        if (sw >= 720) {
             if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 columns = StorageGridColumns.COL_720DP_LAND.getValue();
             } else {
                 columns = StorageGridColumns.COL_720DP.getValue();
+            }
+        } else if (sw >= 600) {
+            if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                columns = StorageGridColumns.COL_600DP_LAND.getValue();
+            } else {
+                columns = StorageGridColumns.COL_600DP.getValue();
             }
         } else {
             if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -107,10 +107,10 @@ public class ConfigurationHelper {
     public static int getStorageDualGridCols(Configuration configuration) {
         int sw = configuration.smallestScreenWidthDp;
         int columns;
-        if (sw >= 600) {
-            columns = StorageGridColumns.COL_600DP_DUAL.getValue();
-        } else if (sw >= 720) {
-           columns = StorageGridColumns.COL_720DP_DUAL.getValue();
+        if (sw >= 720) {
+            columns = StorageGridColumns.COL_720DP_DUAL.getValue();
+        } else if (sw >= 600) {
+           columns = StorageGridColumns.COL_600DP_DUAL.getValue();
         } else {
            columns = StorageGridColumns.COL_DUAL.getValue();
         }

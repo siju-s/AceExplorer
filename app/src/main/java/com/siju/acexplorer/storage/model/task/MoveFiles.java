@@ -126,7 +126,7 @@ public class MoveFiles extends IntentService {
         }
     }
 
-    void checkWriteMode(final String destinationDir) {
+    private void checkWriteMode(final String destinationDir) {
         int totalFiles = filesToMove.size();
         if (totalFiles == 0) {
             sendCompletedResult();

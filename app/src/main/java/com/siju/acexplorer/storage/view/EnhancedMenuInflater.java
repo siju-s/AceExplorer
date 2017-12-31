@@ -29,7 +29,7 @@ import static com.siju.acexplorer.model.groups.Category.FAVORITES;
 import static com.siju.acexplorer.model.groups.Category.FILES;
 
 
-public class EnhancedMenuInflater {
+class EnhancedMenuInflater {
 
     public static void inflate(MenuInflater inflater, Menu menu, Category category) {
         inflater.inflate(R.menu.action_mode_bottom, menu);

@@ -171,6 +171,7 @@ public class LibrarySortActivity extends BaseActivity implements OnStartDragList
                 setResult(RESULT_OK, dataIntent);
                 finish();
                 break;
+
             case R.id.action_cancel:
                 setResult(RESULT_CANCELED);
                 finish();

@@ -15,7 +15,7 @@ import com.bumptech.glide.load.model.MultiModelLoaderFactory;
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.model.helper.AppUtils;
 
-public class PassAppModelLoader implements ModelLoader<String, ApplicationInfo> {
+class PassAppModelLoader implements ModelLoader<String, ApplicationInfo> {
 
     @Nullable
     @Override

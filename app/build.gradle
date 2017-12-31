@@ -167,6 +167,9 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(include: ['*.aar'], dir: 'libs')
+    implementation project(':RootShell')
+
     //Android libs
     implementation 'com.android.support:appcompat-v7:' + supportLibVersion
     implementation 'com.android.support:recyclerview-v7:' + supportLibVersion

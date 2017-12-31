@@ -21,7 +21,7 @@ import android.util.Log;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.storage.model.BaseFile;
 import com.stericson.RootTools.RootTools;
-import com.stericson.RootTools.execution.Command;
+import com.stericson.RootShell.execution.Command;
 
 import java.io.File;
 import java.text.ParsePosition;
@@ -314,7 +314,7 @@ public class RootHelper {
         return -1;
     }
 
-    public static boolean isDirectory(String filePath, boolean root, int count) {
+    private static boolean isDirectory(String filePath, boolean root, int count) {
         File file = new File(filePath);
         String name = file.getName();
         String parentFile = file.getParent();

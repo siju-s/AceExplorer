@@ -48,6 +48,7 @@ public class CopyData implements Parcelable {
     };
 
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -60,6 +61,11 @@ public class CopyData implements Parcelable {
         }
         CopyData o = (CopyData) obj;
         return o.filePath.equals(this.filePath);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
     public String getFilePath() {

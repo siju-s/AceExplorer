@@ -44,6 +44,7 @@ import static com.siju.acexplorer.model.StorageUtils.getInternalStorage;
 
 public class NavigationInfo {
     private static final String TAG = "NavigationInfo";
+    private static final String SEPARATOR = "/";
     private Context              context;
     private LinearLayout         navDirectory;
     private HorizontalScrollView scrollNavigation;
@@ -181,7 +182,7 @@ public class NavigationInfo {
 
     public void setNavDirectory(String path, boolean isHomeScreenEnabled, Category category) {
         String[] parts;
-        parts = path.split(File.separator);
+        parts = path.split(SEPARATOR);
 
         clearNavigation();
         currentDir = path;
@@ -196,8 +197,9 @@ public class NavigationInfo {
             setNavDir(File.separator, File.separator); // Add Root button
         } else {
             int count = 0;
+            StringBuilder stringBuilder = new StringBuilder();
             for (int i = 1; i < parts.length; i++) {
-                dir += File.separator + parts[i];
+                dir = stringBuilder.append(File.separator).append(parts[i]).toString();
 
                 if (!dir.contains(initialDir)) {
                     continue;

@@ -34,14 +34,13 @@ import java.util.List;
  */
 @SuppressWarnings("FieldCanBeLocal")
 public class PickerPresenterImpl implements PickerPresenter, LoaderManager
-                .LoaderCallbacks<ArrayList<FileInfo>>,PickerModel.Listener {
+        .LoaderCallbacks<ArrayList<FileInfo>>, PickerModel.Listener {
 
     private final String TAG = this.getClass().getSimpleName();
-    private final int LOADER_ID = 1000;
-    private final String KEY_PICKER = "picker";
+    private static final int LOADER_ID = 1000;
+    private static final String KEY_PICKER = "picker";
+    private static final String KEY_PATH = "path";
 
-
-    private final String KEY_PATH = "path";
     private PickerUi pickerUi;
     private PickerModel pickerModel;
     private LoaderManager loaderManager;
@@ -92,7 +91,7 @@ public class PickerPresenterImpl implements PickerPresenter, LoaderManager
 
     @Override
     public void onLoadFinished(Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
-         pickerUi.onDataLoaded(data);
+        pickerUi.onDataLoaded(data);
     }
 
     @Override
@@ -102,6 +101,6 @@ public class PickerPresenterImpl implements PickerPresenter, LoaderManager
 
     @Override
     public void onStoragesFetched(List<String> storagesList) {
-       pickerUi.onStoragesFetched(storagesList);
+        pickerUi.onStoragesFetched(storagesList);
     }
 }

@@ -56,7 +56,7 @@ public class StoragesGroup {
     private ArrayList<String> externalSDPaths;
 
 
-    public static StoragesGroup getInstance() {
+    public synchronized static StoragesGroup getInstance() {
         if (storagesGroup == null) {
             storagesGroup = new StoragesGroup();
         }

@@ -57,7 +57,7 @@ import static com.siju.acexplorer.model.groups.Category.FILES;
 /**
  * Created by Siju on 04 September,2017
  */
-public class MenuControls implements Toolbar.OnMenuItemClickListener,
+class MenuControls implements Toolbar.OnMenuItemClickListener,
                                      android.support.v7.widget.SearchView.OnQueryTextListener
 {
 
@@ -496,7 +496,7 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
         storagesUiView.endDrag();
     }
 
-    void hideBottomToolbar() {
+    private void hideBottomToolbar() {
         bottomToolbar.setVisibility(View.GONE);
     }
 
@@ -539,6 +539,7 @@ public class MenuControls implements Toolbar.OnMenuItemClickListener,
 
         setupActionModeToolbar();
         bottomToolbar.getMenu().clear();
+//        bottomToolbar.inflateMenu(R.menu.action_mode_bottom);
         EnhancedMenuInflater.inflate(activity.getMenuInflater(), bottomToolbar.getMenu(),
                 category);
         setupMenu();

@@ -50,6 +50,7 @@ import com.siju.acexplorer.storage.model.task.ExtractService;
 import com.siju.acexplorer.storage.model.task.MoveFiles;
 import com.siju.acexplorer.storage.model.task.PasteConflictChecker;
 import com.siju.acexplorer.view.dialog.DialogHelper;
+import com.stericson.RootTools.RootTools;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -86,7 +87,7 @@ public class StorageModelImpl implements StoragesModel {
     private SharedPreferenceWrapper sharedPreferenceWrapper;
     private Listener listener;
     private FileOpsHelper fileOpsHelper;
-    private final String EXT_TXT = ".txt";
+    private static final String EXT_TXT = ".txt";
 
 
     public StorageModelImpl() {
@@ -510,7 +511,13 @@ public class StorageModelImpl implements StoragesModel {
     };
 
     private void copyFiles(String destinationDir, List<FileInfo> files, List<CopyData> copyData) {
-        if (!FileUtils.isFileNonWritable(new File(destinationDir))) {
+        File destFile = new File(destinationDir);
+        OperationUtils.WriteMode mode = checkWriteAccessMode(destFile);
+        if (!FileUtils.isFileNonWritable(destFile) || mode.equals(OperationUtils.WriteMode.ROOT)) {
+            if (mode.equals(OperationUtils.WriteMode.ROOT) && !RootTools.isAccessGiven()) {
+                listener.onOperationFailed(Operations.COPY);
+                return;
+            }
             listener.showPasteProgressDialog(destinationDir, files, copyData, false);
             Intent intent = new Intent(context, CopyService.class);
             intent.putParcelableArrayListExtra(OperationUtils.KEY_FILES, (ArrayList<? extends

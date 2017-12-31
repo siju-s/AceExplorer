@@ -2,9 +2,7 @@ package com.siju.acexplorer.storage.modules.picker.model;
 
 import java.util.List;
 
-/**
- * Created by sj on 20/09/17.
- */
+
 
 public interface PickerModel {
 

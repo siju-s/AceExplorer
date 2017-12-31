@@ -35,8 +35,8 @@ import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.model.helper.RootHelper;
-import com.siju.acexplorer.model.helper.root.RootTools;
 import com.siju.acexplorer.model.root.RootUtils;
+import com.stericson.RootTools.RootTools;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -312,7 +312,8 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             if (file.isHidden() && !showHidden) {
                 continue;
             }
-            if (file.list() != null) {
+            String [] filesList = file.list();
+            if (filesList != null) {
                 if (!showHidden) {
                     File[] nonHiddenList = file.listFiles(new FilenameFilter() {
                         @Override
@@ -320,9 +321,11 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                             return (!name.startsWith("."));
                         }
                     });
-                    childFileListSize = nonHiddenList.length;
+                    if (nonHiddenList != null) {
+                        childFileListSize = nonHiddenList.length;
+                    }
                 } else {
-                    childFileListSize = file.list().length;
+                    childFileListSize = filesList.length;
                 }
             }
 
@@ -387,7 +390,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
     private void fetchImages() {
         Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        long startTime = System.currentTimeMillis();
         Cursor cursor = getContext().getContentResolver().query(uri, null, null, null, null);
 
         if (cursor != null) {
@@ -423,10 +425,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 } while (cursor.moveToNext());
             }
             cursor.close();
-            long endTime = System.currentTimeMillis();
-            float timetaken = (float) ((endTime - startTime) / 1000);
-            Logger.log(this.getClass().getSimpleName(), "Size = " + fileInfoList.size() + "END Time Taken" +
-                    timetaken);
             if (fileInfoList.size() != 0) {
                 fileInfoList = sortFiles(fileInfoList, sortMode);
             }

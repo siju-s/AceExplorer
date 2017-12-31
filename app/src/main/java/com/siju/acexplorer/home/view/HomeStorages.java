@@ -44,7 +44,7 @@ import static com.siju.acexplorer.model.groups.Category.FILES;
 /**
  * Created by Siju on 03 September,2017
  */
-public class HomeStorages implements View.OnClickListener {
+class HomeStorages implements View.OnClickListener {
 
     private HomeUiView              homeUiView;
     private CardView                layoutStorages;

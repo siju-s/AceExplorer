@@ -92,6 +92,7 @@ public class RootUtils {
         Object[] args = new Object[2];
         args[0] = octalNotation;
         args[1] = path;
+
         RootHelper.runAndWait(String.format(command, args));
     }
 

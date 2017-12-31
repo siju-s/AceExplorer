@@ -140,8 +140,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     private final String TAG = this.getClass().getSimpleName();
     private static final int DIALOG_FRAGMENT = 5000;
-    public static final int SAF_REQUEST = 2000;
-    private final boolean isRootMode = true;
+    private static final int SAF_REQUEST = 2000;
+    private static final boolean isRootMode = true;
 
     private ArrayList<FileInfo> draggedData = new ArrayList<>();
     private SparseBooleanArray mSelectedItemPositions = new SparseBooleanArray();
@@ -308,14 +308,14 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         return PermissionUtils.hasStoragePermission();
     }
 
-    public void onFreeVersion() {
+    private void onFreeVersion() {
         if (getActivity() == null || getActivity().isFinishing()) {
             return;
         }
         showAds();
     }
 
-    public void onPremiumVersion() {
+    private void onPremiumVersion() {
         hideAds();
     }
 
@@ -580,11 +580,11 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         return !category.equals(FILES);
     }
 
-    public void showFab() {
+    private void showFab() {
         frameLayoutFab.setVisibility(View.VISIBLE);
     }
 
-    public void hideFab() {
+    private void hideFab() {
         frameLayoutFab.setVisibility(View.GONE);
     }
 
@@ -777,7 +777,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     private ZipViewer zipViewer;
 
-    public void openZipViewer(String path) {
+    private void openZipViewer(String path) {
         String extension = path.substring(path.lastIndexOf("."), path.length());
         Analytics.getLogger().zipViewer(extension);
         calculateScroll(currentDir);
@@ -811,12 +811,14 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 if (bundle != null) {
                     operation = (Operations) bundle.getSerializable(KEY_OPERATION);
                 }
-                onOperationResult(intent, operation);
+                if (operation != null) {
+                    onOperationResult(intent, operation);
+                }
             }
         }
     };
 
-    void onOperationResult(Intent intent, Operations operation) {
+    private void onOperationResult(Intent intent, Operations operation) {
         Log.d(TAG, "onOperationResult: " + operation);
 
         switch (operation) {
@@ -1141,7 +1143,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         menuControls.setupMenuVisibility(selectedItemPos);
     }
 
-    void toggleSelectAll(boolean selectAll) {
+    private void toggleSelectAll(boolean selectAll) {
         fileListAdapter.clearSelection();
         for (int i = 0; i < fileListAdapter.getItemCount(); i++) {
             fileListAdapter.toggleSelectAll(i, selectAll);
@@ -1204,7 +1206,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
 
-    public boolean isZipMode() {
+    private boolean isZipMode() {
         return isZipViewer;
     }
 
@@ -1334,7 +1336,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
 
-    public boolean isRooted() {
+    private boolean isRooted() {
         return isRootMode;
     }
 
@@ -1670,16 +1672,22 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 Logger.log(TAG, "DRAG END single dir=" + mLastSinglePaneDir);
                 @SuppressWarnings("unchecked")
                 ArrayList<FileInfo> dragPaths = (ArrayList<FileInfo>) event.getLocalState();
-
-                if (singlePaneFragment != null && new File(mLastSinglePaneDir).list()
-                        .length == 0 &&
-                        dragPaths.size() != 0) {
-                    dragHelper.showDragDialog(dragPaths, mLastSinglePaneDir);
+                if (mLastSinglePaneDir != null) {
+                    String[] files = new File(mLastSinglePaneDir).list();
+                    if (singlePaneFragment != null && files != null && files.length == 0 &&
+                            dragPaths.size() != 0) {
+                        dragHelper.showDragDialog(dragPaths, mLastSinglePaneDir);
+                    }
                 }
             }
 
         }
-        menuControls.endActionMode();
+        view.post(new Runnable() {
+            @Override
+            public void run() {
+                menuControls.endActionMode();
+            }
+        });
 //        draggedData = new ArrayList<>();
     }
 
@@ -1837,7 +1845,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         refreshSpan(((AceActivity) getActivity()).getConfiguration());
     }
 
-    public void refreshSpan(Configuration configuration) {
+    private void refreshSpan(Configuration configuration) {
         Log.d(TAG, "refreshSpan: orientation:" + configuration.orientation);
         if (viewMode == ViewMode.GRID) {
             if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT || !mIsDualModeEnabled) {

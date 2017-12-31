@@ -24,9 +24,9 @@ import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.StorageUtils;
 import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.model.helper.MediaStoreHelper;
-import com.siju.acexplorer.model.helper.root.RootTools;
 import com.siju.acexplorer.model.root.RootDeniedException;
 import com.siju.acexplorer.model.root.RootUtils;
+import com.stericson.RootTools.RootTools;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -187,8 +187,12 @@ public class FileUtils {
 
     public static long getFolderSize(File directory) {
         long length = 0;
+        File[] fileList = directory.listFiles();
+        if (fileList == null) {
+            return length;
+        }
         try {
-            for (File file : directory.listFiles()) {
+            for (File file : fileList) {
 
                 if (file.isFile()) {
                     length += file.length();
@@ -440,8 +444,9 @@ public class FileUtils {
         }
         String path = file.getAbsolutePath();
         if (file.isDirectory()) {
-            if (file.listFiles() != null) {
-                for (File child : file.listFiles()) {
+            File [] fileList = file.listFiles();
+            if (fileList != null) {
+                for (File child : fileList) {
                     deleteFilesInFolder(child);
                 }
             }
@@ -457,6 +462,9 @@ public class FileUtils {
     public static boolean isFileExisting(String currentDir, String fileName) {
         File file = new File(currentDir);
         String[] list = file.list();
+        if (list == null) {
+            return false;
+        }
         for (String aList : list) {
             if (fileName.equals(aList)) {
                 return true;

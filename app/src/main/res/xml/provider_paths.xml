@@ -16,6 +16,6 @@
   -->
 
 <paths>
-    <external-path name="internal" path=""/>
+    <external-path name="internal" path="."/>
     <root-path name="external" path=""/>
 </paths>

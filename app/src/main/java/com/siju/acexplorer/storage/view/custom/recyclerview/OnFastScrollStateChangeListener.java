@@ -16,7 +16,7 @@
 
 package com.siju.acexplorer.storage.view.custom.recyclerview;
 
-public interface OnFastScrollStateChangeListener {
+interface OnFastScrollStateChangeListener {
 
     /**
      * Called when fast scrolling begins

@@ -44,7 +44,7 @@ public class SortHelper {
 
     };
 
-    public static Comparator<? super ZipModel> comparatorByNameZip1 = new Comparator<ZipModel>() {
+    public static final Comparator<? super ZipModel> comparatorByNameZip1 = new Comparator<ZipModel>() {
 
         public int compare(ZipModel file1, ZipModel file2) {
             // sort folders first

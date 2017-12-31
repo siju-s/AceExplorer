@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * Created by Siju on 28 August,2017
  */
-public class DrawerGenericAdapter extends BaseAdapter {
+class DrawerGenericAdapter extends BaseAdapter {
 
     private Context context;
     private List<Generic> generics = new ArrayList<>();

@@ -177,7 +177,7 @@ class HomeLibrary {
         return sortModelList;
     }
 
-    void saveLibs() {
+    private void saveLibs() {
         homeLibraryInfoArrayList = homeLibAdapter.getList();
         homeUiView.saveLibs(formLibSortList());
     }

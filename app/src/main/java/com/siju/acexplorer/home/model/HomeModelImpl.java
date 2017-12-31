@@ -51,7 +51,7 @@ import static com.siju.acexplorer.model.groups.Category.VIDEO;
 public class HomeModelImpl implements HomeModel {
 
     private final String TAG        = this.getClass().getSimpleName();
-    private final int    COUNT_ZERO = 0;
+    private static final int    COUNT_ZERO = 0;
     private Context context;
     private int     resourceIds[];
     private String labels[] = new String[]{"Images", "Audio", "Videos", "Docs",

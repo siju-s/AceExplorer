@@ -5,7 +5,7 @@ import com.bumptech.glide.load.Key;
 import java.security.MessageDigest;
 
 
-public class CustomKey implements Key {
+class CustomKey implements Key {
 
     private String path;
 
@@ -24,5 +24,10 @@ public class CustomKey implements Key {
             return path.equals(obj);
         }
         return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

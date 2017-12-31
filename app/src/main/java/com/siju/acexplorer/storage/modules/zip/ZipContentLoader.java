@@ -51,7 +51,7 @@ import static com.siju.acexplorer.model.helper.SortHelper.comparatorByNameZip1;
 
 
 @SuppressWarnings("FieldCanBeLocal")
-public class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
+class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private final String TAG = this.getClass().getSimpleName();
     private ArrayList<FileInfo> fileInfoList;
 

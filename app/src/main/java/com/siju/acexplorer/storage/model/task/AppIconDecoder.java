@@ -14,7 +14,7 @@ import com.bumptech.glide.util.Util;
 
 import java.io.IOException;
 
-public class AppIconDecoder implements ResourceDecoder<ApplicationInfo, Drawable> {
+class AppIconDecoder implements ResourceDecoder<ApplicationInfo, Drawable> {
     private final Context context;
 
     AppIconDecoder(Context context) {

@@ -46,11 +46,10 @@ public class StoragesPresenterImpl implements StoragesUi.Listener,
                                                       .LoaderCallbacks<ArrayList<FileInfo>>
 {
 
-    private final int    LOADER_ID  = 1000;
-    private final String KEY_PICKER = "picker";
+    private static final int    LOADER_ID  = 1000;
+    private static final String KEY_PICKER = "picker";
+    private static final String KEY_PATH = "path";
 
-
-    private final String KEY_PATH = "path";
     private StoragesUi    storagesUi;
     private StoragesModel storagesModel;
     private LoaderManager loaderManager;

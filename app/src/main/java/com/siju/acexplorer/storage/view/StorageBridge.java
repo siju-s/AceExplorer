@@ -16,7 +16,6 @@
 
 package com.siju.acexplorer.storage.view;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -43,13 +42,11 @@ import java.util.List;
 public class StorageBridge implements StoragesUi {
 
     private StoragesUiView storagesUiView;
-    private Context        context;
     private Listener       listener;
     private Fragment       fragment;
 
     StorageBridge(Fragment fragment, ViewGroup parent, StoragesUiView.FavoriteOperation favListener,
                   DrawerListener drawerListener) {
-        this.context = parent.getContext();
         this.fragment = fragment;
         storagesUiView = StoragesUiView.inflate(parent);
         storagesUiView.setBridgeRef(this);

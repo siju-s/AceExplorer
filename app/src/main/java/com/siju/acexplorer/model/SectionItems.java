@@ -41,6 +41,7 @@ public class SectionItems {
         this.storageType = storageType;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -53,6 +54,11 @@ public class SectionItems {
         }
         SectionItems o = (SectionItems) obj;
         return o.path.equals(this.path);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
     public String getPath() {

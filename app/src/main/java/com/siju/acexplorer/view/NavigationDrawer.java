@@ -55,7 +55,7 @@ import static com.siju.acexplorer.model.StorageUtils.getDownloadsDirectory;
  * Created by Siju on 28 August,2017
  */
 @SuppressWarnings("FieldCanBeLocal")
-public class NavigationDrawer implements View.OnClickListener {
+class NavigationDrawer implements View.OnClickListener {
 
     private final        String TAG                       = this.getClass().getSimpleName();
     private static final int    SETTINGS_REQUEST          = 1000;

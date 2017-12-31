@@ -140,7 +140,7 @@ public class CreateZipService extends IntentService {
 
 
 
-    void execute(ArrayList<File> zipFiles, String fileOut) {
+    private void execute(ArrayList<File> zipFiles, String fileOut) {
         for (File f1 : zipFiles) {
             if (f1.isDirectory()) {
                 totalBytes = totalBytes + FileUtils.getFolderSize(f1);
@@ -191,10 +191,11 @@ public class CreateZipService extends IntentService {
             in.close();
             return;
         }
-        if (file.list() == null) {
+        String[] files = file.list();
+        if (files == null) {
             return;
         }
-        for (String fileName : file.list()) {
+        for (String fileName : files) {
 
             File f = new File(file.getAbsolutePath() + File.separator
                     + fileName);

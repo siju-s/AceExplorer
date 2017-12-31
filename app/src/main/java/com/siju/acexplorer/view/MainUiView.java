@@ -104,7 +104,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     private NavigationDrawer navigationDrawer;
     private HomeScreenFragment homeScreenFragment;
 
-    private final int MENU_FAVORITES = 1;
+    private static final int MENU_FAVORITES = 1;
     private int currentOrientation;
     private boolean isHomeScreenEnabled;
     private boolean showHidden;
@@ -441,7 +441,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     }
 
 
-    void showDualPane() {
+    private void showDualPane() {
         if (canDualModeBeAct) {
             frameDualPane.setVisibility(View.VISIBLE);
             viewSeparator.setVisibility(View.VISIBLE);
@@ -455,7 +455,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     }
 
 
-    public void createDualFragment() {
+    private void createDualFragment() {
         FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
         String internalStoragePath = getInternalStorage();
         DualPaneList dualFragment = DualPaneList.newInstance(internalStoragePath, FILES, true);
@@ -574,7 +574,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     }
 
 
-    public void openDrawer() {
+    private void openDrawer() {
         navigationDrawer.openDrawer();
     }
 
@@ -774,7 +774,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
 
     private void checkIsThemeChanged() {
         String value = preferences.getString(PREFS_THEME, "");
-        int themePos = Integer.valueOf(value);
+        int themePos = Integer.parseInt(value);
         Theme theme = Theme.getTheme(themePos);
         if (!theme.equals(currentTheme)) {
             Log.d(TAG, "checkForPreferenceChanges: theme");

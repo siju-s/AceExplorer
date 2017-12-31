@@ -57,7 +57,7 @@ import static com.siju.acexplorer.view.dialog.DialogHelper.openWith;
 public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileInfo>> {
 
     private final String TAG       = this.getClass().getSimpleName();
-    private final int    LOADER_ID = 1000;
+    private static final int    LOADER_ID = 1000;
 
     private       ArrayList<ZipModel>   zipChildren = new ArrayList<>();
     private final ArrayList<FileHeader> rarChildren = new ArrayList<>();

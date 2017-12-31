@@ -137,6 +137,10 @@ public class FileInfo implements Parcelable {
         return o.filePath.equals(this.filePath);
     }
 
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 
     public static final Creator<FileInfo> CREATOR = new Creator<FileInfo>() {
         @Override

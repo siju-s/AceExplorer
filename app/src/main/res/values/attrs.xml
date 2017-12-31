@@ -30,5 +30,10 @@
         <attr name="fastScrollPopupBackgroundSize" format="reference|dimension" />
         <attr name="fastScrollAutoHide" format="boolean" />
         <attr name="fastScrollAutoHideDelay" format="integer" />
+        <attr name="fastScrollThumbInactiveColor" format="reference|boolean" />
+        <attr name="fastScrollPopupPosition" format="enum">
+            <enum name="adjacent" value="0"/>
+            <enum name="center" value="1"/>
+        </attr>
     </declare-styleable>
 </resources>

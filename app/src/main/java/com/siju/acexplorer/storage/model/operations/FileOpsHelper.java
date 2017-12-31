@@ -33,7 +33,7 @@ import com.siju.acexplorer.storage.model.CopyData;
 import com.siju.acexplorer.storage.model.StorageModelImpl;
 import com.siju.acexplorer.storage.model.task.DeleteTask;
 import com.stericson.RootTools.RootTools;
-import com.stericson.RootTools.execution.Command;
+import com.stericson.RootShell.execution.Command;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -56,7 +56,7 @@ public class FileOpsHelper {
     private static final String TAG              = "FileOpsHelper";
     private static final String OPERATION_INTENT = "operation_intent";
     @SuppressWarnings("FieldCanBeLocal")
-    private final        int    INVALID_POS      = -1;
+    private static final        int    INVALID_POS      = -1;
 
 
     public interface FileOperationCallBack {

@@ -48,10 +48,10 @@ import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.helper.FileUtils;
-import com.siju.acexplorer.model.helper.root.RootTools;
 import com.siju.acexplorer.storage.model.operations.Operations;
 import com.siju.acexplorer.utils.Clipboard;
 import com.siju.acexplorer.view.PasteConflictAdapter;
+import com.stericson.RootTools.RootTools;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -685,8 +685,6 @@ public class DialogHelper {
             zipName = fileName.substring(0, fileName.lastIndexOf("."));
         }
         String title = context.getString(R.string.create);
-        String texts[] = new String[]{"", zipName, title, title, "",
-                context.getString(R.string.dialog_cancel)};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -697,7 +695,6 @@ public class DialogHelper {
         final AlertDialog alertDialog = builder.create();
 
         TextView titleText = dialogView.findViewById(R.id.textTitle);
-        TextView msg = dialogView.findViewById(R.id.textMessage);
         final EditText inputText = dialogView.findViewById(R.id.editFileName);
 
         Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
@@ -705,7 +702,7 @@ public class DialogHelper {
 
         titleText.setText(title);
         inputText.setText(zipName);
-        positiveButton.setText(context.getString(R.string.create));
+        positiveButton.setText(title);
         negativeButton.setText(context.getString(R.string.dialog_cancel));
 
 

@@ -53,9 +53,7 @@ public class SharedPreferenceWrapper {
 
     public void addFavorite(Context context, FavInfo favInfo) {
         List<FavInfo> favorites = getFavorites(context);
-        if (favorites == null) {
-            favorites = new ArrayList<>();
-        }
+
         if (!favorites.contains(favInfo)) {
             favorites.add(favInfo);
             saveFavorites(context, favorites);
@@ -65,9 +63,7 @@ public class SharedPreferenceWrapper {
     public int addFavorites(Context context, ArrayList<FavInfo> favInfoArrayList) {
 
         List<FavInfo> favorites = getFavorites(context);
-        if (favorites == null) {
-            favorites = new ArrayList<>();
-        }
+
         int count = 0;
         for (FavInfo favInfo : favInfoArrayList) {
             if (!favorites.contains(favInfo)) {
@@ -130,9 +126,6 @@ public class SharedPreferenceWrapper {
 
     public void addLibrary(Context context, LibrarySortModel librarySortModel) {
         List<LibrarySortModel> libraries = getLibraries(context);
-        if (libraries == null) {
-            libraries = new ArrayList<>();
-        }
         if (!libraries.contains(librarySortModel)) {
             libraries.add(librarySortModel);
             saveLibrary(context, libraries);

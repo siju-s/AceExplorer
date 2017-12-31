@@ -11,13 +11,10 @@ import java.util.List;
 
 import static com.siju.acexplorer.model.StorageUtils.getStorageDirectories;
 
-/**
- * Created by sj on 20/09/17.
- */
 
 public class PickerModelImpl implements PickerModel {
 
-    private final String RINGTONE_PICKER_PATH = "ringtone_picker_path";
+    private static final String RINGTONE_PICKER_PATH = "ringtone_picker_path";
     private PickerModel.Listener listener;
     private SharedPreferences preferences;
 

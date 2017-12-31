@@ -167,13 +167,13 @@ public class HomeUiView extends CoordinatorLayout {
     }
 
 
-    public void onFreeVersion() {
+    private void onFreeVersion() {
         if (getActivity() != null && !getActivity().isFinishing()) {
             showAds();
         }
     }
 
-    public void onPremiumVersion() {
+    private void onPremiumVersion() {
         hideAds();
     }
 
@@ -226,7 +226,7 @@ public class HomeUiView extends CoordinatorLayout {
     }
 
 
-    boolean hasStoragePermission() {
+    private boolean hasStoragePermission() {
         return PermissionUtils.hasStoragePermission();
     }
 
@@ -350,9 +350,9 @@ public class HomeUiView extends CoordinatorLayout {
     }
 
 
-    private boolean getDualModeState() {
+    private void getDualModeState() {
         Log.d(TAG, "getDualModeState: orientation:"+((AceActivity)getActivity()).getConfiguration().orientation);
-        return isDualModeActive = bridge.getDualModeState() && ((AceActivity)getActivity()).getConfiguration().orientation
+        isDualModeActive = bridge.getDualModeState() && ((AceActivity)getActivity()).getConfiguration().orientation
                 == Configuration.ORIENTATION_LANDSCAPE;
     }
 

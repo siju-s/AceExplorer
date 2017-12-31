@@ -58,5 +58,8 @@ public class FavInfo {
         return o.filePath.equalsIgnoreCase(this.filePath);
     }
 
-
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }
