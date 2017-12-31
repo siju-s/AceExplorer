@@ -17,8 +17,6 @@
 package com.siju.acexplorer.model.root;
 
 
-import android.util.Log;
-
 import java.io.File;
 
 public class RootOperations {
@@ -32,7 +30,6 @@ public class RootOperations {
     }
 
     public static boolean fileExists(String path, boolean isDir) throws RootDeniedException {
-        Log.d("RootOPerations", "fileExists: "+path);
         RootUtils.mountRW(path);
         boolean exists = RootUtils.fileExists(path, isDir);
         RootUtils.mountRO(path);

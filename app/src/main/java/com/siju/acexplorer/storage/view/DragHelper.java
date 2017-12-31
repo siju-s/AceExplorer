@@ -114,14 +114,10 @@ class DragHelper {
             // Sets the width of the shadow to half the width of the original View
             width = getView().getWidth() / 6;
 //            width = 100;
-            Log.d(TAG, "width=" + width);
 
             // Sets the height of the shadow to half the height of the original View
             height = getView().getHeight() / 2;
 //            height = 100;
-
-            Log.d(TAG, "height=" + height);
-
 
             // The drag shadow is a ColorDrawable. This sets its dimensions to be the same as the
             // Canvas that the system will provide. As a result, the drag shadow will fill the
@@ -165,7 +161,6 @@ class DragHelper {
 
                 case DragEvent.ACTION_DRAG_STARTED:
 
-                    Log.d(TAG, "DRag started" + v);
 
                     // Determines if this View can accept the dragged data
                     if (event.getClipDescription().hasMimeType(ClipDescription
@@ -178,7 +173,6 @@ class DragHelper {
                     return false;
 
                 case DragEvent.ACTION_DRAG_ENTERED:
-                    Log.d(TAG, "DRag entered");
                     return true;
 
                 case DragEvent.ACTION_DRAG_LOCATION:
@@ -186,7 +180,6 @@ class DragHelper {
                     return true;
 
                 case DragEvent.ACTION_DRAG_EXITED:
-                    Log.d(TAG, "DRag exit");
                     storagesUiView.onDragExit();
                     return true;
 

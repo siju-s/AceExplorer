@@ -26,10 +26,10 @@ import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
 import android.support.v4.provider.DocumentFile;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.groups.StoragesGroup;
 
 import java.io.File;
@@ -160,7 +160,7 @@ public class StorageUtils {
             if (file != null) {
                 int index = file.getAbsolutePath().lastIndexOf(ANDROID_DATA);
                 if (index < 0) {
-                    Log.w("FileUtils", "Unexpected external file dir: " + file.getAbsolutePath());
+                    Logger.log("FileUtils", "Unexpected external file dir: " + file.getAbsolutePath());
                 } else {
                     String path = file.getAbsolutePath().substring(0, index);
                     try {

@@ -25,10 +25,10 @@ import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.logging.Logger;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -184,13 +184,12 @@ public class MediaStoreHack {
     /**
      * Returns an OutputStream to write to the file. The file will be truncated immediately.
      */
-
     private static int getTemporaryAlbumId(final Context context) {
         final File temporaryTrack;
         try {
             temporaryTrack = installTemporaryTrack(context);
         } catch (final IOException ex) {
-            Log.w("MediaFile", "Error installing tempory track.", ex);
+            Logger.log("MediaFile", "Error installing tempory track" +ex);
             return 0;
         }
         if (temporaryTrack == null) {

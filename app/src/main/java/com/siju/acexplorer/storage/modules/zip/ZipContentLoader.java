@@ -20,7 +20,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.content.AsyncTaskLoader;
-import android.util.Log;
 
 import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
@@ -211,7 +210,6 @@ class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private void getZipContents(String dir, String parentZipPath) {
         ZipFile zipfile;
         ArrayList<ZipModel> elements = new ArrayList<>();
-        Log.d(TAG, "getZipContents: parentZip:"+parentZipPath + " dir:"+dir);
         try {
 //            if (totalZipList.size() == 0 || entry != null) {
             if (new File(parentZipPath).canRead()) {

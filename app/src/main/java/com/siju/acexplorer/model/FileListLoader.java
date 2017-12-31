@@ -27,7 +27,6 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
-import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.siju.acexplorer.home.view.HomeScreenFragment;
@@ -337,7 +336,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             fileInfoList.add(fileInfo);
         }
         fileInfoList = sortFiles(fileInfoList, sortMode);
-        Log.d(TAG, "fetchFavorites: " + fileInfoList.size());
     }
 
 

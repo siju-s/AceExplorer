@@ -79,6 +79,8 @@ public interface MainUi {
 
     void switchView(int viewMode, boolean isDual);
 
+    void refreshList(boolean isDual);
+
     interface Listener {
 
         void getTotalGroupData();

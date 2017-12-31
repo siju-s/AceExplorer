@@ -19,7 +19,6 @@ package com.siju.acexplorer.storage.model.backstack;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.HorizontalScrollView;
@@ -70,7 +69,6 @@ public class NavigationInfo {
     }
 
     public void setInitialDir(String currentDir) {
-        Log.d(TAG, "setInitialDir: "+currentDir);
         if (currentDir.contains(getInternalStorage())) {
             initialDir = getInternalStorage();
             isCurrentDirRoot = false;
@@ -188,7 +186,6 @@ public class NavigationInfo {
         currentDir = path;
         String dir = "";
         addHomeNavButton(isHomeScreenEnabled, category);
-        Log.d(TAG, "setNavDirectory: initialDir:" + initialDir);
         // If root dir , parts will be 0
         if (parts.length == 0) {
 
@@ -220,9 +217,6 @@ public class NavigationInfo {
     }
 
     private void setNavDir(String dir, String parts) {
-
-        Log.d(TAG, "setNavDir: " + dir);
-
 
         int WRAP_CONTENT = LinearLayout.LayoutParams.WRAP_CONTENT;
         if (dir.equals(getInternalStorage())) {

@@ -3,7 +3,6 @@ package com.siju.acexplorer.analytics;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.siju.acexplorer.BuildConfig;
@@ -238,7 +237,6 @@ public class GoogleAnalytics implements Analytics.Logger {
     @Override
     public void sendAnalytics(boolean isSent) {
         sendAnalytics = isSent;
-        Log.d(this.getClass().getSimpleName(), "sendAnalytics: " + sendAnalytics);
     }
 
 

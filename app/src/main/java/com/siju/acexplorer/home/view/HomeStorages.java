@@ -81,13 +81,11 @@ class HomeStorages implements View.OnClickListener {
     private void initializeStorageGroup() {
         storagesList = new ArrayList<>();
         storagesList = StoragesGroup.getInstance().getStoragesList();
-        Log.d(this.getClass().getSimpleName(), "initializeStorageGroup: "+storagesList.size());
     }
 
 
     private void inflateStoragesItem() {
         storagesContainer.removeAllViews();
-        Log.d("HomeStorages", "inflateStoragesItem: "+storagesList.size());
         List<String> pathNames = new ArrayList<>();
         for (int i = 0; i < storagesList.size(); i++) {
             RelativeLayout storageItemContainer = (RelativeLayout) View.inflate(context, R.layout.storage_item,
@@ -102,7 +100,6 @@ class HomeStorages implements View.OnClickListener {
             imageStorage.setImageResource(storagesList.get(i).getIcon());
             pathNames.add(storagesList.get(i).getPath());
             StorageUtils.StorageType storageType = storagesList.get(i).getStorageType();
-            Log.d("HomeStorages", "storageType: "+storageType);
 
             if (storageType.equals(EXTERNAL)) {
                 textStorage.setText(storagesList.get(i).getFirstLine());

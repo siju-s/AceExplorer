@@ -25,7 +25,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -71,6 +70,7 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
     private Toolbar    toolbar;
     private Toolbar    bottomToolbar;
     private MenuItem   mRenameItem;
+    private MenuItem   mShareItem;
     private MenuItem   mInfoItem;
     private MenuItem   mArchiveItem;
     private MenuItem   mFavItem;
@@ -104,7 +104,6 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
 
     void setCurrentDir(String currentDir) {
         this.currentDir = currentDir;
-        Log.d(TAG, "setCurrentDir: " + currentDir);
     }
 
     private void init() {
@@ -170,6 +169,7 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
         mFavItem = menu.findItem(R.id.action_fav);
         mExtractItem = menu.findItem(R.id.action_extract);
         mHideItem = menu.findItem(R.id.action_hide);
+        mShareItem = menu.findItem(R.id.action_share);
         mPermissionItem = menu.findItem(R.id.action_permissions);
         // Dont show Fav and Archive option for Non file mode
         if (!category.equals(FILES)) {
@@ -186,6 +186,7 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
                 mExtractItem.setIcon(R.drawable.ic_extract_black);
                 mPermissionItem.setIcon(R.drawable.ic_permissions_black);
                 mFavItem.setIcon(R.drawable.ic_favorite_black);
+                mShareItem.setIcon(R.drawable.ic_share_black);
                 break;
             case DARK:
                 break;
@@ -274,7 +275,6 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        Log.d(TAG, "onMenuItemClick: " + item);
         List<FileInfo> fileInfoList = storagesUiView.getFileList();
         SparseBooleanArray selectedItems = storagesUiView.getSelectedItems();
 
@@ -314,7 +314,6 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_PASTE);
                     ArrayList<FileInfo> info = new ArrayList<>();
                     info.addAll(copiedData);
-                    Log.d(TAG, "onMenuItemClick: CurrentDir:"+currentDir);
                     storagesUiView.onPasteAction(isMoveOperation, info, currentDir);
                     copiedData.clear();
                     endActionMode();

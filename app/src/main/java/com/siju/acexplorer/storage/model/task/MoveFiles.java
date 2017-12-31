@@ -28,10 +28,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.model.root.RootDeniedException;
@@ -141,7 +139,6 @@ public class MoveFiles extends IntentService {
                 for (int i = 0; i < filesToMove.size(); i++) {
                     FileInfo sourceFile = filesToMove.get(i);
                     String sourcePath = sourceFile.getFilePath();
-                    Log.d(TAG, "checkWriteMode: source:" + sourcePath);
                     try {
 
                         if (!new File(sourcePath).canRead()) {
@@ -167,8 +164,6 @@ public class MoveFiles extends IntentService {
                                     lastIndexOf("."));
                             destPath = destinationDir + "/" + fileNameWithoutExt + "(1)" + "." + sourceFile.getExtension();
                         }
-                        Logger.log("MoveFiles", "Execute-Dest file path=" + destPath);
-
                         moveFiles(sourcePath, fileName, destPath);
 
                     } catch (Exception e) {

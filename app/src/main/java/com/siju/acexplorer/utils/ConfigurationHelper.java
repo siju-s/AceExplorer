@@ -1,9 +1,13 @@
 package com.siju.acexplorer.utils;
 
 import android.content.res.Configuration;
-import android.util.Log;
 
-import static com.siju.acexplorer.utils.ConfigurationHelper.HomeGridColumns.*;
+import static com.siju.acexplorer.utils.ConfigurationHelper.HomeGridColumns.COL_600DP;
+import static com.siju.acexplorer.utils.ConfigurationHelper.HomeGridColumns.COL_600DP_LAND;
+import static com.siju.acexplorer.utils.ConfigurationHelper.HomeGridColumns.COL_720DP;
+import static com.siju.acexplorer.utils.ConfigurationHelper.HomeGridColumns.COL_720DP_LAND;
+import static com.siju.acexplorer.utils.ConfigurationHelper.HomeGridColumns.COL_LAND;
+import static com.siju.acexplorer.utils.ConfigurationHelper.HomeGridColumns.COL_PORT;
 
 
 public class ConfigurationHelper {
@@ -54,7 +58,6 @@ public class ConfigurationHelper {
     public static int getHomeGridCols(Configuration configuration) {
         int sw = configuration.smallestScreenWidthDp;
         int orientation = configuration.orientation;
-        Log.d("ConfigHelper", "getHomeGridCols: "+sw + " orientation:"+orientation);
         int columns;
         if (sw >= 720) {
            if (orientation == Configuration.ORIENTATION_LANDSCAPE) {

@@ -20,7 +20,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.Purchase;
@@ -120,7 +119,7 @@ public class MainModelImpl implements MainModel,
 
     @Override
     public void onConsumeFinished(String token, int result) {
-        Log.d(TAG, "onConsumeFinished: purchaseTOken:" + token + " result:" + result);
+        Logger.log(TAG, "onConsumeFinished: purchaseTOken:" + token + " result:" + result);
         if (result == BillingClient.BillingResponse.OK) {
             listener.onFreeVersion();
         }
@@ -142,7 +141,7 @@ public class MainModelImpl implements MainModel,
             listener.onFreeVersion();
         } else {
             for (Purchase purchase : purchases) {
-                Log.d(TAG, "onPurchasesUpdated: sku:" + purchase.getSku());
+                Logger.log(TAG, "onPurchasesUpdated: sku:" + purchase.getSku());
                 if (purchase.getSku().equals(BillingManager.SKU_REMOVE_ADS)) {
                     Analytics.getLogger().setInAppStatus(1);
                     listener.onPremiumVersion();

@@ -21,7 +21,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -101,9 +100,6 @@ public class AceActivity extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        Log.d(TAG, "handleActivityResult(" + requestCode + "," + resultCode + ","
-                + intent);
-
         if (!mainUi.handleActivityResult(requestCode, resultCode, intent)) {
             super.onActivityResult(requestCode, resultCode, intent);
         }
@@ -128,7 +124,6 @@ public class AceActivity extends BaseActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        Log.d(TAG, "onRestart: ");
         mainUi.checkForPreferenceChanges();
     }
 
@@ -156,14 +151,12 @@ public class AceActivity extends BaseActivity {
     private Configuration configuration;
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        Log.d("Ace", "onConfigChanged: "+newConfig.orientation);
         configuration = newConfig;
         mainUi.onConfigChanged(newConfig);
         super.onConfigurationChanged(newConfig);
     }
 
     public Configuration getConfiguration() {
-        Log.d("Ace", "getConfiguration: configuration:"+configuration);
         return configuration != null ? configuration : getResources().getConfiguration();
     }
 
@@ -171,6 +164,13 @@ public class AceActivity extends BaseActivity {
         configuration = getConfiguration();
         if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             mainUi.switchView(viewMode, isDual);
+        }
+    }
+
+    public void refreshList(boolean isDual) {
+        configuration = getConfiguration();
+        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            mainUi.refreshList(isDual);
         }
     }
 }

@@ -24,7 +24,6 @@ import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.text.format.Formatter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -111,7 +110,7 @@ public class OperationProgress {
         copiedFileInfo.clear();
         copiedFileInfo.addAll(files);
         copiedFilesSize = copiedFileInfo.size();
-        Logger.log("FileUtils", "Totalfiles=" + copiedFilesSize);
+        Logger.log(TAG, "Totalfiles=" + copiedFilesSize);
 
 
         textFileFromPath.setText(copiedFileInfo.get(0).getFilePath());
@@ -172,7 +171,7 @@ public class OperationProgress {
         copiedFileInfo = intent.getParcelableArrayListExtra(KEY_FILES);
         String fileName = intent.getStringExtra(KEY_FILEPATH);
         copiedFilesSize = copiedFileInfo.size();
-        Logger.log("FileUtils", "Totalfiles=" + copiedFilesSize);
+        Logger.log(TAG, "Totalfiles=" + copiedFilesSize);
         textFileName.setText(fileName);
         textProgress.setText("0%");
 
@@ -285,7 +284,6 @@ public class OperationProgress {
 //    };
 
     private void stopCopyService() {
-        Log.d(TAG, "stopCopyService: ");
         Context context = AceApplication.getAppContext();
         Intent intent = new Intent(context, CopyService.class);
         context.stopService(intent);
@@ -293,7 +291,6 @@ public class OperationProgress {
     }
 
     private void stopMoveService() {
-        Log.d(TAG, "stopMoveService: ");
         Context context = AceApplication.getAppContext();
         Intent intent = new Intent(context, MoveFiles.class);
         context.stopService(intent);
@@ -306,20 +303,17 @@ public class OperationProgress {
             if (intent == null || intent.getAction() == null) {
                 return;
             }
-            Log.d(TAG, "onReceive: " + intent.getAction());
             handleMessage(intent);
         }
     };
 
     private void unregisterReceiver(Context context) {
-        Log.d(TAG, "unregisterReceiver: ");
         LocalBroadcastManager.getInstance(context).unregisterReceiver(operationProgressReceiver);
 //        context.unregisterReceiver(operationFailureReceiver);
     }
 
 
     private void registerReceiver(Context context) {
-        Log.d(TAG, "registerReceiver: ");
 //        IntentFilter filter = new IntentFilter(ACTION_OP_FAILED);
 //        context.registerReceiver(operationFailureReceiver, filter);
 

@@ -63,7 +63,6 @@ public class ViewHelper {
             DialogHelper.showAlertDialog(context, texts, alertDialogListener);
         } else {
             String mimeType = getSingleton().getMimeTypeFromExtension(ext);
-            Log.d(TAG, " uri==" + uri + "MIME=" + mimeType);
             intent.setDataAndType(uri, mimeType);
             if (mimeType != null) {
                 Analytics.getLogger().openFile();

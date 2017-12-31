@@ -30,7 +30,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +40,6 @@ import android.widget.TextView;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.home.model.LoaderHelper;
-import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.model.helper.MediaStoreHack;
@@ -77,6 +75,7 @@ public class DialogBrowseFragment extends DialogFragment implements
                                                          PermissionResultCallback
 {
 
+    @SuppressWarnings("unused")
     private final String TAG = this.getClass().getSimpleName();
 
     private static final int    MY_PERMISSIONS_REQUEST = 1;
@@ -199,7 +198,6 @@ public class DialogBrowseFragment extends DialogFragment implements
         fileListAdapter.setOnItemClickListener(new FileListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                Log.d(TAG, "onItemClick: " + " fileList:" + fileInfoList.size());
                 File file = new File(fileInfoList.get(position).getFilePath());
                 if (file.isDirectory()) {
                     isStoragesList = false;
@@ -265,7 +263,6 @@ public class DialogBrowseFragment extends DialogFragment implements
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "onClick: ");
                 isBackPressed = true;
                 if (storagesList.contains(currentPath)) {
                     if (!isStoragesList) {
@@ -290,7 +287,6 @@ public class DialogBrowseFragment extends DialogFragment implements
         getDialog().setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
-                Logger.log(TAG, "Cancel");
                 exitPicker();
             }
         });
@@ -362,12 +358,10 @@ public class DialogBrowseFragment extends DialogFragment implements
         if (fileListAdapter != null) {
             fileListAdapter.clearList();
         }
-        Log.d(TAG, "refreshList: " + path);
         pickerPresenter.loadData(path, isRingtonePicker);
     }
 
     private void reloadData() {
-        Log.d(TAG, "reloadData: " + fileInfoList.size());
         isBackPressed = true;
         currentPath = new File(currentPath).getParent();
         textCurrentPath.setText(currentPath);
@@ -395,7 +389,6 @@ public class DialogBrowseFragment extends DialogFragment implements
 
     @Override
     public void onPermissionGranted(String[] permissionName) {
-        Log.d(TAG, "onPermissionGranted: ");
         refreshList(currentPath);
     }
 
@@ -408,14 +401,12 @@ public class DialogBrowseFragment extends DialogFragment implements
     public void onDataLoaded(ArrayList<FileInfo> data) {
         if (data != null) {
             fileInfoList = data;
-            Log.d("TAG", "on onLoadFinished--" + fileInfoList.size() + " this:" + DialogBrowseFragment.this);
             fileListAdapter.setStopAnimation(true);
             fileListAdapter.updateAdapter(fileInfoList);
             fileList.setAdapter(fileListAdapter);
             fileList.addItemDecoration(new DividerItemDecoration(getActivity(), currentTheme));
             if (!data.isEmpty()) {
                 if (isBackPressed) {
-                    Log.d("TEST", "on onLoadFinished scrollpos--" + scrollPosition.entrySet());
 
                     if (scrollPosition.containsKey(currentPath)) {
                         Bundle b = scrollPosition.get(currentPath);

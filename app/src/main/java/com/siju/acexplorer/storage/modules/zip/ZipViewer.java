@@ -102,7 +102,6 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
         this.fragment = fragment;
         this.zipCommunicator = zipCommunicator;
         zipParentPath = zipPath = path;
-        Log.d(TAG, "ZipViewer: zipParent:"+zipParentPath);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(AceApplication.getAppContext());
         isHomeScreenEnabled = preferences.getBoolean(FileConstants.PREFS_HOMESCREEN, true);
         zipCommunicator.setInitialDir(path);
@@ -112,7 +111,6 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
 
     void setZipData(ArrayList<ZipModel> zipData) {
         zipChildren = zipData;
-        Log.d(TAG, "setZipData: " + zipChildren.size());
     }
 
     private void reloadList() {
@@ -149,7 +147,6 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
     private String newPath;
 
     private void checkZipMode(String dir) {
-        Log.d(TAG, "checkZipMode: currentDir:"+currentDir + " dir:"+dir + " zipParentDir:"+zipParentPath );
         if (currentDir == null || currentDir.length() == 0 || dir == null || !dir.contains(zipParentPath)) {
             endZipMode(dir);
         } else {
@@ -163,7 +160,6 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
             }
             Logger.log(TAG, "checkZipMode--currentzipdir AFT=" + currentDir);
             reloadList();
-            Log.d(TAG, "checkZipMode: zipChildren:" + zipChildren.size());
             if (currentDir == null || currentDir.equals(File.separator)) {
                 newPath = zipParentPath;
             } else {
@@ -283,12 +279,10 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
         if (currentDir != null) {
             path = zipParentPath + File.separator + currentDir;
         }
-        Log.d(TAG, "onBackPressed: currentDir:"+currentDir + " fullPath:"+path);
         checkZipMode(path);
     }
 
     public void onBackPressed(String dir) {
-        Log.d(TAG, "onBackPressed: dir:"+dir);
         checkZipMode(dir);
     }
 
@@ -307,7 +301,6 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
             newPath = zipParentPath + File.separator + currentDir;
         }
 
-        Log.d(TAG, "viewZipContents: newpath:" + newPath);
         if (newPath.endsWith(File.separator)) {
             newPath = newPath.substring(0, newPath.length() - 1);
         }
@@ -317,7 +310,6 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
     }
 
     public void loadData() {
-        Log.d(TAG, "loadData: ");
         fragment.getLoaderManager().restartLoader(LOADER_ID, null, this);
     }
 
@@ -339,7 +331,6 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
 
     @Override
     public void onLoadFinished(Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
-        Log.d(TAG, "onLoadFinished: " + data.size());
         zipCommunicator.onZipContentsLoaded(data);
     }
 

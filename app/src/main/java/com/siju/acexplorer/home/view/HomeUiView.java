@@ -28,7 +28,6 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,9 +60,7 @@ import static com.siju.acexplorer.home.view.HomeLibrary.LIBSORT_REQUEST_CODE;
 import static com.siju.acexplorer.model.FileConstants.KEY_CATEGORY;
 import static com.siju.acexplorer.model.groups.StoragesGroup.STORAGE_EMULATED_0;
 
-/**
- * Created by Siju on 02 September,2017
- */
+
 public class HomeUiView extends CoordinatorLayout {
 
     private final String TAG = this.getClass().getSimpleName();
@@ -141,7 +138,6 @@ public class HomeUiView extends CoordinatorLayout {
 
     private void checkBillingStatus() {
         BillingStatus billingStatus = bridge.checkBillingStatus();
-        Log.d(TAG, "checkBillingStatus: " + billingStatus);
         switch (billingStatus) {
             case PREMIUM:
                 onPremiumVersion();
@@ -193,13 +189,11 @@ public class HomeUiView extends CoordinatorLayout {
     }
 
     void getLibraries() {
-        Log.d(TAG, "getLibraries: ");
         bridge.getLibraries();
     }
 
 
     public void onPermissionGranted() {
-        Log.d(TAG, "onPermissionGranted: ");
         List<HomeLibraryInfo> libraryInfoList = library.getLibraries();
         if (libraryInfoList == null) {
             getLibraries();
@@ -220,7 +214,6 @@ public class HomeUiView extends CoordinatorLayout {
     }
 
     public void onLibrariesFetched(List<HomeLibraryInfo> libraries) {
-        Log.d(TAG, "onLibrariesFetched: " + libraries.size());
         library.setLibraries(libraries);
         loadData(libraries);
     }
@@ -288,7 +281,6 @@ public class HomeUiView extends CoordinatorLayout {
 
 
     public void onDataLoaded(int id, List<FileInfo> data) {
-//        Log.d(TAG, "onDataLoaded: "+id);
         if (data != null && data.size() > 0) {
             library.onDataLoaded(id, data);
         }
@@ -322,7 +314,6 @@ public class HomeUiView extends CoordinatorLayout {
             }
         }
         getDualModeState();
-        Log.d(TAG, "loadFileList: dualState:"+isDualModeActive);
         FragmentTransaction ft = getActivity().getSupportFragmentManager()
                 .beginTransaction();
         Bundle args = new Bundle();
@@ -351,13 +342,11 @@ public class HomeUiView extends CoordinatorLayout {
 
 
     private void getDualModeState() {
-        Log.d(TAG, "getDualModeState: orientation:"+((AceActivity)getActivity()).getConfiguration().orientation);
         isDualModeActive = bridge.getDualModeState() && ((AceActivity)getActivity()).getConfiguration().orientation
                 == Configuration.ORIENTATION_LANDSCAPE;
     }
 
     public void onConfigChanged(final Configuration newConfig) {
-        Logger.log(TAG, "onConfigChanged " + newConfig.orientation);
         super.onConfigurationChanged(newConfig);
         library.onOrientationChanged(newConfig);
     }

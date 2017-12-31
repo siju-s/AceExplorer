@@ -18,7 +18,6 @@ package com.siju.acexplorer.storage.model.task;
 
 import android.content.Context;
 import android.os.Process;
-import android.util.Log;
 
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.StorageUtils;
@@ -112,9 +111,7 @@ public class DeleteTask {
         for (int i = 0; i < deletedFilesList.size() ; i++) {
             FileInfo fileInfo = deletedFilesList.get(i);
             int category = fileInfo.getCategory().getValue();
-            Log.d(TAG, "deleteFromMediaStore: category:"+category);
             int deleted = MediaStoreHelper.removeMedia(mContext, fileInfo.getFilePath(), category);
-            Log.d(TAG, "deleteFromMediaStore: deleted:"+deleted);
         }
     }
 

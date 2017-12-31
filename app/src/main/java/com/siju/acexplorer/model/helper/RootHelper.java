@@ -16,12 +16,11 @@
 
 package com.siju.acexplorer.model.helper;
 
-import android.util.Log;
-
+import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.storage.model.BaseFile;
-import com.stericson.RootTools.RootTools;
 import com.stericson.RootShell.execution.Command;
+import com.stericson.RootTools.RootTools;
 
 import java.io.File;
 import java.text.ParsePosition;
@@ -42,18 +41,18 @@ public class RootHelper {
         Command c = new Command(0, cmd) {
             @Override
             public void commandOutput(int i, String s) {
-                Log.d(TAG, "commandOutput: i=" + i + " s=" + s);
+                Logger.log(TAG, "commandOutput: i=" + i + " s=" + s);
 
             }
 
             @Override
             public void commandTerminated(int i, String s) {
-                Log.d(TAG, "commandTerminated: i=" + i + " s=" + s);
+                Logger.log(TAG, "commandTerminated: i=" + i + " s=" + s);
             }
 
             @Override
             public void commandCompleted(int i, int i2) {
-                Log.d(TAG, "commandCompleted: i=" + i + " i2=" + i2);
+                Logger.log(TAG, "commandCompleted: i=" + i + " i2=" + i2);
             }
         };
         try {
@@ -359,7 +358,6 @@ public class RootHelper {
 
     private static boolean contains(String[] a, String name) {
         for (String s : a) {
-            Log.e("checking", s);
             if (s.equals(name)) {
                 return true;
             }

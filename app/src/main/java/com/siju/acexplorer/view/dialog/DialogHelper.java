@@ -801,7 +801,6 @@ public class DialogHelper {
                                               destinationDir, final DragDialogListener
                                               dragDialogListener) {
 
-        Log.d(TAG, "showDragDialog: destDir:"+destinationDir+ "filesToPaste:"+filesToPaste.size());
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
         View dialogView = inflater.inflate(R.layout.dialog_drag, null);

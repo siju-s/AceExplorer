@@ -30,7 +30,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.Formatter;
-import android.util.Log;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.model.FileInfo;
@@ -88,7 +87,6 @@ public class CreateZipService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         if (intent == null) {
-            Log.e(this.getClass().getSimpleName(), "Null intent");
             return;
         }
         name = intent.getStringExtra(KEY_FILEPATH);

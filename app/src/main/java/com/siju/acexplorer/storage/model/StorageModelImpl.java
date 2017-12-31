@@ -26,7 +26,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
@@ -81,6 +80,7 @@ import static com.siju.acexplorer.storage.model.operations.Operations.RENAME;
 @SuppressWarnings("FieldCanBeLocal")
 public class StorageModelImpl implements StoragesModel {
 
+    @SuppressWarnings("unused")
     private final String TAG = this.getClass().getSimpleName();
     private Context context;
     private SharedPreferences sharedPreferences;
@@ -272,7 +272,6 @@ public class StorageModelImpl implements StoragesModel {
         }
 
         String currentDir = newFile.getParent();
-        Log.d(TAG, "onCompressPosClick: " + newFilePath);
 
         if (FileUtils.isFileExisting(currentDir, newFile.getName())) {
             listener.onFileExists(Operations.EXTRACT, context.getString(R.string
@@ -357,7 +356,6 @@ public class StorageModelImpl implements StoragesModel {
 
         @Override
         public void opCompleted(Operations operation, File file, boolean success) {
-            Log.d(TAG, "opCompleted: " + operation);
             switch (operation) {
                 case FILE_CREATION:
                 case FOLDER_CREATION:
@@ -377,7 +375,6 @@ public class StorageModelImpl implements StoragesModel {
         @Override
         public void opCompleted(Operations operation, File oldFile, File newFile,
                                 boolean success) {
-            Log.d(TAG, "opCompleted: " + operation + " result:" + success);
             switch (operation) {
                 case RENAME:
                 case HIDE:
@@ -634,7 +631,6 @@ public class StorageModelImpl implements StoragesModel {
 
         @Override
         public void onFileDeleted(int totalFiles, List<FileInfo> deletedFiles, boolean showToast) {
-            Log.d(TAG, "onFileDeleted: ");
             Intent intent = new Intent(ACTION_OP_REFRESH);
             Bundle bundle = new Bundle();
             bundle.putSerializable(KEY_OPERATION, DELETE);

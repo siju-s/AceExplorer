@@ -20,7 +20,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Process;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
@@ -137,8 +136,6 @@ public class HomeModelImpl implements HomeModel {
 
     @Override
     public void getLibraries() {
-        Log.d(TAG, "getLibraries: ");
-
         new Thread(new Runnable() {
             @Override
             public void run() {

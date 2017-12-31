@@ -25,7 +25,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.ImageButton;
@@ -231,12 +230,10 @@ class HomeLibrary {
     private void setGridColumns(Configuration configuration) {
         int gridColumns = ConfigurationHelper.getHomeGridCols(configuration);//context.getResources().getInteger(R.integer.homescreen_columns);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(context, gridColumns);
-        Log.d(TAG, "setGridColumns: " + gridColumns);
         libraryList.setLayoutManager(gridLayoutManager);
     }
 
     private void inflateLibraryItem() {
-        Log.d(TAG, "inflateLibraryItem: " + homeLibraryInfoArrayList.size()); // TODO: 02/11/17
         // NPE here in dual mode when orientation change from LAND->PORT
         List<String> libNames = new ArrayList<>();
         for (HomeLibraryInfo libraryInfo : homeLibraryInfoArrayList) {
@@ -250,7 +247,6 @@ class HomeLibrary {
 
     void setLibraries(List<HomeLibraryInfo> libraries) {
         this.homeLibraryInfoArrayList = libraries;
-        Log.d(TAG, "setLibraries: " + libraries.size());
         inflateLibraryItem();
     }
 
@@ -303,7 +299,6 @@ class HomeLibrary {
 
     void onOrientationChanged(Configuration configuration) {
         int orientation = configuration.orientation;
-        Log.d(TAG, "onOrientationChanged: old:"+currentOrientation + " neew:"+orientation);
         if (currentOrientation != orientation) {
             currentOrientation = orientation;
             setGridColumns(configuration);

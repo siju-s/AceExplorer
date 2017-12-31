@@ -212,7 +212,6 @@ public class ExtractService extends IntentService {
             publishResults(archive.getName(), 100, totalbytes, copiedbytes);
 
         } catch (Exception e) {
-            Log.e("TAG", "Error while extracting file " + archive, e);
             Intent intent = new Intent(ACTION_RELOAD_LIST);
             intent.putExtra(KEY_OPERATION, EXTRACT);
             sendBroadcast(intent);
@@ -249,7 +248,6 @@ public class ExtractService extends IntentService {
             calculateProgress(archive.getName(), copiedbytes, totalbytes);
 
         } catch (Exception e) {
-            Log.e("TAG", "Error while extracting file " + archive, e);
             Intent intent = new Intent(ACTION_RELOAD_LIST);
             intent.putExtra(KEY_OPERATION, EXTRACT);
             sendBroadcast(intent);

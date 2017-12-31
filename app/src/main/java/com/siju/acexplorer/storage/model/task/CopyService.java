@@ -155,7 +155,6 @@ public class CopyService extends IntentService {
                 getTotalBytes(files);
                 for (int i = 0; i < files.size(); i++) {
                     FileInfo sourceFile = files.get(i);
-                    Log.e("Copy", "basefile\t" + sourceFile.getFilePath());
                     try {
 
                         if (!new File(files.get(i).getFilePath()).canRead()) {
@@ -198,7 +197,6 @@ public class CopyService extends IntentService {
 
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Log.e("Copy", "Got exception checkout");
 
                         failedFiles.add(files.get(i));
                         for (int j = i + 1; j < files.size(); j++) {
@@ -279,7 +277,6 @@ public class CopyService extends IntentService {
 
     private void startCopy(final FileInfo sourceFile, final FileInfo targetFile, final boolean move)
             throws IOException {
-        Log.i("Copy", sourceFile.getFilePath());
         if (sourceFile.isDirectory()) {
             copyDirectory(sourceFile, targetFile, move);
         } else {
@@ -295,7 +292,6 @@ public class CopyService extends IntentService {
             isExists = mkdir(destinationDir);
         }
         if (!isExists) {
-            Log.e("Copy", "cant make dir");
             failedFiles.add(sourceFile);
             isSuccess = false;
             return;
@@ -342,7 +338,6 @@ public class CopyService extends IntentService {
         BufferedInputStream in = new BufferedInputStream(
                 new FileInputStream(sourceFile.getFilePath()));
         if (out == null) {
-            Log.e("Copy", "streams null");
             failedFiles.add(sourceFile);
             isSuccess = false;
             return;
@@ -436,7 +431,6 @@ public class CopyService extends IntentService {
     }
 
     private void endNotification(int id1) {
-        Log.d("CopyService", "endNotification: ");
         builder.setContentTitle("Copy completed");
         if (move) {
             builder.setContentTitle("Move Completed");

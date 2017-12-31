@@ -32,7 +32,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -136,7 +135,6 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     }
 
     private void init() {
-        Log.d(TAG, "init: " + this);
         initViews();
         PreferenceManager.setDefaultValues(getContext(), R.xml.pref_settings, false);
 //        removeFragmentsOnPermissionRevoked(savedInstanceState);
@@ -314,13 +312,11 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     private boolean onStoragePaneBackPress(Fragment fragment) {
         FragmentManager fragmentManager = activity.getSupportFragmentManager();
         int backStackEntryCount = fragmentManager.getBackStackEntryCount();
-        Log.d(TAG, "onStoragePaneBackPress: fragbackStack:" + backStackEntryCount);
 
         if (((BaseFileList) fragment).isFabExpanded()) {
             ((BaseFileList) fragment).collapseFab();
         } else {
             boolean isHome = ((BaseFileList) fragment).onBackPressed();
-            Log.d(TAG, "handleBackPress: isHome" + isHome);
             if (isHome) {
                 hideDualPane();
                 if (isHomePageRemoved) {
@@ -540,12 +536,6 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         }
     }
 
-//    @Override
-//    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-//        Log.d(TAG, "onSizeChanged: ");
-//        super.onSizeChanged(w, h, oldw, oldh);
-//    }
-
     public void onConfigChanged(Configuration newConfig) {
         Logger.log(TAG, "onConfigChanged" + newConfig.orientation);
         if (currentOrientation != newConfig.orientation) {
@@ -682,7 +672,6 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
             if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
                 canDualModeBeAct = true;
             }
-            Log.d(TAG, "checkForPreferenceChanges: canDualModeBeActive:" + canDualModeBeAct);
             Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main_container);
 
             if (fragment instanceof BaseFileList) {
@@ -777,7 +766,6 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         int themePos = Integer.parseInt(value);
         Theme theme = Theme.getTheme(themePos);
         if (!theme.equals(currentTheme)) {
-            Log.d(TAG, "checkForPreferenceChanges: theme");
             currentTheme = theme;
             preferences.edit().putInt(CURRENT_THEME, currentTheme.getValue()).apply();
             restartApp(false);
@@ -795,7 +783,6 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     }
 
     public void switchView(int viewMode, boolean isDual) {
-        Log.d(TAG, "switchView: dualFrag:" + isDual + " isDUalPaneNabled:" + isDualPaneEnabled);
         if (isDualPaneEnabled) {
             Fragment fragment;
             if (isDual) {
@@ -805,6 +792,21 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
             }
             if (fragment != null) {
                 ((BaseFileList) fragment).switchView(viewMode);
+            }
+        }
+    }
+
+
+    public void refreshList(boolean isDual) {
+        if (isDualPaneEnabled) {
+            Fragment fragment;
+            if (isDual) {
+                fragment = activity.getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
+            } else {
+                fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main_container);
+            }
+            if (fragment != null) {
+                ((BaseFileList) fragment).refreshList();
             }
         }
     }

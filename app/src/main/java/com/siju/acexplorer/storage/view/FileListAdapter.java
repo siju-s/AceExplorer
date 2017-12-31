@@ -21,7 +21,6 @@ import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.Formatter;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -78,7 +77,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (fileList != null) {
             filteredList.addAll(fileList);
         }
-        Log.d(TAG, "FileListAdapter: "+filteredList.size());
         mSelectedItemsIds = new SparseBooleanArray();
         this.category = category;
         this.mViewMode = viewMode;
@@ -92,7 +90,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             this.fileList = fileInfos;
             clearList();
             filteredList.addAll(fileList);
-            Log.d(TAG, "FileListAdapter->updateAdapter:"+filteredList.size());
             offset = 0;
             mStopAnimation = !mIsAnimNeeded;
             notifyDataSetChanged();
@@ -100,7 +97,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 mAnimatedPos.put(i, false);
             }
         }
-        Logger.log("FileListAdapter", "updateAdapter--animated=" + mStopAnimation);
     }
 
     void setList(ArrayList<FileInfo> fileList) {
@@ -192,14 +188,12 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
         if (holder instanceof FileListViewHolder) {
             FileListViewHolder fileListViewHolder = (FileListViewHolder) holder;
-//            Log.d(TAG, "onBindViewHolder: b4"+position);
 
             if (!mStopAnimation && !mAnimatedPos.get(position)) {
                 animate(fileListViewHolder);
                 mAnimatedPos.put(position, true);
             }
 
-//            Log.d(TAG, "onBindViewHolder: "+position);
             int color;
             if (mIsThemeDark) {
                 color = ContextCompat.getColor(context, R.color.dark_actionModeItemSelected);
@@ -250,7 +244,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     void clearDragPos() {
-        Log.d(TAG, "clearDragPos: "+draggedPos+ "this:"+this);
         draggedPos = -1;
     }
 
@@ -305,7 +298,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 
     void toggleSelection(int position, boolean isLongPress) {
-        Log.d(TAG, "toggleSelection: ");
         if (isLongPress) {
             selectView(position, true);
         } else {
@@ -316,7 +308,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 
     void toggleSelectAll(int position, boolean selectAll) {
-        Log.d(TAG, "toggleSelectAll: ");
         if (selectAll) {
             mSelectedItemsIds.put(position, true);
         } else {
@@ -325,19 +316,16 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     void clearSelection() {
-        Log.d(TAG, "clearSelection: ");
         mSelectedItemsIds = new SparseBooleanArray();
     }
 
     void removeSelection() {
-        Log.d(TAG, "removeSelection: ");
         clearSelection();
         notifyDataSetChanged();
     }
 
 
     private void selectView(int position, boolean value) {
-        Log.d(TAG, "selectView: ");
         if (value) {
             mSelectedItemsIds.put(position, true);
         } else {
@@ -349,12 +337,10 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     int getSelectedCount() {
-        Log.d(TAG, "getSelectedCount: ");
         return mSelectedItemsIds.size();
     }
 
     SparseBooleanArray getSelectedItemPositions() {
-        Log.d(TAG, "getSelectedItemPositions: ");
         return mSelectedItemsIds;
     }
 
@@ -376,8 +362,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 fileList.clear();
                 fileList.addAll(result);
             }
-            Log.d(TAG, "filter: "+filteredList.size());
-
         }
         if (searchCallback != null) {
             searchCallback.updateList(fileList);

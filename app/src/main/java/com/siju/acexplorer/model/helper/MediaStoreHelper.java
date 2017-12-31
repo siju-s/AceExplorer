@@ -22,7 +22,6 @@ import android.content.Context;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
 
 
 public class MediaStoreHelper {
@@ -36,7 +35,7 @@ public class MediaStoreHelper {
                 new String[]{path}, null,
                 new MediaScannerConnection.OnScanCompletedListener() {
                     public void onScanCompleted(String path, Uri uri) {
-                        Log.i(TAG, "Scanned " + path);
+//                        Log.i(TAG, "Scanned " + path);
 //                        Log.i(TAG, "-> uri=" + uri);
                     }
                 });
@@ -72,7 +71,7 @@ public class MediaStoreHelper {
                 deleted = resolver.delete(uri, MediaStore.Files.FileColumns.DATA + "=?", new String[]{path});
                 break;
         }
-        Log.d(TAG, "removeMedia: uri:"+uri + " deleted:"+deleted + " path:"+path);
+        //Log.d(TAG, "removeMedia: uri:"+uri + " deleted:"+deleted + " path:"+path);
         resolver.notifyChange(uri, null);
         return deleted;
     }
@@ -86,7 +85,7 @@ public class MediaStoreHelper {
         int updated;
         Uri uri;
         String fileName = FileUtils.getFileNameWithoutExt(path);
-        Log.d(TAG, "updateMedia: fileName:"+fileName);
+        //Log.d(TAG, "updateMedia: fileName:"+fileName);
 
         switch (category) {
             case 1:
@@ -118,7 +117,7 @@ public class MediaStoreHelper {
                 updated = resolver.update(uri, contentValues, MediaStore.Files.FileColumns.DATA + "=?", new String[]{path});
                 break;
         }
-        Log.d(TAG, "updateMedia: uri:"+uri + " updated:"+updated);
+        //Log.d(TAG, "updateMedia: uri:"+uri + " updated:"+updated);
         resolver.notifyChange(uri, null);
         return updated;
     }
