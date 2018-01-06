@@ -45,7 +45,6 @@
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
             android:layout_toEndOf="@+id/textFileFromPlaceHolder"
-            android:layout_toRightOf="@+id/textFileFromPlaceHolder"
             android:textStyle="bold" />
 
         <TextView
@@ -63,7 +62,6 @@
             android:layout_below="@+id/textFileFromPath"
             android:layout_margin="15dp"
             android:layout_toEndOf="@+id/textFileToPlaceHolder"
-            android:layout_toRightOf="@+id/textFileToPlaceHolder"
             android:paddingEnd="10dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
@@ -74,10 +72,8 @@
             android:id="@+id/textFilesLeft"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_below="@+id/progressBarPaste"
-            android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
             android:gravity="start" />
 
@@ -86,10 +82,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
             android:layout_below="@+id/progressBarPaste"
             android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
             android:gravity="end" />
 
         <ProgressBar
@@ -97,11 +91,9 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/textFilesLeft"
             android:layout_alignStart="@+id/textFilesLeft"
             android:layout_below="@+id/textFileToPlaceHolder"
             android:layout_marginBottom="20dp"
-            android:layout_marginRight="@dimen/margin_16"
             android:layout_marginEnd="@dimen/margin_16"
             android:max="100" />
 

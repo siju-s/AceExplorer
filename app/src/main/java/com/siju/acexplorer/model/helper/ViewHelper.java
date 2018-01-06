@@ -19,7 +19,6 @@ package com.siju.acexplorer.model.helper;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.util.Log;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
@@ -57,7 +56,7 @@ public class ViewHelper {
         String texts[] = new String[]{context.getString(R.string.package_installer),
                 context.getString(R.string.package_installer_content),
                 context.getString(R.string.install), context.getString(R.string.dialog_cancel), context.getString(R.string.view),
-                };
+        };
 
         if ("apk".equals(ext)) {
             DialogHelper.showAlertDialog(context, texts, alertDialogListener);

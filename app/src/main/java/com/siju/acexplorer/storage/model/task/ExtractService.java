@@ -31,8 +31,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.Formatter;
 import android.util.Log;
 
-import com.github.junrar.Archive;
-import com.github.junrar.rarfile.FileHeader;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.helper.FileUtils;
@@ -66,10 +64,11 @@ import static com.siju.acexplorer.storage.model.operations.ProgressUtils.EXTRACT
 import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_COMPLETED;
 import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_PROGRESS;
 import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_TOTAL;
+import static com.siju.acexplorer.storage.modules.zip.ZipUtils.EXT_TAR;
+import static com.siju.acexplorer.storage.modules.zip.ZipUtils.EXT_TAR_GZ;
 
 public class ExtractService extends IntentService {
     private final int NOTIFICATION_ID = 1000;
-
     private Context context;
     private NotificationManager notificationManager;
     private NotificationCompat.Builder builder;
@@ -138,10 +137,8 @@ public class ExtractService extends IntentService {
             File zipFile = new File(zipFilePath);
             if (ZipUtils.isZipViewable(zipFilePath)) {
                 extract(zipFile, newFile);
-            } else if (zipFilePath.toLowerCase().endsWith(".rar")) {
-                extractRar(zipFile, newFile);
-            } else if (zipFilePath.toLowerCase().endsWith(".tar") || zipFile.getName().toLowerCase().endsWith
-                    (".tar.gz")) {
+            }  else if (zipFilePath.toLowerCase().endsWith(EXT_TAR) || zipFile.getName().toLowerCase().endsWith
+                    (EXT_TAR_GZ)) {
                 extractTar(zipFile, newFile);
             }
         }
@@ -184,7 +181,7 @@ public class ExtractService extends IntentService {
         try {
             ArrayList<TarArchiveEntry> archiveEntries = new ArrayList<>();
             TarArchiveInputStream inputStream;
-            if (archive.getName().endsWith(".tar"))
+            if (archive.getName().endsWith(EXT_TAR))
                 inputStream = new TarArchiveInputStream(new BufferedInputStream(new FileInputStream(archive)));
             else
                 inputStream = new TarArchiveInputStream(new GZIPInputStream(new FileInputStream(archive)));
@@ -219,41 +216,6 @@ public class ExtractService extends IntentService {
 
         }
 
-    }
-
-    private void extractRar(File archive, String destinationPath) {
-        try {
-            ArrayList<FileHeader> arrayList = new ArrayList<>();
-            Archive zipfile = new Archive(archive);
-            FileHeader fh = zipfile.nextFileHeader();
-            publishResults(archive.getName(), 0, totalbytes, copiedbytes);
-            while (fh != null) {
-
-
-                arrayList.add(fh);
-                fh = zipfile.nextFileHeader();
-
-            }
-            for (FileHeader header : arrayList) {
-                totalbytes = totalbytes + header.getFullUnpackSize();
-            }
-            for (FileHeader header : arrayList) {
-
-                unzipRAREntry(archive.getName(), zipfile, header, destinationPath);
-
-            }
-            Intent intent = new Intent(ACTION_RELOAD_LIST);
-            intent.putExtra(KEY_OPERATION, EXTRACT);
-            sendBroadcast(intent);
-            calculateProgress(archive.getName(), copiedbytes, totalbytes);
-
-        } catch (Exception e) {
-            Intent intent = new Intent(ACTION_RELOAD_LIST);
-            intent.putExtra(KEY_OPERATION, EXTRACT);
-            sendBroadcast(intent);
-            calculateProgress(archive.getName(), copiedbytes, totalbytes);
-
-        }
     }
 
 
@@ -355,51 +317,7 @@ public class ExtractService extends IntentService {
         }
     }
 
-    private void unzipRAREntry(String fileName, Archive zipfile, FileHeader entry, String outputDir)
-            throws Exception {
-        String name = entry.getFileNameString();
-        name = name.replaceAll("\\\\", "/");
-        if (entry.isDirectory()) {
-            createDir(new File(outputDir, name));
-            return;
-        }
-        File outputFile = new File(outputDir, name);
-        if (!outputFile.getParentFile().exists()) {
-            createDir(outputFile.getParentFile());
-        }
-        BufferedInputStream inputStream = new BufferedInputStream(
-                zipfile.getInputStream(entry));
-        BufferedOutputStream outputStream = new BufferedOutputStream(
-                FileUtils.getOutputStream(outputFile, context));
-        try {
-            int len;
-            byte buf[] = new byte[20480];
-            while ((len = inputStream.read(buf)) > 0) {
 
-                outputStream.write(buf, 0, len);
-                copiedbytes = copiedbytes + len;
-                long time1 = System.nanoTime() / 500000000;
-                if (((int) time1) > ((int) (time))) {
-                    calculateProgress(fileName, copiedbytes, totalbytes);
-                    time = System.nanoTime() / 500000000;
-                }
-
-            }
-        } finally {
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-                //closing quietly
-            }
-
-            try {
-                outputStream.close();
-            } catch (IOException e) {
-                //closing quietly
-            }
-
-        }
-    }
 
     private void unzipTAREntry(TarArchiveInputStream zipfile, TarArchiveEntry entry, String outputDir,
                                String fileName)

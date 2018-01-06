@@ -22,8 +22,6 @@ import android.os.Build;
 import android.util.TypedValue;
 import android.view.View;
 
-import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastAPI17;
-
 public class Utils {
 
     /**
@@ -50,7 +48,6 @@ public class Utils {
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public static boolean isRtl(Resources res) {
-        return (isAtleastAPI17()) &&
-                (res.getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL);
+        return res.getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
     }
 }

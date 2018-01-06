@@ -11,7 +11,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.0-alpha06'
+        classpath 'com.android.tools.build:gradle:3.1.0-alpha07'
         classpath 'com.google.gms:google-services:3.1.2'
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -35,11 +35,11 @@ task clean(type: Delete) {
 }
 
 ext {
-    compileSdkVersion = 26
-    targetSdkVersion  = 26
-    minSdkVersion     = 16
+    compileSdkVersion = 27
+    targetSdkVersion  = 27
+    minSdkVersion     = 19
     buildToolsVersion = "27.0.1"
-    supportLibVersion = "26.0.1"
-    firebaseVersion   = "11.6.0"
+    supportLibVersion = "27.0.2"
+    firebaseVersion   = "11.8.0"
 }
 

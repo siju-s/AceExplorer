@@ -19,6 +19,13 @@ package com.siju.acexplorer.storage.modules.zip;
 
 public class ZipUtils {
 
+    public static final String EXT_ZIP = ".zip";
+    public static final String EXT_APK= ".apk";
+    public static final String EXT_TAR = ".tar";
+    public static final String EXT_TAR_GZ = ".tar.gz";
+
+
+
     /**
      * To be used when RAR as viewable not needed
      *
@@ -26,8 +33,7 @@ public class ZipUtils {
      * @return
      */
     public static boolean isZipViewable(String filePath) {
-        return filePath.toLowerCase().endsWith(".zip") ||
-                filePath.toLowerCase().endsWith(".jar") ||
-                filePath.toLowerCase().endsWith(".apk");
+        return filePath.toLowerCase().endsWith(EXT_ZIP) ||
+                filePath.toLowerCase().endsWith(EXT_APK);
     }
 }

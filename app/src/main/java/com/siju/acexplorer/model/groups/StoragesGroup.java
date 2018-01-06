@@ -107,6 +107,7 @@ public class StoragesGroup {
             } else if (STORAGE_SDCARD1.equals(path)) {
                 icon = R.drawable.ic_ext_white;
                 storageType = EXTERNAL;
+                name = path;
                 externalSDPaths.add(path);
             } else {
                 name = file.getName();

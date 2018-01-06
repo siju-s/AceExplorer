@@ -142,7 +142,7 @@ public class DialogBrowseFragment extends DialogFragment implements
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.dialog_browse, container, false);
         return root;
     }

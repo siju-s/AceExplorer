@@ -148,9 +148,7 @@ public class MediaStoreHelper {
 
         try {
             contentProviderResults = resolver.applyBatch("media", operationList);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        } catch (OperationApplicationException e) {
+        } catch (RemoteException | OperationApplicationException e) {
             e.printStackTrace();
         }
         Logger.log(TAG, "removeBatchMedia: deleted:"+contentProviderResults.length);

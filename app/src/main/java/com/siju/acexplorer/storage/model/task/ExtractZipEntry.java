@@ -19,9 +19,7 @@ package com.siju.acexplorer.storage.model.task;
 
 import android.os.AsyncTask;
 
-import com.github.junrar.Archive;
-import com.github.junrar.exception.RarException;
-import com.github.junrar.rarfile.FileHeader;
+
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.view.dialog.DialogHelper;
@@ -43,8 +41,6 @@ public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
     private final String fileName;
     private final boolean zip;
     private ZipEntry entry;
-    private Archive rar;
-    private FileHeader header;
     private File output;
     private DialogHelper.AlertDialogListener alertDialogListener;
 
@@ -58,16 +54,6 @@ public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
         this.alertDialogListener = alertDialogListener;
     }
 
-    public ExtractZipEntry(Archive rar, String outputDir, String fileName,
-                           FileHeader fileHeader, DialogHelper.AlertDialogListener alertDialogListener) {
-        this.zip = false;
-        this.outputDir = outputDir;
-        this.rar = rar;
-        this.fileName = fileName;
-        this.header = fileHeader;
-        this.alertDialogListener = alertDialogListener;
-
-    }
 
     @Override
     protected Void doInBackground(Void... zipEntries) {
@@ -76,9 +62,7 @@ public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
             if (zip) {
                 unzipEntry(zipFile, entry, outputDir);
             }
-            else {
-                unzipRAREntry(rar, header, outputDir);
-            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -136,26 +120,4 @@ public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
 
         }
     }
-
-    private void unzipRAREntry(Archive zipfile, FileHeader header, String outputDir)
-            throws IOException, RarException {
-
-        output = new File(outputDir + "/" + header.getFileNameString().trim());
-        FileOutputStream fileOutputStream = null;
-        try {
-            fileOutputStream = new FileOutputStream(output);
-            zipfile.extractFile(header, fileOutputStream);
-
-        } finally {
-            try {
-                if (fileOutputStream != null) {
-                    fileOutputStream.close();
-                }
-            } catch (IOException e) {
-                //closing quietly
-            }
-        }
-    }
-
-
 }

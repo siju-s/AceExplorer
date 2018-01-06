@@ -187,18 +187,16 @@ dependencies {
     implementation 'com.google.firebase:firebase-ads:' + firebaseVersion
     implementation 'com.google.firebase:firebase-invites:' + firebaseVersion
     //3rd party libs
-    implementation 'com.github.bumptech.glide:glide:4.2.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.2.0'
+    implementation 'com.github.bumptech.glide:glide:4.5.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.5.0'
     implementation 'com.getbase:floatingactionbutton:1.10.1'
-    implementation 'com.google.code.gson:gson:2.8.0'
-    implementation 'io.github.kobakei:ratethisapp:1.1.0'
-    implementation 'org.apache.commons:commons-compress:1.12'
-    implementation 'com.github.junrar:junrar:0.7'
+    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'io.github.kobakei:ratethisapp:1.2.0'
+    implementation 'org.apache.commons:commons-compress:1.15'
     implementation('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
         transitive = true
     }
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5'
-    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
-    testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
 }
 apply plugin: 'com.google.gms.google-services'

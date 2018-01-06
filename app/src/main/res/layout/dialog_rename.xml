@@ -41,7 +41,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
             tools:text="@string/action_rename"
              />
 
@@ -51,7 +50,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="@string/dialog_cancel"
-            android:layout_toLeftOf="@+id/buttonPositive"
             android:layout_toStartOf="@+id/buttonPositive" />
 
     </RelativeLayout>

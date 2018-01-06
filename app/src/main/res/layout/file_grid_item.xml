@@ -61,7 +61,6 @@
         android:layout_height="@dimen/folder_thumb_icon_grid"
         android:layout_alignBottom="@id/imageIcon"
         android:layout_alignEnd="@+id/imageIcon"
-        android:layout_alignRight="@+id/imageIcon"
         android:scaleType="centerCrop"
         tools:ignore="ContentDescription"/>
 

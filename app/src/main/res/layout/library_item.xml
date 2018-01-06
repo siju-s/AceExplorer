@@ -39,7 +39,6 @@
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/imageLibrary"
         android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/imageLibrary"
         android:layout_marginTop="1dp"
         android:background="@drawable/circle_count"
         android:gravity="center_horizontal|center_vertical"
@@ -52,13 +51,11 @@
         android:id="@+id/imageDone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/imageLibrary"
         android:layout_marginStart="@dimen/padding_5"
         android:background="@null"
         android:scaleType="center"
         android:visibility="gone"
         android:src="@drawable/ic_done_white"
-        android:layout_marginLeft="@dimen/padding_5"
         android:contentDescription="@string/msg_ok"
         android:layout_alignStart="@id/imageLibrary" />
 

@@ -340,7 +340,9 @@ public class BillingManager implements PurchasesUpdatedListener {
                             + purchasesResult.getResponseCode());
                 }
                 onQueryPurchasesFinished(purchasesResult);
+//                if (purchasesResult != null && purchasesResult.getPurchasesList().size() > 0) {
 //                consumeAsync(purchasesResult.getPurchasesList().get(0).getPurchaseToken());
+//                }
             }
         };
 

@@ -695,9 +695,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
 
     private boolean isZipViewable(String filePath) {
-        return filePath.toLowerCase().endsWith(".zip") ||
-                filePath.toLowerCase().endsWith(".jar") ||
-                filePath.toLowerCase().endsWith(".rar");
+        return filePath.toLowerCase().endsWith(".zip");
     }
 
 

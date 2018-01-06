@@ -21,9 +21,6 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.content.AsyncTaskLoader;
 
-import com.github.junrar.Archive;
-import com.github.junrar.exception.RarException;
-import com.github.junrar.rarfile.FileHeader;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileConstants;
 import com.siju.acexplorer.model.FileInfo;
@@ -38,7 +35,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -65,15 +61,9 @@ class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private String fileName;
     private boolean isZipFormat;
     private ZipEntry entry = null;
-    private Archive rar;
-    private FileHeader header;
-    private boolean isRooted;
     private String mCurrentZipDir;
     private ArrayList<ZipModel> totalZipList = new ArrayList<>();
 
-    private Archive mArchive;
-    private final ArrayList<FileHeader> totalRarList = new ArrayList<>();
-    private final ArrayList<FileHeader> rarChildren = new ArrayList<>();
     private ZipViewer zipViewer;
 
 
@@ -177,12 +167,7 @@ class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     }
 
     private void fetchZipContents() {
-        if (parentZip.endsWith("rar")) {
-            getRarContents(mZipPath, parentZip);
-        }
-        else {
-            getZipContents(mZipPath, parentZip);
-        }
+        getZipContents(mZipPath, parentZip);
     }
 
     private void unzip() {
@@ -392,80 +377,5 @@ class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         getZipContents("", output.getAbsolutePath());
     }
 
-    private void getRarContents(String dir, String parentZipPath) {
-        ArrayList<FileHeader> elements = new ArrayList<>();
-        try {
-            mArchive = new Archive(new File(parentZipPath));
-
-            if (totalRarList.size() == 0) {
-
-                FileHeader fh = mArchive.nextFileHeader();
-                while (fh != null) {
-                    totalRarList.add(fh);
-                    fh = mArchive.nextFileHeader();
-                }
-            }
-            if (dir == null || dir.trim().length() == 0 || dir.equals("")) {
-
-                for (FileHeader header : totalRarList) {
-                    String name = header.getFileNameString();
-
-                    if (!name.contains("\\")) {
-                        elements.add(header);
-
-                    }
-                }
-            } else {
-                for (FileHeader header : totalRarList) {
-                    String name = header.getFileNameString();
-                    if (name.substring(0, name.lastIndexOf("\\")).equals(dir)) {
-                        elements.add(header);
-                    }
-                }
-            }
-        } catch (Exception ignored) {
-        }
-
-        for (FileHeader fileHeader : elements) {
-            String name = fileHeader.getFileNameString();
-
-            boolean isDirectory = fileHeader.isDirectory();
-        /*    if (isDirectory) {
-                name = name.substring(name.lastIndexOf(File.separator) + 1);
-            }*/
-            long size = fileHeader.getPackSize();
-            int type = COMPRESSED.getValue();
-            Date date = fileHeader.getMTime();
-            long date1 = date.getTime();
-//            String noOfFilesOrSize = Formatter.formatFileSize(mContext, size);
-//            String fileModifiedDate = FileUtils.convertDate(date);
-            String extension;
-            if (isDirectory) {
-                name = name.substring(0, name.length() - 1);
-                if (!mInParentZip) {
-                    name = name.substring(name.lastIndexOf(File.separator) + 1);
-                }
-                extension = null;
-            } else {
-                name = name.substring(name.lastIndexOf(File.separator) + 1);
-                extension = name.substring(name.lastIndexOf(".") + 1, name.length());
-            }
-            String path = parentZipPath + File.separator + name;
-
-            FileInfo fileInfo = new FileInfo(COMPRESSED, name, path, date1, size,
-                    isDirectory, extension, RootHelper.parseFilePermission(new File(path)), false);
-            fileInfoList.add(fileInfo);
-        }
-        Collections.sort(fileInfoList, comparatorByNameZip);
-    }
-
-
-    private void unzipRAREntry(Archive zipfile, FileHeader header, String outputDir)
-            throws IOException, RarException {
-
-        File output = new File(outputDir + "/" + header.getFileNameString().trim());
-        FileOutputStream fileOutputStream = new FileOutputStream(output);
-        zipfile.extractFile(header, fileOutputStream);
-    }
 
 }

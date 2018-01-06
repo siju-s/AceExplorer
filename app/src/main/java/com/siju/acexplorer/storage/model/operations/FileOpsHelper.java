@@ -89,15 +89,15 @@ public class FileOpsHelper {
         OperationUtils.WriteMode mode = OperationUtils.checkFolder(file.getParent());
         switch (mode) {
             case ROOT:
-                boolean exists = false;
+                boolean exists;
                 try {
                     exists = RootOperations.fileExists(file.getAbsolutePath(), true);
                 } catch (RootDeniedException e) {
-                    e.printStackTrace();
-                    fileOperationCallBack.opCompleted(FILE_CREATION, file, false);
+                    fileOperationCallBack.opCompleted(FOLDER_CREATION, file, false);
+                    return;
                 }
                 if (exists) {
-                    fileOperationCallBack.exists(FILE_CREATION);
+                    fileOperationCallBack.exists(FOLDER_CREATION);
                 } else {
                     boolean result = FileOperations.mkdir(file);
                     if (!result && RootTools.isAccessGiven()) {
@@ -143,12 +143,12 @@ public class FileOpsHelper {
         OperationUtils.WriteMode mode = OperationUtils.checkFolder(file.getParent());
         switch (mode) {
             case ROOT:
-                boolean exists = false;
+                boolean exists;
                 try {
                     exists = RootOperations.fileExists(file.getAbsolutePath(), false);
                 } catch (RootDeniedException e) {
-                    e.printStackTrace();
                     fileOperationCallBack.opCompleted(FILE_CREATION, file, false);
+                    return;
                 }
                 if (exists) {
                     fileOperationCallBack.exists(FILE_CREATION);

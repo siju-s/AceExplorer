@@ -27,12 +27,8 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.View;
 
-import com.github.junrar.Archive;
-import com.github.junrar.exception.RarException;
-import com.github.junrar.rarfile.FileHeader;
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileConstants;
@@ -56,40 +52,37 @@ import static com.siju.acexplorer.view.dialog.DialogHelper.openWith;
 
 public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileInfo>> {
 
-    private final String TAG       = this.getClass().getSimpleName();
-    private static final int    LOADER_ID = 1000;
+    private final String TAG = this.getClass().getSimpleName();
+    private static final String EXT_ZIP = ".zip";
 
-    private       ArrayList<ZipModel>   zipChildren = new ArrayList<>();
-    private final ArrayList<FileHeader> rarChildren = new ArrayList<>();
+    private static final int LOADER_ID = 1000;
+
+    private ArrayList<ZipModel> zipChildren = new ArrayList<>();
 
     private Fragment fragment;
 
     private ZipEntry zipEntry;
 
-    private String  currentDir;
-    private String  zipParentPath;
-    private String  zipPath;
+    private String currentDir;
+    private String zipParentPath;
+    private String zipPath;
     private boolean inChildZip;
 
-    private String          zipEntryFileName;
-    private boolean         isHomeScreenEnabled;
+    private String zipEntryFileName;
+    private boolean isHomeScreenEnabled;
     private ZipCommunicator zipCommunicator;
 
     enum ZipFormats {
         ZIP,
-        RAR,
         APK;
 
         static final String zip = "zip";
-        static final String rar = "rar";
         static final String apk = "apk";
 
         public static ZipFormats getFormatFromExt(String extension) {
             switch (extension) {
                 case zip:
                     return ZIP;
-                case rar:
-                    return RAR;
                 case apk:
                     return APK;
             }
@@ -202,9 +195,9 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
     }
 
     public void onFileClicked(int position) {
-        if (zipParentPath.endsWith(".zip")) {
+        if (zipParentPath.endsWith(EXT_ZIP)) {
             String name = zipChildren.get(position).getName().substring(zipChildren.get(position)
-                                                                                .getName().lastIndexOf("/") + 1);
+                    .getName().lastIndexOf("/") + 1);
 
             ZipEntry zipEntry = zipChildren.get(position).getEntry();
             ZipEntry zipEntry1 = new ZipEntry(zipEntry);
@@ -212,7 +205,7 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
             Logger.log(TAG, "Zip entry NEW:" + zipEntry1 + " zip entry=" + zipEntry);
 
             if (cacheDirPath != null) {
-                if (name.endsWith(".zip")) {
+                if (name.endsWith(EXT_ZIP)) {
                     this.zipEntry = zipEntry1;
                     zipEntryFileName = name;
                     inChildZip = true;
@@ -231,31 +224,12 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
                     }
                     zipEntry1 = zipEntry;
                     new ExtractZipEntry(zipFile, cacheDirPath,
-                                        name, zipEntry1, alertDialogListener)
+                            name, zipEntry1, alertDialogListener)
                             .execute();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-        } else if (zipParentPath.endsWith(".rar")) {
-            String name = rarChildren.get(position).getFileNameString();
-            FileHeader fileHeader = rarChildren.get(position);
-            String cacheDirPath = createCacheDirExtract();
-
-            if (cacheDirPath != null) {
-
-                try {
-                    Archive rarFile = new Archive(new File(zipParentPath));
-                    new ExtractZipEntry(rarFile, cacheDirPath,
-                                        name, fileHeader, alertDialogListener)
-                            .execute();
-
-                } catch (IOException | RarException e) {
-                    e.printStackTrace();
-                }
-
-            }
-
         }
     }
 
@@ -288,12 +262,7 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
 
 
     private void viewZipContents(int position) {
-        if (zipParentPath.endsWith("rar")) {
-            String name = rarChildren.get(position).getFileNameString();
-            currentDir = name.substring(0, name.length() - 1);
-        } else {
-            currentDir = zipChildren.get(position).getName();
-        }
+        currentDir = zipChildren.get(position).getName();
 
         if (currentDir.startsWith(File.separator)) {
             newPath = zipParentPath + currentDir;
@@ -324,7 +293,7 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
                 path = zipParentPath;
             }
             return new ZipContentLoader(fragment.getContext(), path, createCacheDirExtract(),
-                                        zipEntryFileName, zipEntry);
+                    zipEntryFileName, zipEntry);
         }
         return new ZipContentLoader(fragment.getContext(), this, zipPath, ZIP_VIEWER, currentDir);
     }
@@ -342,8 +311,7 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
 
     // Dialog for SAF
     private DialogHelper.AlertDialogListener alertDialogListener = new DialogHelper
-            .AlertDialogListener()
-    {
+            .AlertDialogListener() {
 
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         @Override

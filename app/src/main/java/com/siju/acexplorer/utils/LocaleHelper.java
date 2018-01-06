@@ -28,7 +28,6 @@ import com.siju.acexplorer.logging.Logger;
 
 import java.util.Locale;
 
-import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastAPI17;
 import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastNougat;
 
 public class LocaleHelper extends ContextWrapper {
@@ -89,12 +88,9 @@ public class LocaleHelper extends ContextWrapper {
             config.setLocales(localeList);
             context = context.createConfigurationContext(config);
         }
-        else if (isAtleastAPI17()) {
+        else {
             config.setLocale(locale);
             context = context.createConfigurationContext(config);
-        } else {
-            config.locale = locale;
-            resources.updateConfiguration(config, resources.getDisplayMetrics());
         }
         return context;
 

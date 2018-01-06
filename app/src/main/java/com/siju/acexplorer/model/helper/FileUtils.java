@@ -427,8 +427,7 @@ public class FileUtils {
     public static boolean isFileCompressed(String filePath) {
         return filePath.toLowerCase().endsWith(".zip") ||
                 filePath.toLowerCase().endsWith(".tar") ||
-                filePath.toLowerCase().endsWith(".tar.gz") ||
-                filePath.toLowerCase().endsWith(".rar");
+                filePath.toLowerCase().endsWith(".tar.gz");
     }
 
     /**

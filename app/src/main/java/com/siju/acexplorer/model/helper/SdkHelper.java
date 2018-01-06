@@ -45,7 +45,5 @@ public class SdkHelper {
         return Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT;
     }
 
-    public static boolean isAtleastAPI17() {
-        return Build.VERSION.SDK_INT >= 17;
-    }
+
 }

@@ -22,8 +22,6 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="5dp"
                 android:paddingEnd="16dp"
-                android:paddingLeft="@dimen/file_list_margin"
-                android:paddingRight="16dp"
                 android:paddingStart="@dimen/file_list_margin"
                 android:paddingTop="5dp">
 
@@ -43,9 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="12dp"
-        android:layout_marginLeft="5dp"
         android:layout_marginStart="5dp"
-        android:layout_toRightOf="@+id/imageIcon"
         android:layout_toEndOf="@+id/imageIcon"
         android:textSize="14sp"/>
 
@@ -56,9 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/textFolderName"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="5dp"
         android:layout_marginStart="5dp"
-        android:layout_toRightOf="@+id/imageIcon"
         android:layout_toEndOf="@+id/imageIcon"
         android:textAppearance="?attr/textAppearanceListItemSmall"
         android:textSize="12sp"/>
@@ -68,10 +62,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_below="@+id/textFolderName"
         android:layout_marginEnd="5dp"
-        android:layout_marginRight="5dp"
         android:layout_marginTop="12dp"
         android:textSize="12sp"/>
 
@@ -80,7 +72,6 @@
         android:layout_width="@dimen/folder_thumb_icon"
         android:layout_height="@dimen/folder_thumb_icon"
         android:layout_alignEnd="@+id/imageIcon"
-        android:layout_alignRight="@+id/imageIcon"
         android:layout_alignTop="@+id/textSecondLine"
         android:scaleType="centerCrop"
         android:visibility="gone"

@@ -25,7 +25,6 @@
         android:id="@+id/imageStorage"
         android:layout_width="@dimen/home_storage_icon_size"
         android:layout_height="@dimen/home_storage_icon_size"
-        android:layout_marginLeft="@dimen/homescreen_storage_margin"
         android:layout_marginStart="@dimen/homescreen_storage_margin"
         android:contentDescription="@string/img_accessibility_storage_icon"
         tools:src="@drawable/ic_storage_white" />
@@ -34,10 +33,8 @@
         android:id="@+id/textStorageName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_16"
         android:layout_marginStart="@dimen/margin_16"
         android:layout_toEndOf="@+id/imageStorage"
-        android:layout_toRightOf="@+id/imageStorage"
         tools:text="@string/nav_menu_internal_storage" />
 
     <ProgressBar
@@ -47,11 +44,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/textStorageName"
         android:layout_marginEnd="@dimen/homescreen_storage_margin"
-        android:layout_marginLeft="@dimen/margin_16"
-        android:layout_marginRight="@dimen/homescreen_storage_margin"
         android:layout_marginStart="@dimen/margin_16"
         android:layout_toEndOf="@+id/imageStorage"
-        android:layout_toRightOf="@+id/imageStorage"
         android:max="100"
         tools:progress="50" />
 
@@ -60,10 +54,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_below="@id/progressBarSD"
         android:layout_marginEnd="@dimen/homescreen_storage_margin"
-        android:layout_marginRight="@dimen/homescreen_storage_margin" />
+         />
 
     <View
         android:id="@+id/home_storages_divider"
