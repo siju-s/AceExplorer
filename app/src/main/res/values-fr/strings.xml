@@ -58,7 +58,7 @@
     <string name="dialog_from_placeholder">De</string>
     <string name="dialog_to_placeholder">À:</string>
     <string name="background">Contexte</string>
-    <string name="dialog_delete_title">Êtes-vous sûr de vouloir supprimer les fichiers suivants?</string>
+    <string name="dialog_delete_title"> tes-vous s˚r de vouloir supprimer les fichiers %d?</string>
     <string name="msg_ok">D\'accord</string>
     <string name="no_files">Aucun fichier</string>
     <string name="msg_error_invalid_name">Entrez un nom valide</string>

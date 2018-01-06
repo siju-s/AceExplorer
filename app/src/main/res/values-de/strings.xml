@@ -58,7 +58,7 @@
     <string name="dialog_from_placeholder">Von</string>
     <string name="dialog_to_placeholder">Nach:</string>
     <string name="background">Hintergrund</string>
-    <string name="dialog_delete_title">Sind Sie sicher, dass Sie die folgenden Dateien zu löschen?</string>
+    <string name="dialog_delete_title">Möchten Sie wirklich %d Dateien löschen?</string>
     <string name="msg_ok">OK</string>
     <string name="no_files">Keine Dateien</string>
     <string name="msg_error_invalid_name">Geben Sie einen gültigen Namen</string>

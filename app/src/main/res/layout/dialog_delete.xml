@@ -7,25 +7,20 @@
 
     <TextView
         android:id="@+id/textTitle"
-        style="@style/DialogTitle"
+        style="@style/DialogMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="@string/action_delete" />
+        tools:text="@string/dialog_delete_title" />
 
 
-    <TextView
-        android:id="@+id/textDeleteItems"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/textTitle"
-        android:layout_margin="@dimen/margin_16"
-        android:gravity="center_horizontal" />
 
     <include
         android:id="@+id/layoutButtons"
         layout="@layout/dialog_buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textDeleteItems" />
+        android:layout_marginTop="@dimen/margin_16"
+        android:layout_below="@+id/textTitle"
+         />
 
 </RelativeLayout>

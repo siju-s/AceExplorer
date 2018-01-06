@@ -70,7 +70,7 @@ public class UriHelper {
     }
 
 
-    static Uri getUriFromFile(final String path, Context context) {
+    public static Uri getUriFromFile(final String path, Context context) {
         ContentResolver resolver = context.getContentResolver();
 
         Cursor filecursor = resolver.query(MediaStore.Files.getContentUri("external"),

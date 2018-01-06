@@ -73,6 +73,7 @@ public class HomeScreenFragment extends Fragment {
         LinearLayout linearLayout = getView().findViewById(R.id.home_base);
         homeView = new HomeBridge(this, linearLayout, drawerListener, favListener);
         HomeModel homeModel = new HomeModelImpl();
+        homeModel.setActivityContext(getActivity());
         LoaderHelper loaderHelper = new LoaderHelper(this);
 
         new HomePresenterImpl(homeView, homeModel, loaderHelper,

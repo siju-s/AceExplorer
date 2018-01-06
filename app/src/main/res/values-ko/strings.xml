@@ -57,7 +57,7 @@
     <string name="dialog_from_placeholder">에서</string>
     <string name="dialog_to_placeholder">에</string>
     <string name="background">배경</string>
-    <string name="dialog_delete_title">다음 파일을 삭제 하시겠습니까?</string>
+    <string name="dialog_delete_title">%d 개 파일을 삭제 하시겠습니까?</string>
     <string name="msg_ok">승인</string>
     <string name="no_files">파일이 없습니다</string>
     <string name="msg_error_invalid_name">유효한 이름을 입력합니다</string>

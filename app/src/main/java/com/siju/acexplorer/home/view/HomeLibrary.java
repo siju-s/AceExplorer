@@ -169,8 +169,7 @@ class HomeLibrary {
             }
             LibrarySortModel model = new LibrarySortModel();
             model.setChecked(true);
-            model.setCategory(category);
-            model.setLibraryName(homeLibraryInfoArrayList.get(i).getCategoryName());
+            model.setCategoryId(category.getValue());
             sortModelList.add(model);
         }
         return sortModelList;

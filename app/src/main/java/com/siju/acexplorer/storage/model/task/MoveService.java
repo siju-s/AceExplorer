@@ -30,8 +30,10 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.helper.FileUtils;
+import com.siju.acexplorer.model.helper.LargeBundleTransfer;
 import com.siju.acexplorer.model.root.RootDeniedException;
 import com.siju.acexplorer.model.root.RootUtils;
 import com.siju.acexplorer.storage.model.CopyData;
@@ -58,9 +60,9 @@ import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_TOT
 import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_TOTAL_PROGRESS;
 import static com.siju.acexplorer.storage.model.operations.ProgressUtils.MOVE_PROGRESS;
 
-public class MoveFiles extends IntentService {
+public class MoveService extends IntentService {
 
-    private static final String TAG = "MoveFiles";
+    private static final String TAG = "MoveService";
 
     private Context                    context;
     private NotificationManager        notificationManager;
@@ -77,8 +79,8 @@ public class MoveFiles extends IntentService {
     private final String CHANNEL_ID      = "operation";
 
 
-    public MoveFiles() {
-        super("MoveFiles");
+    public MoveService() {
+        super("MoveService");
     }
 
 
@@ -91,6 +93,14 @@ public class MoveFiles extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         filesToMove = intent.getParcelableArrayListExtra(KEY_FILES);
+        if (filesToMove == null) {
+            filesToMove = LargeBundleTransfer.getFileData(context);
+            if (filesToMove == null) {
+                return;
+            } else {
+                LargeBundleTransfer.removeFileData(context);
+            }
+        }
         copyData = intent.getParcelableArrayListExtra(KEY_CONFLICT_DATA);
         String destDir = intent.getStringExtra(KEY_FILEPATH);
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -164,13 +174,14 @@ public class MoveFiles extends IntentService {
                                     lastIndexOf("."));
                             destPath = destinationDir + "/" + fileNameWithoutExt + "(1)" + "." + sourceFile.getExtension();
                         }
-                        moveFiles(sourcePath, fileName, destPath);
+                        moveFiles(sourceFile, fileName, destPath);
 
                     } catch (Exception e) {
                         e.printStackTrace();
                         break;
                     }
                 }
+                sendCompletedResult();
                 break;
 
             case ROOT:
@@ -184,19 +195,16 @@ public class MoveFiles extends IntentService {
         }
     }
 
-    private void moveFiles(String sourcePath, String fileName, String destinationPath) {
-
-        for (FileInfo fileInfo : filesToMove) {
+    private void moveFiles(FileInfo sourceFileInfo, String fileName, String destinationPath) {
+            String sourcePath = sourceFileInfo.getFilePath();
             File newFile = new File(destinationPath);
             File oldFile = new File(sourcePath);
             if (oldFile.renameTo(newFile)) {
-                oldFileList.add(fileInfo.getFilePath());
+                oldFileList.add(sourcePath);
                 filesMovedList.add(newFile.getAbsolutePath());
-                categories.add(fileInfo.getCategory().getValue());
+                categories.add(sourceFileInfo.getCategory().getValue());
             }
             publishResults(fileName, filesToMove.size(), filesMovedList.size());
-        }
-        sendCompletedResult();
     }
 
     private void moveRoot(String path, String name, String destinationPath) {
@@ -222,7 +230,7 @@ public class MoveFiles extends IntentService {
     }
 
     private void publishResults(String fileName, long total, long done) {
-        int progress = (int) (((float) (done / total)) * 100);
+        int progress = (int) (( ((float)done / total)) * 100);
         builder.setProgress(100, progress, false);
         builder.setOngoing(true);
         int title = R.string.moving;
@@ -239,6 +247,7 @@ public class MoveFiles extends IntentService {
     }
 
     private void sendCompletedResult() {
+        Logger.log(TAG, "sendCompletedResult"+ filesMovedList.size());
         boolean isMoveSuccess = filesMovedList.size() == filesToMove.size();
         builder.setContentTitle(getString(R.string.move_complete));
         builder.setProgress(0, 0, false);

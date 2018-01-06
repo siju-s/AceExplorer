@@ -36,6 +36,7 @@ import android.widget.LinearLayout;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
+import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.billing.BillingStatus;
@@ -235,7 +236,7 @@ public class HomeUiView extends CoordinatorLayout {
         LinearLayout adviewLayout = findViewById(R.id.adviewLayout);
         // Create an ad.
         if (mAdView == null) {
-            mAdView = new AdView(getActivity().getApplicationContext());
+            mAdView = new AdView(AceApplication.getAppContext());
             mAdView.setAdSize(AdSize.BANNER);
             mAdView.setAdUnitId(getResources().getString(R.string.banner_ad_unit_id));
             // DYNAMICALLY CREATE AD END

@@ -58,7 +58,7 @@
     <string name="dialog_from_placeholder">Από</string>
     <string name="dialog_to_placeholder">Να:</string>
     <string name="background">Φόντο</string>
-    <string name="dialog_delete_title">Είστε σίγουροι ότι θέλετε να διαγράψετε τα ακόλουθα αρχεία;</string>
+    <string name="dialog_delete_title">Είστε βέβαιοι ότι θέλετε να διαγράψετε αρχεία %d;</string>
     <string name="msg_ok">Εντάξει</string>
     <string name="no_files">Δεν υπάρχουν αρχεία</string>
     <string name="msg_error_invalid_name">Εισάγετε ένα έγκυρο όνομα</string>

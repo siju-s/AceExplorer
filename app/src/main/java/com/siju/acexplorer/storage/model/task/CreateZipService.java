@@ -34,6 +34,7 @@ import android.text.format.Formatter;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.helper.FileUtils;
+import com.siju.acexplorer.model.helper.LargeBundleTransfer;
 import com.siju.acexplorer.storage.model.operations.OperationUtils;
 import com.siju.acexplorer.view.AceActivity;
 
@@ -44,6 +45,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -90,7 +92,15 @@ public class CreateZipService extends IntentService {
             return;
         }
         name = intent.getStringExtra(KEY_FILEPATH);
-        ArrayList<FileInfo> zipFiles = intent.getParcelableArrayListExtra(KEY_FILES);
+        List<FileInfo> zipFiles = intent.getParcelableArrayListExtra(KEY_FILES);
+        if (zipFiles == null) {
+            zipFiles = LargeBundleTransfer.getFileData(context);
+            if (zipFiles == null) {
+                return;
+            } else {
+                LargeBundleTransfer.removeFileData(context);
+            }
+        }
         File zipName = new File(name);
         if (!zipName.exists()) {
             try {
@@ -204,7 +214,7 @@ public class CreateZipService extends IntentService {
 
 
 
-    private ArrayList<File> toFileArray(ArrayList<FileInfo> a) {
+    private ArrayList<File> toFileArray(List<FileInfo> a) {
         ArrayList<File> b = new ArrayList<>();
         for (int i = 0; i < a.size(); i++) {
             b.add(new File(a.get(i).getFilePath()));

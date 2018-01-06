@@ -60,7 +60,7 @@
     <string name="dialog_from_placeholder">з</string>
     <string name="dialog_to_placeholder">до</string>
     <string name="background">фон</string>
-    <string name="dialog_delete_title">Ви впевнені, що хочете видалити такі файли?</string>
+    <string name="dialog_delete_title">Ви впевнені, що хочете видалити файли %d?</string>
     <string name="msg_ok">добре</string>
     <string name="no_files">немає файлів</string>
     <string name="msg_error_invalid_name">Введіть дійсне ім\'я</string>

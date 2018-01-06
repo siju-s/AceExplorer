@@ -57,7 +57,7 @@
     <string name="dialog_from_placeholder">から</string>
     <string name="dialog_to_placeholder">に</string>
     <string name="background">バックグラウンド</string>
-    <string name="dialog_delete_title">次のファイルを削除してもよろしいですか？</string>
+    <string name="dialog_delete_title">%d 個のファイルを削除してもよろしいですか？</string>
     <string name="msg_ok">[OK]</string>
     <string name="no_files">ファイルがありません</string>
     <string name="msg_error_invalid_name">有効な名前を入力します。</string>

@@ -58,7 +58,7 @@
     <string name="dialog_from_placeholder">Van</string>
     <string name="dialog_to_placeholder">aan</string>
     <string name="background">agtergrond</string>
-    <string name="dialog_delete_title">Is jy seker jy wil die volgende lêers uitwis?</string>
+    <string name="dialog_delete_title">Is jy seker jy wil %d lÍers uitvee?</string>
     <string name="msg_ok">OK</string>
     <string name="no_files">geen lêers</string>
     <string name="msg_error_invalid_name">Gee \'n geldige naam</string>

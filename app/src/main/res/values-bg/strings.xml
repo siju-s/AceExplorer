@@ -58,7 +58,7 @@
     <string name="dialog_from_placeholder">от</string>
     <string name="dialog_to_placeholder">Да се</string>
     <string name="background">Заден план</string>
-    <string name="dialog_delete_title">Сигурни ли сте, че искате да изтриете следните файлове?</string>
+    <string name="dialog_delete_title">Наистина ли искате да изтриете %d файлове?</string>
     <string name="msg_ok">Добре</string>
     <string name="no_files">Няма файлове</string>
     <string name="msg_error_invalid_name">Въведете валиден име</string>

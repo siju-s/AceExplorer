@@ -58,7 +58,7 @@
     <string name="dialog_from_placeholder">itibaren</string>
     <string name="dialog_to_placeholder">için</string>
     <string name="background">Arka fon</string>
-    <string name="dialog_delete_title">Aşağıdaki dosyaları silmek istediğinizden emin misiniz?</string>
+    <string name="dialog_delete_title">%D dosyaları silmek istediğinizden emin misiniz?</string>
     <string name="msg_ok">tamam</string>
     <string name="no_files">Dosya yok</string>
     <string name="msg_error_invalid_name">Geçerli bir ad girin</string>

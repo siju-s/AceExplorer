@@ -16,6 +16,8 @@
 
 package com.siju.acexplorer.home.model;
 
+import android.support.v4.app.FragmentActivity;
+
 import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.home.types.HomeLibraryInfo;
 
@@ -37,6 +39,8 @@ public interface HomeModel {
     boolean getDualModeState();
 
     void saveLibs(List<LibrarySortModel> librarySortModels);
+
+    void setActivityContext(FragmentActivity activity);
 
 
     interface Listener {

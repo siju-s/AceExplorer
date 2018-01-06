@@ -57,7 +57,7 @@
     <string name="dialog_from_placeholder">จาก</string>
     <string name="dialog_to_placeholder">ไปยัง</string>
     <string name="background">พื้นหลัง</string>
-    <string name="dialog_delete_title">คุณคุณแน่ใจหรือว่าต้องการลบไฟล์ต่อไปนี้?</string>
+    <string name="dialog_delete_title">คุณแน่ใจหรือไม่ว่าต้องการลบไฟล์ %d?</string>
     <string name="msg_ok">ตกลง</string>
     <string name="no_files">ไม่มีไฟล์</string>
     <string name="msg_error_invalid_name">ใส่ชื่อที่ถูกต้อง</string>

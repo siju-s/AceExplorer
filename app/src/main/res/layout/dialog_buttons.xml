@@ -24,7 +24,7 @@
         android:layout_gravity="center"
         android:layout_weight="1"
         android:visibility="gone"
-        tools:visibility="visible"
+        tools:visibility="gone"
         tools:text="@string/view"
         />
 

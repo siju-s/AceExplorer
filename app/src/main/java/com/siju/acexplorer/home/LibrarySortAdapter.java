@@ -16,6 +16,7 @@
 
 package com.siju.acexplorer.home;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -28,6 +29,7 @@ import android.widget.TextView;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.home.model.LibrarySortModel;
+import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.storage.view.custom.helper.ItemTouchHelperAdapter;
 import com.siju.acexplorer.storage.view.custom.helper.ItemTouchHelperViewHolder;
 
@@ -40,6 +42,7 @@ class LibrarySortAdapter extends RecyclerView.Adapter<LibrarySortAdapter.Library
 
     private final OnStartDragListener dragStartListener;
     private ArrayList<LibrarySortModel> totalLibraries = new ArrayList<>();
+    private Context context;
 
 
     LibrarySortAdapter(OnStartDragListener dragStartListener,
@@ -51,7 +54,8 @@ class LibrarySortAdapter extends RecyclerView.Adapter<LibrarySortAdapter.Library
 
     @Override
     public LibrarySortViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.library_sort_item,
+        context = parent.getContext();
+        View view = LayoutInflater.from(context).inflate(R.layout.library_sort_item,
                                                                      parent, false);
         return new LibrarySortViewHolder(view);
     }
@@ -61,7 +65,9 @@ class LibrarySortAdapter extends RecyclerView.Adapter<LibrarySortAdapter.Library
         //change background color if list item is selected
         final LibrarySortModel model = totalLibraries.get(position);
 
-        librarySortViewHolder.textLibrary.setText(model.getLibraryName());
+        Category category = Category.getCategory(model.getCategoryId());
+
+        librarySortViewHolder.textLibrary.setText(Category.getCategoryName(context,category));
 
         librarySortViewHolder.imageSort.setOnTouchListener(new View.OnTouchListener() {
             @Override

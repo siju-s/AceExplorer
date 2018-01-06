@@ -101,6 +101,8 @@
             android:layout_alignStart="@+id/textFilesLeft"
             android:layout_below="@+id/textFileToPlaceHolder"
             android:layout_marginBottom="20dp"
+            android:layout_marginRight="@dimen/margin_16"
+            android:layout_marginEnd="@dimen/margin_16"
             android:max="100" />
 
     </RelativeLayout>

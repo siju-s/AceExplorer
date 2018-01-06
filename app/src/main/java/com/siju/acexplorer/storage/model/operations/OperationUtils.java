@@ -32,6 +32,8 @@ public class OperationUtils {
     public static final String KEY_FILEPATH2      = "filepath2";
     public static final String KEY_OPERATION      = "operation";
     public static final String KEY_FILES          = "op_files";
+    public static final String KEY_MEDIA_INDEX_FILES          = "mediastore_files";
+
     public static final String KEY_OLD_FILES      = "old_op_files";
     public static final String KEY_POSITION       = "pos";
     public static final String KEY_CONFLICT_DATA  = "conflict_data";

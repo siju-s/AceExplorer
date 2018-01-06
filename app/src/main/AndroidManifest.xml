@@ -111,7 +111,7 @@
         <service android:name=".storage.model.task.CreateZipService"/>
         <service android:name=".storage.model.task.CopyService"/>
         <service android:name=".storage.model.task.ExtractService"/>
-        <service android:name=".storage.model.task.MoveFiles" />
+        <service android:name=".storage.model.task.MoveService" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -122,9 +122,9 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths"/>
         </provider>
-        <!--<meta-data-->
-            <!--android:name="io.fabric.ApiKey"-->
-            <!--android:value="d34cf3ffdd00d6e0d7b3e85d558c4fa01210a6f1"/>-->
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="d34cf3ffdd00d6e0d7b3e85d558c4fa01210a6f1"/>
 
     </application>
 

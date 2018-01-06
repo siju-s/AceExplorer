@@ -60,7 +60,7 @@
     <string name="dialog_from_placeholder">Из</string>
     <string name="dialog_to_placeholder">к</string>
     <string name="background">Задний план</string>
-    <string name="dialog_delete_title">Вы уверены, что хотите удалить следующие файлы?</string>
+    <string name="dialog_delete_title">Вы действительно хотите удалить файлы %d?</string>
     <string name="msg_ok">ОК</string>
     <string name="no_files">Файлов нет</string>
     <string name="msg_error_invalid_name">Введите действительное имя</string>

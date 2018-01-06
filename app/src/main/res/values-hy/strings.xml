@@ -58,7 +58,7 @@
     <string name="dialog_from_placeholder">Ից</string>
     <string name="dialog_to_placeholder">To:</string>
     <string name="background">ետին պլան</string>
-    <string name="dialog_delete_title">Համոզված եք, որ ցանկանում եք ջնջել հետեւյալ ֆայլերը.</string>
+    <string name="dialog_delete_title">Վստահ եք, որ ուզում եք ջնջել %d ֆայլեր:</string>
     <string name="msg_ok">լավ</string>
     <string name="no_files">Ոչ ֆայլեր</string>
     <string name="msg_error_invalid_name">Մուտքագրեք վավերական անուն</string>

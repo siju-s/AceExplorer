@@ -60,7 +60,7 @@
     <string name="dialog_from_placeholder">מ</string>
     <string name="dialog_to_placeholder">ל:</string>
     <string name="background">רקע</string>
-    <string name="dialog_delete_title">האם אתה בטוח שאתה רוצה למחוק את הקבצים הבאים?</string>
+    <string name="dialog_delete_title">האם אתה בטוח שברצונך למחוק %d קבצים?</string>
     <string name="msg_ok">בסדר</string>
     <string name="no_files">אין קבצים</string>
     <string name="msg_error_invalid_name">זן שם חוקי</string>

@@ -16,13 +16,17 @@
 
 package com.siju.acexplorer.storage.model.task;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Process;
+import android.support.annotation.NonNull;
+import android.support.v4.provider.DocumentFile;
 
+import com.siju.acexplorer.AceApplication;
+import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.StorageUtils;
-import com.siju.acexplorer.model.helper.FileUtils;
-import com.siju.acexplorer.model.helper.MediaStoreHelper;
 import com.siju.acexplorer.model.root.RootDeniedException;
 import com.siju.acexplorer.model.root.RootUtils;
 import com.stericson.RootTools.RootTools;
@@ -31,18 +35,25 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.siju.acexplorer.model.StorageUtils.getDocumentFile;
+import static com.siju.acexplorer.model.StorageUtils.isOnExtSdCard;
+import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastLollipop;
+import static com.siju.acexplorer.model.helper.SdkHelper.isKitkat;
+import static com.siju.acexplorer.model.helper.UriHelper.getUriFromFile;
+
 public class DeleteTask {
 
+    private static final String TAG = "DeleteTask";
 
     private int totalFiles;
     private final ArrayList<FileInfo> deletedFilesList = new ArrayList<>();
-    private final Context mContext;
     private ArrayList<FileInfo> fileList = new ArrayList<>();
+    private List<String> filesToMediaIndex = new ArrayList<>();
+
     private boolean mShowToast = true;
 
 
     public DeleteTask(Context context, ArrayList<FileInfo> fileList) {
-        mContext = context;
         this.fileList = fileList;
     }
 
@@ -54,7 +65,7 @@ public class DeleteTask {
 
     public interface DeleteResultCallback {
 
-        void onFileDeleted(int deletedCount, List<FileInfo> fileList, boolean showToast);
+        void onFileDeleted(int deletedCount, List<FileInfo> fileList, List<String> filestoMediaIndex, boolean showToast);
     }
 
     void setmShowToast() {
@@ -69,15 +80,17 @@ public class DeleteTask {
                 Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
 
                 totalFiles = fileList.size();
+                filesToMediaIndex.clear();
+                deletedFilesList.clear();
 
                 for (int i = 0; i < totalFiles; i++) {
                     String path = fileList.get(i).getFilePath();
-                    boolean isDeleted = FileUtils.deleteFile(new File(path));
+                    boolean isDeleted = delete(new File(path));
 
                     if (!isDeleted) {
                         boolean isRootDir = StorageUtils.isRootDirectory(path);
                         if (!isRootDir) {
-                            deleteResultCallback.onFileDeleted(totalFiles, deletedFilesList, mShowToast);
+                            deleteResultCallback.onFileDeleted(totalFiles, deletedFilesList, filesToMediaIndex, mShowToast);
                             return;
                         }
                         boolean isRootMode = RootTools.isAccessGiven();
@@ -87,7 +100,7 @@ public class DeleteTask {
                                 RootUtils.delete(path);
                                 RootUtils.mountRO(path);
                                 deletedFilesList.add(fileList.get(i));
-                                deleteFromMediaStore(deletedFilesList);
+                                filesToMediaIndex.add(path);
                             } catch (RootDeniedException e) {
                                 e.printStackTrace();
                             }
@@ -98,21 +111,76 @@ public class DeleteTask {
                     }
                 }
                 if (deleteResultCallback != null) {
-                    deleteResultCallback.onFileDeleted(totalFiles, deletedFilesList, mShowToast);
+                    deleteResultCallback.onFileDeleted(totalFiles, deletedFilesList, filesToMediaIndex, mShowToast);
                 }
             }
         }).start();
 
     }
 
-    private static final String TAG = "DeleteTask";
 
-    private void deleteFromMediaStore(ArrayList<FileInfo> deletedFilesList) {
-        for (int i = 0; i < deletedFilesList.size() ; i++) {
-            FileInfo fileInfo = deletedFilesList.get(i);
-            int category = fileInfo.getCategory().getValue();
-            int deleted = MediaStoreHelper.removeMedia(mContext, fileInfo.getFilePath(), category);
+    private boolean delete(File file) {
+        boolean fileDelete = deleteFile(file);
+
+        if (file.delete() || fileDelete) {
+            return true;
         }
+
+        // Try with Storage Access Framework.
+        if (isAtleastLollipop() && isOnExtSdCard(file)) {
+
+            DocumentFile document = getDocumentFile(file, false);
+            return document != null && document.delete();
+        }
+
+        // Try the Kitkat workaround.
+        if (isKitkat()) {
+            Context context = AceApplication.getAppContext();
+            ContentResolver resolver = context.getContentResolver();
+
+            try {
+                Uri uri = getUriFromFile(file.getAbsolutePath(), context);
+                if (uri != null) {
+                    resolver.delete(uri, null, null);
+                }
+                return !file.exists();
+            } catch (Exception e) {
+                Logger.log(TAG, "Error when deleting file " + file.getAbsolutePath());
+                return false;
+            }
+        }
+
+        return !file.exists();
+    }
+
+    /**
+     * Delete a file. May be even on external SD card.
+     *
+     * @param file the file to be deleted.
+     * @return True if successfully deleted.
+     */
+    private boolean deleteFile(@NonNull final File file) {
+        // First try the normal deletion.
+        boolean isDeleted = false;
+        if (file.isDirectory()) {
+            File[] fileList = file.listFiles();
+            if (fileList != null) {
+                for (File child : fileList) {
+                    String path = child.getAbsolutePath();
+                    isDeleted = deleteFile(child);
+                    if (isDeleted) {
+                        filesToMediaIndex.add(path);
+                    }
+                }
+            }
+        } else {
+            String path = file.getAbsolutePath();
+            isDeleted = file.delete();
+            if (isDeleted) {
+                filesToMediaIndex.add(path);
+            }
+        }
+        return isDeleted;
     }
 
 

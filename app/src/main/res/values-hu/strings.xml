@@ -58,7 +58,7 @@
     <string name="dialog_from_placeholder">Ból ből</string>
     <string name="dialog_to_placeholder">Nak nek:</string>
     <string name="background">Háttér</string>
-    <string name="dialog_delete_title">Biztosan törölni szeretné a következő fájlokat?</string>
+    <string name="dialog_delete_title">Biztos benne, hogy törölni szeretne %d fájlt?</string>
     <string name="msg_ok">rendben</string>
     <string name="no_files">nincs fájl</string>
     <string name="msg_error_invalid_name">Adjon meg egy érvényes nevet</string>

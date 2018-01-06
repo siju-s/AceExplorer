@@ -58,7 +58,7 @@
     <string name="dialog_from_placeholder">მდებარეობა</string>
     <string name="dialog_to_placeholder">იმისათვის, რომ</string>
     <string name="background">Background</string>
-    <string name="dialog_delete_title">დარწმუნებული ხართ, რომ გსურთ წაშალოთ შემდეგი ფაილი?</string>
+    <string name="dialog_delete_title">დარწმუნებული ხართ, რომ გსურთ %d ფაილების წაშლა?</string>
     <string name="msg_ok">კარგი</string>
     <string name="no_files">ფაილები არ არის</string>
     <string name="msg_error_invalid_name">შეიყვანოთ სწორი სახელი</string>

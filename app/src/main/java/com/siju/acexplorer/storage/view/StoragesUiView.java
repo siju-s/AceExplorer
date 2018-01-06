@@ -75,6 +75,8 @@ import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.SharedPreferenceWrapper;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.model.helper.FileUtils;
+import com.siju.acexplorer.model.helper.LargeBundleTransfer;
+import com.siju.acexplorer.model.helper.MediaStoreHelper;
 import com.siju.acexplorer.permission.PermissionUtils;
 import com.siju.acexplorer.storage.model.BackStackModel;
 import com.siju.acexplorer.storage.model.ViewMode;
@@ -109,8 +111,10 @@ import static com.siju.acexplorer.model.groups.Category.DOWNLOADS;
 import static com.siju.acexplorer.model.groups.Category.FAVORITES;
 import static com.siju.acexplorer.model.groups.Category.FILES;
 import static com.siju.acexplorer.model.groups.Category.checkIfFileCategory;
+import static com.siju.acexplorer.model.helper.MediaStoreHelper.removeBatchMedia;
 import static com.siju.acexplorer.model.helper.MediaStoreHelper.removeMedia;
 import static com.siju.acexplorer.model.helper.MediaStoreHelper.scanFile;
+import static com.siju.acexplorer.model.helper.MediaStoreHelper.scanMultipleFiles;
 import static com.siju.acexplorer.model.helper.MediaStoreHelper.updateMedia;
 import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastNougat;
 import static com.siju.acexplorer.model.helper.UriHelper.createContentUri;
@@ -122,6 +126,7 @@ import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_CO
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH2;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES;
+import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_MEDIA_INDEX_FILES;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OLD_FILES;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_RESULT;
@@ -357,7 +362,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         LinearLayout adviewLayout = findViewById(R.id.adviewLayout);
         // Create an ad.
         if (mAdView == null) {
-            mAdView = new AdView(getActivity().getApplicationContext());
+            mAdView = new AdView(AceApplication.getAppContext());
             mAdView.setAdSize(AdSize.BANNER);
             mAdView.setAdUnitId(getResources().getString(R.string.banner_ad_unit_id));
             // DYNAMICALLY CREATE AD END
@@ -472,7 +477,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                         if (draggedData.size() > 0) {
                             Intent intent = new Intent();
                             intent.putParcelableArrayListExtra(FileConstants.KEY_PATH, draggedData);
-                            intent.putExtra(FileConstants.KEY_CATEGORY, category.getValue());
+                            intent.putExtra(KEY_CATEGORY, category.getValue());
                             ClipData data = ClipData.newIntent("", intent);
                             int count = fileListAdapter.getSelectedCount();
                             View.DragShadowBuilder shadowBuilder = dragHelper.getDragShadowBuilder
@@ -543,7 +548,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     private void getArgs() {
         if (getArguments() != null) {
             currentDir = getArguments().getString(FileConstants.KEY_PATH);
-            category = (Category) getArguments().getSerializable(FileConstants.KEY_CATEGORY);
+            category = (Category) getArguments().getSerializable(KEY_CATEGORY);
             isZipViewer = getArguments().getBoolean(FileConstants.KEY_ZIP, false);
             mIsDualModeEnabled = getArguments().getBoolean(FileConstants.KEY_DUAL_ENABLED, false);
 
@@ -599,6 +604,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     public void refreshList() {
+        Logger.log(TAG, "refreshList");
         fileInfoList = new ArrayList<>();
         if (fileListAdapter != null) {
             fileListAdapter.clearList();
@@ -793,7 +799,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 String path = intent.getStringExtra(KEY_FILEPATH);
                 Logger.log(TAG, "New zip PAth=" + path);
                 if (path != null) {
-                    scanFile(getActivity().getApplicationContext(), path);
+                    scanFile(AceApplication.getAppContext(), path);
                 }
                 refreshList();
             } else if (action.equals(ACTION_OP_REFRESH)) {
@@ -810,18 +816,45 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         }
     };
 
+    private void deleteFromMediaStore(final List<String> filesToMediaIndex) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Logger.log(TAG, "deleteFromMediaStore: " + filesToMediaIndex.size());
+                if (filesToMediaIndex.size() == 0) {
+                    return;
+                }
+                MediaStoreHelper.removeBatchMedia(AceApplication.getAppContext(), filesToMediaIndex, null);
+            }
+        }).start();
+    }
+
     private void onOperationResult(Intent intent, Operations operation) {
         Logger.log(TAG, "onOperationResult: " + operation);
 
         switch (operation) {
             case DELETE:
+                boolean isLargeBundle = false;
+                List<FileInfo> deletedFilesList;
+                List<String> filesToMediaIndex;
 
-                ArrayList<FileInfo> deletedFilesList = intent.getParcelableArrayListExtra
+                deletedFilesList = intent.getParcelableArrayListExtra
                         (KEY_FILES);
-                for (FileInfo info : deletedFilesList) {
-                    scanFile(getActivity().getApplicationContext(), info.getFilePath());
+                filesToMediaIndex = intent.getStringArrayListExtra(KEY_MEDIA_INDEX_FILES);
+                if (deletedFilesList == null) {
+                    deletedFilesList = LargeBundleTransfer.getFileData(AceApplication.getAppContext());
+                    isLargeBundle = true;
                 }
+                if (filesToMediaIndex == null) {
+                    filesToMediaIndex = LargeBundleTransfer.getStringData(AceApplication.getAppContext());
+                }
+
+
+//                for (FileInfo info : deletedFilesList) {
+//                    scanMultipleFiles(getActivity().getApplicationContext(), info.getFilePath());
+//                }
                 int totalFiles = intent.getIntExtra(KEY_COUNT, 0);
+
                 int deletedCount = deletedFilesList.size();
                 if (intent.getBooleanExtra(KEY_SHOW_RESULT, false)) {
 
@@ -839,6 +872,11 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 removeFavorite(deletedFilesList);
                 fileListAdapter.setStopAnimation(true);
                 fileListAdapter.updateAdapter(fileInfoList);
+                deleteFromMediaStore(filesToMediaIndex);
+                if (isLargeBundle) {
+                    LargeBundleTransfer.removeFileData(AceApplication.getAppContext());
+                    LargeBundleTransfer.removeStringData(AceApplication.getAppContext());
+                }
                 break;
 
             case RENAME:
@@ -884,31 +922,27 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 }, 1000); // Intentional delay to let mediascanner index file first and then lets change the title
                 break;
             case CUT:
-                ArrayList<String> movedFiles = intent.getStringArrayListExtra(KEY_FILES);
-                ArrayList<String> oldFiles = intent.getStringArrayListExtra(KEY_OLD_FILES);
-                ArrayList<Integer> categories = intent.getIntegerArrayListExtra(KEY_CATEGORY);
-
-                if (oldFiles != null) {
-                    for (int i = 0; i < oldFiles.size(); i++) {
-                        removeMedia(getActivity(), oldFiles.get(i), categories.get(i));
-                    }
-                }
-
-                if (movedFiles != null) {
-                    for (String path : movedFiles) {
-                        scanFile(getActivity().getApplicationContext(), path);
-                    }
-                }
                 refreshList();
+
+                final ArrayList<String> movedFiles = intent.getStringArrayListExtra(KEY_FILES);
+                final ArrayList<String> oldFiles = intent.getStringArrayListExtra(KEY_OLD_FILES);
+                final ArrayList<Integer> categories = intent.getIntegerArrayListExtra(KEY_CATEGORY);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (movedFiles != null) {
+                            String newList[] = new String[movedFiles.size()];
+                            scanMultipleFiles(AceApplication.getAppContext(), movedFiles.toArray(newList));
+                        }
+
+                        if (oldFiles != null) {
+                            removeBatchMedia(AceApplication.getAppContext(), oldFiles, null);
+                        }
+                    }
+                }).start();
                 break;
             case COPY:
-                ArrayList<String> copiedFiles = intent.getStringArrayListExtra(KEY_FILES);
-
-                if (copiedFiles != null) {
-                    for (String path : copiedFiles) {
-                        scanFile(getActivity().getApplicationContext(), path);
-                    }
-                }
                 refreshList();
                 break;
             case FOLDER_CREATION:
@@ -1000,7 +1034,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     private boolean checkIfBackStackExists() {
         int backStackSize = backStackInfo.getBackStack().size();
-        Logger.log(TAG, "checkIfBackStackExists --size=" + backStackSize + "homeCLicked:"+ isHomeClicked);
+        Logger.log(TAG, "checkIfBackStackExists --size=" + backStackSize + "homeCLicked:" + isHomeClicked);
 
         if (isHomeClicked) {
             return false;
@@ -1258,7 +1292,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     void passViewMode() {
         if (mIsDualModeEnabled) {
-            ((AceActivity)getActivity()).switchView(viewMode, !(fragment instanceof DualPaneList));
+            ((AceActivity) getActivity()).switchView(viewMode, !(fragment instanceof DualPaneList));
         }
     }
 
@@ -1419,7 +1453,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         bridge.persistSortMode(position);
         refreshList();
         if (mIsDualModeEnabled) {
-            ((AceActivity)getActivity()).refreshList(!(fragment instanceof DualPaneList)); //Intentional negation to make the other pane reflect changes
+            ((AceActivity) getActivity()).refreshList(!(fragment instanceof DualPaneList)); //Intentional negation to make the other pane reflect changes
         }
     }
 
@@ -1561,7 +1595,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         }
         View top = fileList.findChildViewUnder(event.getX(), event.getY());
         int position = fileList.getChildAdapterPosition(top);
-        Logger.log(TAG, "DROP new pos=" + position + " this:" + StoragesUiView.this + "fileListSize:"+fileList.getAdapter().getItemCount());
+        Logger.log(TAG, "DROP new pos=" + position + " this:" + StoragesUiView.this + "fileListSize:" + fileList.getAdapter().getItemCount());
         @SuppressWarnings("unchecked")
         ArrayList<FileInfo> draggedFiles = (ArrayList<FileInfo>) event.getLocalState();
         ArrayList<String> paths = new ArrayList<>();
@@ -1631,7 +1665,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 menuControls.endActionMode();
                 return;
             }
-            int dragCategory = intent.getIntExtra(FileConstants.KEY_CATEGORY, 0);
+            int dragCategory = intent.getIntExtra(KEY_CATEGORY, 0);
             Logger.log(TAG, "onDragEnded: category:" + category + " dropcat:" + dragCategory);
 
             if (dragCategory == FILES.getValue() && !category.equals(FILES)) {
@@ -1795,7 +1829,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         favoriteListener.updateFavorites(favInfoArrayList);
     }
 
-    void removeFavorite(ArrayList<FileInfo> fileInfoList) {
+    void removeFavorite(List<FileInfo> fileInfoList) {
         ArrayList<FavInfo> favInfoArrayList = new ArrayList<>();
         SharedPreferenceWrapper sharedPreferenceWrapper = new SharedPreferenceWrapper();
         for (int i = 0; i < fileInfoList.size(); i++) {
@@ -1809,10 +1843,12 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 favInfoArrayList.add(favInfo);
             }
         }
-        if (category.equals(FAVORITES)) {
-            refreshList();
+        if (favInfoArrayList.size() > 0) {
+            if (category.equals(FAVORITES)) {
+                refreshList();
+            }
+            favoriteListener.removeFavorites(favInfoArrayList);
         }
-        favoriteListener.removeFavorites(favInfoArrayList);
     }
 
 

@@ -37,7 +37,7 @@ import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.storage.model.task.CopyService;
 import com.siju.acexplorer.storage.model.task.CreateZipService;
 import com.siju.acexplorer.storage.model.task.ExtractService;
-import com.siju.acexplorer.storage.model.task.MoveFiles;
+import com.siju.acexplorer.storage.model.task.MoveService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -292,7 +292,7 @@ public class OperationProgress {
 
     private void stopMoveService() {
         Context context = AceApplication.getAppContext();
-        Intent intent = new Intent(context, MoveFiles.class);
+        Intent intent = new Intent(context, MoveService.class);
         context.stopService(intent);
         unregisterReceiver(context);
     }
@@ -394,8 +394,8 @@ public class OperationProgress {
                 break;
             case MOVE_PROGRESS:
                 int totalProgressPaste = intent.getIntExtra(KEY_TOTAL_PROGRESS, 0);
-                Logger.log("FileUtils", "KEY_PROGRESS=" + progress + " KEY_TOTAL KEY_PROGRESS=" + totalProgressPaste);
-                Logger.log("FileUtils", "Copied files=" + copiedBytes + " KEY_TOTAL files=" + totalBytes);
+                Logger.log(TAG, "KEY_PROGRESS=" + progress + " KEY_TOTAL KEY_PROGRESS=" + totalProgressPaste);
+                Logger.log(TAG, "Copied files=" + copiedBytes + " KEY_TOTAL files=" + totalBytes);
                 progressBarPaste.setProgress(totalProgressPaste);
                 textProgress.setText(String.format(Locale.getDefault(), "%d%s", totalProgressPaste, mContext.getString
                         (R.string.percent_placeholder)));

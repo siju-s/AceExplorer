@@ -58,7 +58,7 @@
     <string name="dialog_from_placeholder">Fra</string>
     <string name="dialog_to_placeholder">Til</string>
     <string name="background">Bakgrunn</string>
-    <string name="dialog_delete_title">Er du sikker på at du vil slette disse filene?</string>
+    <string name="dialog_delete_title">Er du sikker på at du vil slette %d filer?</string>
     <string name="msg_ok">OK</string>
     <string name="no_files">ingen filer</string>
     <string name="msg_error_invalid_name">Skriv inn et gyldig navn</string>

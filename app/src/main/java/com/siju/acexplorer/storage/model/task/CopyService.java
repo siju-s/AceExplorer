@@ -30,11 +30,13 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.FileListLoader;
 import com.siju.acexplorer.model.helper.FileUtils;
+import com.siju.acexplorer.model.helper.LargeBundleTransfer;
 import com.siju.acexplorer.model.helper.RootHelper;
 import com.siju.acexplorer.model.root.RootDeniedException;
 import com.siju.acexplorer.model.root.RootUtils;
@@ -52,6 +54,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.siju.acexplorer.model.helper.FileOperations.mkdir;
+import static com.siju.acexplorer.model.helper.MediaStoreHelper.scanMultipleFiles;
 import static com.siju.acexplorer.model.helper.SdkHelper.isOreo;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_CONFLICT_DATA;
@@ -99,23 +102,10 @@ public class CopyService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
+        Logger.log("CopyService", "onCreate: ");
         context = getApplicationContext();
-    }
-
-    @Override
-    protected void onHandleIntent(@Nullable Intent intent) {
-
-        if (intent == null) {
-            Log.e(this.getClass().getSimpleName(), "Null intent");
-            return;
-        }
-
-        files = intent.getParcelableArrayListExtra(KEY_FILES);
-        copyData = intent.getParcelableArrayListExtra(KEY_CONFLICT_DATA);
-        move = intent.getBooleanExtra(KEY_MOVE, false);
-
-        String currentDir = intent.getStringExtra(KEY_FILEPATH);
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
 
         Intent notificationIntent = new Intent(this, AceActivity.class);
         notificationIntent.setAction(Intent.ACTION_MAIN);
@@ -133,6 +123,30 @@ public class CopyService extends IntentService {
         startForeground(NOTIFICATION_ID, notification);
         // Issue the notification.
         notificationManager.notify(NOTIFICATION_ID, notification);
+    }
+
+    @Override
+    protected void onHandleIntent(@Nullable Intent intent) {
+
+        Logger.log("CopyService", "onHandleIntent: "+intent);
+        if (intent == null) {
+            Log.e(this.getClass().getSimpleName(), "Null intent");
+            return;
+        }
+
+        files = intent.getParcelableArrayListExtra(KEY_FILES);
+        if (files == null) {
+            files = LargeBundleTransfer.getFileData(context);
+            if (files == null) {
+                return;
+            } else {
+                LargeBundleTransfer.removeFileData(context);
+            }
+        }
+        copyData = intent.getParcelableArrayListExtra(KEY_CONFLICT_DATA);
+        move = intent.getBooleanExtra(KEY_MOVE, false);
+
+        String currentDir = intent.getStringExtra(KEY_FILEPATH);
         checkWriteMode(currentDir);
     }
 
@@ -249,7 +263,8 @@ public class CopyService extends IntentService {
         Intent intent = new Intent(ACTION_OP_REFRESH);
         intent.putExtra(KEY_RESULT, isSuccess);
         intent.putExtra(KEY_OPERATION, move ? CUT : COPY);
-        intent.putStringArrayListExtra(KEY_FILES, filesToMediaIndex);
+        String newList [] = new String[filesToMediaIndex.size()];
+        scanMultipleFiles(AceApplication.getAppContext(), filesToMediaIndex.toArray(newList));
         sendBroadcast(intent);
     }
 

@@ -57,7 +57,7 @@
     <string name="dialog_from_placeholder">從</string>
     <string name="dialog_to_placeholder">至</string>
     <string name="background">背景</string>
-    <string name="dialog_delete_title">您確定要刪除以下文件嗎？</string>
+    <string name="dialog_delete_title">您確定要刪除%d個文件嗎？</string>
     <string name="msg_ok">好</string>
     <string name="no_files">沒有文件</string>
     <string name="msg_error_invalid_name">輸入有效的名稱</string>

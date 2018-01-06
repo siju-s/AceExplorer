@@ -47,7 +47,6 @@ import static com.siju.acexplorer.model.groups.Category.IMAGE;
 import static com.siju.acexplorer.model.groups.Category.LARGE_FILES;
 import static com.siju.acexplorer.model.groups.Category.PDF;
 import static com.siju.acexplorer.model.groups.Category.VIDEO;
-import static com.siju.acexplorer.model.groups.Category.getCategoryName;
 
 public class LibrarySortActivity extends BaseActivity implements OnStartDragListener {
     private ItemTouchHelper         itemTouchHelper;
@@ -124,14 +123,13 @@ public class LibrarySortActivity extends BaseActivity implements OnStartDragList
         savedLibraries = sharedPreferenceWrapper.getLibraries(this);
         if (savedLibraries != null) {
             for (int j = 0; j < savedLibraries.size(); j++) {
-                Category category = savedLibraries.get(j).getCategory();
-                String name = getCategoryName(this, category);
-                totalLibraries.add(new LibrarySortModel(category, name));
+                int categoryId = savedLibraries.get(j).getCategoryId();
+                totalLibraries.add(new LibrarySortModel(categoryId));
             }
         }
 
         for (int i = 0; i < resourceIds.length; i++) {
-            LibrarySortModel model = new LibrarySortModel(categories[i], mLabels[i]);
+            LibrarySortModel model = new LibrarySortModel(categories[i].getValue());
             if (!totalLibraries.contains(model)) {
                 model.setChecked(false);
                 totalLibraries.add(model);

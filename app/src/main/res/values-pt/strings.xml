@@ -58,7 +58,7 @@
     <string name="dialog_from_placeholder">A partir de</string>
     <string name="dialog_to_placeholder">Para</string>
     <string name="background">fundo</string>
-    <string name="dialog_delete_title">Tem certeza de que deseja excluir os seguintes arquivos?</string>
+    <string name="dialog_delete_title">Tem certeza de que deseja excluir arquivos %d?</string>
     <string name="msg_ok">Está bem</string>
     <string name="no_files">Sem arquivos</string>
     <string name="msg_error_invalid_name">Insira um nome válido</string>

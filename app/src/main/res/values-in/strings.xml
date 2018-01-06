@@ -57,7 +57,7 @@
     <string name="dialog_from_placeholder">Dari</string>
     <string name="dialog_to_placeholder">Untuk</string>
     <string name="background">Latar Belakang</string>
-    <string name="dialog_delete_title">Apakah Anda yakin ingin menghapus file-file berikut?</string>
+    <string name="dialog_delete_title">Yakin ingin menghapus file %d?</string>
     <string name="msg_ok">baik</string>
     <string name="no_files">Tidak ada data</string>
     <string name="msg_error_invalid_name">Masukkan nama yang valid</string>

@@ -385,7 +385,7 @@ public class FileUtils {
      * @param file the file to be deleted.
      * @return True if successfully deleted.
      */
-    public static boolean deleteFile(@NonNull final File file) {
+    static boolean deleteFile(@NonNull final File file) {
         // First try the normal deletion.
         boolean fileDelete = deleteFilesInFolder(file);
         if (file.delete() || fileDelete) {

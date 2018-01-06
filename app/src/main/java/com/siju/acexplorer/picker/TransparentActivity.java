@@ -19,12 +19,15 @@ package com.siju.acexplorer.picker;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.storage.modules.picker.view.DialogBrowseFragment;
 import com.siju.acexplorer.theme.ThemeUtils;
 
+import static com.siju.acexplorer.settings.SettingsPreferenceFragment.PREFS_ANALYTICS;
 import static com.siju.acexplorer.theme.ThemeUtils.THEME_DARK;
 
 
@@ -33,6 +36,11 @@ public class TransparentActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        boolean sendAnalytics = PreferenceManager.getDefaultSharedPreferences(this).
+                getBoolean(PREFS_ANALYTICS, true);
+        Analytics.getLogger().sendAnalytics(sendAnalytics);
+        Analytics.getLogger().register(this);
+        Analytics.getLogger().reportDeviceName();
         Intent intent = getIntent();
         handleIntent(intent);
     }
@@ -59,8 +67,8 @@ public class TransparentActivity extends AppCompatActivity {
     private void showPickerDialog(Intent intent, boolean isRingtonePicker) {
 
         DialogBrowseFragment dialogFragment = DialogBrowseFragment.getNewInstance(checkTheme(),
-                                                                                  isRingtonePicker,
-                                                                                  intent.getIntExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, 0));
+                isRingtonePicker,
+                intent.getIntExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, 0));
         String FRAGMENT_TAG = "Browse_Frag";
         dialogFragment.show(getSupportFragmentManager(), FRAGMENT_TAG);
     }

@@ -58,7 +58,7 @@
     <string name="dialog_from_placeholder">Da parte di</string>
     <string name="dialog_to_placeholder">A</string>
     <string name="background">sfondo</string>
-    <string name="dialog_delete_title">Sei sicuro di voler eliminare i seguenti file?</string>
+    <string name="dialog_delete_title">Sei sicuro di voler eliminare %d file?</string>
     <string name="msg_ok">ok</string>
     <string name="no_files">Nessun documento</string>
     <string name="msg_error_invalid_name">Inserire un nome valido</string>

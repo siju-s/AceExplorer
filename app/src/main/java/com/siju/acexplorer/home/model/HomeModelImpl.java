@@ -20,12 +20,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Process;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentActivity;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.home.types.HomeLibraryInfo;
+import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FavInfo;
 import com.siju.acexplorer.model.SharedPreferenceWrapper;
 import com.siju.acexplorer.model.groups.Category;
@@ -43,6 +45,7 @@ import static com.siju.acexplorer.model.groups.Category.DOWNLOADS;
 import static com.siju.acexplorer.model.groups.Category.FAVORITES;
 import static com.siju.acexplorer.model.groups.Category.IMAGE;
 import static com.siju.acexplorer.model.groups.Category.VIDEO;
+import static com.siju.acexplorer.model.groups.Category.getCategoryName;
 
 /**
  * Created by Siju on 02 September,2017
@@ -60,6 +63,8 @@ public class HomeModelImpl implements HomeModel {
     private SharedPreferenceWrapper sharedPreferenceWrapper;
     private List<HomeLibraryInfo>   homeLibraryInfoArrayList;
     private HomeModel.Listener      listener;
+    // Used for fetching strings using activity context (since app context will not reflect new language strings if changed)
+    private FragmentActivity activity;
 
     public HomeModelImpl() {
         this.context = AceApplication.getAppContext();
@@ -100,14 +105,13 @@ public class HomeModelImpl implements HomeModel {
                 Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
                 for (int i = 0; i < selectedLibs.size(); i++) {
 
-                    Category category = selectedLibs.get(i).getCategory();
+                    Category category = Category.getCategory(selectedLibs.get(i).getCategoryId());
                     int resourceId = getResourceIdForCategory(category);
-                    String categoryName = selectedLibs.get(i).getLibraryName();
+                    String categoryName = getCategoryName(activity.getBaseContext(), category);
                     int count = 0;
 
                     for (int j = 0; j < tempLibraryInfoArrayList.size(); j++) {
-                        if (tempLibraryInfoArrayList.get(j).getCategory().equals(selectedLibs.get
-                                (i).getCategory())) {
+                        if (tempLibraryInfoArrayList.get(j).getCategory().equals(category)) {
                             count = tempLibraryInfoArrayList.get(j).getCount();
                             break;
                         }
@@ -133,6 +137,11 @@ public class HomeModelImpl implements HomeModel {
         sharedPreferenceWrapper.saveLibrary(context, librarySortModels);
     }
 
+    @Override
+    public void setActivityContext(FragmentActivity activity) {
+        this.activity = activity;
+    }
+
 
     @Override
     public void getLibraries() {
@@ -144,6 +153,7 @@ public class HomeModelImpl implements HomeModel {
 
                 if (isFirstRun) {
                     addDefaultLibraries();
+                    addPlusCategory();
                 } else {
                     addSavedLibraries();
                     addPlusCategory();
@@ -159,26 +169,32 @@ public class HomeModelImpl implements HomeModel {
 
     private void addDefaultLibraries() {
         for (int i = 0; i < resourceIds.length; i++) {
+            if (resourceIds[i] == R.drawable.ic_library_add) {
+                continue;
+            }
             addToLibrary(new HomeLibraryInfo(categories[i], labels[i], resourceIds[i], COUNT_ZERO));
             LibrarySortModel model = new LibrarySortModel();
-            model.setCategory(categories[i]);
-            model.setLibraryName(labels[i]);
+            model.setCategoryId(categories[i].getValue());
             model.setChecked(true);
-            if (!model.getCategory().equals(ADD)) {
-                sharedPreferenceWrapper.addLibrary(context, model);
-            }
+           sharedPreferenceWrapper.addLibrary(context, model);
         }
         sharedPreferences.edit().putBoolean(PREFS_FIRST_RUN, false).apply();
     }
 
 
     private void addSavedLibraries() {
+        boolean hasOldPrefs = sharedPreferenceWrapper.removeOldPrefs(context);
+        Logger.log(TAG, "has old prefs:"+hasOldPrefs);
+        if (hasOldPrefs) {
+            addDefaultLibraries();
+            return;
+        }
         ArrayList<LibrarySortModel> savedLibraries = sharedPreferenceWrapper.getLibraries(context);
         homeLibraryInfoArrayList.clear();
         for (int i = 0; i < savedLibraries.size(); i++) {
-            Category category = savedLibraries.get(i).getCategory();
+            Category category = Category.getCategory(savedLibraries.get(i).getCategoryId());
             int resourceId = getResourceIdForCategory(category);
-            String name = savedLibraries.get(i).getLibraryName();//getCategoryName(context, category);
+            String name = getCategoryName(activity.getBaseContext(), category);
             addToLibrary(new HomeLibraryInfo(category, name, resourceId,
                                              COUNT_ZERO));
         }

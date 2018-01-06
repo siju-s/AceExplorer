@@ -59,7 +59,7 @@
     <string name="dialog_from_placeholder">Din</string>
     <string name="dialog_to_placeholder">La</string>
     <string name="background">fundal</string>
-    <string name="dialog_delete_title">Sunteți sigur că doriți să ștergeți următoarele fișiere?</string>
+    <string name="dialog_delete_title">Sigur doriți să ștergeți fișierele %d?</string>
     <string name="msg_ok">O.K</string>
     <string name="no_files">Nu există fișiere</string>
     <string name="msg_error_invalid_name">Introduceți un nume valid</string>

@@ -36,6 +36,7 @@ import com.siju.acexplorer.model.FileConstants;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.SharedPreferenceWrapper;
 import com.siju.acexplorer.model.helper.FileUtils;
+import com.siju.acexplorer.model.helper.LargeBundleTransfer;
 import com.siju.acexplorer.model.helper.RootHelper;
 import com.siju.acexplorer.model.helper.SdkHelper;
 import com.siju.acexplorer.model.root.RootUtils;
@@ -46,7 +47,7 @@ import com.siju.acexplorer.storage.model.task.CopyService;
 import com.siju.acexplorer.storage.model.task.CreateZipService;
 import com.siju.acexplorer.storage.model.task.DeleteTask;
 import com.siju.acexplorer.storage.model.task.ExtractService;
-import com.siju.acexplorer.storage.model.task.MoveFiles;
+import com.siju.acexplorer.storage.model.task.MoveService;
 import com.siju.acexplorer.storage.model.task.PasteConflictChecker;
 import com.siju.acexplorer.view.dialog.DialogHelper;
 import com.stericson.RootTools.RootTools;
@@ -55,6 +56,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.siju.acexplorer.model.helper.LargeBundleTransfer.LARGE_BUNDLE_LIMIT;
 import static com.siju.acexplorer.model.helper.MediaStoreHelper.scanFile;
 import static com.siju.acexplorer.model.helper.PermissionsHelper.parse;
 import static com.siju.acexplorer.storage.model.operations.FileOpsHelper.checkWriteAccessMode;
@@ -63,6 +65,7 @@ import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_CO
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH2;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES;
+import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_MEDIA_INDEX_FILES;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OLD_FILES;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_SHOW_RESULT;
@@ -292,7 +295,11 @@ public class StorageModelImpl implements StoragesModel {
         } else if (mode == OperationUtils.WriteMode.INTERNAL) {
             Intent zipIntent = new Intent(context, CreateZipService.class);
             zipIntent.putExtra(KEY_FILEPATH, newFile.getAbsolutePath());
-            zipIntent.putParcelableArrayListExtra(KEY_FILES, files);
+            if (files.size() > LARGE_BUNDLE_LIMIT) {
+                LargeBundleTransfer.storeFileData(context, files);
+            } else {
+                zipIntent.putParcelableArrayListExtra(KEY_FILES, files);
+            }
             listener.showZipProgressDialog(zipIntent);
             if (SdkHelper.isOreo()) {
                 context.startForegroundService(zipIntent);
@@ -517,10 +524,15 @@ public class StorageModelImpl implements StoragesModel {
             }
             listener.showPasteProgressDialog(destinationDir, files, copyData, false);
             Intent intent = new Intent(context, CopyService.class);
-            intent.putParcelableArrayListExtra(OperationUtils.KEY_FILES, (ArrayList<? extends
-                    Parcelable>) files);
+
             intent.putParcelableArrayListExtra(OperationUtils.KEY_CONFLICT_DATA,
                     (ArrayList<? extends Parcelable>) copyData);
+            if (files.size() > LARGE_BUNDLE_LIMIT) {
+                LargeBundleTransfer.storeFileData(context, files);
+            } else {
+                intent.putParcelableArrayListExtra(OperationUtils.KEY_FILES, (ArrayList<? extends
+                        Parcelable>) files);
+            }
             intent.putExtra(OperationUtils.KEY_FILEPATH, destinationDir);
             if (SdkHelper.isOreo()) {
                 context.startForegroundService(intent);
@@ -534,9 +546,13 @@ public class StorageModelImpl implements StoragesModel {
 
     private void moveFiles(String destinationDir, final List<FileInfo> files, final List<CopyData> copyData) {
         listener.showPasteProgressDialog(destinationDir, files, copyData, true);
-        Intent intent = new Intent(context, MoveFiles.class);
-        intent.putParcelableArrayListExtra(OperationUtils.KEY_FILES, (ArrayList<? extends
-                Parcelable>) files);
+        Intent intent = new Intent(context, MoveService.class);
+        if (files.size() > LARGE_BUNDLE_LIMIT) {
+            LargeBundleTransfer.storeFileData(context, files);
+        } else {
+            intent.putParcelableArrayListExtra(OperationUtils.KEY_FILES, (ArrayList<? extends
+                    Parcelable>) files);
+        }
         intent.putParcelableArrayListExtra(OperationUtils.KEY_CONFLICT_DATA,
                 (ArrayList<? extends Parcelable>) copyData);
         intent.putExtra(OperationUtils.KEY_FILEPATH, destinationDir);
@@ -630,11 +646,17 @@ public class StorageModelImpl implements StoragesModel {
 
 
         @Override
-        public void onFileDeleted(int totalFiles, List<FileInfo> deletedFiles, boolean showToast) {
+        public void onFileDeleted(int totalFiles, List<FileInfo> deletedFiles, List<String> filestoMediaIndex, boolean showToast) {
             Intent intent = new Intent(ACTION_OP_REFRESH);
             Bundle bundle = new Bundle();
             bundle.putSerializable(KEY_OPERATION, DELETE);
-            bundle.putParcelableArrayList(KEY_FILES, (ArrayList<? extends Parcelable>) deletedFiles);
+            if (deletedFiles.size() > LARGE_BUNDLE_LIMIT) {
+                LargeBundleTransfer.storeFileData(context, deletedFiles);
+                LargeBundleTransfer.storeStringData(context, filestoMediaIndex);
+            } else {
+                bundle.putParcelableArrayList(KEY_FILES, (ArrayList<? extends Parcelable>) deletedFiles);
+                bundle.putStringArrayList(KEY_MEDIA_INDEX_FILES, (ArrayList<String>) filestoMediaIndex);
+            }
             intent.putExtra(KEY_COUNT, totalFiles);
             intent.putExtra(KEY_SHOW_RESULT, showToast);
             intent.putExtras(bundle);

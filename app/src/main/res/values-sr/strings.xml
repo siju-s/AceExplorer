@@ -59,7 +59,7 @@
     <string name="dialog_from_placeholder">од</string>
     <string name="dialog_to_placeholder">До</string>
     <string name="background">позадина</string>
-    <string name="dialog_delete_title">Да ли сте сигурни да желите да избришете следеће фајлове?</string>
+    <string name="dialog_delete_title">Да ли сте сигурни да желите да избришете %d д датотеке?</string>
     <string name="msg_ok">ок</string>
     <string name="no_files">Но филес</string>
     <string name="msg_error_invalid_name">Унесите важећи назив</string>

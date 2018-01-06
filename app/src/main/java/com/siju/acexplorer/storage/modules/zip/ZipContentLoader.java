@@ -324,7 +324,6 @@ class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                     String modelName = zipmodel.getEntry().getName();
                     if (modelName.startsWith(File.separator))
                         modelName = modelName.substring(1, modelName.length());
-//                    System.out.println("SIJU --Dir true--modelname" + modelName + " name=" + name);
 
                     if (modelName.startsWith(name)) {
                         count++;

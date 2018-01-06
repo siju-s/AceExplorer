@@ -19,16 +19,12 @@ package com.siju.acexplorer.home.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.siju.acexplorer.model.groups.Category;
-
 public class LibrarySortModel implements Parcelable {
-    private String   libraryName;
     private boolean  isChecked;
-    private Category category;
+    private int categoryId;
 
-    public LibrarySortModel(Category category, String libraryName) {
-        this.category = category;
-        this.libraryName = libraryName;
+    public LibrarySortModel(int categoryId) {
+        this.categoryId = categoryId;
         this.isChecked = true;
     }
 
@@ -48,7 +44,7 @@ public class LibrarySortModel implements Parcelable {
             return false;
         }
         LibrarySortModel o = (LibrarySortModel) obj;
-        return o.category.equals(this.category);
+        return o.categoryId == (this.categoryId);
     }
 
     @Override
@@ -56,17 +52,25 @@ public class LibrarySortModel implements Parcelable {
         return super.hashCode();
     }
 
-    public Category getCategory() {
-        return category;
+    public int getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
     }
 
-    private LibrarySortModel(Parcel in) {
-        category = (Category) in.readSerializable();
-        libraryName = in.readString();
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
+    }
+
+
+    protected LibrarySortModel(Parcel in) {
+        categoryId = in.readInt();
         isChecked = in.readByte() != 0;
     }
 
@@ -82,32 +86,14 @@ public class LibrarySortModel implements Parcelable {
         }
     };
 
-    public String getLibraryName() {
-        return libraryName;
-    }
-
-    public void setLibraryName(String libraryName) {
-        this.libraryName = libraryName;
-    }
-
-    public boolean isChecked() {
-        return isChecked;
-    }
-
-    public void setChecked(boolean checked) {
-        isChecked = checked;
-    }
-
     @Override
     public int describeContents() {
         return 0;
     }
 
     @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-        parcel.writeSerializable(category);
-        parcel.writeString(libraryName);
-        parcel.writeByte((byte) (isChecked ? 1 : 0));
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(categoryId);
+        dest.writeByte((byte) (isChecked ? 1 : 0));
     }
 }

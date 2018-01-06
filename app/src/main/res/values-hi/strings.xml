@@ -58,7 +58,7 @@
     <string name="dialog_from_placeholder">से</string>
     <string name="dialog_to_placeholder">सेवा मेरे:</string>
     <string name="background">पृष्ठभूमि</string>
-    <string name="dialog_delete_title">आप निम्न फ़ाइलों को हटाना चाहते हैं आप सुनिश्चित हैं?</string>
+    <string name="dialog_delete_title">क्या आप वाकई %d फ़ाइलों को हटाना चाहते हैं?</string>
     <string name="msg_ok">ठीक</string>
     <string name="no_files">कोई फाइल नहीं</string>
     <string name="msg_error_invalid_name">एक मान्य नाम दर्ज करें</string>

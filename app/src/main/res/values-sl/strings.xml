@@ -60,7 +60,7 @@
     <string name="dialog_from_placeholder">iz</string>
     <string name="dialog_to_placeholder">Za</string>
     <string name="background">Ozadje</string>
-    <string name="dialog_delete_title">Ali ste prepričani, da želite izbrisati te datoteke?</string>
+    <string name="dialog_delete_title">Ali ste prepričani, da želite izbrisati %d datotek?</string>
     <string name="msg_ok">v redu</string>
     <string name="no_files">ni datotek</string>
     <string name="msg_error_invalid_name">Vnesite veljavno ime</string>

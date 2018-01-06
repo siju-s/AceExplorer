@@ -28,7 +28,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AlertDialog;
 import android.text.format.Formatter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,7 +74,7 @@ public class DialogHelper {
      */
     public static void showDeleteDialog(final Context context, final ArrayList<FileInfo> fileInfo,
                                         final DeleteDialogListener deleteDialogListener) {
-        String title = context.getString(R.string.dialog_delete_title);
+        String title = context.getString(R.string.dialog_delete_title, fileInfo.size());
         String texts[] = new String[]{title, context.getString(R.string.msg_ok), "", context
                 .getString(R.string
                                    .dialog_cancel)};
@@ -91,7 +90,6 @@ public class DialogHelper {
 
 
         TextView textTitle = dialogView.findViewById(R.id.textTitle);
-        TextView textItems = dialogView.findViewById(R.id.textDeleteItems);
         Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
         Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
 
@@ -99,19 +97,6 @@ public class DialogHelper {
         positiveButton.setText(texts[1]);
         negativeButton.setText(texts[3]);
 
-
-        StringBuilder items = new StringBuilder();
-        for (int i = 0; i < fileInfo.size(); i++) {
-            String path = fileInfo.get(i).getFilePath();
-            items.append(path).append('\n');
-            if (i == 9 && fileInfo.size() > 10) {
-                int rem = fileInfo.size() - 10;
-                items.append("+").append(rem).append(" ").append(context.getString(R.string.more));
-                break;
-            }
-        }
-
-        textItems.setText(items);
 
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override

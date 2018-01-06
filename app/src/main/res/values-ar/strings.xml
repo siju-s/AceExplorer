@@ -62,7 +62,7 @@
     <string name="dialog_from_placeholder">من عند</string>
     <string name="dialog_to_placeholder">إلى:</string>
     <string name="background">خلفية</string>
-    <string name="dialog_delete_title">هل أنت متأكد أنك تريد حذف الملفات التالية؟</string>
+    <string name="dialog_delete_title">هل تريد بالتأكيد حذف %d من الملفات؟</string>
     <string name="msg_ok">حسنا</string>
     <string name="no_files">لا ملفات</string>
     <string name="msg_error_invalid_name">أدخل اسم صالح</string>

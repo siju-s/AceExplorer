@@ -61,7 +61,7 @@
     <string name="dialog_from_placeholder">ó</string>
     <string name="dialog_to_placeholder">Chun:</string>
     <string name="background">cúlra</string>
-    <string name="dialog_delete_title">An bhfuil tú cinnte go bhfuil tú ag iarraidh a scriosadh na comhaid seo a leanas?</string>
+    <string name="dialog_delete_title">An bhfuil tú cinnte gur mhaith leat %d a scriosadh?</string>
     <string name="msg_ok">OK</string>
     <string name="no_files">Uimh comhaid</string>
     <string name="msg_error_invalid_name">Iontráil ainm bailí</string>

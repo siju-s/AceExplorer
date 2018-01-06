@@ -34,8 +34,16 @@ import static com.siju.acexplorer.model.StorageUtils.getDownloadsDirectory;
 public class SharedPreferenceWrapper {
 
     private static final String PREFS_NAME = "PREFS";
-    private static final String FAVORITES  = "Product_Favorite";
-    private static final String LIBRARIES  = "Library";
+    private static final String PREFS_NAME_TEMP = "PREFS_TEMP";
+
+    private static final String FAVORITES_OLD = "Product_Favorite";
+    private static final String LIBRARIES_OLD = "Library";
+
+    private static final String FAVORITES = "Favorite";
+    private static final String LIBRARIES = "Libs";
+    private static final String TEMP_FILE_DATA = "File_data";
+    private static final String TEMP_STRING_DATA = "String_data";
+
 
     private static final String PREFS_VIEW_MODE = "view-mode";
 
@@ -108,16 +116,17 @@ public class SharedPreferenceWrapper {
     }
 
     public ArrayList<FavInfo> getFavorites(Context context) {
-        SharedPreferences settings;
+        SharedPreferences sharedPreferences;
         ArrayList<FavInfo> favorites = new ArrayList<>();
 
-        settings = context.getSharedPreferences(PREFS_NAME,
-                                                Context.MODE_PRIVATE);
-        if (settings.contains(FAVORITES)) {
-            String jsonFavorites = settings.getString(FAVORITES, null);
+        sharedPreferences = context.getSharedPreferences(PREFS_NAME,
+                Context.MODE_PRIVATE);
+        removeOldFavPref(sharedPreferences);
+        if (sharedPreferences.contains(FAVORITES)) {
+            String jsonFavorites = sharedPreferences.getString(FAVORITES, null);
             Gson gson = new Gson();
             FavInfo[] favoriteItems = gson.fromJson(jsonFavorites,
-                                                    FavInfo[].class);
+                    FavInfo[].class);
             favorites.addAll(Arrays.asList(favoriteItems));
         }
 
@@ -130,22 +139,22 @@ public class SharedPreferenceWrapper {
             libraries.add(librarySortModel);
             saveLibrary(context, libraries);
         }
-        Logger.log("SIJU", "addLibrary=" + libraries.size());
+        Logger.log("SharedWrapper", "addLibrary=" + libraries.size());
 
     }
 
 
     public ArrayList<LibrarySortModel> getLibraries(Context context) {
-        SharedPreferences settings;
+        SharedPreferences preferences;
         ArrayList<LibrarySortModel> libraries = new ArrayList<>();
 
-        settings = context.getSharedPreferences(PREFS_NAME,
-                                                Context.MODE_PRIVATE);
-        if (settings.contains(LIBRARIES)) {
-            String jsonFavorites = settings.getString(LIBRARIES, null);
+        preferences = context.getSharedPreferences(PREFS_NAME,
+                Context.MODE_PRIVATE);
+        if (preferences.contains(LIBRARIES)) {
+            String jsonFavorites = preferences.getString(LIBRARIES, null);
             Gson gson = new Gson();
             LibrarySortModel[] libItems = gson.fromJson(jsonFavorites,
-                                                        LibrarySortModel[].class);
+                    LibrarySortModel[].class);
             libraries.addAll(Arrays.asList(libItems));
         }
 
@@ -168,12 +177,12 @@ public class SharedPreferenceWrapper {
         SharedPreferences.Editor editor;
 
         settings = context.getSharedPreferences(PREFS_NAME,
-                                                Context.MODE_PRIVATE);
+                Context.MODE_PRIVATE);
         editor = settings.edit();
 
         Gson gson = new Gson();
         String jsonFavorites = gson.toJson(librarySortModel);
-        Logger.log("SIJU", "Save library=" + jsonFavorites);
+        Logger.log("SharedWrapper", "Save library=" + jsonFavorites);
         editor.putString(LIBRARIES, jsonFavorites);
 
         editor.apply();
@@ -185,7 +194,7 @@ public class SharedPreferenceWrapper {
         int mode;
 
         sharedPreferences = context.getSharedPreferences(PREFS_NAME,
-                                                         Context.MODE_PRIVATE);
+                Context.MODE_PRIVATE);
         if (sharedPreferences.contains(PREFS_VIEW_MODE)) {
             mode = sharedPreferences.getInt(PREFS_VIEW_MODE, ViewMode.LIST);
         } else {
@@ -216,4 +225,117 @@ public class SharedPreferenceWrapper {
         }
 
     }
+
+    public boolean removeOldPrefs(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME,
+                Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        boolean hadOldPrefs = false;
+        if (preferences.contains(LIBRARIES_OLD)) {
+            hadOldPrefs = true;
+            editor.remove(LIBRARIES_OLD).apply();
+        }
+
+        return hadOldPrefs;
+
+    }
+
+    private boolean removeOldFavPref(SharedPreferences preferences) {
+
+        if (preferences.contains(FAVORITES_OLD)) {
+            preferences.edit().remove(FAVORITES_OLD).apply();
+            return true;
+        }
+        return false;
+    }
+
+    public void storeFileData(Context context, List<FileInfo> fileInfo) {
+        SharedPreferences settings;
+        SharedPreferences.Editor editor;
+
+        settings = context.getSharedPreferences(PREFS_NAME_TEMP,
+                Context.MODE_PRIVATE);
+        editor = settings.edit();
+
+        Gson gson = new Gson();
+        String value = gson.toJson(fileInfo);
+        Logger.log("SharedWrapper", "storeFileData=" + fileInfo.size());
+        editor.putString(TEMP_FILE_DATA, value);
+        editor.apply();
+    }
+
+
+
+    public List<FileInfo> getFileData(Context context) {
+        SharedPreferences preferences;
+        ArrayList<FileInfo> files = new ArrayList<>();
+
+        preferences = context.getSharedPreferences(PREFS_NAME_TEMP,
+                Context.MODE_PRIVATE);
+        if (preferences.contains(TEMP_FILE_DATA)) {
+
+            String jsonFavorites = preferences.getString(TEMP_FILE_DATA, null);
+            Gson gson = new Gson();
+            FileInfo[] libItems = gson.fromJson(jsonFavorites,
+                    FileInfo[].class);
+            files.addAll(Arrays.asList(libItems));
+            Logger.log("SharedWrapper", "getFileData="+files.size());
+        }
+        return files;
+    }
+
+    public void removeFileData(Context context) {
+        SharedPreferences preferences;
+        preferences = context.getSharedPreferences(PREFS_NAME_TEMP,
+                Context.MODE_PRIVATE);
+        if (preferences.contains(TEMP_FILE_DATA)) {
+            Logger.log("SharedWrapper", "removeFileData=");
+            preferences.edit().remove(TEMP_FILE_DATA).apply();
+        }
+    }
+
+    public void storeStringData(Context context, List<String> fileInfo) {
+        SharedPreferences settings;
+        SharedPreferences.Editor editor;
+
+        settings = context.getSharedPreferences(PREFS_NAME_TEMP,
+                Context.MODE_PRIVATE);
+        editor = settings.edit();
+
+        Gson gson = new Gson();
+        String value = gson.toJson(fileInfo);
+        Logger.log("SharedWrapper", "storeStringData=" + fileInfo.size());
+        editor.putString(TEMP_STRING_DATA, value);
+        editor.apply();
+    }
+
+    public void removeStringData(Context context) {
+        SharedPreferences preferences;
+        preferences = context.getSharedPreferences(PREFS_NAME_TEMP,
+                Context.MODE_PRIVATE);
+        if (preferences.contains(TEMP_STRING_DATA)) {
+            Logger.log("SharedWrapper", "removeStringData=");
+            preferences.edit().remove(TEMP_STRING_DATA).apply();
+        }
+    }
+
+    public List<String> getStringData(Context context) {
+        SharedPreferences preferences;
+        ArrayList<String> files = new ArrayList<>();
+
+        preferences = context.getSharedPreferences(PREFS_NAME_TEMP,
+                Context.MODE_PRIVATE);
+        if (preferences.contains(TEMP_STRING_DATA)) {
+
+            String jsonFavorites = preferences.getString(TEMP_STRING_DATA, null);
+            Gson gson = new Gson();
+            String[] libItems = gson.fromJson(jsonFavorites,
+                    String[].class);
+            files.addAll(Arrays.asList(libItems));
+            Logger.log("SharedWrapper", "getStringData="+files.size());
+        }
+        return files;
+    }
+
+
 }
