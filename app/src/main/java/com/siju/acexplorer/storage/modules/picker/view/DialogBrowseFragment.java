@@ -187,7 +187,7 @@ public class DialogBrowseFragment extends DialogFragment implements
         textCurrentPath.setText(currentPath);
 
         fileList.setItemAnimator(new DefaultItemAnimator());
-        fileListAdapter = new FileListAdapter(getContext(), fileInfoList, FILES, ViewMode.LIST);
+        fileListAdapter = new FileListAdapter(getContext(), fileInfoList, FILES, ViewMode.LIST, null);
         fileList.setAdapter(fileListAdapter);
 
         setListeners();
@@ -197,7 +197,7 @@ public class DialogBrowseFragment extends DialogFragment implements
     private void setListeners() {
         fileListAdapter.setOnItemClickListener(new FileListAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(int position) {
+            public void onItemClick(View view, int position) {
                 File file = new File(fileInfoList.get(position).getFilePath());
                 if (file.isDirectory()) {
                     isStoragesList = false;

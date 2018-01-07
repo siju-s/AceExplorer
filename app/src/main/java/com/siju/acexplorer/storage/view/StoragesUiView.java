@@ -94,6 +94,7 @@ import com.siju.acexplorer.storage.view.custom.DividerItemDecoration;
 import com.siju.acexplorer.storage.view.custom.GridItemDecoration;
 import com.siju.acexplorer.storage.view.custom.recyclerview.FastScrollRecyclerView;
 import com.siju.acexplorer.theme.Theme;
+import com.siju.acexplorer.ui.peekandpop.PeekAndPop;
 import com.siju.acexplorer.utils.ConfigurationHelper;
 import com.siju.acexplorer.view.AceActivity;
 import com.siju.acexplorer.view.DrawerListener;
@@ -200,6 +201,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     private String mSelectedPath;
     private FileInfo fileInfo;
     private boolean isHomeClicked;
+    private PeekAndPop peekAndPop;
 
 
     public StoragesUiView(Context context, AttributeSet attrs) {
@@ -401,12 +403,31 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
         fileListAdapter.setOnItemClickListener(new FileListAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(int position) {
-                if (isActionModeActive() && !menuControls.isPasteOp()) {
-                    itemClickActionMode(position, false);
-                } else {
-                    handleItemClick(position);
+            public void onItemClick(View view, int position) {
+                if (position >= fileInfoList.size() || position == RecyclerView.NO_POSITION) {
+                    return;
                 }
+                switch (view.getId()) {
+                    case R.id.imagePeekView:
+                        handleItemClick(position);
+                        break;
+                    case R.id.imageButtonInfo:
+                        menuControls.showInfoDialog(fileInfoList.get(position), category);
+                        break;
+                    case R.id.imageButtonShare:
+                        ArrayList<FileInfo> files = new ArrayList<>();
+                        files.add(fileInfoList.get(position));
+                        menuControls.shareFiles(files, category);
+                        break;
+                    default:
+                        if (isActionModeActive() && !menuControls.isPasteOp()) {
+                            itemClickActionMode(position, false);
+                        } else {
+                            handleItemClick(position);
+                        }
+                     break;
+                }
+
             }
         });
         fileListAdapter.setOnItemLongClickListener(new FileListAdapter.OnItemLongClickListener() {
@@ -598,8 +619,10 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             refreshSpan(((AceActivity) getActivity()).getConfiguration());
         }
         fileList.setItemAnimator(new DefaultItemAnimator());
+        peekAndPop = new PeekAndPop.Builder(getActivity()).peekLayout(R.layout.peek_pop).
+                parentViewGroupToDisallowTouchEvents(fileList).build();
         fileListAdapter = new FileListAdapter(getContext(), fileInfoList,
-                category, viewMode);
+                category, viewMode, peekAndPop);
         fileListAdapter.setSearchCallback(this);
     }
 
@@ -630,10 +653,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     private String extension;
 
     private void handleItemClick(int position) {
-        if (position >= fileInfoList.size() || position == RecyclerView.NO_POSITION) {
-            return;
-        }
-
         switch (category) {
             case AUDIO:
             case VIDEO:
@@ -960,12 +979,23 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         }
     }
 
+    private boolean isPeekMode() {
+        return peekAndPop.getPeekView().isShown();
+    }
+
+    private void endPeekMode() {
+        peekAndPop.destroy();
+    }
+
     /**
      * @return false to avoid call to super.onBackPressed()
      */
     public boolean onBackPressed() {
 
-        if (menuControls.isSearch()) {
+        if (isPeekMode()) {
+            endPeekMode();
+        }
+        else if (menuControls.isSearch()) {
             menuControls.endSearch();
             return false;
         } else if (isZipMode()) {
@@ -1315,7 +1345,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
         shouldStopAnimation = true;
 
-        fileListAdapter = new FileListAdapter(getContext(), fileInfoList, category, viewMode);
+        fileListAdapter = new FileListAdapter(getContext(), fileInfoList, category, viewMode, peekAndPop);
         fileListAdapter.setSearchCallback(this);
 
         fileList.setAdapter(fileListAdapter);

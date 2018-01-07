@@ -103,6 +103,8 @@ public class Analytics {
 
         String EV_PICKER = "Picker";
 
+        String EV_PEEK = "Peek";
+
 
         void register(Context context);
 
@@ -171,5 +173,7 @@ public class Analytics {
         void logEvent(String event, Bundle params);
 
         void logEvent(String event);
+
+        void enterPeekMode();
     }
 }

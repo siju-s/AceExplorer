@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/peek_pop_size"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/padding_10"
+    android:orientation="horizontal">
+
+
+    <ImageButton
+        android:id="@+id/imageButtonInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_info_white"
+        android:background="@null"
+        android:layout_alignParentStart="true" />
+
+    <ImageButton
+        android:id="@+id/imageButtonShare"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:background="@null"
+        android:src="@drawable/ic_share"/>
+
+</RelativeLayout>

@@ -21,6 +21,7 @@ import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.Formatter;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,29 +33,35 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.storage.model.ViewMode;
 import com.siju.acexplorer.theme.ThemeUtils;
+import com.siju.acexplorer.ui.peekandpop.PeekAndPop;
 
 import java.util.ArrayList;
 
+import static com.siju.acexplorer.model.groups.Category.AUDIO;
+import static com.siju.acexplorer.model.groups.Category.IMAGE;
 import static com.siju.acexplorer.model.groups.Category.PICKER;
+import static com.siju.acexplorer.model.groups.Category.VIDEO;
 import static com.siju.acexplorer.utils.ThumbnailUtils.displayThumb;
 
 
 public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final int TYPE_ITEM   = 1;
-    private static final int TYPE_FOOTER = 2;
-    private static final String TAG = "FileListAdapter";
+    private static final int    TYPE_ITEM   = 1;
+    private static final int    TYPE_FOOTER = 2;
+    private static final int    INVALID_POS = -1;
+    private static final String TAG         = "FileListAdapter";
     private Context context;
 
-    private       ArrayList<FileInfo> fileList = new ArrayList<>();
+    private       ArrayList<FileInfo> fileList     = new ArrayList<>();
     private       ArrayList<FileInfo> filteredList = new ArrayList<>();
-    private final SparseBooleanArray  mAnimatedPos          = new SparseBooleanArray();
+    private final SparseBooleanArray  mAnimatedPos = new SparseBooleanArray();
     private SparseBooleanArray      mSelectedItemsIds;
     private OnItemClickListener     mItemClickListener;
     private OnItemLongClickListener mOnItemLongClickListener;
@@ -66,14 +73,17 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private int offset = 0;
     boolean mStopAnimation;
     private boolean mIsAnimNeeded = true;
-    private final boolean mIsThemeDark;
+    private final boolean    mIsThemeDark;
+    private       PeekAndPop peekAndPop;
+    private int peekPos = INVALID_POS;
 
 
     public FileListAdapter(Context context, ArrayList<FileInfo>
-            fileList, Category category, int viewMode) {
+            fileList, Category category, int viewMode, PeekAndPop peekAndPop) {
 
         this.context = context;
         this.fileList = fileList;
+        this.peekAndPop = peekAndPop;
         if (fileList != null) {
             filteredList.addAll(fileList);
         }
@@ -82,6 +92,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.mViewMode = viewMode;
         mAnimation = R.anim.fade_in_top;
         mIsThemeDark = ThemeUtils.isDarkTheme(context);
+        setPeekPopListener();
     }
 
     public void updateAdapter(ArrayList<FileInfo> fileInfos) {
@@ -124,7 +135,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public interface OnItemClickListener {
-        void onItemClick(int position);
+        void onItemClick(View view, int position);
     }
 
     interface OnItemLongClickListener {
@@ -178,6 +189,53 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return new FileListViewHolder(view);
 
 
+    }
+
+    private void setPeekPopListener() {
+        if (peekAndPop == null) {
+            return;
+        }
+
+        peekAndPop.setOnGeneralActionListener(new PeekAndPop.OnGeneralActionListener() {
+            @Override
+            public void onPeek(View longClickView, int position) {
+                Log.d(TAG, "onPeek: " + longClickView + " pos:" + position);
+                loadPeekView(position);
+            }
+
+            @Override
+            public void onPop(View longClickView, int position) {
+                peekPos = INVALID_POS;
+            }
+        });
+
+        peekAndPop.setOnClickListener(new PeekAndPop.OnClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                Log.d(TAG, "onClick: view:" + view + " pos:" + position + " peekPos:" + peekPos);
+                if (peekPos == INVALID_POS) {
+                    return;
+                }
+                if (mItemClickListener != null) {
+                    mItemClickListener.onItemClick(view, peekPos);
+                }
+            }
+        });
+    }
+
+    private void loadPeekView(int position) {
+        Analytics.getLogger().enterPeekMode();
+        this.peekPos = position;
+        View view = peekAndPop.getPeekView();
+        TextView titleText = view.findViewById(R.id.titlePeekView);
+        ImageView thumb = view.findViewById(R.id.imagePeekView);
+        FileInfo fileInfo = fileList.get(position);
+        titleText.setText(fileInfo.getFileName());
+        displayThumb(context, fileInfo, fileInfo.getCategory(), thumb, null);
+    }
+
+    private boolean isPeekPopCategory(Category category) {
+        return category.equals(IMAGE) || category.equals(VIDEO) || category.equals(AUDIO);
     }
 
     @Override
@@ -250,13 +308,17 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private void setViewByCategory(FileListViewHolder fileListViewHolder, int position) {
         FileInfo fileInfo = fileList.get(position);
 
-        if (fileInfo.getCategory().equals(PICKER)) {
+        Category category = fileInfo.getCategory();
+        if (category.equals(PICKER)) {
             fileListViewHolder.imageIcon.setImageResource(fileInfo.getIcon());
             fileListViewHolder.textFileName.setText(fileInfo.getFileName());
         } else {
+            if (peekAndPop != null && isPeekPopCategory(category)) {
+                peekAndPop.addClickView(fileListViewHolder.imageIcon, position);
+            }
             String fileName = fileInfo.getFileName();
             String fileDate;
-            if (Category.checkIfFileCategory(category)) {
+            if (Category.checkIfFileCategory(this.category)) {
                 fileDate = FileUtils.convertDate(fileInfo.getDate());
             } else {
                 fileDate = FileUtils.convertDate(fileInfo.getDate() * 1000);
@@ -290,7 +352,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
             fileListViewHolder.textNoOfFileOrSize.setText(fileNoOrSize);
 
-            displayThumb(context, fileInfo, fileInfo.getCategory(), fileListViewHolder.imageIcon,
+            displayThumb(context, fileInfo, category, fileListViewHolder.imageIcon,
                          fileListViewHolder.imageThumbIcon);
         }
 
@@ -394,6 +456,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             if (mViewMode == ViewMode.LIST) {
                 textFileModifiedDate = itemView.findViewById(R.id.textDate);
             }
+            imageIcon.setOnLongClickListener(this);
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
         }
@@ -401,10 +464,11 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         @Override
         public void onClick(View v) {
-            Logger.log("TAG", "" + mItemClickListener);
+            int pos =  getAdapterPosition();
+            Logger.log(TAG, "" + mItemClickListener + " pos:"+pos);
 
             if (mItemClickListener != null) {
-                mItemClickListener.onItemClick(getAdapterPosition());
+                mItemClickListener.onItemClick(v, pos);
             }
         }
 

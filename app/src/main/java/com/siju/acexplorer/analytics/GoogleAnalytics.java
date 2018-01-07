@@ -234,6 +234,12 @@ public class GoogleAnalytics implements Analytics.Logger {
         logEvent(EV_PICKER, params);
     }
 
+
+    @Override
+    public void enterPeekMode() {
+        logEvent(EV_PEEK);
+    }
+
     @Override
     public void sendAnalytics(boolean isSent) {
         sendAnalytics = isSent;

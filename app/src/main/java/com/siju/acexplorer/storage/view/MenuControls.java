@@ -344,7 +344,6 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
 
             case R.id.action_share:
                 if (selectedItems != null && selectedItems.size() > 0) {
-                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_SHARE);
                     ArrayList<FileInfo> filesToShare = new ArrayList<>();
                     for (int i = 0; i < selectedItems.size(); i++) {
                         FileInfo info = fileInfoList.get(selectedItems.keyAt(i));
@@ -352,7 +351,7 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
                             filesToShare.add(info);
                         }
                     }
-                    ShareHelper.shareFiles(context, filesToShare, category);
+                    shareFiles(filesToShare, category);
                     endActionMode();
                 }
                 break;
@@ -369,9 +368,8 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
             case R.id.action_info:
 
                 if (selectedItems != null && selectedItems.size() > 0) {
-                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_PROPERTIES);
                     FileInfo fileInfo = fileInfoList.get(selectedItems.keyAt(0));
-                    DialogHelper.showInfoDialog(context, fileInfo, category.equals(FILES));
+                    showInfoDialog(fileInfo, category);
                     endActionMode();
                 }
                 break;
@@ -465,6 +463,16 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
                 break;
         }
         return false;
+    }
+
+    void showInfoDialog(FileInfo fileInfo, Category category) {
+        Analytics.getLogger().operationClicked(Analytics.Logger.EV_PROPERTIES);
+        DialogHelper.showInfoDialog(context, fileInfo, category.equals(FILES));
+    }
+
+    void shareFiles(ArrayList<FileInfo> filesToShare, Category category) {
+        Analytics.getLogger().operationClicked(Analytics.Logger.EV_SHARE);
+        ShareHelper.shareFiles(context, filesToShare, category);
     }
 
     private void clearSelection() {
