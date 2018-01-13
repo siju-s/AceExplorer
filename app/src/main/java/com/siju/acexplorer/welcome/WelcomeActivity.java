@@ -45,6 +45,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
             R.raw.library,
             R.raw.drawer,
             R.raw.dragdrop,
+            R.raw.dualpane,
             R.raw.theme
     };
 
@@ -76,16 +77,19 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         String[] headerText = {getString(R.string.slide_1_title),
                 getString(R.string.slide_2_title),
                 getString(R.string.slide_3_title),
+                getString(R.string.dual_pane_intro_title),
                 getString(R.string.slide_4_title)};
 
         String[] text = {getString(R.string.slide_1_desc),
                 getString(R.string.slide_2_desc),
                 getString(R.string.slide_3_desc),
+                getString(R.string.dual_pane_intro_subtitle),
                 getString(R.string.slide_4_desc)};
         int[] bgColors = {ContextCompat.getColor(this, R.color.bg_screen1),
                 ContextCompat.getColor(this, R.color.bg_screen2),
                 ContextCompat.getColor(this, R.color.bg_screen3),
-                ContextCompat.getColor(this, R.color.bg_screen4)};
+                ContextCompat.getColor(this, R.color.bg_screen4),
+                ContextCompat.getColor(this, R.color.bg_screen5)};
         adapter = new WelcomePagerAdapter(this, mImageResources, headerText, text, bgColors);
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(0);

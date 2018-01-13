@@ -47,6 +47,9 @@ import java.util.List;
 import static com.siju.acexplorer.model.groups.Category.ADD;
 import static com.siju.acexplorer.model.groups.Category.DOWNLOADS;
 import static com.siju.acexplorer.model.groups.Category.FAVORITES;
+import static com.siju.acexplorer.model.groups.Category.GENERIC_IMAGES;
+import static com.siju.acexplorer.model.groups.Category.GENERIC_MUSIC;
+import static com.siju.acexplorer.model.groups.Category.GENERIC_VIDEOS;
 
 /**
  * Created by Siju on 03 September,2017
@@ -188,8 +191,19 @@ class HomeLibrary {
             homeUiView.getFragment().startActivityForResult(intent, LIBSORT_REQUEST_CODE);
         } else {
             String path = null;
-            if (category.equals(DOWNLOADS)) {
-                path = StorageUtils.getDownloadsDirectory();
+            switch (category) {
+                case DOWNLOADS:
+                    path = StorageUtils.getDownloadsDirectory();
+                    break;
+                case AUDIO:
+                    category = GENERIC_MUSIC;
+                    break;
+                case IMAGE:
+                    category = GENERIC_IMAGES;
+                    break;
+                case VIDEO:
+                    category = GENERIC_VIDEOS;
+                    break;
             }
             homeUiView.loadFileList(path, category);
         }

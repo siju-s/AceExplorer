@@ -16,6 +16,7 @@ public class CustomGlideModule extends AppGlideModule {
     public void registerComponents(Context context, Glide glide, Registry registry) {
         registry.append(ApplicationInfo.class, Drawable.class, new AppIconDecoder(context));
         registry.append(String.class, ApplicationInfo.class, new PassAppModelLoader.PassAppModelLoaderFactory());
+        registry.append(ApplicationInfo.class, ApplicationInfo.class, new AppManagerModelLoader.AppManagerModelLoaderFactory());
     }
 
     @Override

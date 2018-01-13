@@ -43,9 +43,11 @@ import static com.siju.acexplorer.model.groups.Category.COMPRESSED;
 import static com.siju.acexplorer.model.groups.Category.DOCS;
 import static com.siju.acexplorer.model.groups.Category.DOWNLOADS;
 import static com.siju.acexplorer.model.groups.Category.FAVORITES;
+import static com.siju.acexplorer.model.groups.Category.GIF;
 import static com.siju.acexplorer.model.groups.Category.IMAGE;
 import static com.siju.acexplorer.model.groups.Category.LARGE_FILES;
 import static com.siju.acexplorer.model.groups.Category.PDF;
+import static com.siju.acexplorer.model.groups.Category.RECENT;
 import static com.siju.acexplorer.model.groups.Category.VIDEO;
 
 public class LibrarySortActivity extends BaseActivity implements OnStartDragListener {
@@ -93,19 +95,17 @@ public class LibrarySortActivity extends BaseActivity implements OnStartDragList
                 R.drawable.ic_library_videos, R.drawable.ic_library_docs,
                 R.drawable.ic_library_downloads,
                 R.drawable.ic_library_compressed, R.drawable.ic_library_favorite,
-                R.drawable.ic_library_pdf, R.drawable.ic_library_apk, R.drawable.ic_library_large};
+                R.drawable.ic_library_pdf, R.drawable.ic_library_apk, R.drawable.ic_library_large,
+        R.drawable.ic_library_gif,
+        R.drawable.ic_library_recents};
         // No Add Label to be shown
-        mLabels = new String[]{getString(R.string
-                                                 .nav_menu_image), getString(R.string
-                                                                                     .nav_menu_music), getString(R.string
-                                                                                                                         .nav_menu_video), getString(R.string
-                                                                                                                                                             .home_docs), getString(R.string
-                                                                                                                                                                                            .downloads), getString(R.string
-                                                                                                                                                                                                                           .compressed), getString(R.string
-                                                                                                                                                                                                                                                           .nav_header_favourites), getString(R.string
-                                                                                                                                                                                                                                                                                                      .pdf), getString(R.string
-                                                                                                                                                                                                                                                                                                                               .apk), getString(R.string
-                                                                                                                                                                                                                                                                                                                                                        .library_large)};
+        mLabels = new String[]{getString(R.string.nav_menu_image), getString(R.string.nav_menu_music),
+                getString(R.string.nav_menu_video), getString(R.string.home_docs),
+                getString(R.string.downloads), getString(R.string.compressed),
+                getString(R.string.nav_header_favourites), getString(R.string.pdf),
+                                  getString(R.string.apk), getString(R.string.library_large),
+        getString(R.string.library_gif),
+                getString(R.string.library_recent)};
         categories = new Category[]{IMAGE,
                 AUDIO,
                 VIDEO,
@@ -115,7 +115,9 @@ public class LibrarySortActivity extends BaseActivity implements OnStartDragList
                 FAVORITES,
                 PDF,
                 APPS,
-                LARGE_FILES};
+                LARGE_FILES,
+                GIF,
+        RECENT};
     }
 
 

@@ -19,6 +19,7 @@ package com.siju.acexplorer.home.model;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
 
+import com.siju.acexplorer.appmanager.AppLoader;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.FileListLoader;
 import com.siju.acexplorer.model.StorageUtils;
@@ -39,26 +40,43 @@ public class LoaderHelper {
 
     public Loader<ArrayList<FileInfo>> createLoader(Category category, int id) {
 //        Log.d("LoaderHelper", "createLoader: Category:"+category + " id:"+id);
-        switch (id) {
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 7:
-            case 8:
-            case 9:
-            case 10:
-            case 11:
-                return new FileListLoader(fragment, null, category, false);
-            case 5:
+        switch (category) {
+            case AUDIO:
+            case VIDEO:
+            case IMAGE:
+            case DOCS:
+            case COMPRESSED:
+            case FAVORITES:
+            case PDF:
+            case APPS:
+            case LARGE_FILES:
+            case GIF:
+            case RECENT:
+            case GENERIC_MUSIC:
+            case ALL_TRACKS:
+            case ALBUMS:
+            case ARTISTS:
+            case GENRES:
+            case ALARMS:
+            case NOTIFICATIONS:
+            case RINGTONES:
+            case PODCASTS:
+                return new FileListLoader(fragment, null, category, false, FileListLoader.INVALID_ID);
+            case DOWNLOADS:
                 String path = StorageUtils.getDownloadsDirectory();
-                return new FileListLoader(fragment, path, category, false);
+                return new FileListLoader(fragment, path, category, false, FileListLoader.INVALID_ID);
         }
         return null;
     }
 
-    public Loader<ArrayList<FileInfo>> createLoader(String path, Category category, boolean isPicker) {
+    public Loader<ArrayList<FileInfo>> createLoader(String path, Category category, boolean isPicker, long id) {
 //        Log.d(this.getClass().getSimpleName(), "createLoader: "+path);
-        return new FileListLoader(fragment, path, category, isPicker);
+        if (fragment == null) {
+            return null;
+        }
+        if (category.equals(Category.APP_MANAGER)) {
+            return new AppLoader(fragment.getContext());
+        }
+        return new FileListLoader(fragment, path, category, isPicker, id);
     }
 }

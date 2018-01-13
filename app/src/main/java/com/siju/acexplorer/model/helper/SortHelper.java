@@ -93,6 +93,39 @@ public class SortHelper {
     }
 
 
+    public static ArrayList<FileInfo> sortAppManager(ArrayList<FileInfo> files, int sortMode) {
+
+        switch (sortMode) {
+            case 0:
+                Collections.sort(files, comparatorByName);
+                break;
+            case 1:
+                Collections.sort(files, comparatorByNameDesc);
+                break;
+            case 2:
+                Collections.sort(files, comparatorByType);
+                break;
+            case 3:
+                Collections.sort(files, comparatorByTypeDesc);
+                break;
+            case 4:
+                Collections.sort(files, comparatorBySizeApk);
+                break;
+            case 5:
+                Collections.sort(files, comparatorBySizeApkDesc);
+                break;
+            case 6:
+                Collections.sort(files, comparatorByDateApk);
+                break;
+            case 7:
+                Collections.sort(files, comparatorByDateApkDesc);
+                break;
+
+        }
+        return files;
+    }
+
+
     private static final Comparator<? super FileInfo> comparatorByName = new Comparator<FileInfo>() {
 
         public int compare(FileInfo file1, FileInfo file2) {
@@ -155,6 +188,46 @@ public class SortHelper {
             Long first = getSize(new File(file1.getFilePath()));
             Long second = getSize(new File(file2.getFilePath()));
             return second.compareTo(first);
+        }
+    };
+
+    private static final Comparator<? super FileInfo> comparatorBySizeApk = new Comparator<FileInfo>() {
+
+        public int compare(FileInfo file1, FileInfo file2) {
+
+            Long first = file1.getSize();
+            Long second = file2.getSize();
+            return first.compareTo(second);
+        }
+    };
+
+    private static final Comparator<? super FileInfo> comparatorBySizeApkDesc = new Comparator<FileInfo>() {
+
+        public int compare(FileInfo file1, FileInfo file2) {
+
+            Long first = file1.getSize();
+            Long second = file2.getSize();
+            return second.compareTo(first);
+        }
+    };
+
+    private static final Comparator<? super FileInfo> comparatorByDateApk = new Comparator<FileInfo>() {
+
+        public int compare(FileInfo file1, FileInfo file2) {
+
+            Long date1 = file1.getDate();
+            Long date2 = file2.getDate();
+            return date1.compareTo(date2);
+        }
+    };
+
+    private static final Comparator<? super FileInfo> comparatorByDateApkDesc = new Comparator<FileInfo>() {
+
+        public int compare(FileInfo file1, FileInfo file2) {
+
+            Long date1 = file1.getDate();
+            Long date2 = file2.getDate();
+            return date2.compareTo(date1);
         }
     };
 

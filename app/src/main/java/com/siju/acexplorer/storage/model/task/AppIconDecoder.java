@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.bumptech.glide.load.Options;
@@ -22,21 +23,20 @@ class AppIconDecoder implements ResourceDecoder<ApplicationInfo, Drawable> {
     }
 
     @Override
-    public boolean handles(ApplicationInfo source, Options options) throws IOException {
+    public boolean handles(@NonNull ApplicationInfo source, @NonNull Options options) throws IOException {
         return true;
     }
 
     @Nullable
     @Override
-    public Resource<Drawable> decode(ApplicationInfo applicationInfo, int width, int height, Options
+    public Resource<Drawable> decode(@NonNull ApplicationInfo applicationInfo, int width, int height, @NonNull Options
             options) throws IOException {
-        if (applicationInfo == null) {
-            return null;
-        }
         Drawable icon = applicationInfo.loadIcon(context.getPackageManager());
+
 
         return new DrawableResource<Drawable>(icon) {
 
+            @NonNull
             @Override
             public Class<Drawable> getResourceClass() {
                 return Drawable.class;

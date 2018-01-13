@@ -39,10 +39,12 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import static com.siju.acexplorer.model.StorageUtils.getInternalStorage;
+import static com.siju.acexplorer.model.groups.CategoryHelper.checkIfAnyMusicCategory;
+import static com.siju.acexplorer.model.groups.CategoryHelper.getCategoryName;
 
 
 public class NavigationInfo {
-    private static final String TAG = "NavigationInfo";
+    private static final String TAG       = "NavigationInfo";
     private static final String SEPARATOR = "/";
     private Context              context;
     private LinearLayout         navDirectory;
@@ -117,66 +119,151 @@ public class NavigationInfo {
                 }
             });
             addViewToNavigation(imageButton);
-
-            ImageView navArrow = new ImageView(context);
-            params.leftMargin = 15;
-            params.rightMargin = 20;
-            navArrow.setImageResource(R.drawable.ic_arrow_nav);
-            navArrow.setLayoutParams(params);
-            addViewToNavigation(navArrow);
-            addTitleText(category);
+            addArrowButton();
+            addTitleText(category, false);
         } else {
-            addTitleText(category);
+            addTitleText(category, false);
         }
 
     }
 
-    private void addTitleText(Category category) {
+    private void addHomeNavButton(boolean isHomeScreenEnabled, Category category, boolean isLessPadding) {
+
+        clearNavigation();
+        if (isHomeScreenEnabled) {
+            ImageButton imageButton = new ImageButton(context);
+            imageButton.setImageResource(R.drawable.ic_home_white);
+            imageButton.setBackgroundColor(Color.parseColor("#00ffffff"));
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            params.gravity = Gravity.CENTER_VERTICAL;
+
+            imageButton.setLayoutParams(params);
+            imageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Analytics.getLogger().navBarClicked(true);
+                    navigationCallback.onHomeClicked();
+                }
+            });
+            addViewToNavigation(imageButton);
+            addArrowButton();
+            addTitleText(category, isLessPadding);
+        } else {
+            addTitleText(category, isLessPadding);
+        }
+
+    }
+
+    private void addArrowButton() {
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.gravity = Gravity.CENTER_VERTICAL;
+        ImageView navArrow = new ImageView(context);
+        params.leftMargin = 15;
+        params.rightMargin = 20;
+        navArrow.setImageResource(R.drawable.ic_arrow_nav);
+        navArrow.setLayoutParams(params);
+        addViewToNavigation(navArrow);
+    }
+
+    private void addTitleText(Category category, boolean shouldBeLessPadding) {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params.gravity = Gravity.CENTER_VERTICAL;
 
         if (!category.equals(Category.FILES) && !category.equals(Category.DOWNLOADS)) {
-            String title = getTitleForCategory(category).toUpperCase(Locale.getDefault());
+            String title = getCategoryName(context, category).toUpperCase(Locale.getDefault());
             final TextView textView = new TextView(context);
             textView.setText(title);
             textView.setTextColor(ContextCompat.getColor(context, R.color.navButtons));
             textView.setTextSize(19);
             int paddingLeft = context.getResources().getDimensionPixelSize(R.dimen.padding_10);
 
-            int paddingRight = context.getResources().getDimensionPixelSize(R.dimen.padding_60);
+            int paddingRight;
+            if (shouldBeLessPadding) {
+                paddingRight = paddingLeft;
+            } else {
+                paddingRight = context.getResources().getDimensionPixelSize(R.dimen.padding_60);
+
+            }
             textView.setPadding(paddingLeft, 0, paddingRight, 0);
             textView.setLayoutParams(params);
             addViewToNavigation(textView);
         }
     }
 
-    private String getTitleForCategory(Category category) {
-        switch (category) {
-            case AUDIO:
-                return context.getString(R.string.audio);
-            case VIDEO:
-                return context.getString(R.string.nav_menu_video);
-            case IMAGE:
-                return context.getString(R.string.nav_menu_image);
-            case DOCS:
-                return context.getString(R.string.nav_menu_docs);
-            case DOWNLOADS:
-                return context.getString(R.string.downloads);
-            case COMPRESSED:
-                return context.getString(R.string.compressed);
-            case FAVORITES:
-                return context.getString(R.string.nav_header_favourites);
-            case PDF:
-                return context.getString(R.string.pdf);
-            case APPS:
-                return context.getString(R.string.apk);
-            case LARGE_FILES:
-                return context.getString(R.string.library_large);
+    private void addTitleText(String category) {
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.gravity = Gravity.CENTER_VERTICAL;
 
-        }
-        return context.getString(R.string.app_name);
+        String title = category.toUpperCase(Locale.getDefault());
+        final TextView textView = new TextView(context);
+        textView.setText(title);
+        textView.setTextColor(ContextCompat.getColor(context, R.color.navButtons));
+        textView.setTextSize(19);
+        int paddingLeft = context.getResources().getDimensionPixelSize(R.dimen.padding_10);
+
+        textView.setPadding(paddingLeft, 0, paddingLeft, 0);
+        textView.setLayoutParams(params);
+        addViewToNavigation(textView);
     }
+
+    public void addLibSpecificNavButtons(boolean isHomeScreenEnabled, Category category, String bucketName) {
+
+        if (checkIfAnyMusicCategory(category)) {
+            addHomeNavButton(isHomeScreenEnabled, Category.AUDIO, true);
+            switch (category) {
+                case ALBUM_DETAIL:
+                case ALBUMS:
+                    addArrowButton();
+                    addTitleText(Category.ALBUMS, true);
+                    if (bucketName != null) {
+                        addArrowButton();
+                        addTitleText(bucketName);
+                    }
+                    break;
+                case ARTIST_DETAIL:
+                case ARTISTS:
+                    addArrowButton();
+                    addTitleText(Category.ARTISTS, true);
+                    if (bucketName != null) {
+                        addArrowButton();
+                        addTitleText(bucketName);
+                    }
+                    break;
+                case GENRE_DETAIL:
+                case GENRES:
+                    addArrowButton();
+                    addTitleText(Category.GENRES, true);
+                    if (bucketName != null) {
+                        addArrowButton();
+                        addTitleText(bucketName);
+                    }
+                    break;
+                case ALARMS:
+                case NOTIFICATIONS:
+                case RINGTONES:
+                case ALL_TRACKS:
+                case PODCASTS:
+                    addArrowButton();
+                    addTitleText(category, true);
+                    break;
+
+            }
+        } else if (category.equals(Category.FOLDER_VIDEOS)) {
+            addHomeNavButton(isHomeScreenEnabled, Category.VIDEO, true);
+            addArrowButton();
+            addTitleText(bucketName);
+        } else if (category.equals(Category.FOLDER_IMAGES)) {
+            addHomeNavButton(isHomeScreenEnabled, Category.IMAGE, true);
+            addArrowButton();
+            addTitleText(bucketName);
+        }
+
+    }
+
 
     public void setNavDirectory(String path, boolean isHomeScreenEnabled, Category category) {
         String[] parts;

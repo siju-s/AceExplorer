@@ -26,6 +26,7 @@ import com.siju.acexplorer.model.groups.Category;
 public class FileInfo implements Parcelable {
 
     private Category category;
+    private Category subcategory;
     private String   fileName;
     private String   filePath;
     private String   fileDate;
@@ -41,6 +42,9 @@ public class FileInfo implements Parcelable {
 
     private long id       = -1;
     private long bucketId = -1;
+
+    private String title;
+    private long   numTracks;
 
 
     public FileInfo(Category category, String fileName, String filePath, long fileDate, long
@@ -88,6 +92,13 @@ public class FileInfo implements Parcelable {
         this.count = count;
     }
 
+    // For HomeLib count
+    public FileInfo(Category category, Category subcategory, int count) {
+        this.category = category;
+        this.subcategory = subcategory;
+        this.count = count;
+    }
+
     private FileInfo(Parcel in) {
         category = (Category) in.readSerializable();
         fileName = in.readString();
@@ -100,6 +111,33 @@ public class FileInfo implements Parcelable {
         bucketId = in.readLong();
         permissions = in.readString();
         isRootMode = in.readByte() != 0;
+
+    }
+
+    public FileInfo(Category category, long albumId, String title, long numTracks) {
+        this.category = category;
+        this.id = albumId;
+        this.title = title;
+        this.numTracks = numTracks;
+    }
+
+    // Folder Images
+    public FileInfo(Category category, long bucketId, String bucketName, String path, int count) {
+        this.category = category;
+        this.bucketId = bucketId;
+        this.fileName = bucketName;
+        this.filePath = path;
+        this.numTracks = count;
+
+    }
+
+    // App manager
+    public FileInfo(Category category, String name, String packageName, long date, long size) {
+        this.category = category;
+        this.fileName = name;
+        this.filePath = packageName;
+        this.date = date;
+        this.size = size;
 
     }
 
@@ -262,6 +300,31 @@ public class FileInfo implements Parcelable {
 
     public void setPermissions(String permissions) {
         this.permissions = permissions;
+    }
+
+    public Category getSubcategory() {
+        return subcategory;
+    }
+
+    public void setSubcategory(Category subcategory) {
+        this.subcategory = subcategory;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+
+    public long getNumTracks() {
+        return numTracks;
+    }
+
+    public void setNumTracks(long numTracks) {
+        this.numTracks = numTracks;
     }
 
     @Override

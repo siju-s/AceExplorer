@@ -322,8 +322,8 @@ public class StorageBridge implements StoragesUi {
     }
 
 
-    void loadData(String currentDir, Category category) {
-        listener.loadData(currentDir, category);
+    void loadData(String currentDir, Category category, long id) {
+        listener.loadData(currentDir, category, id);
     }
 
     BillingStatus checkBillingStatus() {

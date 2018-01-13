@@ -48,6 +48,8 @@ public class StoragesPresenterImpl implements StoragesUi.Listener,
 
     private static final int    LOADER_ID  = 1000;
     private static final String KEY_PICKER = "picker";
+    private static final String KEY_ID = "id";
+
     private static final String KEY_PATH = "path";
 
     private StoragesUi    storagesUi;
@@ -69,11 +71,12 @@ public class StoragesPresenterImpl implements StoragesUi.Listener,
 
 
     @Override
-    public void loadData(String currentDir, Category category) {
+    public void loadData(String currentDir, Category category, long id) {
         this.category = category;
         Bundle args = new Bundle();
         args.putString(KEY_PATH, currentDir);
         args.putBoolean(KEY_PICKER, false);
+        args.putLong(KEY_ID, id);
         loaderManager.restartLoader(LOADER_ID, args, this);
     }
 
@@ -263,7 +266,8 @@ public class StoragesPresenterImpl implements StoragesUi.Listener,
     @Override
     public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
 
-        return loaderHelper.createLoader(args.getString(KEY_PATH), category, args.getBoolean(KEY_PICKER));
+        return loaderHelper.createLoader(args.getString(KEY_PATH), category, args.getBoolean(KEY_PICKER),
+                                         args.getLong(KEY_ID));
     }
 
     @Override

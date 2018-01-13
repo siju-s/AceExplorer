@@ -36,6 +36,9 @@ import com.siju.acexplorer.storage.view.custom.helper.ItemTouchHelperViewHolder;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import static com.siju.acexplorer.model.groups.CategoryHelper.getCategory;
+import static com.siju.acexplorer.model.groups.CategoryHelper.getCategoryName;
+
 class LibrarySortAdapter extends RecyclerView.Adapter<LibrarySortAdapter.LibrarySortViewHolder>
         implements ItemTouchHelperAdapter
 {
@@ -65,9 +68,9 @@ class LibrarySortAdapter extends RecyclerView.Adapter<LibrarySortAdapter.Library
         //change background color if list item is selected
         final LibrarySortModel model = totalLibraries.get(position);
 
-        Category category = Category.getCategory(model.getCategoryId());
+        Category category = getCategory(model.getCategoryId());
 
-        librarySortViewHolder.textLibrary.setText(Category.getCategoryName(context,category));
+        librarySortViewHolder.textLibrary.setText(getCategoryName(context,category));
 
         librarySortViewHolder.imageSort.setOnTouchListener(new View.OnTouchListener() {
             @Override

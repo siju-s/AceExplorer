@@ -75,6 +75,7 @@ import static com.siju.acexplorer.model.groups.Category.AUDIO;
 import static com.siju.acexplorer.model.groups.Category.FILES;
 import static com.siju.acexplorer.model.groups.Category.IMAGE;
 import static com.siju.acexplorer.model.groups.Category.VIDEO;
+import static com.siju.acexplorer.model.groups.CategoryHelper.getCategory;
 import static com.siju.acexplorer.settings.SettingsPreferenceFragment.PREFS_LANGUAGE;
 import static com.siju.acexplorer.theme.ThemeUtils.CURRENT_THEME;
 import static com.siju.acexplorer.theme.ThemeUtils.PREFS_THEME;
@@ -432,7 +433,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     }
 
     void onLibraryItemClicked(int childPos) {
-        Category category = Category.getCategory(childPos);
+        Category category = getCategory(childPos);
         displayFileList(null, category);
     }
 

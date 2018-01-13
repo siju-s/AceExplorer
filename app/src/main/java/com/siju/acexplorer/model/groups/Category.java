@@ -16,10 +16,6 @@
 
 package com.siju.acexplorer.model.groups;
 
-import android.content.Context;
-
-import com.siju.acexplorer.R;
-
 public enum Category {
     FILES(0),
     AUDIO(1),
@@ -35,7 +31,26 @@ public enum Category {
     LARGE_FILES(11),
     ZIP_VIEWER(12),
     GENERIC_LIST(13),
-    PICKER(14);
+    PICKER(14),
+    GIF(15),
+    RECENT(16),
+    ALBUMS(17),
+    ARTISTS(18),
+    GENRES(19),
+    ALARMS(20),
+    NOTIFICATIONS(21),
+    RINGTONES(22),
+    PODCASTS(23),
+    GENERIC_MUSIC(24),
+    ALL_TRACKS(25),
+    ALBUM_DETAIL(26),
+    ARTIST_DETAIL(27),
+    GENRE_DETAIL(28),
+    GENERIC_IMAGES(29),
+    FOLDER_IMAGES(30),
+    GENERIC_VIDEOS(31),
+    FOLDER_VIDEOS(32),
+    APP_MANAGER(33);
 
     private final int value;
 
@@ -48,73 +63,4 @@ public enum Category {
         return value;
     }
 
-    public static Category getCategory(int position) {
-        switch (position) {
-            case 0:
-                return FILES;
-            case 1:
-                return AUDIO;
-            case 2:
-                return VIDEO;
-            case 3:
-                return IMAGE;
-            case 4:
-                return DOCS;
-            case 5:
-                return DOWNLOADS;
-            case 7:
-                return COMPRESSED;
-            case 8:
-                return FAVORITES;
-            case 9:
-                return PDF;
-            case 10:
-                return APPS;
-            case 11:
-                return LARGE_FILES;
-            case 12:
-                return ZIP_VIEWER;
-            case 13:
-                return GENERIC_LIST;
-            case 14:
-                return PICKER;
-        }
-        return FILES;
-    }
-
-    public static boolean checkIfFileCategory(Category category) {
-        return category.equals(FILES) ||
-                category.equals(COMPRESSED) ||
-                category.equals(DOWNLOADS) ||
-                category.equals(FAVORITES) ||
-                category.equals(LARGE_FILES);
-    }
-
-    public static String getCategoryName(Context context, Category categoryId) {
-        switch (categoryId) {
-            case AUDIO:
-                return context.getString(R.string.audio);
-            case VIDEO:
-                return context.getString(R.string.nav_menu_video);
-            case IMAGE:
-                return context.getString(R.string.nav_menu_image);
-            case DOCS:
-                return context.getString(R.string.nav_menu_docs);
-            case DOWNLOADS:
-                return context.getString(R.string.downloads);
-            case ADD:
-                return context.getString(R.string.home_add);
-            case COMPRESSED:
-                return context.getString(R.string.compressed);
-            case FAVORITES:
-                return context.getString(R.string.nav_header_favourites);
-            case PDF:
-                return context.getString(R.string.pdf);
-            case APPS:
-                return context.getString(R.string.apk);
-            case LARGE_FILES:
-                return context.getString(R.string.library_large);
-        }
-        return context.getString(R.string.audio);
-    }
 }

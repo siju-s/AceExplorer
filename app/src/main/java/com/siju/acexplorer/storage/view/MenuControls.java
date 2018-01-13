@@ -25,6 +25,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,6 +36,7 @@ import android.widget.Toast;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
+import com.siju.acexplorer.appmanager.AppHelper;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.model.helper.FileUtils;
@@ -50,8 +52,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.siju.acexplorer.R.string.hide;
+import static com.siju.acexplorer.model.groups.Category.APP_MANAGER;
 import static com.siju.acexplorer.model.groups.Category.FAVORITES;
 import static com.siju.acexplorer.model.groups.Category.FILES;
+import static com.siju.acexplorer.model.groups.CategoryHelper.checkIfAnyMusicCategory;
+import static com.siju.acexplorer.model.groups.CategoryHelper.isSortOrActionModeUnSupported;
 
 /**
  * Created by Siju on 04 September,2017
@@ -87,6 +92,7 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
     private String  currentDir;
     private boolean isMoveOperation;
     private boolean isPasteVisible;
+    private MenuItem sortItem;
 
 
     MenuControls(Activity activity, StoragesUiView storagesUiView, Theme theme) {
@@ -100,7 +106,9 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
 
     void setCategory(Category category) {
         this.category = category;
+
     }
+
 
     void setCurrentDir(String currentDir) {
         this.currentDir = currentDir;
@@ -195,6 +203,7 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
     }
 
     void setupMenuVisibility(SparseBooleanArray selectedItemPos) {
+        Log.d(TAG, "setupMenuVisibility: "+category);
         List<FileInfo> fileInfoList = storagesUiView.getFileList();
         if (selectedItemPos.size() > 1) {
             mRenameItem.setVisible(false);
@@ -222,6 +231,18 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
                 }
                 if (!isDirectory) {
                     mFavItem.setVisible(false);
+                }
+
+                if (category.equals(APP_MANAGER)) {
+                    mRenameItem.setVisible(false);
+                    mPermissionItem.setVisible(false);
+                    mExtractItem.setVisible(false);
+                    mArchiveItem.setVisible(false);
+                    mShareItem.setVisible(false);
+                } else if (checkIfAnyMusicCategory(category)) {
+                    mPermissionItem.setVisible(false);
+                    mExtractItem.setVisible(false);
+                    mArchiveItem.setVisible(false);
                 }
 
             }
@@ -268,8 +289,21 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
         searchItem = menu.findItem(R.id.action_search);
         searchView = (android.support.v7.widget.SearchView) searchItem.getActionView();
         mViewItem = menu.findItem(R.id.action_view);
+        sortItem = menu.findItem(R.id.action_sort);
+        setupSortVisibility();
         updateMenuTitle(storagesUiView.getViewMode());
         setupSearchView();
+    }
+
+    public void setupSortVisibility() {
+        if (sortItem == null) {
+            return;
+        }
+        if (isSortOrActionModeUnSupported(category)) {
+            sortItem.setVisible(false);
+        } else {
+            sortItem.setVisible(true);
+        }
     }
 
 
@@ -324,8 +358,10 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
 
                 if (selectedItems != null && selectedItems.size() > 0) {
                     ArrayList<FileInfo> filesToDelete = new ArrayList<>();
+                    ArrayList<String> packages = new ArrayList<>();
                     for (int i = 0; i < selectedItems.size(); i++) {
                         FileInfo info = fileInfoList.get(selectedItems.keyAt(i));
+                        packages.add(info.getFilePath());
                         filesToDelete.add(info);
                     }
                     if (category.equals(FAVORITES)) {
@@ -333,7 +369,12 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
                         storagesUiView.removeFavorite(filesToDelete);
                         Toast.makeText(context, context.getString(R.string.fav_removed), Toast
                                 .LENGTH_SHORT).show();
-                    } else {
+                    } else if (category.equals(APP_MANAGER)) {
+                        Analytics.getLogger().operationClicked(Analytics.Logger.EV_DELETE);
+                        uninstallApps(packages);
+                    }
+
+                    else {
                         Analytics.getLogger().operationClicked(Analytics.Logger.EV_DELETE);
                         DialogHelper.showDeleteDialog(context, filesToDelete, deleteDialogListener);
                     }
@@ -463,6 +504,12 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
                 break;
         }
         return false;
+    }
+
+    private void uninstallApps(ArrayList<String> packages) {
+        for (String packageName : packages) {
+            AppHelper.uninstallApp(storagesUiView.getActivity(), packageName);
+        }
     }
 
     void showInfoDialog(FileInfo fileInfo, Category category) {

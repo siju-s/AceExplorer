@@ -25,7 +25,8 @@ public enum DrawerGroup {
     STORAGE(0),
     FAVORITES(1),
     LIBRARY(2),
-    OTHERS(3);
+    OTHERS(3),
+    TOOLS(4);
 
     private final int value;
 
@@ -47,6 +48,8 @@ public enum DrawerGroup {
             case 2:
                 return LIBRARY;
             case 3:
+                return TOOLS;
+            case 4 :
                 return OTHERS;
         }
         return STORAGE;
@@ -60,6 +63,8 @@ public enum DrawerGroup {
                 return context.getString(R.string.nav_header_favourites);
             case LIBRARY:
                 return context.getString(R.string.nav_header_collections);
+            case TOOLS:
+                return context.getString(R.string.nav_header_tools);
         }
         return null;
     }

@@ -88,17 +88,7 @@
     <string name="action_view_list">List view</string>
     <string name="action_view_grid">Grid view</string>
 
-    <string name="sort_name">Name (A-Z)</string>
-    <string name="sort_name_desc">Name (Z-A)</string>
 
-    <string name="sort_type">Type (Ascending)</string>
-    <string name="sort_type_desc">Type (Descending)</string>
-
-    <string name="sort_size">Size (Smaller)</string>
-    <string name="sort_size_desc">Size (Bigger)</string>
-
-    <string name="sort_date">Date (Older)</string>
-    <string name="sort_date_desc">Date (Newest)</string>
     <string name="extract_to">Extract to</string>
     <string name="open">Open</string>
     <string name="extracting">Extracting..</string>
@@ -223,5 +213,45 @@
     <string name="analytics_summary">Help us improve app by sending anonymous usage data.</string>
     <string name="move_complete">Move Completed</string>
 
+    <!-- Start for 2.0 update -->
+    <string name="dual_pane_intro_title">Dual pane</string>
+    <string name="dual_pane_intro_subtitle">Dual mode for better usability.</string>
+    <string name="library_gif">GIF</string>
+    <string name="sort_name">Name</string>
+    <string name="sort_type">Type</string>
+    <string name="sort_size">Size</string>
+    <string name="sort_date">Date</string>
+    <string name="ascending">Ascending</string>
+    <string name="library_recent">Recent</string>
+
+    <string name="albums">Albums</string>
+    <string name="artists">Artists</string>
+    <string name="genres">Genres</string>
+    <string name="all_tracks">All Songs</string>
+    <string name="notifications">Notifications</string>
+    <string name="alarms">Alarms</string>
+    <string name="ringtones">Ringtones</string>
+    <string name="podcasts">Podcasts</string>
+    <string name="mute">mute</string>
+    <string name="unmute">unmute</string>
+    
+    <string name="uninstall">uninstall</string>
+    <string name="package_name">Package name</string>
+    <string name="version_name">Version</string>
+    <string name="installed_source">Source</string>
+    <string name="min_sdk">Min SDK</string>
+    <string name="target_sdk">Target SDK</string>
+    <string name="installed">Installed</string>
+    <string name="updated">Updated</string>
+    <string name="nav_header_tools">Tools</string>
+    <string name="app_manager">App manager</string>
+    <string name="category">Category</string>
+    <string name="app_detail">App detail</string>
+    <string name="unknown">Unknown</string>
+    <string name="play_store">Play store</string>
+    <string name="enabled">Enabled</string>
+    <string name="trash">Trash</string>
+    <string name="move_trash">Move to Trash</string>
+    <string name="restore">Restore</string>
 
 </resources>

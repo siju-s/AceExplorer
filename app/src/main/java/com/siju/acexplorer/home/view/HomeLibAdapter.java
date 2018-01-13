@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.siju.acexplorer.model.groups.Category.ADD;
-import static com.siju.acexplorer.model.groups.Category.getCategoryName;
+import static com.siju.acexplorer.model.groups.CategoryHelper.getCategoryName;
 
 
 public class HomeLibAdapter extends RecyclerView.Adapter<HomeLibAdapter.HomeLibHolder>
@@ -219,6 +219,16 @@ public class HomeLibAdapter extends RecyclerView.Adapter<HomeLibAdapter.HomeLibH
                 ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
                         (context, R.color
                                 .large_files_bg_dark));
+                break;
+            case GIF:
+                ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
+                        (context, R.color
+                                .gif_bg_dark));
+                break;
+            case RECENT:
+                ((GradientDrawable) itemView.getBackground()).setColor(ContextCompat.getColor
+                        (context, R.color
+                                .recents_bg_dark));
                 break;
 
             default:

@@ -21,6 +21,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.ui.autoplay.AutoPlayContainer;
 
 import java.util.ArrayList;
 
@@ -61,10 +62,11 @@ public class PeekAndPop {
     protected float[] peekViewOriginalPosition;
     protected int     peekViewMargin;
     protected int     downX, downY;
-    protected long        popTime;
-    private   ImageView   thumbImage;
-    private   ImageButton shareButton;
-    private   ImageButton infoButton;
+    protected long              popTime;
+    private   ImageView         thumbImage;
+    private   AutoPlayContainer autoPlayView;
+    private   ImageButton       shareButton;
+    private   ImageButton       infoButton;
 
 
     public PeekAndPop(Builder builder) {
@@ -106,6 +108,7 @@ public class PeekAndPop {
         peekView.setId(R.id.peek_view);
 
         thumbImage = peekView.findViewById(R.id.imagePeekView);
+        autoPlayView = peekView.findViewById(R.id.autoPlayView);
         shareButton = peekView.findViewById(R.id.imageButtonShare);
         infoButton = peekView.findViewById(R.id.imageButtonInfo);
 
@@ -167,48 +170,9 @@ public class PeekAndPop {
     }
 
     protected void initialiseGestureListener(@NonNull View view, final int position) {
-//        view.setOnTouchListener(new PeekAndPopOnTouchListener(position));
-        // onTouchListener will not work correctly if the view doesn't have an
-        // onClickListener set, hence adding one if none has been added.
-//        if (!view.hasOnClickListeners()) {
-//            view.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Log.d("PeekPop", "onClick: " + v + " pos:" + position);
-//                    peek(v, position);
-//                }
-//            });
-//        }
-
-//
-//        thumbImage.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Log.d("PeekPop", "onClick: " + v + " pos:" + position);
-//                onClickListener.onClick(v, position);
-//                pop(v, position);
-//
-//            }
-//        });
-//
-//        shareButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//
-//            }
-//        });
-//
-//        infoButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                onClickListener.onClick(v, position);
-//                pop(v, position);
-//            }
-//        });
-
         PeekAndPopClickListener peekAndPopClickListener = new PeekAndPopClickListener(position);
         thumbImage.setOnClickListener(peekAndPopClickListener);
+        autoPlayView.setOnClickListener(peekAndPopClickListener);
         infoButton.setOnClickListener(peekAndPopClickListener);
         shareButton.setOnClickListener(peekAndPopClickListener);
         view.setOnClickListener(peekAndPopClickListener);
@@ -257,6 +221,7 @@ public class PeekAndPop {
         if (onGeneralActionListener != null) {
             onGeneralActionListener.onPeek(longClickView, index);
         }
+        peekView.setVisibility(View.VISIBLE);
         peekLayout.setVisibility(View.VISIBLE);
         peekLayout.getBackground().setAlpha(240);
 
@@ -293,8 +258,11 @@ public class PeekAndPop {
 
             @Override
             public void onAnimationEnd(Animator animation) {
+                Log.d("Peek", "onAnimationEnd: ");
                 resetViews();
                 animation.cancel();
+                peekView.setVisibility(View.GONE);
+
             }
 
             @Override
@@ -312,7 +280,9 @@ public class PeekAndPop {
     /**
      * Reset all views back to their initial values, this done after the onPeek has popped.
      */
-    private void resetViews() {
+    public void resetViews() {
+        Log.d("Peek", "resetViews: ");
+
         peekLayout.setVisibility(View.GONE);
         downX = 0;
         downY = 0;
@@ -323,6 +293,11 @@ public class PeekAndPop {
         }
         peekView.setScaleX(0.85f);
         peekView.setScaleY(0.85f);
+
+    }
+
+    public boolean isPeekLayoutVisible() {
+        return peekLayout.getVisibility() == View.VISIBLE;
     }
 
     public void destroy() {

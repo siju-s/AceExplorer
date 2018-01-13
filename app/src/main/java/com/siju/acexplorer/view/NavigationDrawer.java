@@ -50,6 +50,7 @@ import com.siju.acexplorer.theme.Theme;
 import java.util.ArrayList;
 
 import static com.siju.acexplorer.model.StorageUtils.getDownloadsDirectory;
+import static com.siju.acexplorer.model.groups.Category.APP_MANAGER;
 
 /**
  * Created by Siju on 28 August,2017
@@ -63,6 +64,8 @@ class NavigationDrawer implements View.OnClickListener {
     private static final String PLAYSTORE_URL             = "https://play.google.com/store/apps/details?id=";
     static               int    DRAWER_HEADER_STORAGE_POS = 0;
     static               int    DRAWER_HEADER_FAV_POS     = 1;
+    static               int    DRAWER_HEADER_TOOLS_POS     = 3;
+
 
 
     private Activity activity;
@@ -254,6 +257,9 @@ class NavigationDrawer implements View.OnClickListener {
             case LIBRARY:
                 uiView.onLibraryItemClicked(childPos + 1);
                 break;
+            case TOOLS:
+                uiView.onLibraryItemClicked(APP_MANAGER.getValue());
+                break;
         }
     }
 
@@ -351,5 +357,7 @@ class NavigationDrawer implements View.OnClickListener {
         expandableListAdapter = new ExpandableListAdapter(context, totalGroupData);
         expandableListView.setAdapter(expandableListAdapter);
         expandableListView.expandGroup(DRAWER_HEADER_STORAGE_POS);
+        expandableListView.expandGroup(DRAWER_HEADER_TOOLS_POS);
+
     }
 }

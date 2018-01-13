@@ -64,4 +64,12 @@
         <item name="android:listDivider">@null</item>
     </style>
 
+    <style name="BaseDarkTheme.AppInfo">
+        <item name="android:windowTranslucentStatus">false</item>
+    </style>
+
+    <style name="BaseLightTheme.AppInfo">
+            <item name="android:windowTranslucentStatus">false</item>
+    </style>
+
 </resources>

@@ -66,5 +66,8 @@ public class FileConstants {
 
     public static final String ADS = "ACTION_ADS";
 
+    public static final String EXT_GIF = "gif";
+
+
 
 }

@@ -45,7 +45,6 @@ public class AppUtils {
     }
 
     public static Drawable getAppIconForFolder(Context context, String packageName) {
-
         try {
             return context.getPackageManager().getApplicationIcon(packageName);
         } catch (PackageManager.NameNotFoundException e) {

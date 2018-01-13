@@ -36,6 +36,7 @@ import static com.siju.acexplorer.model.StorageUtils.getDownloadsDirectory;
 import static com.siju.acexplorer.model.groups.DrawerGroup.FAVORITES;
 import static com.siju.acexplorer.model.groups.DrawerGroup.LIBRARY;
 import static com.siju.acexplorer.model.groups.DrawerGroup.STORAGE;
+import static com.siju.acexplorer.model.groups.DrawerGroup.TOOLS;
 
 public class DrawerItems {
 
@@ -59,6 +60,7 @@ public class DrawerItems {
                 initializeStorageGroup();
                 initializeFavouritesGroup();
                 initializeLibraryGroup();
+                initializeToolsGroup();
                 itemsCallback.onTotalGroupDataFetched(totalGroupData);
             }
         }).start();
@@ -116,6 +118,18 @@ public class DrawerItems {
     private void initializeLibraryGroup() {
 
         populateDrawerItems(new SectionGroup(addLibraryItems(), LIBRARY));
+    }
+
+    private void initializeToolsGroup() {
+
+        populateDrawerItems(new SectionGroup(addToolGroupItems(), TOOLS));
+    }
+
+    private ArrayList<SectionItems> addToolGroupItems() {
+        ArrayList<SectionItems> toolsGroupChild = new ArrayList<>();
+        toolsGroupChild.add(new SectionItems(null, null, R.drawable.ic_app_manager,
+                                               null, 0, Category.APP_MANAGER, null));
+        return toolsGroupChild;
     }
 
     private ArrayList<SectionItems> addLibraryItems() {

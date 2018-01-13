@@ -107,6 +107,9 @@
         <activity
             android:name="com.siju.acexplorer.home.LibrarySortActivity"
             android:theme="@style/BaseDarkTheme"/>
+        <activity android:name=".appmanager.AppInfoActivity"
+            android:theme="@style/BaseDarkTheme">
+        </activity>
 
         <service android:name=".storage.model.task.CreateZipService"/>
         <service android:name=".storage.model.task.CopyService"/>

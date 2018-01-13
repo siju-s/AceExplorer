@@ -51,27 +51,13 @@
     <color name="bg_screen2">#2278d4</color>
     <color name="bg_screen3">#FFAC33</color>
     <color name="bg_screen4">#FF6E33</color>
+    <color name="bg_screen5">#139E33</color>
 
-    <!-- dots inactive colors -->
 
-    <!-- dots active colors -->
 
 
     <!-- Colors for library items in Homescreen -->
 
-    <color name="audio_bg">#35465c</color>
-    <color name="video_bg">#74489d</color>
-    <color name="image_bg">#613854</color>
-    <color name="docs_bg">#1e91d0</color>
-    <color name="downloads_bg">#3266cc</color>
-    <color name="add_bg">#1a0967</color>
-    <color name="compressed_bg">#00a3b6</color>
-    <color name="fav_bg">#a70048</color>
-    <color name="pdf_bg">#bf3c4e</color>
-    <color name="apps_bg">#006600</color>
-    <color name="large_files_bg">#cd0067</color>
-
-    <!-- DARK THEME -->
     <color name="audio_bg_dark">#8B2252</color>
     <color name="video_bg_dark">#74489d</color>
     <color name="image_bg_dark">#458B74</color>
@@ -83,6 +69,9 @@
     <color name="pdf_bg_dark">#bf3c4e</color>
     <color name="apps_bg_dark">#006600</color>
     <color name="large_files_bg_dark">#cd0067</color>
+    <color name="gif_bg_dark">#DAA520</color>
+    <color name="recents_bg_dark">#8a36b5</color>
+
 
     <color name="blue">#1e91d0</color>
     <color name="color_text">#5D6A77</color>

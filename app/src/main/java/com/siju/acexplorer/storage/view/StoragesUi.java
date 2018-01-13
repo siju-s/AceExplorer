@@ -119,7 +119,7 @@ public interface StoragesUi {
 
     interface Listener {
 
-        void loadData(String currentDir, Category category);
+        void loadData(String currentDir, Category category, long id);
 
         BillingStatus checkBillingStatus();
 

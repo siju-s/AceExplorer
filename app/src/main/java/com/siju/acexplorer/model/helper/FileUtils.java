@@ -295,7 +295,6 @@ public class FileUtils {
         }
         extension = extension.toLowerCase(); // necessary
         String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-
         if (mimeType != null) {
             if (mimeType.indexOf("image") == 0) {
                 value = IMAGE;

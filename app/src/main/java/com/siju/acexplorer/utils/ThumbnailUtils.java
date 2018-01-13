@@ -2,6 +2,8 @@ package com.siju.acexplorer.utils;
 
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -48,7 +50,7 @@ public class ThumbnailUtils {
                 if (isDirectory) {
                     imageIcon.setImageResource(R.drawable.ic_folder);
                     if (imageThumbIcon != null) {
-                        Drawable apkIcon = getAppIconForFolder(context, fileName);
+                        Drawable apkIcon = getAppIconForFolder(context, fileName); // TODO: 10/01/18 It should be package name and not filename
                         if (apkIcon != null) {
                             imageThumbIcon.setVisibility(View.VISIBLE);
                             imageThumbIcon.setImageDrawable(apkIcon);
@@ -86,16 +88,26 @@ public class ThumbnailUtils {
                 break;
 
             case VIDEO:
+            case GENERIC_VIDEOS:
+            case FOLDER_VIDEOS:
                 displayVideoThumb(context, imageIcon, filePath);
                 break;
 
             case IMAGE: // For images group
+            case GENERIC_IMAGES:
+            case FOLDER_IMAGES:
                 displayImageThumb(context, imageIcon, filePath);
                 break;
             case DOCS: // For docs group
                 String extension = fileInfo.getExtension();
                 extension = extension.toLowerCase();
                 changeFileIcon(context, imageIcon, extension, null);
+                break;
+            case APP_MANAGER:
+                loadAppIcon(context, imageIcon, fileInfo.getFilePath());
+                break;
+            default:
+                imageIcon.setImageResource(R.drawable.ic_folder);
                 break;
 
         }
@@ -124,7 +136,7 @@ public class ThumbnailUtils {
     }
 
     private static void displayAudioAlbumArt(Context context, long bucketId, ImageView imageIcon,
-                                            String path) {
+                                             String path) {
         if (bucketId != -1) {
             Uri uri = ContentUris.withAppendedId(AUDIO_URI, bucketId);
             RequestOptions options = new RequestOptions()
@@ -162,6 +174,27 @@ public class ThumbnailUtils {
                 imageIcon.setImageResource(R.drawable.ic_music_default);
             }
         }
+    }
+
+    private static void loadAppIcon(Context context, ImageView imageIcon, String packageName) {
+
+        RequestOptions options = new RequestOptions()
+                .centerCrop()
+                .placeholder(R.drawable.ic_apk_green)
+                .diskCacheStrategy(DiskCacheStrategy.NONE); // cannot disk cache
+        // ApplicationInfo, nor Drawables
+
+        try {
+            ApplicationInfo applicationInfo = context.getPackageManager().getApplicationInfo(packageName, PackageManager.GET_META_DATA);
+            Glide.with(context)
+                    .as(Drawable.class)
+                    .apply(options.dontAnimate().dontTransform().priority(Priority.LOW))
+                    .load(applicationInfo)
+                    .into(imageIcon);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private static void changeFileIcon(Context context, ImageView imageIcon, String extension, String

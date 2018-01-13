@@ -39,6 +39,7 @@ import java.util.ArrayList;
 
 import static com.siju.acexplorer.model.StorageUtils.StorageType.EXTERNAL;
 import static com.siju.acexplorer.model.StorageUtils.getStorageSpaceText;
+import static com.siju.acexplorer.model.groups.CategoryHelper.getCategoryName;
 import static com.siju.acexplorer.view.NavigationDrawer.DRAWER_HEADER_FAV_POS;
 import static com.siju.acexplorer.view.NavigationDrawer.DRAWER_HEADER_STORAGE_POS;
 
@@ -95,7 +96,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
             if (category.equals(Category.FAVORITES)) {
                 text = new File(child.getSecondLine()).getName();
             } else {
-                text = Category.getCategoryName(context, category);
+                text = getCategoryName(context, category);
             }
         } else {
             text = child.getFirstLine();

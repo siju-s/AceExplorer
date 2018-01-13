@@ -45,7 +45,9 @@ import static com.siju.acexplorer.model.groups.Category.DOWNLOADS;
 import static com.siju.acexplorer.model.groups.Category.FAVORITES;
 import static com.siju.acexplorer.model.groups.Category.IMAGE;
 import static com.siju.acexplorer.model.groups.Category.VIDEO;
-import static com.siju.acexplorer.model.groups.Category.getCategoryName;
+import static com.siju.acexplorer.model.groups.CategoryHelper.getCategory;
+import static com.siju.acexplorer.model.groups.CategoryHelper.getCategoryName;
+import static com.siju.acexplorer.model.groups.CategoryHelper.getResourceIdForCategory;
 
 /**
  * Created by Siju on 02 September,2017
@@ -105,7 +107,7 @@ public class HomeModelImpl implements HomeModel {
                 Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
                 for (int i = 0; i < selectedLibs.size(); i++) {
 
-                    Category category = Category.getCategory(selectedLibs.get(i).getCategoryId());
+                    Category category = getCategory(selectedLibs.get(i).getCategoryId());
                     int resourceId = getResourceIdForCategory(category);
                     String categoryName = getCategoryName(activity.getBaseContext(), category);
                     int count = 0;
@@ -192,7 +194,7 @@ public class HomeModelImpl implements HomeModel {
         ArrayList<LibrarySortModel> savedLibraries = sharedPreferenceWrapper.getLibraries(context);
         homeLibraryInfoArrayList.clear();
         for (int i = 0; i < savedLibraries.size(); i++) {
-            Category category = Category.getCategory(savedLibraries.get(i).getCategoryId());
+            Category category = getCategory(savedLibraries.get(i).getCategoryId());
             int resourceId = getResourceIdForCategory(category);
             String name = getCategoryName(activity.getBaseContext(), category);
             addToLibrary(new HomeLibraryInfo(category, name, resourceId,
@@ -200,33 +202,6 @@ public class HomeModelImpl implements HomeModel {
         }
     }
 
-    private int getResourceIdForCategory(Category categoryId) {
-        switch (categoryId) {
-            case AUDIO:
-                return R.drawable.ic_library_music;
-            case VIDEO:
-                return R.drawable.ic_library_videos;
-            case IMAGE:
-                return R.drawable.ic_library_images;
-            case DOCS:
-                return R.drawable.ic_library_docs;
-            case DOWNLOADS:
-                return R.drawable.ic_library_downloads;
-            case ADD:
-                return R.drawable.ic_library_add;
-            case COMPRESSED:
-                return R.drawable.ic_library_compressed;
-            case FAVORITES:
-                return R.drawable.ic_library_favorite;
-            case PDF:
-                return R.drawable.ic_library_pdf;
-            case APPS:
-                return R.drawable.ic_library_apk;
-            case LARGE_FILES:
-                return R.drawable.ic_library_large;
-        }
-        return 0;
-    }
 
     private void addPlusCategory() {
         addToLibrary(new HomeLibraryInfo(ADD, labels[5], getResourceIdForCategory(ADD),

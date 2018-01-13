@@ -21,12 +21,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.webkit.MimeTypeMap;
 
+import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.model.FileInfo;
 
 import java.util.ArrayList;
 
-import static com.siju.acexplorer.model.groups.Category.checkIfFileCategory;
+import static com.siju.acexplorer.model.groups.CategoryHelper.checkIfFileCategory;
 
 
 public class ShareHelper {
@@ -39,6 +40,7 @@ public class ShareHelper {
         } else {
             String extension = fileInfo.get(0).getExtension();
             String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+            Logger.log("ShareHelper", "Mime:"+mimeType);
             intent.setType(mimeType);
         }
 
@@ -50,7 +52,9 @@ public class ShareHelper {
         }
 
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
-        context.startActivity(intent);
+        if (context.getPackageManager().resolveActivity(intent, 0) != null) {
+            context.startActivity(intent);
+        }
     }
 
 }

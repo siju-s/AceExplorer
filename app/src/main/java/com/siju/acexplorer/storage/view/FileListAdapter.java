@@ -37,17 +37,27 @@ import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.groups.Category;
+import com.siju.acexplorer.model.groups.CategoryHelper;
 import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.storage.model.ViewMode;
 import com.siju.acexplorer.theme.ThemeUtils;
+import com.siju.acexplorer.ui.autoplay.AutoPlayView;
+import com.siju.acexplorer.ui.autoplay.AutoPlayContainer;
 import com.siju.acexplorer.ui.peekandpop.PeekAndPop;
 
 import java.util.ArrayList;
 
-import static com.siju.acexplorer.model.groups.Category.AUDIO;
-import static com.siju.acexplorer.model.groups.Category.IMAGE;
+import static android.view.View.GONE;
+import static com.siju.acexplorer.model.groups.Category.APP_MANAGER;
+import static com.siju.acexplorer.model.groups.Category.FOLDER_VIDEOS;
 import static com.siju.acexplorer.model.groups.Category.PICKER;
 import static com.siju.acexplorer.model.groups.Category.VIDEO;
+import static com.siju.acexplorer.model.groups.CategoryHelper.checkIfFileCategory;
+import static com.siju.acexplorer.model.groups.CategoryHelper.isGenericImagesCategory;
+import static com.siju.acexplorer.model.groups.CategoryHelper.isGenericMusic;
+import static com.siju.acexplorer.model.groups.CategoryHelper.isGenericVideosCategory;
+import static com.siju.acexplorer.model.groups.CategoryHelper.isMusicCategory;
+import static com.siju.acexplorer.model.groups.CategoryHelper.isPeekPopCategory;
 import static com.siju.acexplorer.utils.ThumbnailUtils.displayThumb;
 
 
@@ -205,7 +215,9 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             @Override
             public void onPop(View longClickView, int position) {
+                Log.d(TAG, "onPop: ");
                 peekPos = INVALID_POS;
+                stopAutoPlayVid();
             }
         });
 
@@ -225,18 +237,67 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private void loadPeekView(int position) {
         Analytics.getLogger().enterPeekMode();
+        Category category = fileList.get(position).getCategory();
         this.peekPos = position;
         View view = peekAndPop.getPeekView();
-        TextView titleText = view.findViewById(R.id.titlePeekView);
+//        TextView titleText = view.findViewById(R.id.titlePeekView);
         ImageView thumb = view.findViewById(R.id.imagePeekView);
+        AutoPlayContainer autoPlayView = view.findViewById(R.id.autoPlayView);
+        final AutoPlayView customVideoView = autoPlayView.getCustomVideoView();
+        final ImageView volume = view.findViewById(R.id.imageVolume);
         FileInfo fileInfo = fileList.get(position);
-        titleText.setText(fileInfo.getFileName());
+
+        if (category.equals(VIDEO) || category.equals(FOLDER_VIDEOS)) {
+            thumb.setVisibility(GONE);
+            autoPlayView.setVisibility(View.VISIBLE);
+            volume.setVisibility(View.VISIBLE);
+            volume.setImageResource(R.drawable.ic_volume_off);
+            customVideoView.setLooping(true);
+            customVideoView.setSource(fileInfo.getFilePath());
+            customVideoView.setListener(peekPopVideoCallback);
+            customVideoView.init();
+
+        } else {
+            autoPlayView.setVisibility(GONE);
+            volume.setVisibility(GONE);
+            thumb.setVisibility(View.VISIBLE);
+        }
+
+        volume.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (customVideoView.isMuted()) {
+                    customVideoView.unmuteVideo();
+                    volume.setImageResource(R.drawable.ic_volume_on);
+                    volume.setContentDescription(context.getString(R.string.unmute));
+                } else {
+                    customVideoView.muteVideo();
+                    volume.setImageResource(R.drawable.ic_volume_off);
+                    volume.setContentDescription(context.getString(R.string.mute));
+                }
+            }
+        });
+
+
+//        titleText.setText(fileInfo.getFileName());
         displayThumb(context, fileInfo, fileInfo.getCategory(), thumb, null);
     }
 
-    private boolean isPeekPopCategory(Category category) {
-        return category.equals(IMAGE) || category.equals(VIDEO) || category.equals(AUDIO);
+    private AutoPlayView.PeekPopVideoCallback peekPopVideoCallback = new AutoPlayView.PeekPopVideoCallback() {
+        @Override
+        public void onSurfaceDestroyed() {
+            peekAndPop.resetViews();
+        }
+    };
+
+    void stopAutoPlayVid() {
+        View view = peekAndPop.getPeekView();
+        peekAndPop.resetViews();
+        AutoPlayContainer autoPlayView = view.findViewById(R.id.autoPlayView);
+        autoPlayView.getCustomVideoView().clearAll();
     }
+
+
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
@@ -312,13 +373,22 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (category.equals(PICKER)) {
             fileListViewHolder.imageIcon.setImageResource(fileInfo.getIcon());
             fileListViewHolder.textFileName.setText(fileInfo.getFileName());
-        } else {
+        } else if (isGenericMusic(category)) {
+            setViewGenericMusic(fileListViewHolder, fileInfo);
+        } else if (isMusicCategory(category)) {
+            setViewMusicCategory(fileListViewHolder, fileInfo);
+        } else if (isGenericImagesCategory(category) || isGenericVideosCategory(category)) {
+            setViewGenericImagesVidsCategory(fileListViewHolder, fileInfo);
+        } else if (category.equals(APP_MANAGER)) {
+            setAppManagerCategory(fileListViewHolder, fileInfo);
+        }
+        else {
             if (peekAndPop != null && isPeekPopCategory(category)) {
                 peekAndPop.addClickView(fileListViewHolder.imageIcon, position);
             }
             String fileName = fileInfo.getFileName();
             String fileDate;
-            if (Category.checkIfFileCategory(this.category)) {
+            if (checkIfFileCategory(this.category)) {
                 fileDate = FileUtils.convertDate(fileInfo.getDate());
             } else {
                 fileDate = FileUtils.convertDate(fileInfo.getDate() * 1000);
@@ -357,6 +427,58 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
 
     }
+
+    private void setViewGenericMusic(FileListViewHolder fileListViewHolder, FileInfo fileInfo) {
+        int count = fileInfo.getCount();
+        String files = context.getResources().getQuantityString(R.plurals.number_of_files,
+                                                                count, count);
+        fileListViewHolder.textFileName.setText(CategoryHelper.getCategoryName(context, fileInfo.getSubcategory()));
+        fileListViewHolder.textNoOfFileOrSize.setText(files);
+        displayThumb(context, fileInfo, category, fileListViewHolder.imageIcon,
+                     fileListViewHolder.imageThumbIcon);
+    }
+
+    private void setViewMusicCategory(FileListViewHolder fileListViewHolder, FileInfo fileInfo) {
+
+        fileListViewHolder.textFileName.setText(fileInfo.getTitle());
+        int num = (int) fileInfo.getNumTracks();
+        if (num != INVALID_POS) {
+            String files = context.getResources().getQuantityString(R.plurals.number_of_files,
+                                                                    num, num);
+            fileListViewHolder.textNoOfFileOrSize.setText(files);
+        }
+        displayThumb(context, fileInfo, category, fileListViewHolder.imageIcon,
+                     fileListViewHolder.imageThumbIcon);
+    }
+
+    private void setViewGenericImagesVidsCategory(FileListViewHolder fileListViewHolder, FileInfo fileInfo) {
+
+        fileListViewHolder.textFileName.setText(fileInfo.getFileName());
+        int num = (int) fileInfo.getNumTracks();
+        if (num != INVALID_POS) {
+            String files = context.getResources().getQuantityString(R.plurals.number_of_files,
+                                                                    num, num);
+            fileListViewHolder.textNoOfFileOrSize.setText(files);
+        }
+        displayThumb(context, fileInfo, category, fileListViewHolder.imageIcon,
+                     fileListViewHolder.imageThumbIcon);
+    }
+
+    private void setAppManagerCategory(FileListViewHolder fileListViewHolder, FileInfo fileInfo) {
+
+        fileListViewHolder.textFileName.setText(fileInfo.getFileName());
+        long size =  fileInfo.getSize();
+        String fileSize = Formatter.formatFileSize(context, size);
+        fileListViewHolder.textNoOfFileOrSize.setText(fileSize);
+        String fileDate = FileUtils.convertDate(fileInfo.getDate());
+        if (mViewMode == ViewMode.LIST) {
+            fileListViewHolder.textFileModifiedDate.setText(fileDate);
+        }
+        displayThumb(context, fileInfo, category, fileListViewHolder.imageIcon,
+                     fileListViewHolder.imageThumbIcon);
+    }
+
+
 
 
     void toggleSelection(int position, boolean isLongPress) {
@@ -457,6 +579,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 textFileModifiedDate = itemView.findViewById(R.id.textDate);
             }
             imageIcon.setOnLongClickListener(this);
+            imageIcon.setOnClickListener(this);
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
         }
@@ -464,8 +587,8 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         @Override
         public void onClick(View v) {
-            int pos =  getAdapterPosition();
-            Logger.log(TAG, "" + mItemClickListener + " pos:"+pos);
+            int pos = getAdapterPosition();
+            Logger.log(TAG, "" + mItemClickListener + " pos:" + pos);
 
             if (mItemClickListener != null) {
                 mItemClickListener.onItemClick(v, pos);

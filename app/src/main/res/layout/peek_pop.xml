@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
@@ -15,47 +16,70 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/titlePeekView"
+            <!--<TextView-->
+                <!--android:id="@+id/titlePeekView"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginStart="8dp"-->
+                <!--android:ellipsize="end"-->
+                <!--android:maxLines="1"-->
+                <!--android:padding="8dp"-->
+                <!--android:textColor="@color/white"-->
+                <!--android:textSize="16sp" />-->
+
+            <!--<View-->
+                <!--android:id="@+id/view"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="0.5dp"-->
+                <!--android:layout_below="@id/titlePeekView"-->
+                <!--android:background="@android:color/darker_gray" />-->
+
+            <FrameLayout
+                android:id="@+id/containerMedia"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:padding="8dp"
-                android:text="Example name"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
+                >
+
+                <ImageView
+                    android:id="@+id/imagePeekView"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/peek_pop_size"
+                    android:background="@null"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible"
+                    tools:ignore="ContentDescription" />
+
+                <com.siju.acexplorer.ui.autoplay.AutoPlayContainer
+                    android:id="@+id/autoPlayView"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/peek_pop_size"
+                    android:visibility="gone"/>
+                
+                <ImageButton
+                    android:id="@+id/imageVolume"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|bottom"
+                    android:layout_margin="@dimen/padding_10"
+                    android:padding="@dimen/padding_10"
+                    android:background="@null"
+                    android:contentDescription="@string/mute"
+                    android:src="@drawable/ic_volume_off"/>
+            </FrameLayout>
 
             <View
-                android:id="@+id/view"
+                android:id="@+id/bottomView"
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:layout_below="@id/titlePeekView"
-                android:background="@android:color/darker_gray" />
-
-
-            <ImageView
-                android:id="@+id/imagePeekView"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/peek_pop_size"
-                android:layout_below="@id/view"
-                android:background="@null"
-                android:scaleType="centerCrop"
-                android:visibility="visible" />
-
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:background="@android:color/darker_gray" />
+                android:layout_below="@+id/containerMedia"
+                 />
 
 
             <include
                 layout="@layout/peek_pop_items"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/imagePeekView" />
+                android:layout_below="@+id/bottomView" />
             <!--<ImageView-->
             <!--android:id="@+id/arrow_down"-->
             <!--android:layout_width="match_parent"-->

@@ -19,7 +19,6 @@ package com.siju.acexplorer.view.dialog;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -123,46 +122,70 @@ public class DialogHelper {
     SortDialogListener sortDialogListener) {
         String title = context.getString(R.string.action_sort);
         String texts[] = new String[]{title, context.getString(R.string.msg_ok), "", context
-                .getString(R.string.dialog_cancel)};
+                .getString(R.string
+                                   .dialog_cancel)};
 
-        final CharSequence options[] = {context.getString(R.string.sort_name),
-                context.getString(R.string.sort_name_desc),
-                context.getString(R.string.sort_type),
-                context.getString(R.string.sort_type_desc),
-                context.getString(R.string.sort_size),
-                context.getString(R.string.sort_size_desc),
-                context.getString(R.string.sort_date),
-                context.getString(R.string.sort_date_desc)};
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(title);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View dialogView = inflater.inflate(R.layout.dialog_sort, null);
+        builder.setView(dialogView);
         builder.setCancelable(true);
 
-        final int[] selectedPos = {sortMode};
-        builder.setSingleChoiceItems(options, sortMode, new DialogInterface.OnClickListener() {
+        final AlertDialog alertDialog = builder.create();
+
+        TextView textTitle = dialogView.findViewById(R.id.textTitle);
+        final RadioGroup radioGroup = dialogView.findViewById(R.id.radioGroupSort);
+        Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
+        Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
+        final CheckBox orderCheckbox = dialogView.findViewById(R.id.checkBoxOrder);
+        orderCheckbox.setChecked(isAscending(sortMode));
+
+        textTitle.setText(title);
+        positiveButton.setText(texts[1]);
+        negativeButton.setText(texts[3]);
+        View radioButton = radioGroup.getChildAt(indexToCheck(sortMode));
+        radioGroup.check(radioButton.getId());
+
+        positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                selectedPos[0] = which;
-            }
-        });
-        builder.setPositiveButton(texts[1], new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                sortDialogListener.onPositiveButtonClick(selectedPos[0]);
-                dialog.dismiss();
+            public void onClick(View view) {
+                int radioButtonID = radioGroup.getCheckedRadioButtonId();
+                View radioButton = radioGroup.findViewById(radioButtonID);
+                int index = radioGroup.indexOfChild(radioButton);
+                int newIndex = newSortMode(index, orderCheckbox.isChecked());
+                sortDialogListener.onPositiveButtonClick(newIndex);
+                alertDialog.dismiss();
             }
         });
 
-        builder.setNegativeButton(texts[3], new DialogInterface.OnClickListener() {
+        negativeButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-             dialog.dismiss();
+            public void onClick(View view) {
+                alertDialog.dismiss();
             }
         });
-        final AlertDialog alertDialog = builder.create();
 
         alertDialog.show();
     }
+
+    private static boolean isAscending(int sortMode) {
+       return sortMode % 2 == 0;
+    }
+
+    private static int indexToCheck(int sortMode) {
+       return sortMode/2;
+    }
+
+    private static int newSortMode(int selectedOption, boolean isAscending) {
+        int newSortMode = selectedOption * 2;
+        if (!isAscending) {
+             newSortMode += 1;
+        }
+        return newSortMode;
+    }
+
+
 
     /**
      * @param context
