@@ -50,7 +50,8 @@ public enum Category {
     FOLDER_IMAGES(30),
     GENERIC_VIDEOS(31),
     FOLDER_VIDEOS(32),
-    APP_MANAGER(33);
+    APP_MANAGER(33),
+    TRASH(34);
 
     private final int value;
 

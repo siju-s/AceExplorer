@@ -84,14 +84,6 @@
     <string name="action_sort">Ordenar</string>
     <string name="action_view_list">Vista de la lista</string>
     <string name="action_view_grid">Vista en cuadrícula</string>
-    <string name="sort_name">Nombre (AZ)</string>
-    <string name="sort_name_desc">Nombre (Z-A)</string>
-    <string name="sort_type">Tipo (ascendente)</string>
-    <string name="sort_type_desc">Tipo (Descendente)</string>
-    <string name="sort_size">Tamaño (más pequeño)</string>
-    <string name="sort_size_desc">Tamaño (más grande)</string>
-    <string name="sort_date">Fecha (Mayor)</string>
-    <string name="sort_date_desc">Fecha (la más reciente)</string>
     <string name="extract_to">extraer en</string>
     <string name="open">Abierto</string>
     <string name="extracting">La extracción ..</string>
@@ -202,4 +194,44 @@
     <string name="analytics_text">Enviar análisis</string>
     <string name="analytics_summary">Ayúdenos a mejorar la aplicación enviando datos de uso anónimos.</string>
     <string name="move_complete">Mover completado</string>
+	
+	<string name="dual_pane_intro_title">Panel doble</string>
+    <string name="dual_pane_intro_subtitle">Modo dual para una mejor usabilidad.</string>
+    <string name="sort_name">Nombre</string>
+    <string name="sort_type">Tipo</string>
+    <string name="sort_size">tamaño</string>
+    <string name="sort_date">Fecha</string>
+    <string name="ascending">Ascendente</string>
+    <string name="library_recent">Reciente</string>
+    <string name="albums">Álbumes</string>
+    <string name="artists">Artistas</string>
+    <string name="genres">Géneros</string>
+    <string name="all_tracks">Todas las canciones</string>
+    <string name="notifications">Notificaciones</string>
+    <string name="alarms">Alarmas</string>
+    <string name="ringtones">Tonos de llamada</string>
+    <string name="podcasts">Podcasts</string>
+    <string name="mute">Mudo</string>
+    <string name="unmute">Dejar de silenciar</string>
+    <string name="uninstall">Desinstalar</string>
+    <string name="package_name">Nombre del paquete</string>
+    <string name="version_name">Versión</string>
+    <string name="installed_source">Fuente</string>
+    <string name="min_sdk">Min SDK</string>
+    <string name="target_sdk">Target SDK</string>
+    <string name="installed">Instalado</string>
+    <string name="updated">Actualizado</string>
+    <string name="nav_header_tools">Herramientas</string>
+    <string name="app_manager">Control de aplicaciones</string>
+    <string name="category">Categoría</string>
+    <string name="app_detail">Detalle de la aplicación</string>
+    <string name="unknown">Desconocido</string>
+    <string name="enabled">Habilitado</string>
+    <string name="trash">Basura</string>
+    <string name="move_trash">Mover a la papelera</string>
+    <string name="restore">Restaurar</string>
+    <string name="moving_title_trash">Mudarse a la basura</string>
+    <string name="restoring_title_trash">Restaurando</string>
+
+	
 </resources>

@@ -38,7 +38,6 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/layoutDummy">
 
-
         <com.siju.acexplorer.storage.view.custom.recyclerview.FastScrollRecyclerView
             android:id="@+id/recyclerViewFileList"
             android:layout_width="match_parent"
@@ -48,7 +47,9 @@
             app:fastScrollPopupBgColor="@color/colorPrimary"
             app:fastScrollPopupTextColor="@android:color/primary_text_dark"
             app:fastScrollThumbColor="@color/colorPrimary"
-            app:fastScrollTrackColor="@android:color/transparent" />
+            app:fastScrollTrackColor="@android:color/transparent">
+
+        </com.siju.acexplorer.storage.view.custom.recyclerview.FastScrollRecyclerView>
 
 
     </android.support.v4.widget.SwipeRefreshLayout>

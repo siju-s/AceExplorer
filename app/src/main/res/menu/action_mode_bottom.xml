@@ -46,6 +46,14 @@
         android:title="@string/action_delete"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/action_restore"
+        android:icon="@drawable/ic_restore"
+        android:orderInCategory="5"
+        android:title="@string/restore"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
 
     <item
         android:id="@+id/action_overflow"

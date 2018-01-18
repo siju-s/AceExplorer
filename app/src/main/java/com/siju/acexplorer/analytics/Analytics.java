@@ -98,12 +98,10 @@ public class Analytics {
         String EV_NAV_BAR = "Navbar_clicked";
 
         String EV_DRAWER = "Drawer_item_clicked";
-
         String EV_PERMISSIONS = "Permissions_clicked";
-
         String EV_PICKER = "Picker";
-
         String EV_PEEK = "Peek";
+        String EV_RESTORE = "Restore";
 
 
         void register(Context context);

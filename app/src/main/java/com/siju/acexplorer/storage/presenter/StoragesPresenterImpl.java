@@ -31,6 +31,7 @@ import com.siju.acexplorer.storage.model.CopyData;
 import com.siju.acexplorer.storage.model.StoragesModel;
 import com.siju.acexplorer.storage.model.operations.Operations;
 import com.siju.acexplorer.storage.view.StoragesUi;
+import com.siju.acexplorer.trash.TrashModel;
 import com.siju.acexplorer.view.dialog.DialogHelper;
 
 import java.util.ArrayList;
@@ -96,6 +97,17 @@ public class StoragesPresenterImpl implements StoragesUi.Listener,
     }
 
     @Override
+    public void moveToTrash(ArrayList<FileInfo> filesToDelete, String trashDir) {
+        storagesModel.moveToTrash(filesToDelete, trashDir);
+    }
+
+    @Override
+    public void restoreFiles(List<TrashModel> trashModelList) {
+        storagesModel.restoreFiles(trashModelList);
+
+    }
+
+    @Override
     public void handleSAFResult(Intent operationIntent, Uri treeUri, boolean rooted, int flags) {
         storagesModel.handleSAFResult(operationIntent, treeUri, rooted, flags);
     }
@@ -148,6 +160,11 @@ public class StoragesPresenterImpl implements StoragesUi.Listener,
     public void persistSortMode(int position) {
         storagesModel.persistSortMode(position);
 
+    }
+
+    @Override
+    public void persistTrashState(boolean value) {
+        storagesModel.persistTrashState(value);
     }
 
     @Override

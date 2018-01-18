@@ -3,13 +3,10 @@ package com.siju.acexplorer.ui.peekandpop;
 import android.animation.Animator;
 import android.app.Activity;
 import android.content.res.Configuration;
-import android.os.Build;
-import android.support.annotation.IntDef;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -21,52 +18,37 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.model.helper.SdkHelper;
 import com.siju.acexplorer.ui.autoplay.AutoPlayContainer;
 
 import java.util.ArrayList;
 
 public class PeekAndPop {
 
-    @IntDef({FLING_UPWARDS, FLING_DOWNWARDS})
-    public @interface FlingDirections {
-    }
-
-    public static final int FLING_UPWARDS   = 0;
-    public static final int FLING_DOWNWARDS = 1;
-
     private static final int PEEK_VIEW_MARGIN = 12;
 
-    private static final int   FLING_VELOCITY_THRESHOLD = 3000;
-    private static final float FLING_VELOCITY_MAX       = 1000;
-
-    protected static final int ANIMATION_PEEK_DURATION = 275;
-    protected static final int ANIMATION_POP_DURATION  = 250;
+    private static final int ANIMATION_PEEK_DURATION = 275;
+    private static final int ANIMATION_POP_DURATION  = 250;
 
     protected Builder             builder;
-    protected View                peekView;
-    protected ViewGroup           contentView;
-    protected ViewGroup           peekLayout;
-    protected PeekAnimationHelper peekAnimationHelper;
+    private   View                peekView;
+    private   ViewGroup           contentView;
+    private   ViewGroup           peekLayout;
+    private   PeekAnimationHelper peekAnimationHelper;
 
-    private boolean animateFling;
-    private boolean allowUpwardsFling;
-    private boolean allowDownwardsFling;
     private boolean enabled = true;
 
-    protected OnGeneralActionListener onGeneralActionListener;
-    private   OnClickListener         onClickListener;
-    protected GestureListener         gestureListener;
-    protected GestureDetector         gestureDetector;
-
+    private OnGeneralActionListener onGeneralActionListener;
+    private OnClickListener         onClickListener;
     protected int     orientation;
-    protected float[] peekViewOriginalPosition;
-    protected int     peekViewMargin;
-    protected int     downX, downY;
-    protected long              popTime;
-    private   ImageView         thumbImage;
-    private   AutoPlayContainer autoPlayView;
-    private   ImageButton       shareButton;
-    private   ImageButton       infoButton;
+    private   float[] peekViewOriginalPosition;
+    private   int     peekViewMargin;
+    private   int     downX, downY;
+    private long              popTime;
+    private ImageView         thumbImage;
+    private AutoPlayContainer autoPlayView;
+    private ImageButton       shareButton;
+    private ImageButton       infoButton;
 
 
     public PeekAndPop(Builder builder) {
@@ -76,18 +58,11 @@ public class PeekAndPop {
 
     protected void init() {
         this.onGeneralActionListener = builder.onGeneralActionListener;
-        this.gestureListener = new GestureListener();
-        this.gestureDetector = new GestureDetector(builder.activity, this.gestureListener);
+//        this.gestureListener = new GestureListener();
+//        this.gestureDetector = new GestureDetector(builder.activity, this.gestureListener);
         initialiseGestureListeners();
-
-
-        this.animateFling = builder.animateFling;
-        this.allowUpwardsFling = builder.allowUpwardsFling;
-        this.allowDownwardsFling = builder.allowDownwardsFling;
-
         this.orientation = builder.activity.getResources().getConfiguration().orientation;
         this.peekViewMargin = DimensionUtil.convertDpToPx(builder.activity.getApplicationContext(), PEEK_VIEW_MARGIN);
-
         initialisePeekView();
     }
 
@@ -98,7 +73,7 @@ public class PeekAndPop {
      * <p/>
      * If a flingToActionViewLayoutId is supplied, inflate the flingToActionViewLayoutId.
      */
-    protected void initialisePeekView() {
+    private void initialisePeekView() {
         LayoutInflater inflater = LayoutInflater.from(builder.activity);
         contentView = (ViewGroup) builder.activity.findViewById(android.R.id.content).getRootView();
 
@@ -136,7 +111,7 @@ public class PeekAndPop {
      * If lollipop or above, use elevation to bring peek views to the front
      */
     private void bringViewsToFront() {
-        if (Build.VERSION.SDK_INT >= 21) {
+        if (SdkHelper.isAtleastLollipop()) {
             peekLayout.setElevation(10f);
             peekView.setElevation(10f);
         } else {
@@ -162,14 +137,14 @@ public class PeekAndPop {
     /**
      * Set an onClick and onTouch listener for each long click view.
      */
-    protected void initialiseGestureListeners() {
+    private void initialiseGestureListeners() {
         for (int i = 0; i < builder.longClickViews.size(); i++) {
             initialiseGestureListener(builder.longClickViews.get(i), -1);
         }
-        gestureDetector.setIsLongpressEnabled(false);
+//        gestureDetector.setIsLongpressEnabled(false);
     }
 
-    protected void initialiseGestureListener(@NonNull View view, final int position) {
+    private void initialiseGestureListener(@NonNull View view, final int position) {
         PeekAndPopClickListener peekAndPopClickListener = new PeekAndPopClickListener(position);
         thumbImage.setOnClickListener(peekAndPopClickListener);
         autoPlayView.setOnClickListener(peekAndPopClickListener);
@@ -190,13 +165,9 @@ public class PeekAndPop {
      * If the user is within the bounds, and is at the edges of the view, then
      * move it appropriately.
      */
-    protected void handleTouch(@NonNull View view, @NonNull MotionEvent event, int position) {
+    private void handleTouch(@NonNull View view, @NonNull MotionEvent event, int position) {
         if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_CANCEL) {
             pop(view, position);
-        }
-
-        if (gestureDetector != null) {
-            gestureDetector.onTouchEvent(event);
         }
     }
 
@@ -217,7 +188,7 @@ public class PeekAndPop {
      * @param longClickView the view that was long clicked
      * @param index         the view that long clicked
      */
-    protected void peek(@NonNull View longClickView, int index) {
+    private void peek(@NonNull View longClickView, int index) {
         if (onGeneralActionListener != null) {
             onGeneralActionListener.onPeek(longClickView, index);
         }
@@ -235,8 +206,8 @@ public class PeekAndPop {
         downX = 0;
         downY = 0;
 
-        gestureListener.setView(longClickView);
-        gestureListener.setPosition(index);
+//        gestureListener.setView(longClickView);
+//        gestureListener.setPosition(index);
     }
 
     /**
@@ -246,7 +217,7 @@ public class PeekAndPop {
      * @param longClickView the view that was long clicked
      * @param index         the view that long clicked
      */
-    protected void pop(@NonNull View longClickView, int index) {
+    private void pop(@NonNull View longClickView, int index) {
         if (onGeneralActionListener != null) {
             onGeneralActionListener.onPop(longClickView, index);
         }
@@ -347,17 +318,17 @@ public class PeekAndPop {
 
         // essentials
         protected final Activity activity;
-        protected int peekLayoutId = -1;
+        int peekLayoutId = -1;
 
         // optional extras
-        protected ViewGroup       parentViewGroup;
-        protected ArrayList<View> longClickViews;
+        ViewGroup       parentViewGroup;
+        ArrayList<View> longClickViews;
 
-        protected OnGeneralActionListener onGeneralActionListener;
+        OnGeneralActionListener onGeneralActionListener;
 
-        protected boolean animateFling        = true;
-        protected boolean allowUpwardsFling   = true;
-        protected boolean allowDownwardsFling = true;
+        boolean animateFling        = true;
+        boolean allowUpwardsFling   = true;
+        boolean allowDownwardsFling = true;
 
         public Builder(@NonNull Activity activity) {
             this.activity = activity;
@@ -472,65 +443,65 @@ public class PeekAndPop {
         }
     }
 
-    protected class GestureListener extends GestureDetector.SimpleOnGestureListener {
-
-        private int  position;
-        private View view;
-
-        public void setView(View view) {
-            this.view = view;
-        }
-
-        public void setPosition(int position) {
-            this.position = position;
-        }
-
-        @Override
-        public boolean onDown(MotionEvent e) {
-            return true;
-        }
-
-        @Override
-        public boolean onFling(MotionEvent firstEvent, MotionEvent secondEvent, float velocityX, float velocityY) {
-            return false;
-        }
-
-        private boolean handleFling(float velocityX, float velocityY) {
-            if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-                if (velocityY < -FLING_VELOCITY_THRESHOLD && allowUpwardsFling) {
-                    flingToAction(FLING_UPWARDS, velocityX, velocityY);
-                    return false;
-                } else if (velocityY > FLING_VELOCITY_THRESHOLD && allowDownwardsFling) {
-                    flingToAction(FLING_DOWNWARDS, velocityX, velocityY);
-                    return false;
-                }
-            } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                if (velocityX < -FLING_VELOCITY_THRESHOLD && allowUpwardsFling) {
-                    flingToAction(FLING_UPWARDS, velocityX, velocityY);
-                    return false;
-                } else if (velocityX > FLING_VELOCITY_THRESHOLD && allowDownwardsFling) {
-                    flingToAction(FLING_DOWNWARDS, velocityX, velocityY);
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        private void flingToAction(@FlingDirections int direction, float velocityX, float velocityY) {
-            if (animateFling) {
-                if (direction == FLING_UPWARDS) {
-                    peekAnimationHelper.animateExpand(ANIMATION_POP_DURATION, popTime);
-                    peekAnimationHelper.animateFling(velocityX, velocityY, ANIMATION_POP_DURATION, popTime, -FLING_VELOCITY_MAX);
-                } else {
-                    peekAnimationHelper.animateFling(velocityX, velocityY, ANIMATION_POP_DURATION, popTime, FLING_VELOCITY_MAX);
-                }
-            }
-        }
-    }
-
-    public interface OnFlingToActionListener {
-        void onFlingToAction(View longClickView, int position, int direction);
-    }
+//    protected class GestureListener extends GestureDetector.SimpleOnGestureListener {
+//
+//        private int  position;
+//        private View view;
+//
+//        public void setView(View view) {
+//            this.view = view;
+//        }
+//
+//        public void setPosition(int position) {
+//            this.position = position;
+//        }
+//
+//        @Override
+//        public boolean onDown(MotionEvent e) {
+//            return true;
+//        }
+//
+//        @Override
+//        public boolean onFling(MotionEvent firstEvent, MotionEvent secondEvent, float velocityX, float velocityY) {
+//            return false;
+//        }
+//
+//        private boolean handleFling(float velocityX, float velocityY) {
+//            if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+//                if (velocityY < -FLING_VELOCITY_THRESHOLD && allowUpwardsFling) {
+//                    flingToAction(FLING_UPWARDS, velocityX, velocityY);
+//                    return false;
+//                } else if (velocityY > FLING_VELOCITY_THRESHOLD && allowDownwardsFling) {
+//                    flingToAction(FLING_DOWNWARDS, velocityX, velocityY);
+//                    return false;
+//                }
+//            } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//                if (velocityX < -FLING_VELOCITY_THRESHOLD && allowUpwardsFling) {
+//                    flingToAction(FLING_UPWARDS, velocityX, velocityY);
+//                    return false;
+//                } else if (velocityX > FLING_VELOCITY_THRESHOLD && allowDownwardsFling) {
+//                    flingToAction(FLING_DOWNWARDS, velocityX, velocityY);
+//                    return false;
+//                }
+//            }
+//            return true;
+//        }
+//
+//        private void flingToAction(@FlingDirections int direction, float velocityX, float velocityY) {
+//            if (animateFling) {
+//                if (direction == FLING_UPWARDS) {
+//                    peekAnimationHelper.animateExpand(ANIMATION_POP_DURATION, popTime);
+//                    peekAnimationHelper.animateFling(velocityX, velocityY, ANIMATION_POP_DURATION, popTime, -FLING_VELOCITY_MAX);
+//                } else {
+//                    peekAnimationHelper.animateFling(velocityX, velocityY, ANIMATION_POP_DURATION, popTime, FLING_VELOCITY_MAX);
+//                }
+//            }
+//        }
+//    }
+//
+//    public interface OnFlingToActionListener {
+//        void onFlingToAction(View longClickView, int position, int direction);
+//    }
 
     public interface OnGeneralActionListener {
         void onPeek(View longClickView, int position);

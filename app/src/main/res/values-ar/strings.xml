@@ -88,14 +88,6 @@
     <string name="action_sort">فرز</string>
     <string name="action_view_list">عرض القائمة</string>
     <string name="action_view_grid">عرض الشبكة</string>
-    <string name="sort_name">اسم (A-Z)</string>
-    <string name="sort_name_desc">اسم (Z-A)</string>
-    <string name="sort_type">نوع (تصاعدي)</string>
-    <string name="sort_type_desc">نوع (تنازلي)</string>
-    <string name="sort_size">الحجم (أصغر)</string>
-    <string name="sort_size_desc">حجم (أكبر)</string>
-    <string name="sort_date">التاريخ (أقدم)</string>
-    <string name="sort_date_desc">التاريخ (الأحدث)</string>
     <string name="extract_to">استخراج ل</string>
     <string name="open">فتح</string>
     <string name="extracting">استخراج ..</string>
@@ -207,4 +199,44 @@
     <string name="analytics_text">إرسال تحليلات</string>
     <string name="analytics_summary">مساعدتنا على تحسين التطبيق عن طريق إرسال بيانات الاستخدام المجهول.</string>
     <string name="move_complete">اكتمل النقل</string>
+	
+	 
+	<string name="dual_pane_intro_title">الجزء المزدوج</string>
+    <string name="dual_pane_intro_subtitle">وضع مزدوج لتحسين الاستخدام.</string>
+    <string name="sort_name">اسم</string>
+    <string name="sort_type">اكتب</string>
+    <string name="sort_size">بحجم</string>
+    <string name="sort_date">تاريخ</string>
+    <string name="ascending">تصاعدي</string>
+    <string name="library_recent">الأخيرة</string>
+    <string name="albums">ألبومات</string>
+    <string name="artists">الفنانين</string>
+    <string name="genres">الجنس الأدبي</string>
+    <string name="all_tracks">جميع أغاني</string>
+    <string name="notifications">إخطارات</string>
+    <string name="alarms">إنذار</string>
+    <string name="ringtones">نغمات</string>
+    <string name="podcasts">المدونة الصوتية</string>
+    <string name="mute">كتم الصوت</string>
+    <string name="unmute">غير الصامت</string>
+    <string name="uninstall">الغاء التثبيت</string>
+    <string name="package_name">اسم الحزمة</string>
+    <string name="version_name">الإصدار</string>
+    <string name="installed_source">مصدر</string>
+    <string name="min_sdk">مين سك</string>
+    <string name="target_sdk">استهداف سك</string>
+    <string name="installed">المثبتة</string>
+    <string name="updated">محدث</string>
+    <string name="nav_header_tools">أدوات</string>
+    <string name="app_manager">مدير التطبيق</string>
+    <string name="category">الفئة</string>
+    <string name="app_detail">تفاصيل التطبيق</string>
+    <string name="unknown">غير معروف</string>
+    <string name="enabled">تمكين</string>
+    <string name="trash">قمامة، يدمر، يهدم</string>
+    <string name="move_trash">ارسال الى سلة المحذوفات</string>
+    <string name="restore">استعادة</string>
+    <string name="moving_title_trash">جار النقل إلى المهملات</string>
+    <string name="restoring_title_trash">استعادة</string>
+
 </resources>

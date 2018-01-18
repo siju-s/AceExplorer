@@ -120,47 +120,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    void setList(ArrayList<FileInfo> fileList) {
-        this.fileList = fileList;
-    }
-
-    private void clear() {
-        fileList = new ArrayList<>();
-    }
-
-
-    public void setStopAnimation(boolean flag) {
-        mIsAnimNeeded = !flag;
-    }
-
-
-    public void clearList() {
-        if (filteredList != null && !filteredList.isEmpty()) {
-            filteredList.clear();
-        }
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
-    public interface OnItemClickListener {
-        void onItemClick(View view, int position);
-    }
-
-    interface OnItemLongClickListener {
-        void onItemLongClick(View view, int position);
-    }
-
-
-    public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
-        this.mItemClickListener = mItemClickListener;
-    }
-
-    void setOnItemLongClickListener(final OnItemLongClickListener mItemClickListener) {
-        this.mOnItemLongClickListener = mItemClickListener;
-    }
-
     @Override
     public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
@@ -178,7 +137,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
         return super.onFailedToRecycleView(holder);
     }
-
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -199,6 +157,88 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return new FileListViewHolder(view);
 
 
+    }
+
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+
+        if (context == null) {
+            return;
+        }
+        if (holder instanceof FileListViewHolder) {
+            FileListViewHolder fileListViewHolder = (FileListViewHolder) holder;
+
+            if (!mStopAnimation && !mAnimatedPos.get(position)) {
+                animate(fileListViewHolder);
+                mAnimatedPos.put(position, true);
+            }
+
+            int color;
+            if (mIsThemeDark) {
+                color = ContextCompat.getColor(context, R.color.dark_actionModeItemSelected);
+            } else {
+                color = ContextCompat.getColor(context, R.color.actionModeItemSelected);
+            }
+
+            if (mSelectedItemsIds.get(position)) {
+                fileListViewHolder.itemView.setBackgroundColor(color);
+            } else {
+                if (position == draggedPos) {
+                    fileListViewHolder.itemView.setBackgroundColor(color);
+                } else {
+                    fileListViewHolder.itemView.setBackgroundColor(Color.TRANSPARENT);
+                }
+            }
+
+            setViewByCategory(fileListViewHolder, position);
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return TYPE_ITEM;
+    }
+
+    void setList(ArrayList<FileInfo> fileList) {
+        this.fileList = fileList;
+    }
+
+
+    private void clear() {
+        fileList = new ArrayList<>();
+    }
+
+
+    public void setStopAnimation(boolean flag) {
+        mIsAnimNeeded = !flag;
+    }
+
+    public void clearList() {
+        if (filteredList != null && !filteredList.isEmpty()) {
+            filteredList.clear();
+        }
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+    public interface OnItemClickListener {
+        void onItemClick(View view, int position);
+
+    }
+    interface OnItemLongClickListener {
+        void onItemLongClick(View view, int position);
+
+
+    }
+
+    public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
+        this.mItemClickListener = mItemClickListener;
+    }
+
+    void setOnItemLongClickListener(final OnItemLongClickListener mItemClickListener) {
+        this.mOnItemLongClickListener = mItemClickListener;
     }
 
     private void setPeekPopListener() {
@@ -290,54 +330,13 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     };
 
-    void stopAutoPlayVid() {
+
+
+    public void stopAutoPlayVid() {
         View view = peekAndPop.getPeekView();
         peekAndPop.resetViews();
         AutoPlayContainer autoPlayView = view.findViewById(R.id.autoPlayView);
         autoPlayView.getCustomVideoView().clearAll();
-    }
-
-
-
-    @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
-        if (context == null) {
-            return;
-        }
-        if (holder instanceof FileListViewHolder) {
-            FileListViewHolder fileListViewHolder = (FileListViewHolder) holder;
-
-            if (!mStopAnimation && !mAnimatedPos.get(position)) {
-                animate(fileListViewHolder);
-                mAnimatedPos.put(position, true);
-            }
-
-            int color;
-            if (mIsThemeDark) {
-                color = ContextCompat.getColor(context, R.color.dark_actionModeItemSelected);
-            } else {
-                color = ContextCompat.getColor(context, R.color.actionModeItemSelected);
-            }
-
-            if (mSelectedItemsIds.get(position)) {
-                fileListViewHolder.itemView.setBackgroundColor(color);
-            } else {
-                if (position == draggedPos) {
-                    fileListViewHolder.itemView.setBackgroundColor(color);
-                } else {
-                    fileListViewHolder.itemView.setBackgroundColor(Color.TRANSPARENT);
-                }
-            }
-
-            setViewByCategory(fileListViewHolder, position);
-        }
-
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return TYPE_ITEM;
     }
 
     private void animate(FileListViewHolder fileListViewHolder) {
@@ -516,8 +515,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             mSelectedItemsIds.delete(position);
 
         }
-
-        notifyDataSetChanged();
+        notifyItemChanged(position);
     }
 
     int getSelectedCount() {
@@ -529,6 +527,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     void filter(String text) {
+        
         if (text.isEmpty()) {
             if (fileList != null) {
                 fileList.clear();
@@ -537,6 +536,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         } else {
             ArrayList<FileInfo> result = new ArrayList<>();
             text = text.toLowerCase();
+
             for (FileInfo item : filteredList) {
                 if (item.getFileName().toLowerCase().contains(text)) {
                     result.add(item);

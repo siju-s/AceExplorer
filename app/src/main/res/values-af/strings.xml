@@ -84,14 +84,6 @@
     <string name="action_sort">Sorteer</string>
     <string name="action_view_list">lys skerm</string>
     <string name="action_view_grid">Grid view</string>
-    <string name="sort_name">Naam (A-Z)</string>
-    <string name="sort_name_desc">Naam (Z-A)</string>
-    <string name="sort_type">Tipe (oplopend)</string>
-    <string name="sort_type_desc">Tipe (Afgaande)</string>
-    <string name="sort_size">Grootte (kleiner)</string>
-    <string name="sort_size_desc">Grootte (groter)</string>
-    <string name="sort_date">Datum (ouer)</string>
-    <string name="sort_date_desc">Datum (Nuutste)</string>
     <string name="extract_to">Uittreksel om</string>
     <string name="open">oop</string>
     <string name="extracting">Uittreksels van ..</string>
@@ -202,4 +194,44 @@
     <string name="analytics_text">Stuur analise</string>
     <string name="analytics_summary">Help ons om die program te verbeter deur anonieme gebruiksdata te stuur.</string>
     <string name="move_complete">Skuif voltooi</string>
+	
+
+	<string name="dual_pane_intro_title">Dubbele paneel</string>
+    <string name="dual_pane_intro_subtitle">Dual modus vir beter bruikbaarheid.</string>
+    <string name="sort_name">naam</string>
+    <string name="sort_type">tipe</string>
+    <string name="sort_size">grootte</string>
+    <string name="sort_date">datum</string>
+    <string name="ascending">stygende</string>
+    <string name="library_recent">onlangse</string>
+    <string name="albums">albums</string>
+    <string name="artists">kunstenaars</string>
+    <string name="genres">genres</string>
+    <string name="all_tracks">Alle liedjies</string>
+    <string name="notifications">Kennisgewings</string>
+    <string name="alarms">alarms</string>
+    <string name="ringtones">luitone</string>
+    <string name="podcasts">podcasts</string>
+    <string name="mute">stom</string>
+    <string name="unmute">inschakelt</string>
+    <string name="uninstall">verwyder</string>
+    <string name="package_name">Pakket naam</string>
+    <string name="version_name">weergawe</string>
+    <string name="installed_source">Bron</string>
+    <string name="min_sdk">Min SDK</string>
+    <string name="target_sdk">Teiken SDK</string>
+    <string name="installed">geïnstalleer</string>
+    <string name="updated">Opgedateer</string>
+    <string name="nav_header_tools">gereedskap</string>
+    <string name="app_manager">Programbestuurder</string>
+    <string name="category">kategorie</string>
+    <string name="app_detail">App detail</string>
+    <string name="unknown">onbekend</string>
+    <string name="enabled">enabled</string>
+    <string name="trash">asblik</string>
+    <string name="move_trash">Beweeg na rommel</string>
+    <string name="restore">herstel</string>
+    <string name="moving_title_trash">Skuif na asblik</string>
+    <string name="restoring_title_trash">herstel</string>
+
 </resources>

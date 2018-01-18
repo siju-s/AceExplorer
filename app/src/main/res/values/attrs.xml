@@ -17,10 +17,6 @@
 
 <resources>
     <attr name="toolbar_theme" format="reference" />
-<!--    <declare-styleable name="ScrimInsetsView">
-        <attr name="insetForeground" format="reference|color" />
-    </declare-styleable>-->
-
     <declare-styleable name="FastScrollRecyclerView">
         <attr name="fastScrollThumbColor" format="reference|color" />
         <attr name="fastScrollTrackColor" format="reference|color" />

@@ -36,6 +36,7 @@ import com.siju.acexplorer.permission.PermissionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.siju.acexplorer.model.FileConstants.PREFS_ADD_RECENT;
 import static com.siju.acexplorer.model.FileConstants.PREFS_DUAL_PANE;
 import static com.siju.acexplorer.model.FileConstants.PREFS_FIRST_RUN;
 import static com.siju.acexplorer.model.groups.Category.ADD;
@@ -44,6 +45,7 @@ import static com.siju.acexplorer.model.groups.Category.DOCS;
 import static com.siju.acexplorer.model.groups.Category.DOWNLOADS;
 import static com.siju.acexplorer.model.groups.Category.FAVORITES;
 import static com.siju.acexplorer.model.groups.Category.IMAGE;
+import static com.siju.acexplorer.model.groups.Category.RECENT;
 import static com.siju.acexplorer.model.groups.Category.VIDEO;
 import static com.siju.acexplorer.model.groups.CategoryHelper.getCategory;
 import static com.siju.acexplorer.model.groups.CategoryHelper.getCategoryName;
@@ -59,7 +61,7 @@ public class HomeModelImpl implements HomeModel {
     private Context context;
     private int     resourceIds[];
     private String labels[] = new String[]{"Images", "Audio", "Videos", "Docs",
-            "Downloads", "Add"};
+            "Downloads", "Recent", "Add"};
     private Category                categories[];
     private SharedPreferences       sharedPreferences;
     private SharedPreferenceWrapper sharedPreferenceWrapper;
@@ -79,9 +81,9 @@ public class HomeModelImpl implements HomeModel {
     private void initConstants() {
         resourceIds = new int[]{R.drawable.ic_library_images, R.drawable.ic_library_music,
                 R.drawable.ic_library_videos, R.drawable.ic_library_docs,
-                R.drawable.ic_library_downloads, R.drawable.ic_library_add};
+                R.drawable.ic_library_downloads, R.drawable.ic_library_recents, R.drawable.ic_library_add};
         categories = new Category[]{IMAGE, AUDIO, VIDEO,
-                DOCS, DOWNLOADS, ADD};
+                DOCS, DOWNLOADS, RECENT, ADD};
     }
 
     @Override
@@ -158,6 +160,10 @@ public class HomeModelImpl implements HomeModel {
                     addPlusCategory();
                 } else {
                     addSavedLibraries();
+                    if (!sharedPreferences.getBoolean(PREFS_ADD_RECENT,false)) {
+                        addRecentCategory();
+                        sharedPreferences.edit().putBoolean(PREFS_ADD_RECENT, true).apply();
+                    }
                     addPlusCategory();
                 }
 
@@ -181,6 +187,14 @@ public class HomeModelImpl implements HomeModel {
            sharedPreferenceWrapper.addLibrary(context, model);
         }
         sharedPreferences.edit().putBoolean(PREFS_FIRST_RUN, false).apply();
+    }
+
+    private void addRecentCategory() {
+        addToLibrary(new HomeLibraryInfo(categories[5], labels[5], resourceIds[5], COUNT_ZERO));
+        LibrarySortModel model = new LibrarySortModel();
+        model.setCategoryId(categories[5].getValue());
+        model.setChecked(true);
+        sharedPreferenceWrapper.addLibrary(context, model);
     }
 
 

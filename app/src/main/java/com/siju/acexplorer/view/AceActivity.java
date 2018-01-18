@@ -21,6 +21,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +37,7 @@ import com.siju.acexplorer.model.MainModel;
 import com.siju.acexplorer.model.MainModelImpl;
 import com.siju.acexplorer.presenter.MainPresenter;
 import com.siju.acexplorer.presenter.MainPresenterImpl;
+import com.siju.acexplorer.trash.TrashHelper;
 
 import static com.siju.acexplorer.settings.SettingsPreferenceFragment.PREFS_ANALYTICS;
 
@@ -51,6 +53,7 @@ public class AceActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.base);
+        TrashHelper.createTrashDir(getApplicationContext());
 
         boolean sendAnalytics = PreferenceManager.getDefaultSharedPreferences(this).
                 getBoolean(PREFS_ANALYTICS, true);
@@ -73,6 +76,7 @@ public class AceActivity extends BaseActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
+        Log.d(TAG, "onNewIntent: "+intent);
         mainUi.onIntentReceived(intent);
     }
 

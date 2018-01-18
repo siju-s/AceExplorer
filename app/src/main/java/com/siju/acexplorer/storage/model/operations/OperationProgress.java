@@ -38,6 +38,7 @@ import com.siju.acexplorer.storage.model.task.CopyService;
 import com.siju.acexplorer.storage.model.task.CreateZipService;
 import com.siju.acexplorer.storage.model.task.ExtractService;
 import com.siju.acexplorer.storage.model.task.MoveService;
+import com.siju.acexplorer.trash.TrashHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,16 +71,21 @@ public class OperationProgress {
     private TextView    textProgress;
     private ArrayList<FileInfo> copiedFileInfo = new ArrayList<>();
     private Context mContext;
+    public static final String ACTION_STOP = "com.siju.acexplorer.ACTION_STOP";
 
 
     @SuppressLint("InflateParams")
     public void showPasteProgress(final Context context, String destinationDir, List<FileInfo> files,
                                   boolean isMove) {
+
+        boolean isTrash = destinationDir.contains(TrashHelper.getTrashDir(context));
         mContext = context;
         registerReceiver(context);
         String title;
         if (isMove) {
             title = context.getString(R.string.move);
+        } else if (isTrash){
+            title = context.getString(R.string.moving_title_trash);
         } else {
             title = context.getString(R.string.action_copy);
         }
@@ -115,7 +121,12 @@ public class OperationProgress {
 
         textFileFromPath.setText(copiedFileInfo.get(0).getFilePath());
         textFileName.setText(copiedFileInfo.get(0).getFileName());
-        textFileToPath.setText(destinationDir);
+        if (isTrash) {
+            textFileToPath.setText(context.getString(R.string.trash));
+        } else {
+            textFileToPath.setText(destinationDir);
+
+        }
         textFileCount.setText(String.format(Locale.getDefault(), "%s%d", context.getString(R.string.count_placeholder),
                                             copiedFilesSize));
         textProgress.setText("0%");
@@ -172,7 +183,8 @@ public class OperationProgress {
         String fileName = intent.getStringExtra(KEY_FILEPATH);
         copiedFilesSize = copiedFileInfo.size();
         Logger.log(TAG, "Totalfiles=" + copiedFilesSize);
-        textFileName.setText(fileName);
+        textFileName.setText(title);
+        textFileFromPath.setText(fileName);
         textProgress.setText("0%");
 
         positiveButton.setOnClickListener(new View.OnClickListener() {
@@ -223,10 +235,10 @@ public class OperationProgress {
         positiveButton.setText(texts[1]);
         negativeButton.setText(texts[2]);
 
-        textFileToPath.setText(intent.getStringExtra(KEY_FILEPATH));
-        String fileName = intent.getStringExtra(KEY_FILEPATH2);
+        textFileFromPath.setText(intent.getStringExtra(KEY_FILEPATH));
+        textFileToPath.setText(intent.getStringExtra(KEY_FILEPATH2));
 
-        textFileName.setText(fileName);
+        textFileName.setText(title);
         textProgress.setText("0%");
 
         positiveButton.setOnClickListener(new View.OnClickListener() {
@@ -251,14 +263,16 @@ public class OperationProgress {
     private void stopZipService() {
         Context context = AceApplication.getAppContext();
         Intent intent = new Intent(context, CreateZipService.class);
-        context.stopService(intent);
+        intent.setAction(ACTION_STOP);
+        context.startService(intent);
         unregisterReceiver(context);
     }
 
     private void stopExtractService() {
         Context context = AceApplication.getAppContext();
         Intent intent = new Intent(context, ExtractService.class);
-        context.stopService(intent);
+        intent.setAction(ACTION_STOP);
+        context.startService(intent);
         unregisterReceiver(context);
 
     }
@@ -286,14 +300,18 @@ public class OperationProgress {
     private void stopCopyService() {
         Context context = AceApplication.getAppContext();
         Intent intent = new Intent(context, CopyService.class);
-        context.stopService(intent);
+        intent.setAction(ACTION_STOP);
+        context.startService(intent);
         unregisterReceiver(context);
     }
+
+
 
     private void stopMoveService() {
         Context context = AceApplication.getAppContext();
         Intent intent = new Intent(context, MoveService.class);
-        context.stopService(intent);
+        intent.setAction(ACTION_STOP);
+        context.startService(intent);
         unregisterReceiver(context);
     }
 

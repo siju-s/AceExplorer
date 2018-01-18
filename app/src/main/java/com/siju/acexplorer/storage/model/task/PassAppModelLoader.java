@@ -2,6 +2,7 @@ package com.siju.acexplorer.storage.model.task;
 
 
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -19,14 +20,14 @@ class PassAppModelLoader implements ModelLoader<String, ApplicationInfo> {
 
     @Nullable
     @Override
-    public LoadData<ApplicationInfo> buildLoadData(String path, int width,
-                                                   int height, Options options) {
+    public LoadData<ApplicationInfo> buildLoadData(@NonNull String path, int width,
+                                                   int height, @NonNull Options options) {
         return new LoadData<>(new CustomKey(path), new CastingDataFetcher(path));
     }
 
     @Override
-    public boolean handles(String s) {
-        return s != null;
+    public boolean handles(@NonNull String s) {
+        return true;
     }
 
 
@@ -34,8 +35,9 @@ class PassAppModelLoader implements ModelLoader<String, ApplicationInfo> {
             implements ModelLoaderFactory<String, ApplicationInfo>
     {
 
+        @NonNull
         @Override
-        public ModelLoader<String, ApplicationInfo> build(MultiModelLoaderFactory
+        public ModelLoader<String, ApplicationInfo> build(@NonNull MultiModelLoaderFactory
                                                                   multiFactory) {
             return new PassAppModelLoader();
         }
@@ -58,9 +60,18 @@ class PassAppModelLoader implements ModelLoader<String, ApplicationInfo> {
 
 
         @Override
-        public void loadData(Priority priority, DataCallback<? super ApplicationInfo> callback) {
-            ApplicationInfo applicationInfo = AppUtils.getAppInfo(AceApplication.getAppContext(),
-                                                                  path);
+        public void loadData(@NonNull Priority priority, @NonNull DataCallback<? super ApplicationInfo> callback) {
+            ApplicationInfo applicationInfo = null;
+            if (path.contains("/")) {
+                applicationInfo = AppUtils.getAppInfo(AceApplication.getAppContext(),
+                                                                      path);
+            } else {
+                try { // For App manager, package name to be passed
+                    applicationInfo = AceApplication.getAppContext().getPackageManager().getApplicationInfo(path, 0);
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
             callback.onDataReady(applicationInfo);
         }
 

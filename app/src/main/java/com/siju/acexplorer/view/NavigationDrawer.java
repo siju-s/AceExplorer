@@ -51,6 +51,7 @@ import java.util.ArrayList;
 
 import static com.siju.acexplorer.model.StorageUtils.getDownloadsDirectory;
 import static com.siju.acexplorer.model.groups.Category.APP_MANAGER;
+import static com.siju.acexplorer.model.groups.Category.TRASH;
 
 /**
  * Created by Siju on 28 August,2017
@@ -258,7 +259,13 @@ class NavigationDrawer implements View.OnClickListener {
                 uiView.onLibraryItemClicked(childPos + 1);
                 break;
             case TOOLS:
-                uiView.onLibraryItemClicked(APP_MANAGER.getValue());
+                int clickedPos;
+                if (childPos == 0) {
+                    clickedPos = APP_MANAGER.getValue();
+                } else {
+                    clickedPos = TRASH.getValue();
+                }
+                uiView.onLibraryItemClicked(clickedPos);
                 break;
         }
     }

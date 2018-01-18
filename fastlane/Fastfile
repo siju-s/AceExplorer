@@ -23,3 +23,18 @@ lane :beta do
     build_secret: "e61cbd26d2a5943cbda9e3c988af24ab21d176820524fc91d8ca7aded9c92546"
   )
 end
+
+lane :playstore do
+  gradle(
+    task: 'assemble',
+    build_type: 'Release'
+  )
+ upload_to_play_store(
+    track: 'alpha',
+package_name: 'com.siju.acexplorer',
+skip_upload_images: 'true',
+skip_upload_screenshots: 'true',
+apk:"/Volumes/ANDROID/WORKSPACE/ACE/ace-explorer/app/build/outputs/apk/prod/release/Ace_2.0.0.build2.apk"
+    #rollout: '0.5'
+  )
+end

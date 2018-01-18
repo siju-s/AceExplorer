@@ -84,14 +84,6 @@
     <string name="action_sort">Вид</string>
     <string name="action_view_list">изглед Списък</string>
     <string name="action_view_grid">Табличен</string>
-    <string name="sort_name">Име (A-Z)</string>
-    <string name="sort_name_desc">Наименование (Z-A)</string>
-    <string name="sort_type">Вид (възходящ ред)</string>
-    <string name="sort_type_desc">Вид (низходящ ред)</string>
-    <string name="sort_size">Размер (по-малък)</string>
-    <string name="sort_size_desc">Размер (Bigger)</string>
-    <string name="sort_date">Дата (стари)</string>
-    <string name="sort_date_desc">Дата (най-новите)</string>
     <string name="extract_to">Екстракт да</string>
     <string name="open">отворено</string>
     <string name="extracting">Извличане ..</string>
@@ -202,4 +194,44 @@
     <string name="analytics_text">Изпратете аналитични данни</string>
     <string name="analytics_summary">Помогнете ни да подобрим приложението, като изпратите анонимни данни за използването.</string>
     <string name="move_complete">Преместване завършено</string>
+	
+
+	<string name="dual_pane_intro_title">Двойно стъкло</string>
+    <string name="dual_pane_intro_subtitle">Двоен режим за по-добра използваемост.</string>
+    <string name="sort_name">име</string>
+    <string name="sort_type">Тип</string>
+    <string name="sort_size">размер</string>
+    <string name="sort_date">Дата</string>
+    <string name="ascending">Възходящ</string>
+    <string name="library_recent">скорошен</string>
+    <string name="albums">Албуми</string>
+    <string name="artists">Художници</string>
+    <string name="genres">Жанрове</string>
+    <string name="all_tracks">Всички песни</string>
+    <string name="notifications">Известия</string>
+    <string name="alarms">Аларми</string>
+    <string name="ringtones">Мелодии</string>
+    <string name="podcasts">Подкастове</string>
+    <string name="mute">ням</string>
+    <string name="unmute">Със звук</string>
+    <string name="uninstall">Uninstall</string>
+    <string name="package_name">Име на пакета</string>
+    <string name="version_name">версия</string>
+    <string name="installed_source">източник</string>
+    <string name="min_sdk">Мин. SDK</string>
+    <string name="target_sdk">Целеви SDK</string>
+    <string name="installed">Инсталирана</string>
+    <string name="updated">Обновено</string>
+    <string name="nav_header_tools">Инструменти</string>
+    <string name="app_manager">Мениджър на приложения</string>
+    <string name="category">категория</string>
+    <string name="app_detail">Подробности за приложението</string>
+    <string name="unknown">неизвестен</string>
+    <string name="enabled">Enabled</string>
+    <string name="trash">боклук</string>
+    <string name="move_trash">Преместване в кошчето</string>
+    <string name="restore">Възстанови</string>
+    <string name="moving_title_trash">Преместване в кошчето</string>
+    <string name="restoring_title_trash">Възстановяване</string>
+
 </resources>

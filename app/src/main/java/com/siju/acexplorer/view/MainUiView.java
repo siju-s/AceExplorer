@@ -73,6 +73,9 @@ import static com.siju.acexplorer.model.FileConstants.PREFS_FIRST_RUN;
 import static com.siju.acexplorer.model.StorageUtils.getInternalStorage;
 import static com.siju.acexplorer.model.groups.Category.AUDIO;
 import static com.siju.acexplorer.model.groups.Category.FILES;
+import static com.siju.acexplorer.model.groups.Category.GENERIC_IMAGES;
+import static com.siju.acexplorer.model.groups.Category.GENERIC_MUSIC;
+import static com.siju.acexplorer.model.groups.Category.GENERIC_VIDEOS;
 import static com.siju.acexplorer.model.groups.Category.IMAGE;
 import static com.siju.acexplorer.model.groups.Category.VIDEO;
 import static com.siju.acexplorer.model.groups.CategoryHelper.getCategory;
@@ -183,7 +186,12 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
             String query = intent.getStringExtra(SearchManager.QUERY);
             Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id
                     .main_container);
-            if (fragment instanceof BaseFileList) {
+            Fragment dualFragment = activity.getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
+
+            if (isDualPaneInFocus && dualFragment != null) {
+                ((BaseFileList) dualFragment).performVoiceSearch(query);
+            }
+            else if (fragment instanceof BaseFileList) {
                 ((BaseFileList) fragment).performVoiceSearch(query);
             }
         }
@@ -434,6 +442,17 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
 
     void onLibraryItemClicked(int childPos) {
         Category category = getCategory(childPos);
+            switch (category) {
+                case AUDIO:
+                    category = GENERIC_MUSIC;
+                    break;
+                case IMAGE:
+                    category = GENERIC_IMAGES;
+                    break;
+                case VIDEO:
+                    category = GENERIC_VIDEOS;
+                    break;
+        }
         displayFileList(null, category);
     }
 

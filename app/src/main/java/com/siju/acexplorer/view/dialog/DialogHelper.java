@@ -47,6 +47,7 @@ import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.storage.model.operations.Operations;
+import com.siju.acexplorer.trash.TrashHelper;
 import com.siju.acexplorer.utils.Clipboard;
 import com.siju.acexplorer.view.PasteConflictAdapter;
 import com.stericson.RootTools.RootTools;
@@ -70,13 +71,16 @@ public class DialogHelper {
 
     /**
      * @param fileInfo Paths to delete
+     * @param trashEnabled
      */
     public static void showDeleteDialog(final Context context, final ArrayList<FileInfo> fileInfo,
-                                        final DeleteDialogListener deleteDialogListener) {
+                                        final boolean trashEnabled, final DeleteDialogListener deleteDialogListener) {
         String title = context.getString(R.string.dialog_delete_title, fileInfo.size());
         String texts[] = new String[]{title, context.getString(R.string.msg_ok), "", context
                 .getString(R.string
                                    .dialog_cancel)};
+
+        final boolean isTrashDir = fileInfo.get(0).getFilePath().contains(TrashHelper.getTrashDir(context));
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -92,15 +96,22 @@ public class DialogHelper {
         Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
         Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
 
+        final CheckBox checkBoxTrash = dialogView.findViewById(R.id.checkBoxTrash);
+        checkBoxTrash.setChecked(trashEnabled);
+        if (isTrashDir) {
+            checkBoxTrash.setVisibility(View.GONE);
+        }
         textTitle.setText(title);
         positiveButton.setText(texts[1]);
         negativeButton.setText(texts[3]);
 
 
+
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                deleteDialogListener.onPositiveButtonClick(view, fileInfo);
+                boolean isChecked = !isTrashDir && checkBoxTrash.isChecked();
+                deleteDialogListener.onPositiveButtonClick(view, isChecked, fileInfo);
                 alertDialog.dismiss();
             }
         });
@@ -571,6 +582,7 @@ public class DialogHelper {
         ImageView imageFileIcon = dialogView.findViewById(R.id.imageFileIcon);
         TextView textFileName = dialogView.findViewById(R.id.textFileName);
         TextView textPath = dialogView.findViewById(R.id.textPath);
+        TextView textPathHolder = dialogView.findViewById(R.id.textPathPlaceholder);
         TextView textFileSize = dialogView.findViewById(R.id.textFileSize);
         TextView textDateModified = dialogView.findViewById(R.id.textDateModified);
         TextView textHidden = dialogView.findViewById(R.id.textHidden);
@@ -585,6 +597,7 @@ public class DialogHelper {
         TextView textMD5Placeholder = dialogView.findViewById(R.id.textMD5PlaceHolder);
 
         final String path = fileInfo.getFilePath();
+        boolean isTrash = TrashHelper.isTrashDir(context, path);
         String fileName = fileInfo.getFileName();
         String fileDate;
         if (isFileCategory) {
@@ -613,12 +626,19 @@ public class DialogHelper {
         boolean isWriteable = new File(path).canWrite();
         boolean isHidden = new File(path).isHidden();
 
+        if (isTrash) {
+            textPath.setVisibility(View.GONE);
+            textPathHolder.setVisibility(View.GONE);
+        }
+
+
+
         textFileName.setText(fileName);
         textPath.setText(path);
         textFileSize.setText(fileNoOrSize);
         textDateModified.setText(fileDate);
 
-        if (!isFileCategory) {
+        if (!isFileCategory || isTrash) {
             textMD5.setVisibility(View.GONE);
             textMD5Placeholder.setVisibility(View.GONE);
             textReadablePlaceHolder.setVisibility(View.GONE);
@@ -651,6 +671,12 @@ public class DialogHelper {
         Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
         Button neutralButton = dialogView.findViewById(R.id.buttonNeutral);
         dialogView.findViewById(R.id.buttonNegative).setVisibility(View.GONE);
+
+        // For app manager
+        if (path != null && !path.contains("/")) {
+            textPathHolder.setText(context.getString(R.string.package_name));
+            neutralButton.setVisibility(View.GONE);
+        }
 
         positiveButton.setText(context.getString(R.string.msg_ok));
         neutralButton.setText(context.getString(R.string.copy_path).toUpperCase(Locale.getDefault
@@ -965,7 +991,7 @@ public class DialogHelper {
 
     public interface DeleteDialogListener {
 
-        void onPositiveButtonClick(View view, ArrayList<FileInfo> filesToDelete);
+        void onPositiveButtonClick(View view, boolean isTrashEnabled, ArrayList<FileInfo> filesToDelete);
 
     }
 

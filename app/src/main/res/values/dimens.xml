@@ -73,9 +73,11 @@
     <dimen name="text_16">16sp</dimen>
     <dimen name="home_storage_icon_size">55dp</dimen>
     <dimen name="card_home_radius">5dp</dimen>
-    <dimen name="peek_pop_size">300dp</dimen>
+    <dimen name="peek_pop_size">250dp</dimen>
     <dimen name="app_detail_icon_height">250dp</dimen>
     <dimen name="margin_30">30dp</dimen>
+    <dimen name="margin_20">20dp</dimen>
+    <dimen name="app_detail_icon_size">60dp</dimen>
 
 
 </resources>

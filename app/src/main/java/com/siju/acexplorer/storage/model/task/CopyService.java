@@ -17,14 +17,20 @@
 package com.siju.acexplorer.storage.model.task;
 
 import android.annotation.TargetApi;
-import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
+import android.os.Process;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -41,8 +47,10 @@ import com.siju.acexplorer.model.helper.RootHelper;
 import com.siju.acexplorer.model.root.RootDeniedException;
 import com.siju.acexplorer.model.root.RootUtils;
 import com.siju.acexplorer.storage.model.CopyData;
+import com.siju.acexplorer.storage.model.operations.OperationProgress;
 import com.siju.acexplorer.storage.model.operations.OperationUtils;
-import com.siju.acexplorer.view.AceActivity;
+import com.siju.acexplorer.trash.TrashDbHelper;
+import com.siju.acexplorer.trash.TrashModel;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -72,11 +80,12 @@ import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_PRO
 import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_TOTAL;
 import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_TOTAL_PROGRESS;
 
-public class CopyService extends IntentService {
+public class CopyService extends Service {
 
-    private final int    NOTIFICATION_ID = 1000;
-    private final String SEPARATOR       = "/";
-    private final String CHANNEL_ID      = "operation";
+    private static final String TAG      = "CopyService";
+    private final int NOTIFICATION_ID = 1000;
+    private final String SEPARATOR    = "/";
+    private final String CHANNEL_ID   = "operation";
 
 
     private Context                    context;
@@ -91,12 +100,14 @@ public class CopyService extends IntentService {
     private long totalBytes = 0L, copiedBytes = 0L;
     private int     count     = 0;
     private boolean isSuccess = true;
-    private boolean move;
-    private boolean calculatingTotalSize;
-
-    public CopyService() {
-        super("CopyService");
-    }
+    private boolean               move;
+    private boolean               calculatingTotalSize;
+    private boolean               isCopyToTrash;
+    private boolean               isTrashRestore;
+    private ArrayList<TrashModel> trashList;
+    private Looper                serviceLooper;
+    private ServiceHandler        serviceHandler;
+    private boolean stopService;
 
 
     @Override
@@ -105,50 +116,104 @@ public class CopyService extends IntentService {
         Logger.log("CopyService", "onCreate: ");
         context = getApplicationContext();
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancelAll();
-
-        Intent notificationIntent = new Intent(this, AceActivity.class);
-        notificationIntent.setAction(Intent.ACTION_MAIN);
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-
+        if (notificationManager != null) {
+            notificationManager.cancelAll();
+        }
         createChannelId();
         builder = new NotificationCompat.Builder(context, CHANNEL_ID);
-        builder.setContentIntent(pendingIntent);
         builder.setContentTitle(getResources().getString(R.string.copying)).setSmallIcon(R.drawable.ic_copy_white);
         builder.setOnlyAlertOnce(true);
         builder.setDefaults(0);
+        Intent cancelIntent = new Intent(context, CopyService.class);
+        cancelIntent.setAction(OperationProgress.ACTION_STOP);
+        PendingIntent pendingCancelIntent =
+                PendingIntent.getService(context, NOTIFICATION_ID, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT) ;
+        builder.addAction(new NotificationCompat.Action(R.drawable.ic_cancel, getString(R.string.dialog_cancel), pendingCancelIntent));
 
         Notification notification = builder.build();
         startForeground(NOTIFICATION_ID, notification);
-        // Issue the notification.
+
         notificationManager.notify(NOTIFICATION_ID, notification);
+        startThread();
     }
+
+    private void startThread() {
+        HandlerThread thread = new HandlerThread("CopyService",
+                                                 Process.THREAD_PRIORITY_BACKGROUND);
+        thread.start();
+
+        // Get the HandlerThread's Looper and use it for our Handler
+        serviceLooper = thread.getLooper();
+        serviceHandler = new ServiceHandler(serviceLooper);
+    }
+
 
     @Override
-    protected void onHandleIntent(@Nullable Intent intent) {
-
-        Logger.log("CopyService", "onHandleIntent: "+intent);
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Logger.log("CopyService", "onStartCommand: " + intent + "starId:" + startId);
         if (intent == null) {
             Log.e(this.getClass().getSimpleName(), "Null intent");
-            return;
+            stopService();
+            return START_NOT_STICKY;
+        }
+        String action = intent.getAction();
+        if (action != null && action.equals(OperationProgress.ACTION_STOP)) {
+            stopService = true;
+            stopSelf();
+            return START_NOT_STICKY;
         }
 
-        files = intent.getParcelableArrayListExtra(KEY_FILES);
-        if (files == null) {
-            files = LargeBundleTransfer.getFileData(context);
+        isTrashRestore = intent.getBooleanExtra(OperationUtils.KEY_IS_RESTORE, false);
+        if (isTrashRestore) {
+            trashList = intent.getParcelableArrayListExtra(OperationUtils.KEY_TRASH_DATA);
+            copyTrashFiles();
+        } else {
+            files = intent.getParcelableArrayListExtra(KEY_FILES);
             if (files == null) {
-                return;
-            } else {
-                LargeBundleTransfer.removeFileData(context);
+                files = LargeBundleTransfer.getFileData(context);
+                if (files == null) {
+                    stopService();
+                    return START_NOT_STICKY;
+                } else {
+                    LargeBundleTransfer.removeFileData(context);
+                }
             }
-        }
-        copyData = intent.getParcelableArrayListExtra(KEY_CONFLICT_DATA);
-        move = intent.getBooleanExtra(KEY_MOVE, false);
+            isCopyToTrash = intent.getBooleanExtra(OperationUtils.KEY_IS_TRASH, false);
+            copyData = intent.getParcelableArrayListExtra(KEY_CONFLICT_DATA);
+            move = intent.getBooleanExtra(KEY_MOVE, false);
 
-        String currentDir = intent.getStringExtra(KEY_FILEPATH);
-        checkWriteMode(currentDir);
+            String currentDir = intent.getStringExtra(KEY_FILEPATH);
+
+            Message msg = serviceHandler.obtainMessage();
+            msg.arg1 = startId;
+            msg.obj = currentDir;
+            serviceHandler.sendMessage(msg);
+        }
+        return START_STICKY;
     }
+
+    private void stopService() {
+        stopSelf();
+    }
+
+    // Handler that receives messages from the thread
+    private final class ServiceHandler extends Handler {
+        ServiceHandler(Looper looper) {
+            super(looper);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            Logger.log("CopyService", "handleMessage: " + msg.arg1);
+            String currentDir = (String) msg.obj;
+            checkWriteMode(currentDir);
+
+            // Stop the service using the startId, so that we don't stop
+            // the service in the middle of handling another job
+            stopSelf();
+        }
+    }
+
 
     @TargetApi(Build.VERSION_CODES.O)
     private void createChannelId() {
@@ -169,6 +234,10 @@ public class CopyService extends IntentService {
                 getTotalBytes(files);
                 for (int i = 0; i < files.size(); i++) {
                     FileInfo sourceFile = files.get(i);
+                    if (stopService) {
+                        publishCompletionResult();
+                        return;
+                    }
                     try {
 
                         if (!new File(files.get(i).getFilePath()).canRead()) {
@@ -257,13 +326,66 @@ public class CopyService extends IntentService {
         calculatingTotalSize = false;
     }
 
+    private void copyTrashFiles() {
+        for (int i = 0; i < trashList.size(); i++) {
+            String sourceFile = trashList.get(i).getDestination(); // Intentional : Destination will be source
+            String destFile = trashList.get(i).getSource() + sourceFile.substring(sourceFile.lastIndexOf("/"), sourceFile.length());
+            startCopy(sourceFile, destFile, move);
+        }
+    }
+
+    private void startCopy(String sourceFile, String targetFile, boolean move) {
+        if (new File(sourceFile).isDirectory()) {
+            copyDirectory(sourceFile, targetFile, move);
+        } else {
+            copyFiles(sourceFile, targetFile);
+        }
+    }
+
+    private void copyDirectory(String sourceFile, String targetFile, boolean move) {
+        File destinationDir = new File(targetFile);
+        boolean isExists = true;
+        if (!destinationDir.exists()) {
+            isExists = mkdir(destinationDir);
+        }
+        if (!isExists) {
+//            failedFiles.add(sourceFile);
+            isSuccess = false;
+            return;
+        }
+//                    targetFile.setFileDate(sourceFile.lastModified());
+
+        ArrayList<FileInfo> filePaths = FileListLoader.getFilesList(sourceFile,
+                                                                    false, true, false);
+        for (FileInfo file : filePaths) {
+            String path = file.getFilePath();
+            String destFile = path + file.getFilePath().substring(sourceFile.lastIndexOf("/"), sourceFile.length());
+            startCopy(file.getFilePath(), destFile, move);
+        }
+
+        if (filePaths.size() == 0) {
+            deleteSourceFile(sourceFile, destinationDir);
+            Intent intent = new Intent(COPY_PROGRESS);
+            intent.putExtra(KEY_PROGRESS, 100);
+            intent.putExtra(KEY_COMPLETED, 0L);
+            intent.putExtra(KEY_TOTAL, totalBytes);
+            intent.putExtra(KEY_COUNT, 1);
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+        }
+    }
+
+    private void copyFiles(String source, String destination) {
+
+    }
+
 
     private void publishCompletionResult() {
+        Log.d(TAG, "publishCompletionResult: ");
         endNotification(NOTIFICATION_ID);
         Intent intent = new Intent(ACTION_OP_REFRESH);
-        intent.putExtra(KEY_RESULT, isSuccess);
+        intent.putExtra(KEY_RESULT, failedFiles.size() == 0);
         intent.putExtra(KEY_OPERATION, move ? CUT : COPY);
-        String newList [] = new String[filesToMediaIndex.size()];
+        String newList[] = new String[filesToMediaIndex.size()];
         scanMultipleFiles(AceApplication.getAppContext(), filesToMediaIndex.toArray(newList));
         sendBroadcast(intent);
     }
@@ -325,6 +447,7 @@ public class CopyService extends IntentService {
             startCopy(file, destFile, move);
         }
         if (filePaths.size() == 0) {
+            deleteSourceFile(sourceFile.getFilePath(), destinationDir);
             Intent intent = new Intent(COPY_PROGRESS);
             intent.putExtra(KEY_PROGRESS, 100);
             intent.putExtra(KEY_COMPLETED, 0L);
@@ -357,21 +480,29 @@ public class CopyService extends IntentService {
             isSuccess = false;
             return;
         }
-        copy(in, out, size, sourceFile.getFileName(), targetFile.getFilePath());
+        copy(in, out, size, sourceFile, targetFile.getFilePath());
 
     }
 
     private long time = System.nanoTime() / 500000000;
 
 
-    private void copy(BufferedInputStream in, BufferedOutputStream out, long size, String name,
+    private void copy(BufferedInputStream in, BufferedOutputStream out, long size, FileInfo sourceFile,
                       String targetPath) throws IOException {
+        String name = sourceFile.getFileName();
         long fileBytes = 0L;
         final int buffer = 2048; //2 KB
         byte[] data = new byte[2048];
         int length;
         //copy the file content in bytes
-        while ((length = in.read(data, 0, buffer)) != -1) {
+        while ((length = in.read(data, 0, buffer)) != -1 ) {
+            if (stopService) {
+                failedFiles.add(sourceFile);
+                File targetFile = new File(targetPath);
+                targetFile.delete();
+                publishCompletionResult();
+                break;
+            }
             out.write(data, 0, length);
             copiedBytes += length;
             fileBytes += length;
@@ -382,10 +513,11 @@ public class CopyService extends IntentService {
             }
         }
 
-
         if (fileBytes == size) {
             count++;
-            if (FileUtils.isMediaScanningRequired(FileUtils.getMimeType(new File(targetPath)))) {
+            File targetFile = new File(targetPath);
+            deleteSourceFile(sourceFile.getFilePath(), targetFile);
+            if (FileUtils.isMediaScanningRequired(FileUtils.getMimeType(targetFile))) {
                 filesToMediaIndex.add(targetPath);
             }
             Logger.log("CopyService", "Completed " + name + " KEY_COUNT=" + count);
@@ -398,10 +530,21 @@ public class CopyService extends IntentService {
             int p1 = (int) ((copiedBytes / (float) totalBytes) * 100);
             intent.putExtra(KEY_TOTAL_PROGRESS, p1);
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-
         }
         in.close();
         out.close();
+    }
+
+    private void deleteSourceFile(String sourcePath, File targetFile) {
+        if (targetFile.exists() && (isCopyToTrash || isTrashRestore)) {
+            File file = new File(sourcePath);
+            if (isCopyToTrash) {
+                TrashDbHelper.getInstance().addTrashData(new TrashModel(targetFile.getAbsolutePath(), file.getParent()));
+            } else {
+                TrashDbHelper.getInstance().deleteTrashData(file.getParent());
+            }
+            file.delete();
+        }
     }
 
     private void calculateProgress(String name) {
@@ -410,7 +553,6 @@ public class CopyService extends IntentService {
         if (calculatingTotalSize) {
             p1 = 0;
         }
-
         publishResults(name, p1, totalBytes, copiedBytes);
     }
 
@@ -427,8 +569,7 @@ public class CopyService extends IntentService {
         }
         builder.setContentTitle(getString(title));
         builder.setContentText(new File(fileName).getName() + " " + FileUtils.formatSize
-                (context, done)
-                                       + SEPARATOR + FileUtils
+                (context, done)  + SEPARATOR + FileUtils
                 .formatSize(context, total));
         int id1 = NOTIFICATION_ID;
         notificationManager.notify(id1, builder.build());
@@ -441,14 +582,12 @@ public class CopyService extends IntentService {
         if (p1 == 100 || total == 0 || totalBytes == copiedBytes) {
             endNotification(id1);
         }
-
-
     }
 
     private void endNotification(int id1) {
         builder.setContentTitle("Copy completed");
         if (move) {
-            builder.setContentTitle("Move Completed");
+            builder.setContentTitle(getString(R.string.move_complete));
         }
         builder.setContentText("");
         builder.setProgress(0, 0, false);
@@ -528,9 +667,16 @@ public class CopyService extends IntentService {
         }
     }
 
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         context = null;
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 }

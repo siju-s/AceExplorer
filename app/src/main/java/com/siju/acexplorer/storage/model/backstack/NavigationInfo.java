@@ -19,6 +19,7 @@ package com.siju.acexplorer.storage.model.backstack;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.HorizontalScrollView;
@@ -41,6 +42,8 @@ import java.util.Locale;
 import static com.siju.acexplorer.model.StorageUtils.getInternalStorage;
 import static com.siju.acexplorer.model.groups.CategoryHelper.checkIfAnyMusicCategory;
 import static com.siju.acexplorer.model.groups.CategoryHelper.getCategoryName;
+import static com.siju.acexplorer.model.groups.CategoryHelper.isGenericImagesCategory;
+import static com.siju.acexplorer.model.groups.CategoryHelper.isGenericVideosCategory;
 
 
 public class NavigationInfo {
@@ -120,6 +123,7 @@ public class NavigationInfo {
             });
             addViewToNavigation(imageButton);
             addArrowButton();
+
             addTitleText(category, false);
         } else {
             addTitleText(category, false);
@@ -167,7 +171,12 @@ public class NavigationInfo {
         addViewToNavigation(navArrow);
     }
 
-    private void addTitleText(Category category, boolean shouldBeLessPadding) {
+    private void addTitleText(final Category category, boolean shouldBeLessPadding) {
+        if (category.equals(Category.GENERIC_MUSIC) || category.equals(Category.GENERIC_VIDEOS) ||
+                category.equals(Category.GENERIC_IMAGES)) {
+            addLibSpecificTitleText(category, null);
+            return;
+        }
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params.gravity = Gravity.CENTER_VERTICAL;
@@ -190,15 +199,21 @@ public class NavigationInfo {
             textView.setPadding(paddingLeft, 0, paddingRight, 0);
             textView.setLayoutParams(params);
             addViewToNavigation(textView);
+
+
         }
     }
 
-    private void addTitleText(String category) {
+    private void addLibSpecificTitleText(final Category category, final String bucketName) {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params.gravity = Gravity.CENTER_VERTICAL;
-
-        String title = category.toUpperCase(Locale.getDefault());
+        String title;
+        if (bucketName == null) {
+            title = getCategoryName(context, category).toUpperCase(Locale.getDefault());
+        } else {
+            title = bucketName.toUpperCase(Locale.getDefault());
+        }
         final TextView textView = new TextView(context);
         textView.setText(title);
         textView.setTextColor(ContextCompat.getColor(context, R.color.navButtons));
@@ -208,38 +223,49 @@ public class NavigationInfo {
         textView.setPadding(paddingLeft, 0, paddingLeft, 0);
         textView.setLayoutParams(params);
         addViewToNavigation(textView);
+        Log.d(TAG, "addLibSpecificTitleText: "+title);
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Logger.log(TAG, "nav button onclick--bucket=" + bucketName + " category:"+category);
+                navigationCallback.onNavButtonClicked(category, bucketName);
+            }
+        });
+        scrollNavigation();
     }
+
+
 
     public void addLibSpecificNavButtons(boolean isHomeScreenEnabled, Category category, String bucketName) {
 
         if (checkIfAnyMusicCategory(category)) {
-            addHomeNavButton(isHomeScreenEnabled, Category.AUDIO, true);
+            addHomeNavButton(isHomeScreenEnabled, Category.GENERIC_MUSIC, true);
             switch (category) {
                 case ALBUM_DETAIL:
                 case ALBUMS:
                     addArrowButton();
-                    addTitleText(Category.ALBUMS, true);
+                    addLibSpecificTitleText(Category.ALBUMS, null);
                     if (bucketName != null) {
                         addArrowButton();
-                        addTitleText(bucketName);
+                        addLibSpecificTitleText(category, bucketName);
                     }
                     break;
                 case ARTIST_DETAIL:
                 case ARTISTS:
                     addArrowButton();
-                    addTitleText(Category.ARTISTS, true);
+                    addLibSpecificTitleText(Category.ARTISTS, null);
                     if (bucketName != null) {
                         addArrowButton();
-                        addTitleText(bucketName);
+                        addLibSpecificTitleText(category, bucketName);
                     }
                     break;
                 case GENRE_DETAIL:
                 case GENRES:
                     addArrowButton();
-                    addTitleText(Category.GENRES, true);
+                    addLibSpecificTitleText(Category.GENRES, null);
                     if (bucketName != null) {
                         addArrowButton();
-                        addTitleText(bucketName);
+                        addLibSpecificTitleText(category, bucketName);
                     }
                     break;
                 case ALARMS:
@@ -248,18 +274,22 @@ public class NavigationInfo {
                 case ALL_TRACKS:
                 case PODCASTS:
                     addArrowButton();
-                    addTitleText(category, true);
+                    addLibSpecificTitleText(category, null);
                     break;
 
             }
-        } else if (category.equals(Category.FOLDER_VIDEOS)) {
-            addHomeNavButton(isHomeScreenEnabled, Category.VIDEO, true);
-            addArrowButton();
-            addTitleText(bucketName);
-        } else if (category.equals(Category.FOLDER_IMAGES)) {
-            addHomeNavButton(isHomeScreenEnabled, Category.IMAGE, true);
-            addArrowButton();
-            addTitleText(bucketName);
+        } else if (category.equals(Category.FOLDER_VIDEOS) || isGenericVideosCategory(category)) {
+            addHomeNavButton(isHomeScreenEnabled, Category.GENERIC_VIDEOS, true);
+            if (category.equals(Category.FOLDER_VIDEOS)) {
+                addArrowButton();
+                addLibSpecificTitleText(category, bucketName);
+            }
+        } else if (category.equals(Category.FOLDER_IMAGES) || isGenericImagesCategory(category)) {
+            addHomeNavButton(isHomeScreenEnabled, Category.GENERIC_IMAGES, true);
+            if (category.equals(Category.FOLDER_IMAGES)) {
+                addArrowButton();
+                addLibSpecificTitleText(category, bucketName);
+            }
         }
 
     }
@@ -306,10 +336,10 @@ public class NavigationInfo {
     private void setNavDir(String dir, String parts) {
 
         int WRAP_CONTENT = LinearLayout.LayoutParams.WRAP_CONTENT;
-        if (dir.equals(getInternalStorage())) {
+        if (getInternalStorage().equals(dir)) {
             isCurrentDirRoot = false;
             createNavButton(STORAGE_INTERNAL, dir);
-        } else if (dir.equals(File.separator)) {
+        } else if (File.separator.equals(dir)) {
             createNavButton(STORAGE_ROOT, dir);
         } else if (externalSDPaths.contains(dir)) {
             isCurrentDirRoot = false;

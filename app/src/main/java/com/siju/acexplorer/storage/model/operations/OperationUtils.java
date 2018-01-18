@@ -44,6 +44,10 @@ public class OperationUtils {
     public static final String KEY_MOVE           = "move";
     public static final String KEY_COUNT          = "count";
     public static final String KEY_SHOW_RESULT    = "show_result";
+    public static final String KEY_IS_TRASH       = "trash";
+    public static final String KEY_IS_RESTORE       = "restore";
+
+    public static final String KEY_TRASH_DATA        = "trash_data";
 
 
     public enum WriteMode {

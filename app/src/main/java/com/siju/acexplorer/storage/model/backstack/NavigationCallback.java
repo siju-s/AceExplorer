@@ -17,9 +17,11 @@
 package com.siju.acexplorer.storage.model.backstack;
 
 
+import com.siju.acexplorer.model.groups.Category;
 
 public interface NavigationCallback {
 
     void onHomeClicked();
     void onNavButtonClicked(String dir);
+    void onNavButtonClicked(Category category, String bucketName);
 }

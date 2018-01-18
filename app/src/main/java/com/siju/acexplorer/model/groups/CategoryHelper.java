@@ -46,6 +46,8 @@ public class CategoryHelper {
                 return RECENT;
             case 33:
                 return APP_MANAGER;
+            case 34:
+                return TRASH;
         }
         return FILES;
     }
@@ -69,7 +71,8 @@ public class CategoryHelper {
     }
 
     public static boolean checkIfAnyMusicCategory(Category category) {
-        return category.equals(ALBUMS) ||
+        return isGenericMusic(category) ||
+                category.equals(ALBUMS) ||
                 category.equals(ARTISTS) ||
                 category.equals(GENRES) ||
                 category.equals(ALARMS) ||
@@ -79,17 +82,17 @@ public class CategoryHelper {
                 category.equals(ALBUM_DETAIL) ||
                 category.equals(ARTIST_DETAIL) ||
                 category.equals(GENRE_DETAIL) ||
-                category.equals(ALL_TRACKS);
+                category.equals(ALL_TRACKS) ;
     }
 
 
 
     public static boolean isGenericImagesCategory(Category category) {
-        return category.equals(GENERIC_IMAGES);
+        return GENERIC_IMAGES.equals(category);
     }
 
     public static boolean isGenericVideosCategory(Category category) {
-        return category.equals(GENERIC_VIDEOS);
+        return GENERIC_VIDEOS.equals(category);
     }
 
     public static boolean isPeekPopCategory(Category category) {
@@ -156,6 +159,8 @@ public class CategoryHelper {
                 return context.getString(R.string.all_tracks);
             case APP_MANAGER:
                 return context.getString(R.string.app_manager);
+            case TRASH:
+                return context.getString(R.string.trash);
         }
         return context.getString(R.string.audio);
     }

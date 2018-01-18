@@ -24,6 +24,7 @@ import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.FileListLoader;
 import com.siju.acexplorer.model.StorageUtils;
 import com.siju.acexplorer.model.groups.Category;
+import com.siju.acexplorer.trash.TrashLoader;
 
 import java.util.ArrayList;
 
@@ -76,6 +77,8 @@ public class LoaderHelper {
         }
         if (category.equals(Category.APP_MANAGER)) {
             return new AppLoader(fragment.getContext());
+        }  else if (category.equals(Category.TRASH)) {
+            return new TrashLoader(fragment.getContext());
         }
         return new FileListLoader(fragment, path, category, isPicker, id);
     }

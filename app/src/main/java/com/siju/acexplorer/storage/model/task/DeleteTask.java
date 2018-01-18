@@ -172,6 +172,13 @@ public class DeleteTask {
                         filesToMediaIndex.add(path);
                     }
                 }
+                if (fileList.length == 0) {
+                    String path = file.getAbsolutePath();
+                    isDeleted = file.delete();
+                    if (isDeleted) {
+                        filesToMediaIndex.add(path);
+                    }
+                }
             }
         } else {
             String path = file.getAbsolutePath();

@@ -9,7 +9,9 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.AdaptiveIconDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -64,6 +66,24 @@ public class AppInfoActivity extends BaseActivity implements View.OnClickListene
         setupUI();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!isPackageExisting()) {
+            finish();
+        }
+    }
+
+    private boolean isPackageExisting(){
+        PackageManager pm=getPackageManager();
+        try {
+            pm.getPackageInfo(packageName,PackageManager.GET_META_DATA);
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+        return true;
+    }
+
     private void getIntentExtras() {
         Intent intent = getIntent();
         if (intent == null) {
@@ -90,6 +110,8 @@ public class AppInfoActivity extends BaseActivity implements View.OnClickListene
         TextView updatedTimeText = findViewById(R.id.textUpdated);
         TextView installedTimeText = findViewById(R.id.textInstalled);
         TextView permissionText = findViewById(R.id.textPermissions);
+        TextView permissionHolderText = findViewById(R.id.textPermissionPlaceholder);
+
         TextView enabledText = findViewById(R.id.textEnabled);
         final ImageView imageIcon = findViewById(R.id.imageAppIcon);
 
@@ -116,12 +138,18 @@ public class AppInfoActivity extends BaseActivity implements View.OnClickListene
             updatedTimeText.setText(FileUtils.convertDate(packageInfo.lastUpdateTime));
             installedTimeText.setText(FileUtils.convertDate(packageInfo.firstInstallTime));
             String[] permissions = packageInfo.requestedPermissions;
-            StringBuilder permissionList = new StringBuilder();
-            for (String permission : permissions) {
-                permissionList.append(permission);
-                permissionList.append('\n');
+            if (permissions == null) {
+                permissionText.setVisibility(View.GONE);
+                permissionHolderText.setVisibility(View.GONE);
+            } else {
+                StringBuilder permissionList = new StringBuilder();
+
+                for (String permission : permissions) {
+                    permissionList.append(permission);
+                    permissionList.append('\n');
+                }
+                permissionText.setText(permissionList.toString());
             }
-            permissionText.setText(permissionList.toString());
 
             ApplicationInfo applicationInfo = packageInfo.applicationInfo;
             boolean enabled = applicationInfo.enabled;
@@ -129,6 +157,8 @@ public class AppInfoActivity extends BaseActivity implements View.OnClickListene
             String appName = applicationInfo.loadLabel(getPackageManager()).toString();
             appNameText.setText(appName);
             toolbar.setTitle(appName);
+            imageIcon.setContentDescription(appName);
+            Log.d(TAG, "setupUI: App name :" + appName+ "Installer package name:"+source);
 
 
             targetSdkText.setText(String.valueOf(applicationInfo.targetSdkVersion));
@@ -141,13 +171,12 @@ public class AppInfoActivity extends BaseActivity implements View.OnClickListene
             Glide.with(this)
                     .as(Drawable.class)
                     .apply(options.dontAnimate().dontTransform().priority(Priority.LOW))
-                    .load(applicationInfo)
+                    .load(packageName)
                     .into(new SimpleTarget<Drawable>() {
                         @Override
                         public void onResourceReady(@NonNull Drawable drawable, @Nullable Transition<? super Drawable> transition) {
                             imageIcon.setImageDrawable(drawable);
-                            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
-                            Bitmap bitmap = bitmapDrawable.getBitmap();
+                             Bitmap bitmap = getBitmapFromDrawable(drawable);
                             if (bitmap != null) {
                                 Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
                                     public void onGenerated(@NonNull Palette palette) {
@@ -162,11 +191,26 @@ public class AppInfoActivity extends BaseActivity implements View.OnClickListene
         }
     }
 
+    private Bitmap getBitmapFromDrawable(Drawable drawable) {
+        Bitmap bitmap =  null;
+        if (drawable instanceof  BitmapDrawable) {
+            bitmap = ((BitmapDrawable)drawable).getBitmap();
+        } else if (drawable instanceof AdaptiveIconDrawable) {
+            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            final Canvas canvas = new Canvas(bitmap);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+        }
+        return bitmap;
+    }
+
     private String getInstallerSource(String packageName) {
         if (packageName == null) {
             return getString(R.string.unknown);
         } else if (packageName.equals("com.android.vending")) {
             return getString(R.string.play_store);
+        } else if (packageName.equals("com.amazon.venezia")) {
+            return getString(R.string.amazon_play_store);
         }
         return getString(R.string.unknown);
     }
@@ -178,16 +222,16 @@ public class AppInfoActivity extends BaseActivity implements View.OnClickListene
     }
 
     private void updateBackground(FloatingActionButton fab, Palette palette) {
-        int lightVibrantColor = palette.getLightVibrantColor(getResources().getColor(android.R.color.white));
+        int lightVibrantColor = palette.getLightVibrantColor(getResources().getColor(R.color.colorPrimary));
         int vibrantColor = palette.getVibrantColor(getResources().getColor(R.color.colorAccent));
 
         fab.setRippleColor(lightVibrantColor);
         fab.setBackgroundTintList(ColorStateList.valueOf(vibrantColor));
-        toolbar.setBackgroundColor(vibrantColor);
+//        toolbar.setBackgroundColor(vibrantColor);
         settingsButton.setBackgroundColor(vibrantColor);
         uninstallButton.setBackgroundColor(vibrantColor);
         if (SdkHelper.isAtleastLollipop()) {
-            getWindow().setStatusBarColor(darkenColor(vibrantColor));
+            getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
 
     }
@@ -213,7 +257,7 @@ public class AppInfoActivity extends BaseActivity implements View.OnClickListene
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.settingsButton:
-                AppHelper.openAppSettings(getBaseContext(), packageName);
+                AppHelper.openAppSettings(this, packageName);
                 break;
             case R.id.uninstallButton:
                 AppHelper.uninstallApp(this, packageName);

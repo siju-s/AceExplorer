@@ -49,6 +49,8 @@ import com.siju.acexplorer.storage.model.task.DeleteTask;
 import com.siju.acexplorer.storage.model.task.ExtractService;
 import com.siju.acexplorer.storage.model.task.MoveService;
 import com.siju.acexplorer.storage.model.task.PasteConflictChecker;
+import com.siju.acexplorer.trash.TrashHelper;
+import com.siju.acexplorer.trash.TrashModel;
 import com.siju.acexplorer.view.dialog.DialogHelper;
 import com.stericson.RootTools.RootTools;
 
@@ -122,10 +124,14 @@ public class StorageModelImpl implements StoragesModel {
                 .PREFS_HOMESCREEN, true);
         int viewMode = sharedPreferenceWrapper.getViewMode(context);
         boolean showHidden = sharedPreferences.getBoolean(FileConstants.PREFS_HIDDEN, false);
+        boolean isTrashEnabled = sharedPreferences.getBoolean(FileConstants.PREFS_TRASH, true);
+
         bundle.putInt(FileConstants.KEY_GRID_COLUMNS, gridCols);
         bundle.putBoolean(FileConstants.PREFS_HOMESCREEN, isHomeScreenEnabled);
         bundle.putInt(FileConstants.PREFS_VIEW_MODE, viewMode);
         bundle.putBoolean(FileConstants.PREFS_HIDDEN, showHidden);
+        bundle.putBoolean(FileConstants.PREFS_TRASH, isTrashEnabled);
+
         return bundle;
     }
 
@@ -142,6 +148,36 @@ public class StorageModelImpl implements StoragesModel {
                 conflictChecker.execute();
             }
         }).start();
+    }
+
+    @Override
+    public void moveToTrash(final ArrayList<FileInfo> filesToDelete, final String trashDir) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                startPasteOperation(trashDir, filesToDelete, copyData, false);
+            }
+        }).start();
+    }
+
+    @Override
+    public void restoreFiles(List<TrashModel> trashModelList) {
+        Intent intent = new Intent(context, CopyService.class);
+
+        intent.putParcelableArrayListExtra(OperationUtils.KEY_TRASH_DATA,
+                                           (ArrayList<? extends Parcelable>) trashModelList);
+//        if (files.size() > LARGE_BUNDLE_LIMIT) {
+//            LargeBundleTransfer.storeFileData(context, files);
+//        } else {
+//            intent.putParcelableArrayListExtra(OperationUtils.KEY_FILES, (ArrayList<? extends
+//                    Parcelable>) files);
+//        }
+        intent.putExtra(OperationUtils.KEY_IS_RESTORE, true);
+        if (SdkHelper.isOreo()) {
+            context.startForegroundService(intent);
+        } else {
+            context.startService(intent);
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -533,6 +569,9 @@ public class StorageModelImpl implements StoragesModel {
                 intent.putParcelableArrayListExtra(OperationUtils.KEY_FILES, (ArrayList<? extends
                         Parcelable>) files);
             }
+            if (destinationDir.equals(TrashHelper.getTrashDir(context))) {
+                intent.putExtra(OperationUtils.KEY_IS_TRASH, true);
+            }
             intent.putExtra(OperationUtils.KEY_FILEPATH, destinationDir);
             if (SdkHelper.isOreo()) {
                 context.startForegroundService(intent);
@@ -563,9 +602,16 @@ public class StorageModelImpl implements StoragesModel {
         }
     }
 
+    @Override
     public void persistSortMode(int sortMode) {
         sharedPreferences.edit().putInt(FileConstants.KEY_SORT_MODE, sortMode).apply();
     }
+
+    @Override
+    public void persistTrashState(boolean value) {
+        sharedPreferences.edit().putBoolean(FileConstants.PREFS_TRASH, value).apply();
+    }
+
 
 
     public int getSortMode() {

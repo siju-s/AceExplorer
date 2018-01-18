@@ -174,8 +174,8 @@ public class FastScrollPopup {
             mTextPaint.setAlpha((int) (mAlpha * 255));
             canvas.drawPath(mBackgroundPath, mBackgroundPaint);
             canvas.drawText(mSectionName, (mBgBounds.width() - mTextBounds.width()) / 2,
-                    mBgBounds.height() - (mBgBounds.height() - mTextBounds.height()) / 2,
-                    mTextPaint);
+                            mBgBounds.height() - (mBgBounds.height() - mTextBounds.height()) / 2,
+                            mTextPaint);
             canvas.restoreToCount(restoreCount);
         }
     }

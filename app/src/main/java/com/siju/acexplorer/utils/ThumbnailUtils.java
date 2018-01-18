@@ -2,8 +2,6 @@ package com.siju.acexplorer.utils;
 
 import android.content.ContentUris;
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -176,7 +174,25 @@ public class ThumbnailUtils {
         }
     }
 
-    private static void loadAppIcon(Context context, ImageView imageIcon, String packageName) {
+    private static void loadAppIcon(Context context, ImageView imageIcon, String name) {
+
+
+//        RequestOptions options = new RequestOptions()
+//                .centerCrop()
+//                .placeholder(R.drawable.ic_apk_green)
+//                .diskCacheStrategy(DiskCacheStrategy.NONE); // cannot disk cache
+//        // ApplicationInfo, nor Drawables
+//
+//        try {
+//            ApplicationInfo applicationInfo = context.getPackageManager().getApplicationInfo(packageName, 0);
+//            Glide.with(context)
+//                    .as(Drawable.class)
+//                    .apply(options.dontAnimate().dontTransform().priority(Priority.LOW))
+//                    .load(applicationInfo)
+//                    .into(imageIcon);
+//        } catch (PackageManager.NameNotFoundException e) {
+//            e.printStackTrace();
+//        }
 
         RequestOptions options = new RequestOptions()
                 .centerCrop()
@@ -184,16 +200,11 @@ public class ThumbnailUtils {
                 .diskCacheStrategy(DiskCacheStrategy.NONE); // cannot disk cache
         // ApplicationInfo, nor Drawables
 
-        try {
-            ApplicationInfo applicationInfo = context.getPackageManager().getApplicationInfo(packageName, PackageManager.GET_META_DATA);
-            Glide.with(context)
-                    .as(Drawable.class)
-                    .apply(options.dontAnimate().dontTransform().priority(Priority.LOW))
-                    .load(applicationInfo)
-                    .into(imageIcon);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
+        Glide.with(context)
+                .as(Drawable.class)
+                .apply(options.dontAnimate().dontTransform().priority(Priority.LOW))
+                .load(name)
+                .into(imageIcon);
 
     }
 
@@ -201,17 +212,7 @@ public class ThumbnailUtils {
             path) {
         switch (extension) {
             case FileConstants.APK_EXTENSION:
-                RequestOptions options = new RequestOptions()
-                        .centerCrop()
-                        .placeholder(R.drawable.ic_apk_green)
-                        .diskCacheStrategy(DiskCacheStrategy.NONE); // cannot disk cache
-                // ApplicationInfo, nor Drawables
-
-                Glide.with(context)
-                        .as(Drawable.class)
-                        .apply(options.dontAnimate().dontTransform().priority(Priority.LOW))
-                        .load(path)
-                        .into(imageIcon);
+                loadAppIcon(context, imageIcon, path);
 
                 break;
             case FileConstants.EXT_DOC:

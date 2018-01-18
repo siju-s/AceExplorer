@@ -17,14 +17,21 @@
 package com.siju.acexplorer.storage.model.task;
 
 import android.annotation.TargetApi;
-import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
+import android.os.Process;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -34,8 +41,8 @@ import android.util.Log;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.helper.FileUtils;
+import com.siju.acexplorer.storage.model.operations.OperationProgress;
 import com.siju.acexplorer.storage.modules.zip.ZipUtils;
-import com.siju.acexplorer.view.AceActivity;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -67,18 +74,17 @@ import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_TOT
 import static com.siju.acexplorer.storage.modules.zip.ZipUtils.EXT_TAR;
 import static com.siju.acexplorer.storage.modules.zip.ZipUtils.EXT_TAR_GZ;
 
-public class ExtractService extends IntentService {
+public class ExtractService extends Service {
     private final int NOTIFICATION_ID = 1000;
-    private Context context;
-    private NotificationManager notificationManager;
+    private Context                    context;
+    private NotificationManager        notificationManager;
     private NotificationCompat.Builder builder;
     private long copiedbytes = 0, totalbytes = 0;
     private final String CHANNEL_ID = "operation";
+    private Looper         serviceLooper;
+    private ServiceHandler serviceHandler;
+    private boolean        stopService;
 
-
-    public ExtractService() {
-        super("ExtractService");
-    }
 
     @Override
     public void onCreate() {
@@ -87,34 +93,96 @@ public class ExtractService extends IntentService {
     }
 
     @Override
-    protected void onHandleIntent(@Nullable Intent intent) {
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Logger.log("ExtractService", "onStartCommand: " + intent + "starId:" + startId);
         if (intent == null) {
             Log.e(this.getClass().getSimpleName(), "Null intent");
-            return;
+            stopService();
+            return START_NOT_STICKY;
+        }
+        String action = intent.getAction();
+        if (action != null && action.equals(OperationProgress.ACTION_STOP)) {
+            stopService = true;
+            stopSelf();
+            return START_NOT_STICKY;
         }
         String file = intent.getStringExtra(KEY_FILEPATH);
         String newFile = intent.getStringExtra(KEY_FILEPATH2);
 
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        Intent notificationIntent = new Intent(this, AceActivity.class);
-        notificationIntent.setAction(Intent.ACTION_MAIN);
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-
+        if (notificationManager != null) {
+            notificationManager.cancelAll();
+        }
         createChannelId();
         builder = new NotificationCompat.Builder(context, CHANNEL_ID);
-        builder.setContentIntent(pendingIntent);
         builder.setContentTitle(getResources().getString(R.string.extracting))
                 .setContentText(new File(file).getName())
                 .setSmallIcon(R.drawable.ic_doc_compressed);
         builder.setOnlyAlertOnce(true);
         builder.setDefaults(0);
+        Intent cancelIntent = new Intent(context, ExtractService.class);
+        cancelIntent.setAction(OperationProgress.ACTION_STOP);
+        PendingIntent pendingCancelIntent =
+                PendingIntent.getService(context, NOTIFICATION_ID, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT) ;
+        builder.addAction(new NotificationCompat.Action(R.drawable.ic_cancel, getString(R.string.dialog_cancel), pendingCancelIntent));
 
         Notification notification = builder.build();
         startForeground(NOTIFICATION_ID, notification);
-        notificationManager.notify(NOTIFICATION_ID , notification);
-        start(file, newFile);
+        notificationManager.notify(NOTIFICATION_ID, notification);
+        startThread();
+
+        Message msg = serviceHandler.obtainMessage();
+        msg.arg1 = startId;
+        Bundle bundle = new Bundle();
+        bundle.putString(KEY_FILEPATH, file);
+        bundle.putString(KEY_FILEPATH2, newFile);
+        msg.setData(bundle);
+        serviceHandler.sendMessage(msg);
+        return START_STICKY;
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    private void startThread() {
+        HandlerThread thread = new HandlerThread("CopyService",
+                                                 Process.THREAD_PRIORITY_BACKGROUND);
+        thread.start();
+
+        // Get the HandlerThread's Looper and use it for our Handler
+        serviceLooper = thread.getLooper();
+        serviceHandler = new ServiceHandler(serviceLooper);
+    }
+
+
+    private void stopService() {
+        stopSelf();
+    }
+
+    // Handler that receives messages from the thread
+    private final class ServiceHandler extends Handler {
+        ServiceHandler(Looper looper) {
+            super(looper);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            Logger.log("ExtractService", "handleMessage: " + msg.arg1);
+            Bundle bundle = msg.getData();
+            String file = bundle.getString(KEY_FILEPATH);
+            String newFile = bundle.getString(KEY_FILEPATH2);
+            start(file, newFile);
+
+            // Stop the service using the startId, so that we don't stop
+            // the service in the middle of handling another job
+            stopSelf(msg.arg1);
+            if (stopService) {
+                publishCompletedResult(NOTIFICATION_ID);
+            }
+        }
     }
 
 
@@ -137,7 +205,7 @@ public class ExtractService extends IntentService {
             File zipFile = new File(zipFilePath);
             if (ZipUtils.isZipViewable(zipFilePath)) {
                 extract(zipFile, newFile);
-            }  else if (zipFilePath.toLowerCase().endsWith(EXT_TAR) || zipFile.getName().toLowerCase().endsWith
+            } else if (zipFilePath.toLowerCase().endsWith(EXT_TAR) || zipFile.getName().toLowerCase().endsWith
                     (EXT_TAR_GZ)) {
                 extractTar(zipFile, newFile);
             }
@@ -161,12 +229,17 @@ public class ExtractService extends IntentService {
                 totalbytes = totalbytes + entry.getSize();
             }
             for (ZipEntry entry : arrayList) {
+                if (stopService) {
+                    publishCompletedResult(NOTIFICATION_ID);
+                    break;
+                }
                 unzipEntry(zipfile, entry, destinationPath);
             }
             Intent intent = new Intent(ACTION_RELOAD_LIST);
             intent.putExtra(KEY_OPERATION, EXTRACT);
             sendBroadcast(intent);
             calculateProgress(archive.getName(), copiedbytes, totalbytes);
+            zipfile.close();
         } catch (Exception e) {
             Log.e(this.getClass().getSimpleName(), "Error while extracting file " + archive, e);
             Intent intent = new Intent(ACTION_OP_FAILED);
@@ -181,10 +254,11 @@ public class ExtractService extends IntentService {
         try {
             ArrayList<TarArchiveEntry> archiveEntries = new ArrayList<>();
             TarArchiveInputStream inputStream;
-            if (archive.getName().endsWith(EXT_TAR))
+            if (archive.getName().endsWith(EXT_TAR)) {
                 inputStream = new TarArchiveInputStream(new BufferedInputStream(new FileInputStream(archive)));
-            else
+            } else {
                 inputStream = new TarArchiveInputStream(new GZIPInputStream(new FileInputStream(archive)));
+            }
             publishResults(archive.getName(), 0, totalbytes, copiedbytes);
             TarArchiveEntry tarArchiveEntry = inputStream.getNextTarEntry();
             while (tarArchiveEntry != null) {
@@ -277,6 +351,7 @@ public class ExtractService extends IntentService {
             return;
         }
         File outputFile = new File(outputDir, entry.getName());
+        Log.d("Extract", "unzipEntry: " + outputFile);
         if (!outputFile.getParentFile().exists()) {
             createDir(outputFile.getParentFile());
         }
@@ -291,6 +366,11 @@ public class ExtractService extends IntentService {
             int len;
             byte buf[] = new byte[20480];
             while ((len = inputStream.read(buf)) > 0) {
+                if (stopService) {
+                    new File(outputDir).delete();
+                    publishCompletedResult(NOTIFICATION_ID);
+                    break;
+                }
 
                 outputStream.write(buf, 0, len);
                 copiedbytes = copiedbytes + len;
@@ -318,7 +398,6 @@ public class ExtractService extends IntentService {
     }
 
 
-
     private void unzipTAREntry(TarArchiveInputStream zipfile, TarArchiveEntry entry, String outputDir,
                                String fileName)
             throws Exception {
@@ -338,7 +417,10 @@ public class ExtractService extends IntentService {
             int len;
             byte buf[] = new byte[20480];
             while ((len = zipfile.read(buf)) > 0) {
-
+                if (stopService) {
+                    outputFile.delete();
+                    publishCompletedResult(NOTIFICATION_ID);
+                }
                 outputStream.write(buf, 0, len);
                 copiedbytes = copiedbytes + len;
                 long time1 = System.nanoTime() / 500000000;

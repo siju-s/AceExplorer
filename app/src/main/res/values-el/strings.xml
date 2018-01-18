@@ -84,14 +84,6 @@
     <string name="action_sort">Είδος</string>
     <string name="action_view_list">Προβολή λίστας</string>
     <string name="action_view_grid">προβολή πλέγματος</string>
-    <string name="sort_name">Όνομα (A-Ω)</string>
-    <string name="sort_name_desc">Όνομα (Ω-Α)</string>
-    <string name="sort_type">Τύπος (αύξουσα)</string>
-    <string name="sort_type_desc">Τύπος (Φθίνουσα)</string>
-    <string name="sort_size">Μέγεθος (μικρότερο)</string>
-    <string name="sort_size_desc">Μέγεθος (μεγαλύτερο)</string>
-    <string name="sort_date">Ημερομηνία (Παλαιότερα)</string>
-    <string name="sort_date_desc">Ημερομηνία (πιο πρόσφατη)</string>
     <string name="extract_to">Απόσπασμα με</string>
     <string name="open">Ανοιχτό</string>
     <string name="extracting">Εξαγωγή ..</string>
@@ -203,4 +195,44 @@
     <string name="analytics_text">Αποστολή αναλυτικών στοιχείων</string>
     <string name="analytics_summary">Βοηθήστε μας να βελτιώσουμε την εφαρμογή αποστέλλοντας ανώνυμα δεδομένα χρήσης.</string>
     <string name="move_complete">Μετακίνηση Ολοκληρώθηκε</string>
+	
+	
+	<string name="dual_pane_intro_title">Διπλό παράθυρο</string>
+    <string name="dual_pane_intro_subtitle">Διπλή λειτουργία για καλύτερη χρηστικότητα.</string>
+    <string name="sort_name">Ονομα</string>
+    <string name="sort_type">Τύπος</string>
+    <string name="sort_size">Μέγεθος</string>
+    <string name="sort_date">Ημερομηνία</string>
+    <string name="ascending">Αύξουσα</string>
+    <string name="library_recent">Πρόσφατος</string>
+    <string name="albums">Άλμπουμ</string>
+    <string name="artists">Καλλιτέχνες</string>
+    <string name="genres">Genres</string>
+    <string name="all_tracks">Ολα τα τραγούδια</string>
+    <string name="notifications">Ειδοποιήσεις</string>
+    <string name="alarms">Συναγερμός</string>
+    <string name="ringtones">Ήχοι κλήσης</string>
+    <string name="podcasts">Podcasts</string>
+    <string name="mute">Βουβός</string>
+    <string name="unmute">Αναίρεση σίγασης</string>
+    <string name="uninstall">Καταργήστε την εγκατάσταση</string>
+    <string name="package_name">Ονομα πακέτου</string>
+    <string name="version_name">Εκδοχή</string>
+    <string name="installed_source">Πηγή</string>
+    <string name="min_sdk">Ελάχιστο SDK</string>
+    <string name="target_sdk">Στόχος SDK</string>
+    <string name="installed">Εγκαταστήθηκε</string>
+    <string name="updated">ΕΠΙΚΑΙΡΟΠΟΙΗΜΕΝΟ</string>
+    <string name="nav_header_tools">Εργαλεία</string>
+    <string name="app_manager">Διαχειριστής εφαρμογής</string>
+    <string name="category">Κατηγορία</string>
+    <string name="app_detail">Λεπτομέρειες εφαρμογής</string>
+    <string name="unknown">Αγνωστος</string>
+    <string name="enabled">Ενεργοποιήθηκε</string>
+    <string name="trash">Σκουπίδια</string>
+    <string name="move_trash">Μετακίνηση σε Κάδο απορριμμάτων</string>
+    <string name="restore">Επαναφέρω</string>
+    <string name="moving_title_trash">Μετακίνηση σε Κάδο απορριμμάτων</string>
+    <string name="restoring_title_trash">Επαναφορά</string>
+
 </resources>

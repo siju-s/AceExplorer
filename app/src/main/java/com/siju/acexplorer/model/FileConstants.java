@@ -27,7 +27,8 @@ public class FileConstants {
     public static final String PREFS_RESET = "prefsReset";
     public static final String PREFS_FIRST_RUN = "first_app_run";
     public static final String PREFS_VIEW_MODE = "view_mode";
-
+    public static final String PREFS_TRASH = "prefTrash";
+    public static final String PREFS_ADD_RECENT = "recent_add_default";
 
     public static final String SAF_URI = "saf_uri";
 

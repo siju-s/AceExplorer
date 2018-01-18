@@ -106,7 +106,9 @@ public class HomeUiView extends CoordinatorLayout {
         getActivity().getSupportActionBar().setHomeButtonEnabled(true);
         getActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getActivity().getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_drawer);
-        drawerListener.syncDrawer();
+        if (drawerListener != null) {
+            drawerListener.syncDrawer();
+        }
     }
 
     public void setFragment(Fragment fragment) {

@@ -614,11 +614,12 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     }
 
     private void fetchGif() {
-        Uri uri = MediaStore.Files.getContentUri("external");
+        Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         String gif = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_GIF);
-        String[] selectionArgs = new String[]{gif};
+        Log.d(TAG, "fetchGif: mime:"+gif);
+        String selectionArgs[] = new String[]{gif};
 
-        String where = MediaStore.Files.FileColumns.MIME_TYPE + " = ?";
+        String where = MediaStore.Images.Media.MIME_TYPE + " =?";
 
         Cursor cursor = getContext().getContentResolver().query(uri, null, where, selectionArgs,
                                                                 null);
@@ -632,11 +633,11 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                     return;
                 }
                 do {
-                    int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.TITLE);
-                    int sizeIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.SIZE);
-                    int dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_MODIFIED);
-                    int fileIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID);
-                    int pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA);
+                    int titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.TITLE);
+                    int sizeIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE);
+                    int dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED);
+                    int fileIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID);
+                    int pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
                     String path = cursor.getString(pathIndex);
                     File file = new File(path);
                     if (file.isHidden() && !showHidden) {

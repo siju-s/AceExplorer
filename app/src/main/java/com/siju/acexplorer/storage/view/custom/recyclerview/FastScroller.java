@@ -255,7 +255,7 @@ public class FastScroller {
      */
     private boolean isNearPoint(int x, int y) {
         mTmpRect.set(mThumbPosition.x, mThumbPosition.y, mThumbPosition.x + mWidth,
-                mThumbPosition.y + mThumbHeight);
+                     mThumbPosition.y + mThumbHeight);
         mTmpRect.inset(mTouchInset, mTouchInset);
         return mTmpRect.contains(x, y);
     }

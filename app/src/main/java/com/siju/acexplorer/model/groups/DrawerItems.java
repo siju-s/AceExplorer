@@ -129,6 +129,9 @@ public class DrawerItems {
         ArrayList<SectionItems> toolsGroupChild = new ArrayList<>();
         toolsGroupChild.add(new SectionItems(null, null, R.drawable.ic_app_manager,
                                                null, 0, Category.APP_MANAGER, null));
+
+//        toolsGroupChild.add(new SectionItems(null, null, R.drawable.ic_trash,
+//                                             null, 0, Category.TRASH, null));
         return toolsGroupChild;
     }
 

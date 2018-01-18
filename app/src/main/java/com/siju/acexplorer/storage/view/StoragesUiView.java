@@ -67,7 +67,6 @@ import com.google.android.gms.ads.AdView;
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
-import com.siju.acexplorer.appmanager.AppHelper;
 import com.siju.acexplorer.appmanager.AppInfoActivity;
 import com.siju.acexplorer.base.view.BaseActivity;
 import com.siju.acexplorer.billing.BillingStatus;
@@ -97,6 +96,7 @@ import com.siju.acexplorer.storage.view.custom.DividerItemDecoration;
 import com.siju.acexplorer.storage.view.custom.GridItemDecoration;
 import com.siju.acexplorer.storage.view.custom.recyclerview.FastScrollRecyclerView;
 import com.siju.acexplorer.theme.Theme;
+import com.siju.acexplorer.trash.TrashModel;
 import com.siju.acexplorer.ui.peekandpop.PeekAndPop;
 import com.siju.acexplorer.utils.ConfigurationHelper;
 import com.siju.acexplorer.view.AceActivity;
@@ -214,6 +214,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     private boolean    isHomeClicked;
     private PeekAndPop peekAndPop;
     private long       id;
+    private boolean isTrashEnabled;
 
 
     public StoragesUiView(Context context, AttributeSet attrs) {
@@ -401,6 +402,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         mAdView.loadAd(adRequest);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initializeListeners() {
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -491,8 +493,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             public boolean onTouch(View view, MotionEvent motionEvent) {
 
 
-                int event = motionEvent.getActionMasked();
-
+                int event = motionEvent.getAction();
+                Logger.log(TAG, "onTouch: "+event);
                 if (shouldStopAnimation) {
                     stopAnimation();
                     shouldStopAnimation = false;
@@ -502,7 +504,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                     return false;
                 }
 
-                if (event == MotionEvent.ACTION_UP) {
+                if (event == MotionEvent.ACTION_UP || event == MotionEvent.ACTION_CANCEL) {
                     isDragStarted = false;
                 } else if (event == MotionEvent.ACTION_MOVE && mLongPressedTime !=
                         0) {
@@ -583,6 +585,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         isHomeScreenEnabled = bundle.getBoolean(FileConstants.PREFS_HOMESCREEN, true);
         showHidden = bundle.getBoolean(FileConstants.PREFS_HIDDEN, false);
         viewMode = bundle.getInt(FileConstants.PREFS_VIEW_MODE, ViewMode.LIST);
+        isTrashEnabled = bundle.getBoolean(FileConstants.PREFS_TRASH, true);
     }
 
     private void getArgs() {
@@ -689,6 +692,9 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             case GENRE_DETAIL:
             case FOLDER_IMAGES:
             case FOLDER_VIDEOS:
+            case ALL_TRACKS:
+            case RECENT:
+            case GIF:
                 this.extension = fileInfoList.get(position).getExtension().toLowerCase();
                 viewFile(getContext(), fileInfoList.get(position).getFilePath(),
                          extension, alertDialogListener);
@@ -700,6 +706,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             case PDF:
             case APPS:
             case LARGE_FILES:
+            case TRASH:
                 genericFileItemClick(position);
                 break;
             case GENERIC_MUSIC:
@@ -1060,7 +1067,12 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     private void endPeekMode() {
-        peekAndPop.destroy();
+        fileListAdapter.stopAutoPlayVid();
+    }
+
+    boolean isTrashEnabled() {
+        return false;
+//        return isTrashEnabled; TODO COmmented this for future use
     }
 
     /**
@@ -1868,6 +1880,11 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         return isActionModeActive;
     }
 
+    void setDualPaneState() {
+        boolean isDualPaneInFocus = fragment instanceof DualPaneList;
+        ((AceActivity) getActivity()).setDualPaneFocusState(isDualPaneInFocus);
+    }
+
 
     @Override
     public void onHomeClicked() {
@@ -1913,6 +1930,32 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         }
     }
 
+    @Override
+    public void onNavButtonClicked(Category category, String bucketName) {
+        boolean isDualPaneInFocus = fragment instanceof DualPaneList;
+        ((AceActivity) getActivity()).setDualPaneFocusState(isDualPaneInFocus);
+
+        if (isActionModeActive() && !menuControls.isPasteOp()) {
+            menuControls.endActionMode();
+        }
+        this.category = category;
+        menuControls.setCategory(category);
+        int position = 0;
+        ArrayList<BackStackModel> backStack = backStackInfo.getBackStack();
+        for (int i = 0; i < backStack.size(); i++) {
+            if (category.equals(backStack.get(i).getCategory())) {
+                position = i;
+                break;
+            }
+        }
+        for (int j = backStack.size() - 1; j > position; j--) {
+            backStackInfo.removeEntryAtIndex(j);
+        }
+
+        refreshList();
+        navigationInfo.addLibSpecificNavButtons(isHomeScreenEnabled, category, bucketName);
+
+    }
 
     private int getThemeStyle() {
         switch (currentTheme) {
@@ -2129,7 +2172,13 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         switchView();
     }
 
+    public void onMoveToTrash(ArrayList<FileInfo> filesToDelete, String trashDir) {
+        bridge.moveToTrash(filesToDelete, trashDir);
+    }
 
+    public void onRestoreFile(List<TrashModel> trashModelList) {
+        bridge.restoreFiles(trashModelList);
+    }
 
 
     public interface FavoriteOperation {

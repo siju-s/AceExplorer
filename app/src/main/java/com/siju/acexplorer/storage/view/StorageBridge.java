@@ -29,6 +29,7 @@ import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.storage.model.CopyData;
 import com.siju.acexplorer.storage.model.operations.Operations;
+import com.siju.acexplorer.trash.TrashModel;
 import com.siju.acexplorer.view.AceActivity;
 import com.siju.acexplorer.view.DrawerListener;
 import com.siju.acexplorer.view.dialog.DialogHelper;
@@ -383,6 +384,10 @@ public class StorageBridge implements StoragesUi {
         listener.persistSortMode(position);
     }
 
+    void persistTrashState(boolean value) {
+        listener.persistTrashState(value);
+    }
+
     void onCompressPosClick(String newFilePath, ArrayList<FileInfo> paths) {
         listener.onCompressPosClick(newFilePath, paths);
 
@@ -407,5 +412,15 @@ public class StorageBridge implements StoragesUi {
 
     void showDualFrame() {
         ((AceActivity)fragment.getActivity()).showDualFrame();
+    }
+
+    public void moveToTrash(ArrayList<FileInfo> filesToDelete, String trashDir) {
+        listener.moveToTrash(filesToDelete, trashDir);
+
+    }
+
+    public void restoreFiles(List<TrashModel> trashModelList) {
+        listener.restoreFiles(trashModelList);
+
     }
 }
