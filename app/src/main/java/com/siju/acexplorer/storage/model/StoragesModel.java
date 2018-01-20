@@ -111,12 +111,12 @@ public interface StoragesModel {
 
         void onPermissionsSet();
 
-        void showZipProgressDialog(Intent zipIntent);
-
         void showExtractDialog(Intent intent);
 
         void onFavExists();
 
         void onFavAdded(int count);
+
+        void showZipProgressDialog(ArrayList<FileInfo> files, String absolutePath);
     }
 }

@@ -83,7 +83,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private int offset = 0;
     boolean mStopAnimation;
     private boolean mIsAnimNeeded = true;
-    private final boolean    mIsThemeDark;
+    private final boolean    isThemeDark;
     private       PeekAndPop peekAndPop;
     private int peekPos = INVALID_POS;
 
@@ -101,7 +101,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.category = category;
         this.mViewMode = viewMode;
         mAnimation = R.anim.fade_in_top;
-        mIsThemeDark = ThemeUtils.isDarkTheme(context);
+        isThemeDark = ThemeUtils.isDarkTheme(context);
         setPeekPopListener();
     }
 
@@ -141,11 +141,11 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
-        if (viewType == TYPE_FOOTER) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_footer,
-                                                                      parent, false);
-            return new FooterViewHolder(v);
-        }
+//        if (viewType == TYPE_FOOTER) {
+//            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_footer,
+//                                                                      parent, false);
+//            return new FooterViewHolder(v);
+//        }
         if (mViewMode == ViewMode.LIST) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_list_item,
                                                                     parent, false);
@@ -175,7 +175,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
 
             int color;
-            if (mIsThemeDark) {
+            if (isThemeDark) {
                 color = ContextCompat.getColor(context, R.color.dark_actionModeItemSelected);
             } else {
                 color = ContextCompat.getColor(context, R.color.actionModeItemSelected);
@@ -614,12 +614,12 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         void updateList(ArrayList<FileInfo> fileList);
     }
 
-    private static class FooterViewHolder extends RecyclerView.ViewHolder {
-
-        FooterViewHolder(View itemView) {
-            super(itemView);
-        }
-    }
+//    private static class FooterViewHolder extends RecyclerView.ViewHolder {
+//
+//        FooterViewHolder(View itemView) {
+//            super(itemView);
+//        }
+//    }
 
     void onDetach() {
         context = null;

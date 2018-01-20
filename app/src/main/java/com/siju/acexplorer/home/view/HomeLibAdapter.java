@@ -87,6 +87,11 @@ public class HomeLibAdapter extends RecyclerView.Adapter<HomeLibAdapter.HomeLibH
         notifyItemMoved(fromPosition, toPosition);
     }
 
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
     List<HomeLibraryInfo> getList() {
         return homeLibraryInfoArrayList;
     }
@@ -158,10 +163,7 @@ public class HomeLibAdapter extends RecyclerView.Adapter<HomeLibAdapter.HomeLibH
         return homeLibraryInfoArrayList.size();
     }
 
-    @Override
-    public long getItemId(int position) {
-        return homeLibraryInfoArrayList.get(position).getCategory().getValue();
-    }
+
 
     private void changeColor(View itemView, Category category) {
         switch (category) {

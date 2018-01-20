@@ -99,7 +99,7 @@ public interface StoragesUi {
 
     void setPremium();
 
-    void showZipProgressDialog(Intent zipIntent);
+    void showZipProgressDialog(ArrayList<FileInfo> files, String destinationPath);
 
     void onOperationFailed(Operations operation);
 

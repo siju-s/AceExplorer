@@ -46,7 +46,6 @@ import java.util.Locale;
 
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH2;
-import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_RESULT;
 import static com.siju.acexplorer.storage.model.operations.ProgressUtils.COPY_PROGRESS;
 import static com.siju.acexplorer.storage.model.operations.ProgressUtils.EXTRACT_PROGRESS;
@@ -151,7 +150,7 @@ public class OperationProgress {
     }
 
     @SuppressLint("InflateParams")
-    public void showZipProgressDialog(final Context context, final Intent intent) {
+    public void showZipProgressDialog(final Context context, ArrayList<FileInfo> files, String destinationPath) {
         mContext = context;
         registerReceiver(context);
         String title = context.getString(R.string.zip_progress_title);
@@ -179,13 +178,12 @@ public class OperationProgress {
         positiveButton.setText(texts[1]);
         negativeButton.setText(texts[2]);
 
-        copiedFileInfo = intent.getParcelableArrayListExtra(KEY_FILES);
-        String fileName = intent.getStringExtra(KEY_FILEPATH);
+        copiedFileInfo = files;
         copiedFilesSize = copiedFileInfo.size();
         Logger.log(TAG, "Totalfiles=" + copiedFilesSize);
         textFileName.setText(title);
-        textFileFromPath.setText(fileName);
-        textProgress.setText("0%");
+        textFileFromPath.setText(destinationPath);
+        textProgress.setText(R.string.zero_percent);
 
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override

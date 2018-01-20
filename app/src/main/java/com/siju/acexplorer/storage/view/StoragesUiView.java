@@ -488,6 +488,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             }
         });
 
+
         fileList.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -506,12 +507,13 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
                 if (event == MotionEvent.ACTION_UP || event == MotionEvent.ACTION_CANCEL) {
                     isDragStarted = false;
+                    mLongPressedTime = 0;
                 } else if (event == MotionEvent.ACTION_MOVE && mLongPressedTime !=
                         0) {
                     long timeElapsed = System.currentTimeMillis() - mLongPressedTime;
                     Logger.log(TAG, "On item touch time Elapsed" + timeElapsed);
 
-                    if (timeElapsed > 1000) {
+                    if (timeElapsed > 1500) {
                         mLongPressedTime = 0;
                         isDragStarted = false;
 //                        Logger.log(TAG, "On touch drag path size=" + draggedData.size());
@@ -1830,8 +1832,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         drawerListener.syncDrawer();
     }
 
-    public void showZipProgressDialog(Intent zipIntent) {
-        new OperationProgress().showZipProgressDialog(getContext(), zipIntent);
+    public void showZipProgressDialog(ArrayList<FileInfo> files, String destinationPath) {
+        new OperationProgress().showZipProgressDialog(getContext(), files, destinationPath);
     }
 
     @SuppressWarnings("unused")

@@ -271,8 +271,8 @@ public class StorageBridge implements StoragesUi {
     }
 
     @Override
-    public void showZipProgressDialog(Intent zipIntent) {
-        storagesUiView.showZipProgressDialog(zipIntent);
+    public void showZipProgressDialog(ArrayList<FileInfo> files, String destinationPath) {
+        storagesUiView.showZipProgressDialog(files, destinationPath);
     }
 
     @Override

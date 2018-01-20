@@ -336,7 +336,7 @@ public class StorageModelImpl implements StoragesModel {
             } else {
                 zipIntent.putParcelableArrayListExtra(KEY_FILES, files);
             }
-            listener.showZipProgressDialog(zipIntent);
+            listener.showZipProgressDialog(files, newFile.getAbsolutePath());
             if (SdkHelper.isOreo()) {
                 context.startForegroundService(zipIntent);
             } else {

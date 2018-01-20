@@ -259,10 +259,10 @@ public class StoragesPresenterImpl implements StoragesUi.Listener,
         storagesUi.onPermissionsSet();
     }
 
-    @Override
-    public void showZipProgressDialog(Intent zipIntent) {
-        storagesUi.showZipProgressDialog(zipIntent);
 
+    @Override
+    public void showZipProgressDialog(ArrayList<FileInfo> files, String destinationPath) {
+        storagesUi.showZipProgressDialog(files, destinationPath);
     }
 
     @Override
@@ -296,4 +296,5 @@ public class StoragesPresenterImpl implements StoragesUi.Listener,
     public void onLoaderReset(Loader<ArrayList<FileInfo>> loader) {
 
     }
+
 }

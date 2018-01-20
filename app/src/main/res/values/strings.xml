@@ -256,6 +256,7 @@
     <string name="restore">Restore</string>
     <string name="moving_title_trash">Moving to Trash</string>
     <string name="restoring_title_trash">Restoring</string>
+    <string name="zero_percent" translatable="false">0%</string>
 
 
 </resources>
