@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_END;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH2;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_RESULT;
@@ -350,6 +351,7 @@ public class OperationProgress {
         int progress = intent.getIntExtra(KEY_PROGRESS, 0);
         long copiedBytes = intent.getLongExtra(KEY_COMPLETED, 0);
         long totalBytes = intent.getLongExtra(KEY_TOTAL, 0);
+        boolean end = intent.getBooleanExtra(KEY_END, false);
 
         switch (intent.getAction()) {
             case ZIP_PROGRESS:
@@ -362,6 +364,9 @@ public class OperationProgress {
 
                 if (progress == 100 || totalBytes == copiedBytes) {
                     stopZipService();
+                    progressDialog.dismiss();
+                }
+                if (end && progressDialog != null) {
                     progressDialog.dismiss();
                 }
                 break;
@@ -378,6 +383,9 @@ public class OperationProgress {
                     stopExtractService();
                     progressDialog.dismiss();
                 }
+                if (end && progressDialog != null) {
+                    progressDialog.dismiss();
+                }
                 break;
             case COPY_PROGRESS:
                 boolean isSuccess = intent.getBooleanExtra(KEY_RESULT, true);
@@ -387,6 +395,8 @@ public class OperationProgress {
                     progressDialog.dismiss();
                     return;
                 }
+
+
                 int totalProgress = intent.getIntExtra(KEY_TOTAL_PROGRESS, 0);
                 Logger.log(TAG, "KEY_PROGRESS=" + progress + " KEY_TOTAL KEY_PROGRESS=" + totalProgress);
                 Logger.log(TAG, "Copied bytes=" + copiedBytes + " KEY_TOTAL bytes=" + totalBytes);
@@ -410,6 +420,9 @@ public class OperationProgress {
                         textFileCount.setText(String.format(Locale.getDefault(), "%d/%d", newCount, copiedFilesSize));
                     }
                 }
+                if (end && progressDialog != null) {
+                    progressDialog.dismiss();
+                }
                 break;
             case MOVE_PROGRESS:
                 int totalProgressPaste = intent.getIntExtra(KEY_TOTAL_PROGRESS, 0);
@@ -426,6 +439,9 @@ public class OperationProgress {
                 }
                 if (totalProgressPaste == 100) {
                     stopMoveService();
+                    progressDialog.dismiss();
+                }
+                if (end && progressDialog != null) {
                     progressDialog.dismiss();
                 }
                 break;

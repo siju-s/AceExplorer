@@ -41,6 +41,8 @@ public class OperationUtils {
     public static final String ACTION_RELOAD_LIST = "reload";
     public static final String ACTION_OP_FAILED   = "failed";
     public static final String KEY_RESULT         = "result";
+    public static final String KEY_END            = "end";
+
     public static final String KEY_MOVE           = "move";
     public static final String KEY_COUNT          = "count";
     public static final String KEY_SHOW_RESULT    = "show_result";

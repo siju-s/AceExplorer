@@ -283,6 +283,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 //        TextView titleText = view.findViewById(R.id.titlePeekView);
         ImageView thumb = view.findViewById(R.id.imagePeekView);
         AutoPlayContainer autoPlayView = view.findViewById(R.id.autoPlayView);
+        autoPlayView.init();
         final AutoPlayView customVideoView = autoPlayView.getCustomVideoView();
         final ImageView volume = view.findViewById(R.id.imageVolume);
         FileInfo fileInfo = fileList.get(position);
@@ -337,6 +338,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         peekAndPop.resetViews();
         AutoPlayContainer autoPlayView = view.findViewById(R.id.autoPlayView);
         autoPlayView.getCustomVideoView().clearAll();
+        autoPlayView.cleanup();
     }
 
     private void animate(FileListViewHolder fileListViewHolder) {

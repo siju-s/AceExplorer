@@ -56,6 +56,7 @@ import static com.siju.acexplorer.model.helper.FileUtils.checkMimeType;
 import static com.siju.acexplorer.model.helper.SdkHelper.isOreo;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_CONFLICT_DATA;
+import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_END;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OLD_FILES;
@@ -318,6 +319,12 @@ public class MoveService extends Service {
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
+    private void dismissProgressDialog() {
+        Intent intent = new Intent(MOVE_PROGRESS);
+        intent.putExtra(KEY_END, true);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
     private void sendCompletedResult() {
         if (isCompleted) {
             return;
@@ -326,6 +333,9 @@ public class MoveService extends Service {
         Logger.log(TAG, "sendCompletedResult" + filesMovedList.size());
         boolean isMoveSuccess = filesMovedList.size() == filesToMove.size();
         endNotification();
+        if (stopService) {
+            dismissProgressDialog();
+        }
 
         if (!isMoveSuccess) {
             Intent intent = new Intent(MOVE_PROGRESS);

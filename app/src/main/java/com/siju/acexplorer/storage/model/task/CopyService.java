@@ -65,6 +65,7 @@ import static com.siju.acexplorer.model.helper.MediaStoreHelper.scanMultipleFile
 import static com.siju.acexplorer.model.helper.SdkHelper.isOreo;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_CONFLICT_DATA;
+import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_END;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_MOVE;
@@ -372,6 +373,12 @@ public class CopyService extends Service {
 
     }
 
+    private void dismissProgressDialog() {
+        Intent intent = new Intent(COPY_PROGRESS);
+        intent.putExtra(KEY_END, true);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
 
     private void publishCompletionResult() {
         if (isCompleted) {
@@ -381,6 +388,9 @@ public class CopyService extends Service {
         Logger.log(TAG, "publishCompletionResult: ");
         isCompleted = true;
         endNotification(NOTIFICATION_ID);
+        if (stopService) {
+            dismissProgressDialog();
+        }
         Intent intent = new Intent(ACTION_OP_REFRESH);
         intent.putExtra(KEY_RESULT, failedFiles.size() == 0);
         intent.putExtra(KEY_OPERATION, move ? CUT : COPY);
@@ -600,7 +610,6 @@ public class CopyService extends Service {
         }
     }
 
-
     //check if copy is successful
     private boolean checkFiles(FileInfo oldFileInfo, FileInfo newFileInfo) {
         if (oldFileInfo.isDirectory()) {
@@ -650,6 +659,7 @@ public class CopyService extends Service {
         }
     }
 
+
     private void deleteCopiedFiles() {
         if (move) {
             ArrayList<FileInfo> toDelete = new ArrayList<>();
@@ -665,6 +675,8 @@ public class CopyService extends Service {
             deleteTask.delete();
         }
     }
+
+
 
 
     @Override

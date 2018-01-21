@@ -57,6 +57,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import static com.siju.acexplorer.model.helper.SdkHelper.isOreo;
+import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_END;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION;
@@ -317,11 +318,21 @@ public class CreateZipService extends Service {
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
+    private void dismissProgressDialog() {
+        Intent intent = new Intent(ZIP_PROGRESS);
+        intent.putExtra(KEY_END, true);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
+
     private void publishCompletedResult(int id1) {
         if (isCompleted) {
             return;
         }
         isCompleted = true;
+        if (stopService) {
+            dismissProgressDialog();
+        }
         Intent intent = new Intent(OperationUtils.ACTION_RELOAD_LIST);
         intent.putExtra(KEY_OPERATION, COMPRESS);
         intent.putExtra(KEY_FILEPATH, name);

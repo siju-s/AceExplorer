@@ -37,11 +37,16 @@ public class AutoPlayContainer extends FrameLayout {
     }
 
 
-    private void init() {
+    public void init() {
         autoPlayView = new AutoPlayView(getContext());
         ImageView image = new ImageView(getContext());
         image.setScaleType(ImageView.ScaleType.CENTER_CROP);
         this.addView(autoPlayView);
         this.addView(image);
+    }
+
+
+    public void cleanup() {
+        this.removeAllViews();
     }
 }

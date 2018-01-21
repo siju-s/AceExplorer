@@ -62,6 +62,7 @@ import static com.siju.acexplorer.model.helper.FileOperations.mkdir;
 import static com.siju.acexplorer.model.helper.SdkHelper.isOreo;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_FAILED;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_RELOAD_LIST;
+import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_END;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILENAME;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH2;
@@ -422,12 +423,21 @@ public class ExtractService extends Service {
         }
     }
 
+    private void dismissProgressDialog() {
+        Intent intent = new Intent(EXTRACT_PROGRESS);
+        intent.putExtra(KEY_END, true);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
 
     private void publishCompletedResult(int id) {
         try {
             notificationManager.cancel(id);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        if (stopService) {
+            dismissProgressDialog();
         }
     }
 }
