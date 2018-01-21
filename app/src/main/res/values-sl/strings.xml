@@ -156,8 +156,8 @@
     <string name="start">RAZUMEM</string>
     <string name="slide_1_title">organizirana knjižnica</string>
     <string name="slide_1_desc">En klik za medijsko knjižnico iz začetnega zaslona.</string>
-    <string name="slide_2_title">Navigation</string>
-    <string name="slide_2_desc">Enostavno navigacijo iz katerega koli zaslonu.</string>
+    <string name="slide_2_title">peek in pop</string>
+    <string name="slide_2_desc">peek in pop vaše slike in video posnetke.</string>
     <string name="slide_3_title">Povleci in spusti</string>
     <string name="slide_3_desc">Povlecite datoteke iz ene mape v drugo!</string>
     <string name="action_sort">Razvrsti</string>

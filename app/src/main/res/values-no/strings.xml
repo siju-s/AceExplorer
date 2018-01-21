@@ -154,8 +154,8 @@
     <string name="start">HAR DET</string>
     <string name="slide_1_title">Organized Library</string>
     <string name="slide_1_desc">Ett klikk til mediebiblioteket fra startskjermen.</string>
-    <string name="slide_2_title">Navigasjon</string>
-    <string name="slide_2_desc">Enkel navigering fra hvilken som helst skjerm.</string>
+    <string name="slide_2_title">kikk og pop</string>
+    <string name="slide_2_desc">kikk og pop bildene og videoene dine.</string>
     <string name="slide_3_title">Dra og slipp</string>
     <string name="slide_3_desc">Dra filer fra en mappe til en annen!</string>
     <string name="action_sort">Sortere</string>

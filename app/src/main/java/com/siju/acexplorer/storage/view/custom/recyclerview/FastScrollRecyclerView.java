@@ -152,6 +152,11 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
 
     }
 
+    @Override
+    public boolean performClick() {
+        return super.performClick();
+    }
+
     /**
      * Returns the available scroll height:
      * AvailableScrollHeight = Total height of the all items - last page height

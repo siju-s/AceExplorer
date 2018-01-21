@@ -155,9 +155,9 @@
     <string name="start">СХВАНАХ ГО</string>
     <string name="slide_1_title">организирана библиотека</string>
     <string name="slide_1_desc">С едно кликване на медийната библиотека от началния екран.</string>
-    <string name="slide_2_title">навигация</string>
-    <string name="slide_2_desc">Лесна навигация от всеки екран.</string>
-    <string name="slide_3_title">Влачите и пускате</string>
+    <string name="slide_2_title">Поглед и поп</string>
+    <string name="slide_2_desc">Гледайте и поп вашите снимки и видеоклипове.</string>
+	<string name="slide_3_title">Влачите и пускате</string>
     <string name="slide_3_desc">Плъзнете файлове от една папка в друга!</string>
     <string name="slide_4_title">Теми</string>
     <string name="slide_4_desc">Тъмен или светъл начин! Твой избор.</string>

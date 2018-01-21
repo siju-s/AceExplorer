@@ -153,8 +153,8 @@
     <string name="start">HIỂU RỒI</string>
     <string name="slide_1_title">Thư viện có tổ chức</string>
     <string name="slide_1_desc">Một nhấp chuột vào thư viện phương tiện truyền thông từ màn hình chính.</string>
-    <string name="slide_2_title">dẫn đường</string>
-    <string name="slide_2_desc">Dễ dàng chuyển hướng từ bất kỳ màn hình.</string>
+    <string name="slide_2_title">peek và pop</string>
+    <string name="slide_2_desc">peek và pop hình ảnh và video của bạn.</string>
     <string name="slide_3_title">Kéo và thả</string>
     <string name="slide_3_desc">Kéo tập tin từ một thư mục khác!</string>
     <string name="action_sort">loại</string>

@@ -153,8 +153,8 @@
     <string name="start">알았다</string>
     <string name="slide_1_title">조직 도서관</string>
     <string name="slide_1_desc">홈 화면에서 미디어 라이브러리에 하나를 클릭합니다.</string>
-    <string name="slide_2_title">항해</string>
-    <string name="slide_2_desc">모든 화면에서 쉽게 탐색.</string>
+    <string name="slide_2_title">엿보기와 팝</string>
+    <string name="slide_2_desc">귀하의 이미지와 비디오를 엿보고 팝하십시오.</string>
     <string name="slide_3_title">끌어서 놓기</string>
     <string name="slide_3_desc">한 폴더에서 다른 폴더로 파일을 드래그!</string>
     <string name="action_sort">종류</string>

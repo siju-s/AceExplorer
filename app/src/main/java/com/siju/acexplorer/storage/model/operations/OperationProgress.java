@@ -128,7 +128,7 @@ public class OperationProgress {
         }
         textFileCount.setText(String.format(Locale.getDefault(), "%s%d", context.getString(R.string.count_placeholder),
                                             copiedFilesSize));
-        textProgress.setText("0%");
+        textProgress.setText(context.getString(R.string.zero_percent));
 
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -397,11 +397,14 @@ public class OperationProgress {
                 if (progress == 100 || totalBytes == copiedBytes) {
                     int count = intent.getIntExtra(KEY_COUNT, 1);
                     Logger.log(TAG, "KEY_COUNT=" + count);
-                    if (count == copiedFilesSize || copiedBytes == totalBytes) {
+                    if (copiedBytes == totalBytes) {
                         stopCopyService();
                         progressDialog.dismiss();
                     } else {
                         int newCount = count + 1;
+                        if (newCount >= copiedFileInfo.size()) {
+                            return;
+                        }
                         textFileFromPath.setText(copiedFileInfo.get(count).getFilePath());
                         textFileName.setText(copiedFileInfo.get(count).getFileName());
                         textFileCount.setText(String.format(Locale.getDefault(), "%d/%d", newCount, copiedFilesSize));

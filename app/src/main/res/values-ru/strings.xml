@@ -157,8 +157,8 @@
     <string name="start">ПОНЯЛ</string>
     <string name="slide_1_title">Организованная библиотека</string>
     <string name="slide_1_desc">Одним нажатием кнопки медиа-библиотеку с домашнего экрана.</string>
-    <string name="slide_2_title">навигация</string>
-    <string name="slide_2_desc">Удобная навигация с любого экрана.</string>
+    <string name="slide_2_title">подглядывать и поп</string>
+    <string name="slide_2_desc">заглянуть и поп ваши изображения и видео.</string>
     <string name="slide_3_title">Перетаскивание</string>
     <string name="slide_3_desc">Перетащите файлы из одной папки в другую!</string>
     <string name="action_sort">Сортировать</string>

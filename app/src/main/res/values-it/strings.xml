@@ -155,8 +155,8 @@
     <string name="start">FATTO</string>
     <string name="slide_1_title">libreria organizzata</string>
     <string name="slide_1_desc">Un clic per mediateca dalla homescreen.</string>
-    <string name="slide_2_title">Navigazione</string>
-    <string name="slide_2_desc">Facile navigazione da qualsiasi schermata.</string>
+    <string name="slide_2_title">sbirciare e schioccare</string>
+    <string name="slide_2_desc">sbircia e apri le tue immagini e i tuoi video.</string>
     <string name="slide_3_title">Trascinare e rilasciare</string>
     <string name="slide_3_desc">Trascinare i file da una cartella ad un\'altra!</string>
     <string name="action_sort">Ordinare</string>

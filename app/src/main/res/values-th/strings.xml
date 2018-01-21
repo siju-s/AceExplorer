@@ -154,8 +154,8 @@
     <string name="start">GOT IT</string>
     <string name="slide_1_title">ห้องสมุดจัด</string>
     <string name="slide_1_desc">หนึ่งคลิกเพื่อห้องสมุดสื่อจากหน้าจอหลัก</string>
-    <string name="slide_2_title">การเดินเรือ</string>
-    <string name="slide_2_desc">ง่ายต่อจากหน้าจอใด</string>
+    <string name="slide_2_title">peek และ pop</string>
+    <string name="slide_2_desc">มองและเปิดภาพและวิดีโอของคุณ</string>
     <string name="slide_3_title">ลากแล้ววาง</string>
     <string name="slide_3_desc">ลากไฟล์จากโฟลเดอร์หนึ่งไปยังอีก!</string>
     <string name="action_sort">ประเภท</string>

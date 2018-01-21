@@ -155,8 +155,8 @@
     <string name="start">გავიგე</string>
     <string name="slide_1_title">ორგანიზებული ბიბლიოთეკაში</string>
     <string name="slide_1_desc">ერთი დაჭერით მედია ბიბლიოთეკა საწყისი homescreen.</string>
-    <string name="slide_2_title">ნავიგაცია</string>
-    <string name="slide_2_desc">მარტივი ნავიგაცია ნებისმიერი ეკრანზე.</string>
+    <string name="slide_2_title">peek და pop</string>
+    <string name="slide_2_desc">peek და პოპ თქვენი სურათები და ვიდეოები.</string>
     <string name="slide_3_title">გადმოათრიე და ჩააგდე</string>
     <string name="slide_3_desc">გადაათრიეთ ფაილი ერთ საქაღალდეში და სხვა!</string>
     <string name="action_sort">დალაგება</string>

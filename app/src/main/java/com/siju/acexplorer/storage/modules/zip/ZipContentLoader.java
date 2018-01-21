@@ -61,7 +61,6 @@ class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private String fileName;
     private boolean isZipFormat;
     private ZipEntry entry = null;
-    private String mCurrentZipDir;
     private ArrayList<ZipModel> totalZipList = new ArrayList<>();
 
     private ZipViewer zipViewer;

@@ -34,7 +34,6 @@ import android.os.Process;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
@@ -80,6 +79,7 @@ import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_PRO
 import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_TOTAL;
 import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_TOTAL_PROGRESS;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class CopyService extends Service {
 
     private static final String TAG      = "CopyService";
@@ -99,15 +99,14 @@ public class CopyService extends Service {
 
     private long totalBytes = 0L, copiedBytes = 0L;
     private int     count     = 0;
-    private boolean isSuccess = true;
     private boolean               move;
     private boolean               calculatingTotalSize;
     private boolean               isCopyToTrash;
     private boolean               isTrashRestore;
     private ArrayList<TrashModel> trashList;
-    private Looper                serviceLooper;
     private ServiceHandler        serviceHandler;
     private boolean stopService;
+    private boolean isCompleted;
 
 
     @Override
@@ -115,6 +114,11 @@ public class CopyService extends Service {
         super.onCreate();
         Logger.log("CopyService", "onCreate: ");
         context = getApplicationContext();
+        createNotification();
+        startThread();
+    }
+
+    private void createNotification() {
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (notificationManager != null) {
             notificationManager.cancelAll();
@@ -132,10 +136,19 @@ public class CopyService extends Service {
 
         Notification notification = builder.build();
         startForeground(NOTIFICATION_ID, notification);
-
         notificationManager.notify(NOTIFICATION_ID, notification);
-        startThread();
     }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    private void createChannelId() {
+        if (isOreo()) {
+            CharSequence name = getString(R.string.operation);
+            int importance = NotificationManager.IMPORTANCE_LOW;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
 
     private void startThread() {
         HandlerThread thread = new HandlerThread("CopyService",
@@ -143,16 +156,15 @@ public class CopyService extends Service {
         thread.start();
 
         // Get the HandlerThread's Looper and use it for our Handler
-        serviceLooper = thread.getLooper();
+        Looper serviceLooper = thread.getLooper();
         serviceHandler = new ServiceHandler(serviceLooper);
     }
 
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Logger.log("CopyService", "onStartCommand: " + intent + "starId:" + startId);
+        Logger.log(TAG, "onStartCommand: " + intent + "starId:" + startId);
         if (intent == null) {
-            Log.e(this.getClass().getSimpleName(), "Null intent");
+            Logger.log(this.getClass().getSimpleName(), "Null intent");
             stopService();
             return START_NOT_STICKY;
         }
@@ -171,7 +183,7 @@ public class CopyService extends Service {
             files = intent.getParcelableArrayListExtra(KEY_FILES);
             if (files == null) {
                 files = LargeBundleTransfer.getFileData(context);
-                if (files == null) {
+                if (files.size() == 0) {
                     stopService();
                     return START_NOT_STICKY;
                 } else {
@@ -195,33 +207,17 @@ public class CopyService extends Service {
     private void stopService() {
         stopSelf();
     }
-
-    // Handler that receives messages from the thread
     private final class ServiceHandler extends Handler {
+
         ServiceHandler(Looper looper) {
             super(looper);
         }
-
         @Override
         public void handleMessage(Message msg) {
-            Logger.log("CopyService", "handleMessage: " + msg.arg1);
+            Logger.log(TAG, "handleMessage: " + msg.arg1);
             String currentDir = (String) msg.obj;
             checkWriteMode(currentDir);
-
-            // Stop the service using the startId, so that we don't stop
-            // the service in the middle of handling another job
             stopSelf();
-        }
-    }
-
-
-    @TargetApi(Build.VERSION_CODES.O)
-    private void createChannelId() {
-        if (isOreo()) {
-            CharSequence name = getString(R.string.operation);
-            int importance = NotificationManager.IMPORTANCE_LOW;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            notificationManager.createNotificationChannel(channel);
         }
     }
 
@@ -236,7 +232,7 @@ public class CopyService extends Service {
                     FileInfo sourceFile = files.get(i);
                     if (stopService) {
                         publishCompletionResult();
-                        return;
+                        break;
                     }
                     try {
 
@@ -349,11 +345,8 @@ public class CopyService extends Service {
             isExists = mkdir(destinationDir);
         }
         if (!isExists) {
-//            failedFiles.add(sourceFile);
-            isSuccess = false;
             return;
         }
-//                    targetFile.setFileDate(sourceFile.lastModified());
 
         ArrayList<FileInfo> filePaths = FileListLoader.getFilesList(sourceFile,
                                                                     false, true, false);
@@ -374,13 +367,19 @@ public class CopyService extends Service {
         }
     }
 
+    // For trash
     private void copyFiles(String source, String destination) {
 
     }
 
 
     private void publishCompletionResult() {
-        Log.d(TAG, "publishCompletionResult: ");
+        if (isCompleted) {
+            return;
+        }
+
+        Logger.log(TAG, "publishCompletionResult: ");
+        isCompleted = true;
         endNotification(NOTIFICATION_ID);
         Intent intent = new Intent(ACTION_OP_REFRESH);
         intent.putExtra(KEY_RESULT, failedFiles.size() == 0);
@@ -407,7 +406,6 @@ public class CopyService extends Service {
             copiedBytes++;
             calculateProgress(name);
         } catch (RootDeniedException e) {
-            isSuccess = false;
             e.printStackTrace();
         }
     }
@@ -430,14 +428,16 @@ public class CopyService extends Service {
         }
         if (!isExists) {
             failedFiles.add(sourceFile);
-            isSuccess = false;
             return;
         }
-//                    targetFile.setFileDate(sourceFile.lastModified());
 
         ArrayList<FileInfo> filePaths = FileListLoader.getFilesList(sourceFile.getFilePath(),
                                                                     false, true, false);
         for (FileInfo file : filePaths) {
+            if (stopService) {
+                publishCompletionResult();
+                break;
+            }
 
             FileInfo destFile = new FileInfo(sourceFile.getCategory(), sourceFile.getFileName
                     (), sourceFile.getFilePath(),
@@ -477,7 +477,6 @@ public class CopyService extends Service {
                 new FileInputStream(sourceFile.getFilePath()));
         if (out == null) {
             failedFiles.add(sourceFile);
-            isSuccess = false;
             return;
         }
         copy(in, out, size, sourceFile, targetFile.getFilePath());

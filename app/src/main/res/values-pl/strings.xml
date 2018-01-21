@@ -157,8 +157,8 @@
     <string name="start">ROZUMIEM</string>
     <string name="slide_1_title">Organized Biblioteka</string>
     <string name="slide_1_desc">Jedno kliknięcie do biblioteki mediów z ekranu głównego.</string>
-    <string name="slide_2_title">Nawigacja</string>
-    <string name="slide_2_desc">Łatwa nawigacja z dowolnego ekranu.</string>
+    <string name="slide_2_title">peek i pop</string>
+    <string name="slide_2_desc">zaglądaj i pop swoje zdjęcia i filmy.</string>
     <string name="slide_3_title">Przeciągnij i upuść</string>
     <string name="slide_3_desc">Przeciągnij pliki z jednego folderu do drugiego!</string>
     <string name="action_sort">Sortować</string>

@@ -153,8 +153,8 @@
     <string name="start">得到它了</string>
     <string name="slide_1_title">組織圖書館</string>
     <string name="slide_1_desc">一次單擊從主屏幕媒體庫。</string>
-    <string name="slide_2_title">導航</string>
-    <string name="slide_2_desc">從任何屏幕輕鬆導航。</string>
+    <string name="slide_2_title">偷看和流行</string>
+    <string name="slide_2_desc">偷看並彈出您的圖片和視頻。</string>
     <string name="slide_3_title">拖放</string>
     <string name="slide_3_desc">將文件從一個文件夾拖動到另一個！</string>
     <string name="action_sort">分類</string>

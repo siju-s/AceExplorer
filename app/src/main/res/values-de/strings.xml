@@ -155,9 +155,9 @@
     <string name="start">ICH HABS</string>
     <string name="slide_1_title">Organisierte Bibliothek</string>
     <string name="slide_1_desc">Ein Klick auf Medienbibliothek aus dem Homescreen.</string>
-    <string name="slide_2_title">Navigation</string>
-    <string name="slide_2_desc">Einfache Navigation von jedem Bildschirm.</string>
-    <string name="slide_3_title">Drag and Drop</string>
+    <string name="slide_2_title">spähen und pop</string>
+    <string name="slide_2_desc">Schau und platziere deine Bilder und Videos.</string>
+	<string name="slide_3_title">Drag and Drop</string>
     <string name="slide_3_desc">Ziehen Sie Dateien von einem Ordner in einen anderen!</string>
     <string name="slide_4_title">Themen</string>
     <string name="slide_4_desc">Dunkel oder Hell Weg! Deine Entscheidung.</string>

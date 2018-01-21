@@ -35,7 +35,6 @@ import android.os.Process;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.logging.Logger;
@@ -70,71 +69,35 @@ import static com.siju.acexplorer.storage.model.operations.ProgressUtils.MOVE_PR
 
 public class MoveService extends Service {
 
-    private static final String TAG = "MoveService";
+    private static final String TAG             = "MoveService";
+    private final        int    NOTIFICATION_ID = 1000;
+    private final        String SEPARATOR       = "/";
+    private final        String CHANNEL_ID      = "operation";
 
     private Context                    context;
     private NotificationManager        notificationManager;
     private NotificationCompat.Builder builder;
+    private ServiceHandler             serviceHandler;
 
-    private List<FileInfo>     filesToMove;
-    private List<CopyData>     copyData;
-    private ArrayList<String>  filesMovedList;
-    private ArrayList<String>  oldFileList;
+    private List<FileInfo>    filesToMove;
+    private List<CopyData>    copyData;
+    private ArrayList<String> filesMovedList;
+    private ArrayList<String> oldFileList;
+
     private ArrayList<Integer> categories;
-
-    private final int    NOTIFICATION_ID = 1000;
-    private final String SEPARATOR       = "/";
-    private final String CHANNEL_ID      = "operation";
-
-    private Looper         serviceLooper;
-    private ServiceHandler serviceHandler;
-    private final int STOP_REQUEST = 200;
-    private boolean stopService;
+    private boolean            stopService;
+    private boolean            isCompleted;
 
 
     @Override
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
+        createNotification();
         startThread();
     }
 
-    private void startThread() {
-        HandlerThread thread = new HandlerThread("MoveService",
-                                                 Process.THREAD_PRIORITY_BACKGROUND);
-        thread.start();
-
-        // Get the HandlerThread's Looper and use it for our Handler
-        serviceLooper = thread.getLooper();
-        serviceHandler = new ServiceHandler(serviceLooper);
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Logger.log("CopyService", "onHandleIntent: " + intent + "starId:" + startId);
-        if (intent == null) {
-            Log.e(this.getClass().getSimpleName(), "Null intent");
-            stopService();
-            return START_NOT_STICKY;
-        }
-        String action = intent.getAction();
-        if (action != null && action.equals(OperationProgress.ACTION_STOP)) {
-            stopService = true;
-            stopSelf();
-            return START_NOT_STICKY;
-        }
-
-        filesToMove = intent.getParcelableArrayListExtra(KEY_FILES);
-        if (filesToMove == null) {
-            filesToMove = LargeBundleTransfer.getFileData(context);
-            if (filesToMove == null) {
-                return START_NOT_STICKY;
-            } else {
-                LargeBundleTransfer.removeFileData(context);
-            }
-        }
-        copyData = intent.getParcelableArrayListExtra(KEY_CONFLICT_DATA);
-        String destDir = intent.getStringExtra(KEY_FILEPATH);
+    private void createNotification() {
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (notificationManager != null) {
             notificationManager.cancelAll();
@@ -148,49 +111,12 @@ public class MoveService extends Service {
         Intent cancelIntent = new Intent(context, MoveService.class);
         cancelIntent.setAction(OperationProgress.ACTION_STOP);
         PendingIntent pendingCancelIntent =
-                PendingIntent.getService(context, NOTIFICATION_ID, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT) ;
+                PendingIntent.getService(context, NOTIFICATION_ID, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.addAction(new NotificationCompat.Action(R.drawable.ic_cancel, getString(R.string.dialog_cancel), pendingCancelIntent));
 
         Notification notification = builder.build();
         startForeground(NOTIFICATION_ID, notification);
         notificationManager.notify(NOTIFICATION_ID, notification);
-
-        Message msg = serviceHandler.obtainMessage();
-        msg.arg1 = startId;
-        msg.obj = destDir;
-        serviceHandler.sendMessage(msg);
-
-        return START_STICKY;
-    }
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-
-    private void stopService() {
-        stopSelf();
-    }
-
-    // Handler that receives messages from the thread
-    private final class ServiceHandler extends Handler {
-        ServiceHandler(Looper looper) {
-            super(looper);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            Logger.log("CopyService", "handleMessage: " + msg.arg1);
-
-                String currentDir = (String) msg.obj;
-                checkWriteMode(currentDir);
-
-                // Stop the service using the startId, so that we don't stop
-                // the service in the middle of handling another job
-                stopSelf(msg.arg1);
-        }
     }
 
     @TargetApi(Build.VERSION_CODES.O)
@@ -201,6 +127,78 @@ public class MoveService extends Service {
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             notificationManager.createNotificationChannel(channel);
         }
+    }
+
+    private void startThread() {
+        HandlerThread thread = new HandlerThread("MoveService",
+                                                 Process.THREAD_PRIORITY_BACKGROUND);
+        thread.start();
+
+        // Get the HandlerThread's Looper and use it for our Handler
+        Looper serviceLooper = thread.getLooper();
+        serviceHandler = new ServiceHandler(serviceLooper);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Logger.log(TAG, "onStartCommand: " + intent + "startId:" + startId);
+        if (intent == null) {
+            Logger.log(this.getClass().getSimpleName(), "Null intent");
+            stopService();
+            return START_NOT_STICKY;
+        }
+        String action = intent.getAction();
+        if (action != null && action.equals(OperationProgress.ACTION_STOP)) {
+            stopService = true;
+            stopSelf();
+            return START_NOT_STICKY;
+        }
+
+        filesToMove = intent.getParcelableArrayListExtra(KEY_FILES);
+        if (filesToMove == null) {
+            filesToMove = LargeBundleTransfer.getFileData(context);
+            if (filesToMove.size() == 0) {
+                return START_NOT_STICKY;
+            } else {
+                LargeBundleTransfer.removeFileData(context);
+            }
+        }
+        copyData = intent.getParcelableArrayListExtra(KEY_CONFLICT_DATA);
+        String destDir = intent.getStringExtra(KEY_FILEPATH);
+
+        Message msg = serviceHandler.obtainMessage();
+        msg.arg1 = startId;
+        msg.obj = destDir;
+        serviceHandler.sendMessage(msg);
+
+        return START_STICKY;
+    }
+
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    private void stopService() {
+        stopSelf();
+    }
+
+    private final class ServiceHandler extends Handler {
+
+        ServiceHandler(Looper looper) {
+            super(looper);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            Logger.log(TAG, "handleMessage: " + msg.arg1);
+            String currentDir = (String) msg.obj;
+            checkWriteMode(currentDir);
+            stopSelf(msg.arg1);
+        }
+
     }
 
     private void checkWriteMode(final String destinationDir) {
@@ -218,7 +216,7 @@ public class MoveService extends Service {
                 for (int i = 0; i < filesToMove.size(); i++) {
                     if (stopService) {
                         sendCompletedResult();
-                       break;
+                        break;
                     }
                     FileInfo sourceFile = filesToMove.get(i);
                     String sourcePath = sourceFile.getFilePath();
@@ -321,13 +319,13 @@ public class MoveService extends Service {
     }
 
     private void sendCompletedResult() {
+        if (isCompleted) {
+            return;
+        }
+        isCompleted = true;
         Logger.log(TAG, "sendCompletedResult" + filesMovedList.size());
         boolean isMoveSuccess = filesMovedList.size() == filesToMove.size();
-        builder.setContentTitle(getString(R.string.move_complete));
-        builder.setProgress(0, 0, false);
-        builder.setOngoing(false);
-        builder.setAutoCancel(true);
-        notificationManager.notify(NOTIFICATION_ID, builder.build());
+        endNotification();
 
         if (!isMoveSuccess) {
             Intent intent = new Intent(MOVE_PROGRESS);
@@ -344,5 +342,13 @@ public class MoveService extends Service {
         intent.putStringArrayListExtra(KEY_OLD_FILES, oldFileList);
         intent.putIntegerArrayListExtra(KEY_CATEGORY, categories);
         sendBroadcast(intent);
+    }
+
+    private void endNotification() {
+        builder.setContentTitle(getString(R.string.move_complete));
+        builder.setProgress(0, 0, false);
+        builder.setOngoing(false);
+        builder.setAutoCancel(true);
+        notificationManager.notify(NOTIFICATION_ID, builder.build());
     }
 }

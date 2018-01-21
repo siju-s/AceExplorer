@@ -18,13 +18,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME    = "ace.db";
     private static final int    DATABASE_VERSION = 1;
     private static final String TRASH_TABLE_NAME = "Trash";
-    private final        String text             = " TEXT";
     private static final String KEY_ID           = "id";
     private static final String KEY_DESTINATION  = "dest";
     private static final String KEY_SOURCE       = "source";
 
 
-    private final String CREATE_TRASH = "CREATE TABLE IF NOT EXISTS " + TRASH_TABLE_NAME + " (" +
+    private static final String CREATE_TRASH = "CREATE TABLE IF NOT EXISTS " + TRASH_TABLE_NAME + " (" +
             KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
             KEY_DESTINATION + " TEXT," +
             KEY_SOURCE + " TEXT" + ");";

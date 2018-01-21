@@ -494,8 +494,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             public boolean onTouch(View view, MotionEvent motionEvent) {
 
 
-                int event = motionEvent.getAction();
-                Logger.log(TAG, "onTouch: "+event);
+                int event = motionEvent.getActionMasked();
                 if (shouldStopAnimation) {
                     stopAnimation();
                     shouldStopAnimation = false;
@@ -511,7 +510,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 } else if (event == MotionEvent.ACTION_MOVE && mLongPressedTime !=
                         0) {
                     long timeElapsed = System.currentTimeMillis() - mLongPressedTime;
-                    Logger.log(TAG, "On item touch time Elapsed" + timeElapsed);
 
                     if (timeElapsed > 1500) {
                         mLongPressedTime = 0;
@@ -1028,7 +1026,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
                 final ArrayList<String> movedFiles = intent.getStringArrayListExtra(KEY_FILES);
                 final ArrayList<String> oldFiles = intent.getStringArrayListExtra(KEY_OLD_FILES);
-                final ArrayList<Integer> categories = intent.getIntegerArrayListExtra(KEY_CATEGORY);
 
                 new Thread(new Runnable() {
                     @Override
@@ -1895,6 +1892,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
         isHomeClicked = true;
         menuControls.endActionMode();
+        fileListAdapter.stopAutoPlayVid();
         //removeDualFileFragment();
         getActivity().onBackPressed();
     }

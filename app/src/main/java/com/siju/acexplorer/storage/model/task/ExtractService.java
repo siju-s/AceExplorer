@@ -74,14 +74,16 @@ import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_TOT
 import static com.siju.acexplorer.storage.modules.zip.ZipUtils.EXT_TAR;
 import static com.siju.acexplorer.storage.modules.zip.ZipUtils.EXT_TAR_GZ;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class ExtractService extends Service {
-    private final int NOTIFICATION_ID = 1000;
+    private static final String TAG = "ExtractService";
+
+    private final int    NOTIFICATION_ID = 1000;
+    private final String CHANNEL_ID      = "operation";
     private Context                    context;
     private NotificationManager        notificationManager;
     private NotificationCompat.Builder builder;
     private long copiedbytes = 0, totalbytes = 0;
-    private final String CHANNEL_ID = "operation";
-    private Looper         serviceLooper;
     private ServiceHandler serviceHandler;
     private boolean        stopService;
 
@@ -90,13 +92,55 @@ public class ExtractService extends Service {
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
+        createNotification();
+        startThread();
+    }
+
+    private void createNotification() {
+        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            notificationManager.cancelAll();
+        }
+        createChannelId();
+        builder = new NotificationCompat.Builder(context, CHANNEL_ID);
+        builder.setContentTitle(getResources().getString(R.string.extracting))
+                .setSmallIcon(R.drawable.ic_doc_compressed);
+        builder.setOnlyAlertOnce(true);
+        builder.setDefaults(0);
+        Intent cancelIntent = new Intent(context, ExtractService.class);
+        cancelIntent.setAction(OperationProgress.ACTION_STOP);
+        PendingIntent pendingCancelIntent =
+                PendingIntent.getService(context, NOTIFICATION_ID, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.addAction(new NotificationCompat.Action(R.drawable.ic_cancel, getString(R.string.dialog_cancel), pendingCancelIntent));
+
+        Notification notification = builder.build();
+        startForeground(NOTIFICATION_ID, notification);
+        notificationManager.notify(NOTIFICATION_ID, notification);
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    private void createChannelId() {
+        if (isOreo()) {
+            CharSequence name = getString(R.string.operation);
+            int importance = NotificationManager.IMPORTANCE_LOW;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    private void startThread() {
+        HandlerThread thread = new HandlerThread("ExtractService",
+                                                 Process.THREAD_PRIORITY_BACKGROUND);
+        thread.start();
+        Looper serviceLooper = thread.getLooper();
+        serviceHandler = new ServiceHandler(serviceLooper);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Logger.log("ExtractService", "onStartCommand: " + intent + "starId:" + startId);
+        Logger.log(TAG, "onStartCommand: " + intent + "startId:" + startId);
         if (intent == null) {
-            Log.e(this.getClass().getSimpleName(), "Null intent");
+            Logger.log(this.getClass().getSimpleName(), "Null intent");
             stopService();
             return START_NOT_STICKY;
         }
@@ -109,28 +153,6 @@ public class ExtractService extends Service {
         String file = intent.getStringExtra(KEY_FILEPATH);
         String newFile = intent.getStringExtra(KEY_FILEPATH2);
 
-        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (notificationManager != null) {
-            notificationManager.cancelAll();
-        }
-        createChannelId();
-        builder = new NotificationCompat.Builder(context, CHANNEL_ID);
-        builder.setContentTitle(getResources().getString(R.string.extracting))
-                .setContentText(new File(file).getName())
-                .setSmallIcon(R.drawable.ic_doc_compressed);
-        builder.setOnlyAlertOnce(true);
-        builder.setDefaults(0);
-        Intent cancelIntent = new Intent(context, ExtractService.class);
-        cancelIntent.setAction(OperationProgress.ACTION_STOP);
-        PendingIntent pendingCancelIntent =
-                PendingIntent.getService(context, NOTIFICATION_ID, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT) ;
-        builder.addAction(new NotificationCompat.Action(R.drawable.ic_cancel, getString(R.string.dialog_cancel), pendingCancelIntent));
-
-        Notification notification = builder.build();
-        startForeground(NOTIFICATION_ID, notification);
-        notificationManager.notify(NOTIFICATION_ID, notification);
-        startThread();
-
         Message msg = serviceHandler.obtainMessage();
         msg.arg1 = startId;
         Bundle bundle = new Bundle();
@@ -141,66 +163,40 @@ public class ExtractService extends Service {
         return START_STICKY;
     }
 
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
 
-    private void startThread() {
-        HandlerThread thread = new HandlerThread("CopyService",
-                                                 Process.THREAD_PRIORITY_BACKGROUND);
-        thread.start();
-
-        // Get the HandlerThread's Looper and use it for our Handler
-        serviceLooper = thread.getLooper();
-        serviceHandler = new ServiceHandler(serviceLooper);
-    }
-
-
     private void stopService() {
         stopSelf();
     }
 
-    // Handler that receives messages from the thread
     private final class ServiceHandler extends Handler {
+
         ServiceHandler(Looper looper) {
             super(looper);
         }
 
         @Override
         public void handleMessage(Message msg) {
-            Logger.log("ExtractService", "handleMessage: " + msg.arg1);
+            Logger.log(TAG, "handleMessage: " + msg.arg1);
             Bundle bundle = msg.getData();
             String file = bundle.getString(KEY_FILEPATH);
             String newFile = bundle.getString(KEY_FILEPATH2);
             start(file, newFile);
-
-            // Stop the service using the startId, so that we don't stop
-            // the service in the middle of handling another job
             stopSelf(msg.arg1);
             if (stopService) {
                 publishCompletedResult(NOTIFICATION_ID);
             }
         }
-    }
 
 
-    @TargetApi(Build.VERSION_CODES.O)
-    private void createChannelId() {
-        if (isOreo()) {
-            // The id of the channel.
-//        String id = "ace_channel_01";
-            CharSequence name = getString(R.string.operation);
-            int importance = NotificationManager.IMPORTANCE_LOW;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            notificationManager.createNotificationChannel(channel);
-        }
     }
 
     private void start(String zipFilePath, String newFile) {
-
-
         if (zipFilePath != null) {
             File zipFile = new File(zipFilePath);
             if (ZipUtils.isZipViewable(zipFilePath)) {
@@ -211,19 +207,16 @@ public class ExtractService extends Service {
             }
         }
 
-        Logger.log("ExtractService", "ZIp file=" + zipFilePath + "new file=" + newFile);
+        Logger.log(TAG, "ZIp file=" + zipFilePath + "new file=" + newFile);
     }
 
     private void extract(File archive, String destinationPath) {
         try {
             ArrayList<ZipEntry> arrayList = new ArrayList<>();
             ZipFile zipfile = new ZipFile(archive);
-//                calculateProgress(archive.getName(), id, copiedbytes, totalbytes);
             for (Enumeration e = zipfile.entries(); e.hasMoreElements(); ) {
-
                 ZipEntry entry = (ZipEntry) e.nextElement();
                 arrayList.add(entry);
-
             }
             for (ZipEntry entry : arrayList) {
                 totalbytes = totalbytes + entry.getSize();
@@ -247,7 +240,6 @@ public class ExtractService extends Service {
             sendBroadcast(intent);
             publishResults(archive.getName(), 100, totalbytes, copiedbytes);
         }
-
     }
 
     private void extractTar(File archive, String destinationPath) {
@@ -262,17 +254,18 @@ public class ExtractService extends Service {
             publishResults(archive.getName(), 0, totalbytes, copiedbytes);
             TarArchiveEntry tarArchiveEntry = inputStream.getNextTarEntry();
             while (tarArchiveEntry != null) {
-
+                if (stopService) {
+                    publishCompletedResult(NOTIFICATION_ID);
+                    break;
+                }
                 archiveEntries.add(tarArchiveEntry);
                 tarArchiveEntry = inputStream.getNextTarEntry();
-
             }
             for (TarArchiveEntry entry : archiveEntries) {
                 totalbytes = totalbytes + entry.getSize();
             }
             for (TarArchiveEntry entry : archiveEntries) {
                 unzipTAREntry(inputStream, entry, destinationPath, archive.getName());
-
             }
 
             inputStream.close();
@@ -320,15 +313,6 @@ public class ExtractService extends Service {
 
     }
 
-    private void publishCompletedResult(int id) {
-        try {
-            notificationManager.cancel(id);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
     private void createDir(File dir) {
         mkdir(dir);
     }
@@ -339,8 +323,8 @@ public class ExtractService extends Service {
 
         int progress = (int) ((copiedbytes / (float) totalbytes) * 100);
         publishResults(name, progress, totalbytes, copiedbytes);
-
     }
+
 
     private long time = System.nanoTime() / 500000000;
 
@@ -351,7 +335,7 @@ public class ExtractService extends Service {
             return;
         }
         File outputFile = new File(outputDir, entry.getName());
-        Log.d("Extract", "unzipEntry: " + outputFile);
+        Logger.log(TAG, "unzipEntry: " + outputFile);
         if (!outputFile.getParentFile().exists()) {
             createDir(outputFile.getParentFile());
         }
@@ -360,7 +344,6 @@ public class ExtractService extends Service {
                 zipfile.getInputStream(entry));
         BufferedOutputStream outputStream = new BufferedOutputStream(
                 FileUtils.getOutputStream(outputFile, context));
-//            Logger.log("ExtractService", "zipfile=" + zipfile + " zipentry=" + entry + " stream=" + inputStream);
 
         try {
             int len;
@@ -385,18 +368,17 @@ public class ExtractService extends Service {
             try {
                 inputStream.close();
             } catch (IOException e) {
-                //closing quietly
+                //no-op
             }
 
             try {
                 outputStream.close();
             } catch (IOException e) {
-                //closing quietly
+                //no-op
             }
 
         }
     }
-
 
     private void unzipTAREntry(TarArchiveInputStream zipfile, TarArchiveEntry entry, String outputDir,
                                String fileName)
@@ -437,6 +419,15 @@ public class ExtractService extends Service {
                 //close
             }
 
+        }
+    }
+
+
+    private void publishCompletedResult(int id) {
+        try {
+            notificationManager.cancel(id);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

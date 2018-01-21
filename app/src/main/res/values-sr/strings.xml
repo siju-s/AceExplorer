@@ -156,9 +156,9 @@
     <string name="start">РАЗУМЕМ</string>
     <string name="slide_1_title">организовани Библиотека</string>
     <string name="slide_1_desc">Један клик на библиотеке медија са почетном екрану.</string>
-    <string name="slide_2_title">навигација</string>
-    <string name="slide_2_desc">Лако кретање на било ком екрану.</string>
-    <string name="slide_3_title">Превуци и отпусти</string>
+    <string name="slide_2_title">пеек и поп</string>
+    <string name="slide_2_desc">погледајте и попишите своје слике и видео записе.</string>
+	<string name="slide_3_title">Превуци и отпусти</string>
     <string name="slide_3_desc">Вући фајлове из једног фолдера у други!</string>
     <string name="action_sort">Врста</string>
     <string name="slide_4_title">Теме</string>

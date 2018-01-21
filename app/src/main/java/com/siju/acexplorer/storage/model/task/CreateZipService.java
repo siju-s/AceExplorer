@@ -69,34 +69,82 @@ import static com.siju.acexplorer.storage.model.operations.ProgressUtils.ZIP_PRO
 
 public class CreateZipService extends Service {
 
+    private static final String TAG             = "CreateZipService";
+    private final        String CHANNEL_ID      = "operation";
+    private final static int    NOTIFICATION_ID = 1000;
+
     private NotificationManager        notificationManager;
     private NotificationCompat.Builder builder;
     private Context                    context;
-    private final int NOTIFICATION_ID = 1000;
+    private ServiceHandler             serviceHandler;
+    private ZipOutputStream            zipOutputStream;
 
-    private int  lastpercent;
-    private long size, totalBytes;
-    private String filePath;
-
-    private ZipOutputStream zipOutputStream;
-    private String          name;
-    private final String CHANNEL_ID = "operation";
-    private Looper         serviceLooper;
-    private ServiceHandler serviceHandler;
-    private boolean        stopService;
     private List<FileInfo> zipFiles;
+
+    private String  filePath;
+    private String  name;
+    private boolean stopService;
+    private boolean isCompleted;
+    private int     lastpercent;
+    private long    size, totalBytes;
 
 
     @Override
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
+        createNotification();
+        startThread();
     }
 
 
+    private void createNotification() {
+        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            notificationManager.cancelAll();
+        }
+
+        createChannelId();
+        builder = new NotificationCompat.Builder(context, CHANNEL_ID);
+        builder.setContentTitle(getResources().getString(R.string.zip_progress_title))
+                .setSmallIcon(R.drawable.ic_archive_white);
+        builder.setOnlyAlertOnce(true);
+        builder.setDefaults(0);
+        Intent cancelIntent = new Intent(context, CreateZipService.class);
+        cancelIntent.setAction(OperationProgress.ACTION_STOP);
+        PendingIntent pendingCancelIntent =
+                PendingIntent.getService(context, NOTIFICATION_ID, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.addAction(new NotificationCompat.Action(R.drawable.ic_cancel, getString(R.string.dialog_cancel), pendingCancelIntent));
+
+        Notification notification = builder.build();
+        startForeground(NOTIFICATION_ID, notification);
+        notificationManager.notify(NOTIFICATION_ID, notification);
+    }
+
+    private void startThread() {
+        HandlerThread thread = new HandlerThread("CreateZipService",
+                                                 Process.THREAD_PRIORITY_BACKGROUND);
+        thread.start();
+
+        // Get the HandlerThread's Looper and use it for our Handler
+        Looper serviceLooper = thread.getLooper();
+        serviceHandler = new ServiceHandler(serviceLooper);
+    }
+
+    // Handler that receives messages from the thread
+    @TargetApi(Build.VERSION_CODES.O)
+    private void createChannelId() {
+        if (isOreo()) {
+            CharSequence name = getString(R.string.operation);
+            int importance = NotificationManager.IMPORTANCE_LOW;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Logger.log("CreateZipService", "onStartCommand: " + intent + "starId:" + startId);
+        Logger.log(TAG, "onStartCommand: " + intent + "startId:" + startId);
         if (intent == null) {
             stopSelf();
             return START_NOT_STICKY;
@@ -112,7 +160,7 @@ public class CreateZipService extends Service {
         zipFiles = intent.getParcelableArrayListExtra(KEY_FILES);
         if (zipFiles == null) {
             zipFiles = LargeBundleTransfer.getFileData(context);
-            if (zipFiles == null) {
+            if (zipFiles.size() == 0) {
                 return START_NOT_STICKY;
             } else {
                 LargeBundleTransfer.removeFileData(context);
@@ -128,28 +176,6 @@ public class CreateZipService extends Service {
             }
         }
 
-        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (notificationManager != null) {
-            notificationManager.cancelAll();
-        }
-
-        createChannelId();
-        builder = new NotificationCompat.Builder(context, CHANNEL_ID);
-        builder.setContentTitle(getResources().getString(R.string.zip_progress_title))
-                .setSmallIcon(R.drawable.ic_archive_white);
-        builder.setOnlyAlertOnce(true);
-        builder.setDefaults(0);
-        Intent cancelIntent = new Intent(context, CreateZipService.class);
-        cancelIntent.setAction(OperationProgress.ACTION_STOP);
-        PendingIntent pendingCancelIntent =
-                PendingIntent.getService(context, NOTIFICATION_ID, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT) ;
-        builder.addAction(new NotificationCompat.Action(R.drawable.ic_cancel, getString(R.string.dialog_cancel), pendingCancelIntent));
-
-        Notification notification = builder.build();
-        startForeground(NOTIFICATION_ID, notification);
-        notificationManager.notify(NOTIFICATION_ID, notification);
-
-        startThread();
         Message msg = serviceHandler.obtainMessage();
         msg.arg1 = startId;
         serviceHandler.sendMessage(msg);
@@ -162,18 +188,8 @@ public class CreateZipService extends Service {
         return null;
     }
 
-    private void startThread() {
-        HandlerThread thread = new HandlerThread("CreateZipService",
-                                                 Process.THREAD_PRIORITY_BACKGROUND);
-        thread.start();
-
-        // Get the HandlerThread's Looper and use it for our Handler
-        serviceLooper = thread.getLooper();
-        serviceHandler = new ServiceHandler(serviceLooper);
-    }
-
-    // Handler that receives messages from the thread
     private final class ServiceHandler extends Handler {
+
         ServiceHandler(Looper looper) {
             super(looper);
         }
@@ -183,19 +199,6 @@ public class CreateZipService extends Service {
             Logger.log(CreateZipService.this.getClass().getSimpleName(), "handleMessage: " + msg.arg1);
             execute(toFileArray(zipFiles), name);
             stopSelf();
-        }
-    }
-
-
-    @TargetApi(Build.VERSION_CODES.O)
-    private void createChannelId() {
-        if (isOreo()) {
-            // The id of the channel.
-//        String id = "ace_channel_01";
-            CharSequence name = getString(R.string.operation);
-            int importance = NotificationManager.IMPORTANCE_LOW;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            notificationManager.createNotificationChannel(channel);
         }
     }
 
@@ -312,10 +315,13 @@ public class CreateZipService extends Service {
         intent.putExtra(KEY_TOTAL, total);
         intent.putExtra(KEY_FILEPATH, filePath);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-
     }
 
     private void publishCompletedResult(int id1) {
+        if (isCompleted) {
+            return;
+        }
+        isCompleted = true;
         Intent intent = new Intent(OperationUtils.ACTION_RELOAD_LIST);
         intent.putExtra(KEY_OPERATION, COMPRESS);
         intent.putExtra(KEY_FILEPATH, name);
@@ -333,7 +339,5 @@ public class CreateZipService extends Service {
         lastpercent = (int) copiedbytes;
         publishResults(name, progress, copiedbytes, totalbytes);
     }
-
-
 }
 

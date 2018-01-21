@@ -155,8 +155,8 @@
     <string name="start">ENTENDI</string>
     <string name="slide_1_title">Biblioteca Organizada</string>
     <string name="slide_1_desc">Um clique para a biblioteca de mídia a partir do homescreen.</string>
-    <string name="slide_2_title">Navegação</string>
-    <string name="slide_2_desc">Navegação fácil de qualquer tela.</string>
+    <string name="slide_2_title">peek e pop</string>
+    <string name="slide_2_desc">espiar e exibir suas imagens e vídeos.</string>
     <string name="slide_3_title">Arraste e solte</string>
     <string name="slide_3_desc">Arraste arquivos de uma pasta para outra!</string>
     <string name="action_sort">Ordenar</string>
@@ -207,7 +207,7 @@
     <string name="albums">Álbuns</string>
     <string name="artists">Artistas</string>
     <string name="genres">Gênios</string>
-    <string name="all_tracks">Todas as musicas</string>
+    <string name="all_tracks">Todas as músicas</string>
     <string name="notifications">Notificações</string>
     <string name="alarms">Alarmes</string>
     <string name="ringtones">Ringtones</string>

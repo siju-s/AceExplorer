@@ -43,7 +43,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     private ImageView[] dots;
     private final int[] mImageResources = {
             R.raw.library,
-            R.raw.drawer,
+            R.raw.peekpop,
             R.raw.dragdrop,
             R.raw.dualpane,
             R.raw.theme

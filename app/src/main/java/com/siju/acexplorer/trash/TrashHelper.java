@@ -59,7 +59,8 @@ public class TrashHelper {
     }
 
     public static boolean isTrashDir(Context context, String dir) {
-        return dir.contains(getTrashDir(context));
+        return false;
+//        return dir.contains(getTrashDir(context));
     }
 
 

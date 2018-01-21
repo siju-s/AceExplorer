@@ -332,7 +332,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 
 
-    public void stopAutoPlayVid() {
+    void stopAutoPlayVid() {
         View view = peekAndPop.getPeekView();
         peekAndPop.resetViews();
         AutoPlayContainer autoPlayView = view.findViewById(R.id.autoPlayView);
@@ -515,7 +515,8 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             mSelectedItemsIds.delete(position);
 
         }
-        notifyItemChanged(position);
+//        notifyItemChanged(position);
+        notifyDataSetChanged();
     }
 
     int getSelectedCount() {

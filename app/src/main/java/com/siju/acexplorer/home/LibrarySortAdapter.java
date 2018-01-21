@@ -146,7 +146,6 @@ class LibrarySortAdapter extends RecyclerView.Adapter<LibrarySortAdapter.Library
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
                 }
             });
 

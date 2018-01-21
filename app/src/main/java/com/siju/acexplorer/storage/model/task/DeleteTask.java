@@ -33,7 +33,9 @@ import com.stericson.RootTools.RootTools;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.siju.acexplorer.model.StorageUtils.getDocumentFile;
 import static com.siju.acexplorer.model.StorageUtils.isOnExtSdCard;
@@ -46,9 +48,9 @@ public class DeleteTask {
     private static final String TAG = "DeleteTask";
 
     private int totalFiles;
-    private final ArrayList<FileInfo> deletedFilesList = new ArrayList<>();
-    private ArrayList<FileInfo> fileList = new ArrayList<>();
-    private List<String> filesToMediaIndex = new ArrayList<>();
+    private final ArrayList<FileInfo> deletedFilesList  = new ArrayList<>();
+    private       ArrayList<FileInfo> fileList          = new ArrayList<>();
+    private       Set<String>         filesToMediaIndex = new HashSet<>();
 
     private boolean mShowToast = true;
 
@@ -90,7 +92,8 @@ public class DeleteTask {
                     if (!isDeleted) {
                         boolean isRootDir = StorageUtils.isRootDirectory(path);
                         if (!isRootDir) {
-                            deleteResultCallback.onFileDeleted(totalFiles, deletedFilesList, filesToMediaIndex, mShowToast);
+                            List<String> list = new ArrayList<>(filesToMediaIndex);
+                            deleteResultCallback.onFileDeleted(totalFiles, deletedFilesList, list, mShowToast);
                             return;
                         }
                         boolean isRootMode = RootTools.isAccessGiven();
@@ -111,7 +114,8 @@ public class DeleteTask {
                     }
                 }
                 if (deleteResultCallback != null) {
-                    deleteResultCallback.onFileDeleted(totalFiles, deletedFilesList, filesToMediaIndex, mShowToast);
+                    List<String> list = new ArrayList<>(filesToMediaIndex);
+                    deleteResultCallback.onFileDeleted(totalFiles, deletedFilesList, list, mShowToast);
                 }
             }
         }).start();
@@ -172,12 +176,10 @@ public class DeleteTask {
                         filesToMediaIndex.add(path);
                     }
                 }
-                if (fileList.length == 0) {
-                    String path = file.getAbsolutePath();
-                    isDeleted = file.delete();
-                    if (isDeleted) {
-                        filesToMediaIndex.add(path);
-                    }
+                String path = file.getAbsolutePath();
+                isDeleted = file.delete();
+                if (isDeleted) {
+                    filesToMediaIndex.add(path);
                 }
             }
         } else {

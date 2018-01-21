@@ -156,8 +156,8 @@
     <string name="start">AM ÎNŢELES</string>
     <string name="slide_1_title">Biblioteca organizată</string>
     <string name="slide_1_desc">Un singur clic pentru biblioteca media din homescreen.</string>
-    <string name="slide_2_title">Navigare</string>
-    <string name="slide_2_desc">navigare ușoară din orice ecran.</string>
+    <string name="slide_2_title">peek și pop</string>
+    <string name="slide_2_desc">peek și pop imaginile și clipurile video.</string>
     <string name="slide_3_title">Tragere și plasare</string>
     <string name="slide_3_desc">Trageți fișiere dintr-un dosar în altul!</string>
     <string name="action_sort">Fel</string>

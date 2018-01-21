@@ -154,8 +154,8 @@
     <string name="start">JAG FATTAR</string>
     <string name="slide_1_title">organiserad Library</string>
     <string name="slide_1_desc">Ett klick till mediebiblioteket från startskärmen.</string>
-    <string name="slide_2_title">Navigering</string>
-    <string name="slide_2_desc">Enkel navigering från vilken skärm som helst.</string>
+    <string name="slide_2_title">titt och pop</string>
+    <string name="slide_2_desc">kika och pop dina bilder och videoklipp.</string>
     <string name="slide_3_title">Dra och släpp</string>
     <string name="slide_3_desc">Dra filer från en mapp till en annan!</string>
     <string name="action_sort">Sortera</string>

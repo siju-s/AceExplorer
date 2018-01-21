@@ -154,8 +154,8 @@
     <string name="start">NÁÐI ÞVÍ</string>
     <string name="slide_1_title">skipulögð Library</string>
     <string name="slide_1_desc">Einn smellur á miðöldum bókasafn frá homescreen.</string>
-    <string name="slide_2_title">Navigation</string>
-    <string name="slide_2_desc">Þægilegur siglingar af hvaða skjá.</string>
+    <string name="slide_2_title">kíkja og skjóta</string>
+    <string name="slide_2_desc">kíkja og skjóta myndunum þínum og myndskeiðum.</string>
     <string name="slide_3_title">Draga og sleppa</string>
     <string name="slide_3_desc">Dragðu skrár úr einni möppu í aðra!</string>
     <string name="action_sort">Raða</string>

@@ -154,9 +154,9 @@
     <string name="start">ANLADIM</string>
     <string name="slide_1_title">Organize Kütüphanesi</string>
     <string name="slide_1_desc">homescreen ortam kitaplığına Bir tıklayın.</string>
-    <string name="slide_2_title">Navigasyon</string>
-    <string name="slide_2_desc">Herhangi bir ekrandan kolay navigasyon.</string>
-    <string name="slide_3_title">Sürükle ve bırak</string>
+    <string name="slide_2_title">gözetleme ve pop</string>
+    <string name="slide_2_desc">İnceleyin ve resimlerinizi ve videolarınızı açın.</string>
+	<string name="slide_3_title">Sürükle ve bırak</string>
     <string name="slide_3_desc">başka bir klasördeki dosyaları sürükleyin!</string>
     <string name="action_sort">çeşit</string>
     <string name="slide_4_title">Temalar</string>

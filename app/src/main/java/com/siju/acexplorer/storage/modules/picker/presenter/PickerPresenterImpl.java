@@ -46,7 +46,6 @@ public class PickerPresenterImpl implements PickerPresenter, LoaderManager
     private PickerModel pickerModel;
     private LoaderManager loaderManager;
     private LoaderHelper loaderHelper;
-    private Category category;
 
 
     public PickerPresenterImpl(PickerUi pickerUi, PickerModel pickerModel, LoaderHelper loaderHelper,

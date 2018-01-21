@@ -43,8 +43,6 @@ public class PeekAndPop {
     protected int     orientation;
     private   float[] peekViewOriginalPosition;
     private   int     peekViewMargin;
-    private   int     downX, downY;
-    private long              popTime;
     private ImageView         thumbImage;
     private AutoPlayContainer autoPlayView;
     private ImageButton       shareButton;
@@ -201,13 +199,6 @@ public class PeekAndPop {
         if (builder.parentViewGroup != null) {
             builder.parentViewGroup.requestDisallowInterceptTouchEvent(true);
         }
-
-        // Reset the touch coordinates to prevent accidental long hold actions on long hold views
-        downX = 0;
-        downY = 0;
-
-//        gestureListener.setView(longClickView);
-//        gestureListener.setPosition(index);
     }
 
     /**
@@ -245,7 +236,6 @@ public class PeekAndPop {
             }
         }, ANIMATION_POP_DURATION);
 
-        popTime = System.currentTimeMillis();
     }
 
     /**
@@ -255,9 +245,6 @@ public class PeekAndPop {
         Log.d("Peek", "resetViews: ");
 
         peekLayout.setVisibility(View.GONE);
-        downX = 0;
-        downY = 0;
-
         if (peekViewOriginalPosition != null) {
             peekView.setX(peekViewOriginalPosition[0]);
             peekView.setY(peekViewOriginalPosition[1]);
@@ -325,10 +312,6 @@ public class PeekAndPop {
         ArrayList<View> longClickViews;
 
         OnGeneralActionListener onGeneralActionListener;
-
-        boolean animateFling        = true;
-        boolean allowUpwardsFling   = true;
-        boolean allowDownwardsFling = true;
 
         public Builder(@NonNull Activity activity) {
             this.activity = activity;
@@ -401,6 +384,7 @@ public class PeekAndPop {
             }
 
             handleTouch(view, event, position);
+            view.performClick();
             return true;
         }
 
