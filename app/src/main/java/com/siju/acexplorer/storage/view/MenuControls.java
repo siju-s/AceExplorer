@@ -45,9 +45,6 @@ import com.siju.acexplorer.model.root.RootUtils;
 import com.siju.acexplorer.storage.model.ViewMode;
 import com.siju.acexplorer.storage.model.operations.Operations;
 import com.siju.acexplorer.theme.Theme;
-import com.siju.acexplorer.trash.TrashDbHelper;
-import com.siju.acexplorer.trash.TrashHelper;
-import com.siju.acexplorer.trash.TrashModel;
 import com.siju.acexplorer.view.dialog.DialogHelper;
 
 import java.io.File;
@@ -79,7 +76,6 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
     private Toolbar    toolbar;
     private Toolbar    bottomToolbar;
     private MenuItem   mRenameItem;
-    private MenuItem   restoreItem;
     private MenuItem   mShareItem;
     private MenuItem   mInfoItem;
     private MenuItem   mArchiveItem;
@@ -184,7 +180,6 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
         mHideItem = menu.findItem(R.id.action_hide);
         mShareItem = menu.findItem(R.id.action_share);
         mPermissionItem = menu.findItem(R.id.action_permissions);
-        restoreItem = menu.findItem(R.id.action_restore);
 
         // Dont show Fav and Archive option for Non file mode
         if (!category.equals(FILES)) {
@@ -257,7 +252,6 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
                     mHideItem.setVisible(false);
                     mFavItem.setVisible(false);
                     mArchiveItem.setVisible(false);
-                    restoreItem.setVisible(true);
                 }
 
             }
@@ -310,7 +304,7 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
         setupSearchView();
     }
 
-    public void setupSortVisibility() {
+    void setupSortVisibility() {
         if (sortItem == null) {
             return;
         }
@@ -399,28 +393,6 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
 
                 }
                 break;
-            case R.id.action_restore:
-                for (int i = 0; i < selectedItems.size(); i++) {
-                    copiedData.add(fileInfoList.get(selectedItems.keyAt(i)));
-                }
-                if (copiedData.size() > 0) {
-                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_RESTORE);
-                    ArrayList<FileInfo> info = new ArrayList<>();
-                    info.addAll(copiedData);
-                    ArrayList<String> destPaths = new ArrayList<>();
-                    for (FileInfo fileInfo : info) {
-                        destPaths.add(fileInfo.getFilePath());
-                    }
-                    String[] arr = destPaths.toArray(new String[destPaths.size()]);
-                    List<TrashModel> trashModelList = TrashDbHelper.getInstance().readMultipleTrashData(arr);
-                    Log.d(TAG, "onMenuItemClick: restore:"+trashModelList.get(0).getSource());
-                    storagesUiView.onRestoreFile(trashModelList);
-                    copiedData.clear();
-                    endActionMode();
-                }
-
-                break;
-
             case R.id.action_share:
                 if (selectedItems != null && selectedItems.size() > 0) {
                     ArrayList<FileInfo> filesToShare = new ArrayList<>();
@@ -768,11 +740,7 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
     {
         @Override
         public void onPositiveButtonClick(View view, boolean isTrashEnabled, ArrayList<FileInfo> filesToDelete) {
-            if (isTrashEnabled) {
-                storagesUiView.onMoveToTrash(filesToDelete, TrashHelper.getTrashDir(context));
-            } else {
                 storagesUiView.deleteFiles(filesToDelete);
-            }
         }
     };
 

@@ -96,7 +96,6 @@ import com.siju.acexplorer.storage.view.custom.DividerItemDecoration;
 import com.siju.acexplorer.storage.view.custom.GridItemDecoration;
 import com.siju.acexplorer.storage.view.custom.recyclerview.FastScrollRecyclerView;
 import com.siju.acexplorer.theme.Theme;
-import com.siju.acexplorer.trash.TrashModel;
 import com.siju.acexplorer.ui.peekandpop.PeekAndPop;
 import com.siju.acexplorer.utils.ConfigurationHelper;
 import com.siju.acexplorer.view.AceActivity;
@@ -2176,10 +2175,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     public void onMoveToTrash(ArrayList<FileInfo> filesToDelete, String trashDir) {
         bridge.moveToTrash(filesToDelete, trashDir);
-    }
-
-    public void onRestoreFile(List<TrashModel> trashModelList) {
-        bridge.restoreFiles(trashModelList);
     }
 
 

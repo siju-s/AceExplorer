@@ -36,7 +36,6 @@ import com.siju.acexplorer.model.MainModel;
 import com.siju.acexplorer.model.MainModelImpl;
 import com.siju.acexplorer.presenter.MainPresenter;
 import com.siju.acexplorer.presenter.MainPresenterImpl;
-import com.siju.acexplorer.trash.TrashHelper;
 
 import static com.siju.acexplorer.settings.SettingsPreferenceFragment.PREFS_ANALYTICS;
 
@@ -52,7 +51,6 @@ public class AceActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.base);
-        TrashHelper.createTrashDir(getApplicationContext());
 
         boolean sendAnalytics = PreferenceManager.getDefaultSharedPreferences(this).
                 getBoolean(PREFS_ANALYTICS, true);

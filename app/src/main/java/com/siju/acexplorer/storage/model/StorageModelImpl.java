@@ -49,8 +49,6 @@ import com.siju.acexplorer.storage.model.task.DeleteTask;
 import com.siju.acexplorer.storage.model.task.ExtractService;
 import com.siju.acexplorer.storage.model.task.MoveService;
 import com.siju.acexplorer.storage.model.task.PasteConflictChecker;
-import com.siju.acexplorer.trash.TrashHelper;
-import com.siju.acexplorer.trash.TrashModel;
 import com.siju.acexplorer.view.dialog.DialogHelper;
 import com.stericson.RootTools.RootTools;
 
@@ -160,25 +158,6 @@ public class StorageModelImpl implements StoragesModel {
         }).start();
     }
 
-    @Override
-    public void restoreFiles(List<TrashModel> trashModelList) {
-        Intent intent = new Intent(context, CopyService.class);
-
-        intent.putParcelableArrayListExtra(OperationUtils.KEY_TRASH_DATA,
-                                           (ArrayList<? extends Parcelable>) trashModelList);
-//        if (files.size() > LARGE_BUNDLE_LIMIT) {
-//            LargeBundleTransfer.storeFileData(context, files);
-//        } else {
-//            intent.putParcelableArrayListExtra(OperationUtils.KEY_FILES, (ArrayList<? extends
-//                    Parcelable>) files);
-//        }
-        intent.putExtra(OperationUtils.KEY_IS_RESTORE, true);
-        if (SdkHelper.isOreo()) {
-            context.startForegroundService(intent);
-        } else {
-            context.startService(intent);
-        }
-    }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
@@ -568,9 +547,6 @@ public class StorageModelImpl implements StoragesModel {
             } else {
                 intent.putParcelableArrayListExtra(OperationUtils.KEY_FILES, (ArrayList<? extends
                         Parcelable>) files);
-            }
-            if (destinationDir.equals(TrashHelper.getTrashDir(context))) {
-                intent.putExtra(OperationUtils.KEY_IS_TRASH, true);
             }
             intent.putExtra(OperationUtils.KEY_FILEPATH, destinationDir);
             if (SdkHelper.isOreo()) {

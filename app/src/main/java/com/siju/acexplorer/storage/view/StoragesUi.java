@@ -27,7 +27,6 @@ import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.storage.model.CopyData;
 import com.siju.acexplorer.storage.model.operations.Operations;
-import com.siju.acexplorer.trash.TrashModel;
 import com.siju.acexplorer.view.dialog.DialogHelper;
 
 import java.util.ArrayList;
@@ -164,6 +163,5 @@ public interface StoragesUi {
 
         void moveToTrash(ArrayList<FileInfo> filesToDelete, String trashDir);
 
-        void restoreFiles(List<TrashModel> trashModelList);
     }
 }

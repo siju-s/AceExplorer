@@ -47,7 +47,6 @@ import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.storage.model.operations.Operations;
-import com.siju.acexplorer.trash.TrashHelper;
 import com.siju.acexplorer.utils.Clipboard;
 import com.siju.acexplorer.view.PasteConflictAdapter;
 import com.stericson.RootTools.RootTools;
@@ -80,8 +79,6 @@ public class DialogHelper {
                 .getString(R.string
                                    .dialog_cancel)};
 
-        final boolean isTrashDir = fileInfo.get(0).getFilePath().contains(TrashHelper.getTrashDir(context));
-
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -98,9 +95,7 @@ public class DialogHelper {
 
         final CheckBox checkBoxTrash = dialogView.findViewById(R.id.checkBoxTrash);
         checkBoxTrash.setChecked(trashEnabled);
-        if (isTrashDir) {
-            checkBoxTrash.setVisibility(View.GONE);
-        }
+
         textTitle.setText(title);
         positiveButton.setText(texts[1]);
         negativeButton.setText(texts[3]);
@@ -110,7 +105,7 @@ public class DialogHelper {
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean isChecked = !isTrashDir && checkBoxTrash.isChecked();
+                boolean isChecked = false;
                 deleteDialogListener.onPositiveButtonClick(view, isChecked, fileInfo);
                 alertDialog.dismiss();
             }
@@ -597,7 +592,6 @@ public class DialogHelper {
         TextView textMD5Placeholder = dialogView.findViewById(R.id.textMD5PlaceHolder);
 
         final String path = fileInfo.getFilePath();
-        boolean isTrash = TrashHelper.isTrashDir(context, path);
         String fileName = fileInfo.getFileName();
         String fileDate;
         if (isFileCategory) {
@@ -626,19 +620,12 @@ public class DialogHelper {
         boolean isWriteable = new File(path).canWrite();
         boolean isHidden = new File(path).isHidden();
 
-        if (isTrash) {
-            textPath.setVisibility(View.GONE);
-            textPathHolder.setVisibility(View.GONE);
-        }
-
-
-
         textFileName.setText(fileName);
         textPath.setText(path);
         textFileSize.setText(fileNoOrSize);
         textDateModified.setText(fileDate);
 
-        if (!isFileCategory || isTrash) {
+        if (!isFileCategory) {
             textMD5.setVisibility(View.GONE);
             textMD5Placeholder.setVisibility(View.GONE);
             textReadablePlaceHolder.setVisibility(View.GONE);

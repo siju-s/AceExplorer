@@ -29,7 +29,6 @@ import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.storage.model.CopyData;
 import com.siju.acexplorer.storage.model.operations.Operations;
-import com.siju.acexplorer.trash.TrashModel;
 import com.siju.acexplorer.view.AceActivity;
 import com.siju.acexplorer.view.DrawerListener;
 import com.siju.acexplorer.view.dialog.DialogHelper;
@@ -416,11 +415,6 @@ public class StorageBridge implements StoragesUi {
 
     public void moveToTrash(ArrayList<FileInfo> filesToDelete, String trashDir) {
         listener.moveToTrash(filesToDelete, trashDir);
-
-    }
-
-    public void restoreFiles(List<TrashModel> trashModelList) {
-        listener.restoreFiles(trashModelList);
 
     }
 }

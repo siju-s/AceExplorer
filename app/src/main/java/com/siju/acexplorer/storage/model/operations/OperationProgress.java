@@ -38,7 +38,6 @@ import com.siju.acexplorer.storage.model.task.CopyService;
 import com.siju.acexplorer.storage.model.task.CreateZipService;
 import com.siju.acexplorer.storage.model.task.ExtractService;
 import com.siju.acexplorer.storage.model.task.MoveService;
-import com.siju.acexplorer.trash.TrashHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,14 +77,11 @@ public class OperationProgress {
     public void showPasteProgress(final Context context, String destinationDir, List<FileInfo> files,
                                   boolean isMove) {
 
-        boolean isTrash = destinationDir.contains(TrashHelper.getTrashDir(context));
         mContext = context;
         registerReceiver(context);
         String title;
         if (isMove) {
             title = context.getString(R.string.move);
-        } else if (isTrash){
-            title = context.getString(R.string.moving_title_trash);
         } else {
             title = context.getString(R.string.action_copy);
         }
@@ -121,12 +117,9 @@ public class OperationProgress {
 
         textFileFromPath.setText(copiedFileInfo.get(0).getFilePath());
         textFileName.setText(copiedFileInfo.get(0).getFileName());
-        if (isTrash) {
-            textFileToPath.setText(context.getString(R.string.trash));
-        } else {
-            textFileToPath.setText(destinationDir);
 
-        }
+        textFileToPath.setText(destinationDir);
+
         textFileCount.setText(String.format(Locale.getDefault(), "%s%d", context.getString(R.string.count_placeholder),
                                             copiedFilesSize));
         textProgress.setText(context.getString(R.string.zero_percent));
@@ -303,7 +296,6 @@ public class OperationProgress {
         context.startService(intent);
         unregisterReceiver(context);
     }
-
 
 
     private void stopMoveService() {

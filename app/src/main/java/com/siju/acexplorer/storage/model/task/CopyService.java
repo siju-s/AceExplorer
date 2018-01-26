@@ -48,8 +48,6 @@ import com.siju.acexplorer.model.root.RootUtils;
 import com.siju.acexplorer.storage.model.CopyData;
 import com.siju.acexplorer.storage.model.operations.OperationProgress;
 import com.siju.acexplorer.storage.model.operations.OperationUtils;
-import com.siju.acexplorer.trash.TrashDbHelper;
-import com.siju.acexplorer.trash.TrashModel;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -83,10 +81,10 @@ import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_TOT
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class CopyService extends Service {
 
-    private static final String TAG      = "CopyService";
-    private final int NOTIFICATION_ID = 1000;
-    private final String SEPARATOR    = "/";
-    private final String CHANNEL_ID   = "operation";
+    private static final String TAG             = "CopyService";
+    private final        int    NOTIFICATION_ID = 1000;
+    private final        String SEPARATOR       = "/";
+    private final        String CHANNEL_ID      = "operation";
 
 
     private Context                    context;
@@ -99,15 +97,14 @@ public class CopyService extends Service {
     private List<CopyData> copyData;
 
     private long totalBytes = 0L, copiedBytes = 0L;
-    private int     count     = 0;
-    private boolean               move;
-    private boolean               calculatingTotalSize;
-    private boolean               isCopyToTrash;
-    private boolean               isTrashRestore;
-    private ArrayList<TrashModel> trashList;
-    private ServiceHandler        serviceHandler;
-    private boolean stopService;
-    private boolean isCompleted;
+    private int count = 0;
+    private boolean        move;
+    private boolean        calculatingTotalSize;
+    private boolean        isCopyToTrash;
+    private boolean        isTrashRestore;
+    private ServiceHandler serviceHandler;
+    private boolean        stopService;
+    private boolean        isCompleted;
 
 
     @Override
@@ -132,7 +129,7 @@ public class CopyService extends Service {
         Intent cancelIntent = new Intent(context, CopyService.class);
         cancelIntent.setAction(OperationProgress.ACTION_STOP);
         PendingIntent pendingCancelIntent =
-                PendingIntent.getService(context, NOTIFICATION_ID, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT) ;
+                PendingIntent.getService(context, NOTIFICATION_ID, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.addAction(new NotificationCompat.Action(R.drawable.ic_cancel, getString(R.string.dialog_cancel), pendingCancelIntent));
 
         Notification notification = builder.build();
@@ -175,44 +172,39 @@ public class CopyService extends Service {
             stopSelf();
             return START_NOT_STICKY;
         }
-
-        isTrashRestore = intent.getBooleanExtra(OperationUtils.KEY_IS_RESTORE, false);
-        if (isTrashRestore) {
-            trashList = intent.getParcelableArrayListExtra(OperationUtils.KEY_TRASH_DATA);
-            copyTrashFiles();
-        } else {
-            files = intent.getParcelableArrayListExtra(KEY_FILES);
-            if (files == null) {
-                files = LargeBundleTransfer.getFileData(context);
-                if (files.size() == 0) {
-                    stopService();
-                    return START_NOT_STICKY;
-                } else {
-                    LargeBundleTransfer.removeFileData(context);
-                }
+        files = intent.getParcelableArrayListExtra(KEY_FILES);
+        if (files == null) {
+            files = LargeBundleTransfer.getFileData(context);
+            if (files.size() == 0) {
+                stopService();
+                return START_NOT_STICKY;
+            } else {
+                LargeBundleTransfer.removeFileData(context);
             }
-            isCopyToTrash = intent.getBooleanExtra(OperationUtils.KEY_IS_TRASH, false);
-            copyData = intent.getParcelableArrayListExtra(KEY_CONFLICT_DATA);
-            move = intent.getBooleanExtra(KEY_MOVE, false);
-
-            String currentDir = intent.getStringExtra(KEY_FILEPATH);
-
-            Message msg = serviceHandler.obtainMessage();
-            msg.arg1 = startId;
-            msg.obj = currentDir;
-            serviceHandler.sendMessage(msg);
         }
+        isCopyToTrash = intent.getBooleanExtra(OperationUtils.KEY_IS_TRASH, false);
+        copyData = intent.getParcelableArrayListExtra(KEY_CONFLICT_DATA);
+        move = intent.getBooleanExtra(KEY_MOVE, false);
+
+        String currentDir = intent.getStringExtra(KEY_FILEPATH);
+
+        Message msg = serviceHandler.obtainMessage();
+        msg.arg1 = startId;
+        msg.obj = currentDir;
+        serviceHandler.sendMessage(msg);
         return START_STICKY;
     }
 
     private void stopService() {
         stopSelf();
     }
+
     private final class ServiceHandler extends Handler {
 
         ServiceHandler(Looper looper) {
             super(looper);
         }
+
         @Override
         public void handleMessage(Message msg) {
             Logger.log(TAG, "handleMessage: " + msg.arg1);
@@ -323,13 +315,6 @@ public class CopyService extends Service {
         calculatingTotalSize = false;
     }
 
-    private void copyTrashFiles() {
-        for (int i = 0; i < trashList.size(); i++) {
-            String sourceFile = trashList.get(i).getDestination(); // Intentional : Destination will be source
-            String destFile = trashList.get(i).getSource() + sourceFile.substring(sourceFile.lastIndexOf("/"), sourceFile.length());
-            startCopy(sourceFile, destFile, move);
-        }
-    }
 
     private void startCopy(String sourceFile, String targetFile, boolean move) {
         if (new File(sourceFile).isDirectory()) {
@@ -358,7 +343,6 @@ public class CopyService extends Service {
         }
 
         if (filePaths.size() == 0) {
-            deleteSourceFile(sourceFile, destinationDir);
             Intent intent = new Intent(COPY_PROGRESS);
             intent.putExtra(KEY_PROGRESS, 100);
             intent.putExtra(KEY_COMPLETED, 0L);
@@ -457,7 +441,6 @@ public class CopyService extends Service {
             startCopy(file, destFile, move);
         }
         if (filePaths.size() == 0) {
-            deleteSourceFile(sourceFile.getFilePath(), destinationDir);
             Intent intent = new Intent(COPY_PROGRESS);
             intent.putExtra(KEY_PROGRESS, 100);
             intent.putExtra(KEY_COMPLETED, 0L);
@@ -504,7 +487,7 @@ public class CopyService extends Service {
         byte[] data = new byte[2048];
         int length;
         //copy the file content in bytes
-        while ((length = in.read(data, 0, buffer)) != -1 ) {
+        while ((length = in.read(data, 0, buffer)) != -1) {
             if (stopService) {
                 failedFiles.add(sourceFile);
                 File targetFile = new File(targetPath);
@@ -525,7 +508,6 @@ public class CopyService extends Service {
         if (fileBytes == size) {
             count++;
             File targetFile = new File(targetPath);
-            deleteSourceFile(sourceFile.getFilePath(), targetFile);
             if (FileUtils.isMediaScanningRequired(FileUtils.getMimeType(targetFile))) {
                 filesToMediaIndex.add(targetPath);
             }
@@ -542,18 +524,6 @@ public class CopyService extends Service {
         }
         in.close();
         out.close();
-    }
-
-    private void deleteSourceFile(String sourcePath, File targetFile) {
-        if (targetFile.exists() && (isCopyToTrash || isTrashRestore)) {
-            File file = new File(sourcePath);
-            if (isCopyToTrash) {
-                TrashDbHelper.getInstance().addTrashData(new TrashModel(targetFile.getAbsolutePath(), file.getParent()));
-            } else {
-                TrashDbHelper.getInstance().deleteTrashData(file.getParent());
-            }
-            file.delete();
-        }
     }
 
     private void calculateProgress(String name) {
@@ -578,7 +548,7 @@ public class CopyService extends Service {
         }
         builder.setContentTitle(getString(title));
         builder.setContentText(new File(fileName).getName() + " " + FileUtils.formatSize
-                (context, done)  + SEPARATOR + FileUtils
+                (context, done) + SEPARATOR + FileUtils
                 .formatSize(context, total));
         int id1 = NOTIFICATION_ID;
         notificationManager.notify(id1, builder.build());
@@ -675,8 +645,6 @@ public class CopyService extends Service {
             deleteTask.delete();
         }
     }
-
-
 
 
     @Override

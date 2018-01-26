@@ -24,7 +24,6 @@ import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.model.FavInfo;
 import com.siju.acexplorer.model.FileInfo;
 import com.siju.acexplorer.storage.model.operations.Operations;
-import com.siju.acexplorer.trash.TrashModel;
 import com.siju.acexplorer.view.dialog.DialogHelper;
 
 import java.util.ArrayList;
@@ -80,8 +79,6 @@ public interface StoragesModel {
     void renameFile(String filePath, String newFilePath, String name, boolean rooted);
 
     void moveToTrash(ArrayList<FileInfo> filesToDelete, String trashDir);
-
-    void restoreFiles(List<TrashModel> trashModelList);
 
 
     interface Listener {
