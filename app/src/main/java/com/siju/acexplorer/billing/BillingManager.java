@@ -261,7 +261,7 @@ public class BillingManager implements PurchasesUpdatedListener {
 
         isPremium = purchase.getSku().equals(SKU_REMOVE_ADS);
 
-        Log.d(TAG, "User has " + (isPremium ? "REMOVED ADS" : "NOT REMOVED ADS"));
+        Logger.log(TAG, "User has " + (isPremium ? "REMOVED ADS" : "NOT REMOVED ADS"));
         mPurchases.add(purchase);
     }
 

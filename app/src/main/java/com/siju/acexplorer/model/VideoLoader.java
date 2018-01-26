@@ -44,7 +44,6 @@ public class VideoLoader {
 
 
     private static ArrayList<FileInfo> fetchVideos(Context context, Category category, boolean isHome) {
-        Log.d(TAG, "fetchVideos() called with: category = [" + category + "], isHome = [" + isHome + "]");
         ArrayList<FileInfo> fileInfoList = new ArrayList<>();
 
         Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
@@ -62,7 +61,6 @@ public class VideoLoader {
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 if (isHome) {
-                    Log.d(TAG, "fetchVideos: category:"+category + " count:"+cursor.getCount());
                     fileInfoList.add(new FileInfo(category, cursor.getCount()));
                     cursor.close();
                     return fileInfoList;
@@ -82,7 +80,6 @@ public class VideoLoader {
                         count = 1;
                         FileInfo fileInfo = new FileInfo(category, bucketId, bucketName, path, count);
                         fileInfoList.add(fileInfo);
-                        Log.d(TAG, "fetchVideos: bucketName:"+bucketName + "id:"+bucketId);
                         ids.add(bucketId);
                     } else {
                         count++;

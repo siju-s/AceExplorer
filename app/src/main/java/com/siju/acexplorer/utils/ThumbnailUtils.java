@@ -7,6 +7,8 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -14,6 +16,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.model.FileConstants;
 import com.siju.acexplorer.model.FileInfo;
@@ -133,7 +137,7 @@ public class ThumbnailUtils {
                 .into(imageIcon);
     }
 
-    private static void displayAudioAlbumArt(Context context, long bucketId, ImageView imageIcon,
+    private static void displayAudioAlbumArt(Context context, long bucketId, final ImageView imageIcon,
                                              String path) {
         if (bucketId != -1) {
             Uri uri = ContentUris.withAppendedId(AUDIO_URI, bucketId);
@@ -153,7 +157,9 @@ public class ThumbnailUtils {
                                                                null);
 
             if (cursor != null) {
+                int size = context.getResources().getDimensionPixelSize(R.dimen.folder_icon);
                 if (cursor.moveToFirst()) {
+                    Glide.with(context).clear(imageIcon);
                     int albumIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media
                                                                             .ALBUM_ID);
 
@@ -162,10 +168,22 @@ public class ThumbnailUtils {
                     Uri newUri = ContentUris.withAppendedId(AUDIO_URI, albumId);
                     RequestOptions options = new RequestOptions()
                             .centerCrop()
-                            .placeholder(R.drawable.ic_music_default);
+                            .placeholder(R.drawable.ic_music_default)
+                            .error(R.drawable.ic_music_default)
+                            .fallback(R.drawable.ic_music_default);
                     Glide.with(context).load(newUri)
                             .apply(options)
-                            .into(imageIcon);
+                            .into(new SimpleTarget<Drawable>() {
+                                @Override
+                                public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                                    imageIcon.setImageDrawable(resource);
+                                }
+
+                                @Override
+                                public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                                    imageIcon.setImageDrawable(errorDrawable);
+                                }
+                            });
                 }
                 cursor.close();
             } else {

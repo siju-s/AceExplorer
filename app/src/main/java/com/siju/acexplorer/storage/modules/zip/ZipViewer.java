@@ -223,7 +223,7 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
                         zipFile = new ZipFile(zipParentPath);
                     }
                     zipEntry1 = zipEntry;
-                    new ExtractZipEntry(zipFile, cacheDirPath,
+                    new ExtractZipEntry(fragment.getContext(), zipFile, cacheDirPath,
                             name, zipEntry1, alertDialogListener)
                             .execute();
                 } catch (IOException e) {

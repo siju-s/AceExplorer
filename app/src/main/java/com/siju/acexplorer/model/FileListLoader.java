@@ -27,7 +27,6 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
-import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.siju.acexplorer.home.view.HomeScreenFragment;
@@ -596,7 +595,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                     String fileName = cursor.getString(titleIndex);
                     long size1 = cursor.getLong(sizeIndex);
                     long date1 = cursor.getLong(dateIndex);
-                    Log.d(TAG, "fetchDocumentsByCategory: date:"+date1);
                     long fileId = cursor.getLong(fileIdIndex);
                     String extension = path.substring(path.lastIndexOf(".") + 1);
                     category = checkMimeType(extension);
@@ -616,7 +614,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private void fetchGif() {
         Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         String gif = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_GIF);
-        Log.d(TAG, "fetchGif: mime:"+gif);
         String selectionArgs[] = new String[]{gif};
 
         String where = MediaStore.Images.Media.MIME_TYPE + " =?";
@@ -624,7 +621,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         Cursor cursor = getContext().getContentResolver().query(uri, null, where, selectionArgs,
                                                                 null);
         if (cursor != null) {
-            Log.d(TAG, "fetchGif: category:"+category + "count:"+cursor.getCount());
 
             if (cursor.moveToFirst()) {
                 if (isHomeFragment()) {
@@ -674,7 +670,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private void fetchRecents(long timePeriodMs) {
         Uri uri = MediaStore.Files.getContentUri("external");
         long currentTimeMs = System.currentTimeMillis()/1000;
-        Log.d(TAG, "fetchRecents: currentTIme:"+currentTimeMs);
         long pastTime = currentTimeMs - timePeriodMs;
 //        String whereFilter = MediaStore.Files.FileColumns.MIME_TYPE + " LIKE " + "'image%'" + " OR " +
 //                MediaStore.Files.FileColumns.MIME_TYPE + " LIKE " + "'video%'" + " OR " +

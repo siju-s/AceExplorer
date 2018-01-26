@@ -3,9 +3,10 @@ package com.siju.acexplorer.ui.autoplay;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
+import com.siju.acexplorer.logging.Logger;
 
 import java.io.IOException;
 
@@ -34,12 +35,10 @@ public class AutoPlayView extends SurfaceView implements SurfaceHolder.Callback 
 
     public void setSource(String source) {
         this.path = source;
-        Log.d(TAG, "setSource: " + this.path);
     }
 
 
     public void startVideo() {
-        Log.d(TAG, "startVideo: " + mediaPlayer);
         if (path != null && !path.isEmpty()) {
             if (surfaceHolder != null) {
                 if (mediaPlayer != null) {
@@ -65,7 +64,6 @@ public class AutoPlayView extends SurfaceView implements SurfaceHolder.Callback 
     }
 
     public void init() {
-        Log.d(TAG, "init: isSurfaceReady()" + isSurfaceReady);
         surfaceHolder = getHolder();
         if (isSurfaceReady) {
             startVideo();
@@ -93,7 +91,6 @@ public class AutoPlayView extends SurfaceView implements SurfaceHolder.Callback 
     private MediaPlayer.OnErrorListener errorListener = new MediaPlayer.OnErrorListener() {
         @Override
         public boolean onError(MediaPlayer mp, int what, int extra) {
-            Log.d(TAG, "onError: " + what);
             return true;
         }
     };
@@ -105,7 +102,6 @@ public class AutoPlayView extends SurfaceView implements SurfaceHolder.Callback 
 
     @Override
     protected void onDetachedFromWindow() {
-        Log.d(TAG, "onDetachedFromWindow: ");
         // release resources on detach
         if (mediaPlayer != null) {
             mediaPlayer.release();
@@ -116,8 +112,6 @@ public class AutoPlayView extends SurfaceView implements SurfaceHolder.Callback 
 
 
     public void clearAll() {
-
-        Log.d(TAG, "clearAll: " + mediaPlayer);
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();
@@ -142,7 +136,6 @@ public class AutoPlayView extends SurfaceView implements SurfaceHolder.Callback 
     private boolean isMuted;
 
     public void muteVideo() {
-        Log.d(TAG, "muteVideo: " + isMuted + " player:" + mediaPlayer);
         if (mediaPlayer != null && !isMuted()) {
             mediaPlayer.setVolume(0f, 0f);
             isMuted = true;
@@ -150,7 +143,6 @@ public class AutoPlayView extends SurfaceView implements SurfaceHolder.Callback 
     }
 
     public void unmuteVideo() {
-        Log.d(TAG, "unmuteVideo: " + isMuted + " player:" + mediaPlayer);
         if (mediaPlayer != null && isMuted()) {
             mediaPlayer.setVolume(1f, 1f);
             isMuted = false;
@@ -177,7 +169,7 @@ public class AutoPlayView extends SurfaceView implements SurfaceHolder.Callback 
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        Log.d(TAG, "surfaceCreated: ");
+        Logger.log(TAG, "surfaceCreated: ");
         surfaceHolder = holder;
         isSurfaceReady = true;
         startVideo();
@@ -190,7 +182,7 @@ public class AutoPlayView extends SurfaceView implements SurfaceHolder.Callback 
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.d(TAG, "surfaceDestroyed: ");
+        Logger.log(TAG, "surfaceDestroyed: ");
         isSurfaceReady = false;
         surfaceHolder = null;
         if (callback != null) {

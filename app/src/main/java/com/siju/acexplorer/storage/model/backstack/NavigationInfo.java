@@ -223,7 +223,6 @@ public class NavigationInfo {
         textView.setPadding(paddingLeft, 0, paddingLeft, 0);
         textView.setLayoutParams(params);
         addViewToNavigation(textView);
-        Log.d(TAG, "addLibSpecificTitleText: "+title);
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

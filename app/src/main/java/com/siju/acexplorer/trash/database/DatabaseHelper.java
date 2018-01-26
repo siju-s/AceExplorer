@@ -5,8 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
+import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.trash.TrashModel;
 
 import java.util.ArrayList;
@@ -105,7 +105,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 stringBuilder.append(",");
             }
         }
-        Log.d("DbHelper", "readMultipleTrashData: " + stringBuilder.toString());
+        Logger.log("DbHelper", "readMultipleTrashData: " + stringBuilder.toString());
 
         Cursor cursor = db.query(TRASH_TABLE_NAME, null, KEY_DESTINATION + " IN " + "(" + stringBuilder.toString()
                 + ")", null, null, null, null, null);

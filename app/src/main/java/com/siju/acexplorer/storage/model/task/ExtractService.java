@@ -41,6 +41,7 @@ import android.util.Log;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.helper.FileUtils;
+import com.siju.acexplorer.model.helper.MediaStoreHelper;
 import com.siju.acexplorer.storage.model.operations.OperationProgress;
 import com.siju.acexplorer.storage.modules.zip.ZipUtils;
 
@@ -379,6 +380,8 @@ public class ExtractService extends Service {
             }
 
         }
+
+        MediaStoreHelper.scanFile(context, outputFile.getAbsolutePath());
     }
 
     private void unzipTAREntry(TarArchiveInputStream zipfile, TarArchiveEntry entry, String outputDir,

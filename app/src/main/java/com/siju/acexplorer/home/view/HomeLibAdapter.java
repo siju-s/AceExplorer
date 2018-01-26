@@ -89,7 +89,7 @@ public class HomeLibAdapter extends RecyclerView.Adapter<HomeLibAdapter.HomeLibH
 
     @Override
     public long getItemId(int position) {
-        return position;
+        return homeLibraryInfoArrayList.get(position).getCategory().getValue();
     }
 
     List<HomeLibraryInfo> getList() {

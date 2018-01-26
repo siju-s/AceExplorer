@@ -112,7 +112,7 @@ class HomeLibrary {
         libraryList.setHasFixedSize(true);
         libraryList.setNestedScrollingEnabled(false);
         homeLibAdapter = new HomeLibAdapter(context, homeLibraryInfoArrayList, theme);
-        homeLibAdapter.setHasStableIds(true);
+        homeLibAdapter.setHasStableIds(false);
         libraryList.getItemAnimator().setChangeDuration(0);
         setGridColumns(homeUiView.getConfiguration());
 

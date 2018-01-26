@@ -1940,6 +1940,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         }
         this.category = category;
         menuControls.setCategory(category);
+        menuControls.setupSortVisibility();
+
         int position = 0;
         ArrayList<BackStackModel> backStack = backStackInfo.getBackStack();
         for (int i = 0; i < backStack.size(); i++) {

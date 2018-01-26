@@ -4,7 +4,6 @@ package com.siju.acexplorer.trash;
 import android.content.Context;
 import android.util.JsonReader;
 import android.util.JsonWriter;
-import android.util.Log;
 
 import com.siju.acexplorer.AceApplication;
 
@@ -29,7 +28,7 @@ public class TrashHelper {
 
     public static String getTrashDir(Context context) {
         File filesDir = new File(context.getFilesDir(), TRASH_DIR);
-        Log.d("TrashHelper", "getTrashDir: canwrite:" + filesDir.canWrite());
+        //Log.d("TrashHelper", "getTrashDir: canwrite:" + filesDir.canWrite());
 
         return filesDir.getAbsolutePath();
     }
@@ -53,7 +52,7 @@ public class TrashHelper {
                         e.printStackTrace();
                     }
                 }
-                Log.d("TrashHelper", "createTrashDir: " + isCreated + " canwrite:" + trashDir.canWrite());
+                //Log.d("TrashHelper", "createTrashDir: " + isCreated + " canwrite:" + trashDir.canWrite());
             }
         }
     }

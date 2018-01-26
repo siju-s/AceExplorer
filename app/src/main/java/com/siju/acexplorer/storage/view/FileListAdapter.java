@@ -278,6 +278,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private void loadPeekView(int position) {
         Analytics.getLogger().enterPeekMode();
         Category category = fileList.get(position).getCategory();
+
         this.peekPos = position;
         View view = peekAndPop.getPeekView();
 //        TextView titleText = view.findViewById(R.id.titlePeekView);

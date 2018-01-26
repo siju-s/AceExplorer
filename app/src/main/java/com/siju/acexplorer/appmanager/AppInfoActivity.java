@@ -21,7 +21,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -158,8 +157,6 @@ public class AppInfoActivity extends BaseActivity implements View.OnClickListene
             appNameText.setText(appName);
             toolbar.setTitle(appName);
             imageIcon.setContentDescription(appName);
-            Log.d(TAG, "setupUI: App name :" + appName+ "Installer package name:"+source);
-
 
             targetSdkText.setText(String.valueOf(applicationInfo.targetSdkVersion));
             if (SdkHelper.isAtleastNougat()) {
@@ -247,7 +244,6 @@ public class AppInfoActivity extends BaseActivity implements View.OnClickListene
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "onActivityResult: resultCode:" + resultCode);
         if (requestCode == REQUEST_CODE_UNINSTALL && resultCode == Activity.RESULT_OK) {
             finish();
         }

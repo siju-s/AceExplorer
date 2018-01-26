@@ -880,7 +880,6 @@ public class DialogHelper {
 
     public static void openWith(final Uri uri, final Context context) {
 
-        //Initializing a bottom sheet
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
         View sheetView = LayoutInflater.from(context).inflate(R.layout.dialog_open_as, null);
         bottomSheetDialog.setContentView(sheetView);
@@ -890,7 +889,6 @@ public class DialogHelper {
         items.add(context.getString(R.string.image));
         items.add(context.getString(R.string.audio));
         items.add(context.getString(R.string.other));
-
 
         TextView textTitle = sheetView.findViewById(R.id.textTitle);
         ListView listView = sheetView.findViewById(R.id.listOpenAs);

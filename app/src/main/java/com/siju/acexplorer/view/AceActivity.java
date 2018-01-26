@@ -21,7 +21,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -76,7 +75,6 @@ public class AceActivity extends BaseActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
-        Log.d(TAG, "onNewIntent: "+intent);
         mainUi.onIntentReceived(intent);
     }
 

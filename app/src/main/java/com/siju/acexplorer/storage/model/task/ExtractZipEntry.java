@@ -17,10 +17,9 @@
 package com.siju.acexplorer.storage.model.task;
 
 
+import android.content.Context;
 import android.os.AsyncTask;
 
-
-import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.view.dialog.DialogHelper;
 
@@ -43,9 +42,11 @@ public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
     private ZipEntry entry;
     private File output;
     private DialogHelper.AlertDialogListener alertDialogListener;
+    private Context context;
 
-    public ExtractZipEntry(ZipFile zipFile, String outputDir, String fileName,
+    public ExtractZipEntry(Context context, ZipFile zipFile, String outputDir, String fileName,
                            ZipEntry zipEntry, DialogHelper.AlertDialogListener alertDialogListener) {
+        this.context = context;
         this.zip = true;
         this.outputDir = outputDir;
         this.zipFile = zipFile;
@@ -78,7 +79,7 @@ public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
 //        RootHelper.runAndWait(cmd);
         String outputPath = output.getPath();
         String extension = outputPath.substring(outputPath.lastIndexOf(".") + 1, outputPath.length());
-        viewFile(AceApplication.getAppContext(), outputPath, extension, alertDialogListener);
+        viewFile(context, outputPath, extension, alertDialogListener);
 
     }
 

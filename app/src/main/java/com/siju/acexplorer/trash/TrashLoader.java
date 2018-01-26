@@ -30,7 +30,7 @@ public class TrashLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         sortMode = PreferenceManager.getDefaultSharedPreferences(context).getInt(
                 FileConstants.KEY_SORT_MODE, FileConstants.KEY_SORT_NAME);
         dir = TrashHelper.getTrashDir(context);
-        Log.d("TrashLoader", "Dir: "+dir);
+        //Log.d("TrashLoader", "Dir: "+dir);
     }
 
     @Override

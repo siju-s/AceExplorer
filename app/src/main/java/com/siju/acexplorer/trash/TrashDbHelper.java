@@ -1,9 +1,8 @@
 package com.siju.acexplorer.trash;
 
 
-import android.util.Log;
-
 import com.siju.acexplorer.AceApplication;
+import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.trash.database.DatabaseHelper;
 
 import java.util.List;
@@ -23,7 +22,7 @@ public class TrashDbHelper {
     }
 
     public void addTrashData(TrashModel trashModel) {
-        Log.d(TAG, "addTrashData: dest:"+trashModel.getDestination() + "source:"+trashModel.getSource());
+        Logger.log(TAG, "addTrashData: dest:"+trashModel.getDestination() + "source:"+trashModel.getSource());
         databaseHelper.addTrashData(trashModel);
     }
 
