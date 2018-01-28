@@ -270,7 +270,7 @@ public class StorageModelImpl implements StoragesModel {
             intent.putExtra(KEY_FILEPATH, currentFile.getPath());
             intent.putExtra(KEY_FILEPATH2, file.getAbsolutePath());
             listener.showExtractDialog(intent);
-            if (SdkHelper.isOreo()) {
+            if (SdkHelper.isAtleastOreo()) {
                 context.startForegroundService(intent);
             } else {
                 context.startService(intent);
@@ -316,7 +316,7 @@ public class StorageModelImpl implements StoragesModel {
                 zipIntent.putParcelableArrayListExtra(KEY_FILES, files);
             }
             listener.showZipProgressDialog(files, newFile.getAbsolutePath());
-            if (SdkHelper.isOreo()) {
+            if (SdkHelper.isAtleastOreo()) {
                 context.startForegroundService(zipIntent);
             } else {
                 context.startService(zipIntent);
@@ -549,7 +549,7 @@ public class StorageModelImpl implements StoragesModel {
                         Parcelable>) files);
             }
             intent.putExtra(OperationUtils.KEY_FILEPATH, destinationDir);
-            if (SdkHelper.isOreo()) {
+            if (SdkHelper.isAtleastOreo()) {
                 context.startForegroundService(intent);
             } else {
                 context.startService(intent);
@@ -571,7 +571,7 @@ public class StorageModelImpl implements StoragesModel {
         intent.putParcelableArrayListExtra(OperationUtils.KEY_CONFLICT_DATA,
                 (ArrayList<? extends Parcelable>) copyData);
         intent.putExtra(OperationUtils.KEY_FILEPATH, destinationDir);
-        if (SdkHelper.isOreo()) {
+        if (SdkHelper.isAtleastOreo()) {
             context.startForegroundService(intent);
         } else {
             context.startService(intent);

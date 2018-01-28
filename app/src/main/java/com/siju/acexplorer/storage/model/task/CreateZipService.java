@@ -56,7 +56,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static com.siju.acexplorer.model.helper.SdkHelper.isOreo;
+import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastOreo;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_END;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES;
@@ -135,7 +135,7 @@ public class CreateZipService extends Service {
     // Handler that receives messages from the thread
     @TargetApi(Build.VERSION_CODES.O)
     private void createChannelId() {
-        if (isOreo()) {
+        if (isAtleastOreo()) {
             CharSequence name = getString(R.string.operation);
             int importance = NotificationManager.IMPORTANCE_LOW;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
@@ -223,7 +223,7 @@ public class CreateZipService extends Service {
         }
         for (File file : zipFiles) {
             if (stopService) {
-                publishCompletedResult(NOTIFICATION_ID);
+                publishCompletedResult();
                 break;
             }
             try {
@@ -249,7 +249,7 @@ public class CreateZipService extends Service {
             zipOutputStream.putNextEntry(new ZipEntry(path + "/" + file.getName()));
             while ((len = in.read(buf)) > 0) {
                 if (stopService) {
-                    publishCompletedResult(NOTIFICATION_ID);
+                    publishCompletedResult();
                     break;
                 }
                 zipOutputStream.write(buf, 0, len);
@@ -294,16 +294,10 @@ public class CreateZipService extends Service {
         builder.setContentTitle(getResources().getString(title));
         builder.setContentText(new File(filePath).getName() + " " + Formatter.formatFileSize
                 (context, done) + "/" + Formatter.formatFileSize(context, total));
-        int id1 = NOTIFICATION_ID;
-        notificationManager.notify(id1, builder.build());
+        notificationManager.notify(NOTIFICATION_ID, builder.build());
         //Log.d("CreateZip", "publishResults: progress:"+i + " total:"+total);
         if (i == 100 || total == 0) {
-            builder.setContentTitle("Zip completed");
-            builder.setContentText("");
-            builder.setProgress(0, 0, false);
-            builder.setOngoing(false);
-            notificationManager.notify(id1, builder.build());
-            publishCompletedResult(id1);
+            publishCompletedResult();
         }
 
         Intent intent = new Intent(ZIP_PROGRESS);
@@ -325,7 +319,7 @@ public class CreateZipService extends Service {
     }
 
 
-    private void publishCompletedResult(int id1) {
+    private void publishCompletedResult() {
         if (isCompleted) {
             return;
         }
@@ -337,11 +331,8 @@ public class CreateZipService extends Service {
         intent.putExtra(KEY_OPERATION, COMPRESS);
         intent.putExtra(KEY_FILEPATH, name);
         sendBroadcast(intent);
-        try {
-            notificationManager.cancel(id1);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        notificationManager.cancel(NOTIFICATION_ID);
+
     }
 
     private void calculateProgress(final String name, final long

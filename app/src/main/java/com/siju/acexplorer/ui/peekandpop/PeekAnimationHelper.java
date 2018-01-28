@@ -14,13 +14,13 @@ import android.view.animation.OvershootInterpolator;
  * <p/>
  * Helper class for animating the PeekAndPop views
  */
-public class PeekAnimationHelper {
+class PeekAnimationHelper {
 
     private View peekLayout;
     private View peekView;
     private Context context;
 
-    public PeekAnimationHelper(Context context, View peekLayout, View peekView) {
+    PeekAnimationHelper(Context context, View peekLayout, View peekView) {
         this.context = context;
         this.peekLayout = peekLayout;
         this.peekView = peekView;

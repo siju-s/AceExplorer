@@ -387,7 +387,7 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
 
                     else {
                         Analytics.getLogger().operationClicked(Analytics.Logger.EV_DELETE);
-                        DialogHelper.showDeleteDialog(context, filesToDelete, storagesUiView.isTrashEnabled(), deleteDialogListener);
+                        DialogHelper.showDeleteDialog(context, filesToDelete, false, deleteDialogListener);
                     }
                     endActionMode();
 

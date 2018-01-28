@@ -31,6 +31,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Process;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
@@ -78,7 +79,6 @@ import com.siju.acexplorer.model.SharedPreferenceWrapper;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.model.helper.FileUtils;
 import com.siju.acexplorer.model.helper.LargeBundleTransfer;
-import com.siju.acexplorer.model.helper.MediaStoreHelper;
 import com.siju.acexplorer.permission.PermissionUtils;
 import com.siju.acexplorer.storage.model.BackStackModel;
 import com.siju.acexplorer.storage.model.ViewMode;
@@ -105,7 +105,10 @@ import com.siju.acexplorer.view.dialog.DialogHelper;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import static android.webkit.MimeTypeMap.getSingleton;
 import static com.siju.acexplorer.model.FileConstants.ADS;
@@ -124,7 +127,6 @@ import static com.siju.acexplorer.model.groups.CategoryHelper.showLibSpecificNav
 import static com.siju.acexplorer.model.helper.MediaStoreHelper.removeBatchMedia;
 import static com.siju.acexplorer.model.helper.MediaStoreHelper.removeMedia;
 import static com.siju.acexplorer.model.helper.MediaStoreHelper.scanFile;
-import static com.siju.acexplorer.model.helper.MediaStoreHelper.scanMultipleFiles;
 import static com.siju.acexplorer.model.helper.MediaStoreHelper.updateMedia;
 import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastNougat;
 import static com.siju.acexplorer.model.helper.UriHelper.createContentUri;
@@ -136,6 +138,7 @@ import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_CO
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH2;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES;
+import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES_COUNT;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_MEDIA_INDEX_FILES;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OLD_FILES;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION;
@@ -213,7 +216,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     private boolean    isHomeClicked;
     private PeekAndPop peekAndPop;
     private long       id;
-    private boolean isTrashEnabled;
 
 
     public StoragesUiView(Context context, AttributeSet attrs) {
@@ -423,6 +425,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 switch (view.getId()) {
                     case R.id.imagePeekView:
                     case R.id.autoPlayView:
+                    case R.id.imageIcon:
                         if (isActionModeActive() && !menuControls.isPasteOp()) {
                             itemClickActionMode(position, false);
                             return;
@@ -446,6 +449,11 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                         break;
                 }
 
+            }
+
+            @Override
+            public boolean canShowPeek() {
+                return !isActionModeActive();
             }
         });
         fileListAdapter.setOnItemLongClickListener(new FileListAdapter.OnItemLongClickListener() {
@@ -584,7 +592,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         isHomeScreenEnabled = bundle.getBoolean(FileConstants.PREFS_HOMESCREEN, true);
         showHidden = bundle.getBoolean(FileConstants.PREFS_HIDDEN, false);
         viewMode = bundle.getInt(FileConstants.PREFS_VIEW_MODE, ViewMode.LIST);
-        isTrashEnabled = bundle.getBoolean(FileConstants.PREFS_TRASH, true);
     }
 
     private void getArgs() {
@@ -919,17 +926,26 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Logger.log(TAG, "deleteFromMediaStore: " + filesToMediaIndex.size());
+                Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
                 if (filesToMediaIndex.size() == 0) {
                     return;
                 }
-                MediaStoreHelper.removeBatchMedia(AceApplication.getAppContext(), filesToMediaIndex, null);
+                Logger.log(TAG, "deleteFromMediaStore: " + filesToMediaIndex.size());
+                String mediaScanningPath = new File(filesToMediaIndex.get(0)).getParent();
+                addToMediaScanning(mediaScanningPath);
+                Logger.log(TAG, "run CUT: mediaScanningPath" + mediaScanningPath + "size:" + mediaScanningPaths.size());
+                removeBatchMedia(AceApplication.getAppContext(), filesToMediaIndex, null);
+                removeFromMediaScanning(mediaScanningPath);
             }
         }).start();
     }
 
+    private boolean isMediaScanning;
+    private Set<String> mediaScanningPaths = new HashSet<>();
+
     private void onOperationResult(Intent intent, Operations operation) {
         Logger.log(TAG, "onOperationResult: " + operation);
+        int count = intent.getIntExtra(KEY_FILES_COUNT, 0);
 
         switch (operation) {
             case DELETE:
@@ -1021,27 +1037,20 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 }, 1000); // Intentional delay to let mediascanner index file first and then lets change the title
                 break;
             case CUT:
-                refreshList();
-
-                final ArrayList<String> movedFiles = intent.getStringArrayListExtra(KEY_FILES);
-                final ArrayList<String> oldFiles = intent.getStringArrayListExtra(KEY_OLD_FILES);
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (movedFiles != null) {
-                            String newList[] = new String[movedFiles.size()];
-                            scanMultipleFiles(AceApplication.getAppContext(), movedFiles.toArray(newList));
-                        }
-
-                        if (oldFiles != null) {
-                            removeBatchMedia(AceApplication.getAppContext(), oldFiles, null);
-                        }
-                    }
-                }).start();
+                if (count > 0 && getContext() != null) {
+                    Toast.makeText(getContext(), String.format(Locale.getDefault(), getContext().
+                            getString(R.string.moved), count), Toast.LENGTH_SHORT).show();
+                    refreshList();
+                }
+                final ArrayList<String> oldFileList = intent.getStringArrayListExtra(KEY_OLD_FILES);
+                deleteFromMediaStore(oldFileList);
                 break;
             case COPY:
-                refreshList();
+                if (count > 0 && getContext() != null) {
+                    Toast.makeText(getContext(), String.format(Locale.getDefault(), getContext().
+                            getString(R.string.copied), count), Toast.LENGTH_SHORT).show();
+                    refreshList();
+                }
                 break;
             case FOLDER_CREATION:
             case FILE_CREATION:
@@ -1500,7 +1509,37 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     public void onPasteAction(boolean isMove, ArrayList<FileInfo> filesToPaste, String
             destinationDir) {
         menuControls.endActionMode();
+        Logger.log(TAG, "onPasteAction: isScanning:" + isMediaScanning + "mediascanpath:" + mediaScanningPaths.size() + "destinationDir:" + destinationDir);
+        if (isMediaScanning && isMediaScanning(destinationDir)) {
+            onOperationFailed(Operations.COPY);
+            return;
+        }
         bridge.startPasteOperation(destinationDir, isMove, isRooted(), filesToPaste);
+    }
+
+    private boolean isMediaScanning(String path) {
+
+        for (String scannerPath : mediaScanningPaths) {
+            if (path.equals(scannerPath)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    private synchronized void addToMediaScanning(String path) {
+        Log.d(TAG, "addToMediaScanning: path:" + path);
+        isMediaScanning = true;
+        mediaScanningPaths.add(path);
+    }
+
+    private synchronized void removeFromMediaScanning(String path) {
+        Log.d(TAG, "removeFromMediaScanning: path:" + path);
+        mediaScanningPaths.remove(path);
+        if (mediaScanningPaths.size() == 0) {
+            isMediaScanning = false;
+        }
     }
 
     private Intent  operationIntent;
@@ -1567,6 +1606,10 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     public void deleteFiles(ArrayList<FileInfo> filesToDelete) {
+        if (isMediaScanning && isMediaScanning(filesToDelete.get(0).getFilePath())) {
+            onOperationFailed(Operations.DELETE);
+            return;
+        }
         bridge.deleteFiles(filesToDelete);
     }
 
@@ -1862,7 +1905,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     public void endActionMode() {
-        int selectedItems = fileListAdapter.getSelectedCount();
         isDragStarted = false;
         isActionModeActive = false;
         fileListAdapter.clearDragPos();

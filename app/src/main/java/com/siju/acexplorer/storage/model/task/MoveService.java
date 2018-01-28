@@ -51,17 +51,17 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.siju.acexplorer.model.FileConstants.KEY_CATEGORY;
 import static com.siju.acexplorer.model.helper.FileUtils.checkMimeType;
-import static com.siju.acexplorer.model.helper.SdkHelper.isOreo;
+import static com.siju.acexplorer.model.helper.MediaStoreHelper.scanFile;
+import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastOreo;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_CONFLICT_DATA;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_END;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES;
+import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES_COUNT;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OLD_FILES;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION;
-import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_RESULT;
 import static com.siju.acexplorer.storage.model.operations.Operations.CUT;
 import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_COMPLETED;
 import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_TOTAL;
@@ -82,7 +82,7 @@ public class MoveService extends Service {
 
     private List<FileInfo>    filesToMove;
     private List<CopyData>    copyData;
-    private ArrayList<String> filesMovedList;
+    private ArrayList<String> filesMovedList = new ArrayList<>();
     private ArrayList<String> oldFileList;
 
     private ArrayList<Integer> categories;
@@ -122,7 +122,7 @@ public class MoveService extends Service {
 
     @TargetApi(Build.VERSION_CODES.O)
     private void createChannelId() {
-        if (isOreo()) {
+        if (isAtleastOreo()) {
             CharSequence name = getString(R.string.operation);
             int importance = NotificationManager.IMPORTANCE_LOW;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
@@ -273,8 +273,11 @@ public class MoveService extends Service {
         File newFile = new File(destinationPath);
         File oldFile = new File(sourcePath);
         if (oldFile.renameTo(newFile)) {
+            String newPath = newFile.getAbsolutePath();
             oldFileList.add(sourcePath);
-            filesMovedList.add(newFile.getAbsolutePath());
+            filesMovedList.add(newPath);
+            scanFile(context, newPath);
+//            MediaStoreHelper.removeMedia(context, sourcePath, sourceFileInfo.getCategory().getValue());
             categories.add(sourceFileInfo.getCategory().getValue());
         }
         publishResults(fileName, filesToMove.size(), filesMovedList.size());
@@ -308,8 +311,7 @@ public class MoveService extends Service {
         builder.setOngoing(true);
         int title = R.string.moving;
         builder.setContentTitle(getString(title));
-        builder.setContentText(new File(fileName).getName() + " " + FileUtils.formatSize
-                (context, done) + SEPARATOR + FileUtils.formatSize(context, total));
+        builder.setContentText(new File(fileName).getName() + " " + done + SEPARATOR + total);
         notificationManager.notify(NOTIFICATION_ID, builder.build());
 
         Intent intent = new Intent(MOVE_PROGRESS);
@@ -336,7 +338,6 @@ public class MoveService extends Service {
         if (stopService) {
             dismissProgressDialog();
         }
-
         if (!isMoveSuccess) {
             Intent intent = new Intent(MOVE_PROGRESS);
             intent.putExtra(KEY_COMPLETED, 0L);
@@ -346,19 +347,14 @@ public class MoveService extends Service {
         }
 
         Intent intent = new Intent(ACTION_OP_REFRESH);
-        intent.putExtra(KEY_RESULT, isMoveSuccess);
+        intent.putExtra(KEY_FILES_COUNT, filesMovedList.size());
         intent.putExtra(KEY_OPERATION, CUT);
-        intent.putStringArrayListExtra(KEY_FILES, filesMovedList);
+//        intent.putStringArrayListExtra(KEY_FILES, filesMovedList);
         intent.putStringArrayListExtra(KEY_OLD_FILES, oldFileList);
-        intent.putIntegerArrayListExtra(KEY_CATEGORY, categories);
         sendBroadcast(intent);
     }
 
     private void endNotification() {
-        builder.setContentTitle(getString(R.string.move_complete));
-        builder.setProgress(0, 0, false);
-        builder.setOngoing(false);
-        builder.setAutoCancel(true);
-        notificationManager.notify(NOTIFICATION_ID, builder.build());
+        notificationManager.cancel(NOTIFICATION_ID);
     }
 }

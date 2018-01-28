@@ -21,7 +21,7 @@ import android.os.Build;
 
 public class SdkHelper {
 
-    public static boolean isOreo() {
+    public static boolean isAtleastOreo() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
     }
 

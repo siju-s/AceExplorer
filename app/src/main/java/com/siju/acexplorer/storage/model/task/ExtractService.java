@@ -60,7 +60,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import static com.siju.acexplorer.model.helper.FileOperations.mkdir;
-import static com.siju.acexplorer.model.helper.SdkHelper.isOreo;
+import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastOreo;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_FAILED;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_RELOAD_LIST;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_END;
@@ -88,6 +88,7 @@ public class ExtractService extends Service {
     private long copiedbytes = 0, totalbytes = 0;
     private ServiceHandler serviceHandler;
     private boolean        stopService;
+    private boolean        isCompleted;
 
 
     @Override
@@ -122,7 +123,7 @@ public class ExtractService extends Service {
 
     @TargetApi(Build.VERSION_CODES.O)
     private void createChannelId() {
-        if (isOreo()) {
+        if (isAtleastOreo()) {
             CharSequence name = getString(R.string.operation);
             int importance = NotificationManager.IMPORTANCE_LOW;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
@@ -296,11 +297,6 @@ public class ExtractService extends Service {
                 (context, done) + "/" + Formatter.formatFileSize(context, total));
         notificationManager.notify(NOTIFICATION_ID, builder.build());
         if (progress == 100) {
-            builder.setContentTitle(getResources().getString(R.string.extract_complete));
-            builder.setContentText(new File(fileName).getName() + " " + Formatter.formatFileSize(context, total));
-            builder.setProgress(0, 0, false);
-            builder.setOngoing(false);
-            notificationManager.notify(NOTIFICATION_ID, builder.build());
             publishCompletedResult(NOTIFICATION_ID);
         }
 
@@ -312,7 +308,6 @@ public class ExtractService extends Service {
         intent.putExtra(KEY_TOTAL, total);
         intent.putExtra(KEY_FILENAME, fileName);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-
     }
 
     private void createDir(File dir) {
@@ -434,11 +429,11 @@ public class ExtractService extends Service {
 
 
     private void publishCompletedResult(int id) {
-        try {
-            notificationManager.cancel(id);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (isCompleted) {
+            return;
         }
+        isCompleted = true;
+        notificationManager.cancel(id);
         if (stopService) {
             dismissProgressDialog();
         }

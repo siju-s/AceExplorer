@@ -30,6 +30,7 @@
         <item name="android:actionModeBackground">@color/colorPrimary</item>
         <item name="actionBarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
         <item name="drawerArrowStyle">@style/DrawerIconStyle</item>
+        <item name="autoCompleteTextViewStyle">@style/SearchAutoCompleteTextView</item>
     </style>
 
 
@@ -47,6 +48,7 @@
         <item name="android:actionModeBackground">@color/colorPrimary</item>
         <item name="actionBarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
         <item name="drawerArrowStyle">@style/DrawerIconStyle</item>
+        <item name="autoCompleteTextViewStyle">@style/SearchAutoCompleteTextView</item>
     </style>
 
     <style name="BaseLightTheme.Settings">

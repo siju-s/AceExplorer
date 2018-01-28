@@ -100,8 +100,6 @@ public class DialogHelper {
         positiveButton.setText(texts[1]);
         negativeButton.setText(texts[3]);
 
-
-
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

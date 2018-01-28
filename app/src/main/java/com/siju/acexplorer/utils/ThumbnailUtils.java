@@ -157,7 +157,6 @@ public class ThumbnailUtils {
                                                                null);
 
             if (cursor != null) {
-                int size = context.getResources().getDimensionPixelSize(R.dimen.folder_icon);
                 if (cursor.moveToFirst()) {
                     Glide.with(context).clear(imageIcon);
                     int albumIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media

@@ -60,12 +60,13 @@ import java.util.List;
 
 import static com.siju.acexplorer.model.helper.FileOperations.mkdir;
 import static com.siju.acexplorer.model.helper.MediaStoreHelper.scanMultipleFiles;
-import static com.siju.acexplorer.model.helper.SdkHelper.isOreo;
+import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastOreo;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_CONFLICT_DATA;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_END;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES;
+import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES_COUNT;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_MOVE;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_RESULT;
@@ -105,6 +106,7 @@ public class CopyService extends Service {
     private ServiceHandler serviceHandler;
     private boolean        stopService;
     private boolean        isCompleted;
+    private int filesCopied;
 
 
     @Override
@@ -139,7 +141,7 @@ public class CopyService extends Service {
 
     @TargetApi(Build.VERSION_CODES.O)
     private void createChannelId() {
-        if (isOreo()) {
+        if (isAtleastOreo()) {
             CharSequence name = getString(R.string.operation);
             int importance = NotificationManager.IMPORTANCE_LOW;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
@@ -368,14 +370,14 @@ public class CopyService extends Service {
         if (isCompleted) {
             return;
         }
-
         Logger.log(TAG, "publishCompletionResult: ");
         isCompleted = true;
-        endNotification(NOTIFICATION_ID);
+        endNotification();
         if (stopService) {
             dismissProgressDialog();
         }
         Intent intent = new Intent(ACTION_OP_REFRESH);
+        intent.putExtra(KEY_FILES_COUNT, filesCopied);
         intent.putExtra(KEY_RESULT, failedFiles.size() == 0);
         intent.putExtra(KEY_OPERATION, move ? CUT : COPY);
         String newList[] = new String[filesToMediaIndex.size()];
@@ -508,6 +510,7 @@ public class CopyService extends Service {
         if (fileBytes == size) {
             count++;
             File targetFile = new File(targetPath);
+            filesCopied++;
             if (FileUtils.isMediaScanningRequired(FileUtils.getMimeType(targetFile))) {
                 filesToMediaIndex.add(targetPath);
             }
@@ -550,8 +553,7 @@ public class CopyService extends Service {
         builder.setContentText(new File(fileName).getName() + " " + FileUtils.formatSize
                 (context, done) + SEPARATOR + FileUtils
                 .formatSize(context, total));
-        int id1 = NOTIFICATION_ID;
-        notificationManager.notify(id1, builder.build());
+        notificationManager.notify(NOTIFICATION_ID, builder.build());
         Intent intent = new Intent(COPY_PROGRESS);
         intent.putExtra(KEY_COMPLETED, copiedBytes);
         intent.putExtra(KEY_TOTAL, totalBytes);
@@ -559,25 +561,12 @@ public class CopyService extends Service {
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
         if (p1 == 100 || total == 0 || totalBytes == copiedBytes) {
-            endNotification(id1);
+            endNotification();
         }
     }
 
-    private void endNotification(int id1) {
-        builder.setContentTitle("Copy completed");
-        if (move) {
-            builder.setContentTitle(getString(R.string.move_complete));
-        }
-        builder.setContentText("");
-        builder.setProgress(0, 0, false);
-        builder.setOngoing(false);
-        builder.setAutoCancel(true);
-        notificationManager.notify(id1, builder.build());
-        try {
-            notificationManager.cancel(id1);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private void endNotification() {
+       notificationManager.cancel(NOTIFICATION_ID);
     }
 
     //check if copy is successful

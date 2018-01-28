@@ -1,14 +1,7 @@
 ## Built application files
-#*.apk
+*.apk
 app/release/
-app/app-release-unaligned.apk
 
-
-# Files for the ART/Dalvik VM
-*.dex
-
-# Java class files
-*.class
 
 # Generated files
 bin/
@@ -42,6 +35,8 @@ app/app.iml___jb_tmp___
 .idea/libraries
 .idea/checkstyle-idea.xml
 .idea/findbugs-idea.xml
+.idea/codeStyles
+.idea/caches
 
 # Keystore files
 # Uncomment the following line if you do not want to check your keystore files in.
@@ -55,3 +50,12 @@ fabric.properties
 
 # Google Services (e.g. APIs or Firebase)
 google-services.json
+
+#Fastlane
+fastlane/metadata
+fastlane/report.xml
+fastlane/README.md
+
+output.json
+
+

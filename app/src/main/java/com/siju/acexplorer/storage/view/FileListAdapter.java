@@ -223,14 +223,13 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void setCategory(Category category) {
         this.category = category;
     }
+
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
-
+        boolean canShowPeek();
     }
     interface OnItemLongClickListener {
         void onItemLongClick(View view, int position);
-
-
     }
 
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
@@ -263,14 +262,24 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         peekAndPop.setOnClickListener(new PeekAndPop.OnClickListener() {
             @Override
-            public void onClick(View view, int position) {
-                Log.d(TAG, "onClick: view:" + view + " pos:" + position + " peekPos:" + peekPos);
+            public void onClick(View view, int position, boolean canShowPeek) {
+                if (!canShowPeek) {
+                    if (mItemClickListener != null) {
+                        mItemClickListener.onItemClick(view, position);
+                    }
+                    return;
+                }
                 if (peekPos == INVALID_POS) {
                     return;
                 }
                 if (mItemClickListener != null) {
                     mItemClickListener.onItemClick(view, peekPos);
                 }
+            }
+
+            @Override
+            public boolean canShowPeek() {
+                return mItemClickListener.canShowPeek();
             }
         });
     }
@@ -617,13 +626,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     interface SearchCallback {
         void updateList(ArrayList<FileInfo> fileList);
     }
-
-//    private static class FooterViewHolder extends RecyclerView.ViewHolder {
-//
-//        FooterViewHolder(View itemView) {
-//            super(itemView);
-//        }
-//    }
 
     void onDetach() {
         context = null;

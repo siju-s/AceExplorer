@@ -192,7 +192,7 @@ public class AppInfoActivity extends BaseActivity implements View.OnClickListene
         Bitmap bitmap =  null;
         if (drawable instanceof  BitmapDrawable) {
             bitmap = ((BitmapDrawable)drawable).getBitmap();
-        } else if (drawable instanceof AdaptiveIconDrawable) {
+        } else if (SdkHelper.isAtleastOreo() && drawable instanceof AdaptiveIconDrawable) {
             bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
             final Canvas canvas = new Canvas(bitmap);
             drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());

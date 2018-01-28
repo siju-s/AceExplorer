@@ -258,5 +258,8 @@
     <string name="restoring_title_trash">Restoring</string>
     <string name="zero_percent" translatable="false">0%</string>
 
+    <string name="moved">%d files moved</string>
+    <string name="copied">%d files copied</string>
+
 
 </resources>

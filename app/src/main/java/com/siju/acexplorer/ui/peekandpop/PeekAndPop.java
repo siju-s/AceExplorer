@@ -409,11 +409,14 @@ public class PeekAndPop {
 
         @Override
         public void onClick(View v) {
-            Log.d("PeekPop", "onClick: " + v);
+            if (!onClickListener.canShowPeek()) {
+                onClickListener.onClick(v, position, false);
+                return;
+            }
             if (v.getId() == R.id.imageIcon) {
                 peek(v, position);
             } else {
-                onClickListener.onClick(v, position);
+                onClickListener.onClick(v, position, true);
                 pop(v, position);
             }
         }
@@ -494,7 +497,9 @@ public class PeekAndPop {
     }
 
     public interface OnClickListener {
-        void onClick(View view, int position);
+        void onClick(View view, int position, boolean canShowPeek);
+
+        boolean canShowPeek();
     }
 
 }

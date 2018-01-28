@@ -239,6 +239,11 @@ public class DialogBrowseFragment extends DialogFragment implements
                 }
 
             }
+
+            @Override
+            public boolean canShowPeek() {
+                return false;
+            }
         });
 
         okButton.setOnClickListener(new View.OnClickListener() {

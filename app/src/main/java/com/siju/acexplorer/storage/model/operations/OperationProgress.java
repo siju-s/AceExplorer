@@ -81,9 +81,9 @@ public class OperationProgress {
         registerReceiver(context);
         String title;
         if (isMove) {
-            title = context.getString(R.string.move);
+            title = context.getString(R.string.moving);
         } else {
-            title = context.getString(R.string.action_copy);
+            title = context.getString(R.string.copying);
         }
         String texts[] = new String[]{title, context.getString(R.string.background),
                 context.getString(R.string.dialog_cancel)};
@@ -102,10 +102,12 @@ public class OperationProgress {
         textFileCount = dialogView.findViewById(R.id.textFilesLeft);
         textProgress = dialogView.findViewById(R.id.textProgressPercent);
         progressBarPaste = dialogView.findViewById(R.id.progressBarPaste);
+        TextView titleText = dialogView.findViewById(R.id.textTitle);
 
         Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
         Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
 
+        titleText.setText(texts[0]);
         positiveButton.setText(texts[1]);
         negativeButton.setText(texts[2]);
 
@@ -352,7 +354,7 @@ public class OperationProgress {
                         (mContext, copiedBytes), Formatter.formatFileSize(mContext, totalBytes)));
                 textProgress.setText(String.format(Locale.getDefault(), "%d%s", progress, mContext.getString
                         (R.string.percent_placeholder)));
-                Logger.log("FileUtils", "KEY_PROGRESS=" + progress + "Copied bytes=" + copiedBytes + " KEY_TOTAL bytes=" + totalBytes);
+//                Logger.log("FileUtils", "KEY_PROGRESS=" + progress + "Copied bytes=" + copiedBytes + " KEY_TOTAL bytes=" + totalBytes);
 
                 if (progress == 100 || totalBytes == copiedBytes) {
                     stopZipService();
@@ -390,8 +392,8 @@ public class OperationProgress {
 
 
                 int totalProgress = intent.getIntExtra(KEY_TOTAL_PROGRESS, 0);
-                Logger.log(TAG, "KEY_PROGRESS=" + progress + " KEY_TOTAL KEY_PROGRESS=" + totalProgress);
-                Logger.log(TAG, "Copied bytes=" + copiedBytes + " KEY_TOTAL bytes=" + totalBytes);
+//                Logger.log(TAG, "KEY_PROGRESS=" + progress + " KEY_TOTAL KEY_PROGRESS=" + totalProgress);
+//                Logger.log(TAG, "Copied bytes=" + copiedBytes + " KEY_TOTAL bytes=" + totalBytes);
                 progressBarPaste.setProgress(totalProgress);
                 textProgress.setText(String.format(Locale.getDefault(), "%d%s", totalProgress, mContext.getString
                         (R.string
@@ -418,8 +420,8 @@ public class OperationProgress {
                 break;
             case MOVE_PROGRESS:
                 int totalProgressPaste = intent.getIntExtra(KEY_TOTAL_PROGRESS, 0);
-                Logger.log(TAG, "KEY_PROGRESS=" + progress + " KEY_TOTAL KEY_PROGRESS=" + totalProgressPaste);
-                Logger.log(TAG, "Copied files=" + copiedBytes + " KEY_TOTAL files=" + totalBytes);
+//                Logger.log(TAG, "KEY_PROGRESS=" + progress + " KEY_TOTAL KEY_PROGRESS=" + totalProgressPaste);
+//                Logger.log(TAG, "Copied files=" + copiedBytes + " KEY_TOTAL files=" + totalBytes);
                 progressBarPaste.setProgress(totalProgressPaste);
                 textProgress.setText(String.format(Locale.getDefault(), "%d%s", totalProgressPaste, mContext.getString
                         (R.string.percent_placeholder)));

@@ -33,6 +33,7 @@
         <item name="actionModeBackground">@color/colorPrimary</item>
         <item name="android:actionModeBackground">@color/colorPrimary</item>
         <item name="drawerArrowStyle">@style/DrawerIconStyle</item>
+        <item name="autoCompleteTextViewStyle">@style/SearchAutoCompleteTextView</item>
     </style>
 
     <style name="BaseDarkTheme" parent="Theme.AppCompat.NoActionBar">
@@ -45,6 +46,7 @@
         <item name="actionModeBackground">@color/colorPrimary</item>
         <item name="android:actionModeBackground">@color/colorPrimary</item>
         <item name="drawerArrowStyle">@style/DrawerIconStyle</item>
+        <item name="autoCompleteTextViewStyle">@style/SearchAutoCompleteTextView</item>
     </style>
 
     <style name="BaseLightTheme.Settings">
@@ -66,6 +68,11 @@
     </style>
 
     <style name="BaseLightTheme.AppInfo">
+    </style>
+
+    <style name="SearchAutoCompleteTextView" parent="Widget.AppCompat.AutoCompleteTextView">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorHint">@color/white</item>
     </style>
 
     <style name="DrawerIconStyle" parent="Widget.AppCompat.DrawerArrowToggle">
