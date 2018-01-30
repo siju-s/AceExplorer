@@ -209,11 +209,14 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
         List<FileInfo> fileInfoList = storagesUiView.getFileList();
         if (selectedItemPos.size() > 1) {
             mRenameItem.setVisible(false);
+            mHideItem.setVisible(false);
             mInfoItem.setVisible(false);
 
         } else {
             mRenameItem.setVisible(true);
             mInfoItem.setVisible(true);
+            mHideItem.setVisible(true);
+
             if (selectedItemPos.size() == 1) {
 
                 boolean isDirectory = fileInfoList.get(selectedItemPos.keyAt(0))
@@ -484,7 +487,6 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
                     for (int i = 0; i < selectedItems.size(); i++) {
                         infoList.add(fileInfoList.get(selectedItems.keyAt(i)));
                         pos.add(selectedItems.keyAt(i));
-
                     }
                     storagesUiView.hideUnHideFiles(infoList, pos);
                     endActionMode();

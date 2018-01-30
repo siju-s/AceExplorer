@@ -32,8 +32,8 @@ import com.siju.acexplorer.model.root.RootUtils;
 import com.siju.acexplorer.storage.model.CopyData;
 import com.siju.acexplorer.storage.model.StorageModelImpl;
 import com.siju.acexplorer.storage.model.task.DeleteTask;
-import com.stericson.RootTools.RootTools;
 import com.stericson.RootShell.execution.Command;
+import com.stericson.RootTools.RootTools;
 
 import java.io.File;
 import java.util.ArrayList;

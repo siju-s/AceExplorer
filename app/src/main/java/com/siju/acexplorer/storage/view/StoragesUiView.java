@@ -1003,6 +1003,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                     fileInfo = intent.getParcelableExtra(KEY_OLD_FILES);
                 }
                 if (fileInfo == null) {
+
                     return;
                 }
                 int position = fileInfoList.indexOf(fileInfo);
@@ -1868,7 +1869,9 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     public void syncDrawer() {
-        drawerListener.syncDrawer();
+        if (drawerListener != null) {
+            drawerListener.syncDrawer();
+        }
     }
 
     public void showZipProgressDialog(ArrayList<FileInfo> files, String destinationPath) {
@@ -2204,9 +2207,19 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     };
 
     public void addHomeNavPath() {
-//        navigationInfo.addHomeNavButton(true, category);
         isHomeScreenEnabled = true;
-        navigationInfo.setNavDirectory(currentDir, true, category);
+        if (checkIfFileCategory(category)) {
+            if (shouldShowPathNavigation()) {
+                navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled,
+                                               category);
+            } else {
+                navigationInfo.addHomeNavButton(isHomeScreenEnabled, category);
+            }
+        } else if (showLibSpecificNavigation(category)) {
+            navigationInfo.addLibSpecificNavButtons(isHomeScreenEnabled, category, bucketName);
+        } else {
+            navigationInfo.addHomeNavButton(isHomeScreenEnabled, category);
+        }
     }
 
     public void setViewMode(int viewMode) {
@@ -2215,14 +2228,9 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         switchView();
     }
 
-    public void onMoveToTrash(ArrayList<FileInfo> filesToDelete, String trashDir) {
-        bridge.moveToTrash(filesToDelete, trashDir);
-    }
-
 
     public interface FavoriteOperation {
         void updateFavorites(ArrayList<FavInfo> favList);
-
         void removeFavorites(ArrayList<FavInfo> favList);
     }
 

@@ -497,7 +497,12 @@ public class FileUtils {
         File file = new File(filePath);
         String fileName;
         if (file.isFile()) {
-            fileName = filePath.substring(filePath.lastIndexOf("/") + 1 , filePath.lastIndexOf("."));
+            int dotIndex = filePath.lastIndexOf(".");
+            int fileNameIdx = filePath.lastIndexOf("/") + 1;
+            if (dotIndex <= fileNameIdx) {
+                return null;
+            }
+            fileName = filePath.substring(fileNameIdx, dotIndex);
         } else {
             fileName = file.getName();
         }

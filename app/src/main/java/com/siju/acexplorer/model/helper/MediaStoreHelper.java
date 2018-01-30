@@ -164,6 +164,10 @@ public class MediaStoreHelper {
         int updated;
         Uri uri;
         String fileName = FileUtils.getFileNameWithoutExt(path);
+
+        if (fileName == null) {
+            return 0;
+        }
         //Log.d(TAG, "updateMedia: fileName:"+fileName);
 
         switch (category) {

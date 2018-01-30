@@ -30,6 +30,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -198,6 +199,9 @@ public class DialogBrowseFragment extends DialogFragment implements
         fileListAdapter.setOnItemClickListener(new FileListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
+                if (position >= fileInfoList.size() || position == RecyclerView.NO_POSITION) {
+                    return;
+                }
                 File file = new File(fileInfoList.get(position).getFilePath());
                 if (file.isDirectory()) {
                     isStoragesList = false;
