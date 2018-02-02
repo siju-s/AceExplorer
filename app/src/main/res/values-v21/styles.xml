@@ -31,6 +31,8 @@
         <item name="actionBarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
         <item name="drawerArrowStyle">@style/DrawerIconStyle</item>
         <item name="autoCompleteTextViewStyle">@style/SearchAutoCompleteTextView</item>
+        <item name="android:textDirection">locale</item>
+        <item name="android:textAlignment">gravity</item>
     </style>
 
 
@@ -49,6 +51,8 @@
         <item name="actionBarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
         <item name="drawerArrowStyle">@style/DrawerIconStyle</item>
         <item name="autoCompleteTextViewStyle">@style/SearchAutoCompleteTextView</item>
+        <item name="android:textDirection">locale</item>
+        <item name="android:textAlignment">gravity</item>
     </style>
 
     <style name="BaseLightTheme.Settings">
@@ -64,6 +68,8 @@
         <item name="android:textColorPrimary">@color/dark_text</item>
         <item name="android:textColorSecondary">@color/dark_text</item>
         <item name="android:listDivider">@null</item>
+        <item name="android:textDirection">locale</item>
+        <item name="android:textAlignment">gravity</item>
     </style>
 
     <style name="BaseDarkTheme.AppInfo">

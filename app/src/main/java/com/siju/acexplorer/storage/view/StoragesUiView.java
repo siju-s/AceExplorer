@@ -626,7 +626,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     private boolean checkIfLibraryCategory(Category category) {
-        return !category.equals(FILES);
+        return !category.equals(FILES) && !category.equals(DOWNLOADS);
     }
 
     private void showFab() {
@@ -1433,10 +1433,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         } else {
             viewMode = ViewMode.LIST;
         }
-        fileListAdapter = null;
-        fileList.setHasFixedSize(true);
         bridge.saveSettingsOnExit(gridCols, viewMode);
-
 
         if (viewMode == ViewMode.LIST) {
             layoutManager = new CustomLayoutManager(getActivity());
@@ -1447,11 +1444,11 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         }
 
         shouldStopAnimation = true;
+        fileListAdapter.setViewMode(viewMode);
 
-        fileListAdapter = new FileListAdapter(getContext(), fileInfoList, category, viewMode, peekAndPop);
         fileListAdapter.setSearchCallback(this);
-
         fileList.setAdapter(fileListAdapter);
+        fileListAdapter.notifyDataSetChanged();
         if (viewMode == ViewMode.LIST) {
             if (mGridItemDecoration != null) {
                 fileList.removeItemDecoration(mGridItemDecoration);

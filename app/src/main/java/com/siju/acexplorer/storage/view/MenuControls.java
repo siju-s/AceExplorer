@@ -244,6 +244,7 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
                     mExtractItem.setVisible(false);
                     mArchiveItem.setVisible(false);
                     mShareItem.setVisible(false);
+                    mHideItem.setVisible(false);
                 } else if (checkIfAnyMusicCategory(category)) {
                     mPermissionItem.setVisible(false);
                     mExtractItem.setVisible(false);
@@ -602,7 +603,6 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
     }
 
     void startActionMode() {
-
         setupActionModeToolbar();
         bottomToolbar.getMenu().clear();
 //        bottomToolbar.inflateMenu(R.menu.action_mode_bottom);

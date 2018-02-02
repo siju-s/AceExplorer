@@ -82,14 +82,15 @@ public class LocaleHelper extends ContextWrapper {
         Resources resources = context.getResources();
         Configuration config = resources.getConfiguration();
         if (isAtleastNougat()) {
-            config.setLocale(locale);
             LocaleList localeList = new LocaleList(locale);
             LocaleList.setDefault(localeList);
             config.setLocales(localeList);
+            Logger.log(TAG, "updateResources: layoutDir:"+config.getLayoutDirection());
             context = context.createConfigurationContext(config);
         }
         else {
             config.setLocale(locale);
+            config.setLayoutDirection(locale);
             context = context.createConfigurationContext(config);
         }
         return context;

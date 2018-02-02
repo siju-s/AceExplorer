@@ -77,7 +77,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private OnItemLongClickListener mOnItemLongClickListener;
     private Category                category;
 
-    private final int mViewMode;
+    private int mViewMode;
     private int draggedPos = -1;
     private final int mAnimation;
     private int offset = 0;
@@ -222,6 +222,10 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public void setViewMode(int viewMode) {
+        mViewMode = viewMode;
     }
 
     public interface OnItemClickListener {
