@@ -54,20 +54,14 @@ public class LocaleHelper extends ContextWrapper {
         String currentLanguage = getLanguage(context);
         Logger.log(TAG, "setLanguage: current:"+currentLanguage + " default:"+Locale.getDefault().getLanguage());
         if (!currentLanguage.equals(Locale.getDefault().getLanguage())) {
-            context = setLocale(context, currentLanguage);
-        } else {
-            context = updateResources(context, currentLanguage);
+            persist(context, currentLanguage);
         }
+        context = updateResources(context, currentLanguage);
         return context;
     }
 
-    public static Context setLocale(Context context, String language) {
-        persist(context, language);
-        return updateResources(context, language);
-    }
 
-
-    private static void persist(Context context, String language) {
+    public static void persist(Context context, String language) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = preferences.edit();
         Logger.log(TAG, "persist: "+language);
@@ -85,7 +79,7 @@ public class LocaleHelper extends ContextWrapper {
             LocaleList localeList = new LocaleList(locale);
             LocaleList.setDefault(localeList);
             config.setLocales(localeList);
-            Logger.log(TAG, "updateResources: layoutDir:"+config.getLayoutDirection());
+            Logger.log(TAG, "updateResources: new config:"+config);
             context = context.createConfigurationContext(config);
         }
         else {

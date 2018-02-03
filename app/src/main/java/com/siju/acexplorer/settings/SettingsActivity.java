@@ -17,9 +17,7 @@
 package com.siju.acexplorer.settings;
 
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -33,9 +31,9 @@ import android.view.ViewGroup;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.theme.ThemeUtils;
 import com.siju.acexplorer.utils.LocaleHelper;
-import com.siju.acexplorer.view.AceActivity;
 
 import static com.siju.acexplorer.theme.ThemeUtils.THEME_DARK;
 
@@ -45,8 +43,11 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void attachBaseContext(Context newBase) {
         checkTheme();
-        super.attachBaseContext(LocaleHelper.setLanguage(newBase));
+        Context context = LocaleHelper.setLanguage(newBase);
+        Logger.log("Settings", "attachBaseContext: context:"+context.getResources().getConfiguration());
+        super.attachBaseContext(context);
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,13 +59,12 @@ public class SettingsActivity extends AppCompatActivity {
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsPreferenceFragment())
                 .commit();
-
     }
 
     private void checkTheme() {
         currentTheme = ThemeUtils.getTheme(AceApplication.getAppContext());
-
     }
+
     private void setAppTheme() {
         if (currentTheme == THEME_DARK) {
             setTheme(R.style.BaseDarkTheme_Settings);
@@ -73,19 +73,6 @@ public class SettingsActivity extends AppCompatActivity {
             setTheme(R.style.BaseLightTheme_Settings);
         }
     }
-
-    @Override
-    public void onBackPressed() {
-        Intent in = new Intent(this, AceActivity.class);
-        final int enter_anim = android.R.anim.fade_in;
-        final int exit_anim = android.R.anim.fade_out;
-        Activity activity = this;
-        activity.overridePendingTransition(enter_anim, exit_anim);
-        activity.finish();
-        activity.overridePendingTransition(enter_anim, exit_anim);
-        activity.startActivity(in);
-    }
-
 
     private void setupActionBar() {
         ViewGroup rootView = findViewById(R.id.action_bar_root);

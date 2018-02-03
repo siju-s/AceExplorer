@@ -1003,7 +1003,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                     fileInfo = intent.getParcelableExtra(KEY_OLD_FILES);
                 }
                 if (fileInfo == null) {
-
                     return;
                 }
                 int position = fileInfoList.indexOf(fileInfo);
@@ -1944,7 +1943,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         boolean isDualPaneInFocus = fragment instanceof DualPaneList;
         ((AceActivity) getActivity()).setDualPaneFocusState(isDualPaneInFocus);
 
-
         if (isActionModeActive() && !menuControls.isPasteOp()) {
             menuControls.endActionMode();
         }
@@ -1965,7 +1963,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             for (int j = backStack.size() - 1; j > position; j--) {
                 backStackInfo.removeEntryAtIndex(j);
             }
-
             refreshList();
             navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled, FILES);
         }

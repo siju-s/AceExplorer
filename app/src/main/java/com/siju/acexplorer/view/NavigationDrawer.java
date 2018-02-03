@@ -39,6 +39,7 @@ import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FavInfo;
+import com.siju.acexplorer.model.FileConstants;
 import com.siju.acexplorer.model.SectionGroup;
 import com.siju.acexplorer.model.SectionItems;
 import com.siju.acexplorer.model.groups.DrawerGroup;
@@ -310,7 +311,6 @@ class NavigationDrawer implements View.OnClickListener {
     }
 
     private void resetFavouritesGroup() {
-
         for (int i = favoritesGroupChild.size() - 1; i >= 0; i--) {
             if (!favoritesGroupChild.get(i).getSecondLine().equalsIgnoreCase
                     (getDownloadsDirectory())) {
@@ -319,7 +319,6 @@ class NavigationDrawer implements View.OnClickListener {
         }
         expandableListAdapter.notifyDataSetChanged();
         expandableListView.smoothScrollToPosition(0);
-
     }
 
     void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -339,8 +338,13 @@ class NavigationDrawer implements View.OnClickListener {
                 }
                 break;
             case SETTINGS_REQUEST:
-                resetFavouritesGroup();
-                uiView.resetFavoritesData();
+                if (intent == null) {
+                    return;
+                }
+                if (intent.getBooleanExtra(FileConstants.PREFS_RESET, false)) {
+                    resetFavouritesGroup();
+                    uiView.resetFavoritesData();
+                }
                 break;
         }
     }

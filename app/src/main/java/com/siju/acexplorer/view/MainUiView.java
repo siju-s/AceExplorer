@@ -777,7 +777,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
 
         }
         Logger.log(TAG, "OnPrefschanged PREFS_LANGUAGE");
-        LocaleHelper.setLocale(getContext(), language);
+        LocaleHelper.persist(getContext(), language);
         restartApp(false);
     }
 

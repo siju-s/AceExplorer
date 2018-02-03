@@ -30,6 +30,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
+import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
@@ -39,6 +40,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewParent;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.siju.acexplorer.AceApplication;
@@ -68,6 +70,14 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
 
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        ListView listView = view.findViewById(android.R.id.list);
+        if (listView != null) {
+            listView.setVerticalScrollBarEnabled(false);
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_settings);
@@ -94,7 +104,6 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         hiddenPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                getActivity().setResult(Activity.RESULT_OK, null);
                 return true;
             }
         });
@@ -261,10 +270,8 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
                                         : null);
 
                         if (listPreference.getKey().equals(PREFS_LANGUAGE)) {
-                            Logger.log("Settings", "sBindPreferenceSummaryToValueListener -lang=" + stringValue);
-
                             if (!stringValue.equals(currentLanguage)) {
-                                LocaleHelper.setLocale(getActivity(), stringValue);
+                                LocaleHelper.persist(getActivity(), stringValue);
                                 restartApp();
                             }
                         }
@@ -324,7 +331,6 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         activity.finish();
         activity.overridePendingTransition(enter_anim, exit_anim);
         activity.startActivity(activity.getIntent());
-
     }
 
     @Override

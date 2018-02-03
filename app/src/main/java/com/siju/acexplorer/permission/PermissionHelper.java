@@ -36,8 +36,8 @@ import static com.siju.acexplorer.view.MainUiView.PERMISSIONS_REQUEST;
 
 
 public class PermissionHelper {
-    private static final String TAG              = "PermissionHelper";
-    private static final        int    SETTINGS_REQUEST = 1000;
+    private static final String     TAG                    = "PermissionHelper";
+    private static final        int PHONE_SETTINGS_REQUEST = 2000;
 
     private final Activity                 context;
     private       PermissionResultCallback permissionCallback;
@@ -130,7 +130,7 @@ public class PermissionHelper {
                     intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                     Uri uri = Uri.fromParts("package", context.getPackageName(), null);
                     intent.setData(uri);
-                    context.startActivityForResult(intent, SETTINGS_REQUEST);
+                    context.startActivityForResult(intent, PHONE_SETTINGS_REQUEST);
                 }
             }
         });
