@@ -404,19 +404,15 @@ public class DialogHelper {
         // POSITIVE BUTTON ->SKIP   NEGATIVE ->REPLACE    NEUTRAL ->KEEP BOTH
         if (sourceFile.getParent().equals(destinationDir)) {
             if (isMove) {
-                neutralButton.setEnabled(false);
-                negativeButton.setEnabled(false);
-                neutralButton.setAlpha(0.7f);
-                negativeButton.setAlpha(0.7f);
+                neutralButton.setVisibility(View.GONE);
+                negativeButton.setVisibility(View.GONE);
             } else {
-                negativeButton.setEnabled(false);
-                negativeButton.setAlpha(0.7f);
+                negativeButton.setVisibility(View.GONE);
             }
         }
 
         if (new File(conflictFiles.get(0).getFilePath()).isDirectory()) {
-            neutralButton.setEnabled(false);
-            neutralButton.setAlpha(0.5f);
+            neutralButton.setVisibility(View.GONE);
         }
 
 
@@ -425,6 +421,7 @@ public class DialogHelper {
         {
             @Override
             public void onClick(View view) {
+                dialog.dismiss();
                 pasteConflictListener.onPositiveButtonClick(dialog, Operations.COPY, destFiles,
                                                             conflictFiles, destinationDir,
                                                             isMove, checkBox.isChecked());
@@ -436,6 +433,7 @@ public class DialogHelper {
         {
             @Override
             public void onClick(View view) {
+                dialog.dismiss();
                 pasteConflictListener.onNegativeButtonClick(dialog, Operations.COPY, destFiles,
                                                             conflictFiles, destinationDir,
                                                             isMove, checkBox.isChecked());
@@ -447,6 +445,7 @@ public class DialogHelper {
         {
             @Override
             public void onClick(View view) {
+                dialog.dismiss();
                 pasteConflictListener.onNeutralButtonClick(dialog, Operations.COPY, destFiles,
                                                            conflictFiles, destinationDir,
                                                            isMove, checkBox.isChecked());

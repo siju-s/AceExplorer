@@ -463,6 +463,7 @@ public class StorageModelImpl implements StoragesModel {
                 isEnd = true;
             } else {
                 files.remove(conflictFiles.get(0));
+                destFiles.remove(0);
                 conflictFiles.remove(0);
                 if (conflictFiles.size() == 0) {
                     isEnd = true;
@@ -487,6 +488,7 @@ public class StorageModelImpl implements StoragesModel {
                 isEnd = true;
             } else {
                 conflictFiles.remove(0);
+                destFiles.remove(0);
                 if (conflictFiles.size() == 0) {
                     isEnd = true;
                 }
@@ -514,6 +516,7 @@ public class StorageModelImpl implements StoragesModel {
             } else {
                 copyData.add(new CopyData(conflictFiles.get(0).getFilePath()));
                 conflictFiles.remove(0);
+                destFiles.remove(0);
                 if (conflictFiles.size() == 0) {
                     isEnd = true;
                 }

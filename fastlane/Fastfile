@@ -34,7 +34,7 @@ lane :playstore do
 package_name: 'com.siju.acexplorer',
 skip_upload_images: 'true',
 skip_upload_screenshots: 'true',
-apk:"/Volumes/ANDROID/WORKSPACE/ACE/ace-explorer/app/build/outputs/apk/prod/release/Ace_2.0.0.build7.apk"
+apk:"/Volumes/ANDROID/WORKSPACE/ACE/ace-explorer/app/build/outputs/apk/prod/release/Ace_2.0.0.build8.apk"
     #rollout: '0.5'
   )
 end
