@@ -190,10 +190,7 @@ public class ExtractService extends Service {
             String file = bundle.getString(KEY_FILEPATH);
             String newFile = bundle.getString(KEY_FILEPATH2);
             start(file, newFile);
-            stopSelf(msg.arg1);
-            if (stopService) {
-                publishCompletedResult(NOTIFICATION_ID);
-            }
+            stopSelf();
         }
 
 
@@ -226,7 +223,7 @@ public class ExtractService extends Service {
             }
             for (ZipEntry entry : arrayList) {
                 if (stopService) {
-                    publishCompletedResult(NOTIFICATION_ID);
+                    publishCompletedResult();
                     break;
                 }
                 unzipEntry(zipfile, entry, destinationPath);
@@ -258,7 +255,7 @@ public class ExtractService extends Service {
             TarArchiveEntry tarArchiveEntry = inputStream.getNextTarEntry();
             while (tarArchiveEntry != null) {
                 if (stopService) {
-                    publishCompletedResult(NOTIFICATION_ID);
+                    publishCompletedResult();
                     break;
                 }
                 archiveEntries.add(tarArchiveEntry);
@@ -297,7 +294,11 @@ public class ExtractService extends Service {
                 (context, done) + "/" + Formatter.formatFileSize(context, total));
         notificationManager.notify(NOTIFICATION_ID, builder.build());
         if (progress == 100) {
-            publishCompletedResult(NOTIFICATION_ID);
+            publishCompletedResult();
+        }
+
+        if (stopService) {
+            endNotification();
         }
 
         Logger.log(ExtractService.this.getClass().getSimpleName(), "Progress=" + progress + " done=" + done + " total="
@@ -348,7 +349,7 @@ public class ExtractService extends Service {
             while ((len = inputStream.read(buf)) > 0) {
                 if (stopService) {
                     new File(outputDir).delete();
-                    publishCompletedResult(NOTIFICATION_ID);
+                    publishCompletedResult();
                     break;
                 }
 
@@ -400,7 +401,7 @@ public class ExtractService extends Service {
             while ((len = zipfile.read(buf)) > 0) {
                 if (stopService) {
                     outputFile.delete();
-                    publishCompletedResult(NOTIFICATION_ID);
+                    publishCompletedResult();
                 }
                 outputStream.write(buf, 0, len);
                 copiedbytes = copiedbytes + len;
@@ -427,13 +428,18 @@ public class ExtractService extends Service {
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
+    private void endNotification() {
+        notificationManager.cancel(NOTIFICATION_ID);
+    }
 
-    private void publishCompletedResult(int id) {
+
+
+    private void publishCompletedResult() {
         if (isCompleted) {
             return;
         }
         isCompleted = true;
-        notificationManager.cancel(id);
+        endNotification();
         if (stopService) {
             dismissProgressDialog();
         }

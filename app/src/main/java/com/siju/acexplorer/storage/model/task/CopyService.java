@@ -101,8 +101,6 @@ public class CopyService extends Service {
     private int count = 0;
     private boolean        move;
     private boolean        calculatingTotalSize;
-    private boolean        isCopyToTrash;
-    private boolean        isTrashRestore;
     private ServiceHandler serviceHandler;
     private boolean        stopService;
     private boolean        isCompleted;
@@ -184,7 +182,6 @@ public class CopyService extends Service {
                 LargeBundleTransfer.removeFileData(context);
             }
         }
-        isCopyToTrash = intent.getBooleanExtra(OperationUtils.KEY_IS_TRASH, false);
         copyData = intent.getParcelableArrayListExtra(KEY_CONFLICT_DATA);
         move = intent.getBooleanExtra(KEY_MOVE, false);
 
