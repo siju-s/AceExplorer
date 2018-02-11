@@ -2073,7 +2073,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     @Override
     public void onConfigurationChanged(final Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        Logger.log(TAG, "onConfigChanged " + newConfig.orientation);
         if (mCurrentOrientation != newConfig.orientation) {
             mCurrentOrientation = newConfig.orientation;
             refreshSpan(newConfig);

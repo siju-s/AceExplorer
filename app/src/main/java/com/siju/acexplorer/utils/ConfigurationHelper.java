@@ -57,6 +57,7 @@ public class ConfigurationHelper {
 
     public static int getHomeGridCols(Configuration configuration) {
         int sw = configuration.smallestScreenWidthDp;
+        int width = configuration.screenWidthDp;
         int orientation = configuration.orientation;
         int columns;
         if (sw >= 720) {
@@ -72,6 +73,10 @@ public class ConfigurationHelper {
                 columns = COL_600DP.getValue();
             }
         } else {
+            if (sw <=320 && width < 400) {
+                columns = COL_PORT.getValue();
+                return columns;
+            }
             if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 columns = COL_LAND.getValue();
             } else {
@@ -84,6 +89,8 @@ public class ConfigurationHelper {
     public static int getStorageGridCols(Configuration configuration) {
         int sw = configuration.smallestScreenWidthDp;
         int orientation = configuration.orientation;
+        int width = configuration.screenWidthDp;
+
         int columns;
         if (sw >= 720) {
             if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -98,6 +105,14 @@ public class ConfigurationHelper {
                 columns = StorageGridColumns.COL_600DP.getValue();
             }
         } else {
+            if (sw <=320 && width < 400) {
+                if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    columns = StorageGridColumns.COL_DUAL.getValue();
+                } else {
+                    columns = StorageGridColumns.COL_PORT.getValue();
+                }
+                return columns;
+            }
             if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 columns = StorageGridColumns.COL_LAND.getValue();
             } else {

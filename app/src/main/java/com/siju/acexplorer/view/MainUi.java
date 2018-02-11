@@ -81,6 +81,8 @@ public interface MainUi {
 
     void refreshList(boolean isDual);
 
+    void onMultiWindowChanged(boolean isInMultiWindowMode, Configuration newConfig);
+
     interface Listener {
 
         void getTotalGroupData();

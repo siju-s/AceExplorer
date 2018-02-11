@@ -57,7 +57,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     private       MountUnmountReceiver mountUnmountReceiver;
     private final Category             category;
 
-
     private ArrayList<FileInfo> fileInfoList;
 
     private final String  currentDir;
@@ -107,8 +106,6 @@ public class FileListLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
         fileInfoList = data;
 
         if (isStarted()) {
-            // If the Loader is in a started state, deliver the results to the
-            // client. The superclass method does this for us.
             super.deliverResult(data);
         }
         super.deliverResult(data);

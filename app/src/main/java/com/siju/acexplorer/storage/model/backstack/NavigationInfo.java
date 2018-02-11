@@ -19,7 +19,6 @@ package com.siju.acexplorer.storage.model.backstack;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.HorizontalScrollView;
@@ -166,7 +165,7 @@ public class NavigationInfo {
         ImageView navArrow = new ImageView(context);
         params.leftMargin = 15;
         params.rightMargin = 20;
-        navArrow.setImageResource(R.drawable.ic_arrow_nav);
+        navArrow.setImageResource(R.drawable.ic_arrow);
         navArrow.setLayoutParams(params);
         addViewToNavigation(navArrow);
     }
@@ -349,7 +348,7 @@ public class NavigationInfo {
                                                                                    WRAP_CONTENT);
             layoutParams.leftMargin = 20;
             layoutParams.gravity = Gravity.CENTER_VERTICAL;
-            navArrow.setImageResource(R.drawable.ic_arrow_nav);
+            navArrow.setImageResource(R.drawable.ic_arrow);
             navArrow.setLayoutParams(layoutParams);
 
             addViewToNavigation(navArrow);

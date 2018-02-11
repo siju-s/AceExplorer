@@ -133,6 +133,9 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                if (storagesUiView.getActivity() == null) {
+                    return;
+                }
                 inflateBaseMenu();
             }
         }, 200);
@@ -211,7 +214,8 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
             mRenameItem.setVisible(false);
             mHideItem.setVisible(false);
             mInfoItem.setVisible(false);
-
+            mExtractItem.setVisible(false);
+            mPermissionItem.setVisible(false);
         } else {
             mRenameItem.setVisible(true);
             mInfoItem.setVisible(true);

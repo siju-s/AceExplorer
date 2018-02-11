@@ -143,7 +143,7 @@ public class HomeLibAdapter extends RecyclerView.Adapter<HomeLibAdapter.HomeLibH
         if (mSelectedItemsIds.get(position)) {
             homeLibHolder.imageDone.setVisibility(View.VISIBLE);
             if (theme == Theme.LIGHT) {
-                homeLibHolder.imageDone.setImageResource(R.drawable.ic_done_black);
+                homeLibHolder.imageDone.setImageResource(R.drawable.ic_done_dark);
             } else {
                 homeLibHolder.imageDone.setImageResource(R.drawable.ic_done_white);
             }

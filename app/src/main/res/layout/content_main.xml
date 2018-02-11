@@ -32,7 +32,7 @@
         android:id="@+id/viewSeparator"
         android:layout_width="3dp"
         android:layout_height="match_parent"
-        android:background="@drawable/test"
+        android:background="@drawable/pane_divider"
         android:visibility="gone"/>
 
     <FrameLayout

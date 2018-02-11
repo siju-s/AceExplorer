@@ -52,6 +52,7 @@ import com.siju.acexplorer.model.SectionGroup;
 import com.siju.acexplorer.model.SharedPreferenceWrapper;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.model.groups.DrawerGroup;
+import com.siju.acexplorer.model.helper.SdkHelper;
 import com.siju.acexplorer.permission.PermissionHelper;
 import com.siju.acexplorer.permission.PermissionResultCallback;
 import com.siju.acexplorer.permission.PermissionUtils;
@@ -557,7 +558,11 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     }
 
     public void onConfigChanged(Configuration newConfig) {
-        Logger.log(TAG, "onConfigChanged" + newConfig.orientation);
+        if (SdkHelper.isAtleastNougat()) {
+            if (activity.isInMultiWindowMode()) {
+                return;
+            }
+        }
         if (currentOrientation != newConfig.orientation) {
             currentOrientation = newConfig.orientation;
             Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main_container);
@@ -829,5 +834,26 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
                 ((BaseFileList) fragment).refreshList();
             }
         }
+    }
+
+    public void onMultiWindowChanged(boolean isInMultiWindowMode, Configuration newConfig) {
+            currentOrientation = newConfig.orientation;
+            Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main_container);
+            isDualPaneEnabled = preferences.getBoolean(FileConstants
+                                                               .PREFS_DUAL_PANE, false);
+            if (!isInMultiWindowMode && newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE && isDualPaneEnabled) {
+                canDualModeBeAct = true;
+                if (fragment instanceof BaseFileList) {
+                    showDualPane();
+                    ((BaseFileList) fragment).showDualPane();
+                    createDualFragment();
+                } else {
+                    ((HomeScreenFragment) fragment).showDualMode();
+                }
+            } else {
+                canDualModeBeAct = false;
+                hideDualPane();
+            }
+            fragment.onConfigurationChanged(newConfig);
     }
 }

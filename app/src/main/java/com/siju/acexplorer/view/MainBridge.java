@@ -120,6 +120,11 @@ public class MainBridge implements MainUi {
     }
 
     @Override
+    public void onMultiWindowChanged(boolean isInMultiWindowMode, Configuration newConfig) {
+        uiView.onMultiWindowChanged(isInMultiWindowMode, newConfig);
+    }
+
+    @Override
     public void switchView(int viewMode, boolean isDual) {
         uiView.switchView(viewMode, isDual);
     }

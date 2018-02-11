@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,72 +15,7 @@
   ~ limitations under the License.
   -->
 
-<!--<selector xmlns:android="http://schemas.android.com/apk/res/android">-->
-
-<!--<item android:state_pressed="true">--><!--<shape>--><!--<solid android:color="#A6000000" />--><!--<padding android:left="8dp" android:top="4dp" android:right="8dp" android:bottom="4dp" />--><!--<corners android:radius="2dp" />--><!--</shape>--><!--</item>-->
-
-<!--<item>--><!--<shape>--><!--<solid android:color="#99000000" />--><!--<padding android:left="8dp" android:top="4dp" android:right="8dp" android:bottom="4dp" />--><!--<corners android:radius="2dp" />--><!--</shape>--><!--</item>-->
-
-<!--</selector>--><!--<?xml version="1.0" encoding="utf-8"?>-->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <!--&lt;!&ndash; Drop Shadow Stack &ndash;&gt;-->
-    <!--<item>-->
-    <!--<shape>-->
-    <!--<padding-->
-    <!--android:left="1px"-->
-    <!--android:right="1px"-->
-    <!--android:top="1px" />-->
-    <!--<solid android:color="#e7e7e7" />-->
-    <!--<corners android:radius="4dp" />-->
-    <!--</shape>-->
-    <!--</item>-->
-    <!--<item>-->
-    <!--<shape>-->
-    <!--<padding-->
-    <!--android:left="1px"-->
-    <!--android:right="1px"-->
-    <!--android:top="1px" />-->
-    <!--&lt;!&ndash;<solid android:color="#d6d6d6" />&ndash;&gt;-->
-    <!--<corners android:radius="3dp" />-->
-    <!--</shape>-->
-    <!--</item>-->
-    <!--<item>-->
-    <!--<shape>-->
-    <!--<padding android:bottom="1px" />-->
-    <!--&lt;!&ndash;<solid android:color="#ebebeb" />&ndash;&gt;-->
-    <!--<corners android:radius="3dp" />-->
-    <!--</shape>-->
-    <!--</item>-->
-    <!--<item>-->
-    <!--<shape>-->
-    <!--<padding android:bottom="1px" />-->
-    <!--&lt;!&ndash;<solid android:color="@color/colorPrimary" />&ndash;&gt;-->
-    <!--<corners android:radius="3dp" />-->
-    <!--</shape>-->
-    <!--</item>-->
-    <!--<item>-->
-    <!--<shape>-->
-    <!--<padding android:bottom="1px" />-->
-    <!--&lt;!&ndash;<solid android:color="@color/colorPrimary" />&ndash;&gt;-->
-    <!--<corners android:radius="3dp" />-->
-    <!--</shape>-->
-    <!--</item>-->
-    <!--<item>-->
-    <!--<shape>-->
-    <!--<padding android:bottom="1px" />-->
-    <!--&lt;!&ndash;<solid android:color="@color/colorPrimary" />&ndash;&gt;-->
-    <!--<corners android:radius="3dp" />-->
-    <!--</shape>-->
-    <!--</item>-->
-    <!--<item>-->
-    <!--<shape>-->
-    <!--<padding android:bottom="1px" />-->
-    <!--&lt;!&ndash;<solid android:color="#b0b0b0" />&ndash;&gt;-->
-    <!--<corners android:radius="3dp" />-->
-    <!--</shape>-->
-    <!--</item>-->
-
     <!-- White Top color -->
     <item>
         <shape>

@@ -151,9 +151,15 @@ public class AceActivity extends BaseActivity {
     private Configuration configuration;
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
         configuration = newConfig;
         mainUi.onConfigChanged(newConfig);
-        super.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void onMultiWindowModeChanged(boolean isInMultiWindowMode, Configuration newConfig) {
+        super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig);
+        mainUi.onMultiWindowChanged(isInMultiWindowMode, newConfig);
     }
 
     public Configuration getConfiguration() {

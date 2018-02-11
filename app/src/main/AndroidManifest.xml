@@ -52,9 +52,10 @@
 
         <activity
             android:name="com.siju.acexplorer.view.AceActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|smallestScreenSize"
             android:label="@string/app_name"
             android:theme="@style/BaseDarkTheme"
+            android:resizeableActivity="true"
             android:launchMode="singleTask">
 
             <meta-data
