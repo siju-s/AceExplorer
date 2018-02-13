@@ -23,6 +23,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -130,6 +131,7 @@ public class LibrarySortActivity extends BaseActivity implements OnStartDragList
             }
         }
 
+
         for (int i = 0; i < resourceIds.length; i++) {
             LibrarySortModel model = new LibrarySortModel(categories[i].getValue());
             if (!totalLibraries.contains(model)) {
@@ -137,6 +139,7 @@ public class LibrarySortActivity extends BaseActivity implements OnStartDragList
                 totalLibraries.add(model);
             }
         }
+
     }
 
 
@@ -165,6 +168,8 @@ public class LibrarySortActivity extends BaseActivity implements OnStartDragList
                         savedLibraries.add(totalLibraries.get(i));
                     }
                 }
+                Log.d(this.getClass().getSimpleName(), "savedLibraries: Aft"+savedLibraries.size());
+
                 Intent dataIntent = new Intent();
                 dataIntent.putParcelableArrayListExtra(FileConstants.KEY_LIB_SORTLIST,
                                                        savedLibraries);

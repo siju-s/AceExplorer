@@ -73,7 +73,7 @@ public class ConfigurationHelper {
                 columns = COL_600DP.getValue();
             }
         } else {
-            if (sw <=320 && width < 400) {
+            if (width < 500) {
                 columns = COL_PORT.getValue();
                 return columns;
             }
@@ -105,11 +105,11 @@ public class ConfigurationHelper {
                 columns = StorageGridColumns.COL_600DP.getValue();
             }
         } else {
-            if (sw <=320 && width < 400) {
+            if (width < 480) {
                 if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-                    columns = StorageGridColumns.COL_DUAL.getValue();
-                } else {
                     columns = StorageGridColumns.COL_PORT.getValue();
+                } else {
+                    columns = StorageGridColumns.COL_DUAL.getValue();
                 }
                 return columns;
             }

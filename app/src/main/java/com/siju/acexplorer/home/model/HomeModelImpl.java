@@ -39,7 +39,6 @@ import java.util.List;
 import static com.siju.acexplorer.model.FileConstants.PREFS_ADD_RECENT;
 import static com.siju.acexplorer.model.FileConstants.PREFS_DUAL_PANE;
 import static com.siju.acexplorer.model.FileConstants.PREFS_FIRST_RUN;
-import static com.siju.acexplorer.model.groups.Category.ADD;
 import static com.siju.acexplorer.model.groups.Category.AUDIO;
 import static com.siju.acexplorer.model.groups.Category.DOCS;
 import static com.siju.acexplorer.model.groups.Category.DOWNLOADS;
@@ -58,10 +57,11 @@ public class HomeModelImpl implements HomeModel {
 
     private final String TAG        = this.getClass().getSimpleName();
     private static final int    COUNT_ZERO = 0;
+    private static final String ADD = "Add";
     private Context context;
     private int     resourceIds[];
-    private String labels[] = new String[]{"Images", "Audio", "Videos", "Docs",
-            "Downloads", "Recent", "Add"};
+    private static final String labels[] = new String[]{"Images", "Audio", "Videos", "Docs",
+            "Downloads", "Recent"};
     private Category                categories[];
     private SharedPreferences       sharedPreferences;
     private SharedPreferenceWrapper sharedPreferenceWrapper;
@@ -81,9 +81,9 @@ public class HomeModelImpl implements HomeModel {
     private void initConstants() {
         resourceIds = new int[]{R.drawable.ic_library_images, R.drawable.ic_library_music,
                 R.drawable.ic_library_videos, R.drawable.ic_library_docs,
-                R.drawable.ic_library_downloads, R.drawable.ic_library_recents, R.drawable.ic_library_add};
+                R.drawable.ic_library_downloads, R.drawable.ic_library_recents};
         categories = new Category[]{IMAGE, AUDIO, VIDEO,
-                DOCS, DOWNLOADS, RECENT, ADD};
+                DOCS, DOWNLOADS, RECENT};
     }
 
     @Override
@@ -157,15 +157,11 @@ public class HomeModelImpl implements HomeModel {
 
                 if (isFirstRun) {
                     addDefaultLibraries();
-                    addPlusCategory();
                 } else {
                     addSavedLibraries();
-                    if (!sharedPreferences.getBoolean(PREFS_ADD_RECENT,false)) {
-                        addRecentCategory();
-                        sharedPreferences.edit().putBoolean(PREFS_ADD_RECENT, true).apply();
-                    }
-                    addPlusCategory();
-                }
+                    addRecentCategory();
+                 }
+                addPlusCategory();
 
                 if (hasStoragePermission()) {
                     setupFavorites();
@@ -177,9 +173,6 @@ public class HomeModelImpl implements HomeModel {
 
     private void addDefaultLibraries() {
         for (int i = 0; i < resourceIds.length; i++) {
-            if (resourceIds[i] == R.drawable.ic_library_add) {
-                continue;
-            }
             addToLibrary(new HomeLibraryInfo(categories[i], labels[i], resourceIds[i], COUNT_ZERO));
             LibrarySortModel model = new LibrarySortModel();
             model.setCategoryId(categories[i].getValue());
@@ -187,14 +180,19 @@ public class HomeModelImpl implements HomeModel {
            sharedPreferenceWrapper.addLibrary(context, model);
         }
         sharedPreferences.edit().putBoolean(PREFS_FIRST_RUN, false).apply();
+        sharedPreferences.edit().putBoolean(PREFS_ADD_RECENT, true).apply();
     }
 
     private void addRecentCategory() {
+        if (sharedPreferences.getBoolean(PREFS_ADD_RECENT,false)) {
+            return;
+        }
         addToLibrary(new HomeLibraryInfo(categories[5], labels[5], resourceIds[5], COUNT_ZERO));
         LibrarySortModel model = new LibrarySortModel();
         model.setCategoryId(categories[5].getValue());
         model.setChecked(true);
         sharedPreferenceWrapper.addLibrary(context, model);
+        sharedPreferences.edit().putBoolean(PREFS_ADD_RECENT, true).apply();
     }
 
 
@@ -218,7 +216,7 @@ public class HomeModelImpl implements HomeModel {
 
 
     private void addPlusCategory() {
-        addToLibrary(new HomeLibraryInfo(ADD, labels[5], getResourceIdForCategory(ADD),
+        addToLibrary(new HomeLibraryInfo(Category.ADD, ADD, getResourceIdForCategory(Category.ADD),
                                          COUNT_ZERO));
     }
 
