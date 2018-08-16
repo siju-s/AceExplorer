@@ -20,13 +20,16 @@
           package="com.siju.acexplorer">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <!-- To install apps -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <!-- For setting alarm, ringtone !-->
     <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
 
-    <!-- To install apps -->
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <!-- Normal permission(auto granted) -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <!-- For starting foreground service in Android Pie and above -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
         android:name=".AceApplication"
