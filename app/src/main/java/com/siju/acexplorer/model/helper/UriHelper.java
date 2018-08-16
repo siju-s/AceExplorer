@@ -38,7 +38,9 @@ import static com.siju.acexplorer.model.helper.FileUtils.showMessage;
 public class UriHelper {
 
     public static Uri createContentUri(Context context, String path) {
-
+        if (path == null) {
+            return null;
+        }
         if (SdkHelper.isAtleastNougat()) {
             String authority = context.getPackageName() + ".fileprovider";
             return FileProvider.getUriForFile(context, authority, new File(path));

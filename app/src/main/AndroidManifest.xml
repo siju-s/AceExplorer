@@ -25,6 +25,9 @@
     <!-- For setting alarm, ringtone !-->
     <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
 
+    <!-- To install apps -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
     <application
         android:name=".AceApplication"
         android:allowBackup="true"

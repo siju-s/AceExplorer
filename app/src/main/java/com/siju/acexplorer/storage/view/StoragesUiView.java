@@ -98,6 +98,7 @@ import com.siju.acexplorer.storage.view.custom.recyclerview.FastScrollRecyclerVi
 import com.siju.acexplorer.theme.Theme;
 import com.siju.acexplorer.ui.peekandpop.PeekAndPop;
 import com.siju.acexplorer.utils.ConfigurationHelper;
+import com.siju.acexplorer.utils.InstallHelper;
 import com.siju.acexplorer.view.AceActivity;
 import com.siju.acexplorer.view.DrawerListener;
 import com.siju.acexplorer.view.dialog.DialogHelper;
@@ -823,7 +824,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
 
     public void handleActivityResult(int requestCode, int resultCode, Intent intent) {
-        Logger.log(TAG, "OnActivityREsult==" + resultCode);
         switch (requestCode) {
             case DIALOG_FRAGMENT:
                 if (resultCode == AppCompatActivity.RESULT_OK) {
@@ -853,6 +853,12 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                                                                                   .access_denied_external),
                                    Toast.LENGTH_LONG).show();
                 }
+            case InstallHelper.UNKNOWN_APPS_INSTALL_REQUEST:
+                if (resultCode == AppCompatActivity.RESULT_OK) {
+                    Uri uri = createContentUri(getContext(), filePath);
+                    InstallHelper.openInstallAppScreen(getContext(), uri);
+                }
+                break;
         }
     }
 
@@ -2169,18 +2175,18 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             if (isSAFShown) {
                 triggerStorageAccessFramework();
             } else {
-                Uri uri = createContentUri(getContext(), filePath);
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_INSTALL_PACKAGE);
-
                 String mimeType = getSingleton().getMimeTypeFromExtension(extension);
-                intent.setData(uri);
+                Uri uri = createContentUri(getContext(), filePath);
                 extension = null;
-
-                if (mimeType != null) {
-                    grantUriPermission(getContext(), intent, uri);
-                } else {
+                if (mimeType == null) {
                     openWith(uri, getContext());
+                    return;
+                }
+                boolean canInstallApp = InstallHelper.canInstallApp(getContext());
+                if (canInstallApp) {
+                    InstallHelper.openInstallAppScreen(getContext(), uri);
+                } else {
+                    InstallHelper.requestUnknownAppsInstallPermission(fragment);
                 }
             }
         }
