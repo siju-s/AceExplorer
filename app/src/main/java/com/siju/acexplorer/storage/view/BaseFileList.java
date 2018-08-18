@@ -33,7 +33,6 @@ import android.widget.LinearLayout;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.home.model.LoaderHelper;
-import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.storage.model.StorageModelImpl;
 import com.siju.acexplorer.storage.model.StoragesModel;
@@ -42,8 +41,6 @@ import com.siju.acexplorer.view.DrawerListener;
 
 
 public class BaseFileList extends Fragment {
-
-    private final String TAG = this.getClass().getSimpleName();
 
     private StoragesUi storagesUi;
 
@@ -59,16 +56,13 @@ public class BaseFileList extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
-        Logger.log(TAG, "onActivityCreated" + savedInstanceState);
 
         LinearLayout linearLayout = getView().findViewById(R.id.home_base);
         storagesUi = new StorageBridge(this, linearLayout, favListener, drawerListener);
         StoragesModel storagesModel = new StorageModelImpl();
-        LoaderHelper loaderHelper = new LoaderHelper(this);
+        LoaderHelper loaderHelper = new LoaderHelper(getContext());
 
-        new StoragesPresenterImpl(storagesUi, storagesModel, loaderHelper,
-                getLoaderManager());
-
+        new StoragesPresenterImpl(storagesUi, storagesModel, loaderHelper, getLoaderManager());
         storagesUi.init();
     }
 

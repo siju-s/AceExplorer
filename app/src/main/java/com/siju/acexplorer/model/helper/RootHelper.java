@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.siju.acexplorer.model.FileListLoader.getFilesList;
+import static com.siju.acexplorer.model.data.FileDataFetcher.getFilesList;
 import static com.siju.acexplorer.model.groups.Category.FILES;
 
 public class RootHelper {

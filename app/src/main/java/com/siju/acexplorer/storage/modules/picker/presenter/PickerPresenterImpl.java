@@ -22,7 +22,7 @@ import android.support.v4.content.Loader;
 
 import com.siju.acexplorer.home.model.LoaderHelper;
 import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.model.FileListLoader;
+import com.siju.acexplorer.model.data.MainLoader;
 import com.siju.acexplorer.model.groups.Category;
 import com.siju.acexplorer.storage.modules.picker.model.PickerModel;
 import com.siju.acexplorer.storage.modules.picker.view.PickerUi;
@@ -86,7 +86,7 @@ public class PickerPresenterImpl implements PickerPresenter, LoaderManager
     @Override
     public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
 
-        return loaderHelper.createLoader(args.getString(KEY_PATH), Category.FILES, args.getBoolean(KEY_PICKER), FileListLoader.INVALID_ID);
+        return loaderHelper.createLoader(args.getString(KEY_PATH), Category.FILES, args.getBoolean(KEY_PICKER), MainLoader.INVALID_ID);
     }
 
     @Override

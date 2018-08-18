@@ -75,7 +75,7 @@ public class HomeScreenFragment extends Fragment {
         homeView = new HomeBridge(this, linearLayout, drawerListener, favListener);
         HomeModel homeModel = new HomeModelImpl();
         homeModel.setActivityContext(getActivity());
-        LoaderHelper loaderHelper = new LoaderHelper(this);
+        LoaderHelper loaderHelper = new LoaderHelper(getContext());
 
         new HomePresenterImpl(homeView, homeModel, loaderHelper,
                 getActivity().getSupportLoaderManager());

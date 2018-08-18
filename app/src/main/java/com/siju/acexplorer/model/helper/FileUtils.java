@@ -287,7 +287,7 @@ public class FileUtils {
         return outputStream;
     }
 
-    public static Category checkMimeType(String extension) {
+    public static Category getCategoryFromExtension(String extension) {
 
         Category value = FILES;
         if (extension == null) {
@@ -475,22 +475,26 @@ public class FileUtils {
     /**
      * Gets the extension of a file name, like ".png" or ".jpg".
      *
-     * @param uri
+     * @param path
      * @return Extension including the dot("."); "" if there is no extension;
-     * null if uri was null.
+     * null if path was null.
      */
-    private static String getExtension(String uri) {
-        if (uri == null) {
+    public static String getExtension(String path) {
+        if (path == null) {
             return null;
         }
 
-        int dot = uri.lastIndexOf(".");
+        int dot = path.lastIndexOf(".");
         if (dot >= 0) {
-            return uri.substring(dot + 1);
+            return path.substring(dot + 1);
         } else {
             // No extension.
             return "";
         }
+    }
+
+    public static String constructFileNameWithExtension(String fileName, String extension) {
+        return fileName + "." + extension;
     }
 
     static String getFileNameWithoutExt(String filePath) {

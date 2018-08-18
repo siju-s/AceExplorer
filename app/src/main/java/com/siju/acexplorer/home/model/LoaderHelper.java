@@ -16,13 +16,13 @@
 
 package com.siju.acexplorer.home.model;
 
-import android.support.v4.app.Fragment;
+import android.content.Context;
 import android.support.v4.content.Loader;
 
 import com.siju.acexplorer.appmanager.AppLoader;
 import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.model.FileListLoader;
 import com.siju.acexplorer.model.StorageUtils;
+import com.siju.acexplorer.model.data.MainLoader;
 import com.siju.acexplorer.model.groups.Category;
 
 import java.util.ArrayList;
@@ -32,14 +32,14 @@ import java.util.ArrayList;
  */
 public class LoaderHelper {
 
-    private final Fragment fragment;
+    private Context context;
 
-    public LoaderHelper(Fragment fragment) {
-        this.fragment = fragment;
+    public LoaderHelper(Context context) {
+        this.context = context;
     }
 
-    public Loader<ArrayList<FileInfo>> createLoader(Category category, int id) {
-//        Log.d("LoaderHelper", "createLoader: Category:"+category + " id:"+id);
+    public Loader<ArrayList<FileInfo>> createLoader(Category category, boolean showOnlyCount) {
+        String path = null;
         switch (category) {
             case AUDIO:
             case VIDEO:
@@ -61,22 +61,21 @@ public class LoaderHelper {
             case NOTIFICATIONS:
             case RINGTONES:
             case PODCASTS:
-                return new FileListLoader(fragment, null, category, false, FileListLoader.INVALID_ID);
+                break;
             case DOWNLOADS:
-                String path = StorageUtils.getDownloadsDirectory();
-                return new FileListLoader(fragment, path, category, false, FileListLoader.INVALID_ID);
+                path = StorageUtils.getDownloadsDirectory();
+                break;
         }
-        return null;
+        return new MainLoader(context, path, category, showOnlyCount);
     }
 
     public Loader<ArrayList<FileInfo>> createLoader(String path, Category category, boolean isPicker, long id) {
-//        Log.d(this.getClass().getSimpleName(), "createLoader: "+path);
-        if (fragment == null) {
+        if (context == null) {
             return null;
         }
-        if (category.equals(Category.APP_MANAGER)) {
-            return new AppLoader(fragment.getContext());
+        if (Category.APP_MANAGER.equals(category)) {
+            return new AppLoader(context);
         }
-        return new FileListLoader(fragment, path, category, isPicker, id);
+        return new MainLoader(context, path, category, isPicker, id, false);
     }
 }

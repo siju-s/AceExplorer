@@ -90,7 +90,7 @@ public class HomePresenterImpl implements
     @Override
     public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
         Category category = (Category) args.getSerializable(KEY_CATEGORY);
-        return loaderHelper.createLoader(category, id);
+        return loaderHelper.createLoader(category, true);
     }
 
     @Override

@@ -18,7 +18,7 @@ package com.siju.acexplorer.storage.model.task;
 
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.model.FileListLoader;
+import com.siju.acexplorer.model.data.FileDataFetcher;
 import com.siju.acexplorer.model.groups.StoragesGroup;
 import com.siju.acexplorer.model.helper.FileUtils;
 
@@ -100,8 +100,8 @@ public class PasteConflictChecker {
     }
 
     private void findConflictFiles() {
-        ArrayList<FileInfo> listFiles = FileListLoader.getFilesList(destinationDir,
-                rootmode, true, false);
+        ArrayList<FileInfo> listFiles = FileDataFetcher.getFilesList(destinationDir,
+                                                                     rootmode, true, false);
 
         for (FileInfo fileInfo : listFiles) {
             for (FileInfo copiedFiles : totalFiles) {

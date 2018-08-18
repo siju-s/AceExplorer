@@ -51,7 +51,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.siju.acexplorer.model.helper.FileUtils.checkMimeType;
+import static com.siju.acexplorer.model.helper.FileUtils.getCategoryFromExtension;
 import static com.siju.acexplorer.model.helper.MediaStoreHelper.scanFile;
 import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastOreo;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH;
@@ -297,7 +297,7 @@ public class MoveService extends Service {
             oldFileList.add(path);
             filesMovedList.add(targetPath);
             String extension = name.substring(name.lastIndexOf(".") + 1);
-            int category = checkMimeType(extension).getValue();
+            int category = getCategoryFromExtension(extension).getValue();
             categories.add(category);
             publishResults(name, filesToMove.size(), filesMovedList.size());
         } catch (RootDeniedException e) {

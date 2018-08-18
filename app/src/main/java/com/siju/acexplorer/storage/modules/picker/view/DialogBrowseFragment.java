@@ -170,7 +170,7 @@ public class DialogBrowseFragment extends DialogFragment implements
         }
 
         PickerModel pickerModel = new PickerModelImpl();
-        pickerPresenter = new PickerPresenterImpl(this, pickerModel, new LoaderHelper(this),
+        pickerPresenter = new PickerPresenterImpl(this, pickerModel, new LoaderHelper(getContext()),
                                                   getActivity().getSupportLoaderManager());
 
         loadStoragesList();
