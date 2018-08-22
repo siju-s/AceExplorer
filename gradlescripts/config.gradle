@@ -1,9 +1,8 @@
 ext {
     compileSdkVersion = 28
     targetSdkVersion  = 28
-    minSdkVersion     = 19
+    minSdkVersion     = 21
 
-    buildToolsVersion = "28.0.2"
 
     // Google
     firebaseVersion    = "11.8.0"
