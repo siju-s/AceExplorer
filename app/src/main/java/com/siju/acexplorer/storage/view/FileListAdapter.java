@@ -21,7 +21,6 @@ import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.Formatter;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,15 +33,15 @@ import android.widget.TextView;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
-import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.main.model.groups.Category;
 import com.siju.acexplorer.main.model.groups.CategoryHelper;
 import com.siju.acexplorer.main.model.helper.FileUtils;
 import com.siju.acexplorer.storage.model.ViewMode;
 import com.siju.acexplorer.theme.ThemeUtils;
-import com.siju.acexplorer.ui.autoplay.AutoPlayView;
 import com.siju.acexplorer.ui.autoplay.AutoPlayContainer;
+import com.siju.acexplorer.ui.autoplay.AutoPlayView;
 import com.siju.acexplorer.ui.peekandpop.PeekAndPop;
 
 import java.util.ArrayList;
@@ -252,13 +251,11 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         peekAndPop.setOnGeneralActionListener(new PeekAndPop.OnGeneralActionListener() {
             @Override
             public void onPeek(View longClickView, int position) {
-                Log.d(TAG, "onPeek: " + longClickView + " pos:" + position);
                 loadPeekView(position);
             }
 
             @Override
             public void onPop(View longClickView, int position) {
-                Log.d(TAG, "onPop: ");
                 peekPos = INVALID_POS;
                 stopAutoPlayVid();
             }

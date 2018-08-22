@@ -68,7 +68,7 @@ import com.google.android.gms.ads.AdView;
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
-import com.siju.acexplorer.appmanager.AppInfoActivity;
+import com.siju.acexplorer.appmanager.AppDetailActivity;
 import com.siju.acexplorer.base.view.BaseActivity;
 import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.logging.Logger;
@@ -750,7 +750,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 reloadList(null, category);
                 break;
             case APP_MANAGER:
-                AppInfoActivity.openAppInfo(getContext(), fileInfoList.get(position).getFilePath());
+                AppDetailActivity.openAppInfo(getContext(), fileInfoList.get(position).getFilePath());
                 break;
         }
     }

@@ -143,13 +143,17 @@ public class FileInfo implements Parcelable {
     }
 
     // App manager
-    public FileInfo(Category category, String name, String packageName, long date, long size) {
+    private FileInfo(Category category, String name, String packageName, long date, long size) {
         this.category = category;
         this.fileName = name;
         this.filePath = packageName;
         this.date = date;
         this.size = size;
 
+    }
+
+    public static FileInfo createAppInfo(Category category, String name, String packageName, long date, long size) {
+        return new FileInfo(category, name, packageName, date, size);
     }
 
     public boolean isRootMode() {

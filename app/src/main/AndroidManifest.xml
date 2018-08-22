@@ -28,8 +28,10 @@
     <!-- Normal permission(auto granted) -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <!-- For starting foreground service in Android Pie and above -->
+    <!-- For starting foreground service in Android P and above -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <!-- For deleting packages in App manager in Android P and above -->
+    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES"/>
 
     <application
         android:name=".AceApplication"
@@ -114,7 +116,7 @@
         <activity
             android:name="com.siju.acexplorer.home.LibrarySortActivity"
             android:theme="@style/BaseDarkTheme"/>
-        <activity android:name=".appmanager.AppInfoActivity"
+        <activity android:name=".appmanager.AppDetailActivity"
             android:theme="@style/BaseDarkTheme">
         </activity>
 

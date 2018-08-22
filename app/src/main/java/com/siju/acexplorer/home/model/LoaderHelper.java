@@ -19,7 +19,7 @@ package com.siju.acexplorer.home.model;
 import android.content.Context;
 import android.support.v4.content.Loader;
 
-import com.siju.acexplorer.appmanager.AppLoader;
+import com.siju.acexplorer.appmanager.model.AppLoader;
 import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.main.model.StorageUtils;
 import com.siju.acexplorer.main.model.data.MainLoader;

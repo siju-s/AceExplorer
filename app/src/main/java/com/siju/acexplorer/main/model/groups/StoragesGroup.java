@@ -52,7 +52,7 @@ public class StoragesGroup {
 
     private ArrayList<SectionItems> totalStorages;
     private ArrayList<SectionItems> storagesList = new ArrayList<>();
-    private ArrayList<String> externalSDPaths;
+    private ArrayList<String> externalSDPaths = new ArrayList<>();
 
 
     public synchronized static StoragesGroup getInstance() {

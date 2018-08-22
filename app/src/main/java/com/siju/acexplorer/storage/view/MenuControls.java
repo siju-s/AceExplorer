@@ -36,7 +36,7 @@ import android.widget.Toast;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
-import com.siju.acexplorer.appmanager.AppHelper;
+import com.siju.acexplorer.appmanager.helper.AppHelper;
 import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.main.model.groups.Category;
 import com.siju.acexplorer.main.model.helper.FileUtils;

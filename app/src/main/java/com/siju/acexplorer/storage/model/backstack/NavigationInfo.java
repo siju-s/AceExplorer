@@ -52,7 +52,7 @@ public class NavigationInfo {
     private LinearLayout         navDirectory;
     private HorizontalScrollView scrollNavigation;
     private NavigationCallback   navigationCallback;
-    private ArrayList<String> externalSDPaths = new ArrayList<>();
+    private ArrayList<String> externalSDPaths;
     private String currentDir;
     private String initialDir = getInternalStorage();
     private boolean isCurrentDirRoot;

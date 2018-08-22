@@ -23,7 +23,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.appmanager.AppInfoActivity;
+import com.siju.acexplorer.appmanager.AppDetailActivity;
 import com.siju.acexplorer.base.model.BaseModel;
 import com.siju.acexplorer.base.model.BaseModelImpl;
 import com.siju.acexplorer.base.presenter.BasePresenter;
@@ -56,14 +56,14 @@ public class BaseActivity extends AppCompatActivity {
     private void setTheme() {
         switch (currentTheme) {
             case DARK:
-                if (this instanceof AppInfoActivity) {
+                if (this instanceof AppDetailActivity) {
                     setTheme(R.style.BaseDarkTheme_AppInfo);
                 } else {
                     setTheme(R.style.BaseDarkTheme);
                 }
                 break;
             case LIGHT:
-                if (this instanceof AppInfoActivity) {
+                if (this instanceof AppDetailActivity) {
                     setTheme(R.style.BaseLightTheme_AppInfo);
                 } else {
                     setTheme(R.style.BaseLightTheme);

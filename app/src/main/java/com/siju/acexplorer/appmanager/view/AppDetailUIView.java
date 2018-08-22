@@ -1,4 +1,4 @@
-package com.siju.acexplorer.appmanager;
+package com.siju.acexplorer.appmanager.view;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -14,13 +13,15 @@ import android.graphics.drawable.AdaptiveIconDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
+import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -32,63 +33,57 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.base.view.BaseActivity;
+import com.siju.acexplorer.appmanager.helper.AppHelper;
 import com.siju.acexplorer.main.model.helper.FileUtils;
 import com.siju.acexplorer.main.model.helper.SdkHelper;
 
-
-@SuppressWarnings("ConstantConditions")
-public class AppInfoActivity extends BaseActivity implements View.OnClickListener {
-
-    public static final  int                  REQUEST_CODE_UNINSTALL = 1;
-    public static final  String               URL_STORE              = "https://play.google.com/store/apps/details?id=";
-    private static final String               PACKAGE_NAME           = "package";
-    public static final String PACKAGE_NAME_PLAYSTORE = "com.android.vending";
-    public static final String PACKAGE_NAME_AMAZON_APPSTORE = "com.amazon.venezia";
-    private              Toolbar              toolbar;
-    private              Button               settingsButton;
-    private              Button               uninstallButton;
-    private              TextView             packageNameText;
-    private              TextView             versionNameText;
-    private              TextView             appNameText;
-    private              TextView             sourceText;
-    private              TextView             minSdkText;
-    private              TextView             minSdkTextHolder;
-    private              TextView             targetSdkText;
-    private              TextView             updatedTimeText;
-    private              TextView             installedTimeText;
-    private              TextView             permissionText;
-    private              TextView             permissionHolderText;
-    private              TextView             enabledText;
-    private              ImageView            imageIcon;
-    private              FloatingActionButton fabStore;
+public class AppDetailUIView extends CoordinatorLayout implements AppDetailUi, View.OnClickListener {
+    public static final String               URL_STORE = "https://play.google" +
+                                                         ".com/store/apps/details?id=";
+    private             AppCompatActivity    activity;
+    private             Toolbar              toolbar;
+    private             Button               settingsButton;
+    private             Button               uninstallButton;
+    private             TextView             packageNameText;
+    private             TextView             versionNameText;
+    private             TextView             appNameText;
+    private             TextView             sourceText;
+    private             TextView             minSdkText;
+    private             TextView             minSdkTextHolder;
+    private             TextView             targetSdkText;
+    private             TextView             updatedTimeText;
+    private             TextView             installedTimeText;
+    private             TextView             permissionText;
+    private             TextView             permissionHolderText;
+    private             TextView             enabledText;
+    private             ImageView            imageIcon;
+    private             FloatingActionButton fabStore;
+    private             Listener             listener;
 
     private String packageName;
 
-    public static void openAppInfo(Context context, String packageName) {
-        Intent intent = new Intent(context, AppInfoActivity.class);
-        intent.putExtra(PACKAGE_NAME, packageName);
-        context.startActivity(intent);
+
+    public AppDetailUIView(@NonNull Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
     }
 
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.app_detail);
 
+    @Override
+    public void inflateView() {
+        LayoutInflater.from(getContext()).inflate(R.layout.app_detail_ui, this, true);
         getIntentExtras();
         setupUI();
         setupData();
     }
 
     private void getIntentExtras() {
-        Intent intent = getIntent();
+        Intent intent = getActivity().getIntent();
         if (intent == null) {
             return;
         }
-        packageName = intent.getStringExtra(PACKAGE_NAME);
-
+        packageName = intent.getStringExtra(EXTRA_PACKAGE_NAME);
     }
 
     @SuppressLint("DefaultLocale")
@@ -99,20 +94,23 @@ public class AppInfoActivity extends BaseActivity implements View.OnClickListene
     }
 
     private void setupData() {
-        try {
-            PackageInfo packageInfo = getPackageManager().getPackageInfo(packageName, PackageManager.GET_PERMISSIONS);
-            String source = getPackageManager().getInstallerPackageName(packageName);
-            setupData(packageInfo, source);
-        }
-        catch (PackageManager.NameNotFoundException ignored) {
+        Object packageInfo = listener.getPackageInfo(packageName);
+        if (packageInfo != null) {
+            String source = listener.getInstallerSource(packageName);
+            setupData((PackageInfo) packageInfo, source);
         }
     }
 
+    public AppCompatActivity getActivity() {
+        return activity;
+    }
+
+    @SuppressWarnings("ConstantConditions")
     private void setupToolbar() {
         toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle(getString(R.string.app_detail));
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setTitle(getContext().getString(R.string.app_detail));
+        getActivity().setSupportActionBar(toolbar);
+        getActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void findViewsById() {
@@ -149,7 +147,7 @@ public class AppInfoActivity extends BaseActivity implements View.OnClickListene
     private void setPackageInfo(PackageInfo packageInfo, String source) {
         packageNameText.setText(packageName);
         versionNameText.setText(packageInfo.versionName);
-        sourceText.setText(getInstallerSource(source));
+        sourceText.setText(source);
         updatedTimeText.setText(FileUtils.convertDate(packageInfo.lastUpdateTime));
         installedTimeText.setText(FileUtils.convertDate(packageInfo.firstInstallTime));
     }
@@ -173,8 +171,8 @@ public class AppInfoActivity extends BaseActivity implements View.OnClickListene
     private void setupAppProperties(PackageInfo packageInfo) {
         ApplicationInfo applicationInfo = packageInfo.applicationInfo;
         boolean enabled = applicationInfo.enabled;
-        enabledText.setText(enabled ? getString(R.string.yes) : getString(R.string.no));
-        String appName = applicationInfo.loadLabel(getPackageManager()).toString();
+        enabledText.setText(enabled ? getContext().getString(R.string.yes) : getContext().getString(R.string.no));
+        String appName = applicationInfo.loadLabel(getActivity().getPackageManager()).toString();
         appNameText.setText(appName);
         toolbar.setTitle(appName);
         imageIcon.setContentDescription(appName);
@@ -187,17 +185,6 @@ public class AppInfoActivity extends BaseActivity implements View.OnClickListene
             minSdkTextHolder.setVisibility(View.GONE);
         }
         setupAppIcon();
-    }
-
-    private String getInstallerSource(String packageName) {
-        if (packageName == null) {
-            return getString(R.string.unknown);
-        } else if (packageName.equals(PACKAGE_NAME_PLAYSTORE)) {
-            return getString(R.string.play_store);
-        } else if (packageName.equals(PACKAGE_NAME_AMAZON_APPSTORE)) {
-            return getString(R.string.amazon_play_store);
-        }
-        return getString(R.string.unknown);
     }
 
     private void setupAppIcon() {
@@ -245,7 +232,7 @@ public class AppInfoActivity extends BaseActivity implements View.OnClickListene
     private void applyPalette(Palette palette) {
         if (palette != null) {
             updateBackground(fabStore, palette);
-            supportStartPostponedEnterTransition();
+            getActivity().supportStartPostponedEnterTransition();
         }
     }
 
@@ -258,55 +245,55 @@ public class AppInfoActivity extends BaseActivity implements View.OnClickListene
         settingsButton.setBackgroundColor(vibrantColor);
         uninstallButton.setBackgroundColor(vibrantColor);
         if (SdkHelper.isAtleastLollipop()) {
-            getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
+            getActivity().getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    public void setActivity(AppCompatActivity activity) {
+        this.activity = activity;
+    }
+
+    @Override
+    public void onResume() {
+        if (AppHelper.isPackageNotExisting(AceApplication.getAppContext(), packageName)) {
+            getActivity().finish();
+        }
+    }
+
+    @Override
+    public void handleActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_UNINSTALL && resultCode == Activity.RESULT_OK) {
-            finish();
+            getActivity().finish();
         }
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (AppHelper.isPackageNotExisting(getApplicationContext(), packageName)) {
-            finish();
-        }
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
+
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.settingsButton:
-                AppHelper.openAppSettings(this, packageName);
+                AppHelper.openAppSettings(getContext(), packageName);
                 break;
             case R.id.uninstallButton:
-                AppHelper.uninstallApp(this, packageName);
+                AppHelper.uninstallApp(getActivity(), packageName);
                 break;
             case R.id.fabStore:
                 try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + this.packageName)));
+                    getActivity().startActivity(new Intent(Intent.ACTION_VIEW,
+                                                           Uri.parse("market://details?id=" + this.packageName)));
                 }
                 catch (android.content.ActivityNotFoundException anfe) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
+                    getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
                             URL_STORE + this.packageName)));
                 }
                 break;
 
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }
