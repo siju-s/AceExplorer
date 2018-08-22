@@ -30,19 +30,19 @@ import android.widget.TextView;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.logging.Logger;
-import com.siju.acexplorer.model.groups.Category;
-import com.siju.acexplorer.model.groups.StoragesGroup;
+import com.siju.acexplorer.main.model.groups.Category;
+import com.siju.acexplorer.main.model.groups.StoragesGroup;
 import com.siju.acexplorer.storage.view.StoragesUiView;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import static com.siju.acexplorer.model.StorageUtils.getInternalStorage;
-import static com.siju.acexplorer.model.groups.CategoryHelper.checkIfAnyMusicCategory;
-import static com.siju.acexplorer.model.groups.CategoryHelper.getCategoryName;
-import static com.siju.acexplorer.model.groups.CategoryHelper.isGenericImagesCategory;
-import static com.siju.acexplorer.model.groups.CategoryHelper.isGenericVideosCategory;
+import static com.siju.acexplorer.main.model.StorageUtils.getInternalStorage;
+import static com.siju.acexplorer.main.model.groups.CategoryHelper.checkIfAnyMusicCategory;
+import static com.siju.acexplorer.main.model.groups.CategoryHelper.getCategoryName;
+import static com.siju.acexplorer.main.model.groups.CategoryHelper.isGenericImagesCategory;
+import static com.siju.acexplorer.main.model.groups.CategoryHelper.isGenericVideosCategory;
 
 
 public class NavigationInfo {

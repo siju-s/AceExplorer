@@ -25,10 +25,10 @@ import android.support.v4.provider.DocumentFile;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.logging.Logger;
-import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.model.StorageUtils;
-import com.siju.acexplorer.model.root.RootDeniedException;
-import com.siju.acexplorer.model.root.RootUtils;
+import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.main.model.StorageUtils;
+import com.siju.acexplorer.main.model.root.RootDeniedException;
+import com.siju.acexplorer.main.model.root.RootUtils;
 import com.stericson.RootTools.RootTools;
 
 import java.io.File;
@@ -37,11 +37,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.siju.acexplorer.model.StorageUtils.getDocumentFile;
-import static com.siju.acexplorer.model.StorageUtils.isOnExtSdCard;
-import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastLollipop;
-import static com.siju.acexplorer.model.helper.SdkHelper.isKitkat;
-import static com.siju.acexplorer.model.helper.UriHelper.getUriFromFile;
+import static com.siju.acexplorer.main.model.StorageUtils.getDocumentFile;
+import static com.siju.acexplorer.main.model.StorageUtils.isOnExtSdCard;
+import static com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastLollipop;
+import static com.siju.acexplorer.main.model.helper.SdkHelper.isKitkat;
+import static com.siju.acexplorer.main.model.helper.UriHelper.getUriFromFile;
 
 public class DeleteTask {
 

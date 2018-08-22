@@ -28,17 +28,17 @@ import android.widget.TextView;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
-import com.siju.acexplorer.model.SectionItems;
-import com.siju.acexplorer.model.StorageUtils;
-import com.siju.acexplorer.model.groups.StoragesGroup;
+import com.siju.acexplorer.main.model.SectionItems;
+import com.siju.acexplorer.main.model.StorageUtils;
+import com.siju.acexplorer.main.model.groups.StoragesGroup;
 import com.siju.acexplorer.theme.Theme;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.siju.acexplorer.model.StorageUtils.StorageType.EXTERNAL;
-import static com.siju.acexplorer.model.StorageUtils.getStorageSpaceText;
-import static com.siju.acexplorer.model.groups.Category.FILES;
+import static com.siju.acexplorer.main.model.StorageUtils.StorageType.EXTERNAL;
+import static com.siju.acexplorer.main.model.StorageUtils.getStorageSpaceText;
+import static com.siju.acexplorer.main.model.groups.Category.FILES;
 
 /**
  * Created by Siju on 03 September,2017

@@ -29,7 +29,7 @@ import android.graphics.Typeface;
 import android.support.annotation.Keep;
 import android.text.TextUtils;
 
-import com.siju.acexplorer.model.helper.Utils;
+import com.siju.acexplorer.main.model.helper.Utils;
 
 
 @SuppressWarnings("WeakerAccess")

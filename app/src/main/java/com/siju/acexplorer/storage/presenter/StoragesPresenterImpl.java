@@ -24,14 +24,14 @@ import android.support.v4.content.Loader;
 
 import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.home.model.LoaderHelper;
-import com.siju.acexplorer.model.FavInfo;
-import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.model.groups.Category;
+import com.siju.acexplorer.main.model.FavInfo;
+import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.main.model.groups.Category;
 import com.siju.acexplorer.storage.model.CopyData;
 import com.siju.acexplorer.storage.model.StoragesModel;
 import com.siju.acexplorer.storage.model.operations.Operations;
 import com.siju.acexplorer.storage.view.StoragesUi;
-import com.siju.acexplorer.view.dialog.DialogHelper;
+import com.siju.acexplorer.main.view.dialog.DialogHelper;
 
 import java.util.ArrayList;
 import java.util.List;

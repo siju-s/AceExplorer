@@ -47,11 +47,11 @@ import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.logging.Logger;
-import com.siju.acexplorer.model.FileConstants;
-import com.siju.acexplorer.model.helper.FileUtils;
+import com.siju.acexplorer.main.model.FileConstants;
+import com.siju.acexplorer.main.model.helper.FileUtils;
 import com.siju.acexplorer.theme.ThemeUtils;
 import com.siju.acexplorer.utils.LocaleHelper;
-import com.siju.acexplorer.view.AceActivity;
+import com.siju.acexplorer.main.view.AceActivity;
 
 import static com.siju.acexplorer.theme.ThemeUtils.CURRENT_THEME;
 import static com.siju.acexplorer.theme.ThemeUtils.PREFS_THEME;

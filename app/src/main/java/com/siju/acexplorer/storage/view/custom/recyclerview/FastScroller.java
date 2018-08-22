@@ -39,7 +39,7 @@ import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.model.helper.Utils;
+import com.siju.acexplorer.main.model.helper.Utils;
 
 import java.lang.annotation.Retention;
 

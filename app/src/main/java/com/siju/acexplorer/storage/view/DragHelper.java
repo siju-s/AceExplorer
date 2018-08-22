@@ -31,8 +31,8 @@ import android.view.View;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
-import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.view.dialog.DialogHelper;
+import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.main.view.dialog.DialogHelper;
 
 import java.util.ArrayList;
 

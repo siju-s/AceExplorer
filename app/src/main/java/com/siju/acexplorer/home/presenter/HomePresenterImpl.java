@@ -26,13 +26,13 @@ import com.siju.acexplorer.home.model.HomeModel;
 import com.siju.acexplorer.home.model.LibrarySortModel;
 import com.siju.acexplorer.home.model.LoaderHelper;
 import com.siju.acexplorer.home.view.HomeView;
-import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.model.groups.Category;
+import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.main.model.groups.Category;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.siju.acexplorer.model.FileConstants.KEY_CATEGORY;
+import static com.siju.acexplorer.main.model.FileConstants.KEY_CATEGORY;
 
 /**
  * Created by Siju on 02 September,2017

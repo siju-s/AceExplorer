@@ -34,9 +34,9 @@ import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.home.LibrarySortActivity;
 import com.siju.acexplorer.home.model.LibrarySortModel;
 import com.siju.acexplorer.home.types.HomeLibraryInfo;
-import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.model.StorageUtils;
-import com.siju.acexplorer.model.groups.Category;
+import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.main.model.StorageUtils;
+import com.siju.acexplorer.main.model.groups.Category;
 import com.siju.acexplorer.storage.view.custom.helper.SimpleItemTouchHelperCallback;
 import com.siju.acexplorer.theme.Theme;
 import com.siju.acexplorer.utils.ConfigurationHelper;
@@ -44,12 +44,12 @@ import com.siju.acexplorer.utils.ConfigurationHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.siju.acexplorer.model.groups.Category.ADD;
-import static com.siju.acexplorer.model.groups.Category.DOWNLOADS;
-import static com.siju.acexplorer.model.groups.Category.FAVORITES;
-import static com.siju.acexplorer.model.groups.Category.GENERIC_IMAGES;
-import static com.siju.acexplorer.model.groups.Category.GENERIC_MUSIC;
-import static com.siju.acexplorer.model.groups.Category.GENERIC_VIDEOS;
+import static com.siju.acexplorer.main.model.groups.Category.ADD;
+import static com.siju.acexplorer.main.model.groups.Category.DOWNLOADS;
+import static com.siju.acexplorer.main.model.groups.Category.FAVORITES;
+import static com.siju.acexplorer.main.model.groups.Category.GENERIC_IMAGES;
+import static com.siju.acexplorer.main.model.groups.Category.GENERIC_MUSIC;
+import static com.siju.acexplorer.main.model.groups.Category.GENERIC_VIDEOS;
 
 /**
  * Created by Siju on 03 September,2017

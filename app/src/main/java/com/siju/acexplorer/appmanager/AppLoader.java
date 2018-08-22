@@ -12,15 +12,15 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.AsyncTaskLoader;
 
-import com.siju.acexplorer.model.FileConstants;
-import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.model.groups.Category;
+import com.siju.acexplorer.main.model.FileConstants;
+import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.main.model.groups.Category;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.siju.acexplorer.model.helper.SortHelper.sortAppManager;
+import static com.siju.acexplorer.main.model.helper.SortHelper.sortAppManager;
 
 public class AppLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 

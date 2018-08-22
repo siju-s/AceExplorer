@@ -28,7 +28,7 @@ import com.siju.acexplorer.logging.Logger;
 
 import java.util.Locale;
 
-import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastNougat;
+import static com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastNougat;
 
 public class LocaleHelper extends ContextWrapper {
 

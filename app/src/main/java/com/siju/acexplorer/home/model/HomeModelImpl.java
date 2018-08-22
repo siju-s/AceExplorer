@@ -28,27 +28,27 @@ import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.home.types.HomeLibraryInfo;
 import com.siju.acexplorer.logging.Logger;
-import com.siju.acexplorer.model.FavInfo;
-import com.siju.acexplorer.model.SharedPreferenceWrapper;
-import com.siju.acexplorer.model.groups.Category;
+import com.siju.acexplorer.main.model.FavInfo;
+import com.siju.acexplorer.main.model.SharedPreferenceWrapper;
+import com.siju.acexplorer.main.model.groups.Category;
 import com.siju.acexplorer.permission.PermissionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.siju.acexplorer.model.FileConstants.PREFS_ADD_RECENT;
-import static com.siju.acexplorer.model.FileConstants.PREFS_DUAL_PANE;
-import static com.siju.acexplorer.model.FileConstants.PREFS_FIRST_RUN;
-import static com.siju.acexplorer.model.groups.Category.AUDIO;
-import static com.siju.acexplorer.model.groups.Category.DOCS;
-import static com.siju.acexplorer.model.groups.Category.DOWNLOADS;
-import static com.siju.acexplorer.model.groups.Category.FAVORITES;
-import static com.siju.acexplorer.model.groups.Category.IMAGE;
-import static com.siju.acexplorer.model.groups.Category.RECENT;
-import static com.siju.acexplorer.model.groups.Category.VIDEO;
-import static com.siju.acexplorer.model.groups.CategoryHelper.getCategory;
-import static com.siju.acexplorer.model.groups.CategoryHelper.getCategoryName;
-import static com.siju.acexplorer.model.groups.CategoryHelper.getResourceIdForCategory;
+import static com.siju.acexplorer.main.model.FileConstants.PREFS_ADD_RECENT;
+import static com.siju.acexplorer.main.model.FileConstants.PREFS_DUAL_PANE;
+import static com.siju.acexplorer.main.model.FileConstants.PREFS_FIRST_RUN;
+import static com.siju.acexplorer.main.model.groups.Category.AUDIO;
+import static com.siju.acexplorer.main.model.groups.Category.DOCS;
+import static com.siju.acexplorer.main.model.groups.Category.DOWNLOADS;
+import static com.siju.acexplorer.main.model.groups.Category.FAVORITES;
+import static com.siju.acexplorer.main.model.groups.Category.IMAGE;
+import static com.siju.acexplorer.main.model.groups.Category.RECENT;
+import static com.siju.acexplorer.main.model.groups.Category.VIDEO;
+import static com.siju.acexplorer.main.model.groups.CategoryHelper.getCategory;
+import static com.siju.acexplorer.main.model.groups.CategoryHelper.getCategoryName;
+import static com.siju.acexplorer.main.model.groups.CategoryHelper.getResourceIdForCategory;
 
 /**
  * Created by Siju on 02 September,2017

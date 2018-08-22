@@ -72,13 +72,13 @@ import com.siju.acexplorer.appmanager.AppInfoActivity;
 import com.siju.acexplorer.base.view.BaseActivity;
 import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.logging.Logger;
-import com.siju.acexplorer.model.FavInfo;
-import com.siju.acexplorer.model.FileConstants;
-import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.model.SharedPreferenceWrapper;
-import com.siju.acexplorer.model.groups.Category;
-import com.siju.acexplorer.model.helper.FileUtils;
-import com.siju.acexplorer.model.helper.LargeBundleTransfer;
+import com.siju.acexplorer.main.model.FavInfo;
+import com.siju.acexplorer.main.model.FileConstants;
+import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.main.model.SharedPreferenceWrapper;
+import com.siju.acexplorer.main.model.groups.Category;
+import com.siju.acexplorer.main.model.helper.FileUtils;
+import com.siju.acexplorer.main.model.helper.LargeBundleTransfer;
 import com.siju.acexplorer.permission.PermissionUtils;
 import com.siju.acexplorer.storage.model.BackStackModel;
 import com.siju.acexplorer.storage.model.ViewMode;
@@ -99,9 +99,9 @@ import com.siju.acexplorer.theme.Theme;
 import com.siju.acexplorer.ui.peekandpop.PeekAndPop;
 import com.siju.acexplorer.utils.ConfigurationHelper;
 import com.siju.acexplorer.utils.InstallHelper;
-import com.siju.acexplorer.view.AceActivity;
-import com.siju.acexplorer.view.DrawerListener;
-import com.siju.acexplorer.view.dialog.DialogHelper;
+import com.siju.acexplorer.main.view.AceActivity;
+import com.siju.acexplorer.main.view.DrawerListener;
+import com.siju.acexplorer.main.view.dialog.DialogHelper;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -112,27 +112,26 @@ import java.util.Locale;
 import java.util.Set;
 
 import static android.webkit.MimeTypeMap.getSingleton;
-import static com.siju.acexplorer.model.FileConstants.ADS;
-import static com.siju.acexplorer.model.FileConstants.KEY_CATEGORY;
-import static com.siju.acexplorer.model.groups.Category.ALBUM_DETAIL;
-import static com.siju.acexplorer.model.groups.Category.ARTIST_DETAIL;
-import static com.siju.acexplorer.model.groups.Category.DOWNLOADS;
-import static com.siju.acexplorer.model.groups.Category.FAVORITES;
-import static com.siju.acexplorer.model.groups.Category.FILES;
-import static com.siju.acexplorer.model.groups.Category.FOLDER_IMAGES;
-import static com.siju.acexplorer.model.groups.Category.FOLDER_VIDEOS;
-import static com.siju.acexplorer.model.groups.Category.GENRE_DETAIL;
-import static com.siju.acexplorer.model.groups.CategoryHelper.checkIfFileCategory;
-import static com.siju.acexplorer.model.groups.CategoryHelper.isSortOrActionModeUnSupported;
-import static com.siju.acexplorer.model.groups.CategoryHelper.showLibSpecificNavigation;
-import static com.siju.acexplorer.model.helper.MediaStoreHelper.removeBatchMedia;
-import static com.siju.acexplorer.model.helper.MediaStoreHelper.removeMedia;
-import static com.siju.acexplorer.model.helper.MediaStoreHelper.scanFile;
-import static com.siju.acexplorer.model.helper.MediaStoreHelper.updateMedia;
-import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastNougat;
-import static com.siju.acexplorer.model.helper.UriHelper.createContentUri;
-import static com.siju.acexplorer.model.helper.UriHelper.grantUriPermission;
-import static com.siju.acexplorer.model.helper.ViewHelper.viewFile;
+import static com.siju.acexplorer.main.model.FileConstants.ADS;
+import static com.siju.acexplorer.main.model.FileConstants.KEY_CATEGORY;
+import static com.siju.acexplorer.main.model.groups.Category.ALBUM_DETAIL;
+import static com.siju.acexplorer.main.model.groups.Category.ARTIST_DETAIL;
+import static com.siju.acexplorer.main.model.groups.Category.DOWNLOADS;
+import static com.siju.acexplorer.main.model.groups.Category.FAVORITES;
+import static com.siju.acexplorer.main.model.groups.Category.FILES;
+import static com.siju.acexplorer.main.model.groups.Category.FOLDER_IMAGES;
+import static com.siju.acexplorer.main.model.groups.Category.FOLDER_VIDEOS;
+import static com.siju.acexplorer.main.model.groups.Category.GENRE_DETAIL;
+import static com.siju.acexplorer.main.model.groups.CategoryHelper.checkIfFileCategory;
+import static com.siju.acexplorer.main.model.groups.CategoryHelper.isSortOrActionModeUnSupported;
+import static com.siju.acexplorer.main.model.groups.CategoryHelper.showLibSpecificNavigation;
+import static com.siju.acexplorer.main.model.helper.MediaStoreHelper.removeBatchMedia;
+import static com.siju.acexplorer.main.model.helper.MediaStoreHelper.removeMedia;
+import static com.siju.acexplorer.main.model.helper.MediaStoreHelper.scanFile;
+import static com.siju.acexplorer.main.model.helper.MediaStoreHelper.updateMedia;
+import static com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastNougat;
+import static com.siju.acexplorer.main.model.helper.UriHelper.createContentUri;
+import static com.siju.acexplorer.main.model.helper.ViewHelper.viewFile;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_RELOAD_LIST;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_COUNT;
@@ -146,7 +145,7 @@ import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OP
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_RESULT;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_SHOW_RESULT;
 import static com.siju.acexplorer.storage.model.operations.Operations.HIDE;
-import static com.siju.acexplorer.view.dialog.DialogHelper.openWith;
+import static com.siju.acexplorer.main.view.dialog.DialogHelper.openWith;
 
 /**
  * Created by Siju on 02 September,2017
@@ -889,7 +888,10 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     private ZipViewer zipViewer;
 
     private void openZipViewer(String path) {
-        String extension = path.substring(path.lastIndexOf("."), path.length());
+        if (path == null) {
+            return;
+        }
+        String extension = FileUtils.getExtensionWithDot(path);
         Analytics.getLogger().zipViewer(extension);
         calculateScroll(currentDir);
         isZipViewer = true;

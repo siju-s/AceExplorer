@@ -18,11 +18,11 @@ package com.siju.acexplorer.storage.model.operations;
 
 import java.io.File;
 
-import static com.siju.acexplorer.model.StorageUtils.isOnExtSdCard;
-import static com.siju.acexplorer.model.helper.FileUtils.isFileNonWritable;
-import static com.siju.acexplorer.model.helper.FileUtils.isWritable;
-import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastLollipop;
-import static com.siju.acexplorer.model.helper.SdkHelper.isKitkat;
+import static com.siju.acexplorer.main.model.StorageUtils.isOnExtSdCard;
+import static com.siju.acexplorer.main.model.helper.FileUtils.isFileNonWritable;
+import static com.siju.acexplorer.main.model.helper.FileUtils.isWritable;
+import static com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastLollipop;
+import static com.siju.acexplorer.main.model.helper.SdkHelper.isKitkat;
 
 public class OperationUtils {
 

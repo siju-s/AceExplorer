@@ -33,7 +33,7 @@ import android.widget.TextView;
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.logging.Logger;
-import com.siju.acexplorer.model.FileInfo;
+import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.storage.model.task.CopyService;
 import com.siju.acexplorer.storage.model.task.CreateZipService;
 import com.siju.acexplorer.storage.model.task.ExtractService;

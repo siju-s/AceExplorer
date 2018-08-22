@@ -43,23 +43,23 @@ import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.home.model.LibrarySortModel;
 import com.siju.acexplorer.home.types.HomeLibraryInfo;
 import com.siju.acexplorer.logging.Logger;
-import com.siju.acexplorer.model.FileConstants;
-import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.model.groups.Category;
+import com.siju.acexplorer.main.model.FileConstants;
+import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.main.model.groups.Category;
 import com.siju.acexplorer.permission.PermissionUtils;
 import com.siju.acexplorer.storage.view.FileList;
 import com.siju.acexplorer.storage.view.StoragesUiView;
 import com.siju.acexplorer.theme.Theme;
 import com.siju.acexplorer.theme.ThemeUtils;
-import com.siju.acexplorer.view.AceActivity;
-import com.siju.acexplorer.view.DrawerListener;
+import com.siju.acexplorer.main.view.AceActivity;
+import com.siju.acexplorer.main.view.DrawerListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.siju.acexplorer.home.view.HomeLibrary.LIBSORT_REQUEST_CODE;
-import static com.siju.acexplorer.model.FileConstants.KEY_CATEGORY;
-import static com.siju.acexplorer.model.groups.StoragesGroup.STORAGE_EMULATED_0;
+import static com.siju.acexplorer.main.model.FileConstants.KEY_CATEGORY;
+import static com.siju.acexplorer.main.model.groups.StoragesGroup.STORAGE_EMULATED_0;
 
 
 public class HomeUiView extends CoordinatorLayout {

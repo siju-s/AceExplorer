@@ -33,11 +33,11 @@ import android.widget.LinearLayout;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.home.model.LoaderHelper;
-import com.siju.acexplorer.model.groups.Category;
+import com.siju.acexplorer.main.model.groups.Category;
 import com.siju.acexplorer.storage.model.StorageModelImpl;
 import com.siju.acexplorer.storage.model.StoragesModel;
 import com.siju.acexplorer.storage.presenter.StoragesPresenterImpl;
-import com.siju.acexplorer.view.DrawerListener;
+import com.siju.acexplorer.main.view.DrawerListener;
 
 
 public class BaseFileList extends Fragment {

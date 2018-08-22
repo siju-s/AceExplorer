@@ -29,15 +29,15 @@ import android.widget.TextView;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.home.model.LibrarySortModel;
-import com.siju.acexplorer.model.groups.Category;
+import com.siju.acexplorer.main.model.groups.Category;
 import com.siju.acexplorer.storage.view.custom.helper.ItemTouchHelperAdapter;
 import com.siju.acexplorer.storage.view.custom.helper.ItemTouchHelperViewHolder;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static com.siju.acexplorer.model.groups.CategoryHelper.getCategory;
-import static com.siju.acexplorer.model.groups.CategoryHelper.getCategoryName;
+import static com.siju.acexplorer.main.model.groups.CategoryHelper.getCategory;
+import static com.siju.acexplorer.main.model.groups.CategoryHelper.getCategoryName;
 
 class LibrarySortAdapter extends RecyclerView.Adapter<LibrarySortAdapter.LibrarySortViewHolder>
         implements ItemTouchHelperAdapter

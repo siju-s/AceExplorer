@@ -16,7 +16,7 @@
 
 package com.siju.acexplorer.home.types;
 
-import com.siju.acexplorer.model.groups.Category;
+import com.siju.acexplorer.main.model.groups.Category;
 
 @SuppressWarnings("unused")
 public class HomeLibraryInfo {

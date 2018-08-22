@@ -10,7 +10,6 @@ import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.drawable.AdaptiveIconDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -35,20 +34,37 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.base.view.BaseActivity;
-import com.siju.acexplorer.model.helper.FileUtils;
-import com.siju.acexplorer.model.helper.SdkHelper;
+import com.siju.acexplorer.main.model.helper.FileUtils;
+import com.siju.acexplorer.main.model.helper.SdkHelper;
 
 
 @SuppressWarnings("ConstantConditions")
 public class AppInfoActivity extends BaseActivity implements View.OnClickListener {
 
-    private static final String PACKAGE_NAME           = "package";
-    private static final String TAG                    = "AppInfoActivity";
-    public static final  int    REQUEST_CODE_UNINSTALL = 1;
-    private String  packageName;
-    private Button  settingsButton;
-    private Button  uninstallButton;
-    private Toolbar toolbar;
+    public static final  int                  REQUEST_CODE_UNINSTALL = 1;
+    public static final  String               URL_STORE              = "https://play.google.com/store/apps/details?id=";
+    private static final String               PACKAGE_NAME           = "package";
+    public static final String PACKAGE_NAME_PLAYSTORE = "com.android.vending";
+    public static final String PACKAGE_NAME_AMAZON_APPSTORE = "com.amazon.venezia";
+    private              Toolbar              toolbar;
+    private              Button               settingsButton;
+    private              Button               uninstallButton;
+    private              TextView             packageNameText;
+    private              TextView             versionNameText;
+    private              TextView             appNameText;
+    private              TextView             sourceText;
+    private              TextView             minSdkText;
+    private              TextView             minSdkTextHolder;
+    private              TextView             targetSdkText;
+    private              TextView             updatedTimeText;
+    private              TextView             installedTimeText;
+    private              TextView             permissionText;
+    private              TextView             permissionHolderText;
+    private              TextView             enabledText;
+    private              ImageView            imageIcon;
+    private              FloatingActionButton fabStore;
+
+    private String packageName;
 
     public static void openAppInfo(Context context, String packageName) {
         Intent intent = new Intent(context, AppInfoActivity.class);
@@ -56,31 +72,14 @@ public class AppInfoActivity extends BaseActivity implements View.OnClickListene
         context.startActivity(intent);
     }
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.app_detail);
+
         getIntentExtras();
         setupUI();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (!isPackageExisting()) {
-            finish();
-        }
-    }
-
-    private boolean isPackageExisting(){
-        PackageManager pm=getPackageManager();
-        try {
-            pm.getPackageInfo(packageName,PackageManager.GET_META_DATA);
-        } catch (PackageManager.NameNotFoundException e) {
-            return false;
-        }
-        return true;
+        setupData();
     }
 
     private void getIntentExtras() {
@@ -94,106 +93,148 @@ public class AppInfoActivity extends BaseActivity implements View.OnClickListene
 
     @SuppressLint("DefaultLocale")
     private void setupUI() {
+        setupToolbar();
+        findViewsById();
+        initListeners();
+    }
+
+    private void setupData() {
+        try {
+            PackageInfo packageInfo = getPackageManager().getPackageInfo(packageName, PackageManager.GET_PERMISSIONS);
+            String source = getPackageManager().getInstallerPackageName(packageName);
+            setupData(packageInfo, source);
+        }
+        catch (PackageManager.NameNotFoundException ignored) {
+        }
+    }
+
+    private void setupToolbar() {
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(getString(R.string.app_detail));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
 
-        TextView packageNameText = findViewById(R.id.textPackage);
-        TextView versionNameText = findViewById(R.id.textVersionName);
-        TextView appNameText = findViewById(R.id.textAppName);
-        TextView sourceText = findViewById(R.id.textSource);
-        TextView minSdkText = findViewById(R.id.textMinSdk);
-        TextView minSdkTextHolder = findViewById(R.id.textMinSdkPlaceHolder);
-        TextView targetSdkText = findViewById(R.id.textTargetSdk);
-        TextView updatedTimeText = findViewById(R.id.textUpdated);
-        TextView installedTimeText = findViewById(R.id.textInstalled);
-        TextView permissionText = findViewById(R.id.textPermissions);
-        TextView permissionHolderText = findViewById(R.id.textPermissionPlaceholder);
-
-        TextView enabledText = findViewById(R.id.textEnabled);
-        final ImageView imageIcon = findViewById(R.id.imageAppIcon);
-
+    private void findViewsById() {
+        packageNameText = findViewById(R.id.textPackage);
+        versionNameText = findViewById(R.id.textVersionName);
+        appNameText = findViewById(R.id.textAppName);
+        sourceText = findViewById(R.id.textSource);
+        minSdkText = findViewById(R.id.textMinSdk);
+        minSdkTextHolder = findViewById(R.id.textMinSdkPlaceHolder);
+        targetSdkText = findViewById(R.id.textTargetSdk);
+        updatedTimeText = findViewById(R.id.textUpdated);
+        installedTimeText = findViewById(R.id.textInstalled);
+        permissionText = findViewById(R.id.textPermissions);
+        permissionHolderText = findViewById(R.id.textPermissionPlaceholder);
+        enabledText = findViewById(R.id.textEnabled);
+        imageIcon = findViewById(R.id.imageAppIcon);
         settingsButton = findViewById(R.id.settingsButton);
         uninstallButton = findViewById(R.id.uninstallButton);
-        FloatingActionButton fabStore = findViewById(R.id.fabStore);
+        fabStore = findViewById(R.id.fabStore);
+    }
+
+    private void initListeners() {
         fabStore.setOnClickListener(this);
         settingsButton.setOnClickListener(this);
         uninstallButton.setOnClickListener(this);
+    }
 
+    private void setupData(PackageInfo packageInfo, String source) {
+        setPackageInfo(packageInfo, source);
+        setupPermissionData(packageInfo);
+        setupAppProperties(packageInfo);
+    }
+
+    private void setPackageInfo(PackageInfo packageInfo, String source) {
+        packageNameText.setText(packageName);
+        versionNameText.setText(packageInfo.versionName);
+        sourceText.setText(getInstallerSource(source));
+        updatedTimeText.setText(FileUtils.convertDate(packageInfo.lastUpdateTime));
+        installedTimeText.setText(FileUtils.convertDate(packageInfo.firstInstallTime));
+    }
+
+    private void setupPermissionData(PackageInfo packageInfo) {
+        String[] permissions = packageInfo.requestedPermissions;
+        if (permissions == null) {
+            permissionText.setVisibility(View.GONE);
+            permissionHolderText.setVisibility(View.GONE);
+        } else {
+            StringBuilder permissionList = new StringBuilder();
+
+            for (String permission : permissions) {
+                permissionList.append(permission);
+                permissionList.append('\n');
+            }
+            permissionText.setText(permissionList.toString());
+        }
+    }
+
+    private void setupAppProperties(PackageInfo packageInfo) {
+        ApplicationInfo applicationInfo = packageInfo.applicationInfo;
+        boolean enabled = applicationInfo.enabled;
+        enabledText.setText(enabled ? getString(R.string.yes) : getString(R.string.no));
+        String appName = applicationInfo.loadLabel(getPackageManager()).toString();
+        appNameText.setText(appName);
+        toolbar.setTitle(appName);
+        imageIcon.setContentDescription(appName);
+
+        targetSdkText.setText(String.valueOf(applicationInfo.targetSdkVersion));
+        if (SdkHelper.isAtleastNougat()) {
+            minSdkText.setText(String.valueOf(applicationInfo.minSdkVersion));
+        } else {
+            minSdkText.setVisibility(View.GONE);
+            minSdkTextHolder.setVisibility(View.GONE);
+        }
+        setupAppIcon();
+    }
+
+    private String getInstallerSource(String packageName) {
+        if (packageName == null) {
+            return getString(R.string.unknown);
+        } else if (packageName.equals(PACKAGE_NAME_PLAYSTORE)) {
+            return getString(R.string.play_store);
+        } else if (packageName.equals(PACKAGE_NAME_AMAZON_APPSTORE)) {
+            return getString(R.string.amazon_play_store);
+        }
+        return getString(R.string.unknown);
+    }
+
+    private void setupAppIcon() {
         RequestOptions options = new RequestOptions()
                 .centerCrop()
                 .placeholder(R.drawable.ic_apk_green)
                 .diskCacheStrategy(DiskCacheStrategy.NONE); // cannot disk cache
-        // ApplicationInfo, nor Drawables
 
-
-        try {
-            PackageInfo packageInfo = getPackageManager().getPackageInfo(packageName, PackageManager.GET_PERMISSIONS);
-            String source = getPackageManager().getInstallerPackageName(packageName);
-            packageNameText.setText(packageName);
-            versionNameText.setText(packageInfo.versionName);
-            sourceText.setText(getInstallerSource(source));
-            updatedTimeText.setText(FileUtils.convertDate(packageInfo.lastUpdateTime));
-            installedTimeText.setText(FileUtils.convertDate(packageInfo.firstInstallTime));
-            String[] permissions = packageInfo.requestedPermissions;
-            if (permissions == null) {
-                permissionText.setVisibility(View.GONE);
-                permissionHolderText.setVisibility(View.GONE);
-            } else {
-                StringBuilder permissionList = new StringBuilder();
-
-                for (String permission : permissions) {
-                    permissionList.append(permission);
-                    permissionList.append('\n');
-                }
-                permissionText.setText(permissionList.toString());
-            }
-
-            ApplicationInfo applicationInfo = packageInfo.applicationInfo;
-            boolean enabled = applicationInfo.enabled;
-            enabledText.setText(enabled ? getString(R.string.yes) : getString(R.string.no));
-            String appName = applicationInfo.loadLabel(getPackageManager()).toString();
-            appNameText.setText(appName);
-            toolbar.setTitle(appName);
-            imageIcon.setContentDescription(appName);
-
-            targetSdkText.setText(String.valueOf(applicationInfo.targetSdkVersion));
-            if (SdkHelper.isAtleastNougat()) {
-                minSdkText.setText(String.valueOf(applicationInfo.minSdkVersion));
-            } else {
-                minSdkText.setVisibility(View.GONE);
-                minSdkTextHolder.setVisibility(View.GONE);
-            }
-            Glide.with(this)
-                    .as(Drawable.class)
-                    .apply(options.dontAnimate().dontTransform().priority(Priority.LOW))
-                    .load(packageName)
-                    .into(new SimpleTarget<Drawable>() {
-                        @Override
-                        public void onResourceReady(@NonNull Drawable drawable, @Nullable Transition<? super Drawable> transition) {
-                            imageIcon.setImageDrawable(drawable);
-                             Bitmap bitmap = getBitmapFromDrawable(drawable);
-                            if (bitmap != null) {
-                                Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-                                    public void onGenerated(@NonNull Palette palette) {
-                                        applyPalette(palette);
-                                    }
-                                });
-                            }
-                        }
-                    });
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
+        Glide.with(this)
+             .as(Drawable.class)
+             .apply(options.dontAnimate().dontTransform().priority(Priority.LOW))
+             .load(packageName)
+             .into(new SimpleTarget<Drawable>() {
+                 @Override
+                 public void onResourceReady(@NonNull Drawable drawable,
+                                             @Nullable Transition<? super Drawable> transition)
+                 {
+                     imageIcon.setImageDrawable(drawable);
+                     Bitmap bitmap = getBitmapFromDrawable(drawable);
+                     if (bitmap != null) {
+                         Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+                             public void onGenerated(Palette palette) {
+                                 applyPalette(palette);
+                             }
+                         });
+                     }
+                 }
+             });
     }
 
     private Bitmap getBitmapFromDrawable(Drawable drawable) {
-        Bitmap bitmap =  null;
-        if (drawable instanceof  BitmapDrawable) {
-            bitmap = ((BitmapDrawable)drawable).getBitmap();
+        Bitmap bitmap = null;
+        if (drawable instanceof BitmapDrawable) {
+            bitmap = ((BitmapDrawable) drawable).getBitmap();
         } else if (SdkHelper.isAtleastOreo() && drawable instanceof AdaptiveIconDrawable) {
-            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            bitmap = Bitmap
+                    .createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
             final Canvas canvas = new Canvas(bitmap);
             drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
             drawable.draw(canvas);
@@ -201,21 +242,11 @@ public class AppInfoActivity extends BaseActivity implements View.OnClickListene
         return bitmap;
     }
 
-    private String getInstallerSource(String packageName) {
-        if (packageName == null) {
-            return getString(R.string.unknown);
-        } else if (packageName.equals("com.android.vending")) {
-            return getString(R.string.play_store);
-        } else if (packageName.equals("com.amazon.venezia")) {
-            return getString(R.string.amazon_play_store);
-        }
-        return getString(R.string.unknown);
-    }
-
     private void applyPalette(Palette palette) {
-
-        updateBackground((FloatingActionButton) findViewById(R.id.fabStore), palette);
-        supportStartPostponedEnterTransition();
+        if (palette != null) {
+            updateBackground(fabStore, palette);
+            supportStartPostponedEnterTransition();
+        }
     }
 
     private void updateBackground(FloatingActionButton fab, Palette palette) {
@@ -224,27 +255,25 @@ public class AppInfoActivity extends BaseActivity implements View.OnClickListene
 
         fab.setRippleColor(lightVibrantColor);
         fab.setBackgroundTintList(ColorStateList.valueOf(vibrantColor));
-//        toolbar.setBackgroundColor(vibrantColor);
         settingsButton.setBackgroundColor(vibrantColor);
         uninstallButton.setBackgroundColor(vibrantColor);
         if (SdkHelper.isAtleastLollipop()) {
             getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
-
-    }
-
-    // Code to darken the color supplied (mostly color of toolbar)
-    private static int darkenColor(int color) {
-        float[] hsv = new float[3];
-        Color.colorToHSV(color, hsv);
-        hsv[2] *= 0.8f;
-        return Color.HSVToColor(hsv);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_UNINSTALL && resultCode == Activity.RESULT_OK) {
+            finish();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (AppHelper.isPackageNotExisting(getApplicationContext(), packageName)) {
             finish();
         }
     }
@@ -261,8 +290,10 @@ public class AppInfoActivity extends BaseActivity implements View.OnClickListene
             case R.id.fabStore:
                 try {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + this.packageName)));
-                } catch (android.content.ActivityNotFoundException anfe) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + this.packageName)));
+                }
+                catch (android.content.ActivityNotFoundException anfe) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
+                            URL_STORE + this.packageName)));
                 }
                 break;
 

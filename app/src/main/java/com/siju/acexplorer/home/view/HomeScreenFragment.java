@@ -33,11 +33,11 @@ import com.siju.acexplorer.home.model.HomeModelImpl;
 import com.siju.acexplorer.home.model.LoaderHelper;
 import com.siju.acexplorer.home.presenter.HomePresenterImpl;
 import com.siju.acexplorer.logging.Logger;
-import com.siju.acexplorer.model.FileConstants;
+import com.siju.acexplorer.main.model.FileConstants;
 import com.siju.acexplorer.storage.view.StoragesUiView;
-import com.siju.acexplorer.view.DrawerListener;
+import com.siju.acexplorer.main.view.DrawerListener;
 
-import static com.siju.acexplorer.model.FileConstants.PREFS_FIRST_RUN;
+import static com.siju.acexplorer.main.model.FileConstants.PREFS_FIRST_RUN;
 
 public class HomeScreenFragment extends Fragment {
 

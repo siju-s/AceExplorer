@@ -16,8 +16,8 @@
 
 package com.siju.acexplorer.storage.modules.zip;
 
-import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.model.groups.Category;
+import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.main.model.groups.Category;
 
 import java.util.ArrayList;
 

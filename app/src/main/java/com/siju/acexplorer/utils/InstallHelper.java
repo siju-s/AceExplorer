@@ -7,9 +7,9 @@ import android.provider.Settings;
 import android.support.v4.app.Fragment;
 
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.model.helper.SdkHelper;
+import com.siju.acexplorer.main.model.helper.SdkHelper;
 
-import static com.siju.acexplorer.model.helper.FileUtils.showMessage;
+import static com.siju.acexplorer.main.model.helper.FileUtils.showMessage;
 
 public class InstallHelper {
 

@@ -23,8 +23,8 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.google.android.gms.ads.MobileAds;
 
-import static com.siju.acexplorer.model.FileConstants.ADS;
-import static com.siju.acexplorer.model.FileConstants.KEY_PREMIUM;
+import static com.siju.acexplorer.main.model.FileConstants.ADS;
+import static com.siju.acexplorer.main.model.FileConstants.KEY_PREMIUM;
 
 /**
  * Created by Siju on 29 August,2017

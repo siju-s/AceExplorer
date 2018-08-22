@@ -24,10 +24,10 @@ import android.view.ViewGroup;
 import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.home.model.LibrarySortModel;
 import com.siju.acexplorer.home.types.HomeLibraryInfo;
-import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.model.groups.Category;
+import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.main.model.groups.Category;
 import com.siju.acexplorer.storage.view.StoragesUiView;
-import com.siju.acexplorer.view.DrawerListener;
+import com.siju.acexplorer.main.view.DrawerListener;
 
 import java.util.ArrayList;
 import java.util.List;

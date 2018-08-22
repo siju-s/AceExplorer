@@ -24,7 +24,7 @@ import android.view.View;
 import com.android.billingclient.api.BillingClient;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.billing.BillingManager;
-import com.siju.acexplorer.view.dialog.DialogHelper;
+import com.siju.acexplorer.main.view.dialog.DialogHelper;
 
 /**
  * Created by Siju on 29 August,2017

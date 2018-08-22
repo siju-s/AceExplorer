@@ -31,11 +31,11 @@ import android.view.View;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.logging.Logger;
-import com.siju.acexplorer.model.FileConstants;
-import com.siju.acexplorer.model.FileInfo;
+import com.siju.acexplorer.main.model.FileConstants;
+import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.storage.model.ZipModel;
 import com.siju.acexplorer.storage.model.task.ExtractZipEntry;
-import com.siju.acexplorer.view.dialog.DialogHelper;
+import com.siju.acexplorer.main.view.dialog.DialogHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,11 +44,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import static android.webkit.MimeTypeMap.getSingleton;
-import static com.siju.acexplorer.model.groups.Category.FILES;
-import static com.siju.acexplorer.model.groups.Category.ZIP_VIEWER;
-import static com.siju.acexplorer.model.helper.UriHelper.createContentUri;
-import static com.siju.acexplorer.model.helper.UriHelper.grantUriPermission;
-import static com.siju.acexplorer.view.dialog.DialogHelper.openWith;
+import static com.siju.acexplorer.main.model.groups.Category.FILES;
+import static com.siju.acexplorer.main.model.groups.Category.ZIP_VIEWER;
+import static com.siju.acexplorer.main.model.helper.UriHelper.createContentUri;
+import static com.siju.acexplorer.main.model.helper.UriHelper.grantUriPermission;
+import static com.siju.acexplorer.main.view.dialog.DialogHelper.openWith;
 
 public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileInfo>> {
 

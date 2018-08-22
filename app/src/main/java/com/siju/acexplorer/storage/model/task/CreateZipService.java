@@ -39,9 +39,9 @@ import android.text.format.Formatter;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.logging.Logger;
-import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.model.helper.FileUtils;
-import com.siju.acexplorer.model.helper.LargeBundleTransfer;
+import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.main.model.helper.FileUtils;
+import com.siju.acexplorer.main.model.helper.LargeBundleTransfer;
 import com.siju.acexplorer.storage.model.operations.OperationProgress;
 import com.siju.acexplorer.storage.model.operations.OperationUtils;
 
@@ -56,7 +56,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastOreo;
+import static com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastOreo;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_END;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES;

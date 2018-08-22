@@ -21,9 +21,9 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
 import com.siju.acexplorer.home.model.LoaderHelper;
-import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.model.data.MainLoader;
-import com.siju.acexplorer.model.groups.Category;
+import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.main.model.data.MainLoader;
+import com.siju.acexplorer.main.model.groups.Category;
 import com.siju.acexplorer.storage.modules.picker.model.PickerModel;
 import com.siju.acexplorer.storage.modules.picker.view.PickerUi;
 

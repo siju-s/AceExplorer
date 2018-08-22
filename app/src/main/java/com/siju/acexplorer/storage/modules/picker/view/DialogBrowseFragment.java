@@ -41,9 +41,9 @@ import android.widget.TextView;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.home.model.LoaderHelper;
-import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.model.helper.FileUtils;
-import com.siju.acexplorer.model.helper.MediaStoreHack;
+import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.main.model.helper.FileUtils;
+import com.siju.acexplorer.main.model.helper.MediaStoreHack;
 import com.siju.acexplorer.permission.PermissionHelper;
 import com.siju.acexplorer.permission.PermissionResultCallback;
 import com.siju.acexplorer.storage.model.ViewMode;
@@ -62,13 +62,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.siju.acexplorer.model.StorageUtils.getInternalStorage;
-import static com.siju.acexplorer.model.groups.Category.FILES;
-import static com.siju.acexplorer.model.groups.Category.PICKER;
-import static com.siju.acexplorer.model.groups.StoragesGroup.STORAGE_EMULATED_0;
-import static com.siju.acexplorer.model.groups.StoragesGroup.STORAGE_EMULATED_LEGACY;
-import static com.siju.acexplorer.model.groups.StoragesGroup.STORAGE_SDCARD1;
-import static com.siju.acexplorer.model.helper.UriHelper.createContentUri;
+import static com.siju.acexplorer.main.model.StorageUtils.getInternalStorage;
+import static com.siju.acexplorer.main.model.groups.Category.FILES;
+import static com.siju.acexplorer.main.model.groups.Category.PICKER;
+import static com.siju.acexplorer.main.model.groups.StoragesGroup.STORAGE_EMULATED_0;
+import static com.siju.acexplorer.main.model.groups.StoragesGroup.STORAGE_EMULATED_LEGACY;
+import static com.siju.acexplorer.main.model.groups.StoragesGroup.STORAGE_SDCARD1;
+import static com.siju.acexplorer.main.model.helper.UriHelper.createContentUri;
 
 
 public class DialogBrowseFragment extends DialogFragment implements

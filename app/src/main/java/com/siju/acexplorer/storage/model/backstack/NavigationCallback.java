@@ -17,7 +17,7 @@
 package com.siju.acexplorer.storage.model.backstack;
 
 
-import com.siju.acexplorer.model.groups.Category;
+import com.siju.acexplorer.main.model.groups.Category;
 
 public interface NavigationCallback {
 

@@ -31,15 +31,15 @@ import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.billing.BillingStatus;
-import com.siju.acexplorer.model.FavInfo;
-import com.siju.acexplorer.model.FileConstants;
-import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.model.SharedPreferenceWrapper;
-import com.siju.acexplorer.model.helper.FileUtils;
-import com.siju.acexplorer.model.helper.LargeBundleTransfer;
-import com.siju.acexplorer.model.helper.RootHelper;
-import com.siju.acexplorer.model.helper.SdkHelper;
-import com.siju.acexplorer.model.root.RootUtils;
+import com.siju.acexplorer.main.model.FavInfo;
+import com.siju.acexplorer.main.model.FileConstants;
+import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.main.model.SharedPreferenceWrapper;
+import com.siju.acexplorer.main.model.helper.FileUtils;
+import com.siju.acexplorer.main.model.helper.LargeBundleTransfer;
+import com.siju.acexplorer.main.model.helper.RootHelper;
+import com.siju.acexplorer.main.model.helper.SdkHelper;
+import com.siju.acexplorer.main.model.root.RootUtils;
 import com.siju.acexplorer.storage.model.operations.FileOpsHelper;
 import com.siju.acexplorer.storage.model.operations.OperationUtils;
 import com.siju.acexplorer.storage.model.operations.Operations;
@@ -49,16 +49,16 @@ import com.siju.acexplorer.storage.model.task.DeleteTask;
 import com.siju.acexplorer.storage.model.task.ExtractService;
 import com.siju.acexplorer.storage.model.task.MoveService;
 import com.siju.acexplorer.storage.model.task.PasteConflictChecker;
-import com.siju.acexplorer.view.dialog.DialogHelper;
+import com.siju.acexplorer.main.view.dialog.DialogHelper;
 import com.stericson.RootTools.RootTools;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.siju.acexplorer.model.helper.LargeBundleTransfer.LARGE_BUNDLE_LIMIT;
-import static com.siju.acexplorer.model.helper.MediaStoreHelper.scanFile;
-import static com.siju.acexplorer.model.helper.PermissionsHelper.parse;
+import static com.siju.acexplorer.main.model.helper.LargeBundleTransfer.LARGE_BUNDLE_LIMIT;
+import static com.siju.acexplorer.main.model.helper.MediaStoreHelper.scanFile;
+import static com.siju.acexplorer.main.model.helper.PermissionsHelper.parse;
 import static com.siju.acexplorer.storage.model.operations.FileOpsHelper.checkWriteAccessMode;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_COUNT;
@@ -647,7 +647,7 @@ public class StorageModelImpl implements StoragesModel {
         String extension = null;
         boolean isFile = false;
         if (new File(filePath).isFile()) {
-            extension = filePath.substring(filePath.lastIndexOf("."), filePath.length());
+            extension = FileUtils.getExtensionWithDot(filePath);
             isFile = true;
         }
         String newFilePath;

@@ -25,7 +25,7 @@ import com.siju.acexplorer.AceApplication;
 
 import java.util.Hashtable;
 
-import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastMarsh;
+import static com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastMarsh;
 
 public class PermissionUtils {
     private static final String[]                   REQD_PERMISSIONS = new String[]{

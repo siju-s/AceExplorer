@@ -20,10 +20,10 @@ import android.content.Intent;
 import android.content.res.Configuration;
 
 import com.siju.acexplorer.billing.BillingStatus;
-import com.siju.acexplorer.model.FileInfo;
+import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.home.types.HomeLibraryInfo;
 import com.siju.acexplorer.home.model.LibrarySortModel;
-import com.siju.acexplorer.model.groups.Category;
+import com.siju.acexplorer.main.model.groups.Category;
 
 import java.util.ArrayList;
 import java.util.List;

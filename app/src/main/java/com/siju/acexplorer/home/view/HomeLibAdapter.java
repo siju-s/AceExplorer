@@ -13,15 +13,15 @@ import android.widget.TextView;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.home.types.HomeLibraryInfo;
-import com.siju.acexplorer.model.groups.Category;
+import com.siju.acexplorer.main.model.groups.Category;
 import com.siju.acexplorer.storage.view.custom.helper.ItemTouchHelperAdapter;
 import com.siju.acexplorer.theme.Theme;
 
 import java.util.Collections;
 import java.util.List;
 
-import static com.siju.acexplorer.model.groups.Category.ADD;
-import static com.siju.acexplorer.model.groups.CategoryHelper.getCategoryName;
+import static com.siju.acexplorer.main.model.groups.Category.ADD;
+import static com.siju.acexplorer.main.model.groups.CategoryHelper.getCategoryName;
 
 
 public class HomeLibAdapter extends RecyclerView.Adapter<HomeLibAdapter.HomeLibHolder>

@@ -22,10 +22,10 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.AsyncTaskLoader;
 
 import com.siju.acexplorer.logging.Logger;
-import com.siju.acexplorer.model.FileConstants;
-import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.model.groups.Category;
-import com.siju.acexplorer.model.helper.RootHelper;
+import com.siju.acexplorer.main.model.FileConstants;
+import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.main.model.groups.Category;
+import com.siju.acexplorer.main.model.helper.RootHelper;
 import com.siju.acexplorer.storage.model.ZipModel;
 
 import java.io.BufferedInputStream;
@@ -40,9 +40,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
-import static com.siju.acexplorer.model.groups.Category.COMPRESSED;
-import static com.siju.acexplorer.model.helper.SortHelper.comparatorByNameZip;
-import static com.siju.acexplorer.model.helper.SortHelper.comparatorByNameZip1;
+import static com.siju.acexplorer.main.model.groups.Category.COMPRESSED;
+import static com.siju.acexplorer.main.model.helper.SortHelper.comparatorByNameZip;
+import static com.siju.acexplorer.main.model.helper.SortHelper.comparatorByNameZip1;
 
 
 @SuppressWarnings("FieldCanBeLocal")

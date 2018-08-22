@@ -29,7 +29,7 @@ import android.util.SparseIntArray;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.siju.acexplorer.model.helper.Utils;
+import com.siju.acexplorer.main.model.helper.Utils;
 
 
 @SuppressWarnings("unused")

@@ -9,7 +9,7 @@ import com.siju.acexplorer.AceApplication;
 
 import java.util.List;
 
-import static com.siju.acexplorer.model.StorageUtils.getStorageDirectories;
+import static com.siju.acexplorer.main.model.StorageUtils.getStorageDirectories;
 
 
 public class PickerModelImpl implements PickerModel {

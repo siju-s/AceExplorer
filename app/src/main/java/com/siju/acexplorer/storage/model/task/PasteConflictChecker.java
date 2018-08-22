@@ -17,16 +17,16 @@
 package com.siju.acexplorer.storage.model.task;
 
 import com.siju.acexplorer.logging.Logger;
-import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.model.data.FileDataFetcher;
-import com.siju.acexplorer.model.groups.StoragesGroup;
-import com.siju.acexplorer.model.helper.FileUtils;
+import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.main.model.data.FileDataFetcher;
+import com.siju.acexplorer.main.model.groups.StoragesGroup;
+import com.siju.acexplorer.main.model.helper.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.siju.acexplorer.model.StorageUtils.getInternalStorage;
+import static com.siju.acexplorer.main.model.StorageUtils.getInternalStorage;
 
 
 public class PasteConflictChecker {

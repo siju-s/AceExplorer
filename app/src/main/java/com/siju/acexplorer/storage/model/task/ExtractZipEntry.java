@@ -21,7 +21,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.siju.acexplorer.logging.Logger;
-import com.siju.acexplorer.view.dialog.DialogHelper;
+import com.siju.acexplorer.main.model.helper.FileUtils;
+import com.siju.acexplorer.main.view.dialog.DialogHelper;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -31,7 +32,7 @@ import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static com.siju.acexplorer.model.helper.ViewHelper.viewFile;
+import static com.siju.acexplorer.main.model.helper.ViewHelper.viewFile;
 
 
 public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
@@ -78,7 +79,7 @@ public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
 //        Log.d("change permissions", cmd);
 //        RootHelper.runAndWait(cmd);
         String outputPath = output.getPath();
-        String extension = outputPath.substring(outputPath.lastIndexOf(".") + 1, outputPath.length());
+        String extension = FileUtils.getExtension(outputPath);
         viewFile(context, outputPath, extension, alertDialogListener);
 
     }

@@ -1,6 +1,6 @@
 package com.siju.acexplorer.storage.modules.picker.view;
 
-import com.siju.acexplorer.model.FileInfo;
+import com.siju.acexplorer.common.types.FileInfo;
 
 import java.util.ArrayList;
 import java.util.List;

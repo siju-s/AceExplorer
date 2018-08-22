@@ -40,8 +40,8 @@ import android.util.Log;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.logging.Logger;
-import com.siju.acexplorer.model.helper.FileUtils;
-import com.siju.acexplorer.model.helper.MediaStoreHelper;
+import com.siju.acexplorer.main.model.helper.FileUtils;
+import com.siju.acexplorer.main.model.helper.MediaStoreHelper;
 import com.siju.acexplorer.storage.model.operations.OperationProgress;
 import com.siju.acexplorer.storage.modules.zip.ZipUtils;
 
@@ -59,8 +59,8 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static com.siju.acexplorer.model.helper.FileOperations.mkdir;
-import static com.siju.acexplorer.model.helper.SdkHelper.isAtleastOreo;
+import static com.siju.acexplorer.main.model.helper.FileOperations.mkdir;
+import static com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastOreo;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_FAILED;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_RELOAD_LIST;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_END;

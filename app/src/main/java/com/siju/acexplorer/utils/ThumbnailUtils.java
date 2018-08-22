@@ -19,14 +19,14 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.model.FileConstants;
-import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.model.groups.Category;
+import com.siju.acexplorer.main.model.FileConstants;
+import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.main.model.groups.Category;
 
 import java.io.File;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
-import static com.siju.acexplorer.model.helper.AppUtils.getAppIconForFolder;
+import static com.siju.acexplorer.main.model.helper.AppUtils.getAppIconForFolder;
 
 public class ThumbnailUtils {
 

@@ -18,7 +18,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.model.helper.SdkHelper;
+import com.siju.acexplorer.main.model.helper.SdkHelper;
 import com.siju.acexplorer.ui.autoplay.AutoPlayContainer;
 
 import java.util.ArrayList;

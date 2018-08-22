@@ -19,7 +19,7 @@ package com.siju.acexplorer.storage.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.siju.acexplorer.model.helper.FileUtils;
+import com.siju.acexplorer.main.model.helper.FileUtils;
 
 public class CopyData implements Parcelable {
     private final String filePath;

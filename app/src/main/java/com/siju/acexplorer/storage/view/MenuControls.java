@@ -37,27 +37,27 @@ import android.widget.Toast;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.appmanager.AppHelper;
-import com.siju.acexplorer.model.FileInfo;
-import com.siju.acexplorer.model.groups.Category;
-import com.siju.acexplorer.model.helper.FileUtils;
-import com.siju.acexplorer.model.helper.ShareHelper;
-import com.siju.acexplorer.model.root.RootUtils;
+import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.main.model.groups.Category;
+import com.siju.acexplorer.main.model.helper.FileUtils;
+import com.siju.acexplorer.main.model.helper.ShareHelper;
+import com.siju.acexplorer.main.model.root.RootUtils;
 import com.siju.acexplorer.storage.model.ViewMode;
 import com.siju.acexplorer.storage.model.operations.Operations;
 import com.siju.acexplorer.theme.Theme;
-import com.siju.acexplorer.view.dialog.DialogHelper;
+import com.siju.acexplorer.main.view.dialog.DialogHelper;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.siju.acexplorer.R.string.hide;
-import static com.siju.acexplorer.model.groups.Category.APP_MANAGER;
-import static com.siju.acexplorer.model.groups.Category.FAVORITES;
-import static com.siju.acexplorer.model.groups.Category.FILES;
-import static com.siju.acexplorer.model.groups.Category.TRASH;
-import static com.siju.acexplorer.model.groups.CategoryHelper.checkIfAnyMusicCategory;
-import static com.siju.acexplorer.model.groups.CategoryHelper.isSortOrActionModeUnSupported;
+import static com.siju.acexplorer.main.model.groups.Category.APP_MANAGER;
+import static com.siju.acexplorer.main.model.groups.Category.FAVORITES;
+import static com.siju.acexplorer.main.model.groups.Category.FILES;
+import static com.siju.acexplorer.main.model.groups.Category.TRASH;
+import static com.siju.acexplorer.main.model.groups.CategoryHelper.checkIfAnyMusicCategory;
+import static com.siju.acexplorer.main.model.groups.CategoryHelper.isSortOrActionModeUnSupported;
 
 /**
  * Created by Siju on 04 September,2017
@@ -573,7 +573,7 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
 
 
     boolean isSearch() {
-        return !searchView.isIconified();
+        return searchView != null && !searchView.isIconified();
     }
 
     void endSearch() {

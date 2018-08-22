@@ -19,8 +19,8 @@ package com.siju.acexplorer.storage.view;
 
 import android.os.Bundle;
 
-import com.siju.acexplorer.model.FileConstants;
-import com.siju.acexplorer.model.groups.Category;
+import com.siju.acexplorer.main.model.FileConstants;
+import com.siju.acexplorer.main.model.groups.Category;
 
 public class FileList extends BaseFileList {
 
