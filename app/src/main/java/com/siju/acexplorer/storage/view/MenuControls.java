@@ -779,8 +779,10 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
 
 
     void onPermissionsFetched(ArrayList<Boolean[]> permissionList) {
-        DialogHelper.showPermissionsDialog(context, currentDir, isDirectory, permissionList,
-                                           permissionDialogListener);
+        if (!permissionList.isEmpty()) {
+            DialogHelper.showPermissionsDialog(context, currentDir, isDirectory, permissionList,
+                                               permissionDialogListener);
+        }
     }
 
 

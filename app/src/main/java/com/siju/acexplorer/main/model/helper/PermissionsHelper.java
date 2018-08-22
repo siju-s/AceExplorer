@@ -23,6 +23,9 @@ public class PermissionsHelper {
 
     public static ArrayList<Boolean[]> parse(String permLine) {
         ArrayList<Boolean[]> arrayList = new ArrayList<>();
+        if (permLine == null) {
+            return arrayList;
+        }
         Boolean[] read = new Boolean[]{false, false, false};
         Boolean[] write = new Boolean[]{false, false, false};
         Boolean[] execute = new Boolean[]{false, false, false};

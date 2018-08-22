@@ -413,7 +413,7 @@ public class DialogBrowseFragment extends DialogFragment implements
             fileListAdapter.setStopAnimation(true);
             fileListAdapter.updateAdapter(fileInfoList);
             fileList.setAdapter(fileListAdapter);
-            fileList.addItemDecoration(new DividerItemDecoration(getActivity(), currentTheme));
+            fileList.addItemDecoration(new DividerItemDecoration(getContext(), currentTheme));
             if (!data.isEmpty()) {
                 if (isBackPressed) {
 

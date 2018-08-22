@@ -866,7 +866,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         switch (viewMode) {
             case ViewMode.LIST:
                 if (dividerItemDecoration == null) {
-                    dividerItemDecoration = new DividerItemDecoration(getActivity(), currentTheme);
+                    dividerItemDecoration = new DividerItemDecoration(getContext(), currentTheme);
                 } else {
                     fileList.removeItemDecoration(dividerItemDecoration);
                 }
@@ -1461,7 +1461,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 fileList.removeItemDecoration(mGridItemDecoration);
             }
             if (dividerItemDecoration == null) {
-                dividerItemDecoration = new DividerItemDecoration(getActivity(), currentTheme);
+                dividerItemDecoration = new DividerItemDecoration(getContext(), currentTheme);
             }
             dividerItemDecoration.setOrientation();
             fileList.addItemDecoration(dividerItemDecoration);
