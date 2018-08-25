@@ -86,6 +86,12 @@ public class HomePresenterImpl implements
         homeModel.saveLibs(librarySortModels);
     }
 
+    @Override
+    public void onExit() {
+//        if (loaderManager != null) {
+//        }
+    }
+
 
     @Override
     public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {

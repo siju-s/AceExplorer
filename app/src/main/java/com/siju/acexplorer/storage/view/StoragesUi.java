@@ -163,5 +163,7 @@ public interface StoragesUi {
 
         void moveToTrash(ArrayList<FileInfo> filesToDelete, String trashDir);
 
+        void onExit();
+
     }
 }

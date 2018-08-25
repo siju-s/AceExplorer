@@ -65,6 +65,7 @@ public class HomeBridge implements HomeView {
 
     @Override
     public void onExit() {
+        listener.onExit();
         homeUiView.onDestroy();
     }
 

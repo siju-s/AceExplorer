@@ -167,6 +167,7 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
     }
 
     private void endZipMode(String dir) {
+        fragment.getLoaderManager().destroyLoader(LOADER_ID);
         currentDir = null;
         zipChildren.clear();
         zipCommunicator.removeZipScrollPos(zipParentPath);

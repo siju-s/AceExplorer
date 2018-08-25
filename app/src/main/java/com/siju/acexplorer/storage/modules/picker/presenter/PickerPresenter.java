@@ -9,4 +9,6 @@ public interface PickerPresenter {
     void saveLastRingtoneDir(String currentPath);
 
     String getLastSavedRingtoneDir();
+
+    void onDestroy();
 }

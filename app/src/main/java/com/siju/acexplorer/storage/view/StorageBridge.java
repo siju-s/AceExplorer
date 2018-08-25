@@ -69,6 +69,7 @@ public class StorageBridge implements StoragesUi {
 
     @Override
     public void onExit() {
+        listener.onExit();
         storagesUiView.onDestroy();
     }
 

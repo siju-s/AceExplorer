@@ -81,6 +81,13 @@ public class StoragesPresenterImpl implements StoragesUi.Listener,
     }
 
     @Override
+    public void onExit() {
+        if (loaderManager != null) {
+            loaderManager.destroyLoader(LOADER_ID);
+        }
+    }
+
+    @Override
     public BillingStatus checkBillingStatus() {
         return storagesModel.getBillingStatus();
     }

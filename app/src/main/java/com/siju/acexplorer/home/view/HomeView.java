@@ -75,5 +75,7 @@ public interface HomeView {
         boolean getDualModeState();
 
         void saveLibs(List<LibrarySortModel> librarySortModels);
+
+        void onExit();
     }
 }

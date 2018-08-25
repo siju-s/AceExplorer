@@ -17,11 +17,13 @@
 package com.siju.acexplorer.storage.modules.picker.presenter;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.util.Log;
 
-import com.siju.acexplorer.home.model.LoaderHelper;
 import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.home.model.LoaderHelper;
 import com.siju.acexplorer.main.model.data.MainLoader;
 import com.siju.acexplorer.main.model.groups.Category;
 import com.siju.acexplorer.storage.modules.picker.model.PickerModel;
@@ -35,32 +37,33 @@ import java.util.List;
  */
 @SuppressWarnings("FieldCanBeLocal")
 public class PickerPresenterImpl implements PickerPresenter, LoaderManager
-        .LoaderCallbacks<ArrayList<FileInfo>>, PickerModel.Listener {
+        .LoaderCallbacks<ArrayList<FileInfo>>, PickerModel.Listener
+{
 
-    private final String TAG = this.getClass().getSimpleName();
-    private static final int LOADER_ID = 1000;
+    private static final int    LOADER_ID  = 1000;
     private static final String KEY_PICKER = "picker";
-    private static final String KEY_PATH = "path";
+    private static final String KEY_PATH   = "path";
 
-    private PickerUi pickerUi;
-    private PickerModel pickerModel;
+    private PickerUi      pickerUi;
+    private PickerModel   pickerModel;
     private LoaderManager loaderManager;
-    private LoaderHelper loaderHelper;
+    private LoaderHelper  loaderHelper;
 
 
     public PickerPresenterImpl(PickerUi pickerUi, PickerModel pickerModel, LoaderHelper loaderHelper,
-                               LoaderManager loaderManager) {
+                               LoaderManager loaderManager)
+    {
         this.pickerUi = pickerUi;
         this.pickerModel = pickerModel;
         this.loaderHelper = loaderHelper;
         this.loaderManager = loaderManager;
-//        pickerUi.setListener(this);
         pickerModel.setListener(this);
     }
 
 
     @Override
     public void loadData(String path, boolean isRingtonePicker) {
+        Log.d("PickerPresenterImpl", "loadData: "+path);
         Bundle args = new Bundle();
         args.putString(KEY_PATH, path);
         args.putBoolean(KEY_PICKER, isRingtonePicker);
@@ -82,20 +85,31 @@ public class PickerPresenterImpl implements PickerPresenter, LoaderManager
         return pickerModel.getLastSavedRingtoneDir();
     }
 
+    @Override
+    public void onDestroy() {
+        Log.d("PickerPresenter", "onDestroy: ");
+        if (loaderManager != null) {
+            loaderManager.destroyLoader(LOADER_ID);
+        }
+    }
 
+
+    @NonNull
     @Override
     public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
-
-        return loaderHelper.createLoader(args.getString(KEY_PATH), Category.FILES, args.getBoolean(KEY_PICKER), MainLoader.INVALID_ID);
+        Log.d("PickerPResenter", "onCreateLoader: ");
+        return loaderHelper.createLoader(args.getString(KEY_PATH), Category.FILES, args.getBoolean(KEY_PICKER),
+                                         MainLoader.INVALID_ID);
     }
 
     @Override
-    public void onLoadFinished(Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
+    public void onLoadFinished(@NonNull Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
+        Log.d("PickerPResenter", "onLoadFinished: "+data.size() + " loader"+loader.getId());
         pickerUi.onDataLoaded(data);
     }
 
     @Override
-    public void onLoaderReset(Loader<ArrayList<FileInfo>> loader) {
+    public void onLoaderReset(@NonNull Loader<ArrayList<FileInfo>> loader) {
 
     }
 

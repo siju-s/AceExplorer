@@ -31,6 +31,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -363,6 +364,7 @@ public class DialogBrowseFragment extends DialogFragment implements
     }
 
     private void refreshList(String path) {
+        Log.d(TAG, "refreshList: ");
         fileInfoList = new ArrayList<>();
         if (fileListAdapter != null) {
             fileListAdapter.clearList();
@@ -370,7 +372,7 @@ public class DialogBrowseFragment extends DialogFragment implements
         pickerPresenter.loadData(path, isRingtonePicker);
     }
 
-    private void reloadData() {
+    private void reloadData() {        
         isBackPressed = true;
         currentPath = new File(currentPath).getParent();
         textCurrentPath.setText(currentPath);
@@ -391,13 +393,16 @@ public class DialogBrowseFragment extends DialogFragment implements
 
     @Override
     public void onDestroyView() {
+        pickerPresenter.onDestroy();
         fileListAdapter.setStopAnimation(false);
+        Log.d(TAG, "onDestroyView: ");
         getActivity().setResult(AppCompatActivity.RESULT_OK, null);
         super.onDestroyView();
     }
 
     @Override
     public void onPermissionGranted(String[] permissionName) {
+        Log.d(TAG, "onPermissionGranted: ");
         refreshList(currentPath);
     }
 
