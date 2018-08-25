@@ -94,6 +94,11 @@ public class GoogleAnalytics implements Analytics.Logger {
     }
 
     @Override
+    public void policyOpened() {
+        logEvent(EV_POLICY);
+    }
+
+    @Override
     public void unlockFullClicked() {
         logEvent(EV_UNLOCK_FULL);
     }

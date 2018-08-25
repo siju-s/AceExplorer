@@ -87,9 +87,9 @@
             android:title="@string/open_source_license" />
 
         <Preference
+            android:key="prefsPrivacyPolicy"
             android:layout="@layout/prefs_settings_item"
-            android:summary="@string/dev_name"
-            android:title="@string/prefs_summary_dev" />
+            android:title="@string/privacy_policy" />
 
     </PreferenceScreen>
 

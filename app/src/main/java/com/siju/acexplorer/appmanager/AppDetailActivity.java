@@ -30,7 +30,7 @@ public class AppDetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.app_detail);
 
-        appDetailUi = findViewById(R.id.appUi);
+        appDetailUi = findViewById(R.id.appDetailUi);
         appDetailUi.setActivity(this);
         AppPresenter appPresenter = new AppPresenterImpl(appDetailUi, new AppModelImpl());
         appPresenter.setView();

@@ -158,7 +158,7 @@
     <string name="permission_execute">Execute</string>
     <string name="permission_owner">Owner</string>
     <string name="permission_group">Group</string>
-
+    <string name="privacy_policy">Privacy Policy</string>
 
     <string name="next">NEXT</string>
     <string name="skip">SKIP</string>

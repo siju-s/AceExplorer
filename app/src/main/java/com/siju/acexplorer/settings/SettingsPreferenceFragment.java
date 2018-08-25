@@ -62,10 +62,13 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
     private final       String TAG             = this.getClass().getSimpleName();
     public static final String PREFS_LANGUAGE  = "prefLanguage";
     public static final String PREFS_ANALYTICS = "prefsAnalytics";
+    private static final String PREFS_POLICY = "prefsPrivacyPolicy";
+    private static final String URL_POLICY = "https://sites.google.com/view/sjapps/home/privacy-policy";
 
-    private String            currentLanguage;
     private SharedPreferences preferences;
     private Preference        updatePreference;
+    private Preference        policyPreference;
+    private String            currentLanguage;
     private int               theme;
 
 
@@ -89,7 +92,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         theme = ThemeUtils.getTheme(getActivity());
         String PREFS_UPDATE = "prefsUpdate";
         updatePreference = findPreference(PREFS_UPDATE);
-
+        policyPreference = findPreference(PREFS_POLICY);
         String PREFS_VERSION = "prefsVersion";
         Preference version = findPreference(PREFS_VERSION);
         try {
@@ -132,6 +135,14 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
             }
         });
 
+        policyPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                showPolicyScreen();
+                return false;
+            }
+        });
+
 
         String value = LocaleHelper.getLanguage(getActivity());
         langPreference.setValue(value);
@@ -146,6 +157,18 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         bindPreferenceSummaryToValue(langPreference);
         bindPreferenceSummaryToValue(themePreference);
         initializeListeners();
+    }
+
+    private void showPolicyScreen() {
+        Analytics.getLogger().policyOpened();
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(URL_POLICY));
+        if (FileUtils.isPackageIntentUnavailable(getActivity(), intent)) {
+           Toast.makeText(getActivity(), R.string.msg_error_not_supported, Toast.LENGTH_SHORT).show();
+        } else {
+            startActivity(intent);
+        }
+
     }
 
     @Override

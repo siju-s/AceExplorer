@@ -36,8 +36,9 @@ public class Analytics {
 
         String EV_SETTINGS = "Settings_Clicked";
 
-
         String EV_RATE_US = "Rate_us";
+
+        String EV_POLICY = "Policy";
 
         String EV_UNLOCK_FULL = "Unlock_full_version";
 
@@ -123,6 +124,8 @@ public class Analytics {
         void settingsDisplayed();
 
         void rateUsClicked();
+
+        void policyOpened();
 
         void unlockFullClicked();
 
