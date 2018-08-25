@@ -365,6 +365,11 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         }
     }
 
+    private void unregisterReceivers() {
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(adsReceiver);
+        getActivity().unregisterReceiver(mReloadListReceiver);
+    }
+
 
     private void hideAds() {
         LinearLayout adviewLayout = findViewById(R.id.adviewLayout);
@@ -2094,7 +2099,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         }
         if (!mInstanceStateExists) {
             Logger.log(TAG, "onDestroy UNREGISTER");
-            getActivity().unregisterReceiver(mReloadListReceiver);
+            unregisterReceivers();
         }
     }
 

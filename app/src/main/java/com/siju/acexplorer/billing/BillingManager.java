@@ -165,6 +165,7 @@ public class BillingManager implements PurchasesUpdatedListener {
      */
     public void destroy() {
         activity = null;
+        mBillingUpdatesListener = null;
         if (mBillingClient != null && mBillingClient.isReady()) {
             mBillingClient.endConnection();
             mBillingClient = null;
