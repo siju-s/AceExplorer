@@ -32,6 +32,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -234,16 +235,16 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
 
     private boolean checkIfInAppShortcut(Intent intent) {
         if (intent != null && intent.getAction() != null) {
-            Category category = IMAGE;
+            Category category = GENERIC_IMAGES;
             switch (intent.getAction()) {
                 case ACTION_IMAGES:
-                    category = IMAGE;
+                    category = GENERIC_IMAGES;
                     break;
                 case ACTION_MUSIC:
-                    category = AUDIO;
+                    category = GENERIC_MUSIC;
                     break;
                 case ACTION_VIDEOS:
-                    category = VIDEO;
+                    category = GENERIC_VIDEOS;
                     break;
 
             }
@@ -404,9 +405,6 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
             ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim
                     .enter_from_right, R.anim
                     .exit_to_left);
-//            ft.hide(fragment);
-//            ft.add(R.id.main_container, baseFileList, directory);
-
             ft.replace(R.id.main_container, baseFileList, directory);
             ft.addToBackStack(null);
             ft.commit();
