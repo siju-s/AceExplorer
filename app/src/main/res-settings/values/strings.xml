@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_title_theme">Theme</string>
+    <string name="pref_subs_light">Light</string>
+    <string name="pref_subs_dark">Dark</string>
+    <string name="pref_title_reset_fav">Reset favourites</string>
+    <string name="pref_title_show_hidden">Show Hidden Files</string>
+    <string name="pref_title_disable_dual">Dual pane in Landscape</string>
+    <string name="pref_title_check_update">Check for updates</string>
+    <string name="pref_title_change_lang">Language</string>
+    <string name="pref_title_homescreen">Show HomeScreen</string>
+    <string name="msg_fav_reset">Favourites resetted to default.</string>
+    <string name="analytics_text">Send analytics</string>
+    <string name="analytics_summary">Help us improve app by sending anonymous usage data.</string>
+</resources>

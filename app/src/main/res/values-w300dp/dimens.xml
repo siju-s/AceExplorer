@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <integer name="grid_columns_dual">3</integer>
-    <integer name="grid_columns">3</integer>
-    <integer name="homescreen_columns">3</integer>
-</resources>

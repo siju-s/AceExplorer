@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_settings">Settings</string>
+    <string name="nav_menu_internal_storage">Internal Storage</string>
+    <string name="nav_menu_root">Root</string>
+    <string name="nav_menu_ext_storage">External SD</string>
+    <string name="nav_menu_music">Music</string>
+    <string name="nav_menu_video">Videos</string>
+    <string name="nav_menu_image">Images</string>
+    <string name="nav_menu_docs">Documents</string>
+    <string name="downloads">Downloads</string>
+    <string name="nav_header_storages">Storages</string>
+    <string name="nav_header_favourites">Favorites</string>
+    <string name="nav_header_collections">Library</string>
+    <string name="nav_header_others">Others</string>
+    <string name="nav_header_tools">Tools</string>
+    <string name="app_manager">App manager</string>
+    <string name="app_invite_title">App invite</string>
+    <string name="app_invite_msg">Try this cool file manager !!</string>
+    <string name="app_invite_failed">Sending invite failed.</string>
+    <string name="fav_removed">Removed from favorites</string>
+    <string name="rate_us">Rate Us</string>
+    <string name="unlock_full_version">Unlock full version</string>
+    <string name="full_version_buy_ask">Full version removes annoying ads. Do you want to buy it?</string>
+    <string name="img_accessibility_expand">Expand or Collapse</string>
+    <string name="img_accessibility_brand">App logo</string>
+    <string name="img_accessibility_icon_lib">Library icon</string>
+    <string name="img_accessibility_storage_icon">Storage icon</string>
+</resources>

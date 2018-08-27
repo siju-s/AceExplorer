@@ -1,0 +1,227 @@
+<!--
+  ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+    <string name="app_name">Ace Explorer</string>
+    <string name="navigation_drawer_open">Åpne navigasjonsmenyen</string>
+    <string name="navigation_drawer_close">Lukk navigasjonsmenyen</string>
+    <string name="action_settings">innstillinger</string>
+    <string name="nav_menu_internal_storage">Intern lagring</string>
+    <string name="nav_menu_root">Rot</string>
+    <string name="nav_menu_ext_storage">ekstern SD</string>
+    <string name="nav_menu_music">Musikk</string>
+    <string name="nav_menu_video">videoer</string>
+    <string name="nav_menu_image">Bilder</string>
+    <string name="nav_menu_docs">dokumenter</string>
+    <string name="nav_header_storages">Garasje</string>
+    <string name="nav_header_favourites">Favoritter</string>
+    <string name="nav_header_collections">Bibliotek</string>
+    <string name="nav_header_others">andre</string>
+    <string name="msg_free">fri fra</string>
+    <string name="empty">Tom</string>
+    <plurals name="number_of_files">
+        <item quantity="one">%d fil</item>
+        <item quantity="other">%d filer</item>
+    </plurals>
+    <string name="downloads">Nedlastinger</string>
+    <string name="action_rename">Gi nytt navn</string>
+    <string name="action_info">Egenskaper</string>
+    <string name="action_archive">Arkiv</string>
+    <string name="action_cut">Kutte opp</string>
+    <string name="action_copy">Kopiere</string>
+    <string name="action_paste">Lim inn</string>
+    <string name="action_delete">Slett</string>
+    <string name="action_share">Dele</string>
+    <string name="msg_cut_copy">filen (e) er kopiert til utklippstavlen</string>
+    <string name="msg_delete_success">slettet</string>
+    <string name="msg_copy_failure">Kopier operasjonen mislyktes</string>
+    <string name="msg_move_failure">Flytt operasjonen mislyktes</string>
+    <string name="msg_delete_failure">Slett operasjonen mislyktes</string>
+    <string name="dialog_skip">Hopp</string>
+    <string name="dialog_replace">Erstatte</string>
+    <string name="dialog_keep_both">Hold begge filer</string>
+    <string name="dialog_cancel">Kansellere</string>
+    <string name="msg_file_exists">Det finnes fil</string>
+    <string name="dialog_from_placeholder">Fra</string>
+    <string name="dialog_to_placeholder">Til</string>
+    <string name="background">Bakgrunn</string>
+    <string name="dialog_delete_title">Er du sikker på at du vil slette %d filer?</string>
+    <string name="msg_ok">OK</string>
+    <string name="no_files">ingen filer</string>
+    <string name="msg_error_invalid_name">Skriv inn et gyldig navn</string>
+    <string name="path">Sti:</string>
+    <string name="size">Størrelse:</string>
+    <string name="date_modified">Dato endret:</string>
+    <string name="hidden">skjulte:</string>
+    <string name="readable">Leselig:</string>
+    <string name="writeable">skrivbar:</string>
+    <string name="md5">MD5:</string>
+    <string name="permissions">tillatelser</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nei</string>
+    <string name="properties">Egenskaper</string>
+    <string name="new_folder">Ny mappe</string>
+    <string name="new_file">ny fil</string>
+    <string name="rate_us">Rangere oss</string>
+    <string name="add_fav">Legg til i favoritter</string>
+    <string name="msg_added_to_fav">Lagt til i favoritter</string>
+    <string name="msg_error_not_supported">Ingen app for å håndtere handlingen</string>
+    <string name="permission_request">Trenger lagring tillatelse til å vise alle filene</string>
+    <string name="action_grant">STIPEND</string>
+    <string name="action_view_list">Listevisning</string>
+    <string name="action_view_grid">Rutenett visning</string>
+    <string name="extract_to">Utdrag til</string>
+    <string name="open">Åpen</string>
+    <string name="extracting">Trekke ..</string>
+    <string name="dialog_current_path">Nåværende bane</string>
+    <string name="dialog_specify_path">angi banen</string>
+    <string name="enter_file_name">Skriv inn filnavnet</string>
+    <string name="extract">Ekstrakt</string>
+    <string name="dialog_title_browse">Velg mappe</string>
+    <string name="action_select_all">Velg alle</string>
+    <string name="delete_fav">Slett favoritt</string>
+    <string name="action_search">Søke</string>
+    <string name="pref_title_theme">Tema</string>
+    <string name="pref_subs_light">Lett</string>
+    <string name="pref_subs_dark">Mørk</string>
+    <string name="pref_title_reset_fav">Tilbakestill favoritter</string>
+    <string name="pref_title_show_hidden">Vis skjulte filer</string>
+    <string name="pref_title_disable_dual">Dual-ruten i Landskap</string>
+    <string name="pref_title_check_update">Se etter oppdateringer</string>
+    <string name="pref_title_change_lang">Språk</string>
+    <string name="pref_title_about">Om oss</string>
+    <string name="pref_title_version">Versjon</string>
+    <string name="prefs_summary_dev">Utvikler</string>
+    <string name="hide">Gjemme seg</string>
+    <string name="unhide">Unhide</string>
+    <string name="more">mer</string>
+    <string name="drag">Dra</string>
+    <string name="move">Bevege seg</string>
+    <string name="msg_fav_reset">Favoritter resetted til standard.</string>
+    <string name="pref_title_homescreen">Vis skjermen</string>
+    <string name="home_add">Legg til</string>
+    <string name="home_docs">Dokumenter</string>
+    <string name="compressed">komprimert</string>
+    <string name="apk">Apps</string>
+    <string name="pdf">PDF</string>
+    <string name="library_large">store filer</string>
+    <string name="open_as">åpne som</string>
+    <string name="text">Tekst</string>
+    <string name="image">Bilde</string>
+    <string name="audio">Audio</string>
+    <string name="other">Annen</string>
+    <string name="create">Skape</string>
+    <string name="zip_progress_title">Opprette zip</string>
+    <string name="needsaccess">Skriv Tilgang Nødvendig</string>
+    <string name="needs_access_summary">Velg rotkatalogen %1$s for å gi skrivetilgang for å operere</string>
+    <string name="error">Feil</string>
+    <string name="completed">fullført</string>
+    <string name="msg_operation_failed">operasjonen mislyktes</string>
+    <string name="selected">valgt</string>
+    <string name="enter_name">Skriv inn navn</string>
+    <string name="storage_low">For lite plass</string>
+    <string name="paste_conflict_remember">Huske</string>
+    <string name="copying">kopiering av filer</string>
+    <string name="moving">Flytte filer</string>
+    <string name="package_installer">Package Installer</string>
+    <string name="view">Utsikt</string>
+    <string name="install">Installere</string>
+    <string name="package_installer_content">Hvilke tiltak vil du gjøre?</string>
+    <string name="open_source_license">Åpen kildekode-lisenser</string>
+    <string name="need_permission">trenger tillatelse</string>
+    <string name="permission_setting_hint">Trykk på Innstillinger -> Tillatelser og deretter slå Lagring på.</string>
+    <string name="access_denied_external">Skrivetilgang til eksterne SD ikke innvilget</string>
+    <string name="permission_read">Lese</string>
+    <string name="permission_write">Skrive</string>
+    <string name="permission_execute">Henrette</string>
+    <string name="permission_owner">Eieren</string>
+    <string name="permission_group">Gruppe</string>
+    <string name="next">NESTE</string>
+    <string name="skip">SKIP</string>
+    <string name="start">HAR DET</string>
+    <string name="slide_1_title">Organized Library</string>
+    <string name="slide_1_desc">Ett klikk til mediebiblioteket fra startskjermen.</string>
+    <string name="slide_2_title">kikk og pop</string>
+    <string name="slide_2_desc">kikk og pop bildene og videoene dine.</string>
+    <string name="slide_3_title">Dra og slipp</string>
+    <string name="slide_3_desc">Dra filer fra en mappe til en annen!</string>
+    <string name="action_sort">Sortere</string>
+    <string name="slide_4_title">temaer</string>
+    <string name="slide_4_desc">Mørk eller lys vei! Ditt valg.</string>
+    <string name="no_music"> Ingen musikkfiler</string>
+    <string name="fav_removed">Fjernet fra favoritter</string>
+    <string name="img_accessibility_back">Tilbake</string>
+    <string name="img_accessibility_permission">Grant tillatelse</string>
+    <string name="img_accessibility_expand">Utvid eller skjul</string>
+    <string name="img_accessibility_brand">App logo</string>
+    <string name="img_accessibility_icon_lib">bibliotek-ikonet</string>
+    <string name="img_accessibility_storage_icon">Storage icon</string>
+	<string name="unlock_full_version">Lås opp fullversjonen </string>
+    <string name="full_version_buy_ask">Full versjonen fjerner irriterende annonser. Ønsker du å kjøpe den?</string>
+    <string name="dialog_title_picker">Velg musikkfil</string>
+	<string name="app_invite_title">App invitere</string>
+    <string name="app_invite_msg">Prøv denne kule filbehandler !!</string>
+    <string name="app_invite_failed">Sende invitasjon mislyktes.</string>
+
+    <string name="browse">Søk</string>
+    <string name="msg_error_unrooted">Root tilgang nektet.</string>
+    <string name="billing_unsupported">Kjøper i appen støttes ikke på denne enheten.</string>
+    <string name="action_more">Mer</string>
+    <string name="directory">Directory</string>
+    <string name="operation">Operasjon</string>
+    <string name="extract_complete">Utdrag fullført</string>
+    <string name="clipboard">%d i utklippstavlen</string>
+    <string name="fav_exists">Favoritt finnes allerede.</string>
+    <string name="msg_added_fav">%d element (er) lagt til i Favoritter.</string>
+    <string name="header_source">Kilde</string>
+    <string name="header_destination">Mål</string>
+    <string name="error_unsupported">Ikke støttet</string>
+    <string name="copy_path">Kopier sti</string>
+    <string name="text_copied_clipboard">Kopiert til utklippstavlen.</string>
+    <string name="analytics_text">Send analytikk</string>
+    <string name="analytics_summary">Hjelp oss til å forbedre appen ved å sende anonyme bruksdata.</string>
+    <string name="move_complete">Flytt ferdig</string>
+	
+	<string name="dual_pane_intro_title">Dobbel rute</string>
+    <string name="dual_pane_intro_subtitle">Dual modus for bedre brukervennlighet.</string>
+    <string name="sort_name">Navn</string>
+    <string name="sort_type">Type</string>
+    <string name="sort_size">Størrelse</string>
+    <string name="sort_date">Dato</string>
+    <string name="ascending">stigende</string>
+    <string name="library_recent">Nylig</string>
+    <string name="albums">album</string>
+    <string name="artists">Artister</string>
+    <string name="genres">sjangere</string>
+    <string name="all_tracks">Alle sanger</string>
+    <string name="notifications">Varsler</string>
+    <string name="alarms">alarmer</string>
+    <string name="ringtones">ringetoner</string>
+    <string name="podcasts">Podcasts</string>
+    <string name="mute">Stum</string>
+    <string name="unmute">Mikrofon</string>
+    <string name="nav_header_tools">Verktøy</string>
+    <string name="app_manager">Appleder</string>
+    <string name="category">Kategori</string>
+    <string name="unknown">Ukjent</string>
+    <string name="enabled">aktivert</string>
+    <string name="trash">Søppel</string>
+    <string name="move_trash">Flytt til søppel</string>
+    <string name="restore">Restaurere</string>
+    <string name="moving_title_trash">Flytter til søppel</string>
+    <string name="restoring_title_trash">gjenopprette</string>
+
+</resources>

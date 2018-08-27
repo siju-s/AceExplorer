@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="home_library_width">78dp</dimen>
+    <dimen name="homescreen_storage_margin">16dp</dimen>
+    <dimen name="library_count_font_size">11sp</dimen>
+</resources>

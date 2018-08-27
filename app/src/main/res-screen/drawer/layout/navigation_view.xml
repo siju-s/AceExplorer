@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.NavigationView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawerPane"
+    android:layout_width="@dimen/drawer_width"
+    android:layout_height="match_parent"
+    android:layout_gravity="start"
+    android:fitsSystemWindows="true"
+    tools:showIn="@layout/activity_main">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/header"
+            layout="@layout/drawer_list_header" />
+
+        <ExpandableListView
+            android:id="@+id/expandListDrawer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/divider"
+            android:layout_below="@+id/header"
+            android:layout_gravity="start"
+            android:divider="@null"
+            android:fitsSystemWindows="true"
+            android:groupIndicator="@null"
+            android:scrollbars="none" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="@dimen/drawer_width"
+            android:layout_height="1dp"
+            android:layout_above="@+id/listGeneric"
+            android:background="@color/light_divider" />
+
+
+        <ListView
+            android:id="@+id/listGeneric"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="@dimen/drawer_list_margin_top"
+            android:divider="@null" />
+
+    </RelativeLayout>
+
+</android.support.design.widget.NavigationView>

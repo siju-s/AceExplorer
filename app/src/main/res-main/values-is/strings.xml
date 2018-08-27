@@ -1,0 +1,227 @@
+<!--
+  ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+    <string name="app_name">Ace Explorer</string>
+    <string name="navigation_drawer_open">Open leiðaskúffu</string>
+    <string name="navigation_drawer_close">Loka leiðaskúffu</string>
+    <string name="action_settings">Stillingar</string>
+    <string name="nav_menu_internal_storage">Innri geymsla</string>
+    <string name="nav_menu_root">Root</string>
+    <string name="nav_menu_ext_storage">ytri SD</string>
+    <string name="nav_menu_music">Tónlist</string>
+    <string name="nav_menu_video">Myndbönd</string>
+    <string name="nav_menu_image">myndir</string>
+    <string name="nav_menu_docs">skjöl</string>
+    <string name="nav_header_storages">geymslur</string>
+    <string name="nav_header_favourites">Uppáhalds</string>
+    <string name="nav_header_collections">Bókasafn</string>
+    <string name="nav_header_others">aðrir</string>
+    <string name="msg_free">laust við</string>
+    <string name="empty">tómur</string>
+    <plurals name="number_of_files">
+        <item quantity="one">%d skrá</item>
+        <item quantity="other">%d skrár</item>
+    </plurals>
+    <string name="downloads">Downloads</string>
+    <string name="action_rename">endurnefna</string>
+    <string name="action_info">Properties</string>
+    <string name="action_archive">Archive</string>
+    <string name="action_cut">Skera</string>
+    <string name="action_copy">Afrita</string>
+    <string name="action_paste">Líma</string>
+    <string name="action_delete">eyða</string>
+    <string name="action_share">Deila</string>
+    <string name="msg_cut_copy">skrá (s) afrituð á klemmuspjald</string>
+    <string name="msg_delete_success">eytt</string>
+    <string name="msg_copy_failure">Afritun mistókst</string>
+    <string name="msg_move_failure">Færa mistókst</string>
+    <string name="msg_delete_failure">Eyða mistókst</string>
+    <string name="dialog_skip">Sleppa</string>
+    <string name="dialog_replace">Skipta</string>
+    <string name="dialog_keep_both">Halda bæði skrár</string>
+    <string name="dialog_cancel">Hætta</string>
+    <string name="msg_file_exists">skráin er til</string>
+    <string name="dialog_from_placeholder">frá</string>
+    <string name="dialog_to_placeholder">til</string>
+    <string name="background">bakgrunnur</string>
+    <string name="dialog_delete_title">Ertu viss um að þú viljir eyða %d skrám?</string>
+    <string name="msg_ok">OK</string>
+    <string name="no_files">engar skrár</string>
+    <string name="msg_error_invalid_name">Sláðu inn gilt nafn</string>
+    <string name="path">path:</string>
+    <string name="size">stærð:</string>
+    <string name="date_modified">Dagsetning breytt:</string>
+    <string name="hidden">falinn:</string>
+    <string name="readable">læsileg:</string>
+    <string name="writeable">writeable:</string>
+    <string name="md5">MD5:</string>
+    <string name="permissions">heimildir</string>
+    <string name="yes">Já</string>
+    <string name="no">engin</string>
+    <string name="properties">Properties</string>
+    <string name="new_folder">Ný mappa</string>
+    <string name="new_file">ný skrá</string>
+    <string name="rate_us">Gefa okkur</string>
+    <string name="add_fav">Bæta við uppáhöld</string>
+    <string name="msg_added_to_fav">Bætt við uppáhöld</string>
+    <string name="msg_error_not_supported">Ekkert forrit til að höndla aðgerð</string>
+    <string name="permission_request">Þarftu geymsla leyfi til að sýna allar skrár</string>
+    <string name="action_grant">GRANT</string>
+    <string name="action_view_list">List view</string>
+    <string name="action_view_grid">Grid view</string>
+    <string name="extract_to">þykkni til</string>
+    <string name="open">Open</string>
+    <string name="extracting">Útdráttur ..</string>
+    <string name="dialog_current_path">Núverandi Slóð</string>
+    <string name="dialog_specify_path">tilgreina slóð</string>
+    <string name="enter_file_name">Sláðu inn skráarnafnið</string>
+    <string name="extract">þykkni</string>
+    <string name="dialog_title_browse">Veldu möppu</string>
+    <string name="action_select_all">Velja allt</string>
+    <string name="delete_fav">eyða uppáhalds</string>
+    <string name="action_search">leit</string>
+    <string name="pref_title_theme">Þema</string>
+    <string name="pref_subs_light">ljós</string>
+    <string name="pref_subs_dark">Dark</string>
+    <string name="pref_title_reset_fav">Endurstilla uppáhöld</string>
+    <string name="pref_title_show_hidden">Sýna faldar skrár</string>
+    <string name="pref_title_disable_dual">Dual megin í landslaginu</string>
+    <string name="pref_title_check_update">Athugaðu með uppfærslur</string>
+    <string name="pref_title_change_lang">Tungumál</string>
+    <string name="pref_title_about">Um okkur</string>
+    <string name="pref_title_version">útgáfa</string>
+    <string name="prefs_summary_dev">Hönnuður</string>
+    <string name="hide">fela</string>
+    <string name="unhide">Birta</string>
+    <string name="more">meira</string>
+    <string name="drag">draga</string>
+    <string name="move">færa</string>
+    <string name="msg_fav_reset">Uppáhöld resetted að vanræksla.</string>
+    <string name="pref_title_homescreen">Sýna homescreen</string>
+    <string name="home_add">Bæta</string>
+    <string name="home_docs">Docs</string>
+    <string name="compressed">þjappað</string>
+    <string name="apk">forrit</string>
+    <string name="pdf">PDF</string>
+    <string name="library_large">stórar skrár</string>
+    <string name="open_as">Opna sem</string>
+    <string name="text">Texti</string>
+    <string name="image">Mynd</string>
+    <string name="audio">Audio</string>
+    <string name="other">Annað</string>
+    <string name="create">Búa</string>
+    <string name="zip_progress_title">búa til Zip</string>
+    <string name="needsaccess">Skrifaðu aðgang þarf</string>
+    <string name="needs_access_summary">Vinsamlegast veldu rót skrá af %1$s að veita skrifréttindi starfa</string>
+    <string name="error">villa</string>
+    <string name="completed">lokið</string>
+    <string name="msg_operation_failed">aðgerð mistókst</string>
+    <string name="selected">valinn</string>
+    <string name="enter_name">Sláðu inn heiti</string>
+    <string name="storage_low">nægt pláss</string>
+    <string name="paste_conflict_remember">Mundu</string>
+    <string name="copying">skrár afritun</string>
+    <string name="moving">flytja skrár</string>
+    <string name="package_installer">pakki Installer</string>
+    <string name="view">Útsýni</string>
+    <string name="install">setja</string>
+    <string name="package_installer_content">Hvaða aðgerð viltu gera?</string>
+    <string name="open_source_license">Opinn uppspretta leyfi</string>
+    <string name="need_permission">þarf leyfi</string>
+    <string name="permission_setting_hint">Pikkaðu á Stillingar -> Heimildir og þá snúa geymslu á.</string>
+    <string name="access_denied_external">Skrifréttindi ytri SD ekki veitt</string>
+    <string name="permission_read">Lesa</string>
+    <string name="permission_write">skrifaðu</string>
+    <string name="permission_execute">keyra</string>
+    <string name="permission_owner">eigandi</string>
+    <string name="permission_group">Group</string>
+    <string name="next">NEXT</string>
+    <string name="skip">SKIP</string>
+    <string name="start">NÁÐI ÞVÍ</string>
+    <string name="slide_1_title">skipulögð Library</string>
+    <string name="slide_1_desc">Einn smellur á miðöldum bókasafn frá homescreen.</string>
+    <string name="slide_2_title">kíkja og skjóta</string>
+    <string name="slide_2_desc">kíkja og skjóta myndunum þínum og myndskeiðum.</string>
+    <string name="slide_3_title">Draga og sleppa</string>
+    <string name="slide_3_desc">Dragðu skrár úr einni möppu í aðra!</string>
+    <string name="action_sort">Raða</string>
+    <string name="slide_4_title">Þemu</string>
+    <string name="slide_4_desc">Dark eða Light hátt! Val þitt.</string>
+    <string name="no_music"> Engar Tónl.skrár</string>
+    <string name="fav_removed">Fjarlægt úr eftirlæti</string>
+    <string name="img_accessibility_back">Back</string>
+    <string name="img_accessibility_permission">Grant leyfi</string>
+    <string name="img_accessibility_expand">Stækka eða Minnka</string>
+    <string name="img_accessibility_brand">app logo</string>
+    <string name="img_accessibility_icon_lib">Bókasafn táknið</string>
+    <string name="img_accessibility_storage_icon">geymsla táknið</string>
+	<string name="unlock_full_version">Aflæsa fulla útgáfu</string>
+    <string name="full_version_buy_ask">Full útgáfa fjarlægir pirrandi auglýsingar. Viltu kaupa það?</string>
+    <string name="dialog_title_picker">Veldu hljóðskrá</string>
+	<string name="app_invite_title">app bjóða</string>
+    <string name="app_invite_msg">Prófaðu þetta flott skráastjóri !!</string>
+    <string name="app_invite_failed">Sending Boðskort mistókst.</string>
+
+    <string name="browse">Skoða</string>
+    <string name="msg_error_unrooted">Aðgangur að rótum hafnað.</string>
+    <string name="billing_unsupported">Kaup í forritum er ekki studd á þessu tæki.</string>
+    <string name="action_more">Meira</string>
+    <string name="directory">Skrá</string>
+    <string name="operation">Aðgerð</string>
+    <string name="extract_complete">Útdráttur lokið</string>
+    <string name="clipboard">%d í klemmuspjaldinu</string>
+    <string name="fav_exists">Uppáhalds er þegar til.</string>
+    <string name="msg_added_fav">%d atriði (s) bætt við Favorites.</string>
+    <string name="header_source">Heimild</string>
+    <string name="header_destination">Áfangastaður</string>
+    <string name="error_unsupported">Ekki stutt</string>
+    <string name="copy_path">Afrita slóð</string>
+    <string name="text_copied_clipboard">Afritað á klemmuspjald.</string>
+    <string name="analytics_text">Senda greiningar</string>
+    <string name="analytics_summary">Hjálpaðu okkur að bæta forritið með því að senda nafnlausa notkunarupplýsingar.</string>
+    <string name="move_complete">Færa lokið</string>
+	
+	<string name="dual_pane_intro_title">Dual rás</string>
+    <string name="dual_pane_intro_subtitle">Dual ham fyrir betri notagildi.</string>
+    <string name="sort_name">Nafn</string>
+    <string name="sort_type">Gerð</string>
+    <string name="sort_size">Stærð</string>
+    <string name="sort_date">Dagsetning</string>
+    <string name="ascending">Hækkandi</string>
+    <string name="library_recent">Nýleg</string>
+    <string name="albums">Albúm</string>
+    <string name="artists">Listamenn</string>
+    <string name="genres">Tegundir</string>
+    <string name="all_tracks">Öll lög</string>
+    <string name="notifications">Tilkynningar</string>
+    <string name="alarms">Vekjaraklukka</string>
+    <string name="ringtones">Hringitónar</string>
+    <string name="podcasts">Podcasts</string>
+    <string name="mute">Slökktu á</string>
+    <string name="unmute">Slökkva á</string>
+    <string name="nav_header_tools">Verkfæri</string>
+    <string name="app_manager">Forritastjóri</string>
+    <string name="category">Flokkur</string>
+    <string name="unknown">Óþekktur</string>
+    <string name="enabled">Virkja</string>
+    <string name="trash">Ruslið</string>
+    <string name="move_trash">Færðu í ruslið</string>
+    <string name="restore">Endurheimta</string>
+    <string name="moving_title_trash">Flyt í ruslið</string>
+    <string name="restoring_title_trash">Endurheimt</string>
+
+</resources>

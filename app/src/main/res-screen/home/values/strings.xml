@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_add">Add</string>
+    <string name="home_docs">Docs</string>
+    <string name="compressed">Compressed</string>
+    <string name="apk">Apps</string>
+    <string name="pdf">PDF</string>
+    <string name="library_large">Large files</string>
+    <string name="library_recent">Recent</string>
+
+    <string name="library_gif" translatable="false">GIF</string>
+</resources>

@@ -1,0 +1,227 @@
+<!--
+  ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+    <string name="app_name">Ace Explorer</string>
+    <string name="navigation_drawer_open">Açık Gezinme çekmecesini</string>
+    <string name="navigation_drawer_close">Gezinme çekmecesini kapat</string>
+    <string name="action_settings">Ayarlar</string>
+    <string name="nav_menu_internal_storage">Dahili depolama</string>
+    <string name="nav_menu_root">Kök</string>
+    <string name="nav_menu_ext_storage">harici SD</string>
+    <string name="nav_menu_music">Müzik</string>
+    <string name="nav_menu_video">Videolar</string>
+    <string name="nav_menu_image">Görüntüler</string>
+    <string name="nav_menu_docs">evraklar</string>
+    <string name="nav_header_storages">Depolar</string>
+    <string name="nav_header_favourites">Favoriler</string>
+    <string name="nav_header_collections">Kütüphane</string>
+    <string name="nav_header_others">Diğerleri</string>
+    <string name="msg_free">ücretsiz</string>
+    <string name="empty">Boş</string>
+    <plurals name="number_of_files">
+        <item quantity="one">%d dosya</item>
+        <item quantity="other">%d dosyaları</item>
+    </plurals>
+    <string name="downloads">İndirme</string>
+    <string name="action_rename">Adını değiştirmek</string>
+    <string name="action_info">Özellikleri</string>
+    <string name="action_archive">Arşiv</string>
+    <string name="action_cut">kesim</string>
+    <string name="action_copy">kopya</string>
+    <string name="action_paste">Yapıştırmak</string>
+    <string name="action_delete">silmek</string>
+    <string name="action_share">Pay</string>
+    <string name="msg_cut_copy">dosya (lar) panoya kopyalandı</string>
+    <string name="msg_delete_success">başarıyla silindi</string>
+    <string name="msg_copy_failure">Kopya işlemi başarısız oldu</string>
+    <string name="msg_move_failure">Taşıma işlemi başarısız oldu</string>
+    <string name="msg_delete_failure">Sil işlemi başarısız oldu</string>
+    <string name="dialog_skip">atlamak</string>
+    <string name="dialog_replace">değiştirmek</string>
+    <string name="dialog_keep_both">Her iki dosyaları tutmak</string>
+    <string name="dialog_cancel">İptal etmek</string>
+    <string name="msg_file_exists">dosya var</string>
+    <string name="dialog_from_placeholder">itibaren</string>
+    <string name="dialog_to_placeholder">için</string>
+    <string name="background">Arka fon</string>
+    <string name="dialog_delete_title">%D dosyaları silmek istediğinizden emin misiniz?</string>
+    <string name="msg_ok">tamam</string>
+    <string name="no_files">Dosya yok</string>
+    <string name="msg_error_invalid_name">Geçerli bir ad girin</string>
+    <string name="path">Yol:</string>
+    <string name="size">Boyut:</string>
+    <string name="date_modified">Değiştirilme tarihi:</string>
+    <string name="hidden">Gizli:</string>
+    <string name="readable">Okunabilir:</string>
+    <string name="writeable">yazılabilir:</string>
+    <string name="md5">MD5:</string>
+    <string name="permissions">İzinler</string>
+    <string name="yes">Evet</string>
+    <string name="no">Yok hayır</string>
+    <string name="properties">Özellikleri</string>
+    <string name="new_folder">Yeni dosya</string>
+    <string name="new_file">Yeni dosya</string>
+    <string name="rate_us">Bizi değerlendirin</string>
+    <string name="add_fav">Favorilere ekle</string>
+    <string name="msg_added_to_fav">Sık eklendi</string>
+    <string name="msg_error_not_supported">Hiçbir uygulama eylemi işlemek için</string>
+    <string name="permission_request">tüm dosyaları göstermek için depolama iznine ihtiyacınız</string>
+    <string name="action_grant">HİBE</string>
+    <string name="action_view_list">Liste görünümü</string>
+    <string name="action_view_grid">ızgara görünümü</string>
+    <string name="extract_to">ayıklayın</string>
+    <string name="open">Açık</string>
+    <string name="extracting">Ayıklanıyor ..</string>
+    <string name="dialog_current_path">Geçerli yol</string>
+    <string name="dialog_specify_path">yolu belirtin</string>
+    <string name="enter_file_name">Dosya adını girin</string>
+    <string name="extract">özüt</string>
+    <string name="dialog_title_browse">klasörü seçin</string>
+    <string name="action_select_all">Hepsini seç</string>
+    <string name="delete_fav">favori sil</string>
+    <string name="action_search">Arama</string>
+    <string name="pref_title_theme">Tema</string>
+    <string name="pref_subs_light">ışık</string>
+    <string name="pref_subs_dark">karanlık</string>
+    <string name="pref_title_reset_fav">sıfırlama sık</string>
+    <string name="pref_title_show_hidden">Gizli dosyaları göster</string>
+    <string name="pref_title_disable_dual">Manzara Çift bölmesi</string>
+    <string name="pref_title_check_update">Güncellemeleri kontrol et</string>
+    <string name="pref_title_change_lang">Dil</string>
+    <string name="pref_title_about">Hakkımızda</string>
+    <string name="pref_title_version">versiyon</string>
+    <string name="prefs_summary_dev">Geliştirici</string>
+    <string name="hide">gizlemek</string>
+    <string name="unhide">Göster\'i</string>
+    <string name="more">Daha</string>
+    <string name="drag">Sürüklemek</string>
+    <string name="move">Hareket</string>
+    <string name="msg_fav_reset">Favoriler varsayılan resetted.</string>
+    <string name="pref_title_homescreen">göster ana ekran</string>
+    <string name="home_add">Eklemek</string>
+    <string name="home_docs">Dokümanlar</string>
+    <string name="compressed">Sıkıştırılmış</string>
+    <string name="apk">Uygulamalar</string>
+    <string name="pdf">PDF</string>
+    <string name="library_large">büyük dosyaları</string>
+    <string name="open_as">Açık olduğu gibi</string>
+    <string name="text">Metin</string>
+    <string name="image">görüntü</string>
+    <string name="audio">Ses</string>
+    <string name="other">Diğer</string>
+    <string name="create">yaratmak</string>
+    <string name="zip_progress_title">oluşturma zip</string>
+    <string name="needsaccess">Erişim Gerekli yaz</string>
+    <string name="needs_access_summary">çalışmasına yazma erişimi vermek için %1$s kök dizinini seçiniz</string>
+    <string name="error">Hata</string>
+    <string name="completed">Tamamlanan</string>
+    <string name="msg_operation_failed">Operasyon başarısız</string>
+    <string name="selected">seçilmiş</string>
+    <string name="enter_name">İsim giriniz</string>
+    <string name="storage_low">Yetersiz alan</string>
+    <string name="paste_conflict_remember">Hatırlamak</string>
+    <string name="copying">dosya kopyalama</string>
+    <string name="moving">hareketli dosyalar</string>
+    <string name="package_installer">paket Yükleyici</string>
+    <string name="view">Görünüm</string>
+    <string name="install">kurmak</string>
+    <string name="package_installer_content">Hangi eylem yapmak istersiniz?</string>
+    <string name="open_source_license">Açık kaynak lisansları</string>
+    <string name="need_permission">izin alması gerekiyor</string>
+    <string name="permission_setting_hint">Dokunun Ayarlar -> İzinler ve ardından Saklama açın.</string>
+    <string name="access_denied_external">Dış Yazma erişim izni olmayan SD</string>
+    <string name="permission_read">okumak</string>
+    <string name="permission_write">Yazmak</string>
+    <string name="permission_execute">gerçekleştirmek</string>
+    <string name="permission_owner">Sahip</string>
+    <string name="permission_group">grup</string>
+    <string name="next">SONRAKİ</string>
+    <string name="skip">SKIP</string>
+    <string name="start">ANLADIM</string>
+    <string name="slide_1_title">Organize Kütüphanesi</string>
+    <string name="slide_1_desc">homescreen ortam kitaplığına Bir tıklayın.</string>
+    <string name="slide_2_title">gözetleme ve pop</string>
+    <string name="slide_2_desc">İnceleyin ve resimlerinizi ve videolarınızı açın.</string>
+	<string name="slide_3_title">Sürükle ve bırak</string>
+    <string name="slide_3_desc">başka bir klasördeki dosyaları sürükleyin!</string>
+    <string name="action_sort">çeşit</string>
+    <string name="slide_4_title">Temalar</string>
+    <string name="slide_4_desc">Koyu veya Açık yolu! Senin seçimin.</string>
+    <string name="no_music"> Hiçbir Müzik dosyaları</string>
+    <string name="fav_removed">favorilerden kaldırıldı</string>
+    <string name="img_accessibility_back">Arka</string>
+    <string name="img_accessibility_permission">hibe izni</string>
+    <string name="img_accessibility_expand">Expand veya kapa</string>
+    <string name="img_accessibility_brand">Uygulama logosu</string>
+    <string name="img_accessibility_icon_lib">Kütüphane simgesi</string>
+    <string name="img_accessibility_storage_icon">depolama simgesi</string>
+	<string name="unlock_full_version">Tam sürümün kilidini aç</string>
+    <string name="full_version_buy_ask">Tam sürüm rahatsız edici reklamları kaldırır. Satın almak istiyor musun</string>
+    <string name="dialog_title_picker">Müzik dosyası seçin</string>
+	<string name="app_invite_title">Uygulama davetiyesi</string>
+    <string name="app_invite_msg">Bu harika dosya yöneticisini deneyin !!</string>
+    <string name="app_invite_failed">Davetiye gönderilemedi.</string>
+
+    <string name="browse">Araştır</string>
+    <string name="msg_error_unrooted">Kök erişimi reddedildi.</string>
+    <string name="billing_unsupported">Uygulama içi satın alma işlemleri bu cihazda desteklenmiyor.</string>
+    <string name="action_more">Daha</string>
+    <string name="directory">rehber</string>
+    <string name="operation">Operasyon</string>
+    <string name="extract_complete">Ayıklanan tamamlandı</string>
+    <string name="clipboard">%d panoya</string>
+    <string name="fav_exists">Favori zaten var.</string>
+    <string name="msg_added_fav">%d madde (ler) Favorilere eklendi.</string>
+    <string name="header_source">Kaynak</string>
+    <string name="header_destination">Hedef</string>
+    <string name="error_unsupported">Desteklenmiyor</string>
+    <string name="copy_path">Yolu kopyala</string>
+    <string name="text_copied_clipboard">Panoya kopyalandı.</string>
+    <string name="analytics_text">Analiz gönder</string>
+    <string name="analytics_summary">Anonim kullanım verileri göndererek uygulamayı iyileştirmemize yardımcı olun.</string>
+    <string name="move_complete">Tamamlandı Taşı</string>
+	
+	<string name="dual_pane_intro_title">Çiftli bölme</string>
+    <string name="dual_pane_intro_subtitle">Daha iyi kullanılabilirlik için ikili mod.</string>
+    <string name="sort_name">isim</string>
+    <string name="sort_type">tip</string>
+    <string name="sort_size">Boyut</string>
+    <string name="sort_date">tarih</string>
+    <string name="ascending">yükselen</string>
+    <string name="library_recent">Son</string>
+    <string name="albums">albümler</string>
+    <string name="artists">Sanatçılar</string>
+    <string name="genres">Türler</string>
+    <string name="all_tracks">Tüm şarkılar</string>
+    <string name="notifications">Bildirimler</string>
+    <string name="alarms">alarm</string>
+    <string name="ringtones">Zil sesleri</string>
+    <string name="podcasts">Podcast</string>
+    <string name="mute">Sessiz</string>
+    <string name="unmute">Sesi aç</string>
+    <string name="nav_header_tools">Araçlar</string>
+    <string name="app_manager">Uygulama Yöneticisi</string>
+    <string name="category">Kategori</string>
+    <string name="unknown">Bilinmeyen</string>
+    <string name="enabled">Etkin</string>
+    <string name="trash">Çöp</string>
+    <string name="move_trash">Çöp kutusuna taşıyın</string>
+    <string name="restore">Restore</string>
+    <string name="moving_title_trash">Çöp Kutusuna Taşıma</string>
+    <string name="restoring_title_trash">geri Yükleme</string>
+
+</resources>
