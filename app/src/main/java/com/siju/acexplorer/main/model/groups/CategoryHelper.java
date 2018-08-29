@@ -2,6 +2,8 @@ package com.siju.acexplorer.main.model.groups;
 
 
 import android.content.Context;
+import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import com.siju.acexplorer.R;
 
@@ -9,6 +11,8 @@ import static com.siju.acexplorer.main.model.groups.Category.*;
 
 
 public class CategoryHelper {
+
+    public static final String MIME_TYPE_APK = "application/vnd.android.package-archive";
 
     public static Category getCategory(int position) {
         switch (position) {
@@ -91,6 +95,15 @@ public class CategoryHelper {
                 category.equals(ALL_TRACKS) ;
     }
 
+    public static boolean isRecentCategory(Category category) {
+        return RECENT_IMAGES.equals(category) || RECENT_AUDIO.equals(category) ||
+               RECENT_APPS.equals(category) || RECENT_VIDEOS.equals(category) ||
+               RECENT_DOCS.equals(category);
+    }
+
+    public static boolean isRecentGenericCategory(Category category) {
+        return RECENT.equals(category);
+    }
 
 
     public static boolean isGenericImagesCategory(Category category) {
@@ -117,16 +130,66 @@ public class CategoryHelper {
                 isGenericImagesCategory(category));
     }
 
+    public static Category getCategoryForRecentFromExtension(String extension) {
+
+        Category value = RECENT_DOCS;
+        if (extension == null) {
+            return RECENT_DOCS;
+        }
+        extension = extension.toLowerCase(); // necessary
+        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        Log.d("CategoryHelper", "getCategoryForRecentFromExtension: ext;"+extension + " mime:"+mimeType);
+        if (mimeType != null) {
+            if (mimeType.indexOf("image") == 0) {
+                value = RECENT_IMAGES;
+            } else if (mimeType.indexOf("video") == 0) {
+                value = RECENT_VIDEOS;
+            } else if (mimeType.indexOf("audio") == 0) {
+                value = RECENT_AUDIO;
+            } else if (MIME_TYPE_APK.equals(mimeType)) {
+                value = RECENT_APPS;
+            }
+        }
+        return value;
+    }
+
+    public static Category getSubCategoryForRecentFromExtension(String extension) {
+
+        Category value = DOCS;
+        if (extension == null) {
+            return DOCS;
+        }
+        extension = extension.toLowerCase(); // necessary
+        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        Log.d("CategoryHelper", "getCategoryForRecentFromExtension: ext;"+extension + " mime:"+mimeType);
+        if (mimeType != null) {
+            if (mimeType.indexOf("image") == 0) {
+                value = IMAGE;
+            } else if (mimeType.indexOf("video") == 0) {
+                value = VIDEO;
+            } else if (mimeType.indexOf("audio") == 0) {
+                value = AUDIO;
+            } else if (MIME_TYPE_APK.equals(mimeType)) {
+                value = APPS;
+            }
+        }
+        return value;
+    }
+
     public static String getCategoryName(Context context, Category categoryId) {
         switch (categoryId) {
+            case RECENT_AUDIO:
             case AUDIO:
                 return context.getString(R.string.audio);
+            case RECENT_VIDEOS:
             case VIDEO:
             case GENERIC_VIDEOS:
                 return context.getString(R.string.nav_menu_video);
+            case RECENT_IMAGES:
             case IMAGE:
             case GENERIC_IMAGES:
                 return context.getString(R.string.nav_menu_image);
+            case RECENT_DOCS:
             case DOCS:
                 return context.getString(R.string.nav_menu_docs);
             case DOWNLOADS:
@@ -139,6 +202,7 @@ public class CategoryHelper {
                 return context.getString(R.string.nav_header_favourites);
             case PDF:
                 return context.getString(R.string.pdf);
+            case RECENT_APPS:
             case APPS:
                 return context.getString(R.string.apk);
             case LARGE_FILES:

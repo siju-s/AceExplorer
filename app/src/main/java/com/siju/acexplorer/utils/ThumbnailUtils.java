@@ -49,6 +49,7 @@ public class ThumbnailUtils {
             case APPS:
             case LARGE_FILES:
             case ZIP_VIEWER:
+            case RECENT_APPS:
                 if (isDirectory) {
                     imageIcon.setImageResource(R.drawable.ic_folder);
                     if (imageThumbIcon != null) {
@@ -85,6 +86,7 @@ public class ThumbnailUtils {
                 }
                 break;
             case AUDIO:
+            case RECENT_AUDIO:
                 displayAudioAlbumArt(context, fileInfo.getBucketId(), imageIcon,
                                      filePath);
                 break;
@@ -92,15 +94,18 @@ public class ThumbnailUtils {
             case VIDEO:
             case GENERIC_VIDEOS:
             case FOLDER_VIDEOS:
+            case RECENT_VIDEOS:
                 displayVideoThumb(context, imageIcon, filePath);
                 break;
 
             case IMAGE: // For images group
             case GENERIC_IMAGES:
             case FOLDER_IMAGES:
+            case RECENT_IMAGES:
                 displayImageThumb(context, imageIcon, filePath);
                 break;
             case DOCS: // For docs group
+            case RECENT_DOCS:
                 String extension = fileInfo.getExtension();
                 extension = extension.toLowerCase();
                 changeFileIcon(context, imageIcon, extension, null);

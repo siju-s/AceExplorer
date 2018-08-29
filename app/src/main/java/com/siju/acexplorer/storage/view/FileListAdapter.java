@@ -50,6 +50,7 @@ import static android.view.View.GONE;
 import static com.siju.acexplorer.main.model.groups.Category.APP_MANAGER;
 import static com.siju.acexplorer.main.model.groups.Category.FOLDER_VIDEOS;
 import static com.siju.acexplorer.main.model.groups.Category.PICKER;
+import static com.siju.acexplorer.main.model.groups.Category.RECENT;
 import static com.siju.acexplorer.main.model.groups.Category.VIDEO;
 import static com.siju.acexplorer.main.model.groups.CategoryHelper.checkIfFileCategory;
 import static com.siju.acexplorer.main.model.groups.CategoryHelper.isGenericImagesCategory;
@@ -57,6 +58,7 @@ import static com.siju.acexplorer.main.model.groups.CategoryHelper.isGenericMusi
 import static com.siju.acexplorer.main.model.groups.CategoryHelper.isGenericVideosCategory;
 import static com.siju.acexplorer.main.model.groups.CategoryHelper.isMusicCategory;
 import static com.siju.acexplorer.main.model.groups.CategoryHelper.isPeekPopCategory;
+import static com.siju.acexplorer.main.model.groups.CategoryHelper.isRecentCategory;
 import static com.siju.acexplorer.utils.ThumbnailUtils.displayThumb;
 
 
@@ -396,6 +398,8 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             setViewGenericImagesVidsCategory(fileListViewHolder, fileInfo);
         } else if (category.equals(APP_MANAGER)) {
             setAppManagerCategory(fileListViewHolder, fileInfo);
+        } else if (isRecentCategory(category)) {
+            setViewGenericRecent(fileListViewHolder, fileInfo);
         }
         else {
             if (peekAndPop != null && isPeekPopCategory(category)) {
@@ -445,8 +449,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                                                 count, count);
         fileListViewHolder.textFileName.setText(CategoryHelper.getCategoryName(context, fileInfo.getSubcategory()));
         fileListViewHolder.textNoOfFileOrSize.setText(files);
-        displayThumb(context, fileInfo, category, fileListViewHolder.imageIcon,
-                     fileListViewHolder.imageThumbIcon);
+        fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_folder);
     }
 
     private void setViewMusicCategory(FileListViewHolder fileListViewHolder, FileInfo fileInfo) {
@@ -473,6 +476,15 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
         displayThumb(context, fileInfo, category, fileListViewHolder.imageIcon,
                      fileListViewHolder.imageThumbIcon);
+    }
+
+    private void setViewGenericRecent(FileListViewHolder fileListViewHolder, FileInfo fileInfo) {
+        int count = fileInfo.getCount();
+        String files = context.getResources().getQuantityString(R.plurals.number_of_files,
+                                                                count, count);
+        fileListViewHolder.textFileName.setText(CategoryHelper.getCategoryName(context, fileInfo.getSubcategory()));
+        fileListViewHolder.textNoOfFileOrSize.setText(files);
+        fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_folder);
     }
 
     private void setAppManagerCategory(FileListViewHolder fileListViewHolder, FileInfo fileInfo) {

@@ -62,6 +62,7 @@ public class FileUtils {
     public static final int ACTION_NONE = 0;
     public static final int ACTION_KEEP = 3;
     private static final HashMap<String, String> MIME_TYPES = new HashMap<>();
+    public static final String EXT_APK = "apk";
 
 
     static {
@@ -427,6 +428,10 @@ public class FileUtils {
         return filePath.toLowerCase().endsWith(".zip") ||
                 filePath.toLowerCase().endsWith(".tar") ||
                 filePath.toLowerCase().endsWith(".tar.gz");
+    }
+
+    public static boolean isApk(String extension) {
+        return EXT_APK.equals(extension);
     }
 
     /**

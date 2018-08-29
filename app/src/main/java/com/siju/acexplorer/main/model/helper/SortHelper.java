@@ -17,6 +17,7 @@
 package com.siju.acexplorer.main.model.helper;
 
 import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.main.model.groups.Category;
 import com.siju.acexplorer.storage.model.ZipModel;
 
 import java.io.File;
@@ -25,21 +26,22 @@ import java.util.Collections;
 import java.util.Comparator;
 
 
-
 public class SortHelper {
 
     public static final Comparator<? super FileInfo> comparatorByNameZip = new Comparator<FileInfo>() {
 
         public int compare(FileInfo file1, FileInfo file2) {
             // sort folders first
-            if ((file1.isDirectory()) && (!file2.isDirectory()))
+            if ((file1.isDirectory()) && (!file2.isDirectory())) {
                 return -1;
-            if ((!file1.isDirectory()) && (file2.isDirectory()))
+            }
+            if ((!file1.isDirectory()) && (file2.isDirectory())) {
                 return 1;
+            }
 
             // here both are folders or both are files : sort alpha
             return file1.getFileName().toLowerCase()
-                    .compareTo(file2.getFileName().toLowerCase());
+                        .compareTo(file2.getFileName().toLowerCase());
         }
 
     };
@@ -48,14 +50,16 @@ public class SortHelper {
 
         public int compare(ZipModel file1, ZipModel file2) {
             // sort folders first
-            if ((file1.isDirectory()) && (!file2.isDirectory()))
+            if ((file1.isDirectory()) && (!file2.isDirectory())) {
                 return -1;
-            if ((!file1.isDirectory()) && (file2.isDirectory()))
+            }
+            if ((!file1.isDirectory()) && (file2.isDirectory())) {
                 return 1;
+            }
 
             // here both are folders or both are files : sort alpha
             return file1.getName().toLowerCase()
-                    .compareTo(file2.getName().toLowerCase());
+                        .compareTo(file2.getName().toLowerCase());
         }
 
     };
@@ -125,18 +129,24 @@ public class SortHelper {
         return files;
     }
 
+    public static void sortRecentCategory(ArrayList<FileInfo> files) {
+       Collections.sort(files, comparatorRecentCategory);
+    }
+
 
     private static final Comparator<? super FileInfo> comparatorByName = new Comparator<FileInfo>() {
 
         public int compare(FileInfo file1, FileInfo file2) {
 
-            if ((file1.isDirectory()) && (!file2.isDirectory()))
+            if ((file1.isDirectory()) && (!file2.isDirectory())) {
                 return -1;
-            if ((!file1.isDirectory()) && (file2.isDirectory()))
+            }
+            if ((!file1.isDirectory()) && (file2.isDirectory())) {
                 return 1;
+            }
             // here both are folders or both are files : sort alpha
             return file1.getFileName().toLowerCase()
-                    .compareTo(file2.getFileName().toLowerCase());
+                        .compareTo(file2.getFileName().toLowerCase());
         }
 
     };
@@ -145,13 +155,15 @@ public class SortHelper {
 
         public int compare(FileInfo file1, FileInfo file2) {
 
-            if ((file1.isDirectory()) && (!file2.isDirectory()))
+            if ((file1.isDirectory()) && (!file2.isDirectory())) {
                 return -1;
-            if ((!file1.isDirectory()) && (file2.isDirectory()))
+            }
+            if ((!file1.isDirectory()) && (file2.isDirectory())) {
                 return 1;
+            }
             // here both are folders or both are files : sort alpha
             return file2.getFileName().toLowerCase()
-                    .compareTo(file1.getFileName().toLowerCase());
+                        .compareTo(file1.getFileName().toLowerCase());
         }
 
     };
@@ -229,6 +241,60 @@ public class SortHelper {
             Long date2 = file2.getDate();
             return date2.compareTo(date1);
         }
+    };
+
+    private static final Comparator<? super FileInfo> comparatorRecentCategory = new Comparator<FileInfo>() {
+
+        public int compare(FileInfo file1, FileInfo file2) {
+
+            Category category1 = file1.getCategory();
+            Category category2 = file2.getCategory();
+
+            // Images, Audio, Video, Docs, Apps
+
+            if (Category.IMAGE.equals(category1) && Category.AUDIO.equals(category2)) {
+                return -1;
+            } else if (Category.IMAGE.equals(category1) && Category.VIDEO.equals(category2)) {
+                return -1;
+            } else if (Category.IMAGE.equals(category1) && Category.DOCS.equals(category2)) {
+                return -1;
+            } else if (Category.IMAGE.equals(category1) && Category.APPS.equals(category2)) {
+                return -1;
+            } else if (Category.AUDIO.equals(category1) && Category.IMAGE.equals(category2)) {
+                return 1;
+            } else if (Category.AUDIO.equals(category1) && Category.VIDEO.equals(category2)) {
+                return -1;
+            } else if (Category.AUDIO.equals(category1) && Category.DOCS.equals(category2)) {
+                return -1;
+            } else if (Category.AUDIO.equals(category1) && Category.APPS.equals(category2)) {
+                return -1;
+            } else if (Category.VIDEO.equals(category1) && Category.IMAGE.equals(category2)) {
+                return 1;
+            } else if (Category.VIDEO.equals(category1) && Category.AUDIO.equals(category2)) {
+                return 1;
+            } else if (Category.VIDEO.equals(category1) && Category.DOCS.equals(category2)) {
+                return -1;
+            } else if (Category.VIDEO.equals(category1) && Category.APPS.equals(category2)) {
+                return -1;
+            }
+            else if (Category.DOCS.equals(category1) && Category.IMAGE.equals(category2)) {
+                return 1;
+            }
+            else if (Category.DOCS.equals(category1) && Category.AUDIO.equals(category2)) {
+                return 1;
+            }
+            else if (Category.DOCS.equals(category1) && Category.VIDEO.equals(category2)) {
+                return 1;
+            }
+            else if (Category.DOCS.equals(category1) && Category.APPS.equals(category2)) {
+                return -1;
+            } else if (category1.equals(category2)) {
+                return 0;
+            } else {
+                return -1;
+            }
+        }
+
     };
 
     private static long getSize(File file) {

@@ -38,6 +38,16 @@ class DataLoader {
                 return ImageDataFetcher.fetchGif(context, category, sortMode, showOnlyCount, showHidden);
             case RECENT:
                 return RecentDataFetcher.fetchRecent(context, category, showOnlyCount, sortMode, showHidden);
+            case RECENT_IMAGES:
+                return RecentDataFetcher.fetchRecentImages(context,category , showHidden);
+            case RECENT_AUDIO:
+                return RecentDataFetcher.fetchRecentAudio(context,category , showHidden);
+            case RECENT_VIDEOS:
+                return RecentDataFetcher.fetchRecentVideos(context,category , showHidden);
+            case RECENT_DOCS:
+                return RecentDataFetcher.fetchRecentDocs(context,category , showHidden);
+            case RECENT_APPS:
+                return RecentDataFetcher.fetchRecentApps(context,category , showHidden);
             case APPS:
                 return AppDataFetcher.fetchApk(context, category, sortMode, showOnlyCount, showHidden);
         }

@@ -51,7 +51,12 @@ public enum Category {
     GENERIC_VIDEOS(31),
     FOLDER_VIDEOS(32),
     APP_MANAGER(33),
-    TRASH(34);
+    TRASH(34),
+    RECENT_IMAGES(35),
+    RECENT_AUDIO(36),
+    RECENT_VIDEOS(37),
+    RECENT_DOCS(38),
+    RECENT_APPS(39);
 
     private final int value;
 

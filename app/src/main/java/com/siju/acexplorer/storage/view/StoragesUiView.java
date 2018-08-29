@@ -704,8 +704,11 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             case FOLDER_IMAGES:
             case FOLDER_VIDEOS:
             case ALL_TRACKS:
-            case RECENT:
             case GIF:
+            case RECENT_AUDIO:
+            case RECENT_DOCS:
+            case RECENT_IMAGES:
+            case RECENT_VIDEOS:
                 this.extension = fileInfoList.get(position).getExtension().toLowerCase();
                 viewFile(getContext(), fileInfoList.get(position).getFilePath(),
                          extension, alertDialogListener);
@@ -718,6 +721,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             case APPS:
             case LARGE_FILES:
             case TRASH:
+            case RECENT_APPS:
                 genericFileItemClick(position);
                 break;
             case GENERIC_MUSIC:
@@ -752,6 +756,10 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 category = FOLDER_VIDEOS;
                 id = fileInfoList.get(position).getBucketId();
                 bucketName = fileInfoList.get(position).getFileName();
+                reloadList(null, category);
+                break;
+            case RECENT:
+                category = fileInfoList.get(position).getCategory();
                 reloadList(null, category);
                 break;
             case APP_MANAGER:
