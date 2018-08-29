@@ -55,6 +55,8 @@ import static com.siju.acexplorer.R.string.hide;
 import static com.siju.acexplorer.main.model.groups.Category.APP_MANAGER;
 import static com.siju.acexplorer.main.model.groups.Category.FAVORITES;
 import static com.siju.acexplorer.main.model.groups.Category.FILES;
+import static com.siju.acexplorer.main.model.groups.Category.LARGE_FILES;
+import static com.siju.acexplorer.main.model.groups.Category.RECENT;
 import static com.siju.acexplorer.main.model.groups.Category.TRASH;
 import static com.siju.acexplorer.main.model.groups.CategoryHelper.checkIfAnyMusicCategory;
 import static com.siju.acexplorer.main.model.groups.CategoryHelper.isSortOrActionModeUnSupported;
@@ -318,6 +320,9 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
         }
         if (isSortOrActionModeUnSupported(category)) {
             searchItem.setVisible(false);
+            sortItem.setVisible(false);
+        } else if (RECENT.equals(category) || LARGE_FILES.equals(category)) {
+            searchItem.setVisible(true);
             sortItem.setVisible(false);
         } else {
             searchItem.setVisible(true);

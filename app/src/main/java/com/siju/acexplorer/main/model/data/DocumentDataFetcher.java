@@ -47,7 +47,6 @@ class DocumentDataFetcher {
                 selectionArgs = new String[]{String.valueOf(LARGE_FILES_MIN_SIZE_MB)};
                 break;
         }
-
         Cursor cursor = context.getContentResolver().query(uri, null, selection, selectionArgs,
                                                            null);
 
@@ -118,15 +117,22 @@ class DocumentDataFetcher {
                 String fileName = cursor.getString(titleIndex);
                 String extension = FileUtils.getExtension(path);
                 String nameWithExt = FileUtils.constructFileNameWithExtension(fileName, extension);
-                category = getCategoryFromExtension(extension);
                 long size = cursor.getLong(sizeIndex);
                 long date = cursor.getLong(dateIndex);
                 long fileId = cursor.getLong(fileIdIndex);
-                fileInfoList.add(new FileInfo(category, fileId, nameWithExt, path, date, size, extension));
+                fileInfoList.add(new FileInfo(getCategoryFromExtension(extension), fileId, nameWithExt, path, date, size, extension));
             } while (cursor.moveToNext());
         }
         cursor.close();
+        if (isLargeFilesCategory(category)) {
+            sortMode = 5; // (Size desc) TODO 29-Aug-2018 Replace sort mode with enums
+        }
         sortFiles(fileInfoList, sortMode);
+
         return fileInfoList;
+    }
+
+    private static boolean isLargeFilesCategory(Category category) {
+        return Category.LARGE_FILES.equals(category);
     }
 }

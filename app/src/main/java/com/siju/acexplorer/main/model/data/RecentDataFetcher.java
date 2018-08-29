@@ -25,10 +25,11 @@ class RecentDataFetcher {
     {
         Uri uri = MediaStore.Files.getContentUri("external");
         String selection = constructRecentSelectionArgument();
+        String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
 
         Cursor cursor = context.getContentResolver().query(uri, null, selection, null,
-                                                           null);
-        return getDataFromCursor(cursor, category, showOnlyCount, sortMode, showHidden);
+                                                           sortOrder);
+        return getDataFromCursor(cursor, category, showOnlyCount, showHidden);
     }
 
     private static String constructRecentSelectionArgument() {
@@ -41,7 +42,7 @@ class RecentDataFetcher {
     }
 
     private static ArrayList<FileInfo> getDataFromCursor(Cursor cursor, Category category, boolean showOnlyCount,
-                                                         int sortMode, boolean showHidden)
+                                                         boolean showHidden)
     {
         ArrayList<FileInfo> fileInfoList = new ArrayList<>();
         if (cursor == null) {
@@ -78,6 +79,6 @@ class RecentDataFetcher {
             } while (cursor.moveToNext());
         }
         cursor.close();
-        return sortFiles(fileInfoList, sortMode);
+        return fileInfoList;
     }
 }
