@@ -402,12 +402,8 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 peekAndPop.addClickView(fileListViewHolder.imageIcon, position);
             }
             String fileName = fileInfo.getFileName();
-            String fileDate;
-            if (checkIfFileCategory(this.category)) {
-                fileDate = FileUtils.convertDate(fileInfo.getDate());
-            } else {
-                fileDate = FileUtils.convertDate(fileInfo.getDate() * 1000);
-            }
+            long dateMs = CategoryHelper.isDateInMs(this.category) ? fileInfo.getDate() : fileInfo.getDate() * 1000;
+            String fileDate = FileUtils.convertDate(dateMs);
             boolean isDirectory = fileInfo.isDirectory();
             String fileNoOrSize;
             if (isDirectory) {

@@ -60,6 +60,12 @@ public class CategoryHelper {
                 category.equals(LARGE_FILES);
     }
 
+    public static boolean isDateInMs(Category category) {
+        return category.equals(FILES) ||
+               category.equals(DOWNLOADS) ||
+               category.equals(FAVORITES);
+    }
+
     public static boolean isGenericMusic(Category category) {
         return category.equals(GENERIC_MUSIC);
     }
