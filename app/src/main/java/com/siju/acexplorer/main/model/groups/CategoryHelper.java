@@ -121,7 +121,8 @@ public class CategoryHelper {
 
     public static boolean showLibSpecificNavigation(Category category) {
         return  checkIfAnyMusicCategory(category) ||
-                category.equals(FOLDER_IMAGES) || category.equals(FOLDER_VIDEOS);
+                category.equals(FOLDER_IMAGES) || category.equals(FOLDER_VIDEOS) ||
+                isRecentCategory(category);
     }
 
     public static boolean isSortOrActionModeUnSupported(Category category) {

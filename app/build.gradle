@@ -93,27 +93,8 @@ android {
     }
     sourceSets {
         main {
-            res.srcDirs =
-                    [
-                            'src/main/res-appmanager',
-                            'src/main/res-common',
-                            'src/main/res-main',
-                            'src/main/res-permission',
-                            'src/main/res-screen',
-                            'src/main/res-screen/common',
-                            'src/main/res-screen/drawer',
-                            'src/main/res-screen/home',
-                            'src/main/res-screen/storage',
-                            'src/main/res-screen/storage/common',
-                            'src/main/res-screen/storage/info',
-                            'src/main/res-screen/storage/operations',
-                            'src/main/res-screen/storage/operations/paste',
-                            'src/main/res-screen/storage/peekpop',
-                            'src/main/res-screen/storage/sort',
-                            'src/main/res-settings',
-                            'src/main/res-settings/about',
-                            'src/main/res-welcome'
-                    ]
+            res.srcDirs = [rootProject.resDirs]
+
         }
     }
     externalNativeBuild {

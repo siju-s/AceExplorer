@@ -53,7 +53,7 @@ class DocumentDataFetcher {
         return getDataFromCursor(cursor, category, showOnlyCount, sortMode, showHidden);
     }
 
-    private static String constructSelectionForDocs() {
+    static String constructSelectionForDocs() {
         String doc = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_DOC);
         String docx = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_DOCX);
         String txt = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_TEXT);
@@ -76,7 +76,7 @@ class DocumentDataFetcher {
                + "'" + pptx + "'" + " )";
     }
 
-    private static String constructSelectionForZip() {
+    static String constructSelectionForZip() {
         String zip = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_ZIP);
         String tar = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_TAR);
         String tgz = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_TGZ);

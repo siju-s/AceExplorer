@@ -130,7 +130,7 @@ public class SortHelper {
     }
 
     public static void sortRecentCategory(ArrayList<FileInfo> files) {
-       Collections.sort(files, comparatorRecentCategory);
+        Collections.sort(files, comparatorRecentCategory);
     }
 
 
@@ -250,7 +250,7 @@ public class SortHelper {
             Category category1 = file1.getCategory();
             Category category2 = file2.getCategory();
 
-            // Images, Audio, Video, Docs, Apps
+            // Expected order is Images, Audio, Video, Docs, Apps
 
             if (Category.IMAGE.equals(category1) && Category.AUDIO.equals(category2)) {
                 return -1;
@@ -276,20 +276,18 @@ public class SortHelper {
                 return -1;
             } else if (Category.VIDEO.equals(category1) && Category.APPS.equals(category2)) {
                 return -1;
-            }
-            else if (Category.DOCS.equals(category1) && Category.IMAGE.equals(category2)) {
+            } else if (Category.DOCS.equals(category1) && Category.IMAGE.equals(category2)) {
                 return 1;
-            }
-            else if (Category.DOCS.equals(category1) && Category.AUDIO.equals(category2)) {
+            } else if (Category.DOCS.equals(category1) && Category.AUDIO.equals(category2)) {
                 return 1;
-            }
-            else if (Category.DOCS.equals(category1) && Category.VIDEO.equals(category2)) {
+            } else if (Category.DOCS.equals(category1) && Category.VIDEO.equals(category2)) {
                 return 1;
-            }
-            else if (Category.DOCS.equals(category1) && Category.APPS.equals(category2)) {
+            } else if (Category.DOCS.equals(category1) && Category.APPS.equals(category2)) {
                 return -1;
             } else if (category1.equals(category2)) {
                 return 0;
+            } else if (Category.APPS.equals(category1) || Category.APPS.equals(category2)) {
+                return 1;
             } else {
                 return -1;
             }

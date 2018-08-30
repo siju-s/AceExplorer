@@ -318,13 +318,15 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
         if (sortItem == null) {
             return;
         }
-        if (isSortOrActionModeUnSupported(category)) {
+        if (isSortOrActionModeUnSupported(category) || RECENT.equals(category)) {
             searchItem.setVisible(false);
             sortItem.setVisible(false);
-        } else if (RECENT.equals(category) || LARGE_FILES.equals(category)) {
+        }
+        else if (LARGE_FILES.equals(category)) {
             searchItem.setVisible(true);
             sortItem.setVisible(false);
-        } else {
+        }
+        else {
             searchItem.setVisible(true);
             sortItem.setVisible(true);
         }
@@ -370,8 +372,7 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
                 isPasteVisible = false;
                 if (copiedData.size() > 0) {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_PASTE);
-                    ArrayList<FileInfo> info = new ArrayList<>();
-                    info.addAll(copiedData);
+                    ArrayList<FileInfo> info = new ArrayList<>(copiedData);
                     storagesUiView.onPasteAction(isMoveOperation, info, currentDir);
                     copiedData.clear();
                     endActionMode();

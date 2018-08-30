@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.webkit.MimeTypeMap;
 
 import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.main.model.HiddenFileHelper;
@@ -17,6 +18,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.siju.acexplorer.main.model.data.DocumentDataFetcher.constructSelectionForDocs;
+import static com.siju.acexplorer.main.model.data.DocumentDataFetcher.constructSelectionForZip;
 import static com.siju.acexplorer.main.model.groups.Category.RECENT_DOCS;
 import static com.siju.acexplorer.main.model.helper.FileUtils.isApk;
 
@@ -28,74 +31,20 @@ class RecentDataFetcher {
                                            boolean showOnlyCount, boolean showHidden)
     {
         Uri uri = MediaStore.Files.getContentUri("external");
-        String selection = constructRecentTimeSelectionArgument() + " AND " + buildHasMimeTypeArguments();
-        String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
-
-        Cursor cursor = context.getContentResolver().query(uri, null, selection, null,
-                                                           sortOrder);
-        return getDataFromCursor(cursor, category, showOnlyCount, showHidden);
-    }
-
-    @NonNull
-    private static String buildHasMimeTypeArguments() {
-        return MediaStore.Files.FileColumns.MIME_TYPE + " != " + "''";
-    }
-
-    static ArrayList<FileInfo> fetchRecentImages(Context context, Category category, boolean showHidden)
-    {
-        Uri uri = MediaStore.Files.getContentUri("external");
-        String selection = constructRecentTimeSelectionArgument() + " AND " + getImagesMediaType();
-        String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
-        Cursor cursor = context.getContentResolver().query(uri, null, selection, null,
-                                                           sortOrder);
-        return getDataFromCursor(cursor, category, false, showHidden);
-    }
-
-    static ArrayList<FileInfo> fetchRecentAudio(Context context, Category category, boolean showHidden)
-    {
-        Uri uri = MediaStore.Files.getContentUri("external");
-        String selection = constructRecentTimeSelectionArgument() + " AND " + getAudioMediaType();
-        String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
-        Cursor cursor = context.getContentResolver().query(uri, null, selection, null,
-                                                           sortOrder);
-        return getDataFromCursor(cursor, category, false, showHidden);
-    }
-
-    static ArrayList<FileInfo> fetchRecentVideos(Context context, Category category, boolean showHidden)
-    {
-        Uri uri = MediaStore.Files.getContentUri("external");
-        String selection = constructRecentTimeSelectionArgument() + " AND " + getVideosMediaType();
-        String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
-        Cursor cursor = context.getContentResolver().query(uri, null, selection, null,
-                                                           sortOrder);
-        return getDataFromCursor(cursor, category, false, showHidden);
-    }
-
-    static ArrayList<FileInfo> fetchRecentApps(Context context, Category category, boolean showHidden)
-    {
-        Uri uri = MediaStore.Files.getContentUri("external");
         String where = MediaStore.Files.FileColumns.DATA + " LIKE ?";
-        String selection =
-                constructRecentTimeSelectionArgument() + " AND " + buildHasMimeTypeArguments() + " AND " + getDocs() +
-                " AND " + where;
-        String filter = ".apk";
+        // Reason for such a big query is to avoid fetching directories in the count and also because we can't just
+        // filter based on {@link MediaStore.Files.FileColumns.MIME_TYPE} since "apk" mime type is stored as null
+        String selection = constructRecentTimeSelectionArgument() + " AND " + " ( " + constructSelectionForZip() +
+                           " OR " + constructSelectionForDocs() + " OR " + getImagesMediaType() + " OR " +
+                           getAudioMediaType() + " OR " + getVideosMediaType() + " OR " + where + " )";
+        String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
+
+        String filter = AppDataFetcher.EXT_APK;
         String[] selectionArgs = new String[]{"%" + filter};
 
-        String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
         Cursor cursor = context.getContentResolver().query(uri, null, selection, selectionArgs,
                                                            sortOrder);
-        return getDataFromCursor(cursor, category, false, showHidden);
-    }
-
-    static ArrayList<FileInfo> fetchRecentDocs(Context context, Category category, boolean showHidden)
-    {
-        Uri uri = MediaStore.Files.getContentUri("external");
-        String selection = constructRecentTimeSelectionArgument() + " AND " + buildHasMimeTypeArguments() + " AND " +
-                           getDocs();
-        String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
-        Cursor cursor = context.getContentResolver().query(uri, null, selection, null,
-                                                           sortOrder);
-        return getDataFromCursor(cursor, category, false, showHidden);
+        return getDataFromCursor(cursor, category, showOnlyCount, showHidden);
     }
 
     private static String constructRecentTimeSelectionArgument() {
@@ -108,16 +57,12 @@ class RecentDataFetcher {
         return MediaStore.Files.FileColumns.MEDIA_TYPE + " = " + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
     }
 
-    private static String getVideosMediaType() {
-        return MediaStore.Files.FileColumns.MEDIA_TYPE + " = " + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
-    }
-
     private static String getAudioMediaType() {
         return MediaStore.Files.FileColumns.MEDIA_TYPE + " = " + MediaStore.Files.FileColumns.MEDIA_TYPE_AUDIO;
     }
 
-    private static String getDocs() {
-        return MediaStore.Files.FileColumns.MEDIA_TYPE + " = " + MediaStore.Files.FileColumns.MEDIA_TYPE_NONE;
+    private static String getVideosMediaType() {
+        return MediaStore.Files.FileColumns.MEDIA_TYPE + " = " + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
     }
 
     private static ArrayList<FileInfo> getDataFromCursor(Cursor cursor, Category category, boolean showOnlyCount,
@@ -193,6 +138,72 @@ class RecentDataFetcher {
             }
         }
         return fileInfoList;
+    }
+
+    static ArrayList<FileInfo> fetchRecentImages(Context context, Category category, boolean showHidden)
+    {
+        Uri uri = MediaStore.Files.getContentUri("external");
+        String selection = constructRecentTimeSelectionArgument() + " AND " + getImagesMediaType();
+        String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
+        Cursor cursor = context.getContentResolver().query(uri, null, selection, null,
+                                                           sortOrder);
+        return getDataFromCursor(cursor, category, false, showHidden);
+    }
+
+    static ArrayList<FileInfo> fetchRecentAudio(Context context, Category category, boolean showHidden)
+    {
+        Uri uri = MediaStore.Files.getContentUri("external");
+        String selection = constructRecentTimeSelectionArgument() + " AND " + getAudioMediaType();
+        String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
+        Cursor cursor = context.getContentResolver().query(uri, null, selection, null,
+                                                           sortOrder);
+        return getDataFromCursor(cursor, category, false, showHidden);
+    }
+
+    static ArrayList<FileInfo> fetchRecentVideos(Context context, Category category, boolean showHidden)
+    {
+        Uri uri = MediaStore.Files.getContentUri("external");
+        String selection = constructRecentTimeSelectionArgument() + " AND " + getVideosMediaType();
+        String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
+        Cursor cursor = context.getContentResolver().query(uri, null, selection, null,
+                                                           sortOrder);
+        return getDataFromCursor(cursor, category, false, showHidden);
+    }
+
+    static ArrayList<FileInfo> fetchRecentApps(Context context, Category category, boolean showHidden)
+    {
+        Uri uri = MediaStore.Files.getContentUri("external");
+        String where = MediaStore.Files.FileColumns.DATA + " LIKE ?";
+        String selection =
+                constructRecentTimeSelectionArgument() + " AND " + getDocs() +
+                " AND " + where;
+        String filter = ".apk";
+        String[] selectionArgs = new String[]{"%" + filter};
+
+        String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
+        Cursor cursor = context.getContentResolver().query(uri, null, selection, selectionArgs,
+                                                           sortOrder);
+        return getDataFromCursor(cursor, category, false, showHidden);
+    }
+
+    private static String getDocs() {
+        return MediaStore.Files.FileColumns.MEDIA_TYPE + " = " + MediaStore.Files.FileColumns.MEDIA_TYPE_NONE;
+    }
+
+    static ArrayList<FileInfo> fetchRecentDocs(Context context, Category category, boolean showHidden)
+    {
+        Uri uri = MediaStore.Files.getContentUri("external");
+        String selection = constructRecentTimeSelectionArgument() + " AND " + buildHasMimeTypeArguments() + " AND " +
+                           getDocs();
+        String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
+        Cursor cursor = context.getContentResolver().query(uri, null, selection, null,
+                                                           sortOrder);
+        return getDataFromCursor(cursor, category, false, showHidden);
+    }
+
+    @NonNull
+    private static String buildHasMimeTypeArguments() {
+        return MediaStore.Files.FileColumns.MIME_TYPE + " != " + "''";
     }
 
 

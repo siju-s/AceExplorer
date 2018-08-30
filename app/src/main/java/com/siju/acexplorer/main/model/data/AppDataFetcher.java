@@ -15,14 +15,15 @@ import java.util.ArrayList;
 
 import static com.siju.acexplorer.main.model.helper.SortHelper.sortFiles;
 
-public class AppDataFetcher {
+class AppDataFetcher {
 
-    public static ArrayList<FileInfo> fetchApk(Context context, Category category, int sortMode,
-                                               boolean showOnlyCount, boolean showHidden)
+    static final String EXT_APK = ".apk";
+
+    static ArrayList<FileInfo> fetchApk(Context context, Category category, int sortMode,
+                                        boolean showOnlyCount, boolean showHidden)
     {
         String where = MediaStore.Files.FileColumns.DATA + " LIKE ?";
-        String filter = ".apk";
-        String[] selectionArgs = new String[]{"%" + filter};
+        String[] selectionArgs = new String[]{"%" + EXT_APK};
         Uri uri = MediaStore.Files.getContentUri("external");
 
         Cursor cursor = context.getContentResolver().query(uri, null, where, selectionArgs,

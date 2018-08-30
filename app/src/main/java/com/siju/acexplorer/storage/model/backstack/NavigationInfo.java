@@ -43,6 +43,8 @@ import static com.siju.acexplorer.main.model.groups.CategoryHelper.checkIfAnyMus
 import static com.siju.acexplorer.main.model.groups.CategoryHelper.getCategoryName;
 import static com.siju.acexplorer.main.model.groups.CategoryHelper.isGenericImagesCategory;
 import static com.siju.acexplorer.main.model.groups.CategoryHelper.isGenericVideosCategory;
+import static com.siju.acexplorer.main.model.groups.CategoryHelper.isRecentCategory;
+import static com.siju.acexplorer.main.model.groups.CategoryHelper.isRecentGenericCategory;
 
 
 public class NavigationInfo {
@@ -172,7 +174,7 @@ public class NavigationInfo {
 
     private void addTitleText(final Category category, boolean shouldBeLessPadding) {
         if (category.equals(Category.GENERIC_MUSIC) || category.equals(Category.GENERIC_VIDEOS) ||
-                category.equals(Category.GENERIC_IMAGES)) {
+                category.equals(Category.GENERIC_IMAGES) || Category.RECENT.equals(category)) {
             addLibSpecificTitleText(category, null);
             return;
         }
@@ -276,7 +278,22 @@ public class NavigationInfo {
                     break;
 
             }
-        } else if (category.equals(Category.FOLDER_VIDEOS) || isGenericVideosCategory(category)) {
+        }
+        else if (isRecentCategory(category) || isRecentGenericCategory(category)) {
+            addHomeNavButton(isHomeScreenEnabled, Category.RECENT, true);
+            switch (category) {
+                case RECENT_IMAGES:
+                case RECENT_VIDEOS:
+                case RECENT_AUDIO:
+                case RECENT_DOCS:
+                case RECENT_APPS:
+                    addArrowButton();
+                    addLibSpecificTitleText(category, null);
+                    break;
+            }
+
+        }
+        else if (category.equals(Category.FOLDER_VIDEOS) || isGenericVideosCategory(category)) {
             addHomeNavButton(isHomeScreenEnabled, Category.GENERIC_VIDEOS, true);
             if (category.equals(Category.FOLDER_VIDEOS)) {
                 addArrowButton();
