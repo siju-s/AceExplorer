@@ -37,7 +37,7 @@ class DataLoader {
             case GIF:
                 return ImageDataFetcher.fetchGif(context, category, sortMode, showOnlyCount, showHidden);
             case RECENT:
-                return RecentDataFetcher.fetchRecent(context, category, showOnlyCount, sortMode, showHidden);
+                return RecentDataFetcher.fetchRecent(context, category, showOnlyCount, showHidden);
             case RECENT_IMAGES:
                 return RecentDataFetcher.fetchRecentImages(context,category , showHidden);
             case RECENT_AUDIO:

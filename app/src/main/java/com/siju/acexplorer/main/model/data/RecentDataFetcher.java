@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 
 import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.main.model.HiddenFileHelper;
@@ -24,10 +25,10 @@ class RecentDataFetcher {
     private static final long MAX_RECENT_DAYS_IN_SECONDS = 7 * 24 * 3600; // 7 days
 
     static ArrayList<FileInfo> fetchRecent(Context context, Category category,
-                                           boolean showOnlyCount, int sortMode, boolean showHidden)
+                                           boolean showOnlyCount, boolean showHidden)
     {
         Uri uri = MediaStore.Files.getContentUri("external");
-        String selection = constructRecentSelectionArgument();
+        String selection = constructRecentTimeSelectionArgument() + " AND " + buildHasMimeTypeArguments();
         String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
 
         Cursor cursor = context.getContentResolver().query(uri, null, selection, null,
@@ -35,10 +36,15 @@ class RecentDataFetcher {
         return getDataFromCursor(cursor, category, showOnlyCount, showHidden);
     }
 
+    @NonNull
+    private static String buildHasMimeTypeArguments() {
+        return MediaStore.Files.FileColumns.MIME_TYPE + " != " + "''";
+    }
+
     static ArrayList<FileInfo> fetchRecentImages(Context context, Category category, boolean showHidden)
     {
         Uri uri = MediaStore.Files.getContentUri("external");
-        String selection = constructRecentSelectionArgument() + " AND " + getImagesMediaType();
+        String selection = constructRecentTimeSelectionArgument() + " AND " + getImagesMediaType();
         String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
         Cursor cursor = context.getContentResolver().query(uri, null, selection, null,
                                                            sortOrder);
@@ -48,7 +54,7 @@ class RecentDataFetcher {
     static ArrayList<FileInfo> fetchRecentAudio(Context context, Category category, boolean showHidden)
     {
         Uri uri = MediaStore.Files.getContentUri("external");
-        String selection = constructRecentSelectionArgument() + " AND " + getAudioMediaType();
+        String selection = constructRecentTimeSelectionArgument() + " AND " + getAudioMediaType();
         String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
         Cursor cursor = context.getContentResolver().query(uri, null, selection, null,
                                                            sortOrder);
@@ -58,7 +64,7 @@ class RecentDataFetcher {
     static ArrayList<FileInfo> fetchRecentVideos(Context context, Category category, boolean showHidden)
     {
         Uri uri = MediaStore.Files.getContentUri("external");
-        String selection = constructRecentSelectionArgument() + " AND " + getVideosMediaType();
+        String selection = constructRecentTimeSelectionArgument() + " AND " + getVideosMediaType();
         String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
         Cursor cursor = context.getContentResolver().query(uri, null, selection, null,
                                                            sortOrder);
@@ -69,7 +75,9 @@ class RecentDataFetcher {
     {
         Uri uri = MediaStore.Files.getContentUri("external");
         String where = MediaStore.Files.FileColumns.DATA + " LIKE ?";
-        String selection = constructRecentSelectionArgument() + " AND " + getDocs() + " AND " + where;
+        String selection =
+                constructRecentTimeSelectionArgument() + " AND " + buildHasMimeTypeArguments() + " AND " + getDocs() +
+                " AND " + where;
         String filter = ".apk";
         String[] selectionArgs = new String[]{"%" + filter};
 
@@ -82,14 +90,15 @@ class RecentDataFetcher {
     static ArrayList<FileInfo> fetchRecentDocs(Context context, Category category, boolean showHidden)
     {
         Uri uri = MediaStore.Files.getContentUri("external");
-        String selection = constructRecentSelectionArgument() + " AND " + getDocs();
+        String selection = constructRecentTimeSelectionArgument() + " AND " + buildHasMimeTypeArguments() + " AND " +
+                           getDocs();
         String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
         Cursor cursor = context.getContentResolver().query(uri, null, selection, null,
                                                            sortOrder);
         return getDataFromCursor(cursor, category, false, showHidden);
     }
 
-    private static String constructRecentSelectionArgument() {
+    private static String constructRecentTimeSelectionArgument() {
         long currentTimeMs = System.currentTimeMillis() / 1000;
         long pastTime = currentTimeMs - MAX_RECENT_DAYS_IN_SECONDS;
         return MediaStore.Files.FileColumns.DATE_ADDED + " BETWEEN " + pastTime + " AND " + currentTimeMs;
@@ -130,6 +139,7 @@ class RecentDataFetcher {
             int dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_MODIFIED);
             int fileIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID);
             int pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA);
+
             do {
                 String path = cursor.getString(pathIndex);
                 File file = new File(path);
@@ -141,7 +151,7 @@ class RecentDataFetcher {
                 long date = cursor.getLong(dateIndex);
                 long fileId = cursor.getLong(fileIdIndex);
                 String extension = FileUtils.getExtension(path);
-                if (RECENT_DOCS.equals(category) && isApk(extension)) {
+                if (shouldSkipApk(category, extension)) {
                     continue;
                 }
                 String nameWithExt = FileUtils.constructFileNameWithExtension(fileName, extension);
@@ -156,6 +166,10 @@ class RecentDataFetcher {
             return getRecentCategoryList(fileInfoList);
         }
         return fileInfoList;
+    }
+
+    private static boolean shouldSkipApk(Category category, String extension) {
+        return RECENT_DOCS.equals(category) && isApk(extension);
     }
 
     private static ArrayList<FileInfo> getRecentCategoryList(ArrayList<FileInfo> fileList) {
