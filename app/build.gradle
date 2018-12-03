@@ -26,11 +26,13 @@ buildscript {
 
 
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 apply plugin: 'io.fabric'
 
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
+    mavenCentral()
 }
 
 android {
@@ -106,8 +108,10 @@ android {
     productFlavors {
         dev {
             applicationIdSuffix ".dev"
+            buildConfigField 'boolean', 'IS_DEV_VERSION', 'true'
         }
         prod {
+            buildConfigField 'boolean', 'IS_DEV_VERSION', 'false'
         }
     }
     lintOptions {
@@ -133,6 +137,7 @@ dependencies {
     implementation google.billing
     implementation google.gson
 
+    implementation others.kotlin
     implementation others.glide
     annotationProcessor others.glideCompiler
     implementation others.apache_compress

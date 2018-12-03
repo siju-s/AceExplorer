@@ -40,14 +40,14 @@ import java.util.ArrayList;
  * Created by Siju on 04 September,2017
  */
 class DragHelper {
-    private final String TAG = this.getClass().getSimpleName();
-    private Context context;
-    private DragEventListener dragEventListener;
-    private StoragesUiView storagesUiView;
+    private final String            TAG = this.getClass().getSimpleName();
+    private       Context           context;
+    private       DragEventListener dragEventListener;
+    private       FilesView         filesView;
 
-    DragHelper(Context context, StoragesUiView storagesUiView) {
+    DragHelper(Context context, FilesView filesView) {
         this.context = context;
-        this.storagesUiView = storagesUiView;
+        this.filesView = filesView;
         dragEventListener = new DragEventListener();
     }
 
@@ -176,19 +176,19 @@ class DragHelper {
                     return true;
 
                 case DragEvent.ACTION_DRAG_LOCATION:
-                    oldPos = storagesUiView.onDragLocationEvent(event, oldPos);
+                    oldPos = filesView.onDragLocationEvent(event, oldPos);
                     return true;
 
                 case DragEvent.ACTION_DRAG_EXITED:
-                    storagesUiView.onDragExit();
+                    filesView.onDragExit();
                     return true;
 
                 case DragEvent.ACTION_DROP:
-                    storagesUiView.onDragDropEvent(event);
+                    filesView.onDragDropEvent(event);
                     return true;
 
                 case DragEvent.ACTION_DRAG_ENDED:
-                    storagesUiView.onDragEnded(v, event);
+                    filesView.onDragEnded(v, event);
                     return true;
 
                 // An unknown action type was received.
@@ -204,7 +204,7 @@ class DragHelper {
     private DialogHelper.DragDialogListener dragDialogListener = new DialogHelper.DragDialogListener() {
         @Override
         public void onPositiveButtonClick(ArrayList<FileInfo> filesToPaste, String destinationDir, boolean isMove) {
-            storagesUiView.onPasteAction(isMove, filesToPaste, destinationDir);
+            filesView.onPasteAction(isMove, filesToPaste, destinationDir);
         }
     };
 }

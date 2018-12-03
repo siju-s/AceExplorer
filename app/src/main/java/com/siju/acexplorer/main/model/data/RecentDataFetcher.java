@@ -4,8 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.webkit.MimeTypeMap;
 
 import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.main.model.HiddenFileHelper;
@@ -193,18 +191,12 @@ class RecentDataFetcher {
     static ArrayList<FileInfo> fetchRecentDocs(Context context, Category category, boolean showHidden)
     {
         Uri uri = MediaStore.Files.getContentUri("external");
-        String selection = constructRecentTimeSelectionArgument() + " AND " + buildHasMimeTypeArguments() + " AND " +
-                           getDocs();
+        String selection = constructRecentTimeSelectionArgument() + " AND " + getDocs() + " AND " +
+                           constructSelectionForZip() + " OR " + constructSelectionForDocs();
         String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
         Cursor cursor = context.getContentResolver().query(uri, null, selection, null,
                                                            sortOrder);
         return getDataFromCursor(cursor, category, false, showHidden);
     }
-
-    @NonNull
-    private static String buildHasMimeTypeArguments() {
-        return MediaStore.Files.FileColumns.MIME_TYPE + " != " + "''";
-    }
-
 
 }

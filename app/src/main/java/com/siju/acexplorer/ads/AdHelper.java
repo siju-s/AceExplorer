@@ -31,18 +31,24 @@ import static com.siju.acexplorer.main.model.FileConstants.KEY_PREMIUM;
  */
 public class AdHelper {
 
+    private static final int DELAY_ADS_MILLIS = 2000;
+
     public static void setupAds(final Activity activity) {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (!activity.isFinishing()) {
+                if (activity != null && !activity.isFinishing()) {
                     MobileAds.initialize(activity.getApplicationContext(), "ca-app-pub-3940256099942544~3347511713");
-                    Intent intent = new Intent(ADS);
-                    intent.putExtra(KEY_PREMIUM, false);
-                    LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
+                    sendAdBroadcast(activity);
                 }
             }
-        }, 2000);
+        }, DELAY_ADS_MILLIS);
 
+    }
+
+    private static void sendAdBroadcast(Activity activity) {
+        Intent intent = new Intent(ADS);
+        intent.putExtra(KEY_PREMIUM, false);
+        LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
     }
 }

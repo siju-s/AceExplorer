@@ -31,28 +31,24 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
-import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.ads.AdsView;
 import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.billing.BillingStatus;
+import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.home.model.LibrarySortModel;
 import com.siju.acexplorer.home.types.HomeLibraryInfo;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.main.model.FileConstants;
-import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.main.model.groups.Category;
+import com.siju.acexplorer.main.view.AceActivity;
+import com.siju.acexplorer.main.view.DrawerListener;
 import com.siju.acexplorer.permission.PermissionUtils;
 import com.siju.acexplorer.storage.view.FileList;
 import com.siju.acexplorer.storage.view.StoragesUiView;
 import com.siju.acexplorer.theme.Theme;
 import com.siju.acexplorer.theme.ThemeUtils;
-import com.siju.acexplorer.main.view.AceActivity;
-import com.siju.acexplorer.main.view.DrawerListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,18 +60,18 @@ import static com.siju.acexplorer.main.model.groups.StoragesGroup.STORAGE_EMULAT
 
 public class HomeUiView extends CoordinatorLayout {
 
-    private final String TAG = this.getClass().getSimpleName();
-    private AdView mAdView;
-    private boolean isPremium = true;
-    private NestedScrollView                 nestedScrollViewHome;
-    private Theme                            theme;
-    private Toolbar                          toolbar;
-    private boolean                          isDualModeActive;
-    private Fragment                         fragment;
-    private HomeBridge                       bridge;
-    private HomeLibrary                      library;
-    private DrawerListener                   drawerListener;
-    private StoragesUiView.FavoriteOperation favListener;
+    private final String                           TAG       = this.getClass().getSimpleName();
+    private       AdsView                          adsView;
+    private       HomeBridge                       bridge;
+    private       HomeLibrary                      library;
+    private       Theme                            theme;
+    private       StoragesUiView.FavoriteOperation favListener;
+    private       DrawerListener                   drawerListener;
+    private       Fragment                         fragment;
+    private       NestedScrollView                 nestedScrollViewHome;
+    private       Toolbar                          toolbar;
+    private       boolean                          isDualModeActive;
+    private       boolean                          isPremium = true;
 
     public HomeUiView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -84,7 +80,7 @@ public class HomeUiView extends CoordinatorLayout {
 
     public static HomeUiView inflate(ViewGroup parent) {
         return (HomeUiView) LayoutInflater.from(parent.getContext()).inflate(R.layout.homescreen,
-                                                                             parent,  false);
+                                                                             parent, false);
     }
 
     @Override
@@ -94,6 +90,7 @@ public class HomeUiView extends CoordinatorLayout {
     }
 
     private void init() {
+        adsView = new AdsView(this);
         nestedScrollViewHome = findViewById(R.id.scrollLayoutHome);
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(getResources().getString(R.string.app_name));
@@ -136,7 +133,7 @@ public class HomeUiView extends CoordinatorLayout {
         checkBillingStatus();
         initializeListeners();
         isDualModeActive = bridge.getDualModeState() && getResources().getConfiguration().orientation
-                == Configuration.ORIENTATION_LANDSCAPE;
+                                                        == Configuration.ORIENTATION_LANDSCAPE;
     }
 
     private void checkBillingStatus() {
@@ -153,7 +150,7 @@ public class HomeUiView extends CoordinatorLayout {
     }
 
     Configuration getConfiguration() {
-        return ((AceActivity)getActivity()).getConfiguration();
+        return ((AceActivity) getActivity()).getConfiguration();
     }
 
     private void initializeListeners() {
@@ -168,12 +165,12 @@ public class HomeUiView extends CoordinatorLayout {
 
     private void onFreeVersion() {
         if (getActivity() != null && !getActivity().isFinishing()) {
-            showAds();
+            adsView.showAds();
         }
     }
 
     private void onPremiumVersion() {
-        hideAds();
+        adsView.hideAds();
     }
 
 
@@ -226,60 +223,19 @@ public class HomeUiView extends CoordinatorLayout {
         return PermissionUtils.hasStoragePermission();
     }
 
-    private void hideAds() {
-        LinearLayout adviewLayout = findViewById(R.id.adviewLayout);
-        if (adviewLayout.getChildCount() != 0) {
-            adviewLayout.removeView(mAdView);
-        }
-    }
-
-    private void showAds() {
-        // DYNAMICALLY CREATE AD START
-        LinearLayout adviewLayout = findViewById(R.id.adviewLayout);
-        // Create an ad.
-        if (mAdView == null) {
-            mAdView = new AdView(AceApplication.getAppContext());
-            mAdView.setAdSize(AdSize.BANNER);
-            mAdView.setAdUnitId(getResources().getString(R.string.banner_ad_unit_id));
-            // DYNAMICALLY CREATE AD END
-            AdRequest adRequest = new AdRequest.Builder().build();
-            // Start loading the ad in the background.
-            mAdView.loadAd(adRequest);
-            // Add the AdView to the view hierarchy. The view will have no size until the ad is
-            // loaded.
-            adviewLayout.addView(mAdView);
-        } else {
-            ((LinearLayout) mAdView.getParent()).removeAllViews();
-            adviewLayout.addView(mAdView);
-            // Reload Ad if necessary.  Loaded ads are lost when the activity is paused.
-            if (!mAdView.isLoading()) {
-                AdRequest adRequest = new AdRequest.Builder().build();
-                // Start loading the ad in the background.
-                mAdView.loadAd(adRequest);
-            }
-        }
-        // DYNAMICALLY CREATE AD END
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
-    }
-
 
     public void setPremium() {
         isPremium = true;
-        hideAds();
+        adsView.hideAds();
     }
 
 
     public void onPause() {
-        if (mAdView != null) {
-            mAdView.pause();
-        }
+        adsView.pauseAds();
     }
 
     public void onResume() {
-        if (mAdView != null) {
-            mAdView.resume();
-        }
+        adsView.resumeAds();
     }
 
 
@@ -318,7 +274,7 @@ public class HomeUiView extends CoordinatorLayout {
         }
         getDualModeState();
         FragmentTransaction ft = getActivity().getSupportFragmentManager()
-                .beginTransaction();
+                                              .beginTransaction();
         Bundle args = new Bundle();
         args.putBoolean(FileConstants.KEY_HOME, true);
         args.putSerializable(KEY_CATEGORY, category);
@@ -345,8 +301,8 @@ public class HomeUiView extends CoordinatorLayout {
 
 
     private void getDualModeState() {
-        isDualModeActive = bridge.getDualModeState() && ((AceActivity)getActivity()).getConfiguration().orientation
-                == Configuration.ORIENTATION_LANDSCAPE;
+        isDualModeActive = bridge.getDualModeState() && ((AceActivity) getActivity()).getConfiguration().orientation
+                                                        == Configuration.ORIENTATION_LANDSCAPE;
     }
 
     public void onConfigChanged(final Configuration newConfig) {
@@ -356,9 +312,7 @@ public class HomeUiView extends CoordinatorLayout {
 
 
     public void onDestroy() {
-        if (mAdView != null) {
-            mAdView.destroy();
-        }
+        adsView.destroyAds();
     }
 
 

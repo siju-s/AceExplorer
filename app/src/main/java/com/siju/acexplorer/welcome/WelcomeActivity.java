@@ -117,8 +117,6 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         dots[0].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.intro_selecteditem));
-        Logger.log("WelcomeAct", "addBottomDots");
-
     }
 
     private void launchHomeScreen() {

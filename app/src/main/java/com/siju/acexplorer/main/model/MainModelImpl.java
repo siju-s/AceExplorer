@@ -127,11 +127,11 @@ public class MainModelImpl implements MainModel,
 
     @Override
     public void onPurchasesUpdated(List<Purchase> purchases) {
-        int billingResponse = BillingManager.getInstance().getBillingClientResponseCode();
-        if (BuildConfig.FLAVOR.equals("dev")) {
+        if (BuildConfig.IS_DEV_VERSION) {
             listener.onPremiumVersion();
             return;
         }
+        int billingResponse = BillingManager.getInstance().getBillingClientResponseCode();
         if (billingResponse == BillingClient.BillingResponse.BILLING_UNAVAILABLE ||
                 billingResponse == BillingClient.BillingResponse.FEATURE_NOT_SUPPORTED) {
             Analytics.getLogger().setInAppStatus(-1);

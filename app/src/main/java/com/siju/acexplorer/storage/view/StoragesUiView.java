@@ -20,65 +20,44 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
-import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Process;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseBooleanArray;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
-import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.ads.AdsView;
 import com.siju.acexplorer.analytics.Analytics;
-import com.siju.acexplorer.appmanager.AppDetailActivity;
 import com.siju.acexplorer.base.view.BaseActivity;
 import com.siju.acexplorer.billing.BillingStatus;
+import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.main.model.FavInfo;
 import com.siju.acexplorer.main.model.FileConstants;
-import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.main.model.SharedPreferenceWrapper;
 import com.siju.acexplorer.main.model.groups.Category;
 import com.siju.acexplorer.main.model.helper.FileUtils;
-import com.siju.acexplorer.main.model.helper.LargeBundleTransfer;
+import com.siju.acexplorer.main.view.AceActivity;
+import com.siju.acexplorer.main.view.DrawerListener;
+import com.siju.acexplorer.main.view.dialog.DialogHelper;
 import com.siju.acexplorer.permission.PermissionUtils;
 import com.siju.acexplorer.storage.model.BackStackModel;
 import com.siju.acexplorer.storage.model.ViewMode;
@@ -90,188 +69,87 @@ import com.siju.acexplorer.storage.model.operations.Operations;
 import com.siju.acexplorer.storage.modules.picker.view.DialogBrowseFragment;
 import com.siju.acexplorer.storage.modules.zip.ZipCommunicator;
 import com.siju.acexplorer.storage.modules.zip.ZipViewer;
-import com.siju.acexplorer.storage.view.custom.CustomGridLayoutManager;
-import com.siju.acexplorer.storage.view.custom.CustomLayoutManager;
-import com.siju.acexplorer.storage.view.custom.DividerItemDecoration;
-import com.siju.acexplorer.storage.view.custom.GridItemDecoration;
-import com.siju.acexplorer.storage.view.custom.recyclerview.FastScrollRecyclerView;
 import com.siju.acexplorer.theme.Theme;
-import com.siju.acexplorer.ui.peekandpop.PeekAndPop;
-import com.siju.acexplorer.utils.ConfigurationHelper;
 import com.siju.acexplorer.utils.InstallHelper;
-import com.siju.acexplorer.main.view.AceActivity;
-import com.siju.acexplorer.main.view.DrawerListener;
-import com.siju.acexplorer.main.view.dialog.DialogHelper;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
 
-import static android.webkit.MimeTypeMap.getSingleton;
-import static com.siju.acexplorer.main.model.FileConstants.ADS;
 import static com.siju.acexplorer.main.model.FileConstants.KEY_CATEGORY;
-import static com.siju.acexplorer.main.model.groups.Category.ALBUM_DETAIL;
-import static com.siju.acexplorer.main.model.groups.Category.ARTIST_DETAIL;
 import static com.siju.acexplorer.main.model.groups.Category.DOWNLOADS;
 import static com.siju.acexplorer.main.model.groups.Category.FAVORITES;
 import static com.siju.acexplorer.main.model.groups.Category.FILES;
-import static com.siju.acexplorer.main.model.groups.Category.FOLDER_IMAGES;
-import static com.siju.acexplorer.main.model.groups.Category.FOLDER_VIDEOS;
-import static com.siju.acexplorer.main.model.groups.Category.GENRE_DETAIL;
 import static com.siju.acexplorer.main.model.groups.CategoryHelper.checkIfFileCategory;
-import static com.siju.acexplorer.main.model.groups.CategoryHelper.isSortOrActionModeUnSupported;
 import static com.siju.acexplorer.main.model.groups.CategoryHelper.showLibSpecificNavigation;
-import static com.siju.acexplorer.main.model.helper.MediaStoreHelper.removeBatchMedia;
-import static com.siju.acexplorer.main.model.helper.MediaStoreHelper.removeMedia;
-import static com.siju.acexplorer.main.model.helper.MediaStoreHelper.scanFile;
-import static com.siju.acexplorer.main.model.helper.MediaStoreHelper.updateMedia;
-import static com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastNougat;
-import static com.siju.acexplorer.main.model.helper.UriHelper.createContentUri;
-import static com.siju.acexplorer.main.model.helper.ViewHelper.viewFile;
-import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH;
-import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_RELOAD_LIST;
-import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_COUNT;
-import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH;
-import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH2;
-import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES;
-import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES_COUNT;
-import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_MEDIA_INDEX_FILES;
-import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OLD_FILES;
-import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION;
-import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_RESULT;
-import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_SHOW_RESULT;
-import static com.siju.acexplorer.storage.model.operations.Operations.HIDE;
-import static com.siju.acexplorer.main.view.dialog.DialogHelper.openWith;
 
 /**
  * Created by Siju on 02 September,2017
  */
 @SuppressLint("ClickableViewAccessibility")
-public class StoragesUiView extends CoordinatorLayout implements View.OnClickListener,
-                                                                 NavigationCallback,
-                                                                 FileListAdapter.SearchCallback
+public class StoragesUiView extends CoordinatorLayout implements
+                                                      NavigationCallback
 {
 
-    private final        String  TAG             = this.getClass().getSimpleName();
-    private static final int     DIALOG_FRAGMENT = 5000;
-    private static final int     SAF_REQUEST     = 2000;
-    private static final boolean isRootMode      = true;
+    private static final int               DIALOG_FRAGMENT = 5000;
+    private static final int               SAF_REQUEST     = 2000;
+    private static final boolean           isRootMode      = true;
+    private final        String            TAG             = this.getClass().getSimpleName();
+    private              Fragment          fragment;
+    private              CoordinatorLayout mainContainer;
+    private              Button            buttonPathSelect;
+    private              FloatingView      floatingView;
+    private              SharedPreferences preferences;
+    private              AdsView           adsView;
+    private              StorageBridge     bridge;
 
-    private       ArrayList<FileInfo>     draggedData            = new ArrayList<>();
-    private       SparseBooleanArray      mSelectedItemPositions = new SparseBooleanArray();
-    private final HashMap<String, Bundle> scrollPosition         = new HashMap<>();
+    private Category                         category;
+    private NavigationInfo                   navigationInfo;
+    private BackStackInfo                    backStackInfo;
+    private Theme                            currentTheme;
+    private DrawerListener                   drawerListener;
+    private MenuControls                     menuControls;
+    private ZipViewer                        zipViewer;
+    private Intent                           operationIntent;
+    private Dialog                           dialog;
+    private StoragesUiView.FavoriteOperation favoriteListener;
+    private FilesView                        filesView;
 
-    private Fragment                   fragment;
-    private CoordinatorLayout          mMainLayout;
-    private FastScrollRecyclerView     fileList;
-    private TextView                   mTextEmpty;
-    private View                       mItemView;
-    private RecyclerView.LayoutManager layoutManager;
-    private SwipeRefreshLayout         mSwipeRefreshLayout;
-    private Button                     buttonPathSelect;
-    private DividerItemDecoration      dividerItemDecoration;
-    private GridItemDecoration         mGridItemDecoration;
-    private AdView                     mAdView;
-    private FloatingActionsMenu        fabCreateMenu;
-    private FloatingActionButton       fabCreateFolder;
-    private FloatingActionButton       fabCreateFile;
-    private FloatingActionButton       fabOperation;
-    private FrameLayout                frameLayoutFab;
-    private SharedPreferences          preferences;
+    private String currentDir;
+    private String mSelectedPath;
 
-    private StorageBridge       bridge;
-    private FileListAdapter     fileListAdapter;
-    private ArrayList<FileInfo> fileInfoList;
-    private Category            category;
-    private NavigationInfo      navigationInfo;
-    private BackStackInfo       backStackInfo;
-    private Theme               currentTheme;
-    private DrawerListener      drawerListener;
-    private MenuControls        menuControls;
-    private DragHelper          dragHelper;
-
-    private boolean isHomeScreenEnabled;
-    private String  filePath;
-    private String  currentDir;
-    private boolean isActionModeActive;
+    private int     currentOrientation;
+    private boolean homeScreenEnabled;
     private boolean showHidden;
-    private boolean mIsDualModeEnabled;
-    private boolean isDragStarted;
-    private long    mLongPressedTime;
-    private int viewMode = ViewMode.LIST;
+    private boolean dualModeEnabled;
     private boolean isZipViewer;
-    private boolean shouldStopAnimation = true;
-    private boolean isPremium           = true;
-
-    private int        gridCols;
-    private String     mLastSinglePaneDir;
-    private boolean    mInstanceStateExists;
-    private int        mCurrentOrientation;
-    private String     mSelectedPath;
-    private FileInfo   fileInfo;
-    private boolean    isHomeClicked;
-    private PeekAndPop peekAndPop;
-    private long       id;
+    private boolean isPremium = true;
+    private boolean isHomeClicked;
+    private boolean mInstanceStateExists;
+    private boolean isSAFShown;
 
 
     public StoragesUiView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-
     public static StoragesUiView inflate(ViewGroup parent) {
         return (StoragesUiView) LayoutInflater.from(parent.getContext()).inflate(R.layout.main_list,
                                                                                  parent, false);
     }
 
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-        initializeViews();
-    }
-
-    private void initializeViews() {
-        mMainLayout = findViewById(R.id.main_content);
-        fileList = findViewById(R.id.recyclerViewFileList);
-        mTextEmpty = findViewById(R.id.textEmpty);
-        mSwipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
-        int colorResIds[] = {R.color.colorPrimaryDark, R.color.colorPrimary, R.color
-                .colorPrimaryDark};
-        mSwipeRefreshLayout.setColorSchemeResources(colorResIds);
-        mSwipeRefreshLayout.setDistanceToTriggerSync(500);
-        frameLayoutFab = findViewById(R.id.frameLayoutFab);
-        fabCreateMenu = findViewById(R.id.fabCreate);
-        fabCreateFolder = findViewById(R.id.fabCreateFolder);
-        fabCreateFile = findViewById(R.id.fabCreateFile);
-        fabOperation = findViewById(R.id.fabOperation);
-    }
-
-
     private void setTheme() {
         currentTheme = ((BaseActivity) getActivity()).getCurrentTheme();
-        switch (currentTheme) {
-            case DARK:
-                mMainLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color
-                        .dark_background));
-
-                frameLayoutFab.setBackgroundColor(ContextCompat.getColor(getContext(), R.color
-                        .dark_overlay));
-                break;
+        if (currentTheme == Theme.DARK) {
+            mainContainer.setBackgroundColor(ContextCompat.getColor(getContext(), R.color
+                    .dark_background));
         }
-        frameLayoutFab.getBackground().setAlpha(0);
+        filesView.setTheme(currentTheme);
+        floatingView.setTheme(currentTheme);
     }
-
 
     public void setFragment(Fragment fragment) {
         this.fragment = fragment;
-    }
-
-    AppCompatActivity getActivity() {
-        return (AppCompatActivity) fragment.getActivity();
     }
 
     public void setBridgeRef(StorageBridge bridge) {
@@ -279,32 +157,37 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     void initialize() {
+        adsView = new AdsView(this);
+        adsView.setAdResultListener(adResultListener);
+        filesView = new FilesView(getActivity(), this);
         preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        dragHelper = new DragHelper(getContext(), this);
         setTheme();
-        fileList.setOnDragListener(dragHelper.getDragEventListener());
         checkBillingStatus();
         registerReceivers();
-
         navigationInfo = new NavigationInfo(this, this);
         backStackInfo = new BackStackInfo();
-
-        mCurrentOrientation = ((AceActivity) getActivity()).getConfiguration().orientation;
+        currentOrientation = ((AceActivity) getActivity()).getConfiguration().orientation;
         getPreferences();
         getArgs();
-        menuControls = new MenuControls(getActivity(), this, currentTheme);
-        menuControls.setCategory(category);
-        menuControls.setCurrentDir(currentDir);
-        setupList();
+        filesView.setCurrentDir(currentDir);
+        filesView.setCategory(category);
+        setupMenuControls();
+        filesView.setMenuControls(menuControls);
+//        setupList();
         if (shouldShowPathNavigation()) {
-            navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled, category);
+            navigationInfo.setNavDirectory(currentDir, homeScreenEnabled, category);
         } else {
-            navigationInfo.addHomeNavButton(isHomeScreenEnabled, category);
+            navigationInfo.addHomeNavButton(homeScreenEnabled, category);
         }
         backStackInfo.addToBackStack(currentDir, category);
         refreshList();
-        initializeListeners();
         createDualFrag();
+    }
+
+    private void setupMenuControls() {
+        menuControls = new MenuControls(getActivity(), this, currentTheme);
+        menuControls.setCategory(category);
+        menuControls.setCurrentDir(currentDir);
     }
 
     private void checkBillingStatus() {
@@ -321,282 +204,49 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         }
     }
 
+    private AdsView.AdResultListener adResultListener = new AdsView.AdResultListener() {
+        @Override
+        public void onFreeVersion() {
+            StoragesUiView.this.onFreeVersion();
+        }
 
-    private boolean hasStoragePermission() {
-        return PermissionUtils.hasStoragePermission();
-    }
+        @Override
+        public void onPremiumVersion() {
+            StoragesUiView.this.onPremiumVersion();
+        }
+    };
 
     private void onFreeVersion() {
         if (getActivity() == null || getActivity().isFinishing()) {
             return;
         }
-        showAds();
+        adsView.showAds();
     }
 
     private void onPremiumVersion() {
-        hideAds();
+        adsView.hideAds();
     }
-
-    private BroadcastReceiver adsReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent == null || intent.getAction() == null) {
-                return;
-            }
-            if (intent.getAction().equals(ADS)) {
-                isPremium = intent.getBooleanExtra(FileConstants.KEY_PREMIUM, false);
-                if (isPremium) {
-                    onPremiumVersion();
-                } else {
-                    onFreeVersion();
-                }
-            }
-        }
-    };
-
 
     private void registerReceivers() {
-        IntentFilter intentFilter = new IntentFilter(ADS);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(adsReceiver, intentFilter);
-        if (!mInstanceStateExists) {
-            IntentFilter filter = new IntentFilter(ACTION_RELOAD_LIST);
-            filter.addAction(ACTION_OP_REFRESH);
-            getActivity().registerReceiver(mReloadListReceiver, filter);
-        }
+        adsView.register();
     }
 
-    private void unregisterReceivers() {
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(adsReceiver);
-        getActivity().unregisterReceiver(mReloadListReceiver);
-    }
-
-
-    private void hideAds() {
-        LinearLayout adviewLayout = findViewById(R.id.adviewLayout);
-        if (adviewLayout.getChildCount() != 0) {
-            adviewLayout.removeView(mAdView);
-        }
-    }
-
-    private void showAds() {
-        // DYNAMICALLY CREATE AD START
-        LinearLayout adviewLayout = findViewById(R.id.adviewLayout);
-        // Create an ad.
-        if (mAdView == null) {
-            mAdView = new AdView(AceApplication.getAppContext());
-            mAdView.setAdSize(AdSize.BANNER);
-            mAdView.setAdUnitId(getResources().getString(R.string.banner_ad_unit_id));
-            // DYNAMICALLY CREATE AD END
-            AdRequest adRequest = new AdRequest.Builder().build();
-            // Start loading the ad in the background.
-            mAdView.loadAd(adRequest);
-            // Add the AdView to the view hierarchy. The view will have no size until the ad is
-            // loaded.
-            adviewLayout.addView(mAdView);
-        } else {
-            ((LinearLayout) mAdView.getParent()).removeAllViews();
-            adviewLayout.addView(mAdView);
-            // Reload Ad if necessary.  Loaded ads are lost when the activity is paused.
-            if (!mAdView.isLoading()) {
-                AdRequest adRequest = new AdRequest.Builder().build();
-                // Start loading the ad in the background.
-                mAdView.loadAd(adRequest);
-            }
-        }
-        // DYNAMICALLY CREATE AD END
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    private void initializeListeners() {
-
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                removeScrolledPos(currentDir);
-                refreshList();
-            }
-        });
-
-        setupFab();
-
-        fileListAdapter.setOnItemClickListener(new FileListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                if (position >= fileInfoList.size() || position == RecyclerView.NO_POSITION) {
-                    return;
-                }
-                switch (view.getId()) {
-                    case R.id.imagePeekView:
-                    case R.id.autoPlayView:
-                    case R.id.imageIcon:
-                        if (isActionModeActive() && !menuControls.isPasteOp()) {
-                            itemClickActionMode(position, false);
-                            return;
-                        }
-                        handleItemClick(position);
-                        break;
-                    case R.id.imageButtonInfo:
-                        menuControls.showInfoDialog(fileInfoList.get(position), category);
-                        break;
-                    case R.id.imageButtonShare:
-                        ArrayList<FileInfo> files = new ArrayList<>();
-                        files.add(fileInfoList.get(position));
-                        menuControls.shareFiles(files, category);
-                        break;
-                    default:
-                        if (isActionModeActive() && !menuControls.isPasteOp()) {
-                            itemClickActionMode(position, false);
-                        } else {
-                            handleItemClick(position);
-                        }
-                        break;
-                }
-
-            }
-
-            @Override
-            public boolean canShowPeek() {
-                return !isActionModeActive();
-            }
-        });
-        fileListAdapter.setOnItemLongClickListener(new FileListAdapter.OnItemLongClickListener() {
-            @Override
-            public void onItemLongClick(View view, int position) {
-                Logger.log(TAG, "On long click" + isDragStarted);
-                if (position >= fileInfoList.size() || position == RecyclerView.NO_POSITION ||
-                        isSortOrActionModeUnSupported(category)) {
-                    return;
-                }
-
-                if (!isZipViewer && !menuControls.isPasteOp()) {
-                    itemClickActionMode(position, true);
-                    mLongPressedTime = System.currentTimeMillis();
-
-                    if (isActionModeActive && fileListAdapter.getSelectedCount() >= 1) {
-                        mSwipeRefreshLayout.setEnabled(false);
-                        mItemView = view;
-                        isDragStarted = true;
-                    }
-                }
-            }
-        });
-
-
-        fileList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-
-                switch (newState) {
-                    case RecyclerView.SCROLL_STATE_DRAGGING:
-                    case RecyclerView.SCROLL_STATE_SETTLING:
-                        if (shouldStopAnimation) {
-                            stopAnimation();
-                            shouldStopAnimation = false;
-                        }
-                        break;
-                }
-            }
-        });
-
-
-        fileList.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-
-
-                int event = motionEvent.getActionMasked();
-                if (shouldStopAnimation) {
-                    stopAnimation();
-                    shouldStopAnimation = false;
-                }
-
-                if (!isDragStarted) {
-                    return false;
-                }
-
-                if (event == MotionEvent.ACTION_UP || event == MotionEvent.ACTION_CANCEL) {
-                    isDragStarted = false;
-                    mLongPressedTime = 0;
-                } else if (event == MotionEvent.ACTION_MOVE && mLongPressedTime !=
-                        0) {
-                    long timeElapsed = System.currentTimeMillis() - mLongPressedTime;
-
-                    if (timeElapsed > 1500) {
-                        mLongPressedTime = 0;
-                        isDragStarted = false;
-//                        Logger.log(TAG, "On touch drag path size=" + draggedData.size());
-                        if (draggedData.size() > 0) {
-                            Intent intent = new Intent();
-                            intent.putParcelableArrayListExtra(FileConstants.KEY_PATH, draggedData);
-                            intent.putExtra(KEY_CATEGORY, category.getValue());
-                            ClipData data = ClipData.newIntent("", intent);
-                            int count = fileListAdapter.getSelectedCount();
-                            View.DragShadowBuilder shadowBuilder = dragHelper.getDragShadowBuilder
-                                    (mItemView, count);
-                            if (isAtleastNougat()) {
-                                view.startDragAndDrop(data, shadowBuilder, draggedData, 0);
-                            } else {
-                                view.startDrag(data, shadowBuilder, draggedData, 0);
-                            }
-                        }
-                    }
-                }
-                if (motionEvent.getAction() == MotionEvent.ACTION_UP || motionEvent.getAction()
-                        == MotionEvent.ACTION_CANCEL) {
-                    view.performClick();
-                }
-                return false;
-            }
-        });
-    }
-
-    private void setupFab() {
-        fabCreateFile.setOnClickListener(this);
-        fabCreateFolder.setOnClickListener(this);
-        fabOperation.setOnClickListener(this);
-
-        fabCreateMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu
-                .OnFloatingActionsMenuUpdateListener()
-        {
-
-            @SuppressLint("ClickableViewAccessibility")
-            @Override
-            public void onMenuExpanded() {
-                frameLayoutFab.getBackground().setAlpha(240);
-                frameLayoutFab.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        fabCreateMenu.collapse();
-                        return true;
-                    }
-                });
-            }
-
-            @Override
-            public void onMenuCollapsed() {
-                frameLayoutFab.getBackground().setAlpha(0);
-                frameLayoutFab.setOnTouchListener(null);
-            }
-        });
-    }
 
     /**
      * Show dual pane in Landscape mode
      */
     public void showDualPane() {
         // For Files category only, show dual pane
-        mIsDualModeEnabled = true;
-        refreshSpan(((AceActivity) getActivity()).getConfiguration());
+        dualModeEnabled = true;
+        filesView.refreshSpan(((AceActivity) getActivity()).getConfiguration());
     }
 
     private void getPreferences() {
         Bundle bundle = bridge.getUserPrefs();
-        gridCols = bundle.getInt(FileConstants.KEY_GRID_COLUMNS, 0);
-        isHomeScreenEnabled = bundle.getBoolean(FileConstants.PREFS_HOMESCREEN, true);
+        filesView.setViewMode(bundle.getInt(FileConstants.PREFS_VIEW_MODE, ViewMode.LIST));
+        filesView.setGridCols(bundle.getInt(FileConstants.KEY_GRID_COLUMNS, 0));
+        homeScreenEnabled = bundle.getBoolean(FileConstants.PREFS_HOMESCREEN, true);
         showHidden = bundle.getBoolean(FileConstants.PREFS_HIDDEN, false);
-        viewMode = bundle.getInt(FileConstants.PREFS_VIEW_MODE, ViewMode.LIST);
     }
 
     private void getArgs() {
@@ -604,18 +254,18 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             currentDir = getArguments().getString(FileConstants.KEY_PATH);
             category = (Category) getArguments().getSerializable(KEY_CATEGORY);
             isZipViewer = getArguments().getBoolean(FileConstants.KEY_ZIP, false);
-            mIsDualModeEnabled = getArguments().getBoolean(FileConstants.KEY_DUAL_ENABLED, false);
+            dualModeEnabled = getArguments().getBoolean(FileConstants.KEY_DUAL_ENABLED, false);
 
             if (checkIfLibraryCategory(category)) {
-                hideFab();
+                floatingView.hideFab();
             } else {
-                showFab();
+                floatingView.showFab();
             }
             navigationInfo.showNavigationView();
             if (shouldShowPathNavigation()) {
                 navigationInfo.setInitialDir(currentDir);
             }
-            mLastSinglePaneDir = currentDir;
+//            mLastSinglePaneDir = currentDir;
         }
     }
 
@@ -624,186 +274,14 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     private void createDualFrag() {
-        if (mIsDualModeEnabled && fragment instanceof FileList) {
+        if (dualModeEnabled && fragment instanceof FileList) {
             bridge.showDualFrame();
             showDualPane();
         }
     }
 
-    private boolean checkIfLibraryCategory(Category category) {
+    boolean checkIfLibraryCategory(Category category) {
         return !category.equals(FILES) && !category.equals(DOWNLOADS);
-    }
-
-    private void showFab() {
-        frameLayoutFab.setVisibility(View.VISIBLE);
-    }
-
-    private void hideFab() {
-        frameLayoutFab.setVisibility(View.GONE);
-    }
-
-
-    private void setupList() {
-        fileList.setHasFixedSize(true);
-        if (viewMode == ViewMode.LIST) {
-            layoutManager = new CustomLayoutManager(getActivity());
-            fileList.setLayoutManager(layoutManager);
-        } else {
-            refreshSpan(((AceActivity) getActivity()).getConfiguration());
-        }
-        fileList.setItemAnimator(new DefaultItemAnimator());
-        peekAndPop = new PeekAndPop.Builder(getActivity()).peekLayout(R.layout.peek_pop).
-                parentViewGroupToDisallowTouchEvents(fileList).build();
-        fileListAdapter = new FileListAdapter(getContext(), fileInfoList,
-                                              category, viewMode, peekAndPop);
-        fileListAdapter.setSearchCallback(this);
-    }
-
-    public void refreshList() {
-        Logger.log(TAG, "refreshList");
-        fileInfoList = new ArrayList<>();
-        if (fileListAdapter != null) {
-            fileListAdapter.clearList();
-        }
-        if (!hasStoragePermission()) {
-            return;
-        }
-        mSwipeRefreshLayout.setRefreshing(true);
-        if (isZipMode()) {
-            zipViewer.loadData();
-        } else {
-            bridge.loadData(currentDir, category, id);
-        }
-    }
-
-
-    @Override
-    public void updateList(ArrayList<FileInfo> fileInfoArrayList) {
-        this.fileInfoList = fileInfoArrayList;
-    }
-
-
-    private String extension;
-    private String bucketName;
-
-    private void handleItemClick(int position) {
-        Log.d(TAG, "handleItemClick: " + category);
-        bucketName = null;
-        switch (category) {
-            case AUDIO:
-            case VIDEO:
-            case IMAGE:
-            case DOCS:
-            case ALARMS:
-            case NOTIFICATIONS:
-            case PODCASTS:
-            case RINGTONES:
-            case ALBUM_DETAIL:
-            case ARTIST_DETAIL:
-            case GENRE_DETAIL:
-            case FOLDER_IMAGES:
-            case FOLDER_VIDEOS:
-            case ALL_TRACKS:
-            case GIF:
-            case RECENT_AUDIO:
-            case RECENT_DOCS:
-            case RECENT_IMAGES:
-            case RECENT_VIDEOS:
-                this.extension = fileInfoList.get(position).getExtension().toLowerCase();
-                viewFile(getContext(), fileInfoList.get(position).getFilePath(),
-                         extension, alertDialogListener);
-                break;
-            case FILES:
-            case DOWNLOADS:
-            case COMPRESSED:
-            case FAVORITES:
-            case PDF:
-            case APPS:
-            case LARGE_FILES:
-            case TRASH:
-            case RECENT_APPS:
-                genericFileItemClick(position);
-                break;
-            case GENERIC_MUSIC:
-                category = fileInfoList.get(position).getSubcategory();
-                reloadList(null, category);
-                break;
-            case ALBUMS:
-                category = ALBUM_DETAIL;
-                id = fileInfoList.get(position).getId();
-                bucketName = fileInfoList.get(position).getTitle();
-                reloadList(null, category);
-                break;
-            case ARTISTS:
-                category = ARTIST_DETAIL;
-                id = fileInfoList.get(position).getId();
-                bucketName = fileInfoList.get(position).getTitle();
-                reloadList(null, category);
-                break;
-            case GENRES:
-                category = GENRE_DETAIL;
-                id = fileInfoList.get(position).getId();
-                bucketName = fileInfoList.get(position).getTitle();
-                reloadList(null, category);
-                break;
-            case GENERIC_IMAGES:
-                category = FOLDER_IMAGES;
-                id = fileInfoList.get(position).getBucketId();
-                bucketName = fileInfoList.get(position).getFileName();
-                reloadList(null, category);
-                break;
-            case GENERIC_VIDEOS:
-                category = FOLDER_VIDEOS;
-                id = fileInfoList.get(position).getBucketId();
-                bucketName = fileInfoList.get(position).getFileName();
-                reloadList(null, category);
-                break;
-            case RECENT:
-                category = fileInfoList.get(position).getCategory();
-                reloadList(null, category);
-                break;
-            case APP_MANAGER:
-                AppDetailActivity.openAppInfo(getContext(), fileInfoList.get(position).getFilePath());
-                break;
-        }
-    }
-
-    private void genericFileItemClick(int position) {
-        if (fileInfoList.get(position).isDirectory()) {
-            onDirectoryClicked(position);
-        } else {
-            onFileClicked(position);
-        }
-    }
-
-    private void onDirectoryClicked(int position) {
-        boolean isDualPaneInFocus = fragment instanceof DualPaneList;
-        ((AceActivity) getActivity()).setDualPaneFocusState(isDualPaneInFocus);
-
-        if (isZipMode()) {
-            zipViewer.onDirectoryClicked(position);
-        } else {
-            calculateScroll(currentDir);
-            String path = fileInfoList.get(position).getFilePath();
-            category = FILES;
-            reloadList(path, category);
-        }
-    }
-
-    private void onFileClicked(int position) {
-        String filePath = fileInfoList.get(position).getFilePath();
-        extension = fileInfoList.get(position).getExtension().toLowerCase();
-
-        if (!isZipMode() && isZipViewable(filePath)) {
-            openZipViewer(filePath);
-        } else {
-            if (isZipMode()) {
-                zipViewer.onFileClicked(position);
-            } else {
-                this.filePath = filePath;
-                viewFile(getContext(), filePath, extension, alertDialogListener);
-            }
-        }
     }
 
 
@@ -811,27 +289,20 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         return filePath.toLowerCase().endsWith(".zip");
     }
 
-
     public void setPremium() {
         isPremium = true;
-        hideAds();
+        adsView.hideAds();
     }
 
 
     public void onPause() {
-        pauseAds();
-        pauseAutoPlayVid();
-    }
-
-    private void pauseAutoPlayVid() {
-        if (isPeekMode()) {
-            fileListAdapter.stopAutoPlayVid();
-        }
+        adsView.pauseAds();
+        filesView.pauseAutoPlayVid();
     }
 
 
     public void onResume() {
-        resumeAds();
+        adsView.resumeAds();
     }
 
 
@@ -867,236 +338,28 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 }
             case InstallHelper.UNKNOWN_APPS_INSTALL_REQUEST:
                 if (resultCode == AppCompatActivity.RESULT_OK) {
-                    Uri uri = createContentUri(getContext(), filePath);
-                    InstallHelper.openInstallAppScreen(getContext(), uri);
+                    filesView.openInstallScreen();
                 }
                 break;
         }
     }
 
-    private void addItemDecoration() {
-
-        switch (viewMode) {
-            case ViewMode.LIST:
-                if (dividerItemDecoration == null) {
-                    dividerItemDecoration = new DividerItemDecoration(getContext(), currentTheme);
-                } else {
-                    fileList.removeItemDecoration(dividerItemDecoration);
-                }
-                fileList.addItemDecoration(dividerItemDecoration);
-                break;
-            case ViewMode.GRID:
-                if (mGridItemDecoration == null) {
-                    mGridItemDecoration = new GridItemDecoration(getContext(), currentTheme,
-                                                                 gridCols);
-                } else {
-                    fileList.removeItemDecoration(mGridItemDecoration);
-                }
-                fileList.addItemDecoration(mGridItemDecoration);
-                break;
-        }
+    private boolean isRooted() {
+        return isRootMode;
     }
 
-
-    private ZipViewer zipViewer;
-
-    private void openZipViewer(String path) {
+    void openZipViewer(String path) {
         if (path == null) {
             return;
         }
         String extension = FileUtils.getExtensionWithDot(path);
         Analytics.getLogger().zipViewer(extension);
-        calculateScroll(currentDir);
+        filesView.calculateScroll(currentDir);
         isZipViewer = true;
         zipViewer = new ZipViewer(zipCommunicator, fragment, path);
         refreshList();
     }
 
-
-    private final BroadcastReceiver mReloadListReceiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action == null) {
-                return;
-            }
-            if (action.equals(ACTION_RELOAD_LIST)) {
-                calculateScroll(currentDir);
-                String path = intent.getStringExtra(KEY_FILEPATH);
-                Logger.log(TAG, "New zip PAth=" + path);
-                if (path != null) {
-                    scanFile(AceApplication.getAppContext(), path);
-                }
-                refreshList();
-            } else if (action.equals(ACTION_OP_REFRESH)) {
-
-                Bundle bundle = intent.getExtras();
-                Operations operation = null;
-                if (bundle != null) {
-                    operation = (Operations) bundle.getSerializable(KEY_OPERATION);
-                }
-                if (operation != null) {
-                    onOperationResult(intent, operation);
-                }
-            }
-        }
-    };
-
-    private void deleteFromMediaStore(final List<String> filesToMediaIndex) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-                if (filesToMediaIndex.size() == 0) {
-                    return;
-                }
-                Logger.log(TAG, "deleteFromMediaStore: " + filesToMediaIndex.size());
-                String mediaScanningPath = new File(filesToMediaIndex.get(0)).getParent();
-                addToMediaScanning(mediaScanningPath);
-                Logger.log(TAG, "run CUT: mediaScanningPath" + mediaScanningPath + "size:" + mediaScanningPaths.size());
-                removeBatchMedia(AceApplication.getAppContext(), filesToMediaIndex, null);
-                removeFromMediaScanning(mediaScanningPath);
-            }
-        }).start();
-    }
-
-    private boolean isMediaScanning;
-    private Set<String> mediaScanningPaths = new HashSet<>();
-
-    private void onOperationResult(Intent intent, Operations operation) {
-        Logger.log(TAG, "onOperationResult: " + operation);
-        int count = intent.getIntExtra(KEY_FILES_COUNT, 0);
-
-        switch (operation) {
-            case DELETE:
-                boolean isLargeBundle = false;
-                List<FileInfo> deletedFilesList;
-                List<String> filesToMediaIndex;
-
-                deletedFilesList = intent.getParcelableArrayListExtra
-                        (KEY_FILES);
-                filesToMediaIndex = intent.getStringArrayListExtra(KEY_MEDIA_INDEX_FILES);
-                if (deletedFilesList == null) {
-                    deletedFilesList = LargeBundleTransfer.getFileData(AceApplication.getAppContext());
-                    isLargeBundle = true;
-                }
-                if (filesToMediaIndex == null) {
-                    filesToMediaIndex = LargeBundleTransfer.getStringData(AceApplication.getAppContext());
-                }
-
-
-//                for (FileInfo info : deletedFilesList) {
-//                    scanMultipleFiles(getActivity().getApplicationContext(), info.getFilePath());
-//                }
-                int totalFiles = intent.getIntExtra(KEY_COUNT, 0);
-
-                int deletedCount = deletedFilesList.size();
-                if (intent.getBooleanExtra(KEY_SHOW_RESULT, false)) {
-
-                    if (deletedCount != 0) {
-                        FileUtils.showMessage(getContext(), getResources().getQuantityString(R.
-                                                                                                     plurals.number_of_files, deletedCount, deletedCount) + " " +
-                                getResources().getString(R.string.msg_delete_success));
-                    }
-
-                    if (totalFiles != deletedCount) {
-                        FileUtils.showMessage(getContext(), getResources().getString(R.string.msg_delete_failure));
-                    }
-                }
-                fileInfoList.removeAll(deletedFilesList);
-                removeFavorite(deletedFilesList);
-                fileListAdapter.setStopAnimation(true);
-                fileListAdapter.updateAdapter(fileInfoList);
-                deleteFromMediaStore(filesToMediaIndex);
-                if (isLargeBundle) {
-                    LargeBundleTransfer.removeFileData(AceApplication.getAppContext());
-                    LargeBundleTransfer.removeStringData(AceApplication.getAppContext());
-                }
-                break;
-
-            case RENAME:
-            case HIDE:
-                dismissDialog();
-                String oldFile = intent.getStringExtra(KEY_FILEPATH);
-                final String newFile = intent.getStringExtra(KEY_FILEPATH2);
-                if (operation.equals(HIDE)) {
-                    fileInfo = intent.getParcelableExtra(KEY_OLD_FILES);
-                }
-                if (fileInfo == null) {
-                    return;
-                }
-                int position = fileInfoList.indexOf(fileInfo);
-                if (position == -1) {
-                    return;
-                }
-                final Category category = fileInfoList.get(position).getCategory();
-                if (!oldFile.equals(fileInfoList.get(position).getFilePath())) {
-                    return;
-                }
-
-                removeMedia(AceApplication.getAppContext(), oldFile, category.getValue());
-//                Log.d(TAG, "onOperationResult: NewUri:"+insertUri);
-                scanFile(AceApplication.getAppContext(), newFile);
-
-                fileListAdapter.setStopAnimation(true);
-                Logger.log(TAG, "Position changed=" + position);
-                if (!showHidden && new File(newFile).getName().startsWith(".")) {
-                    fileInfoList.remove(position);
-                    fileListAdapter.setList(fileInfoList);
-                    fileListAdapter.notifyItemRemoved(position);
-                } else {
-                    fileInfoList.get(position).setFilePath(newFile);
-                    fileInfoList.get(position).setFileName(new File(newFile).getName());
-                    fileListAdapter.notifyItemChanged(position);
-                }
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateMedia(AceApplication.getAppContext(), newFile, category.getValue());
-                    }
-                }, 1000); // Intentional delay to let mediascanner index file first and then lets change the title
-                break;
-            case CUT:
-                if (count > 0 && getContext() != null) {
-                    Toast.makeText(getContext(), String.format(Locale.getDefault(), getContext().
-                            getString(R.string.moved), count), Toast.LENGTH_SHORT).show();
-                    refreshList();
-                }
-                final ArrayList<String> oldFileList = intent.getStringArrayListExtra(KEY_OLD_FILES);
-                deleteFromMediaStore(oldFileList);
-                break;
-            case COPY:
-                if (count > 0 && getContext() != null) {
-                    Toast.makeText(getContext(), String.format(Locale.getDefault(), getContext().
-                            getString(R.string.copied), count), Toast.LENGTH_SHORT).show();
-                    refreshList();
-                }
-                break;
-            case FOLDER_CREATION:
-            case FILE_CREATION:
-                dismissDialog();
-                boolean isSuccess = intent.getBooleanExtra(KEY_RESULT, true);
-
-                if (!isSuccess) {
-                    Toast.makeText(getActivity(), getContext().getString(R.string.msg_operation_failed), Toast
-                            .LENGTH_LONG).show();
-                } else {
-                    computeScroll();
-                    refreshList();
-                }
-                break;
-
-        }
-    }
-
-    private boolean isPeekMode() {
-        return peekAndPop.getPeekView().isShown();
-    }
-
-    private void endPeekMode() {
-        fileListAdapter.stopAutoPlayVid();
-    }
 
     boolean isTrashEnabled() {
         return false;
@@ -1108,8 +371,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
      */
     public boolean onBackPressed() {
 
-        if (isPeekMode()) {
-            endPeekMode();
+        if (filesView.isPeekMode()) {
+            filesView.endPeekMode();
         } else if (menuControls.isSearch()) {
             menuControls.endSearch();
             return false;
@@ -1120,7 +383,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
             } else {
                 zipViewer.onBackPressed();
             }
-        } else if (isActionModeActive() && !menuControls.isPasteOp()) {
+        } else if (filesView.isActionModeActive() && !menuControls.isPasteOp()) {
             menuControls.endActionMode();
         } else {
             return backOperation();
@@ -1129,10 +392,16 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         return false;
     }
 
+
+    public boolean isZipMode() {
+        return isZipViewer;
+    }
+
+
     private boolean backOperation() {
 
         if (checkIfBackStackExists()) {
-            removeScrolledPos(currentDir);
+            filesView.removeScrolledPos(currentDir);
             backStackInfo.removeEntryAtIndex(backStackInfo.getBackStack().size() - 1);
 
             String currentDir = backStackInfo.getDirAtPosition(backStackInfo.getBackStack().size
@@ -1143,37 +412,39 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                                                                                    .size() - 1);
             category = currentCategory;
             this.currentDir = currentDir;
+            filesView.setCategory(category);
+            filesView.setCurrentDir(currentDir);
             menuControls.setCategory(category);
             menuControls.setCurrentDir(currentDir);
             menuControls.setupSortVisibility();
-            bucketName = null;
-            Log.d(TAG, "backOperation: category:" + category + "bucketName:" + bucketName);
+            filesView.setBucketName(null);
+            Log.d(TAG, "backOperation: category:" + category);
 
             if (checkIfFileCategory(currentCategory)) {
 //                navigationInfo.setInitialDir();
                 if (shouldShowPathNavigation()) {
                     navigationInfo.setInitialDir(currentDir);
-                    navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled,
+                    navigationInfo.setNavDirectory(currentDir, homeScreenEnabled,
                                                    currentCategory);
                 } else {
-                    navigationInfo.addHomeNavButton(isHomeScreenEnabled, currentCategory);
+                    navigationInfo.addHomeNavButton(homeScreenEnabled, currentCategory);
                 }
             } else if (showLibSpecificNavigation(currentCategory)) {
-                navigationInfo.addLibSpecificNavButtons(isHomeScreenEnabled, category, bucketName);
+                navigationInfo.addLibSpecificNavButtons(homeScreenEnabled, category, filesView.getBucketName());
             } else {
-                navigationInfo.addHomeNavButton(isHomeScreenEnabled, currentCategory);
-                hideFab();
+                navigationInfo.addHomeNavButton(homeScreenEnabled, currentCategory);
+                floatingView.hideFab();
             }
             refreshList();
 //            menuControls.setTitleForCategory(currentCategory);
             if (currentCategory.equals(FILES)) {
-                showFab();
+                floatingView.showFab();
             }
 
             return false;
         } else {
             removeDualFileFragment();
-            if (!isHomeScreenEnabled) {
+            if (!homeScreenEnabled) {
                 getActivity().finish();
             }
             return true;
@@ -1202,15 +473,36 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         return category.equals(FILES) || category.equals(DOWNLOADS);
     }
 
-
-    public boolean isFabExpanded() {
-        return fabCreateMenu.isExpanded();
+    void onReloadList(String path) {
+        if (shouldShowPathNavigation()) {
+            navigationInfo.setInitialDir(path);
+        }
+        if (checkIfLibraryCategory(category)) {
+            floatingView.hideFab();
+        } else {
+            floatingView.showFab();
+        }
+        if (shouldShowPathNavigation()) {
+            navigationInfo.setNavDirectory(currentDir, homeScreenEnabled, category);
+        } else if (showLibSpecificNavigation(category)) {
+            navigationInfo.addLibSpecificNavButtons(homeScreenEnabled, category, filesView.getBucketName());
+        } else {
+            navigationInfo.addHomeNavButton(homeScreenEnabled, category);
+        }
+        backStackInfo.addToBackStack(path, category);
     }
 
-    public void collapseFab() {
-        fabCreateMenu.collapse();
+    public void refreshList() {
+        if (!hasStoragePermission()) {
+            return;
+        }
+        filesView.refreshList();
+        if (isZipMode()) {
+            zipViewer.loadData();
+        } else {
+            bridge.loadData(currentDir, category, filesView.getId());
+        }
     }
-
 
     /**
      * Called from {@link #onBackPressed()} . Does the following:
@@ -1234,334 +526,46 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         }
     }
 
-    private void resumeAds() {
-        if (mAdView != null) {
-            mAdView.resume();
-        }
+    AppCompatActivity getActivity() {
+        return (AppCompatActivity) fragment.getActivity();
     }
 
-    private void pauseAds() {
-        if (mAdView != null) {
-            mAdView.pause();
-        }
+    private boolean hasStoragePermission() {
+        return PermissionUtils.hasStoragePermission();
     }
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.fabCreateFile:
-                Analytics.getLogger().operationClicked(Analytics.Logger.EV_FAB);
-                showCreateFileDialog();
-                fabCreateMenu.collapse();
-                break;
-            case R.id.fabCreateFolder:
-                Analytics.getLogger().operationClicked(Analytics.Logger.EV_FAB);
-                showCreateDirDialog();
-                fabCreateMenu.collapse();
-                break;
-
-        }
-    }
-
-
-    private void toggleDragData(FileInfo fileInfo) {
-        if (draggedData.contains(fileInfo)) {
-            draggedData.remove(fileInfo);
-        } else {
-            draggedData.add(fileInfo);
-        }
-    }
-
-    private void itemClickActionMode(int position, boolean isLongPress) {
-        fileListAdapter.toggleSelection(position, isLongPress);
-
-        boolean hasCheckedItems = fileListAdapter.getSelectedCount() > 0;
-        if (hasCheckedItems && !isActionModeActive) {
-            // there are some selected items, start the actionMode
-            startActionMode();
-        } else if (!hasCheckedItems && isActionModeActive) {
-            // there no selected items, finish the actionMode
-            menuControls.endActionMode();
-        }
-        if (isActionModeActive) {
-            FileInfo fileInfo = fileInfoList.get(position);
-            toggleDragData(fileInfo);
-            SparseBooleanArray checkedItemPos = fileListAdapter.getSelectedItemPositions();
-            setSelectedItemPos(checkedItemPos);
-            menuControls.setToolbarText(String.valueOf(fileListAdapter
-                                                               .getSelectedCount()));
-        }
-    }
-
-    private void calculateScroll(String currentDir) {
-        View vi = fileList.getChildAt(0);
-        int top = (vi == null) ? 0 : vi.getTop();
-        int position;
-        if (viewMode == ViewMode.LIST) {
-            position = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
-        } else {
-            position = ((GridLayoutManager) layoutManager).findFirstVisibleItemPosition();
-        }
-        Bundle bundle = new Bundle();
-        bundle.putInt(FileConstants.KEY_POSITION, position);
-        bundle.putInt(FileConstants.KEY_OFFSET, top);
-
-        putScrolledPosition(currentDir, bundle);
-    }
-
-    private void setSelectedItemPos(SparseBooleanArray selectedItemPos) {
-        mSelectedItemPositions = selectedItemPos;
-        menuControls.setupMenuVisibility(selectedItemPos);
-    }
-
-    private void toggleSelectAll(boolean selectAll) {
-        fileListAdapter.clearSelection();
-        for (int i = 0; i < fileListAdapter.getItemCount(); i++) {
-            fileListAdapter.toggleSelectAll(i, selectAll);
-        }
-        SparseBooleanArray checkedItemPos = fileListAdapter.getSelectedItemPositions();
-        setSelectedItemPos(checkedItemPos);
-        int count = fileListAdapter.getSelectedCount();
-        if (count == 0) {
-            menuControls.endActionMode();
-        } else {
-            menuControls.setToolbarText(String.valueOf(fileListAdapter.getSelectedCount()) + " " +
-                                                getResources().getString(R.string.selected));
-            fileListAdapter.notifyDataSetChanged();
-        }
-    }
-
-    void clearSelection() {
-        fileListAdapter.removeSelection();
-    }
-
-
-    public void reloadList(String path, Category category) {
-        currentDir = path;
-        this.category = category;
-        if (shouldShowPathNavigation()) {
-            navigationInfo.setInitialDir(path);
-        }
-        if (checkIfLibraryCategory(category)) {
-            hideFab();
-        } else {
-            showFab();
-        }
-        menuControls.setCategory(category);
-        menuControls.setCurrentDir(currentDir);
-        menuControls.setupSortVisibility();
-        if (shouldShowPathNavigation()) {
-            navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled, category);
-        } else if (showLibSpecificNavigation(category)) {
-            navigationInfo.addLibSpecificNavButtons(isHomeScreenEnabled, category, bucketName);
-        } else {
-            navigationInfo.addHomeNavButton(isHomeScreenEnabled, category);
-        }
-        backStackInfo.addToBackStack(path, category);
-        if (isActionModeActive() && (checkIfLibraryCategory(category) ||
-                !menuControls.isPasteOp())) {
-            menuControls.endActionMode();
-        }
-        refreshList();
-    }
-
-
-    private void stopAnimation() {
-        if (!fileListAdapter.mStopAnimation) {
-            for (int i = 0; i < fileList.getChildCount(); i++) {
-                View view = fileList.getChildAt(i);
-                if (view != null) {
-                    view.clearAnimation();
-                }
-            }
-        }
-        fileListAdapter.mStopAnimation = true;
-    }
-
-
-    private boolean isZipMode() {
-        return isZipViewer;
-    }
-
-    void onDataLoaded(ArrayList<FileInfo> data) {
-        mSwipeRefreshLayout.setRefreshing(false);
-
-        if (data != null) {
-
-            shouldStopAnimation = true;
-            fileInfoList = data;
-            fileListAdapter.setCategory(category);
-            fileList.setAdapter(fileListAdapter);
-            fileListAdapter.updateAdapter(fileInfoList);
-
-            addItemDecoration();
-
-            if (!data.isEmpty()) {
-                getScrolledPosition();
-                fileList.stopScroll();
-                mTextEmpty.setVisibility(View.GONE);
-            } else {
-                mTextEmpty.setVisibility(View.VISIBLE);
-            }
-        }
-    }
 
     List<FileInfo> getFileList() {
-        return fileInfoList;
-    }
-
-    private void getScrolledPosition() {
-        if (currentDir != null && scrollPosition.containsKey(currentDir)) {
-            Bundle b = scrollPosition.get(currentDir);
-            if (viewMode == ViewMode.LIST) {
-                ((LinearLayoutManager) layoutManager).scrollToPositionWithOffset(b.getInt
-                        (FileConstants
-                                 .KEY_POSITION), b.getInt(FileConstants.KEY_OFFSET));
-            } else {
-                ((GridLayoutManager) layoutManager).scrollToPositionWithOffset(b.getInt
-                        (FileConstants
-                                 .KEY_POSITION), b.getInt(FileConstants.KEY_OFFSET));
-            }
-        }
-    }
-
-    private void putScrolledPosition(String path, Bundle position) {
-        scrollPosition.put(path, position);
-    }
-
-    private void removeScrolledPos(String path) {
-        if (path == null) {
-            return;
-        }
-        scrollPosition.remove(path);
+        return filesView.getFileList();
     }
 
 
-    int getViewMode() {
-        return viewMode;
+    public void setViewMode(int viewMode) {
+        filesView.setViewMode(viewMode);
+        menuControls.updateMenuTitle(viewMode == ViewMode.LIST ? ViewMode.GRID : ViewMode.LIST);
+        switchView();
     }
 
     void passViewMode() {
-        if (mIsDualModeEnabled) {
-            ((AceActivity) getActivity()).switchView(viewMode, !(fragment instanceof DualPaneList));
+        if (dualModeEnabled) {
+            ((AceActivity) getActivity()).switchView(filesView.getViewMode(), !(fragment instanceof DualPaneList));
         }
     }
 
     void switchView() {
-        if (viewMode == ViewMode.LIST) {
-            viewMode = ViewMode.GRID;
-        } else {
-            viewMode = ViewMode.LIST;
-        }
-        bridge.saveSettingsOnExit(gridCols, viewMode);
-
-        if (viewMode == ViewMode.LIST) {
-            layoutManager = new CustomLayoutManager(getActivity());
-            fileList.setLayoutManager(layoutManager);
-
-        } else {
-            refreshSpan(((AceActivity) getActivity()).getConfiguration());
-        }
-
-        shouldStopAnimation = true;
-        fileListAdapter.setViewMode(viewMode);
-
-        fileListAdapter.setSearchCallback(this);
-        fileList.setAdapter(fileListAdapter);
-        fileListAdapter.notifyDataSetChanged();
-        if (viewMode == ViewMode.LIST) {
-            if (mGridItemDecoration != null) {
-                fileList.removeItemDecoration(mGridItemDecoration);
-            }
-            if (dividerItemDecoration == null) {
-                dividerItemDecoration = new DividerItemDecoration(getContext(), currentTheme);
-            }
-            dividerItemDecoration.setOrientation();
-            fileList.addItemDecoration(dividerItemDecoration);
-        } else {
-            if (dividerItemDecoration != null) {
-                fileList.removeItemDecoration(dividerItemDecoration);
-            }
-            addItemDecoration();
-        }
-
-        initializeListeners();
-
+        int viewMode = filesView.getNewViewMode();
+        bridge.saveSettingsOnExit(filesView.getGridCols(), viewMode);
+        filesView.switchView();
     }
-
 
     SparseBooleanArray getSelectedItems() {
-        return mSelectedItemPositions;
-    }
-
-
-    private boolean isRooted() {
-        return isRootMode;
-    }
-
-    void showCreateDirDialog() {
-        String title = getContext().getString(R.string.new_folder);
-        String texts[] = new String[]{title, getContext().getString(R.string.enter_name), getContext
-                ().getString(R.string
-                                     .create), getContext().getString(R.string.dialog_cancel)};
-        DialogHelper.showInputDialog(getContext(), texts, Operations.FOLDER_CREATION, null,
-                                     dialogListener);
-    }
-
-    private void showCreateFileDialog() {
-        String title = getContext().getString(R.string.new_file);
-        String texts[] = new String[]{title, getContext().getString(R.string.enter_name), getContext
-                ().getString(R.string.create), getContext().getString(R.string.dialog_cancel)};
-        DialogHelper.showInputDialog(getContext(), texts, Operations.FILE_CREATION, null,
-                                     dialogListener);
+        return filesView.getSelectedItems();
     }
 
     void showRenameDialog(FileInfo fileInfo, String text) {
-        this.fileInfo = fileInfo;
-        String title = getContext().getString(R.string.action_rename);
-        String texts[] = new String[]{title, getContext().getString(R.string.enter_name), getContext
-                ().getString(R.string.action_rename), getContext().getString(R.string.dialog_cancel)};
-        DialogHelper.showInputDialog(getContext(), texts, Operations.RENAME, text, dialogListener);
+        filesView.showRenameDialog(fileInfo, text);
     }
 
-    public void onPasteAction(boolean isMove, ArrayList<FileInfo> filesToPaste, String
-            destinationDir) {
-        menuControls.endActionMode();
-        Logger.log(TAG, "onPasteAction: isScanning:" + isMediaScanning + "mediascanpath:" + mediaScanningPaths.size() + "destinationDir:" + destinationDir);
-        if (isMediaScanning && isMediaScanning(destinationDir)) {
-            onOperationFailed(Operations.COPY);
-            return;
-        }
-        bridge.startPasteOperation(destinationDir, isMove, isRooted(), filesToPaste);
-    }
-
-    private boolean isMediaScanning(String path) {
-
-        for (String scannerPath : mediaScanningPaths) {
-            if (path.equals(scannerPath)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-    private synchronized void addToMediaScanning(String path) {
-        Log.d(TAG, "addToMediaScanning: path:" + path);
-        isMediaScanning = true;
-        mediaScanningPaths.add(path);
-    }
-
-    private synchronized void removeFromMediaScanning(String path) {
-        Log.d(TAG, "removeFromMediaScanning: path:" + path);
-        mediaScanningPaths.remove(path);
-        if (mediaScanningPaths.size() == 0) {
-            isMediaScanning = false;
-        }
-    }
-
-    private Intent  operationIntent;
-    private boolean isSAFShown;
 
     public void showSAFDialog(String path, Intent intent) {
         dismissDialog();
@@ -1569,14 +573,23 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         operationIntent = intent;
         isSAFShown = true;
         String title = getContext().getString(R.string.needsaccess);
-        String texts[] = new String[]{title, getContext().getString(R.string
+        String[] texts = new String[]{title, getContext().getString(R.string
                                                                             .needs_access_summary, path),
-                getContext().getString(R.string.open), getContext().getString(R.string
-                                                                                      .dialog_cancel)};
+                                      getContext().getString(R.string.open), getContext().getString(R.string
+                                                                                                            .dialog_cancel)};
         DialogHelper.showSAFDialog(getContext(), R.layout.dialog_saf,
                                    texts, alertDialogListener);
     }
 
+    public void dismissDialog() {
+        if (dialog != null) {
+            dialog.dismiss();
+        }
+    }
+
+    public void setDialog(Dialog dialog) {
+        this.dialog = dialog;
+    }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void triggerStorageAccessFramework() {
@@ -1610,7 +623,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     public void showConflictDialog(final List<FileInfo> conflictFiles,
                                    List<FileInfo> destFiles, final String destinationDir, final
                                    boolean isMove,
-                                   final DialogHelper.PasteConflictListener pasteConflictListener) {
+                                   final DialogHelper.PasteConflictListener pasteConflictListener)
+    {
         Analytics.getLogger().conflictDialogShown();
         DialogHelper.showConflictDialog(getContext(), conflictFiles, destFiles, destinationDir,
                                         isMove, pasteConflictListener);
@@ -1618,24 +632,33 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     public void showPasteProgressDialog(String destinationDir, List<FileInfo> files,
-                                        boolean isMove) {
+                                        boolean isMove)
+    {
         new OperationProgress().showPasteProgress(getContext(), destinationDir, files,
                                                   isMove);
     }
 
     public void deleteFiles(ArrayList<FileInfo> filesToDelete) {
-        if (isMediaScanning && isMediaScanning(filesToDelete.get(0).getFilePath())) {
+        if (filesView.isMediaScannerActive() && filesView.isMediaScanning(filesToDelete.get(0).getFilePath())) {
             onOperationFailed(Operations.DELETE);
             return;
         }
         bridge.deleteFiles(filesToDelete);
     }
 
+
+    @SuppressWarnings("unused")
+    public void onOperationFailed(Operations operation) {
+        Toast.makeText(getContext(), R.string.msg_operation_failed, Toast
+                .LENGTH_SHORT).show();
+    }
+
     public void sortFiles(int position) {
         bridge.persistSortMode(position);
         refreshList();
-        if (mIsDualModeEnabled) {
-            ((AceActivity) getActivity()).refreshList(!(fragment instanceof DualPaneList)); //Intentional negation to make the other pane reflect changes
+        if (dualModeEnabled) {
+            ((AceActivity) getActivity()).refreshList(
+                    !(fragment instanceof DualPaneList)); //Intentional negation to make the other pane reflect changes
         }
     }
 
@@ -1648,7 +671,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     public void onExtractPositiveClick(Dialog dialog, String currentFilePath, String newFileName,
-                                       boolean isChecked) {
+                                       boolean isChecked)
+    {
 
         this.dialog = dialog;
         if (mSelectedPath == null) {
@@ -1656,7 +680,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         }
         bridge.onExtractPositiveClick(currentFilePath, newFileName, isChecked, mSelectedPath);
     }
-
 
     public void showSelectPathDialog(Button buttonPathSelect) {
         this.buttonPathSelect = buttonPathSelect;
@@ -1666,8 +689,15 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         dialogFragment.show(fragment.getFragmentManager(), "Browse Fragment");
     }
 
-
-    private Dialog dialog;
+    private int getThemeStyle() {
+        switch (currentTheme) {
+            case DARK:
+                return R.style.BaseDarkTheme;
+            case LIGHT:
+                return R.style.BaseLightTheme;
+        }
+        return R.style.BaseDarkTheme;
+    }
 
     public void onInvalidName(Operations operation) {
         switch (operation) {
@@ -1677,12 +707,6 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 final EditText editText = dialog.findViewById(R.id.editFileName);
                 editText.setError(getContext().getString(R.string.msg_error_invalid_name));
                 break;
-        }
-    }
-
-    public void dismissDialog() {
-        if (dialog != null) {
-            dialog.dismiss();
         }
     }
 
@@ -1696,7 +720,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     public void onCompressPosClick(Dialog dialog, String newFileName,
-                                   String extension, ArrayList<FileInfo> paths) {
+                                   String extension, ArrayList<FileInfo> paths)
+    {
         this.dialog = dialog;
         String newFilePath = currentDir + File.separator + newFileName + extension;
         bridge.onCompressPosClick(newFilePath, paths);
@@ -1704,7 +729,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
     public void onPermissionSetError() {
         Toast.makeText(getContext(), getContext().getString(R.string.error), Toast.LENGTH_SHORT)
-                .show();
+             .show();
     }
 
     public void onPermissionsSet() {
@@ -1716,7 +741,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     public void removeHomeFromNavPath() {
-        isHomeScreenEnabled = false;
+        homeScreenEnabled = false;
         navigationInfo.removeHomeFromNavPath();
     }
 
@@ -1734,156 +759,19 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     public void onQueryTextChange(String query) {
-        fileListAdapter.filter(query);
+        filesView.onQueryChange(query);
     }
 
-    public int onDragLocationEvent(DragEvent event, int oldPos) {
-        View onTopOf = fileList.findChildViewUnder(event.getX(), event.getY());
-        int newPos = fileList.getChildAdapterPosition(onTopOf);
-//        Log.d(TAG, "onDragLocationEvent: pos:"+newPos);
-
-        if (oldPos != newPos && newPos != RecyclerView.NO_POSITION) {
-            // For scroll up
-            if (oldPos != RecyclerView.NO_POSITION && newPos < oldPos) {
-                int changedPos = newPos - 2;
-                Logger.log(TAG, "drag Location old pos=" + oldPos + "new pos=" +
-                        newPos +
-                        "changed pos=" + changedPos);
-                if (changedPos >= 0) {
-                    fileList.smoothScrollToPosition(changedPos);
-                }
-            } else {
-                int changedPos = newPos + 2;
-                // For scroll down
-                if (changedPos < fileInfoList.size()) {
-                    fileList.smoothScrollToPosition(newPos + 2);
-                }
-                Logger.log(TAG, "drag Location old pos=" + oldPos + "new pos=" +
-                        newPos +
-                        "changed pos=" + changedPos);
-
-            }
-            oldPos = newPos;
-            fileListAdapter.setDraggedPos(newPos);
-        }
-        return oldPos;
-    }
-
-    public void onDragDropEvent(DragEvent event) {
-        if (!category.equals(FILES)) {
-            Toast.makeText(getContext(), getResources().getString(R.string.error_unsupported),
-                           Toast.LENGTH_SHORT).show();
+    public void onPasteAction(boolean isMove, ArrayList<FileInfo> filesToPaste, String
+            destinationDir)
+    {
+        if (filesView.isMediaScannerActive() && filesView.isMediaScanning(destinationDir)) {
+            onOperationFailed(Operations.COPY);
             return;
         }
-        View top = fileList.findChildViewUnder(event.getX(), event.getY());
-        int position = fileList.getChildAdapterPosition(top);
-        Logger.log(TAG, "DROP new pos=" + position + " this:" + StoragesUiView.this + "fileListSize:" + fileList.getAdapter().getItemCount());
-        @SuppressWarnings("unchecked")
-        ArrayList<FileInfo> draggedFiles = (ArrayList<FileInfo>) event.getLocalState();
-        ArrayList<String> paths = new ArrayList<>();
-
-                  /*  ArrayList<FileInfo> paths = dragData.getParcelableArrayListExtra(FileConstants
-                            .KEY_PATH);*/
-
-        String destinationDir;
-        if (position != -1) {
-            destinationDir = fileInfoList.get(position).getFilePath();
-        } else {
-            destinationDir = currentDir;
-        }
-
-        for (FileInfo info : draggedFiles) {
-            paths.add(info.getFilePath());
-        }
-
-        String sourceParent = new File(draggedFiles.get(0).getFilePath()).getParent();
-        if (!new File(destinationDir).isDirectory()) {
-            destinationDir = new File(destinationDir).getParent();
-        }
-
-        boolean value = destinationDir.equals(sourceParent);
-        Logger.log(TAG, "Source parent=" + sourceParent + " " + value);
-
-
-        if (!paths.contains(destinationDir)) {
-            if (!destinationDir.equals(sourceParent)) {
-                Logger.log(TAG, "Source parent=" + sourceParent + " Dest=" +
-                        destinationDir + "draggedFiles:" + draggedFiles.size());
-                dragHelper.showDragDialog(draggedFiles, destinationDir);
-            } else {
-                ArrayList<FileInfo> info = new ArrayList<>();
-                info.addAll(draggedFiles);
-                Logger.log(TAG, "Source=" + draggedFiles.get(0) + "Dest=" +
-                        destinationDir);
-                onPasteAction(false, info, destinationDir);
-            }
-        }
-
-//        draggedData = new ArrayList<>();
+        bridge.startPasteOperation(destinationDir, isMove, isRooted(), filesToPaste);
     }
 
-    public void onDragExit() {
-//        fileListAdapter.clearDragPos();
-//        draggedData = new ArrayList<>();
-    }
-
-    public void onDragEnded(View view, DragEvent event) {
-
-        View top1 = fileList.findChildViewUnder(event.getX(), event.getY());
-        int position1 = fileList.getChildAdapterPosition(top1);
-        Logger.log(TAG, "onDragEnded: " + category + " result:" + event.getResult() + " position:" +
-                position1 + " this:" + StoragesUiView.this);
-
-        if (!event.getResult() && position1 == RecyclerView.NO_POSITION) {
-
-            ClipData clipData = event.getClipData();
-            if (clipData == null) {
-                menuControls.endActionMode();
-                return;
-            }
-            ClipData.Item item = clipData.getItemAt(0);
-            Intent intent = item.getIntent();
-            if (intent == null) {
-                menuControls.endActionMode();
-                return;
-            }
-            int dragCategory = intent.getIntExtra(KEY_CATEGORY, 0);
-            Logger.log(TAG, "onDragEnded: category:" + category + " dropcat:" + dragCategory);
-
-            if (dragCategory == FILES.getValue() && !category.equals(FILES)) {
-                Toast.makeText(getContext(), "Not supported", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            ViewParent parent1 = view.getParent().getParent();
-
-            if (((View) parent1).getId() == R.id.frame_container_dual) {
-                Logger.log(TAG, "DRAG END parent dual =" + true);
-            } else {
-                Logger.log(TAG, "DRAG END parent dual =" + false);
-                BaseFileList singlePaneFragment = (BaseFileList)
-                        fragment.getFragmentManager()
-                                .findFragmentById(R.id.main_container);
-                Logger.log(TAG, "DRAG END single dir=" + mLastSinglePaneDir);
-                @SuppressWarnings("unchecked")
-                ArrayList<FileInfo> dragPaths = (ArrayList<FileInfo>) event.getLocalState();
-                if (mLastSinglePaneDir != null) {
-                    String[] files = new File(mLastSinglePaneDir).list();
-                    if (singlePaneFragment != null && files != null && files.length == 0 &&
-                            dragPaths.size() != 0) {
-                        dragHelper.showDragDialog(dragPaths, mLastSinglePaneDir);
-                    }
-                }
-            }
-
-        }
-        view.post(new Runnable() {
-            @Override
-            public void run() {
-                menuControls.endActionMode();
-            }
-        });
-//        draggedData = new ArrayList<>();
-    }
 
     public void syncDrawer() {
         if (drawerListener != null) {
@@ -1895,56 +783,19 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         new OperationProgress().showZipProgressDialog(getContext(), files, destinationPath);
     }
 
-    @SuppressWarnings("unused")
-    public void onOperationFailed(Operations operation) {
-        Toast.makeText(getContext(), R.string.msg_operation_failed, Toast
-                .LENGTH_SHORT).show();
-    }
-
     public void showExtractDialog(Intent intent) {
         new OperationProgress().showExtractProgressDialog(getContext(), intent);
     }
 
-    public void onSelectAllClicked() {
-        if (mSelectedItemPositions != null) {
-            if (mSelectedItemPositions.size() < fileListAdapter.getItemCount()) {
-                toggleSelectAll(true);
-            } else {
-                toggleSelectAll(false);
-            }
-        }
-    }
 
-
-    private void startActionMode() {
-        isActionModeActive = true;
-        clearSelectedPos();
-        hideFab();
-        draggedData.clear();
-        menuControls.startActionMode();
-    }
-
-    public void endActionMode() {
-        isDragStarted = false;
-        isActionModeActive = false;
-        fileListAdapter.clearDragPos();
-        fileListAdapter.removeSelection();
-        mSwipeRefreshLayout.setEnabled(true);
-        // FAB should be visible only for Files Category
-        if (isFilesCategory()) {
-            showFab();
-        }
-    }
-
-    boolean isActionModeActive() {
-        return isActionModeActive;
+    private boolean isFilesCategory() {
+        return category.equals(FILES);
     }
 
     void setDualPaneState() {
         boolean isDualPaneInFocus = fragment instanceof DualPaneList;
         ((AceActivity) getActivity()).setDualPaneFocusState(isDualPaneInFocus);
     }
-
 
     @Override
     public void onHomeClicked() {
@@ -1953,18 +804,17 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
         isHomeClicked = true;
         menuControls.endActionMode();
-        fileListAdapter.stopAutoPlayVid();
+        filesView.onHomeClicked();
         //removeDualFileFragment();
         getActivity().onBackPressed();
     }
-
 
     @Override
     public void onNavButtonClicked(String dir) {
         boolean isDualPaneInFocus = fragment instanceof DualPaneList;
         ((AceActivity) getActivity()).setDualPaneFocusState(isDualPaneInFocus);
 
-        if (isActionModeActive() && !menuControls.isPasteOp()) {
+        if (filesView.isActionModeActive() && !menuControls.isPasteOp()) {
             menuControls.endActionMode();
         }
         if (isZipMode()) {
@@ -1985,7 +835,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
                 backStackInfo.removeEntryAtIndex(j);
             }
             refreshList();
-            navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled, FILES);
+            navigationInfo.setNavDirectory(currentDir, homeScreenEnabled, FILES);
         }
     }
 
@@ -1994,7 +844,7 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         boolean isDualPaneInFocus = fragment instanceof DualPaneList;
         ((AceActivity) getActivity()).setDualPaneFocusState(isDualPaneInFocus);
 
-        if (isActionModeActive() && !menuControls.isPasteOp()) {
+        if (filesView.isActionModeActive() && !menuControls.isPasteOp()) {
             menuControls.endActionMode();
         }
         this.category = category;
@@ -2014,20 +864,8 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         }
 
         refreshList();
-        navigationInfo.addLibSpecificNavButtons(isHomeScreenEnabled, category, bucketName);
-
+        navigationInfo.addLibSpecificNavButtons(homeScreenEnabled, category, bucketName);
     }
-
-    private int getThemeStyle() {
-        switch (currentTheme) {
-            case DARK:
-                return R.style.BaseDarkTheme;
-            case LIGHT:
-                return R.style.BaseLightTheme;
-        }
-        return R.style.BaseDarkTheme;
-    }
-
 
     void updateFavouritesGroup(ArrayList<FileInfo> fileInfoList) {
         ArrayList<FavInfo> favInfoArrayList = new ArrayList<>();
@@ -2066,70 +904,54 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         }
     }
 
-
-    private StoragesUiView.FavoriteOperation favoriteListener;
-
     void changeGridCols() {
-        refreshSpan(((AceActivity) getActivity()).getConfiguration());
-    }
-
-    private void refreshSpan(Configuration configuration) {
-        if (viewMode == ViewMode.GRID) {
-            if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT || !mIsDualModeEnabled) {
-                gridCols = ConfigurationHelper.getStorageGridCols(configuration);
-            } else {
-                gridCols = ConfigurationHelper.getStorageDualGridCols(configuration);
-            }
-            layoutManager = new CustomGridLayoutManager(getActivity(), gridCols);
-            fileList.setLayoutManager(layoutManager);
-        }
-    }
-
-
-    private boolean isFilesCategory() {
-        return category.equals(FILES);
+        filesView.refreshSpan(((AceActivity) getActivity()).getConfiguration());
     }
 
 
     @Override
     public void onConfigurationChanged(final Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (mCurrentOrientation != newConfig.orientation) {
-            mCurrentOrientation = newConfig.orientation;
-            refreshSpan(newConfig);
+        if (currentOrientation != newConfig.orientation) {
+            currentOrientation = newConfig.orientation;
+            filesView.refreshSpan(newConfig);
         }
     }
 
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        initializeViews();
+    }
+
+    private void initializeViews() {
+        mainContainer = findViewById(R.id.main_content);
+        floatingView = new FloatingView(this);
+    }
 
     public void onDestroy() {
-        if (mAdView != null) {
-            mAdView.destroy();
-        }
+        adsView.destroyAds();
         if (!mInstanceStateExists) {
-            Logger.log(TAG, "onDestroy UNREGISTER");
             unregisterReceivers();
         }
+        filesView.onDestroy();
+    }
+
+    private void unregisterReceivers() {
+        adsView.unregister();
     }
 
     public void onViewDestroyed() {
-        fileList.stopScroll();
+        filesView.onDestroyView();
         if (!mInstanceStateExists) {
-            bridge.saveSettingsOnExit(gridCols, viewMode);
-        }
-
-        if (fileListAdapter != null) {
-            fileListAdapter.onDetach();
+            bridge.saveSettingsOnExit(filesView.getGridCols(), filesView.getViewMode());
         }
     }
 
     void clearSelectedPos() {
-        mSelectedItemPositions = new SparseBooleanArray();
+        filesView.clearSelectedPos();
     }
 
-
-    public void endDrag() {
-        isDragStarted = false;
-    }
 
     public void setHidden(boolean showHidden) {
         this.showHidden = showHidden;
@@ -2145,117 +967,153 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
     }
 
     public void hideDualPane() {
-        mIsDualModeEnabled = false;
+        dualModeEnabled = false;
     }
-
 
     public void setFavListener(StoragesUiView.FavoriteOperation favoriteListener) {
         this.favoriteListener = favoriteListener;
     }
 
-    private DialogHelper.DialogCallback dialogListener = new DialogHelper.DialogCallback() {
-
-
-        @Override
-        public void onPositiveButtonClick(Dialog dialog, Operations operation, String name) {
-            StoragesUiView.this.dialog = dialog;
-            switch (operation) {
-                case FOLDER_CREATION:
-                    bridge.createDir(currentDir, name, isRooted());
-                    break;
-                case FILE_CREATION:
-                    bridge.createFile(currentDir, name, isRooted());
-                    break;
-                case RENAME:
-                    String filePath = fileInfo.getFilePath();
-                    bridge.renameFile(filePath, new File(filePath).getParent(), name, isRooted());
-                    break;
-            }
-        }
-
-        @Override
-        public void onNegativeButtonClick(Operations operations) {
-
-        }
-    };
-
-    // Dialog for SAF and APK dialog
-    private DialogHelper.AlertDialogListener alertDialogListener = new DialogHelper
-            .AlertDialogListener()
-    {
-
-        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-        @Override
-        public void onPositiveButtonClick(View view) {
-            if (isSAFShown) {
-                triggerStorageAccessFramework();
-            } else {
-                String mimeType = getSingleton().getMimeTypeFromExtension(extension);
-                Uri uri = createContentUri(getContext(), filePath);
-                extension = null;
-                if (mimeType == null) {
-                    openWith(uri, getContext());
-                    return;
-                }
-                boolean canInstallApp = InstallHelper.canInstallApp(getContext());
-                if (canInstallApp) {
-                    InstallHelper.openInstallAppScreen(getContext(), uri);
-                } else {
-                    InstallHelper.requestUnknownAppsInstallPermission(fragment);
-                }
-            }
-        }
-
-        @Override
-        public void onNegativeButtonClick(View view) {
-            if (isSAFShown) {
-                Toast.makeText(getContext(), getContext().getString(R.string.error), Toast
-                        .LENGTH_SHORT).show();
-            }
-        }
-
-        @Override
-        public void onNeutralButtonClick(View view) {
-            openZipViewer(filePath);
-        }
-    };
-
     public void addHomeNavPath() {
-        isHomeScreenEnabled = true;
+        homeScreenEnabled = true;
         if (checkIfFileCategory(category)) {
             if (shouldShowPathNavigation()) {
-                navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled,
+                navigationInfo.setNavDirectory(currentDir, homeScreenEnabled,
                                                category);
             } else {
-                navigationInfo.addHomeNavButton(isHomeScreenEnabled, category);
+                navigationInfo.addHomeNavButton(homeScreenEnabled, category);
             }
         } else if (showLibSpecificNavigation(category)) {
-            navigationInfo.addLibSpecificNavButtons(isHomeScreenEnabled, category, bucketName);
+            navigationInfo.addLibSpecificNavButtons(homeScreenEnabled, category, filesView.getBucketName());
         } else {
-            navigationInfo.addHomeNavButton(isHomeScreenEnabled, category);
+            navigationInfo.addHomeNavButton(homeScreenEnabled, category);
         }
     }
 
-    public void setViewMode(int viewMode) {
-        this.viewMode = viewMode;
-        menuControls.updateMenuTitle(viewMode == ViewMode.LIST ? ViewMode.GRID : ViewMode.LIST);
-        switchView();
+
+    public void createDir(String name) {
+        bridge.createDir(currentDir, name, isRooted());
+    }
+
+    public void createFile(String name) {
+        bridge.createDir(currentDir, name, isRooted());
+    }
+
+    public boolean isFabExpanded() {
+        return floatingView.isFabExpanded();
+    }
+
+    public void showCreateDirDialog() {
+        floatingView.showCreateDirDialog();
+    }
+
+    public void collapseFab() {
+        floatingView.collapseFab();
+    }
+
+    public Fragment getFragment() {
+        return fragment;
+    }
+
+    public ZipViewer getZipViewer() {
+        return zipViewer;
+    }
+
+    public boolean isZipFile(String filePath) {
+        if (!isZipMode() && isZipViewable(filePath)) {
+            openZipViewer(filePath);
+            return true;
+        }
+        return false;
+    }
+
+    public void onZipFileClicked(int position) {
+        zipViewer.onFileClicked(position);
+    }
+
+    public void onActionModeStarted() {
+        floatingView.hideFab();
+    }
+
+    public void onActionModeEnded() {
+        // FAB should be visible only for Files Category
+        if (isFilesCategory()) {
+            floatingView.showFab();
+        }
+    }
+
+    public boolean isDualModeEnabled() {
+        return dualModeEnabled;
+    }
+
+    void renameFile(String filePath, String parentDir, String name) {
+        bridge.renameFile(filePath, parentDir, name, isRooted());
+    }
+
+
+    public void dismissFAB() {
+        floatingView.dismissDialog();
+    }
+
+    public boolean showHidden() {
+        return showHidden;
+    }
+
+    public void reloadList(String directory, Category category) {
+        filesView.reloadList(directory, category);
+    }
+
+    public void onDataLoaded(ArrayList<FileInfo> data) {
+        filesView.onDataLoaded(data);
+    }
+
+    public boolean isActionModeActive() {
+        return filesView.isActionModeActive();
+    }
+
+    public int getViewMode() {
+        return filesView.getViewMode();
+    }
+
+    public void clearSelection() {
+        filesView.clearSelection();
+    }
+
+    public void endDrag() {
+        filesView.endDrag();
+    }
+
+    public void endActionMode() {
+        filesView.endActionMode();
+    }
+
+    public void onSelectAllClicked() {
+        filesView.onSelectAllClicked();
+    }
+
+    public void setCurrentDir(String currentDir) {
+        this.currentDir = currentDir;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
 
     public interface FavoriteOperation {
         void updateFavorites(ArrayList<FavInfo> favList);
+
         void removeFavorites(ArrayList<FavInfo> favList);
     }
 
-    private ZipCommunicator zipCommunicator = new ZipCommunicator() {
+    private ZipCommunicator                  zipCommunicator     = new ZipCommunicator() {
 
         @Override
         public void removeZipScrollPos(String newPath) {
             if (newPath == null) {
                 return;
             }
-            scrollPosition.remove(newPath);
+            filesView.removeScrolledPos(newPath);
         }
 
         @Override
@@ -2288,20 +1146,20 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
 
             refreshList();
             if (shouldShowPathNavigation()) {
-                navigationInfo.setNavDirectory(currentDir, isHomeScreenEnabled, category);
+                navigationInfo.setNavDirectory(currentDir, homeScreenEnabled, category);
             } else {
-                navigationInfo.addHomeNavButton(isHomeScreenEnabled, category);
+                navigationInfo.addHomeNavButton(homeScreenEnabled, category);
             }
         }
 
         @Override
         public void calculateZipScroll(String dir) {
-            calculateScroll(dir);
+            filesView.calculateScroll(dir);
         }
 
         @Override
         public void onZipContentsLoaded(ArrayList<FileInfo> data) {
-            onDataLoaded(data);
+            filesView.onDataLoaded(data);
         }
 
         @Override
@@ -2327,6 +1185,31 @@ public class StoragesUiView extends CoordinatorLayout implements View.OnClickLis
         @Override
         public void setInitialDir(String path) {
             navigationInfo.setInitialDir(path);
+        }
+    };
+    // Dialog for SAF and APK dialog
+    private DialogHelper.AlertDialogListener alertDialogListener = new DialogHelper
+            .AlertDialogListener()
+    {
+
+        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+        @Override
+        public void onPositiveButtonClick(View view) {
+            if (isSAFShown) {
+                triggerStorageAccessFramework();
+            }
+        }
+
+        @Override
+        public void onNegativeButtonClick(View view) {
+            if (isSAFShown) {
+                Toast.makeText(getContext(), getContext().getString(R.string.error), Toast
+                        .LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void onNeutralButtonClick(View view) {
         }
     };
 

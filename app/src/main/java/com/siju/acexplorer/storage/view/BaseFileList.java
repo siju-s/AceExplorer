@@ -67,12 +67,6 @@ public class BaseFileList extends Fragment {
     }
 
 
-    @Override
-    public void onDestroy() {
-        storagesUi.onExit();
-        super.onDestroy();
-    }
-
 
     public boolean onBackPressed() {
         return storagesUi.onBackPress();
@@ -108,12 +102,6 @@ public class BaseFileList extends Fragment {
     }
 
     @Override
-    public void onDestroyView() {
-        storagesUi.onViewDestroyed();
-        super.onDestroyView();
-    }
-
-    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
         super.onCreateOptionsMenu(menu, inflater);
@@ -123,6 +111,18 @@ public class BaseFileList extends Fragment {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         storagesUi.onConfigChanged(newConfig);
+    }
+
+    @Override
+    public void onDestroyView() {
+        storagesUi.onViewDestroyed();
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        storagesUi.onExit();
+        super.onDestroy();
     }
 
     @Override

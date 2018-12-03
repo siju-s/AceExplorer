@@ -221,7 +221,6 @@ public class StorageBridge implements StoragesUi {
     @Override
     public void collapseFab() {
         storagesUiView.collapseFab();
-
     }
 
     @Override
