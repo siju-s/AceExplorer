@@ -91,17 +91,18 @@ public class StoragesUiView extends CoordinatorLayout implements
                                                       NavigationCallback
 {
 
-    private static final int               DIALOG_FRAGMENT = 5000;
-    private static final int               SAF_REQUEST     = 2000;
-    private static final boolean           isRootMode      = true;
-    private final        String            TAG             = this.getClass().getSimpleName();
-    private              Fragment          fragment;
-    private              CoordinatorLayout mainContainer;
-    private              Button            buttonPathSelect;
-    private              FloatingView      floatingView;
-    private              SharedPreferences preferences;
-    private              AdsView           adsView;
-    private              StorageBridge     bridge;
+    private static final int     DIALOG_FRAGMENT = 5000;
+    private static final int     SAF_REQUEST     = 2000;
+    private static final boolean isRootMode      = true;
+    private final        String  TAG             = this.getClass().getSimpleName();
+
+    private Fragment          fragment;
+    private CoordinatorLayout mainContainer;
+    private Button            buttonPathSelect;
+    private FloatingView      floatingView;
+    private SharedPreferences preferences;
+    private AdsView           adsView;
+    private StorageBridge     bridge;
 
     private Category                         category;
     private NavigationInfo                   navigationInfo;
@@ -115,15 +116,13 @@ public class StoragesUiView extends CoordinatorLayout implements
     private StoragesUiView.FavoriteOperation favoriteListener;
     private FilesView                        filesView;
 
-    private String currentDir;
-    private String mSelectedPath;
-
+    private String  currentDir;
+    private String  mSelectedPath;
     private int     currentOrientation;
     private boolean homeScreenEnabled;
     private boolean showHidden;
     private boolean dualModeEnabled;
     private boolean isZipViewer;
-    private boolean isPremium = true;
     private boolean isHomeClicked;
     private boolean mInstanceStateExists;
     private boolean isSAFShown;
@@ -173,7 +172,6 @@ public class StoragesUiView extends CoordinatorLayout implements
         filesView.setCategory(category);
         setupMenuControls();
         filesView.setMenuControls(menuControls);
-//        setupList();
         if (shouldShowPathNavigation()) {
             navigationInfo.setNavDirectory(currentDir, homeScreenEnabled, category);
         } else {
@@ -192,7 +190,6 @@ public class StoragesUiView extends CoordinatorLayout implements
 
     private void checkBillingStatus() {
         BillingStatus billingStatus = bridge.checkBillingStatus();
-        isPremium = billingStatus == BillingStatus.PREMIUM;
         switch (billingStatus) {
             case PREMIUM:
                 onPremiumVersion();
@@ -290,7 +287,6 @@ public class StoragesUiView extends CoordinatorLayout implements
     }
 
     public void setPremium() {
-        isPremium = true;
         adsView.hideAds();
     }
 
@@ -848,6 +844,7 @@ public class StoragesUiView extends CoordinatorLayout implements
             menuControls.endActionMode();
         }
         this.category = category;
+        filesView.setCategory(category);
         menuControls.setCategory(category);
         menuControls.setupSortVisibility();
 

@@ -979,6 +979,7 @@ public class FilesView extends RecyclerView.OnScrollListener
     }
 
     public void setCategory(Category category) {
+        Log.d(TAG, "setCategory() called with: category = [" + category + "]");
         this.category = category;
     }
 

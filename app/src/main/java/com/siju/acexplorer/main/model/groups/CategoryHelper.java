@@ -139,7 +139,7 @@ public class CategoryHelper {
         }
         extension = extension.toLowerCase(); // necessary
         String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-        Log.d("CategoryHelper", "getCategoryForRecentFromExtension: ext;"+extension + " mime:"+mimeType);
+//        Log.d("CategoryHelper", "getCategoryForRecentFromExtension: ext;"+extension + " mime:"+mimeType);
         if (mimeType != null) {
             if (mimeType.indexOf("image") == 0) {
                 value = RECENT_IMAGES;
@@ -162,7 +162,7 @@ public class CategoryHelper {
         }
         extension = extension.toLowerCase(); // necessary
         String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-        Log.d("CategoryHelper", "getCategoryForRecentFromExtension: ext;"+extension + " mime:"+mimeType);
+//        Log.d("CategoryHelper", "getCategoryForRecentFromExtension: ext;"+extension + " mime:"+mimeType);
         if (mimeType != null) {
             if (mimeType.indexOf("image") == 0) {
                 value = IMAGE;
