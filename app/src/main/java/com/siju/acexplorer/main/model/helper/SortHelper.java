@@ -38,13 +38,29 @@ public class SortHelper {
             if ((!file1.isDirectory()) && (file2.isDirectory())) {
                 return 1;
             }
+            return compareFileNames(file1.getFileName(), file2.getFileName());
 
-            // here both are folders or both are files : sort alpha
-            return file1.getFileName().toLowerCase()
-                        .compareTo(file2.getFileName().toLowerCase());
         }
 
     };
+
+    private static int compareFileNames(String filename1, String filename2) {
+
+        if (filename1 == null && filename2 == null) {
+            return 0;
+        }
+        else if (filename1 == null) {
+            return 1;
+        }
+        else if (filename2 == null) {
+            return -1;
+        }
+
+        return filename1.toLowerCase()
+                .compareTo(filename2.toLowerCase());
+    }
+
+
 
     public static final Comparator<? super ZipModel> comparatorByNameZip1 = new Comparator<ZipModel>() {
 
@@ -58,8 +74,7 @@ public class SortHelper {
             }
 
             // here both are folders or both are files : sort alpha
-            return file1.getName().toLowerCase()
-                        .compareTo(file2.getName().toLowerCase());
+            return compareFileNames(file1.getName(), file2.getName());
         }
 
     };
@@ -144,9 +159,7 @@ public class SortHelper {
             if ((!file1.isDirectory()) && (file2.isDirectory())) {
                 return 1;
             }
-            // here both are folders or both are files : sort alpha
-            return file1.getFileName().toLowerCase()
-                        .compareTo(file2.getFileName().toLowerCase());
+            return compareFileNames(file1.getFileName(), file2.getFileName());
         }
 
     };
@@ -161,9 +174,7 @@ public class SortHelper {
             if ((!file1.isDirectory()) && (file2.isDirectory())) {
                 return 1;
             }
-            // here both are folders or both are files : sort alpha
-            return file2.getFileName().toLowerCase()
-                        .compareTo(file1.getFileName().toLowerCase());
+            return compareFileNames(file1.getFileName(), file2.getFileName());
         }
 
     };

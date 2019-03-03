@@ -38,7 +38,7 @@ public class Premium {
 
     public void showPremiumDialog() {
 
-        String text[] = {context.getString(R.string.unlock_full_version),
+        String[] text = {context.getString(R.string.unlock_full_version),
                 context.getString(R.string.full_version_buy_ask),
                 context.getString(R.string.yes),
                 context.getString(R.string.no)};

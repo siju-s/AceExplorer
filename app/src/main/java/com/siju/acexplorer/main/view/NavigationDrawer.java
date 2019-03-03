@@ -66,9 +66,7 @@ class NavigationDrawer implements View.OnClickListener {
     private static final String PLAYSTORE_URL             = "https://play.google.com/store/apps/details?id=";
     static               int    DRAWER_HEADER_STORAGE_POS = 0;
     static               int    DRAWER_HEADER_FAV_POS     = 1;
-    static               int    DRAWER_HEADER_TOOLS_POS     = 3;
-
-
+    private static       int    DRAWER_HEADER_TOOLS_POS   = 3;
 
     private Activity activity;
     private Context  context;
@@ -291,9 +289,7 @@ class NavigationDrawer implements View.OnClickListener {
                                                     favInfoArrayList.get(i)
                                                             .getFilePath(), R.drawable.ic_fav_folder, favInfoArrayList.get(i)
                                                             .getFilePath(), 0, null, null);
-            if (favoritesGroupChild.contains(favItem)) {
-                favoritesGroupChild.remove(favItem);
-            }
+            favoritesGroupChild.remove(favItem);
         }
         expandableListAdapter.notifyDataSetChanged();
     }

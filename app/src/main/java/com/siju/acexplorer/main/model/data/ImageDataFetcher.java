@@ -97,7 +97,7 @@ class ImageDataFetcher {
     {
         Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         String gif = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_GIF);
-        String selectionArgs[] = new String[]{gif};
+        String[] selectionArgs = new String[]{gif};
         String where = MediaStore.Images.Media.MIME_TYPE + " =?";
 
         Cursor cursor = context.getContentResolver().query(uri, null, where, selectionArgs,
@@ -152,7 +152,7 @@ class ImageDataFetcher {
     {
         Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         String selection = MediaStore.Images.Media.BUCKET_ID + " =?";
-        String selectionArgs[] = new String[]{String.valueOf(bucketId)};
+        String[] selectionArgs = new String[]{String.valueOf(bucketId)};
 
         Cursor cursor = context.getContentResolver().query(uri, null, selection, selectionArgs,
                                                            MediaStore.Images.Media.DEFAULT_SORT_ORDER);
