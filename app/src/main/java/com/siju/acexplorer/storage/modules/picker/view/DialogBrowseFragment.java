@@ -317,7 +317,7 @@ public class DialogBrowseFragment extends DialogFragment implements
     }
 
     private boolean checkIfRootDir() {
-        return !currentPath.equals(getInternalStorage());
+        return currentPath != null && !currentPath.equals(getInternalStorage());
     }
 
 
