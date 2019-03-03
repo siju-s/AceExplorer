@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:padding="@dimen/padding_5"
-        android:background="#30ffffff"
+        android:background="@color/white"
         android:src="@drawable/ic_left_arrow" />
 
 
@@ -77,7 +77,7 @@
         android:id="@+id/buttonNext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#30ffffff"
+        android:background="@color/white"
         android:layout_toEndOf="@id/cardView"
         android:layout_centerVertical="true"
         android:padding="@dimen/padding_5"

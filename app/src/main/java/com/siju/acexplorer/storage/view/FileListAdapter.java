@@ -45,15 +45,15 @@ import com.siju.acexplorer.ui.autoplay.AutoPlayContainer;
 import com.siju.acexplorer.ui.autoplay.AutoPlayView;
 import com.siju.acexplorer.ui.peekandpop.PeekAndPop;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 
 import static android.view.View.GONE;
 import static com.siju.acexplorer.main.model.groups.Category.APP_MANAGER;
 import static com.siju.acexplorer.main.model.groups.Category.FOLDER_VIDEOS;
 import static com.siju.acexplorer.main.model.groups.Category.PICKER;
-import static com.siju.acexplorer.main.model.groups.Category.RECENT;
 import static com.siju.acexplorer.main.model.groups.Category.VIDEO;
-import static com.siju.acexplorer.main.model.groups.CategoryHelper.checkIfFileCategory;
 import static com.siju.acexplorer.main.model.groups.CategoryHelper.isGenericImagesCategory;
 import static com.siju.acexplorer.main.model.groups.CategoryHelper.isGenericMusic;
 import static com.siju.acexplorer.main.model.groups.CategoryHelper.isGenericVideosCategory;
@@ -65,30 +65,28 @@ import static com.siju.acexplorer.utils.ThumbnailUtils.displayThumb;
 
 public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final int    TYPE_ITEM   = 1;
-    private static final int    TYPE_FOOTER = 2;
-    private static final int    INVALID_POS = -1;
-    private static final String TAG         = "FileListAdapter";
+    private static final int TYPE_ITEM = 1;
+    private static final int TYPE_FOOTER = 2;
+    private static final int INVALID_POS = -1;
+    private static final String TAG = "FileListAdapter";
+    private final SparseBooleanArray mAnimatedPos = new SparseBooleanArray();
+    private final int mAnimation;
+    private final boolean isThemeDark;
+    boolean mStopAnimation;
     private Context context;
-
-    private       ArrayList<FileInfo> fileList     = new ArrayList<>();
-    private       ArrayList<FileInfo> filteredList = new ArrayList<>();
-    private final SparseBooleanArray  mAnimatedPos = new SparseBooleanArray();
-    private SparseBooleanArray      mSelectedItemsIds;
-    private OnItemClickListener     mItemClickListener;
+    private ArrayList<FileInfo> fileList = new ArrayList<>();
+    private ArrayList<FileInfo> filteredList = new ArrayList<>();
+    private SparseBooleanArray mSelectedItemsIds;
+    private OnItemClickListener mItemClickListener;
     private OnItemLongClickListener mOnItemLongClickListener;
-    private Category                category;
-
+    private Category category;
     private int mViewMode;
     private int draggedPos = -1;
-    private final int mAnimation;
     private int offset = 0;
-    boolean mStopAnimation;
     private boolean mIsAnimNeeded = true;
-    private final boolean    isThemeDark;
-    private       PeekAndPop peekAndPop;
+    private PeekAndPop peekAndPop;
     private int peekPos = INVALID_POS;
-
+    private SearchCallback searchCallback;
 
     public FileListAdapter(Context context, ArrayList<FileInfo>
             fileList, Category category, int viewMode, PeekAndPop peekAndPop) {
@@ -102,7 +100,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         mSelectedItemsIds = new SparseBooleanArray();
         this.category = category;
         this.mViewMode = viewMode;
-        Log.d(TAG, "FileListAdapter: "+viewMode);
+        Logger.log(TAG, "FileListAdapter: " + viewMode);
         mAnimation = R.anim.fade_in_top;
         isThemeDark = ThemeUtils.isDarkTheme(context);
         setPeekPopListener();
@@ -124,7 +122,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     @Override
-    public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
+    public void onViewDetachedFromWindow(@NotNull RecyclerView.ViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
         if (holder instanceof FileListViewHolder) {
             FileListViewHolder fileListViewHolder = (FileListViewHolder) holder;
@@ -133,7 +131,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     @Override
-    public boolean onFailedToRecycleView(RecyclerView.ViewHolder holder) {
+    public boolean onFailedToRecycleView(@NotNull RecyclerView.ViewHolder holder) {
         if (holder instanceof FileListViewHolder) {
             FileListViewHolder fileListViewHolder = (FileListViewHolder) holder;
             fileListViewHolder.container.clearAnimation();
@@ -141,8 +139,9 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return super.onFailedToRecycleView(holder);
     }
 
+    @NotNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
         View view;
 //        if (viewType == TYPE_FOOTER) {
 //            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_footer,
@@ -151,10 +150,10 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 //        }
         if (mViewMode == ViewMode.LIST) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_list_item,
-                                                                    parent, false);
+                    parent, false);
         } else {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_grid_item,
-                                                                    parent, false);
+                    parent, false);
         }
 
         return new FileListViewHolder(view);
@@ -162,9 +161,8 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     }
 
-
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NotNull RecyclerView.ViewHolder holder, int position) {
 
         if (context == null) {
             return;
@@ -207,11 +205,9 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.fileList = fileList;
     }
 
-
     private void clear() {
         fileList = new ArrayList<>();
     }
-
 
     public void setStopAnimation(boolean flag) {
         mIsAnimNeeded = !flag;
@@ -230,14 +226,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void setViewMode(int viewMode) {
         Log.d(TAG, "setViewMode() called with: viewMode = [" + viewMode + "]");
         mViewMode = viewMode;
-    }
-
-    public interface OnItemClickListener {
-        void onItemClick(View view, int position);
-        boolean canShowPeek();
-    }
-    interface OnItemLongClickListener {
-        void onItemLongClick(View view, int position);
     }
 
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
@@ -299,6 +287,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         this.peekPos = position;
         View view = peekAndPop.getPeekView();
+        changePeekButtonsState(position, view);
         ImageView thumb = view.findViewById(R.id.imagePeekView);
         AutoPlayContainer autoPlayView = view.findViewById(R.id.autoPlayView);
         autoPlayView.init();
@@ -339,6 +328,31 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         displayThumb(context, fileInfo, fileInfo.getCategory(), thumb, null);
     }
 
+    private void disablePeekButton(View view) {
+        view.setAlpha(0.3f);
+        view.setEnabled(false);
+    }
+
+    private void enablePeekButton(View view) {
+        view.setAlpha(1f);
+        view.setEnabled(true);
+    }
+
+    private void changePeekButtonsState(int position, View view) {
+        View prevButton = view.findViewById(R.id.buttonPrev);
+        if (position == 0) {
+            disablePeekButton(prevButton);
+        } else {
+            enablePeekButton(prevButton);
+        }
+        View nextButton = view.findViewById(R.id.buttonNext);
+        if (position == fileList.size() - 1) {
+            disablePeekButton(nextButton);
+        } else {
+            enablePeekButton(nextButton);
+        }
+    }
+
     void loadNextPeekView(int position) {
         if (position >= fileList.size() || position == INVALID_POS) {
             return;
@@ -351,6 +365,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final ImageView volume = view.findViewById(R.id.imageVolume);
         ImageView thumb = view.findViewById(R.id.imagePeekView);
 
+        changePeekButtonsState(position, view);
         if (VIDEO.equals(category) || FOLDER_VIDEOS.equals(category)) {
             thumb.setVisibility(GONE);
             autoPlayView.setVisibility(View.VISIBLE);
@@ -446,8 +461,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             setAppManagerCategory(fileListViewHolder, fileInfo);
         } else if (isRecentCategory(category)) {
             setViewGenericRecent(fileListViewHolder, fileInfo);
-        }
-        else {
+        } else {
             if (peekAndPop != null && isPeekPopCategory(category)) {
                 peekAndPop.addClickView(fileListViewHolder.imageIcon, position);
             }
@@ -467,8 +481,8 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         fileNoOrSize = "";
                     } else {
                         fileNoOrSize = context.getResources().getQuantityString(R.plurals
-                                                                                        .number_of_files,
-                                                                                childFileListSize, childFileListSize);
+                                        .number_of_files,
+                                childFileListSize, childFileListSize);
                     }
                 }
             } else {
@@ -484,7 +498,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             fileListViewHolder.textNoOfFileOrSize.setText(fileNoOrSize);
 
             displayThumb(context, fileInfo, category, fileListViewHolder.imageIcon,
-                         fileListViewHolder.imageThumbIcon);
+                    fileListViewHolder.imageThumbIcon);
         }
 
     }
@@ -492,7 +506,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private void setViewGenericMusic(FileListViewHolder fileListViewHolder, FileInfo fileInfo) {
         int count = fileInfo.getCount();
         String files = context.getResources().getQuantityString(R.plurals.number_of_files,
-                                                                count, count);
+                count, count);
         fileListViewHolder.textFileName.setText(CategoryHelper.getCategoryName(context, fileInfo.getSubcategory()));
         fileListViewHolder.textNoOfFileOrSize.setText(files);
         fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_folder);
@@ -504,11 +518,11 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         int num = (int) fileInfo.getNumTracks();
         if (num != INVALID_POS) {
             String files = context.getResources().getQuantityString(R.plurals.number_of_files,
-                                                                    num, num);
+                    num, num);
             fileListViewHolder.textNoOfFileOrSize.setText(files);
         }
         displayThumb(context, fileInfo, category, fileListViewHolder.imageIcon,
-                     fileListViewHolder.imageThumbIcon);
+                fileListViewHolder.imageThumbIcon);
     }
 
     private void setViewGenericImagesVidsCategory(FileListViewHolder fileListViewHolder, FileInfo fileInfo) {
@@ -517,17 +531,17 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         int num = (int) fileInfo.getNumTracks();
         if (num != INVALID_POS) {
             String files = context.getResources().getQuantityString(R.plurals.number_of_files,
-                                                                    num, num);
+                    num, num);
             fileListViewHolder.textNoOfFileOrSize.setText(files);
         }
         displayThumb(context, fileInfo, category, fileListViewHolder.imageIcon,
-                     fileListViewHolder.imageThumbIcon);
+                fileListViewHolder.imageThumbIcon);
     }
 
     private void setViewGenericRecent(FileListViewHolder fileListViewHolder, FileInfo fileInfo) {
         int count = fileInfo.getCount();
         String files = context.getResources().getQuantityString(R.plurals.number_of_files,
-                                                                count, count);
+                count, count);
         fileListViewHolder.textFileName.setText(CategoryHelper.getCategoryName(context, fileInfo.getSubcategory()));
         fileListViewHolder.textNoOfFileOrSize.setText(files);
         fileListViewHolder.imageIcon.setImageResource(R.drawable.ic_folder);
@@ -536,7 +550,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private void setAppManagerCategory(FileListViewHolder fileListViewHolder, FileInfo fileInfo) {
 
         fileListViewHolder.textFileName.setText(fileInfo.getFileName());
-        long size =  fileInfo.getSize();
+        long size = fileInfo.getSize();
         String fileSize = Formatter.formatFileSize(context, size);
         fileListViewHolder.textNoOfFileOrSize.setText(fileSize);
         String fileDate = FileUtils.convertDate(fileInfo.getDate());
@@ -544,11 +558,8 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             fileListViewHolder.textFileModifiedDate.setText(fileDate);
         }
         displayThumb(context, fileInfo, category, fileListViewHolder.imageIcon,
-                     fileListViewHolder.imageThumbIcon);
+                fileListViewHolder.imageThumbIcon);
     }
-
-
-
 
     void toggleSelection(int position, boolean isLongPress) {
         if (isLongPress) {
@@ -558,7 +569,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         }
     }
-
 
     void toggleSelectAll(int position, boolean selectAll) {
         if (selectAll) {
@@ -576,7 +586,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         clearSelection();
         notifyDataSetChanged();
     }
-
 
     private void selectView(int position, boolean value) {
         if (value) {
@@ -598,7 +607,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     void filter(String text) {
-        
+
         if (text.isEmpty()) {
             if (fileList != null) {
                 fileList.clear();
@@ -625,17 +634,37 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         notifyDataSetChanged();
     }
 
+    void setSearchCallback(SearchCallback searchCallback) {
+        this.searchCallback = searchCallback;
+    }
+
+    void onDetach() {
+        context = null;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View view, int position);
+
+        boolean canShowPeek();
+    }
+
+    interface OnItemLongClickListener {
+        void onItemLongClick(View view, int position);
+    }
+
+    interface SearchCallback {
+        void updateList(ArrayList<FileInfo> fileList);
+    }
 
     private class FileListViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener,
-                       View.OnLongClickListener
-    {
+            View.OnLongClickListener {
         final TextView textFileName;
-        TextView textFileModifiedDate;
-        final TextView       textNoOfFileOrSize;
-        final ImageView      imageIcon;
-        final ImageView      imageThumbIcon;
+        final TextView textNoOfFileOrSize;
+        final ImageView imageIcon;
+        final ImageView imageThumbIcon;
         final RelativeLayout container;
+        TextView textFileModifiedDate;
 
 
         FileListViewHolder(View itemView) {
@@ -673,20 +702,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
             return true;
         }
-    }
-
-    private SearchCallback searchCallback;
-
-    void setSearchCallback(SearchCallback searchCallback) {
-        this.searchCallback = searchCallback;
-    }
-
-    interface SearchCallback {
-        void updateList(ArrayList<FileInfo> fileList);
-    }
-
-    void onDetach() {
-        context = null;
     }
 
 
