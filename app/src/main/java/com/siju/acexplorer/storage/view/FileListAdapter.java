@@ -51,6 +51,7 @@ import java.util.ArrayList;
 
 import static android.view.View.GONE;
 import static com.siju.acexplorer.main.model.groups.Category.APP_MANAGER;
+import static com.siju.acexplorer.main.model.groups.Category.AUDIO;
 import static com.siju.acexplorer.main.model.groups.Category.FOLDER_VIDEOS;
 import static com.siju.acexplorer.main.model.groups.Category.PICKER;
 import static com.siju.acexplorer.main.model.groups.Category.VIDEO;
@@ -244,7 +245,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         peekAndPop.setOnGeneralActionListener(new PeekAndPop.OnGeneralActionListener() {
             @Override
             public void onPeek(View longClickView, int position) {
-                loadPeekView(position);
+                loadPeekView(position, true);
             }
 
             @Override
@@ -278,11 +279,10 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         });
     }
 
-    private void loadPeekView(int position) {
+    void loadPeekView(int position, boolean firstRun) {
         if (position >= fileList.size() || position == INVALID_POS) {
             return;
         }
-        Analytics.getLogger().enterPeekMode();
         Category category = fileList.get(position).getCategory();
 
         this.peekPos = position;
@@ -290,22 +290,36 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         changePeekButtonsState(position, view);
         ImageView thumb = view.findViewById(R.id.imagePeekView);
         AutoPlayContainer autoPlayView = view.findViewById(R.id.autoPlayView);
-        autoPlayView.init();
+        if (firstRun) {
+            Analytics.getLogger().enterPeekMode();
+            autoPlayView.init();
+        }
         final AutoPlayView customVideoView = autoPlayView.getCustomVideoView();
         final ImageView volume = view.findViewById(R.id.imageVolume);
+        final TextView fileNameText = view.findViewById(R.id.textFileName);
         FileInfo fileInfo = fileList.get(position);
-
-        if (category.equals(VIDEO) || category.equals(FOLDER_VIDEOS)) {
+        if (VIDEO.equals(category) || FOLDER_VIDEOS.equals(category) || AUDIO.equals(category)) {
+            fileNameText.setVisibility(View.VISIBLE);
+            fileNameText.setText(fileInfo.getFileName());
             thumb.setVisibility(GONE);
             autoPlayView.setVisibility(View.VISIBLE);
             volume.setVisibility(View.VISIBLE);
-            volume.setImageResource(R.drawable.ic_volume_off);
+            volume.setImageResource(firstRun ? R.drawable.ic_volume_off : customVideoView.isMuted() ? R.drawable.ic_volume_off : R.drawable.ic_volume_on);
             customVideoView.setLooping(true);
             customVideoView.setSource(fileInfo.getFilePath());
             customVideoView.setListener(peekPopVideoCallback);
-            customVideoView.init();
+            customVideoView.setVideoMode(!AUDIO.equals(category));
+            if (firstRun) {
+                customVideoView.init();
+            }
+            else {
+                customVideoView.stopPlayer();
+                customVideoView.playNext();
+            }
+
 
         } else {
+            fileNameText.setVisibility(GONE);
             autoPlayView.setVisibility(GONE);
             volume.setVisibility(GONE);
             thumb.setVisibility(View.VISIBLE);
@@ -315,11 +329,11 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             @Override
             public void onClick(View v) {
                 if (customVideoView.isMuted()) {
-                    customVideoView.unmuteVideo();
+                    customVideoView.unmutePlayer();
                     volume.setImageResource(R.drawable.ic_volume_on);
                     volume.setContentDescription(context.getString(R.string.unmute));
                 } else {
-                    customVideoView.muteVideo();
+                    customVideoView.mutePlayer();
                     volume.setImageResource(R.drawable.ic_volume_off);
                     volume.setContentDescription(context.getString(R.string.mute));
                 }
@@ -351,54 +365,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         } else {
             enablePeekButton(nextButton);
         }
-    }
-
-    void loadNextPeekView(int position) {
-        if (position >= fileList.size() || position == INVALID_POS) {
-            return;
-        }
-        this.peekPos = position;
-        FileInfo fileInfo = fileList.get(position);
-        View view = peekAndPop.getPeekView();
-        AutoPlayContainer autoPlayView = view.findViewById(R.id.autoPlayView);
-        final AutoPlayView customVideoView = autoPlayView.getCustomVideoView();
-        final ImageView volume = view.findViewById(R.id.imageVolume);
-        ImageView thumb = view.findViewById(R.id.imagePeekView);
-
-        changePeekButtonsState(position, view);
-        if (VIDEO.equals(category) || FOLDER_VIDEOS.equals(category)) {
-            thumb.setVisibility(GONE);
-            autoPlayView.setVisibility(View.VISIBLE);
-            volume.setVisibility(View.VISIBLE);
-            volume.setImageResource(customVideoView.isMuted() ? R.drawable.ic_volume_off : R.drawable.ic_volume_on);
-            customVideoView.setSource(fileInfo.getFilePath());
-            customVideoView.setLooping(true);
-            customVideoView.setListener(peekPopVideoCallback);
-            customVideoView.stopVideo();
-            customVideoView.playNextVideo();
-
-        } else {
-            autoPlayView.setVisibility(GONE);
-            volume.setVisibility(GONE);
-            thumb.setVisibility(View.VISIBLE);
-        }
-
-        volume.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (customVideoView.isMuted()) {
-                    customVideoView.unmuteVideo();
-                    volume.setImageResource(R.drawable.ic_volume_on);
-                    volume.setContentDescription(context.getString(R.string.unmute));
-                } else {
-                    customVideoView.muteVideo();
-                    volume.setImageResource(R.drawable.ic_volume_off);
-                    volume.setContentDescription(context.getString(R.string.mute));
-                }
-            }
-        });
-
-        displayThumb(context, fileInfo, fileInfo.getCategory(), thumb, null);
     }
 
     private AutoPlayView.PeekPopVideoCallback peekPopVideoCallback = new AutoPlayView.PeekPopVideoCallback() {
