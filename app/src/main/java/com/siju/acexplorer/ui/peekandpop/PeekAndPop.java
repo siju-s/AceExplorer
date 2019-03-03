@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 public class PeekAndPop {
 
-    private static final int PEEK_VIEW_MARGIN = 12;
+    private static final int PEEK_VIEW_MARGIN_DP = 12;
 
     private static final int ANIMATION_PEEK_DURATION = 275;
     private static final int ANIMATION_POP_DURATION  = 250;
@@ -47,7 +47,8 @@ public class PeekAndPop {
     private AutoPlayContainer autoPlayView;
     private ImageButton       shareButton;
     private ImageButton       infoButton;
-
+    private ImageButton       previousButton;
+    private ImageButton       nextButton;
 
     public PeekAndPop(Builder builder) {
         this.builder = builder;
@@ -60,7 +61,7 @@ public class PeekAndPop {
 //        this.gestureDetector = new GestureDetector(builder.activity, this.gestureListener);
         initialiseGestureListeners();
         this.orientation = builder.activity.getResources().getConfiguration().orientation;
-        this.peekViewMargin = DimensionUtil.convertDpToPx(builder.activity.getApplicationContext(), PEEK_VIEW_MARGIN);
+        this.peekViewMargin = DimensionUtil.convertDpToPx(builder.activity.getApplicationContext(), PEEK_VIEW_MARGIN_DP);
         initialisePeekView();
     }
 
@@ -84,6 +85,8 @@ public class PeekAndPop {
         autoPlayView = peekView.findViewById(R.id.autoPlayView);
         shareButton = peekView.findViewById(R.id.imageButtonShare);
         infoButton = peekView.findViewById(R.id.imageButtonInfo);
+        previousButton = peekView.findViewById(R.id.buttonPrev);
+        nextButton = peekView.findViewById(R.id.buttonNext);
 
         FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) peekView.getLayoutParams();
         layoutParams.gravity = Gravity.CENTER;
@@ -149,6 +152,8 @@ public class PeekAndPop {
         infoButton.setOnClickListener(peekAndPopClickListener);
         shareButton.setOnClickListener(peekAndPopClickListener);
         view.setOnClickListener(peekAndPopClickListener);
+        previousButton.setOnClickListener(peekAndPopClickListener);
+        nextButton.setOnClickListener(peekAndPopClickListener);
 
         peekLayout.setOnTouchListener(new PeekAndPopOnTouchListener(position));
     }
@@ -409,13 +414,18 @@ public class PeekAndPop {
 
         @Override
         public void onClick(View v) {
+            Log.d("Peek", "onClick: "+v);
             if (!onClickListener.canShowPeek()) {
                 onClickListener.onClick(v, position, false);
                 return;
             }
             if (v.getId() == R.id.imageIcon) {
                 peek(v, position);
-            } else {
+            }
+            else if (v.getId() == R.id.buttonNext || v.getId() == R.id.buttonPrev) {
+                onClickListener.onClick(v, position, true);
+            }
+            else {
                 onClickListener.onClick(v, position, true);
                 pop(v, position);
             }

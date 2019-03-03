@@ -1,20 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
+    <ImageButton
+        android:id="@+id/buttonPrev"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:padding="@dimen/padding_5"
+        android:background="#30ffffff"
+        android:src="@drawable/ic_left_arrow" />
+
+
     <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/cardView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_toEndOf="@id/buttonPrev"
+        android:layout_centerHorizontal="true"
         android:layout_margin="8dp"
         card_view:cardCornerRadius="4dp">
 
         <RelativeLayout
             android:layout_width="@dimen/peek_pop_size"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
 
             <FrameLayout
                 android:id="@+id/containerMedia"
@@ -54,19 +66,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/containerMedia" />
-            <!--<ImageView-->
-            <!--android:id="@+id/arrow_down"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:background="?attr/selectableItemBackground"-->
-            <!--android:padding="8dp"-->
-            <!--android:paddingEnd="16dp"-->
-            <!--android:paddingRight="16dp"-->
-            <!--android:src="@android:drawable/ic_menu_info_details"-->
-            <!--android:visibility="gone" />-->
 
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>
 
-</FrameLayout>
+
+
+    <ImageButton
+        android:id="@+id/buttonNext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#30ffffff"
+        android:layout_toEndOf="@id/cardView"
+        android:layout_centerVertical="true"
+        android:padding="@dimen/padding_5"
+        android:src="@drawable/ic_right_arrow" />
+
+</RelativeLayout>

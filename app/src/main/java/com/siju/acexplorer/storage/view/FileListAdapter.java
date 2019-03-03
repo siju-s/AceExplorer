@@ -291,7 +291,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     private void loadPeekView(int position) {
-        if (position >= fileList.size()) {
+        if (position >= fileList.size() || position == INVALID_POS) {
             return;
         }
         Analytics.getLogger().enterPeekMode();
@@ -299,7 +299,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         this.peekPos = position;
         View view = peekAndPop.getPeekView();
-//        TextView titleText = view.findViewById(R.id.titlePeekView);
         ImageView thumb = view.findViewById(R.id.imagePeekView);
         AutoPlayContainer autoPlayView = view.findViewById(R.id.autoPlayView);
         autoPlayView.init();
@@ -337,9 +336,53 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 }
             }
         });
+        displayThumb(context, fileInfo, fileInfo.getCategory(), thumb, null);
+    }
 
+    void loadNextPeekView(int position) {
+        if (position >= fileList.size() || position == INVALID_POS) {
+            return;
+        }
+        this.peekPos = position;
+        FileInfo fileInfo = fileList.get(position);
+        View view = peekAndPop.getPeekView();
+        AutoPlayContainer autoPlayView = view.findViewById(R.id.autoPlayView);
+        final AutoPlayView customVideoView = autoPlayView.getCustomVideoView();
+        final ImageView volume = view.findViewById(R.id.imageVolume);
+        ImageView thumb = view.findViewById(R.id.imagePeekView);
 
-//        titleText.setText(fileInfo.getFileName());
+        if (VIDEO.equals(category) || FOLDER_VIDEOS.equals(category)) {
+            thumb.setVisibility(GONE);
+            autoPlayView.setVisibility(View.VISIBLE);
+            volume.setVisibility(View.VISIBLE);
+            volume.setImageResource(customVideoView.isMuted() ? R.drawable.ic_volume_off : R.drawable.ic_volume_on);
+            customVideoView.setSource(fileInfo.getFilePath());
+            customVideoView.setLooping(true);
+            customVideoView.setListener(peekPopVideoCallback);
+            customVideoView.stopVideo();
+            customVideoView.playNextVideo();
+
+        } else {
+            autoPlayView.setVisibility(GONE);
+            volume.setVisibility(GONE);
+            thumb.setVisibility(View.VISIBLE);
+        }
+
+        volume.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (customVideoView.isMuted()) {
+                    customVideoView.unmuteVideo();
+                    volume.setImageResource(R.drawable.ic_volume_on);
+                    volume.setContentDescription(context.getString(R.string.unmute));
+                } else {
+                    customVideoView.muteVideo();
+                    volume.setImageResource(R.drawable.ic_volume_off);
+                    volume.setContentDescription(context.getString(R.string.mute));
+                }
+            }
+        });
+
         displayThumb(context, fileInfo, fileInfo.getCategory(), thumb, null);
     }
 

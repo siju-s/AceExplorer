@@ -39,27 +39,50 @@ public class AutoPlayView extends SurfaceView implements SurfaceHolder.Callback 
 
 
     public void startVideo() {
-        if (path != null && !path.isEmpty()) {
-            if (surfaceHolder != null) {
+        if (path == null || path.isEmpty() || surfaceHolder == null) {
+            return;
+        }
                 if (mediaPlayer != null) {
                     mediaPlayer.start();
                 } else {
                     try {
-                        mediaPlayer = new MediaPlayer();
-                        mediaPlayer.setOnCompletionListener(completionListener);
-                        mediaPlayer.setOnPreparedListener(preparedListener);
-                        mediaPlayer.setOnErrorListener(errorListener);
-
-                        mediaPlayer.setLooping(isLooping);
-                        mediaPlayer.setDataSource(path);
-                        muteVideo();
-                        mediaPlayer.setDisplay(surfaceHolder);
-                        mediaPlayer.prepareAsync();
+                        initPlayer();
                     } catch (IllegalArgumentException | SecurityException | IllegalStateException | IOException e) {
                         e.printStackTrace();
                     }
                 }
+    }
+
+    private void initPlayer() throws IOException {
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setOnCompletionListener(completionListener);
+        mediaPlayer.setOnPreparedListener(preparedListener);
+        mediaPlayer.setOnErrorListener(errorListener);
+        mediaPlayer.setLooping(isLooping);
+        mediaPlayer.setDataSource(path);
+        muteVideo();
+        mediaPlayer.setDisplay(surfaceHolder);
+        mediaPlayer.prepareAsync();
+    }
+
+    public void playNextVideo() {
+        if (path == null || path.isEmpty() || surfaceHolder == null) {
+            return;
+        }
+        if (mediaPlayer == null) {
+            try {
+                initPlayer();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+            return;
+        }
+        try {
+            mediaPlayer.setDataSource(path);
+            mediaPlayer.setDisplay(surfaceHolder);
+            mediaPlayer.prepareAsync();
+        } catch (IllegalArgumentException | SecurityException | IllegalStateException | IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -126,6 +149,13 @@ public class AutoPlayView extends SurfaceView implements SurfaceHolder.Callback 
     public void pauseVideo() {
         if (mediaPlayer != null) {
             mediaPlayer.pause();
+        }
+    }
+
+    public void stopVideo() {
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.reset();
         }
     }
 

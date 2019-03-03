@@ -219,6 +219,12 @@ public class FilesView extends RecyclerView.OnScrollListener
                     files.add(fileInfoList.get(position));
                     menuControls.shareFiles(files, category);
                     break;
+                case R.id.buttonNext:
+                    fileListAdapter.loadNextPeekView(position + 1);
+                    break;
+                case R.id.buttonPrev:
+                    fileListAdapter.loadNextPeekView(position - 1);
+                    break;
                 default:
                     if (isActionModeActive() && !menuControls.isPasteOp()) {
                         itemClickActionMode(position, false);
