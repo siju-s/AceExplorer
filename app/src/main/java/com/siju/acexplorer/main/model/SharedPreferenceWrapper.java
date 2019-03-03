@@ -199,7 +199,7 @@ public class SharedPreferenceWrapper {
         if (sharedPreferences.contains(PREFS_VIEW_MODE)) {
             mode = sharedPreferences.getInt(PREFS_VIEW_MODE, ViewMode.LIST);
         } else {
-            return ViewMode.LIST;
+            mode = ViewMode.LIST;
         }
         return mode;
     }

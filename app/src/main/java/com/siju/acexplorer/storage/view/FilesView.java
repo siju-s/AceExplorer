@@ -118,10 +118,11 @@ public class FilesView extends RecyclerView.OnScrollListener
     private String   filePath;
     private FileInfo fileInfo;
 
-    public FilesView(AppCompatActivity activity, StoragesUiView storagesUiView) {
+    FilesView(AppCompatActivity activity, StoragesUiView storagesUiView, int viewMode) {
         this.activity = activity;
         this.context = storagesUiView.getContext();
         this.storagesUiView = storagesUiView;
+        this.viewMode = viewMode;
         operationResultReceiver = new OperationResultReceiver(getContext(), this);
         setupUI();
     }
@@ -142,7 +143,7 @@ public class FilesView extends RecyclerView.OnScrollListener
         return activity;
     }
 
-    public void setMenuControls(MenuControls menuControls) {
+    void setMenuControls(MenuControls menuControls) {
         this.menuControls = menuControls;
     }
 
@@ -559,6 +560,7 @@ public class FilesView extends RecyclerView.OnScrollListener
     }
 
     void refreshSpan(Configuration configuration) {
+        Log.d(TAG, "refreshSpan() called with: viewMOde = [" + viewMode + "]");
         if (viewMode == ViewMode.GRID) {
             if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT || !storagesUiView
                     .isDualModeEnabled()) {
@@ -579,7 +581,7 @@ public class FilesView extends RecyclerView.OnScrollListener
         menuControls.startActionMode();
     }
 
-    public void endActionMode() {
+    void endActionMode() {
         isDragStarted = false;
         isActionModeActive = false;
         fileListAdapter.clearDragPos();
@@ -610,7 +612,7 @@ public class FilesView extends RecyclerView.OnScrollListener
         menuControls.setupMenuVisibility(selectedItemPos);
     }
 
-    public void onSelectAllClicked() {
+    void onSelectAllClicked() {
         if (mSelectedItemPositions != null) {
             if (mSelectedItemPositions.size() < fileListAdapter.getItemCount()) {
                 toggleSelectAll(true);
@@ -667,7 +669,7 @@ public class FilesView extends RecyclerView.OnScrollListener
         return false;
     }
 
-    public int onDragLocationEvent(DragEvent event, int oldPos) {
+    int onDragLocationEvent(DragEvent event, int oldPos) {
         View onTopOf = fileList.findChildViewUnder(event.getX(), event.getY());
         int newPos = fileList.getChildAdapterPosition(onTopOf);
 //        Log.d(TAG, "onDragLocationEvent: pos:"+newPos);
@@ -699,12 +701,12 @@ public class FilesView extends RecyclerView.OnScrollListener
         return oldPos;
     }
 
-    public void onDragExit() {
+    void onDragExit() {
 //        fileListAdapter.clearDragPos();
 //        draggedData = new ArrayList<>();
     }
 
-    public void onDragEnded(View view, DragEvent event) {
+    void onDragEnded(View view, DragEvent event) {
 
         View top1 = fileList.findChildViewUnder(event.getX(), event.getY());
         int position1 = fileList.getChildAdapterPosition(top1);
@@ -761,7 +763,7 @@ public class FilesView extends RecyclerView.OnScrollListener
 //        draggedData = new ArrayList<>();
     }
 
-    public void onDragDropEvent(DragEvent event) {
+    void onDragDropEvent(DragEvent event) {
         if (!category.equals(FILES)) {
             Toast.makeText(getContext(), getContext().getResources().getString(R.string.error_unsupported),
                            Toast.LENGTH_SHORT).show();
@@ -854,7 +856,7 @@ public class FilesView extends RecyclerView.OnScrollListener
         return viewMode;
     }
 
-    public int getNewViewMode() {
+    int getNewViewMode() {
         if (viewMode == ViewMode.LIST) {
             viewMode = ViewMode.GRID;
         } else {
@@ -915,12 +917,12 @@ public class FilesView extends RecyclerView.OnScrollListener
         }
     }
 
-    public void endDrag() {
+    void endDrag() {
         isDragStarted = false;
     }
 
 
-    public void onQueryChange(String query) {
+    void onQueryChange(String query) {
         fileListAdapter.filter(query);
     }
 
@@ -928,18 +930,18 @@ public class FilesView extends RecyclerView.OnScrollListener
         getActivity().unregisterReceiver(operationResultReceiver);
     }
 
-    public void onDestroyView() {
+    void onDestroyView() {
         fileList.stopScroll();
         if (fileListAdapter != null) {
             fileListAdapter.onDetach();
         }
     }
 
-    public int getGridCols() {
+    int getGridCols() {
         return gridCols;
     }
 
-    public void onHomeClicked() {
+    void onHomeClicked() {
         fileListAdapter.stopAutoPlayVid();
     }
 
@@ -947,26 +949,26 @@ public class FilesView extends RecyclerView.OnScrollListener
         this.viewMode = viewMode;
     }
 
-    public List<FileInfo> getFileList() {
+    List<FileInfo> getFileList() {
         return fileInfoList;
     }
 
 
-    public void setGridCols(int anInt) {
+    void setGridCols(int anInt) {
         this.gridCols = anInt;
     }
 
-    public SparseBooleanArray getSelectedItems() {
+    SparseBooleanArray getSelectedItems() {
         return mSelectedItemPositions;
 
     }
 
-    public void clearSelectedPos() {
+    void clearSelectedPos() {
         mSelectedItemPositions = new SparseBooleanArray();
 
     }
 
-    public void onFilesDeleted(List<FileInfo> deletedFilesList) {
+    void onFilesDeleted(List<FileInfo> deletedFilesList) {
         fileInfoList.removeAll(deletedFilesList);
         storagesUiView.removeFavorite(deletedFilesList);
         fileListAdapter.setStopAnimation(true);
@@ -1022,11 +1024,11 @@ public class FilesView extends RecyclerView.OnScrollListener
         this.currentTheme = currentTheme;
     }
 
-    public String getBucketName() {
+    String getBucketName() {
         return bucketName;
     }
 
-    public void setBucketName(String name) {
+    void setBucketName(String name) {
         this.bucketName = name;
     }
 
@@ -1034,7 +1036,7 @@ public class FilesView extends RecyclerView.OnScrollListener
         return id;
     }
 
-    public void onRename(Intent intent, Operations operation) {
+    void onRename(Intent intent, Operations operation) {
         storagesUiView.dismissDialog();
         String oldFile = intent.getStringExtra(KEY_FILEPATH);
         final String newFile = intent.getStringExtra(KEY_FILEPATH2);
@@ -1076,7 +1078,7 @@ public class FilesView extends RecyclerView.OnScrollListener
 
     }
 
-    public void showRenameDialog(FileInfo fileInfo, String text) {
+    void showRenameDialog(FileInfo fileInfo, String text) {
         this.fileInfo = fileInfo;
         String title = getContext().getString(R.string.action_rename);
         String texts[] = new String[]{title, getContext().getString(R.string.enter_name), getContext

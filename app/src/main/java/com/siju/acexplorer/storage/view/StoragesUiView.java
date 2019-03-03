@@ -158,7 +158,9 @@ public class StoragesUiView extends CoordinatorLayout implements
     void initialize() {
         adsView = new AdsView(this);
         adsView.setAdResultListener(adResultListener);
-        filesView = new FilesView(getActivity(), this);
+        Bundle prefs  = getPreferences();
+        filesView = new FilesView(getActivity(), this, prefs.getInt(FileConstants.PREFS_VIEW_MODE, ViewMode.LIST));
+        filesView.setGridCols(prefs.getInt(FileConstants.KEY_GRID_COLUMNS, 0));
         preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         setTheme();
         checkBillingStatus();
@@ -166,7 +168,6 @@ public class StoragesUiView extends CoordinatorLayout implements
         navigationInfo = new NavigationInfo(this, this);
         backStackInfo = new BackStackInfo();
         currentOrientation = ((AceActivity) getActivity()).getConfiguration().orientation;
-        getPreferences();
         getArgs();
         filesView.setCurrentDir(currentDir);
         filesView.setCategory(category);
@@ -238,12 +239,11 @@ public class StoragesUiView extends CoordinatorLayout implements
         filesView.refreshSpan(((AceActivity) getActivity()).getConfiguration());
     }
 
-    private void getPreferences() {
+    private Bundle getPreferences() {
         Bundle bundle = bridge.getUserPrefs();
-        filesView.setViewMode(bundle.getInt(FileConstants.PREFS_VIEW_MODE, ViewMode.LIST));
-        filesView.setGridCols(bundle.getInt(FileConstants.KEY_GRID_COLUMNS, 0));
         homeScreenEnabled = bundle.getBoolean(FileConstants.PREFS_HOMESCREEN, true);
         showHidden = bundle.getBoolean(FileConstants.PREFS_HIDDEN, false);
+        return bundle;
     }
 
     private void getArgs() {
@@ -458,10 +458,7 @@ public class StoragesUiView extends CoordinatorLayout implements
         if (backStackSize == 1) {
             backStackInfo.clearBackStack();
             return false;
-        } else if (backStackSize > 1) {
-            return true;
-        }
-        return false;
+        } else return backStackSize > 1;
     }
 
 

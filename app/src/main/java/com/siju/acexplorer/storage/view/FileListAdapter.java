@@ -21,6 +21,7 @@ import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.Formatter;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -101,6 +102,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         mSelectedItemsIds = new SparseBooleanArray();
         this.category = category;
         this.mViewMode = viewMode;
+        Log.d(TAG, "FileListAdapter: "+viewMode);
         mAnimation = R.anim.fade_in_top;
         isThemeDark = ThemeUtils.isDarkTheme(context);
         setPeekPopListener();
@@ -226,6 +228,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public void setViewMode(int viewMode) {
+        Log.d(TAG, "setViewMode() called with: viewMode = [" + viewMode + "]");
         mViewMode = viewMode;
     }
 
