@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,14 +15,13 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/container_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="5dp"
-                android:paddingEnd="16dp"
-                android:paddingStart="@dimen/file_list_margin"
-                android:paddingTop="5dp">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container_list"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="@dimen/file_list_margin"
+    android:paddingEnd="@dimen/file_list_margin"
+    android:minHeight="@dimen/file_list_thumb_min_height">
 
 
     <ImageView
@@ -32,7 +30,8 @@
         android:layout_height="@dimen/folder_icon"
         android:layout_centerVertical="true"
         android:scaleType="centerCrop"
-        tools:ignore="ContentDescription"/>
+        android:background="@drawable/round_shape"
+        tools:ignore="ContentDescription" />
 
 
     <TextView
@@ -40,41 +39,41 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
-        android:layout_marginStart="5dp"
         android:layout_toEndOf="@+id/imageIcon"
-        android:textSize="14sp"/>
+        android:textSize="14sp" />
 
-    <!-- This will be no of filesToMove for directory & size for file -->
+    <!-- This will be no of files for directory & size for file -->
     <TextView
         android:id="@+id/textSecondLine"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textFolderName"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="10dp"
-        android:layout_marginStart="5dp"
         android:layout_toEndOf="@+id/imageIcon"
         android:textAppearance="?attr/textAppearanceListItemSmall"
-        android:textSize="12sp"/>
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/textDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_below="@+id/textFolderName"
-        android:layout_marginEnd="5dp"
+        android:layout_alignParentEnd="true"
         android:layout_marginTop="12dp"
-        android:textSize="12sp"/>
+        android:layout_marginEnd="8dp"
+        android:textSize="12sp" />
 
     <ImageView
         android:id="@+id/imageThumbIcon"
         android:layout_width="@dimen/folder_thumb_icon"
         android:layout_height="@dimen/folder_thumb_icon"
-        android:layout_alignEnd="@+id/imageIcon"
         android:layout_alignTop="@+id/textSecondLine"
+        android:layout_alignEnd="@+id/imageIcon"
         android:scaleType="centerCrop"
         android:visibility="gone"
-        tools:ignore="ContentDescription"/>
+        tools:ignore="ContentDescription" />
 
 </RelativeLayout>

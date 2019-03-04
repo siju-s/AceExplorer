@@ -144,11 +144,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
         View view;
-//        if (viewType == TYPE_FOOTER) {
-//            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_footer,
-//                                                                      parent, false);
-//            return new FooterViewHolder(v);
-//        }
         if (mViewMode == ViewMode.LIST) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_list_item,
                     parent, false);
@@ -158,8 +153,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
 
         return new FileListViewHolder(view);
-
-
     }
 
     @Override
@@ -639,6 +632,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             textFileName = itemView
                     .findViewById(R.id.textFolderName);
             imageIcon = itemView.findViewById(R.id.imageIcon);
+            imageIcon.setClipToOutline(true);
             imageThumbIcon = itemView.findViewById(R.id.imageThumbIcon);
             textNoOfFileOrSize = itemView.findViewById(R.id.textSecondLine);
             if (mViewMode == ViewMode.LIST) {

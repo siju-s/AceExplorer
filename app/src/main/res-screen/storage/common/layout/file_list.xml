@@ -36,6 +36,7 @@
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="8dp"
         android:layout_above="@+id/layoutDummy">
 
         <com.siju.acexplorer.storage.view.custom.recyclerview.FastScrollRecyclerView

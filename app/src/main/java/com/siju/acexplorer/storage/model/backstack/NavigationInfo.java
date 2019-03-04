@@ -59,10 +59,12 @@ public class NavigationInfo {
     private String initialDir = getInternalStorage();
     private boolean isCurrentDirRoot;
     private String  STORAGE_INTERNAL, STORAGE_ROOT, STORAGE_EXTERNAL;
+    private int margin;
 
 
     public NavigationInfo(StoragesUiView storagesUiView, NavigationCallback navigationCallback) {
         this.context = storagesUiView.getContext();
+        margin = context.getResources().getDimensionPixelSize(R.dimen.padding_10);
         navDirectory = storagesUiView.findViewById(R.id.navButtons);
         scrollNavigation = storagesUiView.findViewById(R.id.scrollNavigation);
         scrollNavigation.setBackgroundColor(ContextCompat.getColor(context, R.color
@@ -200,8 +202,6 @@ public class NavigationInfo {
             textView.setPadding(paddingLeft, 0, paddingRight, 0);
             textView.setLayoutParams(params);
             addViewToNavigation(textView);
-
-
         }
     }
 
@@ -363,7 +363,7 @@ public class NavigationInfo {
             ImageView navArrow = new ImageView(context);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(WRAP_CONTENT,
                                                                                    WRAP_CONTENT);
-            layoutParams.leftMargin = 20;
+            layoutParams.leftMargin = margin;
             layoutParams.gravity = Gravity.CENTER_VERTICAL;
             navArrow.setImageResource(R.drawable.ic_arrow);
             navArrow.setLayoutParams(layoutParams);
