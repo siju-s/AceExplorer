@@ -230,7 +230,6 @@ public class DialogHelper {
             public void onClick(View v) {
                 String name = inputText.getText().toString().trim();
                 dialogListener.onPositiveButtonClick(alertDialog, operation, name);
-
             }
         });
 

@@ -698,6 +698,7 @@ public class StoragesUiView extends CoordinatorLayout implements
             case FILE_CREATION:
             case FOLDER_CREATION:
                 final EditText editText = dialog.findViewById(R.id.editFileName);
+                editText.requestFocus();
                 editText.setError(getContext().getString(R.string.msg_error_invalid_name));
                 break;
         }

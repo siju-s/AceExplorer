@@ -140,6 +140,7 @@ public class FloatingView implements View.OnClickListener {
         @Override
         public void onPositiveButtonClick(Dialog dialog, Operations operation, String name) {
             FloatingView.this.dialog = dialog;
+            storagesUiView.setDialog(dialog);
             switch (operation) {
                 case FOLDER_CREATION:
                     storagesUiView.createDir(name);
