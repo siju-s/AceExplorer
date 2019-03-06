@@ -991,7 +991,7 @@ public class StoragesUiView extends CoordinatorLayout implements
     }
 
     public void createFile(String name) {
-        bridge.createDir(currentDir, name, isRooted());
+        bridge.createFile(currentDir, name, isRooted());
     }
 
     public boolean isFabExpanded() {
