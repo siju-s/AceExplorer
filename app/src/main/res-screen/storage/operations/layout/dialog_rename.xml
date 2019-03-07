@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:padding="@dimen/margin_16"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/textTitle"
         style="@style/DialogTitle"
-        tools:text="@string/action_rename"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        tools:text="@string/action_rename" />
 
 
     <TextView
         android:id="@+id/textMessage"
-        android:layout_width="wrap_content"
         style="@style/DialogMessage"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
 
@@ -26,32 +25,10 @@
         style="@style/EditTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="12dd"
-        android:inputType="none" />
+        android:inputType="none"
+        tools:text="12dd" />
 
+    <include layout="@layout/dialog_buttons" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_16">
-
-        <Button
-            android:id="@+id/buttonPositive"
-            style="@style/DialogPositiveButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            tools:text="@string/action_rename"
-             />
-
-        <Button
-            android:id="@+id/buttonNegative"
-            style="@style/DialogNegativeButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="@string/dialog_cancel"
-            android:layout_toStartOf="@+id/buttonPositive" />
-
-    </RelativeLayout>
 
 </LinearLayout>

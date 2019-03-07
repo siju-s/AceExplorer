@@ -75,9 +75,9 @@ public class DialogHelper {
     public static void showDeleteDialog(final Context context, final ArrayList<FileInfo> fileInfo,
                                         final boolean trashEnabled, final DeleteDialogListener deleteDialogListener) {
         String title = context.getString(R.string.dialog_delete_title, fileInfo.size());
-        String texts[] = new String[]{title, context.getString(R.string.msg_ok), "", context
+        String[] texts = new String[]{title, context.getString(R.string.msg_ok), "", context
                 .getString(R.string
-                                   .dialog_cancel)};
+                .dialog_cancel)};
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -119,15 +119,12 @@ public class DialogHelper {
         alertDialog.show();
     }
 
-    /**
-     * @param fileInfo Paths to delete
-     */
     public static void showSortDialog(final Context context, final int sortMode, final
     SortDialogListener sortDialogListener) {
         String title = context.getString(R.string.action_sort);
-        String texts[] = new String[]{title, context.getString(R.string.msg_ok), "", context
+        String[] texts = new String[]{title, context.getString(R.string.msg_ok), "", context
                 .getString(R.string
-                                   .dialog_cancel)};
+                .dialog_cancel)};
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -250,7 +247,7 @@ public class DialogHelper {
      * @param text           0->title, 1->msg, 2->Positive button 3->Negative button
      * @param dialogListener
      */
-    public static void showAlertDialog(final Context context, String text[],
+    public static void showAlertDialog(final Context context, String[] text,
                                        final AlertDialogListener dialogListener) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -361,7 +358,7 @@ public class DialogHelper {
                                           final List<FileInfo> destFiles, final String
                                                   destinationDir, final boolean isMove,
                                           final PasteConflictListener pasteConflictListener) {
-        String texts[] = new String[]{context.getString(R.string.msg_file_exists),
+        String[] texts = new String[]{context.getString(R.string.msg_file_exists),
                 context.getString(R.string.dialog_skip), context.getString(R.string.dialog_keep_both),
                 context.getString(R.string.dialog_replace)};
 
@@ -571,6 +568,7 @@ public class DialogHelper {
         final AlertDialog alertDialog = builder.create();
 
         ImageView imageFileIcon = dialogView.findViewById(R.id.imageFileIcon);
+        imageFileIcon.setClipToOutline(true);
         TextView textFileName = dialogView.findViewById(R.id.textFileName);
         TextView textPath = dialogView.findViewById(R.id.textPath);
         TextView textPathHolder = dialogView.findViewById(R.id.textPathPlaceholder);
@@ -750,7 +748,7 @@ public class DialogHelper {
         final String currentFileName = currentFilePath.substring(currentFilePath.lastIndexOf("/")
                                                                          + 1, currentFilePath
                                                                          .lastIndexOf("."));
-        String texts[] = new String[]{context.getString(R.string.extract), context.getString(R.string.dialog_cancel)};
+        String[] texts = new String[]{context.getString(R.string.extract), context.getString(R.string.dialog_cancel)};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);

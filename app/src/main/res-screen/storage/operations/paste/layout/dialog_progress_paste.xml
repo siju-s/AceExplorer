@@ -18,45 +18,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/margin_16"
     android:orientation="vertical">
-
-
 
     <TextView
         android:id="@+id/textTitle"
+        style="@style/DialogTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:textSize="15sp"
-        tools:text="@string/moving"
-        android:textStyle="bold" />
-
+        tools:text="@string/moving" />
 
     <TextView
         android:id="@+id/textFileName"
+        style="@style/DialogMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
         android:textStyle="bold" />
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_16">
 
         <TextView
             android:id="@+id/textFileFromPlaceHolder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:text="@string/dialog_from_placeholder" />
+            android:text="@string/dialog_from_placeholder"
+            android:textSize="@dimen/text_16" />
 
         <TextView
             android:id="@+id/textFileFromPath"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
             android:layout_toEndOf="@+id/textFileFromPlaceHolder"
+            android:textSize="@dimen/text_16"
             android:textStyle="bold" />
 
         <TextView
@@ -64,38 +59,33 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/textFileFromPath"
-            android:layout_margin="15dp"
-            android:text="@string/dialog_to_placeholder" />
+            android:layout_marginTop="@dimen/margin_16"
+            android:text="@string/dialog_to_placeholder"
+            android:textSize="@dimen/text_16" />
 
         <TextView
             android:id="@+id/textFileToPath"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/textFileFromPath"
-            android:layout_margin="15dp"
+            android:layout_marginTop="@dimen/margin_16"
             android:layout_toEndOf="@+id/textFileToPlaceHolder"
-            android:paddingEnd="10dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingStart="10dp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textFilesLeft"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
             android:layout_below="@+id/progressBarPaste"
-            android:layout_marginStart="10dp"
+            android:layout_alignParentStart="true"
             android:gravity="start" />
 
         <TextView
             android:id="@+id/textProgressPercent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
             android:layout_below="@+id/progressBarPaste"
-            android:layout_marginEnd="10dp"
+            android:layout_alignParentEnd="true"
             android:gravity="end" />
 
         <ProgressBar
@@ -103,10 +93,10 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/textFilesLeft"
             android:layout_below="@+id/textFileToPath"
-            android:layout_marginBottom="20dp"
-            android:layout_marginEnd="@dimen/margin_16"
+            android:layout_alignStart="@+id/textFilesLeft"
+            android:layout_marginTop="@dimen/margin_16"
+            android:layout_marginBottom="@dimen/margin_16"
             android:max="100" />
 
     </RelativeLayout>

@@ -6,23 +6,31 @@
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/textHeader"
+        style="@style/DialogTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/action_delete" />
+
+
+    <TextView
         android:id="@+id/textTitle"
         style="@style/DialogMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/textHeader"
         tools:text="@string/dialog_delete_title" />
-    
-    
+
+
     <CheckBox
         android:id="@+id/checkBoxTrash"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/textTitle"
-        android:layout_marginTop="@dimen/padding_10"
-        android:visibility="gone"
         android:layout_marginStart="@dimen/margin_16"
-        android:text="@string/move_trash"/>
-
+        android:layout_marginTop="@dimen/padding_10"
+        android:text="@string/move_trash"
+        android:visibility="gone" />
 
 
     <include
@@ -30,8 +38,6 @@
         layout="@layout/dialog_buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_16"
-        android:layout_below="@+id/checkBoxTrash"
-         />
+        android:layout_below="@+id/checkBoxTrash" />
 
 </RelativeLayout>

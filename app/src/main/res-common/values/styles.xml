@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="DialogTitle">
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">18sp</item>
         <item name="android:layout_marginTop">@dimen/margin_16</item>
-        <item name="android:layout_marginLeft">@dimen/margin_16</item>
-        <item name="android:layout_marginRight">@dimen/margin_16</item>
+        <item name="android:layout_marginStart">@dimen/margin_16</item>
+        <item name="android:layout_marginEnd">@dimen/margin_16</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="DialogMessage">
@@ -18,8 +20,8 @@
 
     <style name="DialogPositiveButton" parent="Base.Widget.AppCompat.Button.ButtonBar.AlertDialog">
         <item name="android:textColor">@color/blue</item>
-        <item name="android:layout_marginLeft">@dimen/margin_16</item>
-        <item name="android:layout_marginRight">@dimen/margin_16</item>
+        <item name="android:layout_marginStart">@dimen/margin_16</item>
+        <item name="android:layout_marginEnd">@dimen/margin_16</item>
     </style>
 
     <style name="DialogNegativeButton" parent="Base.Widget.AppCompat.Button.ButtonBar.AlertDialog">

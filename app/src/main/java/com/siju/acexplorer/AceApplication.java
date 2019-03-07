@@ -21,6 +21,7 @@ import android.content.Context;
 import android.os.StrictMode;
 
 import com.crashlytics.android.Crashlytics;
+import com.kobakei.ratethisapp.RateThisApp;
 import com.squareup.leakcanary.LeakCanary;
 
 import io.fabric.sdk.android.Fabric;
@@ -28,6 +29,8 @@ import io.fabric.sdk.android.Fabric;
 
 public class AceApplication extends Application {
 
+    public static final int RATE_APP_CRITERIA_INSTALL_DAYS = 7;
+    public static final int RATE_APP_CRITERIA_LAUNCH_TIMES = 25;
     private static Context appContext;
 
     public static Context getAppContext() {
@@ -41,6 +44,9 @@ public class AceApplication extends Application {
         if (BuildConfig.ENABLE_CRASHLYTICS) {
             Fabric.with(this, new Crashlytics());
         }
+
+        RateThisApp.Config config = new RateThisApp.Config(RATE_APP_CRITERIA_INSTALL_DAYS, RATE_APP_CRITERIA_LAUNCH_TIMES);
+        RateThisApp.init(config);
 
         if (isDebugBuild()) {
 //        setStrictMode();

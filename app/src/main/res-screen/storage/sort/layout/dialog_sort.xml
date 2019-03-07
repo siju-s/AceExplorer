@@ -14,8 +14,6 @@
             style="@style/DialogTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAllCaps="true"
-            android:textStyle="bold"
             tools:text="@string/action_sort" />
 
 
@@ -29,7 +27,9 @@
             android:id="@+id/checkBoxOrder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_16"
+            android:layout_margin="32dp"
+            android:paddingStart="@dimen/margin_16"
+            android:paddingEnd="@dimen/margin_16"
             android:checked="true"
             android:text="@string/ascending" />
 

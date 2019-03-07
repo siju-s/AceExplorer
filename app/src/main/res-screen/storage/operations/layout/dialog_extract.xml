@@ -17,7 +17,7 @@
   -->
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="@dimen/dialog_file_info"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:fillViewport="true">
 
@@ -25,23 +25,32 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <TextView
+            android:id="@+id/textTitle"
+            style="@style/DialogTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/extract" />
+
 
         <RadioGroup
             android:id="@+id/radioGroupPath"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/textDialogTitle"
-            android:layout_margin="15dp"
+            android:layout_below="@id/textTitle"
+            android:layout_margin="@dimen/margin_16"
             android:checkedButton="@+id/radioButtonCurrentPath">
 
             <RadioButton
                 android:id="@+id/radioButtonCurrentPath"
+                style="@style/RadioButtonTextStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/dialog_current_path" />
 
             <RadioButton
                 android:id="@+id/radioButtonSpecifyPath"
+                style="@style/RadioButtonTextStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/dialog_specify_path" />
@@ -60,11 +69,12 @@
 
         <EditText
             android:id="@+id/editFileName"
+            style="@style/EditTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/buttonPathSelect"
-            android:layout_marginTop="5dp"
-            android:hint="@string/enter_file_name" />
+            android:hint="@string/enter_file_name"
+            android:inputType="text" />
 
         <include
             layout="@layout/dialog_buttons"
