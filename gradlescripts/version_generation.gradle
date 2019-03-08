@@ -3,7 +3,8 @@ def versionPropsFile = file("${projectDir}/version.properties")
 def code = 1
 def versionMajor = 2
 def versionMinor = 0
-def versionPatch = 1
+def versionPatch = 0
+
 def version
 def devReleaseTask = "assembledevRelease"
 def prodReleaseTask = "assembleprodRelease"
@@ -32,10 +33,8 @@ if (versionPropsFile.canRead()) {
         versionBuild++
         versionProps['VERSION_CODE'] = code.toString()
         versionProps['VERSION_BUILD'] = versionBuild.toString()
-//        version = new StringBuilder().append(versionMajor).append(".").append(versionMinor).append(".").
-//                append(versionPatch).append(".").append("build").append(versionBuild).toString()
         version = new StringBuilder().append(versionMajor).append(".").append(versionMinor).append(".").
-                append(versionPatch).toString()
+                append(versionPatch).append(".").append(versionBuild).toString()
         versionProps['VERSION_NAME'] = version
         versionProps.store(versionPropsFile.newWriter(), null)
     }

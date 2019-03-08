@@ -59,6 +59,8 @@ import static com.siju.acexplorer.main.model.groups.Category.LARGE_FILES;
 import static com.siju.acexplorer.main.model.groups.Category.RECENT;
 import static com.siju.acexplorer.main.model.groups.Category.TRASH;
 import static com.siju.acexplorer.main.model.groups.CategoryHelper.checkIfAnyMusicCategory;
+import static com.siju.acexplorer.main.model.groups.CategoryHelper.isRecentCategory;
+import static com.siju.acexplorer.main.model.groups.CategoryHelper.isRecentGenericCategory;
 import static com.siju.acexplorer.main.model.groups.CategoryHelper.isSortOrActionModeUnSupported;
 
 /**
@@ -318,7 +320,7 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
         if (sortItem == null) {
             return;
         }
-        if (isSortOrActionModeUnSupported(category) || RECENT.equals(category)) {
+        if (isSortOrActionModeUnSupported(category) || isRecentGenericCategory(category) || isRecentCategory(category)) {
             searchItem.setVisible(false);
             sortItem.setVisible(false);
         }
