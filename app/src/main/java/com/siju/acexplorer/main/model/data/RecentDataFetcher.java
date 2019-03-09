@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.main.model.HiddenFileHelper;
@@ -17,6 +16,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.siju.acexplorer.main.model.HiddenFileHelper.constructionNoHiddenFilesArgs;
 import static com.siju.acexplorer.main.model.data.DocumentDataFetcher.constructSelectionForDocs;
 import static com.siju.acexplorer.main.model.data.DocumentDataFetcher.constructSelectionForZip;
 import static com.siju.acexplorer.main.model.groups.Category.RECENT_DOCS;
@@ -27,15 +27,18 @@ class RecentDataFetcher {
     private static final long MAX_RECENT_DAYS_IN_SECONDS = 7 * 24 * 3600; // 7 days
 
     static ArrayList<FileInfo> fetchRecent(Context context, Category category,
-                                           boolean showOnlyCount, boolean showHidden)
-    {
+                                           boolean showOnlyCount, boolean showHidden) {
         Uri uri = MediaStore.Files.getContentUri("external");
+        String selection = "";
+        if (!showHidden) {
+            selection = constructionNoHiddenFilesArgs() + " AND ";
+        }
         String where = MediaStore.Files.FileColumns.DATA + " LIKE ?";
         // Reason for such a big query is to avoid fetching directories in the count and also because we can't just
         // filter based on {@link MediaStore.Files.FileColumns.MIME_TYPE} since "apk" mime type is stored as null
-        String selection = constructRecentTimeSelectionArgument() + " AND " +
+        selection += constructRecentTimeSelectionArgument() + " AND " +
                 "(" + getImagesMediaType() + " OR "
-                 + getAudioMediaType() + " OR " +
+                + getAudioMediaType() + " OR " +
                 getVideosMediaType() + " OR " +
                 constructSelectionForZip() + " OR " +
                 constructSelectionForDocs() + " OR "
@@ -46,7 +49,7 @@ class RecentDataFetcher {
         String[] selectionArgs = new String[]{"%" + filter};
 
         Cursor cursor = context.getContentResolver().query(uri, null, selection, selectionArgs,
-                                                           sortOrder);
+                sortOrder);
         return getDataFromCursor(cursor, category, showOnlyCount, showHidden);
     }
 
@@ -69,8 +72,7 @@ class RecentDataFetcher {
     }
 
     private static ArrayList<FileInfo> getDataFromCursor(Cursor cursor, Category category, boolean showOnlyCount,
-                                                         boolean showHidden)
-    {
+                                                         boolean showHidden) {
         ArrayList<FileInfo> fileInfoList = new ArrayList<>();
         if (cursor == null) {
             return fileInfoList;
@@ -87,8 +89,6 @@ class RecentDataFetcher {
             int dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_MODIFIED);
             int fileIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID);
             int pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA);
-            int dateAddedIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_ADDED);
-
 
             do {
                 String path = cursor.getString(pathIndex);
@@ -106,8 +106,8 @@ class RecentDataFetcher {
                 }
                 String nameWithExt = FileUtils.constructFileNameWithExtension(fileName, extension);
                 fileInfoList.add(new FileInfo(CategoryHelper.getSubCategoryForRecentFromExtension(extension), fileId,
-                                              nameWithExt, path, date, size,
-                                              extension));
+                        nameWithExt, path, date, size,
+                        extension));
 
             } while (cursor.moveToNext());
         }
@@ -132,9 +132,9 @@ class RecentDataFetcher {
             if (!categories.contains(newCategory)) {
                 count = 1;
                 FileInfo itemFileInfo = new FileInfo(newCategory,
-                                                     CategoryHelper.getSubCategoryForRecentFromExtension(
-                                                             fileInfo.getExtension()),
-                                                     count);
+                        CategoryHelper.getSubCategoryForRecentFromExtension(
+                                fileInfo.getExtension()),
+                        count);
                 fileInfoList.add(itemFileInfo);
                 categories.add(newCategory);
             } else {
@@ -145,60 +145,72 @@ class RecentDataFetcher {
         return fileInfoList;
     }
 
-    static ArrayList<FileInfo> fetchRecentImages(Context context, Category category, boolean showHidden)
-    {
+    static ArrayList<FileInfo> fetchRecentImages(Context context, Category category, boolean showHidden) {
         Uri uri = MediaStore.Files.getContentUri("external");
         String selection = constructRecentTimeSelectionArgument() + " AND " + getImagesMediaType();
+        if (!showHidden) {
+            selection += " AND " + constructionNoHiddenFilesArgs();
+        }
         String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
         Cursor cursor = context.getContentResolver().query(uri, null, selection, null,
-                                                           sortOrder);
+                sortOrder);
         return getDataFromCursor(cursor, category, false, showHidden);
     }
 
-    static ArrayList<FileInfo> fetchRecentAudio(Context context, Category category, boolean showHidden)
-    {
+    static ArrayList<FileInfo> fetchRecentAudio(Context context, Category category, boolean showHidden) {
         Uri uri = MediaStore.Files.getContentUri("external");
         String selection = constructRecentTimeSelectionArgument() + " AND " + getAudioMediaType();
+        if (!showHidden) {
+            selection += " AND " + constructionNoHiddenFilesArgs();
+        }
         String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
         Cursor cursor = context.getContentResolver().query(uri, null, selection, null,
-                                                           sortOrder);
+                sortOrder);
         return getDataFromCursor(cursor, category, false, showHidden);
     }
 
-    static ArrayList<FileInfo> fetchRecentVideos(Context context, Category category, boolean showHidden)
-    {
+    static ArrayList<FileInfo> fetchRecentVideos(Context context, Category category, boolean showHidden) {
         Uri uri = MediaStore.Files.getContentUri("external");
         String selection = constructRecentTimeSelectionArgument() + " AND " + getVideosMediaType();
+        if (!showHidden) {
+            selection += " AND " + constructionNoHiddenFilesArgs();
+        }
         String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
         Cursor cursor = context.getContentResolver().query(uri, null, selection, null,
-                                                           sortOrder);
+                sortOrder);
         return getDataFromCursor(cursor, category, false, showHidden);
     }
 
-    static ArrayList<FileInfo> fetchRecentApps(Context context, Category category, boolean showHidden)
-    {
+    static ArrayList<FileInfo> fetchRecentApps(Context context, Category category, boolean showHidden) {
         Uri uri = MediaStore.Files.getContentUri("external");
         String where = MediaStore.Files.FileColumns.DATA + " LIKE ?";
-        String selection =
+        String selection = "";
+        if (!showHidden) {
+            selection = constructionNoHiddenFilesArgs() + " AND ";
+        }
+        selection +=
                 constructRecentTimeSelectionArgument() + " AND " + where;
         String filter = ".apk";
         String[] selectionArgs = new String[]{"%" + filter};
 
         String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
         Cursor cursor = context.getContentResolver().query(uri, null, selection, selectionArgs,
-                                                           sortOrder);
+                sortOrder);
         return getDataFromCursor(cursor, category, false, showHidden);
     }
 
 
-    static ArrayList<FileInfo> fetchRecentDocs(Context context, Category category, boolean showHidden)
-    {
+    static ArrayList<FileInfo> fetchRecentDocs(Context context, Category category, boolean showHidden) {
         Uri uri = MediaStore.Files.getContentUri("external");
-        String selection = constructRecentTimeSelectionArgument() + " AND " + " ( " +
-                           constructSelectionForZip() + " OR " + constructSelectionForDocs() + " )";
+        String selection = "";
+        if (!showHidden) {
+            selection = constructionNoHiddenFilesArgs() + " AND ";
+        }
+        selection += constructRecentTimeSelectionArgument() + " AND " + " ( " +
+                constructSelectionForZip() + " OR " + constructSelectionForDocs() + " )";
         String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
         Cursor cursor = context.getContentResolver().query(uri, null, selection, null,
-                                                           sortOrder);
+                sortOrder);
         return getDataFromCursor(cursor, category, false, showHidden);
     }
 

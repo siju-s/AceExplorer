@@ -15,6 +15,7 @@ import com.siju.acexplorer.main.model.helper.FileUtils;
 import java.io.File;
 import java.util.ArrayList;
 
+import static com.siju.acexplorer.main.model.HiddenFileHelper.constructionNoHiddenFilesArgs;
 import static com.siju.acexplorer.main.model.helper.FileUtils.getCategoryFromExtension;
 import static com.siju.acexplorer.main.model.helper.SortHelper.sortFiles;
 
@@ -26,24 +27,36 @@ class DocumentDataFetcher {
                                                         boolean showOnlyCount, int sortMode, boolean showHidden)
     {
         Uri uri = MediaStore.Files.getContentUri("external");
-        String selection = null;
+        String selection = "";
         String[] selectionArgs = null;
 
         switch (category) {
             case DOCS:
-                selection = constructSelectionForDocs();
+                selection = constructSelectionForDocs() ;
+                if (!showHidden) {
+                    selection = selection + " AND " + constructionNoHiddenFilesArgs();
+                }
                 break;
             case COMPRESSED:
-                selection = getMediaTypeNone() + " AND " +constructSelectionForZip();
+                selection = getMediaTypeNone() + " AND " + constructSelectionForZip();
+                if (!showHidden) {
+                    selection = selection + " AND " + constructionNoHiddenFilesArgs();
+                }
                 break;
             case PDF:
                 String pdf1 = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants
                                                                                           .EXT_PDF);
-                selection = getMediaTypeNone() + " AND " + MediaStore.Files.FileColumns.MIME_TYPE + " =?";
+                if (!showHidden) {
+                    selection = constructionNoHiddenFilesArgs() + " AND ";
+                }
+                selection += getMediaTypeNone() + " AND " + MediaStore.Files.FileColumns.MIME_TYPE + " =?";
                 selectionArgs = new String[]{pdf1};
                 break;
             case LARGE_FILES:
-                selection = MediaStore.Files.FileColumns.SIZE + " >?";
+                if (!showHidden) {
+                    selection = constructionNoHiddenFilesArgs() + " AND ";
+                }
+                selection += MediaStore.Files.FileColumns.SIZE + " >?";
                 selectionArgs = new String[]{String.valueOf(LARGE_FILES_MIN_SIZE_MB)};
                 break;
         }
