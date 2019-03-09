@@ -75,7 +75,7 @@ public class OperationResultReceiver extends BroadcastReceiver {
         if (path != null) {
             scanFile(AceApplication.getAppContext(), path);
         }
-        filesView.refreshList();
+        filesView.reloadList();
     }
 
     private void onOperationResult(Intent intent, Operations operation) {
@@ -119,7 +119,7 @@ public class OperationResultReceiver extends BroadcastReceiver {
                                                                                                 getString(
                                                                                                         R.string.copied),
                                                        count), Toast.LENGTH_SHORT).show();
-            filesView.refreshList();
+            filesView.reloadList();
         }
     }
 
@@ -129,7 +129,7 @@ public class OperationResultReceiver extends BroadcastReceiver {
                                                                                                 getString(
                                                                                                         R.string.moved),
                                                        count), Toast.LENGTH_SHORT).show();
-            filesView.refreshList();
+            filesView.reloadList();
         }
         final ArrayList<String> oldFileList = intent.getStringArrayListExtra(KEY_OLD_FILES);
         deleteFromMediaStore(oldFileList);

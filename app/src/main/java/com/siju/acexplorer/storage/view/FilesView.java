@@ -874,8 +874,8 @@ public class FilesView extends RecyclerView.OnScrollListener
         return viewMode;
     }
 
-    public void refreshList() {
-        Logger.log(TAG, "refreshList");
+    public void clearList() {
+        Logger.log(TAG, "clearList");
         fileInfoList = new ArrayList<>();
         if (fileListAdapter != null) {
             fileListAdapter.clearList();
@@ -1135,5 +1135,9 @@ public class FilesView extends RecyclerView.OnScrollListener
 
     void dismissFAB() {
         storagesUiView.dismissFAB();
+    }
+
+    void reloadList() {
+        storagesUiView.refreshList();
     }
 }

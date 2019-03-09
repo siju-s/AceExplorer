@@ -490,7 +490,7 @@ public class StoragesUiView extends CoordinatorLayout implements
         if (!hasStoragePermission()) {
             return;
         }
-        filesView.refreshList();
+        filesView.clearList();
         if (isZipMode()) {
             zipViewer.loadData();
         } else {
