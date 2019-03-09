@@ -198,4 +198,8 @@ public class BaseFileList extends Fragment {
     public void switchView(int viewMode) {
         storagesUi.switchView(viewMode);
     }
+
+    public void collapseSearchView() {
+        storagesUi.collapseSearchView();
+    }
 }

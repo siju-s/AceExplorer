@@ -115,6 +115,11 @@ public class MainBridge implements MainUi {
     }
 
     @Override
+    public void onSearchClicked() {
+        uiView.onSearchClicked();
+    }
+
+    @Override
     public void onConfigChanged(Configuration newConfig) {
         uiView.onConfigChanged(newConfig);
     }

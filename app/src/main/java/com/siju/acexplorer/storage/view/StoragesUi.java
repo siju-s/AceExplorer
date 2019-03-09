@@ -116,6 +116,8 @@ public interface StoragesUi {
 
     void switchView(int viewMode);
 
+    void collapseSearchView();
+
 
     interface Listener {
 

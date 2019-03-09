@@ -239,6 +239,11 @@ public class StorageBridge implements StoragesUi {
     }
 
     @Override
+    public void collapseSearchView() {
+       storagesUiView.collapseSearchView();
+    }
+
+    @Override
     public void reloadList(String directory, Category category) {
         storagesUiView.reloadList(directory, category);
     }

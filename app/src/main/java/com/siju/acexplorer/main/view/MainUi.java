@@ -83,6 +83,8 @@ public interface MainUi {
 
     void onMultiWindowChanged(boolean isInMultiWindowMode, Configuration newConfig);
 
+    void onSearchClicked();
+
     interface Listener {
 
         void getTotalGroupData();

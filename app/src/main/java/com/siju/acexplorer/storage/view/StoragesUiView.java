@@ -1096,6 +1096,15 @@ public class StoragesUiView extends CoordinatorLayout implements
         this.category = category;
     }
 
+    public void onSearchClicked() {
+        setDualPaneState();
+        ((AceActivity) getActivity()).onSearchClicked();
+    }
+
+    public void collapseSearchView() {
+        menuControls.collapseSearchView();
+    }
+
 
     public interface FavoriteOperation {
         void updateFavorites(ArrayList<FavInfo> favList);

@@ -179,4 +179,8 @@ public class AceActivity extends BaseActivity {
             mainUi.refreshList(isDual);
         }
     }
+
+    public void onSearchClicked() {
+        mainUi.onSearchClicked();
+    }
 }

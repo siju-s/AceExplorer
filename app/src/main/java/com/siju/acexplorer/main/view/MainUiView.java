@@ -838,6 +838,19 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         }
     }
 
+
+    public void onSearchClicked() {
+        Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main_container);
+        Fragment dualFragment = activity.getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
+
+        if (isDualPaneInFocus) {
+            ((BaseFileList)fragment).collapseSearchView();
+        }
+        else {
+            ((DualPaneList)dualFragment).collapseSearchView();
+        }
+    }
+
     public void onMultiWindowChanged(boolean isInMultiWindowMode, Configuration newConfig) {
             currentOrientation = newConfig.orientation;
             Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main_container);
