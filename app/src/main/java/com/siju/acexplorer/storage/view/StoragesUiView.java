@@ -159,6 +159,7 @@ public class StoragesUiView extends CoordinatorLayout implements
         adsView = new AdsView(this);
         adsView.setAdResultListener(adResultListener);
         Bundle prefs  = getPreferences();
+        getArgs();
         filesView = new FilesView(getActivity(), this, prefs.getInt(FileConstants.PREFS_VIEW_MODE, ViewMode.LIST));
         filesView.setGridCols(prefs.getInt(FileConstants.KEY_GRID_COLUMNS, 0));
         preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -166,9 +167,17 @@ public class StoragesUiView extends CoordinatorLayout implements
         checkBillingStatus();
         registerReceivers();
         navigationInfo = new NavigationInfo(this, this);
+        if (checkIfLibraryCategory(category)) {
+            floatingView.hideFab();
+        } else {
+            floatingView.showFab();
+        }
+        navigationInfo.showNavigationView();
+        if (shouldShowPathNavigation()) {
+            navigationInfo.setInitialDir(currentDir);
+        }
         backStackInfo = new BackStackInfo();
         currentOrientation = ((AceActivity) getActivity()).getConfiguration().orientation;
-        getArgs();
         filesView.setCurrentDir(currentDir);
         filesView.setCategory(category);
         setupMenuControls();
@@ -235,6 +244,7 @@ public class StoragesUiView extends CoordinatorLayout implements
      */
     public void showDualPane() {
         // For Files category only, show dual pane
+        Log.d(TAG, "showDualPane: frag:"+fragment);
         dualModeEnabled = true;
         filesView.refreshSpan(((AceActivity) getActivity()).getConfiguration());
     }
@@ -252,16 +262,7 @@ public class StoragesUiView extends CoordinatorLayout implements
             category = (Category) getArguments().getSerializable(KEY_CATEGORY);
             isZipViewer = getArguments().getBoolean(FileConstants.KEY_ZIP, false);
             dualModeEnabled = getArguments().getBoolean(FileConstants.KEY_DUAL_ENABLED, false);
-
-            if (checkIfLibraryCategory(category)) {
-                floatingView.hideFab();
-            } else {
-                floatingView.showFab();
-            }
-            navigationInfo.showNavigationView();
-            if (shouldShowPathNavigation()) {
-                navigationInfo.setInitialDir(currentDir);
-            }
+            Log.d(TAG, "getArgs: fragment:"+fragment + " dualMode:"+dualModeEnabled);
 //            mLastSinglePaneDir = currentDir;
         }
     }
@@ -962,6 +963,7 @@ public class StoragesUiView extends CoordinatorLayout implements
     }
 
     public void hideDualPane() {
+        Log.d(TAG, "hideDualPane() called");
         dualModeEnabled = false;
     }
 
