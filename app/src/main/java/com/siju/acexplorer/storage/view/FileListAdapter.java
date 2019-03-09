@@ -53,7 +53,9 @@ import static android.view.View.GONE;
 import static com.siju.acexplorer.main.model.groups.Category.APP_MANAGER;
 import static com.siju.acexplorer.main.model.groups.Category.AUDIO;
 import static com.siju.acexplorer.main.model.groups.Category.FOLDER_VIDEOS;
+import static com.siju.acexplorer.main.model.groups.Category.IMAGE;
 import static com.siju.acexplorer.main.model.groups.Category.PICKER;
+import static com.siju.acexplorer.main.model.groups.Category.RECENT_IMAGES;
 import static com.siju.acexplorer.main.model.groups.Category.VIDEO;
 import static com.siju.acexplorer.main.model.groups.CategoryHelper.isGenericImagesCategory;
 import static com.siju.acexplorer.main.model.groups.CategoryHelper.isGenericMusic;
@@ -311,8 +313,15 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
 
 
-        } else {
+        } else if (IMAGE.equals(category) || RECENT_IMAGES.equals(category)){
             fileNameText.setVisibility(GONE);
+            autoPlayView.setVisibility(GONE);
+            volume.setVisibility(GONE);
+            thumb.setVisibility(View.VISIBLE);
+        }
+        else {
+            fileNameText.setVisibility(View.VISIBLE);
+            fileNameText.setText(fileInfo.getFileName());
             autoPlayView.setVisibility(GONE);
             volume.setVisibility(GONE);
             thumb.setVisibility(View.VISIBLE);

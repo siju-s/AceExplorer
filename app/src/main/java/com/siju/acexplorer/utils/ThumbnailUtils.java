@@ -78,17 +78,13 @@ public class ThumbnailUtils {
                         imageIcon.setImageResource(R.drawable.ic_doc_white);
                     }
                 }
-
-                if (fileName.startsWith(".")) {
-                    imageIcon.setColorFilter(Color.argb(200, 255, 255, 255));
-                } else {
-                    imageIcon.clearColorFilter();
-                }
+                setThumbHiddenFilter(imageIcon, fileName);
                 break;
             case AUDIO:
             case RECENT_AUDIO:
                 displayAudioAlbumArt(context, fileInfo.getBucketId(), imageIcon,
                                      filePath);
+                setThumbHiddenFilter(imageIcon, fileName);
                 break;
 
             case VIDEO:
@@ -96,6 +92,7 @@ public class ThumbnailUtils {
             case FOLDER_VIDEOS:
             case RECENT_VIDEOS:
                 displayVideoThumb(context, imageIcon, filePath);
+                setThumbHiddenFilter(imageIcon, fileName);
                 break;
 
             case IMAGE: // For images group
@@ -103,20 +100,31 @@ public class ThumbnailUtils {
             case FOLDER_IMAGES:
             case RECENT_IMAGES:
                 displayImageThumb(context, imageIcon, filePath);
+                setThumbHiddenFilter(imageIcon, fileName);
                 break;
             case DOCS: // For docs group
             case RECENT_DOCS:
                 String extension = fileInfo.getExtension();
                 extension = extension.toLowerCase();
                 changeFileIcon(context, imageIcon, extension, null);
+                setThumbHiddenFilter(imageIcon, fileName);
                 break;
             case APP_MANAGER:
                 loadAppIcon(context, imageIcon, fileInfo.getFilePath());
+                setThumbHiddenFilter(imageIcon, fileName);
                 break;
             default:
                 imageIcon.setImageResource(R.drawable.ic_folder);
                 break;
 
+        }
+    }
+
+    private static void setThumbHiddenFilter(ImageView imageIcon, String fileName) {
+        if (fileName.startsWith(".")) {
+            imageIcon.setColorFilter(Color.argb(200, 255, 255, 255));
+        } else {
+            imageIcon.clearColorFilter();
         }
     }
 
