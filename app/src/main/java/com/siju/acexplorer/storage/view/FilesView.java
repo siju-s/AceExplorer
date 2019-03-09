@@ -346,6 +346,7 @@ public class FilesView extends RecyclerView.OnScrollListener
     private void onDirectoryClicked(int position) {
         boolean isDualPaneInFocus = storagesUiView.getFragment() instanceof DualPaneList;
         ((AceActivity) getActivity()).setDualPaneFocusState(isDualPaneInFocus);
+        Log.d(TAG, "onDirectoryClicked() called with: isDualPaneInFocus = [" + isDualPaneInFocus + "]");
 
         if (storagesUiView.isZipMode()) {
             storagesUiView.getZipViewer().onDirectoryClicked(position);
@@ -480,6 +481,8 @@ public class FilesView extends RecyclerView.OnScrollListener
     void reloadList(String path, Category category) {
         currentDir = path;
         this.category = category;
+        boolean isDualPaneInFocus = storagesUiView.getFragment() instanceof DualPaneList;
+        ((AceActivity) getActivity()).setDualPaneFocusState(isDualPaneInFocus);
         storagesUiView.setCurrentDir(currentDir);
         storagesUiView.setCategory(category);
         storagesUiView.onReloadList(path);
@@ -566,7 +569,7 @@ public class FilesView extends RecyclerView.OnScrollListener
     }
 
     void refreshSpan(Configuration configuration) {
-        Log.d(TAG, "refreshSpan() called with: viewMOde = [" + viewMode + "]");
+        Log.d(TAG, "refreshSpan() called " + this + " dual:"+storagesUiView.isDualModeEnabled());
         if (viewMode == ViewMode.GRID) {
             if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT || !storagesUiView
                     .isDualModeEnabled()) {

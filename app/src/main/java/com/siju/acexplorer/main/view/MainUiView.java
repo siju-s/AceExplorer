@@ -72,13 +72,10 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import static com.siju.acexplorer.main.model.StorageUtils.getInternalStorage;
-import static com.siju.acexplorer.main.model.groups.Category.AUDIO;
 import static com.siju.acexplorer.main.model.groups.Category.FILES;
 import static com.siju.acexplorer.main.model.groups.Category.GENERIC_IMAGES;
 import static com.siju.acexplorer.main.model.groups.Category.GENERIC_MUSIC;
 import static com.siju.acexplorer.main.model.groups.Category.GENERIC_VIDEOS;
-import static com.siju.acexplorer.main.model.groups.Category.IMAGE;
-import static com.siju.acexplorer.main.model.groups.Category.VIDEO;
 import static com.siju.acexplorer.main.model.groups.CategoryHelper.getCategory;
 import static com.siju.acexplorer.settings.SettingsPreferenceFragment.PREFS_LANGUAGE;
 import static com.siju.acexplorer.theme.ThemeUtils.CURRENT_THEME;
@@ -388,6 +385,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     }
 
     private void displayFileList(String directory, Category category) {
+        Log.d(TAG, "displayFileList: dualPaneFocus:"+isDualPaneInFocus);
 
         FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
         Bundle args = new Bundle();
@@ -397,6 +395,8 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
 
         Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id
                 .main_container);
+        Fragment dualPaneFragment = activity.getSupportFragmentManager().findFragmentById(R.id
+                .frame_container_dual);
         if (fragment == null || fragment instanceof HomeScreenFragment) {
             FileList baseFileList = new FileList();
             baseFileList.setArguments(args);
@@ -410,7 +410,11 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
             ft.commit();
             Logger.log(TAG, "displayFileList");
 
-        } else {
+        }
+        else if (isDualPaneInFocus && dualPaneFragment != null) {
+            ((DualPaneList) dualPaneFragment).reloadList(directory, category);
+        }
+        else {
             ((BaseFileList) fragment).reloadList(directory, category);
         }
     }
@@ -802,6 +806,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
 
     public void setDualPaneFocusState(boolean state) {
         isDualPaneInFocus = state;
+        Log.d(TAG, "setDualPaneFocusState() called with: state = [" + state + "]");
     }
 
     public void switchView(int viewMode, boolean isDual) {
