@@ -52,7 +52,9 @@ import java.util.ArrayList;
 import static android.view.View.GONE;
 import static com.siju.acexplorer.main.model.groups.Category.APP_MANAGER;
 import static com.siju.acexplorer.main.model.groups.Category.AUDIO;
+import static com.siju.acexplorer.main.model.groups.Category.FOLDER_IMAGES;
 import static com.siju.acexplorer.main.model.groups.Category.FOLDER_VIDEOS;
+import static com.siju.acexplorer.main.model.groups.Category.GENERIC_IMAGES;
 import static com.siju.acexplorer.main.model.groups.Category.IMAGE;
 import static com.siju.acexplorer.main.model.groups.Category.PICKER;
 import static com.siju.acexplorer.main.model.groups.Category.RECENT_IMAGES;
@@ -279,7 +281,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             return;
         }
         Category category = fileList.get(position).getCategory();
-
         this.peekPos = position;
         View view = peekAndPop.getPeekView();
         changePeekButtonsState(position, view);
@@ -313,7 +314,8 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
 
 
-        } else if (IMAGE.equals(category) || RECENT_IMAGES.equals(category)){
+        } else if (IMAGE.equals(category) || RECENT_IMAGES.equals(category) || FOLDER_IMAGES.equals(category)
+        || GENERIC_IMAGES.equals(category)) {
             fileNameText.setVisibility(GONE);
             autoPlayView.setVisibility(GONE);
             volume.setVisibility(GONE);
