@@ -87,7 +87,7 @@ public class MusicDataFetcher {
 
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         String selection = null;
-        String selectionArgs[] = null;
+        String[] selectionArgs = null;
         switch (category) {
             case ALBUM_DETAIL:
                 selection = MediaStore.Audio.Media.ALBUM_ID + "=?";

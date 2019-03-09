@@ -42,6 +42,7 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -161,7 +162,8 @@ public class FileUtils {
 
     public static String convertDate(long dateInMs) {
         SimpleDateFormat df2 = new SimpleDateFormat("MMM dd, yyyy hh:mm a", Locale.getDefault());
-        return df2.format(dateInMs);
+        Date date = new Date(dateInMs);
+        return df2.format(date);
     }
 
 

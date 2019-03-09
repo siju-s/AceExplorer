@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.main.model.HiddenFileHelper;
@@ -32,9 +33,13 @@ class RecentDataFetcher {
         String where = MediaStore.Files.FileColumns.DATA + " LIKE ?";
         // Reason for such a big query is to avoid fetching directories in the count and also because we can't just
         // filter based on {@link MediaStore.Files.FileColumns.MIME_TYPE} since "apk" mime type is stored as null
-        String selection = constructRecentTimeSelectionArgument() + " AND " + " ( " + constructSelectionForZip() +
-                           " OR " + constructSelectionForDocs() + " OR " + getImagesMediaType() + " OR " +
-                           getAudioMediaType() + " OR " + getVideosMediaType() + " OR " + where + " )";
+        String selection = constructRecentTimeSelectionArgument() + " AND " +
+                "(" + getImagesMediaType() + " OR "
+                 + getAudioMediaType() + " OR " +
+                getVideosMediaType() + " OR " +
+                constructSelectionForZip() + " OR " +
+                constructSelectionForDocs() + " OR "
+                + where + ")";
         String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
 
         String filter = AppDataFetcher.EXT_APK;
@@ -48,7 +53,7 @@ class RecentDataFetcher {
     private static String constructRecentTimeSelectionArgument() {
         long currentTimeMs = System.currentTimeMillis() / 1000;
         long pastTime = currentTimeMs - MAX_RECENT_DAYS_IN_SECONDS;
-        return MediaStore.Files.FileColumns.DATE_ADDED + " BETWEEN " + pastTime + " AND " + currentTimeMs;
+        return MediaStore.Files.FileColumns.DATE_MODIFIED + " BETWEEN " + pastTime + " AND " + currentTimeMs;
     }
 
     private static String getImagesMediaType() {
@@ -82,6 +87,8 @@ class RecentDataFetcher {
             int dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_MODIFIED);
             int fileIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID);
             int pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA);
+            int dateAddedIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_ADDED);
+
 
             do {
                 String path = cursor.getString(pathIndex);
@@ -173,8 +180,7 @@ class RecentDataFetcher {
         Uri uri = MediaStore.Files.getContentUri("external");
         String where = MediaStore.Files.FileColumns.DATA + " LIKE ?";
         String selection =
-                constructRecentTimeSelectionArgument() + " AND " + getDocs() +
-                " AND " + where;
+                constructRecentTimeSelectionArgument() + " AND " + where;
         String filter = ".apk";
         String[] selectionArgs = new String[]{"%" + filter};
 
@@ -184,15 +190,12 @@ class RecentDataFetcher {
         return getDataFromCursor(cursor, category, false, showHidden);
     }
 
-    private static String getDocs() {
-        return MediaStore.Files.FileColumns.MEDIA_TYPE + " = " + MediaStore.Files.FileColumns.MEDIA_TYPE_NONE;
-    }
 
     static ArrayList<FileInfo> fetchRecentDocs(Context context, Category category, boolean showHidden)
     {
         Uri uri = MediaStore.Files.getContentUri("external");
-        String selection = constructRecentTimeSelectionArgument() + " AND " + getDocs() + " AND " +
-                           constructSelectionForZip() + " OR " + constructSelectionForDocs();
+        String selection = constructRecentTimeSelectionArgument() + " AND " + " ( " +
+                           constructSelectionForZip() + " OR " + constructSelectionForDocs() + " )";
         String sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED + " DESC";
         Cursor cursor = context.getContentResolver().query(uri, null, selection, null,
                                                            sortOrder);

@@ -31,15 +31,15 @@ class DocumentDataFetcher {
 
         switch (category) {
             case DOCS:
-                selection = getDocs() + " AND " + constructSelectionForDocs();
+                selection = constructSelectionForDocs();
                 break;
             case COMPRESSED:
-                selection = getDocs() + " AND " +constructSelectionForZip();
+                selection = getMediaTypeNone() + " AND " +constructSelectionForZip();
                 break;
             case PDF:
                 String pdf1 = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants
                                                                                           .EXT_PDF);
-                selection = getDocs() + " AND " + MediaStore.Files.FileColumns.MIME_TYPE + " =?";
+                selection = getMediaTypeNone() + " AND " + MediaStore.Files.FileColumns.MIME_TYPE + " =?";
                 selectionArgs = new String[]{pdf1};
                 break;
             case LARGE_FILES:
@@ -89,7 +89,7 @@ class DocumentDataFetcher {
                + "'" + rar + "'" + ")";
     }
 
-    private static String getDocs() {
+    private static String getMediaTypeNone() {
         return MediaStore.Files.FileColumns.MEDIA_TYPE + " = " + MediaStore.Files.FileColumns.MEDIA_TYPE_NONE;
     }
 
