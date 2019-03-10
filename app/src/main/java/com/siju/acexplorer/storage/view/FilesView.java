@@ -79,44 +79,47 @@ import static com.siju.acexplorer.storage.model.operations.Operations.HIDE;
 
 public class FilesView extends RecyclerView.OnScrollListener
         implements FileListAdapter.OnItemLongClickListener, View.OnTouchListener,
-                   FileListAdapter.SearchCallback
-{
+                   FileListAdapter.SearchCallback {
 
-    private static final String                     TAG                    = FilesView.class.getSimpleName();
-    private              AppCompatActivity          activity;
-    private              Context                    context;
-    private              TextView                   emptyText;
-    private              FastScrollRecyclerView     fileList;
-    private              SwipeRefreshLayout         swipeRefreshLayout;
-    private              RecyclerView.LayoutManager layoutManager;
-    private              DividerItemDecoration      dividerItemDecoration;
-    private              GridItemDecoration         mGridItemDecoration;
-    private              FileListAdapter            fileListAdapter;
-    private              ArrayList<FileInfo>        fileInfoList;
-    private              StoragesUiView             storagesUiView;
-    private              DragHelper                 dragHelper;
-    private              PeekAndPop                 peekAndPop;
-    private              boolean                    shouldStopAnimation    = true;
-    private              long                       mLongPressedTime;
-    private              boolean                    isDragStarted;
-    private final        HashMap<String, Bundle>    scrollPosition         = new HashMap<>();
-    private              int                        viewMode               = ViewMode.LIST;
-    private              ArrayList<FileInfo>        draggedData            = new ArrayList<>();
-    private              int                        gridCols;
-    private              SparseBooleanArray         mSelectedItemPositions = new SparseBooleanArray();
-    private              String                     currentDir;
-    private              Category                   category;
-    private              MenuControls               menuControls;
-    private              OperationResultReceiver    operationResultReceiver;
-    private              boolean                    isActionModeActive;
+    private static final String TAG = FilesView.class.getSimpleName();
 
-    private String   bucketName;
-    private long     id;
-    private String   extension;
-    private View     mItemView;
-    private String   mLastSinglePaneDir;
-    private String   filePath;
-    private FileInfo fileInfo;
+    private AppCompatActivity activity;
+    private Context           context;
+
+    private FastScrollRecyclerView  fileList;
+    private FileListAdapter         fileListAdapter;
+    private StoragesUiView          storagesUiView;
+    private DragHelper              dragHelper;
+    private PeekAndPop              peekAndPop;
+    private MenuControls            menuControls;
+    private OperationResultReceiver operationResultReceiver;
+    private Category                category;
+    private FileInfo                fileInfo;
+
+    private TextView                   emptyText;
+    private SwipeRefreshLayout         swipeRefreshLayout;
+    private RecyclerView.LayoutManager layoutManager;
+    private DividerItemDecoration      dividerItemDecoration;
+    private GridItemDecoration         mGridItemDecoration;
+    private View                       mItemView;
+
+    private       ArrayList<FileInfo>     fileInfoList;
+    private final HashMap<String, Bundle> scrollPosition         = new HashMap<>();
+    private       ArrayList<FileInfo>     draggedData            = new ArrayList<>();
+    private       SparseBooleanArray      mSelectedItemPositions = new SparseBooleanArray();
+
+    private String  currentDir;
+    private String  bucketName;
+    private String  extension;
+    private String  filePath;
+    private long    mLongPressedTime;
+    private long    id;
+    private int     viewMode;
+    private int     gridCols;
+    private boolean isActionModeActive;
+    private boolean shouldStopAnimation = true;
+    private boolean isDragStarted;
+
 
     FilesView(AppCompatActivity activity, StoragesUiView storagesUiView, int viewMode) {
         this.activity = activity;
@@ -169,14 +172,15 @@ public class FilesView extends RecyclerView.OnScrollListener
         if (viewMode == ViewMode.LIST) {
             layoutManager = new CustomLayoutManager(getActivity());
             fileList.setLayoutManager(layoutManager);
-        } else {
+        }
+        else {
             refreshSpan(((AceActivity) getActivity()).getConfiguration());
         }
         fileList.setItemAnimator(new DefaultItemAnimator());
         peekAndPop = new PeekAndPop.Builder(getActivity()).peekLayout(R.layout.peek_pop).
                 parentViewGroupToDisallowTouchEvents(fileList).build();
         fileListAdapter = new FileListAdapter(getContext(), fileInfoList,
-                                              category, viewMode, peekAndPop);
+                category, viewMode, peekAndPop);
         fileListAdapter.setSearchCallback(this);
     }
 
@@ -228,7 +232,8 @@ public class FilesView extends RecyclerView.OnScrollListener
                 default:
                     if (isActionModeActive() && !menuControls.isPasteOp()) {
                         itemClickActionMode(position, false);
-                    } else {
+                    }
+                    else {
                         handleItemClick(position);
                     }
                     break;
@@ -270,7 +275,7 @@ public class FilesView extends RecyclerView.OnScrollListener
             case RECENT_VIDEOS:
                 this.extension = fileInfoList.get(position).getExtension().toLowerCase();
                 viewFile(getContext(), fileInfoList.get(position).getFilePath(),
-                         extension, alertDialogListener);
+                        extension, alertDialogListener);
                 break;
 
             case FILES:
@@ -338,7 +343,8 @@ public class FilesView extends RecyclerView.OnScrollListener
     private void genericFileItemClick(int position) {
         if (fileInfoList.get(position).isDirectory()) {
             onDirectoryClicked(position);
-        } else {
+        }
+        else {
             onFileClicked(position);
         }
     }
@@ -350,7 +356,8 @@ public class FilesView extends RecyclerView.OnScrollListener
 
         if (storagesUiView.isZipMode()) {
             storagesUiView.getZipViewer().onDirectoryClicked(position);
-        } else {
+        }
+        else {
             calculateScroll(currentDir);
             String path = fileInfoList.get(position).getFilePath();
             category = FILES;
@@ -379,10 +386,12 @@ public class FilesView extends RecyclerView.OnScrollListener
 
         if (storagesUiView.isZipFile(filePath)) {
             storagesUiView.openZipViewer(filePath);
-        } else {
+        }
+        else {
             if (storagesUiView.isZipMode()) {
                 storagesUiView.onZipFileClicked(position);
-            } else {
+            }
+            else {
                 this.filePath = filePath;
                 viewFile(getContext(), filePath, extension, alertDialogListener);
             }
@@ -393,7 +402,7 @@ public class FilesView extends RecyclerView.OnScrollListener
     public void onItemLongClick(View view, int position) {
         Logger.log(TAG, "On long click" + isDragStarted);
         if (position >= fileInfoList.size() || position == RecyclerView.NO_POSITION ||
-            isSortOrActionModeUnSupported(category)) {
+                isSortOrActionModeUnSupported(category)) {
             return;
         }
 
@@ -421,7 +430,8 @@ public class FilesView extends RecyclerView.OnScrollListener
         if (hasCheckedItems && !isActionModeActive) {
             // there are some selected items, start the actionMode
             startActionMode();
-        } else if (!hasCheckedItems && isActionModeActive) {
+        }
+        else if (!hasCheckedItems && isActionModeActive) {
             // there no selected items, finish the actionMode
             menuControls.endActionMode();
         }
@@ -431,7 +441,7 @@ public class FilesView extends RecyclerView.OnScrollListener
             SparseBooleanArray checkedItemPos = fileListAdapter.getSelectedItemPositions();
             setSelectedItemPos(checkedItemPos);
             menuControls.setToolbarText(String.valueOf(fileListAdapter
-                                                               .getSelectedCount()));
+                    .getSelectedCount()));
         }
     }
 
@@ -441,7 +451,8 @@ public class FilesView extends RecyclerView.OnScrollListener
         int position;
         if (viewMode == ViewMode.LIST) {
             position = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
-        } else {
+        }
+        else {
             position = ((GridLayoutManager) layoutManager).findFirstVisibleItemPosition();
         }
         Bundle bundle = new Bundle();
@@ -471,6 +482,13 @@ public class FilesView extends RecyclerView.OnScrollListener
     @Override
     public void updateList(ArrayList<FileInfo> fileInfoArrayList) {
         this.fileInfoList = fileInfoArrayList;
+        if (fileInfoList.isEmpty()) {
+            emptyText.setText(getContext().getString(R.string.no_search_results));
+            emptyText.setVisibility(View.VISIBLE);
+        }
+        else {
+            emptyText.setVisibility(View.GONE);
+        }
     }
 
 
@@ -524,7 +542,9 @@ public class FilesView extends RecyclerView.OnScrollListener
                 getScrolledPosition();
                 fileList.stopScroll();
                 emptyText.setVisibility(View.GONE);
-            } else {
+            }
+            else {
+                emptyText.setText(getContext().getString(R.string.no_files));
                 emptyText.setVisibility(View.VISIBLE);
             }
         }
@@ -536,7 +556,8 @@ public class FilesView extends RecyclerView.OnScrollListener
             case ViewMode.LIST:
                 if (dividerItemDecoration == null) {
                     dividerItemDecoration = new DividerItemDecoration(getContext(), currentTheme);
-                } else {
+                }
+                else {
                     fileList.removeItemDecoration(dividerItemDecoration);
                 }
                 fileList.addItemDecoration(dividerItemDecoration);
@@ -544,8 +565,9 @@ public class FilesView extends RecyclerView.OnScrollListener
             case ViewMode.GRID:
                 if (mGridItemDecoration == null) {
                     mGridItemDecoration = new GridItemDecoration(getContext(), currentTheme,
-                                                                 gridCols);
-                } else {
+                            gridCols);
+                }
+                else {
                     fileList.removeItemDecoration(mGridItemDecoration);
                 }
                 fileList.addItemDecoration(mGridItemDecoration);
@@ -555,26 +577,31 @@ public class FilesView extends RecyclerView.OnScrollListener
 
     private void getScrolledPosition() {
         if (currentDir != null && scrollPosition.containsKey(currentDir)) {
-            Bundle b = scrollPosition.get(currentDir);
+            Bundle bundle = scrollPosition.get(currentDir);
+            if (bundle == null) {
+                return;
+            }
             if (viewMode == ViewMode.LIST) {
-                ((LinearLayoutManager) layoutManager).scrollToPositionWithOffset(b.getInt
+                ((LinearLayoutManager) layoutManager).scrollToPositionWithOffset(bundle.getInt
                         (FileConstants
-                                 .KEY_POSITION), b.getInt(FileConstants.KEY_OFFSET));
-            } else {
-                ((GridLayoutManager) layoutManager).scrollToPositionWithOffset(b.getInt
+                                .KEY_POSITION), bundle.getInt(FileConstants.KEY_OFFSET));
+            }
+            else {
+                ((GridLayoutManager) layoutManager).scrollToPositionWithOffset(bundle.getInt
                         (FileConstants
-                                 .KEY_POSITION), b.getInt(FileConstants.KEY_OFFSET));
+                                .KEY_POSITION), bundle.getInt(FileConstants.KEY_OFFSET));
             }
         }
     }
 
     void refreshSpan(Configuration configuration) {
-        Log.d(TAG, "refreshSpan() called " + this + " dual:"+storagesUiView.isDualModeEnabled());
+        Log.d(TAG, "refreshSpan() called " + this + " dual:" + storagesUiView.isDualModeEnabled());
         if (viewMode == ViewMode.GRID) {
             if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT || !storagesUiView
                     .isDualModeEnabled()) {
                 gridCols = ConfigurationHelper.getStorageGridCols(configuration);
-            } else {
+            }
+            else {
                 gridCols = ConfigurationHelper.getStorageDualGridCols(configuration);
             }
             layoutManager = new CustomGridLayoutManager(getActivity(), gridCols);
@@ -609,9 +636,10 @@ public class FilesView extends RecyclerView.OnScrollListener
         int count = fileListAdapter.getSelectedCount();
         if (count == 0) {
             menuControls.endActionMode();
-        } else {
-            menuControls.setToolbarText(String.valueOf(fileListAdapter.getSelectedCount()) + " " +
-                                        getContext().getResources().getString(R.string.selected));
+        }
+        else {
+            menuControls.setToolbarText(count + " " +
+                    getContext().getResources().getString(R.string.selected));
             fileListAdapter.notifyDataSetChanged();
         }
     }
@@ -625,7 +653,8 @@ public class FilesView extends RecyclerView.OnScrollListener
         if (mSelectedItemPositions != null) {
             if (mSelectedItemPositions.size() < fileListAdapter.getItemCount()) {
                 toggleSelectAll(true);
-            } else {
+            }
+            else {
                 toggleSelectAll(false);
             }
         }
@@ -647,8 +676,9 @@ public class FilesView extends RecyclerView.OnScrollListener
         if (event == MotionEvent.ACTION_UP || event == MotionEvent.ACTION_CANCEL) {
             isDragStarted = false;
             mLongPressedTime = 0;
-        } else if (event == MotionEvent.ACTION_MOVE && mLongPressedTime !=
-                                                       0) {
+        }
+        else if (event == MotionEvent.ACTION_MOVE && mLongPressedTime !=
+                0) {
             long timeElapsed = System.currentTimeMillis() - mLongPressedTime;
 
             if (timeElapsed > 1500) {
@@ -665,14 +695,15 @@ public class FilesView extends RecyclerView.OnScrollListener
                             (mItemView, count);
                     if (isAtleastNougat()) {
                         storagesUiView.startDragAndDrop(data, shadowBuilder, draggedData, 0);
-                    } else {
+                    }
+                    else {
                         storagesUiView.startDrag(data, shadowBuilder, draggedData, 0);
                     }
                 }
             }
         }
         if (motionEvent.getAction() == MotionEvent.ACTION_UP || motionEvent.getAction()
-                                                                == MotionEvent.ACTION_CANCEL) {
+                == MotionEvent.ACTION_CANCEL) {
             storagesUiView.performClick();
         }
         return false;
@@ -680,6 +711,9 @@ public class FilesView extends RecyclerView.OnScrollListener
 
     int onDragLocationEvent(DragEvent event, int oldPos) {
         View onTopOf = fileList.findChildViewUnder(event.getX(), event.getY());
+        if (onTopOf == null) {
+            return oldPos;
+        }
         int newPos = fileList.getChildAdapterPosition(onTopOf);
 //        Log.d(TAG, "onDragLocationEvent: pos:"+newPos);
 
@@ -688,20 +722,21 @@ public class FilesView extends RecyclerView.OnScrollListener
             if (oldPos != RecyclerView.NO_POSITION && newPos < oldPos) {
                 int changedPos = newPos - 2;
                 Logger.log(TAG, "drag Location old pos=" + oldPos + "new pos=" +
-                                newPos +
-                                "changed pos=" + changedPos);
+                        newPos +
+                        "changed pos=" + changedPos);
                 if (changedPos >= 0) {
                     fileList.smoothScrollToPosition(changedPos);
                 }
-            } else {
+            }
+            else {
                 int changedPos = newPos + 2;
                 // For scroll down
                 if (changedPos < fileInfoList.size()) {
                     fileList.smoothScrollToPosition(newPos + 2);
                 }
                 Logger.log(TAG, "drag Location old pos=" + oldPos + "new pos=" +
-                                newPos +
-                                "changed pos=" + changedPos);
+                        newPos +
+                        "changed pos=" + changedPos);
 
             }
             oldPos = newPos;
@@ -718,9 +753,13 @@ public class FilesView extends RecyclerView.OnScrollListener
     void onDragEnded(View view, DragEvent event) {
 
         View top1 = fileList.findChildViewUnder(event.getX(), event.getY());
+        if (top1 == null) {
+            return;
+        }
         int position1 = fileList.getChildAdapterPosition(top1);
+
         Logger.log(TAG, "onDragEnded: " + category + " result:" + event.getResult() + " position:" +
-                        position1 + " this:" + FilesView.this);
+                position1 + " this:" + FilesView.this);
 
         if (!event.getResult() && position1 == RecyclerView.NO_POSITION) {
 
@@ -746,20 +785,6 @@ public class FilesView extends RecyclerView.OnScrollListener
 
             if (((View) parent1).getId() == R.id.frame_container_dual) {
                 Logger.log(TAG, "DRAG END parent dual =" + true);
-            } else {
-                Logger.log(TAG, "DRAG END parent dual =" + false);
-                BaseFileList singlePaneFragment = (BaseFileList)
-                        storagesUiView.getFragment().getFragmentManager().findFragmentById(R.id.main_container);
-                Logger.log(TAG, "DRAG END single dir=" + mLastSinglePaneDir);
-                @SuppressWarnings("unchecked")
-                ArrayList<FileInfo> dragPaths = (ArrayList<FileInfo>) event.getLocalState();
-                if (mLastSinglePaneDir != null) {
-                    String[] files = new File(mLastSinglePaneDir).list();
-                    if (singlePaneFragment != null && files != null && files.length == 0 &&
-                        dragPaths.size() != 0) {
-                        dragHelper.showDragDialog(dragPaths, mLastSinglePaneDir);
-                    }
-                }
             }
 
         }
@@ -769,20 +794,16 @@ public class FilesView extends RecyclerView.OnScrollListener
                 menuControls.endActionMode();
             }
         });
-//        draggedData = new ArrayList<>();
     }
 
     void onDragDropEvent(DragEvent event) {
         if (!category.equals(FILES)) {
             Toast.makeText(getContext(), getContext().getResources().getString(R.string.error_unsupported),
-                           Toast.LENGTH_SHORT).show();
+                    Toast.LENGTH_SHORT).show();
             return;
         }
         View top = fileList.findChildViewUnder(event.getX(), event.getY());
         int position = fileList.getChildAdapterPosition(top);
-        Logger.log(TAG,
-                   "DROP new pos=" + position + " this:" + FilesView.this + "fileListSize:" + fileList.getAdapter()
-                                                                                                      .getItemCount());
         @SuppressWarnings("unchecked")
         ArrayList<FileInfo> draggedFiles = (ArrayList<FileInfo>) event.getLocalState();
         ArrayList<String> paths = new ArrayList<>();
@@ -793,7 +814,8 @@ public class FilesView extends RecyclerView.OnScrollListener
         String destinationDir;
         if (position != -1) {
             destinationDir = fileInfoList.get(position).getFilePath();
-        } else {
+        }
+        else {
             destinationDir = currentDir;
         }
 
@@ -813,12 +835,13 @@ public class FilesView extends RecyclerView.OnScrollListener
         if (!paths.contains(destinationDir)) {
             if (!destinationDir.equals(sourceParent)) {
                 Logger.log(TAG, "Source parent=" + sourceParent + " Dest=" +
-                                destinationDir + "draggedFiles:" + draggedFiles.size());
+                        destinationDir + "draggedFiles:" + draggedFiles.size());
                 dragHelper.showDragDialog(draggedFiles, destinationDir);
-            } else {
+            }
+            else {
                 ArrayList<FileInfo> info = new ArrayList<>(draggedFiles);
                 Logger.log(TAG, "Source=" + draggedFiles.get(0) + "Dest=" +
-                                destinationDir);
+                        destinationDir);
                 onPasteAction(false, info, destinationDir);
             }
         }
@@ -827,8 +850,7 @@ public class FilesView extends RecyclerView.OnScrollListener
     }
 
     void onPasteAction(boolean isMove, ArrayList<FileInfo> filesToPaste, String
-            destinationDir)
-    {
+            destinationDir) {
         menuControls.endActionMode();
         if (isMediaScannerActive() && isMediaScanning(destinationDir)) {
             storagesUiView.onOperationFailed(Operations.COPY);
@@ -868,10 +890,11 @@ public class FilesView extends RecyclerView.OnScrollListener
     int getNewViewMode() {
         if (viewMode == ViewMode.LIST) {
             viewMode = ViewMode.GRID;
-        } else {
+        }
+        else {
             viewMode = ViewMode.LIST;
         }
-        Log.d(TAG, "getNewViewMode: "+viewMode);
+        Log.d(TAG, "getNewViewMode: " + viewMode);
         return viewMode;
     }
 
@@ -889,7 +912,8 @@ public class FilesView extends RecyclerView.OnScrollListener
             layoutManager = new CustomLayoutManager(getActivity());
             fileList.setLayoutManager(layoutManager);
 
-        } else {
+        }
+        else {
             refreshSpan(((AceActivity) getActivity()).getConfiguration());
         }
 
@@ -908,7 +932,8 @@ public class FilesView extends RecyclerView.OnScrollListener
             }
             dividerItemDecoration.setOrientation();
             fileList.addItemDecoration(dividerItemDecoration);
-        } else {
+        }
+        else {
             if (dividerItemDecoration != null) {
                 fileList.removeItemDecoration(dividerItemDecoration);
             }
@@ -922,7 +947,8 @@ public class FilesView extends RecyclerView.OnScrollListener
     private void toggleDragData(FileInfo fileInfo) {
         if (draggedData.contains(fileInfo)) {
             draggedData.remove(fileInfo);
-        } else {
+        }
+        else {
             draggedData.add(fileInfo);
         }
     }
@@ -997,8 +1023,7 @@ public class FilesView extends RecyclerView.OnScrollListener
 
     // Dialog for SAF and APK dialog
     private DialogHelper.AlertDialogListener alertDialogListener = new DialogHelper
-            .AlertDialogListener()
-    {
+            .AlertDialogListener() {
 
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         @Override
@@ -1013,7 +1038,8 @@ public class FilesView extends RecyclerView.OnScrollListener
             boolean canInstallApp = InstallHelper.canInstallApp(getContext());
             if (canInstallApp) {
                 InstallHelper.openInstallAppScreen(getContext(), uri);
-            } else {
+            }
+            else {
                 InstallHelper.requestUnknownAppsInstallPermission(storagesUiView.getFragment());
             }
         }
@@ -1074,7 +1100,8 @@ public class FilesView extends RecyclerView.OnScrollListener
             fileInfoList.remove(position);
             fileListAdapter.setList(fileInfoList);
             fileListAdapter.notifyItemRemoved(position);
-        } else {
+        }
+        else {
             fileInfoList.get(position).setFilePath(newFile);
             fileInfoList.get(position).setFileName(new File(newFile).getName());
             fileListAdapter.notifyItemChanged(position);
@@ -1091,7 +1118,7 @@ public class FilesView extends RecyclerView.OnScrollListener
     void showRenameDialog(FileInfo fileInfo, String text) {
         this.fileInfo = fileInfo;
         String title = getContext().getString(R.string.action_rename);
-        String texts[] = new String[]{title, getContext().getString(R.string.enter_name), getContext
+        String[] texts = new String[]{title, getContext().getString(R.string.enter_name), getContext
                 ().getString(R.string.action_rename), getContext().getString(R.string.dialog_cancel)};
         DialogHelper.showInputDialog(getContext(), texts, Operations.RENAME, text, dialogListener);
     }
@@ -1102,11 +1129,9 @@ public class FilesView extends RecyclerView.OnScrollListener
         @Override
         public void onPositiveButtonClick(Dialog dialog, Operations operation, String name) {
             storagesUiView.setDialog(dialog);
-            switch (operation) {
-                case RENAME:
-                    String filePath = fileInfo.getFilePath();
-                    storagesUiView.renameFile(filePath, new File(filePath).getParent(), name);
-                    break;
+            if (operation == Operations.RENAME) {
+                String filePath = fileInfo.getFilePath();
+                storagesUiView.renameFile(filePath, new File(filePath).getParent(), name);
             }
         }
 

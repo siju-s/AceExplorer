@@ -843,10 +843,10 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main_container);
         Fragment dualFragment = activity.getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
 
-        if (isDualPaneInFocus) {
+        if (isDualPaneInFocus && fragment instanceof FileList) {
             ((BaseFileList)fragment).collapseSearchView();
         }
-        else {
+        else if (!isDualPaneInFocus && dualFragment != null) {
             ((DualPaneList)dualFragment).collapseSearchView();
         }
     }

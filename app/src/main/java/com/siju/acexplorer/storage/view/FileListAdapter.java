@@ -577,7 +577,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     void filter(String text) {
-
         if (text.isEmpty()) {
             if (fileList != null) {
                 fileList.clear();

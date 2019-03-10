@@ -22,6 +22,7 @@
     <string name="no_music"> No Music files</string>
     <string name="no_files">No files</string>
     <string name="msg_free">free of</string>
+    <string name="no_search_results">No results found</string>
 
     <string name="zero_percent" translatable="false">0%</string>
 </resources>
