@@ -26,6 +26,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
@@ -123,7 +124,7 @@ public class StorageModelImpl implements StoragesModel {
         int viewMode = sharedPreferenceWrapper.getViewMode(context);
         boolean showHidden = sharedPreferences.getBoolean(FileConstants.PREFS_HIDDEN, false);
         boolean isTrashEnabled = sharedPreferences.getBoolean(FileConstants.PREFS_TRASH, true);
-
+        Log.d(TAG, "getUserPrefs: viewMode:"+viewMode);
         bundle.putInt(FileConstants.KEY_GRID_COLUMNS, gridCols);
         bundle.putBoolean(FileConstants.PREFS_HOMESCREEN, isHomeScreenEnabled);
         bundle.putInt(FileConstants.PREFS_VIEW_MODE, viewMode);
@@ -621,7 +622,7 @@ public class StorageModelImpl implements StoragesModel {
 
     @Override
     public void saveSettingsOnExit(int gridCols, int viewMode) {
-
+        Log.d(TAG, "saveSettingsOnExit() called with: gridCols = [" + gridCols + "], viewMode = [" + viewMode + "]");
         sharedPreferences.edit().putInt(FileConstants.KEY_GRID_COLUMNS, gridCols).apply();
         sharedPreferenceWrapper.savePrefs(context, viewMode);
     }

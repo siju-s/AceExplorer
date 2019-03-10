@@ -871,10 +871,11 @@ public class FilesView extends RecyclerView.OnScrollListener
         } else {
             viewMode = ViewMode.LIST;
         }
+        Log.d(TAG, "getNewViewMode: "+viewMode);
         return viewMode;
     }
 
-    public void clearList() {
+    void clearList() {
         Logger.log(TAG, "clearList");
         fileInfoList = new ArrayList<>();
         if (fileListAdapter != null) {

@@ -18,6 +18,7 @@ package com.siju.acexplorer.main.model;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.siju.acexplorer.common.types.FileInfo;
@@ -170,6 +171,7 @@ public class SharedPreferenceWrapper {
 
         editor = sharedPreferences.edit();
         editor.putInt(PREFS_VIEW_MODE, viewMode);
+        Log.d("Wrapper", "savePrefs: viewMode:"+viewMode);
         editor.apply();
     }
 

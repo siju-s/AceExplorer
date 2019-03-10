@@ -472,7 +472,6 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         isDualPaneInFocus = false;
     }
 
-
     private void createDualFragment() {
         FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
         String internalStoragePath = getInternalStorage();

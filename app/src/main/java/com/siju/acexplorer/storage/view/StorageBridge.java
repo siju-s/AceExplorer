@@ -401,7 +401,7 @@ public class StorageBridge implements StoragesUi {
         listener.setPermissions(path, isDir, permissions);
     }
 
-    void saveSettingsOnExit(int gridCols, int viewMode) {
+    void saveViewPrefs(int gridCols, int viewMode) {
         listener.saveSettingsOnExit(gridCols, viewMode);
     }
 

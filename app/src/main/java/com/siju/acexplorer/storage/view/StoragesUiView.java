@@ -548,7 +548,7 @@ public class StoragesUiView extends CoordinatorLayout implements
 
     void switchView() {
         int viewMode = filesView.getNewViewMode();
-        bridge.saveSettingsOnExit(filesView.getGridCols(), viewMode);
+        bridge.saveViewPrefs(filesView.getGridCols(), viewMode);
         filesView.switchView();
     }
 
@@ -939,9 +939,6 @@ public class StoragesUiView extends CoordinatorLayout implements
 
     public void onViewDestroyed() {
         filesView.onDestroyView();
-        if (!mInstanceStateExists) {
-            bridge.saveSettingsOnExit(filesView.getGridCols(), filesView.getViewMode());
-        }
     }
 
     void clearSelectedPos() {
