@@ -758,13 +758,14 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
 
         if (showHidden != this.showHidden) {
             this.showHidden = showHidden;
-            Logger.log(TAG, "OnPrefschanged PREFS_HIDDEN" + this.showHidden);
             Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id.main_container);
-
             Fragment dualPaneFragment = activity.getSupportFragmentManager().findFragmentById(R.id.frame_container_dual);
             if (fragment instanceof BaseFileList) {
                 ((BaseFileList) fragment).setHidden(showHidden);
                 ((BaseFileList) fragment).refreshList();
+            }
+            else if (fragment instanceof HomeScreenFragment) {
+                ((HomeScreenFragment) fragment).refreshList();
             }
 
             if (canDualModeBeAct && dualPaneFragment != null) {

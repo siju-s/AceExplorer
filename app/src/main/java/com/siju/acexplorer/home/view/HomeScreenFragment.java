@@ -149,4 +149,8 @@ public class HomeScreenFragment extends Fragment {
     public void setPremium() {
         homeView.setPremium();
     }
+
+    public void refreshList() {
+        homeView.refreshList();
+    }
 }

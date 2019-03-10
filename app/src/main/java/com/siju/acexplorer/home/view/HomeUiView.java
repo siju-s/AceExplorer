@@ -25,6 +25,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
@@ -97,15 +98,21 @@ public class HomeUiView extends CoordinatorLayout {
         setTheme();
     }
 
-    @SuppressWarnings("ConstantConditions")
     private void setupToolbar() {
         getActivity().setSupportActionBar(toolbar);
-        getActivity().getSupportActionBar().setHomeButtonEnabled(true);
-        getActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getActivity().getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_drawer);
+        ActionBar actionBar = getActivity().getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_drawer);
+        }
         if (drawerListener != null) {
             drawerListener.syncDrawer();
         }
+    }
+
+    public void refreshList() {
+        getLibraries();
     }
 
     public void setFragment(Fragment fragment) {
@@ -288,8 +295,6 @@ public class HomeUiView extends CoordinatorLayout {
         baseFileList.setArguments(args);
         ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
                 .exit_to_left);
-//        ft.add(R.id.main_container, baseFileList);
-//        ft.hide(fragment);
         ft.replace(R.id.main_container, baseFileList);
         ft.addToBackStack(null);
         ft.commit();

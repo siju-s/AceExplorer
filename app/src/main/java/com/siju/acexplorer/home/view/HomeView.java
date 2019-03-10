@@ -62,6 +62,8 @@ public interface HomeView {
 
     void onConfigChanged(Configuration newConfig);
 
+    void refreshList();
+
     interface Listener {
 
         void getLibraries();

@@ -86,6 +86,11 @@ public class HomeBridge implements HomeView {
     }
 
     @Override
+    public void refreshList() {
+        homeUiView.refreshList();
+    }
+
+    @Override
     public void onDataLoaded(int id, ArrayList<FileInfo> data) {
         homeUiView.onDataLoaded(id, data);
     }
