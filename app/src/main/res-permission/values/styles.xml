@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="PermissionDialog" parent="Theme.AppCompat.NoActionBar">
+    <style name="PermissionDialog" parent="Theme.MaterialComponents.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="android:windowBackground">@color/dark_background</item>
         <item name="windowNoTitle">true</item>

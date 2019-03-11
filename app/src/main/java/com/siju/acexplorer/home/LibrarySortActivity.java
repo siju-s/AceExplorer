@@ -58,9 +58,9 @@ public class LibrarySortActivity extends BaseActivity implements OnStartDragList
     private       ArrayList<LibrarySortModel> savedLibraries = new ArrayList<>();
     private final ArrayList<LibrarySortModel> totalLibraries = new ArrayList<>();
 
-    private int      resourceIds[];
-    private String   mLabels[];
-    private Category categories[];
+    private int[]      resourceIds;
+    private String[]   mLabels;
+    private Category[] categories;
 
 
     @Override

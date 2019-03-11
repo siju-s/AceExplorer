@@ -19,7 +19,7 @@
     <color name="colorPrimary">#73066e</color>
     <color name="colorPrimaryDark">#800080</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="navButtons">#ffffff</color>
+    <color name="navButtons">#73000000</color>
     <!--20% transparent -->
     <color name="actionModeItemSelected">#33800080</color>
     <color name="white">#ffffff</color>

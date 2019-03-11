@@ -16,7 +16,7 @@
   -->
 <resources>
 
-     <style name="BaseLightTheme" parent="Theme.AppCompat.Light.NoActionBar">
+     <style name="BaseLightTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -31,7 +31,7 @@
         <item name="android:textAlignment">gravity</item>
     </style>
 
-    <style name="BaseDarkTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="BaseDarkTheme" parent="Theme.MaterialComponents.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -56,7 +56,7 @@
         <item name="color">@android:color/white</item>
     </style>
 
-    <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.Light">
+    <style name="ToolbarTheme" parent="ThemeOverlay.MaterialComponents.Light">
         <item name="colorControlNormal">@color/white</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -67,11 +67,11 @@
         <item name="android:textSize">18sp</item>
     </style>
 
-    <style name="TransparentTheme" parent="Theme.AppCompat.Light.Dialog">
+    <style name="TransparentTheme" parent="Theme.MaterialComponents.Light.Dialog">
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="TransparentTheme_AppTheme_NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="TransparentTheme_AppTheme_NoActionBar" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -82,7 +82,7 @@
         <item name="android:actionModeBackground">@color/colorPrimary</item>
     </style>
 
-    <style name="TransparentTheme_DarkAppTheme_NoActionBar" parent="Theme.AppCompat.NoActionBar">
+    <style name="TransparentTheme_DarkAppTheme_NoActionBar" parent="Theme.MaterialComponents.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -90,10 +90,10 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light" />
 
-    <style name="Dark_AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" />
+    <style name="Dark_AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Dark" />
 
 </resources>
