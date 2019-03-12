@@ -421,6 +421,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (category.equals(PICKER)) {
             fileListViewHolder.imageIcon.setImageResource(fileInfo.getIcon());
             fileListViewHolder.textFileName.setText(fileInfo.getFileName());
+            fileListViewHolder.textNoOfFileOrSize.setText(fileInfo.getFilePath());
         } else if (isGenericMusic(category)) {
             setViewGenericMusic(fileListViewHolder, fileInfo);
         } else if (isMusicCategory(category)) {

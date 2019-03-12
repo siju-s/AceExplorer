@@ -286,7 +286,6 @@ public class PeekAndPop {
      *                 and drag to action listener.
      */
     public void addClickView(@NonNull View view, int position) {
-        Log.d("PeekPop", "addClickView: "+position);
         initialiseGestureListener(view, position);
     }
 

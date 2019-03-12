@@ -31,7 +31,7 @@ import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.utils.PrefManager;
 import com.siju.acexplorer.main.view.AceActivity;
 
-public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener,
+public class  WelcomeActivity extends AppCompatActivity implements View.OnClickListener,
                                                                   ViewPager.OnPageChangeListener
 {
 

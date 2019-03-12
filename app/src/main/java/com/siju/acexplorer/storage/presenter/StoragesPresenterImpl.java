@@ -33,6 +33,8 @@ import com.siju.acexplorer.storage.model.operations.Operations;
 import com.siju.acexplorer.storage.view.StoragesUi;
 import com.siju.acexplorer.main.view.dialog.DialogHelper;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -289,7 +291,7 @@ public class StoragesPresenterImpl implements StoragesUi.Listener,
     }
 
     @Override
-    public void onLoadFinished(Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
+    public void onLoadFinished(@NotNull Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
         storagesUi.onDataLoaded(data);
     }
 

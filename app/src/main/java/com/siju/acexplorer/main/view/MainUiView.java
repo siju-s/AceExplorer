@@ -807,7 +807,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
 
     public void setDualPaneFocusState(boolean state) {
         isDualPaneInFocus = state;
-        Log.d(TAG, "setDualPaneFocusState() called with: state = [" + state + "]");
+//        Log.d(TAG, "setDualPaneFocusState() called with: state = [" + state + "]");
     }
 
     public void switchView(int viewMode, boolean isDual) {

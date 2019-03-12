@@ -27,10 +27,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,8 +43,8 @@ import android.widget.TextView;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
-import com.siju.acexplorer.home.model.LoaderHelper;
 import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.home.model.LoaderHelper;
 import com.siju.acexplorer.main.model.helper.FileUtils;
 import com.siju.acexplorer.main.model.helper.MediaStoreHack;
 import com.siju.acexplorer.permission.PermissionHelper;
@@ -74,8 +76,7 @@ import static com.siju.acexplorer.main.model.helper.UriHelper.createContentUri;
 
 public class DialogBrowseFragment extends DialogFragment implements
                                                          PickerUi,
-                                                         PermissionResultCallback
-{
+                                                         PermissionResultCallback {
 
     @SuppressWarnings("unused")
     private final String TAG = this.getClass().getSimpleName();
@@ -91,7 +92,6 @@ public class DialogBrowseFragment extends DialogFragment implements
     private View                   root;
     private ImageButton            backButton;
     private TextView               textCurrentPath;
-    private TextView               title;
     private Button                 okButton;
     private Button                 cancelButton;
     private LinearLayoutManager    layoutManager;
@@ -114,6 +114,7 @@ public class DialogBrowseFragment extends DialogFragment implements
     private PermissionHelper permissionHelper;
     private PickerPresenter  pickerPresenter;
     private Theme            currentTheme;
+    private Toolbar          toolbar;
 
 
     public static DialogBrowseFragment getNewInstance(int theme, boolean isRingtonePicker,
@@ -136,7 +137,8 @@ public class DialogBrowseFragment extends DialogFragment implements
             public void onBackPressed() {
                 if (checkIfRootDir()) {
                     reloadData();
-                } else {
+                }
+                else {
                     exitPicker();
                 }
             }
@@ -159,20 +161,25 @@ public class DialogBrowseFragment extends DialogFragment implements
         if (getArguments() != null) {
             if (getArguments().getBoolean(RINGTONE_PICKER)) {
                 Analytics.getLogger().pickerShown(true);
-                title.setText(getString(R.string.dialog_title_picker));
+                setTitle(getString(R.string.dialog_title_picker));
                 okButton.setVisibility(View.GONE);
                 isRingtonePicker = true;
                 ringToneType = getArguments().getInt(RINGTONE_TYPE);
-            } else if (getArguments().getBoolean(FILE_PICKER)) {
+            }
+            else if (getArguments().getBoolean(FILE_PICKER)) {
+                setTitle(getString(R.string.dialog_title_browse));
                 Analytics.getLogger().pickerShown(false);
                 okButton.setVisibility(View.GONE);
                 isFilePicker = true;
             }
         }
+        else {
+            setTitle(getString(R.string.dialog_title_browse));
+        }
 
         PickerModel pickerModel = new PickerModelImpl();
         pickerPresenter = new PickerPresenterImpl(this, pickerModel, new LoaderHelper(getContext()),
-                                                  getActivity().getSupportLoaderManager());
+                getActivity().getSupportLoaderManager());
 
         loadStoragesList();
 
@@ -180,10 +187,12 @@ public class DialogBrowseFragment extends DialogFragment implements
             String path = pickerPresenter.getLastSavedRingtoneDir();
             if (path != null && new File(path).exists()) {
                 currentPath = path;
-            } else {
+            }
+            else {
                 currentPath = getInternalStorage();
             }
-        } else {
+        }
+        else {
             currentPath = getInternalStorage();
         }
         textCurrentPath.setText(currentPath);
@@ -195,6 +204,14 @@ public class DialogBrowseFragment extends DialogFragment implements
         setListeners();
         setupPermissions();
     }
+
+    private void setTitle(String title) {
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(title);
+        }
+    }
+
 
     private void setListeners() {
         fileListAdapter.setOnItemClickListener(new FileListAdapter.OnItemClickListener() {
@@ -210,19 +227,21 @@ public class DialogBrowseFragment extends DialogFragment implements
                     currentPath = file.getAbsolutePath();
                     textCurrentPath.setText(currentPath);
                     refreshList(currentPath);
-                } else if (isStoragesList) {
+                }
+                else if (isStoragesList) {
                     isStoragesList = false;
                     File storagesFile = new File(fileInfoList.get(position).getFilePath());
                     currentPath = storagesFile.getAbsolutePath();
                     textCurrentPath.setText(currentPath);
                     refreshList(currentPath);
-                } else {
+                }
+                else {
                     if (isRingtonePicker) {
                         Intent intent = new Intent();
                         Uri mediaStoreUri = MediaStoreHack.getCustomRingtoneUri(getActivity().getContentResolver(),
-                                                                                file.getAbsolutePath(), ringToneType);
+                                file.getAbsolutePath(), ringToneType);
                         System.out.println(mediaStoreUri + "\t" + FileUtils.getMimeType(file) + "type=" +
-                                                   ringToneType);
+                                ringToneType);
 
                         if (mediaStoreUri != null) {
                             intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, ringToneType);
@@ -231,11 +250,13 @@ public class DialogBrowseFragment extends DialogFragment implements
                             pickerPresenter.saveLastRingtoneDir(currentPath);
                             fileListAdapter.setStopAnimation(false);
                             getActivity().setResult(Activity.RESULT_OK, intent);
-                        } else {
+                        }
+                        else {
                             getActivity().setResult(Activity.RESULT_CANCELED, intent);
                         }
                         getActivity().finish();
-                    } else if (isFilePicker) {
+                    }
+                    else if (isFilePicker) {
                         Intent intent = new Intent();
                         intent.setData(createContentUri(getActivity(), file.getAbsolutePath()));
                         getActivity().setResult(Activity.RESULT_OK, intent);
@@ -283,7 +304,8 @@ public class DialogBrowseFragment extends DialogFragment implements
                         fileListAdapter.updateAdapter(fileInfoList);
                         fileList.setAdapter(fileListAdapter);
                     }
-                } else {
+                }
+                else {
                     isStoragesList = false;
                     currentPath = new File(currentPath).getParent();
                     textCurrentPath.setText(currentPath);
@@ -311,7 +333,8 @@ public class DialogBrowseFragment extends DialogFragment implements
         getActivity().setResult(AppCompatActivity.RESULT_CANCELED, null);
         if (isRingtonePicker) {
             getActivity().finish();
-        } else {
+        }
+        else {
             getDialog().dismiss();
         }
     }
@@ -357,10 +380,10 @@ public class DialogBrowseFragment extends DialogFragment implements
         textCurrentPath = root.findViewById(R.id.textPath);
         okButton = root.findViewById(R.id.buttonPositive);
         cancelButton = root.findViewById(R.id.buttonNegative);
-        title = root.findViewById(R.id.textDialogTitle);
-
         okButton.setText(getString(R.string.msg_ok));
         cancelButton.setText(getString(R.string.dialog_cancel));
+        toolbar = root.findViewById(R.id.toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
     }
 
     private void refreshList(String path) {
@@ -372,7 +395,7 @@ public class DialogBrowseFragment extends DialogFragment implements
         pickerPresenter.loadData(path, isRingtonePicker);
     }
 
-    private void reloadData() {        
+    private void reloadData() {
         isBackPressed = true;
         currentPath = new File(currentPath).getParent();
         textCurrentPath.setText(currentPath);
@@ -430,7 +453,8 @@ public class DialogBrowseFragment extends DialogFragment implements
                 }
                 fileList.stopScroll();
                 textEmpty.setVisibility(View.GONE);
-            } else {
+            }
+            else {
                 textEmpty.setText(getString(R.string.no_music));
                 textEmpty.setVisibility(View.VISIBLE);
             }
@@ -457,10 +481,12 @@ public class DialogBrowseFragment extends DialogFragment implements
                 name = STORAGE_INTERNAL;
                 icon = R.drawable.ic_phone_white;
 
-            } else if (STORAGE_SDCARD1.equals(path)) {
+            }
+            else if (STORAGE_SDCARD1.equals(path)) {
                 name = STORAGE_EXTERNAL;
                 icon = R.drawable.ic_ext_white;
-            } else {
+            }
+            else {
                 name = file.getName();
                 icon = R.drawable.ic_ext_white;
             }

@@ -16,44 +16,42 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="@dimen/dialog_file_info"
-    android:layout_height="@dimen/dialog_file_info"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-
-    <TextView
-        android:id="@+id/textDialogTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:padding="10dp"
-        android:text="@string/dialog_title_browse"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar"/>
 
     <LinearLayout
         android:id="@+id/layoutFileNavigate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textDialogTitle"
+        android:layout_below="@id/toolbar"
         android:layout_marginStart="10dp"
+        android:minHeight="?android:attr/actionBarSize"
         android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/imageButtonBack"
-            android:layout_width="20dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:background="@null"
             android:contentDescription="@string/img_accessibility_back"
             android:src="@drawable/ic_back_black" />
 
         <TextView
             android:id="@+id/textPath"
+            android:layout_gravity="center_vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="10dp"
             android:gravity="center_vertical"
+            xmlns:tools="http://schemas.android.com/tools"
+            tools:text="/storage/emulated"
             android:maxLines="1" />
 
     </LinearLayout>
