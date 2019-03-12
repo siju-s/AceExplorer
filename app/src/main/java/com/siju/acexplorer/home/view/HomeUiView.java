@@ -46,6 +46,7 @@ import com.siju.acexplorer.main.model.groups.Category;
 import com.siju.acexplorer.main.view.AceActivity;
 import com.siju.acexplorer.main.view.DrawerListener;
 import com.siju.acexplorer.permission.PermissionUtils;
+import com.siju.acexplorer.storage.view.DualPaneList;
 import com.siju.acexplorer.storage.view.FileList;
 import com.siju.acexplorer.storage.view.StoragesUiView;
 import com.siju.acexplorer.theme.Theme;
@@ -164,7 +165,7 @@ public class HomeUiView extends CoordinatorLayout {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                drawerListener.onDrawerIconClicked();
+                drawerListener.onDrawerIconClicked(fragment instanceof DualPaneList);
             }
         });
     }

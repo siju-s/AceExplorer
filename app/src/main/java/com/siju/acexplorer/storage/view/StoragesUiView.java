@@ -741,7 +741,7 @@ public class StoragesUiView extends CoordinatorLayout implements
     }
 
     public void openDrawer() {
-        drawerListener.onDrawerIconClicked();
+        drawerListener.onDrawerIconClicked(fragment instanceof DualPaneList);
     }
 
     public void setDrawerListener(DrawerListener drawerListener) {

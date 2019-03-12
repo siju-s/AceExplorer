@@ -21,7 +21,7 @@ package com.siju.acexplorer.main.view;
  */
 public interface DrawerListener {
 
-    void onDrawerIconClicked();
+    void onDrawerIconClicked(boolean dualPane);
 
     void syncDrawer();
 }

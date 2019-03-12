@@ -589,7 +589,8 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     }
 
 
-    private void openDrawer() {
+    private void openDrawer(boolean dualPane) {
+        isDualPaneInFocus = dualPane;
         navigationDrawer.openDrawer();
     }
 
@@ -642,8 +643,8 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     }
 
     @Override
-    public void onDrawerIconClicked() {
-        openDrawer();
+    public void onDrawerIconClicked(boolean dualPane) {
+        openDrawer(dualPane);
     }
 
     @Override
