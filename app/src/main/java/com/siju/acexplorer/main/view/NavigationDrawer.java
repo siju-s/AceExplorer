@@ -32,12 +32,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.billing.BillingStatus;
-import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.main.model.FavInfo;
 import com.siju.acexplorer.main.model.FileConstants;
 import com.siju.acexplorer.main.model.SectionGroup;
@@ -62,8 +60,8 @@ class NavigationDrawer implements View.OnClickListener {
 
     private final        String TAG                       = this.getClass().getSimpleName();
     private static final int    SETTINGS_REQUEST          = 1000;
-    private static final int    REQUEST_INVITE            = 4000;
     private static final String PLAYSTORE_URL             = "https://play.google.com/store/apps/details?id=";
+    private static final String DYNAMIC_LINK              = "https://c3dba.app.goo.gl/acexplorer";
     static               int    DRAWER_HEADER_STORAGE_POS = 0;
     static               int    DRAWER_HEADER_FAV_POS     = 1;
     private static       int    DRAWER_HEADER_TOOLS_POS   = 3;
@@ -121,8 +119,7 @@ class NavigationDrawer implements View.OnClickListener {
 
     private void initListeners() {
         drawerToggle = new ActionBarDrawerToggle(activity, drawerLayout, R.string.navigation_drawer_open, R.string
-                                                         .navigation_drawer_close)
-        {
+                .navigation_drawer_close) {
 
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
@@ -176,11 +173,13 @@ class NavigationDrawer implements View.OnClickListener {
         switch (view.getId()) {
             case R.id.imageInvite:
                 Analytics.getLogger().appInviteClicked();
-                Intent inviteIntent = new AppInviteInvitation.IntentBuilder(context.getString(R
-                                                                                                      .string.app_invite_title))
-                        .setMessage(context.getString(R.string.app_invite_msg))
-                        .build();
-                activity.startActivityForResult(inviteIntent, REQUEST_INVITE);
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.app_invite_msg) + "\n\n" + DYNAMIC_LINK);
+                sendIntent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.app_invite_title));
+                sendIntent.setType("text/plain");
+                startActivity(Intent.createChooser(sendIntent,
+                        context.getResources().getText(R.string.action_share)));
                 break;
 
         }
@@ -192,11 +191,12 @@ class NavigationDrawer implements View.OnClickListener {
             case 0:
                 Analytics.getLogger().unlockFullClicked();
                 if (BillingManager.getInstance().getInAppBillingStatus().equals(BillingStatus
-                                                                                        .UNSUPPORTED)) {
+                        .UNSUPPORTED)) {
 
                     Toast.makeText(context, context.getString(R.string.billing_unsupported), Toast
                             .LENGTH_SHORT).show();
-                } else {
+                }
+                else {
                     Premium premium = new Premium(activity);
                     premium.showPremiumDialog();
                 }
@@ -206,19 +206,21 @@ class NavigationDrawer implements View.OnClickListener {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 // Try Google play
                 intent.setData(Uri
-                                       .parse("market://details?id=" + context.getPackageName()));
+                        .parse("market://details?id=" + context.getPackageName()));
                 if (FileUtils.isPackageIntentUnavailable(context, intent)) {
                     // Market (Google play) app seems not installed,
                     // let's try to open a webbrowser
                     intent.setData(Uri.parse(PLAYSTORE_URL + context.getPackageName()));
                     if (FileUtils.isPackageIntentUnavailable(context, intent)) {
                         Toast.makeText(context,
-                                       context.getString(R.string.msg_error_not_supported),
-                                       Toast.LENGTH_SHORT).show();
-                    } else {
+                                context.getString(R.string.msg_error_not_supported),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    else {
                         startActivity(intent);
                     }
-                } else {
+                }
+                else {
                     startActivity(intent);
                 }
                 drawerLayout.closeDrawer(drawerPane);
@@ -261,7 +263,8 @@ class NavigationDrawer implements View.OnClickListener {
                 int clickedPos;
                 if (childPos == 0) {
                     clickedPos = APP_MANAGER.getValue();
-                } else {
+                }
+                else {
                     clickedPos = TRASH.getValue();
                 }
                 uiView.onLibraryItemClicked(clickedPos);
@@ -272,9 +275,9 @@ class NavigationDrawer implements View.OnClickListener {
     void updateFavorites(ArrayList<FavInfo> favInfoArrayList) {
         for (int i = 0; i < favInfoArrayList.size(); i++) {
             SectionItems favItem = new SectionItems(favInfoArrayList.get(i).getFileName(),
-                                                    favInfoArrayList.get(i)
-                                                            .getFilePath(), R.drawable.ic_fav_folder, favInfoArrayList.get(i)
-                                                            .getFilePath(), 0, null, null);
+                    favInfoArrayList.get(i)
+                            .getFilePath(), R.drawable.ic_fav_folder, favInfoArrayList.get(i)
+                    .getFilePath(), 0, null, null);
             if (!favoritesGroupChild.contains(favItem)) {
                 favoritesGroupChild.add(favItem);
             }
@@ -286,9 +289,9 @@ class NavigationDrawer implements View.OnClickListener {
     void removeFavorites(ArrayList<FavInfo> favInfoArrayList) {
         for (int i = 0; i < favInfoArrayList.size(); i++) {
             SectionItems favItem = new SectionItems(favInfoArrayList.get(i).getFileName(),
-                                                    favInfoArrayList.get(i)
-                                                            .getFilePath(), R.drawable.ic_fav_folder, favInfoArrayList.get(i)
-                                                            .getFilePath(), 0, null, null);
+                    favInfoArrayList.get(i)
+                            .getFilePath(), R.drawable.ic_fav_folder, favInfoArrayList.get(i)
+                    .getFilePath(), 0, null, null);
             favoritesGroupChild.remove(favItem);
         }
         expandableListAdapter.notifyDataSetChanged();
@@ -319,20 +322,6 @@ class NavigationDrawer implements View.OnClickListener {
 
     void onActivityResult(int requestCode, int resultCode, Intent intent) {
         switch (requestCode) {
-            case REQUEST_INVITE:
-                if (resultCode == Activity.RESULT_OK) {
-                    Analytics.getLogger().appInviteResult(true);
-                    // Get the invitation IDs of all sent messages
-                    String[] ids = AppInviteInvitation.getInvitationIds(resultCode, intent);
-                    for (String id : ids) {
-                        Logger.log(TAG, "handleActivityResult: sent invitation " + id);
-                    }
-                } else {
-                    Analytics.getLogger().appInviteResult(false);
-                    Toast.makeText(context, context.getString(R.string.app_invite_failed), Toast
-                            .LENGTH_SHORT).show();
-                }
-                break;
             case SETTINGS_REQUEST:
                 if (intent == null) {
                     return;
