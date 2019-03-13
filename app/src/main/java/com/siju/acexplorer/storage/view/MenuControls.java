@@ -580,10 +580,13 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
 
 
     boolean isSearch() {
-        return searchView != null && !searchView.isIconified();
+        Log.d(TAG, "isSearch: query:"+searchView.getQuery());
+        return searchView != null && (!searchView.isIconified() || (searchView.getQuery() != null
+                && !searchView.getQuery().toString().isEmpty()));
     }
 
     void endSearch() {
+        searchView.setQuery("", false);
         searchItem.collapseActionView();
     }
 
@@ -699,17 +702,19 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
 
     @Override
     public boolean onQueryTextChange(String query) {
+        Log.d(TAG, "onQueryTextChange() called with: query = [" + query + "]");
         if (storagesUiView.isActionModeActive()) {
             return true;
         }
         isSearchActive = !query.isEmpty();
         storagesUiView.onQueryTextChange(query);
+        storagesUiView.setSearch(isSearch());
         return true;
     }
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        hideSearchView();
+        Log.d(TAG, "onQueryTextSubmit() called with: query = [" + query + "]");
         isSearchActive = false;
         return false;
     }

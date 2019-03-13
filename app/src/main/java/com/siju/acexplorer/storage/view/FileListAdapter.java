@@ -579,29 +579,36 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     void filter(String text) {
         if (text.isEmpty()) {
-            if (fileList != null) {
-                fileList.clear();
-                fileList.addAll(filteredList);
-            }
+            populateOriginalList();
         } else {
-            ArrayList<FileInfo> result = new ArrayList<>();
-            text = text.toLowerCase();
-
-            for (FileInfo item : filteredList) {
-                if (item.getFileName().toLowerCase().contains(text)) {
-                    result.add(item);
-                }
-            }
-            if (fileList != null) {
-                fileList.clear();
-                fileList.addAll(result);
-            }
+            addSearchResults(text);
         }
         if (searchCallback != null) {
             searchCallback.updateList(fileList);
         }
-
         notifyDataSetChanged();
+    }
+
+    private void populateOriginalList() {
+        if (fileList != null) {
+            fileList.clear();
+            fileList.addAll(filteredList);
+        }
+    }
+
+    private void addSearchResults(String text) {
+        ArrayList<FileInfo> result = new ArrayList<>();
+        text = text.toLowerCase();
+
+        for (FileInfo item : filteredList) {
+            if (item.getFileName().toLowerCase().contains(text)) {
+                result.add(item);
+            }
+        }
+        if (fileList != null) {
+            fileList.clear();
+            fileList.addAll(result);
+        }
     }
 
     void setSearchCallback(SearchCallback searchCallback) {
@@ -612,7 +619,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         context = null;
     }
 
-    public interface OnItemClickListener {
+   public interface OnItemClickListener {
         void onItemClick(View view, int position);
 
         boolean canShowPeek();
@@ -624,6 +631,8 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     interface SearchCallback {
         void updateList(ArrayList<FileInfo> fileList);
+
+        void setSearch(boolean search);
     }
 
     private class FileListViewHolder extends RecyclerView.ViewHolder

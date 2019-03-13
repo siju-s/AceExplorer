@@ -479,10 +479,12 @@ public class FilesView extends RecyclerView.OnScrollListener
         scrollPosition.remove(path);
     }
 
+    private boolean search;
+
     @Override
     public void updateList(ArrayList<FileInfo> fileInfoArrayList) {
         this.fileInfoList = fileInfoArrayList;
-        if (fileInfoList.isEmpty()) {
+        if (isSearch() && fileInfoList.isEmpty()) {
             emptyText.setText(getContext().getString(R.string.no_search_results));
             emptyText.setVisibility(View.VISIBLE);
         }
@@ -497,6 +499,7 @@ public class FilesView extends RecyclerView.OnScrollListener
     }
 
     void reloadList(String path, Category category) {
+        Log.d(TAG, "reloadList() called with: path = [" + path + "], category = [" + category + "]");
         currentDir = path;
         this.category = category;
         boolean isDualPaneInFocus = storagesUiView.getFragment() instanceof DualPaneList;
@@ -525,10 +528,18 @@ public class FilesView extends RecyclerView.OnScrollListener
         fileListAdapter.mStopAnimation = true;
     }
 
+    private boolean isSearch() {
+        return search;
+    }
+
     void onDataLoaded(ArrayList<FileInfo> data) {
         swipeRefreshLayout.setRefreshing(false);
-
+        Log.d(TAG, "onDataLoaded: search:" + search);
+        if (isSearch()) {
+            return;
+        }
         if (data != null) {
+            Log.d(TAG, "onDataLoaded: " + data.size());
 
             shouldStopAnimation = true;
             fileInfoList = data;
@@ -538,16 +549,20 @@ public class FilesView extends RecyclerView.OnScrollListener
 
             addItemDecoration();
 
-            if (!data.isEmpty()) {
+            if (data.isEmpty()) {
+                showEmptyPlaceholder();
+            }
+            else {
                 getScrolledPosition();
                 fileList.stopScroll();
                 emptyText.setVisibility(View.GONE);
             }
-            else {
-                emptyText.setText(getContext().getString(R.string.no_files));
-                emptyText.setVisibility(View.VISIBLE);
-            }
         }
+    }
+
+    private void showEmptyPlaceholder() {
+        emptyText.setText(getContext().getString(R.string.no_files));
+        emptyText.setVisibility(View.VISIBLE);
     }
 
     private void addItemDecoration() {
@@ -1165,5 +1180,10 @@ public class FilesView extends RecyclerView.OnScrollListener
 
     void reloadList() {
         storagesUiView.refreshList();
+    }
+
+    @Override
+    public void setSearch(boolean search) {
+        this.search = search;
     }
 }

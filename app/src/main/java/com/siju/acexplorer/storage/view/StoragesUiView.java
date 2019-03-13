@@ -1102,6 +1102,10 @@ public class StoragesUiView extends CoordinatorLayout implements
         menuControls.collapseSearchView();
     }
 
+    public void setSearch(boolean search) {
+        filesView.setSearch(search);
+    }
+
 
     public interface FavoriteOperation {
         void updateFavorites(ArrayList<FavInfo> favList);
