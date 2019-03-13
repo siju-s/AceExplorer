@@ -548,8 +548,8 @@ public class StoragesUiView extends CoordinatorLayout implements
 
     void switchView() {
         int viewMode = filesView.getNewViewMode();
-        bridge.saveViewPrefs(filesView.getGridCols(), viewMode);
         filesView.switchView();
+        bridge.saveViewPrefs(filesView.getGridCols(), viewMode);
     }
 
     SparseBooleanArray getSelectedItems() {
