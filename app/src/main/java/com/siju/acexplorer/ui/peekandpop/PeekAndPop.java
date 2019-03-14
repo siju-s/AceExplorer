@@ -18,6 +18,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.main.model.groups.Category;
+import com.siju.acexplorer.main.model.groups.CategoryHelper;
 import com.siju.acexplorer.main.model.helper.SdkHelper;
 import com.siju.acexplorer.ui.autoplay.AutoPlayContainer;
 
@@ -140,13 +142,15 @@ public class PeekAndPop {
      */
     private void initialiseGestureListeners() {
         for (int i = 0; i < builder.longClickViews.size(); i++) {
-            initialiseGestureListener(builder.longClickViews.get(i), -1);
+            initialiseGestureListener(builder.longClickViews.get(i), -1, Category.FILES);
         }
 //        gestureDetector.setIsLongpressEnabled(false);
     }
 
-    private void initialiseGestureListener(@NonNull View view, final int position) {
-        PeekAndPopClickListener peekAndPopClickListener = new PeekAndPopClickListener(position);
+    private void initialiseGestureListener(@NonNull View view, final int position, Category category) {
+        Log.d("PeekPop", "initialiseGestureListener: "+position);
+
+        PeekAndPopClickListener peekAndPopClickListener = new PeekAndPopClickListener(position, category);
         thumbImage.setOnClickListener(peekAndPopClickListener);
         autoPlayView.setOnClickListener(peekAndPopClickListener);
         infoButton.setOnClickListener(peekAndPopClickListener);
@@ -280,13 +284,12 @@ public class PeekAndPop {
 
     /**
      * Adds a view to receive long click and touch events
-     *
-     * @param view     view to receive events
+     *  @param view     view to receive events
      * @param position add position of view if in a list, this will be returned in the general action listener
-     *                 and drag to action listener.
+     * @param category
      */
-    public void addClickView(@NonNull View view, int position) {
-        initialiseGestureListener(view, position);
+    public void addClickView(@NonNull View view, int position, Category category) {
+        initialiseGestureListener(view, position, category);
     }
 
     public View getPeekView() {
@@ -406,15 +409,18 @@ public class PeekAndPop {
     protected class PeekAndPopClickListener implements View.OnClickListener {
 
         private int position;
+        private Category category;
 
-        PeekAndPopClickListener(int position) {
+        PeekAndPopClickListener(int position, Category category) {
             this.position = position;
+            this.category = category;
+            Log.d("PeekPop", "PeekAndPopClickListener() called with: position = [" + position + "], category = [" + category + "]");
         }
 
         @Override
         public void onClick(View v) {
-            Log.d("Peek", "onClick: "+v);
-            if (!onClickListener.canShowPeek()) {
+            Log.d("Peek", "onClick: category"+category + " pos:"+position);
+            if (!onClickListener.canShowPeek() || !CategoryHelper.isPeekPopCategory(category)) {
                 onClickListener.onClick(v, position, false);
                 return;
             }

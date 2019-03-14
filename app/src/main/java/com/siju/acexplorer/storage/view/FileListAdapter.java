@@ -28,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -277,6 +278,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     void loadPeekView(int position, boolean firstRun) {
+        Log.d(TAG, "loadPeekView: pos:"+position + "list size:"+fileList.size());
         if (position >= fileList.size() || position == INVALID_POS) {
             return;
         }
@@ -286,6 +288,13 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         changePeekButtonsState(position, view);
         ImageView thumb = view.findViewById(R.id.imagePeekView);
         AutoPlayContainer autoPlayView = view.findViewById(R.id.autoPlayView);
+        ImageButton shareButton = view.findViewById(R.id.imageButtonShare);
+        if (isPeekPopCategory(category)) {
+            shareButton.setVisibility(View.VISIBLE);
+        }
+        else {
+            shareButton.setVisibility(GONE);
+        }
         if (firstRun) {
             Analytics.getLogger().enterPeekMode();
             autoPlayView.init();
@@ -416,8 +425,8 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private void setViewByCategory(FileListViewHolder fileListViewHolder, int position) {
         FileInfo fileInfo = fileList.get(position);
-
         Category category = fileInfo.getCategory();
+        Log.d(TAG, "setViewByCategory: "+category + " pos:"+position);
         if (category.equals(PICKER)) {
             fileListViewHolder.imageIcon.setImageResource(fileInfo.getIcon());
             fileListViewHolder.textFileName.setText(fileInfo.getFileName());
@@ -433,8 +442,8 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         } else if (isRecentCategory(category)) {
             setViewGenericRecent(fileListViewHolder, fileInfo);
         } else {
-            if (peekAndPop != null && isPeekPopCategory(category)) {
-                peekAndPop.addClickView(fileListViewHolder.imageIcon, position);
+            if (peekAndPop != null) {
+                peekAndPop.addClickView(fileListViewHolder.imageIcon, position, category);
             }
             String fileName = fileInfo.getFileName();
             long dateMs = CategoryHelper.isDateInMs(this.category) ? fileInfo.getDate() : fileInfo.getDate() * 1000;
@@ -594,6 +603,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             fileList.clear();
             fileList.addAll(filteredList);
         }
+        Log.d(TAG, "populateOriginalList: "+fileList.size());
     }
 
     private void addSearchResults(String text) {
@@ -609,6 +619,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             fileList.clear();
             fileList.addAll(result);
         }
+        Log.d(TAG, "addSearchResults: "+fileList.size());
     }
 
     void setSearchCallback(SearchCallback searchCallback) {

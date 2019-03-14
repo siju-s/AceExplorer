@@ -116,7 +116,8 @@ public class CategoryHelper {
 
     public static boolean isPeekPopCategory(Category category) {
         return category.equals(IMAGE) || category.equals(VIDEO) || category.equals(AUDIO) ||
-                category.equals(FOLDER_IMAGES) || category.equals(FOLDER_VIDEOS);
+                category.equals(FOLDER_IMAGES) || category.equals(FOLDER_VIDEOS) ||
+                RECENT_IMAGES.equals(category) || GENERIC_IMAGES.equals(category);
     }
 
     public static boolean showLibSpecificNavigation(Category category) {
