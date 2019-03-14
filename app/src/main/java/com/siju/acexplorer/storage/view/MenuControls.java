@@ -581,8 +581,7 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
 
     boolean isSearch() {
         Log.d(TAG, "isSearch: query:"+searchView.getQuery());
-        return searchView != null && (!searchView.isIconified() || (searchView.getQuery() != null
-                && !searchView.getQuery().toString().isEmpty()));
+        return searchView != null && isSearchActive();
     }
 
     void endSearch() {
@@ -598,8 +597,7 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
             fileName = oldFilePath.substring(oldFilePath.lastIndexOf("/") + 1, oldFilePath
                     .lastIndexOf("."));
         } else {
-            fileName = oldFilePath.substring(oldFilePath.lastIndexOf("/") + 1, oldFilePath
-                    .length());
+            fileName = oldFilePath.substring(oldFilePath.lastIndexOf("/") + 1);
         }
 
         storagesUiView.showRenameDialog(fileInfo, fileName);
@@ -681,6 +679,8 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
+                isSearchActive = false;
+                storagesUiView.onSearchEnd();
                 return true;
             }
         });
@@ -715,7 +715,6 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
     @Override
     public boolean onQueryTextSubmit(String query) {
         Log.d(TAG, "onQueryTextSubmit() called with: query = [" + query + "]");
-        isSearchActive = false;
         return false;
     }
 

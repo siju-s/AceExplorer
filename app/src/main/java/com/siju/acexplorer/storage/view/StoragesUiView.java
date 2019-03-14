@@ -900,6 +900,10 @@ public class StoragesUiView extends CoordinatorLayout implements
         }
     }
 
+    private void hideNavigation() {
+        navigationInfo.hideNavigationView();
+    }
+
     void changeGridCols() {
         filesView.refreshSpan(((AceActivity) getActivity()).getConfiguration());
     }
@@ -1095,7 +1099,9 @@ public class StoragesUiView extends CoordinatorLayout implements
 
     public void onSearchClicked() {
         setDualPaneState();
+        //hide search of other pane
         ((AceActivity) getActivity()).onSearchClicked();
+        hideNavigation();
     }
 
     public void collapseSearchView() {
@@ -1104,6 +1110,11 @@ public class StoragesUiView extends CoordinatorLayout implements
 
     public void setSearch(boolean search) {
         filesView.setSearch(search);
+    }
+
+    public void onSearchEnd() {
+        navigationInfo.showNavigationView();
+        setSearch(false);
     }
 
 

@@ -378,6 +378,10 @@ public class NavigationInfo {
         scrollNavigation.setVisibility(View.VISIBLE);
     }
 
+    public void hideNavigationView() {
+        scrollNavigation.setVisibility(View.GONE);
+    }
+
     private void scrollNavigation() {
         scrollNavigation.postDelayed(new Runnable() {
             public void run() {
