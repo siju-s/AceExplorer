@@ -306,23 +306,26 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (VIDEO.equals(category) || FOLDER_VIDEOS.equals(category) || AUDIO.equals(category)) {
             fileNameText.setVisibility(View.VISIBLE);
             fileNameText.setText(fileInfo.getFileName());
-            thumb.setVisibility(GONE);
-            autoPlayView.setVisibility(View.VISIBLE);
-            volume.setVisibility(View.VISIBLE);
-            volume.setImageResource(firstRun ? R.drawable.ic_volume_off : customVideoView.isMuted() ? R.drawable.ic_volume_off : R.drawable.ic_volume_on);
+            if (AUDIO.equals(category)) {
+                autoPlayView.setVisibility(GONE);
+                thumb.setVisibility(View.VISIBLE);
+            }
+            else {
+                thumb.setVisibility(GONE);
+                autoPlayView.setVisibility(View.VISIBLE);
+            }
             customVideoView.setLooping(true);
             customVideoView.setSource(fileInfo.getFilePath());
             customVideoView.setListener(peekPopVideoCallback);
             customVideoView.setVideoMode(!AUDIO.equals(category));
-            if (firstRun) {
-                customVideoView.init();
-            }
-            else {
+
+            boolean initialized = customVideoView.init();
+            volume.setVisibility(View.VISIBLE);
+            volume.setImageResource(customVideoView.isMuted() ? R.drawable.ic_volume_off : R.drawable.ic_volume_on);
+            if (initialized) {
                 customVideoView.stopPlayer();
-                customVideoView.playNext();
             }
-
-
+            customVideoView.playNext();
         } else if (IMAGE.equals(category) || RECENT_IMAGES.equals(category) || FOLDER_IMAGES.equals(category)
         || GENERIC_IMAGES.equals(category)) {
             fileNameText.setVisibility(GONE);

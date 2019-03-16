@@ -22,7 +22,8 @@ public class AutoPlayView extends SurfaceView implements SurfaceHolder.Callback 
     private SurfaceHolder surfaceHolder;
     private boolean isSurfaceReady;
     private boolean videoMode;
-    private boolean isMuted;
+    private boolean isMuted = true;
+    private boolean shouldMute;
     private PeekPopVideoCallback callback;
 
     private MediaPlayer.OnCompletionListener completionListener = new MediaPlayer.OnCompletionListener() {
@@ -35,7 +36,6 @@ public class AutoPlayView extends SurfaceView implements SurfaceHolder.Callback 
         public void onPrepared(MediaPlayer mp) {
             Log.d(TAG, "onPrepared: ");
             mp.start();
-
         }
     };
     private MediaPlayer.OnErrorListener errorListener = new MediaPlayer.OnErrorListener() {
@@ -77,6 +77,7 @@ public class AutoPlayView extends SurfaceView implements SurfaceHolder.Callback 
         mediaPlayer.setOnCompletionListener(completionListener);
         mediaPlayer.setOnPreparedListener(preparedListener);
         mediaPlayer.setOnErrorListener(errorListener);
+        Log.d(TAG, "initPlayer: looping:"+isLooping);
         mediaPlayer.setLooping(isLooping);
         mediaPlayer.setDataSource(path);
         mutePlayer();
@@ -87,7 +88,7 @@ public class AutoPlayView extends SurfaceView implements SurfaceHolder.Callback 
     }
 
     public void playNext() {
-        if (path == null || path.isEmpty() || (isVideoMode() && surfaceHolder == null)) {
+        if (path == null || path.isEmpty() || (isVideoMode() && (surfaceHolder == null || !isSurfaceReady))) {
             return;
         }
         if (mediaPlayer == null) {
@@ -99,7 +100,9 @@ public class AutoPlayView extends SurfaceView implements SurfaceHolder.Callback 
             return;
         }
         try {
+            mediaPlayer.setLooping(isLooping);
             mediaPlayer.setDataSource(path);
+            mutePlayerOnCondition();
             if (isVideoMode()) {
                 mediaPlayer.setDisplay(surfaceHolder);
             }
@@ -109,18 +112,37 @@ public class AutoPlayView extends SurfaceView implements SurfaceHolder.Callback 
         }
     }
 
-    public void init() {
+      private boolean initialized;
+
+    public boolean isInitialized() {
+        return initialized;
+    }
+
+    public boolean init() {
         if (isVideoMode()) {
-            surfaceHolder = getHolder();
-            if (isSurfaceReady) {
-                startPlayer();
-                return;
-            }
-            surfaceHolder.addCallback(this);
+            return initSurface();
         }
         else {
-            startPlayer();
+            if (mediaPlayer != null) {
+                startPlayer();
+                return true;
+            }
+            return false;
         }
+    }
+
+    private boolean initSurface() {
+        if (surfaceHolder != null) {
+            initialized = true;
+            return true;
+        }
+        surfaceHolder = getHolder();
+        if (isSurfaceReady) {
+            startPlayer();
+            return true;
+        }
+        surfaceHolder.addCallback(this);
+        return false;
     }
 
     @Override
@@ -153,6 +175,7 @@ public class AutoPlayView extends SurfaceView implements SurfaceHolder.Callback 
     }
 
     public void stopPlayer() {
+        Log.d(TAG, "stopPlayer: "+mediaPlayer);
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.reset();
@@ -164,16 +187,29 @@ public class AutoPlayView extends SurfaceView implements SurfaceHolder.Callback 
     }
 
     public void mutePlayer() {
-        if (mediaPlayer != null && !isMuted()) {
+        if (mediaPlayer != null) {
             mediaPlayer.setVolume(0f, 0f);
+            Log.d(TAG, "mutePlayer: muted");
+            isMuted = true;
+            shouldMute = true;
+        }
+    }
+
+
+    private void mutePlayerOnCondition() {
+        if (mediaPlayer != null && shouldMute) {
+            mediaPlayer.setVolume(0f, 0f);
+            Log.d(TAG, "mutePlayer: muted");
             isMuted = true;
         }
     }
 
     public void unmutePlayer() {
-        if (mediaPlayer != null && isMuted()) {
+        if (mediaPlayer != null) {
+            Log.d(TAG, "unmutePlayer: unmuted");
             mediaPlayer.setVolume(1f, 1f);
             isMuted = false;
+            shouldMute = false;
         }
     }
 
@@ -183,6 +219,7 @@ public class AutoPlayView extends SurfaceView implements SurfaceHolder.Callback 
     }
 
     public boolean isMuted() {
+        Log.d(TAG, "isMuted: "+isMuted);
         return isMuted;
     }
 
@@ -216,6 +253,7 @@ public class AutoPlayView extends SurfaceView implements SurfaceHolder.Callback 
         Logger.log(TAG, "surfaceCreated: ");
         surfaceHolder = holder;
         isSurfaceReady = true;
+        initialized = true;
         startPlayer();
     }
 
@@ -229,6 +267,7 @@ public class AutoPlayView extends SurfaceView implements SurfaceHolder.Callback 
         Logger.log(TAG, "surfaceDestroyed: ");
         isSurfaceReady = false;
         surfaceHolder = null;
+        initialized = false;
         if (callback != null) {
             callback.onSurfaceDestroyed();
         }
