@@ -51,7 +51,7 @@
                 android:id="@+id/cardViewLibrary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/padding_10"
+                android:layout_margin="@dimen/margin_16"
                 card_view:cardCornerRadius="@dimen/card_home_radius">
 
                 <RelativeLayout
@@ -64,10 +64,9 @@
                         android:id="@+id/textLibrary"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/margin_16"
-                        android:layout_marginLeft="@dimen/margin_16"
-                        android:layout_marginRight="@dimen/margin_16"
                         android:layout_marginStart="@dimen/margin_16"
+                        android:layout_marginTop="@dimen/padding_10"
+                        android:layout_marginEnd="@dimen/margin_16"
                         android:text="@string/nav_header_collections"
                         android:textAllCaps="true"
                         android:textSize="18sp"
@@ -80,17 +79,17 @@
                         android:layout_alignParentEnd="true"
                         android:layout_marginEnd="@dimen/padding_5"
                         android:background="@null"
-                        android:visibility="gone"
                         android:contentDescription="@string/action_delete"
-                        android:src="@drawable/ic_delete_white" />
+                        android:src="@drawable/ic_delete_white"
+                        android:visibility="gone" />
 
                     <View
                         android:id="@+id/dividerLib"
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
                         android:layout_below="@id/textLibrary"
-                        android:layout_marginBottom="2dp"
                         android:layout_marginTop="2dp"
+                        android:layout_marginBottom="2dp"
                         android:background="@color/colorPrimaryDark" />
 
 
@@ -99,8 +98,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/dividerLib"
-                        android:layout_marginBottom="@dimen/margin_16"
-                        android:layout_marginTop="@dimen/margin_16" />
+                        android:layout_marginTop="@dimen/margin_16"
+                        android:layout_marginBottom="@dimen/margin_16" />
 
                 </RelativeLayout>
             </android.support.v7.widget.CardView>
@@ -111,7 +110,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/cardViewLibrary"
-                android:layout_margin="@dimen/padding_10"
+                android:layout_margin="@dimen/margin_16"
                 card_view:cardCornerRadius="@dimen/card_home_radius">
 
                 <LinearLayout
@@ -123,10 +122,9 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/margin_16"
-                        android:layout_marginLeft="@dimen/margin_16"
-                        android:layout_marginRight="@dimen/margin_16"
                         android:layout_marginStart="@dimen/margin_16"
+                        android:layout_marginTop="@dimen/padding_10"
+                        android:layout_marginEnd="@dimen/margin_16"
                         android:text="@string/nav_header_storages"
                         android:textAllCaps="true"
                         android:textSize="18sp"
@@ -135,16 +133,16 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
-                        android:layout_marginBottom="2dp"
                         android:layout_marginTop="2dp"
+                        android:layout_marginBottom="2dp"
                         android:background="@color/colorPrimaryDark" />
 
                     <LinearLayout
                         android:id="@+id/storagesContainer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/margin_16"
                         android:layout_marginTop="@dimen/margin_16"
+                        android:layout_marginBottom="@dimen/margin_16"
                         android:orientation="vertical" />
 
                 </LinearLayout>
@@ -157,17 +155,6 @@
                 android:layout_below="@+id/cardViewStorages"
                 android:layout_centerHorizontal="true"
                 android:orientation="vertical" />
-
-            <!--<com.google.android.gms.ads.AdView-->
-            <!--android:id="@+id/adView"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--ads:adSize="BANNER"-->
-            <!--android:layout_alignParentBottom="true"-->
-            <!--android:layout_below="@+id/layoutStorages"-->
-            <!--android:layout_centerHorizontal="true"-->
-            <!--ads:adUnitId="@string/banner_ad_unit_id">-->
-            <!--</com.google.android.gms.ads.AdView>-->
 
         </RelativeLayout>
     </android.support.v4.widget.NestedScrollView>

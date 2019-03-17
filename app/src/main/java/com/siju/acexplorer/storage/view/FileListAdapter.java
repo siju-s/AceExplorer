@@ -53,13 +53,7 @@ import java.util.ArrayList;
 import static android.view.View.GONE;
 import static com.siju.acexplorer.main.model.groups.Category.APP_MANAGER;
 import static com.siju.acexplorer.main.model.groups.Category.AUDIO;
-import static com.siju.acexplorer.main.model.groups.Category.FOLDER_IMAGES;
-import static com.siju.acexplorer.main.model.groups.Category.FOLDER_VIDEOS;
-import static com.siju.acexplorer.main.model.groups.Category.GENERIC_IMAGES;
-import static com.siju.acexplorer.main.model.groups.Category.IMAGE;
 import static com.siju.acexplorer.main.model.groups.Category.PICKER;
-import static com.siju.acexplorer.main.model.groups.Category.RECENT_IMAGES;
-import static com.siju.acexplorer.main.model.groups.Category.VIDEO;
 import static com.siju.acexplorer.main.model.groups.CategoryHelper.isGenericImagesCategory;
 import static com.siju.acexplorer.main.model.groups.CategoryHelper.isGenericMusic;
 import static com.siju.acexplorer.main.model.groups.CategoryHelper.isGenericVideosCategory;
@@ -71,28 +65,27 @@ import static com.siju.acexplorer.utils.ThumbnailUtils.displayThumb;
 
 public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final int TYPE_ITEM = 1;
-    private static final int TYPE_FOOTER = 2;
-    private static final int INVALID_POS = -1;
-    private static final String TAG = "FileListAdapter";
-    private final SparseBooleanArray mAnimatedPos = new SparseBooleanArray();
-    private final int mAnimation;
-    private final boolean isThemeDark;
+    private static final int                TYPE_ITEM    = 1;
+    private static final int                INVALID_POS  = -1;
+    private static final String             TAG          = "FileListAdapter";
+    private final        SparseBooleanArray mAnimatedPos = new SparseBooleanArray();
+    private final        int                mAnimation;
+    private final        boolean            isThemeDark;
     boolean mStopAnimation;
-    private Context context;
-    private ArrayList<FileInfo> fileList = new ArrayList<>();
-    private ArrayList<FileInfo> filteredList = new ArrayList<>();
-    private SparseBooleanArray mSelectedItemsIds;
-    private OnItemClickListener mItemClickListener;
+    private Context                 context;
+    private ArrayList<FileInfo>     fileList;
+    private ArrayList<FileInfo>     filteredList  = new ArrayList<>();
+    private SparseBooleanArray      mSelectedItemsIds;
+    private OnItemClickListener     mItemClickListener;
     private OnItemLongClickListener mOnItemLongClickListener;
-    private Category category;
-    private int mViewMode;
-    private int draggedPos = -1;
-    private int offset = 0;
-    private boolean mIsAnimNeeded = true;
-    private PeekAndPop peekAndPop;
-    private int peekPos = INVALID_POS;
-    private SearchCallback searchCallback;
+    private Category                category;
+    private int                     mViewMode;
+    private int                     draggedPos    = -1;
+    private int                     offset        = 0;
+    private boolean                 mIsAnimNeeded = true;
+    private PeekAndPop              peekAndPop;
+    private int                     peekPos       = INVALID_POS;
+    private SearchCallback          searchCallback;
 
     public FileListAdapter(Context context, ArrayList<FileInfo>
             fileList, Category category, int viewMode, PeekAndPop peekAndPop) {
@@ -152,7 +145,8 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (mViewMode == ViewMode.LIST) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_list_item,
                     parent, false);
-        } else {
+        }
+        else {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_grid_item,
                     parent, false);
         }
@@ -177,16 +171,19 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             int color;
             if (isThemeDark) {
                 color = ContextCompat.getColor(context, R.color.dark_actionModeItemSelected);
-            } else {
+            }
+            else {
                 color = ContextCompat.getColor(context, R.color.actionModeItemSelected);
             }
 
             if (mSelectedItemsIds.get(position)) {
                 fileListViewHolder.itemView.setBackgroundColor(color);
-            } else {
+            }
+            else {
                 if (position == draggedPos) {
                     fileListViewHolder.itemView.setBackgroundColor(color);
-                } else {
+                }
+                else {
                     fileListViewHolder.itemView.setBackgroundColor(Color.TRANSPARENT);
                 }
             }
@@ -278,7 +275,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     void loadPeekView(int position, boolean firstRun) {
-        Log.d(TAG, "loadPeekView: pos:"+position + "list size:"+fileList.size());
+        Log.d(TAG, "loadPeekView: pos:" + position + "list size:" + fileList.size());
         if (position >= fileList.size() || position == INVALID_POS) {
             return;
         }
@@ -303,42 +300,57 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final ImageView volume = view.findViewById(R.id.imageVolume);
         final TextView fileNameText = view.findViewById(R.id.textFileName);
         FileInfo fileInfo = fileList.get(position);
-        if (VIDEO.equals(category) || FOLDER_VIDEOS.equals(category) || AUDIO.equals(category)) {
-            fileNameText.setVisibility(View.VISIBLE);
-            fileNameText.setText(fileInfo.getFileName());
-            if (AUDIO.equals(category)) {
-                autoPlayView.setVisibility(GONE);
-                thumb.setVisibility(View.VISIBLE);
-            }
-            else {
-                thumb.setVisibility(GONE);
-                autoPlayView.setVisibility(View.VISIBLE);
-            }
-            customVideoView.setLooping(true);
-            customVideoView.setSource(fileInfo.getFilePath());
-            customVideoView.setListener(peekPopVideoCallback);
-            customVideoView.setVideoMode(!AUDIO.equals(category));
+        boolean isPlaying = customVideoView.isPlaying();
+        switch (category) {
+            case VIDEO:
+            case FOLDER_VIDEOS:
+            case AUDIO:
+                fileNameText.setVisibility(View.VISIBLE);
+                fileNameText.setText(fileInfo.getFileName());
+                if (AUDIO.equals(category)) {
+                    autoPlayView.setVisibility(GONE);
+                    thumb.setVisibility(View.VISIBLE);
+                }
+                else {
+                    thumb.setVisibility(GONE);
+                    autoPlayView.setVisibility(View.VISIBLE);
+                }
+                customVideoView.setLooping(true);
+                customVideoView.setSource(fileInfo.getFilePath());
+                customVideoView.setListener(peekPopVideoCallback);
+                customVideoView.setVideoMode(!AUDIO.equals(category));
 
-            boolean initialized = customVideoView.init();
-            volume.setVisibility(View.VISIBLE);
-            volume.setImageResource(customVideoView.isMuted() ? R.drawable.ic_volume_off : R.drawable.ic_volume_on);
-            if (initialized) {
-                customVideoView.stopPlayer();
-            }
-            customVideoView.playNext();
-        } else if (IMAGE.equals(category) || RECENT_IMAGES.equals(category) || FOLDER_IMAGES.equals(category)
-        || GENERIC_IMAGES.equals(category)) {
-            fileNameText.setVisibility(GONE);
-            autoPlayView.setVisibility(GONE);
-            volume.setVisibility(GONE);
-            thumb.setVisibility(View.VISIBLE);
-        }
-        else {
-            fileNameText.setVisibility(View.VISIBLE);
-            fileNameText.setText(fileInfo.getFileName());
-            autoPlayView.setVisibility(GONE);
-            volume.setVisibility(GONE);
-            thumb.setVisibility(View.VISIBLE);
+                boolean initialized = customVideoView.init();
+                volume.setVisibility(View.VISIBLE);
+                volume.setImageResource(customVideoView.isMuted() ? R.drawable.ic_volume_off : R.drawable.ic_volume_on);
+                if (initialized) {
+                    customVideoView.stopPlayer();
+                }
+                customVideoView.playNext();
+                break;
+            case IMAGE:
+            case RECENT_IMAGES:
+            case FOLDER_IMAGES:
+            case GENERIC_IMAGES:
+                if (isPlaying) {
+                    customVideoView.stopPlayer();
+                }
+                fileNameText.setVisibility(GONE);
+                autoPlayView.setVisibility(GONE);
+                volume.setVisibility(GONE);
+                thumb.setVisibility(View.VISIBLE);
+                break;
+            default:
+                if (isPlaying) {
+                    customVideoView.stopPlayer();
+                }
+                fileNameText.setVisibility(View.VISIBLE);
+                fileNameText.setText(fileInfo.getFileName());
+                autoPlayView.setVisibility(GONE);
+                volume.setVisibility(GONE);
+                thumb.setVisibility(View.VISIBLE);
+                break;
+
         }
 
         volume.setOnClickListener(new View.OnClickListener() {
@@ -348,7 +360,8 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     customVideoView.unmutePlayer();
                     volume.setImageResource(R.drawable.ic_volume_on);
                     volume.setContentDescription(context.getString(R.string.unmute));
-                } else {
+                }
+                else {
                     customVideoView.mutePlayer();
                     volume.setImageResource(R.drawable.ic_volume_off);
                     volume.setContentDescription(context.getString(R.string.mute));
@@ -372,13 +385,15 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         View prevButton = view.findViewById(R.id.buttonPrev);
         if (position == 0) {
             disablePeekButton(prevButton);
-        } else {
+        }
+        else {
             enablePeekButton(prevButton);
         }
         View nextButton = view.findViewById(R.id.buttonNext);
         if (position == fileList.size() - 1) {
             disablePeekButton(nextButton);
-        } else {
+        }
+        else {
             enablePeekButton(nextButton);
         }
     }
@@ -389,7 +404,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             peekAndPop.resetViews();
         }
     };
-
 
 
     void stopAutoPlayVid() {
@@ -412,7 +426,8 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public int getItemCount() {
         if (fileList == null) {
             return 0;
-        } else {
+        }
+        else {
             return fileList.size();
         }
     }
@@ -429,22 +444,28 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private void setViewByCategory(FileListViewHolder fileListViewHolder, int position) {
         FileInfo fileInfo = fileList.get(position);
         Category category = fileInfo.getCategory();
-        Log.d(TAG, "setViewByCategory: "+category + " pos:"+position);
+        Log.d(TAG, "setViewByCategory: " + category + " pos:" + position);
         if (category.equals(PICKER)) {
             fileListViewHolder.imageIcon.setImageResource(fileInfo.getIcon());
             fileListViewHolder.textFileName.setText(fileInfo.getFileName());
             fileListViewHolder.textNoOfFileOrSize.setText(fileInfo.getFilePath());
-        } else if (isGenericMusic(category)) {
+        }
+        else if (isGenericMusic(category)) {
             setViewGenericMusic(fileListViewHolder, fileInfo);
-        } else if (isMusicCategory(category)) {
+        }
+        else if (isMusicCategory(category)) {
             setViewMusicCategory(fileListViewHolder, fileInfo);
-        } else if (isGenericImagesCategory(category) || isGenericVideosCategory(category)) {
+        }
+        else if (isGenericImagesCategory(category) || isGenericVideosCategory(category)) {
             setViewGenericImagesVidsCategory(fileListViewHolder, fileInfo);
-        } else if (category.equals(APP_MANAGER)) {
+        }
+        else if (category.equals(APP_MANAGER)) {
             setAppManagerCategory(fileListViewHolder, fileInfo);
-        } else if (isRecentCategory(category)) {
+        }
+        else if (isRecentCategory(category)) {
             setViewGenericRecent(fileListViewHolder, fileInfo);
-        } else {
+        }
+        else {
             if (peekAndPop != null) {
                 peekAndPop.addClickView(fileListViewHolder.imageIcon, position, category);
             }
@@ -456,19 +477,23 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             if (isDirectory) {
                 if (fileInfo.isRootMode()) {
                     fileNoOrSize = context.getString(R.string.directory);
-                } else {
+                }
+                else {
                     int childFileListSize = (int) fileInfo.getSize();
                     if (childFileListSize == 0) {
                         fileNoOrSize = context.getResources().getString(R.string.empty);
-                    } else if (childFileListSize == -1) {
+                    }
+                    else if (childFileListSize == -1) {
                         fileNoOrSize = "";
-                    } else {
+                    }
+                    else {
                         fileNoOrSize = context.getResources().getQuantityString(R.plurals
                                         .number_of_files,
                                 childFileListSize, childFileListSize);
                     }
                 }
-            } else {
+            }
+            else {
                 long size = fileInfo.getSize();
                 fileNoOrSize = Formatter.formatFileSize(context, size);
             }
@@ -547,7 +572,8 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     void toggleSelection(int position, boolean isLongPress) {
         if (isLongPress) {
             selectView(position, true);
-        } else {
+        }
+        else {
             selectView(position, !mSelectedItemsIds.get(position));
 
         }
@@ -556,7 +582,8 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     void toggleSelectAll(int position, boolean selectAll) {
         if (selectAll) {
             mSelectedItemsIds.put(position, true);
-        } else {
+        }
+        else {
             mSelectedItemsIds = new SparseBooleanArray();
         }
     }
@@ -573,7 +600,8 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private void selectView(int position, boolean value) {
         if (value) {
             mSelectedItemsIds.put(position, true);
-        } else {
+        }
+        else {
             mSelectedItemsIds.delete(position);
 
         }
@@ -592,7 +620,8 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     void filter(String text) {
         if (text.isEmpty()) {
             populateOriginalList();
-        } else {
+        }
+        else {
             addSearchResults(text);
         }
         if (searchCallback != null) {
@@ -606,7 +635,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             fileList.clear();
             fileList.addAll(filteredList);
         }
-        Log.d(TAG, "populateOriginalList: "+fileList.size());
     }
 
     private void addSearchResults(String text) {
@@ -622,7 +650,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             fileList.clear();
             fileList.addAll(result);
         }
-        Log.d(TAG, "addSearchResults: "+fileList.size());
     }
 
     void setSearchCallback(SearchCallback searchCallback) {
@@ -633,7 +660,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         context = null;
     }
 
-   public interface OnItemClickListener {
+    public interface OnItemClickListener {
         void onItemClick(View view, int position);
 
         boolean canShowPeek();
@@ -651,11 +678,11 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private class FileListViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener,
-            View.OnLongClickListener {
-        final TextView textFileName;
-        final TextView textNoOfFileOrSize;
-        final ImageView imageIcon;
-        final ImageView imageThumbIcon;
+                       View.OnLongClickListener {
+        final TextView       textFileName;
+        final TextView       textNoOfFileOrSize;
+        final ImageView      imageIcon;
+        final ImageView      imageThumbIcon;
         final RelativeLayout container;
         TextView textFileModifiedDate;
 
