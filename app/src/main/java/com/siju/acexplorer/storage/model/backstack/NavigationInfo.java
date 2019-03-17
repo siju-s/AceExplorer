@@ -109,7 +109,7 @@ public class NavigationInfo {
         clearNavigation();
         if (isHomeScreenEnabled) {
             MaterialButton imageButton = (MaterialButton) LayoutInflater.from(context).inflate(R.layout.material_button_icon, null);
-            imageButton.setIconResource(R.drawable.ic_home_white);
+            imageButton.setIconResource(R.drawable.ic_home_white_48);
             imageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -314,13 +314,13 @@ public class NavigationInfo {
                 text.equals(STORAGE_ROOT)) {
             MaterialButton button = (MaterialButton) LayoutInflater.from(context).inflate(R.layout.material_button_icon, null);
             if (text.equals(STORAGE_INTERNAL)) {
-                button.setIconResource(R.drawable.ic_storage_white_nav);
+                button.setIconResource(R.drawable.ic_storage_white_48);
             }
             else if (text.equals(STORAGE_EXTERNAL)) {
-                button.setIconResource(R.drawable.ic_ext_nav);
+                button.setIconResource(R.drawable.ic_ext_sd_white_48);
             }
             else {
-                button.setIconResource(R.drawable.ic_root_white_nav);
+                button.setIconResource(R.drawable.ic_root_white_48);
             }
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
