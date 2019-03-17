@@ -240,6 +240,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         peekAndPop.setOnGeneralActionListener(new PeekAndPop.OnGeneralActionListener() {
             @Override
             public void onPeek(View longClickView, int position) {
+                Log.d(TAG, "onPeek() called with: longClickView = [" + longClickView + "], position = [" + position + "]");
                 loadPeekView(position, true);
             }
 
@@ -255,7 +256,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             public void onClick(View view, int position, boolean canShowPeek) {
                 if (!canShowPeek) {
                     if (mItemClickListener != null) {
-                        mItemClickListener.onItemClick(view, position);
+                        mItemClickListener.onItemClick(view, peekAndPop.isNextPrevIcon(view) ? peekPos : position);
                     }
                     return;
                 }
@@ -279,6 +280,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (position >= fileList.size() || position == INVALID_POS) {
             return;
         }
+        Log.d(TAG, "loadPeekView: category:"+category);
         Category category = fileList.get(position).getCategory();
         this.peekPos = position;
         View view = peekAndPop.getPeekView();
@@ -350,7 +352,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 volume.setVisibility(GONE);
                 thumb.setVisibility(View.VISIBLE);
                 break;
-
         }
 
         volume.setOnClickListener(new View.OnClickListener() {

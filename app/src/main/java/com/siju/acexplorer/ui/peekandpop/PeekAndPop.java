@@ -376,6 +376,10 @@ public class PeekAndPop {
         }
     }
 
+    public boolean isNextPrevIcon(View view) {
+        return view.getId() == R.id.buttonNext || view.getId() == R.id.buttonPrev;
+    }
+
     protected class PeekAndPopOnTouchListener implements View.OnTouchListener {
 
         private int position;
@@ -420,10 +424,13 @@ public class PeekAndPop {
         @Override
         public void onClick(View v) {
             Log.d("Peek", "onClick: category"+category + " pos:"+position);
-            if (!onClickListener.canShowPeek() || !CategoryHelper.isPeekPopCategory(category)) {
+            boolean canShowPeek = onClickListener.canShowPeek() && CategoryHelper.isPeekPopCategory(category);
+
+            if (!canShowPeek) {
                 onClickListener.onClick(v, position, false);
                 return;
             }
+
             if (v.getId() == R.id.imageIcon) {
                 peek(v, position);
             }
