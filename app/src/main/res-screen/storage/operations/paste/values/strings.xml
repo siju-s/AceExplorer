@@ -8,7 +8,7 @@
     <string name="msg_move_failure">Move operation failed</string>
     <string name="dialog_skip">Skip</string>
     <string name="dialog_replace">Replace</string>
-    <string name="dialog_keep_both">Keep both files</string>
+    <string name="dialog_keep_both">Keep both</string>
     <string name="drag">Drag</string>
     <string name="move">Move</string>
     <string name="copying">Copying files</string>
