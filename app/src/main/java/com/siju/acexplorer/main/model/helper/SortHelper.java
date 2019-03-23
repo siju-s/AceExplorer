@@ -60,6 +60,22 @@ public class SortHelper {
                 .compareTo(filename2.toLowerCase());
     }
 
+    private static int compareFileNamesDesc(String filename1, String filename2) {
+
+        if (filename1 == null && filename2 == null) {
+            return 0;
+        }
+        else if (filename1 == null) {
+            return -1;
+        }
+        else if (filename2 == null) {
+            return 1;
+        }
+
+        return filename2.toLowerCase()
+                .compareTo(filename1.toLowerCase());
+    }
+
 
 
     public static final Comparator<? super ZipModel> comparatorByNameZip1 = new Comparator<ZipModel>() {
@@ -174,7 +190,7 @@ public class SortHelper {
             if ((!file1.isDirectory()) && (file2.isDirectory())) {
                 return 1;
             }
-            return compareFileNames(file1.getFileName(), file2.getFileName());
+            return compareFileNamesDesc(file1.getFileName(), file2.getFileName());
         }
 
     };
