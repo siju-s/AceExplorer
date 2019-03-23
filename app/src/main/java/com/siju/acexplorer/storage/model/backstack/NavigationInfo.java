@@ -386,6 +386,7 @@ public class NavigationInfo {
         scrollNavigation.postDelayed(new Runnable() {
             public void run() {
                 scrollNavigation.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
+                scrollNavigation.smoothScrollBy(100, 0);
             }
         }, 100L);
     }

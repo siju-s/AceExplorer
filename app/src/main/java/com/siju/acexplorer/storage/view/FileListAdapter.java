@@ -445,7 +445,6 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private void setViewByCategory(FileListViewHolder fileListViewHolder, int position) {
         FileInfo fileInfo = fileList.get(position);
         Category category = fileInfo.getCategory();
-        Log.d(TAG, "setViewByCategory: " + category + " pos:" + position);
         if (category.equals(PICKER)) {
             fileListViewHolder.imageIcon.setImageResource(fileInfo.getIcon());
             fileListViewHolder.textFileName.setText(fileInfo.getFileName());

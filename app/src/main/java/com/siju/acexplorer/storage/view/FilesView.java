@@ -468,11 +468,13 @@ public class FilesView extends RecyclerView.OnScrollListener
 
 
     private void putScrolledPosition(String path, Bundle position) {
+        Log.d(TAG, "putScrolledPosition() called with: path = [" + path + "], position = [" + position + "]");
         scrollPosition.put(path, position);
     }
 
 
     void removeScrolledPos(String path) {
+        Log.d(TAG, "removeScrolledPos() called with: path = [" + path + "]");
         if (path == null) {
             return;
         }
@@ -591,6 +593,27 @@ public class FilesView extends RecyclerView.OnScrollListener
     }
 
     private void getScrolledPosition() {
+        if (storagesUiView.isZipMode()) {
+            String dir = storagesUiView.getZipViewer().getScrollDir();
+            Log.d(TAG, "getScrolledPosition: dir:"+dir);
+            if (dir != null && scrollPosition.containsKey(dir)) {
+                Bundle bundle = scrollPosition.get(dir);
+                if (bundle == null) {
+                    return;
+                }
+                if (viewMode == ViewMode.LIST) {
+                    ((LinearLayoutManager) layoutManager).scrollToPositionWithOffset(bundle.getInt
+                            (FileConstants
+                                    .KEY_POSITION), bundle.getInt(FileConstants.KEY_OFFSET));
+                }
+                else {
+                    ((GridLayoutManager) layoutManager).scrollToPositionWithOffset(bundle.getInt
+                            (FileConstants
+                                    .KEY_POSITION), bundle.getInt(FileConstants.KEY_OFFSET));
+                }
+            }
+            return;
+        }
         if (currentDir != null && scrollPosition.containsKey(currentDir)) {
             Bundle bundle = scrollPosition.get(currentDir);
             if (bundle == null) {

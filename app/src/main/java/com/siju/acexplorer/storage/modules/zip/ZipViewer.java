@@ -30,12 +30,12 @@ import android.support.v4.content.Loader;
 import android.view.View;
 
 import com.siju.acexplorer.AceApplication;
+import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.main.model.FileConstants;
-import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.main.view.dialog.DialogHelper;
 import com.siju.acexplorer.storage.model.ZipModel;
 import com.siju.acexplorer.storage.model.task.ExtractZipEntry;
-import com.siju.acexplorer.main.view.dialog.DialogHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -238,15 +238,29 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
 
         String name = zipChildren.get(position).getName();
         if (name.startsWith("/")) {
-            name = name.substring(1, name.length());
+            name = name.substring(1);
         }
         String name1 = name.substring(0, name.length() - 1); // 2 so that / doesnt come
         zipEntry = zipChildren.get(position).getEntry();
         zipEntryFileName = name1;
+        if (zipEntryFileName.contains("/")) {
+            String dirPath = zipEntryFileName.substring(0, zipEntryFileName.lastIndexOf("/"));
+            scrollDir = zipParentPath + File.separator + dirPath;
+            zipCommunicator.calculateZipScroll(scrollDir);
+        }
+        else {
+            scrollDir = null;
+        }
         Logger.log(TAG, "handleItemClick--entry=" + zipEntry + " dir=" + zipEntry.isDirectory()
-                + "name=" + zipEntryFileName);
-        zipCommunicator.calculateZipScroll(zipParentPath + File.separator + zipEntryFileName);
+                + " name=" + zipEntryFileName);
         viewZipContents(position);
+    }
+
+    private String scrollDir;
+
+    public String getScrollDir() {
+        return scrollDir;
+
     }
 
     public void onBackPressed() {

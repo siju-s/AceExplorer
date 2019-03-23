@@ -148,7 +148,6 @@ public class PeekAndPop {
     }
 
     private void initialiseGestureListener(@NonNull View view, final int position, Category category) {
-        Log.d("PeekPop", "initialiseGestureListener: "+position);
 
         PeekAndPopClickListener peekAndPopClickListener = new PeekAndPopClickListener(position, category);
         thumbImage.setOnClickListener(peekAndPopClickListener);
@@ -418,12 +417,10 @@ public class PeekAndPop {
         PeekAndPopClickListener(int position, Category category) {
             this.position = position;
             this.category = category;
-            Log.d("PeekPop", "PeekAndPopClickListener() called with: position = [" + position + "], category = [" + category + "]");
         }
 
         @Override
         public void onClick(View v) {
-            Log.d("Peek", "onClick: category"+category + " pos:"+position);
             boolean canShowPeek = onClickListener.canShowPeek() && CategoryHelper.isPeekPopCategory(category);
 
             if (!canShowPeek) {
