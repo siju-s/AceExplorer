@@ -1105,6 +1105,7 @@ public class StoragesUiView extends CoordinatorLayout implements
         //hide search of other pane
         ((AceActivity) getActivity()).onSearchClicked();
         hideNavigation();
+        floatingView.hideFab();
     }
 
     public void collapseSearchView() {
@@ -1116,6 +1117,11 @@ public class StoragesUiView extends CoordinatorLayout implements
     }
 
     public void onSearchEnd() {
+        if (checkIfLibraryCategory(category)) {
+            floatingView.hideFab();
+        } else {
+            floatingView.showFab();
+        }
         navigationInfo.showNavigationView();
         setSearch(false);
     }
