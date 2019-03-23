@@ -172,7 +172,7 @@ public class StoragesPresenterImpl implements StoragesUi.Listener,
 
     @Override
     public void onCompressPosClick(String newFilePath, ArrayList<FileInfo> paths) {
-        storagesModel.onCompressPosClick(newFilePath, paths);
+        storagesModel.onCompressFile(newFilePath, paths);
 
     }
 

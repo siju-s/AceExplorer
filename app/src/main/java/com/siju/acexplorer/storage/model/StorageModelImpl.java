@@ -282,18 +282,18 @@ public class StorageModelImpl implements StoragesModel {
     }
 
     @Override
-    public void onCompressPosClick(String newFilePath, ArrayList<FileInfo> paths) {
+    public void onCompressFile(String newFilePath, ArrayList<FileInfo> paths) {
         File newFile = new File(newFilePath);
         String newFileName = newFile.getName();
         if (FileUtils.isFileNameInvalid(newFileName)) {
-            listener.onInvalidName(Operations.EXTRACT);
+            listener.onInvalidName(COMPRESS);
             return;
         }
 
         String currentDir = newFile.getParent();
 
         if (FileUtils.isFileExisting(currentDir, newFile.getName())) {
-            listener.onFileExists(Operations.EXTRACT, context.getString(R.string
+            listener.onFileExists(COMPRESS, context.getString(R.string
                     .msg_file_exists));
             return;
         }

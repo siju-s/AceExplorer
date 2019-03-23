@@ -68,7 +68,7 @@ public interface StoragesModel {
 
     void persistTrashState(boolean value);
 
-    void onCompressPosClick(String newFilePath, ArrayList<FileInfo> paths);
+    void onCompressFile(String newFilePath, ArrayList<FileInfo> paths);
 
     void setPermissions(String path, boolean isDir, String permissions);
 

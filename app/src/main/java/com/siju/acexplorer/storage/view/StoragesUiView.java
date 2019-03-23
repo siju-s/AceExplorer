@@ -603,7 +603,9 @@ public class StoragesUiView extends CoordinatorLayout implements
             case FILE_CREATION:
             case EXTRACT:
             case RENAME:
+            case COMPRESS:
                 final EditText editText = dialog.findViewById(R.id.editFileName);
+                editText.requestFocus();
                 editText.setError(getContext().getString(R.string.msg_file_exists));
                 break;
             case HIDE:
@@ -696,6 +698,7 @@ public class StoragesUiView extends CoordinatorLayout implements
     public void onInvalidName(Operations operation) {
         switch (operation) {
             case EXTRACT:
+            case COMPRESS:
             case FILE_CREATION:
             case FOLDER_CREATION:
                 final EditText editText = dialog.findViewById(R.id.editFileName);
