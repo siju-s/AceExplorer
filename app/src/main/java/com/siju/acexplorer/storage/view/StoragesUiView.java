@@ -1061,7 +1061,13 @@ public class StoragesUiView extends CoordinatorLayout implements
     }
 
     public void reloadList(String directory, Category category) {
-        filesView.reloadList(directory, category);
+        if (isZipMode()) {
+            this.category = category;
+            zipViewer.endZipMode(directory);
+        }
+        else {
+            filesView.reloadList(directory, category);
+        }
     }
 
     public void onDataLoaded(ArrayList<FileInfo> data) {
@@ -1144,7 +1150,7 @@ public class StoragesUiView extends CoordinatorLayout implements
         }
 
         @Override
-        public void endZipMode(String dir) {
+        public void onZipModeEnd(String dir) {
             if (dir != null && dir.length() != 0) {
                 currentDir = dir;
             }
