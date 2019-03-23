@@ -21,7 +21,7 @@
     <dimen name="desc_padding">40dp</dimen>
     <dimen name="margin_16">16dp</dimen>
     <dimen name="padding_60">60dp</dimen>
-    <dimen name="actionbar_height">64dp</dimen>
+    <dimen name="actionbar_height">56dp</dimen>
     <dimen name="text_16">16sp</dimen>
     <dimen name="home_storage_icon_size">55dp</dimen>
     <dimen name="card_home_radius">5dp</dimen>
