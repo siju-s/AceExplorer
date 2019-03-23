@@ -38,8 +38,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.Formatter;
 
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.main.model.helper.FileUtils;
 import com.siju.acexplorer.main.model.helper.LargeBundleTransfer;
 import com.siju.acexplorer.storage.model.operations.OperationProgress;
@@ -242,11 +242,15 @@ public class CreateZipService extends Service {
 
     private void compressFile(File file, String path) throws IOException, NullPointerException {
 
-        if (!file.isDirectory()) {
+        if (file.isFile()) {
             byte[] buf = new byte[2048];
             int len;
             BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
             zipOutputStream.putNextEntry(new ZipEntry(path + "/" + file.getName()));
+            if (file.length() == 0) {
+                calculateProgress(filePath, size, totalBytes);
+                return;
+            }
             while ((len = in.read(buf)) > 0) {
                 if (stopService) {
                     publishCompletedResult();
@@ -285,26 +289,26 @@ public class CreateZipService extends Service {
         return b;
     }
 
-    private void publishResults(String filePath, int i, long done, long total) {
+    private void publishResults(String filePath, int progress, long done, long total) {
 
 
-        builder.setProgress(100, i, false);
+        builder.setProgress(100, progress, false);
         builder.setOngoing(true);
         int title = R.string.zip_progress_title;
         builder.setContentTitle(getResources().getString(title));
         builder.setContentText(new File(filePath).getName() + " " + Formatter.formatFileSize
                 (context, done) + "/" + Formatter.formatFileSize(context, total));
         notificationManager.notify(NOTIFICATION_ID, builder.build());
-        //Log.d("CreateZip", "publishResults: progress:"+i + " total:"+total);
-        if (i == 100 || total == 0) {
+//        Log.e("CreateZip", "publishResults: progress:"+progress + " total:"+total);
+        if (progress == 100 || total == 0) {
             publishCompletedResult();
         }
 
         Intent intent = new Intent(ZIP_PROGRESS);
-        if (i == 100 || total == 0) {
+        if (progress == 100 || total == 0) {
             intent.putExtra(KEY_PROGRESS, 100);
         } else {
-            intent.putExtra(KEY_PROGRESS, i);
+            intent.putExtra(KEY_PROGRESS, progress);
         }
         intent.putExtra(KEY_COMPLETED, done);
         intent.putExtra(KEY_TOTAL, total);
