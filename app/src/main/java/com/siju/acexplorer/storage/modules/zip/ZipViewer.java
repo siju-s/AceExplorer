@@ -156,17 +156,17 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
             if (currentDir == null || currentDir.equals(File.separator)) {
                 newPath = zipParentPath;
             } else {
-//                if (currentDir.startsWith(File.separator)) {
-                newPath = zipParentPath + File.separator + currentDir;
-//                } else {
-//                    newPath = zipParentPath + currentDir;
-//                }
+                if (currentDir.startsWith(File.separator)) {
+                    newPath = zipParentPath + currentDir;
+                } else {
+                    newPath = zipParentPath + File.separator + currentDir;
+                }
             }
             setNavDirectory(newPath);
         }
     }
 
-     public void endZipMode(String dir) {
+    public void endZipMode(String dir) {
         fragment.getLoaderManager().destroyLoader(LOADER_ID);
         currentDir = null;
         zipChildren.clear();
