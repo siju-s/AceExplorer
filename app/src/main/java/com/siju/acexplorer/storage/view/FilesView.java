@@ -275,7 +275,7 @@ public class FilesView extends RecyclerView.OnScrollListener
             case RECENT_VIDEOS:
                 this.extension = fileInfoList.get(position).getExtension().toLowerCase();
                 viewFile(getContext(), fileInfoList.get(position).getFilePath(),
-                        extension, alertDialogListener);
+                        extension, alertDialogListener, false);
                 break;
 
             case FILES:
@@ -393,7 +393,7 @@ public class FilesView extends RecyclerView.OnScrollListener
             }
             else {
                 this.filePath = filePath;
-                viewFile(getContext(), filePath, extension, alertDialogListener);
+                viewFile(getContext(), filePath, extension, alertDialogListener, false);
             }
         }
     }

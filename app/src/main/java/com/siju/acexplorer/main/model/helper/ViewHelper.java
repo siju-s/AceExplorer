@@ -28,17 +28,9 @@ import static android.webkit.MimeTypeMap.getSingleton;
 
 
 public class ViewHelper {
-    private static final String TAG = "ViewHelper";
 
-    /**
-     * View the file in external apps based on Mime Type
-     *
-     * @param context
-     * @param path
-     * @param extension
-     */
     public static void viewFile(Context context, String path, String extension,
-                                DialogHelper.AlertDialogListener alertDialogListener) {
+                                DialogHelper.AlertDialogListener alertDialogListener, boolean fromZip) {
 
         Uri uri = UriHelper.createContentUri(context, path);
 
@@ -51,13 +43,21 @@ public class ViewHelper {
         }
         String ext = extension.toLowerCase();
 
-        String texts[] = new String[]{context.getString(R.string.package_installer),
-                context.getString(R.string.package_installer_content),
-                context.getString(R.string.install), context.getString(R.string.dialog_cancel), context.getString(R.string.view),
-        };
-
         if ("apk".equals(ext)) {
-            DialogHelper.showAlertDialog(context, texts, alertDialogListener);
+            if (fromZip) {
+                String[] texts = new String[]{context.getString(R.string.package_installer),
+                        context.getString(R.string.package_installer_content),
+                        context.getString(R.string.install), context.getString(R.string.dialog_cancel)
+                };
+                DialogHelper.showAlertDialog(context, texts, alertDialogListener);
+            }
+            else {
+                String[] texts = new String[]{context.getString(R.string.package_installer),
+                        context.getString(R.string.package_installer_content),
+                        context.getString(R.string.install), context.getString(R.string.dialog_cancel), context.getString(R.string.view)
+                };
+                DialogHelper.showAlertDialog(context, texts, alertDialogListener);
+            }
         } else {
             String mimeType = getSingleton().getMimeTypeFromExtension(ext);
             intent.setDataAndType(uri, mimeType);

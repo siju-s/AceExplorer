@@ -18,6 +18,7 @@ package com.siju.acexplorer.storage.modules.zip;
 
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -36,6 +37,8 @@ import com.siju.acexplorer.main.model.FileConstants;
 import com.siju.acexplorer.main.view.dialog.DialogHelper;
 import com.siju.acexplorer.storage.model.ZipModel;
 import com.siju.acexplorer.storage.model.task.ExtractZipEntry;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -207,11 +210,6 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
 
             if (cacheDirPath != null) {
                 if (name.endsWith(EXT_ZIP)) {
-                    this.zipEntry = zipEntry1;
-                    zipEntryFileName = name;
-                    inChildZip = true;
-                    viewZipContents(position);
-                    zipPath = cacheDirPath + "/" + name;
                     return;
                 }
 
@@ -298,6 +296,7 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
     }
 
 
+    @NotNull
     @Override
     public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
         if (inChildZip) {
@@ -314,13 +313,13 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
     }
 
     @Override
-    public void onLoadFinished(Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
+    public void onLoadFinished(@NotNull Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
         zipCommunicator.onZipContentsLoaded(data);
     }
 
 
     @Override
-    public void onLoaderReset(Loader<ArrayList<FileInfo>> loader) {
+    public void onLoaderReset(@NotNull Loader<ArrayList<FileInfo>> loader) {
 
     }
 
@@ -331,7 +330,11 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         @Override
         public void onPositiveButtonClick(View view) {
-            Uri uri = createContentUri(fragment.getContext(), currentDir);
+            Context context = fragment.getContext();
+            if (context == null) {
+                return;
+            }
+            Uri uri = createContentUri(context, currentDir);
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_INSTALL_PACKAGE);
 
@@ -339,9 +342,9 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
             intent.setData(uri);
 
             if (mimeType != null) {
-                grantUriPermission(fragment.getContext(), intent, uri);
+                grantUriPermission(context, intent, uri);
             } else {
-                openWith(uri, fragment.getContext());
+                openWith(uri, context);
             }
         }
 
