@@ -36,6 +36,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.Formatter;
+import android.util.Log;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.types.FileInfo;
@@ -70,24 +71,24 @@ import static com.siju.acexplorer.storage.model.operations.ProgressUtils.ZIP_PRO
 
 public class CreateZipService extends Service {
 
-    private static final String TAG             = "CreateZipService";
-    private final        String CHANNEL_ID      = "operation";
-    private final static int    NOTIFICATION_ID = 1000;
+    private static final String TAG = "CreateZipService";
+    private final String CHANNEL_ID = "operation";
+    private final static int NOTIFICATION_ID = 1000;
 
-    private NotificationManager        notificationManager;
+    private NotificationManager notificationManager;
     private NotificationCompat.Builder builder;
-    private Context                    context;
-    private ServiceHandler             serviceHandler;
-    private ZipOutputStream            zipOutputStream;
+    private Context context;
+    private ServiceHandler serviceHandler;
+    private ZipOutputStream zipOutputStream;
 
     private List<FileInfo> zipFiles;
 
-    private String  filePath;
-    private String  name;
+    private String filePath;
+    private String name;
     private boolean stopService;
     private boolean isCompleted;
-    private int     lastpercent;
-    private long    size, totalBytes;
+    private int lastpercent;
+    private long size, totalBytes;
 
 
     @Override
@@ -106,33 +107,14 @@ public class CreateZipService extends Service {
         }
 
         createChannelId();
-        builder = new NotificationCompat.Builder(context, CHANNEL_ID);
-        builder.setContentTitle(getResources().getString(R.string.zip_progress_title))
-                .setSmallIcon(R.drawable.ic_archive_white);
-        builder.setOnlyAlertOnce(true);
-        builder.setDefaults(0);
-        Intent cancelIntent = new Intent(context, CreateZipService.class);
-        cancelIntent.setAction(OperationProgress.ACTION_STOP);
-        PendingIntent pendingCancelIntent =
-                PendingIntent.getService(context, NOTIFICATION_ID, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.addAction(new NotificationCompat.Action(R.drawable.ic_cancel, getString(R.string.dialog_cancel), pendingCancelIntent));
+        createBuilder();
+        addCancelAction();
 
         Notification notification = builder.build();
         startForeground(NOTIFICATION_ID, notification);
         notificationManager.notify(NOTIFICATION_ID, notification);
     }
 
-    private void startThread() {
-        HandlerThread thread = new HandlerThread("CreateZipService",
-                                                 Process.THREAD_PRIORITY_BACKGROUND);
-        thread.start();
-
-        // Get the HandlerThread's Looper and use it for our Handler
-        Looper serviceLooper = thread.getLooper();
-        serviceHandler = new ServiceHandler(serviceLooper);
-    }
-
-    // Handler that receives messages from the thread
     @TargetApi(Build.VERSION_CODES.O)
     private void createChannelId() {
         if (isAtleastOreo()) {
@@ -141,6 +123,32 @@ public class CreateZipService extends Service {
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             notificationManager.createNotificationChannel(channel);
         }
+    }
+
+    private void createBuilder() {
+        builder = new NotificationCompat.Builder(context, CHANNEL_ID);
+        builder.setContentTitle(getResources().getString(R.string.zip_progress_title))
+                .setSmallIcon(R.drawable.ic_archive_white);
+        builder.setOnlyAlertOnce(true);
+        builder.setDefaults(0);
+    }
+
+    private void addCancelAction() {
+        Intent cancelIntent = new Intent(context, CreateZipService.class);
+        cancelIntent.setAction(OperationProgress.ACTION_STOP);
+        PendingIntent pendingCancelIntent =
+                PendingIntent.getService(context, NOTIFICATION_ID, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.addAction(new NotificationCompat.Action(R.drawable.ic_cancel, getString(R.string.dialog_cancel), pendingCancelIntent));
+    }
+
+    private void startThread() {
+        HandlerThread thread = new HandlerThread("CreateZipService",
+                Process.THREAD_PRIORITY_BACKGROUND);
+        thread.start();
+
+        // Get the HandlerThread's Looper and use it for our Handler
+        Looper serviceLooper = thread.getLooper();
+        serviceHandler = new ServiceHandler(serviceLooper);
     }
 
     @Override
@@ -167,6 +175,15 @@ public class CreateZipService extends Service {
                 LargeBundleTransfer.removeFileData(context);
             }
         }
+        createZipFile();
+
+        Message msg = serviceHandler.obtainMessage();
+        msg.arg1 = startId;
+        serviceHandler.sendMessage(msg);
+        return START_STICKY;
+    }
+
+    private void createZipFile() {
         File zipName = new File(name);
         if (!zipName.exists()) {
             try {
@@ -176,11 +193,6 @@ public class CreateZipService extends Service {
                 e.printStackTrace();
             }
         }
-
-        Message msg = serviceHandler.obtainMessage();
-        msg.arg1 = startId;
-        serviceHandler.sendMessage(msg);
-        return START_STICKY;
     }
 
     @Nullable
@@ -206,11 +218,7 @@ public class CreateZipService extends Service {
 
     private void execute(ArrayList<File> zipFiles, String fileOut) {
         for (File f1 : zipFiles) {
-            if (f1.isDirectory()) {
-                totalBytes = totalBytes + FileUtils.getFolderSize(f1);
-            } else {
-                totalBytes = totalBytes + f1.length();
-            }
+            calculateTotalSize(f1);
         }
         OutputStream out;
         filePath = fileOut;
@@ -221,13 +229,14 @@ public class CreateZipService extends Service {
             zipOutputStream = new ZipOutputStream(new BufferedOutputStream(out));
         } catch (Exception ignored) {
         }
+
         for (File file : zipFiles) {
             if (stopService) {
                 publishCompletedResult();
                 break;
             }
             try {
-                compressFile(file, "");
+                compress(file, "");
             } catch (Exception ignored) {
             }
         }
@@ -239,45 +248,72 @@ public class CreateZipService extends Service {
         }
     }
 
+    private void calculateTotalSize(File file) {
+        if (file.isDirectory()) {
+            totalBytes = totalBytes + FileUtils.getFolderSize(file);
+        } else {
+            totalBytes = totalBytes + file.length();
+        }
+    }
 
-    private void compressFile(File file, String path) throws IOException, NullPointerException {
+
+    private void compress(File file, String path) throws IOException, NullPointerException {
 
         if (file.isFile()) {
-            byte[] buf = new byte[2048];
-            int len;
+            compressFile(file, path);
+        } else {
+            compressDirectory(file, path);
+        }
+    }
+
+    private void compressFile(File file, String path) throws IOException {
+        if (file.length() == 0) {
+            calculateProgress(filePath, size, totalBytes);
+        } else {
             BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
             zipOutputStream.putNextEntry(new ZipEntry(path + "/" + file.getName()));
-            if (file.length() == 0) {
-                calculateProgress(filePath, size, totalBytes);
-                return;
-            }
-            while ((len = in.read(buf)) > 0) {
-                if (stopService) {
-                    publishCompletedResult();
-                    break;
-                }
-                zipOutputStream.write(buf, 0, len);
-                size += len;
-                int p = (int) ((size / (float) totalBytes) * 100);
-                if (p != lastpercent || lastpercent == 0) {
-                    calculateProgress(filePath, size, totalBytes);
-                }
-                lastpercent = p;
-            }
+            zipFile(in);
             in.close();
-            return;
         }
+    }
+
+    private void compressDirectory(File file, String path) throws IOException {
         String[] files = file.list();
         if (files == null) {
             return;
+        } else if (files.length == 0) {
+            compressEmptyFolder(path + File.separator + file.getName() + "/");
         }
         for (String fileName : files) {
 
             File f = new File(file.getAbsolutePath() + File.separator
-                                      + fileName);
-            compressFile(f, path + File.separator + file.getName());
+                    + fileName);
+            compress(f, path + File.separator + file.getName());
 
         }
+    }
+
+    private void zipFile(BufferedInputStream in) throws IOException {
+        byte[] buf = new byte[2048];
+        int len;
+        while ((len = in.read(buf)) > 0) {
+            if (stopService) {
+                publishCompletedResult();
+                break;
+            }
+            zipOutputStream.write(buf, 0, len);
+            size += len;
+            int p = (int) ((size / (float) totalBytes) * 100);
+            if (p != lastpercent || lastpercent == 0) {
+                calculateProgress(filePath, size, totalBytes);
+            }
+            lastpercent = p;
+        }
+    }
+
+    private void compressEmptyFolder(String path) throws IOException {
+        zipOutputStream.putNextEntry(new ZipEntry(path));
+        calculateProgress(filePath, size, totalBytes);
     }
 
 
@@ -291,7 +327,6 @@ public class CreateZipService extends Service {
 
     private void publishResults(String filePath, int progress, long done, long total) {
 
-
         builder.setProgress(100, progress, false);
         builder.setOngoing(true);
         int title = R.string.zip_progress_title;
@@ -299,11 +334,16 @@ public class CreateZipService extends Service {
         builder.setContentText(new File(filePath).getName() + " " + Formatter.formatFileSize
                 (context, done) + "/" + Formatter.formatFileSize(context, total));
         notificationManager.notify(NOTIFICATION_ID, builder.build());
-//        Log.e("CreateZip", "publishResults: progress:"+progress + " total:"+total);
+
+        Log.e("CreateZip", "publishResults: progress:" + progress + " total:" + total);
         if (progress == 100 || total == 0) {
             publishCompletedResult();
         }
 
+        sendBroadcast(filePath, progress, done, total);
+    }
+
+    private void sendBroadcast(String filePath, int progress, long done, long total) {
         Intent intent = new Intent(ZIP_PROGRESS);
         if (progress == 100 || total == 0) {
             intent.putExtra(KEY_PROGRESS, 100);
@@ -336,7 +376,6 @@ public class CreateZipService extends Service {
         intent.putExtra(KEY_FILEPATH, name);
         sendBroadcast(intent);
         notificationManager.cancel(NOTIFICATION_ID);
-
     }
 
     private void calculateProgress(final String name, final long

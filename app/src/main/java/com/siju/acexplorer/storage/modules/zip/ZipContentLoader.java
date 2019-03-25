@@ -42,7 +42,7 @@ import java.util.zip.ZipInputStream;
 
 import static com.siju.acexplorer.main.model.groups.Category.COMPRESSED;
 import static com.siju.acexplorer.main.model.helper.SortHelper.comparatorByNameZip;
-import static com.siju.acexplorer.main.model.helper.SortHelper.comparatorByNameZip1;
+import static com.siju.acexplorer.main.model.helper.SortHelper.comparatorByNameZipViewer;
 
 
 @SuppressWarnings("FieldCanBeLocal")
@@ -157,148 +157,52 @@ class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
     @Override
     public ArrayList<FileInfo> loadInBackground() {
         fileInfoList = new ArrayList<>();
-        if (entry != null) {
-            unzip();
+        if (entry == null) {
+            getZipContents(mZipPath, parentZip);
         } else {
-            fetchZipContents();
+            unzip();
         }
         return fileInfoList;
-    }
-
-    private void fetchZipContents() {
-        getZipContents(mZipPath, parentZip);
     }
 
     private void unzip() {
 
         ZipViewer.ZipFormats zipFormats = ZipViewer.ZipFormats.getFormatFromExt(entry.getName().
-                substring(entry.getName().lastIndexOf(".") + 1, entry.getName().length()));
-        switch (zipFormats) {
-            case ZIP:
-                try {
-                    unzipEntry(zipFile, entry, outputDir);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
-
+                substring(entry.getName().lastIndexOf(".") + 1));
+        if (zipFormats == ZipViewer.ZipFormats.ZIP) {
+            try {
+                unzipEntry(zipFile, entry, outputDir);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
     }
 
     /**
      * @param dir           Child path names. First time it will be null
      * @param parentZipPath Original zip path with .zip extension
-     * @return Zip contents
      */
     private void getZipContents(String dir, String parentZipPath) {
-        ZipFile zipfile;
         ArrayList<ZipModel> elements = new ArrayList<>();
         try {
-//            if (totalZipList.size() == 0 || entry != null) {
-            if (new File(parentZipPath).canRead()) {
-                totalZipList = new ArrayList<>();
-                zipfile = new ZipFile(parentZipPath);
-                for (Enumeration e = zipfile.entries(); e.hasMoreElements(); ) {
-                    ZipEntry entry = (ZipEntry) e.nextElement();
-                    totalZipList.add(new ZipModel(entry, entry.getTime(), entry.getSize(), entry
-                            .isDirectory()));
-                }
-                zipfile.close();
-            } else {
-                totalZipList = new ArrayList<>();
-                ZipEntry zipEntry;
-                Uri uri = Uri.parse(parentZipPath);
-                ZipInputStream zipfile1 = new ZipInputStream(getContext().getContentResolver()
-                        .openInputStream(uri));
-                while ((zipEntry = zipfile1.getNextEntry()) != null) {
-                    totalZipList.add(new ZipModel(zipEntry, zipEntry.getTime(), zipEntry.getSize(), zipEntry
-                            .isDirectory()));
-                }
-                zipfile1.close();
-            }
-
-            ArrayList<String> strings = new ArrayList<>();
-            for (ZipModel entry : totalZipList) {
-
-                File file = new File(entry.getName());
-                if (dir == null || dir.trim().length() == 0) {
-                    String y = entry.getName();
-//                    System.out.println("entry name==" + y);
-
-              /*      if (y.startsWith(File.separator))
-                        y = y.substring(1, y.length());*/
-                    if (file.getParent() == null || file.getParent().length() == 0 || file.getParent().equals(File
-                            .separator)) {
-//                        System.out.println("entry if isdir==" + entry.isDirectory() + "y=" + y);
-                        if (!strings.contains(y)) {
-                            elements.add(new ZipModel(new ZipEntry(y), entry.getTime(), entry.getSize(),
-                                    entry.isDirectory()));
-                            strings.add(y);
-                        }
-                    } else {
-                        boolean slash = false;
-                        if (y.startsWith(File.separator)) {
-                            slash = true;
-                            y = y.substring(1, y.length());
-                        }
-                        String path = y.substring(0, y.indexOf(File.separator) + 1);
-                        if (slash) {
-                            path = "/" + path;
-                        }
-//                        System.out.println("entry else path==" + path);
-                        ZipModel zipObj;
-                        if (!strings.contains(path)) {
-                            zipObj = new ZipModel(new ZipEntry(path), entry.getTime(), entry
-                                    .getSize(), true);
-                            strings.add(path);
-                            elements.add(zipObj);
-                        }
-                    }
-                } else {
-                    String y = entry.getName();
-//                    System.out.println("ZIP ITEM==" + y + "dir=" + dir);
-                /*    if (y.startsWith(File.separator))
-                        y = y.substring(1, y.length());*/
-
-                    if (file.getParent() != null && (file.getParent().equals(dir) || file.getParent().equals(File
-                            .separator + dir))) {
-                        if (!strings.contains(y)) {
-                            elements.add(new ZipModel(new ZipEntry(y), entry.getTime(), entry.getSize(), entry
-                                    .isDirectory()));
-                            strings.add(y);
-                        }
-                    } else {
-                        if (y.startsWith(dir + File.separator) && y.length() > dir.length() + 1) {
-                            String path1 = y.substring(dir.length() + 1, y.length());
-//                            System.out.println("path1==" + path1);
-
-                            int index = dir.length() + 1 + path1.indexOf(File.separator);
-                            String path = y.substring(0, index + 1);
-//                            System.out.println("path==" + path);
-
-                            if (!strings.contains(path)) {
-                                ZipModel zipObj = new ZipModel(new ZipEntry(y.substring(0, index + 1)), entry.getTime
-                                        (), entry.getSize(), true);
-                                strings.add(path);
-                                elements.add(zipObj);
-                            }
-                        }
-                    }
-
-                }
-            }
+            totalZipList = new ArrayList<>();
+            populateTotalZipList(parentZipPath);
+            traverseZipElements(dir, elements);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        Collections.sort(elements, comparatorByNameZip1);
-
+        Collections.sort(elements, comparatorByNameZipViewer);
         zipViewer.setZipData(elements);
+        populateZipModel(parentZipPath, elements);
+        Collections.sort(fileInfoList, comparatorByNameZip);
+    }
+
+    private void populateZipModel(String parentZipPath, ArrayList<ZipModel> elements) {
         for (ZipModel model : elements) {
             String name = model.getName();
             if (name.startsWith("/")) {
-                name = name.substring(1, name.length());
+                name = name.substring(1);
             }
             boolean isDirectory = model.isDirectory();
             long size;
@@ -307,9 +211,9 @@ class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 for (ZipModel zipmodel : totalZipList) {
                     String modelName = zipmodel.getEntry().getName();
                     if (modelName.startsWith(File.separator))
-                        modelName = modelName.substring(1, modelName.length());
+                        modelName = modelName.substring(1);
 
-                    if (modelName.startsWith(name)) {
+                    if (!name.equals(modelName) && modelName.startsWith(name)) {
                         count++;
                     }
                 }
@@ -317,9 +221,9 @@ class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
             } else {
                 size = model.getSize();
             }
-            int type = COMPRESSED.getValue();
             long date = model.getTime();
             String extension;
+
             if (isDirectory) {
                 name = name.substring(0, name.length() - 1);
                 if (!mInParentZip) {
@@ -328,15 +232,101 @@ class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
                 extension = null;
             } else {
                 name = name.substring(name.lastIndexOf(File.separator) + 1);
-                extension = name.substring(name.lastIndexOf(".") + 1, name.length());
+                extension = name.substring(name.lastIndexOf(".") + 1);
             }
+
             String path = parentZipPath + File.separator + name;
 
             FileInfo fileInfo = new FileInfo(COMPRESSED, name, path, date, size,
                     isDirectory, extension, RootHelper.parseFilePermission(new File(path)), false);
             fileInfoList.add(fileInfo);
         }
-        Collections.sort(fileInfoList, comparatorByNameZip);
+    }
+
+    private void traverseZipElements(String dir, ArrayList<ZipModel> elements) {
+        ArrayList<String> entriesList = new ArrayList<>();
+        for (ZipModel entry : totalZipList) {
+
+            String entryName = entry.getName();
+            File file = new File(entryName);
+            if (dir == null || dir.trim().length() == 0) {
+                if (file.getParent() == null || file.getParent().length() == 0 || file.getParent().equals(File
+                        .separator)) {
+                    if (!entriesList.contains(entryName)) {
+                        elements.add(new ZipModel(new ZipEntry(entryName), entry.getTime(), entry.getSize(),
+                                entry.isDirectory()));
+                        entriesList.add(entryName);
+                    }
+                } else {
+                    addZipEntryDirectory(elements, entriesList, entry, entryName);
+                }
+            } else {
+                if (file.getParent() != null && (file.getParent().equals(dir) || file.getParent().equals(File
+                        .separator + dir))) {
+                    if (!entriesList.contains(entryName)) {
+                        elements.add(new ZipModel(new ZipEntry(entryName), entry.getTime(), entry.getSize(), entry
+                                .isDirectory()));
+                        entriesList.add(entryName);
+                    }
+                } else {
+                    if (entryName.startsWith(dir + File.separator) && entryName.length() > dir.length() + 1) {
+                        String path1 = entryName.substring(dir.length() + 1);
+
+                        int index = dir.length() + 1 + path1.indexOf(File.separator);
+                        String path = entryName.substring(0, index + 1);
+
+                        if (!entriesList.contains(path)) {
+                            ZipModel zipObj = new ZipModel(new ZipEntry(entryName.substring(0, index + 1)), entry.getTime
+                                    (), entry.getSize(), true);
+                            entriesList.add(path);
+                            elements.add(zipObj);
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
+    private void addZipEntryDirectory(ArrayList<ZipModel> elements, ArrayList<String> strings, ZipModel entry, String entryName) {
+        boolean slash = false;
+        if (entryName.startsWith(File.separator)) {
+            slash = true;
+            entryName = entryName.substring(1);
+        }
+        String path = entryName.substring(0, entryName.indexOf(File.separator) + 1);
+        if (slash) {
+            path = "/" + path;
+        }
+        ZipModel zipObj;
+        if (!strings.contains(path)) {
+            zipObj = new ZipModel(new ZipEntry(path), entry.getTime(), entry
+                    .getSize(), true);
+            strings.add(path);
+            elements.add(zipObj);
+        }
+    }
+
+    private void populateTotalZipList(String parentZipPath) throws IOException {
+        if (new File(parentZipPath).canRead()) {
+            ZipFile zipfile = new ZipFile(parentZipPath);
+            for (Enumeration e = zipfile.entries(); e.hasMoreElements(); ) {
+                ZipEntry entry = (ZipEntry) e.nextElement();
+                totalZipList.add(new ZipModel(entry, entry.getTime(), entry.getSize(), entry
+                        .isDirectory()));
+            }
+            zipfile.close();
+        } else {
+            ZipEntry zipEntry;
+            Uri uri = Uri.parse(parentZipPath);
+            ZipInputStream zipInputStream = new ZipInputStream(getContext().getContentResolver()
+                    .openInputStream(uri));
+            while ((zipEntry = zipInputStream.getNextEntry()) != null) {
+                totalZipList.add(new ZipModel(zipEntry, zipEntry.getTime(), zipEntry.getSize(), zipEntry
+                        .isDirectory()));
+            }
+            zipInputStream.close();
+        }
     }
 
     private void unzipEntry(ZipFile zipfile, ZipEntry entry, String outputDir)
@@ -354,9 +344,8 @@ class ZipContentLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
         try {
             int len;
-            byte buf[] = new byte[20480];
+            byte[] buf = new byte[20480];
             while ((len = inputStream.read(buf)) > 0) {
-                //System.out.println(id + " " + hash.get(id));
                 outputStream.write(buf, 0, len);
             }
         } finally {
