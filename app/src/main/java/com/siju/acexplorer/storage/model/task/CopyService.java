@@ -56,6 +56,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.siju.acexplorer.main.model.helper.FileOperations.mkdir;
@@ -219,82 +220,144 @@ public class CopyService extends Service {
         OperationUtils.WriteMode mode = OperationUtils.checkFolder(currentDir);
         switch (mode) {
             case INTERNAL:
-                getTotalBytes(files);
-                for (int i = 0; i < files.size(); i++) {
-                    FileInfo sourceFile = files.get(i);
-                    if (stopService) {
-                        publishCompletionResult();
-                        break;
-                    }
-                    try {
-
-                        if (!new File(files.get(i).getFilePath()).canRead()) {
-                            copyRoot(files.get(i).getFilePath(), files.get(i).getFileName(),
-                                     currentDir);
-                            continue;
-                        }
-                        FileInfo destFile = new FileInfo(sourceFile.getCategory(), sourceFile
-                                .getFileName(),
-                                                         sourceFile.getFilePath(), sourceFile.getDate(), sourceFile
-                                                                 .getSize(), sourceFile.isDirectory(),
-                                                         sourceFile.getExtension(), sourceFile.getPermissions(), false);
-                        int action = FileUtils.ACTION_NONE;
-                        if (copyData != null) {
-                            for (CopyData copyData1 : copyData) {
-                                if (copyData1.getFilePath().equals(sourceFile.getFilePath())) {
-                                    action = copyData1.getAction();
-                                    break;
-                                }
-                            }
-                        }
-                        String fileName = files.get(i).getFileName();
-                        String path = currentDir + SEPARATOR + fileName;
-                        if (action == FileUtils.ACTION_KEEP) {
-                            if (new File(path).isDirectory()) {
-                                path = currentDir + SEPARATOR + fileName + "(2)";
-                            } else {
-                                String fileNameWithoutExt = fileName.substring(0, fileName.
-                                        lastIndexOf("."));
-                                path = currentDir + SEPARATOR + fileNameWithoutExt + "(2)" + "." + files
-                                        .get(i)
-                                        .getExtension();
-                            }
-                        }
-                        destFile.setFilePath(path);
-                        Logger.log("CopyService", "Execute-Dest file path=" + destFile
-                                .getFilePath());
-
-                        startCopy(sourceFile, destFile, move);
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-
-                        failedFiles.add(files.get(i));
-                        for (int j = i + 1; j < files.size(); j++) {
-                            failedFiles.add(files.get(j));
-                        }
-                        break;
-                    }
-                }
+                onInternalStorage(currentDir);
                 publishCompletionResult();
                 break;
 
             case ROOT:
-                totalBytes = files.size();
-                for (int i = 0; i < files.size(); i++) {
-                    String path = files.get(i).getFilePath();
-                    String name = files.get(i).getFileName();
-                    copyRoot(path, name, currentDir);
-                    FileInfo newFileInfo = files.get(i);
-                    newFileInfo.setFilePath(currentDir + SEPARATOR + (newFileInfo.getFileName()));
-                    if (checkFiles(files.get(i), newFileInfo)) {
-                        failedFiles.add(files.get(i));
-                    }
-                }
+                onRoot(currentDir);
                 publishCompletionResult();
                 break;
         }
         deleteCopiedFiles();
+    }
+
+    private void onRoot(String currentDir) {
+        totalBytes = files.size();
+        for (int i = 0; i < files.size(); i++) {
+            String path = files.get(i).getFilePath();
+            String name = files.get(i).getFileName();
+            copyRoot(path, name, currentDir);
+            FileInfo newFileInfo = files.get(i);
+            newFileInfo.setFilePath(currentDir + SEPARATOR + (newFileInfo.getFileName()));
+            if (checkFiles(files.get(i), newFileInfo)) {
+                failedFiles.add(files.get(i));
+            }
+        }
+    }
+
+    private void onInternalStorage(String currentDir) {
+        getTotalBytes(files);
+        for (int index = 0; index < files.size(); index++) {
+            FileInfo sourceFile = files.get(index);
+            if (stopService) {
+                publishCompletionResult();
+                break;
+            }
+            try {
+                if (isNonReadable(index)) {
+                    copyRoot(files.get(index).getFilePath(), files.get(index).getFileName(),
+                             currentDir);
+                    continue;
+                }
+
+                FileInfo destFile = new FileInfo(sourceFile.getCategory(), sourceFile
+                        .getFileName(),
+                                                 sourceFile.getFilePath(), sourceFile.getDate(), sourceFile
+                                                         .getSize(), sourceFile.isDirectory(),
+                                                 sourceFile.getExtension(), sourceFile.getPermissions(), false);
+
+                int action = FileUtils.ACTION_NONE;
+                if (copyData != null) {
+                    action = getAction(sourceFile, action);
+                }
+                String path = getNewPathForAction(currentDir, index, action);
+                destFile.setFilePath(path);
+                Logger.log("CopyService", "Execute-Dest file path=" + destFile
+                        .getFilePath());
+
+                startCopy(sourceFile, destFile, move);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                populateFailedFiles(index);
+                break;
+            }
+        }
+    }
+
+    private String getNewPathForAction(String currentDir, int index, int action) {
+        String fileName = files.get(index).getFileName();
+        String path = currentDir + SEPARATOR + fileName;
+
+        if (action == FileUtils.ACTION_KEEP) {
+            boolean isDirectory = new File(path).isDirectory();
+            if (isDirectory) {
+                path = getNewFileName(currentDir, fileName, true, files.get(index).getExtension());
+            }
+            else {
+                String fileNameWithoutExt = fileName.substring(0, fileName.
+                        lastIndexOf("."));
+                path = currentDir + SEPARATOR + getNewFileName(currentDir, fileNameWithoutExt, false, files.get(index).getExtension());
+            }
+        }
+        return path;
+    }
+
+    private int getAction(FileInfo sourceFile, int action) {
+        for (CopyData copyData1 : copyData) {
+            if (copyData1.getFilePath().equals(sourceFile.getFilePath())) {
+                action = copyData1.getAction();
+                break;
+            }
+        }
+        return action;
+    }
+
+    private void populateFailedFiles(int index) {
+        failedFiles.add(files.get(index));
+        for (int j = index + 1; j < files.size(); j++) {
+            failedFiles.add(files.get(j));
+        }
+    }
+
+    private boolean isNonReadable(int i) {
+        return !new File(files.get(i).getFilePath()).canRead();
+    }
+
+    private String getNewFileName(String currentDir, String fileName, boolean isDirectory, String extension) {
+       File file = new File(currentDir);
+       List<String> files = Arrays.asList(file.list());
+       int suffix = 1;
+        String newFileName = fileName + " " + "(" + suffix + ")";
+        if (isDirectory) {
+           return getNewDirectoryName(files, suffix, newFileName, fileName);
+       }
+       else {
+           return getFileName(files, suffix, newFileName, fileName, extension);
+       }
+    }
+
+    private String getFileName(List<String> files, int suffix, String fileName, String originalFileName, String extension) {
+        if (files.contains(fileName + "." + extension)) {
+            suffix++;
+            String newFileName = originalFileName + " " + "(" + suffix + ")";
+            return getFileName(files, suffix, newFileName, originalFileName, extension);
+        }
+        else {
+            return fileName + "." + extension;
+        }
+    }
+
+    private String getNewDirectoryName(List<String> files, int suffix, String fileName, String originalFileName) {
+        if (files.contains(fileName)) {
+            suffix++;
+            String newFileName = originalFileName + " " + "(" + suffix + ")";
+            return getNewDirectoryName(files, suffix, newFileName, originalFileName);
+        }
+        else {
+            return fileName;
+        }
     }
 
 
@@ -377,7 +440,7 @@ public class CopyService extends Service {
         intent.putExtra(KEY_FILES_COUNT, filesCopied);
         intent.putExtra(KEY_RESULT, failedFiles.size() == 0);
         intent.putExtra(KEY_OPERATION, move ? CUT : COPY);
-        String newList[] = new String[filesToMediaIndex.size()];
+        String[] newList = new String[filesToMediaIndex.size()];
         scanMultipleFiles(AceApplication.getAppContext(), filesToMediaIndex.toArray(newList));
         sendBroadcast(intent);
     }
