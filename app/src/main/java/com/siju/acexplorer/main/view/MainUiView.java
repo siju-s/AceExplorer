@@ -44,7 +44,6 @@ import android.widget.FrameLayout;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.ads.AdHelper;
 import com.siju.acexplorer.analytics.Analytics;
-import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.home.view.HomeScreenFragment;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.main.model.FavInfo;
@@ -118,7 +117,6 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     private boolean isFirstRun;
     private String language;
 
-
     public MainUiView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
@@ -170,7 +168,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
 
     void initialize() {
         currentTheme = bridge.getCurrentTheme();
-        navigationDrawer = new NavigationDrawer(activity, this, currentTheme);
+        navigationDrawer = new NavigationDrawer(activity, this, currentTheme, bridge.getBillingManager());
         setupPermissions();
     }
 
@@ -289,7 +287,6 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         } catch (IOException e) {
             e.printStackTrace();
         }
-        BillingManager.getInstance().destroy();
     }
 
 
@@ -375,6 +372,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         args.putBoolean(FileConstants.PREFS_FIRST_RUN, isFirstRun);
         args.putBoolean(FileConstants.KEY_DUAL_ENABLED, canDualModeBeAct);
         homeScreenFragment = new HomeScreenFragment();
+        homeScreenFragment.setBillingManager(bridge.getBillingManager());
         homeScreenFragment.setArguments(args);
         homeScreenFragment.setDrawerListener(this);
         homeScreenFragment.setFavListener(this);
@@ -399,6 +397,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
                 .frame_container_dual);
         if (fragment == null || fragment instanceof HomeScreenFragment) {
             FileList baseFileList = new FileList();
+            baseFileList.setBillingManager(bridge.getBillingManager());
             baseFileList.setArguments(args);
             baseFileList.setFavoriteListener(this);
             baseFileList.setDrawerListener(this);
@@ -476,6 +475,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
         String internalStoragePath = getInternalStorage();
         DualPaneList dualFragment = DualPaneList.newInstance(internalStoragePath, FILES, true);
+        dualFragment.setBillingManager(bridge.getBillingManager());
         dualFragment.setFavoriteListener(this);
         dualFragment.setDrawerListener(this);
         ft.replace(R.id.frame_container_dual, dualFragment);
@@ -607,7 +607,7 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
     public void onBillingUnSupported() {
         PremiumUtils.onStart(getContext());
         if (PremiumUtils.shouldShowPremiumDialog()) {
-            Premium premium = new Premium(activity);
+            Premium premium = new Premium(activity, bridge.getBillingManager());
             premium.showPremiumDialog();
         }
     }
@@ -872,4 +872,5 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
             }
             fragment.onConfigurationChanged(newConfig);
     }
+
 }

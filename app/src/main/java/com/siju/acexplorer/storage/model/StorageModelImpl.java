@@ -92,9 +92,11 @@ public class StorageModelImpl implements StoragesModel {
     private Listener listener;
     private FileOpsHelper fileOpsHelper;
     private static final String EXT_TXT = ".txt";
+    private BillingManager billingManager;
 
 
-    public StorageModelImpl() {
+    public StorageModelImpl(BillingManager billingManager) {
+        this.billingManager = billingManager;
         this.context = AceApplication.getAppContext();
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         sharedPreferenceWrapper = new SharedPreferenceWrapper();
@@ -111,7 +113,7 @@ public class StorageModelImpl implements StoragesModel {
 
     @Override
     public BillingStatus getBillingStatus() {
-        return BillingManager.getInstance().getInAppBillingStatus();
+        return billingManager.getInAppBillingStatus();
     }
 
 

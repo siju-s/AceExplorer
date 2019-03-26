@@ -1,6 +1,5 @@
 package com.siju.acexplorer.billing;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
@@ -36,8 +35,6 @@ public class BillingManager implements PurchasesUpdatedListener {
     // Default value of mBillingClientResponseCode until BillingManager was not yeat initialized
     public static final  int            BILLING_MANAGER_NOT_INITIALIZED = -1;
     private static final String         TAG = "BillingManager";
-    @SuppressLint("StaticFieldLeak")
-    private static       BillingManager billingInstance;
 
     static {
         System.loadLibrary("keys");
@@ -59,15 +56,6 @@ public class BillingManager implements PurchasesUpdatedListener {
     private Set<String> mTokensToBeConsumed;
     private int mBillingClientResponseCode = BILLING_MANAGER_NOT_INITIALIZED;
 
-    private BillingManager() {
-    }
-
-    public static BillingManager getInstance() {
-        if (billingInstance == null) {
-            billingInstance = new BillingManager();
-        }
-        return billingInstance;
-    }
 
     public void setupBilling(final BillingUpdatesListener updatesListener) {
         billingUpdatesListener = updatesListener;
@@ -222,7 +210,6 @@ public class BillingManager implements PurchasesUpdatedListener {
      * Handles the purchase
      * <p>Note: Notice that for each purchase, we check if signature is valid on the client.
      * It's recommended to move this check into your backend.
-     * See {@link Security#verifyPurchase(String, String, String)}
      * </p>
      *
      * @param purchase Purchase to be handled

@@ -28,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.home.model.HomeModel;
 import com.siju.acexplorer.home.model.HomeModelImpl;
 import com.siju.acexplorer.home.model.LoaderHelper;
@@ -46,6 +47,7 @@ public class HomeScreenFragment extends Fragment {
     private HomeView homeView;
     private DrawerListener drawerListener;
     private StoragesUiView.FavoriteOperation favListener;
+    private BillingManager billingManager;
 
     public static HomeScreenFragment newInstance(boolean isFirstRun, boolean isDualMode) {
         Bundle args = new Bundle();
@@ -73,7 +75,7 @@ public class HomeScreenFragment extends Fragment {
 
         LinearLayout linearLayout = getView().findViewById(R.id.home_base);
         homeView = new HomeBridge(this, linearLayout, drawerListener, favListener);
-        HomeModel homeModel = new HomeModelImpl();
+        HomeModel homeModel = new HomeModelImpl(billingManager);
         homeModel.setActivityContext(getActivity());
         LoaderHelper loaderHelper = new LoaderHelper(getContext());
 
@@ -81,6 +83,10 @@ public class HomeScreenFragment extends Fragment {
                 getActivity().getSupportLoaderManager());
 
         homeView.init();
+    }
+
+    public void setBillingManager(BillingManager billingManager) {
+        this.billingManager = billingManager;
     }
 
 

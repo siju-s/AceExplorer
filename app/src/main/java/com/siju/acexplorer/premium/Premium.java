@@ -31,9 +31,11 @@ import com.siju.acexplorer.main.view.dialog.DialogHelper;
  */
 public class Premium {
     private Activity context;
+    private BillingManager billingManager;
 
-    public Premium(Activity activity) {
+    public Premium(Activity activity, BillingManager billingManager) {
         this.context = activity;
+        this.billingManager = billingManager;
     }
 
     public void showPremiumDialog() {
@@ -66,7 +68,7 @@ public class Premium {
     };
 
     private void showPurchaseDialog() {
-        BillingManager.getInstance().initiatePurchaseFlow(BillingManager.SKU_REMOVE_ADS,
+        billingManager.initiatePurchaseFlow(BillingManager.SKU_REMOVE_ADS,
                                                           BillingClient.SkuType.INAPP);
     }
 

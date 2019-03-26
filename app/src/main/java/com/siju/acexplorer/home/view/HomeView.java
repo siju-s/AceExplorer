@@ -19,6 +19,7 @@ package com.siju.acexplorer.home.view;
 import android.content.Intent;
 import android.content.res.Configuration;
 
+import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.home.types.HomeLibraryInfo;
@@ -79,5 +80,7 @@ public interface HomeView {
         void saveLibs(List<LibrarySortModel> librarySortModels);
 
         void onExit();
+
+        BillingManager getBillingManager();
     }
 }

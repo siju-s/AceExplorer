@@ -291,6 +291,7 @@ public class HomeUiView extends CoordinatorLayout {
         args.putBoolean(FileConstants.KEY_DUAL_ENABLED, isDualModeActive);
 
         FileList baseFileList = new FileList();
+        baseFileList.setBillingManager(bridge.getBillingManager());
         baseFileList.setDrawerListener(drawerListener);
         baseFileList.setFavoriteListener(favListener);
         baseFileList.setArguments(args);

@@ -59,19 +59,21 @@ public class HomeModelImpl implements HomeModel {
     private static final int    COUNT_ZERO = 0;
     private static final String ADD = "Add";
     private Context context;
-    private int     resourceIds[];
-    private static final String labels[] = new String[]{"Images", "Audio", "Videos", "Docs",
+    private int[] resourceIds;
+    private static final String[] labels = new String[]{"Images", "Audio", "Videos", "Docs",
             "Downloads", "Recent"};
-    private Category                categories[];
+    private Category[] categories;
     private SharedPreferences       sharedPreferences;
     private SharedPreferenceWrapper sharedPreferenceWrapper;
     private List<HomeLibraryInfo>   homeLibraryInfoArrayList;
     private HomeModel.Listener      listener;
     // Used for fetching strings using activity context (since app context will not reflect new language strings if changed)
     private FragmentActivity activity;
+    private BillingManager billingManager;
 
-    public HomeModelImpl() {
+    public HomeModelImpl(BillingManager billingManager) {
         this.context = AceApplication.getAppContext();
+        this.billingManager = billingManager;
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         sharedPreferenceWrapper = new SharedPreferenceWrapper();
         homeLibraryInfoArrayList = new ArrayList<>();
@@ -93,9 +95,13 @@ public class HomeModelImpl implements HomeModel {
 
     @Override
     public BillingStatus getBillingStatus() {
-        return BillingManager.getInstance().getInAppBillingStatus();
+        return billingManager.getInAppBillingStatus();
     }
 
+    @Override
+    public BillingManager getBillingManager() {
+        return billingManager;
+    }
 
     @Override
     public void reloadLibraries(final List<LibrarySortModel> selectedLibs) {

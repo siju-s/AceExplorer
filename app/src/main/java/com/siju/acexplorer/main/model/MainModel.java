@@ -18,6 +18,7 @@ package com.siju.acexplorer.main.model;
 
 import android.os.Bundle;
 
+import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.theme.Theme;
 
 import java.util.ArrayList;
@@ -29,13 +30,17 @@ public interface MainModel {
 
     void getUserSettings();
 
-    void getBillingStatus();
+    void setupBilling();
 
     void setListener(Listener listener);
 
     Theme getTheme();
 
     void getTotalGroupData();
+
+    void cleanup();
+
+    BillingManager getBillingManager();
 
     interface Listener {
         void passUserPrefs(Bundle userPrefs);

@@ -24,6 +24,7 @@ import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.main.model.SectionGroup;
 
 import java.util.ArrayList;
@@ -88,5 +89,9 @@ public interface MainUi {
     interface Listener {
 
         void getTotalGroupData();
+
+        void onExit();
+
+        BillingManager getBillingManager();
     }
 }

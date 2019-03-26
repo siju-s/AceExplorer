@@ -18,6 +18,7 @@ package com.siju.acexplorer.main.presenter;
 
 import android.os.Bundle;
 
+import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.main.model.MainModel;
 import com.siju.acexplorer.main.model.SectionGroup;
 import com.siju.acexplorer.main.view.MainUi;
@@ -45,13 +46,23 @@ public class MainPresenterImpl implements MainPresenter, MainUi.Listener, MainMo
     }
 
     @Override
-    public void getBillingStatus() {
-       mainModel.getBillingStatus();
+    public void setupBilling() {
+       mainModel.setupBilling();
+    }
+
+    @Override
+    public BillingManager getBillingManager() {
+        return mainModel.getBillingManager();
     }
 
     @Override
     public void passUserPrefs(Bundle userPrefs) {
         mainUi.passUserPrefs(userPrefs);
+    }
+
+    @Override
+    public void onExit() {
+        mainModel.cleanup();
     }
 
     @Override

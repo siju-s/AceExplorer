@@ -30,7 +30,6 @@ import com.kobakei.ratethisapp.RateThisApp;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.base.view.BaseActivity;
-import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.main.model.MainModel;
 import com.siju.acexplorer.main.model.MainModelImpl;
@@ -60,15 +59,12 @@ public class AceActivity extends BaseActivity {
 
         LinearLayout linearLayout = findViewById(R.id.base);
         mainUi = new MainBridge(this, linearLayout);
-        MainModel mainModel = new MainModelImpl();
+        MainModel mainModel = new MainModelImpl(this);
         MainPresenter mainPresenter = new MainPresenterImpl(mainUi, mainModel);
 
         mainUi.init();
         mainPresenter.getUserPreferences();
-
-        BillingManager billingManager = BillingManager.getInstance();
-        billingManager.setContext(this);
-        mainPresenter.getBillingStatus();
+        mainPresenter.setupBilling();
     }
 
     @Override

@@ -19,21 +19,20 @@ package com.siju.acexplorer.storage.presenter;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
 import com.siju.acexplorer.billing.BillingStatus;
+import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.home.model.LoaderHelper;
 import com.siju.acexplorer.main.model.FavInfo;
-import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.main.model.groups.Category;
+import com.siju.acexplorer.main.view.dialog.DialogHelper;
 import com.siju.acexplorer.storage.model.CopyData;
 import com.siju.acexplorer.storage.model.StoragesModel;
 import com.siju.acexplorer.storage.model.operations.Operations;
 import com.siju.acexplorer.storage.view.StoragesUi;
-import com.siju.acexplorer.main.view.dialog.DialogHelper;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -283,6 +282,7 @@ public class StoragesPresenterImpl implements StoragesUi.Listener,
         storagesUi.onFavAdded(count);
     }
 
+    @NonNull
     @Override
     public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
 
@@ -291,12 +291,12 @@ public class StoragesPresenterImpl implements StoragesUi.Listener,
     }
 
     @Override
-    public void onLoadFinished(@NotNull Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
+    public void onLoadFinished(@NonNull Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
         storagesUi.onDataLoaded(data);
     }
 
     @Override
-    public void onLoaderReset(Loader<ArrayList<FileInfo>> loader) {
+    public void onLoaderReset(@NonNull Loader<ArrayList<FileInfo>> loader) {
 
     }
 

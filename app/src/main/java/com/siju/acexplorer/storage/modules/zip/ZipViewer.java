@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -38,7 +39,6 @@ import com.siju.acexplorer.main.view.dialog.DialogHelper;
 import com.siju.acexplorer.storage.model.ZipModel;
 import com.siju.acexplorer.storage.model.task.ExtractZipEntry;
 
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -296,7 +296,7 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
     }
 
 
-    @NotNull
+    @NonNull
     @Override
     public Loader<ArrayList<FileInfo>> onCreateLoader(int id, Bundle args) {
         if (inChildZip) {
@@ -313,13 +313,13 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
     }
 
     @Override
-    public void onLoadFinished(@NotNull Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
+    public void onLoadFinished(@NonNull Loader<ArrayList<FileInfo>> loader, ArrayList<FileInfo> data) {
         zipCommunicator.onZipContentsLoaded(data);
     }
 
 
     @Override
-    public void onLoaderReset(@NotNull Loader<ArrayList<FileInfo>> loader) {
+    public void onLoaderReset(@NonNull Loader<ArrayList<FileInfo>> loader) {
 
     }
 
@@ -350,7 +350,6 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
 
         @Override
         public void onNegativeButtonClick(View view) {
-            zipCommunicator.openZipViewer(currentDir);
         }
 
         @Override

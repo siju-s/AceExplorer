@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
+import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.home.types.HomeLibraryInfo;
 import com.siju.acexplorer.home.model.HomeModel;
@@ -69,6 +70,11 @@ public class HomePresenterImpl implements
     @Override
     public BillingStatus checkBillingStatus() {
         return homeModel.getBillingStatus();
+    }
+
+    @Override
+    public BillingManager getBillingManager() {
+        return homeModel.getBillingManager();
     }
 
     @Override

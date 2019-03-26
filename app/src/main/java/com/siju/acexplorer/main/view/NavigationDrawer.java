@@ -82,12 +82,14 @@ class NavigationDrawer implements View.OnClickListener {
     private ArrayList<SectionItems> favoritesGroupChild = new ArrayList<>();
     private boolean                 isPremium;
     private MainUiView              uiView;
+    private BillingManager billingManager;
 
 
-    NavigationDrawer(Activity activity, MainUiView uiView, Theme theme) {
+    NavigationDrawer(Activity activity, MainUiView uiView, Theme theme, BillingManager billingManager) {
         this.context = uiView.getContext();
         this.activity = activity;
         this.uiView = uiView;
+        this.billingManager = billingManager;
         init();
         setTheme(theme);
         initListeners();
@@ -190,14 +192,14 @@ class NavigationDrawer implements View.OnClickListener {
         switch (position) {
             case 0:
                 Analytics.getLogger().unlockFullClicked();
-                if (BillingManager.getInstance().getInAppBillingStatus().equals(BillingStatus
+                if (billingManager.getInAppBillingStatus().equals(BillingStatus
                         .UNSUPPORTED)) {
 
                     Toast.makeText(context, context.getString(R.string.billing_unsupported), Toast
                             .LENGTH_SHORT).show();
                 }
                 else {
-                    Premium premium = new Premium(activity);
+                    Premium premium = new Premium(activity, billingManager);
                     premium.showPremiumDialog();
                 }
                 break;

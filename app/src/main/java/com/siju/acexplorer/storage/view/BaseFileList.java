@@ -32,17 +32,19 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.siju.acexplorer.R;
+import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.home.model.LoaderHelper;
 import com.siju.acexplorer.main.model.groups.Category;
+import com.siju.acexplorer.main.view.DrawerListener;
 import com.siju.acexplorer.storage.model.StorageModelImpl;
 import com.siju.acexplorer.storage.model.StoragesModel;
 import com.siju.acexplorer.storage.presenter.StoragesPresenterImpl;
-import com.siju.acexplorer.main.view.DrawerListener;
 
 
 public class BaseFileList extends Fragment {
 
     private StoragesUi storagesUi;
+    private BillingManager billingManager;
 
     @Override
     public View onCreateView(
@@ -59,13 +61,16 @@ public class BaseFileList extends Fragment {
 
         LinearLayout linearLayout = getView().findViewById(R.id.home_base);
         storagesUi = new StorageBridge(this, linearLayout, favListener, drawerListener);
-        StoragesModel storagesModel = new StorageModelImpl();
+        StoragesModel storagesModel = new StorageModelImpl(billingManager);
         LoaderHelper loaderHelper = new LoaderHelper(getContext());
 
         new StoragesPresenterImpl(storagesUi, storagesModel, loaderHelper, getLoaderManager());
         storagesUi.init();
     }
 
+    public void setBillingManager(BillingManager billingManager) {
+        this.billingManager = billingManager;
+    }
 
 
     public boolean onBackPressed() {

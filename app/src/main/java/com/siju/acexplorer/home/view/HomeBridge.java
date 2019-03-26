@@ -21,6 +21,7 @@ import android.content.res.Configuration;
 import android.support.v4.app.Fragment;
 import android.view.ViewGroup;
 
+import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.home.model.LibrarySortModel;
 import com.siju.acexplorer.home.types.HomeLibraryInfo;
@@ -162,5 +163,9 @@ public class HomeBridge implements HomeView {
 
     void saveLibs(List<LibrarySortModel> librarySortModels) {
         listener.saveLibs(librarySortModels);
+    }
+
+    public BillingManager getBillingManager() {
+        return listener.getBillingManager();
     }
 }

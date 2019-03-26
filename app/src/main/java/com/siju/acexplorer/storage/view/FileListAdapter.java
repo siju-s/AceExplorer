@@ -18,6 +18,7 @@ package com.siju.acexplorer.storage.view;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.Formatter;
@@ -46,7 +47,6 @@ import com.siju.acexplorer.ui.autoplay.AutoPlayContainer;
 import com.siju.acexplorer.ui.autoplay.AutoPlayView;
 import com.siju.acexplorer.ui.peekandpop.PeekAndPop;
 
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -121,7 +121,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     @Override
-    public void onViewDetachedFromWindow(@NotNull RecyclerView.ViewHolder holder) {
+    public void onViewDetachedFromWindow(@NonNull RecyclerView.ViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
         if (holder instanceof FileListViewHolder) {
             FileListViewHolder fileListViewHolder = (FileListViewHolder) holder;
@@ -130,7 +130,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     @Override
-    public boolean onFailedToRecycleView(@NotNull RecyclerView.ViewHolder holder) {
+    public boolean onFailedToRecycleView(@NonNull RecyclerView.ViewHolder holder) {
         if (holder instanceof FileListViewHolder) {
             FileListViewHolder fileListViewHolder = (FileListViewHolder) holder;
             fileListViewHolder.container.clearAnimation();
@@ -138,9 +138,9 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return super.onFailedToRecycleView(holder);
     }
 
-    @NotNull
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
         if (mViewMode == ViewMode.LIST) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.file_list_item,
@@ -155,7 +155,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     @Override
-    public void onBindViewHolder(@NotNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
         if (context == null) {
             return;

@@ -29,6 +29,7 @@ import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.main.model.groups.DrawerItems;
+import com.siju.acexplorer.main.view.AceActivity;
 import com.siju.acexplorer.theme.Theme;
 import com.siju.acexplorer.theme.ThemeUtils;
 import com.siju.acexplorer.utils.Utils;
@@ -51,9 +52,17 @@ public class MainModelImpl implements MainModel,
     private final String TAG = this.getClass().getSimpleName();
     private MainModel.Listener listener;
     private Context            context;
+    private BillingManager     billingManager;
 
-    public MainModelImpl() {
+    public MainModelImpl(AceActivity activity) {
         context = AceApplication.getAppContext();
+        billingManager = new BillingManager();
+        billingManager.setContext(activity);
+    }
+
+    @Override
+    public BillingManager getBillingManager() {
+        return billingManager;
     }
 
     @Override
@@ -87,8 +96,8 @@ public class MainModelImpl implements MainModel,
     }
 
     @Override
-    public void getBillingStatus() {
-        BillingManager.getInstance().setupBilling(this);
+    public void setupBilling() {
+        billingManager.setupBilling(this);
     }
 
     @Override
@@ -126,12 +135,18 @@ public class MainModelImpl implements MainModel,
     }
 
     @Override
+    public void cleanup() {
+        billingManager.destroy();
+    }
+
+    @Override
     public void onPurchasesUpdated(List<Purchase> purchases) {
         if (BuildConfig.IS_DEV_VERSION) {
             listener.onPremiumVersion();
             return;
         }
-        int billingResponse = BillingManager.getInstance().getBillingClientResponseCode();
+        int billingResponse = billingManager.getBillingClientResponseCode();
+
         if (billingResponse == BillingClient.BillingResponse.BILLING_UNAVAILABLE ||
                 billingResponse == BillingClient.BillingResponse.FEATURE_NOT_SUPPORTED) {
             Analytics.getLogger().setInAppStatus(-1);

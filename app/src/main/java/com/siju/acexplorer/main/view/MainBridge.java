@@ -26,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.main.model.SectionGroup;
 import com.siju.acexplorer.theme.Theme;
 
@@ -65,6 +66,7 @@ public class MainBridge implements MainUi {
 
     @Override
     public void onExit() {
+        listener.onExit();
         uiView.cleanUp();
     }
 
@@ -181,5 +183,9 @@ public class MainBridge implements MainUi {
 
     Theme getCurrentTheme() {
         return ((AceActivity) activity).getCurrentTheme();
+    }
+
+    BillingManager getBillingManager() {
+        return listener.getBillingManager();
     }
 }
