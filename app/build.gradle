@@ -15,7 +15,6 @@
  */
 
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
 apply plugin: 'io.fabric'
 
 android {
@@ -120,7 +119,6 @@ dependencies {
     implementation google.billing
     implementation google.gson
 
-    implementation others.kotlin
     implementation others.glide
     annotationProcessor others.glideCompiler
     implementation others.apache_compress
