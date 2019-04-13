@@ -16,14 +16,15 @@
 
 package com.siju.acexplorer.storage.view;
 
-import android.support.v4.internal.view.SupportMenuItem;
-import android.support.v7.view.menu.MenuItemImpl;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.main.model.groups.Category;
+
+import androidx.appcompat.view.menu.MenuItemImpl;
+import androidx.core.internal.view.SupportMenuItem;
 
 import static com.siju.acexplorer.main.model.groups.Category.FAVORITES;
 import static com.siju.acexplorer.main.model.groups.Category.FILES;

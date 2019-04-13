@@ -20,7 +20,7 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;

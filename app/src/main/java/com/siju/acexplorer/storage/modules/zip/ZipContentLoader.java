@@ -19,7 +19,7 @@ package com.siju.acexplorer.storage.modules.zip;
 import android.content.Context;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.support.v4.content.AsyncTaskLoader;
+import androidx.loader.content.AsyncTaskLoader;
 
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.main.model.FileConstants;

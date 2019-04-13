@@ -19,9 +19,10 @@ package com.siju.acexplorer.ads;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
-import android.support.v4.content.LocalBroadcastManager;
 
 import com.google.android.gms.ads.MobileAds;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import static com.siju.acexplorer.main.model.FileConstants.ADS;
 import static com.siju.acexplorer.main.model.FileConstants.KEY_PREMIUM;

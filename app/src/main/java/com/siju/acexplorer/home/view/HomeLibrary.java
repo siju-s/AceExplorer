@@ -19,22 +19,16 @@ package com.siju.acexplorer.home.view;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.ImageButton;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
+import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.home.LibrarySortActivity;
 import com.siju.acexplorer.home.model.LibrarySortModel;
 import com.siju.acexplorer.home.types.HomeLibraryInfo;
-import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.main.model.StorageUtils;
 import com.siju.acexplorer.main.model.groups.Category;
 import com.siju.acexplorer.storage.view.custom.helper.SimpleItemTouchHelperCallback;
@@ -43,6 +37,13 @@ import com.siju.acexplorer.utils.ConfigurationHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 import static com.siju.acexplorer.main.model.groups.Category.ADD;
 import static com.siju.acexplorer.main.model.groups.Category.DOWNLOADS;

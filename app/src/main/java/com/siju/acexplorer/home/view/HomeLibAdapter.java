@@ -2,8 +2,6 @@ package com.siju.acexplorer.home.view;
 
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +17,9 @@ import com.siju.acexplorer.theme.Theme;
 
 import java.util.Collections;
 import java.util.List;
+
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import static com.siju.acexplorer.main.model.groups.Category.ADD;
 import static com.siju.acexplorer.main.model.groups.CategoryHelper.getCategoryName;

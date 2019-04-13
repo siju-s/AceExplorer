@@ -16,13 +16,13 @@
 
 package com.siju.acexplorer.home.model;
 
-import android.support.v4.app.FragmentActivity;
-
 import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.home.types.HomeLibraryInfo;
 
 import java.util.List;
+
+import androidx.fragment.app.FragmentActivity;
 
 /**
  * Created by Siju on 02 September,2017

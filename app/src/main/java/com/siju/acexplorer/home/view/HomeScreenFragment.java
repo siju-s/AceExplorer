@@ -19,9 +19,6 @@ package com.siju.acexplorer.home.view;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,8 +32,12 @@ import com.siju.acexplorer.home.model.LoaderHelper;
 import com.siju.acexplorer.home.presenter.HomePresenterImpl;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.main.model.FileConstants;
-import com.siju.acexplorer.storage.view.StoragesUiView;
 import com.siju.acexplorer.main.view.DrawerListener;
+import com.siju.acexplorer.storage.view.StoragesUiView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import static com.siju.acexplorer.main.model.FileConstants.PREFS_FIRST_RUN;
 

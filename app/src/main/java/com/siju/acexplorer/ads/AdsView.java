@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
@@ -14,6 +13,8 @@ import com.google.android.gms.ads.AdView;
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.main.model.FileConstants;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import static com.siju.acexplorer.main.model.FileConstants.ADS;
 

@@ -19,8 +19,8 @@ package com.siju.acexplorer.main.model.helper;
 import android.annotation.TargetApi;
 import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.v4.provider.DocumentFile;
+import androidx.annotation.NonNull;
+import androidx.documentfile.provider.DocumentFile;
 import android.util.Log;
 
 import com.siju.acexplorer.AceApplication;

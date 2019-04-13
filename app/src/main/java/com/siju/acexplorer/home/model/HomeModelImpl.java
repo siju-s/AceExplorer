@@ -20,7 +20,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Process;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
@@ -35,6 +34,8 @@ import com.siju.acexplorer.permission.PermissionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.fragment.app.FragmentActivity;
 
 import static com.siju.acexplorer.main.model.FileConstants.PREFS_ADD_RECENT;
 import static com.siju.acexplorer.main.model.FileConstants.PREFS_DUAL_PANE;

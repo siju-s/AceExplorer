@@ -8,9 +8,6 @@ import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.content.AsyncTaskLoader;
 
 import com.siju.acexplorer.appmanager.helper.AppHelper;
 import com.siju.acexplorer.common.types.FileInfo;
@@ -20,6 +17,10 @@ import com.siju.acexplorer.main.model.groups.Category;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.loader.content.AsyncTaskLoader;
 
 import static com.siju.acexplorer.appmanager.helper.AppHelper.isSystemPackage;
 import static com.siju.acexplorer.main.model.helper.SortHelper.sortAppManager;

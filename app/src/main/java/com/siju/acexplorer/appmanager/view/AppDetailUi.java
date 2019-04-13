@@ -1,7 +1,7 @@
 package com.siju.acexplorer.appmanager.view;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 public interface AppDetailUi {
 

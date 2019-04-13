@@ -17,8 +17,6 @@
 package com.siju.acexplorer.home.view;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.CardView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -35,6 +33,9 @@ import com.siju.acexplorer.theme.Theme;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 
 import static com.siju.acexplorer.main.model.StorageUtils.StorageType.EXTERNAL;
 import static com.siju.acexplorer.main.model.StorageUtils.getStorageSpaceText;

@@ -20,12 +20,14 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.theme.Theme;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class GridItemDecoration extends RecyclerView.ItemDecoration {
 
@@ -33,16 +35,6 @@ public class GridItemDecoration extends RecyclerView.ItemDecoration {
     private final Drawable mVerticalDivider;
     private final int mNumColumns;
 
-    /**
-     * Sole constructor. Takes in {@link Drawable} objects to be used as
-     * horizontal and vertical dividers.
-     *
-     * @param horizontalDivider A divider {@code Drawable} to be drawn on the
-     *                          rows of the grid of the RecyclerView
-     * @param verticalDivider   A divider {@code Drawable} to be drawn on the
-     *                          columns of the grid of the RecyclerView
-     * @param numColumns        The number of columns in the grid of the RecyclerView
-     */
     public GridItemDecoration(Context context, Theme theme, int numColumns) {
         switch (theme) {
             case LIGHT:
@@ -68,7 +60,7 @@ public class GridItemDecoration extends RecyclerView.ItemDecoration {
      * @param state  The current RecyclerView.State of the RecyclerView
      */
     @Override
-    public void onDraw(Canvas canvas, RecyclerView parent, RecyclerView.State state) {
+    public void onDraw(@NonNull Canvas canvas, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
         drawHorizontalDividers(canvas, parent);
         drawVerticalDividers(canvas, parent);
 
@@ -84,7 +76,7 @@ public class GridItemDecoration extends RecyclerView.ItemDecoration {
      * @param state   The current RecyclerView.State of the RecyclerView
      */
     @Override
-    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+    public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
         super.getItemOffsets(outRect, view, parent, state);
 
         boolean childIsInLeftmostColumn = (parent.getChildAdapterPosition(view) % mNumColumns) == 0;

@@ -33,7 +33,7 @@ android {
         targetSdkVersion rootProject.targetSdkVersion
         versionCode versionCodeValue
         versionName versionValue
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField 'boolean', 'ENABLE_CRASHLYTICS', 'true'
     }
 
@@ -120,6 +120,7 @@ dependencies {
     implementation google.gson
 
     implementation others.glide
+    annotationProcessor supportDependencies.annotation
     annotationProcessor others.glideCompiler
     implementation others.apache_compress
     implementation others.floatingButton

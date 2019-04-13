@@ -17,9 +17,9 @@
 package com.siju.acexplorer.storage.modules.picker.presenter;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
+import androidx.annotation.NonNull;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
 import android.util.Log;
 
 import com.siju.acexplorer.common.types.FileInfo;

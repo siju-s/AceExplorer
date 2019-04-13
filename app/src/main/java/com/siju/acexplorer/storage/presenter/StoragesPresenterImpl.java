@@ -19,9 +19,9 @@ package com.siju.acexplorer.storage.presenter;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
+import androidx.annotation.NonNull;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
 
 import com.siju.acexplorer.billing.BillingStatus;
 import com.siju.acexplorer.common.types.FileInfo;

@@ -3,7 +3,6 @@ package com.siju.acexplorer.appmanager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.MenuItem;
 
 import com.siju.acexplorer.R;
@@ -12,6 +11,8 @@ import com.siju.acexplorer.appmanager.presenter.AppPresenter;
 import com.siju.acexplorer.appmanager.presenter.AppPresenterImpl;
 import com.siju.acexplorer.appmanager.view.AppDetailUi;
 import com.siju.acexplorer.base.view.BaseActivity;
+
+import androidx.annotation.Nullable;
 
 
 @SuppressWarnings("ConstantConditions")

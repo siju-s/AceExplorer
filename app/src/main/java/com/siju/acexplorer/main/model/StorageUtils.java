@@ -23,8 +23,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.support.annotation.RequiresApi;
-import android.support.v4.provider.DocumentFile;
+import androidx.annotation.RequiresApi;
+import androidx.documentfile.provider.DocumentFile;
 import android.text.TextUtils;
 
 import com.siju.acexplorer.AceApplication;

@@ -21,10 +21,6 @@ import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.os.Handler;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
@@ -42,14 +38,19 @@ import com.siju.acexplorer.main.model.groups.Category;
 import com.siju.acexplorer.main.model.helper.FileUtils;
 import com.siju.acexplorer.main.model.helper.ShareHelper;
 import com.siju.acexplorer.main.model.root.RootUtils;
+import com.siju.acexplorer.main.view.dialog.DialogHelper;
 import com.siju.acexplorer.storage.model.ViewMode;
 import com.siju.acexplorer.storage.model.operations.Operations;
 import com.siju.acexplorer.theme.Theme;
-import com.siju.acexplorer.main.view.dialog.DialogHelper;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
 import static com.siju.acexplorer.R.string.hide;
 import static com.siju.acexplorer.main.model.groups.Category.APP_MANAGER;
@@ -66,7 +67,7 @@ import static com.siju.acexplorer.main.model.groups.CategoryHelper.isSortOrActio
  * Created by Siju on 04 September,2017
  */
 class MenuControls implements Toolbar.OnMenuItemClickListener,
-                                     android.support.v7.widget.SearchView.OnQueryTextListener
+                                     androidx.appcompat.widget.SearchView.OnQueryTextListener
 {
 
     private final String TAG = this.getClass().getSimpleName();
@@ -307,7 +308,7 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
 
     private void setupMenuItems(Menu menu) {
         searchItem = menu.findItem(R.id.action_search);
-        searchView = (android.support.v7.widget.SearchView) searchItem.getActionView();
+        searchView = (androidx.appcompat.widget.SearchView) searchItem.getActionView();
         mViewItem = menu.findItem(R.id.action_view);
         sortItem = menu.findItem(R.id.action_sort);
         setupSortVisibility();

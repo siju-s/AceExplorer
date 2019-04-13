@@ -17,7 +17,6 @@
 package com.siju.acexplorer.home.model;
 
 import android.content.Context;
-import android.support.v4.content.Loader;
 
 import com.siju.acexplorer.appmanager.model.AppLoader;
 import com.siju.acexplorer.common.types.FileInfo;
@@ -26,6 +25,8 @@ import com.siju.acexplorer.main.model.data.MainLoader;
 import com.siju.acexplorer.main.model.groups.Category;
 
 import java.util.ArrayList;
+
+import androidx.loader.content.Loader;
 
 /**
  * Created by Siju on 03 September,2017
