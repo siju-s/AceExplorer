@@ -53,7 +53,7 @@ public class Premium {
 
         @Override
         public void onPositiveButtonClick(View view) {
-            showPurchaseDialog();
+            showPurchaseDialog(context);
         }
 
         @Override
@@ -67,8 +67,8 @@ public class Premium {
         }
     };
 
-    private void showPurchaseDialog() {
-        billingManager.initiatePurchaseFlow(BillingManager.SKU_REMOVE_ADS,
+    private void showPurchaseDialog(Activity context) {
+        billingManager.initiatePurchaseFlow(context, BillingManager.SKU_REMOVE_ADS,
                                                           BillingClient.SkuType.INAPP);
     }
 

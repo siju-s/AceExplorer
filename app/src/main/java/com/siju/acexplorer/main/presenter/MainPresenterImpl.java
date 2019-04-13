@@ -45,10 +45,6 @@ public class MainPresenterImpl implements MainPresenter, MainUi.Listener, MainMo
         mainModel.getUserSettings();
     }
 
-    @Override
-    public void setupBilling() {
-       mainModel.setupBilling();
-    }
 
     @Override
     public BillingManager getBillingManager() {

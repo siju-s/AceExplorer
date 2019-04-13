@@ -29,7 +29,6 @@ import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.main.model.groups.DrawerItems;
-import com.siju.acexplorer.main.view.AceActivity;
 import com.siju.acexplorer.theme.Theme;
 import com.siju.acexplorer.theme.ThemeUtils;
 import com.siju.acexplorer.utils.Utils;
@@ -54,10 +53,14 @@ public class MainModelImpl implements MainModel,
     private Context            context;
     private BillingManager     billingManager;
 
-    public MainModelImpl(AceActivity activity) {
+    public MainModelImpl() {
         context = AceApplication.getAppContext();
         billingManager = new BillingManager();
-        billingManager.setContext(activity);
+        setupBilling();
+    }
+
+    private void setupBilling() {
+        billingManager.setupBilling(this);
     }
 
     @Override
@@ -93,11 +96,6 @@ public class MainModelImpl implements MainModel,
 
         Analytics.getLogger().userTheme(getTheme().toString());
         listener.passUserPrefs(bundle);
-    }
-
-    @Override
-    public void setupBilling() {
-        billingManager.setupBilling(this);
     }
 
     @Override

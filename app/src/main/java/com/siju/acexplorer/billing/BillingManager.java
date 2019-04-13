@@ -1,7 +1,6 @@
 package com.siju.acexplorer.billing;
 
 import android.app.Activity;
-import android.content.Context;
 import android.util.Log;
 
 import com.android.billingclient.api.BillingClient;
@@ -17,6 +16,7 @@ import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsParams;
 import com.android.billingclient.api.SkuDetailsResponseListener;
+import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.logging.Logger;
 
 import java.io.IOException;
@@ -32,7 +32,6 @@ import java.util.Set;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class BillingManager implements PurchasesUpdatedListener {
     public static final  String         SKU_REMOVE_ADS = "com.siju.acexplorer.pro"; //"android.test.purchased";
-    // Default value of mBillingClientResponseCode until BillingManager was not yeat initialized
     public static final  int            BILLING_MANAGER_NOT_INITIALIZED = -1;
     private static final String         TAG = "BillingManager";
 
@@ -52,14 +51,13 @@ public class BillingManager implements PurchasesUpdatedListener {
      */
     private boolean serviceConnected;
     private BillingUpdatesListener billingUpdatesListener;
-    private Activity activity;
     private Set<String> mTokensToBeConsumed;
     private int mBillingClientResponseCode = BILLING_MANAGER_NOT_INITIALIZED;
 
 
     public void setupBilling(final BillingUpdatesListener updatesListener) {
         billingUpdatesListener = updatesListener;
-        billingClient = BillingClient.newBuilder(activity).setListener(this).build();
+        billingClient = BillingClient.newBuilder(AceApplication.getAppContext()).setListener(this).build();
 
         // Start setup. This is asynchronous and the specified listener will be called
         // once setup completes.
@@ -247,15 +245,15 @@ public class BillingManager implements PurchasesUpdatedListener {
     /**
      * Start a purchase flow
      */
-    public void initiatePurchaseFlow(final String skuId, final @SkuType String billingType) {
-        initiatePurchaseFlow(skuId, null, billingType);
+    public void initiatePurchaseFlow(Activity context, final String skuId, final @SkuType String billingType) {
+        initiatePurchaseFlow(context, skuId, null, billingType);
     }
 
     /**
      * Start a purchase or subscription replace flow
      */
     @SuppressWarnings("SameParameterValue")
-    public void initiatePurchaseFlow(final String skuId, final String oldSku,
+    public void initiatePurchaseFlow(final Activity activity, final String skuId, final String oldSku,
                                      final @SkuType String billingType)
     {
         Runnable purchaseFlowRequest = new Runnable() {
@@ -274,13 +272,6 @@ public class BillingManager implements PurchasesUpdatedListener {
         executeServiceRequest(purchaseFlowRequest);
     }
 
-    public Context getContext() {
-        return activity;
-    }
-
-    public void setContext(Activity activity) {
-        this.activity = activity;
-    }
 
     public void querySkuDetailsAsync(@SkuType final String itemType, final List<String> skuList,
                                      final SkuDetailsResponseListener listener)
@@ -363,7 +354,6 @@ public class BillingManager implements PurchasesUpdatedListener {
      * Clear the resources
      */
     public void destroy() {
-        activity = null;
         billingUpdatesListener = null;
         if (billingClient != null && billingClient.isReady()) {
             billingClient.endConnection();

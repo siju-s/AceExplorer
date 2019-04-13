@@ -30,8 +30,6 @@ public interface MainModel {
 
     void getUserSettings();
 
-    void setupBilling();
-
     void setListener(Listener listener);
 
     Theme getTheme();

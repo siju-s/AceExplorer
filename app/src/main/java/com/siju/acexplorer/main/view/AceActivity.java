@@ -53,18 +53,18 @@ public class AceActivity extends BaseActivity {
 
         boolean sendAnalytics = PreferenceManager.getDefaultSharedPreferences(this).
                 getBoolean(PREFS_ANALYTICS, true);
+
         Analytics.getLogger().sendAnalytics(sendAnalytics);
         Analytics.getLogger().register(this);
         Analytics.getLogger().reportDeviceName();
 
         LinearLayout linearLayout = findViewById(R.id.base);
+        MainModel mainModel = new MainModelImpl();
         mainUi = new MainBridge(this, linearLayout);
-        MainModel mainModel = new MainModelImpl(this);
         MainPresenter mainPresenter = new MainPresenterImpl(mainUi, mainModel);
 
         mainUi.init();
         mainPresenter.getUserPreferences();
-        mainPresenter.setupBilling();
     }
 
     @Override

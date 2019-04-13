@@ -24,6 +24,5 @@ public interface MainPresenter {
 
     void getUserPreferences();
 
-    void setupBilling();
 
 }
