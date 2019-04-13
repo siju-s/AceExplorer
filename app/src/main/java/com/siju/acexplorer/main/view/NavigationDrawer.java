@@ -16,15 +16,9 @@
 
 package com.siju.acexplorer.main.view;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import com.google.android.material.navigation.NavigationView;
-import androidx.core.content.ContextCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ExpandableListView;
@@ -32,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.material.navigation.NavigationView;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.billing.BillingManager;
@@ -47,6 +42,12 @@ import com.siju.acexplorer.settings.SettingsActivity;
 import com.siju.acexplorer.theme.Theme;
 
 import java.util.ArrayList;
+
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import static com.siju.acexplorer.main.model.StorageUtils.getDownloadsDirectory;
 import static com.siju.acexplorer.main.model.groups.Category.APP_MANAGER;
@@ -66,7 +67,7 @@ class NavigationDrawer implements View.OnClickListener {
     static               int    DRAWER_HEADER_FAV_POS     = 1;
     private static       int    DRAWER_HEADER_TOOLS_POS   = 3;
 
-    private Activity activity;
+    private AppCompatActivity activity;
     private Context  context;
 
     private DrawerLayout          drawerLayout;
@@ -85,7 +86,7 @@ class NavigationDrawer implements View.OnClickListener {
     private BillingManager billingManager;
 
 
-    NavigationDrawer(Activity activity, MainUiView uiView, Theme theme, BillingManager billingManager) {
+    NavigationDrawer(AppCompatActivity activity, MainUiView uiView, Theme theme, BillingManager billingManager) {
         this.context = uiView.getContext();
         this.activity = activity;
         this.uiView = uiView;
@@ -346,7 +347,7 @@ class NavigationDrawer implements View.OnClickListener {
     }
 
     void openDrawer() {
-        drawerLayout.openDrawer(Gravity.START);
+        drawerLayout.openDrawer(GravityCompat.START);
     }
 
     void onTotalGroupDataFetched(ArrayList<SectionGroup> totalData) {

@@ -103,9 +103,6 @@
     <string name="pref_title_disable_dual">Dual стъкло в Пейзаж</string>
     <string name="pref_title_check_update">Провери за актуализации</string>
     <string name="pref_title_change_lang">Смени езика</string>
-    <string name="pref_title_about">За нас</string>
-    <string name="pref_title_version">версия</string>
-    <string name="prefs_summary_dev">Разработчик</string>
     <string name="hide">Крия</string>
     <string name="unhide">Разкрий</string>
     <string name="more">Повече ▼</string>
@@ -141,7 +138,6 @@
     <string name="view">изглед</string>
     <string name="install">Инсталирай</string>
     <string name="package_installer_content">Кои действия бихте искали да направите?</string>
-    <string name="open_source_license">лицензи за отворен код</string>
     <string name="need_permission">Има нужда от разрешение</string>
     <string name="permission_setting_hint">Докоснете Настройки -> Разрешения и след това включете съхранение на.</string>
     <string name="access_denied_external">Напиши достъп до външно не SD отпуска</string>

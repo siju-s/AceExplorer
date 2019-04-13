@@ -130,10 +130,14 @@ public class DialogBrowseFragment extends DialogFragment implements
         return dialogFragment;
     }
 
+    private AppCompatActivity getActivityWrapper() {
+        return (AppCompatActivity) getActivity();
+    }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        return new Dialog(getActivity(), getTheme()) {
+        return new Dialog(getActivityWrapper(), getTheme()) {
             @Override
             public void onBackPressed() {
                 if (checkIfRootDir()) {
@@ -326,7 +330,7 @@ public class DialogBrowseFragment extends DialogFragment implements
     }
 
     private void setupPermissions() {
-        permissionHelper = new PermissionHelper(getActivity(), this);
+        permissionHelper = new PermissionHelper(getActivityWrapper(), this);
         permissionHelper.checkPermissions();
     }
 

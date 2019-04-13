@@ -104,9 +104,7 @@
     <string name="pref_title_disable_dual">Podwójna szyba w Krajobraz</string>
     <string name="pref_title_check_update">Sprawdź aktualizacje</string>
     <string name="pref_title_change_lang">Język</string>
-    <string name="pref_title_about">O nas</string>
-    <string name="pref_title_version">Wersja</string>
-    <string name="prefs_summary_dev">Deweloper</string>
+
     <string name="hide">Ukryć</string>
     <string name="unhide">Unhide</string>
     <string name="more">jeszcze</string>
@@ -143,7 +141,6 @@
     <string name="view">Widok</string>
     <string name="install">zainstalować</string>
     <string name="package_installer_content">Jaka akcja chcesz zrobić?</string>
-    <string name="open_source_license">Licencje open source</string>
     <string name="need_permission">potrzebuje pozwolenia</string>
     <string name="permission_setting_hint">Dotknij Ustawienia -> Uprawnienia i włącz Storage dalej.</string>
     <string name="access_denied_external">Zapis dostęp do zewnętrznych nie przyznano SD</string>

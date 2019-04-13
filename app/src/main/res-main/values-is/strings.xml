@@ -102,9 +102,7 @@
     <string name="pref_title_disable_dual">Dual megin í landslaginu</string>
     <string name="pref_title_check_update">Athugaðu með uppfærslur</string>
     <string name="pref_title_change_lang">Tungumál</string>
-    <string name="pref_title_about">Um okkur</string>
-    <string name="pref_title_version">útgáfa</string>
-    <string name="prefs_summary_dev">Hönnuður</string>
+
     <string name="hide">fela</string>
     <string name="unhide">Birta</string>
     <string name="more">meira</string>
@@ -140,7 +138,6 @@
     <string name="view">Útsýni</string>
     <string name="install">setja</string>
     <string name="package_installer_content">Hvaða aðgerð viltu gera?</string>
-    <string name="open_source_license">Opinn uppspretta leyfi</string>
     <string name="need_permission">þarf leyfi</string>
     <string name="permission_setting_hint">Pikkaðu á Stillingar -> Heimildir og þá snúa geymslu á.</string>
     <string name="access_denied_external">Skrifréttindi ytri SD ekki veitt</string>

@@ -103,9 +103,7 @@
     <string name="pref_title_disable_dual">Dobbelt rude i Landskab</string>
     <string name="pref_title_check_update">Søg efter opdateringer</string>
     <string name="pref_title_change_lang">Skift sprog</string>
-    <string name="pref_title_about">Om os</string>
-    <string name="pref_title_version">Version</string>
-    <string name="prefs_summary_dev">Udvikler</string>
+
     <string name="hide">Skjule</string>
     <string name="unhide">Vis igen</string>
     <string name="more">mere</string>
@@ -141,7 +139,6 @@
     <string name="view">Udsigt</string>
     <string name="install">Installere</string>
     <string name="package_installer_content">Hvilken handling vil du gerne gøre?</string>
-    <string name="open_source_license">Open source-licenser</string>
     <string name="need_permission">behov tilladelse</string>
     <string name="permission_setting_hint">Tryk på Indstillinger -> Tilladelser og derefter slå Opbevaring på.</string>
     <string name="access_denied_external">Skriveadgang til eksterne SD ikke ydet</string>

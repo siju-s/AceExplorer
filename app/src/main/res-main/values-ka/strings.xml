@@ -102,9 +102,7 @@
     <string name="pref_title_disable_dual">Dual მინა Landscape</string>
     <string name="pref_title_check_update">შეამოწმოთ განახლებები</string>
     <string name="pref_title_change_lang">ენა</string>
-    <string name="pref_title_about">ჩვენს შესახებ</string>
-    <string name="pref_title_version">მობილური</string>
-    <string name="prefs_summary_dev">დეველოპერი</string>
+
     <string name="hide">დამალვა</string>
     <string name="unhide">unhide</string>
     <string name="more">მეტი</string>
@@ -141,7 +139,6 @@
     <string name="view">კალენდარი</string>
     <string name="install">დაინსტალირება</string>
     <string name="package_installer_content">რომელი ქმედება გსურთ ამის გაკეთება?</string>
-    <string name="open_source_license">ღია ლიცენზიები</string>
     <string name="need_permission">საჭიროებს ნებართვას</string>
     <string name="permission_setting_hint">Tap Settings -> ნებართვები და შემდეგ აქციოს შენახვის შესახებ.</string>
     <string name="access_denied_external">ჩაწერის უფლება, გარე SD არ გაიცემა</string>

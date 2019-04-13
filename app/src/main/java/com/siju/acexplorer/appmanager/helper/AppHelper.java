@@ -1,13 +1,14 @@
 package com.siju.acexplorer.appmanager.helper;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.Settings;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import static com.siju.acexplorer.appmanager.view.AppDetailUi.REQUEST_CODE_UNINSTALL;
 
@@ -17,7 +18,7 @@ public class AppHelper {
     public static final  String SCHEME_PACKAGE     = "package";
     private static final String PREFIX_PACKAGE_URI = "package:";
 
-    public static void uninstallApp(Activity activity, String packageName) {
+    public static void uninstallApp(AppCompatActivity activity, String packageName) {
         Uri packageUri = Uri.parse(PREFIX_PACKAGE_URI + packageName);
         Intent uninstallIntent =
                 new Intent(Intent.ACTION_UNINSTALL_PACKAGE, packageUri);

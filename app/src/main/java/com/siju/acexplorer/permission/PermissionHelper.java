@@ -17,20 +17,21 @@
 package com.siju.acexplorer.permission;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.Settings;
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.logging.Logger;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import static com.siju.acexplorer.main.view.MainUiView.PERMISSIONS_REQUEST;
 
@@ -39,7 +40,7 @@ public class PermissionHelper {
     private static final String     TAG                    = "PermissionHelper";
     private static final        int PHONE_SETTINGS_REQUEST = 2000;
 
-    private final Activity                 context;
+    private final AppCompatActivity context;
     private       PermissionResultCallback permissionCallback;
     private       Dialog                   permissionDialog;
 
@@ -47,7 +48,7 @@ public class PermissionHelper {
             .WRITE_EXTERNAL_STORAGE};
 
 
-    public PermissionHelper(@NonNull Activity context, PermissionResultCallback permissionCallback) {
+    public PermissionHelper(@NonNull AppCompatActivity context, PermissionResultCallback permissionCallback) {
         this.context = context;
         this.permissionCallback = permissionCallback;
     }

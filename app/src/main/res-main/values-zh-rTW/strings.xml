@@ -101,9 +101,7 @@
     <string name="pref_title_disable_dual">橫向的雙窗格</string>
     <string name="pref_title_check_update">檢查更新</string>
     <string name="pref_title_change_lang">語言</string>
-    <string name="pref_title_about">關於我們</string>
-    <string name="pref_title_version">版</string>
-    <string name="prefs_summary_dev">開發人員</string>
+
     <string name="hide">隱藏</string>
     <string name="unhide">取消隱藏</string>
     <string name="more">更多</string>
@@ -139,7 +137,6 @@
     <string name="view">視圖</string>
     <string name="install">安裝</string>
     <string name="package_installer_content">你想做哪個動作？</string>
-    <string name="open_source_license">開源許可證</string>
     <string name="need_permission">需要許可</string>
     <string name="permission_setting_hint">點擊設置 - >權限，然後打開存儲。</string>
     <string name="access_denied_external">未授予對外部SD的寫訪問權限</string>

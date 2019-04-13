@@ -103,9 +103,7 @@
     <string name="pref_title_disable_dual">Dual-Fenster in Landschaft</string>
     <string name="pref_title_check_update">Auf Updates prüfen</string>
     <string name="pref_title_change_lang">Sprache ändern</string>
-    <string name="pref_title_about">Über uns</string>
-    <string name="pref_title_version">Version</string>
-    <string name="prefs_summary_dev">Entwickler</string>
+
     <string name="hide">Verstecken</string>
     <string name="unhide">Sichtbar machen</string>
     <string name="more">Mehr</string>
@@ -141,7 +139,6 @@
     <string name="view">Aussicht</string>
     <string name="install">Installieren</string>
     <string name="package_installer_content">Welche Aktion möchten Sie tun?</string>
-    <string name="open_source_license">Open-Source-Lizenzen</string>
     <string name="need_permission">braucht Erlaubnis</string>
     <string name="permission_setting_hint">Tippen Sie auf Einstellungen -> Berechtigungen und schalten Lagerung auf.</string>
     <string name="access_denied_external">Schreibzugriff auf externe SD nicht gewährt</string>

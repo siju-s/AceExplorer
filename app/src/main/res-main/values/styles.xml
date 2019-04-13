@@ -24,7 +24,6 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@color/colorPrimary</item>
-        <item name="android:actionModeBackground">@color/colorPrimary</item>
         <item name="drawerArrowStyle">@style/DrawerIconStyle</item>
         <item name="autoCompleteTextViewStyle">@style/SearchAutoCompleteTextView</item>
         <item name="android:textDirection">locale</item>
@@ -39,7 +38,6 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@color/colorPrimary</item>
-        <item name="android:actionModeBackground">@color/colorPrimary</item>
         <item name="drawerArrowStyle">@style/DrawerIconStyle</item>
         <item name="autoCompleteTextViewStyle">@style/SearchAutoCompleteTextView</item>
         <item name="android:textDirection">locale</item>
@@ -81,7 +79,6 @@
         <item name="actionModeBackground">@color/colorPrimary</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:actionModeBackground">@color/colorPrimary</item>
     </style>
 
     <style name="TransparentTheme_DarkAppTheme_NoActionBar" parent="Theme.MaterialComponents.NoActionBar">

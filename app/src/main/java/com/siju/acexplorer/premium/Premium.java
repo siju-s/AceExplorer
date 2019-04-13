@@ -16,7 +16,6 @@
 
 package com.siju.acexplorer.premium;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.View;
@@ -26,14 +25,16 @@ import com.siju.acexplorer.R;
 import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.main.view.dialog.DialogHelper;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 /**
  * Created by Siju on 29 August,2017
  */
 public class Premium {
-    private Activity context;
+    private AppCompatActivity context;
     private BillingManager billingManager;
 
-    public Premium(Activity activity, BillingManager billingManager) {
+    public Premium(AppCompatActivity activity, BillingManager billingManager) {
         this.context = activity;
         this.billingManager = billingManager;
     }
@@ -67,7 +68,7 @@ public class Premium {
         }
     };
 
-    private void showPurchaseDialog(Activity context) {
+    private void showPurchaseDialog(AppCompatActivity context) {
         billingManager.initiatePurchaseFlow(context, BillingManager.SKU_REMOVE_ADS,
                                                           BillingClient.SkuType.INAPP);
     }

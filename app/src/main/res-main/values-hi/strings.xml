@@ -103,9 +103,6 @@
     <string name="pref_title_disable_dual">लैंडस्केप में दोहरी फलक</string>
     <string name="pref_title_check_update">अद्यतन के लिए जाँच</string>
     <string name="pref_title_change_lang">भाषा बदलो</string>
-    <string name="pref_title_about">हमारे बारे में</string>
-    <string name="pref_title_version">संस्करण</string>
-    <string name="prefs_summary_dev">डेवलपर</string>
     <string name="hide">छिपाना</string>
     <string name="unhide">सामने लाएँ</string>
     <string name="more">अधिक</string>
@@ -141,7 +138,6 @@
     <string name="view">राय</string>
     <string name="install">इंस्टॉल करें</string>
     <string name="package_installer_content">जो लड़ाई आप क्या करना चाहते हैं?</string>
-    <string name="open_source_license">ओपन सोर्स लाइसेंस</string>
     <string name="need_permission">अनुमति की जरूरत है</string>
     <string name="permission_setting_hint">सेटिंग टैप करें -> अनुमतियां और फिर संग्रहण की बारी है।</string>
     <string name="access_denied_external">बाहरी के लिए उपयोग लिखने के लिए दी नहीं SD</string>

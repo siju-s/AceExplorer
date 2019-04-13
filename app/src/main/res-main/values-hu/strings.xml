@@ -103,9 +103,6 @@
     <string name="pref_title_disable_dual">Kettős ablaktábla Landscape</string>
     <string name="pref_title_check_update">Frissítések keresése</string>
     <string name="pref_title_change_lang">Válts nyelvet</string>
-    <string name="pref_title_about">Rólunk</string>
-    <string name="pref_title_version">Változat</string>
-    <string name="prefs_summary_dev">Fejlesztő</string>
     <string name="hide">Elrejt</string>
     <string name="unhide">felfedése</string>
     <string name="more">több</string>
@@ -141,7 +138,6 @@
     <string name="view">Kilátás</string>
     <string name="install">Telepítse</string>
     <string name="package_installer_content">Melyik műveletet szeretne tenni?</string>
-    <string name="open_source_license">Nyílt forráskódú licencek</string>
     <string name="need_permission">engedélyt kér</string>
     <string name="permission_setting_hint">Érintse meg a Beállítások -> Engedélyek majd kapcsolja Tároló.</string>
     <string name="access_denied_external">Írási hozzáférést külső SD nem részesülő</string>

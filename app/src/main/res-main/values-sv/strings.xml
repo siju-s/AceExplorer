@@ -102,9 +102,7 @@
     <string name="pref_title_disable_dual">Dubbla rutan i landskaps</string>
     <string name="pref_title_check_update">Kolla efter uppdateringar</string>
     <string name="pref_title_change_lang">Språk</string>
-    <string name="pref_title_about">Om oss</string>
-    <string name="pref_title_version">Version</string>
-    <string name="prefs_summary_dev">Utvecklare</string>
+
     <string name="hide">Dölja</string>
     <string name="unhide">Ta fram</string>
     <string name="more">mer</string>
@@ -140,7 +138,6 @@
     <string name="view">Se</string>
     <string name="install">Installera</string>
     <string name="package_installer_content">Vilken åtgärd skulle du vilja göra?</string>
-    <string name="open_source_license">Öppen källkod-licenser</string>
     <string name="need_permission">behöver behörighet</string>
     <string name="permission_setting_hint">Knacka på Inställningar -> Behörigheter och sedan slå Lagring på.</string>
     <string name="access_denied_external">Skrivåtkomst till extern SD inte beviljas</string>

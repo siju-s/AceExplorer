@@ -103,9 +103,7 @@
     <string name="pref_title_disable_dual">Διπλή παράθυρο στο τοπίο</string>
     <string name="pref_title_check_update">Έλεγχος για ενημερώσεις</string>
     <string name="pref_title_change_lang">Άλλαξε γλώσσα</string>
-    <string name="pref_title_about">Σχετικά με εμάς</string>
-    <string name="pref_title_version">Εκδοχή</string>
-    <string name="prefs_summary_dev">προγραμματιστής</string>
+
     <string name="hide">Κρύβω</string>
     <string name="unhide">Επανεμφάνιση</string>
     <string name="more">περισσότερο</string>
@@ -142,7 +140,6 @@
     <string name="view">Θέα</string>
     <string name="install">Εγκαθιστώ</string>
     <string name="package_installer_content">Ποια μέτρα θα θέλατε να κάνετε;</string>
-    <string name="open_source_license">Άδειες λογισμικού ανοικτού κώδικα</string>
     <string name="need_permission">χρειάζεται άδεια</string>
     <string name="permission_setting_hint">Πατήστε Ρυθμίσεις -> Δικαιώματα και στη συνέχεια ενεργοποιήστε Αποθήκευση σε.</string>
     <string name="access_denied_external">Γράψτε την πρόσβαση σε εξωτερικές δεν SD χορηγηθεί</string>

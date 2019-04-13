@@ -16,6 +16,7 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -31,7 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/toolbar"
         android:layout_marginStart="10dp"
-        android:minHeight="?android:attr/actionBarSize"
+        android:minHeight="?attr/actionBarSize"
         android:orientation="horizontal">
 
         <ImageButton
@@ -41,7 +42,7 @@
             android:layout_gravity="center_vertical"
             android:background="@null"
             android:contentDescription="@string/img_accessibility_back"
-            android:src="@drawable/ic_back_black" />
+            app:srcCompat="@drawable/ic_back_black" />
 
         <TextView
             android:id="@+id/textPath"

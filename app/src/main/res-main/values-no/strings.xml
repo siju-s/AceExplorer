@@ -102,9 +102,7 @@
     <string name="pref_title_disable_dual">Dual-ruten i Landskap</string>
     <string name="pref_title_check_update">Se etter oppdateringer</string>
     <string name="pref_title_change_lang">Språk</string>
-    <string name="pref_title_about">Om oss</string>
-    <string name="pref_title_version">Versjon</string>
-    <string name="prefs_summary_dev">Utvikler</string>
+
     <string name="hide">Gjemme seg</string>
     <string name="unhide">Unhide</string>
     <string name="more">mer</string>
@@ -140,7 +138,6 @@
     <string name="view">Utsikt</string>
     <string name="install">Installere</string>
     <string name="package_installer_content">Hvilke tiltak vil du gjøre?</string>
-    <string name="open_source_license">Åpen kildekode-lisenser</string>
     <string name="need_permission">trenger tillatelse</string>
     <string name="permission_setting_hint">Trykk på Innstillinger -> Tillatelser og deretter slå Lagring på.</string>
     <string name="access_denied_external">Skrivetilgang til eksterne SD ikke innvilget</string>

@@ -106,9 +106,6 @@
     <string name="pref_title_disable_dual">phána dé i Tírdhreacha</string>
     <string name="pref_title_check_update">Seiceáil do nuashonruithe</string>
     <string name="pref_title_change_lang">teanga Athraigh</string>
-    <string name="pref_title_about">Fúinn</string>
-    <string name="pref_title_version">Leagan</string>
-    <string name="prefs_summary_dev">Forbróir</string>
     <string name="hide">Folaigh</string>
     <string name="unhide">Bain an folach</string>
     <string name="more">níos</string>
@@ -144,7 +141,6 @@
     <string name="view">Amharc</string>
     <string name="install">Suiteáil</string>
     <string name="package_installer_content">Cén gníomh ba mhaith leat a dhéanamh?</string>
-    <string name="open_source_license">ceadúnas foinse oscailte</string>
     <string name="need_permission">cead riachtanais</string>
     <string name="permission_setting_hint">Socruithe Beartaíonn -> Ceadanna agus ansin cas Stóráil ar.</string>
     <string name="access_denied_external">bealach scríofa a thabhairt Seachtracha Ní Lá Earraigh deonaíodh</string>

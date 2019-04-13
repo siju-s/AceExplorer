@@ -16,6 +16,7 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -61,6 +62,6 @@
         android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"
         android:contentDescription="@string/img_accessibility_permission"
-        android:src="@drawable/permission_rationale" />
+        app:srcCompat="@drawable/permission_rationale" />
 
 </RelativeLayout>

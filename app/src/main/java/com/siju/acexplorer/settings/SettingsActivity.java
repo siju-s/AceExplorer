@@ -18,16 +18,9 @@ package com.siju.acexplorer.settings;
 
 
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
+import android.view.MenuItem;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
@@ -35,16 +28,25 @@ import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.theme.ThemeUtils;
 import com.siju.acexplorer.utils.LocaleHelper;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+
 import static com.siju.acexplorer.theme.ThemeUtils.THEME_DARK;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends AppCompatActivity implements PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
     private int currentTheme;
 
     @Override
     protected void attachBaseContext(Context newBase) {
         checkTheme();
         Context context = LocaleHelper.setLanguage(newBase);
-        Logger.log("Settings", "attachBaseContext: context:"+context.getResources().getConfiguration());
+        Logger.log("Settings", "attachBaseContext: context:" + context.getResources().getConfiguration());
         super.attachBaseContext(context);
     }
 
@@ -54,11 +56,20 @@ public class SettingsActivity extends AppCompatActivity {
         setAppTheme();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pref_holder);
+
         PreferenceManager.setDefaultValues(this, R.xml.pref_settings, false);
         setupActionBar();
-        getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new SettingsPreferenceFragment())
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.content, new SettingsPreferenceFragment())
                 .commit();
+        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+                    setToolbarTitle(getString(R.string.action_settings));
+                }
+            }
+        });
     }
 
     private void checkTheme() {
@@ -67,46 +78,66 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void setAppTheme() {
         if (currentTheme == THEME_DARK) {
-            setTheme(R.style.BaseDarkTheme_Settings);
-        }
-        else {
-            setTheme(R.style.BaseLightTheme_Settings);
+            setTheme(R.style.BaseDarkTheme_Settings_Dark);
+        } else {
+            setTheme(R.style.BaseDarkTheme_Settings_Light);
         }
     }
 
     private void setupActionBar() {
-        ViewGroup rootView = findViewById(R.id.action_bar_root);
-        AppBarLayout bar;
-        if (rootView != null) {
-            bar = (AppBarLayout) LayoutInflater.from(this).inflate(R.layout.toolbar_settings,
-                    rootView,
-                    false);
-            rootView.addView(bar, 0); // insert at top
-            Toolbar toolbar = (Toolbar) bar.getChildAt(0);
-            toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
-            toolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color
-                        .colorPrimaryDark));
-            }
-
-            setSupportActionBar(toolbar);
-            ActionBar actionBar = getSupportActionBar();
-
-            if (actionBar != null) {
-                // Show the Up button in the action bar.
-                actionBar.setDisplayHomeAsUpEnabled(true);
-            }
+        if (actionBar != null) {
+            // Show the Up button in the action bar.
+            actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
 
-    int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
+
+    private void setToolbarTitle(String title) {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(title);
         }
-        return result;
+
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        if (getSupportFragmentManager().popBackStackImmediate()) {
+            return true;
+        }
+        return super.onSupportNavigateUp();
+    }
+
+    @Override
+    public boolean onPreferenceStartFragment(PreferenceFragmentCompat caller, Preference pref) {
+        // Instantiate the new Fragment
+        final Bundle args = pref.getExtras();
+        final Fragment fragment = getSupportFragmentManager().getFragmentFactory().instantiate(
+                getClassLoader(),
+                pref.getFragment(),
+                args);
+        fragment.setArguments(args);
+        fragment.setTargetFragment(caller, 0);
+        // Replace the existing Fragment with the new Fragment
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.content, fragment)
+                .addToBackStack(null)
+                .commit();
+        setToolbarTitle(pref.getTitle().toString());
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

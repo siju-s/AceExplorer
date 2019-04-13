@@ -10,6 +10,7 @@ ext {
     firebaseInvitesVersion    = "16.1.0"
 
     supportLibVersion         = '1.0.0'
+    preferenceVersion         = '1.1.0-alpha04'
     billingVersion            = "1.2"
     gsonVersion               = "2.8.2"
     crashlyticsVersion        = "2.9.9"
@@ -32,7 +33,8 @@ ext {
             recyclerView     : "androidx.recyclerview:recyclerview:${supportLibVersion}",
             cardView         : "androidx.cardview:cardview:${supportLibVersion}",
             palette          : "androidx.palette:palette:${supportLibVersion}",
-            annotation       : "androidx.annotation:annotation:${supportLibVersion}"
+            annotation       : "androidx.annotation:annotation:${supportLibVersion}",
+            preference       : "androidx.preference:preference:${preferenceVersion}"
     ]
 
     firebase = [

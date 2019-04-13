@@ -105,9 +105,7 @@
     <string name="pref_title_disable_dual">בחלונית כפול ב נוף</string>
     <string name="pref_title_check_update">בדוק עדכונים</string>
     <string name="pref_title_change_lang">שנה שפה</string>
-    <string name="pref_title_about">עלינו</string>
-    <string name="pref_title_version">גִרְסָה</string>
-    <string name="prefs_summary_dev">מפתח</string>
+
     <string name="hide">להתחבא</string>
     <string name="unhide">בטל הסתרה</string>
     <string name="more">יותר</string>
@@ -143,7 +141,6 @@
     <string name="view">נוף</string>
     <string name="install">להתקין</string>
     <string name="package_installer_content">איזו פעולה תרצה לעשות?</string>
-    <string name="open_source_license">רישיונות קוד פתוח</string>
     <string name="need_permission">זקוק להרשאה</string>
     <string name="permission_setting_hint">הקש על הגדרות -> הרשאות ולאחר מכן הפעל אחסון.</string>
     <string name="access_denied_external">גישת כתיבה חיצונית לא SD כמובן מאליו</string>

@@ -1,11 +1,7 @@
 package com.siju.acexplorer.ui.peekandpop;
 
 import android.animation.Animator;
-import android.app.Activity;
 import android.content.res.Configuration;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -24,6 +20,11 @@ import com.siju.acexplorer.main.model.helper.SdkHelper;
 import com.siju.acexplorer.ui.autoplay.AutoPlayContainer;
 
 import java.util.ArrayList;
+
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class PeekAndPop {
 
@@ -310,7 +311,7 @@ public class PeekAndPop {
     public static class Builder {
 
         // essentials
-        protected final Activity activity;
+        protected final AppCompatActivity activity;
         int peekLayoutId = -1;
 
         // optional extras
@@ -319,7 +320,7 @@ public class PeekAndPop {
 
         OnGeneralActionListener onGeneralActionListener;
 
-        public Builder(@NonNull Activity activity) {
+        public Builder(@NonNull AppCompatActivity activity) {
             this.activity = activity;
             this.longClickViews = new ArrayList<>();
         }

@@ -16,7 +16,6 @@
 
 package com.siju.acexplorer.storage.view;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.Context;
@@ -75,7 +74,7 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
     private final ArrayList<FileInfo> copiedData = new ArrayList<>();
 
     private Context    context;
-    private Activity   activity;
+    private AppCompatActivity activity;
     private Theme      theme;
     private Toolbar    toolbar;
     private Toolbar    bottomToolbar;
@@ -100,7 +99,7 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
     private MenuItem sortItem;
 
 
-    MenuControls(Activity activity, StoragesUiView storagesUiView, Theme theme) {
+    MenuControls(AppCompatActivity activity, StoragesUiView storagesUiView, Theme theme) {
         this.activity = activity;
         this.storagesUiView = storagesUiView;
         this.context = storagesUiView.getContext();
@@ -151,11 +150,10 @@ class MenuControls implements Toolbar.OnMenuItemClickListener,
     @SuppressWarnings("ConstantConditions")
     private void setToolbar() {
         toolbar.setTitle(R.string.app_name);
-        ((AppCompatActivity) activity).setSupportActionBar(toolbar);
-        ((AppCompatActivity) activity).getSupportActionBar().setHomeButtonEnabled(true);
-        ((AppCompatActivity) activity).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity) activity).getSupportActionBar().setHomeAsUpIndicator(R.drawable
-                                                                                          .ic_drawer);
+        activity.setSupportActionBar(toolbar);
+        activity.getSupportActionBar().setHomeButtonEnabled(true);
+        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        activity.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_drawer);
         storagesUiView.syncDrawer();
     }
 

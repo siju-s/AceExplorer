@@ -104,9 +104,6 @@
     <string name="pref_title_disable_dual">Dual okno u krajoliku</string>
     <string name="pref_title_check_update">Provjeri ažuriranja</string>
     <string name="pref_title_change_lang">Promijeni jezik</string>
-    <string name="pref_title_about">O nama</string>
-    <string name="pref_title_version">Verzija</string>
-    <string name="prefs_summary_dev">razvijač</string>
     <string name="hide">Sakriti</string>
     <string name="unhide">Otkrij</string>
     <string name="more">više</string>
@@ -142,7 +139,6 @@
     <string name="view">Pogled</string>
     <string name="install">Instaliranje</string>
     <string name="package_installer_content">Koji radnju želite učiniti?</string>
-    <string name="open_source_license">Open source licence</string>
     <string name="need_permission">treba dozvolu</string>
     <string name="permission_setting_hint">Dodirnite Postavke -> Dozvole a zatim Storage dalje.</string>
     <string name="access_denied_external">Pisanje pristup vanjskoj ne sd odobrena</string>

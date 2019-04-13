@@ -103,9 +103,7 @@
     <string name="pref_title_disable_dual">پنجره دو در چشم انداز</string>
     <string name="pref_title_check_update">به روز رسانی ها رو بررسی کن</string>
     <string name="pref_title_change_lang">تغییر زبان</string>
-    <string name="pref_title_about">دربارهی ما</string>
-    <string name="pref_title_version">نسخه</string>
-    <string name="prefs_summary_dev">توسعه دهنده</string>
+
     <string name="hide">پنهان شدن</string>
     <string name="unhide">آشکار کردن</string>
     <string name="more">بیش</string>
@@ -141,7 +139,6 @@
     <string name="view">چشم انداز</string>
     <string name="install">نصب</string>
     <string name="package_installer_content">کدام عمل را می خواهید انجام دهید؟</string>
-    <string name="open_source_license">مجوزهای منبع باز</string>
     <string name="need_permission">نیاز به اجازه</string>
     <string name="permission_setting_hint">تنظیمات ضربه بزنید -> مجوز و پس از آن نوبت ذخیره سازی است.</string>
     <string name="access_denied_external">دسترسی برای نوشتن خارجی SD داده نمی</string>

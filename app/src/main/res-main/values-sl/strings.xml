@@ -104,9 +104,7 @@
     <string name="pref_title_disable_dual">Dual pane v krajini</string>
     <string name="pref_title_check_update">Preveri za posodobitve</string>
     <string name="pref_title_change_lang">Jezik</string>
-    <string name="pref_title_about">O podjetju</string>
-    <string name="pref_title_version">različica</string>
-    <string name="prefs_summary_dev">razvijalec</string>
+
     <string name="hide">Skrij</string>
     <string name="unhide">Razkrij</string>
     <string name="more">več</string>
@@ -142,7 +140,6 @@
     <string name="view">Poglej</string>
     <string name="install">namestitev</string>
     <string name="package_installer_content">Kateri ukrepi bi radi storili?</string>
-    <string name="open_source_license">Odprtokodne licence</string>
     <string name="need_permission">potrebuje dovoljenje</string>
     <string name="permission_setting_hint">Tapnite Nastavitve -> Dovoljenja in nato Shranjevanje naprej.</string>
     <string name="access_denied_external">Pisalni dostop do Zunanja ne SD dodeljena</string>

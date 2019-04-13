@@ -102,9 +102,7 @@
     <string name="pref_title_disable_dual">Двојна панелот во пејзаж</string>
     <string name="pref_title_check_update">Провери за надградби</string>
     <string name="pref_title_change_lang">Јазик</string>
-    <string name="pref_title_about">за нас</string>
-    <string name="pref_title_version">верзија</string>
-    <string name="prefs_summary_dev">инвеститорот</string>
+
     <string name="hide">Крие</string>
     <string name="unhide">Изглед</string>
     <string name="more">повеќе</string>
@@ -141,7 +139,6 @@
     <string name="view">Види</string>
     <string name="install">Инсталирај</string>
     <string name="package_installer_content">Која акција би сакал да направам?</string>
-    <string name="open_source_license">отворен код лиценци</string>
     <string name="need_permission">треба дозвола</string>
     <string name="permission_setting_hint">Допрете Settings -> Дозволи и потоа вклучете чување на.</string>
     <string name="access_denied_external">Пристап за пишување Надворешен не SD доделена</string>

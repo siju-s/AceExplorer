@@ -16,12 +16,12 @@
 
 package com.siju.acexplorer.ads;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
 
 import com.google.android.gms.ads.MobileAds;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import static com.siju.acexplorer.main.model.FileConstants.ADS;
@@ -34,7 +34,7 @@ public class AdHelper {
 
     private static final int DELAY_ADS_MILLIS = 2000;
 
-    public static void setupAds(final Activity activity) {
+    public static void setupAds(final AppCompatActivity activity) {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -47,7 +47,7 @@ public class AdHelper {
 
     }
 
-    private static void sendAdBroadcast(Activity activity) {
+    private static void sendAdBroadcast(AppCompatActivity activity) {
         Intent intent = new Intent(ADS);
         intent.putExtra(KEY_PREMIUM, false);
         LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);

@@ -1,6 +1,5 @@
 package com.siju.acexplorer.billing;
 
-import android.app.Activity;
 import android.util.Log;
 
 import com.android.billingclient.api.BillingClient;
@@ -24,6 +23,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Handles all the interactions with Play Store (via Billing library), maintains connection to
@@ -245,7 +246,7 @@ public class BillingManager implements PurchasesUpdatedListener {
     /**
      * Start a purchase flow
      */
-    public void initiatePurchaseFlow(Activity context, final String skuId, final @SkuType String billingType) {
+    public void initiatePurchaseFlow(AppCompatActivity context, final String skuId, final @SkuType String billingType) {
         initiatePurchaseFlow(context, skuId, null, billingType);
     }
 
@@ -253,7 +254,7 @@ public class BillingManager implements PurchasesUpdatedListener {
      * Start a purchase or subscription replace flow
      */
     @SuppressWarnings("SameParameterValue")
-    public void initiatePurchaseFlow(final Activity activity, final String skuId, final String oldSku,
+    public void initiatePurchaseFlow(final AppCompatActivity activity, final String skuId, final String oldSku,
                                      final @SkuType String billingType)
     {
         Runnable purchaseFlowRequest = new Runnable() {

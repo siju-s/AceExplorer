@@ -101,9 +101,7 @@
     <string name="pref_title_disable_dual">Dual pane di Landscape</string>
     <string name="pref_title_check_update">Periksa pembaruan</string>
     <string name="pref_title_change_lang">Bahasa</string>
-    <string name="pref_title_about">Tentang kami</string>
-    <string name="pref_title_version">Versi</string>
-    <string name="prefs_summary_dev">pembangun</string>
+
     <string name="hide">Menyembunyikan</string>
     <string name="unhide">unhide</string>
     <string name="more">lebih</string>
@@ -140,7 +138,6 @@
     <string name="view">Melihat</string>
     <string name="install">Memasang</string>
     <string name="package_installer_content">tindakan yang akan Anda lakukan?</string>
-    <string name="open_source_license">lisensi open source</string>
     <string name="need_permission">memerlukan izin</string>
     <string name="permission_setting_hint">Ketuk -> Permissions kemudian hidupkan Storage di.</string>
     <string name="access_denied_external">Tulis akses ke eksternal tidak SD diberikan</string>

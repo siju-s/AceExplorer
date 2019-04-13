@@ -101,9 +101,7 @@
     <string name="pref_title_disable_dual">บานหน้าต่างสองในภูมิทัศน์</string>
     <string name="pref_title_check_update">ตรวจสอบสำหรับการอัพเดต</string>
     <string name="pref_title_change_lang">ภาษา</string>
-    <string name="pref_title_about">เกี่ยวกับเรา</string>
-    <string name="pref_title_version">รุ่น</string>
-    <string name="prefs_summary_dev">ผู้พัฒนา</string>
+
     <string name="hide">ปิดบัง</string>
     <string name="unhide">ยกเลิกการซ่อน</string>
     <string name="more">มากกว่า</string>
@@ -140,7 +138,6 @@
     <string name="view">ดู</string>
     <string name="install">ติดตั้ง</string>
     <string name="package_installer_content">ซึ่งการกระทำที่คุณต้องการจะทำอย่างไร?</string>
-    <string name="open_source_license">ใบอนุญาตเปิดแหล่งที่มา</string>
     <string name="need_permission">ต้องได้รับอนุญาต</string>
     <string name="permission_setting_hint">แตะการตั้งค่า -> การอนุญาตและเปิดการเก็บรักษาต่อ</string>
     <string name="access_denied_external">การเขียนการเข้าถึงภายนอก SD ไม่ได้รับ</string>

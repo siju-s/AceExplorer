@@ -18,7 +18,6 @@ package com.siju.acexplorer.storage.view;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -28,11 +27,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -75,6 +69,12 @@ import com.siju.acexplorer.utils.InstallHelper;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import static com.siju.acexplorer.main.model.FileConstants.KEY_CATEGORY;
 import static com.siju.acexplorer.main.model.groups.Category.DOWNLOADS;
@@ -317,7 +317,7 @@ public class StoragesUiView extends CoordinatorLayout implements
                 String uriString = preferences.getString(FileConstants.SAF_URI, null);
                 Uri oldUri = uriString != null ? Uri.parse(uriString) : null;
 
-                if (resultCode == Activity.RESULT_OK) {
+                if (resultCode == AppCompatActivity.RESULT_OK) {
                     Analytics.getLogger().SAFResult(true);
                     Uri treeUri = intent.getData();
                     bridge.handleSAFResult(operationIntent, treeUri, isRooted(), intent.getFlags());

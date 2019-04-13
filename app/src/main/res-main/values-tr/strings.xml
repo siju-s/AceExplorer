@@ -102,9 +102,7 @@
     <string name="pref_title_disable_dual">Manzara Çift bölmesi</string>
     <string name="pref_title_check_update">Güncellemeleri kontrol et</string>
     <string name="pref_title_change_lang">Dil</string>
-    <string name="pref_title_about">Hakkımızda</string>
-    <string name="pref_title_version">versiyon</string>
-    <string name="prefs_summary_dev">Geliştirici</string>
+
     <string name="hide">gizlemek</string>
     <string name="unhide">Göster\'i</string>
     <string name="more">Daha</string>
@@ -140,7 +138,6 @@
     <string name="view">Görünüm</string>
     <string name="install">kurmak</string>
     <string name="package_installer_content">Hangi eylem yapmak istersiniz?</string>
-    <string name="open_source_license">Açık kaynak lisansları</string>
     <string name="need_permission">izin alması gerekiyor</string>
     <string name="permission_setting_hint">Dokunun Ayarlar -> İzinler ve ardından Saklama açın.</string>
     <string name="access_denied_external">Dış Yazma erişim izni olmayan SD</string>

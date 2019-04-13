@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference
+        android:key="prefsVersion"
+        android:layout="@layout/prefs_settings_item"
+        android:title="@string/pref_title_version" />
+
+    <com.siju.acexplorer.settings.OpenSourceDialogPreference
+        android:key="prefsOpenSource"
+        android:layout="@layout/prefs_settings_item"
+        android:title="@string/open_source_license" />
+
+    <Preference
+        android:key="prefsPrivacyPolicy"
+        android:layout="@layout/prefs_settings_item"
+        android:title="@string/privacy_policy">
+
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="https://sites.google.com/view/sjapps/home/privacy-policy" />
+
+    </Preference>
+
+</androidx.preference.PreferenceScreen>

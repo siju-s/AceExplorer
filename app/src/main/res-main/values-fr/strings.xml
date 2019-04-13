@@ -103,9 +103,6 @@
     <string name="pref_title_disable_dual">Double vitrage dans Paysage</string>
     <string name="pref_title_check_update">Vérifier les mises à jour</string>
     <string name="pref_title_change_lang">Changer de langue</string>
-    <string name="pref_title_about">À propos de nous</string>
-    <string name="pref_title_version">Version</string>
-    <string name="prefs_summary_dev">Développeur</string>
     <string name="hide">Cacher</string>
     <string name="unhide">Démasquer</string>
     <string name="more">plus</string>
@@ -141,7 +138,6 @@
     <string name="view">Vue</string>
     <string name="install">Installer</string>
     <string name="package_installer_content">Quelle action voulez-vous faire?</string>
-    <string name="open_source_license">licences open source</string>
     <string name="need_permission">besoin de l\'autorisation</string>
     <string name="permission_setting_hint">Appuyez sur Paramètres -> Autorisations et puis tourner Stockage sur.</string>
     <string name="access_denied_external">L\'accès en écriture à externe SD pas accordée</string>

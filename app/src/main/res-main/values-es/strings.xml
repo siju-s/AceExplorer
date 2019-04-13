@@ -103,9 +103,7 @@
     <string name="pref_title_disable_dual">de doble panel en paisaje</string>
     <string name="pref_title_check_update">Comprobar si hay actualizaciones</string>
     <string name="pref_title_change_lang">Cambiar idioma</string>
-    <string name="pref_title_about">Sobre nosotros</string>
-    <string name="pref_title_version">Versión</string>
-    <string name="prefs_summary_dev">Desarrollador</string>
+
     <string name="hide">Esconder</string>
     <string name="unhide">en Mostrar</string>
     <string name="more">Más</string>
@@ -141,7 +139,6 @@
     <string name="view">Ver</string>
     <string name="install">Instalar</string>
     <string name="package_installer_content">¿Qué acción le gustaría hacer?</string>
-    <string name="open_source_license">licencias de código abierto</string>
     <string name="need_permission">necesita el permiso</string>
     <string name="permission_setting_hint">Pulse Configuración -> Permisos de almacenamiento y luego girar sucesivamente.</string>
     <string name="access_denied_external">acceso de escritura externo SD no concedió</string>

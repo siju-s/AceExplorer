@@ -102,9 +102,7 @@
     <string name="pref_title_disable_dual">pane dyfishtë në Peisazhi</string>
     <string name="pref_title_check_update">Kontrollo për përditësime</string>
     <string name="pref_title_change_lang">Gjuhe</string>
-    <string name="pref_title_about">Rreth nesh</string>
-    <string name="pref_title_version">Version</string>
-    <string name="prefs_summary_dev">zhvillues</string>
+
     <string name="hide">fsheh</string>
     <string name="unhide">Unhide</string>
     <string name="more">më shumë</string>
@@ -141,7 +139,6 @@
     <string name="view">Pamje</string>
     <string name="install">instaloj</string>
     <string name="package_installer_content">Cili veprim do të ju pëlqen të bëni?</string>
-    <string name="open_source_license">kod të hapur</string>
     <string name="need_permission">leje ka nevojë për</string>
     <string name="permission_setting_hint">Takoni Cilësimet -> Permissions dhe pastaj të kthehet në Storage.</string>
     <string name="access_denied_external">Shkruaj qasje në të jashtme jo SD dhënë</string>

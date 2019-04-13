@@ -103,9 +103,7 @@
     <string name="pref_title_disable_dual">Dubbele ruit in het Landschap</string>
     <string name="pref_title_check_update">Controleren op updates</string>
     <string name="pref_title_change_lang">wijzig taal</string>
-    <string name="pref_title_about">Over ons</string>
-    <string name="pref_title_version">Versie</string>
-    <string name="prefs_summary_dev">Ontwikkelaar</string>
+
     <string name="hide">Verbergen</string>
     <string name="unhide">unhide</string>
     <string name="more">meer</string>
@@ -141,7 +139,6 @@
     <string name="view">Uitzicht</string>
     <string name="install">Installeren</string>
     <string name="package_installer_content">Welke actie zou je willen doen?</string>
-    <string name="open_source_license">Open source-licenties</string>
     <string name="need_permission">heeft toestemming nodig</string>
     <string name="permission_setting_hint">Tik op Instellingen -> Machtigingen en vervolgens Opslag op.</string>
     <string name="access_denied_external">Schrijftoegang tot externe SD niet toegekend</string>

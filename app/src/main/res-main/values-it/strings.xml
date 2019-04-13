@@ -102,9 +102,7 @@
     <string name="pref_title_disable_dual">A doppio pannello in Landscape</string>
     <string name="pref_title_check_update">Controlla gli aggiornamenti</string>
     <string name="pref_title_change_lang">Lingua</string>
-    <string name="pref_title_about">Riguardo a noi</string>
-    <string name="pref_title_version">Versione</string>
-    <string name="prefs_summary_dev">Sviluppatore</string>
+
     <string name="hide">nascondere</string>
     <string name="unhide">unhide</string>
     <string name="more">Di Più</string>
@@ -141,7 +139,6 @@
     <string name="view">vista</string>
     <string name="install">Installa</string>
     <string name="package_installer_content">Quale azione vorresti fare?</string>
-    <string name="open_source_license">licenze open source</string>
     <string name="need_permission">Ha bisogno il permesso</string>
     <string name="permission_setting_hint">Toccare Impostazioni -> Permessi e poi girare di archiviazione su.</string>
     <string name="access_denied_external">Accesso in scrittura a esterno non SD concesso</string>

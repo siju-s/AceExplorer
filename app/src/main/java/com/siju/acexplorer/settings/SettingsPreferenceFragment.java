@@ -16,31 +16,10 @@
 
 package com.siju.acexplorer.settings;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
-import android.preference.PreferenceScreen;
-import androidx.annotation.Nullable;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.widget.Toolbar;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewParent;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.siju.acexplorer.AceApplication;
@@ -51,59 +30,47 @@ import com.siju.acexplorer.main.model.FileConstants;
 import com.siju.acexplorer.main.model.helper.FileUtils;
 import com.siju.acexplorer.theme.ThemeUtils;
 import com.siju.acexplorer.utils.LocaleHelper;
-import com.siju.acexplorer.main.view.AceActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.CheckBoxPreference;
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 
 import static com.siju.acexplorer.theme.ThemeUtils.CURRENT_THEME;
 import static com.siju.acexplorer.theme.ThemeUtils.PREFS_THEME;
 
 
-public class SettingsPreferenceFragment extends PreferenceFragment {
+public class SettingsPreferenceFragment extends PreferenceFragmentCompat  {
 
-    private final       String TAG             = this.getClass().getSimpleName();
-    public static final String PREFS_LANGUAGE  = "prefLanguage";
+    private final String TAG = this.getClass().getSimpleName();
+    public static final String PREFS_LANGUAGE = "prefLanguage";
     public static final String PREFS_ANALYTICS = "prefsAnalytics";
-    private static final String PREFS_POLICY = "prefsPrivacyPolicy";
-    private static final String URL_POLICY = "https://sites.google.com/view/sjapps/home/privacy-policy";
 
     private SharedPreferences preferences;
-    private Preference        updatePreference;
-    private Preference        policyPreference;
-    private String            currentLanguage;
-    private int               theme;
-
+    private Preference updatePreference;
+    private String currentLanguage;
+    private int theme;
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        ListView listView = view.findViewById(android.R.id.list);
-        if (listView != null) {
-            listView.setVerticalScrollBarEnabled(false);
-        }
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        setPreferencesFromResource(R.xml.pref_settings, rootKey);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.pref_settings);
-        setHasOptionsMenu(true);
         preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
-        ListPreference langPreference = (ListPreference) findPreference(PREFS_LANGUAGE);
-        ListPreference themePreference = (ListPreference) findPreference(PREFS_THEME);
+        ListPreference langPreference = findPreference(PREFS_LANGUAGE);
+        ListPreference themePreference = findPreference(PREFS_THEME);
         theme = ThemeUtils.getTheme(getActivity());
         String PREFS_UPDATE = "prefsUpdate";
         updatePreference = findPreference(PREFS_UPDATE);
-        policyPreference = findPreference(PREFS_POLICY);
-        String PREFS_VERSION = "prefsVersion";
-        Preference version = findPreference(PREFS_VERSION);
-        try {
-            version.setSummary(getActivity().getPackageManager()
-                                       .getPackageInfo(getActivity().getPackageName(), 0).versionName);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
 
 
-        CheckBoxPreference hiddenPreference = (CheckBoxPreference) findPreference("prefHidden");
+        CheckBoxPreference hiddenPreference = findPreference("prefHidden");
         hiddenPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -112,7 +79,7 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         });
 
 
-        CheckBoxPreference analyticsPreference = (CheckBoxPreference) findPreference(PREFS_ANALYTICS);
+        CheckBoxPreference analyticsPreference = findPreference(PREFS_ANALYTICS);
         analyticsPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -130,19 +97,10 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
                 data.putExtra(FileConstants.PREFS_RESET, true);
                 Toast.makeText(AceApplication.getAppContext(), getString(R.string.msg_fav_reset), Toast
                         .LENGTH_LONG).show();
-                getActivity().setResult(Activity.RESULT_OK, data);
+                getActivity().setResult(AppCompatActivity.RESULT_OK, data);
                 return false;
             }
         });
-
-        policyPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                showPolicyScreen();
-                return false;
-            }
-        });
-
 
         String value = LocaleHelper.getLanguage(getActivity());
         langPreference.setValue(value);
@@ -159,84 +117,6 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         initializeListeners();
     }
 
-    private void showPolicyScreen() {
-        Analytics.getLogger().policyOpened();
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(URL_POLICY));
-        if (FileUtils.isPackageIntentUnavailable(getActivity(), intent)) {
-           Toast.makeText(getActivity(), R.string.msg_error_not_supported, Toast.LENGTH_SHORT).show();
-        } else {
-            startActivity(intent);
-        }
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        preferences.registerOnSharedPreferenceChangeListener(mListener);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        preferences.unregisterOnSharedPreferenceChangeListener(mListener);
-
-    }
-
-    @Override
-    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
-        super.onPreferenceTreeClick(preferenceScreen, preference);
-
-        // If the user has clicked on a preference screen, set up the screen
-        if (preference instanceof PreferenceScreen) {
-            Analytics.getLogger().aboutDisplayed();
-            setupActionBar((PreferenceScreen) preference);
-        }
-
-        return false;
-    }
-
-    private void setupActionBar(PreferenceScreen preferenceScreen) {
-        final Dialog dialog = preferenceScreen.getDialog();
-        AppBarLayout bar;
-        ViewParent view1 = dialog.findViewById(android.R.id.list).getParent();
-        ViewParent view2 = view1.getParent();
-        LinearLayout root;
-        Log.d(this.getClass().getSimpleName(), "On prefernce tree-" + view1 + " view2=" + view2 + " view3=" +
-                view2.getParent());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            root = (LinearLayout) view2;
-        } else {
-            root = (LinearLayout) view1;
-        }
-        bar = (AppBarLayout) LayoutInflater.from(getActivity()).inflate(R.layout.toolbar_settings, root,
-
-                                                                        false);
-        root.addView(bar, 0);
-        Toolbar toolbar = (Toolbar) bar.getChildAt(0);
-        toolbar.setTitle(preferenceScreen.getTitle());
-        toolbar.setPadding(0, ((SettingsActivity) getActivity()).getStatusBarHeight(), 0, 0);
-
-
-        toolbar.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorPrimary));
-
-        if (Build.VERSION.SDK_INT >= 21) {
-            getActivity().getWindow().setStatusBarColor(ContextCompat.getColor(getActivity(),
-                                                                               R.color
-                                                                                       .colorPrimaryDark));
-
-        }
-
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-    }
-
-
     private void initializeListeners() {
         updatePreference
                 .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -246,17 +126,17 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
                         Intent intent = new Intent(Intent.ACTION_VIEW);
                         // Try Google play
                         intent.setData(Uri
-                                               .parse("market://details?id=" + getActivity().getPackageName()));
+                                .parse("market://details?id=" + getActivity().getPackageName()));
 
                         if (FileUtils.isPackageIntentUnavailable(getActivity(), intent)) {
                             // Market (Google play) app seems not installed,
                             // let's try to open a webbrowser
                             intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=" +
-                                                             getActivity().getPackageName()));
+                                    getActivity().getPackageName()));
                             if (FileUtils.isPackageIntentUnavailable(getActivity(), intent)) {
                                 Toast.makeText(getActivity(),
-                                               getString(R.string.msg_error_not_supported),
-                                               Toast.LENGTH_SHORT).show();
+                                        getString(R.string.msg_error_not_supported),
+                                        Toast.LENGTH_SHORT).show();
                             } else {
                                 startActivity(intent);
                             }
@@ -337,14 +217,14 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         // Trigger the listener immediately with the preference's
         // current value.
         sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                                                                 PreferenceManager
-                                                                         .getDefaultSharedPreferences(preference.getContext())
-                                                                         .getString(preference.getKey(), ""));
+                PreferenceManager
+                        .getDefaultSharedPreferences(preference.getContext())
+                        .getString(preference.getKey(), ""));
     }
 
 
     private void restartApp() {
-        Activity activity = getActivity();
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
         if (activity == null) {
             return;
         }
@@ -356,43 +236,5 @@ public class SettingsPreferenceFragment extends PreferenceFragment {
         activity.startActivity(activity.getIntent());
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            Intent in = new Intent(getActivity(), AceActivity.class);
-            final int enter_anim = android.R.anim.fade_in;
-            final int exit_anim = android.R.anim.fade_out;
-            Activity activity = getActivity();
-            activity.overridePendingTransition(enter_anim, exit_anim);
-            activity.finish();
-            activity.overridePendingTransition(enter_anim, exit_anim);
-            activity.startActivity(in);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-
-    private final SharedPreferences.OnSharedPreferenceChangeListener mListener =
-            new SharedPreferences.OnSharedPreferenceChangeListener() {
-                public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-                    switch (key) {
-                        case FileConstants.PREFS_HOMESCREEN:
-                            boolean isHomeScreenEnabled = prefs.getBoolean(FileConstants
-                                                                                   .PREFS_HOMESCREEN, true);
-                            Logger.log(TAG, "Homescreen=" + isHomeScreenEnabled);
-//                            mSendIntent.putExtra(FileConstants.PREFS_HOMESCREEN, isHomeScreenEnabled);
-                            break;
-
-                        case FileConstants.PREFS_DUAL_PANE:
-                            boolean isDualPaneEnabledSettings = preferences.getBoolean(FileConstants
-                                                                                          .PREFS_DUAL_PANE, true);
-                            Logger.log(TAG, "Dualpane=" + isDualPaneEnabledSettings);
-//                            mSendIntent.putExtra(FileConstants.PREFS_DUAL_PANE, isDualPaneEnabledSettings);
-                            break;
-                    }
-                }
-            };
 
 }

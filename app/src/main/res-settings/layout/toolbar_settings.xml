@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,22 +14,20 @@
   ~ limitations under the License.
   -->
 
-<com.google.android.material.appbar.AppBarLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.appbar.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:theme="@style/AppTheme.AppBarOverlay">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?colorPrimary"
-        android:minHeight="?actionBarSize"
+        android:layout_height="@dimen/actionbar_height"
         android:theme="@style/ToolbarTheme"
         app:navigationIcon="?homeAsUpIndicator"
         app:title="@string/action_settings"
         app:titleTextAppearance="@style/ToolbarTitle"
-        app:titleTextColor="@color/white"/>
+        app:titleTextColor="@color/white" />
 
 </com.google.android.material.appbar.AppBarLayout>

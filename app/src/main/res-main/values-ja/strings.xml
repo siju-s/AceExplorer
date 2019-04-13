@@ -101,9 +101,7 @@
     <string name="pref_title_disable_dual">風景の中にデュアルペイン</string>
     <string name="pref_title_check_update">アップデートを確認</string>
     <string name="pref_title_change_lang">言語</string>
-    <string name="pref_title_about">私たちに関しては</string>
-    <string name="pref_title_version">バージョン</string>
-    <string name="prefs_summary_dev">ディベロッパー</string>
+
     <string name="hide">隠す</string>
     <string name="unhide">再表示</string>
     <string name="more">もっと</string>
@@ -139,7 +137,6 @@
     <string name="view">ビュー</string>
     <string name="install">インストール</string>
     <string name="package_installer_content">どのアクションをしますか？</string>
-    <string name="open_source_license">オープンソースライセンス</string>
     <string name="need_permission">許可が必要</string>
     <string name="permission_setting_hint">タップ設定] - > [権限と、その後にストレージをオンにします。</string>
     <string name="access_denied_external">付与されていない外部SDへの書き込みアクセス</string>

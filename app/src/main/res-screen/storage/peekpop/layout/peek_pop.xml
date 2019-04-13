@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
@@ -11,7 +12,7 @@
         android:layout_centerVertical="true"
         android:padding="@dimen/padding_5"
         android:background="@color/white"
-        android:src="@drawable/ic_left_arrow" />
+        app:srcCompat="@drawable/ic_left_arrow" />
 
 
     <androidx.cardview.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
@@ -74,7 +75,7 @@
                     android:background="@null"
                     android:contentDescription="@string/mute"
                     android:padding="@dimen/padding_10"
-                    android:src="@drawable/ic_volume_off" />
+                    app:srcCompat="@drawable/ic_volume_off" />
             </FrameLayout>
 
 
@@ -98,6 +99,6 @@
         android:layout_toEndOf="@id/cardView"
         android:layout_centerVertical="true"
         android:padding="@dimen/padding_5"
-        android:src="@drawable/ic_right_arrow" />
+        app:srcCompat="@drawable/ic_right_arrow" />
 
 </RelativeLayout>

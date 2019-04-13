@@ -104,9 +104,7 @@
     <string name="pref_title_disable_dual">Двойная панель в ландшафтном</string>
     <string name="pref_title_check_update">Проверить наличие обновлений</string>
     <string name="pref_title_change_lang">язык</string>
-    <string name="pref_title_about">О нас</string>
-    <string name="pref_title_version">Версия</string>
-    <string name="prefs_summary_dev">разработчик</string>
+
     <string name="hide">Спрятать</string>
     <string name="unhide">Unhide</string>
     <string name="more">Больше</string>
@@ -143,7 +141,6 @@
     <string name="view">Посмотреть</string>
     <string name="install">устанавливать</string>
     <string name="package_installer_content">Какие действия вы хотели бы сделать?</string>
-    <string name="open_source_license">лицензии с открытым исходным кодом</string>
     <string name="need_permission">Требуется разрешение</string>
     <string name="permission_setting_hint">Нажмите Настройки -> Права доступа, а затем включите хранение на.</string>
     <string name="access_denied_external">Запись доступа к внешним источникам не SD предоставлено</string>

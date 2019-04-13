@@ -101,9 +101,7 @@
     <string name="pref_title_disable_dual">풍경 듀얼 창</string>
     <string name="pref_title_check_update">업데이트 확인</string>
     <string name="pref_title_change_lang">언어</string>
-    <string name="pref_title_about">회사 소개</string>
-    <string name="pref_title_version">번역</string>
-    <string name="prefs_summary_dev">개발자</string>
+
     <string name="hide">숨는 장소</string>
     <string name="unhide">숨기기 해제</string>
     <string name="more">더</string>
@@ -139,7 +137,6 @@
     <string name="view">전망</string>
     <string name="install">설치</string>
     <string name="package_installer_content">어떤 행동을하기를 원하십니까?</string>
-    <string name="open_source_license">오픈 소스 라이센스</string>
     <string name="need_permission">권한이 필요합니다</string>
     <string name="permission_setting_hint">탭 설정 -> 권한 및 다음에 저장을 켭니다.</string>
     <string name="access_denied_external">외부에 대한 쓰기 권한이 부여되지 않은 (SD)</string>
