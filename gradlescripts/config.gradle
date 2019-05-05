@@ -10,7 +10,7 @@ ext {
     firebaseInvitesVersion    = "16.1.0"
 
     supportLibVersion         = "28.0.0"
-    billingVersion            = "1.2"
+    billingVersion            = "1.2.2"
     gsonVersion               = "2.8.2"
     crashlyticsVersion        = "2.9.9"
 
