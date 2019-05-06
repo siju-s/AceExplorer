@@ -146,6 +146,24 @@
                 android:layout_column="1"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
+                android:text="@string/version_code"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textVersionCode"
+                android:layout_column="1"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:padding="@dimen/padding_5" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:gravity="end"
+                android:layout_column="1"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
                 android:text="@string/enabled"
                 android:textStyle="bold" />
 

@@ -46,4 +46,7 @@ public class SdkHelper {
     }
 
 
+    public static boolean isAtleastPie() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.P;
+    }
 }
