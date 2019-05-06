@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.siju.acexplorer.billing.BillingManager;
+import com.siju.acexplorer.main.model.FavInfo;
 import com.siju.acexplorer.main.model.SectionGroup;
 import com.siju.acexplorer.theme.Theme;
 
@@ -35,8 +36,8 @@ import java.util.ArrayList;
 
 public class MainBridge implements MainUi {
 
-    private MainUiView        uiView;
-    private MainUi.Listener   listener;
+    private MainUiView uiView;
+    private MainUi.Listener listener;
     private AppCompatActivity activity;
 
     MainBridge(AppCompatActivity activity, ViewGroup parent) {
@@ -119,6 +120,26 @@ public class MainBridge implements MainUi {
     @Override
     public void onSearchClicked() {
         uiView.onSearchClicked();
+    }
+
+    @Override
+    public void onDrawerIconClicked(boolean dualPane) {
+        uiView.onDrawerIconClicked(dualPane);
+    }
+
+    @Override
+    public void syncDrawer() {
+        uiView.syncDrawer();
+    }
+
+    @Override
+    public void updateFavorites(ArrayList<FavInfo> favList) {
+        uiView.updateFavorites(favList);
+    }
+
+    @Override
+    public void removeFavorites(ArrayList<FavInfo> favList) {
+        uiView.removeFavorites(favList);
     }
 
     @Override

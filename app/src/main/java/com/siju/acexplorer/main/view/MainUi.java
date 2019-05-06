@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.siju.acexplorer.billing.BillingManager;
+import com.siju.acexplorer.main.model.FavInfo;
 import com.siju.acexplorer.main.model.SectionGroup;
 
 import java.util.ArrayList;
@@ -85,6 +86,14 @@ public interface MainUi {
     void onMultiWindowChanged(boolean isInMultiWindowMode, Configuration newConfig);
 
     void onSearchClicked();
+
+    void onDrawerIconClicked(boolean dualPane);
+
+    void syncDrawer();
+
+    void updateFavorites(ArrayList<FavInfo> favList);
+
+    void removeFavorites(ArrayList<FavInfo> favList);
 
     interface Listener {
 

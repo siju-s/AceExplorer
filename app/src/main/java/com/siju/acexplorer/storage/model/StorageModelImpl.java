@@ -102,7 +102,6 @@ public class StorageModelImpl implements StoragesModel {
         sharedPreferenceWrapper = new SharedPreferenceWrapper();
         fileOpsHelper = new FileOpsHelper();
         fileOpsHelper.setSAFListener(safDialogListener);
-
     }
 
 

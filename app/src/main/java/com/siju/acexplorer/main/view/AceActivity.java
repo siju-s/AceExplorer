@@ -30,27 +30,31 @@ import com.kobakei.ratethisapp.RateThisApp;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.base.view.BaseActivity;
-import com.siju.acexplorer.logging.Logger;
+import com.siju.acexplorer.billing.BillingManager;
+import com.siju.acexplorer.main.model.FavInfo;
 import com.siju.acexplorer.main.model.MainModel;
 import com.siju.acexplorer.main.model.MainModelImpl;
 import com.siju.acexplorer.main.presenter.MainPresenter;
 import com.siju.acexplorer.main.presenter.MainPresenterImpl;
+import com.siju.acexplorer.storage.view.StoragesUiView;
+
+import java.util.ArrayList;
 
 import static com.siju.acexplorer.settings.SettingsPreferenceFragment.PREFS_ANALYTICS;
 
 
-public class AceActivity extends BaseActivity {
+public class AceActivity extends BaseActivity implements ActivityFragmentCommunicator {
 
     private final String TAG = this.getClass().getSimpleName();
 
     private MainUi mainUi;
+    private MainModel mainModel = new MainModelImpl();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.base);
-
         boolean sendAnalytics = PreferenceManager.getDefaultSharedPreferences(this).
                 getBoolean(PREFS_ANALYTICS, true);
 
@@ -59,7 +63,6 @@ public class AceActivity extends BaseActivity {
         Analytics.getLogger().reportDeviceName();
 
         LinearLayout linearLayout = findViewById(R.id.base);
-        MainModel mainModel = new MainModelImpl();
         mainUi = new MainBridge(this, linearLayout);
         MainPresenter mainPresenter = new MainPresenterImpl(mainUi, mainModel);
 
@@ -111,7 +114,6 @@ public class AceActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        Logger.log(TAG, "onDestroy");
         mainUi.onExit();
         super.onDestroy();
     }
@@ -145,6 +147,7 @@ public class AceActivity extends BaseActivity {
     }
 
     private Configuration configuration;
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -179,4 +182,45 @@ public class AceActivity extends BaseActivity {
     public void onSearchClicked() {
         mainUi.onSearchClicked();
     }
+
+    @Override
+    public BillingManager getBillingManager() {
+        return mainModel.getBillingManager();
+    }
+
+    @Override
+    public DrawerListener getDrawerListener() {
+        return drawerListener;
+    }
+
+    @Override
+    public StoragesUiView.FavoriteOperation getFavListener() {
+        return favListener;
+    }
+
+    private DrawerListener drawerListener = new DrawerListener() {
+        @Override
+        public void onDrawerIconClicked(boolean dualPane) {
+            mainUi.onDrawerIconClicked(dualPane);
+        }
+
+        @Override
+        public void syncDrawer() {
+            mainUi.syncDrawer();
+        }
+    };
+
+    private StoragesUiView.FavoriteOperation favListener = new StoragesUiView.FavoriteOperation() {
+        @Override
+        public void updateFavorites(ArrayList<FavInfo> favList) {
+            mainUi.updateFavorites(favList);
+        }
+
+        @Override
+        public void removeFavorites(ArrayList<FavInfo> favList) {
+            mainUi.removeFavorites(favList);
+        }
+    };
+
+
 }

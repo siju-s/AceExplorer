@@ -34,7 +34,6 @@ public class FileConstants {
 
 
     public static final String KEY_PATH = "PATH";
-    public static final String KEY_HOME = "HOME";
     public static final String KEY_LIB_SORTLIST = "LIB_LIST";
     public static final String KEY_GRID_COLUMNS = "grid_columns";
     public static final String KEY_POSITION = "position";
