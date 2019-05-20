@@ -57,7 +57,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import static com.siju.acexplorer.home.view.HomeLibrary.LIBSORT_REQUEST_CODE;
-import static com.siju.acexplorer.main.model.FileConstants.KEY_CATEGORY;
 import static com.siju.acexplorer.main.model.groups.StoragesGroup.STORAGE_EMULATED_0;
 
 
@@ -284,18 +283,8 @@ public class HomeUiView extends CoordinatorLayout {
         getDualModeState();
         FragmentTransaction ft = getActivity().getSupportFragmentManager()
                                               .beginTransaction();
-        Bundle args = new Bundle();
-        args.putBoolean(FileConstants.KEY_HOME, true);
-        args.putSerializable(KEY_CATEGORY, category);
-        args.putBoolean(FileConstants.KEY_PREMIUM, isPremium);
-        args.putString(FileConstants.KEY_PATH, path);
-        args.putBoolean(FileConstants.KEY_DUAL_ENABLED, isDualModeActive);
 
-        FileList baseFileList = new FileList();
-        baseFileList.setBillingManager(bridge.getBillingManager());
-        baseFileList.setDrawerListener(drawerListener);
-        baseFileList.setFavoriteListener(favListener);
-        baseFileList.setArguments(args);
+        FileList baseFileList = FileList.newInstance(path, category, isDualModeActive);
         ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
                 .exit_to_left);
         ft.replace(R.id.main_container, baseFileList);

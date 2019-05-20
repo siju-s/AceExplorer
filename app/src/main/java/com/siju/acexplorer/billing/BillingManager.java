@@ -18,6 +18,9 @@ import com.android.billingclient.api.SkuDetailsResponseListener;
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.logging.Logger;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -108,16 +111,16 @@ public class BillingManager implements PurchasesUpdatedListener {
                 }
                 PurchasesResult purchasesResult = billingClient.queryPurchases(SkuType.INAPP);
                 Logger.log(TAG, "Querying purchases elapsed time: " + (System.currentTimeMillis() - time)
-                                + "ms");
+                        + "ms");
                 // If there are subscriptions supported, we add subscription rows as well
                 if (areSubscriptionsSupported()) {
                     PurchasesResult subscriptionResult
                             = billingClient.queryPurchases(SkuType.SUBS);
                     Logger.log(TAG, "Querying purchases and subscriptions elapsed time: "
-                                    + (System.currentTimeMillis() - time) + "ms");
+                            + (System.currentTimeMillis() - time) + "ms");
                     Logger.log(TAG, "Querying subscriptions result code: "
-                                    + subscriptionResult.getResponseCode()
-                                    + " res: " + subscriptionResult.getPurchasesList().size());
+                            + subscriptionResult.getResponseCode()
+                            + " res: " + subscriptionResult.getPurchasesList().size());
 
                     if (subscriptionResult.getResponseCode() == BillingResponse.OK) {
                         purchasesResult.getPurchasesList().addAll(
@@ -129,16 +132,20 @@ public class BillingManager implements PurchasesUpdatedListener {
                     Logger.log(TAG, "Skipped subscription purchases query since they are not supported");
                 } else {
                     Logger.log(TAG, "queryPurchases() got an error response code: "
-                                    + purchasesResult.getResponseCode());
+                            + purchasesResult.getResponseCode());
                 }
                 onQueryPurchasesFinished(purchasesResult);
-//                if (purchasesResult != null && purchasesResult.getPurchasesList().size() > 0) {
-//                consumeAsync(purchasesResult.getPurchasesList().get(0).getPurchaseToken());
-//                }
+                //consumePurchase(purchasesResult);
             }
         };
 
         executeServiceRequest(queryToExecute);
+    }
+
+    private void consumePurchase(PurchasesResult purchasesResult) {
+        if (purchasesResult != null && purchasesResult.getPurchasesList().size() > 0) {
+            consumeAsync(purchasesResult.getPurchasesList().get(0).getPurchaseToken());
+        }
     }
 
     /**
@@ -163,7 +170,7 @@ public class BillingManager implements PurchasesUpdatedListener {
         // Have we been disposed of in the meantime? If so, or bad result code, then quit
         if (billingClient == null || result.getResponseCode() != BillingResponse.OK) {
             Logger.log(TAG, "Billing client was null or result code (" + result.getResponseCode()
-                            + ") was bad - quitting");
+                    + ") was bad - quitting");
             return;
         }
 
@@ -247,25 +254,36 @@ public class BillingManager implements PurchasesUpdatedListener {
      * Start a purchase flow
      */
     public void initiatePurchaseFlow(AppCompatActivity context, final String skuId, final @SkuType String billingType) {
-        initiatePurchaseFlow(context, skuId, null, billingType);
+        initiatePurchaseFlow(context, null, createSkuDetail(skuId, billingType));
+    }
+
+    private SkuDetails createSkuDetail(final String skuId, final @SkuType String billingType) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            String productId = "productId";
+            String productType = "type";
+            jsonObject.put(productId, skuId);
+            jsonObject.put(productType, billingType);
+            return new SkuDetails(jsonObject.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
      * Start a purchase or subscription replace flow
      */
     @SuppressWarnings("SameParameterValue")
-    public void initiatePurchaseFlow(final AppCompatActivity activity, final String skuId, final String oldSku,
-                                     final @SkuType String billingType)
-    {
+    public void initiatePurchaseFlow(final AppCompatActivity activity, final String oldSku, final SkuDetails skuDetails) {
         Runnable purchaseFlowRequest = new Runnable() {
             @Override
             public void run() {
-                if (activity == null) {
+                if (activity == null || skuDetails == null) {
                     return;
                 }
                 BillingFlowParams purchaseParams = BillingFlowParams.newBuilder()
-                                                                    .setSku(skuId).setType(billingType)
-                                                                    .setOldSku(oldSku).build();
+                        .setSkuDetails(skuDetails).setOldSku(oldSku).build();
                 billingClient.launchBillingFlow(activity, purchaseParams);
             }
         };

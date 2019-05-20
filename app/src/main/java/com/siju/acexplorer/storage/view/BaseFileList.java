@@ -16,6 +16,7 @@
 
 package com.siju.acexplorer.storage.view;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -35,6 +36,7 @@ import com.siju.acexplorer.R;
 import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.home.model.LoaderHelper;
 import com.siju.acexplorer.main.model.groups.Category;
+import com.siju.acexplorer.main.view.ActivityFragmentCommunicator;
 import com.siju.acexplorer.main.view.DrawerListener;
 import com.siju.acexplorer.storage.model.StorageModelImpl;
 import com.siju.acexplorer.storage.model.StoragesModel;
@@ -45,6 +47,18 @@ public class BaseFileList extends Fragment {
 
     private StoragesUi storagesUi;
     private BillingManager billingManager;
+    private StoragesUiView.FavoriteOperation favListener;
+    private DrawerListener drawerListener;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof ActivityFragmentCommunicator) {
+            billingManager = ((ActivityFragmentCommunicator) context).getBillingManager();
+            drawerListener = ((ActivityFragmentCommunicator) context).getDrawerListener();
+            favListener = ((ActivityFragmentCommunicator) context).getFavListener();
+        }
+    }
 
     @Override
     public View onCreateView(
@@ -67,11 +81,6 @@ public class BaseFileList extends Fragment {
         new StoragesPresenterImpl(storagesUi, storagesModel, loaderHelper, getLoaderManager());
         storagesUi.init();
     }
-
-    public void setBillingManager(BillingManager billingManager) {
-        this.billingManager = billingManager;
-    }
-
 
     public boolean onBackPressed() {
         return storagesUi.onBackPress();
@@ -178,18 +187,6 @@ public class BaseFileList extends Fragment {
             FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
             fragmentTransaction.remove(fragment).commitAllowingStateLoss();
         }
-    }
-
-    private StoragesUiView.FavoriteOperation favListener;
-
-    public void setFavoriteListener(StoragesUiView.FavoriteOperation favoriteListener) {
-        this.favListener = favoriteListener;
-    }
-
-    private DrawerListener drawerListener;
-
-    public void setDrawerListener(DrawerListener drawerListener) {
-        this.drawerListener = drawerListener;
     }
 
     public void setPremium() {

@@ -54,6 +54,7 @@ public class AppDetailUIView extends CoordinatorLayout implements AppDetailUi, V
     private             TextView             minSdkText;
     private             TextView             minSdkTextHolder;
     private             TextView             targetSdkText;
+    private             TextView             versionCodeText;
     private             TextView             updatedTimeText;
     private             TextView             installedTimeText;
     private             TextView             permissionText;
@@ -123,6 +124,7 @@ public class AppDetailUIView extends CoordinatorLayout implements AppDetailUi, V
         minSdkTextHolder = findViewById(R.id.textMinSdkPlaceHolder);
         targetSdkText = findViewById(R.id.textTargetSdk);
         updatedTimeText = findViewById(R.id.textUpdated);
+        versionCodeText = findViewById(R.id.textVersionCode);
         installedTimeText = findViewById(R.id.textInstalled);
         permissionText = findViewById(R.id.textPermissions);
         permissionHolderText = findViewById(R.id.textPermissionPlaceholder);
@@ -148,6 +150,12 @@ public class AppDetailUIView extends CoordinatorLayout implements AppDetailUi, V
     private void setPackageInfo(PackageInfo packageInfo, String source) {
         packageNameText.setText(packageName);
         versionNameText.setText(packageInfo.versionName);
+        if (SdkHelper.isAtleastPie()) {
+            versionCodeText.setText(String.valueOf(packageInfo.getLongVersionCode()));
+        }
+        else {
+            versionCodeText.setText(String.valueOf(packageInfo.versionCode));
+        }
         sourceText.setText(source);
         updatedTimeText.setText(FileUtils.convertDate(packageInfo.lastUpdateTime));
         installedTimeText.setText(FileUtils.convertDate(packageInfo.firstInstallTime));

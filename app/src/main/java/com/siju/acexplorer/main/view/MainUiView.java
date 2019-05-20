@@ -61,7 +61,6 @@ import com.siju.acexplorer.premium.PremiumUtils;
 import com.siju.acexplorer.storage.view.BaseFileList;
 import com.siju.acexplorer.storage.view.DualPaneList;
 import com.siju.acexplorer.storage.view.FileList;
-import com.siju.acexplorer.storage.view.StoragesUiView;
 import com.siju.acexplorer.theme.Theme;
 import com.siju.acexplorer.utils.LocaleHelper;
 import com.stericson.RootTools.RootTools;
@@ -83,9 +82,7 @@ import static com.siju.acexplorer.theme.ThemeUtils.PREFS_THEME;
 /**
  * Created by Siju on 02 September,2017
  */
-public class MainUiView extends DrawerLayout implements PermissionResultCallback,
-        DrawerListener,
-        StoragesUiView.FavoriteOperation {
+public class MainUiView extends DrawerLayout implements PermissionResultCallback {
 
     private final String TAG = this.getClass().getSimpleName();
 
@@ -102,7 +99,6 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
 
     private PermissionHelper permissionHelper;
     private NavigationDrawer navigationDrawer;
-    private HomeScreenFragment homeScreenFragment;
 
     private static final int MENU_FAVORITES = 1;
     private int currentOrientation;
@@ -254,6 +250,11 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
 
 
     private void displayMainScreen(boolean isHomeScreenEnabled) {
+        Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id
+                .main_container);
+        if (fragment != null) {
+            return;
+        }
         if (isHomeScreenEnabled) {
             displayHomeScreen();
         } else {
@@ -367,48 +368,28 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
 
     private void displayHomeScreen() {
         FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
-        Bundle args = new Bundle();
-        args.putBoolean(FileConstants.KEY_HOME, true);
-        args.putBoolean(FileConstants.PREFS_FIRST_RUN, isFirstRun);
-        args.putBoolean(FileConstants.KEY_DUAL_ENABLED, canDualModeBeAct);
-        homeScreenFragment = new HomeScreenFragment();
-        homeScreenFragment.setBillingManager(bridge.getBillingManager());
-        homeScreenFragment.setArguments(args);
-        homeScreenFragment.setDrawerListener(this);
-        homeScreenFragment.setFavListener(this);
+        HomeScreenFragment homeScreenFragment = HomeScreenFragment.newInstance(isFirstRun, canDualModeBeAct);
         ft.replace(R.id.main_container, homeScreenFragment);
         ft.addToBackStack(null);
-        Logger.log(TAG, "displayHomeScreen");
-        ft.commitAllowingStateLoss();
+        ft.commit();
     }
 
     private void displayFileList(String directory, Category category) {
-        Log.d(TAG, "displayFileList: dualPaneFocus:"+isDualPaneInFocus);
-
-        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
-        Bundle args = new Bundle();
-        args.putString(FileConstants.KEY_PATH, directory);
-        args.putSerializable(FileConstants.KEY_CATEGORY, category);
-        args.putBoolean(FileConstants.KEY_DUAL_ENABLED, canDualModeBeAct);
-
         Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id
                 .main_container);
+
+        FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+
         Fragment dualPaneFragment = activity.getSupportFragmentManager().findFragmentById(R.id
                 .frame_container_dual);
         if (fragment == null || fragment instanceof HomeScreenFragment) {
-            FileList baseFileList = new FileList();
-            baseFileList.setBillingManager(bridge.getBillingManager());
-            baseFileList.setArguments(args);
-            baseFileList.setFavoriteListener(this);
-            baseFileList.setDrawerListener(this);
+            FileList baseFileList = FileList.newInstance(directory, category, canDualModeBeAct);
             ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim
                     .enter_from_right, R.anim
                     .exit_to_left);
             ft.replace(R.id.main_container, baseFileList, directory);
             ft.addToBackStack(null);
             ft.commit();
-            Logger.log(TAG, "displayFileList");
-
         }
         else if (isDualPaneInFocus && dualPaneFragment != null) {
             ((DualPaneList) dualPaneFragment).reloadList(directory, category);
@@ -418,19 +399,21 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         }
     }
 
-    @Override
     public void updateFavorites(ArrayList<FavInfo> favList) {
         navigationDrawer.updateFavorites(favList);
-        if (isHomeScreenEnabled && homeScreenFragment != null) {
-            homeScreenFragment.updateFavoritesCount(favList.size());
+        Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id
+                .main_container);
+        if (isHomeScreenEnabled && fragment instanceof HomeScreenFragment) {
+            ((HomeScreenFragment) fragment).updateFavoritesCount(favList.size());
         }
     }
 
-    @Override
     public void removeFavorites(ArrayList<FavInfo> favList) {
         navigationDrawer.removeFavorites(favList);
-        if (isHomeScreenEnabled && homeScreenFragment != null) {
-            homeScreenFragment.removeFavorites(favList.size());
+        Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id
+                .main_container);
+        if (isHomeScreenEnabled && fragment instanceof HomeScreenFragment) {
+            ((HomeScreenFragment) fragment).removeFavorites(favList.size());
         }
     }
 
@@ -475,9 +458,6 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
         String internalStoragePath = getInternalStorage();
         DualPaneList dualFragment = DualPaneList.newInstance(internalStoragePath, FILES, true);
-        dualFragment.setBillingManager(bridge.getBillingManager());
-        dualFragment.setFavoriteListener(this);
-        dualFragment.setDrawerListener(this);
         ft.replace(R.id.frame_container_dual, dualFragment);
         ft.commitAllowingStateLoss();
     }
@@ -551,8 +531,10 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
             case MENU_FAVORITES:
                 FavInfo favInfo = navigationDrawer.removeFavorite(groupPos, childPos);
                 sharedPreferenceWrapper.removeFavorite(getContext(), favInfo);
-                if (isHomeScreenEnabled && homeScreenFragment != null) {
-                    homeScreenFragment.removeFavorites(1);
+                Fragment fragment = activity.getSupportFragmentManager().findFragmentById(R.id
+                        .main_container);
+                if (isHomeScreenEnabled && fragment instanceof HomeScreenFragment) {
+                    ((HomeScreenFragment) fragment).removeFavorites(1);
                 }
         }
     }
@@ -642,12 +624,10 @@ public class MainUiView extends DrawerLayout implements PermissionResultCallback
         navigationDrawer.onTotalGroupDataFetched(totalData);
     }
 
-    @Override
     public void onDrawerIconClicked(boolean dualPane) {
         openDrawer(dualPane);
     }
 
-    @Override
     public void syncDrawer() {
         navigationDrawer.syncDrawerState();
     }

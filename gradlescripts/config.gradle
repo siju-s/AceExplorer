@@ -11,7 +11,7 @@ ext {
 
     supportLibVersion         = '1.0.0'
     preferenceVersion         = '1.1.0-alpha04'
-    billingVersion            = "1.2"
+    billingVersion            = "1.2.2"
     gsonVersion               = "2.8.2"
     crashlyticsVersion        = "2.9.9"
 

@@ -16,6 +16,7 @@
 
 package com.siju.acexplorer.home.view;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -23,6 +24,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.billing.BillingManager;
@@ -32,12 +37,9 @@ import com.siju.acexplorer.home.model.LoaderHelper;
 import com.siju.acexplorer.home.presenter.HomePresenterImpl;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.main.model.FileConstants;
+import com.siju.acexplorer.main.view.ActivityFragmentCommunicator;
 import com.siju.acexplorer.main.view.DrawerListener;
 import com.siju.acexplorer.storage.view.StoragesUiView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 
 import static com.siju.acexplorer.main.model.FileConstants.PREFS_FIRST_RUN;
 
@@ -50,9 +52,18 @@ public class HomeScreenFragment extends Fragment {
     private StoragesUiView.FavoriteOperation favListener;
     private BillingManager billingManager;
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof ActivityFragmentCommunicator) {
+            billingManager = ((ActivityFragmentCommunicator) context).getBillingManager();
+            drawerListener = ((ActivityFragmentCommunicator) context).getDrawerListener();
+            favListener = ((ActivityFragmentCommunicator) context).getFavListener();
+        }
+    }
+
     public static HomeScreenFragment newInstance(boolean isFirstRun, boolean isDualMode) {
         Bundle args = new Bundle();
-        args.putBoolean(FileConstants.KEY_HOME, true);
         args.putBoolean(PREFS_FIRST_RUN, isFirstRun);
         args.putBoolean(FileConstants.KEY_DUAL_ENABLED, isDualMode);
         HomeScreenFragment homeScreenFragment = new HomeScreenFragment();
@@ -85,11 +96,6 @@ public class HomeScreenFragment extends Fragment {
 
         homeView.init();
     }
-
-    public void setBillingManager(BillingManager billingManager) {
-        this.billingManager = billingManager;
-    }
-
 
     @Override
     public void onPause() {
@@ -124,14 +130,6 @@ public class HomeScreenFragment extends Fragment {
 
     public void updateFavoritesCount(int size) {
         homeView.updateFavoritesCount(size);
-    }
-
-    public void setDrawerListener(DrawerListener drawerListener) {
-        this.drawerListener = drawerListener;
-    }
-
-    public void setFavListener(StoragesUiView.FavoriteOperation favoriteListener) {
-        this.favListener = favoriteListener;
     }
 
     public void removeFavorites(int size) {
