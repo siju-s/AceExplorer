@@ -1,12 +1,12 @@
 # More documentation about how to customize your build
 # can be found here:
 # https://docs.fastlane.tools
-fastlane_version "1.109.0"
+fastlane_version "2.68.0"
 
 # This value helps us track success metrics for Fastfiles
 # we automatically generate. Feel free to remove this line
 # once you get things running smoothly!
-generated_fastfile_id "0d2e0ff6-6abf-432b-a2ca-228bd5399a90"
+generated_fastfile_id "68e78da0-8b2e-4e04-8c99-04758b33a4fd"
 
 default_platform :android
 
@@ -15,26 +15,20 @@ default_platform :android
 # info which you can add here later
 lane :beta do
   # build the release variant
-  gradle(task: 'assemble', build_type: 'Release')
-#gradle(task: 'assemble', build_type: 'Release', flavor: 'dev')
-  # upload to Beta by Crashlytics
-  crashlytics(
-    api_token: "d34cf3ffdd00d6e0d7b3e85d558c4fa01210a6f1",
-    build_secret: "e61cbd26d2a5943cbda9e3c988af24ab21d176820524fc91d8ca7aded9c92546"
-  )
-end
+   gradle(
+      task: 'assemble',
+      flavor: "prod",
+      build_type: 'Release',
+      properties: {
+          "android.injected.signing.store.file" => "path-to-keystore",
+          "android.injected.signing.store.password" => "",
+          "android.injected.signing.key.alias" => "",
+          "android.injected.signing.key.password" => "",
+        }
+    )
 
-lane :playstore do
-  gradle(
-    task: 'assemble',
-    build_type: 'Release'
-  )
- upload_to_play_store(
-    track: 'alpha',
-package_name: 'com.siju.acexplorer',
-skip_upload_images: 'true',
-skip_upload_screenshots: 'true',
-apk:"/Volumes/ANDROID/WORKSPACE/ACE/ace-explorer/app/build/outputs/apk/prod/release/Ace_2.0.0.build8.apk"
-    #rollout: '0.5'
+  # upload to HockeyApp
+  hockey(
+    api_token: "023a6d8c6a474cc1883958696399973b"
   )
 end

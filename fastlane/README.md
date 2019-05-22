@@ -20,11 +20,6 @@ or alternatively using `brew cask install fastlane`
 fastlane beta
 ```
 
-### playstore
-```
-fastlane playstore
-```
-
 
 ----
 
