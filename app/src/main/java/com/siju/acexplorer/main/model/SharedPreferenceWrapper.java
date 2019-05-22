@@ -51,6 +51,9 @@ public class SharedPreferenceWrapper {
 
 
     private void saveFavorites(Context context, List<FavInfo> favorites) {
+        if (context == null) {
+            return;
+        }
         SharedPreferences settings;
         SharedPreferences.Editor editor;
         settings = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -71,7 +74,9 @@ public class SharedPreferenceWrapper {
     }
 
     public int addFavorites(Context context, ArrayList<FavInfo> favInfoArrayList) {
-
+        if (context == null) {
+            return 0;
+        }
         List<FavInfo> favorites = getFavorites(context);
 
         int count = 0;
@@ -88,6 +93,9 @@ public class SharedPreferenceWrapper {
     }
 
     public boolean removeFavorite(Context context, FavInfo favInfo) {
+        if (context == null) {
+            return false;
+        }
         ArrayList<FavInfo> favorites = getFavorites(context);
         boolean isDeleted = false;
         if (favorites != null) {
@@ -105,6 +113,9 @@ public class SharedPreferenceWrapper {
      * @param context
      */
     public void resetFavourites(Context context) {
+        if (context == null) {
+            return;
+        }
         ArrayList<FavInfo> favorites = getFavorites(context);
         if (favorites != null) {
             for (int i = favorites.size() - 1; i >= 0; i--) {
@@ -120,6 +131,10 @@ public class SharedPreferenceWrapper {
     public ArrayList<FavInfo> getFavorites(Context context) {
         SharedPreferences sharedPreferences;
         ArrayList<FavInfo> favorites = new ArrayList<>();
+
+        if (context == null) {
+            return favorites;
+        }
 
         sharedPreferences = context.getSharedPreferences(PREFS_NAME,
                 Context.MODE_PRIVATE);

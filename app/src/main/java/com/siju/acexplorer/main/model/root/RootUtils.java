@@ -54,6 +54,9 @@ public class RootUtils {
     }
 
     public static boolean isRootDir(String path) {
+        if (path == null) {
+            return false;
+        }
         List<String> extSDPaths = StoragesGroup.getInstance().getExternalSDList();
         boolean isPathOnExt = false;
         if (extSDPaths != null) {
