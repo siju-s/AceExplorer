@@ -19,14 +19,7 @@ package com.siju.acexplorer.settings;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.MenuItem;
-
-import com.siju.acexplorer.AceApplication;
-import com.siju.acexplorer.R;
-import com.siju.acexplorer.logging.Logger;
-import com.siju.acexplorer.theme.ThemeUtils;
-import com.siju.acexplorer.utils.LocaleHelper;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -36,6 +29,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
+
+import com.siju.acexplorer.AceApplication;
+import com.siju.acexplorer.R;
+import com.siju.acexplorer.logging.Logger;
+import com.siju.acexplorer.theme.ThemeUtils;
+import com.siju.acexplorer.utils.LocaleHelper;
 
 import static com.siju.acexplorer.theme.ThemeUtils.THEME_DARK;
 

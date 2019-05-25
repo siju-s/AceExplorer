@@ -24,12 +24,13 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
-import android.view.View;
+import androidx.preference.PreferenceManager;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.common.types.FileInfo;
@@ -38,7 +39,6 @@ import com.siju.acexplorer.main.model.FileConstants;
 import com.siju.acexplorer.main.view.dialog.DialogHelper;
 import com.siju.acexplorer.storage.model.ZipModel;
 import com.siju.acexplorer.storage.model.task.ExtractZipEntry;
-
 
 import java.io.File;
 import java.io.IOException;

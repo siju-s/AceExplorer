@@ -19,12 +19,13 @@ package com.siju.acexplorer.main.view;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+
+import androidx.annotation.NonNull;
+import androidx.preference.PreferenceManager;
 
 import com.kobakei.ratethisapp.RateThisApp;
 import com.siju.acexplorer.R;

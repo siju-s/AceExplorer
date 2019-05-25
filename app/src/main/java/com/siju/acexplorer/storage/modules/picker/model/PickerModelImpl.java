@@ -3,7 +3,7 @@ package com.siju.acexplorer.storage.modules.picker.model;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Process;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 
 import com.siju.acexplorer.AceApplication;
 

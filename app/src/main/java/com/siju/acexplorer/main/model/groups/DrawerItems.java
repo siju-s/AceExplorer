@@ -19,7 +19,7 @@ package com.siju.acexplorer.main.model.groups;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Process;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;

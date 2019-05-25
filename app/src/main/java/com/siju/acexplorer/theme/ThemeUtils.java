@@ -17,7 +17,7 @@
 package com.siju.acexplorer.theme;
 
 import android.content.Context;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 
 public class ThemeUtils {
 

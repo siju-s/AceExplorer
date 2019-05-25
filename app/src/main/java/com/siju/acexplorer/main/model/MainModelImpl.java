@@ -19,7 +19,8 @@ package com.siju.acexplorer.main.model;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+
+import androidx.preference.PreferenceManager;
 
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.Purchase;

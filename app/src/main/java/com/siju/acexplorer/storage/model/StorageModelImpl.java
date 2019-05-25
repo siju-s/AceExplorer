@@ -25,22 +25,24 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.preference.PreferenceManager;
 import android.util.Log;
+
+import androidx.preference.PreferenceManager;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.billing.BillingManager;
 import com.siju.acexplorer.billing.BillingStatus;
+import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.main.model.FavInfo;
 import com.siju.acexplorer.main.model.FileConstants;
-import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.main.model.SharedPreferenceWrapper;
 import com.siju.acexplorer.main.model.helper.FileUtils;
 import com.siju.acexplorer.main.model.helper.LargeBundleTransfer;
 import com.siju.acexplorer.main.model.helper.RootHelper;
 import com.siju.acexplorer.main.model.helper.SdkHelper;
 import com.siju.acexplorer.main.model.root.RootUtils;
+import com.siju.acexplorer.main.view.dialog.DialogHelper;
 import com.siju.acexplorer.storage.model.operations.FileOpsHelper;
 import com.siju.acexplorer.storage.model.operations.OperationUtils;
 import com.siju.acexplorer.storage.model.operations.Operations;
@@ -50,7 +52,6 @@ import com.siju.acexplorer.storage.model.task.DeleteTask;
 import com.siju.acexplorer.storage.model.task.ExtractService;
 import com.siju.acexplorer.storage.model.task.MoveService;
 import com.siju.acexplorer.storage.model.task.PasteConflictChecker;
-import com.siju.acexplorer.main.view.dialog.DialogHelper;
 import com.stericson.RootTools.RootTools;
 
 import java.io.File;

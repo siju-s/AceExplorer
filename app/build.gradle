@@ -20,6 +20,8 @@ apply plugin: 'kotlin-android'
 apply plugin: 'io.fabric'
 
 android {
+    compileSdkVersion build_versions.target_sdk
+
     signingConfigs {
         config {
             keyAlias keystoreProp['keyAlias']
@@ -28,11 +30,10 @@ android {
             storePassword keystoreProp['storePassword']
         }
     }
-    compileSdkVersion rootProject.compileSdkVersion
     defaultConfig {
         applicationId "com.siju.acexplorer"
-        minSdkVersion rootProject.minSdkVersion
-        targetSdkVersion rootProject.targetSdkVersion
+        minSdkVersion build_versions.min_sdk
+        targetSdkVersion build_versions.target_sdk
         versionCode versionCodeValue
         versionName versionValue
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -108,37 +109,40 @@ dependencies {
     implementation fileTree(include: ['*.aar'], dir: 'libs')
     implementation project(':RootShell')
 
-    implementation supportDependencies.appCompat
-    implementation supportDependencies.recyclerView
-    implementation supportDependencies.design
-    implementation supportDependencies.cardView
-    implementation supportDependencies.palette
-    implementation supportDependencies.preference
+    implementation deps.kotlin.stdlib
 
-    implementation firebase.core
-    implementation firebase.ads
-    implementation firebase.invites
+    // Support libraries
+    implementation deps.support.app_compat
+    implementation deps.support.recycler_view
+    implementation deps.support.design
+    implementation deps.support.card_view
+    implementation deps.support.palette
+    implementation deps.support.preference
+    annotationProcessor deps.support.annotation
 
-    implementation google.billing
-    implementation google.gson
+    implementation deps.firebase.core
+    implementation deps.firebase.ads
+    implementation deps.firebase.invites
 
-    implementation others.glide
-    annotationProcessor supportDependencies.annotation
-    annotationProcessor others.glideCompiler
-    implementation others.apache_compress
-    implementation others.floatingButton
-    implementation others.ratethisapp
+    implementation deps.billing
+    implementation deps.gson
 
-    debugImplementation others.leakCanary
-    releaseImplementation others.leakCanaryRel
+    implementation      deps.glide.runtime
+    annotationProcessor deps.glide.compiler
 
-    implementation(others.crashlytics) {
+    implementation deps.apache_compress
+    implementation deps.floating_button
+    implementation deps.ratethisapp
+
+    debugImplementation   deps.leak_canary
+    releaseImplementation deps.leak_canary_rel
+
+    implementation(deps.crashlytics) {
         transitive = true
     }
-    testImplementation testing.junit
-    androidTestImplementation(testing.espresso, {
+    testImplementation deps.testing.junit
+    androidTestImplementation(deps.testing.espresso, {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 apply plugin: 'com.google.gms.google-services'

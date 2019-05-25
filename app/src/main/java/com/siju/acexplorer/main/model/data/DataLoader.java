@@ -1,7 +1,7 @@
 package com.siju.acexplorer.main.model.data;
 
 import android.content.Context;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 
 import com.siju.acexplorer.main.model.FileConstants;
 import com.siju.acexplorer.common.types.FileInfo;
