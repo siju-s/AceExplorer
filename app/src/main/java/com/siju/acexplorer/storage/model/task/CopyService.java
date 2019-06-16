@@ -396,7 +396,7 @@ public class CopyService extends Service {
             return;
         }
 
-        ArrayList<FileInfo> filePaths = FileDataFetcher.getFilesList(sourceFile,
+        ArrayList<FileInfo> filePaths = FileDataFetcher.Companion.getFilesList(sourceFile,
                                                                     false, true, false);
         for (FileInfo file : filePaths) {
             String path = file.getFilePath();
@@ -487,7 +487,7 @@ public class CopyService extends Service {
             return;
         }
 
-        ArrayList<FileInfo> filePaths = FileDataFetcher.getFilesList(sourceFile.getFilePath(),
+        ArrayList<FileInfo> filePaths = FileDataFetcher.Companion.getFilesList(sourceFile.getFilePath(),
                                                                       false, true, false);
         for (FileInfo file : filePaths) {
             if (stopService) {
@@ -635,7 +635,7 @@ public class CopyService extends Service {
             if (RootHelper.fileExists(newFileInfo.getFilePath())) {
                 return false;
             }
-            ArrayList<FileInfo> baseFiles = FileDataFetcher.getFilesList(oldFileInfo.getFilePath()
+            ArrayList<FileInfo> baseFiles = FileDataFetcher.Companion.getFilesList(oldFileInfo.getFilePath()
                     , true, true, false);
             if (baseFiles.size() > 0) {
                 boolean b = true;
@@ -652,7 +652,7 @@ public class CopyService extends Service {
             return RootHelper.fileExists(newFileInfo.getFilePath());
         } else {
             String parent = new File(oldFileInfo.getFilePath()).getParent();
-            ArrayList<FileInfo> baseFiles = FileDataFetcher.getFilesList(parent, true, true, false);
+            ArrayList<FileInfo> baseFiles = FileDataFetcher.Companion.getFilesList(parent, true, true, false);
             int i = -1;
             int index = -1;
             for (FileInfo b : baseFiles) {
@@ -662,7 +662,7 @@ public class CopyService extends Service {
                     break;
                 }
             }
-            ArrayList<FileInfo> baseFiles1 = FileDataFetcher.getFilesList(parent, true, true, false);
+            ArrayList<FileInfo> baseFiles1 = FileDataFetcher.Companion.getFilesList(parent, true, true, false);
             int i1 = -1;
             int index1 = -1;
             for (FileInfo b : baseFiles1) {

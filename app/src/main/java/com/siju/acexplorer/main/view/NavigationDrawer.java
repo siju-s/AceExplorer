@@ -29,12 +29,12 @@ import android.widget.Toast;
 import com.google.android.material.navigation.NavigationView;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
-import com.siju.acexplorer.billing.BillingManager;
-import com.siju.acexplorer.billing.BillingStatus;
+import com.siju.acexplorer.billing.repository.BillingManager;
+import com.siju.acexplorer.billing.repository.BillingStatus;
 import com.siju.acexplorer.main.model.FavInfo;
 import com.siju.acexplorer.main.model.FileConstants;
 import com.siju.acexplorer.main.model.SectionGroup;
-import com.siju.acexplorer.main.model.SectionItems;
+import com.siju.acexplorer.main.model.StorageItem;
 import com.siju.acexplorer.main.model.groups.DrawerGroup;
 import com.siju.acexplorer.main.model.helper.FileUtils;
 import com.siju.acexplorer.premium.Premium;
@@ -80,7 +80,7 @@ class NavigationDrawer implements View.OnClickListener {
     private ListView              genericList;
 
     private ArrayList<SectionGroup> totalGroupData      = new ArrayList<>();
-    private ArrayList<SectionItems> favoritesGroupChild = new ArrayList<>();
+    private ArrayList<StorageItem> favoritesGroupChild = new ArrayList<>();
     private boolean                 isPremium;
     private MainUiView              uiView;
     private BillingManager billingManager;
@@ -277,7 +277,7 @@ class NavigationDrawer implements View.OnClickListener {
 
     void updateFavorites(ArrayList<FavInfo> favInfoArrayList) {
         for (int i = 0; i < favInfoArrayList.size(); i++) {
-            SectionItems favItem = new SectionItems(favInfoArrayList.get(i).getFileName(),
+            StorageItem favItem = new StorageItem(favInfoArrayList.get(i).getFileName(),
                     favInfoArrayList.get(i)
                             .getFilePath(), R.drawable.ic_fav_folder, favInfoArrayList.get(i)
                     .getFilePath(), 0, null, null);
@@ -291,7 +291,7 @@ class NavigationDrawer implements View.OnClickListener {
 
     void removeFavorites(ArrayList<FavInfo> favInfoArrayList) {
         for (int i = 0; i < favInfoArrayList.size(); i++) {
-            SectionItems favItem = new SectionItems(favInfoArrayList.get(i).getFileName(),
+            StorageItem favItem = new StorageItem(favInfoArrayList.get(i).getFileName(),
                     favInfoArrayList.get(i)
                             .getFilePath(), R.drawable.ic_fav_folder, favInfoArrayList.get(i)
                     .getFilePath(), 0, null, null);
@@ -315,7 +315,7 @@ class NavigationDrawer implements View.OnClickListener {
     private void resetFavouritesGroup() {
         for (int i = favoritesGroupChild.size() - 1; i >= 0; i--) {
             if (!favoritesGroupChild.get(i).getSecondLine().equalsIgnoreCase
-                    (getDownloadsDirectory())) {
+                    (INSTANCE.getDownloadsDirectory())) {
                 favoritesGroupChild.remove(i);
             }
         }

@@ -22,7 +22,7 @@ import android.view.View;
 
 import com.android.billingclient.api.BillingClient;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.billing.BillingManager;
+import com.siju.acexplorer.billing.repository.BillingManager;
 import com.siju.acexplorer.main.view.dialog.DialogHelper;
 
 import androidx.appcompat.app.AppCompatActivity;

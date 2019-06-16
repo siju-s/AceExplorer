@@ -17,6 +17,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
 
 android {
@@ -110,6 +111,13 @@ dependencies {
     implementation project(':RootShell')
 
     implementation deps.kotlin.stdlib
+    implementation deps.kotlin.coroutine_core
+    implementation deps.kotlin.coroutine_android
+
+    implementation deps.lifecycle.extensions
+    implementation deps.lifecycle.viewmodel_ktx
+    implementation deps.lifecycle.room
+    annotationProcessor deps.lifecycle.room_compiler
 
     // Support libraries
     implementation deps.support.app_compat

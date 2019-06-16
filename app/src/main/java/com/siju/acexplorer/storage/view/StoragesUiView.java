@@ -47,7 +47,7 @@ import com.siju.acexplorer.R;
 import com.siju.acexplorer.ads.AdsView;
 import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.base.view.BaseActivity;
-import com.siju.acexplorer.billing.BillingStatus;
+import com.siju.acexplorer.billing.repository.BillingStatus;
 import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.main.model.FavInfo;
@@ -55,7 +55,7 @@ import com.siju.acexplorer.main.model.FileConstants;
 import com.siju.acexplorer.main.model.SharedPreferenceWrapper;
 import com.siju.acexplorer.main.model.groups.Category;
 import com.siju.acexplorer.main.model.helper.FileUtils;
-import com.siju.acexplorer.main.view.AceActivity;
+import com.siju.acexplorer.main.AceActivity;
 import com.siju.acexplorer.main.view.DrawerListener;
 import com.siju.acexplorer.main.view.dialog.DialogHelper;
 import com.siju.acexplorer.permission.PermissionUtils;
@@ -272,7 +272,7 @@ public class StoragesUiView extends CoordinatorLayout implements
     }
 
     private void createDualFrag() {
-        if (dualModeEnabled && fragment instanceof FileList) {
+        if (dualModeEnabled && fragment instanceof FileListFragment) {
             bridge.showDualFrame();
             showDualPane();
         }
@@ -542,7 +542,7 @@ public class StoragesUiView extends CoordinatorLayout implements
 
     void passViewMode() {
         if (dualModeEnabled) {
-            ((AceActivity) getActivity()).switchView(filesView.getViewMode(), !(fragment instanceof DualPaneList));
+            ((AceActivity) getActivity()).switchView(filesView.getViewMode(), !(fragment instanceof DualPaneFragment));
         }
     }
 
@@ -654,7 +654,7 @@ public class StoragesUiView extends CoordinatorLayout implements
         refreshList();
         if (dualModeEnabled) {
             ((AceActivity) getActivity()).refreshList(
-                    !(fragment instanceof DualPaneList)); //Intentional negation to make the other pane reflect changes
+                    !(fragment instanceof DualPaneFragment)); //Intentional negation to make the other pane reflect changes
         }
     }
 
@@ -744,7 +744,7 @@ public class StoragesUiView extends CoordinatorLayout implements
     }
 
     public void openDrawer() {
-        drawerListener.onDrawerIconClicked(fragment instanceof DualPaneList);
+        drawerListener.onDrawerIconClicked(fragment instanceof DualPaneFragment);
     }
 
     public void setDrawerListener(DrawerListener drawerListener) {
@@ -791,13 +791,13 @@ public class StoragesUiView extends CoordinatorLayout implements
     }
 
     void setDualPaneState() {
-        boolean isDualPaneInFocus = fragment instanceof DualPaneList;
+        boolean isDualPaneInFocus = fragment instanceof DualPaneFragment;
         ((AceActivity) getActivity()).setDualPaneFocusState(isDualPaneInFocus);
     }
 
     @Override
     public void onHomeClicked() {
-        boolean isDualPaneInFocus = fragment instanceof DualPaneList;
+        boolean isDualPaneInFocus = fragment instanceof DualPaneFragment;
         ((AceActivity) getActivity()).setDualPaneFocusState(isDualPaneInFocus);
 
         isHomeClicked = true;
@@ -809,7 +809,7 @@ public class StoragesUiView extends CoordinatorLayout implements
 
     @Override
     public void onNavButtonClicked(String dir) {
-        boolean isDualPaneInFocus = fragment instanceof DualPaneList;
+        boolean isDualPaneInFocus = fragment instanceof DualPaneFragment;
         ((AceActivity) getActivity()).setDualPaneFocusState(isDualPaneInFocus);
 
         if (filesView.isActionModeActive() && !menuControls.isPasteOp()) {
@@ -839,7 +839,7 @@ public class StoragesUiView extends CoordinatorLayout implements
 
     @Override
     public void onNavButtonClicked(Category category, String bucketName) {
-        boolean isDualPaneInFocus = fragment instanceof DualPaneList;
+        boolean isDualPaneInFocus = fragment instanceof DualPaneFragment;
         ((AceActivity) getActivity()).setDualPaneFocusState(isDualPaneInFocus);
 
         if (filesView.isActionModeActive() && !menuControls.isPasteOp()) {

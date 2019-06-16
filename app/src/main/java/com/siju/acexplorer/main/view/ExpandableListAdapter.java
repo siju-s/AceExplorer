@@ -28,7 +28,7 @@ import android.widget.TextView;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.main.model.SectionGroup;
-import com.siju.acexplorer.main.model.SectionItems;
+import com.siju.acexplorer.main.model.StorageItem;
 import com.siju.acexplorer.main.model.StorageUtils;
 import com.siju.acexplorer.main.model.groups.Category;
 import com.siju.acexplorer.main.model.groups.DrawerGroup;
@@ -56,7 +56,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        ArrayList<SectionItems> chList = groups.get(groupPosition).getmChildItems();
+        ArrayList<StorageItem> chList = groups.get(groupPosition).getmChildItems();
         return chList.get(childPosition);
     }
 
@@ -69,7 +69,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
     public View getChildView(int groupPosition, final int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
 
-        SectionItems child = (SectionItems) getChild(groupPosition, childPosition);
+        StorageItem child = (StorageItem) getChild(groupPosition, childPosition);
 
         View view = convertView;
         ChildViewHolder childViewHolder;
@@ -89,7 +89,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
         StorageUtils.StorageType storageType = child.getStorageType();
         String text;
         if (storageType != null && !storageType.equals(EXTERNAL)) {
-            text = StorageUtils.StorageType.getStorageText(context, storageType);
+            text = StorageUtils.StorageType.Companion.getStorageText(context, storageType);
         } else if (category != null) {
             if (category.equals(Category.FAVORITES)) {
                 text = new File(child.getSecondLine()).getName();
@@ -106,7 +106,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
         if (groupPosition == NavigationDrawer.DRAWER_HEADER_STORAGE_POS) {
             childViewHolder.progressBar.setVisibility(View.VISIBLE);
             childViewHolder.progressBar.setProgress(child.getProgress());
-            childViewHolder.textSecondLine.setText(getStorageSpaceText(context, child.getSecondLine()));
+            childViewHolder.textSecondLine.setText(INSTANCE.getStorageSpaceText(context, child.getSecondLine()));
 
         } else if (groupPosition == NavigationDrawer.DRAWER_HEADER_FAV_POS) {
             childViewHolder.progressBar.setVisibility(View.GONE);
@@ -123,7 +123,7 @@ class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        ArrayList<SectionItems> chList = groups.get(groupPosition).getmChildItems();
+        ArrayList<StorageItem> chList = groups.get(groupPosition).getmChildItems();
         return chList.size();
     }
 

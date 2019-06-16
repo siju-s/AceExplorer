@@ -57,7 +57,7 @@ public class RootUtils {
         if (path == null) {
             return false;
         }
-        List<String> extSDPaths = StoragesGroup.getInstance().getExternalSDList();
+        List<String> extSDPaths = StoragesGroup.Companion.getInstance().getExternalSDList();
         boolean isPathOnExt = false;
         if (extSDPaths != null) {
             for(String extSD: extSDPaths) {
@@ -67,7 +67,7 @@ public class RootUtils {
                 }
             }
         }
-        return !path.startsWith(StorageUtils.getInternalStorage()) && !isPathOnExt;
+        return !path.startsWith(StorageUtils.INSTANCE.getInternalStorage()) && !isPathOnExt;
     }
 
 

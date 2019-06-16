@@ -19,35 +19,10 @@ package com.siju.acexplorer.home.view;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
-import com.siju.acexplorer.R;
-import com.siju.acexplorer.ads.AdsView;
-import com.siju.acexplorer.analytics.Analytics;
-import com.siju.acexplorer.billing.BillingStatus;
-import com.siju.acexplorer.common.types.FileInfo;
-import com.siju.acexplorer.home.model.LibrarySortModel;
-import com.siju.acexplorer.home.types.HomeLibraryInfo;
-import com.siju.acexplorer.logging.Logger;
-import com.siju.acexplorer.main.model.FileConstants;
-import com.siju.acexplorer.main.model.groups.Category;
-import com.siju.acexplorer.main.view.AceActivity;
-import com.siju.acexplorer.main.view.DrawerListener;
-import com.siju.acexplorer.permission.PermissionUtils;
-import com.siju.acexplorer.storage.view.DualPaneList;
-import com.siju.acexplorer.storage.view.FileList;
-import com.siju.acexplorer.storage.view.StoragesUiView;
-import com.siju.acexplorer.theme.Theme;
-import com.siju.acexplorer.theme.ThemeUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -56,7 +31,27 @@ import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import static com.siju.acexplorer.home.view.HomeLibrary.LIBSORT_REQUEST_CODE;
+import com.siju.acexplorer.R;
+import com.siju.acexplorer.ads.AdsView;
+import com.siju.acexplorer.analytics.Analytics;
+import com.siju.acexplorer.billing.repository.BillingStatus;
+import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.home.model.LibrarySortModel;
+import com.siju.acexplorer.home.types.HomeLibraryInfo;
+import com.siju.acexplorer.logging.Logger;
+import com.siju.acexplorer.main.AceActivity;
+import com.siju.acexplorer.main.model.FileConstants;
+import com.siju.acexplorer.main.model.groups.Category;
+import com.siju.acexplorer.main.view.DrawerListener;
+import com.siju.acexplorer.permission.PermissionUtils;
+import com.siju.acexplorer.storage.view.FileListFragment;
+import com.siju.acexplorer.storage.view.StoragesUiView;
+import com.siju.acexplorer.theme.Theme;
+import com.siju.acexplorer.theme.ThemeUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.siju.acexplorer.main.model.groups.StoragesGroup.STORAGE_EMULATED_0;
 
 
@@ -99,18 +94,7 @@ public class HomeUiView extends CoordinatorLayout {
         setTheme();
     }
 
-    private void setupToolbar() {
-        getActivity().setSupportActionBar(toolbar);
-        ActionBar actionBar = getActivity().getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setHomeButtonEnabled(true);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_drawer);
-        }
-        if (drawerListener != null) {
-            drawerListener.syncDrawer();
-        }
-    }
+
 
     public void refreshList() {
         getLibraries();
@@ -133,7 +117,6 @@ public class HomeUiView extends CoordinatorLayout {
     }
 
     void initialize() {
-        setupToolbar();
 
         library = new HomeLibrary(this, theme);
         new HomeStorages(this, theme);
@@ -161,14 +144,6 @@ public class HomeUiView extends CoordinatorLayout {
         return ((AceActivity) getActivity()).getConfiguration();
     }
 
-    private void initializeListeners() {
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                drawerListener.onDrawerIconClicked(fragment instanceof DualPaneList);
-            }
-        });
-    }
 
 
     private void onFreeVersion() {
@@ -260,7 +235,7 @@ public class HomeUiView extends CoordinatorLayout {
 
     public void handleActivityResult(int requestCode, int resultCode, Intent data) {
         Logger.log(TAG, "OnActivityREsult==" + resultCode);
-        if (requestCode == LIBSORT_REQUEST_CODE && resultCode == AppCompatActivity.RESULT_OK) {
+        if (requestCode == Companion.getLIBSORT_REQUEST_CODE() && resultCode == AppCompatActivity.RESULT_OK) {
             ArrayList<LibrarySortModel> selectedLibs = data.getParcelableArrayListExtra
                     (FileConstants.KEY_LIB_SORTLIST);
             if (selectedLibs != null) {
@@ -274,7 +249,7 @@ public class HomeUiView extends CoordinatorLayout {
         if (path == null) {
             Analytics.getLogger().libDisplayed(category.name());
         } else {
-            if (path.equals(STORAGE_EMULATED_0)) {
+            if (path.equals(Companion.getSTORAGE_EMULATED_0())) {
                 Analytics.getLogger().storageDisplayed();
             } else {
                 Analytics.getLogger().extStorageDisplayed();
@@ -284,7 +259,7 @@ public class HomeUiView extends CoordinatorLayout {
         FragmentTransaction ft = getActivity().getSupportFragmentManager()
                                               .beginTransaction();
 
-        FileList baseFileList = FileList.newInstance(path, category, isDualModeActive);
+        FileListFragment baseFileList = FileListFragment.Companion.newInstance(path, category, isDualModeActive);
         ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim
                 .exit_to_left);
         ft.replace(R.id.main_container, baseFileList);

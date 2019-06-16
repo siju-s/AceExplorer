@@ -7,14 +7,14 @@ import android.content.IntentFilter;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.main.model.FileConstants;
-
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import static com.siju.acexplorer.main.model.FileConstants.ADS;
 
@@ -50,7 +50,7 @@ public class AdsView {
     }
 
     private void createAd() {
-        adView = new AdView(AceApplication.getAppContext());
+        adView = new AdView(AceApplication.Companion.getAppContext());
         adView.setAdSize(AdSize.BANNER);
         adView.setAdUnitId(getContext().getResources().getString(R.string.banner_ad_unit_id));
     }

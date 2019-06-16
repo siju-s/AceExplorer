@@ -22,6 +22,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.CheckBoxPreference;
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
+
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
@@ -30,13 +37,6 @@ import com.siju.acexplorer.main.model.FileConstants;
 import com.siju.acexplorer.main.model.helper.FileUtils;
 import com.siju.acexplorer.theme.ThemeUtils;
 import com.siju.acexplorer.utils.LocaleHelper;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.CheckBoxPreference;
-import androidx.preference.ListPreference;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceManager;
 
 import static com.siju.acexplorer.theme.ThemeUtils.CURRENT_THEME;
 import static com.siju.acexplorer.theme.ThemeUtils.PREFS_THEME;
@@ -95,7 +95,7 @@ public class SettingsPreferenceFragment extends PreferenceFragmentCompat  {
             public boolean onPreferenceClick(Preference preference) {
                 Intent data = new Intent();
                 data.putExtra(FileConstants.PREFS_RESET, true);
-                Toast.makeText(AceApplication.getAppContext(), getString(R.string.msg_fav_reset), Toast
+                Toast.makeText(AceApplication.Companion.getAppContext(), getString(R.string.msg_fav_reset), Toast
                         .LENGTH_LONG).show();
                 getActivity().setResult(AppCompatActivity.RESULT_OK, data);
                 return false;

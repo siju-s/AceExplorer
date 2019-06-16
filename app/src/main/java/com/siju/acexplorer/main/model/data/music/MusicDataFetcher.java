@@ -7,10 +7,14 @@ import android.net.Uri;
 import android.provider.MediaStore;
 
 import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.main.model.data.DataFetcher;
 import com.siju.acexplorer.main.model.data.MainLoader;
 import com.siju.acexplorer.main.model.HiddenFileHelper;
 import com.siju.acexplorer.main.model.groups.Category;
 import com.siju.acexplorer.main.model.helper.FileUtils;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,13 +25,13 @@ import static com.siju.acexplorer.main.model.data.music.GenreDataFetcher.fetchGe
 import static com.siju.acexplorer.main.model.data.music.GenreDataFetcher.fetchGenres;
 import static com.siju.acexplorer.main.model.helper.SortHelper.sortFiles;
 
-public class MusicDataFetcher {
+public class MusicDataFetcher implements DataFetcher {
 
 
     @SuppressWarnings("unused")
     private static final String TAG = "MusicDataFetcher";
 
-    public static ArrayList<FileInfo> fetchMusic(Context context, Category category, long id, int sortMode,
+    public static ArrayList<FileInfo> fetchMusic(Context context, Category category, int sortMode,
                                                  boolean showOnlyCount, boolean showHidden)
     {
         ArrayList<FileInfo> fileInfoList;
@@ -35,23 +39,20 @@ public class MusicDataFetcher {
             case GENERIC_MUSIC:
                 return fetchGenericMusic(context, category, showOnlyCount, showHidden);
             case ALBUMS:
-                return fetchAlbums(context, category);
+                return Companion.fetchAlbums(context, category);
             case ARTISTS:
-                return fetchArtists(context, category);
+                return Companion.fetchArtists(context, category);
             case GENRES:
-                return fetchGenres(context, category);
+                return Companion.fetchGenres(context, category);
             case AUDIO:
             case ALL_TRACKS:
-            case ALARMS:
-            case NOTIFICATIONS:
-            case RINGTONES:
             case PODCASTS:
             case ALBUM_DETAIL:
             case ARTIST_DETAIL:
                 fileInfoList = fetchMusicDetail(context, category, id, false, showOnlyCount, showHidden);
                 break;
             case GENRE_DETAIL:
-                fileInfoList = fetchGenreDetails(context, id);
+                fileInfoList = Companion.fetchGenreDetails(context, id);
                 break;
             default:
                 fileInfoList = new ArrayList<>();
@@ -65,18 +66,12 @@ public class MusicDataFetcher {
                                                          boolean showHidden)
     {
         ArrayList<FileInfo> fileInfoList = new ArrayList<>();
-        fileInfoList.addAll(fetchMusicDetail(context, Category.ALARMS, MainLoader.INVALID_ID, true, showOnlyCount,
-                                             showHidden));
-        fileInfoList.addAll(fetchAlbums(context, category));
+        fileInfoList.addAll(Companion.fetchAlbums(context, category));
         fileInfoList.addAll(fetchMusicDetail(context, Category.ALL_TRACKS, MainLoader.INVALID_ID, true, showOnlyCount,
                                              showHidden));
-        fileInfoList.addAll(fetchArtists(context, category));
-        fileInfoList.addAll(fetchGenres(context, category));
-        fileInfoList.addAll(fetchMusicDetail(context, Category.NOTIFICATIONS, MainLoader.INVALID_ID, true, showOnlyCount,
-                                             showHidden));
+        fileInfoList.addAll(Companion.fetchArtists(context, category));
+        fileInfoList.addAll(Companion.fetchGenres(context, category));
         fileInfoList.addAll(fetchMusicDetail(context, Category.PODCASTS, MainLoader.INVALID_ID, true, showOnlyCount,
-                                             showHidden));
-        fileInfoList.addAll(fetchMusicDetail(context, Category.RINGTONES, MainLoader.INVALID_ID, true, showOnlyCount,
                                              showHidden));
         return fileInfoList;
     }
@@ -96,18 +91,6 @@ public class MusicDataFetcher {
             case ARTIST_DETAIL:
                 selection = MediaStore.Audio.Media.ARTIST_ID + "=?";
                 selectionArgs = new String[]{String.valueOf(id)};
-                break;
-            case ALARMS:
-                selection = MediaStore.Audio.Media.IS_ALARM + "=1";
-                uri = MediaStore.Audio.Media.INTERNAL_CONTENT_URI;
-                break;
-            case NOTIFICATIONS:
-                selection = MediaStore.Audio.Media.IS_NOTIFICATION + "=1";
-                uri = MediaStore.Audio.Media.INTERNAL_CONTENT_URI;
-                break;
-            case RINGTONES:
-                selection = MediaStore.Audio.Media.IS_RINGTONE + "=1";
-                uri = MediaStore.Audio.Media.INTERNAL_CONTENT_URI;
                 break;
             case PODCASTS:
                 selection = MediaStore.Audio.Media.IS_PODCAST + "=1";
@@ -172,4 +155,14 @@ public class MusicDataFetcher {
         return fileInfoList;
     }
 
+    @Override
+    public ArrayList<FileInfo> fetchData(Context context, @Nullable String path, @NotNull Category category) {
+
+    }
+
+    @NotNull
+    @Override
+    public int fetchCount(@NotNull Context context, @Nullable String path) {
+
+    }
 }

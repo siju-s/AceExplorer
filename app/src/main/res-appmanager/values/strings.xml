@@ -13,4 +13,7 @@
 
     <string name="play_store" translatable="false">Play store</string>
     <string name="amazon_play_store" translatable="false">Amazon app store</string>
+    <string name="tab_home">Home</string>
+    <string name="tab_tools">Tools</string>
+    <string name="tab_settings">Settings</string>
 </resources>

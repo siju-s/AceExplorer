@@ -19,8 +19,8 @@ package com.siju.acexplorer.home.view;
 import android.content.Intent;
 import android.content.res.Configuration;
 
-import com.siju.acexplorer.billing.BillingManager;
-import com.siju.acexplorer.billing.BillingStatus;
+import com.siju.acexplorer.billing.repository.BillingManager;
+import com.siju.acexplorer.billing.repository.BillingStatus;
 import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.home.types.HomeLibraryInfo;
 import com.siju.acexplorer.home.model.LibrarySortModel;

@@ -18,8 +18,11 @@ package com.siju.acexplorer.home.presenter;
 
 import android.os.Bundle;
 
-import com.siju.acexplorer.billing.BillingManager;
-import com.siju.acexplorer.billing.BillingStatus;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
+
+import com.siju.acexplorer.billing.repository.BillingManager;
+import com.siju.acexplorer.billing.repository.BillingStatus;
 import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.home.model.HomeModel;
 import com.siju.acexplorer.home.model.LibrarySortModel;
@@ -30,9 +33,6 @@ import com.siju.acexplorer.main.model.groups.Category;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
 
 import static com.siju.acexplorer.main.model.FileConstants.KEY_CATEGORY;
 
@@ -118,7 +118,7 @@ public class HomePresenterImpl implements
 
     @Override
     public void getLibraries() {
-        homeModel.getLibraries();
+        homeModel.getCategories();
     }
 
     @Override

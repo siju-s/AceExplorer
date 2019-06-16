@@ -58,7 +58,7 @@
 
 
         <activity
-            android:name="com.siju.acexplorer.main.view.AceActivity"
+            android:name="com.siju.acexplorer.main.AceActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|smallestScreenSize"
             android:label="@string/app_name"
             android:theme="@style/BaseDarkTheme"

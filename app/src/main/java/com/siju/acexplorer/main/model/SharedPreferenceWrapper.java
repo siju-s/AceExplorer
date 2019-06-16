@@ -119,7 +119,7 @@ public class SharedPreferenceWrapper {
         ArrayList<FavInfo> favorites = getFavorites(context);
         if (favorites != null) {
             for (int i = favorites.size() - 1; i >= 0; i--) {
-                if (!favorites.get(i).getFilePath().equalsIgnoreCase(getDownloadsDirectory())) {
+                if (!favorites.get(i).getFilePath().equalsIgnoreCase(INSTANCE.getDownloadsDirectory())) {
                     Logger.log("TAG", "Fav path=" + favorites.get(i).getFilePath());
                     favorites.remove(i);
                 }

@@ -88,8 +88,8 @@ public class PasteConflictChecker {
     }
 
     private boolean checkIfRootDir() {
-        boolean isRootDir = !destinationDir.startsWith(getInternalStorage());
-        List<String> externalSDList = StoragesGroup.getInstance().getExternalSDList();
+        boolean isRootDir = !destinationDir.startsWith(INSTANCE.getInternalStorage());
+        List<String> externalSDList = StoragesGroup.Companion.getInstance().getExternalSDList();
 
         for (String dir : externalSDList) {
             if (destinationDir.startsWith(dir)) {
@@ -100,7 +100,7 @@ public class PasteConflictChecker {
     }
 
     private void findConflictFiles() {
-        ArrayList<FileInfo> listFiles = FileDataFetcher.getFilesList(destinationDir,
+        ArrayList<FileInfo> listFiles = FileDataFetcher.Companion.getFilesList(destinationDir,
                                                                      rootmode, true, false);
 
         for (FileInfo fileInfo : listFiles) {

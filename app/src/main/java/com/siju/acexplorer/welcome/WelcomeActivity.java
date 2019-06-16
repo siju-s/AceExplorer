@@ -28,7 +28,7 @@ import android.widget.LinearLayout;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.utils.PrefManager;
-import com.siju.acexplorer.main.view.AceActivity;
+import com.siju.acexplorer.main.AceActivity;
 
 public class  WelcomeActivity extends AppCompatActivity implements View.OnClickListener,
                                                                   ViewPager.OnPageChangeListener

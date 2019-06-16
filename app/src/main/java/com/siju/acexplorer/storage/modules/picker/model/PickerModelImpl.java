@@ -29,7 +29,7 @@ public class PickerModelImpl implements PickerModel {
             @Override
             public void run() {
                 Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-                List<String> list = getStorageDirectories();
+                List<String> list = INSTANCE.getStorageDirectories();
                 listener.onStoragesFetched(list);
             }
         }).start();

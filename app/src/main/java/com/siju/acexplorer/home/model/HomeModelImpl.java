@@ -25,8 +25,8 @@ import androidx.preference.PreferenceManager;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.billing.BillingManager;
-import com.siju.acexplorer.billing.BillingStatus;
+import com.siju.acexplorer.billing.repository.BillingManager;
+import com.siju.acexplorer.billing.repository.BillingStatus;
 import com.siju.acexplorer.home.types.HomeLibraryInfo;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.main.model.FavInfo;
@@ -57,24 +57,19 @@ import static com.siju.acexplorer.main.model.groups.CategoryHelper.getResourceId
 public class HomeModelImpl implements HomeModel {
 
     private final String TAG        = this.getClass().getSimpleName();
-    private static final int    COUNT_ZERO = 0;
     private static final String ADD = "Add";
     private Context context;
     private int[] resourceIds;
-    private static final String[] labels = new String[]{"Images", "Audio", "Videos", "Docs",
-            "Downloads", "Recent"};
+
     private Category[] categories;
     private SharedPreferences       sharedPreferences;
     private SharedPreferenceWrapper sharedPreferenceWrapper;
     private List<HomeLibraryInfo>   homeLibraryInfoArrayList;
-    private HomeModel.Listener      listener;
     // Used for fetching strings using activity context (since app context will not reflect new language strings if changed)
     private FragmentActivity activity;
-    private BillingManager billingManager;
 
     public HomeModelImpl(BillingManager billingManager) {
         this.context = AceApplication.getAppContext();
-        this.billingManager = billingManager;
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         sharedPreferenceWrapper = new SharedPreferenceWrapper();
         homeLibraryInfoArrayList = new ArrayList<>();
@@ -87,21 +82,6 @@ public class HomeModelImpl implements HomeModel {
                 R.drawable.ic_library_downloads, R.drawable.ic_library_recents};
         categories = new Category[]{IMAGE, AUDIO, VIDEO,
                 DOCS, DOWNLOADS, RECENT};
-    }
-
-    @Override
-    public void setListener(HomeModel.Listener listener) {
-        this.listener = listener;
-    }
-
-    @Override
-    public BillingStatus getBillingStatus() {
-        return billingManager.getInAppBillingStatus();
-    }
-
-    @Override
-    public BillingManager getBillingManager() {
-        return billingManager;
     }
 
     @Override
@@ -147,14 +127,9 @@ public class HomeModelImpl implements HomeModel {
         sharedPreferenceWrapper.saveLibrary(context, librarySortModels);
     }
 
-    @Override
-    public void setActivityContext(FragmentActivity activity) {
-        this.activity = activity;
-    }
-
 
     @Override
-    public void getLibraries() {
+    public void getCategories() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -183,7 +158,7 @@ public class HomeModelImpl implements HomeModel {
             LibrarySortModel model = new LibrarySortModel();
             model.setCategoryId(categories[i].getValue());
             model.setChecked(true);
-           sharedPreferenceWrapper.addLibrary(context, model);
+            sharedPreferenceWrapper.addLibrary(context, model);
         }
         sharedPreferences.edit().putBoolean(PREFS_FIRST_RUN, false).apply();
         sharedPreferences.edit().putBoolean(PREFS_ADD_RECENT, true).apply();

@@ -85,7 +85,7 @@ public class MainLoader extends AsyncTaskLoader<ArrayList<FileInfo>> {
 
     @Override
     public ArrayList<FileInfo> loadInBackground() {
-        return DataLoader.fetchDataByCategory(getContext(), category, currentDir, id, isRingtonePicker, showOnlyCount);
+        return DataLoader.INSTANCE.fetchDataByCategory(getContext(), category, currentDir, id, isRingtonePicker, showOnlyCount);
     }
 
     @Override

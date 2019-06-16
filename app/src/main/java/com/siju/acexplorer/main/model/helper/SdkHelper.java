@@ -37,10 +37,6 @@ public class SdkHelper {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
 
-    public static boolean isAtleastKitkat() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
-    }
-
     public static boolean isKitkat() {
         return Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT;
     }

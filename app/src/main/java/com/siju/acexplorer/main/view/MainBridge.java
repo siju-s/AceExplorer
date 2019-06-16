@@ -19,14 +19,16 @@ package com.siju.acexplorer.main.view;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.siju.acexplorer.billing.BillingManager;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.siju.acexplorer.billing.repository.BillingManager;
+import com.siju.acexplorer.main.AceActivity;
 import com.siju.acexplorer.main.model.FavInfo;
 import com.siju.acexplorer.main.model.SectionGroup;
 import com.siju.acexplorer.theme.Theme;

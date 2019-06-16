@@ -23,7 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 
-import com.siju.acexplorer.billing.BillingStatus;
+import com.siju.acexplorer.billing.repository.BillingStatus;
 import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.home.model.LoaderHelper;
 import com.siju.acexplorer.main.model.FavInfo;

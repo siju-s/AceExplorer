@@ -23,13 +23,13 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import android.view.ViewGroup;
 
-import com.siju.acexplorer.billing.BillingStatus;
+import com.siju.acexplorer.billing.repository.BillingStatus;
 import com.siju.acexplorer.main.model.FavInfo;
 import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.main.model.groups.Category;
 import com.siju.acexplorer.storage.model.CopyData;
 import com.siju.acexplorer.storage.model.operations.Operations;
-import com.siju.acexplorer.main.view.AceActivity;
+import com.siju.acexplorer.main.AceActivity;
 import com.siju.acexplorer.main.view.DrawerListener;
 import com.siju.acexplorer.main.view.dialog.DialogHelper;
 

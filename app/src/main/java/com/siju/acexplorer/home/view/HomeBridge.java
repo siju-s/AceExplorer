@@ -20,8 +20,10 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.view.ViewGroup;
 
-import com.siju.acexplorer.billing.BillingManager;
-import com.siju.acexplorer.billing.BillingStatus;
+import androidx.fragment.app.Fragment;
+
+import com.siju.acexplorer.billing.repository.BillingManager;
+import com.siju.acexplorer.billing.repository.BillingStatus;
 import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.home.model.LibrarySortModel;
 import com.siju.acexplorer.home.types.HomeLibraryInfo;
@@ -31,8 +33,6 @@ import com.siju.acexplorer.storage.view.StoragesUiView;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.fragment.app.Fragment;
 
 /**
  * Created by Siju on 02 September,2017

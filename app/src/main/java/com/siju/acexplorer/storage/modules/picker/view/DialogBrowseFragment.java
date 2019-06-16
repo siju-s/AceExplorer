@@ -194,11 +194,11 @@ public class DialogBrowseFragment extends DialogFragment implements
                 currentPath = path;
             }
             else {
-                currentPath = getInternalStorage();
+                currentPath = INSTANCE.getInternalStorage();
             }
         }
         else {
-            currentPath = getInternalStorage();
+            currentPath = INSTANCE.getInternalStorage();
         }
         textCurrentPath.setText(currentPath);
 
@@ -345,7 +345,7 @@ public class DialogBrowseFragment extends DialogFragment implements
     }
 
     private boolean checkIfRootDir() {
-        return currentPath != null && !currentPath.equals(getInternalStorage());
+        return currentPath != null && !currentPath.equals(INSTANCE.getInternalStorage());
     }
 
 
@@ -360,7 +360,7 @@ public class DialogBrowseFragment extends DialogFragment implements
                                                    grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST:
-                permissionHelper.onPermissionResult();
+                permissionHelper.onPermissionResult(requestCode, permissions, grantResults);
                 break;
         }
     }
@@ -482,12 +482,12 @@ public class DialogBrowseFragment extends DialogFragment implements
             File file = new File(path);
             int icon;
             String name;
-            if (STORAGE_EMULATED_LEGACY.equals(path) || STORAGE_EMULATED_0.equals(path)) {
+            if (Companion.getSTORAGE_EMULATED_LEGACY().equals(path) || Companion.getSTORAGE_EMULATED_0().equals(path)) {
                 name = STORAGE_INTERNAL;
                 icon = R.drawable.ic_phone_white;
 
             }
-            else if (STORAGE_SDCARD1.equals(path)) {
+            else if (Companion.getSTORAGE_SDCARD1().equals(path)) {
                 name = STORAGE_EXTERNAL;
                 icon = R.drawable.ic_ext_white;
             }

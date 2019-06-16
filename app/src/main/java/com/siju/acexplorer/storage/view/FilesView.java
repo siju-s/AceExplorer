@@ -35,7 +35,7 @@ import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.main.model.FileConstants;
 import com.siju.acexplorer.main.model.groups.Category;
-import com.siju.acexplorer.main.view.AceActivity;
+import com.siju.acexplorer.main.AceActivity;
 import com.siju.acexplorer.main.view.dialog.DialogHelper;
 import com.siju.acexplorer.storage.model.ViewMode;
 import com.siju.acexplorer.storage.model.operations.Operations;
@@ -350,7 +350,7 @@ public class FilesView extends RecyclerView.OnScrollListener
     }
 
     private void onDirectoryClicked(int position) {
-        boolean isDualPaneInFocus = storagesUiView.getFragment() instanceof DualPaneList;
+        boolean isDualPaneInFocus = storagesUiView.getFragment() instanceof DualPaneFragment;
         ((AceActivity) getActivity()).setDualPaneFocusState(isDualPaneInFocus);
         Log.d(TAG, "onDirectoryClicked() called with: isDualPaneInFocus = [" + isDualPaneInFocus + "]");
 
@@ -504,7 +504,7 @@ public class FilesView extends RecyclerView.OnScrollListener
         Log.d(TAG, "reloadList() called with: path = [" + path + "], category = [" + category + "]");
         currentDir = path;
         this.category = category;
-        boolean isDualPaneInFocus = storagesUiView.getFragment() instanceof DualPaneList;
+        boolean isDualPaneInFocus = storagesUiView.getFragment() instanceof DualPaneFragment;
         ((AceActivity) getActivity()).setDualPaneFocusState(isDualPaneInFocus);
         storagesUiView.setCurrentDir(currentDir);
         storagesUiView.setCategory(category);

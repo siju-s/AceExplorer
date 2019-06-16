@@ -55,7 +55,7 @@ public class NavigationInfo {
     private              NavigationCallback   navigationCallback;
     private              ArrayList<String>    externalSDPaths;
     private              String               currentDir;
-    private              String               initialDir = getInternalStorage();
+    private              String               initialDir = INSTANCE.getInternalStorage();
     private              String               STORAGE_INTERNAL, STORAGE_ROOT, STORAGE_EXTERNAL;
     private              boolean              isCurrentDirRoot;
 
@@ -70,12 +70,12 @@ public class NavigationInfo {
         STORAGE_ROOT = context.getResources().getString(R.string.nav_menu_root);
         STORAGE_INTERNAL = context.getResources().getString(R.string.nav_menu_internal_storage);
         STORAGE_EXTERNAL = context.getResources().getString(R.string.nav_menu_ext_storage);
-        externalSDPaths = StoragesGroup.getInstance().getExternalSDList();
+        externalSDPaths = StoragesGroup.Companion.getInstance().getExternalSDList();
     }
 
     public void setInitialDir(String currentDir) {
-        if (currentDir.contains(getInternalStorage())) {
-            initialDir = getInternalStorage();
+        if (currentDir.contains(INSTANCE.getInternalStorage())) {
+            initialDir = INSTANCE.getInternalStorage();
             isCurrentDirRoot = false;
         }
         else if (externalSDPaths.size() > 0) {
@@ -289,7 +289,7 @@ public class NavigationInfo {
 
     private void setNavDir(String dir, String parts) {
 
-        if (getInternalStorage().equals(dir)) {
+        if (INSTANCE.getInternalStorage().equals(dir)) {
             isCurrentDirRoot = false;
             createNavButton(STORAGE_INTERNAL, dir);
         }

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardViewLibrary"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/margin_16"
+    card_view:cardCornerRadius="@dimen/card_home_radius"
+    tools:showIn="@layout/homescreen">
+
+    <RelativeLayout
+        android:id="@+id/layoutLibrary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textLibrary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_16"
+            android:layout_marginTop="@dimen/padding_10"
+            android:layout_marginEnd="@dimen/margin_16"
+            android:text="@string/nav_header_collections"
+            android:textAllCaps="true"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/deleteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="@dimen/padding_5"
+            android:background="@null"
+            android:contentDescription="@string/action_delete"
+            app:srcCompat="@drawable/ic_delete_white"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/dividerLib"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_below="@id/textLibrary"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:background="@color/colorPrimaryDark" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/categoryList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/dividerLib"
+            android:layout_marginTop="@dimen/margin_16"
+            android:layout_marginBottom="@dimen/margin_16" />
+
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

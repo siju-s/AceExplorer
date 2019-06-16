@@ -19,12 +19,13 @@ package com.siju.acexplorer.main.view;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.siju.acexplorer.billing.BillingManager;
+import androidx.annotation.NonNull;
+
+import com.siju.acexplorer.billing.repository.BillingManager;
 import com.siju.acexplorer.main.model.FavInfo;
 import com.siju.acexplorer.main.model.SectionGroup;
 
@@ -48,8 +49,6 @@ public interface MainUi {
                             @NonNull int[] grantResults);
 
     boolean handleActivityResult(int requestCode, int resultCode, Intent intent);
-
-    void passActivityResult(int requestCode, int resultCode, Intent intent);
 
     void checkForPreferenceChanges();
 
