@@ -9,16 +9,17 @@ import com.siju.acexplorer.main.model.data.DataFetcher
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.FileUtils
 import java.io.File
-import java.util.ArrayList
+import java.util.*
 
 
 class VideoDetailFetcher : DataFetcher {
     override fun fetchData(context: Context, path: String?, category: Category): ArrayList<FileInfo> {
+        return ArrayList<FileInfo>()
 
     }
 
     override fun fetchCount(context: Context, path: String?): Int {
-
+return 0
     }
 
     private fun fetchBucketDetail(context: Context, bucketId: Long,

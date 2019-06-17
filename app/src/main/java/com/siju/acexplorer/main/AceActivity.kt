@@ -19,9 +19,6 @@ package com.siju.acexplorer.main
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
-import android.view.ContextMenu
-import android.view.MenuItem
-import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -30,14 +27,12 @@ import com.kobakei.ratethisapp.RateThisApp
 import com.siju.acexplorer.R
 import com.siju.acexplorer.base.view.BaseActivity
 import com.siju.acexplorer.main.view.FragmentsFactory
-import com.siju.acexplorer.main.view.MainUi
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.permission.PermissionHelper
 import kotlinx.android.synthetic.main.activity_main.*
 
 class AceActivity : BaseActivity() {
 
-    private lateinit var mainUi: MainUi
     private lateinit var mainViewModel: MainViewModel
 
     private var configuration: Configuration? = null
@@ -92,7 +87,7 @@ class AceActivity : BaseActivity() {
     }
 
     override fun onNewIntent(intent: Intent) {
-        mainUi.onIntentReceived(intent)
+//        mainUi.onIntentReceived(intent)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
@@ -114,81 +109,81 @@ class AceActivity : BaseActivity() {
         mainViewModel.onResume()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        if (!mainUi.handleActivityResult(requestCode, resultCode, intent)) {
-            super.onActivityResult(requestCode, resultCode, intent)
-        }
-    }
-
-
-    override fun onBackPressed() {
-        if (mainUi.onBackPressed()) {
-            super.onBackPressed()
-        }
-    }
-
-    override fun onDestroy() {
-        mainUi.onExit()
-        super.onDestroy()
-    }
-
-
-    override fun onRestart() {
-        super.onRestart()
-        mainUi.checkForPreferenceChanges()
-    }
-
-    override fun onCreateContextMenu(menu: ContextMenu, v: View,
-                                     menuInfo: ContextMenu.ContextMenuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo)
-        mainUi.onCreateContextMenu(menu, v, menuInfo)
-    }
-
-    override fun onContextItemSelected(item: MenuItem): Boolean {
-        mainUi.onContextItemSelected(item)
-        return super.onContextItemSelected(item)
-    }
-
-    fun showDualFrame() {
-        mainUi.showDualFrame()
-    }
-
-    fun setDualPaneFocusState(isDualPaneInFocus: Boolean) {
-        mainUi.setDualPaneFocusState(isDualPaneInFocus)
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        configuration = newConfig
-        mainUi.onConfigChanged(newConfig)
-    }
-
-    override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, newConfig: Configuration) {
-        super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig)
-        mainUi.onMultiWindowChanged(isInMultiWindowMode, newConfig)
-    }
-
-    fun getConfiguration(): Configuration {
-        return configuration ?: resources.configuration
-    }
-
-    fun switchView(viewMode: Int, isDual: Boolean) {
-        configuration = getConfiguration()
-        if (configuration!!.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            mainUi.switchView(viewMode, isDual)
-        }
-    }
-
-    fun refreshList(isDual: Boolean) {
-        configuration = getConfiguration()
-        if (configuration!!.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            mainUi.refreshList(isDual)
-        }
-    }
-
-    fun onSearchClicked() {
-        mainUi.onSearchClicked()
-    }
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+//        if (!mainUi.handleActivityResult(requestCode, resultCode, intent)) {
+//            super.onActivityResult(requestCode, resultCode, intent)
+//        }
+//    }
+//
+//
+//    override fun onBackPressed() {
+//        if (mainUi.onBackPressed()) {
+//            super.onBackPressed()
+//        }
+//    }
+//
+//    override fun onDestroy() {
+//        mainUi.onExit()
+//        super.onDestroy()
+//    }
+//
+//
+//    override fun onRestart() {
+//        super.onRestart()
+//        mainUi.checkForPreferenceChanges()
+//    }
+//
+//    override fun onCreateContextMenu(menu: ContextMenu, v: View,
+//                                     menuInfo: ContextMenu.ContextMenuInfo) {
+//        super.onCreateContextMenu(menu, v, menuInfo)
+//        mainUi.onCreateContextMenu(menu, v, menuInfo)
+//    }
+//
+//    override fun onContextItemSelected(item: MenuItem): Boolean {
+//        mainUi.onContextItemSelected(item)
+//        return super.onContextItemSelected(item)
+//    }
+//
+//    fun showDualFrame() {
+//        mainUi.showDualFrame()
+//    }
+//
+//    fun setDualPaneFocusState(isDualPaneInFocus: Boolean) {
+//        mainUi.setDualPaneFocusState(isDualPaneInFocus)
+//    }
+//
+//    override fun onConfigurationChanged(newConfig: Configuration) {
+//        super.onConfigurationChanged(newConfig)
+//        configuration = newConfig
+//        mainUi.onConfigChanged(newConfig)
+//    }
+//
+//    override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, newConfig: Configuration) {
+//        super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig)
+//        mainUi.onMultiWindowChanged(isInMultiWindowMode, newConfig)
+//    }
+//
+//    fun getConfiguration(): Configuration {
+//        return configuration ?: resources.configuration
+//    }
+//
+//    fun switchView(viewMode: Int, isDual: Boolean) {
+//        configuration = getConfiguration()
+//        if (configuration!!.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            mainUi.switchView(viewMode, isDual)
+//        }
+//    }
+//
+//    fun refreshList(isDual: Boolean) {
+//        configuration = getConfiguration()
+//        if (configuration!!.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            mainUi.refreshList(isDual)
+//        }
+//    }
+//
+//    fun onSearchClicked() {
+//        mainUi.onSearchClicked()
+//    }
 
 
 }

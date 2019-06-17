@@ -19,12 +19,14 @@ package com.siju.acexplorer.main.model.helper;
 import android.annotation.TargetApi;
 import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
-import android.util.Log;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.logging.Logger;
+import com.siju.acexplorer.main.model.StorageUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,8 +35,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 
-import static com.siju.acexplorer.main.model.StorageUtils.getDocumentFile;
-import static com.siju.acexplorer.main.model.StorageUtils.isOnExtSdCard;
 import static com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastLollipop;
 import static com.siju.acexplorer.main.model.helper.SdkHelper.isKitkat;
 
@@ -63,9 +63,9 @@ public class FileOperations {
 
         // Try the Storage Access Framework if it is just a rename within the same parent folder.
         if (isAtleastLollipop()
-                && source.getParent().equals(target.getParent()) && isOnExtSdCard(source)) {
+                && source.getParent().equals(target.getParent()) && StorageUtils.INSTANCE.isOnExtSdCard(source)) {
 
-            DocumentFile document = getDocumentFile(source, true);
+            DocumentFile document = StorageUtils.INSTANCE.getDocumentFile(source, true);
 
             Logger.log(TAG, " Document uri in rename=" + document);
             if (document != null && document.renameTo(target.getName())) {
@@ -132,8 +132,8 @@ public class FileOperations {
         if (file.exists()) return true;
         boolean result;
         // Try with Storage Access Framework.
-        if (isAtleastLollipop() && isOnExtSdCard(file)) {
-            DocumentFile document = getDocumentFile(file.getParentFile(), true);
+        if (isAtleastLollipop() && StorageUtils.INSTANCE.isOnExtSdCard(file)) {
+            DocumentFile document = StorageUtils.INSTANCE.getDocumentFile(file.getParentFile(), true);
             // getDocumentFile implicitly creates the directory.
             try {
                 Logger.log(TAG, "mkfile--doc=" + document);
@@ -175,8 +175,8 @@ public class FileOperations {
         }
 
         // Try with Storage Access Framework.
-        if (isAtleastLollipop() && isOnExtSdCard(file)) {
-            DocumentFile document = getDocumentFile(file, true);
+        if (isAtleastLollipop() && StorageUtils.INSTANCE.isOnExtSdCard(file)) {
+            DocumentFile document = StorageUtils.INSTANCE.getDocumentFile(file, true);
             // getDocumentFile implicitly creates the directory.
             return document != null && document.exists();
         }
@@ -220,15 +220,15 @@ public class FileOperations {
             } else {
                 if (isAtleastLollipop()) {
                     // Storage Access Framework
-                    DocumentFile targetDocument = getDocumentFile(target, false);
+                    DocumentFile targetDocument = StorageUtils.INSTANCE.getDocumentFile(target, false);
                     if (targetDocument != null)
                         outStream =
-                                AceApplication.getAppContext().getContentResolver().openOutputStream(targetDocument.getUri());
+                                AceApplication.Companion.getAppContext().getContentResolver().openOutputStream(targetDocument.getUri());
                 } else if (isKitkat()) {
                     // Workaround for Kitkat ext SD card
                     Uri uri = MediaStoreHack.getUriFromFile(target.getAbsolutePath());
                     if (uri != null)
-                        outStream = AceApplication.getAppContext().getContentResolver().openOutputStream(uri);
+                        outStream = AceApplication.Companion.getAppContext().getContentResolver().openOutputStream(uri);
                 } else {
                     return false;
                 }

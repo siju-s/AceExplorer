@@ -13,7 +13,7 @@ public class AppModelImpl implements AppModel {
     private              Context context;
 
     public AppModelImpl() {
-        context = AceApplication.getAppContext();
+        context = AceApplication.Companion.getAppContext();
     }
 
     @Override

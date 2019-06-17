@@ -21,8 +21,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.app.AlertDialog;
 import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,10 +28,13 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.storage.model.task.CopyService;
 import com.siju.acexplorer.storage.model.task.CreateZipService;
 import com.siju.acexplorer.storage.model.task.ExtractService;
@@ -255,7 +256,7 @@ public class OperationProgress {
 
 
     private void stopZipService() {
-        Context context = AceApplication.getAppContext();
+        Context context = AceApplication.Companion.getAppContext();
         Intent intent = new Intent(context, CreateZipService.class);
         intent.setAction(ACTION_STOP);
         context.startService(intent);
@@ -263,7 +264,7 @@ public class OperationProgress {
     }
 
     private void stopExtractService() {
-        Context context = AceApplication.getAppContext();
+        Context context = AceApplication.Companion.getAppContext();
         Intent intent = new Intent(context, ExtractService.class);
         intent.setAction(ACTION_STOP);
         context.startService(intent);
@@ -292,7 +293,7 @@ public class OperationProgress {
 //    };
 
     private void stopCopyService() {
-        Context context = AceApplication.getAppContext();
+        Context context = AceApplication.Companion.getAppContext();
         Intent intent = new Intent(context, CopyService.class);
         intent.setAction(ACTION_STOP);
         context.startService(intent);
@@ -301,7 +302,7 @@ public class OperationProgress {
 
 
     private void stopMoveService() {
-        Context context = AceApplication.getAppContext();
+        Context context = AceApplication.Companion.getAppContext();
         Intent intent = new Intent(context, MoveService.class);
         intent.setAction(ACTION_STOP);
         context.startService(intent);

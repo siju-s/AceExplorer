@@ -3,13 +3,13 @@ package com.siju.acexplorer.storage.modules.picker.model;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Process;
+
 import androidx.preference.PreferenceManager;
 
 import com.siju.acexplorer.AceApplication;
+import com.siju.acexplorer.main.model.StorageUtils;
 
 import java.util.List;
-
-import static com.siju.acexplorer.main.model.StorageUtils.getStorageDirectories;
 
 
 public class PickerModelImpl implements PickerModel {
@@ -19,7 +19,7 @@ public class PickerModelImpl implements PickerModel {
     private SharedPreferences preferences;
 
     public PickerModelImpl() {
-        Context context = AceApplication.getAppContext();
+        Context context = AceApplication.Companion.getAppContext();
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
@@ -29,7 +29,7 @@ public class PickerModelImpl implements PickerModel {
             @Override
             public void run() {
                 Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-                List<String> list = INSTANCE.getStorageDirectories();
+                List<String> list = StorageUtils.INSTANCE.getStorageDirectories();
                 listener.onStoragesFetched(list);
             }
         }).start();

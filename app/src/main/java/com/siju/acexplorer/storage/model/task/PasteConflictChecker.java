@@ -16,17 +16,17 @@
 
 package com.siju.acexplorer.storage.model.task;
 
-import com.siju.acexplorer.logging.Logger;
+import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.logging.Logger;
+import com.siju.acexplorer.main.model.StorageUtils;
 import com.siju.acexplorer.main.model.data.FileDataFetcher;
-import com.siju.acexplorer.main.model.groups.StoragesGroup;
+import com.siju.acexplorer.main.model.groups.StorageFetcher;
 import com.siju.acexplorer.main.model.helper.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.siju.acexplorer.main.model.StorageUtils.getInternalStorage;
 
 
 public class PasteConflictChecker {
@@ -88,8 +88,8 @@ public class PasteConflictChecker {
     }
 
     private boolean checkIfRootDir() {
-        boolean isRootDir = !destinationDir.startsWith(INSTANCE.getInternalStorage());
-        List<String> externalSDList = StoragesGroup.Companion.getInstance().getExternalSDList();
+        boolean isRootDir = !destinationDir.startsWith(StorageUtils.INSTANCE.getInternalStorage());
+        List<String> externalSDList = new StorageFetcher(AceApplication.Companion.getAppContext()).getExternalSDList();
 
         for (String dir : externalSDList) {
             if (destinationDir.startsWith(dir)) {
@@ -101,7 +101,7 @@ public class PasteConflictChecker {
 
     private void findConflictFiles() {
         ArrayList<FileInfo> listFiles = FileDataFetcher.Companion.getFilesList(destinationDir,
-                                                                     rootmode, true, false);
+                                                                     rootmode, true);
 
         for (FileInfo fileInfo : listFiles) {
             for (FileInfo copiedFiles : totalFiles) {

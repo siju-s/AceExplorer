@@ -20,6 +20,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.palette.graphics.Palette;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -32,13 +39,6 @@ import com.siju.acexplorer.R;
 import com.siju.acexplorer.appmanager.helper.AppHelper;
 import com.siju.acexplorer.main.model.helper.FileUtils;
 import com.siju.acexplorer.main.model.helper.SdkHelper;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.palette.graphics.Palette;
 
 public class AppDetailUIView extends CoordinatorLayout implements AppDetailUi, View.OnClickListener {
     public static final String               URL_STORE = "https://play.google" +
@@ -265,7 +265,7 @@ public class AppDetailUIView extends CoordinatorLayout implements AppDetailUi, V
 
     @Override
     public void onResume() {
-        if (AppHelper.isPackageNotExisting(AceApplication.getAppContext(), packageName)) {
+        if (AppHelper.isPackageNotExisting(AceApplication.Companion.getAppContext(), packageName)) {
             getActivity().finish();
         }
     }

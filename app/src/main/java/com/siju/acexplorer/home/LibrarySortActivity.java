@@ -18,15 +18,16 @@ package com.siju.acexplorer.home;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.base.view.BaseActivity;
@@ -44,7 +45,6 @@ import static com.siju.acexplorer.main.model.groups.Category.COMPRESSED;
 import static com.siju.acexplorer.main.model.groups.Category.DOCS;
 import static com.siju.acexplorer.main.model.groups.Category.DOWNLOADS;
 import static com.siju.acexplorer.main.model.groups.Category.FAVORITES;
-import static com.siju.acexplorer.main.model.groups.Category.GIF;
 import static com.siju.acexplorer.main.model.groups.Category.IMAGE;
 import static com.siju.acexplorer.main.model.groups.Category.LARGE_FILES;
 import static com.siju.acexplorer.main.model.groups.Category.PDF;
@@ -117,7 +117,6 @@ public class LibrarySortActivity extends BaseActivity implements OnStartDragList
                 PDF,
                 APPS,
                 LARGE_FILES,
-                GIF,
         RECENT};
     }
 

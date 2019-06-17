@@ -63,11 +63,11 @@ class PassAppModelLoader implements ModelLoader<String, ApplicationInfo> {
         public void loadData(@NonNull Priority priority, @NonNull DataCallback<? super ApplicationInfo> callback) {
             ApplicationInfo applicationInfo = null;
             if (path.contains("/")) {
-                applicationInfo = AppUtils.getAppInfo(AceApplication.getAppContext(),
+                applicationInfo = AppUtils.getAppInfo(AceApplication.Companion.getAppContext(),
                                                                       path);
             } else {
                 try { // For App manager, package name to be passed
-                    applicationInfo = AceApplication.getAppContext().getPackageManager().getApplicationInfo(path, 0);
+                    applicationInfo = AceApplication.Companion.getAppContext().getPackageManager().getApplicationInfo(path, 0);
                 } catch (PackageManager.NameNotFoundException e) {
                     e.printStackTrace();
                 }

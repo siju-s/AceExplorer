@@ -24,9 +24,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
+import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.ads.AdsView
+import com.siju.acexplorer.home.model.HomeModelImpl
 import com.siju.acexplorer.home.viewmodel.HomeViewModel
+import com.siju.acexplorer.home.viewmodel.HomeViewModelFactory
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.permission.PermissionHelper
@@ -64,7 +67,8 @@ class HomeScreenFragment : Fragment() {
 
     private fun setupViewModels() {
         mainViewModel = activity?.let { ViewModelProviders.of(it).get(MainViewModel::class.java) }
-        homeViewModel = ViewModelProviders.of(this).get(HomeViewModel::class.java)
+        val viewModelFactory = HomeViewModelFactory(HomeModelImpl(AceApplication.appContext))
+        homeViewModel = ViewModelProviders.of(this, viewModelFactory).get(HomeViewModel::class.java)
     }
 
     private fun initList() {

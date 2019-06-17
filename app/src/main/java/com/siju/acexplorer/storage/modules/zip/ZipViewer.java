@@ -98,7 +98,7 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
         this.fragment = fragment;
         this.zipCommunicator = zipCommunicator;
         zipParentPath = zipPath = path;
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(AceApplication.getAppContext());
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(AceApplication.Companion.getAppContext());
         isHomeScreenEnabled = preferences.getBoolean(FileConstants.PREFS_HOMESCREEN, true);
         zipCommunicator.setInitialDir(path);
         setNavDirectory(path);

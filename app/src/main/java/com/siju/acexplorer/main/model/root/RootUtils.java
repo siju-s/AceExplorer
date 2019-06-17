@@ -18,11 +18,13 @@ package com.siju.acexplorer.main.model.root;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+
 import androidx.preference.PreferenceManager;
 
+import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.main.model.StorageUtils;
-import com.siju.acexplorer.main.model.groups.StoragesGroup;
+import com.siju.acexplorer.main.model.groups.StorageFetcher;
 import com.siju.acexplorer.main.model.helper.RootHelper;
 import com.stericson.RootTools.RootTools;
 
@@ -57,7 +59,7 @@ public class RootUtils {
         if (path == null) {
             return false;
         }
-        List<String> extSDPaths = StoragesGroup.Companion.getInstance().getExternalSDList();
+        List<String> extSDPaths = new StorageFetcher(AceApplication.Companion.getAppContext()).getExternalSDList();
         boolean isPathOnExt = false;
         if (extSDPaths != null) {
             for(String extSD: extSDPaths) {

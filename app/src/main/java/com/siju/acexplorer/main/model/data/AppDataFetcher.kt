@@ -11,7 +11,6 @@ import com.siju.acexplorer.main.model.helper.SortHelper.sortFiles
 import java.io.File
 import java.util.*
 
-private const val EXT_APK = ".apk"
 
 class AppDataFetcher : DataFetcher {
 
@@ -63,5 +62,9 @@ class AppDataFetcher : DataFetcher {
         }
         cursor.close()
         return sortFiles(fileInfoList, sortMode)
+    }
+
+    companion object {
+        const val EXT_APK = ".apk"
     }
 }

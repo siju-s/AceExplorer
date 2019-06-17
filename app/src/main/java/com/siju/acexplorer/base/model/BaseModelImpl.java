@@ -28,7 +28,7 @@ public class BaseModelImpl implements BaseModel {
     private Context context;
 
     public BaseModelImpl() {
-        context = AceApplication.getAppContext();
+        context = AceApplication.Companion.getAppContext();
     }
 
 

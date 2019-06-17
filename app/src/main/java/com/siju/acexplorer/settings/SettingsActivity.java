@@ -73,7 +73,7 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
     }
 
     private void checkTheme() {
-        currentTheme = ThemeUtils.getTheme(AceApplication.getAppContext());
+        currentTheme = ThemeUtils.getTheme(AceApplication.Companion.getAppContext());
     }
 
     private void setAppTheme() {

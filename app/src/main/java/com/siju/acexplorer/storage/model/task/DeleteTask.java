@@ -20,12 +20,13 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Process;
+
 import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
 
 import com.siju.acexplorer.AceApplication;
-import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.main.model.StorageUtils;
 import com.siju.acexplorer.main.model.root.RootDeniedException;
 import com.siju.acexplorer.main.model.root.RootUtils;
@@ -37,8 +38,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.siju.acexplorer.main.model.StorageUtils.getDocumentFile;
-import static com.siju.acexplorer.main.model.StorageUtils.isOnExtSdCard;
 import static com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastLollipop;
 import static com.siju.acexplorer.main.model.helper.SdkHelper.isKitkat;
 import static com.siju.acexplorer.main.model.helper.UriHelper.getUriFromFile;
@@ -90,7 +89,7 @@ public class DeleteTask {
                     boolean isDeleted = delete(new File(path));
 
                     if (!isDeleted) {
-                        boolean isRootDir = StorageUtils.isRootDirectory(path);
+                        boolean isRootDir = StorageUtils.INSTANCE.isRootDirectory(path);
                         if (!isRootDir) {
                             List<String> list = new ArrayList<>(filesToMediaIndex);
                             deleteResultCallback.onFileDeleted(totalFiles, deletedFilesList, list, mShowToast);
@@ -131,15 +130,15 @@ public class DeleteTask {
         }
 
         // Try with Storage Access Framework.
-        if (isAtleastLollipop() && isOnExtSdCard(file)) {
+        if (isAtleastLollipop() && StorageUtils.INSTANCE.isOnExtSdCard(file)) {
 
-            DocumentFile document = getDocumentFile(file, false);
+            DocumentFile document = StorageUtils.INSTANCE.getDocumentFile(file, false);
             return document != null && document.delete();
         }
 
         // Try the Kitkat workaround.
         if (isKitkat()) {
-            Context context = AceApplication.getAppContext();
+            Context context = AceApplication.Companion.getAppContext();
             ContentResolver resolver = context.getContentResolver();
 
             try {

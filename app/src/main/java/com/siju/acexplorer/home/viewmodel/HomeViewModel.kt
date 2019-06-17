@@ -15,7 +15,7 @@ class HomeViewModel(private val homeModel: HomeModel) : ViewModel() {
 
     private val _categories = MutableLiveData<ArrayList<HomeLibraryInfo>>()
     private val _storage = MutableLiveData<ArrayList<StorageItem>>()
-    private val _categoryData = MutableLiveData<Pair<Int,HomeLibraryInfo>>()
+    private val _categoryData = MutableLiveData<Pair<Int, HomeLibraryInfo>>()
 
     val storage: LiveData<ArrayList<StorageItem>>
         get() = _storage
@@ -23,7 +23,7 @@ class HomeViewModel(private val homeModel: HomeModel) : ViewModel() {
     val categories: LiveData<ArrayList<HomeLibraryInfo>>
         get() = _categories
 
-    val categoryData: LiveData<Pair<Int,HomeLibraryInfo>>
+    val categoryData: LiveData<Pair<Int, HomeLibraryInfo>>
         get() = _categoryData
 
     private val viewModelJob = Job()
@@ -47,20 +47,21 @@ class HomeViewModel(private val homeModel: HomeModel) : ViewModel() {
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        viewModelJob.cancel()
+    fun fetchCount(categoryInfoList: ArrayList<HomeLibraryInfo>) {
+        uiScope.launch(Dispatchers.IO) {
+            categoryInfoList.forEachIndexed { index, homeLibraryInfo ->
+                val fileInfo = homeModel.loadCountForCategory(homeLibraryInfo.category)
+                homeLibraryInfo.count = fileInfo.count
+                _categoryData.postValue(Pair(index, homeLibraryInfo))
+            }
+        }
     }
 
     fun getCategoryGridColumns() = homeModel.getCategoryGridCols()
 
-    fun fetchCount(categoryInfoList: ArrayList<HomeLibraryInfo>) {
-        categoryInfoList.forEachIndexed { index, homeLibraryInfo ->
-            val fileInfo = homeModel.loadCountForCategory(homeLibraryInfo.category)
-            homeLibraryInfo.count = fileInfo.count
-            _categoryData.postValue(Pair(index, homeLibraryInfo))
-        }
+    override fun onCleared() {
+        super.onCleared()
+        viewModelJob.cancel()
     }
-
 
 }

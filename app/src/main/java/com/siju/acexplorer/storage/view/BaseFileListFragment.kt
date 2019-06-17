@@ -16,24 +16,36 @@
 
 package com.siju.acexplorer.storage.view
 
-import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
+import com.siju.acexplorer.ads.AdsView
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.main.viewmodel.MainViewModel
+import com.siju.acexplorer.permission.PermissionHelper
+import com.siju.acexplorer.storage.model.StorageModelImpl
+import com.siju.acexplorer.storage.viewmodel.FileListViewModel
+import com.siju.acexplorer.storage.viewmodel.FileListViewModelFactory
+import kotlinx.android.synthetic.main.main_list.*
 
 const val KEY_PATH = "path"
 const val KEY_CATEGORY = "category"
 
 open class BaseFileListFragment : Fragment() {
 
-
-    val isFabExpanded: Boolean
-        get() = storagesUi!!.isFabExpanded
-    private var path : String? = null
+    private var path: String? = null
     private var category: Category? = null
+    private lateinit var filesList: FilesList
+    private var mainViewModel: MainViewModel? = null
+    private lateinit var fileListViewModel: FileListViewModel
+    private lateinit var adView : AdsView
+
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -46,7 +58,14 @@ open class BaseFileListFragment : Fragment() {
         setHasOptionsMenu(true)
 
         getArgs()
+        adView = AdsView(main_content)
 
+        setupViewModels()
+        val view = view
+        view?.let {
+            filesList = FilesList(this, view, fileListViewModel.getViewMode())
+        }
+        initObservers()
     }
 
     private fun getArgs() {
@@ -57,114 +76,143 @@ open class BaseFileListFragment : Fragment() {
         }
     }
 
-    fun onBackPressed(): Boolean {
-        return storagesUi!!.onBackPress()
+    private fun setupViewModels() {
+        mainViewModel = activity?.let { ViewModelProviders.of(it).get(MainViewModel::class.java) }
+        val viewModelFactory = FileListViewModelFactory(StorageModelImpl(AceApplication.appContext))
+        fileListViewModel = ViewModelProviders.of(this, viewModelFactory).get(FileListViewModel::class.java)
+    }
+
+    private fun initObservers() {
+        mainViewModel?.permissionStatus?.observe(viewLifecycleOwner, Observer { permissionStatus ->
+            when (permissionStatus) {
+                is PermissionHelper.PermissionState.Granted -> fileListViewModel.loadData(path,
+                                                                                          category)
+                else                                        -> {
+                }
+            }
+        })
+
+        mainViewModel?.premiumLiveData?.observe(viewLifecycleOwner, Observer { premiumState ->
+            if (premiumState.entitled) {
+                hideAds()
+            }
+            else {
+                showAds()
+            }
+        })
+
+        fileListViewModel.fileData.observe(viewLifecycleOwner, Observer {
+            if (::filesList.isInitialized) {
+                filesList.onDataLoaded(it)
+            }
+        })
+    }
+
+    private fun showAds() {
+        adView.showAds()
+    }
+
+    private fun hideAds() {
+        adView.hideAds()
     }
 
 
-    fun onPermissionGranted() {
-        if (storagesUi != null) {
-            storagesUi!!.refreshList()
-        }
-    }
-
-
-    override fun onResume() {
-        super.onResume()
-        storagesUi!!.onResume()
-    }
-
-
-    override fun onPause() {
-        storagesUi!!.onPause()
-        super.onPause()
-
-    }
-
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        storagesUi!!.handleActivityResult(requestCode, resultCode, intent)
-        super.onActivityResult(requestCode, resultCode, intent)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        storagesUi!!.onConfigChanged(newConfig)
-    }
-
-    override fun onDestroyView() {
-        storagesUi!!.onViewDestroyed()
-        super.onDestroyView()
-    }
-
-    override fun onDestroy() {
-        storagesUi!!.onExit()
-        super.onDestroy()
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return super.onOptionsItemSelected(item)
-    }
-
-    fun performVoiceSearch(query: String) {
-        storagesUi!!.performVoiceSearch(query)
-    }
-
-    fun collapseFab() {
-        storagesUi!!.collapseFab()
-    }
-
-    fun reloadList(directory: String, category: Category) {
-        storagesUi!!.reloadList(directory, category)
-    }
-
-    fun refreshList() {
-        storagesUi!!.refreshList()
-    }
-
-    fun removeHomeFromNavPath() {
-        storagesUi!!.removeHomeFromNavPath()
-    }
-
-    fun addHomeNavPath() {
-        storagesUi!!.addHomeNavPath()
-    }
-
-    fun refreshSpan() {
-        storagesUi!!.refreshSpan()
-    }
-
-    fun showDualPane() {
-        storagesUi!!.showDualPane()
-    }
-
-    fun hideDualPane() {
-        storagesUi!!.hideDualPane()
-        val fragment = activity!!.supportFragmentManager.findFragmentById(R.id.frame_container_dual)
-        if (fragment != null) {
-            val fragmentTransaction = activity!!.supportFragmentManager.beginTransaction()
-            fragmentTransaction.remove(fragment).commitAllowingStateLoss()
-        }
-    }
-
-    fun setPremium() {
-        storagesUi!!.setPremium()
-    }
-
-    fun setHidden(showHidden: Boolean) {
-        storagesUi!!.setHidden(showHidden)
-    }
-
-    fun switchView(viewMode: Int) {
-        storagesUi!!.switchView(viewMode)
-    }
-
-    fun collapseSearchView() {
-        storagesUi!!.collapseSearchView()
-    }
+//    fun onBackPressed(): Boolean {
+//        return storagesUi!!.onBackPress()
+//    }
+//
+//    override fun onResume() {
+//        super.onResume()
+//        storagesUi!!.onResume()
+//    }
+//
+//
+//    override fun onPause() {
+//        storagesUi!!.onPause()
+//        super.onPause()
+//    }
+//
+//
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+//        storagesUi!!.handleActivityResult(requestCode, resultCode, intent)
+//        super.onActivityResult(requestCode, resultCode, intent)
+//    }
+//
+//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+//        menu.clear()
+//        super.onCreateOptionsMenu(menu, inflater)
+//    }
+//
+//    override fun onConfigurationChanged(newConfig: Configuration) {
+//        super.onConfigurationChanged(newConfig)
+//        storagesUi!!.onConfigChanged(newConfig)
+//    }
+//
+//    override fun onDestroyView() {
+//        storagesUi!!.onViewDestroyed()
+//        super.onDestroyView()
+//    }
+//
+//    override fun onDestroy() {
+//        storagesUi!!.onExit()
+//        super.onDestroy()
+//    }
+//
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        return super.onOptionsItemSelected(item)
+//    }
+//
+//    fun performVoiceSearch(query: String) {
+//        storagesUi!!.performVoiceSearch(query)
+//    }
+//
+//    fun collapseFab() {
+//        storagesUi!!.collapseFab()
+//    }
+//
+//    fun reloadList(directory: String, category: Category) {
+//        storagesUi!!.reloadList(directory, category)
+//    }
+//
+//    fun refreshList() {
+//        storagesUi!!.refreshList()
+//    }
+//
+//    fun removeHomeFromNavPath() {
+//        storagesUi!!.removeHomeFromNavPath()
+//    }
+//
+//    fun addHomeNavPath() {
+//        storagesUi!!.addHomeNavPath()
+//    }
+//
+//    fun refreshSpan() {
+//        storagesUi!!.refreshSpan()
+//    }
+//
+//    fun showDualPane() {
+//        storagesUi!!.showDualPane()
+//    }
+//
+//    fun hideDualPane() {
+//        storagesUi!!.hideDualPane()
+//        val fragment = activity!!.supportFragmentManager.findFragmentById(R.id.frame_container_dual)
+//        if (fragment != null) {
+//            val fragmentTransaction = activity!!.supportFragmentManager.beginTransaction()
+//            fragmentTransaction.remove(fragment).commitAllowingStateLoss()
+//        }
+//    }
+//
+//
+//    fun setHidden(showHidden: Boolean) {
+//        storagesUi!!.setHidden(showHidden)
+//    }
+//
+//    fun switchView(viewMode: Int) {
+//        storagesUi!!.switchView(viewMode)
+//    }
+//
+//    fun collapseSearchView() {
+//        storagesUi!!.collapseSearchView()
+//    }
 }

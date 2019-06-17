@@ -2,12 +2,45 @@ package com.siju.acexplorer.main.model.groups;
 
 
 import android.content.Context;
-import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.siju.acexplorer.R;
 
-import static com.siju.acexplorer.main.model.groups.Category.*;
+import static com.siju.acexplorer.main.model.groups.Category.ALBUMS;
+import static com.siju.acexplorer.main.model.groups.Category.ALBUM_DETAIL;
+import static com.siju.acexplorer.main.model.groups.Category.ALL_TRACKS;
+import static com.siju.acexplorer.main.model.groups.Category.APPS;
+import static com.siju.acexplorer.main.model.groups.Category.APP_MANAGER;
+import static com.siju.acexplorer.main.model.groups.Category.ARTISTS;
+import static com.siju.acexplorer.main.model.groups.Category.ARTIST_DETAIL;
+import static com.siju.acexplorer.main.model.groups.Category.AUDIO;
+import static com.siju.acexplorer.main.model.groups.Category.COMPRESSED;
+import static com.siju.acexplorer.main.model.groups.Category.DOCS;
+import static com.siju.acexplorer.main.model.groups.Category.DOWNLOADS;
+import static com.siju.acexplorer.main.model.groups.Category.FAVORITES;
+import static com.siju.acexplorer.main.model.groups.Category.FILES;
+import static com.siju.acexplorer.main.model.groups.Category.FOLDER_IMAGES;
+import static com.siju.acexplorer.main.model.groups.Category.FOLDER_VIDEOS;
+import static com.siju.acexplorer.main.model.groups.Category.GENERIC_IMAGES;
+import static com.siju.acexplorer.main.model.groups.Category.GENERIC_LIST;
+import static com.siju.acexplorer.main.model.groups.Category.GENERIC_MUSIC;
+import static com.siju.acexplorer.main.model.groups.Category.GENERIC_VIDEOS;
+import static com.siju.acexplorer.main.model.groups.Category.GENRES;
+import static com.siju.acexplorer.main.model.groups.Category.GENRE_DETAIL;
+import static com.siju.acexplorer.main.model.groups.Category.IMAGE;
+import static com.siju.acexplorer.main.model.groups.Category.LARGE_FILES;
+import static com.siju.acexplorer.main.model.groups.Category.PDF;
+import static com.siju.acexplorer.main.model.groups.Category.PICKER;
+import static com.siju.acexplorer.main.model.groups.Category.PODCASTS;
+import static com.siju.acexplorer.main.model.groups.Category.RECENT;
+import static com.siju.acexplorer.main.model.groups.Category.RECENT_APPS;
+import static com.siju.acexplorer.main.model.groups.Category.RECENT_AUDIO;
+import static com.siju.acexplorer.main.model.groups.Category.RECENT_DOCS;
+import static com.siju.acexplorer.main.model.groups.Category.RECENT_IMAGES;
+import static com.siju.acexplorer.main.model.groups.Category.RECENT_VIDEOS;
+import static com.siju.acexplorer.main.model.groups.Category.TRASH;
+import static com.siju.acexplorer.main.model.groups.Category.VIDEO;
+import static com.siju.acexplorer.main.model.groups.Category.ZIP_VIEWER;
 
 
 public class CategoryHelper {
@@ -44,8 +77,8 @@ public class CategoryHelper {
                 return GENERIC_LIST;
             case 14:
                 return PICKER;
-            case 15:
-                return GIF;
+//            case 15:
+//                return GIF;
             case 16:
                 return RECENT;
             case 33:
@@ -85,9 +118,6 @@ public class CategoryHelper {
                 category.equals(ALBUMS) ||
                 category.equals(ARTISTS) ||
                 category.equals(GENRES) ||
-                category.equals(ALARMS) ||
-                category.equals(NOTIFICATIONS) ||
-                category.equals(RINGTONES) ||
                 category.equals(PODCASTS) ||
                 category.equals(ALBUM_DETAIL) ||
                 category.equals(ARTIST_DETAIL) ||
@@ -196,8 +226,6 @@ public class CategoryHelper {
                 return context.getString(R.string.nav_menu_docs);
             case DOWNLOADS:
                 return context.getString(R.string.downloads);
-            case ADD:
-                return context.getString(R.string.home_add);
             case COMPRESSED:
                 return context.getString(R.string.compressed);
             case FAVORITES:
@@ -209,22 +237,14 @@ public class CategoryHelper {
                 return context.getString(R.string.apk);
             case LARGE_FILES:
                 return context.getString(R.string.library_large);
-            case GIF:
-                return context.getString(R.string.library_gif);
             case RECENT:
                 return context.getString(R.string.library_recent);
             case ALBUMS:
                 return context.getString(R.string.albums);
             case ARTISTS:
                 return context.getString(R.string.artists);
-            case ALARMS:
-                return context.getString(R.string.alarms);
-            case NOTIFICATIONS:
-                return context.getString(R.string.notifications);
             case GENRES:
                 return context.getString(R.string.genres);
-            case RINGTONES:
-                return context.getString(R.string.ringtones);
             case PODCASTS:
                 return context.getString(R.string.podcasts);
             case ALL_TRACKS:
@@ -249,8 +269,6 @@ public class CategoryHelper {
                 return R.drawable.ic_library_docs;
             case DOWNLOADS:
                 return R.drawable.ic_library_downloads;
-            case ADD:
-                return R.drawable.ic_library_add;
             case COMPRESSED:
                 return R.drawable.ic_library_compressed;
             case FAVORITES:
@@ -261,8 +279,6 @@ public class CategoryHelper {
                 return R.drawable.ic_library_apk;
             case LARGE_FILES:
                 return R.drawable.ic_library_large;
-            case GIF:
-                return R.drawable.ic_library_gif;
             case RECENT:
                 return R.drawable.ic_library_recents;
         }

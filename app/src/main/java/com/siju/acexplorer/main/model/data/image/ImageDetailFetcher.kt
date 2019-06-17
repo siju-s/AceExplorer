@@ -9,16 +9,16 @@ import com.siju.acexplorer.main.model.data.DataFetcher
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.FileUtils
 import java.io.File
-import java.util.ArrayList
+import java.util.*
 
 
 class ImageDetailFetcher : DataFetcher {
     override fun fetchData(context: Context, path: String?, category: Category): ArrayList<FileInfo> {
-        | Settings | File Templates.
+        return ArrayList<FileInfo>()
     }
 
     override fun fetchCount(context: Context, path: String?): Int {
-        | Settings | File Templates.
+        return 0
     }
 
     private fun fetchBucketDetail(context: Context, category: Category, bucketId: Long,

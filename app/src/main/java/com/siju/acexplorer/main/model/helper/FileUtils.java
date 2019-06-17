@@ -22,14 +22,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import androidx.annotation.NonNull;
-import androidx.documentfile.provider.DocumentFile;
 import android.text.format.Formatter;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.documentfile.provider.DocumentFile;
+
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.logging.Logger;
+import com.siju.acexplorer.main.model.StorageUtils;
 import com.siju.acexplorer.main.model.groups.Category;
 
 import java.io.File;
@@ -46,8 +48,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
-import static com.siju.acexplorer.main.model.StorageUtils.getDocumentFile;
-import static com.siju.acexplorer.main.model.StorageUtils.isOnExtSdCard;
 import static com.siju.acexplorer.main.model.groups.Category.AUDIO;
 import static com.siju.acexplorer.main.model.groups.Category.FILES;
 import static com.siju.acexplorer.main.model.groups.Category.IMAGE;
@@ -226,7 +226,7 @@ public class FileUtils {
             } else {
                 if (isAtleastLollipop()) {
                     // Storage Access Framework
-                    DocumentFile targetDocument = getDocumentFile(target, false);
+                    DocumentFile targetDocument = StorageUtils.INSTANCE.getDocumentFile(target, false);
                     if (targetDocument != null) {
                         outStream =
                                 context.getContentResolver().openOutputStream(targetDocument.getUri());
@@ -367,7 +367,7 @@ public class FileUtils {
         }
 
         // Next check SAF writability.
-        DocumentFile document = getDocumentFile(file, false);
+        DocumentFile document = StorageUtils.INSTANCE.getDocumentFile(file, false);
 
         if (document == null) {
             return true;
@@ -395,15 +395,15 @@ public class FileUtils {
         }
 
         // Try with Storage Access Framework.
-        if (isAtleastLollipop() && isOnExtSdCard(file)) {
+        if (isAtleastLollipop() && StorageUtils.INSTANCE.isOnExtSdCard(file)) {
 
-            DocumentFile document = getDocumentFile(file, false);
+            DocumentFile document = StorageUtils.INSTANCE.getDocumentFile(file, false);
             return document != null && document.delete();
         }
 
         // Try the Kitkat workaround.
         if (isKitkat()) {
-            Context context = AceApplication.getAppContext();
+            Context context = AceApplication.Companion.getAppContext();
             ContentResolver resolver = context.getContentResolver();
 
             try {
@@ -458,7 +458,7 @@ public class FileUtils {
         }
         totalSuccess = file.delete();
         if (totalSuccess) {
-            MediaStoreHelper.removeMedia(AceApplication.getAppContext(), path, 0);
+            MediaStoreHelper.removeMedia(AceApplication.Companion.getAppContext(), path, 0);
         }
         return totalSuccess;
     }

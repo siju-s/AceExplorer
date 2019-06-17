@@ -34,12 +34,12 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import com.siju.acexplorer.R
 import com.siju.acexplorer.logging.Logger
-import com.siju.acexplorer.main.view.MainUiView.PERMISSIONS_REQUEST
 
 
 private const val TAG = "PermissionHelper"
 private const val PHONE_SETTINGS_REQUEST = 2000
 private const val SCHEMA_PACKAGE = "package"
+private const val PERMISSIONS_REQUEST = 1000
 private const val storagePermission = Manifest.permission.WRITE_EXTERNAL_STORAGE
 
 class PermissionHelper(private val activity: AppCompatActivity, private val context: Context) {

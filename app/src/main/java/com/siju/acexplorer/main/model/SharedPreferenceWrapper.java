@@ -18,19 +18,15 @@ package com.siju.acexplorer.main.model;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.home.model.LibrarySortModel;
 import com.siju.acexplorer.logging.Logger;
-import com.siju.acexplorer.storage.model.ViewMode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static com.siju.acexplorer.main.model.StorageUtils.getDownloadsDirectory;
 
 
 public class SharedPreferenceWrapper {
@@ -47,7 +43,6 @@ public class SharedPreferenceWrapper {
     private static final String TEMP_STRING_DATA = "String_data";
 
 
-    private static final String PREFS_VIEW_MODE = "view-mode";
 
 
     private void saveFavorites(Context context, List<FavInfo> favorites) {
@@ -107,26 +102,6 @@ public class SharedPreferenceWrapper {
         return isDeleted;
     }
 
-    /**
-     * Reset favourites to initial state
-     *
-     * @param context
-     */
-    public void resetFavourites(Context context) {
-        if (context == null) {
-            return;
-        }
-        ArrayList<FavInfo> favorites = getFavorites(context);
-        if (favorites != null) {
-            for (int i = favorites.size() - 1; i >= 0; i--) {
-                if (!favorites.get(i).getFilePath().equalsIgnoreCase(INSTANCE.getDownloadsDirectory())) {
-                    Logger.log("TAG", "Fav path=" + favorites.get(i).getFilePath());
-                    favorites.remove(i);
-                }
-            }
-            saveFavorites(context, favorites);
-        }
-    }
 
     public ArrayList<FavInfo> getFavorites(Context context) {
         SharedPreferences sharedPreferences;
@@ -178,18 +153,6 @@ public class SharedPreferenceWrapper {
         return libraries;
     }
 
-    public void savePrefs(Context context, int viewMode) {
-        SharedPreferences sharedPreferences;
-        SharedPreferences.Editor editor;
-
-        sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-
-        editor = sharedPreferences.edit();
-        editor.putInt(PREFS_VIEW_MODE, viewMode);
-        Log.d("Wrapper", "savePrefs: viewMode:"+viewMode);
-        editor.apply();
-    }
-
     public void saveLibrary(Context context, List<LibrarySortModel> librarySortModel) {
         SharedPreferences settings;
         SharedPreferences.Editor editor;
@@ -207,19 +170,6 @@ public class SharedPreferenceWrapper {
     }
 
 
-    public int getViewMode(Context context) {
-        SharedPreferences sharedPreferences;
-        int mode;
-
-        sharedPreferences = context.getSharedPreferences(PREFS_NAME,
-                Context.MODE_PRIVATE);
-        if (sharedPreferences.contains(PREFS_VIEW_MODE)) {
-            mode = sharedPreferences.getInt(PREFS_VIEW_MODE, ViewMode.LIST);
-        } else {
-            mode = ViewMode.LIST;
-        }
-        return mode;
-    }
 
 
     public void updateFavoritePath(Context context, String oldFile, String newFile) {

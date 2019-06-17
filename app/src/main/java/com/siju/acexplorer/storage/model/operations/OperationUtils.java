@@ -16,9 +16,10 @@
 
 package com.siju.acexplorer.storage.model.operations;
 
+import com.siju.acexplorer.main.model.StorageUtils;
+
 import java.io.File;
 
-import static com.siju.acexplorer.main.model.StorageUtils.isOnExtSdCard;
 import static com.siju.acexplorer.main.model.helper.FileUtils.isFileNonWritable;
 import static com.siju.acexplorer.main.model.helper.FileUtils.isWritable;
 import static com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastLollipop;
@@ -66,7 +67,7 @@ public class OperationUtils {
             return WriteMode.ROOT;
         }
         File folder = new File(directory);
-        if (isAtleastLollipop() && isOnExtSdCard(folder)) {
+        if (isAtleastLollipop() && StorageUtils.INSTANCE.isOnExtSdCard(folder)) {
             if (!folder.exists() || !folder.isDirectory()) {
                 return WriteMode.ROOT;
             }
@@ -76,7 +77,7 @@ public class OperationUtils {
                 return WriteMode.EXTERNAL;
             }
             return WriteMode.INTERNAL;
-        } else if (isKitkat() && isOnExtSdCard(folder)) {
+        } else if (isKitkat() && StorageUtils.INSTANCE.isOnExtSdCard(folder)) {
             // Assume that Kitkat workaround works
             return WriteMode.INTERNAL;
         } else if (isWritable(new File(folder, "DummyFile"))) {

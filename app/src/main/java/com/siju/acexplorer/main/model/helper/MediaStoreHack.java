@@ -94,7 +94,7 @@ public class MediaStoreHack {
 
     private static OutputStream getOutputStream(String str) {
         OutputStream outputStream = null;
-        Context context = AceApplication.getAppContext();
+        Context context = AceApplication.Companion.getAppContext();
         Uri fileUri = getUriFromFile(str);
         if (fileUri != null) {
             try {
@@ -106,7 +106,7 @@ public class MediaStoreHack {
     }
 
     static Uri getUriFromFile(final String path) {
-        Context context = AceApplication.getAppContext();
+        Context context = AceApplication.Companion.getAppContext();
         ContentResolver resolver = context.getContentResolver();
 
         Cursor filecursor = resolver.query(MediaStore.Files.getContentUri("external"),
@@ -298,7 +298,7 @@ public class MediaStoreHack {
             return file.isDirectory();
         }
         final File tmpFile = new File(file, ".MediaWriteTemp");
-        Context context = AceApplication.getAppContext();
+        Context context = AceApplication.Companion.getAppContext();
         final int albumId = getTemporaryAlbumId(context);
         if (albumId == 0) {
             throw new IOException("Failed to create temporary album id.");

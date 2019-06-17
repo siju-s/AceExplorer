@@ -31,7 +31,7 @@ class HomeModelImpl(val context: Context) : HomeModel {
     }
 
     override fun loadCountForCategory(category: Category): FileInfo {
-        val count = DataLoader.fetchDataCount(context, DataFetcherFactory.createDataFetcher(category), path)
+        val count = DataLoader.fetchDataCount(context, DataFetcherFactory.createDataFetcher(category), null)
         return FileInfo(category, count)
     }
 }

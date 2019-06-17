@@ -397,7 +397,7 @@ public class CopyService extends Service {
         }
 
         ArrayList<FileInfo> filePaths = FileDataFetcher.Companion.getFilesList(sourceFile,
-                                                                    false, true, false);
+                                                                    false, true);
         for (FileInfo file : filePaths) {
             String path = file.getFilePath();
             String destFile = path + file.getFilePath().substring(sourceFile.lastIndexOf("/"), sourceFile.length());
@@ -441,7 +441,7 @@ public class CopyService extends Service {
         intent.putExtra(KEY_RESULT, failedFiles.size() == 0);
         intent.putExtra(KEY_OPERATION, move ? CUT : COPY);
         String[] newList = new String[filesToMediaIndex.size()];
-        scanMultipleFiles(AceApplication.getAppContext(), filesToMediaIndex.toArray(newList));
+        scanMultipleFiles(AceApplication.Companion.getAppContext(), filesToMediaIndex.toArray(newList));
         sendBroadcast(intent);
     }
 
@@ -488,7 +488,7 @@ public class CopyService extends Service {
         }
 
         ArrayList<FileInfo> filePaths = FileDataFetcher.Companion.getFilesList(sourceFile.getFilePath(),
-                                                                      false, true, false);
+                                                                      false, true);
         for (FileInfo file : filePaths) {
             if (stopService) {
                 publishCompletionResult();
@@ -636,7 +636,7 @@ public class CopyService extends Service {
                 return false;
             }
             ArrayList<FileInfo> baseFiles = FileDataFetcher.Companion.getFilesList(oldFileInfo.getFilePath()
-                    , true, true, false);
+                    , true, true);
             if (baseFiles.size() > 0) {
                 boolean b = true;
                 for (FileInfo baseFile : baseFiles) {
@@ -652,7 +652,7 @@ public class CopyService extends Service {
             return RootHelper.fileExists(newFileInfo.getFilePath());
         } else {
             String parent = new File(oldFileInfo.getFilePath()).getParent();
-            ArrayList<FileInfo> baseFiles = FileDataFetcher.Companion.getFilesList(parent, true, true, false);
+            ArrayList<FileInfo> baseFiles = FileDataFetcher.Companion.getFilesList(parent, true, true);
             int i = -1;
             int index = -1;
             for (FileInfo b : baseFiles) {
@@ -662,7 +662,7 @@ public class CopyService extends Service {
                     break;
                 }
             }
-            ArrayList<FileInfo> baseFiles1 = FileDataFetcher.Companion.getFilesList(parent, true, true, false);
+            ArrayList<FileInfo> baseFiles1 = FileDataFetcher.Companion.getFilesList(parent, true, true);
             int i1 = -1;
             int index1 = -1;
             for (FileInfo b : baseFiles1) {
