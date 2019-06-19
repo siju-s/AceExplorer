@@ -2,6 +2,7 @@ package com.siju.acexplorer.home.model
 
 import android.content.Context
 import android.preference.PreferenceManager
+import android.util.Log
 import com.siju.acexplorer.R
 import com.siju.acexplorer.home.types.HomeLibraryInfo
 import com.siju.acexplorer.main.model.FileConstants
@@ -9,22 +10,24 @@ import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper
 
 private const val COUNT_ZERO = 0
-
+private const val TAG = "CategoryCreator"
 object CategoryCreator {
 
     private val resourceIds = listOf(R.drawable.ic_library_images, R.drawable.ic_library_music,
             R.drawable.ic_library_videos, R.drawable.ic_library_docs,
             R.drawable.ic_library_downloads, R.drawable.ic_library_recents)
     private val labels = arrayOf("Images", "Audio", "Videos", "Docs", "Downloads", "Recent")
-    private val categories = listOf(Category.IMAGE, Category.AUDIO, Category.VIDEO,
-            Category.VIDEO, Category.DOCS, Category.DOWNLOADS, Category.RECENT)
+    private val categories = listOf(Category.IMAGE, Category.AUDIO, Category.VIDEO, Category.DOCS,
+                                    Category.DOWNLOADS, Category.RECENT)
 
     fun getCategories(context: Context): ArrayList<HomeLibraryInfo> {
         val homeLibraryInfoList = arrayListOf<HomeLibraryInfo>()
         if (isFirstRun(context)) {
+            Log.e(TAG, "getCategories: addDefault")
             addDefaultLibs(context, homeLibraryInfoList)
             persistFirstRunPref(context)
         } else {
+            Log.e(TAG, "getCategories: addSavedLibs")
             addSavedLibs(context, homeLibraryInfoList)
         }
         return homeLibraryInfoList
@@ -40,7 +43,7 @@ object CategoryCreator {
     }
 
     private fun persistFirstRunPref(context: Context) {
-        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(FileConstants.PREFS_FIRST_RUN, true).apply()
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(FileConstants.PREFS_FIRST_RUN, false).apply()
     }
 
     private fun addToList(homeLibraryInfo: HomeLibraryInfo, homeLibraryInfoList: ArrayList<HomeLibraryInfo>) {

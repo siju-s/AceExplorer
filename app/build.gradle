@@ -114,10 +114,13 @@ dependencies {
     implementation deps.kotlin.coroutine_core
     implementation deps.kotlin.coroutine_android
 
+    implementation deps.lifecycle.runtime
     implementation deps.lifecycle.extensions
+    annotationProcessor deps.lifecycle.compiler
     implementation deps.lifecycle.viewmodel_ktx
-    implementation deps.lifecycle.room
-    annotationProcessor deps.lifecycle.room_compiler
+
+    implementation deps.room.runtime
+    kapt deps.room.compiler
 
     // Support libraries
     implementation deps.support.app_compat

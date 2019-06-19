@@ -17,6 +17,7 @@
 package com.siju.acexplorer.home.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -77,24 +78,20 @@ class HomeScreenFragment : Fragment() {
     }
 
     private fun initObservers() {
-        mainViewModel?.permissionStatus?.observe(viewLifecycleOwner, Observer { permissionStatus ->
-            when (permissionStatus) {
-                is PermissionHelper.PermissionState.Granted -> homeViewModel.loadData()
-                else -> {
+        mainViewModel?.premiumLiveData?.observe(viewLifecycleOwner, Observer { premiumState ->
+            Log.e(TAG, "Premium state:$premiumState")
+            if (premiumState != null) {
+                if (premiumState.entitled) {
+                    hideAds()
+                }
+                else {
+                    showAds()
                 }
             }
         })
 
-        mainViewModel?.premiumLiveData?.observe(viewLifecycleOwner, Observer { premiumState ->
-            if (premiumState.entitled) {
-                hideAds()
-            }
-            else {
-                showAds()
-            }
-        })
-
         homeViewModel.categories.observe(viewLifecycleOwner, Observer {categoryList ->
+            Log.e(TAG, "categories: ${categoryList.size}")
             categoryAdapter.submitList(categoryList)
             homeViewModel.fetchCount(categoryList)
         })
@@ -103,7 +100,16 @@ class HomeScreenFragment : Fragment() {
             storageAdapter.submitList(it)
         })
 
+        mainViewModel?.permissionStatus?.observe(viewLifecycleOwner, Observer { permissionStatus ->
+            when (permissionStatus) {
+                is PermissionHelper.PermissionState.Granted -> homeViewModel.loadData()
+                else -> {
+                }
+            }
+        })
+
         homeViewModel.categoryData.observe(viewLifecycleOwner, Observer {
+            Log.e(TAG, "categorydata: ${it.first}, ${it.second}")
             categoryAdapter.notifyItemChanged(it.first, it.second)
         })
     }
@@ -117,7 +123,7 @@ class HomeScreenFragment : Fragment() {
     }
 
     private fun setupCategoriesList() {
-        categoryList.setHasFixedSize(true)
+        Log.e(TAG, "setupCategoriesList")
         categoryList.isNestedScrollingEnabled = true
         setCategoryLayoutManager()
         categoryAdapter = HomeLibAdapter {
@@ -128,7 +134,7 @@ class HomeScreenFragment : Fragment() {
     }
 
     private fun setupStorageList() {
-        storageList.setHasFixedSize(true)
+        Log.e(TAG, "setupStorageList")
         storageList.isNestedScrollingEnabled = true
         storageAdapter = HomeStorageAdapter { storageItem ->
             loadList(storageItem.path, storageItem.category)
@@ -144,6 +150,7 @@ class HomeScreenFragment : Fragment() {
 
     private fun setCategoryLayoutManager() {
         val gridColumns = homeViewModel.getCategoryGridColumns()
+        Log.e(TAG, "gridColumns$gridColumns")
         val gridLayoutManager = GridLayoutManager(context, gridColumns)
         categoryList.layoutManager = gridLayoutManager
     }

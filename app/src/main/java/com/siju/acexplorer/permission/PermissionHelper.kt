@@ -25,6 +25,7 @@ import android.content.pm.PermissionInfo
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -48,8 +49,8 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
     private val requiredPermissions = arrayOf(Manifest.permission
             .WRITE_EXTERNAL_STORAGE)
 
-    lateinit var permissionStatus: MutableLiveData<PermissionState>
-    private var permissionsNeeded = arrayOf<String>()
+    val permissionStatus: MutableLiveData<PermissionState> = MutableLiveData()
+    private val permissionsNeeded = ArrayList<String>()
 
     fun checkPermissions() {
         if (hasPermissions(context)) {
@@ -61,6 +62,7 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
     }
 
     private fun hasPermissions(context: Context): Boolean {
+        Log.e(TAG, "hasPermissions")
         val permissions: ArrayList<String>
         try {
             permissions = getPermissions(context)
@@ -68,14 +70,13 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
             e.printStackTrace()
             return false
         }
-
+        permissionsNeeded.clear()
         for (permission in permissions) {
             if (isPermissionDenied(context, permission)) {
-                permissions.add(permission)
+                permissionsNeeded.add(permission)
             }
         }
-        permissionsNeeded = permissions.toTypedArray()
-        return permissions.isEmpty()
+        return permissionsNeeded.isEmpty()
     }
 
     private fun isPermissionDenied(context: Context, permission: String) =
@@ -109,10 +110,11 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
 
     fun requestPermission() {
         Logger.log(TAG, "requestPermission")
-        ActivityCompat.requestPermissions(activity, requiredPermissions, PERMISSIONS_REQUEST)
+        ActivityCompat.requestPermissions(activity, permissionsNeeded.toTypedArray(), PERMISSIONS_REQUEST)
     }
 
     fun onPermissionResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        Log.e(TAG, "onPermissionResult")
         if (hasPermissions(context)) {
             Logger.log(TAG, "Permission granted")
             permissionStatus.value = PermissionState.Granted()
@@ -151,6 +153,7 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
     }
 
     private fun onRationaleDialogDismissed() {
+        Log.e(TAG, "onRationaleDialogDismissed")
         if (!hasPermissions(context)) {
             dismissRationaleDialog()
             activity.finish()

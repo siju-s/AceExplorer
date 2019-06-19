@@ -1,5 +1,6 @@
 package com.siju.acexplorer.home.view
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +13,7 @@ import com.siju.acexplorer.R
 import com.siju.acexplorer.home.types.HomeLibraryInfo
 import com.siju.acexplorer.main.model.groups.CategoryHelper.getCategoryName
 
-
+private const val TAG = "HomeLibAdapter"
 class HomeLibAdapter internal constructor(private val clickListener: (HomeLibraryInfo) -> Unit) :
         ListAdapter<HomeLibraryInfo, HomeLibAdapter.ViewHolder>(CategoryDiffCallback()) {
 
@@ -22,6 +23,7 @@ class HomeLibAdapter internal constructor(private val clickListener: (HomeLibrar
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val item = getItem(position)
+        Log.e(TAG, "onBindViewHolder $position")
         viewHolder.bind(item, clickListener)
     }
 

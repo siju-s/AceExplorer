@@ -1,6 +1,7 @@
 package com.siju.acexplorer.home.model
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.home.types.HomeLibraryInfo
@@ -11,6 +12,7 @@ import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.StorageFetcher
 import com.siju.acexplorer.utils.ConfigurationHelper
 
+private const val TAG = "HomeModelImpl"
 class HomeModelImpl(val context: Context) : HomeModel {
     lateinit var libraries: LiveData<ArrayList<HomeLibraryInfo>>
 
@@ -32,6 +34,7 @@ class HomeModelImpl(val context: Context) : HomeModel {
 
     override fun loadCountForCategory(category: Category): FileInfo {
         val count = DataLoader.fetchDataCount(context, DataFetcherFactory.createDataFetcher(category), null)
+        Log.e(TAG, "loadCountForCategory $category = $count")
         return FileInfo(category, count)
     }
 }

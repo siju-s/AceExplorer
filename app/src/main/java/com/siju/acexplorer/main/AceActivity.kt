@@ -42,7 +42,6 @@ class AceActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        ViewModelProviders.of(this).get(MainViewModel::class.java)
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         mainViewModel.setPermissionHelper(PermissionHelper( this, applicationContext))
 
@@ -82,7 +81,6 @@ class AceActivity : BaseActivity() {
     private fun openFragment(fragment: Fragment) {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.main_container, fragment)
-        transaction.addToBackStack(null)
         transaction.commit()
     }
 

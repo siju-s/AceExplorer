@@ -48,12 +48,16 @@ support.preference       = "androidx.preference:preference:$versions.preference"
 deps.support = support
 
 def lifecycle = [:]
+lifecycle.runtime       = "androidx.lifecycle:lifecycle-runtime:$versions.lifecycle"
 lifecycle.extensions    = "androidx.lifecycle:lifecycle-extensions:$versions.lifecycle"
 lifecycle.viewmodel_ktx = "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.lifecycle"
-lifecycle.room          = "androidx.room:room-runtime:$versions.room"
-lifecycle.room_compiler = "androidx.room:room-compiler:$versions.room"
-
+lifecycle.compiler      = "androidx.lifecycle:lifecycle-compiler:$versions.lifecycle"
 deps.lifecycle = lifecycle
+
+def room = [:]
+room.runtime = "androidx.room:room-runtime:$versions.room"
+room.compiler = "androidx.room:room-compiler:$versions.room"
+deps.room = room
 
 def firebase = [:]
 firebase.core    = "com.google.firebase:firebase-core:$versions.firebase_core"
