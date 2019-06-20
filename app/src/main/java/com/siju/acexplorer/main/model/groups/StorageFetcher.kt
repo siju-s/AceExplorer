@@ -56,7 +56,7 @@ class StorageFetcher(private val context: Context) {
                 val leftProgress = (spaceLeft.toFloat() / totalSpace * 100).toInt()
                 val progress = 100 - leftProgress
                 val spaceText = formatStorageSpace(spaceLeft, totalSpace)
-                addToStorageList(storageList, StorageItem(name, spaceText, icon, path, progress, null, storageType))
+                addToStorageList(storageList, StorageItem(name, spaceText, icon, path, progress, Category.FILES, storageType))
             }
         }
         return storageList
@@ -64,7 +64,7 @@ class StorageFetcher(private val context: Context) {
 
     private fun isValidStoragePath(file: File) = file.isFile || file.canExecute()
 
-    private fun getStorageProperties(path: String, file: File): Triple<Int, String?, StorageUtils.StorageType> {
+    private fun getStorageProperties(path: String, file: File): Triple<Int, String, StorageUtils.StorageType> {
         val icon: Int
         val storageType: StorageUtils.StorageType
         val name: String

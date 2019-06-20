@@ -183,7 +183,7 @@ class FileListAdapter internal constructor(private val clickListener: (FileInfo)
 
     class FileInfoDiffCallback : DiffUtil.ItemCallback<FileInfo>() {
         override fun areItemsTheSame(oldItem: FileInfo,
-                                     newItem: FileInfo) = oldItem.filePath == newItem.filePath
+                                     newItem: FileInfo) = oldItem.bucketId == newItem.bucketId
 
         override fun areContentsTheSame(oldItem: FileInfo,
                                         newItem: FileInfo): Boolean = oldItem == newItem

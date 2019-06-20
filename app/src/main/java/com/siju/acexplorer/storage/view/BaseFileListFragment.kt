@@ -36,9 +36,9 @@ import com.siju.acexplorer.storage.viewmodel.FileListViewModelFactory
 import kotlinx.android.synthetic.main.main_list.*
 
 const val KEY_PATH = "path"
-const val  KEY_CATEGORY = "category"
-
+const val KEY_CATEGORY = "category"
 private const val TAG = "BaseFileListFragment"
+
 open class BaseFileListFragment : Fragment() {
 
     private var path: String? = null
@@ -47,7 +47,6 @@ open class BaseFileListFragment : Fragment() {
     private lateinit var mainViewModel: MainViewModel
     private lateinit var fileListViewModel: FileListViewModel
     private lateinit var adView : AdsView
-
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,

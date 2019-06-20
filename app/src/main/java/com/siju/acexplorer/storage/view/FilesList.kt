@@ -4,16 +4,16 @@ import android.content.res.Configuration
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.storage.view.custom.CustomGridLayoutManager
-import com.siju.acexplorer.storage.view.custom.recyclerview.FastScrollRecyclerView
 import com.siju.acexplorer.utils.ConfigurationHelper
 
 class FilesList(val fragment: BaseFileListFragment, val view: View, val viewMode: Int) {
 
-    private lateinit var fileList: FastScrollRecyclerView
+    private lateinit var fileList: RecyclerView
     private lateinit var emptyText: TextView
     private lateinit var adapter: FileListAdapter
 
@@ -28,7 +28,6 @@ class FilesList(val fragment: BaseFileListFragment, val view: View, val viewMode
     }
 
     private fun setupList() {
-        fileList.setHasFixedSize(true)
         setLayoutManager(fileList, viewMode)
         adapter = FileListAdapter {
 
@@ -36,7 +35,7 @@ class FilesList(val fragment: BaseFileListFragment, val view: View, val viewMode
         fileList.adapter = adapter
     }
 
-    private fun setLayoutManager(fileList: FastScrollRecyclerView, viewMode: Int) {
+    private fun setLayoutManager(fileList: RecyclerView, viewMode: Int) {
         when (viewMode) {
             ViewMode.LIST -> fileList.layoutManager = LinearLayoutManager(view.context)
             ViewMode.GRID -> fileList.layoutManager = CustomGridLayoutManager(view.context,
