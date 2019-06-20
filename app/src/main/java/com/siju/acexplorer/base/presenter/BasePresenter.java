@@ -16,8 +16,8 @@
 
 package com.siju.acexplorer.base.presenter;
 
-import com.siju.acexplorer.theme.Theme;
 
+import com.siju.acexplorer.theme.Theme;
 
 public interface BasePresenter {
 

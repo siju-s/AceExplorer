@@ -26,10 +26,9 @@ import androidx.preference.PreferenceManager;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.storage.modules.picker.view.DialogBrowseFragment;
-import com.siju.acexplorer.theme.ThemeUtils;
+import com.siju.acexplorer.theme.Theme;
 
 import static com.siju.acexplorer.settings.SettingsPreferenceFragment.PREFS_ANALYTICS;
-import static com.siju.acexplorer.theme.ThemeUtils.THEME_DARK;
 
 
 public class TransparentActivity extends AppCompatActivity {
@@ -76,9 +75,9 @@ public class TransparentActivity extends AppCompatActivity {
 
 
     private int checkTheme() {
-        int theme = ThemeUtils.getTheme(this);
+        int theme = Theme.Companion.getUserThemeValue(this);
 
-        if (theme == THEME_DARK) {
+        if (theme == Theme.DARK.getValue()) {
             return R.style.TransparentTheme_DarkAppTheme_NoActionBar;
         } else {
             return R.style.TransparentTheme_AppTheme_NoActionBar;

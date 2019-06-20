@@ -20,6 +20,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.appmanager.AppDetailActivity;
 import com.siju.acexplorer.base.model.BaseModel;
@@ -28,9 +31,6 @@ import com.siju.acexplorer.base.presenter.BasePresenter;
 import com.siju.acexplorer.base.presenter.BasePresenterImpl;
 import com.siju.acexplorer.theme.Theme;
 import com.siju.acexplorer.utils.LocaleHelper;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 
 @SuppressLint("Registered")

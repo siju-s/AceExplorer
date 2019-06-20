@@ -22,12 +22,12 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
-import com.siju.acexplorer.R;
-import com.siju.acexplorer.theme.Theme;
-
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.siju.acexplorer.R;
+import com.siju.acexplorer.theme.Theme;
 
 public class GridItemDecoration extends RecyclerView.ItemDecoration {
 

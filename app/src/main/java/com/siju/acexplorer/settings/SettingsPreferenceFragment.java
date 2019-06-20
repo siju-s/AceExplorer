@@ -35,11 +35,11 @@ import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.main.model.FileConstants;
 import com.siju.acexplorer.main.model.helper.FileUtils;
-import com.siju.acexplorer.theme.ThemeUtils;
+import com.siju.acexplorer.theme.Theme;
 import com.siju.acexplorer.utils.LocaleHelper;
 
-import static com.siju.acexplorer.theme.ThemeUtils.CURRENT_THEME;
-import static com.siju.acexplorer.theme.ThemeUtils.PREFS_THEME;
+import static com.siju.acexplorer.theme.ThemeUtilsKt.CURRENT_THEME;
+import static com.siju.acexplorer.theme.ThemeUtilsKt.PREFS_THEME;
 
 
 public class SettingsPreferenceFragment extends PreferenceFragmentCompat  {
@@ -65,7 +65,7 @@ public class SettingsPreferenceFragment extends PreferenceFragmentCompat  {
 
         ListPreference langPreference = findPreference(PREFS_LANGUAGE);
         ListPreference themePreference = findPreference(PREFS_THEME);
-        theme = ThemeUtils.getTheme(getActivity());
+        theme = Theme.Companion.getUserThemeValue(getActivity());
         String PREFS_UPDATE = "prefsUpdate";
         updatePreference = findPreference(PREFS_UPDATE);
 

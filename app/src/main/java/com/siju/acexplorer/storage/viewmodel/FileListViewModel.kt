@@ -19,6 +19,8 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     val fileData: LiveData<ArrayList<FileInfo>>
         get() = _fileData
 
+    val category = MutableLiveData<Category>()
+
     private val viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
@@ -32,4 +34,8 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     }
 
     fun getViewMode() = storageModel.getViewMode()
+
+    fun setCategory(categoryValue: Category?) {
+         category.postValue(categoryValue)
+    }
 }

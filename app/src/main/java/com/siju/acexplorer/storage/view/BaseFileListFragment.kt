@@ -28,6 +28,7 @@ import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.ads.AdsView
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.storage.model.StorageModelImpl
@@ -44,6 +45,7 @@ open class BaseFileListFragment : Fragment() {
     private var path: String? = null
     private var category: Category? = null
     private lateinit var filesList: FilesList
+    private lateinit var floatingView: FloatingView
     private lateinit var mainViewModel: MainViewModel
     private lateinit var fileListViewModel: FileListViewModel
     private lateinit var adView : AdsView
@@ -65,7 +67,9 @@ open class BaseFileListFragment : Fragment() {
         val view = view
         view?.let {
             filesList = FilesList(this, view, fileListViewModel.getViewMode())
+            floatingView = FloatingView(view)
         }
+        fileListViewModel.setCategory(category)
         initObservers()
     }
 
@@ -107,9 +111,22 @@ open class BaseFileListFragment : Fragment() {
            }
         })
 
+        mainViewModel.theme.observe(viewLifecycleOwner, Observer {
+            floatingView.setTheme(it)
+        })
+
         fileListViewModel.fileData.observe(viewLifecycleOwner, Observer {
             if (::filesList.isInitialized) {
                 filesList.onDataLoaded(it)
+            }
+        })
+
+        fileListViewModel.category.observe(viewLifecycleOwner, Observer { category ->
+            if (CategoryHelper.checkIfLibraryCategory(category)) {
+                floatingView.hideFab()
+            }
+            else {
+                floatingView.showFab()
             }
         })
     }

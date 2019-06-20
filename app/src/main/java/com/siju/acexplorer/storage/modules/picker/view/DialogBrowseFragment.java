@@ -79,7 +79,7 @@ public class DialogBrowseFragment extends DialogFragment  {
     private FileListAdapter  fileListAdapter;
     private PermissionHelper permissionHelper;
 //    private PickerPresenter  pickerPresenter;
-    private Theme            currentTheme;
+    private Theme currentTheme;
     private Toolbar          toolbar;
 
 

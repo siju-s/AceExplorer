@@ -34,13 +34,12 @@ import androidx.preference.PreferenceManager;
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.logging.Logger;
-import com.siju.acexplorer.theme.ThemeUtils;
+import com.siju.acexplorer.theme.Theme;
 import com.siju.acexplorer.utils.LocaleHelper;
 
-import static com.siju.acexplorer.theme.ThemeUtils.THEME_DARK;
 
 public class SettingsActivity extends AppCompatActivity implements PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
-    private int currentTheme;
+    private Theme currentTheme;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -73,14 +72,17 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
     }
 
     private void checkTheme() {
-        currentTheme = ThemeUtils.getTheme(AceApplication.Companion.getAppContext());
+        currentTheme = Theme.Companion.getTheme(AceApplication.Companion.getAppContext());
     }
 
     private void setAppTheme() {
-        if (currentTheme == THEME_DARK) {
-            setTheme(R.style.BaseDarkTheme_Settings_Dark);
-        } else {
-            setTheme(R.style.BaseDarkTheme_Settings_Light);
+        switch (currentTheme) {
+            case DARK:
+                setTheme(R.style.BaseDarkTheme_Settings_Dark);
+                break;
+            case LIGHT:
+                setTheme(R.style.BaseDarkTheme_Settings_Light);
+                break;
         }
     }
 

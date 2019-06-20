@@ -1,8 +1,6 @@
 package com.siju.acexplorer.main.view;
 
 import android.content.Context;
-import androidx.core.content.ContextCompat;
-import androidx.cardview.widget.CardView;
 import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,11 +9,13 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
+
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.main.model.helper.FileUtils;
 import com.siju.acexplorer.theme.Theme;
-import com.siju.acexplorer.theme.ThemeUtils;
 
 import java.io.File;
 import java.util.List;
@@ -31,7 +31,7 @@ public class PasteConflictAdapter extends BaseAdapter {
     public PasteConflictAdapter(Context context, List<FileInfo> conflictFileInfoList) {
         this.context = context;
         this.conflictFileInfoList = conflictFileInfoList;
-        this.theme = Theme.getTheme(ThemeUtils.getTheme(context));
+        this.theme = Theme.Companion.getTheme(context);
     }
 
 

@@ -7,23 +7,24 @@ import androidx.lifecycle.LiveData
 import com.siju.acexplorer.billing.repository.BillingRepository
 import com.siju.acexplorer.billing.repository.localdb.AugmentedSkuDetails
 import com.siju.acexplorer.billing.repository.localdb.Premium
-import com.siju.acexplorer.main.model.MainModel
 import com.siju.acexplorer.main.model.MainModelImpl
 import com.siju.acexplorer.permission.PermissionHelper
+import com.siju.acexplorer.theme.Theme
 
 class MainViewModel(val app: Application) : AndroidViewModel(app) {
 
     private val billingRepository: BillingRepository
     val premiumLiveData: LiveData<Premium>
-    private val mainModel: MainModel
+    private val mainModel = MainModelImpl()
     private lateinit var permissionHelper: PermissionHelper
     lateinit var permissionStatus : LiveData<PermissionHelper.PermissionState>
+    val theme : LiveData<Theme>
 
     init {
-        mainModel = MainModelImpl()
         billingRepository = BillingRepository.getInstance(app)
         billingRepository.startDataSourceConnections()
         premiumLiveData = billingRepository.premiumLiveData
+        theme = mainModel.theme
     }
 
     override fun onCleared() {

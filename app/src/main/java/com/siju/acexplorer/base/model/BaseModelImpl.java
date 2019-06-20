@@ -20,7 +20,6 @@ import android.content.Context;
 
 import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.theme.Theme;
-import com.siju.acexplorer.theme.ThemeUtils;
 
 
 public class BaseModelImpl implements BaseModel {
@@ -34,6 +33,6 @@ public class BaseModelImpl implements BaseModel {
 
     @Override
     public Theme getTheme() {
-        return Theme.getTheme(ThemeUtils.getTheme(context));
+        return Theme.Companion.getTheme(context);
     }
 }

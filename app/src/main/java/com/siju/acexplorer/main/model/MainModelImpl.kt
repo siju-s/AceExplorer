@@ -18,22 +18,26 @@ package com.siju.acexplorer.main.model
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.main.model.FileConstants.PREFS_FIRST_RUN
 import com.siju.acexplorer.settings.SettingsPreferenceFragment
+import com.siju.acexplorer.theme.Theme
 import com.siju.acexplorer.utils.Utils
 
 class MainModelImpl : MainModel {
 
     private val context: Context = AceApplication.appContext
+    val theme   = MutableLiveData<Theme>()
 
     init {
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         setupFirstRunSettings(preferences)
         setupAnalytics(preferences)
+        setupTheme()
     }
 
     private fun setupFirstRunSettings(preferences: SharedPreferences) {
@@ -65,5 +69,9 @@ class MainModelImpl : MainModel {
         Analytics.getLogger().sendAnalytics(sendAnalytics)
         Analytics.getLogger().register(context)
         Analytics.getLogger().reportDeviceName()
+    }
+
+    private fun setupTheme() {
+        theme.postValue(Theme.getTheme(context))
     }
 }

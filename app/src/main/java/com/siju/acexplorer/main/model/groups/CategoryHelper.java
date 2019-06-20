@@ -89,6 +89,10 @@ public class CategoryHelper {
         return FILES;
     }
 
+    public static boolean checkIfLibraryCategory(Category category) {
+        return !category.equals(FILES) && !category.equals(DOWNLOADS);
+    }
+
     public static boolean checkIfFileCategory(Category category) {
         return category.equals(FILES) ||
                 category.equals(COMPRESSED) ||
