@@ -137,7 +137,7 @@ public class CategoryHelper {
 
 
     public static boolean isGenericImagesCategory(Category category) {
-        return GENERIC_IMAGES.equals(category);
+        return GENERIC_IMAGES.equals(category) || IMAGE.equals(category);
     }
 
     public static boolean isGenericVideosCategory(Category category) {

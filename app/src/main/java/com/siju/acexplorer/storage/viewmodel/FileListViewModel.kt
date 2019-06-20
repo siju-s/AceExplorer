@@ -1,5 +1,6 @@
 package com.siju.acexplorer.storage.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -22,6 +23,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
     fun loadData(path: String?, category: Category?) {
+        Log.e(this.javaClass.name, "loadData: path $path , category $category")
         category?.let {
             uiScope.launch(Dispatchers.IO) {
                 _fileData.postValue(storageModel.loadData(path, category))

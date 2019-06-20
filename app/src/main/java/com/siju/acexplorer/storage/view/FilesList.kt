@@ -3,11 +3,11 @@ package com.siju.acexplorer.storage.view
 import android.content.res.Configuration
 import android.view.View
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.storage.view.custom.CustomGridLayoutManager
-import com.siju.acexplorer.storage.view.custom.CustomLayoutManager
 import com.siju.acexplorer.storage.view.custom.recyclerview.FastScrollRecyclerView
 import com.siju.acexplorer.utils.ConfigurationHelper
 
@@ -33,11 +33,12 @@ class FilesList(val fragment: BaseFileListFragment, val view: View, val viewMode
         adapter = FileListAdapter {
 
         }
+        fileList.adapter = adapter
     }
 
     private fun setLayoutManager(fileList: FastScrollRecyclerView, viewMode: Int) {
         when (viewMode) {
-            ViewMode.LIST -> fileList.layoutManager = CustomLayoutManager(view.context)
+            ViewMode.LIST -> fileList.layoutManager = LinearLayoutManager(view.context)
             ViewMode.GRID -> fileList.layoutManager = CustomGridLayoutManager(view.context,
                                                                               getGridColumns(
                                                                                       view.resources.configuration))

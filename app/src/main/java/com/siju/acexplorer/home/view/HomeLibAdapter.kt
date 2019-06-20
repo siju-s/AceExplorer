@@ -1,6 +1,5 @@
 package com.siju.acexplorer.home.view
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +22,7 @@ class HomeLibAdapter internal constructor(private val clickListener: (HomeLibrar
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val item = getItem(position)
-        Log.e(TAG, "onBindViewHolder $position")
+//        Log.e(TAG, "onBindViewHolder $position")
         viewHolder.bind(item, clickListener)
     }
 

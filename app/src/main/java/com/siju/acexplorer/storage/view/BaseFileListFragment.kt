@@ -17,6 +17,7 @@
 package com.siju.acexplorer.storage.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,14 +36,15 @@ import com.siju.acexplorer.storage.viewmodel.FileListViewModelFactory
 import kotlinx.android.synthetic.main.main_list.*
 
 const val KEY_PATH = "path"
-const val KEY_CATEGORY = "category"
+const val  KEY_CATEGORY = "category"
 
+private const val TAG = "BaseFileListFragment"
 open class BaseFileListFragment : Fragment() {
 
     private var path: String? = null
     private var category: Category? = null
     private lateinit var filesList: FilesList
-    private var mainViewModel: MainViewModel? = null
+    private lateinit var mainViewModel: MainViewModel
     private lateinit var fileListViewModel: FileListViewModel
     private lateinit var adView : AdsView
 
@@ -77,13 +79,15 @@ open class BaseFileListFragment : Fragment() {
     }
 
     private fun setupViewModels() {
-        mainViewModel = activity?.let { ViewModelProviders.of(it).get(MainViewModel::class.java) }
+        val activity = requireNotNull(activity)
+        mainViewModel = ViewModelProviders.of(activity).get(MainViewModel::class.java)
         val viewModelFactory = FileListViewModelFactory(StorageModelImpl(AceApplication.appContext))
         fileListViewModel = ViewModelProviders.of(this, viewModelFactory).get(FileListViewModel::class.java)
     }
 
     private fun initObservers() {
-        mainViewModel?.permissionStatus?.observe(viewLifecycleOwner, Observer { permissionStatus ->
+        mainViewModel.permissionStatus.observe(viewLifecycleOwner, Observer { permissionStatus ->
+            Log.e(TAG, "permissionStatus state:$permissionStatus")
             when (permissionStatus) {
                 is PermissionHelper.PermissionState.Granted -> fileListViewModel.loadData(path,
                                                                                           category)
@@ -92,13 +96,16 @@ open class BaseFileListFragment : Fragment() {
             }
         })
 
-        mainViewModel?.premiumLiveData?.observe(viewLifecycleOwner, Observer { premiumState ->
-            if (premiumState.entitled) {
-                hideAds()
-            }
-            else {
-                showAds()
-            }
+        mainViewModel.premiumLiveData.observe(viewLifecycleOwner, Observer {
+            Log.e(TAG, "Premium state:$it")
+            it?.apply {
+               if (it.entitled) {
+                   hideAds()
+               }
+               else {
+                   showAds()
+               }
+           }
         })
 
         fileListViewModel.fileData.observe(viewLifecycleOwner, Observer {

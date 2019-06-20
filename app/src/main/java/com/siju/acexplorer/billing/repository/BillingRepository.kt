@@ -441,7 +441,7 @@ class BillingRepository private constructor(private val application: Application
      */
     override fun onBillingSetupFinished(billingResult: BillingResult) {
         when (billingResult.responseCode) {
-            BillingClient.BillingResponseCode.OK -> {
+            BillingClient.BillingResponseCode.OK                  -> {
                 Log.d(LOG_TAG, "onBillingSetupFinished successfully")
                 querySkuDetailsAsync(BillingClient.SkuType.INAPP, AppSku.INAPP_SKUS)
                 queryPurchasesAsync()
@@ -450,7 +450,7 @@ class BillingRepository private constructor(private val application: Application
                 //Some apps may choose to make decisions based on this knowledge.
                 Log.d(LOG_TAG, billingResult.debugMessage)
             }
-            else -> {
+            else                                                  -> {
                 //do nothing. Someone else will connect it through retry policy.
                 //May choose to send to server though
                 Log.d(LOG_TAG, billingResult.debugMessage)
@@ -507,24 +507,29 @@ class BillingRepository private constructor(private val application: Application
         processPurchases(purchasesResult)
     }
 
-    private fun processPurchases(purchasesResult: Set<Purchase>) =
-            CoroutineScope(Job() + Dispatchers.IO).launch {
-                Log.d(LOG_TAG, "processPurchases called")
-                val validPurchases = HashSet<Purchase>(purchasesResult.size)
-                Log.d(LOG_TAG, "processPurchases newBatch content $purchasesResult")
-                purchasesResult.forEach { purchase ->
-                    if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED) {
-                        if (isSignatureValid(purchase)) {
-                            validPurchases.add(purchase)
-                        }
-                    } else if (purchase.purchaseState == Purchase.PurchaseState.PENDING) {
-                        Log.d(LOG_TAG, "Received a pending purchase of SKU: ${purchase.sku}")
-                        // handle pending purchases, e.g. confirm with users about the pending
-                        // purchases, prompt them to complete it, etc.
+    private fun processPurchases(purchasesResult: Set<Purchase>) {
+        Log.e(LOG_TAG, "processPurchases: size:${purchasesResult.size}")
+        if (purchasesResult.isEmpty()) {
+            onFreeVersion()
+        }
+        CoroutineScope(Job() + Dispatchers.IO).launch {
+            Log.d(LOG_TAG, "processPurchases called")
+            val validPurchases = HashSet<Purchase>(purchasesResult.size)
+            Log.d(LOG_TAG, "processPurchases newBatch content $purchasesResult")
+            purchasesResult.forEach { purchase ->
+                if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED) {
+                    if (isSignatureValid(purchase)) {
+                        validPurchases.add(purchase)
                     }
                 }
+                else if (purchase.purchaseState == Purchase.PurchaseState.PENDING) {
+                    Log.d(LOG_TAG, "Received a pending purchase of SKU: ${purchase.sku}")
+                    // handle pending purchases, e.g. confirm with users about the pending
+                    // purchases, prompt them to complete it, etc.
+                }
+            }
 
-                /*
+            /*
                   As is being done in this sample, for extra reliability you may store the
                   receipts/purchases to a your own remote/local database for until after you
                   disburse entitlements. That way if the Google Play Billing library fails at any
@@ -532,12 +537,19 @@ class BillingRepository private constructor(private val application: Application
                   disbursed. In this sample, the receipts are then removed upon entitlement
                   disbursement.
                  */
-                val testing = localCacheBillingClient.purchaseDao().getPurchases()
-                Log.d(LOG_TAG, "processPurchases purchases in the lcl db ${testing.size}")
-                localCacheBillingClient.purchaseDao().insert(*validPurchases.toTypedArray())
-                acknowledgeNonConsumablePurchasesAsync(validPurchases.toList())
-            }
+            val testing = localCacheBillingClient.purchaseDao().getPurchases()
+            Log.d(LOG_TAG, "processPurchases purchases in the lcl db ${testing.size}")
+            localCacheBillingClient.purchaseDao().insert(*validPurchases.toTypedArray())
+            acknowledgeNonConsumablePurchasesAsync(validPurchases.toList())
+        }
+    }
 
+    private fun onFreeVersion() {
+        CoroutineScope(Job() + Dispatchers.IO).launch {
+            val premium = Premium(false)
+            insert(premium)
+        }
+    }
 
     /**
      * If you do not acknowledge a purchase, the Google Play Store will provide a refund to the
@@ -547,13 +559,15 @@ class BillingRepository private constructor(private val application: Application
     private fun acknowledgeNonConsumablePurchasesAsync(nonConsumables: List<Purchase>) {
         nonConsumables.forEach { purchase ->
             val params = AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchase
-                    .purchaseToken).build()
+                                                                                         .purchaseToken)
+                    .build()
             playStoreBillingClient.acknowledgePurchase(params) { billingResult ->
                 when (billingResult.responseCode) {
                     BillingClient.BillingResponseCode.OK -> {
                         disburseNonConsumableEntitlement(purchase)
                     }
-                    else -> Log.d(LOG_TAG, "acknowledgeNonConsumablePurchasesAsync response is ${billingResult.debugMessage}")
+                    else                                 -> Log.d(LOG_TAG,
+                                                                  "acknowledgeNonConsumablePurchasesAsync response is ${billingResult.debugMessage}")
                 }
             }
 
@@ -612,7 +626,7 @@ class BillingRepository private constructor(private val application: Application
                         }
                     }
                 }
-                else -> {
+                else                                 -> {
                     Log.e(LOG_TAG, billingResult.debugMessage)
                 }
             }
@@ -652,11 +666,11 @@ class BillingRepository private constructor(private val application: Application
             purchases: MutableList<Purchase>?
     ) {
         when (billingResult.responseCode) {
-            BillingClient.BillingResponseCode.OK -> {
+            BillingClient.BillingResponseCode.OK                   -> {
                 // will handle server verification, consumables, and updating the local cache
                 purchases?.apply { processPurchases(this.toSet()) }
             }
-            BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED -> {
+            BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED   -> {
                 // item already owned? call queryPurchasesAsync to verify and process all such items
                 Log.d(LOG_TAG, billingResult.debugMessage)
                 queryPurchasesAsync()
@@ -664,7 +678,7 @@ class BillingRepository private constructor(private val application: Application
             BillingClient.BillingResponseCode.SERVICE_DISCONNECTED -> {
                 connectToPlayBillingService()
             }
-            else -> {
+            else                                                   -> {
                 Log.i(LOG_TAG, billingResult.debugMessage)
             }
         }
@@ -704,6 +718,7 @@ class BillingRepository private constructor(private val application: Application
      */
 
     private object AppSku {
+
         val SKU_REMOVE_ADS = "com.siju.acexplorer.pro"
 
         val INAPP_SKUS = listOf(SKU_REMOVE_ADS)

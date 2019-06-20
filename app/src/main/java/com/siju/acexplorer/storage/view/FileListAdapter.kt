@@ -2,6 +2,7 @@ package com.siju.acexplorer.storage.view
 
 import android.content.Context
 import android.text.format.Formatter
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,6 +40,7 @@ class FileListAdapter internal constructor(private val clickListener: (FileInfo)
         private val imageThumbIcon: ImageView = itemView.findViewById(R.id.imageThumbIcon)
 
         fun bind(item: FileInfo, clickListener: (FileInfo) -> Unit) {
+            Log.e("FileListAdapter", "bind:${item.fileName}")
             bindViewByCategory(itemView.context, item)
             itemView.setOnClickListener { clickListener(item) }
         }
@@ -172,7 +174,7 @@ class FileListAdapter internal constructor(private val clickListener: (FileInfo)
 
         companion object {
             fun from(parent: ViewGroup): ViewHolder {
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.library_item,
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.file_list_item,
                                                                        parent, false)
                 return ViewHolder(view)
             }
@@ -181,7 +183,7 @@ class FileListAdapter internal constructor(private val clickListener: (FileInfo)
 
     class FileInfoDiffCallback : DiffUtil.ItemCallback<FileInfo>() {
         override fun areItemsTheSame(oldItem: FileInfo,
-                                     newItem: FileInfo) = oldItem.category == newItem.category
+                                     newItem: FileInfo) = oldItem.filePath == newItem.filePath
 
         override fun areContentsTheSame(oldItem: FileInfo,
                                         newItem: FileInfo): Boolean = oldItem == newItem

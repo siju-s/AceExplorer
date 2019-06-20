@@ -18,8 +18,6 @@ package com.siju.acexplorer.storage.view
 
 
 import android.os.Bundle
-
-import com.siju.acexplorer.main.model.FileConstants
 import com.siju.acexplorer.main.model.groups.Category
 
 class FileListFragment private constructor(): BaseFileListFragment() {
@@ -27,8 +25,8 @@ class FileListFragment private constructor(): BaseFileListFragment() {
         fun newInstance(path: String, category: Category): FileListFragment {
             val bundle = Bundle()
             bundle.apply {
-                putString(FileConstants.KEY_PATH, path)
-                putSerializable(FileConstants.KEY_CATEGORY, category)
+                putString(KEY_PATH, path)
+                putSerializable(KEY_CATEGORY, category)
             }
             //        args.putBoolean(FileConstants.KEY_DUAL_ENABLED, isDualMode);
             val fileList = FileListFragment()

@@ -44,7 +44,7 @@ private const val TAG = "HomeScreenFragment"
 //TODO Add Navigation to this class
 class HomeScreenFragment : Fragment() {
 
-    private var mainViewModel: MainViewModel? = null
+    private lateinit var mainViewModel: MainViewModel
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var categoryAdapter: HomeLibAdapter
     private lateinit var storageAdapter: HomeStorageAdapter
@@ -67,7 +67,8 @@ class HomeScreenFragment : Fragment() {
     }
 
     private fun setupViewModels() {
-        mainViewModel = activity?.let { ViewModelProviders.of(it).get(MainViewModel::class.java) }
+        val activity = requireNotNull(activity)
+        mainViewModel = ViewModelProviders.of(activity).get(MainViewModel::class.java)
         val viewModelFactory = HomeViewModelFactory(HomeModelImpl(AceApplication.appContext))
         homeViewModel = ViewModelProviders.of(this, viewModelFactory).get(HomeViewModel::class.java)
     }
@@ -78,10 +79,10 @@ class HomeScreenFragment : Fragment() {
     }
 
     private fun initObservers() {
-        mainViewModel?.premiumLiveData?.observe(viewLifecycleOwner, Observer { premiumState ->
-            Log.e(TAG, "Premium state:$premiumState")
-            if (premiumState != null) {
-                if (premiumState.entitled) {
+        mainViewModel.premiumLiveData.observe(viewLifecycleOwner, Observer {
+            Log.e(TAG, "Premium state:$it")
+            it?.apply {
+                if (it.entitled) {
                     hideAds()
                 }
                 else {
@@ -100,7 +101,7 @@ class HomeScreenFragment : Fragment() {
             storageAdapter.submitList(it)
         })
 
-        mainViewModel?.permissionStatus?.observe(viewLifecycleOwner, Observer { permissionStatus ->
+        mainViewModel.permissionStatus.observe(viewLifecycleOwner, Observer { permissionStatus ->
             when (permissionStatus) {
                 is PermissionHelper.PermissionState.Granted -> homeViewModel.loadData()
                 else -> {
@@ -112,6 +113,8 @@ class HomeScreenFragment : Fragment() {
             Log.e(TAG, "categorydata: ${it.first}, ${it.second}")
             categoryAdapter.notifyItemChanged(it.first, it.second)
         })
+
+//        lifecycle.addObserver(adView)
     }
 
     private fun showAds() {
