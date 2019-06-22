@@ -12,7 +12,7 @@
     tools:showIn="@layout/main_list">
 
     <LinearLayout
-        android:id="@+id/navButtons"
+        android:id="@+id/navButtonsContainer"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical"

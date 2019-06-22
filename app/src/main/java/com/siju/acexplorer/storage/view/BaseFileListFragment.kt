@@ -28,7 +28,6 @@ import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.ads.AdsView
 import com.siju.acexplorer.main.model.groups.Category
-import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.storage.model.StorageModelImpl
@@ -43,12 +42,13 @@ private const val TAG = "BaseFileListFragment"
 open class BaseFileListFragment : Fragment() {
 
     private var path: String? = null
-    private var category: Category? = null
+    private var category = Category.FILES
     private lateinit var filesList: FilesList
     private lateinit var floatingView: FloatingView
+    private lateinit var navigationView: NavigationView
     private lateinit var mainViewModel: MainViewModel
     private lateinit var fileListViewModel: FileListViewModel
-    private lateinit var adView : AdsView
+    private lateinit var adView: AdsView
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -68,16 +68,27 @@ open class BaseFileListFragment : Fragment() {
         view?.let {
             filesList = FilesList(this, view, fileListViewModel.getViewMode())
             floatingView = FloatingView(view)
+            navigationView = NavigationView(view, fileListViewModel.navigationCallback)
         }
         fileListViewModel.setCategory(category)
+
+        setupNavigationView()
         initObservers()
+    }
+
+    private fun setupNavigationView() {
+        fileListViewModel.setNavigationView(navigationView)
+        fileListViewModel.setInitialDir(path, category)
+        fileListViewModel.setNavDirectory(path, category)
+        fileListViewModel.createNavigationForCategory(category)
+        navigationView.showNavigationView()
     }
 
     private fun getArgs() {
         val args = arguments
         args?.let {
             path = it.getString(KEY_PATH)
-            category = it.getSerializable(KEY_CATEGORY) as Category?
+            category = it.getSerializable(KEY_CATEGORY) as Category
         }
     }
 
@@ -85,7 +96,8 @@ open class BaseFileListFragment : Fragment() {
         val activity = requireNotNull(activity)
         mainViewModel = ViewModelProviders.of(activity).get(MainViewModel::class.java)
         val viewModelFactory = FileListViewModelFactory(StorageModelImpl(AceApplication.appContext))
-        fileListViewModel = ViewModelProviders.of(this, viewModelFactory).get(FileListViewModel::class.java)
+        fileListViewModel = ViewModelProviders.of(this, viewModelFactory)
+                .get(FileListViewModel::class.java)
     }
 
     private fun initObservers() {
@@ -102,13 +114,13 @@ open class BaseFileListFragment : Fragment() {
         mainViewModel.premiumLiveData.observe(viewLifecycleOwner, Observer {
             Log.e(TAG, "Premium state:$it")
             it?.apply {
-               if (it.entitled) {
-                   hideAds()
-               }
-               else {
-                   showAds()
-               }
-           }
+                if (it.entitled) {
+                    hideAds()
+                }
+                else {
+                    showAds()
+                }
+            }
         })
 
         mainViewModel.theme.observe(viewLifecycleOwner, Observer {
@@ -121,12 +133,12 @@ open class BaseFileListFragment : Fragment() {
             }
         })
 
-        fileListViewModel.category.observe(viewLifecycleOwner, Observer { category ->
-            if (CategoryHelper.checkIfLibraryCategory(category)) {
-                floatingView.hideFab()
+        fileListViewModel.showFab.observe(viewLifecycleOwner, Observer { showFab ->
+            if (showFab) {
+                floatingView.showFab()
             }
             else {
-                floatingView.showFab()
+                floatingView.hideFab()
             }
         })
     }
