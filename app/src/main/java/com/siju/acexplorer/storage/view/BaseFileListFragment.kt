@@ -71,8 +71,6 @@ open class BaseFileListFragment : Fragment() {
             floatingView = FloatingView(view)
             navigationView = NavigationView(view, fileListViewModel.navigationCallback)
         }
-        fileListViewModel.setCategory(category)
-
         setupNavigationView()
         initObservers()
     }
@@ -141,7 +139,7 @@ open class BaseFileListFragment : Fragment() {
         })
 
         fileListViewModel.viewFileEvent.observe(viewLifecycleOwner, Observer {
-          TODO()
+            TODO()
         })
     }
 
@@ -154,9 +152,10 @@ open class BaseFileListFragment : Fragment() {
     }
 
     fun handleItemClick(fileInfo: FileInfo) {
-      fileListViewModel.handleItemClick(fileInfo)
+        fileListViewModel.handleItemClick(fileInfo)
     }
 
+    fun onBackPressed() = fileListViewModel.onBackPress()
 
 //    fun onBackPressed(): Boolean {
 //        return storagesUi!!.onBackPress()

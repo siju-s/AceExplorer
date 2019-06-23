@@ -11,6 +11,7 @@ import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.Category.*
 import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.storage.model.StorageModel
+import com.siju.acexplorer.storage.model.backstack.BackStackInfo
 import com.siju.acexplorer.storage.view.Navigation
 import com.siju.acexplorer.storage.view.NavigationCallback
 import com.siju.acexplorer.storage.view.NavigationView
@@ -25,7 +26,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     private lateinit var category: Category
     private val navigation = Navigation(this)
     private var bucketName: String? = null
-    private var id: Long? = null
+    private val backStackInfo = BackStackInfo()
 
     private val _viewFileEvent = MutableLiveData<Pair<String, String>>()
 
@@ -45,6 +46,17 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     fun loadData(path: String?, category: Category) {
         Log.e(this.javaClass.name, "loadData: path $path , category $category")
         addNavigation(path, category)
+        addToBackStack(path, category)
+        setCategory(category)
+        uiScope.launch(Dispatchers.IO) {
+            _fileData.postValue(storageModel.loadData(path, category))
+        }
+    }
+
+    private fun reloadData(path: String?, category: Category) {
+        Log.e(this.javaClass.name, "reloadData: path $path , category $category")
+        addNavigation(path, category)
+        setCategory(category)
         uiScope.launch(Dispatchers.IO) {
             _fileData.postValue(storageModel.loadData(path, category))
         }
@@ -121,45 +133,36 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
             }
 
             GENERIC_MUSIC                                                                      -> {
-                category = fileInfo.subcategory
-                loadData(null, category)
+                loadData(null, fileInfo.subcategory)
             }
 
             ALBUMS                                                                             -> {
-                category = ALBUM_DETAIL
                 bucketName = fileInfo.title
-                loadData(null, category)
+                loadData(fileInfo.id.toString(), ALBUM_DETAIL)
             }
 
             ARTISTS                                                                            -> {
-                category = ARTIST_DETAIL
                 bucketName = fileInfo.title
-                loadData(null, category)
+                loadData(fileInfo.id.toString(), ARTIST_DETAIL)
             }
 
             GENRES                                                                             -> {
-                category = GENRE_DETAIL
                 bucketName = fileInfo.title
-                loadData(null, category)
+                loadData(fileInfo.id.toString(), GENRE_DETAIL)
             }
 
             GENERIC_IMAGES                                                                     -> {
-                category = FOLDER_IMAGES
                 bucketName = fileInfo.fileName
-                id = fileInfo.bucketId
-                loadData(id.toString(), category)
+                loadData(fileInfo.bucketId.toString(), FOLDER_IMAGES)
             }
 
             GENERIC_VIDEOS                                                                     -> {
-                category = FOLDER_VIDEOS
                 bucketName = fileInfo.fileName
-                id = fileInfo.bucketId
-                loadData(id.toString(), category)
+                loadData(fileInfo.bucketId.toString(), FOLDER_VIDEOS)
             }
 
             RECENT                                                                             -> {
-                category = fileInfo.category
-                loadData(null, category)
+                loadData(null, fileInfo.category)
             }
 
             APP_MANAGER                                                                        -> {
@@ -188,9 +191,30 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         navigation.addLibSpecificNavigation(category, bucketName)
     }
 
+    private fun addToBackStack(path: String?, category: Category) {
+        backStackInfo.addToBackStack(path, category)
+    }
+
+    private fun hasBackStack() = backStackInfo.hasBackStack()
+
+    fun onBackPress(): Boolean {
+        if (hasBackStack()) {
+            loadBackStack()
+            return false
+        }
+        return true
+    }
+
+    private fun loadBackStack() {
+        backStackInfo.remove()
+        val backStack = backStackInfo.getCurrentBackStack()
+        backStack?.let {
+            reloadData(backStack.first, backStack.second)
+        }
+    }
+
     private fun onDirectoryClicked(fileInfo: FileInfo) {
-        category = FILES
-        loadData(fileInfo.filePath, category)
+        loadData(fileInfo.filePath, FILES)
     }
 
     val navigationCallback = object : NavigationCallback {

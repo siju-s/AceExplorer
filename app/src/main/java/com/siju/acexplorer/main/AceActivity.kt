@@ -29,6 +29,7 @@ import com.siju.acexplorer.base.view.BaseActivity
 import com.siju.acexplorer.main.view.FragmentsFactory
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.permission.PermissionHelper
+import com.siju.acexplorer.storage.view.BaseFileListFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 class AceActivity : BaseActivity() {
@@ -114,11 +115,19 @@ class AceActivity : BaseActivity() {
 //    }
 //
 //
-//    override fun onBackPressed() {
-//        if (mainUi.onBackPressed()) {
-//            super.onBackPressed()
-//        }
-//    }
+    override fun onBackPressed() {
+       val fragment = supportFragmentManager.findFragmentById(R.id.main_container)
+       if (fragment is BaseFileListFragment) {
+           val backPressNotHandled = fragment.onBackPressed()
+           if (backPressNotHandled) {
+               super.onBackPressed()
+           }
+       }
+       else {
+           super.onBackPressed()
+       }
+
+    }
 //
 //    override fun onDestroy() {
 //        mainUi.onExit()

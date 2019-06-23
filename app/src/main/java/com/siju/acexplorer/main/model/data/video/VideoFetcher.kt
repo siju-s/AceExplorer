@@ -13,7 +13,7 @@ class VideoFetcher : DataFetcher {
 
     override fun fetchData(context: Context, path: String?, category: Category): ArrayList<FileInfo> {
         val cursor = queryVideos(context)
-        return getVideoCursorData(cursor)
+        return getVideoCursorData(cursor, category)
     }
 
     override fun fetchCount(context: Context, path: String?): Int {
@@ -27,7 +27,8 @@ class VideoFetcher : DataFetcher {
         return context.contentResolver.query(uri, projection, null, null, null)
     }
 
-    private fun getVideoCursorData(cursor: Cursor?): ArrayList<FileInfo> {
+    private fun getVideoCursorData(cursor: Cursor?,
+                                   category: Category): ArrayList<FileInfo> {
         val fileInfoList = ArrayList<FileInfo>()
         if (cursor == null) {
             return fileInfoList
@@ -44,7 +45,7 @@ class VideoFetcher : DataFetcher {
                 val bucketName = cursor.getString(bucketNameIndex)
                 if (!ids.contains(bucketId)) {
                     count = 1
-                    val fileInfo = FileInfo(Category.VIDEO, bucketId, bucketName, path, count)
+                    val fileInfo = FileInfo(category, bucketId, bucketName, path, count)
                     fileInfoList.add(fileInfo)
                     ids.add(bucketId)
                 } else {

@@ -1,66 +1,21 @@
 package com.siju.acexplorer.main.model.data.music
 
 import android.content.Context
-import android.database.Cursor
-import android.provider.MediaStore
 import com.siju.acexplorer.common.types.FileInfo
-import com.siju.acexplorer.main.model.HiddenFileHelper
 import com.siju.acexplorer.main.model.data.DataFetcher
+import com.siju.acexplorer.main.model.data.music.PodcastCommonData.getPodcastCursorData
+import com.siju.acexplorer.main.model.data.music.PodcastCommonData.queryPodcasts
 import com.siju.acexplorer.main.model.groups.Category
-import com.siju.acexplorer.main.model.helper.FileUtils
-import java.io.File
 import java.util.*
 
 class PodcastDataFetcher : DataFetcher {
     override fun fetchData(context: Context, path: String?, category: Category): ArrayList<FileInfo> {
         val cursor = queryPodcasts(context)
-        return getPodcastCursorData(cursor, canShowHiddenFiles(context))
+        return getPodcastCursorData(cursor, category, canShowHiddenFiles(context))
     }
 
     override fun fetchCount(context: Context, path: String?): Int {
         val cursor = queryPodcasts(context)
         return getCursorCount(cursor)
-    }
-
-    private fun queryPodcasts(context: Context): Cursor? {
-        val uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-        val selection = MediaStore.Audio.Media.IS_PODCAST + "=1"
-        return context.contentResolver.query(uri, null, selection, null,
-                null)
-    }
-
-    private fun getPodcastCursorData(cursor: Cursor?, showHidden: Boolean): ArrayList<FileInfo> {
-        val fileInfoList = ArrayList<FileInfo>()
-
-        if (cursor == null) {
-            return fileInfoList
-        }
-
-        if (cursor.moveToFirst()) {
-            val titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)
-            val sizeIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE)
-            val dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATE_MODIFIED)
-            val audioIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
-            val albumIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
-            val pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
-            do {
-                val fileName = cursor.getString(titleIndex)
-                val size1 = cursor.getLong(sizeIndex)
-                val date1 = cursor.getLong(dateIndex)
-                val path = cursor.getString(pathIndex)
-                val file = File(path)
-                if (HiddenFileHelper.shouldSkipHiddenFiles(file, showHidden)) {
-                    continue
-                }
-                val audioId = cursor.getLong(audioIdIndex)
-                val albumId = cursor.getLong(albumIdIndex)
-                val extension = FileUtils.getExtension(path)
-                val nameWithExt = FileUtils.constructFileNameWithExtension(fileName, extension)
-                fileInfoList.add(FileInfo(Category.PODCASTS, audioId, albumId, nameWithExt, path, date1, size1,
-                        extension))
-            } while (cursor.moveToNext())
-        }
-        cursor.close()
-        return fileInfoList
     }
 }

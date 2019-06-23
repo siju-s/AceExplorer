@@ -2,6 +2,7 @@ package com.siju.acexplorer.storage.view
 
 import android.content.Context
 import android.text.format.Formatter
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,8 +39,8 @@ class FileListAdapter internal constructor(private val clickListener: (FileInfo)
         private val imageIcon: ImageView = itemView.findViewById(R.id.imageIcon)
         private val imageThumbIcon: ImageView = itemView.findViewById(R.id.imageThumbIcon)
 
-        fun bind(item: FileInfo, count : Int, clickListener: (FileInfo) -> Unit) {
-//            Log.e("FileListAdapter", "bind:${item.fileName}")
+        fun bind(item: FileInfo, count: Int, clickListener: (FileInfo) -> Unit) {
+            Log.e("FileListAdapter", "bind:${item.fileName}")
             bindViewByCategory(itemView.context, item)
             itemView.setOnClickListener {
                 val position = adapterPosition
@@ -187,7 +188,18 @@ class FileListAdapter internal constructor(private val clickListener: (FileInfo)
 
     class FileInfoDiffCallback : DiffUtil.ItemCallback<FileInfo>() {
         override fun areItemsTheSame(oldItem: FileInfo,
-                                     newItem: FileInfo) = oldItem.bucketId == newItem.bucketId
+                                     newItem: FileInfo): Boolean {
+            if (oldItem.category == newItem.category) {
+                when (oldItem.category) {
+                    Category.FILES, Category.FOLDER_IMAGES, Category.FOLDER_VIDEOS -> return oldItem.filePath == newItem.filePath
+                    Category.GENERIC_IMAGES, Category.GENERIC_VIDEOS               -> return oldItem.bucketId == newItem.bucketId
+                    else                                                           -> {
+                        TODO()
+                    }
+                }
+            }
+            return oldItem.category == newItem.category
+        }
 
         override fun areContentsTheSame(oldItem: FileInfo,
                                         newItem: FileInfo): Boolean = oldItem == newItem

@@ -115,7 +115,10 @@ class HomeScreenFragment : Fragment() {
         })
 
         homeViewModel.categoryClickEvent.observe(viewLifecycleOwner, Observer {
-            loadList(it.first, it.second)
+            it?.apply {
+                loadList(first, second)
+                homeViewModel.setCategoryClickEvent(null)
+            }
         })
 
 //        lifecycle.addObserver(adView)

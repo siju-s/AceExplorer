@@ -2,6 +2,7 @@ package com.siju.acexplorer.main.model.data.image
 
 import android.database.Cursor
 import android.provider.MediaStore
+import android.util.Log
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
 import java.util.*
@@ -23,9 +24,9 @@ object ImageCursorData {
                 val path = cursor.getString(pathIndex)
                 val bucketName = cursor.getString(bucketNameIndex)
                 val bucketId = cursor.getLong(bucketIdIndex)
-
                 if (!ids.contains(bucketId)) {
                     count = 1
+                    Log.e("ImageCursor", "bucket:$bucketName, bucketId:$bucketId")
                     val fileInfo = FileInfo(category, bucketId, bucketName, path, count)
                     fileInfoList.add(fileInfo)
                     ids.add(bucketId)

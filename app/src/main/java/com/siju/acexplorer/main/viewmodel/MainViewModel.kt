@@ -13,15 +13,14 @@ import com.siju.acexplorer.theme.Theme
 
 class MainViewModel(val app: Application) : AndroidViewModel(app) {
 
-    private val billingRepository: BillingRepository
+    private val billingRepository = BillingRepository.getInstance(app)
     val premiumLiveData: LiveData<Premium>
     private val mainModel = MainModelImpl()
     private lateinit var permissionHelper: PermissionHelper
-    lateinit var permissionStatus : LiveData<PermissionHelper.PermissionState>
-    val theme : LiveData<Theme>
+    lateinit var permissionStatus: LiveData<PermissionHelper.PermissionState>
+    val theme: LiveData<Theme>
 
     init {
-        billingRepository = BillingRepository.getInstance(app)
         billingRepository.startDataSourceConnections()
         premiumLiveData = billingRepository.premiumLiveData
         theme = mainModel.theme

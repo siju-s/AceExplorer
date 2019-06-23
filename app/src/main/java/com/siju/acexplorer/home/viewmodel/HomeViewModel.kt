@@ -84,4 +84,8 @@ class HomeViewModel(private val homeModel: HomeModel) : ViewModel() {
         _categoryClickEvent.postValue(Pair(path, category1))
     }
 
+    fun setCategoryClickEvent(nothing: Nothing?) {
+        _categoryClickEvent.value = nothing
+    }
+
 }
