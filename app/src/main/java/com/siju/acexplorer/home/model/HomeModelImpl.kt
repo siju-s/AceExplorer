@@ -32,8 +32,8 @@ class HomeModelImpl(val context: Context) : HomeModel {
         return ConfigurationHelper.getHomeGridCols(context.resources.configuration)
     }
 
-    override fun loadCountForCategory(category: Category): FileInfo {
-        val count = DataLoader.fetchDataCount(context, DataFetcherFactory.createDataFetcher(category), null)
+    override fun loadCountForCategory(category: Category, path : String?): FileInfo {
+        val count = DataLoader.fetchDataCount(context, DataFetcherFactory.createDataFetcher(category), path)
         Log.e(TAG, "loadCountForCategory $category = $count")
         return FileInfo(category, count)
     }

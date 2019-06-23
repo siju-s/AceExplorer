@@ -1,6 +1,7 @@
 package com.siju.acexplorer.main.model.data
 
 import android.content.Context
+import android.util.Log
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.HiddenFileHelper
 import com.siju.acexplorer.main.model.groups.Category
@@ -13,6 +14,7 @@ import com.siju.acexplorer.main.model.helper.SortHelper.sortFiles
 import com.siju.acexplorer.main.model.root.RootUtils
 import java.io.File
 
+private const val TAG = "FileDataFetcher"
 class FileDataFetcher : DataFetcher {
 
     override fun fetchData(context: Context, path: String?,
@@ -22,7 +24,18 @@ class FileDataFetcher : DataFetcher {
     }
 
     override fun fetchCount(context: Context, path: String?): Int {
-        return 0
+        Log.e(TAG, "fetchCount:$path")
+        return if (path == null) {
+            0
+        }
+        else {
+            getFileCount(path)
+        }
+    }
+
+    private fun getFileCount(path: String): Int {
+        val file = File(path)
+        return file.list().size
     }
 
     private fun fetchFiles(path: String?, sortMode: Int, showHidden: Boolean,

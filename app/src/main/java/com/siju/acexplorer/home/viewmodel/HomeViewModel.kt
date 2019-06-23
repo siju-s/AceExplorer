@@ -1,5 +1,6 @@
 package com.siju.acexplorer.home.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
+private const val TAG = "HomeViewModel"
 class HomeViewModel(private val homeModel: HomeModel) : ViewModel() {
 
     private val _categories = MutableLiveData<ArrayList<HomeLibraryInfo>>()
@@ -56,12 +58,22 @@ class HomeViewModel(private val homeModel: HomeModel) : ViewModel() {
     fun fetchCount(categoryInfoList: ArrayList<HomeLibraryInfo>) {
         uiScope.launch(Dispatchers.IO) {
             categoryInfoList.forEachIndexed { index, homeLibraryInfo ->
-                val fileInfo = homeModel.loadCountForCategory(homeLibraryInfo.category)
+                val fileInfo = homeModel.loadCountForCategory(homeLibraryInfo.category, getPath(homeLibraryInfo.category) )
                 homeLibraryInfo.count = fileInfo.count
+                Log.e(TAG, "fetchCount : index:$index, category:${homeLibraryInfo.category}, count:${homeLibraryInfo.count}")
                 _categoryData.postValue(Pair(index, homeLibraryInfo))
             }
         }
     }
+
+    private fun getPath(category: Category) : String? {
+        if (isDownloadCategory(category)) {
+            return StorageUtils.downloadsDirectory
+        }
+        return null
+    }
+
+    private fun isDownloadCategory(category: Category) = Category.DOWNLOADS == category
 
     fun getCategoryGridColumns() = homeModel.getCategoryGridCols()
 

@@ -30,5 +30,5 @@ interface HomeModel {
     fun saveCategories(categories: ArrayList<Category>)
     fun getStorage(): ArrayList<StorageItem>
     fun getCategoryGridCols(): Int
-    fun loadCountForCategory(category: Category) : FileInfo
+    fun loadCountForCategory(category: Category, path : String? = null) : FileInfo
 }
