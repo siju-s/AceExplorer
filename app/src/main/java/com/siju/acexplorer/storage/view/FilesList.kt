@@ -54,8 +54,12 @@ class FilesList(val fragment: BaseFileListFragment, val view: View, val viewMode
     }
 
     fun onDataLoaded(data: ArrayList<FileInfo>) {
+        if (data.isEmpty()) {
+            emptyText.visibility = View.VISIBLE
+        }
+        else {
+            emptyText.visibility = View.GONE
+        }
         adapter.submitList(data)
     }
-
-
 }
