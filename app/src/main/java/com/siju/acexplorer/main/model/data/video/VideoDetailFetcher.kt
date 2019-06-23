@@ -13,29 +13,31 @@ import java.util.*
 
 
 class VideoDetailFetcher : DataFetcher {
-    override fun fetchData(context: Context, path: String?, category: Category): ArrayList<FileInfo> {
-        return ArrayList<FileInfo>()
+    override fun fetchData(context: Context, path: String?,
+                           category: Category): ArrayList<FileInfo> {
+        return fetchBucketDetail(context, path, category, canShowHiddenFiles(context))
 
     }
 
     override fun fetchCount(context: Context, path: String?): Int {
-return 0
+        return 0
     }
 
-    private fun fetchBucketDetail(context: Context, bucketId: Long,
+    private fun fetchBucketDetail(context: Context, bucketId: String?, category: Category,
                                   showHidden: Boolean): ArrayList<FileInfo> {
 
         val uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
         val selection = MediaStore.Video.Media.BUCKET_ID + " =?"
-        val selectionArgs = arrayOf(bucketId.toString())
+        val selectionArgs = arrayOf(bucketId)
 
         val cursor = context.contentResolver.query(uri, null, selection, selectionArgs,
-                MediaStore.Video.Media.DEFAULT_SORT_ORDER)
+                                                   MediaStore.Video.Media.DEFAULT_SORT_ORDER)
 
-        return getBucketDetailCursorData(cursor, showHidden)
+        return getBucketDetailCursorData(cursor, category, showHidden)
     }
 
-    private fun getBucketDetailCursorData(cursor: Cursor?, showHidden: Boolean): ArrayList<FileInfo> {
+    private fun getBucketDetailCursorData(cursor: Cursor?, category: Category,
+                                          showHidden: Boolean): ArrayList<FileInfo> {
         val fileInfoList = ArrayList<FileInfo>()
         if (cursor == null) {
             return fileInfoList
@@ -60,9 +62,11 @@ return 0
                 val bucketId = cursor.getLong(bucketIdIndex)
                 val extension = FileUtils.getExtension(path)
                 val nameWithExt = FileUtils.constructFileNameWithExtension(fileName, extension)
-                fileInfoList.add(FileInfo(Category.FOLDER_VIDEOS, videoId, bucketId, nameWithExt, path, date, size,
-                        extension))
-            } while (cursor.moveToNext())
+                fileInfoList.add(
+                        FileInfo(category, videoId, bucketId, nameWithExt, path, date, size,
+                                 extension))
+            }
+            while (cursor.moveToNext())
         }
         cursor.close()
         return fileInfoList

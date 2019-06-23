@@ -38,7 +38,6 @@ import static com.siju.acexplorer.main.model.groups.Category.RECENT_AUDIO;
 import static com.siju.acexplorer.main.model.groups.Category.RECENT_DOCS;
 import static com.siju.acexplorer.main.model.groups.Category.RECENT_IMAGES;
 import static com.siju.acexplorer.main.model.groups.Category.RECENT_VIDEOS;
-import static com.siju.acexplorer.main.model.groups.Category.TRASH;
 import static com.siju.acexplorer.main.model.groups.Category.VIDEO;
 import static com.siju.acexplorer.main.model.groups.Category.ZIP_VIEWER;
 
@@ -83,8 +82,8 @@ public class CategoryHelper {
                 return RECENT;
             case 33:
                 return APP_MANAGER;
-            case 34:
-                return TRASH;
+//            case 34:
+//                return TRASH;
         }
         return FILES;
     }
@@ -255,8 +254,8 @@ public class CategoryHelper {
                 return context.getString(R.string.all_tracks);
             case APP_MANAGER:
                 return context.getString(R.string.app_manager);
-            case TRASH:
-                return context.getString(R.string.trash);
+//            case TRASH:
+//                return context.getString(R.string.trash);
         }
         return context.getString(R.string.audio);
     }

@@ -114,6 +114,10 @@ class HomeScreenFragment : Fragment() {
             categoryAdapter.notifyItemChanged(it.first, it.second)
         })
 
+        homeViewModel.categoryClickEvent.observe(viewLifecycleOwner, Observer {
+            loadList(it.first, it.second)
+        })
+
 //        lifecycle.addObserver(adView)
     }
 
@@ -130,7 +134,7 @@ class HomeScreenFragment : Fragment() {
         categoryList.isNestedScrollingEnabled = true
         setCategoryLayoutManager()
         categoryAdapter = HomeLibAdapter {
-           loadList(null.toString(), it.category)
+            homeViewModel.onCategoryClick(it.category)
         }
 //        setItemTouchHelper()
         categoryList.adapter = categoryAdapter
@@ -158,7 +162,7 @@ class HomeScreenFragment : Fragment() {
         categoryList.layoutManager = gridLayoutManager
     }
 
-    private fun loadList(path: String, category: Category) {
+    private fun loadList(path: String?, category: Category) {
         val transaction = activity?.supportFragmentManager?.beginTransaction()
         transaction?.apply {
             replace(R.id.main_container, FileListFragment.newInstance(path, category))

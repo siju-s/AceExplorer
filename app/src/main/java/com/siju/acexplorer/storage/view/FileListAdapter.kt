@@ -2,7 +2,6 @@ package com.siju.acexplorer.storage.view
 
 import android.content.Context
 import android.text.format.Formatter
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,7 +28,7 @@ class FileListAdapter internal constructor(private val clickListener: (FileInfo)
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val item = getItem(position)
-        viewHolder.bind(item, clickListener)
+        viewHolder.bind(item, itemCount, clickListener)
     }
 
     class ViewHolder private constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -39,10 +38,15 @@ class FileListAdapter internal constructor(private val clickListener: (FileInfo)
         private val imageIcon: ImageView = itemView.findViewById(R.id.imageIcon)
         private val imageThumbIcon: ImageView = itemView.findViewById(R.id.imageThumbIcon)
 
-        fun bind(item: FileInfo, clickListener: (FileInfo) -> Unit) {
-            Log.e("FileListAdapter", "bind:${item.fileName}")
+        fun bind(item: FileInfo, count : Int, clickListener: (FileInfo) -> Unit) {
+//            Log.e("FileListAdapter", "bind:${item.fileName}")
             bindViewByCategory(itemView.context, item)
-            itemView.setOnClickListener { clickListener(item) }
+            itemView.setOnClickListener {
+                val position = adapterPosition
+                if (position < count && position != RecyclerView.NO_POSITION) {
+                    clickListener(item)
+                }
+            }
         }
 
         private fun bindViewByCategory(context: Context, fileInfo: FileInfo) {

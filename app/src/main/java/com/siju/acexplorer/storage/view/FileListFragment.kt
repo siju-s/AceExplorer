@@ -22,7 +22,7 @@ import com.siju.acexplorer.main.model.groups.Category
 
 class FileListFragment private constructor(): BaseFileListFragment() {
     companion object {
-        fun newInstance(path: String, category: Category): FileListFragment {
+        fun newInstance(path: String?, category: Category): FileListFragment {
             val bundle = Bundle()
             bundle.apply {
                 putString(KEY_PATH, path)

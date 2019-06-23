@@ -13,26 +13,28 @@ import java.util.*
 
 
 class ImageDetailFetcher : DataFetcher {
-    override fun fetchData(context: Context, path: String?, category: Category): ArrayList<FileInfo> {
-        return ArrayList<FileInfo>()
+    override fun fetchData(context: Context, path: String?,
+                           category: Category): ArrayList<FileInfo> {
+        return fetchBucketDetail(context, category, path, canShowHiddenFiles(context))
     }
 
     override fun fetchCount(context: Context, path: String?): Int {
         return 0
     }
 
-    private fun fetchBucketDetail(context: Context, category: Category, bucketId: Long,
+    private fun fetchBucketDetail(context: Context, category: Category, bucketId: String?,
                                   showHidden: Boolean): ArrayList<FileInfo> {
         val uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         val selection = MediaStore.Images.Media.BUCKET_ID + " =?"
-        val selectionArgs = arrayOf(bucketId.toString())
+        val selectionArgs = arrayOf(bucketId)
 
         val cursor = context.contentResolver.query(uri, null, selection, selectionArgs,
-                MediaStore.Images.Media.DEFAULT_SORT_ORDER)
+                                                   MediaStore.Images.Media.DEFAULT_SORT_ORDER)
         return getBucketDataFromCursor(cursor, category, showHidden)
     }
 
-    private fun getBucketDataFromCursor(cursor: Cursor?, category: Category, showHidden: Boolean): ArrayList<FileInfo> {
+    private fun getBucketDataFromCursor(cursor: Cursor?, category: Category,
+                                        showHidden: Boolean): ArrayList<FileInfo> {
         val fileInfoList = ArrayList<FileInfo>()
         if (cursor == null) {
             return fileInfoList
@@ -57,9 +59,11 @@ class ImageDetailFetcher : DataFetcher {
                 val fileName = cursor.getString(titleIndex)
                 val extension = FileUtils.getExtension(path)
                 val nameWithExt = FileUtils.constructFileNameWithExtension(fileName, extension)
-                fileInfoList.add(FileInfo(category, imageId, bucketId, nameWithExt, path, date, size,
-                        extension))
-            } while (cursor.moveToNext())
+                fileInfoList.add(
+                        FileInfo(category, imageId, bucketId, nameWithExt, path, date, size,
+                                 extension))
+            }
+            while (cursor.moveToNext())
         }
         cursor.close()
         return fileInfoList

@@ -52,7 +52,7 @@ object DataFetcherFactory {
             Category.GENERIC_LIST -> TODO()
             Category.PICKER -> TODO()
             Category.APP_MANAGER -> TODO()
-            Category.TRASH -> TODO()
+//            Category.TRASH -> TODO()
         }
     }
 

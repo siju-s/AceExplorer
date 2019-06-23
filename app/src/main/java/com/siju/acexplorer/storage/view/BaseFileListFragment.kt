@@ -27,6 +27,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.ads.AdsView
+import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.permission.PermissionHelper
@@ -78,9 +79,6 @@ open class BaseFileListFragment : Fragment() {
 
     private fun setupNavigationView() {
         fileListViewModel.setNavigationView(navigationView)
-        fileListViewModel.setInitialDir(path, category)
-        fileListViewModel.setNavDirectory(path, category)
-        fileListViewModel.createNavigationForCategory(category)
         navigationView.showNavigationView()
     }
 
@@ -141,6 +139,10 @@ open class BaseFileListFragment : Fragment() {
                 floatingView.hideFab()
             }
         })
+
+        fileListViewModel.viewFileEvent.observe(viewLifecycleOwner, Observer {
+          TODO()
+        })
     }
 
     private fun showAds() {
@@ -149,6 +151,10 @@ open class BaseFileListFragment : Fragment() {
 
     private fun hideAds() {
         adView.hideAds()
+    }
+
+    fun handleItemClick(fileInfo: FileInfo) {
+      fileListViewModel.handleItemClick(fileInfo)
     }
 
 

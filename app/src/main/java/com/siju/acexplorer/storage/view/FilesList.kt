@@ -30,7 +30,7 @@ class FilesList(val fragment: BaseFileListFragment, val view: View, val viewMode
     private fun setupList() {
         setLayoutManager(fileList, viewMode)
         adapter = FileListAdapter {
-
+          fragment.handleItemClick(it)
         }
         fileList.adapter = adapter
     }
