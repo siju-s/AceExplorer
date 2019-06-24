@@ -4,12 +4,14 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.Category.*
 import com.siju.acexplorer.main.model.groups.CategoryHelper
+import com.siju.acexplorer.main.view.dialog.DialogHelper
 import com.siju.acexplorer.storage.model.SortMode
 import com.siju.acexplorer.storage.model.StorageModel
 import com.siju.acexplorer.storage.model.ViewMode
@@ -17,6 +19,7 @@ import com.siju.acexplorer.storage.model.backstack.BackStackInfo
 import com.siju.acexplorer.storage.view.Navigation
 import com.siju.acexplorer.storage.view.NavigationCallback
 import com.siju.acexplorer.storage.view.NavigationView
+import com.siju.acexplorer.utils.InstallHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -24,16 +27,17 @@ import kotlinx.coroutines.launch
 
 
 class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
+    var apkPath: String? = null
     private lateinit var navigationView: NavigationView
     private lateinit var category: Category
     private val navigation = Navigation(this)
     private var bucketName: String? = null
     private val backStackInfo = BackStackInfo()
 
-    private val _viewFileEvent = MutableLiveData<Pair<String, String>>()
+    private val _viewFileEvent = MutableLiveData<Pair<String, String?>>()
     private val _sortEvent = MutableLiveData<SortMode>()
 
-    val viewFileEvent: LiveData<Pair<String, String>>
+    val viewFileEvent: LiveData<Pair<String, String?>>
         get() = _viewFileEvent
 
     private val _fileData = MutableLiveData<ArrayList<FileInfo>>()
@@ -50,6 +54,11 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     val viewMode: LiveData<ViewMode>
         get() = _viewMode
+
+    private val _installAppEvent = MutableLiveData<Pair<Boolean, String?>>()
+
+    val installAppEvent : LiveData<Pair<Boolean, String?>>
+    get() = _installAppEvent
 
     private val viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
@@ -206,7 +215,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     }
 
     private fun onFileClicked(fileInfo: FileInfo) {
-        _viewFileEvent.postValue(Pair(fileInfo.filePath, fileInfo.extension.toLowerCase()))
+        _viewFileEvent.postValue(Pair(fileInfo.filePath, fileInfo.extension))
     }
 
     private fun addNavigation(path: String?, category: Category) {
@@ -266,6 +275,22 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
         override fun onNavButtonClicked(category: Category, bucketName: String?) {
         }
+    }
+
+    val apkDialogListener = object : DialogHelper.ApkDialogListener {
+
+        override fun onInstallClicked(path: String?) {
+            val canInstall = InstallHelper.canInstallApp(AceApplication.appContext)
+            apkPath = path
+            _installAppEvent.value = Pair(canInstall, path)
+        }
+
+        override fun onCancelClicked() {
+        }
+
+        override fun onOpenApkClicked(path: String) {
+        }
+
     }
 
 }

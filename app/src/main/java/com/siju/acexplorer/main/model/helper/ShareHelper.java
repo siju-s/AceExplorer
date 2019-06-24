@@ -47,7 +47,7 @@ public class ShareHelper {
         ArrayList<Uri> files = new ArrayList<>();
 
         for (FileInfo info : fileInfo) {
-            Uri uri = UriHelper.createContentUri(context, info.getFilePath());
+            Uri uri = UriHelper.INSTANCE.createContentUri(context, info.getFilePath());
             files.add(uri);
         }
 

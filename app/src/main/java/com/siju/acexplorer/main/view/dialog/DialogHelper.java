@@ -47,6 +47,7 @@ import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.main.model.helper.FileUtils;
+import com.siju.acexplorer.main.model.helper.UriHelper;
 import com.siju.acexplorer.main.view.PasteConflictAdapter;
 import com.siju.acexplorer.storage.model.SortMode;
 import com.siju.acexplorer.storage.model.operations.Operations;
@@ -58,7 +59,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static com.siju.acexplorer.main.model.helper.UriHelper.grantUriPermission;
 import static com.siju.acexplorer.utils.ThumbnailUtils.displayThumb;
 
 /**
@@ -296,6 +296,66 @@ public class DialogHelper {
                 @Override
                 public void onClick(View v) {
                     dialogListener.onNeutralButtonClick(v);
+                    alertDialog.dismiss();
+                }
+            });
+        }
+
+        alertDialog.show();
+        alertDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup
+                .LayoutParams.WRAP_CONTENT);
+    }
+
+    public static void showApkDialog(final Context context, String[] text, final String path,
+                                       final ApkDialogListener dialogListener) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View dialogView = inflater.inflate(R.layout.alert_dialog, null);
+        builder.setView(dialogView);
+        builder.setCancelable(false);
+
+        final AlertDialog alertDialog = builder.create();
+
+        TextView title = dialogView.findViewById(R.id.textTitle);
+        TextView msg = dialogView.findViewById(R.id.textMessage);
+
+        Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
+        Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
+        Button neutralButton = dialogView.findViewById(R.id.buttonNeutral);
+
+
+        title.setText(text[0]);
+        msg.setText(text[1]);
+        positiveButton.setText(text[2]);
+
+        positiveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogListener.onInstallClicked(path);
+                alertDialog.dismiss();
+            }
+        });
+
+        if (text.length > 3) {
+            negativeButton.setVisibility(View.VISIBLE);
+            negativeButton.setText(text[3]);
+            negativeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialogListener.onCancelClicked();
+                    alertDialog.dismiss();
+                }
+            });
+        }
+
+        if (text.length > 4) {
+            neutralButton.setVisibility(View.VISIBLE);
+            neutralButton.setText(text[4]);
+            neutralButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialogListener.onOpenApkClicked(path);
                     alertDialog.dismiss();
                 }
             });
@@ -911,7 +971,10 @@ public class DialogHelper {
                         intent.setDataAndType(uri, "*/*");
                         break;
                 }
-                grantUriPermission(context, intent, uri);
+                boolean canGrant = UriHelper.INSTANCE.canGrantUriPermission(context, intent);
+                if (canGrant) {
+                    context.startActivity(intent);
+                }
                 bottomSheetDialog.dismiss();
             }
         });
@@ -954,6 +1017,16 @@ public class DialogHelper {
         void onNegativeButtonClick(View view);
 
         void onNeutralButtonClick(View view);
+
+    }
+
+    public interface ApkDialogListener {
+
+        void onInstallClicked(String path);
+
+        void onCancelClicked();
+
+        void onOpenApkClicked(String path);
 
     }
 

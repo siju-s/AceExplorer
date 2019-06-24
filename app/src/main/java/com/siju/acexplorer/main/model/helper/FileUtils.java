@@ -54,7 +54,6 @@ import static com.siju.acexplorer.main.model.groups.Category.IMAGE;
 import static com.siju.acexplorer.main.model.groups.Category.VIDEO;
 import static com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastLollipop;
 import static com.siju.acexplorer.main.model.helper.SdkHelper.isKitkat;
-import static com.siju.acexplorer.main.model.helper.UriHelper.getUriFromFile;
 
 
 public class FileUtils {
@@ -280,7 +279,7 @@ public class FileUtils {
 
     private static OutputStream getOutputStream(Context context, String str) {
         OutputStream outputStream = null;
-        Uri fileUri = getUriFromFile(str, context);
+        Uri fileUri = UriHelper.INSTANCE.getUriFromFile(str, context);
         if (fileUri != null) {
             try {
                 outputStream = context.getContentResolver().openOutputStream(fileUri);
@@ -407,7 +406,7 @@ public class FileUtils {
             ContentResolver resolver = context.getContentResolver();
 
             try {
-                Uri uri = getUriFromFile(file.getAbsolutePath(), context);
+                Uri uri = UriHelper.INSTANCE.getUriFromFile(file.getAbsolutePath(), context);
                 if (uri != null) {
                     resolver.delete(uri, null, null);
                 }

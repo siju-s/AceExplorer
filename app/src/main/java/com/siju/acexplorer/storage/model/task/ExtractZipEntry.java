@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static com.siju.acexplorer.main.model.helper.ViewHelper.viewFile;
 
 
 public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
@@ -77,7 +76,8 @@ public class ExtractZipEntry extends AsyncTask<Void, Void, Void> {
 
         String outputPath = output.getPath();
         String extension = FileUtils.getExtension(outputPath);
-        viewFile(context, outputPath, extension, alertDialogListener, true);
+        // TODO: 2019-06-24 Fix this
+//        viewFile(context, outputPath, extension, alertDialogListener, true);
     }
 
     private void unzipEntry(ZipFile zipfile, ZipEntry entry, String outputDir)

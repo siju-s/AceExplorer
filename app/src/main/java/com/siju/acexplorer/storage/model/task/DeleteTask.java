@@ -28,6 +28,7 @@ import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.main.model.StorageUtils;
+import com.siju.acexplorer.main.model.helper.UriHelper;
 import com.siju.acexplorer.main.model.root.RootDeniedException;
 import com.siju.acexplorer.main.model.root.RootUtils;
 import com.stericson.RootTools.RootTools;
@@ -40,7 +41,6 @@ import java.util.Set;
 
 import static com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastLollipop;
 import static com.siju.acexplorer.main.model.helper.SdkHelper.isKitkat;
-import static com.siju.acexplorer.main.model.helper.UriHelper.getUriFromFile;
 
 public class DeleteTask {
 
@@ -142,7 +142,7 @@ public class DeleteTask {
             ContentResolver resolver = context.getContentResolver();
 
             try {
-                Uri uri = getUriFromFile(file.getAbsolutePath(), context);
+                Uri uri = UriHelper.INSTANCE.getUriFromFile(file.getAbsolutePath(), context);
                 if (uri != null) {
                     resolver.delete(uri, null, null);
                 }

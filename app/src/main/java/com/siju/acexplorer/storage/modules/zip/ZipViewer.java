@@ -36,6 +36,7 @@ import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.main.model.FileConstants;
+import com.siju.acexplorer.main.model.helper.UriHelper;
 import com.siju.acexplorer.main.view.dialog.DialogHelper;
 import com.siju.acexplorer.storage.model.ZipModel;
 import com.siju.acexplorer.storage.model.task.ExtractZipEntry;
@@ -49,8 +50,6 @@ import java.util.zip.ZipFile;
 import static android.webkit.MimeTypeMap.getSingleton;
 import static com.siju.acexplorer.main.model.groups.Category.FILES;
 import static com.siju.acexplorer.main.model.groups.Category.ZIP_VIEWER;
-import static com.siju.acexplorer.main.model.helper.UriHelper.createContentUri;
-import static com.siju.acexplorer.main.model.helper.UriHelper.grantUriPermission;
 import static com.siju.acexplorer.main.view.dialog.DialogHelper.openWith;
 
 public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileInfo>> {
@@ -334,7 +333,7 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
             if (context == null) {
                 return;
             }
-            Uri uri = createContentUri(context, currentDir);
+            Uri uri = UriHelper.INSTANCE.createContentUri(context, currentDir);
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_INSTALL_PACKAGE);
 
@@ -342,7 +341,8 @@ public class ZipViewer implements LoaderManager.LoaderCallbacks<ArrayList<FileIn
             intent.setData(uri);
 
             if (mimeType != null) {
-                grantUriPermission(context, intent, uri);
+                // TODO: 2019-06-24 FIx this. Compare it with NoDual branch & fix
+//                UriHelper.INSTANCE.grantUriPermission(context, intent);
             } else {
                 openWith(uri, context);
             }

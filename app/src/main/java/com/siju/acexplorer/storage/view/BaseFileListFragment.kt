@@ -16,6 +16,8 @@
 
 package com.siju.acexplorer.storage.view
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -28,6 +30,8 @@ import com.siju.acexplorer.R
 import com.siju.acexplorer.ads.AdsView
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.main.model.helper.UriHelper
+import com.siju.acexplorer.main.model.helper.ViewHelper
 import com.siju.acexplorer.main.view.dialog.DialogHelper
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.permission.PermissionHelper
@@ -36,6 +40,7 @@ import com.siju.acexplorer.storage.model.StorageModelImpl
 import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.storage.viewmodel.FileListViewModel
 import com.siju.acexplorer.storage.viewmodel.FileListViewModelFactory
+import com.siju.acexplorer.utils.InstallHelper
 import kotlinx.android.synthetic.main.main_list.*
 import kotlinx.android.synthetic.main.toolbar.*
 
@@ -152,7 +157,7 @@ open class BaseFileListFragment : Fragment() {
         })
 
         fileListViewModel.viewFileEvent.observe(viewLifecycleOwner, Observer {
-            TODO()
+            viewFile(it.first, it.second)
         })
 
         fileListViewModel.viewMode.observe(viewLifecycleOwner, Observer {
@@ -161,9 +166,28 @@ open class BaseFileListFragment : Fragment() {
             }
         })
 
-        fileListViewModel.sortEvent.observe(viewLifecycleOwner, Observer {sortMode ->
+        fileListViewModel.sortEvent.observe(viewLifecycleOwner, Observer { sortMode ->
             DialogHelper.showSortDialog(context, sortMode, sortDialogListener)
         })
+
+        fileListViewModel.installAppEvent.observe(viewLifecycleOwner, Observer {
+            val canInstall = it.first
+            if (canInstall) {
+                openInstallScreen(it.second)
+            }
+            else {
+                InstallHelper.requestUnknownAppsInstallPermission(this)
+            }
+        })
+    }
+
+    private fun openInstallScreen(path: String?) {
+        val context = context
+        context?.let {
+            InstallHelper.openInstallAppScreen(context,
+                                               UriHelper.createContentUri(context.applicationContext,
+                                                                          path))
+        }
     }
 
     private fun showAds() {
@@ -179,6 +203,25 @@ open class BaseFileListFragment : Fragment() {
     }
 
     fun onBackPressed() = fileListViewModel.onBackPress()
+
+    private fun viewFile(path: String, extension: String?) {
+        Log.e(TAG, "Viewfile:path:$path, extension:$extension")
+        val context = context
+        context?.let {
+            when (extension?.toLowerCase()) {
+                null               -> {
+                    val uri = UriHelper.createContentUri(context, path)
+                    uri?.let {
+                        DialogHelper.openWith(it, context)
+                    }
+                }
+                ViewHelper.EXT_APK -> ViewHelper.viewApkFile(context, path,
+                                                             fileListViewModel.apkDialogListener)
+                else               -> ViewHelper.viewFile(context, path, extension)
+            }
+        }
+    }
+
 
     //    fun onBackPressed(): Boolean {
 //        return storagesUi!!.onBackPress()
@@ -196,11 +239,19 @@ open class BaseFileListFragment : Fragment() {
 //    }
 //
 //
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-//        storagesUi!!.handleActivityResult(requestCode, resultCode, intent)
-//        super.onActivityResult(requestCode, resultCode, intent)
-//    }
-//
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        when (requestCode) {
+            InstallHelper.UNKNOWN_APPS_INSTALL_REQUEST -> {
+                if (resultCode == RESULT_OK) {
+                    openInstallScreen(fileListViewModel.apkPath)
+                    fileListViewModel.apkPath = null
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, intent)
+    }
+
+    //
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.filelist_base, menu)
@@ -247,7 +298,7 @@ open class BaseFileListFragment : Fragment() {
                 return true
             }
 
-            R.id.action_sort -> {
+            R.id.action_sort      -> {
                 fileListViewModel.onSortClicked()
                 return true
             }
