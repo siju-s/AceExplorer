@@ -10,6 +10,7 @@ import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.Category.*
 import com.siju.acexplorer.main.model.groups.CategoryHelper
+import com.siju.acexplorer.storage.model.SortMode
 import com.siju.acexplorer.storage.model.StorageModel
 import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.storage.model.backstack.BackStackInfo
@@ -30,6 +31,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     private val backStackInfo = BackStackInfo()
 
     private val _viewFileEvent = MutableLiveData<Pair<String, String>>()
+    private val _sortEvent = MutableLiveData<SortMode>()
 
     val viewFileEvent: LiveData<Pair<String, String>>
         get() = _viewFileEvent
@@ -41,6 +43,9 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     val showFab = MutableLiveData<Boolean>()
 
+    val sortEvent: LiveData<SortMode>
+        get() = _sortEvent
+
     private val _viewMode = MutableLiveData<ViewMode>()
 
     val viewMode: LiveData<ViewMode>
@@ -49,9 +54,6 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     private val viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
-    init {
-        _viewMode.value = storageModel.getViewMode()
-    }
 
     fun loadData(path: String?, category: Category) {
         Log.e(this.javaClass.name, "loadData: path $path , category $category")
@@ -132,7 +134,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         createNavigationForCategory(category)
     }
 
-    fun onHiddenFileSettingChanged(value : Boolean) {
+    fun onHiddenFileSettingChanged(value: Boolean) {
         storageModel.saveHiddenFileSetting(value)
         val backStack = backStackInfo.getCurrentBackStack()
         backStack?.let {
@@ -220,14 +222,14 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     fun onBackPress(): Boolean {
         if (hasBackStack()) {
-            loadBackStack()
+            backStackInfo.remove()
+            refreshList()
             return false
         }
         return true
     }
 
-    private fun loadBackStack() {
-        backStackInfo.remove()
+    private fun refreshList() {
         val backStack = backStackInfo.getCurrentBackStack()
         backStack?.let {
             reloadData(backStack.first, backStack.second)
@@ -241,6 +243,15 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     fun switchView(viewMode: ViewMode) {
         _viewMode.value = viewMode
         storageModel.saveViewMode(viewMode)
+    }
+
+    fun onSortClicked() {
+       _sortEvent.value = storageModel.getSortMode()
+    }
+
+    fun onSort(sortMode: SortMode) {
+        storageModel.saveSortMode(sortMode)
+        refreshList()
     }
 
     val navigationCallback = object : NavigationCallback {

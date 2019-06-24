@@ -16,6 +16,7 @@ private const val PREFS_VIEW_MODE = "view-mode"
 class StorageModelImpl(val context: Context) : StorageModel {
 
     private val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    private val globalPreference = PreferenceManager.getDefaultSharedPreferences(context)
 
     override fun loadData(path: String?, category: Category): ArrayList<FileInfo> {
         return DataLoader.fetchDataByCategory(context,
@@ -42,12 +43,28 @@ class StorageModelImpl(val context: Context) : StorageModel {
         }
     }
 
-    override fun shouldShowHiddenFiles() = sharedPreferences.getBoolean(PreferenceConstants.PREFS_HIDDEN, false)
+    override fun shouldShowHiddenFiles() = globalPreference.getBoolean(
+            PreferenceConstants.PREFS_HIDDEN, false)
 
-    override fun saveHiddenFileSetting(value : Boolean) {
+    override fun saveHiddenFileSetting(value: Boolean) {
         Log.e(this.javaClass.name, "saveHiddenFileSetting: value:$value")
-        PreferenceManager.getDefaultSharedPreferences(context).edit().apply{
+        globalPreference.edit().apply {
             putBoolean(PreferenceConstants.PREFS_HIDDEN, value)
+            apply()
+        }
+    }
+
+    override fun getSortMode(): SortMode {
+        return SortMode.getSortModeFromValue(
+                globalPreference.getInt(
+                        PreferenceConstants.KEY_SORT_MODE,
+                        PreferenceConstants.DEFAULT_VALUE_SORT_MODE))
+    }
+
+    override fun saveSortMode(sortMode: SortMode) {
+        Log.e(this.javaClass.name, "saveSortMode: value:$sortMode")
+        globalPreference.edit().apply {
+            putInt(PreferenceConstants.KEY_SORT_MODE, sortMode.value)
             apply()
         }
     }

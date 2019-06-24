@@ -66,6 +66,7 @@ class FilesList(val fragment: BaseFileListFragment, val view: View, val viewMode
     }
 
     fun onViewModeChanged(viewMode: ViewMode) {
+        Log.e(TAG, "onViewModeChanged:$viewMode")
         setLayoutManager(fileList, viewMode)
         adapter.viewMode = viewMode
         fileList.adapter = adapter

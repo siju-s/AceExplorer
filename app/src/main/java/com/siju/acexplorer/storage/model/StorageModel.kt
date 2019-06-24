@@ -113,4 +113,6 @@ interface StorageModel {
     }
 
     fun saveHiddenFileSetting(value: Boolean)
+    fun getSortMode(): SortMode
+    fun saveSortMode(sortMode: SortMode)
 }

@@ -22,10 +22,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import androidx.appcompat.app.AlertDialog;
 import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,13 +38,19 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.main.model.helper.FileUtils;
+import com.siju.acexplorer.main.view.PasteConflictAdapter;
+import com.siju.acexplorer.storage.model.SortMode;
 import com.siju.acexplorer.storage.model.operations.Operations;
 import com.siju.acexplorer.utils.Clipboard;
-import com.siju.acexplorer.main.view.PasteConflictAdapter;
 import com.stericson.RootTools.RootTools;
 
 import java.io.File;
@@ -119,7 +121,7 @@ public class DialogHelper {
         alertDialog.show();
     }
 
-    public static void showSortDialog(final Context context, final int sortMode, final
+    public static void showSortDialog(final Context context, final SortMode sortMode, final
     SortDialogListener sortDialogListener) {
         String title = context.getString(R.string.action_sort);
         String[] texts = new String[]{title, context.getString(R.string.msg_ok), "", context
@@ -139,8 +141,8 @@ public class DialogHelper {
         final RadioGroup radioGroup = dialogView.findViewById(R.id.radioGroupSort);
         Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
         Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
-        final CheckBox orderCheckbox = dialogView.findViewById(R.id.checkBoxOrder);
-        orderCheckbox.setChecked(isAscending(sortMode));
+        final CheckBox ascendingOrderCheckbox = dialogView.findViewById(R.id.checkBoxOrder);
+        ascendingOrderCheckbox.setChecked(SortMode.Companion.isAscending(sortMode));
 
         textTitle.setText(title);
         positiveButton.setText(texts[1]);
@@ -154,8 +156,8 @@ public class DialogHelper {
                 int radioButtonID = radioGroup.getCheckedRadioButtonId();
                 View radioButton = radioGroup.findViewById(radioButtonID);
                 int index = radioGroup.indexOfChild(radioButton);
-                int newIndex = newSortMode(index, orderCheckbox.isChecked());
-                sortDialogListener.onPositiveButtonClick(newIndex);
+                SortMode sortModeNew = SortMode.Companion.getSortModeFromValue(newSortMode(index, ascendingOrderCheckbox.isChecked()));
+                sortDialogListener.onPositiveButtonClick(sortModeNew);
                 alertDialog.dismiss();
             }
         });
@@ -170,12 +172,8 @@ public class DialogHelper {
         alertDialog.show();
     }
 
-    private static boolean isAscending(int sortMode) {
-       return sortMode % 2 == 0;
-    }
-
-    private static int indexToCheck(int sortMode) {
-       return sortMode/2;
+    private static int indexToCheck(SortMode sortMode) {
+       return sortMode.getValue()/2;
     }
 
     private static int newSortMode(int selectedOption, boolean isAscending) {
@@ -961,7 +959,7 @@ public class DialogHelper {
 
     public interface SortDialogListener {
 
-        void onPositiveButtonClick(int position);
+        void onPositiveButtonClick(SortMode sortMode);
 
         void onNegativeButtonClick(View view);
 

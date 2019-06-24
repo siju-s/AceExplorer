@@ -28,8 +28,10 @@ import com.siju.acexplorer.R
 import com.siju.acexplorer.ads.AdsView
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.main.view.dialog.DialogHelper
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.permission.PermissionHelper
+import com.siju.acexplorer.storage.model.SortMode
 import com.siju.acexplorer.storage.model.StorageModelImpl
 import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.storage.viewmodel.FileListViewModel
@@ -158,6 +160,10 @@ open class BaseFileListFragment : Fragment() {
                 filesList.onViewModeChanged(it)
             }
         })
+
+        fileListViewModel.sortEvent.observe(viewLifecycleOwner, Observer {sortMode ->
+            DialogHelper.showSortDialog(context, sortMode, sortDialogListener)
+        })
     }
 
     private fun showAds() {
@@ -240,8 +246,23 @@ open class BaseFileListFragment : Fragment() {
                 fileListViewModel.onHiddenFileSettingChanged(item.isChecked)
                 return true
             }
+
+            R.id.action_sort -> {
+                fileListViewModel.onSortClicked()
+                return true
+            }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private val sortDialogListener = object : DialogHelper.SortDialogListener {
+        override fun onPositiveButtonClick(sortMode: SortMode) {
+            fileListViewModel.onSort(sortMode)
+        }
+
+        override fun onNegativeButtonClick(view: View?) {
+        }
+
     }
 //
 //    fun performVoiceSearch(query: String) {
