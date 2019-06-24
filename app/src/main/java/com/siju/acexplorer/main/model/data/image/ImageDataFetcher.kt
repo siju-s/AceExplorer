@@ -7,13 +7,15 @@ import android.provider.MediaStore
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.data.DataFetcher
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.main.model.helper.SortHelper
 import java.util.*
 
 class ImageDataFetcher : DataFetcher {
 
     override fun fetchData(context: Context, path: String?, category: Category): ArrayList<FileInfo> {
         val cursor = fetchImages(context)
-        return ImageCursorData.getImageDataFromCursor(cursor, category)
+        val data = ImageCursorData.getImageDataFromCursor(cursor, category)
+        return SortHelper.sortFiles(data, getSortMode(context))
     }
 
     override fun fetchCount(context: Context, path: String?): Int {

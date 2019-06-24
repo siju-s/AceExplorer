@@ -7,6 +7,7 @@ import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.HiddenFileHelper.constructionNoHiddenFilesArgs
 import com.siju.acexplorer.main.model.data.DataFetcher
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.main.model.helper.SortHelper
 import java.util.*
 
 
@@ -14,7 +15,8 @@ class DocumentFetcher : DataFetcher {
     override fun fetchData(context: Context, path: String?, category: Category): ArrayList<FileInfo> {
         val showHidden = canShowHiddenFiles(context)
         val cursor = fetchDocuments(context, showHidden)
-        return DocumentCursorData.getDataFromCursor(cursor, category, showHidden)
+        val data = DocumentCursorData.getDataFromCursor(cursor, category, showHidden)
+        return SortHelper.sortFiles(data, getSortMode(context))
     }
 
     override fun fetchCount(context: Context, path: String?): Int {

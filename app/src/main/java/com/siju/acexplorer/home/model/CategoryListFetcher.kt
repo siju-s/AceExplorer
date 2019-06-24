@@ -65,6 +65,7 @@ object CategoryCreator {
     }
 
     private fun saveCategoriesToPrefs(context: Context, categoryIds: ArrayList<Int>) {
+        Log.e(TAG, "saveCategoriesToPrefs:categories:${categoryIds.toArray()}")
         CategorySaver.saveCategories(context, categoryIds)
     }
 

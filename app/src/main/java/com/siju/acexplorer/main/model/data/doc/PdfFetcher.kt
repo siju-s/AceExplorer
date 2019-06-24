@@ -10,6 +10,7 @@ import com.siju.acexplorer.main.model.HiddenFileHelper.constructionNoHiddenFiles
 import com.siju.acexplorer.main.model.data.DataFetcher
 import com.siju.acexplorer.main.model.data.doc.DocumentUtils.getMediaTypeNone
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.main.model.helper.SortHelper
 import java.util.*
 
 
@@ -17,7 +18,8 @@ class PdfFetcher : DataFetcher {
     override fun fetchData(context: Context, path: String?, category: Category): ArrayList<FileInfo> {
         val showHidden = canShowHiddenFiles(context)
         val cursor = fetchPdf(context, showHidden)
-        return DocumentCursorData.getDataFromCursor(cursor, category, showHidden)
+        val data = DocumentCursorData.getDataFromCursor(cursor, category, showHidden)
+        return SortHelper.sortFiles(data, getSortMode(context))
     }
 
     override fun fetchCount(context: Context, path: String?): Int {

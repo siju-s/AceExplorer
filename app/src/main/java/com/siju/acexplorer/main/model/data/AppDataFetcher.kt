@@ -16,7 +16,8 @@ class AppDataFetcher : DataFetcher {
 
     override fun fetchData(context: Context, path: String?, category: Category): ArrayList<FileInfo> {
         val cursor = fetchApk(context)
-        return getApkCursorData(cursor, getSortMode(context), canShowHiddenFiles(context))
+        val data = getApkCursorData(cursor, getSortMode(context), canShowHiddenFiles(context))
+        return sortFiles(data, getSortMode(context))
     }
 
     override fun fetchCount(context: Context, path: String?): Int {

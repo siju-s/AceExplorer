@@ -44,6 +44,7 @@ class HomeViewModel(private val homeModel: HomeModel) : ViewModel() {
     }
 
     private fun fetchCategories() {
+        Log.e(TAG, "fetchCategories")
         uiScope.launch(Dispatchers.IO) {
             _categories.postValue(homeModel.getCategories())
         }

@@ -8,6 +8,7 @@ import com.siju.acexplorer.main.model.HiddenFileHelper
 import com.siju.acexplorer.main.model.data.DataFetcher
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.FileUtils
+import com.siju.acexplorer.main.model.helper.SortHelper
 import java.io.File
 import java.util.*
 
@@ -15,7 +16,8 @@ import java.util.*
 class ImageDetailFetcher : DataFetcher {
     override fun fetchData(context: Context, path: String?,
                            category: Category): ArrayList<FileInfo> {
-        return fetchBucketDetail(context, category, path, canShowHiddenFiles(context))
+        val data = fetchBucketDetail(context, category, path, canShowHiddenFiles(context))
+        return SortHelper.sortFiles(data, getSortMode(context))
     }
 
     override fun fetchCount(context: Context, path: String?): Int {

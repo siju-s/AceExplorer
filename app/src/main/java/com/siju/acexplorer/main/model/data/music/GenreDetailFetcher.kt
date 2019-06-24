@@ -7,6 +7,7 @@ import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.data.DataFetcher
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.FileUtils
+import com.siju.acexplorer.main.model.helper.SortHelper
 import java.util.*
 
 class GenreDetailFetcher : DataFetcher {
@@ -15,8 +16,8 @@ class GenreDetailFetcher : DataFetcher {
         val uri = MediaStore.Audio.Genres.Members.getContentUri("external", path!!.toLong())
         val cursor = context.contentResolver.query(uri,
                                                    null, null, null, null)
-        return getGenreDetailCursorData(cursor)
-
+        val data = getGenreDetailCursorData(cursor)
+        return SortHelper.sortFiles(data, getSortMode(context))
     }
 
     override fun fetchCount(context: Context, path: String?): Int {

@@ -7,13 +7,15 @@ import android.provider.MediaStore
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.data.DataFetcher
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.main.model.helper.SortHelper
 import java.util.*
 
 class VideoBucketFetcher : DataFetcher {
 
     override fun fetchData(context: Context, path: String?, category: Category): ArrayList<FileInfo> {
         val cursor = queryVideos(context)
-        return getVideoCursorData(cursor)
+        val data = getVideoCursorData(cursor)
+        return SortHelper.sortFiles(data, getSortMode(context))
     }
 
     override fun fetchCount(context: Context, path: String?): Int {
