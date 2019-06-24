@@ -19,6 +19,7 @@ package com.siju.acexplorer.main
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -30,8 +31,10 @@ import com.siju.acexplorer.main.view.FragmentsFactory
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.storage.view.BaseFileListFragment
+import com.siju.billingsecure.BillingKey
 import kotlinx.android.synthetic.main.activity_main.*
 
+private const val TAG = "AceActivity"
 class AceActivity : BaseActivity() {
 
     private lateinit var mainViewModel: MainViewModel
@@ -49,6 +52,7 @@ class AceActivity : BaseActivity() {
         initObservers()
         initListeners()
         bottom_navigation.selectedItemId = R.id.navigation_home
+        Log.e(TAG, "billing key:${BillingKey.getBillingKey()}")
     }
 
     private fun initListeners() {

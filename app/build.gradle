@@ -85,11 +85,7 @@ android {
 
         }
     }
-    externalNativeBuild {
-        ndkBuild {
-            path 'src/main/jni/Android.mk'
-        }
-    }
+
     flavorDimensions "dimen"
     productFlavors {
         dev {
@@ -109,6 +105,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation fileTree(include: ['*.aar'], dir: 'libs')
     implementation project(':RootShell')
+    implementation project(':billingsecure')
 
     implementation deps.kotlin.stdlib
     implementation deps.kotlin.coroutine_core

@@ -1,1 +1,1 @@
-include ':app', ':RootShell'
+include ':app', ':RootShell', ':billingsecure'

@@ -13,7 +13,7 @@ void xor_value_with_key(const char* value, char* xorOutput){
     }
 }
 
-jstring Java_com_siju_acexplorer_billing_BillingManager_getNativeKey(JNIEnv *env, jobject instance) {
+jstring Java_com_siju_billingsecure_BillingKey_getNativeKey(JNIEnv *env, jobject thiz) {
 
     xor_value_with_key(KEY, output);
 

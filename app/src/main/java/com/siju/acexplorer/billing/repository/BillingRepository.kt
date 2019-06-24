@@ -27,6 +27,7 @@ import com.siju.acexplorer.billing.repository.localdb.AugmentedSkuDetails
 import com.siju.acexplorer.billing.repository.localdb.Entitlement
 import com.siju.acexplorer.billing.repository.localdb.LocalBillingDb
 import com.siju.acexplorer.billing.repository.localdb.Premium
+import com.siju.billingsecure.BillingKey
 import kotlinx.coroutines.*
 import java.util.*
 
@@ -596,13 +597,10 @@ class BillingRepository private constructor(private val application: Application
      * unnecessary. @see [Security]
      */
     private fun isSignatureValid(purchase: Purchase): Boolean {
-        return Security.verifyPurchase(
-                getNativeKey(), purchase.originalJson, purchase.signature
+        return Security.verifyPurchase(BillingKey.getBillingKey()
+                , purchase.originalJson, purchase.signature
         )
     }
-
-    private external fun getNativeKey(): String
-
 
     /**
      * Presumably a set of SKUs has been defined on the Google Play Developer Console. This
