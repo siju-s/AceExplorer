@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="action_search">Search</string>
+    <string name="action_view">View</string>
     <string name="action_view_list">List view</string>
     <string name="action_view_grid">Grid view</string>
     <string name="more">more</string>

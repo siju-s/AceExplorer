@@ -38,6 +38,7 @@ import com.siju.acexplorer.storage.view.FileListFragment
 import kotlinx.android.synthetic.main.home_categories.*
 import kotlinx.android.synthetic.main.home_storage.*
 import kotlinx.android.synthetic.main.homescreen.*
+import kotlinx.android.synthetic.main.toolbar.*
 
 private const val TAG = "HomeScreenFragment"
 
@@ -61,6 +62,7 @@ class HomeScreenFragment : Fragment() {
 
         setupViewModels()
         adView = AdsView(container)
+        toolbar.title = resources.getString(R.string.app_name)
 
         initList()
         initObservers()

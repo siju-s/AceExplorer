@@ -11,7 +11,7 @@ import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.storage.view.custom.CustomGridLayoutManager
 import com.siju.acexplorer.utils.ConfigurationHelper
 
-class FilesList(val fragment: BaseFileListFragment, val view: View, val viewMode: Int) {
+class FilesList(val fragment: BaseFileListFragment, val view: View, val viewMode: ViewMode) {
 
     private lateinit var fileList: RecyclerView
     private lateinit var emptyText: TextView
@@ -29,18 +29,17 @@ class FilesList(val fragment: BaseFileListFragment, val view: View, val viewMode
 
     private fun setupList() {
         setLayoutManager(fileList, viewMode)
-        adapter = FileListAdapter {
-          fragment.handleItemClick(it)
+        adapter = FileListAdapter(viewMode) {
+            fragment.handleItemClick(it)
         }
         fileList.adapter = adapter
     }
 
-    private fun setLayoutManager(fileList: RecyclerView, viewMode: Int) {
-        when (viewMode) {
-            ViewMode.LIST -> fileList.layoutManager = LinearLayoutManager(view.context)
-            ViewMode.GRID -> fileList.layoutManager = CustomGridLayoutManager(view.context,
-                                                                              getGridColumns(
-                                                                                      view.resources.configuration))
+    private fun setLayoutManager(fileList: RecyclerView, viewMode: ViewMode) {
+        fileList.layoutManager = when (viewMode) {
+            ViewMode.LIST -> LinearLayoutManager(view.context)
+            ViewMode.GRID -> CustomGridLayoutManager(view.context,
+                                                     getGridColumns(view.resources.configuration))
         }
     }
 
@@ -61,5 +60,11 @@ class FilesList(val fragment: BaseFileListFragment, val view: View, val viewMode
             emptyText.visibility = View.GONE
         }
         adapter.submitList(data)
+    }
+
+    fun onViewModeChanged(viewMode: ViewMode) {
+        setLayoutManager(fileList, viewMode)
+        adapter.viewMode = viewMode
+        fileList.adapter = adapter
     }
 }

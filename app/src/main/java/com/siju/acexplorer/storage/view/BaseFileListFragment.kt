@@ -18,9 +18,8 @@ package com.siju.acexplorer.storage.view
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -32,9 +31,11 @@ import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.storage.model.StorageModelImpl
+import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.storage.viewmodel.FileListViewModel
 import com.siju.acexplorer.storage.viewmodel.FileListViewModelFactory
 import kotlinx.android.synthetic.main.main_list.*
+import kotlinx.android.synthetic.main.toolbar.*
 
 const val KEY_PATH = "path"
 const val KEY_CATEGORY = "category"
@@ -63,6 +64,8 @@ open class BaseFileListFragment : Fragment() {
 
         getArgs()
         adView = AdsView(main_content)
+        toolbar.title = resources.getString(R.string.app_name)
+        (activity as AppCompatActivity).setSupportActionBar(toolbar)
 
         setupViewModels()
         val view = view
@@ -141,6 +144,12 @@ open class BaseFileListFragment : Fragment() {
         fileListViewModel.viewFileEvent.observe(viewLifecycleOwner, Observer {
             TODO()
         })
+
+        fileListViewModel.viewMode.observe(viewLifecycleOwner, Observer {
+            if (::filesList.isInitialized) {
+                filesList.onViewModeChanged(it)
+            }
+        })
     }
 
     private fun showAds() {
@@ -157,7 +166,7 @@ open class BaseFileListFragment : Fragment() {
 
     fun onBackPressed() = fileListViewModel.onBackPress()
 
-//    fun onBackPressed(): Boolean {
+    //    fun onBackPressed(): Boolean {
 //        return storagesUi!!.onBackPress()
 //    }
 //
@@ -178,10 +187,10 @@ open class BaseFileListFragment : Fragment() {
 //        super.onActivityResult(requestCode, resultCode, intent)
 //    }
 //
-//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-//        menu.clear()
-//        super.onCreateOptionsMenu(menu, inflater)
-//    }
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.filelist_base, menu)
+    }
 //
 //    override fun onConfigurationChanged(newConfig: Configuration) {
 //        super.onConfigurationChanged(newConfig)
@@ -198,9 +207,19 @@ open class BaseFileListFragment : Fragment() {
 //        super.onDestroy()
 //    }
 //
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        return super.onOptionsItemSelected(item)
-//    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+         when(item.itemId) {
+             R.id.action_view_list -> {
+                 fileListViewModel.switchView(ViewMode.LIST)
+                 return true
+             }
+             R.id.action_view_grid -> {
+                 fileListViewModel.switchView(ViewMode.GRID)
+                 return true
+             }
+         }
+        return super.onOptionsItemSelected(item)
+    }
 //
 //    fun performVoiceSearch(query: String) {
 //        storagesUi!!.performVoiceSearch(query)

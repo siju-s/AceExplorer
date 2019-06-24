@@ -12,6 +12,7 @@ private const val PREFS_VIEW_MODE = "view-mode"
 
 class StorageModelImpl(val context: Context) : StorageModel {
 
+    private val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
     override fun loadData(path: String?, category: Category): ArrayList<FileInfo> {
         return DataLoader.fetchDataByCategory(context,
@@ -19,13 +20,22 @@ class StorageModelImpl(val context: Context) : StorageModel {
                                               category, path)
     }
 
-    override fun getViewMode(): Int {
-        val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    override fun getViewMode(): ViewMode {
         return if (sharedPreferences.contains(PREFS_VIEW_MODE)) {
-            sharedPreferences.getInt(PREFS_VIEW_MODE, ViewMode.LIST)
+            ViewMode.getViewModeFromValue(
+                    sharedPreferences.getInt(PREFS_VIEW_MODE, ViewMode.LIST.value))
         }
         else {
             ViewMode.LIST
+        }
+    }
+
+    override fun saveViewMode(viewMode: ViewMode?) {
+        viewMode?.let {
+            sharedPreferences.edit().apply {
+                putInt(PREFS_VIEW_MODE, viewMode.value)
+                apply()
+            }
         }
     }
 }

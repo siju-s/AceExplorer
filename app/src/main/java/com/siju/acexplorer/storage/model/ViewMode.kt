@@ -14,11 +14,25 @@
  * limitations under the License.
  */
 
-package com.siju.acexplorer.storage.model;
+package com.siju.acexplorer.storage.model
 
-public class ViewMode {
+import java.security.InvalidParameterException
 
-    public static final int LIST = 0;
-    public static final int GRID = 1;
+enum class ViewMode(val value : Int) {
 
+    LIST(0),
+    GRID(1);
+
+    fun getValue(viewMode: ViewMode) = viewMode.value
+
+    companion object {
+        fun getViewModeFromValue(value: Int): ViewMode {
+            return when (value) {
+                0    -> LIST
+                1    -> GRID
+                else -> throw InvalidParameterException(
+                        "View mode value should be either ${LIST.value} or ${GRID.value}")
+            }
+        }
+    }
 }

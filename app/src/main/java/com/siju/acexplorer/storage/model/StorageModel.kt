@@ -72,7 +72,8 @@ interface StorageModel {
 //    fun moveToTrash(filesToDelete: ArrayList<FileInfo>, trashDir: String)
 
     fun loadData(path: String?, category: Category) : ArrayList<FileInfo>
-    fun getViewMode(): Int
+    fun getViewMode(): ViewMode
+    fun saveViewMode(viewMode: ViewMode?)
 
 
     interface Listener {

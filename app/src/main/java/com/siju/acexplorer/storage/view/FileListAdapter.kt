@@ -16,15 +16,17 @@ import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper.*
 import com.siju.acexplorer.main.model.helper.FileUtils
+import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.utils.ThumbnailUtils.displayThumb
 
 private const val INVALID_POS = -1
 
-class FileListAdapter internal constructor(private val clickListener: (FileInfo) -> Unit) :
+class FileListAdapter internal constructor(var viewMode: ViewMode, private val clickListener: (FileInfo) -> Unit) :
         ListAdapter<FileInfo, FileListAdapter.ViewHolder>(FileInfoDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder.from(parent)
+        Log.e("FileListAdapter", "onCreateViewHolder:$viewMode")
+        return ViewHolder.from(parent, viewMode)
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
@@ -32,12 +34,20 @@ class FileListAdapter internal constructor(private val clickListener: (FileInfo)
         viewHolder.bind(item, itemCount, clickListener)
     }
 
-    class ViewHolder private constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder private constructor(itemView: View,
+                                         viewMode: ViewMode) : RecyclerView.ViewHolder(itemView) {
 
         private val textFileName: TextView = itemView.findViewById(R.id.textFolderName)
         private val textNoOfFileOrSize: TextView = itemView.findViewById(R.id.textSecondLine)
         private val imageIcon: ImageView = itemView.findViewById(R.id.imageIcon)
         private val imageThumbIcon: ImageView = itemView.findViewById(R.id.imageThumbIcon)
+        private var dateText : TextView? = null
+
+        init {
+            if (viewMode == ViewMode.LIST) {
+                dateText  = itemView.findViewById(R.id.textDate)
+            }
+        }
 
         fun bind(item: FileInfo, count: Int, clickListener: (FileInfo) -> Unit) {
             Log.e("FileListAdapter", "bind:${item.fileName}")
@@ -76,13 +86,8 @@ class FileListAdapter internal constructor(private val clickListener: (FileInfo)
                                       category: Category?,
                                       context: Context) {
             val fileName = fileInfo.fileName
-            val dateMs = if (isDateInMs(category)) {
-                fileInfo.date
-            }
-            else {
-                fileInfo.date * 1000
-            }
-            val fileDate = FileUtils.convertDate(dateMs)
+            bindDate(category, fileInfo)
+
             val isDirectory = fileInfo.isDirectory
             val fileNumOrSize: String
             fileNumOrSize = if (isDirectory) {
@@ -95,6 +100,19 @@ class FileListAdapter internal constructor(private val clickListener: (FileInfo)
             textNoOfFileOrSize.text = fileNumOrSize
             displayThumb(context, fileInfo, category, imageIcon,
                          imageThumbIcon)
+        }
+
+        private fun bindDate(category: Category?,
+                             fileInfo: FileInfo) {
+            dateText?.let {
+                val dateMs = if (isDateInMs(category)) {
+                    fileInfo.date
+                }
+                else {
+                    fileInfo.date * 1000
+                }
+                it.text = FileUtils.convertDate(dateMs)
+            }
         }
 
         private fun getDirectoryFileCount(context: Context,
@@ -178,10 +196,15 @@ class FileListAdapter internal constructor(private val clickListener: (FileInfo)
         }
 
         companion object {
-            fun from(parent: ViewGroup): ViewHolder {
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.file_list_item,
-                                                                       parent, false)
-                return ViewHolder(view)
+            fun from(parent: ViewGroup,
+                     viewMode: ViewMode): ViewHolder {
+
+                val layoutId = when(viewMode) {
+                    ViewMode.LIST -> R.layout.file_list_item
+                    ViewMode.GRID -> R.layout.file_grid_item
+                }
+                val view = LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
+                return ViewHolder(view, viewMode)
             }
         }
     }

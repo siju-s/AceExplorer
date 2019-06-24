@@ -11,6 +11,7 @@ import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.Category.*
 import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.storage.model.StorageModel
+import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.storage.model.backstack.BackStackInfo
 import com.siju.acexplorer.storage.view.Navigation
 import com.siju.acexplorer.storage.view.NavigationCallback
@@ -40,8 +41,17 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     val showFab = MutableLiveData<Boolean>()
 
+    private val _viewMode = MutableLiveData<ViewMode>()
+
+    val viewMode: LiveData<ViewMode>
+        get() = _viewMode
+
     private val viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+
+    init {
+        _viewMode.value = storageModel.getViewMode()
+    }
 
     fun loadData(path: String?, category: Category) {
         Log.e(this.javaClass.name, "loadData: path $path , category $category")
@@ -64,7 +74,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     fun getViewMode() = storageModel.getViewMode()
 
-    fun setCategory(category: Category) {
+    private fun setCategory(category: Category) {
         this.category = category
         showFab.postValue(canShowFab(category))
     }
@@ -215,6 +225,11 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     private fun onDirectoryClicked(fileInfo: FileInfo) {
         loadData(fileInfo.filePath, FILES)
+    }
+
+    fun switchView(viewMode: ViewMode) {
+        _viewMode.value = viewMode
+        storageModel.saveViewMode(viewMode)
     }
 
     val navigationCallback = object : NavigationCallback {
