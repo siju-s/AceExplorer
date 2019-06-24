@@ -132,6 +132,17 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         createNavigationForCategory(category)
     }
 
+    fun onHiddenFileSettingChanged(value : Boolean) {
+        storageModel.saveHiddenFileSetting(value)
+        val backStack = backStackInfo.getCurrentBackStack()
+        backStack?.let {
+            reloadData(backStack.first, backStack.second)
+        }
+    }
+
+    fun shouldShowHiddenFiles() = storageModel.shouldShowHiddenFiles()
+
+
     fun handleItemClick(fileInfo: FileInfo) {
         when (category) {
             AUDIO, VIDEO, IMAGE, DOCS, PODCASTS, ALBUM_DETAIL, ARTIST_DETAIL, GENRE_DETAIL, FOLDER_IMAGES,

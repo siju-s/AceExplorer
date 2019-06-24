@@ -43,6 +43,7 @@ private const val TAG = "BaseFileListFragment"
 
 open class BaseFileListFragment : Fragment() {
 
+    private var hiddenMenuItem: MenuItem? = null
     private var path: String? = null
     private var category = Category.FILES
     private lateinit var filesList: FilesList
@@ -64,18 +65,25 @@ open class BaseFileListFragment : Fragment() {
 
         getArgs()
         adView = AdsView(main_content)
-        toolbar.title = resources.getString(R.string.app_name)
-        (activity as AppCompatActivity).setSupportActionBar(toolbar)
-
+        setupToolbar()
         setupViewModels()
+
         val view = view
         view?.let {
             filesList = FilesList(this, view, fileListViewModel.getViewMode())
             floatingView = FloatingView(view)
             navigationView = NavigationView(view, fileListViewModel.navigationCallback)
         }
+
         setupNavigationView()
         initObservers()
+        Log.e(TAG, "onAct created:$hiddenMenuItem")
+        setHiddenCheckedState(fileListViewModel.shouldShowHiddenFiles())
+    }
+
+    private fun setupToolbar() {
+        toolbar.title = resources.getString(R.string.app_name)
+        (activity as AppCompatActivity).setSupportActionBar(toolbar)
     }
 
     private fun setupNavigationView() {
@@ -190,8 +198,18 @@ open class BaseFileListFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.filelist_base, menu)
+        Log.e(TAG, "onCreateOptionsMenu")
+        hiddenMenuItem = menu.findItem(R.id.action_hidden)
+        if (::fileListViewModel.isInitialized) {
+            setHiddenCheckedState(fileListViewModel.shouldShowHiddenFiles())
+        }
     }
-//
+
+    private fun setHiddenCheckedState(state: Boolean) {
+        hiddenMenuItem?.isChecked = state
+    }
+
+    //
 //    override fun onConfigurationChanged(newConfig: Configuration) {
 //        super.onConfigurationChanged(newConfig)
 //        storagesUi!!.onConfigChanged(newConfig)
@@ -208,16 +226,21 @@ open class BaseFileListFragment : Fragment() {
 //    }
 //
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-         when(item.itemId) {
-             R.id.action_view_list -> {
-                 fileListViewModel.switchView(ViewMode.LIST)
-                 return true
-             }
-             R.id.action_view_grid -> {
-                 fileListViewModel.switchView(ViewMode.GRID)
-                 return true
-             }
-         }
+        when (item.itemId) {
+            R.id.action_view_list -> {
+                fileListViewModel.switchView(ViewMode.LIST)
+                return true
+            }
+            R.id.action_view_grid -> {
+                fileListViewModel.switchView(ViewMode.GRID)
+                return true
+            }
+            R.id.action_hidden    -> {
+                item.isChecked = !item.isChecked
+                fileListViewModel.onHiddenFileSettingChanged(item.isChecked)
+                return true
+            }
+        }
         return super.onOptionsItemSelected(item)
     }
 //

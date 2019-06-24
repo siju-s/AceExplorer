@@ -74,6 +74,7 @@ interface StorageModel {
     fun loadData(path: String?, category: Category) : ArrayList<FileInfo>
     fun getViewMode(): ViewMode
     fun saveViewMode(viewMode: ViewMode?)
+    fun shouldShowHiddenFiles() : Boolean
 
 
     interface Listener {
@@ -110,4 +111,6 @@ interface StorageModel {
 
         fun showZipProgressDialog(files: ArrayList<FileInfo>, absolutePath: String)
     }
+
+    fun saveHiddenFileSetting(value: Boolean)
 }

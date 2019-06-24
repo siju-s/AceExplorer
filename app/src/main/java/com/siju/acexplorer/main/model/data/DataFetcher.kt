@@ -6,6 +6,7 @@ import androidx.preference.PreferenceManager
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.FileConstants
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.preferences.PreferenceConstants
 import java.util.*
 
 interface DataFetcher {
@@ -19,7 +20,7 @@ interface DataFetcher {
     }
 
     fun canShowHiddenFiles(context: Context): Boolean {
-        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(FileConstants.PREFS_HIDDEN, false)
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PreferenceConstants.PREFS_HIDDEN, false)
     }
 
     fun getCursorCount(cursor: Cursor?): Int {

@@ -1,10 +1,13 @@
 package com.siju.acexplorer.storage.model
 
 import android.content.Context
+import android.util.Log
+import androidx.preference.PreferenceManager
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.data.DataFetcherFactory
 import com.siju.acexplorer.main.model.data.DataLoader
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.preferences.PreferenceConstants
 import java.util.*
 
 private const val PREFS_NAME = "PREFS"
@@ -38,4 +41,16 @@ class StorageModelImpl(val context: Context) : StorageModel {
             }
         }
     }
+
+    override fun shouldShowHiddenFiles() = sharedPreferences.getBoolean(PreferenceConstants.PREFS_HIDDEN, false)
+
+    override fun saveHiddenFileSetting(value : Boolean) {
+        Log.e(this.javaClass.name, "saveHiddenFileSetting: value:$value")
+        PreferenceManager.getDefaultSharedPreferences(context).edit().apply{
+            putBoolean(PreferenceConstants.PREFS_HIDDEN, value)
+            apply()
+        }
+    }
+
+
 }

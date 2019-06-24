@@ -40,8 +40,9 @@ class FileDataFetcher : DataFetcher {
 
     private fun fetchFiles(path: String?, sortMode: Int, showHidden: Boolean,
                            isRooted: Boolean): ArrayList<FileInfo> {
+        Log.e(TAG, "fetchFiles: path:$path, sortMode:$sortMode, hidden:$showHidden")
         if (path == null) {
-            return ArrayList<FileInfo>()
+            return ArrayList()
         }
         val fileInfoList = getFilesList(path, isRooted, showHidden)
         sortFiles(fileInfoList, sortMode)

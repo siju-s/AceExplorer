@@ -1,6 +1,7 @@
 package com.siju.acexplorer.storage.view
 
 import android.content.res.Configuration
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -11,6 +12,7 @@ import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.storage.view.custom.CustomGridLayoutManager
 import com.siju.acexplorer.utils.ConfigurationHelper
 
+private const val TAG = "FilesList"
 class FilesList(val fragment: BaseFileListFragment, val view: View, val viewMode: ViewMode) {
 
     private lateinit var fileList: RecyclerView
@@ -53,6 +55,7 @@ class FilesList(val fragment: BaseFileListFragment, val view: View, val viewMode
     }
 
     fun onDataLoaded(data: ArrayList<FileInfo>) {
+        Log.e(TAG, "onDataLoaded:${data.size}")
         if (data.isEmpty()) {
             emptyText.visibility = View.VISIBLE
         }
