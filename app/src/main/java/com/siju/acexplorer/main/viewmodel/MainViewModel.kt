@@ -38,6 +38,7 @@ class MainViewModel(val app: Application) : AndroidViewModel(app) {
     fun setPermissionHelper(permissionHelper: PermissionHelper) {
         this.permissionHelper = permissionHelper
         permissionStatus = permissionHelper.permissionStatus
+        permissionHelper.checkPermissions()
     }
 
 
@@ -46,7 +47,7 @@ class MainViewModel(val app: Application) : AndroidViewModel(app) {
     }
 
     fun onResume() {
-        permissionHelper.checkPermissions()
+        permissionHelper.onForeground()
     }
 
     fun requestPermissions() {

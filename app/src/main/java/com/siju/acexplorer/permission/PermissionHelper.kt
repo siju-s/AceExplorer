@@ -46,18 +46,25 @@ private const val storagePermission = Manifest.permission.WRITE_EXTERNAL_STORAGE
 class PermissionHelper(private val activity: AppCompatActivity, private val context: Context) {
     private var permissionRationaleDialog: Dialog? = null
 
-    private val requiredPermissions = arrayOf(Manifest.permission
-            .WRITE_EXTERNAL_STORAGE)
-
     val permissionStatus: MutableLiveData<PermissionState> = MutableLiveData()
     private val permissionsNeeded = ArrayList<String>()
 
     fun checkPermissions() {
         if (hasPermissions(context)) {
-            dismissRationaleDialog()
             permissionStatus.value = PermissionState.Granted()
-        } else {
+        }
+        else {
             permissionStatus.value = PermissionState.Required()
+        }
+    }
+
+    fun onForeground() {
+        Log.e(TAG, "onForeground")
+        if (permissionRationaleDialog?.isShowing == true) {
+            if (hasPermissions(context)) {
+                dismissRationaleDialog()
+                permissionStatus.value = PermissionState.Granted()
+            }
         }
     }
 
@@ -66,7 +73,8 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
         val permissions: ArrayList<String>
         try {
             permissions = getPermissions(context)
-        } catch (e: PackageManager.NameNotFoundException) {
+        }
+        catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
             return false
         }
@@ -80,13 +88,14 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
     }
 
     private fun isPermissionDenied(context: Context, permission: String) =
-            ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_DENIED
+            ContextCompat.checkSelfPermission(context,
+                                              permission) == PackageManager.PERMISSION_DENIED
 
 
     @Throws(PackageManager.NameNotFoundException::class)
     private fun getPermissions(context: Context): ArrayList<String> {
         val packageInfo = context.packageManager.getPackageInfo(context.packageName,
-                PackageManager.GET_PERMISSIONS)
+                                                                PackageManager.GET_PERMISSIONS)
         val dangerousPermissions = arrayListOf<String>()
         for (permission in packageInfo.requestedPermissions) {
             val permissionInfo = context.packageManager.getPermissionInfo(permission, 0)
@@ -102,7 +111,8 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
     private fun getPermissionProtectionLevel(permissionInfo: PermissionInfo): Int {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             permissionInfo.protection
-        } else {
+        }
+        else {
             return permissionInfo.protectionLevel and PermissionInfo.PROTECTION_MASK_BASE
         }
     }
@@ -110,7 +120,8 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
 
     fun requestPermission() {
         Logger.log(TAG, "requestPermission")
-        ActivityCompat.requestPermissions(activity, permissionsNeeded.toTypedArray(), PERMISSIONS_REQUEST)
+        ActivityCompat.requestPermissions(activity, permissionsNeeded.toTypedArray(),
+                                          PERMISSIONS_REQUEST)
     }
 
     fun onPermissionResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -119,7 +130,8 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
             Logger.log(TAG, "Permission granted")
             permissionStatus.value = PermissionState.Granted()
             dismissRationaleDialog()
-        } else {
+        }
+        else {
             permissionStatus.value = PermissionState.Rationale()
         }
     }
@@ -129,9 +141,11 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
             createRationaleDialog()
         }
 
-        val showSettings = !ActivityCompat.shouldShowRequestPermissionRationale(activity, storagePermission)
+        val showSettings = !ActivityCompat.shouldShowRequestPermissionRationale(activity,
+                                                                                storagePermission)
         val buttonGrant: Button = permissionRationaleDialog!!.findViewById(R.id.buttonGrant)
-        val textViewPermissionHint: TextView = permissionRationaleDialog!!.findViewById(R.id.textPermissionHint)
+        val textViewPermissionHint: TextView = permissionRationaleDialog!!.findViewById(
+                R.id.textPermissionHint)
 
         permissionRationaleDialog?.setOnDismissListener {
             onRationaleDialogDismissed()
@@ -144,7 +158,8 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
         buttonGrant.setOnClickListener {
             if (showSettings) {
                 openSettings()
-            } else {
+            }
+            else {
                 requestPermission()
             }
         }
@@ -155,13 +170,12 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
     private fun onRationaleDialogDismissed() {
         Log.e(TAG, "onRationaleDialogDismissed")
         if (!hasPermissions(context)) {
-            dismissRationaleDialog()
             activity.finish()
         }
     }
 
     private fun createRationaleDialog() {
-        permissionRationaleDialog = Dialog(context, R.style.PermissionDialog)
+        permissionRationaleDialog = Dialog(activity, R.style.PermissionDialog)
         permissionRationaleDialog?.setContentView(R.layout.dialog_runtime_permissions)
     }
 
@@ -174,25 +188,14 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
     }
 
     private fun dismissRationaleDialog() {
-        if (permissionRationaleDialog?.isShowing == true) {
-            permissionRationaleDialog?.dismiss()
-        }
+        Log.e(TAG, "dismissRationaleDialog")
+        permissionRationaleDialog?.dismiss()
     }
-
-//    interface PermissionResultCallback {
-//        fun onPermissionGranted()
-//        fun onPermissionDenied()
-//        fun onPermissionRequired()
-//        fun onRationaleRequired()
-//    }
-
 
     sealed class PermissionState {
         class Granted : PermissionState()
-        class Denied : PermissionState()
         class Required : PermissionState()
         class Rationale : PermissionState()
-
     }
 
 }

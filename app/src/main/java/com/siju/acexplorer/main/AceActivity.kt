@@ -130,7 +130,6 @@ class AceActivity : BaseActivity() {
        else {
            super.onBackPressed()
        }
-
     }
 //
 //    override fun onDestroy() {
