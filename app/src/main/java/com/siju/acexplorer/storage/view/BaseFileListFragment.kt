@@ -59,6 +59,7 @@ open class BaseFileListFragment : Fragment() {
     private lateinit var mainViewModel: MainViewModel
     private lateinit var fileListViewModel: FileListViewModel
     private lateinit var adView: AdsView
+    private lateinit var menuControls: MenuControls
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -80,12 +81,20 @@ open class BaseFileListFragment : Fragment() {
             filesList = FilesList(this, view, fileListViewModel.getViewMode())
             floatingView = FloatingView(view)
             navigationView = NavigationView(view, fileListViewModel.navigationCallback)
+            menuControls = MenuControls(this, view, category)
         }
-
+        setupMultiSelection()
         setupNavigationView()
         initObservers()
         Log.e(TAG, "onAct created:$hiddenMenuItem")
         setHiddenCheckedState(fileListViewModel.shouldShowHiddenFiles())
+    }
+
+    private fun setupMultiSelection() {
+        val multiSelectionHelper = MultiSelectionHelper()
+        fileListViewModel.multiSelectionHelper = multiSelectionHelper
+        filesList.setMultiSelectionHelper(multiSelectionHelper)
+        multiSelectionHelper.setMultiSelectionListener(fileListViewModel.multiSelectionListener)
     }
 
     private fun setupToolbar() {
@@ -179,6 +188,32 @@ open class BaseFileListFragment : Fragment() {
                 InstallHelper.requestUnknownAppsInstallPermission(this)
             }
         })
+
+        fileListViewModel.actionModeState.observe(viewLifecycleOwner, Observer {
+            Log.e(TAG, "actionModeState:$it")
+            it?.apply {
+               when(it) {
+                   ActionModeState.STARTED -> menuControls.onStartActionMode()
+                   ActionModeState.ENDED -> menuControls.onEndActionMode()
+               }
+            }
+        })
+
+        fileListViewModel.selectedCount.observe(viewLifecycleOwner, Observer {
+            it?.apply {
+                if (fileListViewModel.actionModeState.value != ActionModeState.ENDED) {
+                    menuControls.onSelectedCountChanged(it)
+                }
+            }
+        })
+
+        fileListViewModel.refreshEvent.observe(viewLifecycleOwner, Observer {
+            it?.apply {
+                if (it) {
+                    filesList.refresh()
+                }
+            }
+        })
     }
 
     private fun openInstallScreen(path: String?) {
@@ -198,8 +233,12 @@ open class BaseFileListFragment : Fragment() {
         adView.hideAds()
     }
 
-    fun handleItemClick(fileInfo: FileInfo) {
-        fileListViewModel.handleItemClick(fileInfo)
+    fun handleItemClick(fileInfo: FileInfo, position: Int) {
+        fileListViewModel.handleItemClick(fileInfo, position)
+    }
+
+    fun handleLongItemClick(fileInfo: FileInfo, second: Int) {
+        fileListViewModel.handleLongClick(fileInfo, second)
     }
 
     fun onBackPressed() = fileListViewModel.onBackPress()
@@ -304,6 +343,11 @@ open class BaseFileListFragment : Fragment() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    fun onMenuItemClick(item: MenuItem) {
+        fileListViewModel.onMenuItemClick(item.itemId)
+
     }
 
     private val sortDialogListener = object : DialogHelper.SortDialogListener {

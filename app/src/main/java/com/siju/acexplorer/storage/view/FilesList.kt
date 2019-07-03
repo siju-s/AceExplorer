@@ -13,6 +13,7 @@ import com.siju.acexplorer.storage.view.custom.CustomGridLayoutManager
 import com.siju.acexplorer.utils.ConfigurationHelper
 
 private const val TAG = "FilesList"
+
 class FilesList(val fragment: BaseFileListFragment, val view: View, val viewMode: ViewMode) {
 
     private lateinit var fileList: RecyclerView
@@ -31,9 +32,15 @@ class FilesList(val fragment: BaseFileListFragment, val view: View, val viewMode
 
     private fun setupList() {
         setLayoutManager(fileList, viewMode)
-        adapter = FileListAdapter(viewMode) {
-            fragment.handleItemClick(it)
-        }
+        adapter = FileListAdapter(
+                viewMode,
+                {
+                    fragment.handleItemClick(it.first, it.second)
+                },
+                {
+                    fragment.handleLongItemClick(it.first, it.second)
+                }
+        )
         fileList.adapter = adapter
     }
 
@@ -71,4 +78,14 @@ class FilesList(val fragment: BaseFileListFragment, val view: View, val viewMode
         adapter.viewMode = viewMode
         fileList.adapter = adapter
     }
+
+    fun refresh() {
+        adapter.notifyDataSetChanged()
+    }
+
+    fun setMultiSelectionHelper(multiSelectionHelper: MultiSelectionHelper) {
+       adapter.setMultiSelectionHelper(multiSelectionHelper)
+    }
+
+
 }

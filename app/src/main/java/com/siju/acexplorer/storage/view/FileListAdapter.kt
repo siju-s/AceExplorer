@@ -1,6 +1,7 @@
 package com.siju.acexplorer.storage.view
 
 import android.content.Context
+import android.graphics.Color
 import android.text.format.Formatter
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -21,8 +23,12 @@ import com.siju.acexplorer.utils.ThumbnailUtils.displayThumb
 
 private const val INVALID_POS = -1
 private const val TAG = "FileListAdapter"
-class FileListAdapter internal constructor(var viewMode: ViewMode, private val clickListener: (FileInfo) -> Unit) :
+class FileListAdapter internal constructor(var viewMode: ViewMode, private val clickListener: (Pair<FileInfo, Int>) -> Unit,
+                                           private val longClickListener: (Pair<FileInfo, Int>) -> Unit) :
         ListAdapter<FileInfo, FileListAdapter.ViewHolder>(FileInfoDiffCallback()) {
+
+
+    private var multiSelectionHelper: MultiSelectionHelper? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         Log.e("FileListAdapter", "onCreateViewHolder:$viewMode")
@@ -31,7 +37,11 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val item = getItem(position)
-        viewHolder.bind(item, itemCount, clickListener)
+        viewHolder.bind(item, itemCount, multiSelectionHelper?.isSelected(position), clickListener, longClickListener)
+    }
+
+    fun setMultiSelectionHelper(multiSelectionHelper: MultiSelectionHelper) {
+        this.multiSelectionHelper = multiSelectionHelper
     }
 
     class ViewHolder private constructor(itemView: View,
@@ -49,14 +59,34 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             }
         }
 
-        fun bind(item: FileInfo, count: Int, clickListener: (FileInfo) -> Unit) {
+        fun bind(item: FileInfo, count: Int, selected : Boolean?,
+                 clickListener: (Pair<FileInfo, Int>) -> Unit,
+                 longClickListener: (Pair<FileInfo, Int>) -> Unit) {
             Log.e("FileListAdapter", "bind:${item.fileName}")
+            onSelection(selected)
             bindViewByCategory(itemView.context, item)
             itemView.setOnClickListener {
                 val position = adapterPosition
                 if (position < count && position != RecyclerView.NO_POSITION) {
-                    clickListener(item)
+                    clickListener(Pair(item, position))
                 }
+            }
+
+            itemView.setOnLongClickListener {
+                val position = adapterPosition
+                if (position < count && position != RecyclerView.NO_POSITION) {
+                    longClickListener(Pair(item, position))
+                }
+                true
+            }
+        }
+
+        private fun onSelection(selected: Boolean?) {
+            if (selected == true) {
+                itemView.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.dark_actionModeItemSelected))
+            }
+            else {
+                itemView.setBackgroundColor(Color.TRANSPARENT)
             }
         }
 
