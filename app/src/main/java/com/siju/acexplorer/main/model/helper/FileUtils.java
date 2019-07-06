@@ -513,7 +513,7 @@ public class FileUtils {
         return fileName + "." + extension;
     }
 
-    static String getFileNameWithoutExt(String filePath) {
+    public static String getFileNameWithoutExt(String filePath) {
         File file = new File(filePath);
         String fileName;
         if (file.isFile()) {

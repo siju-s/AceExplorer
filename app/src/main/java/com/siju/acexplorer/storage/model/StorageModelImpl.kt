@@ -7,6 +7,7 @@ import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.data.DataFetcherFactory
 import com.siju.acexplorer.main.model.data.DataLoader
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.preferences.PreferenceConstants
 import java.util.*
 
@@ -66,6 +67,12 @@ class StorageModelImpl(val context: Context) : StorageModel {
         globalPreference.edit().apply {
             putInt(PreferenceConstants.KEY_SORT_MODE, sortMode.value)
             apply()
+        }
+    }
+
+    override fun renameFile(filePath: String?, newName: String?) {
+        if (FileUtils.isFileNameInvalid(newName)) {
+            return
         }
     }
 

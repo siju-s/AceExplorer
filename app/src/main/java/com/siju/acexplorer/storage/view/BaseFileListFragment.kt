@@ -17,6 +17,8 @@
 package com.siju.acexplorer.storage.view
 
 import android.app.Activity.RESULT_OK
+import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -38,6 +40,7 @@ import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.storage.model.SortMode
 import com.siju.acexplorer.storage.model.StorageModelImpl
 import com.siju.acexplorer.storage.model.ViewMode
+import com.siju.acexplorer.storage.model.operations.Operations
 import com.siju.acexplorer.storage.viewmodel.FileListViewModel
 import com.siju.acexplorer.storage.viewmodel.FileListViewModelFactory
 import com.siju.acexplorer.utils.InstallHelper
@@ -192,10 +195,10 @@ open class BaseFileListFragment : Fragment() {
         fileListViewModel.actionModeState.observe(viewLifecycleOwner, Observer {
             Log.e(TAG, "actionModeState:$it")
             it?.apply {
-               when(it) {
-                   ActionModeState.STARTED -> menuControls.onStartActionMode()
-                   ActionModeState.ENDED -> menuControls.onEndActionMode()
-               }
+                when (it) {
+                    ActionModeState.STARTED -> menuControls.onStartActionMode()
+                    ActionModeState.ENDED   -> menuControls.onEndActionMode()
+                }
             }
         })
 
@@ -214,14 +217,50 @@ open class BaseFileListFragment : Fragment() {
                 }
             }
         })
+
+        fileListViewModel.singleOpData.observe(viewLifecycleOwner, Observer {
+            it?.apply {
+                handleSingleItemOperation(it)
+            }
+        })
+    }
+
+    private fun handleSingleItemOperation(operationData: Pair<Operations, FileInfo>) {
+        when (operationData.first) {
+            Operations.RENAME -> {
+                context?.let { context -> showRenameDialog(context, operationData.second) }
+            }
+        }
+    }
+
+    private fun showRenameDialog(context: Context, fileInfo: FileInfo) {
+        val title = context.getString(R.string.action_rename)
+        val texts = arrayOf(title, context.getString(R.string.enter_name),
+                            context.getString(R.string.action_rename),
+                            context.getString(R.string.dialog_cancel))
+        DialogHelper.showInputDialog(context, texts, Operations.RENAME, fileInfo.filePath, alertDialogListener)
     }
 
     private fun openInstallScreen(path: String?) {
         val context = context
         context?.let {
             InstallHelper.openInstallAppScreen(context,
-                                               UriHelper.createContentUri(context.applicationContext,
-                                                                          path))
+                                               UriHelper.createContentUri(
+                                                       context.applicationContext,
+                                                       path))
+        }
+    }
+
+    private var dialog : Dialog? = null
+
+    private val alertDialogListener = object : DialogHelper.DialogCallback {
+
+        override fun onPositiveButtonClick(dialog: Dialog?, operation: Operations?, name: String?) {
+            this@BaseFileListFragment.dialog = dialog
+            fileListViewModel.onOperation(operation, name)
+        }
+
+        override fun onNegativeButtonClick(operations: Operations?) {
         }
     }
 

@@ -17,6 +17,7 @@ import com.siju.acexplorer.storage.model.SortMode
 import com.siju.acexplorer.storage.model.StorageModel
 import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.storage.model.backstack.BackStackInfo
+import com.siju.acexplorer.storage.model.operations.Operations
 import com.siju.acexplorer.storage.view.*
 import com.siju.acexplorer.utils.InstallHelper
 import kotlinx.coroutines.CoroutineScope
@@ -44,6 +45,12 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     val fileData: LiveData<ArrayList<FileInfo>>
         get() = _fileData
+
+    private val _singleOpData = MutableLiveData<Pair<Operations, FileInfo>>()
+
+
+    val singleOpData: LiveData<Pair<Operations, FileInfo>>
+        get() = _singleOpData
 
     val showFab = MutableLiveData<Boolean>()
 
@@ -77,8 +84,8 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     private val _refreshEvent = MutableLiveData<Boolean>()
 
-    val refreshEvent : LiveData<Boolean>
-    get() = _refreshEvent
+    val refreshEvent: LiveData<Boolean>
+        get() = _refreshEvent
 
 
     fun loadData(path: String?, category: Category) {
@@ -313,8 +320,11 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
             R.id.action_edit -> {
                 if (multiSelectionHelper.hasSelectedItems()) {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_RENAME)
-                    _fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
+                    val fileInfo = _fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
                     endActionMode()
+                    fileInfo?.let {
+                        _singleOpData.value = Pair(Operations.RENAME, fileInfo)
+                    }
                 }
             }
         }
@@ -324,6 +334,14 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         multiSelectionHelper.clearSelection()
         _actionModeState.value = ActionModeState.ENDED
         _refreshEvent.value = false
+    }
+
+    fun onOperation(operation: Operations?, name: String?) {
+      when(operation) {
+          Operations.RENAME -> {
+              storageModel.renameFile(_singleOpData.value?.second?.filePath, name)
+          }
+      }
     }
 
     val navigationCallback = object : NavigationCallback {
@@ -360,6 +378,16 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         override fun onItemSelected() {
             _refreshEvent.value = true
         }
+    }
+
+    val singleOperationListener = object : DialogHelper.SingleOperationListener {
+
+        override fun onPositiveClick(operation: Operations?, fileName: String?) {
+        }
+
+        override fun onNegativeClick(operation: Operations?) {
+        }
+
     }
 
 }

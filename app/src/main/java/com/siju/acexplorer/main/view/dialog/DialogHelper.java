@@ -216,9 +216,10 @@ public class DialogHelper {
         positiveButton.setText(text[2]);
         negativeButton.setText(text[3]);
 
+        String fileName = FileUtils.getFileNameWithoutExt(textEdit);
 
-        if (textEdit != null) {
-            inputText.setText(textEdit);
+        if (fileName != null) {
+            inputText.setText(fileName);
         }
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1075,6 +1076,11 @@ public class DialogHelper {
         void onPositiveButtonClick(ArrayList<FileInfo> filesToPaste, String destinationDir,
                                    boolean isMove);
 
+    }
+
+    public interface SingleOperationListener {
+        void onPositiveClick(Operations operation, String fileName);
+        void onNegativeClick(Operations operation);
     }
 
 
