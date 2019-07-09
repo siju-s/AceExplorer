@@ -1,14 +1,20 @@
 package com.siju.acexplorer.storage.model
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.data.DataFetcherFactory
 import com.siju.acexplorer.main.model.data.DataLoader
 import com.siju.acexplorer.main.model.groups.Category
-import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.preferences.PreferenceConstants
+import com.siju.acexplorer.storage.model.operations.OperationAction
+import com.siju.acexplorer.storage.model.operations.OperationHelper
+import com.siju.acexplorer.storage.model.operations.Operations
 import java.util.*
 
 private const val PREFS_NAME = "PREFS"
@@ -18,6 +24,11 @@ class StorageModelImpl(val context: Context) : StorageModel {
 
     private val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     private val globalPreference = PreferenceManager.getDefaultSharedPreferences(context)
+    private val operationHelper = OperationHelper()
+    private val _operationData = MutableLiveData<Pair<Operations, OperationAction>>()
+
+    val operationData: LiveData<Pair<Operations, OperationAction>>
+        get() = _operationData
 
     override fun loadData(path: String?, category: Category): ArrayList<FileInfo> {
         return DataLoader.fetchDataByCategory(context,
@@ -70,9 +81,24 @@ class StorageModelImpl(val context: Context) : StorageModel {
         }
     }
 
-    override fun renameFile(filePath: String?, newName: String?) {
-        if (FileUtils.isFileNameInvalid(newName)) {
-            return
+    override fun renameFile(filePath: String, newName: String) {
+        operationHelper.renameFile(filePath, newName, fileOperationCallback)
+    }
+
+    override fun handleSafResult(uri: Uri, flags: Int) {
+        val newFlags = flags and (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent
+                .FLAG_GRANT_WRITE_URI_PERMISSION)
+        // Persist URI - this is required for verification of writability.
+        context.contentResolver.takePersistableUriPermission(uri, newFlags)
+        operationHelper.onSafSuccess(fileOperationCallback)
+    }
+
+
+    private val fileOperationCallback = object : OperationHelper.FileOperationCallback {
+        override fun onOperationResult(operation: Operations, operationAction: OperationAction?) {
+            operationAction?.let {
+                _operationData.postValue(Pair(operation, operationAction))
+            }
         }
     }
 

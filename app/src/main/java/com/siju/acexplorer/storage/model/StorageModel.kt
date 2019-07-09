@@ -17,6 +17,7 @@
 package com.siju.acexplorer.storage.model
 
 import android.content.Intent
+import android.net.Uri
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.view.dialog.DialogHelper
@@ -115,5 +116,6 @@ interface StorageModel {
     fun saveHiddenFileSetting(value: Boolean)
     fun getSortMode(): SortMode
     fun saveSortMode(sortMode: SortMode)
-    fun renameFile(filePath: String?, newName: String?)
+    fun renameFile(filePath: String, newName: String)
+    fun handleSafResult(uri: Uri, flags: Int)
 }

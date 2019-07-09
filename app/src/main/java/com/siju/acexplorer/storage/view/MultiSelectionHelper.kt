@@ -4,7 +4,8 @@ import android.util.SparseBooleanArray
 
 class MultiSelectionHelper {
     private var multiSelectionListener: MultiSelectionListener? = null
-    var selectedItems = SparseBooleanArray()
+    var selectedItems
+= SparseBooleanArray()
 
     fun toggleSelection(position: Int, longPress: Boolean = false) {
         if (longPress) {
@@ -22,11 +23,12 @@ class MultiSelectionHelper {
         else {
             selectedItems.delete(position)
         }
-        multiSelectionListener?.onItemSelected()
+        multiSelectionListener?.refresh()
     }
 
     fun clearSelection() {
         selectedItems = SparseBooleanArray()
+        multiSelectionListener?.refresh()
     }
 
     fun getSelectedCount() = selectedItems.size()
@@ -40,7 +42,7 @@ class MultiSelectionHelper {
     fun hasSelectedItems() = selectedItems.size() > 0
 
     interface MultiSelectionListener {
-        fun onItemSelected()
+        fun refresh()
     }
 
 }

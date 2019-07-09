@@ -368,13 +368,18 @@ public class DialogHelper {
     }
 
 
-    public static void showSAFDialog(Context context, int resourceId, String[] text, final
-    AlertDialogListener dialogListener) {
+    public static void showSAFDialog(Context context, String path, final AlertDialogListener dialogListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
-        View dialogView = inflater.inflate(resourceId, null);
+        View dialogView = inflater.inflate(R.layout.dialog_saf, null);
         builder.setView(dialogView);
         builder.setCancelable(false);
+
+        String dialogTitle = context.getString(R.string.needsaccess);
+        String[] text = new String[]{dialogTitle, context.getString(R.string
+                .needs_access_summary, path),
+               context.getString(R.string.open), context.getString(R.string
+                .dialog_cancel)};
 
         final AlertDialog alertDialog = builder.create();
 
@@ -388,7 +393,6 @@ public class DialogHelper {
         msg.setText(text[1]);
         positiveButton.setText(text[2]);
 
-
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -397,7 +401,6 @@ public class DialogHelper {
             }
         });
 
-        if (text.length > 3) {
             negativeButton.setVisibility(View.VISIBLE);
             negativeButton.setText(text[3]);
             negativeButton.setOnClickListener(new View.OnClickListener() {
@@ -407,7 +410,6 @@ public class DialogHelper {
                     alertDialog.dismiss();
                 }
             });
-        }
 
         alertDialog.show();
 

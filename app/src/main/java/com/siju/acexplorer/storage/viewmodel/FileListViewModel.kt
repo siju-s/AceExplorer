@@ -1,5 +1,6 @@
 package com.siju.acexplorer.storage.viewmodel
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -15,8 +16,10 @@ import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.view.dialog.DialogHelper
 import com.siju.acexplorer.storage.model.SortMode
 import com.siju.acexplorer.storage.model.StorageModel
+import com.siju.acexplorer.storage.model.StorageModelImpl
 import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.storage.model.backstack.BackStackInfo
+import com.siju.acexplorer.storage.model.operations.OperationAction
 import com.siju.acexplorer.storage.model.operations.Operations
 import com.siju.acexplorer.storage.view.*
 import com.siju.acexplorer.utils.InstallHelper
@@ -47,7 +50,6 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         get() = _fileData
 
     private val _singleOpData = MutableLiveData<Pair<Operations, FileInfo>>()
-
 
     val singleOpData: LiveData<Pair<Operations, FileInfo>>
         get() = _singleOpData
@@ -87,6 +89,12 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     val refreshEvent: LiveData<Boolean>
         get() = _refreshEvent
 
+    val operationData: LiveData<Pair<Operations, OperationAction>>
+
+    init {
+        val model = storageModel as StorageModelImpl
+        operationData = model.operationData
+    }
 
     fun loadData(path: String?, category: Category) {
         Log.e(this.javaClass.name, "loadData: path $path , category $category")
@@ -337,11 +345,19 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     }
 
     fun onOperation(operation: Operations?, name: String?) {
-      when(operation) {
-          Operations.RENAME -> {
-              storageModel.renameFile(_singleOpData.value?.second?.filePath, name)
-          }
-      }
+        when (operation) {
+            Operations.RENAME -> {
+                val path = singleOpData.value?.second?.filePath
+                if (path != null && name != null) {
+                    storageModel.renameFile(path, name)
+                }
+            }
+        }
+    }
+
+    fun handleSafResult(uri: Uri, flags: Int) {
+        storageModel.handleSafResult(uri, flags)
+
     }
 
     val navigationCallback = object : NavigationCallback {
@@ -375,7 +391,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     }
 
     val multiSelectionListener = object : MultiSelectionHelper.MultiSelectionListener {
-        override fun onItemSelected() {
+        override fun refresh() {
             _refreshEvent.value = true
         }
     }

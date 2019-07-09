@@ -23,6 +23,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -30,6 +32,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.ads.AdsView
+import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.UriHelper
@@ -40,6 +43,8 @@ import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.storage.model.SortMode
 import com.siju.acexplorer.storage.model.StorageModelImpl
 import com.siju.acexplorer.storage.model.ViewMode
+import com.siju.acexplorer.storage.model.operations.OperationAction
+import com.siju.acexplorer.storage.model.operations.OperationResultCode
 import com.siju.acexplorer.storage.model.operations.Operations
 import com.siju.acexplorer.storage.viewmodel.FileListViewModel
 import com.siju.acexplorer.storage.viewmodel.FileListViewModelFactory
@@ -50,6 +55,7 @@ import kotlinx.android.synthetic.main.toolbar.*
 const val KEY_PATH = "path"
 const val KEY_CATEGORY = "category"
 private const val TAG = "BaseFileListFragment"
+private const val SAF_REQUEST = 2000
 
 open class BaseFileListFragment : Fragment() {
 
@@ -196,8 +202,16 @@ open class BaseFileListFragment : Fragment() {
             Log.e(TAG, "actionModeState:$it")
             it?.apply {
                 when (it) {
-                    ActionModeState.STARTED -> menuControls.onStartActionMode()
-                    ActionModeState.ENDED   -> menuControls.onEndActionMode()
+                    ActionModeState.STARTED -> {
+                        floatingView.hideFab()
+                        menuControls.onStartActionMode()
+                    }
+                    ActionModeState.ENDED   -> {
+                        if (Category.FILES == category) {
+                            floatingView.showFab()
+                        }
+                        menuControls.onEndActionMode()
+                    }
                 }
             }
         })
@@ -223,9 +237,44 @@ open class BaseFileListFragment : Fragment() {
                 handleSingleItemOperation(it)
             }
         })
+
+        fileListViewModel.operationData.observe(viewLifecycleOwner, Observer {
+            it?.apply {
+                handleOperationResult(it)
+            }
+        })
+    }
+
+    private fun handleOperationResult(operationResult: Pair<Operations, OperationAction>) {
+        Log.e(TAG, "handleOperationResult: $operationResult")
+        val action = operationResult.second
+        val operation = operationResult.first
+        val context = context
+        context?.let {
+            when (action.operationResultCode) {
+                OperationResultCode.SUCCESS      -> {
+                    dismissDialog()
+                    fileListViewModel.loadData(path, category)
+                }
+                OperationResultCode.SAF          -> {
+                    dismissDialog()
+                    showSAFDialog(context, action.operationData.arg1)
+                }
+                OperationResultCode.INVALID_FILE -> onOperationError(operation, context.getString(
+                        R.string.msg_error_invalid_name))
+                OperationResultCode.FILE_EXISTS  -> onOperationError(operation, context.getString(
+                        R.string.msg_file_exists))
+                OperationResultCode.FAIL         -> {
+                    dismissDialog()
+                    Toast.makeText(context, R.string.msg_operation_failed, Toast
+                            .LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private fun handleSingleItemOperation(operationData: Pair<Operations, FileInfo>) {
+        Log.e(TAG, "handleSingleItemOperation: ")
         when (operationData.first) {
             Operations.RENAME -> {
                 context?.let { context -> showRenameDialog(context, operationData.second) }
@@ -233,12 +282,35 @@ open class BaseFileListFragment : Fragment() {
         }
     }
 
+    private fun onOperationError(operation: Operations,
+                                 message: String) {
+        when (operation) {
+            Operations.FOLDER_CREATION, Operations.FILE_CREATION, Operations.EXTRACT, Operations.RENAME, Operations.COMPRESS -> {
+                val editText = dialog?.findViewById<EditText>(R.id.editFileName)
+                editText?.requestFocus()
+                editText?.error = message
+            }
+            Operations.HIDE                                                                                                  -> Toast.makeText(
+                    context, message,
+                    Toast.LENGTH_SHORT).show()
+            else                                                                                                             -> {
+            }
+        }
+
+    }
+
+
     private fun showRenameDialog(context: Context, fileInfo: FileInfo) {
         val title = context.getString(R.string.action_rename)
         val texts = arrayOf(title, context.getString(R.string.enter_name),
                             context.getString(R.string.action_rename),
                             context.getString(R.string.dialog_cancel))
-        DialogHelper.showInputDialog(context, texts, Operations.RENAME, fileInfo.filePath, alertDialogListener)
+        DialogHelper.showInputDialog(context, texts, Operations.RENAME, fileInfo.filePath,
+                                     alertDialogListener)
+    }
+
+    private fun showSAFDialog(context: Context, path: String) {
+        DialogHelper.showSAFDialog(context, path, safDialogListener)
     }
 
     private fun openInstallScreen(path: String?) {
@@ -251,17 +323,51 @@ open class BaseFileListFragment : Fragment() {
         }
     }
 
-    private var dialog : Dialog? = null
+    private fun dismissDialog() {
+        dialog?.dismiss()
+    }
+
+    private var dialog: Dialog? = null
 
     private val alertDialogListener = object : DialogHelper.DialogCallback {
 
         override fun onPositiveButtonClick(dialog: Dialog?, operation: Operations?, name: String?) {
             this@BaseFileListFragment.dialog = dialog
+            Log.e(TAG, "onPositiveButtonClick: dialog:$dialog")
             fileListViewModel.onOperation(operation, name)
         }
 
         override fun onNegativeButtonClick(operations: Operations?) {
         }
+    }
+
+    private fun triggerStorageAccessFramework() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+        if (activity?.packageManager?.resolveActivity(intent, 0) != null) {
+            startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT_TREE),
+                                   SAF_REQUEST)
+        }
+        else {
+            Toast.makeText(context, context?.getString(R.string.msg_error_not_supported),
+                           Toast.LENGTH_LONG).show()
+        }
+    }
+
+
+    private val safDialogListener = object : DialogHelper.AlertDialogListener {
+
+        override fun onPositiveButtonClick(view: View?) {
+            triggerStorageAccessFramework()
+        }
+
+        override fun onNegativeButtonClick(view: View?) {
+            Toast.makeText(context, context?.getString(R.string.error), Toast
+                    .LENGTH_SHORT).show()
+        }
+
+        override fun onNeutralButtonClick(view: View?) {
+        }
+
     }
 
     private fun showAds() {
@@ -323,6 +429,27 @@ open class BaseFileListFragment : Fragment() {
                 if (resultCode == RESULT_OK) {
                     openInstallScreen(fileListViewModel.apkPath)
                     fileListViewModel.apkPath = null
+                }
+            }
+
+            SAF_REQUEST                                -> {
+                if (resultCode == RESULT_OK) {
+                    val uri = intent?.data
+                    if (uri == null) {
+                        Toast.makeText(context, resources.getString(R.string
+                                                                            .access_denied_external),
+                                       Toast.LENGTH_LONG).show()
+                    }
+                    else {
+                        fileListViewModel.handleSafResult(uri, intent.flags)
+                    }
+
+                }
+                else {
+                    Analytics.getLogger().SAFResult(false)
+                    Toast.makeText(context, resources.getString(R.string
+                                                                        .access_denied_external),
+                                   Toast.LENGTH_LONG).show()
                 }
             }
         }

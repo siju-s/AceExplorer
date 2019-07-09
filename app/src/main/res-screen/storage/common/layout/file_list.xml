@@ -21,6 +21,7 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
+    tools:showIn="@layout/main_list"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <TextView
@@ -44,11 +45,9 @@
             android:id="@+id/recyclerViewFileList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_above="@+id/layoutDummy"
             tools:listitem="@layout/file_list_item"
             />
-
-
-
 
     <!--</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>-->
 
@@ -59,16 +58,16 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
-        android:visibility="gone"
         android:orientation="vertical">
 
         <com.siju.acexplorer.storage.view.custom.SplitToolbar
             android:id="@+id/toolbar_bottom"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="112dp"
             android:layout_gravity="bottom"
             android:background="@color/colorPrimary"
             android:visibility="gone"
+            tools:visibility="visible"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
         <LinearLayout
