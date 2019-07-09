@@ -279,6 +279,10 @@ open class BaseFileListFragment : Fragment() {
             Operations.RENAME -> {
                 context?.let { context -> showRenameDialog(context, operationData.second) }
             }
+            Operations.INFO -> {
+                context?.let { context ->  DialogHelper.showInfoDialog(context, operationData.second,
+                                                                       Category.FILES == category)}
+            }
         }
     }
 

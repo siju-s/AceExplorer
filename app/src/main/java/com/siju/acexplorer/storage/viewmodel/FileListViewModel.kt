@@ -348,11 +348,22 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                 }
             }
 
+            R.id.action_info -> {
+                if (multiSelectionHelper.hasSelectedItems()) {
+                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_PROPERTIES)
+                    val fileInfo = _fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
+                    endActionMode()
+                    fileInfo?.let {
+                        _singleOpData.value = Pair(Operations.INFO, fileInfo)
+                    }
+                }
+            }
+
         }
     }
 
     private fun onHideOperation(fileInfo: FileInfo) {
-     val fileName = fileInfo.fileName
+        val fileName = fileInfo.fileName
         val newName = if (fileName.startsWith(".")) {
             fileName.substring(1)
         }

@@ -27,7 +27,8 @@ public enum Operations {
     DELETE(5),
     EXTRACT(6),
     COMPRESS(7),
-    HIDE(8);
+    HIDE(8),
+    INFO(9);
 
     private final int value;
 
