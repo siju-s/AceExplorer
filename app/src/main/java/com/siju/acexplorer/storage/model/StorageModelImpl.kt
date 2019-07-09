@@ -81,8 +81,8 @@ class StorageModelImpl(val context: Context) : StorageModel {
         }
     }
 
-    override fun renameFile(filePath: String, newName: String) {
-        operationHelper.renameFile(filePath, newName, fileOperationCallback)
+    override fun renameFile(operation: Operations, filePath: String, newName: String) {
+        operationHelper.renameFile(operation, filePath, newName, fileOperationCallback)
     }
 
     override fun handleSafResult(uri: Uri, flags: Int) {

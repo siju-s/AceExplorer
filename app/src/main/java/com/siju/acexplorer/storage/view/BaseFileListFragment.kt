@@ -138,7 +138,7 @@ open class BaseFileListFragment : Fragment() {
             when (permissionStatus) {
                 is PermissionHelper.PermissionState.Granted -> fileListViewModel.loadData(path,
                                                                                           category)
-                else                                        -> {
+                else -> {
                 }
             }
         })
@@ -206,7 +206,7 @@ open class BaseFileListFragment : Fragment() {
                         floatingView.hideFab()
                         menuControls.onStartActionMode()
                     }
-                    ActionModeState.ENDED   -> {
+                    ActionModeState.ENDED -> {
                         if (Category.FILES == category) {
                             floatingView.showFab()
                         }
@@ -252,19 +252,19 @@ open class BaseFileListFragment : Fragment() {
         val context = context
         context?.let {
             when (action.operationResultCode) {
-                OperationResultCode.SUCCESS      -> {
+                OperationResultCode.SUCCESS -> {
                     dismissDialog()
                     fileListViewModel.loadData(path, category)
                 }
-                OperationResultCode.SAF          -> {
+                OperationResultCode.SAF -> {
                     dismissDialog()
                     showSAFDialog(context, action.operationData.arg1)
                 }
                 OperationResultCode.INVALID_FILE -> onOperationError(operation, context.getString(
                         R.string.msg_error_invalid_name))
-                OperationResultCode.FILE_EXISTS  -> onOperationError(operation, context.getString(
+                OperationResultCode.FILE_EXISTS -> onOperationError(operation, context.getString(
                         R.string.msg_file_exists))
-                OperationResultCode.FAIL         -> {
+                OperationResultCode.FAIL -> {
                     dismissDialog()
                     Toast.makeText(context, R.string.msg_operation_failed, Toast
                             .LENGTH_SHORT).show()
@@ -290,13 +290,10 @@ open class BaseFileListFragment : Fragment() {
                 editText?.requestFocus()
                 editText?.error = message
             }
-            Operations.HIDE                                                                                                  -> Toast.makeText(
-                    context, message,
-                    Toast.LENGTH_SHORT).show()
-            else                                                                                                             -> {
+            Operations.HIDE -> Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            else -> {
             }
         }
-
     }
 
 
@@ -393,7 +390,7 @@ open class BaseFileListFragment : Fragment() {
         val context = context
         context?.let {
             when (extension?.toLowerCase()) {
-                null               -> {
+                null -> {
                     val uri = UriHelper.createContentUri(context, path)
                     uri?.let {
                         DialogHelper.openWith(it, context)
@@ -401,7 +398,7 @@ open class BaseFileListFragment : Fragment() {
                 }
                 ViewHelper.EXT_APK -> ViewHelper.viewApkFile(context, path,
                                                              fileListViewModel.apkDialogListener)
-                else               -> ViewHelper.viewFile(context, path, extension)
+                else -> ViewHelper.viewFile(context, path, extension)
             }
         }
     }
@@ -432,7 +429,7 @@ open class BaseFileListFragment : Fragment() {
                 }
             }
 
-            SAF_REQUEST                                -> {
+            SAF_REQUEST -> {
                 if (resultCode == RESULT_OK) {
                     val uri = intent?.data
                     if (uri == null) {
@@ -497,13 +494,13 @@ open class BaseFileListFragment : Fragment() {
                 fileListViewModel.switchView(ViewMode.GRID)
                 return true
             }
-            R.id.action_hidden    -> {
+            R.id.action_hidden -> {
                 item.isChecked = !item.isChecked
                 fileListViewModel.onHiddenFileSettingChanged(item.isChecked)
                 return true
             }
 
-            R.id.action_sort      -> {
+            R.id.action_sort -> {
                 fileListViewModel.onSortClicked()
                 return true
             }

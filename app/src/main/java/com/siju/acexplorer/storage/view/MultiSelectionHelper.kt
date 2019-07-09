@@ -4,8 +4,7 @@ import android.util.SparseBooleanArray
 
 class MultiSelectionHelper {
     private var multiSelectionListener: MultiSelectionListener? = null
-    var selectedItems
-= SparseBooleanArray()
+    var selectedItems = SparseBooleanArray()
 
     fun toggleSelection(position: Int, longPress: Boolean = false) {
         if (longPress) {

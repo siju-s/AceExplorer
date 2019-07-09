@@ -40,12 +40,12 @@ class OperationHelper {
 
     private fun hasOperations() = operationList.size > 0
 
-    fun renameFile(filePath: String, newName: String,
+    fun renameFile(operation: Operations, filePath: String, newName: String,
                    fileOperationCallback: FileOperationCallback) {
-        addOperation(Operations.RENAME, OperationData.createRenameOperation(filePath, newName))
+        addOperation(operation, OperationData.createRenameOperation(filePath, newName))
 
         if (FileUtils.isFileNameInvalid(newName)) {
-            fileOperationCallback.onOperationResult(Operations.RENAME, getOperationAction(
+            fileOperationCallback.onOperationResult(operation, getOperationAction(
                     OperationResultCode.INVALID_FILE))
             removeOperation()
             return
@@ -55,7 +55,7 @@ class OperationHelper {
 
             OperationUtils.WriteMode.EXTERNAL -> {
                 fileOperationCallback.onOperationResult(
-                        Operations.RENAME,
+                        operation,
                         getOperationAction(OperationResultCode.SAF))
                 removeOperation()
             }
@@ -75,7 +75,7 @@ class OperationHelper {
                     parent + File.separator + newName
                 }
                 if (FileUtils.isFileExisting(parent, newName)) {
-                    fileOperationCallback.onOperationResult(Operations.RENAME,
+                    fileOperationCallback.onOperationResult(operation,
                                                             getOperationAction(
                                                                     OperationResultCode.FILE_EXISTS))
                     removeOperation()
@@ -87,7 +87,7 @@ class OperationHelper {
                     val success = !oldFile.exists() && newFile.exists()
                     Log.e("OperationHelper", "renameFile: sucess:$success")
                     val resultCode = if (success) OperationResultCode.SUCCESS else OperationResultCode.FAIL
-                    fileOperationCallback.onOperationResult(Operations.RENAME, getOperationAction(
+                    fileOperationCallback.onOperationResult(operation, getOperationAction(
                             resultCode))
                     removeOperation()
                 }
@@ -108,7 +108,7 @@ class OperationHelper {
        val operation = getOperationInfo()
         operation?.let {operationInfo ->
             when(operationInfo.operation) {
-                Operations.RENAME -> renameFile(operationInfo.operationData.arg1, operationInfo.operationData.arg2, fileOperationCallback)
+                Operations.RENAME -> renameFile(operationInfo.operation, operationInfo.operationData.arg1, operationInfo.operationData.arg2, fileOperationCallback)
             }
         }
     }

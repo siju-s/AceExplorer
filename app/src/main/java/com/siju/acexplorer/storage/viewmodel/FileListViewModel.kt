@@ -335,7 +335,31 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                     }
                 }
             }
+
+            R.id.action_hide -> {
+                if (multiSelectionHelper.hasSelectedItems()) {
+                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_HIDE)
+                    val fileInfo = _fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
+                    endActionMode()
+                    fileInfo?.let {
+                        _singleOpData.value = Pair(Operations.HIDE, fileInfo)
+                        onHideOperation(it)
+                    }
+                }
+            }
+
         }
+    }
+
+    private fun onHideOperation(fileInfo: FileInfo) {
+     val fileName = fileInfo.fileName
+        val newName = if (fileName.startsWith(".")) {
+            fileName.substring(1)
+        }
+        else {
+            ".$fileName"
+        }
+        onOperation(Operations.HIDE, newName)
     }
 
     private fun endActionMode() {
@@ -346,10 +370,10 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     fun onOperation(operation: Operations?, name: String?) {
         when (operation) {
-            Operations.RENAME -> {
+            Operations.RENAME, Operations.HIDE -> {
                 val path = singleOpData.value?.second?.filePath
                 if (path != null && name != null) {
-                    storageModel.renameFile(path, name)
+                    storageModel.renameFile(operation, path, name)
                 }
             }
         }

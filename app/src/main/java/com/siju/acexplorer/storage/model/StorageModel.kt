@@ -116,6 +116,6 @@ interface StorageModel {
     fun saveHiddenFileSetting(value: Boolean)
     fun getSortMode(): SortMode
     fun saveSortMode(sortMode: SortMode)
-    fun renameFile(filePath: String, newName: String)
+    fun renameFile(operation: Operations, filePath: String, newName: String)
     fun handleSafResult(uri: Uri, flags: Int)
 }
