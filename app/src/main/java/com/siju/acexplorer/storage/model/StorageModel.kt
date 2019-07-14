@@ -118,4 +118,6 @@ interface StorageModel {
     fun saveSortMode(sortMode: SortMode)
     fun renameFile(operation: Operations, filePath: String, newName: String)
     fun handleSafResult(uri: Uri, flags: Int)
+    fun createFolder(operation: Operations, path: String, name: String)
+    fun createFile(operation: Operations, path: String, name: String)
 }

@@ -40,6 +40,7 @@ import com.siju.acexplorer.R;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.main.model.data.FileDataFetcher;
+import com.siju.acexplorer.main.model.helper.FileOperations;
 import com.siju.acexplorer.main.model.helper.FileUtils;
 import com.siju.acexplorer.main.model.helper.LargeBundleTransfer;
 import com.siju.acexplorer.main.model.helper.RootHelper;
@@ -59,7 +60,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.siju.acexplorer.main.model.helper.FileOperations.mkdir;
 import static com.siju.acexplorer.main.model.helper.MediaStoreHelper.scanMultipleFiles;
 import static com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastOreo;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH;
@@ -390,7 +390,7 @@ public class CopyService extends Service {
         File destinationDir = new File(targetFile);
         boolean isExists = true;
         if (!destinationDir.exists()) {
-            isExists = mkdir(destinationDir);
+            isExists = FileOperations.INSTANCE.mkdir(destinationDir);
         }
         if (!isExists) {
             return;
@@ -480,7 +480,7 @@ public class CopyService extends Service {
         File destinationDir = new File(targetFile.getFilePath());
         boolean isExists = true;
         if (!destinationDir.exists()) {
-            isExists = mkdir(destinationDir);
+            isExists = FileOperations.INSTANCE.mkdir(destinationDir);
         }
         if (!isExists) {
             failedFiles.add(sourceFile);

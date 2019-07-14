@@ -51,6 +51,11 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     private val _singleOpData = MutableLiveData<Pair<Operations, FileInfo>>()
 
+    private val _noOpData = MutableLiveData<Pair<Operations, String>>()
+
+    val noOpData: LiveData<Pair<Operations, String>>
+        get() = _noOpData
+
     val singleOpData: LiveData<Pair<Operations, FileInfo>>
         get() = _singleOpData
 
@@ -362,6 +367,17 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         }
     }
 
+    fun onFABClicked(operation: Operations, path: String?) {
+        when (operation) {
+            Operations.FOLDER_CREATION, Operations.FILE_CREATION -> {
+                Analytics.getLogger().operationClicked(Analytics.Logger.EV_FAB)
+                path?.let {
+                    _noOpData.value = Pair(operation, path)
+                }
+            }
+        }
+    }
+
     private fun onHideOperation(fileInfo: FileInfo) {
         val fileName = fileInfo.fileName
         val newName = if (fileName.startsWith(".")) {
@@ -385,6 +401,19 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                 val path = singleOpData.value?.second?.filePath
                 if (path != null && name != null) {
                     storageModel.renameFile(operation, path, name)
+                }
+            }
+            Operations.FOLDER_CREATION         -> {
+                val path = noOpData.value?.second
+                if (path != null && name != null) {
+                    storageModel.createFolder(operation, path, name)
+                }
+            }
+
+            Operations.FILE_CREATION         -> {
+                val path = noOpData.value?.second
+                if (path != null && name != null) {
+                    storageModel.createFile(operation, path, name)
                 }
             }
         }

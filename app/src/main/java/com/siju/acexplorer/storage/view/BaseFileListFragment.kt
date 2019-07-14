@@ -88,7 +88,7 @@ open class BaseFileListFragment : Fragment() {
         val view = view
         view?.let {
             filesList = FilesList(this, view, fileListViewModel.getViewMode())
-            floatingView = FloatingView(view)
+            floatingView = FloatingView(view, this)
             navigationView = NavigationView(view, fileListViewModel.navigationCallback)
             menuControls = MenuControls(this, view, category)
         }
@@ -243,6 +243,15 @@ open class BaseFileListFragment : Fragment() {
                 handleOperationResult(it)
             }
         })
+
+        fileListViewModel.noOpData.observe(viewLifecycleOwner, Observer {
+            it?.apply {
+                when(it.first) {
+                    Operations.FOLDER_CREATION -> showCreateFolderDialog(context)
+                    Operations.FILE_CREATION -> showCreateFileDialog(context)
+                }
+            }
+        })
     }
 
     private fun handleOperationResult(operationResult: Pair<Operations, OperationAction>) {
@@ -283,6 +292,36 @@ open class BaseFileListFragment : Fragment() {
                 context?.let { context ->  DialogHelper.showInfoDialog(context, operationData.second,
                                                                        Category.FILES == category)}
             }
+        }
+    }
+
+    fun onCreateDirClicked() {
+        fileListViewModel.onFABClicked(Operations.FOLDER_CREATION, path)
+    }
+
+    fun onCreateFileClicked() {
+        fileListViewModel.onFABClicked(Operations.FILE_CREATION, path)
+    }
+
+    private fun showCreateFolderDialog(context: Context?) {
+        context?.let {
+            val title = context.getString(R.string.new_folder)
+            val texts = arrayOf(title, context.getString(R.string.enter_name),
+                                context.getString(R.string.create),
+                                context.getString(R.string.dialog_cancel))
+
+            DialogHelper.showInputDialog(context, texts, Operations.FOLDER_CREATION, null, alertDialogListener)
+        }
+    }
+
+    private fun showCreateFileDialog(context: Context?) {
+        context?.let {
+            val title = context.getString(R.string.new_file)
+            val texts = arrayOf(title, context.getString(R.string.enter_name),
+                                context.getString(R.string.create),
+                                context.getString(R.string.dialog_cancel))
+
+            DialogHelper.showInputDialog(context, texts, Operations.FILE_CREATION, null, alertDialogListener)
         }
     }
 

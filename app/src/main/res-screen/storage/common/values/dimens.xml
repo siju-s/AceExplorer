@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="fab_margin_bottom">72dp</dimen>  <!--Bottom bar height + margin -->
     <dimen name="file_list_margin">16dp</dimen>
     <dimen name="folder_icon">60dp</dimen>
     <dimen name="divider_margin_list">65dp</dimen>

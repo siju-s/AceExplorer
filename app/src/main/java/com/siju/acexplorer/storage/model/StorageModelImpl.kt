@@ -85,6 +85,14 @@ class StorageModelImpl(val context: Context) : StorageModel {
         operationHelper.renameFile(operation, filePath, newName, fileOperationCallback)
     }
 
+    override fun createFolder(operation: Operations, path: String, name: String) {
+        operationHelper.createFolder(operation, path, name, fileOperationCallback)
+    }
+
+    override fun createFile(operation: Operations, path: String, name: String) {
+        operationHelper.createFile(operation, path, name, fileOperationCallback)
+    }
+
     override fun handleSafResult(uri: Uri, flags: Int) {
         val newFlags = flags and (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent
                 .FLAG_GRANT_WRITE_URI_PERMISSION)

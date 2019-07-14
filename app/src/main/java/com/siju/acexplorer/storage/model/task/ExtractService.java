@@ -40,6 +40,7 @@ import android.util.Log;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.logging.Logger;
+import com.siju.acexplorer.main.model.helper.FileOperations;
 import com.siju.acexplorer.main.model.helper.FileUtils;
 import com.siju.acexplorer.main.model.helper.MediaStoreHelper;
 import com.siju.acexplorer.storage.model.operations.OperationProgress;
@@ -59,7 +60,6 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static com.siju.acexplorer.main.model.helper.FileOperations.mkdir;
 import static com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastOreo;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_FAILED;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_RELOAD_LIST;
@@ -312,7 +312,7 @@ public class ExtractService extends Service {
     }
 
     private void createDir(File dir) {
-        mkdir(dir);
+        FileOperations.INSTANCE.mkdir(dir);
     }
 
 

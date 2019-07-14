@@ -13,7 +13,8 @@ import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.theme.Theme
 
 @SuppressLint("ClickableViewAccessibility")
-class FloatingView constructor(view: View) : View.OnClickListener {
+class FloatingView(view: View,
+                   val baseFileListFragment: BaseFileListFragment) : View.OnClickListener {
 
     private val context: Context = view.context
     private lateinit var fabContainer: FrameLayout
@@ -50,7 +51,7 @@ class FloatingView constructor(view: View) : View.OnClickListener {
             override fun onMenuExpanded() {
                 makeFabMenuOpaque()
                 fabContainer.setOnTouchListener { _, _ ->
-                    fabCreateMenu.collapse()
+                    collapseFab()
                     true
                 }
             }
@@ -92,14 +93,13 @@ class FloatingView constructor(view: View) : View.OnClickListener {
     }
 
     override fun onClick(view: View) {
+        Analytics.getLogger().operationClicked(Analytics.Logger.EV_FAB)
         when (view.id) {
             R.id.fabCreateFile   -> {
-                Analytics.getLogger().operationClicked(Analytics.Logger.EV_FAB)
-                //                showCreateFileDialog();
+                baseFileListFragment.onCreateFileClicked()
             }
             R.id.fabCreateFolder -> {
-                Analytics.getLogger().operationClicked(Analytics.Logger.EV_FAB)
-                //                showCreateDirDialog();
+                baseFileListFragment.onCreateDirClicked()
             }
         }
         fabCreateMenu.collapse()

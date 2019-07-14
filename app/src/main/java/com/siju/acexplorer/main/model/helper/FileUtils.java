@@ -514,6 +514,9 @@ public class FileUtils {
     }
 
     public static String getFileNameWithoutExt(String filePath) {
+        if (filePath == null) {
+            return null;
+        }
         File file = new File(filePath);
         String fileName;
         if (file.isFile()) {
