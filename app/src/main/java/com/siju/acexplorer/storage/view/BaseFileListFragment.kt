@@ -36,6 +36,7 @@ import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.FileUtils
+import com.siju.acexplorer.main.model.helper.ShareHelper
 import com.siju.acexplorer.main.model.helper.UriHelper
 import com.siju.acexplorer.main.model.helper.ViewHelper
 import com.siju.acexplorer.main.view.dialog.DialogHelper
@@ -322,6 +323,9 @@ open class BaseFileListFragment : Fragment() {
                context?.let {
                    context -> showDeleteDialog(context, operationData.second)
                }
+           }
+           Operations.SHARE -> {
+               context?.let { ShareHelper.shareFiles(it, operationData.second, category) }
            }
        }
     }

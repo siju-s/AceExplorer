@@ -384,6 +384,22 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                 }
             }
 
+            R.id.action_share -> {
+                if (multiSelectionHelper.hasSelectedItems()) {
+                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_SHARE)
+                    val filesToShare = arrayListOf<FileInfo?>()
+                    val selectedItems = multiSelectionHelper.selectedItems
+                    for (i in 0 until selectedItems.size()) {
+                        val fileInfo = _fileData.value?.get(selectedItems.keyAt(i))
+                        if (fileInfo?.isDirectory == false) {
+                            filesToShare.add(fileInfo)
+                        }
+                    }
+                    endActionMode()
+                    _multiSelectionOpData.value = Pair(Operations.SHARE, filesToShare)
+                }
+            }
+
         }
     }
 
