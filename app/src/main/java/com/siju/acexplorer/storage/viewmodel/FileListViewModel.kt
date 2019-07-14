@@ -51,6 +51,11 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     private val _singleOpData = MutableLiveData<Pair<Operations, FileInfo>>()
 
+    private val _multiSelectionOpData = MutableLiveData<Pair<Operations, ArrayList<FileInfo?>>>()
+
+    val multiSelectionOpData: LiveData<Pair<Operations, ArrayList<FileInfo?>>>
+        get() = _multiSelectionOpData
+
     private val _noOpData = MutableLiveData<Pair<Operations, String>>()
 
     val noOpData: LiveData<Pair<Operations, String>>
@@ -291,6 +296,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         backStackInfo.addToBackStack(path, category)
     }
 
+
     private fun hasBackStack() = backStackInfo.hasBackStack()
 
     fun onBackPress(): Boolean {
@@ -330,7 +336,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     fun onMenuItemClick(itemId: Int) {
 
         when (itemId) {
-            R.id.action_edit -> {
+            R.id.action_edit   -> {
                 if (multiSelectionHelper.hasSelectedItems()) {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_RENAME)
                     val fileInfo = _fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
@@ -341,7 +347,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                 }
             }
 
-            R.id.action_hide -> {
+            R.id.action_hide   -> {
                 if (multiSelectionHelper.hasSelectedItems()) {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_HIDE)
                     val fileInfo = _fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
@@ -353,7 +359,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                 }
             }
 
-            R.id.action_info -> {
+            R.id.action_info   -> {
                 if (multiSelectionHelper.hasSelectedItems()) {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_PROPERTIES)
                     val fileInfo = _fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
@@ -361,6 +367,20 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                     fileInfo?.let {
                         _singleOpData.value = Pair(Operations.INFO, fileInfo)
                     }
+                }
+            }
+
+            R.id.action_delete -> {
+                if (multiSelectionHelper.hasSelectedItems()) {
+                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_DELETE)
+                    val filesToDelete = arrayListOf<FileInfo?>()
+                    val selectedItems = multiSelectionHelper.selectedItems
+                    for (i in 0 until selectedItems.size()) {
+                        val fileInfo = _fileData.value?.get(selectedItems.keyAt(i))
+                        filesToDelete.add(fileInfo)
+                    }
+                    endActionMode()
+                    _multiSelectionOpData.value = Pair(Operations.DELETE, filesToDelete)
                 }
             }
 
@@ -410,7 +430,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                 }
             }
 
-            Operations.FILE_CREATION         -> {
+            Operations.FILE_CREATION           -> {
                 val path = noOpData.value?.second
                 if (path != null && name != null) {
                     storageModel.createFile(operation, path, name)
@@ -422,6 +442,18 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     fun handleSafResult(uri: Uri, flags: Int) {
         storageModel.handleSafResult(uri, flags)
 
+    }
+
+    fun deleteFiles(filesToDelete: ArrayList<FileInfo?>) {
+        uiScope.launch(Dispatchers.IO) {
+            val files = arrayListOf<String>()
+            for (fileInfo in filesToDelete) {
+                fileInfo?.let {
+                    files.add(it.filePath)
+                }
+            }
+            storageModel.deleteFiles(Operations.DELETE, files)
+        }
     }
 
     val navigationCallback = object : NavigationCallback {

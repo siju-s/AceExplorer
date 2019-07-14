@@ -35,6 +35,7 @@ import com.siju.acexplorer.ads.AdsView
 import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.helper.UriHelper
 import com.siju.acexplorer.main.model.helper.ViewHelper
 import com.siju.acexplorer.main.view.dialog.DialogHelper
@@ -252,6 +253,12 @@ open class BaseFileListFragment : Fragment() {
                 }
             }
         })
+
+        fileListViewModel.multiSelectionOpData.observe(viewLifecycleOwner, Observer {
+            it?.apply {
+                handleMultiItemOperation(it)
+            }
+        })
     }
 
     private fun handleOperationResult(operationResult: Pair<Operations, OperationAction>) {
@@ -260,7 +267,10 @@ open class BaseFileListFragment : Fragment() {
         val operation = operationResult.first
         val context = context
         context?.let {
-            when (action.operationResultCode) {
+            if (operation == Operations.DELETE) {
+                onDeletedResult(action)
+            }
+            when (action.operationResult.resultCode) {
                 OperationResultCode.SUCCESS -> {
                     dismissDialog()
                     fileListViewModel.loadData(path, category)
@@ -282,6 +292,17 @@ open class BaseFileListFragment : Fragment() {
         }
     }
 
+    private fun onDeletedResult(operationAction: OperationAction) {
+        val count = operationAction.operationResult.count
+        if (count > 0) {
+            FileUtils.showMessage(context, resources.getQuantityString(R.plurals.number_of_files, count, count) +
+            " " + resources.getString(R.string.msg_delete_success))
+        }
+        else {
+            FileUtils.showMessage(context, resources.getString(R.string.msg_delete_failure))
+        }
+    }
+
     private fun handleSingleItemOperation(operationData: Pair<Operations, FileInfo>) {
         Log.e(TAG, "handleSingleItemOperation: ")
         when (operationData.first) {
@@ -294,6 +315,18 @@ open class BaseFileListFragment : Fragment() {
             }
         }
     }
+
+    private fun handleMultiItemOperation(operationData: Pair<Operations, ArrayList<FileInfo?>>) {
+       when(operationData.first) {
+           Operations.DELETE -> {
+               context?.let {
+                   context -> showDeleteDialog(context, operationData.second)
+               }
+           }
+       }
+    }
+
+
 
     fun onCreateDirClicked() {
         fileListViewModel.onFABClicked(Operations.FOLDER_CREATION, path)
@@ -322,6 +355,12 @@ open class BaseFileListFragment : Fragment() {
                                 context.getString(R.string.dialog_cancel))
 
             DialogHelper.showInputDialog(context, texts, Operations.FILE_CREATION, null, alertDialogListener)
+        }
+    }
+
+    private fun showDeleteDialog(context: Context?, files : ArrayList<FileInfo?>) {
+        context?.let {
+            DialogHelper.showDeleteDialog(context, files, false, deleteDialogListener)
         }
     }
 
@@ -379,6 +418,10 @@ open class BaseFileListFragment : Fragment() {
 
         override fun onNegativeButtonClick(operations: Operations?) {
         }
+    }
+
+    private val deleteDialogListener = DialogHelper.DeleteDialogListener { view, isTrashEnabled, filesToDelete ->
+         fileListViewModel.deleteFiles(filesToDelete)
     }
 
     private fun triggerStorageAccessFramework() {

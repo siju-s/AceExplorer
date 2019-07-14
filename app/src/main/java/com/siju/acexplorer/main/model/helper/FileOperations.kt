@@ -20,6 +20,8 @@ import android.util.Log
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.logging.Logger
 import com.siju.acexplorer.main.model.StorageUtils
+import com.siju.acexplorer.main.model.StorageUtils.getDocumentFile
+import com.siju.acexplorer.main.model.StorageUtils.isOnExtSdCard
 import com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastLollipop
 import java.io.*
 import java.nio.channels.FileChannel
@@ -214,6 +216,61 @@ object FileOperations {
             return file.renameTo(newFile)
         }
         return false
+    }
+
+    fun deleteFiles(filesList: ArrayList<String>) : Int {
+        var filesDeleted = 0
+        for (i in 0 until filesList.size) {
+            val path = filesList[i]
+            val isDeleted = delete(File(path))
+
+            if (!isDeleted) {
+                val isRootDir = StorageUtils.isRootDirectory(path)
+                if (!isRootDir) {
+                    return filesDeleted
+                }
+            }
+            else {
+                filesDeleted++
+            }
+        }
+        return filesDeleted
+    }
+
+    private fun delete(file: File): Boolean {
+        val fileDelete = deleteFile(file)
+
+        if (file.delete() || fileDelete) {
+            return true
+        }
+
+        // Try with Storage Access Framework.
+        if (isOnExtSdCard(file)) {
+            val document = getDocumentFile(file, false)
+            return document != null && document.delete()
+        }
+        return !file.exists()
+    }
+
+    private fun deleteFile(file: File): Boolean {
+        // First try the normal deletion.
+        var isDeleted = false
+        if (file.isDirectory) {
+            val fileList = file.listFiles()
+            if (fileList != null) {
+                for (child in fileList) {
+                    val path = child.absolutePath
+                    isDeleted = deleteFile(child)
+                }
+                val path = file.absolutePath
+                isDeleted = file.delete()
+            }
+        }
+        else {
+            val path = file.absolutePath
+            isDeleted = file.delete()
+        }
+        return isDeleted
     }
 
 }

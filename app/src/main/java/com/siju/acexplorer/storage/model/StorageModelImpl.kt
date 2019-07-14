@@ -15,7 +15,6 @@ import com.siju.acexplorer.preferences.PreferenceConstants
 import com.siju.acexplorer.storage.model.operations.OperationAction
 import com.siju.acexplorer.storage.model.operations.OperationHelper
 import com.siju.acexplorer.storage.model.operations.Operations
-import java.util.*
 
 private const val PREFS_NAME = "PREFS"
 private const val PREFS_VIEW_MODE = "view-mode"
@@ -91,6 +90,10 @@ class StorageModelImpl(val context: Context) : StorageModel {
 
     override fun createFile(operation: Operations, path: String, name: String) {
         operationHelper.createFile(operation, path, name, fileOperationCallback)
+    }
+
+    override fun deleteFiles(operation: Operations, files: ArrayList<String>) {
+        operationHelper.deleteFiles(operation, files, fileOperationCallback)
     }
 
     override fun handleSafResult(uri: Uri, flags: Int) {

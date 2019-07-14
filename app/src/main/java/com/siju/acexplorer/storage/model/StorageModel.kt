@@ -22,7 +22,6 @@ import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.view.dialog.DialogHelper
 import com.siju.acexplorer.storage.model.operations.Operations
-import java.util.*
 
 /**
  * Created by Siju on 04 September,2017
@@ -120,4 +119,5 @@ interface StorageModel {
     fun handleSafResult(uri: Uri, flags: Int)
     fun createFolder(operation: Operations, path: String, name: String)
     fun createFile(operation: Operations, path: String, name: String)
+    fun deleteFiles(operation: Operations, files: ArrayList<String>)
 }

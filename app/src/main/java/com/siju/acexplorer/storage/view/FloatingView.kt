@@ -1,7 +1,6 @@
 package com.siju.acexplorer.storage.view
 
 import android.annotation.SuppressLint
-import android.app.Dialog
 import android.content.Context
 import android.view.View
 import android.widget.FrameLayout
@@ -14,7 +13,7 @@ import com.siju.acexplorer.theme.Theme
 
 @SuppressLint("ClickableViewAccessibility")
 class FloatingView(view: View,
-                   val baseFileListFragment: BaseFileListFragment) : View.OnClickListener {
+                   private val baseFileListFragment: BaseFileListFragment) : View.OnClickListener {
 
     private val context: Context = view.context
     private lateinit var fabContainer: FrameLayout
@@ -22,7 +21,6 @@ class FloatingView(view: View,
     private lateinit var fabCreateFolder: FloatingActionButton
     private lateinit var fabCreateFile: FloatingActionButton
     private lateinit var fabOperation: FloatingActionButton
-    private val dialog: Dialog? = null
 
     internal val isFabExpanded: Boolean
         get() = fabCreateMenu.isExpanded
@@ -103,49 +101,5 @@ class FloatingView(view: View,
             }
         }
         fabCreateMenu.collapse()
-    }
-
-    //    private void showCreateFileDialog() {
-    //        String title = getContext().getString(R.string.new_file);
-    //        String[] texts = new String[]{title, getContext().getString(R.string.enter_name), getContext
-    //                ().getString(R.string.create), getContext().getString(R.string.dialog_cancel)};
-    //        DialogHelper.showInputDialog(getContext(), texts, Operations.FILE_CREATION, null,
-    //                                     dialogListener);
-    //    }
-    //
-    //    void showCreateDirDialog() {
-    //        String title = getContext().getString(R.string.new_folder);
-    //        String[] texts = new String[]{title, getContext().getString(R.string.enter_name), getContext
-    //                ().getString(R.string
-    //                                     .create), getContext().getString(R.string.dialog_cancel)};
-    //        DialogHelper.showInputDialog(getContext(), texts, Operations.FOLDER_CREATION, null,
-    //                                     dialogListener);
-    //    }
-    //
-    //    private DialogHelper.DialogCallback dialogListener = new DialogHelper.DialogCallback() {
-    //
-    //
-    //        @Override
-    //        public void onPositiveButtonClick(Dialog dialog, Operations operation, String name) {
-    //            FloatingView.this.dialog = dialog;
-    //            storagesUiView.setDialog(dialog);
-    //            switch (operation) {
-    //                case FOLDER_CREATION:
-    //                    storagesUiView.createDir(name);
-    //                    break;
-    //                case FILE_CREATION:
-    //                    storagesUiView.createFile(name);
-    //                    break;
-    //            }
-    //        }
-    //
-    //        @Override
-    //        public void onNegativeButtonClick(Operations operations) {
-    //
-    //        }
-    //    };
-
-    fun dismissDialog() {
-        dialog?.dismiss()
     }
 }

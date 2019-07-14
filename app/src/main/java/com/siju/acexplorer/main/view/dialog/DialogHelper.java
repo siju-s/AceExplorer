@@ -71,12 +71,12 @@ public class DialogHelper {
     private static final String TAG = "DialogHelper";
 
     /**
-     * @param fileInfo     Paths to delete
+     * @param files     Paths to delete
      * @param trashEnabled
      */
-    public static void showDeleteDialog(final Context context, final ArrayList<FileInfo> fileInfo,
+    public static void showDeleteDialog(final Context context, final ArrayList<FileInfo> files,
                                         final boolean trashEnabled, final DeleteDialogListener deleteDialogListener) {
-        String title = context.getString(R.string.dialog_delete_title, fileInfo.size());
+        String title = context.getString(R.string.dialog_delete_title, files.size());
         String[] texts = new String[]{title, context.getString(R.string.msg_ok), "", context
                 .getString(R.string
                 .dialog_cancel)};
@@ -89,7 +89,6 @@ public class DialogHelper {
         builder.setCancelable(true);
 
         final AlertDialog alertDialog = builder.create();
-
 
         TextView textTitle = dialogView.findViewById(R.id.textTitle);
         Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
@@ -106,7 +105,7 @@ public class DialogHelper {
             @Override
             public void onClick(View view) {
                 boolean isChecked = false;
-                deleteDialogListener.onPositiveButtonClick(view, isChecked, fileInfo);
+                deleteDialogListener.onPositiveButtonClick(view, isChecked, files);
                 alertDialog.dismiss();
             }
         });

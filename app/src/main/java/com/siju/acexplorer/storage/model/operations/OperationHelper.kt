@@ -5,7 +5,7 @@ import com.siju.acexplorer.main.model.helper.FileOperations
 import com.siju.acexplorer.main.model.helper.FileUtils
 import java.io.File
 
-private val EXT_TXT = ".txt"
+private const val EXT_TXT = ".txt"
 
 class OperationHelper {
 
@@ -48,7 +48,7 @@ class OperationHelper {
 
         if (FileUtils.isFileNameInvalid(newName)) {
             fileOperationCallback.onOperationResult(operation, getOperationAction(
-                    OperationResultCode.INVALID_FILE))
+                    OperationResult(OperationResultCode.INVALID_FILE, 0)))
             removeOperation()
             return
         }
@@ -58,7 +58,7 @@ class OperationHelper {
             OperationUtils.WriteMode.EXTERNAL -> {
                 fileOperationCallback.onOperationResult(
                         operation,
-                        getOperationAction(OperationResultCode.SAF))
+                        getOperationAction(OperationResult(OperationResultCode.SAF,0)))
                 removeOperation()
             }
 
@@ -79,7 +79,7 @@ class OperationHelper {
                 if (FileUtils.isFileExisting(parent, newName)) {
                     fileOperationCallback.onOperationResult(operation,
                                                             getOperationAction(
-                                                                    OperationResultCode.FILE_EXISTS))
+                                                                    OperationResult(OperationResultCode.FILE_EXISTS, 0)))
                     removeOperation()
                 }
                 else {
@@ -87,10 +87,10 @@ class OperationHelper {
                     val newFile = File(newFilePath)
                     FileOperations.renameFolder(oldFile, newFile)
                     val success = !oldFile.exists() && newFile.exists()
-                    Log.e("OperationHelper", "renameFile: sucess:$success")
+                    Log.e("OperationHelper", "renameFile: success:$success")
                     val resultCode = if (success) OperationResultCode.SUCCESS else OperationResultCode.FAIL
                     fileOperationCallback.onOperationResult(operation, getOperationAction(
-                            resultCode))
+                            OperationResult(resultCode, 1)))
                     removeOperation()
                 }
             }
@@ -98,12 +98,12 @@ class OperationHelper {
     }
 
     fun createFolder(operation: Operations, path: String, name: String,
-                      fileOperationCallback: FileOperationCallback) {
+                     fileOperationCallback: FileOperationCallback) {
 
         addOperation(operation, OperationData.createNewFolderOperation(path, name))
         if (FileUtils.isFileNameInvalid(name)) {
             fileOperationCallback.onOperationResult(operation, getOperationAction(
-                    OperationResultCode.INVALID_FILE))
+                    OperationResult(OperationResultCode.INVALID_FILE, 0)))
             removeOperation()
             return
         }
@@ -111,7 +111,7 @@ class OperationHelper {
         if (file.exists()) {
             fileOperationCallback.onOperationResult(operation,
                                                     getOperationAction(
-                                                            OperationResultCode.FILE_EXISTS))
+                                                            OperationResult(OperationResultCode.FILE_EXISTS, 0)))
             removeOperation()
             return
         }
@@ -119,34 +119,34 @@ class OperationHelper {
             OperationUtils.WriteMode.EXTERNAL -> {
                 fileOperationCallback.onOperationResult(
                         operation,
-                        getOperationAction(OperationResultCode.SAF))
+                        getOperationAction(OperationResult(OperationResultCode.SAF, 0)))
                 removeOperation()
             }
             OperationUtils.WriteMode.INTERNAL -> {
                 val success = FileOperations.mkdir(file)
                 val resultCode = if (success) OperationResultCode.SUCCESS else OperationResultCode.FAIL
                 fileOperationCallback.onOperationResult(operation, getOperationAction(
-                        resultCode))
+                        OperationResult(resultCode, 1)))
                 removeOperation()
             }
         }
     }
 
     fun createFile(operation: Operations, path: String, name: String,
-                     fileOperationCallback: FileOperationCallback) {
+                   fileOperationCallback: FileOperationCallback) {
 
         addOperation(operation, OperationData.createNewFileOperation(path, name))
         if (FileUtils.isFileNameInvalid(name)) {
             fileOperationCallback.onOperationResult(operation, getOperationAction(
-                    OperationResultCode.INVALID_FILE))
+                    OperationResult(OperationResultCode.INVALID_FILE, 0)))
             removeOperation()
             return
         }
         val file = File(path + File.separator + name + EXT_TXT)
         if (file.exists()) {
             fileOperationCallback.onOperationResult(operation,
-                                                    getOperationAction(
-                                                            OperationResultCode.FILE_EXISTS))
+                                                    getOperationAction(OperationResult(
+                                                            OperationResultCode.FILE_EXISTS, 0)))
             removeOperation()
             return
         }
@@ -154,25 +154,44 @@ class OperationHelper {
             OperationUtils.WriteMode.EXTERNAL -> {
                 fileOperationCallback.onOperationResult(
                         operation,
-                        getOperationAction(OperationResultCode.SAF))
+                        getOperationAction(OperationResult(OperationResultCode.SAF, 0)))
                 removeOperation()
             }
             OperationUtils.WriteMode.INTERNAL -> {
                 val success = FileOperations.mkfile(file)
                 val resultCode = if (success) OperationResultCode.SUCCESS else OperationResultCode.FAIL
-                fileOperationCallback.onOperationResult(operation, getOperationAction(
-                        resultCode))
+                fileOperationCallback.onOperationResult(operation, getOperationAction(OperationResult(
+                        resultCode, 1)))
                 removeOperation()
             }
         }
     }
 
+    fun deleteFiles(operation: Operations, filesList: ArrayList<String>,
+                    fileOperationCallback: FileOperationCallback) {
+        addOperation(operation, OperationData.createDeleteOperation(filesList))
+        val mode = OperationUtils.checkFolder(File(filesList[0]).parent)
+        when (mode) {
+            OperationUtils.WriteMode.INTERNAL -> {
+                val count = FileOperations.deleteFiles(filesList)
+                val resultCode =
+                        if (count > 0) {
+                            OperationResultCode.SUCCESS
+                        }
+                else {
+                            OperationResultCode.FAIL
+                        }
+                fileOperationCallback.onOperationResult(operation, getOperationAction(OperationResult(resultCode, count)))
+            }
+        }
+    }
 
-    private fun getOperationAction(operationResultCode: OperationResultCode): OperationAction? {
+
+    private fun getOperationAction(operationResult: OperationResult): OperationAction? {
         val operationData = getOperationData()
         Log.e("OperationHelper", "getOperationAction: data:$operationData")
         operationData?.let {
-            return OperationAction(operationResultCode, it)
+            return OperationAction(operationResult, it)
         }
         return null
     }

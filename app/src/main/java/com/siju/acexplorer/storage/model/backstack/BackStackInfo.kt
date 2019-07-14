@@ -27,9 +27,22 @@ class BackStackInfo {
     private val backStack = ArrayList<BackStackModel>()
 
     fun addToBackStack(path: String?, category: Category) {
-        backStack.add(BackStackModel(path, category))
-        Logger.log(TAG,
-                   "addToBackStack--size=" + backStack.size + " Path=" + path + "Category=" + category)
+        if (isPathNotInBackStack(category, path)) {
+            Logger.log(TAG,
+                       "addToBackStack--size=" + backStack.size + " Path=" + path + "Category=" + category)
+            backStack.add(BackStackModel(path, category))
+        }
+    }
+
+    private fun isPathNotInBackStack(category: Category, path: String?) = category != Category.FILES ||
+            path != getLastIndexPath()
+
+    private fun getLastIndexPath() : String? {
+        val index = getLastIndex()
+        if (index >= 0) {
+            return backStack[index].filePath
+        }
+        return null
     }
 
     fun clearBackStack() {
