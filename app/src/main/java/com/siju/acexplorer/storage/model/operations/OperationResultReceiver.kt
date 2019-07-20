@@ -120,36 +120,7 @@ class OperationResultReceiver(private val operationHelper: OperationHelper) : Br
     private fun onOperationResult(intent: Intent, operation: Operations) {
         Logger.log(TAG, "onOperationResult: $operation")
         val count = intent.getIntExtra(KEY_FILES_COUNT, 0)
-
-        when (operation) {
-//            Operations.DELETE                  -> {
-//            }
-//            Operations.RENAME, Operations.HIDE -> onRename(intent, operation)
-            Operations.CUT                     -> onCut(count)
-            Operations.COPY                    -> onCopyOperationCompleted(count)
-            Operations.EXTRACT                 -> onExtractCompleted()
-        }//                onDeleted(intent);
-    }
-
-    private fun onCopyOperationCompleted(count: Int) {
-        operationHelper.onOperationCompleted(Operations.COPY, count)
-    }
-
-    private fun onCut(count: Int) {
-        operationHelper.onOperationCompleted(Operations.CUT, count)
-        //        if (count > 0 && getContext() != null) {
-        //            Toast.makeText(getContext(), String.format(Locale.getDefault(), getContext().
-        //                                                                                                getString(
-        //                                                                                                        R.string.moved),
-        //                                                       count), Toast.LENGTH_SHORT).show();
-        //            operationHelper.reloadList();
-        //        }
-        //        final ArrayList<String> oldFileList = intent.getStringArrayListExtra(KEY_OLD_FILES);
-        //        deleteFromMediaStore(oldFileList);
-    }
-
-    private fun onExtractCompleted() {
-        operationHelper.onOperationCompleted(Operations.EXTRACT, 1)
+        operationHelper.onOperationCompleted(operation, count)
     }
 
     private fun onRename(intent: Intent, operation: Operations) {

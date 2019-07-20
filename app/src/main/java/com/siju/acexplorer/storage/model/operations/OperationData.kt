@@ -44,5 +44,10 @@ class OperationData private constructor(var arg1: String, var arg2: String) {
             return OperationData(sourceFilePath, destinationDir)
         }
 
+        fun createArchiveOperation(destinationDir: String,
+                                   filesToArchive: ArrayList<FileInfo>): OperationData {
+            return OperationData(destinationDir, filesToArchive)
+        }
+
     }
 }

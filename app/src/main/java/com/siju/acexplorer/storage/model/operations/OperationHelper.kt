@@ -11,6 +11,7 @@ import com.siju.acexplorer.main.model.helper.SdkHelper
 import com.siju.acexplorer.storage.model.PasteActionInfo
 import com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH
 import com.siju.acexplorer.storage.model.task.CopyService
+import com.siju.acexplorer.storage.model.task.CreateZipService
 import com.siju.acexplorer.storage.model.task.ExtractService
 import com.siju.acexplorer.storage.model.task.MoveService
 import java.io.File
@@ -340,6 +341,42 @@ class OperationHelper(val context: Context) {
         }
     }
 
+    fun compressFile(context: Context, destinationDir: String, filesToArchive : ArrayList<FileInfo>,
+                    zipOperationCallback: ZipOperationCallback,
+                    fileOperationCallback: FileOperationCallback) {
+        setFileOperationCallback(fileOperationCallback)
+        val newFile = File(destinationDir)
+
+        if (FileUtils.isFileNameInvalid(newFile.name)) {
+            fileOperationCallback.onOperationResult(Operations.COMPRESS, getOperationAction(
+                    OperationResult(OperationResultCode.INVALID_FILE, 0)))
+            return
+        }
+        if (FileUtils.isFileExisting(newFile.parent, newFile.name)) {
+            fileOperationCallback.onOperationResult(Operations.COMPRESS,
+                                                    getOperationAction(OperationResult(
+                                                            OperationResultCode.FILE_EXISTS, 0)))
+            return
+        }
+        when (OperationUtils.checkFolder(newFile.parent)) {
+            OperationUtils.WriteMode.INTERNAL -> {
+                addOperation(Operations.EXTRACT, OperationData.createArchiveOperation(destinationDir, filesToArchive))
+                zipOperationCallback.onZipOperationStarted(Operations.COMPRESS, destinationDir, filesToArchive)
+                val intent = Intent(context, CreateZipService::class.java)
+                intent.apply {
+                    putExtra(OperationUtils.KEY_FILEPATH, destinationDir)
+                    putParcelableArrayListExtra(OperationUtils.KEY_FILES, filesToArchive)
+                }
+                if (SdkHelper.isAtleastOreo()) {
+                    context.startForegroundService(intent)
+                }
+                else {
+                    context.startService(intent)
+                }
+            }
+        }
+    }
+
 
     private fun setFileOperationCallback(fileOperationCallback: FileOperationCallback) {
         this.fileOperationCallback = fileOperationCallback
@@ -373,6 +410,9 @@ class OperationHelper(val context: Context) {
     }
     interface ZipOperationCallback {
         fun onZipOperationStarted(operation: Operations, sourceFilePath: String, destinationDir: String)
+
+        fun onZipOperationStarted(operation: Operations, destinationDir: String, filesToArchive: ArrayList<FileInfo>)
+
     }
 
 }

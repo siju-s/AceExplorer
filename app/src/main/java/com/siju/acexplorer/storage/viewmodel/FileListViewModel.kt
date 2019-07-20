@@ -34,10 +34,10 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     var apkPath: String? = null
     private lateinit var navigationView: NavigationView
     lateinit var category: Category
-    private set
+        private set
 
-    var currentDir : String? = null
-    private set
+    var currentDir: String? = null
+        private set
 
     private val navigation = Navigation(this)
     private var bucketName: String? = null
@@ -117,13 +117,18 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     private val _showPasteDialog = MutableLiveData<Triple<Operations, String, ArrayList<FileInfo>>>()
 
-    val showPasteDialog : LiveData<Triple<Operations, String, ArrayList<FileInfo>>>
-    get() = _showPasteDialog
+    val showPasteDialog: LiveData<Triple<Operations, String, ArrayList<FileInfo>>>
+        get() = _showPasteDialog
 
     private val _showZipDialog = MutableLiveData<Triple<Operations, String, String>>()
 
-    val showZipDialog : LiveData<Triple<Operations, String, String>>
-    get() = _showZipDialog
+    val showZipDialog: LiveData<Triple<Operations, String, String>>
+        get() = _showZipDialog
+
+    private val _showCompressDialog = MutableLiveData<Triple<Operations, String, ArrayList<FileInfo>>>()
+
+    val showCompressDialog: LiveData<Triple<Operations, String, ArrayList<FileInfo>>>
+        get() = _showCompressDialog
 
     init {
         val model = storageModel as StorageModelImpl
@@ -158,7 +163,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         showFab.postValue(canShowFab(category))
     }
 
-    private fun setCurrentDir(currentDir : String?) {
+    private fun setCurrentDir(currentDir: String?) {
         this.currentDir = currentDir
     }
 
@@ -373,7 +378,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     fun onMenuItemClick(itemId: Int) {
 
         when (itemId) {
-            R.id.action_edit   -> {
+            R.id.action_edit    -> {
                 if (multiSelectionHelper.hasSelectedItems()) {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_RENAME)
                     val fileInfo = _fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
@@ -384,7 +389,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                 }
             }
 
-            R.id.action_hide   -> {
+            R.id.action_hide    -> {
                 if (multiSelectionHelper.hasSelectedItems()) {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_HIDE)
                     val fileInfo = _fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
@@ -396,7 +401,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                 }
             }
 
-            R.id.action_info   -> {
+            R.id.action_info    -> {
                 if (multiSelectionHelper.hasSelectedItems()) {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_PROPERTIES)
                     val fileInfo = _fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
@@ -407,7 +412,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                 }
             }
 
-            R.id.action_delete -> {
+            R.id.action_delete  -> {
                 if (multiSelectionHelper.hasSelectedItems()) {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_DELETE)
                     val filesToDelete = arrayListOf<FileInfo>()
@@ -421,7 +426,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                 }
             }
 
-            R.id.action_share  -> {
+            R.id.action_share   -> {
                 if (multiSelectionHelper.hasSelectedItems()) {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_SHARE)
                     val filesToShare = arrayListOf<FileInfo>()
@@ -437,7 +442,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                 }
             }
 
-            R.id.action_copy   -> {
+            R.id.action_copy    -> {
                 if (multiSelectionHelper.hasSelectedItems()) {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_COPY)
                     val filesToCopy = arrayListOf<FileInfo>()
@@ -451,7 +456,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                 }
             }
 
-            R.id.action_cut   -> {
+            R.id.action_cut     -> {
                 if (multiSelectionHelper.hasSelectedItems()) {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_CUT)
                     val filesToMove = arrayListOf<FileInfo>()
@@ -466,9 +471,9 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
             }
 
 
-            R.id.action_paste  -> {
+            R.id.action_paste   -> {
                 val operations = _multiSelectionOpData.value?.first
-                if (operations == Operations.COPY || operations == Operations.CUT)  {
+                if (operations == Operations.COPY || operations == Operations.CUT) {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_PASTE)
                     val list = _multiSelectionOpData.value?.second
                     endActionMode()
@@ -486,6 +491,20 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                     fileInfo?.let {
                         _singleOpData.value = Pair(Operations.EXTRACT, fileInfo)
                     }
+                }
+            }
+
+            R.id.action_archive -> {
+                if (multiSelectionHelper.hasSelectedItems()) {
+                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_ARCHIVE)
+                    val filesToArchive = arrayListOf<FileInfo>()
+                    val selectedItems = multiSelectionHelper.selectedItems
+                    for (i in 0 until selectedItems.size()) {
+                        val fileInfo = _fileData.value?.get(selectedItems.keyAt(i))
+                        fileInfo?.let { filesToArchive.add(it) }
+                    }
+                    endActionMode()
+                    _multiSelectionOpData.value = Pair(Operations.COMPRESS, filesToArchive)
                 }
             }
 
@@ -541,7 +560,18 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                     storageModel.createFile(operation, path, name)
                 }
             }
+
+            Operations.COMPRESS                -> {
+                val filesToArchive = multiSelectionOpData.value?.second
+                filesToArchive?.let {
+                    currentDir?.let { currentDir->
+                        val destinationDir = "$currentDir/$name.zip"
+                        storageModel.compressFile(destinationDir, filesToArchive, zipOperationCallback)
+                    }
+                }
+            }
         }
+
     }
 
     fun handleSafResult(uri: Uri, flags: Int) {
@@ -685,7 +715,8 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
             }
 
             if (end) {
-                storageModel.checkPasteWriteMode(pasteData.destinationDir, filesToPaste, pasteActionInfo,
+                storageModel.checkPasteWriteMode(pasteData.destinationDir, filesToPaste,
+                                                 pasteActionInfo,
                                                  pasteData.operations, pasteOperationCallback)
             }
             else {
@@ -731,7 +762,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
         override fun onPasteActionStarted(operation: Operations, destinationDir: String,
                                           files: ArrayList<FileInfo>) {
-            when(operation) {
+            when (operation) {
                 Operations.COPY -> {
                     _showPasteDialog.postValue(Triple(operation, destinationDir, files))
                 }
@@ -740,9 +771,14 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     }
 
     val zipOperationCallback = object : OperationHelper.ZipOperationCallback {
+        override fun onZipOperationStarted(operation: Operations, destinationDir: String,
+                                           filesToArchive: ArrayList<FileInfo>) {
+            _showCompressDialog.postValue(Triple(operation, destinationDir, filesToArchive))
+        }
+
         override fun onZipOperationStarted(operation: Operations, sourceFilePath: String,
-                                           destinationPath: String) {
-           _showZipDialog.postValue(Triple(operation, sourceFilePath, destinationPath))
+                                           destinationDir: String) {
+            _showZipDialog.postValue(Triple(operation, sourceFilePath, destinationDir))
         }
 
     }

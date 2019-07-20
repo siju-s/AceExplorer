@@ -129,9 +129,17 @@ class StorageModelImpl(val context: Context) : StorageModel {
 
     override fun extractFile(sourceFilePath: String, destinationDir: String, newName: String,
                              zipOperationCallback: OperationHelper.ZipOperationCallback) {
-        operationHelper.extractFile(context, sourceFilePath, destinationDir, newName, zipOperationCallback,
+        operationHelper.extractFile(context, sourceFilePath, destinationDir, newName,
+                                    zipOperationCallback,
                                     fileOperationCallback)
     }
+
+    override fun compressFile(destinationDir: String, filesToArchive: ArrayList<FileInfo>,
+                              zipOperationCallback: OperationHelper.ZipOperationCallback) {
+        operationHelper.compressFile(context, destinationDir, filesToArchive, zipOperationCallback,
+                                     fileOperationCallback)
+    }
+
 
     private val fileOperationCallback = object : OperationHelper.FileOperationCallback {
         override fun onOperationResult(operation: Operations, operationAction: OperationAction?) {

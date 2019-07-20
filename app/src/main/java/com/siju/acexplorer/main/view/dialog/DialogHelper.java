@@ -746,7 +746,6 @@ public class DialogHelper {
     public static void showCompressDialog(Context context, final ArrayList<FileInfo> paths,
                                           final CompressDialogListener dialogListener) {
 
-        final String ext = ".zip";
         String fileName = paths.get(0).getFileName();
         String filePath = paths.get(0).getFilePath();
         String zipName = fileName;
@@ -779,7 +778,7 @@ public class DialogHelper {
             @Override
             public void onClick(View v) {
                 String name = inputText.getText().toString().trim();
-                dialogListener.onPositiveButtonClick(alertDialog, Operations.COMPRESS, name, ext,
+                dialogListener.onPositiveButtonClick(alertDialog, Operations.COMPRESS, name,
                         paths);
 
             }
@@ -1001,7 +1000,7 @@ public class DialogHelper {
     public interface CompressDialogListener {
 
         void onPositiveButtonClick(Dialog dialog, Operations operation, String newFileName,
-                                   String extension, ArrayList<FileInfo> paths);
+                                  ArrayList<FileInfo> paths);
 
         void onNegativeButtonClick(Operations operation);
 

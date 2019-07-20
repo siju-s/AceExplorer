@@ -293,6 +293,14 @@ open class BaseFileListFragment : Fragment() {
                 }
             }
         })
+
+        fileListViewModel.showCompressDialog.observe(viewLifecycleOwner, Observer {
+            it?.apply {
+                context?.let { context ->
+                    OperationProgress().showZipProgressDialog(context, it.second, it.third)
+                }
+            }
+        })
     }
 
     private fun handlePasteOperation(pasteData: PasteData) {
@@ -359,10 +367,10 @@ open class BaseFileListFragment : Fragment() {
     private fun handleSingleItemOperation(operationData: Pair<Operations, FileInfo>) {
         Log.e(TAG, "handleSingleItemOperation: ")
         when (operationData.first) {
-            Operations.RENAME -> {
+            Operations.RENAME  -> {
                 context?.let { context -> showRenameDialog(context, operationData.second) }
             }
-            Operations.INFO   -> {
+            Operations.INFO    -> {
                 context?.let { context ->
                     DialogHelper.showInfoDialog(context, operationData.second,
                                                 Category.FILES == category)
@@ -370,12 +378,14 @@ open class BaseFileListFragment : Fragment() {
             }
 
             Operations.EXTRACT -> {
-                context?.let { context->
-                    DialogHelper.showExtractDialog(context, operationData.second.filePath, fileListViewModel.currentDir,
+                context?.let { context ->
+                    DialogHelper.showExtractDialog(context, operationData.second.filePath,
+                                                   fileListViewModel.currentDir,
                                                    extractDialogListener)
                 }
             }
-            else -> {}
+            else               -> {
+            }
         }
     }
 
@@ -401,10 +411,14 @@ open class BaseFileListFragment : Fragment() {
                 }
             }
 
-            Operations.PASTE                -> {
+            Operations.COMPRESS             -> {
+                context?.let {
+                    showCompressDialog(it, operationData.second)
+                }
             }
 
-            else                            -> {}
+            else                            -> {
+            }
         }
     }
 
@@ -414,100 +428,102 @@ open class BaseFileListFragment : Fragment() {
         }
     }
 
-        fun onCreateDirClicked() {
-            fileListViewModel.onFABClicked(Operations.FOLDER_CREATION, fileListViewModel.currentDir)
-        }
+    fun onCreateDirClicked() {
+        fileListViewModel.onFABClicked(Operations.FOLDER_CREATION, fileListViewModel.currentDir)
+    }
 
-        fun onCreateFileClicked() {
-            fileListViewModel.onFABClicked(Operations.FILE_CREATION, fileListViewModel.currentDir)
-        }
+    fun onCreateFileClicked() {
+        fileListViewModel.onFABClicked(Operations.FILE_CREATION, fileListViewModel.currentDir)
+    }
 
-        private fun showCreateFolderDialog(context: Context?) {
-            context?.let {
-                val title = context.getString(R.string.new_folder)
-                val texts = arrayOf(title, context.getString(R.string.enter_name),
-                                    context.getString(R.string.create),
-                                    context.getString(R.string.dialog_cancel))
-
-                DialogHelper.showInputDialog(context, texts, Operations.FOLDER_CREATION, null,
-                                             alertDialogListener)
-            }
-        }
-
-        private fun showCreateFileDialog(context: Context?) {
-            context?.let {
-                val title = context.getString(R.string.new_file)
-                val texts = arrayOf(title, context.getString(R.string.enter_name),
-                                    context.getString(R.string.create),
-                                    context.getString(R.string.dialog_cancel))
-
-                DialogHelper.showInputDialog(context, texts, Operations.FILE_CREATION, null,
-                                             alertDialogListener)
-            }
-        }
-
-        private fun showDeleteDialog(context: Context?, files: ArrayList<FileInfo>) {
-            context?.let {
-                DialogHelper.showDeleteDialog(context, files, false, deleteDialogListener)
-            }
-        }
-
-        private fun onOperationError(operation: Operations,
-                                     message: String) {
-            when (operation) {
-                Operations.FOLDER_CREATION, Operations.FILE_CREATION, Operations.EXTRACT, Operations.RENAME, Operations.COMPRESS -> {
-                    val editText = dialog?.findViewById<EditText>(R.id.editFileName)
-                    editText?.requestFocus()
-                    editText?.error = message
-                }
-                Operations.HIDE                                                                                                  -> Toast.makeText(
-                        context, message, Toast.LENGTH_SHORT).show()
-                else                                                                                                             -> {
-                }
-            }
-        }
-
-
-        private fun showRenameDialog(context: Context, fileInfo: FileInfo) {
-            val title = context.getString(R.string.action_rename)
+    private fun showCreateFolderDialog(context: Context?) {
+        context?.let {
+            val title = context.getString(R.string.new_folder)
             val texts = arrayOf(title, context.getString(R.string.enter_name),
-                                context.getString(R.string.action_rename),
+                                context.getString(R.string.create),
                                 context.getString(R.string.dialog_cancel))
-            DialogHelper.showInputDialog(context, texts, Operations.RENAME, fileInfo.filePath,
+
+            DialogHelper.showInputDialog(context, texts, Operations.FOLDER_CREATION, null,
                                          alertDialogListener)
         }
+    }
 
-        private fun showSAFDialog(context: Context, path: String) {
-            DialogHelper.showSAFDialog(context, path, safDialogListener)
+    private fun showCreateFileDialog(context: Context?) {
+        context?.let {
+            val title = context.getString(R.string.new_file)
+            val texts = arrayOf(title, context.getString(R.string.enter_name),
+                                context.getString(R.string.create),
+                                context.getString(R.string.dialog_cancel))
+
+            DialogHelper.showInputDialog(context, texts, Operations.FILE_CREATION, null,
+                                         alertDialogListener)
         }
+    }
 
-        private fun openInstallScreen(path: String?) {
-            val context = context
-            context?.let {
-                InstallHelper.openInstallAppScreen(context,
-                                                   UriHelper.createContentUri(
-                                                           context.applicationContext,
-                                                           path))
+    private fun showDeleteDialog(context: Context, files: ArrayList<FileInfo>) {
+        DialogHelper.showDeleteDialog(context, files, false, deleteDialogListener)
+    }
+
+    private fun showCompressDialog(context: Context, files: ArrayList<FileInfo>) {
+        DialogHelper.showCompressDialog(context, files, compressDialogListener)
+    }
+
+    private fun onOperationError(operation: Operations,
+                                 message: String) {
+        when (operation) {
+            Operations.FOLDER_CREATION, Operations.FILE_CREATION, Operations.EXTRACT, Operations.RENAME, Operations.COMPRESS -> {
+                val editText = dialog?.findViewById<EditText>(R.id.editFileName)
+                editText?.requestFocus()
+                editText?.error = message
+            }
+            Operations.HIDE                                                                                                  -> Toast.makeText(
+                    context, message, Toast.LENGTH_SHORT).show()
+            else                                                                                                             -> {
             }
         }
+    }
 
-        private fun dismissDialog() {
-            dialog?.dismiss()
+
+    private fun showRenameDialog(context: Context, fileInfo: FileInfo) {
+        val title = context.getString(R.string.action_rename)
+        val texts = arrayOf(title, context.getString(R.string.enter_name),
+                            context.getString(R.string.action_rename),
+                            context.getString(R.string.dialog_cancel))
+        DialogHelper.showInputDialog(context, texts, Operations.RENAME, fileInfo.filePath,
+                                     alertDialogListener)
+    }
+
+    private fun showSAFDialog(context: Context, path: String) {
+        DialogHelper.showSAFDialog(context, path, safDialogListener)
+    }
+
+    private fun openInstallScreen(path: String?) {
+        val context = context
+        context?.let {
+            InstallHelper.openInstallAppScreen(context,
+                                               UriHelper.createContentUri(
+                                                       context.applicationContext,
+                                                       path))
+        }
+    }
+
+    private fun dismissDialog() {
+        dialog?.dismiss()
+    }
+
+    private var dialog: Dialog? = null
+
+    private val alertDialogListener = object : DialogHelper.DialogCallback {
+
+        override fun onPositiveButtonClick(dialog: Dialog?, operation: Operations?,
+                                           name: String?) {
+            this@BaseFileListFragment.dialog = dialog
+            fileListViewModel.onOperation(operation, name)
         }
 
-        private var dialog: Dialog? = null
-
-        private val alertDialogListener = object : DialogHelper.DialogCallback {
-
-            override fun onPositiveButtonClick(dialog: Dialog?, operation: Operations?,
-                                               name: String?) {
-                this@BaseFileListFragment.dialog = dialog
-                fileListViewModel.onOperation(operation, name)
-            }
-
-            override fun onNegativeButtonClick(operations: Operations?) {
-            }
+        override fun onNegativeButtonClick(operations: Operations?) {
         }
+    }
 
     private val extractDialogListener = object : DialogHelper.ExtractDialogListener {
         override fun onPositiveButtonClick(
@@ -524,8 +540,24 @@ open class BaseFileListFragment : Fragment() {
             theme?.let {
                 dialogFragment.setStyle(DialogBrowseFragment.STYLE_NORMAL, getThemeStyle(theme))
             }
-            this@BaseFileListFragment.fragmentManager?.let { dialogFragment.show(it, "Browse Fragment") }
+            this@BaseFileListFragment.fragmentManager?.let {
+                dialogFragment.show(it, "Browse Fragment")
+            }
         }
+    }
+
+    private val compressDialogListener = object : DialogHelper.CompressDialogListener {
+        override fun onPositiveButtonClick(dialog: Dialog?, operation: Operations?,
+                                           newFileName: String?,
+                                           paths: ArrayList<FileInfo>) {
+            this@BaseFileListFragment.dialog = dialog
+            fileListViewModel.onOperation(operation, newFileName)
+
+        }
+
+        override fun onNegativeButtonClick(operation: Operations?) {
+        }
+
     }
 
     private fun getThemeStyle(theme: Theme): Int {
@@ -535,77 +567,77 @@ open class BaseFileListFragment : Fragment() {
         }
     }
 
-        private val deleteDialogListener = DialogHelper.DeleteDialogListener { view, isTrashEnabled, filesToDelete ->
-            fileListViewModel.deleteFiles(filesToDelete)
+    private val deleteDialogListener = DialogHelper.DeleteDialogListener { view, isTrashEnabled, filesToDelete ->
+        fileListViewModel.deleteFiles(filesToDelete)
+    }
+
+    private fun triggerStorageAccessFramework() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+        if (activity?.packageManager?.resolveActivity(intent, 0) != null) {
+            startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT_TREE),
+                                   SAF_REQUEST)
+        }
+        else {
+            Toast.makeText(context, context?.getString(R.string.msg_error_not_supported),
+                           Toast.LENGTH_LONG).show()
+        }
+    }
+
+
+    private val safDialogListener = object : DialogHelper.AlertDialogListener {
+
+        override fun onPositiveButtonClick(view: View?) {
+            triggerStorageAccessFramework()
         }
 
-        private fun triggerStorageAccessFramework() {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-            if (activity?.packageManager?.resolveActivity(intent, 0) != null) {
-                startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT_TREE),
-                                       SAF_REQUEST)
-            }
-            else {
-                Toast.makeText(context, context?.getString(R.string.msg_error_not_supported),
-                               Toast.LENGTH_LONG).show()
-            }
+        override fun onNegativeButtonClick(view: View?) {
+            Toast.makeText(context, context?.getString(R.string.error), Toast
+                    .LENGTH_SHORT).show()
         }
 
-
-        private val safDialogListener = object : DialogHelper.AlertDialogListener {
-
-            override fun onPositiveButtonClick(view: View?) {
-                triggerStorageAccessFramework()
-            }
-
-            override fun onNegativeButtonClick(view: View?) {
-                Toast.makeText(context, context?.getString(R.string.error), Toast
-                        .LENGTH_SHORT).show()
-            }
-
-            override fun onNeutralButtonClick(view: View?) {
-            }
-
+        override fun onNeutralButtonClick(view: View?) {
         }
 
-        private fun showAds() {
-            adView.showAds()
-        }
+    }
 
-        private fun hideAds() {
-            adView.hideAds()
-        }
+    private fun showAds() {
+        adView.showAds()
+    }
 
-        fun handleItemClick(fileInfo: FileInfo, position: Int) {
-            fileListViewModel.handleItemClick(fileInfo, position)
-        }
+    private fun hideAds() {
+        adView.hideAds()
+    }
 
-        fun handleLongItemClick(fileInfo: FileInfo, second: Int) {
-            fileListViewModel.handleLongClick(fileInfo, second)
-        }
+    fun handleItemClick(fileInfo: FileInfo, position: Int) {
+        fileListViewModel.handleItemClick(fileInfo, position)
+    }
 
-        fun onBackPressed() = fileListViewModel.onBackPress()
+    fun handleLongItemClick(fileInfo: FileInfo, second: Int) {
+        fileListViewModel.handleLongClick(fileInfo, second)
+    }
 
-        private fun viewFile(path: String, extension: String?) {
-            Log.e(TAG, "Viewfile:path:$path, extension:$extension")
-            val context = context
-            context?.let {
-                when (extension?.toLowerCase(Locale.ROOT)) {
-                    null               -> {
-                        val uri = UriHelper.createContentUri(context, path)
-                        uri?.let {
-                            DialogHelper.openWith(it, context)
-                        }
+    fun onBackPressed() = fileListViewModel.onBackPress()
+
+    private fun viewFile(path: String, extension: String?) {
+        Log.e(TAG, "Viewfile:path:$path, extension:$extension")
+        val context = context
+        context?.let {
+            when (extension?.toLowerCase(Locale.ROOT)) {
+                null               -> {
+                    val uri = UriHelper.createContentUri(context, path)
+                    uri?.let {
+                        DialogHelper.openWith(it, context)
                     }
-                    ViewHelper.EXT_APK -> ViewHelper.viewApkFile(context, path,
-                                                                 fileListViewModel.apkDialogListener)
-                    else               -> ViewHelper.viewFile(context, path, extension)
                 }
+                ViewHelper.EXT_APK -> ViewHelper.viewApkFile(context, path,
+                                                             fileListViewModel.apkDialogListener)
+                else               -> ViewHelper.viewFile(context, path, extension)
             }
         }
+    }
 
 
-        //    fun onBackPressed(): Boolean {
+    //    fun onBackPressed(): Boolean {
 //        return storagesUi!!.onBackPress()
 //    }
 //
@@ -621,63 +653,63 @@ open class BaseFileListFragment : Fragment() {
 //    }
 //
 //
-        override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-            when (requestCode) {
-                InstallHelper.UNKNOWN_APPS_INSTALL_REQUEST -> {
-                    if (resultCode == RESULT_OK) {
-                        openInstallScreen(fileListViewModel.apkPath)
-                        fileListViewModel.apkPath = null
-                    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        when (requestCode) {
+            InstallHelper.UNKNOWN_APPS_INSTALL_REQUEST -> {
+                if (resultCode == RESULT_OK) {
+                    openInstallScreen(fileListViewModel.apkPath)
+                    fileListViewModel.apkPath = null
                 }
+            }
 
-                SAF_REQUEST          -> {
-                    if (resultCode == RESULT_OK) {
-                        val uri = intent?.data
-                        if (uri == null) {
-                            Toast.makeText(context, resources.getString(R.string
-                                                                                .access_denied_external),
-                                           Toast.LENGTH_LONG).show()
-                        }
-                        else {
-                            fileListViewModel.handleSafResult(uri, intent.flags)
-                        }
-
-                    }
-                    else {
-                        Analytics.getLogger().SAFResult(false)
+            SAF_REQUEST                                -> {
+                if (resultCode == RESULT_OK) {
+                    val uri = intent?.data
+                    if (uri == null) {
                         Toast.makeText(context, resources.getString(R.string
                                                                             .access_denied_external),
                                        Toast.LENGTH_LONG).show()
                     }
-                }
-
-                EXTRACT_PATH_REQUEST -> {
-                    if (resultCode == RESULT_OK) {
-                        val destDir = intent?.getStringExtra(KEY_FILEPATH)
-                        val pathButton = dialog?.findViewById<Button>(R.id.buttonPathSelect)
-                        pathButton?.text = destDir
+                    else {
+                        fileListViewModel.handleSafResult(uri, intent.flags)
                     }
+
+                }
+                else {
+                    Analytics.getLogger().SAFResult(false)
+                    Toast.makeText(context, resources.getString(R.string
+                                                                        .access_denied_external),
+                                   Toast.LENGTH_LONG).show()
                 }
             }
-            super.onActivityResult(requestCode, resultCode, intent)
-        }
 
-        //
-        override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-            super.onCreateOptionsMenu(menu, inflater)
-            inflater.inflate(R.menu.filelist_base, menu)
-            Log.e(TAG, "onCreateOptionsMenu")
-            hiddenMenuItem = menu.findItem(R.id.action_hidden)
-            if (::fileListViewModel.isInitialized) {
-                setHiddenCheckedState(fileListViewModel.shouldShowHiddenFiles())
+            EXTRACT_PATH_REQUEST                       -> {
+                if (resultCode == RESULT_OK) {
+                    val destDir = intent?.getStringExtra(KEY_FILEPATH)
+                    val pathButton = dialog?.findViewById<Button>(R.id.buttonPathSelect)
+                    pathButton?.text = destDir
+                }
             }
         }
+        super.onActivityResult(requestCode, resultCode, intent)
+    }
 
-        private fun setHiddenCheckedState(state: Boolean) {
-            hiddenMenuItem?.isChecked = state
+    //
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.filelist_base, menu)
+        Log.e(TAG, "onCreateOptionsMenu")
+        hiddenMenuItem = menu.findItem(R.id.action_hidden)
+        if (::fileListViewModel.isInitialized) {
+            setHiddenCheckedState(fileListViewModel.shouldShowHiddenFiles())
         }
+    }
 
-        //
+    private fun setHiddenCheckedState(state: Boolean) {
+        hiddenMenuItem?.isChecked = state
+    }
+
+    //
 //    override fun onConfigurationChanged(newConfig: Configuration) {
 //        super.onConfigurationChanged(newConfig)
 //        storagesUi!!.onConfigChanged(newConfig)
@@ -693,44 +725,44 @@ open class BaseFileListFragment : Fragment() {
 //        super.onDestroy()
 //    }
 //
-        override fun onOptionsItemSelected(item: MenuItem): Boolean {
-            when (item.itemId) {
-                R.id.action_view_list -> {
-                    fileListViewModel.switchView(ViewMode.LIST)
-                    return true
-                }
-                R.id.action_view_grid -> {
-                    fileListViewModel.switchView(ViewMode.GRID)
-                    return true
-                }
-                R.id.action_hidden    -> {
-                    item.isChecked = !item.isChecked
-                    fileListViewModel.onHiddenFileSettingChanged(item.isChecked)
-                    return true
-                }
-
-                R.id.action_sort      -> {
-                    fileListViewModel.onSortClicked()
-                    return true
-                }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_view_list -> {
+                fileListViewModel.switchView(ViewMode.LIST)
+                return true
             }
-            return super.onOptionsItemSelected(item)
-        }
-
-        fun onMenuItemClick(item: MenuItem) {
-            fileListViewModel.onMenuItemClick(item.itemId)
-
-        }
-
-        private val sortDialogListener = object : DialogHelper.SortDialogListener {
-            override fun onPositiveButtonClick(sortMode: SortMode) {
-                fileListViewModel.onSort(sortMode)
+            R.id.action_view_grid -> {
+                fileListViewModel.switchView(ViewMode.GRID)
+                return true
+            }
+            R.id.action_hidden    -> {
+                item.isChecked = !item.isChecked
+                fileListViewModel.onHiddenFileSettingChanged(item.isChecked)
+                return true
             }
 
-            override fun onNegativeButtonClick(view: View?) {
+            R.id.action_sort      -> {
+                fileListViewModel.onSortClicked()
+                return true
             }
-
         }
+        return super.onOptionsItemSelected(item)
+    }
+
+    fun onMenuItemClick(item: MenuItem) {
+        fileListViewModel.onMenuItemClick(item.itemId)
+
+    }
+
+    private val sortDialogListener = object : DialogHelper.SortDialogListener {
+        override fun onPositiveButtonClick(sortMode: SortMode) {
+            fileListViewModel.onSort(sortMode)
+        }
+
+        override fun onNegativeButtonClick(view: View?) {
+        }
+
+    }
 //
 //    fun performVoiceSearch(query: String) {
 //        storagesUi!!.performVoiceSearch(query)
@@ -785,4 +817,4 @@ open class BaseFileListFragment : Fragment() {
 //    fun collapseSearchView() {
 //        storagesUi!!.collapseSearchView()
 //    }
-    }
+}

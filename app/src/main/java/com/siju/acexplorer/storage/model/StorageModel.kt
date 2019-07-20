@@ -130,4 +130,6 @@ interface StorageModel {
 
     fun extractFile(sourceFilePath : String, destinationDir: String, newName: String, zipOperationCallback: OperationHelper.ZipOperationCallback)
 
+    fun compressFile(destinationDir: String, filesToArchive: ArrayList<FileInfo>,
+                     zipOperationCallback: OperationHelper.ZipOperationCallback)
 }

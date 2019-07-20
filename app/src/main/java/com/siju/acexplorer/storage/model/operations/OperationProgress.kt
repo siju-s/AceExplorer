@@ -133,8 +133,7 @@ class OperationProgress {
     }
 
     @SuppressLint("InflateParams")
-    fun showZipProgressDialog(context: Context, files: ArrayList<FileInfo>,
-                              destinationPath: String) {
+    fun showZipProgressDialog(context: Context, destinationPath: String, files: ArrayList<FileInfo>) {
         this.context = context
         registerReceiver(context)
         val title = context.getString(R.string.zip_progress_title)
@@ -146,7 +145,7 @@ class OperationProgress {
         val dialogView = inflater.inflate(R.layout.dialog_progress_paste, null)
         builder.setView(dialogView)
         progressDialog = builder.create()
-        progressDialog!!.setCancelable(false)
+        progressDialog?.setCancelable(false)
         textFileName = dialogView.findViewById(R.id.textFileName)
         textFileFromPath = dialogView.findViewById(R.id.textFileFromPath)
         val textFromPlaceHolder = dialogView.findViewById<TextView>(R.id.textFileFromPlaceHolder)
@@ -166,18 +165,18 @@ class OperationProgress {
         copiedFileInfo = files
         copiedFilesSize = copiedFileInfo.size
         Logger.log(TAG, "Totalfiles=$copiedFilesSize")
-        textFileName!!.text = title
-        textFileFromPath!!.text = destinationPath
-        textProgress!!.setText(R.string.zero_percent)
+        textFileName?.text = title
+        textFileFromPath?.text = destinationPath
+        textProgress?.setText(R.string.zero_percent)
 
-        positiveButton.setOnClickListener { progressDialog!!.dismiss() }
+        positiveButton.setOnClickListener { progressDialog?.dismiss() }
 
         negativeButton.setOnClickListener {
             stopZipService()
-            progressDialog!!.dismiss()
+            progressDialog?.dismiss()
         }
 
-        progressDialog!!.show()
+        progressDialog?.show()
     }
 
     @SuppressLint("InflateParams")
@@ -304,29 +303,9 @@ class OperationProgress {
     // Define the Handler that receives messages from the thread and update the progress
     //    private final Handler handler = new Handler(Looper.getMainLooper()) {
     private fun handleMessage(intent: Intent) {
-        val progress = intent.getIntExtra(KEY_PROGRESS, 0)
-        val copiedBytes = intent.getLongExtra(KEY_COMPLETED, 0)
-        val totalBytes = intent.getLongExtra(KEY_TOTAL, 0)
-        val end = intent.getBooleanExtra(KEY_END, false)
-
         when (intent.action) {
             ZIP_PROGRESS     -> {
-                progressBarPaste!!.progress = progress
-                textFileCount!!.text = String.format("%s/%s",
-                                                     Formatter.formatFileSize(context, copiedBytes),
-                                                     Formatter.formatFileSize(context, totalBytes))
-                textProgress!!.text = String.format(Locale.getDefault(), "%d%s", progress,
-                                                    context!!.getString(
-                                                            R.string.percent_placeholder))
-                //                Logger.log("FileUtils", "KEY_PROGRESS=" + progress + "Copied bytes=" + copiedBytes + " KEY_TOTAL bytes=" + totalBytes);
-
-                if (progress == 100 || isCopied(totalBytes, copiedBytes)) {
-                    stopZipService()
-                    progressDialog!!.dismiss()
-                }
-                if (end && progressDialog != null) {
-                    progressDialog!!.dismiss()
-                }
+                handleZipProgress(intent)
             }
 
             EXTRACT_PROGRESS -> {
@@ -338,6 +317,30 @@ class OperationProgress {
             MOVE_PROGRESS    -> {
                 handleMoveProgress(intent)
             }
+        }
+    }
+
+    private fun handleZipProgress(intent: Intent) {
+        val copiedBytes = intent.getLongExtra(KEY_COMPLETED, 0)
+        val totalBytes = intent.getLongExtra(KEY_TOTAL, 0)
+        val progress = intent.getIntExtra(KEY_PROGRESS, 0)
+        val isCompleted = intent.getBooleanExtra(KEY_END, false)
+
+        progressBarPaste?.progress = progress
+        textFileCount?.text = String.format("%s/%s",
+                                            Formatter.formatFileSize(context, copiedBytes),
+                                            Formatter.formatFileSize(context, totalBytes))
+        textProgress?.text = String.format(Locale.getDefault(), "%d%s", progress,
+                                           context?.getString(
+                                                   R.string.percent_placeholder))
+        //                Logger.log("FileUtils", "KEY_PROGRESS=" + progress + "Copied bytes=" + copiedBytes + " KEY_TOTAL bytes=" + totalBytes);
+
+        if (progress == 100 || isCopied(totalBytes, copiedBytes)) {
+            stopZipService()
+            progressDialog?.dismiss()
+        }
+        if (isCompleted) {
+            progressDialog?.dismiss()
         }
     }
 
