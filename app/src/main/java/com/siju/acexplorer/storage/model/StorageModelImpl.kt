@@ -114,14 +114,24 @@ class StorageModelImpl(val context: Context) : StorageModel {
                                      pasteActionInfo: ArrayList<PasteActionInfo>,
                                      operations: Operations,
                                      pasteOperationCallback: OperationHelper.PasteOperationCallback) {
-        when(operations) {
-            Operations.CUT -> operationHelper.moveFiles(context, destinationDir, files, pasteActionInfo,
-                                                         pasteOperationCallback, fileOperationCallback)
-            Operations.COPY -> operationHelper.copyFiles(context, destinationDir, files, pasteActionInfo,
-                                                         pasteOperationCallback, fileOperationCallback)
+        when (operations) {
+            Operations.CUT  -> operationHelper.moveFiles(context, destinationDir, files,
+                                                         pasteActionInfo,
+                                                         pasteOperationCallback,
+                                                         fileOperationCallback)
+            Operations.COPY -> operationHelper.copyFiles(context, destinationDir, files,
+                                                         pasteActionInfo,
+                                                         pasteOperationCallback,
+                                                         fileOperationCallback)
         }
     }
 
+
+    override fun extractFile(sourceFilePath: String, destinationDir: String, newName: String,
+                             zipOperationCallback: OperationHelper.ZipOperationCallback) {
+        operationHelper.extractFile(context, sourceFilePath, destinationDir, newName, zipOperationCallback,
+                                    fileOperationCallback)
+    }
 
     private val fileOperationCallback = object : OperationHelper.FileOperationCallback {
         override fun onOperationResult(operation: Operations, operationAction: OperationAction?) {

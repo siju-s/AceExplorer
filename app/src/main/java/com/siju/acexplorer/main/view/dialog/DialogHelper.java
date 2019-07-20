@@ -796,11 +796,11 @@ public class DialogHelper {
         alertDialog.show();
     }
 
-    public static void showExtractOptions(Context context, final String currentFilePath,
-                                          final ExtractDialogListener extractDialogListener) {
+    public static void showExtractDialog(Context context, final String zipFilePath,
+                                         final String destinationDir, final ExtractDialogListener extractDialogListener) {
 
-        final String currentFileName = currentFilePath.substring(currentFilePath.lastIndexOf("/")
-                + 1, currentFilePath
+        final String currentFileName = zipFilePath.substring(zipFilePath.lastIndexOf("/")
+                + 1, zipFilePath
                 .lastIndexOf("."));
         String[] texts = new String[]{context.getString(R.string.extract), context.getString(R.string.dialog_cancel)};
 
@@ -811,9 +811,9 @@ public class DialogHelper {
 
         final AlertDialog alertDialog = builder.create();
 
-        final RadioButton radioButtonSpecify = dialogView.findViewById(R.id
+        final RadioButton extractToPathButton = dialogView.findViewById(R.id
                 .radioButtonSpecifyPath);
-        final Button buttonPathSelect = dialogView.findViewById(R.id.buttonPathSelect);
+        final Button selectPathButton = dialogView.findViewById(R.id.buttonPathSelect);
         RadioGroup radioGroupPath = dialogView.findViewById(R.id.radioGroupPath);
         final EditText editFileName = dialogView.findViewById(R.id.editFileName);
         editFileName.setText(currentFileName);
@@ -821,17 +821,17 @@ public class DialogHelper {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
                 if (checkedId == R.id.radioButtonCurrentPath) {
-                    buttonPathSelect.setVisibility(View.GONE);
+                    selectPathButton.setVisibility(View.GONE);
                 } else {
-                    buttonPathSelect.setVisibility(View.VISIBLE);
+                    selectPathButton.setVisibility(View.VISIBLE);
                 }
             }
         });
 
-        buttonPathSelect.setOnClickListener(new View.OnClickListener() {
+        selectPathButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                extractDialogListener.onSelectButtonClick(buttonPathSelect);
+                extractDialogListener.onSelectButtonClicked();
             }
         });
 
@@ -846,8 +846,13 @@ public class DialogHelper {
             @Override
             public void onClick(View view) {
                 String fileName = editFileName.getText().toString();
-                extractDialogListener.onPositiveButtonClick(alertDialog, currentFilePath, fileName,
-                        radioButtonSpecify.isChecked());
+                String newDir = destinationDir;
+                if (extractToPathButton.isChecked()) {
+                    newDir = selectPathButton.getText().toString();
+                }
+                extractDialogListener.onPositiveButtonClick(Operations.EXTRACT, zipFilePath, fileName,
+                        newDir);
+                alertDialog.dismiss();
             }
         });
 
@@ -977,10 +982,10 @@ public class DialogHelper {
 
     public interface ExtractDialogListener {
 
-        void onPositiveButtonClick(Dialog dialog, String currentFile, String newFileName, boolean
-                isChecked);
+        void onPositiveButtonClick(Operations operation, String sourceFilePath, String newFileName,
+                                   String destinationDir);
 
-        void onSelectButtonClick(Button path);
+        void onSelectButtonClicked();
 
 
     }

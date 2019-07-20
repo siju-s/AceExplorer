@@ -103,10 +103,10 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     val actionModeState: LiveData<ActionModeState>
         get() = _actionModeState
 
-    private val _selectedCount = MutableLiveData<Int>()
+    private val _selectedFileInfo = MutableLiveData<Pair<Int, FileInfo?>>()
 
-    val selectedCount: LiveData<Int>
-        get() = _selectedCount
+    val selectedFileInfo: LiveData<Pair<Int, FileInfo?>>
+        get() = _selectedFileInfo
 
     private val _refreshEvent = MutableLiveData<Boolean>()
 
@@ -119,6 +119,11 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     val showPasteDialog : LiveData<Triple<Operations, String, ArrayList<FileInfo>>>
     get() = _showPasteDialog
+
+    private val _showZipDialog = MutableLiveData<Triple<Operations, String, String>>()
+
+    val showZipDialog : LiveData<Triple<Operations, String, String>>
+    get() = _showZipDialog
 
     init {
         val model = storageModel as StorageModelImpl
@@ -308,7 +313,14 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
             endActionMode()
         }
         if (isActionModeActive()) {
-            _selectedCount.value = multiSelectionHelper.getSelectedCount()
+            val selectedCount = multiSelectionHelper.getSelectedCount()
+            if (selectedCount == 1) {
+                val fileInfo = _fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
+                _selectedFileInfo.value = Pair(selectedCount, fileInfo)
+            }
+            else {
+                _selectedFileInfo.value = Pair(selectedCount, null)
+            }
         }
     }
 
@@ -466,6 +478,17 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                 }
             }
 
+            R.id.action_extract -> {
+                if (multiSelectionHelper.hasSelectedItems()) {
+                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_EXTRACT)
+                    val fileInfo = _fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
+                    endActionMode()
+                    fileInfo?.let {
+                        _singleOpData.value = Pair(Operations.EXTRACT, fileInfo)
+                    }
+                }
+            }
+
         }
     }
 
@@ -545,6 +568,13 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                                                             operationData.second)
             pasteConflictChecker.setListener(pasteResultListener)
             pasteConflictChecker.run()
+        }
+    }
+
+    fun onExtractOperation(operation: Operations?, newFileName: String?, destinationDir: String) {
+        val path = singleOpData.value?.second?.filePath
+        if (path != null && newFileName != null) {
+            storageModel.extractFile(path, destinationDir, newFileName, zipOperationCallback)
         }
     }
 
@@ -706,6 +736,13 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                     _showPasteDialog.postValue(Triple(operation, destinationDir, files))
                 }
             }
+        }
+    }
+
+    val zipOperationCallback = object : OperationHelper.ZipOperationCallback {
+        override fun onZipOperationStarted(operation: Operations, sourceFilePath: String,
+                                           destinationPath: String) {
+           _showZipDialog.postValue(Triple(operation, sourceFilePath, destinationPath))
         }
 
     }

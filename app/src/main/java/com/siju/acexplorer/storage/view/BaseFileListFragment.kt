@@ -23,6 +23,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -46,8 +47,11 @@ import com.siju.acexplorer.storage.model.SortMode
 import com.siju.acexplorer.storage.model.StorageModelImpl
 import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.storage.model.operations.*
+import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH
+import com.siju.acexplorer.storage.modules.picker.view.DialogBrowseFragment
 import com.siju.acexplorer.storage.viewmodel.FileListViewModel
 import com.siju.acexplorer.storage.viewmodel.FileListViewModelFactory
+import com.siju.acexplorer.theme.Theme
 import com.siju.acexplorer.utils.InstallHelper
 import kotlinx.android.synthetic.main.main_list.*
 import kotlinx.android.synthetic.main.toolbar.*
@@ -57,6 +61,7 @@ const val KEY_PATH = "path"
 const val KEY_CATEGORY = "category"
 private const val TAG = "BaseFileListFragment"
 private const val SAF_REQUEST = 2000
+private const val EXTRACT_PATH_REQUEST = 5000
 
 open class BaseFileListFragment : Fragment() {
 
@@ -217,10 +222,10 @@ open class BaseFileListFragment : Fragment() {
             }
         })
 
-        fileListViewModel.selectedCount.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.selectedFileInfo.observe(viewLifecycleOwner, Observer {
             it?.apply {
                 if (fileListViewModel.actionModeState.value != ActionModeState.ENDED) {
-                    menuControls.onSelectedCountChanged(it)
+                    menuControls.onSelectedCountChanged(it.first, it.second)
                 }
             }
         })
@@ -277,6 +282,14 @@ open class BaseFileListFragment : Fragment() {
             it?.apply {
                 context?.let { context ->
                     OperationProgress().showPasteDialog(context, it.second, it.third, it.first)
+                }
+            }
+        })
+
+        fileListViewModel.showZipDialog.observe(viewLifecycleOwner, Observer {
+            it?.apply {
+                context?.let { context ->
+                    OperationProgress().showExtractProgressDialog(context, it.second, it.third)
                 }
             }
         })
@@ -355,6 +368,14 @@ open class BaseFileListFragment : Fragment() {
                                                 Category.FILES == category)
                 }
             }
+
+            Operations.EXTRACT -> {
+                context?.let { context->
+                    DialogHelper.showExtractDialog(context, operationData.second.filePath, fileListViewModel.currentDir,
+                                                   extractDialogListener)
+                }
+            }
+            else -> {}
         }
     }
 
@@ -383,6 +404,7 @@ open class BaseFileListFragment : Fragment() {
             Operations.PASTE                -> {
             }
 
+            else                            -> {}
         }
     }
 
@@ -480,13 +502,38 @@ open class BaseFileListFragment : Fragment() {
             override fun onPositiveButtonClick(dialog: Dialog?, operation: Operations?,
                                                name: String?) {
                 this@BaseFileListFragment.dialog = dialog
-                Log.e(TAG, "onSkipClicked: dialog:$dialog")
                 fileListViewModel.onOperation(operation, name)
             }
 
             override fun onNegativeButtonClick(operations: Operations?) {
             }
         }
+
+    private val extractDialogListener = object : DialogHelper.ExtractDialogListener {
+        override fun onPositiveButtonClick(
+                operation: Operations,
+                sourceFilePath: String,
+                newFileName: String, destinationDir: String) {
+            fileListViewModel.onExtractOperation(operation, newFileName, destinationDir)
+        }
+
+        override fun onSelectButtonClicked() {
+            val dialogFragment = DialogBrowseFragment()
+            dialogFragment.setTargetFragment(this@BaseFileListFragment, EXTRACT_PATH_REQUEST)
+            val theme = mainViewModel.theme.value
+            theme?.let {
+                dialogFragment.setStyle(DialogBrowseFragment.STYLE_NORMAL, getThemeStyle(theme))
+            }
+            this@BaseFileListFragment.fragmentManager?.let { dialogFragment.show(it, "Browse Fragment") }
+        }
+    }
+
+    private fun getThemeStyle(theme: Theme): Int {
+        return when (theme) {
+            Theme.DARK  -> R.style.BaseDarkTheme
+            Theme.LIGHT -> R.style.BaseLightTheme
+        }
+    }
 
         private val deleteDialogListener = DialogHelper.DeleteDialogListener { view, isTrashEnabled, filesToDelete ->
             fileListViewModel.deleteFiles(filesToDelete)
@@ -583,7 +630,7 @@ open class BaseFileListFragment : Fragment() {
                     }
                 }
 
-                SAF_REQUEST                                -> {
+                SAF_REQUEST          -> {
                     if (resultCode == RESULT_OK) {
                         val uri = intent?.data
                         if (uri == null) {
@@ -601,6 +648,14 @@ open class BaseFileListFragment : Fragment() {
                         Toast.makeText(context, resources.getString(R.string
                                                                             .access_denied_external),
                                        Toast.LENGTH_LONG).show()
+                    }
+                }
+
+                EXTRACT_PATH_REQUEST -> {
+                    if (resultCode == RESULT_OK) {
+                        val destDir = intent?.getStringExtra(KEY_FILEPATH)
+                        val pathButton = dialog?.findViewById<Button>(R.id.buttonPathSelect)
+                        pathButton?.text = destDir
                     }
                 }
             }

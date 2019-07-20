@@ -6,8 +6,11 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.Toolbar
 import com.siju.acexplorer.R
+import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper.*
+import com.siju.acexplorer.main.model.helper.FileUtils
+import com.siju.acexplorer.main.model.root.RootUtils
 
 private const val TAG = "MenuControls"
 
@@ -117,9 +120,10 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, val categ
         }
     }
 
-    private fun toggleMenuVisibility(count: Int) {
+    private fun toggleMenuVisibility(count: Int,
+                                     fileInfo: FileInfo?) {
         when {
-            count == 1 -> onSingleItemSelected()
+            count == 1 -> onSingleItemSelected(fileInfo)
             count > 1  -> {
                 renameItem.isVisible = false
                 infoItem.isVisible = false
@@ -130,12 +134,30 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, val categ
         }
     }
 
-    private fun onSingleItemSelected() {
+    private fun onSingleItemSelected(fileInfo: FileInfo?) {
         renameItem.isVisible = true
         infoItem.isVisible = true
         hideItem.isVisible = true
+
+        val isDir = fileInfo?.isDirectory
+        val filePath = fileInfo?.filePath
+
+        val isRoot = RootUtils.isRootDir(filePath)
+        if (FileUtils.isFileCompressed(filePath)) {
+            extractItem.isVisible = true
+            archiveItem.isVisible = false
+        }
+        if (isRoot) {
+            permissionItem.isVisible = true
+            extractItem.isVisible = false
+            archiveItem.isVisible = false
+        }
+        if (isDir == false) {
+            favItem.isVisible = false
+        }
+
         when {
-            category == Category.APP_MANAGER -> {
+            category == Category.APP_MANAGER  -> {
                 renameItem.isVisible = false
                 permissionItem.isVisible = false
                 extractItem.isVisible = false
@@ -158,9 +180,10 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, val categ
         return false
     }
 
-    fun onSelectedCountChanged(count: Int) {
+    fun onSelectedCountChanged(count: Int,
+                               fileInfo: FileInfo?) {
         setToolbarText(count.toString())
-        toggleMenuVisibility(count)
+        toggleMenuVisibility(count, fileInfo)
     }
 
     fun setToolbarTitle(title: String) {

@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.siju.acexplorer.storage.modules.zip;
+package com.siju.acexplorer.storage.modules.zip
+
+import java.io.File
 
 
-public class ZipUtils {
+object ZipUtils {
 
-    public static final String EXT_ZIP = ".zip";
-    public static final String EXT_APK= ".apk";
-    public static final String EXT_TAR = ".tar";
-    public static final String EXT_TAR_GZ = ".tar.gz";
-
-
+    private const val EXT_ZIP = ".zip"
+    private const val EXT_APK = ".apk"
+    const val EXT_TAR = ".tar"
+    const val EXT_TAR_GZ = ".tar.gz"
 
     /**
      * To be used when RAR as viewable not needed
@@ -32,8 +32,13 @@ public class ZipUtils {
      * @param filePath
      * @return
      */
-    public static boolean isZipViewable(String filePath) {
-        return filePath.toLowerCase().endsWith(EXT_ZIP) ||
-                filePath.toLowerCase().endsWith(EXT_APK);
+    fun isZipViewable(filePath: String): Boolean {
+        return filePath.endsWith(EXT_ZIP, true) || filePath.endsWith(
+                EXT_APK, true)
+    }
+
+    fun isTar(zipFilePath: String): Boolean {
+        return zipFilePath.endsWith(EXT_TAR, true) || File(zipFilePath).name.endsWith(
+                EXT_TAR_GZ, true)
     }
 }

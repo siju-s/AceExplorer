@@ -97,10 +97,10 @@ class OperationResultReceiver(private val operationHelper: OperationHelper) : Br
 
     override fun onReceive(context: Context, intent: Intent) {
         when(intent.action) {
-            ACTION_RELOAD_LIST -> {
-                val path = intent.getStringExtra(KEY_FILEPATH)
-                onReloadList(path)
-            }
+//            ACTION_RELOAD_LIST -> {
+//                val path = intent.getStringExtra(KEY_FILEPATH)
+//                onReloadList(path)
+//            }
             ACTION_OP_REFRESH  -> {
                 val bundle = intent.extras
                 val operation = bundle?.getSerializable(KEY_OPERATION) as Operations?
@@ -127,6 +127,7 @@ class OperationResultReceiver(private val operationHelper: OperationHelper) : Br
 //            Operations.RENAME, Operations.HIDE -> onRename(intent, operation)
             Operations.CUT                     -> onCut(count)
             Operations.COPY                    -> onCopyOperationCompleted(count)
+            Operations.EXTRACT                 -> onExtractCompleted()
         }//                onDeleted(intent);
     }
 
@@ -145,6 +146,10 @@ class OperationResultReceiver(private val operationHelper: OperationHelper) : Br
         //        }
         //        final ArrayList<String> oldFileList = intent.getStringArrayListExtra(KEY_OLD_FILES);
         //        deleteFromMediaStore(oldFileList);
+    }
+
+    private fun onExtractCompleted() {
+        operationHelper.onOperationCompleted(Operations.EXTRACT, 1)
     }
 
     private fun onRename(intent: Intent, operation: Operations) {

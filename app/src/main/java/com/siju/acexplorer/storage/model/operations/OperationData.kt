@@ -40,5 +40,9 @@ class OperationData private constructor(var arg1: String, var arg2: String) {
             return OperationData(destinationDir, filesToCopy)
         }
 
+        fun createExtractOperation(sourceFilePath: String, destinationDir: String): OperationData {
+            return OperationData(sourceFilePath, destinationDir)
+        }
+
     }
 }

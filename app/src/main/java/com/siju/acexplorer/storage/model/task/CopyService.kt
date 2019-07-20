@@ -150,11 +150,11 @@ class CopyService : Service() {
             stopSelf()
             return START_NOT_STICKY
         }
-        if (getArgs(intent, startId)) return START_NOT_STICKY
+        if (hasArgs(intent, startId)) return START_NOT_STICKY
         return START_STICKY
     }
 
-    private fun getArgs(intent: Intent, startId: Int): Boolean {
+    private fun hasArgs(intent: Intent, startId: Int): Boolean {
         files = intent.getParcelableArrayListExtra(KEY_FILES)
         if (files.isNullOrEmpty()) {
             stopService()

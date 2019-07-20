@@ -33,7 +33,8 @@ import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.logging.Logger
-import com.siju.acexplorer.storage.model.operations.OperationUtils.*
+import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_END
+import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_RESULT
 import com.siju.acexplorer.storage.model.task.CopyService
 import com.siju.acexplorer.storage.model.task.CreateZipService
 import com.siju.acexplorer.storage.model.task.ExtractService
@@ -42,7 +43,6 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 private const val TAG = "OperationProgress"
-
 
 
 class OperationProgress {
@@ -181,7 +181,7 @@ class OperationProgress {
     }
 
     @SuppressLint("InflateParams")
-    fun showExtractProgressDialog(context: Context, intent: Intent) {
+    fun showExtractProgressDialog(context: Context, zipFilePath: String, destinationPath: String) {
         this.context = context
         registerReceiver(context)
 
@@ -195,7 +195,7 @@ class OperationProgress {
         builder.setView(dialogView)
         progressDialog = builder.create()
 
-        progressDialog!!.setCancelable(false)
+        progressDialog?.setCancelable(false)
         textFileName = dialogView.findViewById(R.id.textFileName)
         textFileFromPath = dialogView.findViewById(R.id.textFileFromPath)
         val textFileToPath = dialogView.findViewById<TextView>(R.id.textFileToPath)
@@ -211,20 +211,20 @@ class OperationProgress {
         positiveButton.text = texts[1]
         negativeButton.text = texts[2]
 
-        textFileFromPath!!.text = intent.getStringExtra(KEY_FILEPATH)
-        textFileToPath.text = intent.getStringExtra(KEY_FILEPATH2)
+        textFileFromPath?.text = zipFilePath
+        textFileToPath.text = destinationPath
 
-        textFileName!!.text = title
-        textProgress!!.text = "0%"
+        textFileName?.text = title
+        textProgress?.text = "0%"
 
-        positiveButton.setOnClickListener { progressDialog!!.dismiss() }
+        positiveButton.setOnClickListener { progressDialog?.dismiss() }
 
         negativeButton.setOnClickListener {
             stopExtractService()
-            progressDialog!!.dismiss()
+            progressDialog?.dismiss()
         }
 
-        progressDialog!!.show()
+        progressDialog?.show()
     }
 
 
@@ -330,22 +330,7 @@ class OperationProgress {
             }
 
             EXTRACT_PROGRESS -> {
-                Logger.log(TAG, "Progress=" + progress + "Operation=" + EXTRACT_PROGRESS)
-                progressBarPaste!!.progress = progress
-                textFileCount!!.text = String.format("%s/%s",
-                                                     Formatter.formatFileSize(context, copiedBytes),
-                                                     Formatter.formatFileSize(context, totalBytes))
-                textProgress!!.text = String.format(Locale.getDefault(), "%d%s", progress,
-                                                    context!!.getString(
-                                                            R.string.percent_placeholder))
-
-                if (progress == 100 || isCopied(copiedBytes, totalBytes)) {
-                    stopExtractService()
-                    progressDialog!!.dismiss()
-                }
-                if (end && progressDialog != null) {
-                    progressDialog!!.dismiss()
-                }
+                handleExtractProgress(intent)
             }
             COPY_PROGRESS    -> {
                 handleCopyProgress(intent)
@@ -353,6 +338,30 @@ class OperationProgress {
             MOVE_PROGRESS    -> {
                 handleMoveProgress(intent)
             }
+        }
+    }
+
+    private fun handleExtractProgress(intent: Intent) {
+        val copiedBytes = intent.getLongExtra(KEY_COMPLETED, 0)
+        val totalBytes = intent.getLongExtra(KEY_TOTAL, 0)
+        val progress = intent.getIntExtra(KEY_PROGRESS, 0)
+        val isCompleted = intent.getBooleanExtra(KEY_END, false)
+
+        Logger.log(TAG, "Progress=" + progress + "Operation=" + EXTRACT_PROGRESS)
+        progressBarPaste?.progress = progress
+        textFileCount?.text = String.format("%s/%s",
+                                            Formatter.formatFileSize(context, copiedBytes),
+                                            Formatter.formatFileSize(context, totalBytes))
+        textProgress?.text = String.format(Locale.getDefault(), "%d%s", progress,
+                                           context?.getString(
+                                                   R.string.percent_placeholder))
+
+        if (progress == 100 || isCopied(copiedBytes, totalBytes)) {
+            stopExtractService()
+            progressDialog?.dismiss()
+        }
+        if (isCompleted) {
+            progressDialog?.dismiss()
         }
     }
 
@@ -369,7 +378,7 @@ class OperationProgress {
             textFileFromPath?.text = copiedFileInfo[movedCount - 1].filePath
             textFileName?.text = copiedFileInfo[movedCount - 1].fileName
             textFileCount?.text = String.format(Locale.getDefault(), "%d/%d", movedCount,
-                                                 copiedFilesSize)
+                                                copiedFilesSize)
         }
         if (progress == 100) {
             stopMoveService()

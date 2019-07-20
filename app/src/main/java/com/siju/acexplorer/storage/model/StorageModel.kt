@@ -127,4 +127,7 @@ interface StorageModel {
                             pasteActionInfo: ArrayList<PasteActionInfo>,
                             operations: Operations,
                             pasteOperationCallback: OperationHelper.PasteOperationCallback)
+
+    fun extractFile(sourceFilePath : String, destinationDir: String, newName: String, zipOperationCallback: OperationHelper.ZipOperationCallback)
+
 }

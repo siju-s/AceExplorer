@@ -11,6 +11,7 @@ import com.siju.acexplorer.main.model.helper.SdkHelper
 import com.siju.acexplorer.storage.model.PasteActionInfo
 import com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH
 import com.siju.acexplorer.storage.model.task.CopyService
+import com.siju.acexplorer.storage.model.task.ExtractService
 import com.siju.acexplorer.storage.model.task.MoveService
 import java.io.File
 
@@ -303,6 +304,42 @@ class OperationHelper(val context: Context) {
         }
     }
 
+    fun extractFile(context: Context, sourceFilePath : String, destinationDir: String, newName: String,
+                    zipOperationCallback: ZipOperationCallback,
+                    fileOperationCallback: FileOperationCallback) {
+        setFileOperationCallback(fileOperationCallback)
+        val newPath = "$destinationDir/$newName"
+
+        if (FileUtils.isFileNameInvalid(newName)) {
+            fileOperationCallback.onOperationResult(Operations.EXTRACT, getOperationAction(
+                    OperationResult(OperationResultCode.INVALID_FILE, 0)))
+            return
+        }
+        if (File(newPath).exists()) {
+            fileOperationCallback.onOperationResult(Operations.EXTRACT,
+                                                    getOperationAction(OperationResult(
+                                                            OperationResultCode.FILE_EXISTS, 0)))
+            return
+        }
+        when (OperationUtils.checkFolder(destinationDir)) {
+            OperationUtils.WriteMode.INTERNAL -> {
+                addOperation(Operations.EXTRACT, OperationData.createExtractOperation(sourceFilePath, newPath))
+                zipOperationCallback.onZipOperationStarted(Operations.EXTRACT, sourceFilePath, newPath)
+                val intent = Intent(context, ExtractService::class.java)
+                intent.apply {
+                    putExtra(OperationUtils.KEY_FILEPATH, sourceFilePath)
+                    putExtra(OperationUtils.KEY_FILEPATH2, newPath)
+                }
+                if (SdkHelper.isAtleastOreo()) {
+                    context.startForegroundService(intent)
+                }
+                else {
+                    context.startService(intent)
+                }
+            }
+        }
+    }
+
 
     private fun setFileOperationCallback(fileOperationCallback: FileOperationCallback) {
         this.fileOperationCallback = fileOperationCallback
@@ -333,6 +370,9 @@ class OperationHelper(val context: Context) {
     interface PasteOperationCallback {
         fun onPasteActionStarted(operation: Operations, destinationDir: String,
                                  files: ArrayList<FileInfo>)
+    }
+    interface ZipOperationCallback {
+        fun onZipOperationStarted(operation: Operations, sourceFilePath: String, destinationDir: String)
     }
 
 }
