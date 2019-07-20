@@ -58,6 +58,10 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     private val _multiSelectionOpData = MutableLiveData<Pair<Operations, ArrayList<FileInfo>>>()
 
+    private val _pasteOpData = MutableLiveData<Triple<Operations, Operations, ArrayList<FileInfo>>>()
+    val pasteOpData: LiveData<Triple<Operations, Operations, ArrayList<FileInfo>>>
+        get() = _pasteOpData
+
     val multiSelectionOpData: LiveData<Pair<Operations, ArrayList<FileInfo>>>
         get() = _multiSelectionOpData
 
@@ -111,10 +115,10 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     val operationData: LiveData<Pair<Operations, OperationAction>>
 
-    private val _showCopyDialog = MutableLiveData<Pair<String, ArrayList<FileInfo>>>()
+    private val _showPasteDialog = MutableLiveData<Triple<Operations, String, ArrayList<FileInfo>>>()
 
-    val showCopyDialog : LiveData<Pair<String, ArrayList<FileInfo>>>
-    get() = _showCopyDialog
+    val showPasteDialog : LiveData<Triple<Operations, String, ArrayList<FileInfo>>>
+    get() = _showPasteDialog
 
     init {
         val model = storageModel as StorageModelImpl
@@ -435,13 +439,29 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                 }
             }
 
+            R.id.action_cut   -> {
+                if (multiSelectionHelper.hasSelectedItems()) {
+                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_CUT)
+                    val filesToMove = arrayListOf<FileInfo>()
+                    val selectedItems = multiSelectionHelper.selectedItems
+                    for (i in 0 until selectedItems.size()) {
+                        val fileInfo = _fileData.value?.get(selectedItems.keyAt(i))
+                        fileInfo?.let { filesToMove.add(it) }
+                    }
+                    endActionMode()
+                    _multiSelectionOpData.value = Pair(Operations.CUT, filesToMove)
+                }
+            }
+
+
             R.id.action_paste  -> {
-                if (_multiSelectionOpData.value?.first == Operations.COPY) {
+                val operations = _multiSelectionOpData.value?.first
+                if (operations == Operations.COPY || operations == Operations.CUT)  {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_PASTE)
                     val list = _multiSelectionOpData.value?.second
                     endActionMode()
                     list?.let {
-                        _multiSelectionOpData.value = Pair(Operations.PASTE, list)
+                        _pasteOpData.value = Triple(Operations.PASTE, operations, list)
                     }
                 }
             }
@@ -521,7 +541,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     fun onPaste(path: String, operationData: Pair<Operations, ArrayList<FileInfo>>) {
         uiScope.launch(Dispatchers.IO) {
             val pasteConflictChecker = PasteConflictChecker(path, false,
-                                                            operationData.first == Operations.CUT,
+                                                            operationData.first,
                                                             operationData.second)
             pasteConflictChecker.setListener(pasteResultListener)
             pasteConflictChecker.run()
@@ -683,7 +703,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                                           files: ArrayList<FileInfo>) {
             when(operation) {
                 Operations.COPY -> {
-                    _showCopyDialog.postValue(Pair(destinationDir, files))
+                    _showPasteDialog.postValue(Triple(operation, destinationDir, files))
                 }
             }
         }

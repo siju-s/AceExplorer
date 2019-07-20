@@ -28,7 +28,7 @@ import java.util.*
 
 
 class PasteConflictChecker(private val destinationDir: String, private val rooted: Boolean,
-                           private val isMove: Boolean, private val totalFilesToPaste: ArrayList<FileInfo>) {
+                           private val operation: Operations, private val totalFilesToPaste: ArrayList<FileInfo>) {
 
     private val conflictFiles = arrayListOf<FileInfo>()
     private val destFiles = arrayListOf<FileInfo>()
@@ -50,7 +50,6 @@ class PasteConflictChecker(private val destinationDir: String, private val roote
 
     private fun onPastePossible() {
         findConflictFiles()
-        val operation = if (isMove) Operations.CUT else Operations.COPY
         if (conflictFiles.isEmpty()) {
             pasteResultCallback?.checkWriteMode(destinationDir, totalFilesToPaste, operation)
         }
@@ -65,7 +64,7 @@ class PasteConflictChecker(private val destinationDir: String, private val roote
         for (i in totalFilesToPaste.indices) {
             val fileInfo = totalFilesToPaste[i]
 
-            fileInfo?.let {
+            fileInfo.let {
                 totalBytes = if (fileInfo.isDirectory) {
                     totalBytes + FileUtils.getFolderSize(File(fileInfo.filePath))
                 }
@@ -95,7 +94,7 @@ class PasteConflictChecker(private val destinationDir: String, private val roote
 
         for (destFile in listFiles) {
             for (fileToPaste in totalFilesToPaste) {
-                if (fileToPaste != null && fileToPaste.fileName == destFile.fileName) {
+                if (fileToPaste.fileName == destFile.fileName) {
                     conflictFiles.add(fileToPaste)
                     destFiles.add(destFile)
                 }

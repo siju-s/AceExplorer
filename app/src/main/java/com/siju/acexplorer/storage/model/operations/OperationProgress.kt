@@ -351,28 +351,32 @@ class OperationProgress {
                 handleCopyProgress(intent)
             }
             MOVE_PROGRESS    -> {
-                val totalProgressPaste = intent.getIntExtra(KEY_TOTAL_PROGRESS, 0)
-                //                Logger.log(TAG, "KEY_PROGRESS=" + progress + " KEY_TOTAL KEY_PROGRESS=" + totalProgressPaste);
-                //                Logger.log(TAG, "Copied files=" + copiedBytes + " KEY_TOTAL files=" + totalBytes);
-                progressBarPaste!!.progress = totalProgressPaste
-                textProgress!!.text = String.format(Locale.getDefault(), "%d%s", totalProgressPaste,
-                                                    context!!.getString(
-                                                            R.string.percent_placeholder))
-                val movedCount = copiedBytes.toInt()
-                if (movedCount != 0) {
-                    textFileFromPath!!.text = copiedFileInfo[movedCount - 1].filePath
-                    textFileName!!.text = copiedFileInfo[movedCount - 1].fileName
-                    textFileCount!!.text = String.format(Locale.getDefault(), "%d/%d", movedCount,
-                                                         copiedFilesSize)
-                }
-                if (totalProgressPaste == 100) {
-                    stopMoveService()
-                    progressDialog!!.dismiss()
-                }
-                if (end && progressDialog != null) {
-                    progressDialog!!.dismiss()
-                }
+                handleMoveProgress(intent)
             }
+        }
+    }
+
+    private fun handleMoveProgress(intent: Intent) {
+        val copiedBytes = intent.getLongExtra(KEY_COMPLETED, 0)
+        val progress = intent.getIntExtra(KEY_TOTAL_PROGRESS, 0)
+        val isCompleted = intent.getBooleanExtra(KEY_END, false)
+
+        progressBarPaste?.progress = progress
+        textProgress?.text = String.format(Locale.getDefault(), "%d%s", progress,
+                                           context?.getString(R.string.percent_placeholder))
+        val movedCount = copiedBytes.toInt()
+        if (movedCount > 0) {
+            textFileFromPath?.text = copiedFileInfo[movedCount - 1].filePath
+            textFileName?.text = copiedFileInfo[movedCount - 1].fileName
+            textFileCount?.text = String.format(Locale.getDefault(), "%d/%d", movedCount,
+                                                 copiedFilesSize)
+        }
+        if (progress == 100) {
+            stopMoveService()
+            progressDialog?.dismiss()
+        }
+        if (isCompleted) {
+            progressDialog?.dismiss()
         }
     }
 

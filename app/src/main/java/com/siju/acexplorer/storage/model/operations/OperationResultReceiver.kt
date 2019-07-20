@@ -125,16 +125,17 @@ class OperationResultReceiver(private val operationHelper: OperationHelper) : Br
 //            Operations.DELETE                  -> {
 //            }
 //            Operations.RENAME, Operations.HIDE -> onRename(intent, operation)
-            Operations.CUT                     -> onCut(intent, count)
+            Operations.CUT                     -> onCut(count)
             Operations.COPY                    -> onCopyOperationCompleted(count)
         }//                onDeleted(intent);
     }
 
     private fun onCopyOperationCompleted(count: Int) {
-        operationHelper.onCopyCompleted(Operations.COPY, count)
+        operationHelper.onOperationCompleted(Operations.COPY, count)
     }
 
-    private fun onCut(intent: Intent, count: Int) {
+    private fun onCut(count: Int) {
+        operationHelper.onOperationCompleted(Operations.CUT, count)
         //        if (count > 0 && getContext() != null) {
         //            Toast.makeText(getContext(), String.format(Locale.getDefault(), getContext().
         //                                                                                                getString(

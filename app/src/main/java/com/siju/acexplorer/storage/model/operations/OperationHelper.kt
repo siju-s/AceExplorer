@@ -11,6 +11,7 @@ import com.siju.acexplorer.main.model.helper.SdkHelper
 import com.siju.acexplorer.storage.model.PasteActionInfo
 import com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH
 import com.siju.acexplorer.storage.model.task.CopyService
+import com.siju.acexplorer.storage.model.task.MoveService
 import java.io.File
 
 private const val EXT_TXT = ".txt"
@@ -275,11 +276,39 @@ class OperationHelper(val context: Context) {
         }
     }
 
+    fun moveFiles(context: Context, destinationDir: String, files: ArrayList<FileInfo>,
+                  pasteActionInfo: ArrayList<PasteActionInfo>,
+                  pasteOperationCallback: PasteOperationCallback,
+                  fileOperationCallback: FileOperationCallback) {
+        setFileOperationCallback(fileOperationCallback)
+        when (OperationUtils.checkFolder(destinationDir)) {
+            OperationUtils.WriteMode.INTERNAL -> {
+                addOperation(Operations.CUT,
+                             OperationData.createCopyOperation(destinationDir, files))
+                pasteOperationCallback.onPasteActionStarted(Operations.CUT, destinationDir, files)
+
+                val intent = Intent(context, MoveService::class.java)
+                intent.apply {
+                    putParcelableArrayListExtra(OperationUtils.KEY_CONFLICT_DATA, pasteActionInfo)
+                    putParcelableArrayListExtra(OperationUtils.KEY_FILES, files)
+                    putExtra(OperationUtils.KEY_FILEPATH, destinationDir)
+                }
+                if (SdkHelper.isAtleastOreo()) {
+                    context.startForegroundService(intent)
+                }
+                else {
+                    context.startService(intent)
+                }
+            }
+        }
+    }
+
+
     private fun setFileOperationCallback(fileOperationCallback: FileOperationCallback) {
         this.fileOperationCallback = fileOperationCallback
     }
 
-    fun onCopyCompleted(operation: Operations, count: Int) {
+    fun onOperationCompleted(operation: Operations, count: Int) {
         val resultCode =
                 if (count > 0) {
                     OperationResultCode.SUCCESS

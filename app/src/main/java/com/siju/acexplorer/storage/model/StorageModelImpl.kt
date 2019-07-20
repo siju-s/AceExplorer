@@ -114,8 +114,12 @@ class StorageModelImpl(val context: Context) : StorageModel {
                                      pasteActionInfo: ArrayList<PasteActionInfo>,
                                      operations: Operations,
                                      pasteOperationCallback: OperationHelper.PasteOperationCallback) {
-        operationHelper.copyFiles(context, destinationDir, files, pasteActionInfo,
-                                  pasteOperationCallback, fileOperationCallback)
+        when(operations) {
+            Operations.CUT -> operationHelper.moveFiles(context, destinationDir, files, pasteActionInfo,
+                                                         pasteOperationCallback, fileOperationCallback)
+            Operations.COPY -> operationHelper.copyFiles(context, destinationDir, files, pasteActionInfo,
+                                                         pasteOperationCallback, fileOperationCallback)
+        }
     }
 
 

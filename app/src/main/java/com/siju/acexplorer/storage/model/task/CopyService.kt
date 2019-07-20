@@ -44,12 +44,9 @@ import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_END
 import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH
 import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES
 import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES_COUNT
-import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_MOVE
 import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION
 import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_RESULT
 import com.siju.acexplorer.storage.model.operations.Operations.COPY
-import com.siju.acexplorer.storage.model.operations.Operations.CUT
-
 import java.io.*
 import java.util.*
 
@@ -74,7 +71,6 @@ class CopyService : Service() {
     private var totalBytes = 0L
     private var copiedBytes = 0L
     private var count = 0
-    private var move = false
     private var calculatingTotalSize = false
     private var stopService = false
     private var isCompleted = false
@@ -109,8 +105,8 @@ class CopyService : Service() {
             setOnlyAlertOnce(true)
             setDefaults(0)
             addAction(NotificationCompat.Action(R.drawable.ic_cancel,
-                                              getString(R.string.dialog_cancel),
-                                              pendingCancelIntent))
+                                                getString(R.string.dialog_cancel),
+                                                pendingCancelIntent))
         }
 
         return notifBuilder?.build()
@@ -165,7 +161,6 @@ class CopyService : Service() {
             return true
         }
         pasteActionInfo = intent.getParcelableArrayListExtra(KEY_CONFLICT_DATA)
-        move = intent.getBooleanExtra(KEY_MOVE, false)
 
         val currentDir = intent.getStringExtra(KEY_FILEPATH)
 
@@ -204,7 +199,6 @@ class CopyService : Service() {
                 publishCompletionResult()
             }
         }
-        deleteCopiedFiles()
     }
 
     private fun onRoot(currentDir: String) {
@@ -241,7 +235,7 @@ class CopyService : Service() {
                 destFile.filePath = path
                 Logger.log("CopyService", "Execute-Dest file path=" + destFile
                         .filePath)
-                startCopy(sourceFile, destFile, move)
+                startCopy(sourceFile, destFile)
             }
             catch (e: Exception) {
                 e.printStackTrace()
@@ -372,7 +366,7 @@ class CopyService : Service() {
         val intent = Intent(ACTION_OP_REFRESH)
         intent.putExtra(KEY_FILES_COUNT, filesCopied)
         intent.putExtra(KEY_RESULT, failedFiles.isEmpty())
-        intent.putExtra(KEY_OPERATION, if (move) CUT else COPY)
+        intent.putExtra(KEY_OPERATION, COPY)
         scanMultipleFiles(AceApplication.appContext, filesToMediaIndex.toTypedArray())
         sendBroadcast(intent)
     }
@@ -401,9 +395,9 @@ class CopyService : Service() {
     }
 
     @Throws(IOException::class)
-    private fun startCopy(sourceFile: FileInfo, targetFile: FileInfo, move: Boolean) {
+    private fun startCopy(sourceFile: FileInfo, targetFile: FileInfo) {
         if (sourceFile.isDirectory) {
-            copyDirectory(sourceFile, targetFile, move)
+            copyDirectory(sourceFile, targetFile)
         }
         else {
             copyFiles(sourceFile, targetFile)
@@ -411,7 +405,7 @@ class CopyService : Service() {
     }
 
     @Throws(IOException::class)
-    private fun copyDirectory(sourceFile: FileInfo, targetFile: FileInfo, move: Boolean) {
+    private fun copyDirectory(sourceFile: FileInfo, targetFile: FileInfo) {
         val destinationDir = File(targetFile.filePath)
         var isExists = true
         if (!destinationDir.exists()) {
@@ -438,7 +432,7 @@ class CopyService : Service() {
 
             val destFile = createDestFile(sourceFile)
             destFile.filePath = targetFile.filePath + SEPARATOR + file.fileName
-            startCopy(file, destFile, move)
+            startCopy(file, destFile)
         }
     }
 
@@ -536,18 +530,16 @@ class CopyService : Service() {
     private fun publishResults(fileName: String, totalProgress: Int, total: Long, done: Long) {
         Logger.log("CopyService", "Total bytes=" + totalBytes + "Copied=" + copiedBytes +
                 "Progress = " + totalProgress)
-        notifBuilder?.setProgress(100, totalProgress, false)
-        notifBuilder?.setOngoing(true)
-        var title = R.string.copying
-        if (move) {
-            title = R.string.moving
+        val title = R.string.copying
+        notifBuilder?.apply {
+            setProgress(100, totalProgress, false)
+            setOngoing(true)
+            setContentTitle(getString(title))
+            setContentText(File(fileName).name + " " + FileUtils.formatSize(context,
+                                                                            done) + SEPARATOR + FileUtils
+                    .formatSize(context, total))
         }
-        notifBuilder?.setContentTitle(getString(title))
-        notifBuilder?.setContentText(File(fileName).name + " " + FileUtils.formatSize(context,
-                                                                                      done) + SEPARATOR + FileUtils
-                .formatSize(context, total))
         notificationManager?.notify(NOTIFICATION_ID, notifBuilder?.build())
-
         sendBroadcast(completed = copiedBytes, total = totalBytes, totalProgress = totalProgress)
 
         if (totalProgress == 100 || total == 0L || totalBytes == copiedBytes) {
@@ -602,22 +594,6 @@ class CopyService : Service() {
             }
         }
         return index == -1
-    }
-
-    private fun deleteCopiedFiles() {
-        if (move) {
-            val toDelete = ArrayList<FileInfo>()
-            for (fileInfo in files) {
-                if (!failedFiles.contains(fileInfo)) {
-                    toDelete.add(fileInfo)
-                }
-            }
-            Logger.log("Copy", "todel" + toDelete.size)
-
-            val deleteTask = DeleteTask(context, toDelete)
-            deleteTask.setmShowToast()
-            deleteTask.delete()
-        }
     }
 
     override fun onBind(intent: Intent): IBinder? {
