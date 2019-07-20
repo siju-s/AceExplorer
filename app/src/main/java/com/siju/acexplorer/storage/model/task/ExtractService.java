@@ -32,11 +32,12 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
+import android.text.format.Formatter;
+import android.util.Log;
+
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import android.text.format.Formatter;
-import android.util.Log;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.logging.Logger;
@@ -69,10 +70,10 @@ import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FI
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH2;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION;
 import static com.siju.acexplorer.storage.model.operations.Operations.EXTRACT;
-import static com.siju.acexplorer.storage.model.operations.ProgressUtils.EXTRACT_PROGRESS;
-import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_COMPLETED;
-import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_PROGRESS;
-import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_TOTAL;
+import static com.siju.acexplorer.storage.model.operations.ProgressConstantsKt.EXTRACT_PROGRESS;
+import static com.siju.acexplorer.storage.model.operations.ProgressConstantsKt.KEY_COMPLETED;
+import static com.siju.acexplorer.storage.model.operations.ProgressConstantsKt.KEY_PROGRESS;
+import static com.siju.acexplorer.storage.model.operations.ProgressConstantsKt.KEY_TOTAL;
 import static com.siju.acexplorer.storage.modules.zip.ZipUtils.EXT_TAR;
 import static com.siju.acexplorer.storage.modules.zip.ZipUtils.EXT_TAR_GZ;
 

@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
+import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.data.DataFetcherFactory
 import com.siju.acexplorer.main.model.data.DataLoader
@@ -23,7 +24,7 @@ class StorageModelImpl(val context: Context) : StorageModel {
 
     private val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     private val globalPreference = PreferenceManager.getDefaultSharedPreferences(context)
-    private val operationHelper = OperationHelper()
+    private val operationHelper = OperationHelper(AceApplication.appContext)
     private val _operationData = MutableLiveData<Pair<Operations, OperationAction>>()
 
     val operationData: LiveData<Pair<Operations, OperationAction>>
@@ -102,6 +103,19 @@ class StorageModelImpl(val context: Context) : StorageModel {
         // Persist URI - this is required for verification of writability.
         context.contentResolver.takePersistableUriPermission(uri, newFlags)
         operationHelper.onSafSuccess(fileOperationCallback)
+    }
+
+    override fun onExit() {
+        operationHelper.cleanup()
+    }
+
+    override fun checkPasteWriteMode(destinationDir: String,
+                                     files: ArrayList<FileInfo>,
+                                     pasteActionInfo: ArrayList<PasteActionInfo>,
+                                     operations: Operations,
+                                     pasteOperationCallback: OperationHelper.PasteOperationCallback) {
+        operationHelper.copyFiles(context, destinationDir, files, pasteActionInfo,
+                                  pasteOperationCallback, fileOperationCallback)
     }
 
 

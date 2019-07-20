@@ -30,14 +30,14 @@ import java.util.*
 
 object ShareHelper {
 
-    fun shareFiles(context: Context, fileInfo: ArrayList<FileInfo?>, category: Category) {
+    fun shareFiles(context: Context, fileInfo: ArrayList<FileInfo>, category: Category) {
         val intent = Intent()
         intent.action = Intent.ACTION_SEND_MULTIPLE
         if (checkIfFileCategory(category)) {
             intent.type = "*/*"
         }
         else {
-            val extension = fileInfo[0]?.extension
+            val extension = fileInfo[0].extension
             val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
             Logger.log("ShareHelper", "Mime:" + mimeType!!)
             intent.type = mimeType
@@ -46,7 +46,7 @@ object ShareHelper {
         val files = ArrayList<Uri>()
 
         for (info in fileInfo) {
-            val uri = UriHelper.createContentUri(context, info?.filePath)
+            val uri = UriHelper.createContentUri(context, info.filePath)
             uri?.let { files.add(it) }
         }
 

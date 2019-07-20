@@ -163,4 +163,14 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, val categ
         toggleMenuVisibility(count)
     }
 
+    fun setToolbarTitle(title: String) {
+        toolbar.title = title
+    }
+
+    fun onPasteEnabled() {
+        bottomToolbar.visibility = View.VISIBLE
+        bottomToolbar.menu.clear()
+        bottomToolbar.inflateMenu(R.menu.action_mode_paste)
+    }
+
 }

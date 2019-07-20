@@ -21,6 +21,7 @@ import android.net.Uri
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.view.dialog.DialogHelper
+import com.siju.acexplorer.storage.model.operations.OperationHelper
 import com.siju.acexplorer.storage.model.operations.Operations
 
 /**
@@ -75,6 +76,7 @@ interface StorageModel {
     fun getViewMode(): ViewMode
     fun saveViewMode(viewMode: ViewMode?)
     fun shouldShowHiddenFiles() : Boolean
+    fun onExit()
 
 
     interface Listener {
@@ -89,7 +91,7 @@ interface StorageModel {
 
         fun onLowSpace()
 
-        fun showPasteProgressDialog(destinationDir: String, files: List<FileInfo>, copyData: List<CopyData>, isMove: Boolean)
+        fun showPasteProgressDialog(destinationDir: String, files: List<FileInfo>, copyData: List<PasteActionInfo>, isMove: Boolean)
 
         fun onOperationFailed(operation: Operations)
 
@@ -120,4 +122,9 @@ interface StorageModel {
     fun createFolder(operation: Operations, path: String, name: String)
     fun createFile(operation: Operations, path: String, name: String)
     fun deleteFiles(operation: Operations, files: ArrayList<String>)
+    fun checkPasteWriteMode(destinationDir: String,
+                            files: ArrayList<FileInfo>,
+                            pasteActionInfo: ArrayList<PasteActionInfo>,
+                            operations: Operations,
+                            pasteOperationCallback: OperationHelper.PasteOperationCallback)
 }

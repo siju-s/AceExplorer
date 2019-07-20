@@ -32,18 +32,19 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
+
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.main.model.helper.FileUtils;
 import com.siju.acexplorer.main.model.helper.LargeBundleTransfer;
 import com.siju.acexplorer.main.model.root.RootDeniedException;
 import com.siju.acexplorer.main.model.root.RootUtils;
-import com.siju.acexplorer.storage.model.CopyData;
+import com.siju.acexplorer.storage.model.PasteActionInfo;
 import com.siju.acexplorer.storage.model.operations.OperationProgress;
 import com.siju.acexplorer.storage.model.operations.OperationUtils;
 
@@ -63,10 +64,10 @@ import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FI
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OLD_FILES;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION;
 import static com.siju.acexplorer.storage.model.operations.Operations.CUT;
-import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_COMPLETED;
-import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_TOTAL;
-import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_TOTAL_PROGRESS;
-import static com.siju.acexplorer.storage.model.operations.ProgressUtils.MOVE_PROGRESS;
+import static com.siju.acexplorer.storage.model.operations.ProgressConstantsKt.KEY_COMPLETED;
+import static com.siju.acexplorer.storage.model.operations.ProgressConstantsKt.KEY_TOTAL;
+import static com.siju.acexplorer.storage.model.operations.ProgressConstantsKt.KEY_TOTAL_PROGRESS;
+import static com.siju.acexplorer.storage.model.operations.ProgressConstantsKt.MOVE_PROGRESS;
 
 public class MoveService extends Service {
 
@@ -81,7 +82,7 @@ public class MoveService extends Service {
     private ServiceHandler             serviceHandler;
 
     private List<FileInfo>    filesToMove;
-    private List<CopyData>    copyData;
+    private List<PasteActionInfo>    copyData;
     private ArrayList<String> filesMovedList = new ArrayList<>();
     private ArrayList<String> oldFileList;
 
@@ -232,7 +233,7 @@ public class MoveService extends Service {
                         int action = FileUtils.ACTION_NONE;
 
                         if (copyData != null) {
-                            for (CopyData copyData1 : copyData) {
+                            for (PasteActionInfo copyData1 : copyData) {
                                 if (copyData1.getFilePath().equals(sourcePath)) {
                                     action = copyData1.getAction();
                                     break;

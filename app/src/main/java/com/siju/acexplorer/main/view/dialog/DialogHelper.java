@@ -51,6 +51,7 @@ import com.siju.acexplorer.main.model.helper.UriHelper;
 import com.siju.acexplorer.main.view.PasteConflictAdapter;
 import com.siju.acexplorer.storage.model.SortMode;
 import com.siju.acexplorer.storage.model.operations.Operations;
+import com.siju.acexplorer.storage.model.operations.PasteData;
 import com.siju.acexplorer.utils.Clipboard;
 import com.stericson.RootTools.RootTools;
 
@@ -412,9 +413,7 @@ public class DialogHelper {
 
     }
 
-    public static void showConflictDialog(Context context, final List<FileInfo> conflictFiles,
-                                          final List<FileInfo> destFiles, final String
-                                                  destinationDir, final boolean isMove,
+    public static void showConflictDialog(Context context, final PasteData pasteData,
                                           final PasteConflictListener pasteConflictListener) {
         String[] texts = new String[]{context.getString(R.string.msg_file_exists),
                 context.getString(R.string.dialog_skip), context.getString(R.string.dialog_keep_both),
@@ -435,10 +434,17 @@ public class DialogHelper {
 
         List<FileInfo> fileInfoList = new ArrayList<>();
 
-        String sourcePath = conflictFiles.get(0).getFilePath();
+        final List<FileInfo> conflictFiles = pasteData.getConflictFiles();
+        final List<FileInfo> destFiles = pasteData.getDestFiles();
+
+        final String destinationDir = pasteData.getDestinationDir();
+        final Operations operation = pasteData.getOperations();
+        FileInfo fileToPaste = conflictFiles.get(0);
+
+        String sourcePath = fileToPaste.getFilePath();
         File sourceFile = new File(sourcePath);
 
-        fileInfoList.add(conflictFiles.get(0));
+        fileInfoList.add(fileToPaste);
         fileInfoList.add(destFiles.get(0));
 
         PasteConflictAdapter pasteConflictAdapter = new PasteConflictAdapter(context, fileInfoList);
@@ -457,7 +463,7 @@ public class DialogHelper {
 
         // POSITIVE BUTTON ->SKIP   NEGATIVE ->REPLACE    NEUTRAL ->KEEP BOTH
         if (sourceFile.getParent().equals(destinationDir)) {
-            if (isMove) {
+            if (operation == Operations.CUT) {
                 neutralButton.setVisibility(View.GONE);
                 negativeButton.setVisibility(View.GONE);
             } else {
@@ -465,19 +471,18 @@ public class DialogHelper {
             }
         }
 
-        if (new File(conflictFiles.get(0).getFilePath()).isDirectory()) {
+        if (new File(fileToPaste.getFilePath()).isDirectory()) {
             neutralButton.setVisibility(View.GONE);
         }
 
 
+        final boolean checked = checkBox.isChecked();
         positiveButton.setOnClickListener(new View
                 .OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-                pasteConflictListener.onPositiveButtonClick(dialog, Operations.COPY, destFiles,
-                        conflictFiles, destinationDir,
-                        isMove, checkBox.isChecked());
+                pasteConflictListener.onSkipClicked(pasteData, checked);
             }
         });
 
@@ -486,9 +491,7 @@ public class DialogHelper {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-                pasteConflictListener.onNegativeButtonClick(dialog, Operations.COPY, destFiles,
-                        conflictFiles, destinationDir,
-                        isMove, checkBox.isChecked());
+                pasteConflictListener.onReplaceClicked(pasteData, checked);
             }
         });
 
@@ -497,9 +500,7 @@ public class DialogHelper {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-                pasteConflictListener.onNeutralButtonClick(dialog, Operations.COPY, destFiles,
-                        conflictFiles, destinationDir,
-                        isMove, checkBox.isChecked());
+                pasteConflictListener.onKeepBothClicked(pasteData, checked);
             }
         });
 
@@ -1047,18 +1048,11 @@ public class DialogHelper {
 
     public interface PasteConflictListener {
 
+        void onSkipClicked(PasteData pasteData, boolean isChecked);
 
-        void onPositiveButtonClick(Dialog dialog, Operations operation, List<FileInfo> destFiles,
-                                   List<FileInfo> conflictFiles,
-                                   String destinationDir, boolean isMove, boolean isChecked);
+        void onReplaceClicked(PasteData pasteData, boolean isChecked);
 
-        void onNegativeButtonClick(Dialog dialog, Operations operation, List<FileInfo> destFiles,
-                                   List<FileInfo> conflictFiles,
-                                   String destinationDir, boolean isMove, boolean isChecked);
-
-        void onNeutralButtonClick(Dialog dialog, Operations operation, List<FileInfo> destFiles,
-                                  List<FileInfo> conflictFiles,
-                                  String destinationDir, boolean isMove, boolean isChecked);
+        void onKeepBothClicked(PasteData pasteData, boolean isChecked);
     }
 
     public interface DragDialogListener {
@@ -1067,13 +1061,5 @@ public class DialogHelper {
                                    boolean isMove);
 
     }
-
-    public interface SingleOperationListener {
-        void onPositiveClick(Operations operation, String fileName);
-
-        void onNegativeClick(Operations operation);
-    }
-
-
 }
 

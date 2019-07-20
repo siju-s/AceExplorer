@@ -34,8 +34,8 @@ import com.siju.acexplorer.R
 import com.siju.acexplorer.ads.AdsView
 import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.common.types.FileInfo
+import com.siju.acexplorer.extensions.showToast
 import com.siju.acexplorer.main.model.groups.Category
-import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.helper.ShareHelper
 import com.siju.acexplorer.main.model.helper.UriHelper
 import com.siju.acexplorer.main.model.helper.ViewHelper
@@ -45,14 +45,13 @@ import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.storage.model.SortMode
 import com.siju.acexplorer.storage.model.StorageModelImpl
 import com.siju.acexplorer.storage.model.ViewMode
-import com.siju.acexplorer.storage.model.operations.OperationAction
-import com.siju.acexplorer.storage.model.operations.OperationResultCode
-import com.siju.acexplorer.storage.model.operations.Operations
+import com.siju.acexplorer.storage.model.operations.*
 import com.siju.acexplorer.storage.viewmodel.FileListViewModel
 import com.siju.acexplorer.storage.viewmodel.FileListViewModelFactory
 import com.siju.acexplorer.utils.InstallHelper
 import kotlinx.android.synthetic.main.main_list.*
 import kotlinx.android.synthetic.main.toolbar.*
+import java.util.*
 
 const val KEY_PATH = "path"
 const val KEY_CATEGORY = "category"
@@ -140,7 +139,7 @@ open class BaseFileListFragment : Fragment() {
             when (permissionStatus) {
                 is PermissionHelper.PermissionState.Granted -> fileListViewModel.loadData(path,
                                                                                           category)
-                else -> {
+                else                                        -> {
                 }
             }
         })
@@ -208,7 +207,7 @@ open class BaseFileListFragment : Fragment() {
                         floatingView.hideFab()
                         menuControls.onStartActionMode()
                     }
-                    ActionModeState.ENDED -> {
+                    ActionModeState.ENDED   -> {
                         if (Category.FILES == category) {
                             floatingView.showFab()
                         }
@@ -248,9 +247,9 @@ open class BaseFileListFragment : Fragment() {
 
         fileListViewModel.noOpData.observe(viewLifecycleOwner, Observer {
             it?.apply {
-                when(it.first) {
+                when (it.first) {
                     Operations.FOLDER_CREATION -> showCreateFolderDialog(context)
-                    Operations.FILE_CREATION -> showCreateFileDialog(context)
+                    Operations.FILE_CREATION   -> showCreateFileDialog(context)
                 }
             }
         })
@@ -260,6 +259,25 @@ open class BaseFileListFragment : Fragment() {
                 handleMultiItemOperation(it)
             }
         })
+
+        fileListViewModel.pasteData.observe(viewLifecycleOwner, Observer {
+            it?.apply {
+                handlePasteOperation(it)
+            }
+        })
+
+        fileListViewModel.showCopyDialog.observe(viewLifecycleOwner, Observer {
+            it?.apply {
+                context?.let { context ->
+                    OperationProgress().showPasteDialog(context, it.first, it.second,
+                                                        Operations.COPY)
+                }
+            }
+        })
+    }
+
+    private fun handlePasteOperation(pasteData: PasteData) {
+        DialogHelper.showConflictDialog(context, pasteData, fileListViewModel.pasteConflictListener)
     }
 
     private fun handleOperationResult(operationResult: Pair<Operations, OperationAction>) {
@@ -268,41 +286,50 @@ open class BaseFileListFragment : Fragment() {
         val operation = operationResult.first
         val context = context
         context?.let {
-            if (operation == Operations.DELETE) {
-                onDeletedResult(action)
-            }
             when (action.operationResult.resultCode) {
-                OperationResultCode.SUCCESS -> {
-                    dismissDialog()
-                    fileListViewModel.loadData(path, category)
+                OperationResultCode.SUCCESS      -> {
+                    onOperationSuccess(operation, action)
                 }
-                OperationResultCode.SAF -> {
+                OperationResultCode.SAF          -> {
                     dismissDialog()
                     showSAFDialog(context, action.operationData.arg1)
                 }
                 OperationResultCode.INVALID_FILE -> onOperationError(operation, context.getString(
                         R.string.msg_error_invalid_name))
-                OperationResultCode.FILE_EXISTS -> onOperationError(operation, context.getString(
+                OperationResultCode.FILE_EXISTS  -> onOperationError(operation, context.getString(
                         R.string.msg_file_exists))
-                OperationResultCode.FAIL -> {
-                    dismissDialog()
-                    Toast.makeText(context, R.string.msg_operation_failed, Toast
-                            .LENGTH_SHORT).show()
+                OperationResultCode.FAIL         -> {
+                    onOperationFailed(context)
                 }
             }
         }
     }
 
-    private fun onDeletedResult(operationAction: OperationAction) {
-        val count = operationAction.operationResult.count
-        if (count > 0) {
-            FileUtils.showMessage(context, resources.getQuantityString(R.plurals.number_of_files, count, count) +
-            " " + resources.getString(R.string.msg_delete_success))
-        }
-        else {
-            FileUtils.showMessage(context, resources.getString(R.string.msg_delete_failure))
-        }
+    private fun onOperationFailed(context: Context) {
+        dismissDialog()
+        context.showToast(getString(R.string.msg_operation_failed))
     }
+
+    private fun onOperationSuccess(operation: Operations, operationAction: OperationAction) {
+        when (operation) {
+            Operations.DELETE -> {
+                val count = operationAction.operationResult.count
+                context?.showToast(resources.getQuantityString(R.plurals.number_of_files, count,
+                                                               count) +
+                                           " " + resources.getString(R.string.msg_delete_success))
+            }
+
+            Operations.COPY   -> {
+                val count = operationAction.operationResult.count
+                context?.showToast(String.format(
+                        Locale.getDefault(), resources.getString(R.string.copied), count))
+            }
+        }
+        dismissDialog()
+        fileListViewModel.loadData(fileListViewModel.currentDir,
+                                   fileListViewModel.category)
+    }
+
 
     private fun handleSingleItemOperation(operationData: Pair<Operations, FileInfo>) {
         Log.e(TAG, "handleSingleItemOperation: ")
@@ -310,34 +337,50 @@ open class BaseFileListFragment : Fragment() {
             Operations.RENAME -> {
                 context?.let { context -> showRenameDialog(context, operationData.second) }
             }
-            Operations.INFO -> {
-                context?.let { context ->  DialogHelper.showInfoDialog(context, operationData.second,
-                                                                       Category.FILES == category)}
+            Operations.INFO   -> {
+                context?.let { context ->
+                    DialogHelper.showInfoDialog(context, operationData.second,
+                                                Category.FILES == category)
+                }
             }
         }
     }
 
-    private fun handleMultiItemOperation(operationData: Pair<Operations, ArrayList<FileInfo?>>) {
-       when(operationData.first) {
-           Operations.DELETE -> {
-               context?.let {
-                   context -> showDeleteDialog(context, operationData.second)
-               }
-           }
-           Operations.SHARE -> {
-               context?.let { ShareHelper.shareFiles(it, operationData.second, category) }
-           }
-       }
-    }
+    private fun handleMultiItemOperation(operationData: Pair<Operations, ArrayList<FileInfo>>) {
+        when (operationData.first) {
+            Operations.DELETE -> {
+                context?.let { context ->
+                    showDeleteDialog(context, operationData.second)
+                }
+            }
+            Operations.SHARE  -> {
+                context?.let { ShareHelper.shareFiles(it, operationData.second, category) }
+            }
 
+            Operations.COPY   -> {
+                val size = operationData.second.size
+                context?.let { context ->
+                    context.showToast(
+                            size.toString() + " " + context.getString(R.string.msg_cut_copy))
+                    menuControls.setToolbarTitle(
+                            String.format(context.getString(R.string.clipboard), size))
+                    menuControls.onPasteEnabled()
+                }
+            }
+
+            Operations.PASTE  -> {
+                fileListViewModel.currentDir?.let { fileListViewModel.onPaste(it, operationData) }
+            }
+        }
+    }
 
 
     fun onCreateDirClicked() {
-        fileListViewModel.onFABClicked(Operations.FOLDER_CREATION, path)
+        fileListViewModel.onFABClicked(Operations.FOLDER_CREATION, fileListViewModel.currentDir)
     }
 
     fun onCreateFileClicked() {
-        fileListViewModel.onFABClicked(Operations.FILE_CREATION, path)
+        fileListViewModel.onFABClicked(Operations.FILE_CREATION, fileListViewModel.currentDir)
     }
 
     private fun showCreateFolderDialog(context: Context?) {
@@ -347,7 +390,8 @@ open class BaseFileListFragment : Fragment() {
                                 context.getString(R.string.create),
                                 context.getString(R.string.dialog_cancel))
 
-            DialogHelper.showInputDialog(context, texts, Operations.FOLDER_CREATION, null, alertDialogListener)
+            DialogHelper.showInputDialog(context, texts, Operations.FOLDER_CREATION, null,
+                                         alertDialogListener)
         }
     }
 
@@ -358,11 +402,12 @@ open class BaseFileListFragment : Fragment() {
                                 context.getString(R.string.create),
                                 context.getString(R.string.dialog_cancel))
 
-            DialogHelper.showInputDialog(context, texts, Operations.FILE_CREATION, null, alertDialogListener)
+            DialogHelper.showInputDialog(context, texts, Operations.FILE_CREATION, null,
+                                         alertDialogListener)
         }
     }
 
-    private fun showDeleteDialog(context: Context?, files : ArrayList<FileInfo?>) {
+    private fun showDeleteDialog(context: Context?, files: ArrayList<FileInfo>) {
         context?.let {
             DialogHelper.showDeleteDialog(context, files, false, deleteDialogListener)
         }
@@ -376,8 +421,9 @@ open class BaseFileListFragment : Fragment() {
                 editText?.requestFocus()
                 editText?.error = message
             }
-            Operations.HIDE -> Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-            else -> {
+            Operations.HIDE                                                                                                  -> Toast.makeText(
+                    context, message, Toast.LENGTH_SHORT).show()
+            else                                                                                                             -> {
             }
         }
     }
@@ -416,7 +462,7 @@ open class BaseFileListFragment : Fragment() {
 
         override fun onPositiveButtonClick(dialog: Dialog?, operation: Operations?, name: String?) {
             this@BaseFileListFragment.dialog = dialog
-            Log.e(TAG, "onPositiveButtonClick: dialog:$dialog")
+            Log.e(TAG, "onSkipClicked: dialog:$dialog")
             fileListViewModel.onOperation(operation, name)
         }
 
@@ -425,7 +471,7 @@ open class BaseFileListFragment : Fragment() {
     }
 
     private val deleteDialogListener = DialogHelper.DeleteDialogListener { view, isTrashEnabled, filesToDelete ->
-         fileListViewModel.deleteFiles(filesToDelete)
+        fileListViewModel.deleteFiles(filesToDelete)
     }
 
     private fun triggerStorageAccessFramework() {
@@ -480,7 +526,7 @@ open class BaseFileListFragment : Fragment() {
         val context = context
         context?.let {
             when (extension?.toLowerCase()) {
-                null -> {
+                null               -> {
                     val uri = UriHelper.createContentUri(context, path)
                     uri?.let {
                         DialogHelper.openWith(it, context)
@@ -488,7 +534,7 @@ open class BaseFileListFragment : Fragment() {
                 }
                 ViewHelper.EXT_APK -> ViewHelper.viewApkFile(context, path,
                                                              fileListViewModel.apkDialogListener)
-                else -> ViewHelper.viewFile(context, path, extension)
+                else               -> ViewHelper.viewFile(context, path, extension)
             }
         }
     }
@@ -519,7 +565,7 @@ open class BaseFileListFragment : Fragment() {
                 }
             }
 
-            SAF_REQUEST -> {
+            SAF_REQUEST                                -> {
                 if (resultCode == RESULT_OK) {
                     val uri = intent?.data
                     if (uri == null) {
@@ -584,13 +630,13 @@ open class BaseFileListFragment : Fragment() {
                 fileListViewModel.switchView(ViewMode.GRID)
                 return true
             }
-            R.id.action_hidden -> {
+            R.id.action_hidden    -> {
                 item.isChecked = !item.isChecked
                 fileListViewModel.onHiddenFileSettingChanged(item.isChecked)
                 return true
             }
 
-            R.id.action_sort -> {
+            R.id.action_sort      -> {
                 fileListViewModel.onSortClicked()
                 return true
             }

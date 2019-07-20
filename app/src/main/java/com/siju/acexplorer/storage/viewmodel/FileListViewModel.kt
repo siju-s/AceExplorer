@@ -14,13 +14,13 @@ import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.Category.*
 import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.view.dialog.DialogHelper
-import com.siju.acexplorer.storage.model.SortMode
-import com.siju.acexplorer.storage.model.StorageModel
-import com.siju.acexplorer.storage.model.StorageModelImpl
-import com.siju.acexplorer.storage.model.ViewMode
+import com.siju.acexplorer.storage.model.*
 import com.siju.acexplorer.storage.model.backstack.BackStackInfo
 import com.siju.acexplorer.storage.model.operations.OperationAction
+import com.siju.acexplorer.storage.model.operations.OperationHelper
 import com.siju.acexplorer.storage.model.operations.Operations
+import com.siju.acexplorer.storage.model.operations.PasteData
+import com.siju.acexplorer.storage.model.task.PasteConflictChecker
 import com.siju.acexplorer.storage.view.*
 import com.siju.acexplorer.utils.InstallHelper
 import kotlinx.coroutines.CoroutineScope
@@ -33,7 +33,12 @@ private const val TAG = "FileListViewModel"
 class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     var apkPath: String? = null
     private lateinit var navigationView: NavigationView
-    private lateinit var category: Category
+    lateinit var category: Category
+    private set
+
+    var currentDir : String? = null
+    private set
+
     private val navigation = Navigation(this)
     private var bucketName: String? = null
     private val backStackInfo = BackStackInfo()
@@ -51,10 +56,15 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     private val _singleOpData = MutableLiveData<Pair<Operations, FileInfo>>()
 
-    private val _multiSelectionOpData = MutableLiveData<Pair<Operations, ArrayList<FileInfo?>>>()
+    private val _multiSelectionOpData = MutableLiveData<Pair<Operations, ArrayList<FileInfo>>>()
 
-    val multiSelectionOpData: LiveData<Pair<Operations, ArrayList<FileInfo?>>>
+    val multiSelectionOpData: LiveData<Pair<Operations, ArrayList<FileInfo>>>
         get() = _multiSelectionOpData
+
+    private val _pasteData = MutableLiveData<PasteData>()
+
+    val pasteData: LiveData<PasteData>
+        get() = _pasteData
 
     private val _noOpData = MutableLiveData<Pair<Operations, String>>()
 
@@ -101,6 +111,11 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     val operationData: LiveData<Pair<Operations, OperationAction>>
 
+    private val _showCopyDialog = MutableLiveData<Pair<String, ArrayList<FileInfo>>>()
+
+    val showCopyDialog : LiveData<Pair<String, ArrayList<FileInfo>>>
+    get() = _showCopyDialog
+
     init {
         val model = storageModel as StorageModelImpl
         operationData = model.operationData
@@ -111,6 +126,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         addNavigation(path, category)
         addToBackStack(path, category)
         setCategory(category)
+        setCurrentDir(path)
         uiScope.launch(Dispatchers.IO) {
             _fileData.postValue(storageModel.loadData(path, category))
         }
@@ -120,6 +136,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         Log.e(this.javaClass.name, "reloadData: path $path , category $category")
         addNavigation(path, category)
         setCategory(category)
+        setCurrentDir(path)
         uiScope.launch(Dispatchers.IO) {
             _fileData.postValue(storageModel.loadData(path, category))
         }
@@ -130,6 +147,10 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     private fun setCategory(category: Category) {
         this.category = category
         showFab.postValue(canShowFab(category))
+    }
+
+    private fun setCurrentDir(currentDir : String?) {
+        this.currentDir = currentDir
     }
 
     private fun canShowFab(category: Category) =
@@ -373,21 +394,21 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
             R.id.action_delete -> {
                 if (multiSelectionHelper.hasSelectedItems()) {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_DELETE)
-                    val filesToDelete = arrayListOf<FileInfo?>()
+                    val filesToDelete = arrayListOf<FileInfo>()
                     val selectedItems = multiSelectionHelper.selectedItems
                     for (i in 0 until selectedItems.size()) {
                         val fileInfo = _fileData.value?.get(selectedItems.keyAt(i))
-                        filesToDelete.add(fileInfo)
+                        fileInfo?.let { filesToDelete.add(it) }
                     }
                     endActionMode()
                     _multiSelectionOpData.value = Pair(Operations.DELETE, filesToDelete)
                 }
             }
 
-            R.id.action_share -> {
+            R.id.action_share  -> {
                 if (multiSelectionHelper.hasSelectedItems()) {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_SHARE)
-                    val filesToShare = arrayListOf<FileInfo?>()
+                    val filesToShare = arrayListOf<FileInfo>()
                     val selectedItems = multiSelectionHelper.selectedItems
                     for (i in 0 until selectedItems.size()) {
                         val fileInfo = _fileData.value?.get(selectedItems.keyAt(i))
@@ -397,6 +418,31 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                     }
                     endActionMode()
                     _multiSelectionOpData.value = Pair(Operations.SHARE, filesToShare)
+                }
+            }
+
+            R.id.action_copy   -> {
+                if (multiSelectionHelper.hasSelectedItems()) {
+                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_COPY)
+                    val filesToCopy = arrayListOf<FileInfo>()
+                    val selectedItems = multiSelectionHelper.selectedItems
+                    for (i in 0 until selectedItems.size()) {
+                        val fileInfo = _fileData.value?.get(selectedItems.keyAt(i))
+                        fileInfo?.let { filesToCopy.add(it) }
+                    }
+                    endActionMode()
+                    _multiSelectionOpData.value = Pair(Operations.COPY, filesToCopy)
+                }
+            }
+
+            R.id.action_paste  -> {
+                if (_multiSelectionOpData.value?.first == Operations.COPY) {
+                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_PASTE)
+                    val list = _multiSelectionOpData.value?.second
+                    endActionMode()
+                    list?.let {
+                        _multiSelectionOpData.value = Pair(Operations.PASTE, list)
+                    }
                 }
             }
 
@@ -472,6 +518,16 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         }
     }
 
+    fun onPaste(path: String, operationData: Pair<Operations, ArrayList<FileInfo>>) {
+        uiScope.launch(Dispatchers.IO) {
+            val pasteConflictChecker = PasteConflictChecker(path, false,
+                                                            operationData.first == Operations.CUT,
+                                                            operationData.second)
+            pasteConflictChecker.setListener(pasteResultListener)
+            pasteConflictChecker.run()
+        }
+    }
+
     val navigationCallback = object : NavigationCallback {
         override fun onHomeClicked() {
         }
@@ -508,14 +564,131 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         }
     }
 
-    val singleOperationListener = object : DialogHelper.SingleOperationListener {
-
-        override fun onPositiveClick(operation: Operations?, fileName: String?) {
+    private val pasteResultListener = object : PasteConflictChecker.PasteResultCallback {
+        override fun showConflictDialog(files: java.util.ArrayList<FileInfo>,
+                                        conflictFiles: java.util.ArrayList<FileInfo>,
+                                        destFiles: java.util.ArrayList<FileInfo>,
+                                        destinationDir: String, operation: Operations) {
+            Analytics.getLogger().conflictDialogShown()
+            _pasteData.postValue(
+                    PasteData(files, conflictFiles, destFiles, destinationDir, operation))
         }
 
-        override fun onNegativeClick(operation: Operations?) {
+        override fun checkWriteMode(destinationDir: String, files: java.util.ArrayList<FileInfo>,
+                                    operation: Operations) {
+            storageModel.checkPasteWriteMode(destinationDir, files, pasteActionInfo, operation,
+                                             pasteOperationCallback)
+        }
+
+
+        override fun onLowSpace() {
         }
 
     }
+
+    private val pasteActionInfo = arrayListOf<PasteActionInfo>()
+    val pasteConflictListener = object : DialogHelper.PasteConflictListener {
+
+        override fun onSkipClicked(pasteData: PasteData, isChecked: Boolean) {
+            var end = false
+            val filesToPaste = pasteData.files
+            if (isChecked) {
+                filesToPaste.removeAll(pasteData.conflictFiles)
+                end = true
+            }
+            else {
+                filesToPaste.remove(pasteData.conflictFiles[0])
+                pasteData.destFiles.removeAt(0)
+                pasteData.conflictFiles.removeAt(0)
+                if (pasteData.conflictFiles.isEmpty()) {
+                    end = true
+                }
+            }
+
+            if (end) {
+                if (filesToPaste.isNotEmpty()) {
+                    storageModel.checkPasteWriteMode(pasteData.destinationDir, filesToPaste,
+                                                     pasteActionInfo,
+                                                     pasteData.operations,
+                                                     pasteOperationCallback)
+                }
+            }
+            else {
+                _pasteData.postValue(
+                        PasteData(filesToPaste, pasteData.conflictFiles, pasteData.destFiles,
+                                  pasteData.destinationDir, pasteData.operations))
+            }
+        }
+
+        override fun onReplaceClicked(pasteData: PasteData, isChecked: Boolean) {
+            var end = false
+            val filesToPaste = pasteData.files
+            if (isChecked) {
+                end = true
+            }
+            else {
+                pasteData.destFiles.removeAt(0)
+                pasteData.conflictFiles.removeAt(0)
+                if (pasteData.conflictFiles.isEmpty()) {
+                    end = true
+                }
+            }
+
+            if (end) {
+                storageModel.checkPasteWriteMode(pasteData.destinationDir, filesToPaste, pasteActionInfo,
+                                                 pasteData.operations, pasteOperationCallback)
+            }
+            else {
+                _pasteData.postValue(
+                        PasteData(filesToPaste, pasteData.conflictFiles, pasteData.destFiles,
+                                  pasteData.destinationDir, pasteData.operations))
+            }
+        }
+
+        override fun onKeepBothClicked(pasteData: PasteData, isChecked: Boolean) {
+            var end = false
+            val filesToPaste = pasteData.files
+            if (isChecked) {
+                for (fileInfo in pasteData.conflictFiles) {
+                    pasteActionInfo.add(PasteActionInfo(fileInfo.filePath))
+                }
+                end = true
+            }
+            else {
+                pasteActionInfo.add(PasteActionInfo(pasteData.conflictFiles.get(0).filePath))
+                pasteData.destFiles.removeAt(0)
+                pasteData.conflictFiles.removeAt(0)
+                if (pasteData.conflictFiles.isEmpty()) {
+                    end = true
+                }
+            }
+
+            if (end) {
+                storageModel.checkPasteWriteMode(pasteData.destinationDir, filesToPaste,
+                                                 pasteActionInfo, pasteData.operations,
+                                                 pasteOperationCallback)
+            }
+            else {
+                _pasteData.postValue(
+                        PasteData(filesToPaste, pasteData.conflictFiles, pasteData.destFiles,
+                                  pasteData.destinationDir, pasteData.operations))
+            }
+        }
+
+    }
+
+    val pasteOperationCallback = object : OperationHelper.PasteOperationCallback {
+
+        override fun onPasteActionStarted(operation: Operations, destinationDir: String,
+                                          files: ArrayList<FileInfo>) {
+            when(operation) {
+                Operations.COPY -> {
+                    _showCopyDialog.postValue(Pair(destinationDir, files))
+                }
+            }
+        }
+
+    }
+
 
 }

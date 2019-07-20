@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.siju.acexplorer.storage.model.operations;
+package com.siju.acexplorer.storage.model.operations
 
 
-public enum Operations {
+enum class Operations constructor(val value: Int) {
 
     CUT(0),
     COPY(1),
@@ -29,19 +29,6 @@ public enum Operations {
     COMPRESS(7),
     HIDE(8),
     INFO(9),
-    SHARE(10);
-
-    private final int value;
-
-    Operations(int value) {
-        this.value = value;
-    }
-
-    public int getValue() {
-
-        return value;
-    }
-
-
-
+    SHARE(10),
+    PASTE(11)
 }

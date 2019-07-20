@@ -1,22 +1,46 @@
 package com.siju.acexplorer.storage.model.operations
 
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.util.Log
+import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.helper.FileOperations
 import com.siju.acexplorer.main.model.helper.FileUtils
+import com.siju.acexplorer.main.model.helper.SdkHelper
+import com.siju.acexplorer.storage.model.PasteActionInfo
+import com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH
+import com.siju.acexplorer.storage.model.task.CopyService
 import java.io.File
 
 private const val EXT_TXT = ".txt"
 
-class OperationHelper {
+class OperationHelper(val context: Context) {
 
     private val operationList = arrayListOf<OperationInfo>()
     private var operationId = 0
+    private var fileOperationCallback: FileOperationCallback? = null
+    private val operationResultReceiver = OperationResultReceiver(this)
+
+    init {
+        registerReceiver()
+    }
 
     private fun addOperation(operations: Operations, operationData: OperationData) {
         Log.e("OperationHelper", "addOperation: ${operationData.arg1}")
         operationId++
         operationList.add(OperationInfo(operationId, operations, operationData))
     }
+
+    private fun registerReceiver() {
+        val intentFilter = IntentFilter(ACTION_OP_REFRESH)
+        context.registerReceiver(operationResultReceiver, intentFilter)
+    }
+
+    private fun unregisterReceiver() {
+        context.unregisterReceiver(operationResultReceiver)
+    }
+
 
     private fun removeOperation() {
         Log.e("OperationHelper", "removeOperation: ")
@@ -58,7 +82,7 @@ class OperationHelper {
             OperationUtils.WriteMode.EXTERNAL -> {
                 fileOperationCallback.onOperationResult(
                         operation,
-                        getOperationAction(OperationResult(OperationResultCode.SAF,0)))
+                        getOperationAction(OperationResult(OperationResultCode.SAF, 0)))
                 removeOperation()
             }
 
@@ -79,7 +103,9 @@ class OperationHelper {
                 if (FileUtils.isFileExisting(parent, newName)) {
                     fileOperationCallback.onOperationResult(operation,
                                                             getOperationAction(
-                                                                    OperationResult(OperationResultCode.FILE_EXISTS, 0)))
+                                                                    OperationResult(
+                                                                            OperationResultCode.FILE_EXISTS,
+                                                                            0)))
                     removeOperation()
                 }
                 else {
@@ -111,7 +137,9 @@ class OperationHelper {
         if (file.exists()) {
             fileOperationCallback.onOperationResult(operation,
                                                     getOperationAction(
-                                                            OperationResult(OperationResultCode.FILE_EXISTS, 0)))
+                                                            OperationResult(
+                                                                    OperationResultCode.FILE_EXISTS,
+                                                                    0)))
             removeOperation()
             return
         }
@@ -160,8 +188,9 @@ class OperationHelper {
             OperationUtils.WriteMode.INTERNAL -> {
                 val success = FileOperations.mkfile(file)
                 val resultCode = if (success) OperationResultCode.SUCCESS else OperationResultCode.FAIL
-                fileOperationCallback.onOperationResult(operation, getOperationAction(OperationResult(
-                        resultCode, 1)))
+                fileOperationCallback.onOperationResult(operation,
+                                                        getOperationAction(OperationResult(
+                                                                resultCode, 1)))
                 removeOperation()
             }
         }
@@ -178,10 +207,11 @@ class OperationHelper {
                         if (count > 0) {
                             OperationResultCode.SUCCESS
                         }
-                else {
+                        else {
                             OperationResultCode.FAIL
                         }
-                fileOperationCallback.onOperationResult(operation, getOperationAction(OperationResult(resultCode, count)))
+                fileOperationCallback.onOperationResult(operation, getOperationAction(
+                        OperationResult(resultCode, count)))
             }
         }
     }
@@ -215,12 +245,65 @@ class OperationHelper {
                 }
             }
         }
+
+    }
+
+    fun copyFiles(context: Context, destinationDir: String, files: ArrayList<FileInfo>,
+                  pasteActionInfo: ArrayList<PasteActionInfo>,
+                  pasteOperationCallback: PasteOperationCallback,
+                  fileOperationCallback: FileOperationCallback) {
+        setFileOperationCallback(fileOperationCallback)
+        when (OperationUtils.checkFolder(destinationDir)) {
+            OperationUtils.WriteMode.INTERNAL -> {
+                addOperation(Operations.COPY,
+                             OperationData.createCopyOperation(destinationDir, files))
+                pasteOperationCallback.onPasteActionStarted(Operations.COPY, destinationDir, files)
+
+                val intent = Intent(context, CopyService::class.java)
+                intent.apply {
+                    putParcelableArrayListExtra(OperationUtils.KEY_CONFLICT_DATA, pasteActionInfo)
+                    putParcelableArrayListExtra(OperationUtils.KEY_FILES, files)
+                    putExtra(OperationUtils.KEY_FILEPATH, destinationDir)
+                }
+                if (SdkHelper.isAtleastOreo()) {
+                    context.startForegroundService(intent)
+                }
+                else {
+                    context.startService(intent)
+                }
+            }
+        }
+    }
+
+    private fun setFileOperationCallback(fileOperationCallback: FileOperationCallback) {
+        this.fileOperationCallback = fileOperationCallback
+    }
+
+    fun onCopyCompleted(operation: Operations, count: Int) {
+        val resultCode =
+                if (count > 0) {
+                    OperationResultCode.SUCCESS
+                }
+                else {
+                    OperationResultCode.FAIL
+                }
+        fileOperationCallback?.onOperationResult(operation, getOperationAction(
+                OperationResult(resultCode, count)))
+    }
+
+    fun cleanup() {
+        unregisterReceiver()
+        fileOperationCallback = null
     }
 
 
     interface FileOperationCallback {
-
         fun onOperationResult(operation: Operations, operationAction: OperationAction?)
+    }
+
+    interface PasteOperationCallback {
+        fun onPasteActionStarted(operation: Operations, destinationDir: String,
+                                 files: ArrayList<FileInfo>)
     }
 
 }

@@ -32,11 +32,12 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
+import android.text.format.Formatter;
+import android.util.Log;
+
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import android.text.format.Formatter;
-import android.util.Log;
 
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.types.FileInfo;
@@ -63,10 +64,10 @@ import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FI
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES;
 import static com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION;
 import static com.siju.acexplorer.storage.model.operations.Operations.COMPRESS;
-import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_COMPLETED;
-import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_PROGRESS;
-import static com.siju.acexplorer.storage.model.operations.ProgressUtils.KEY_TOTAL;
-import static com.siju.acexplorer.storage.model.operations.ProgressUtils.ZIP_PROGRESS;
+import static com.siju.acexplorer.storage.model.operations.ProgressConstantsKt.KEY_COMPLETED;
+import static com.siju.acexplorer.storage.model.operations.ProgressConstantsKt.KEY_PROGRESS;
+import static com.siju.acexplorer.storage.model.operations.ProgressConstantsKt.KEY_TOTAL;
+import static com.siju.acexplorer.storage.model.operations.ProgressConstantsKt.ZIP_PROGRESS;
 
 
 public class CreateZipService extends Service {
