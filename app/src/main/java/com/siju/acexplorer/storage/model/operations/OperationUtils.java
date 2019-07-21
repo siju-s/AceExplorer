@@ -62,7 +62,7 @@ public class OperationUtils {
     }
 
 
-    public static WriteMode checkFolder(final String directory) {
+    public static WriteMode getWriteMode(final String directory) {
         if (directory == null) {
             return WriteMode.ROOT;
         }

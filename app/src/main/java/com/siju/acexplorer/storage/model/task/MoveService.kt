@@ -179,7 +179,7 @@ class MoveService : Service() {
 
     private fun checkWriteMode(destinationDir: String) {
 
-        when (checkFolder(destinationDir)) {
+        when (getWriteMode(destinationDir)) {
             WriteMode.INTERNAL -> {
                 moveOnInternalStorage(destinationDir)
                 publishCompletedResult()

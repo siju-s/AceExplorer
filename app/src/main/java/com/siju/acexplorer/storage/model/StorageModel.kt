@@ -132,4 +132,6 @@ interface StorageModel {
 
     fun compressFile(destinationDir: String, filesToArchive: ArrayList<FileInfo>,
                      zipOperationCallback: OperationHelper.ZipOperationCallback)
+
+    fun addToFavorite(favList: ArrayList<String>)
 }

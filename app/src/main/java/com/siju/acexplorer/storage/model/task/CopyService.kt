@@ -188,7 +188,7 @@ class CopyService : Service() {
 
     private fun checkWriteMode(currentDir: String) {
 
-        when (OperationUtils.checkFolder(currentDir)) {
+        when (OperationUtils.getWriteMode(currentDir)) {
             OperationUtils.WriteMode.INTERNAL -> {
                 copyOnInternalStorage(currentDir)
                 publishCompletionResult()

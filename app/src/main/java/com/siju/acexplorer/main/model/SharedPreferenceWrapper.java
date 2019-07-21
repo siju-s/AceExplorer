@@ -43,88 +43,6 @@ public class SharedPreferenceWrapper {
     private static final String TEMP_STRING_DATA = "String_data";
 
 
-
-
-    private void saveFavorites(Context context, List<FavInfo> favorites) {
-        if (context == null) {
-            return;
-        }
-        SharedPreferences settings;
-        SharedPreferences.Editor editor;
-        settings = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        editor = settings.edit();
-        Gson gson = new Gson();
-        String jsonFavorites = gson.toJson(favorites);
-        editor.putString(FAVORITES, jsonFavorites);
-        editor.apply();
-    }
-
-    public void addFavorite(Context context, FavInfo favInfo) {
-        List<FavInfo> favorites = getFavorites(context);
-
-        if (!favorites.contains(favInfo)) {
-            favorites.add(favInfo);
-            saveFavorites(context, favorites);
-        }
-    }
-
-    public int addFavorites(Context context, ArrayList<FavInfo> favInfoArrayList) {
-        if (context == null) {
-            return 0;
-        }
-        List<FavInfo> favorites = getFavorites(context);
-
-        int count = 0;
-        for (FavInfo favInfo : favInfoArrayList) {
-            if (!favorites.contains(favInfo)) {
-                favorites.add(favInfo);
-                count++;
-            }
-        }
-        if (count != 0) {
-            saveFavorites(context, favorites);
-        }
-        return count;
-    }
-
-    public boolean removeFavorite(Context context, FavInfo favInfo) {
-        if (context == null) {
-            return false;
-        }
-        ArrayList<FavInfo> favorites = getFavorites(context);
-        boolean isDeleted = false;
-        if (favorites != null) {
-            if (favorites.remove(favInfo)) {
-                isDeleted = true;
-                saveFavorites(context, favorites);
-            }
-        }
-        return isDeleted;
-    }
-
-
-    public ArrayList<FavInfo> getFavorites(Context context) {
-        SharedPreferences sharedPreferences;
-        ArrayList<FavInfo> favorites = new ArrayList<>();
-
-        if (context == null) {
-            return favorites;
-        }
-
-        sharedPreferences = context.getSharedPreferences(PREFS_NAME,
-                Context.MODE_PRIVATE);
-        removeOldFavPref(sharedPreferences);
-        if (sharedPreferences.contains(FAVORITES)) {
-            String jsonFavorites = sharedPreferences.getString(FAVORITES, null);
-            Gson gson = new Gson();
-            FavInfo[] favoriteItems = gson.fromJson(jsonFavorites,
-                    FavInfo[].class);
-            favorites.addAll(Arrays.asList(favoriteItems));
-        }
-
-        return favorites;
-    }
-
     public void addLibrary(Context context, LibrarySortModel librarySortModel) {
         List<LibrarySortModel> libraries = getLibraries(context);
         if (!libraries.contains(librarySortModel)) {
@@ -134,7 +52,6 @@ public class SharedPreferenceWrapper {
         Logger.log("SharedWrapper", "addLibrary=" + libraries.size());
 
     }
-
 
     public ArrayList<LibrarySortModel> getLibraries(Context context) {
         SharedPreferences preferences;
@@ -168,32 +85,6 @@ public class SharedPreferenceWrapper {
 
         editor.apply();
     }
-
-
-
-
-    public void updateFavoritePath(Context context, String oldFile, String newFile) {
-        ArrayList<FavInfo> favList = getFavorites(context);
-        Logger.log("SharedWrapper", "updateFavoritePath: " + favList.size());
-        FavInfo fav = null;
-        FavInfo newFavInfo = null;
-        for (FavInfo favInfo : favList) {
-            if (favInfo.getFilePath().equals(oldFile)) {
-                fav = favInfo;
-                newFavInfo = favInfo;
-                newFavInfo.setFilePath(newFile);
-                break;
-            }
-        }
-        if (fav != null) {
-            favList.remove(fav);
-            favList.add(newFavInfo);
-            Logger.log("SharedWrapper", "updateFavoritePath NEW: " + favList.size() + " newFavInfo:" + newFavInfo.getFilePath());
-            saveFavorites(context, favList);
-        }
-
-    }
-
     public boolean removeOldPrefs(Context context) {
         SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME,
                 Context.MODE_PRIVATE);

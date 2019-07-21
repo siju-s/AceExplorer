@@ -97,6 +97,10 @@ class StorageModelImpl(val context: Context) : StorageModel {
         operationHelper.deleteFiles(operation, files, fileOperationCallback)
     }
 
+    override fun addToFavorite(favList: ArrayList<String>)  {
+        operationHelper.addToFavorite(context, favList, fileOperationCallback)
+    }
+
     override fun handleSafResult(uri: Uri, flags: Int) {
         val newFlags = flags and (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent
                 .FLAG_GRANT_WRITE_URI_PERMISSION)

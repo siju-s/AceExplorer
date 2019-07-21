@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
 import com.siju.acexplorer.common.types.FileInfo
+import com.siju.acexplorer.home.model.FavoriteHelper
 import com.siju.acexplorer.main.model.helper.FileOperations
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.helper.SdkHelper
@@ -30,7 +31,7 @@ class OperationHelper(val context: Context) {
     }
 
     private fun addOperation(operations: Operations, operationData: OperationData) {
-        Log.e("OperationHelper", "addOperation: ${operationData.arg1}")
+        Log.e("OperationHelper", "addOperation: ${operationData}")
         operationId++
         operationList.add(OperationInfo(operationId, operations, operationData))
     }
@@ -53,7 +54,7 @@ class OperationHelper(val context: Context) {
     }
 
     private fun getOperationData(): OperationData? {
-        Log.d("OperationHelper", "getOperationData: ${hasOperations()}")
+        Log.d("OperationHelper", "getOperationResult: ${hasOperations()}")
         if (hasOperations()) {
             return operationList[0].operationData
         }
@@ -80,7 +81,7 @@ class OperationHelper(val context: Context) {
             return
         }
         val parent = File(filePath).parent
-        when (OperationUtils.checkFolder(parent)) {
+        when (OperationUtils.getWriteMode(parent)) {
 
             OperationUtils.WriteMode.EXTERNAL -> {
                 fileOperationCallback.onOperationResult(
@@ -146,7 +147,7 @@ class OperationHelper(val context: Context) {
             removeOperation()
             return
         }
-        when (OperationUtils.checkFolder(path)) {
+        when (OperationUtils.getWriteMode(path)) {
             OperationUtils.WriteMode.EXTERNAL -> {
                 fileOperationCallback.onOperationResult(
                         operation,
@@ -181,7 +182,7 @@ class OperationHelper(val context: Context) {
             removeOperation()
             return
         }
-        when (OperationUtils.checkFolder(path)) {
+        when (OperationUtils.getWriteMode(path)) {
             OperationUtils.WriteMode.EXTERNAL -> {
                 fileOperationCallback.onOperationResult(
                         operation,
@@ -202,8 +203,7 @@ class OperationHelper(val context: Context) {
     fun deleteFiles(operation: Operations, filesList: ArrayList<String>,
                     fileOperationCallback: FileOperationCallback) {
         addOperation(operation, OperationData.createDeleteOperation(filesList))
-        val mode = OperationUtils.checkFolder(File(filesList[0]).parent)
-        when (mode) {
+        when (OperationUtils.getWriteMode(File(filesList[0]).parent)) {
             OperationUtils.WriteMode.INTERNAL -> {
                 val count = FileOperations.deleteFiles(filesList)
                 val resultCode =
@@ -256,7 +256,7 @@ class OperationHelper(val context: Context) {
                   pasteOperationCallback: PasteOperationCallback,
                   fileOperationCallback: FileOperationCallback) {
         setFileOperationCallback(fileOperationCallback)
-        when (OperationUtils.checkFolder(destinationDir)) {
+        when (OperationUtils.getWriteMode(destinationDir)) {
             OperationUtils.WriteMode.INTERNAL -> {
                 addOperation(Operations.COPY,
                              OperationData.createCopyOperation(destinationDir, files))
@@ -283,7 +283,7 @@ class OperationHelper(val context: Context) {
                   pasteOperationCallback: PasteOperationCallback,
                   fileOperationCallback: FileOperationCallback) {
         setFileOperationCallback(fileOperationCallback)
-        when (OperationUtils.checkFolder(destinationDir)) {
+        when (OperationUtils.getWriteMode(destinationDir)) {
             OperationUtils.WriteMode.INTERNAL -> {
                 addOperation(Operations.CUT,
                              OperationData.createCopyOperation(destinationDir, files))
@@ -322,7 +322,7 @@ class OperationHelper(val context: Context) {
                                                             OperationResultCode.FILE_EXISTS, 0)))
             return
         }
-        when (OperationUtils.checkFolder(destinationDir)) {
+        when (OperationUtils.getWriteMode(destinationDir)) {
             OperationUtils.WriteMode.INTERNAL -> {
                 addOperation(Operations.EXTRACT, OperationData.createExtractOperation(sourceFilePath, newPath))
                 zipOperationCallback.onZipOperationStarted(Operations.EXTRACT, sourceFilePath, newPath)
@@ -358,7 +358,7 @@ class OperationHelper(val context: Context) {
                                                             OperationResultCode.FILE_EXISTS, 0)))
             return
         }
-        when (OperationUtils.checkFolder(newFile.parent)) {
+        when (OperationUtils.getWriteMode(newFile.parent)) {
             OperationUtils.WriteMode.INTERNAL -> {
                 addOperation(Operations.EXTRACT, OperationData.createArchiveOperation(destinationDir, filesToArchive))
                 zipOperationCallback.onZipOperationStarted(Operations.COMPRESS, destinationDir, filesToArchive)
@@ -397,6 +397,13 @@ class OperationHelper(val context: Context) {
     fun cleanup() {
         unregisterReceiver()
         fileOperationCallback = null
+    }
+
+    fun addToFavorite(context: Context, favList: ArrayList<String>, fileOperationCallback: FileOperationCallback) {
+        setFileOperationCallback(fileOperationCallback)
+        addOperation(Operations.FAVORITE, OperationData.createFavoriteOperation(favList))
+        val count = FavoriteHelper.addFavorites(context, favList)
+        onOperationCompleted(Operations.FAVORITE, count)
     }
 
 

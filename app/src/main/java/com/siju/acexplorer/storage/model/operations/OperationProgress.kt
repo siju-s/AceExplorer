@@ -133,7 +133,8 @@ class OperationProgress {
     }
 
     @SuppressLint("InflateParams")
-    fun showZipProgressDialog(context: Context, destinationPath: String, files: ArrayList<FileInfo>) {
+    fun showZipProgressDialog(context: Context, destinationPath: String,
+                              files: ArrayList<FileInfo>) {
         this.context = context
         registerReceiver(context)
         val title = context.getString(R.string.zip_progress_title)
@@ -299,9 +300,6 @@ class OperationProgress {
                 .registerReceiver(operationProgressReceiver, filter1)
     }
 
-
-    // Define the Handler that receives messages from the thread and update the progress
-    //    private final Handler handler = new Handler(Looper.getMainLooper()) {
     private fun handleMessage(intent: Intent) {
         when (intent.action) {
             ZIP_PROGRESS     -> {
@@ -405,8 +403,6 @@ class OperationProgress {
             return
         }
         val totalProgress = intent.getIntExtra(KEY_TOTAL_PROGRESS, 0)
-        //                Logger.log(TAG, "KEY_PROGRESS=" + progress + " KEY_TOTAL KEY_PROGRESS=" + totalProgress);
-        //                Logger.log(TAG, "Copied bytes=" + copiedBytes + " KEY_TOTAL bytes=" + totalBytes);
         progressBarPaste?.progress = totalProgress
         textProgress?.text = String.format(Locale.getDefault(), "%d%s", totalProgress,
                                            context?.getString(R.string.percent_placeholder))

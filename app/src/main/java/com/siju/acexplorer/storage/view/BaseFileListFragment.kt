@@ -244,7 +244,7 @@ open class BaseFileListFragment : Fragment() {
             }
         })
 
-        fileListViewModel.operationData.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.operationResult.observe(viewLifecycleOwner, Observer {
             it?.apply {
                 handleOperationResult(it)
             }
@@ -357,10 +357,18 @@ open class BaseFileListFragment : Fragment() {
                 context?.showToast(String.format(
                         Locale.getDefault(), resources.getString(R.string.moved), count))
             }
+
+            Operations.FAVORITE -> {
+                val count = operationAction.operationResult.count
+                context?.showToast(String.format(
+                        Locale.getDefault(), resources.getString(R.string.msg_added_to_fav), count))
+            }
         }
         dismissDialog()
-        fileListViewModel.loadData(fileListViewModel.currentDir,
-                                   fileListViewModel.category)
+        if (operation != Operations.FAVORITE) {
+            fileListViewModel.loadData(fileListViewModel.currentDir,
+                                       fileListViewModel.category)
+        }
     }
 
 
@@ -415,6 +423,10 @@ open class BaseFileListFragment : Fragment() {
                 context?.let {
                     showCompressDialog(it, operationData.second)
                 }
+            }
+
+            Operations.FAVORITE             -> {
+                fileListViewModel.addToFavorite(operationData.second)
             }
 
             else                            -> {

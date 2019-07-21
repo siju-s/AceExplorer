@@ -113,7 +113,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     val refreshEvent: LiveData<Boolean>
         get() = _refreshEvent
 
-    val operationData: LiveData<Pair<Operations, OperationAction>>
+    val operationResult: LiveData<Pair<Operations, OperationAction>>
 
     private val _showPasteDialog = MutableLiveData<Triple<Operations, String, ArrayList<FileInfo>>>()
 
@@ -132,7 +132,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     init {
         val model = storageModel as StorageModelImpl
-        operationData = model.operationData
+        operationResult = model.operationData
     }
 
     fun loadData(path: String?, category: Category) {
@@ -347,6 +347,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
             refreshList()
             return false
         }
+        storageModel.onExit()
         return true
     }
 
@@ -508,6 +509,22 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                 }
             }
 
+            R.id.action_fav   -> {
+                if (multiSelectionHelper.hasSelectedItems()) {
+                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_ADD_FAV)
+                    val favList = arrayListOf<FileInfo>()
+                    val selectedItems = multiSelectionHelper.selectedItems
+                    for (i in 0 until selectedItems.size()) {
+                        val fileInfo = _fileData.value?.get(selectedItems.keyAt(i))
+                        if (fileInfo?.isDirectory == true) {
+                            favList.add(fileInfo)
+                        }
+                    }
+                    endActionMode()
+                    _multiSelectionOpData.value = Pair(Operations.FAVORITE, favList)
+                }
+            }
+
         }
     }
 
@@ -605,6 +622,16 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         val path = singleOpData.value?.second?.filePath
         if (path != null && newFileName != null) {
             storageModel.extractFile(path, destinationDir, newFileName, zipOperationCallback)
+        }
+    }
+
+    fun addToFavorite(favList:ArrayList<FileInfo>) {
+        val favPathList = ArrayList<String>()
+        for (fav in favList) {
+            favPathList.add(fav.filePath)
+        }
+        uiScope.launch(Dispatchers.IO) {
+            storageModel.addToFavorite(favPathList)
         }
     }
 
@@ -770,7 +797,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         }
     }
 
-    val zipOperationCallback = object : OperationHelper.ZipOperationCallback {
+    private val zipOperationCallback = object : OperationHelper.ZipOperationCallback {
         override fun onZipOperationStarted(operation: Operations, destinationDir: String,
                                            filesToArchive: ArrayList<FileInfo>) {
             _showCompressDialog.postValue(Triple(operation, destinationDir, filesToArchive))

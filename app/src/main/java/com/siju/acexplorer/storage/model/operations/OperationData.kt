@@ -49,5 +49,9 @@ class OperationData private constructor(var arg1: String, var arg2: String) {
             return OperationData(destinationDir, filesToArchive)
         }
 
+        fun createFavoriteOperation(favList: ArrayList<String>): OperationData {
+            return OperationData(favList)
+        }
+
     }
 }
