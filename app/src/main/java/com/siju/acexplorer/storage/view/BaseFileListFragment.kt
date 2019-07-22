@@ -228,7 +228,7 @@ open class BaseFileListFragment : Fragment() {
         fileListViewModel.selectedFileInfo.observe(viewLifecycleOwner, Observer {
             it?.apply {
                 if (fileListViewModel.actionModeState.value != ActionModeState.ENDED) {
-                    menuControls.onSelectedCountChanged(it.first, it.second)
+                    menuControls.onSelectedCountChanged(it.first, it.second, mainViewModel.getExternalSdList())
                 }
             }
         })

@@ -8,6 +8,8 @@ import com.siju.acexplorer.billing.repository.BillingRepository
 import com.siju.acexplorer.billing.repository.localdb.AugmentedSkuDetails
 import com.siju.acexplorer.billing.repository.localdb.Premium
 import com.siju.acexplorer.main.model.MainModelImpl
+import com.siju.acexplorer.main.model.StorageItem
+import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.theme.Theme
 
@@ -19,6 +21,7 @@ class MainViewModel(val app: Application) : AndroidViewModel(app) {
     private lateinit var permissionHelper: PermissionHelper
     lateinit var permissionStatus: LiveData<PermissionHelper.PermissionState>
     val theme: LiveData<Theme>
+    private var storageList: ArrayList<StorageItem>? = null
 
     init {
         billingRepository.startDataSourceConnections()
@@ -56,6 +59,22 @@ class MainViewModel(val app: Application) : AndroidViewModel(app) {
 
     fun showPermissionRationale() {
         permissionHelper.showRationale()
+    }
+
+    fun setStorageList(storageList: ArrayList<StorageItem>) {
+        this.storageList = storageList
+    }
+
+    fun getExternalSdList() : ArrayList<String> {
+        val extSdList = arrayListOf<String>()
+        storageList?.let {
+            for(storage in it) {
+                if (storage.storageType == StorageUtils.StorageType.EXTERNAL) {
+                     extSdList.add(storage.path)
+                }
+            }
+        }
+        return extSdList
     }
 
 }

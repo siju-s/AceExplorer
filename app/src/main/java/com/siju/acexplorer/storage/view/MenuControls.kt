@@ -121,9 +121,10 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, val categ
     }
 
     private fun toggleMenuVisibility(count: Int,
-                                     fileInfo: FileInfo?) {
+                                     fileInfo: FileInfo?,
+                                     externalSdList: ArrayList<String>) {
         when {
-            count == 1 -> onSingleItemSelected(fileInfo)
+            count == 1 -> onSingleItemSelected(fileInfo, externalSdList)
             count > 1  -> {
                 renameItem.isVisible = false
                 infoItem.isVisible = false
@@ -134,7 +135,8 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, val categ
         }
     }
 
-    private fun onSingleItemSelected(fileInfo: FileInfo?) {
+    private fun onSingleItemSelected(fileInfo: FileInfo?,
+                                     externalSdList: ArrayList<String>) {
         renameItem.isVisible = true
         infoItem.isVisible = true
         hideItem.isVisible = true
@@ -142,7 +144,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, val categ
         val isDir = fileInfo?.isDirectory
         val filePath = fileInfo?.filePath
 
-        val isRoot = RootUtils.isRootDir(filePath)
+        val isRoot = RootUtils.isRootDir(filePath, externalSdList)
         if (FileUtils.isFileCompressed(filePath)) {
             extractItem.isVisible = true
             archiveItem.isVisible = false
@@ -181,9 +183,10 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, val categ
     }
 
     fun onSelectedCountChanged(count: Int,
-                               fileInfo: FileInfo?) {
+                               fileInfo: FileInfo?,
+                               externalSdList: ArrayList<String>) {
         setToolbarText(count.toString())
-        toggleMenuVisibility(count, fileInfo)
+        toggleMenuVisibility(count, fileInfo, externalSdList)
     }
 
     fun setToolbarTitle(title: String) {

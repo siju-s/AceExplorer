@@ -24,6 +24,7 @@ class OperationHelper(val context: Context) {
     private val operationList = arrayListOf<OperationInfo>()
     private var operationId = 0
     private var fileOperationCallback: FileOperationCallback? = null
+    private var zipOperationCallback: ZipOperationCallback? = null
     private val operationResultReceiver = OperationResultReceiver(this)
 
     init {
@@ -257,6 +258,10 @@ class OperationHelper(val context: Context) {
                     deleteWriteableFiles(filesToDelete, fileOperationCallback,
                                          operationInfo.operation)
                 }
+
+                Operations.EXTRACT -> {
+                    extract(context, operationInfo.operationData.arg1, operationInfo.operationData.arg2, zipOperationCallback)
+                }
             }
         }
 
@@ -347,6 +352,8 @@ class OperationHelper(val context: Context) {
                     zipOperationCallback: ZipOperationCallback,
                     fileOperationCallback: FileOperationCallback) {
         setFileOperationCallback(fileOperationCallback)
+        setZipOperationCallback(zipOperationCallback)
+
         val newPath = "$destinationDir/$newName"
 
         if (FileUtils.isFileNameInvalid(newName)) {
@@ -363,19 +370,33 @@ class OperationHelper(val context: Context) {
         when (OperationUtils.getWriteMode(destinationDir)) {
             OperationUtils.WriteMode.INTERNAL -> {
                 addOperation(Operations.EXTRACT, OperationData.createExtractOperation(sourceFilePath, newPath))
-                zipOperationCallback.onZipOperationStarted(Operations.EXTRACT, sourceFilePath, newPath)
-                val intent = Intent(context, ExtractService::class.java)
-                intent.apply {
-                    putExtra(OperationUtils.KEY_FILEPATH, sourceFilePath)
-                    putExtra(OperationUtils.KEY_FILEPATH2, newPath)
-                }
-                if (SdkHelper.isAtleastOreo()) {
-                    context.startForegroundService(intent)
-                }
-                else {
-                    context.startService(intent)
-                }
+                extract(context, sourceFilePath, newPath, zipOperationCallback)
             }
+
+            OperationUtils.WriteMode.EXTERNAL -> {
+                addOperation(Operations.EXTRACT, OperationData.createExtractOperation(sourceFilePath, newPath))
+                fileOperationCallback.onOperationResult(
+                        Operations.EXTRACT,
+                        getOperationAction(OperationResult(OperationResultCode.SAF, 0)))
+
+            }
+        }
+    }
+
+    private fun extract(context: Context, sourceFilePath: String,
+                        newPath: String,
+                        zipOperationCallback: ZipOperationCallback?) {
+        zipOperationCallback?.onZipOperationStarted(Operations.EXTRACT, sourceFilePath, newPath)
+        val intent = Intent(context, ExtractService::class.java)
+        intent.apply {
+            putExtra(OperationUtils.KEY_FILEPATH, sourceFilePath)
+            putExtra(OperationUtils.KEY_FILEPATH2, newPath)
+        }
+        if (SdkHelper.isAtleastOreo()) {
+            context.startForegroundService(intent)
+        }
+        else {
+            context.startService(intent)
         }
     }
 
@@ -420,6 +441,11 @@ class OperationHelper(val context: Context) {
         this.fileOperationCallback = fileOperationCallback
     }
 
+    private fun setZipOperationCallback(zipOperationCallback: ZipOperationCallback?) {
+        this.zipOperationCallback = zipOperationCallback
+    }
+
+
     fun onOperationCompleted(operation: Operations, count: Int) {
         val resultCode =
                 if (count > 0) {
@@ -430,6 +456,7 @@ class OperationHelper(val context: Context) {
                 }
         fileOperationCallback?.onOperationResult(operation, getOperationAction(
                 OperationResult(resultCode, count)))
+        removeOperation()
     }
 
     fun cleanup() {

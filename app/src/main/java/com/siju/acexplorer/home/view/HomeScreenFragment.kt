@@ -100,7 +100,10 @@ class HomeScreenFragment : Fragment() {
         })
 
         homeViewModel.storage.observe(viewLifecycleOwner, Observer {
-            storageAdapter.submitList(it)
+            it?.apply {
+                mainViewModel.setStorageList(it)
+                storageAdapter.submitList(it)
+            }
         })
 
         mainViewModel.permissionStatus.observe(viewLifecycleOwner, Observer { permissionStatus ->

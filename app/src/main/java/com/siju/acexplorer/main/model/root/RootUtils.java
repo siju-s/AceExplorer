@@ -21,14 +21,12 @@ import android.content.SharedPreferences;
 
 import androidx.preference.PreferenceManager;
 
-import com.siju.acexplorer.AceApplication;
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.main.model.StorageUtils;
-import com.siju.acexplorer.main.model.groups.StorageFetcher;
 import com.siju.acexplorer.main.model.helper.RootHelper;
 import com.stericson.RootTools.RootTools;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 
@@ -55,20 +53,17 @@ public class RootUtils {
         preferences.edit().putBoolean(PREFS_ROOTED, true).apply();
     }
 
-    public static boolean isRootDir(String path) {
+    public static boolean isRootDir(String path, ArrayList<String> externalSdList) {
         if (path == null) {
             return false;
         }
-        List<String> extSDPaths = new StorageFetcher(AceApplication.Companion.getAppContext()).getExternalSDList();
         boolean isPathOnExt = false;
-        if (extSDPaths != null) {
-            for(String extSD: extSDPaths) {
+            for(String extSD: externalSdList) {
                 if (path.startsWith(extSD)) {
                     isPathOnExt = true;
                     break;
                 }
             }
-        }
         return !path.startsWith(StorageUtils.INSTANCE.getInternalStorage()) && !isPathOnExt;
     }
 
