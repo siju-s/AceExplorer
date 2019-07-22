@@ -182,17 +182,22 @@ class OperationHelper(val context: Context) {
                 fileOperationCallback.onOperationResult(
                         operation,
                         getOperationAction(OperationResult(OperationResultCode.SAF, 0)))
-                removeOperation()
             }
             OperationUtils.WriteMode.INTERNAL -> {
-                val success = FileOperations.mkfile(file)
-                val resultCode = if (success) OperationResultCode.SUCCESS else OperationResultCode.FAIL
-                fileOperationCallback.onOperationResult(operation,
-                                                        getOperationAction(OperationResult(
-                                                                resultCode, 1)))
-                removeOperation()
+                createFile(operation, file, fileOperationCallback)
             }
         }
+    }
+
+    private fun createFile(operation: Operations,
+                           file: File,
+                           fileOperationCallback: FileOperationCallback) {
+        val success = FileOperations.mkfile(file)
+        val resultCode = if (success) OperationResultCode.SUCCESS else OperationResultCode.FAIL
+        fileOperationCallback.onOperationResult(operation,
+                                                getOperationAction(OperationResult(
+                                                        resultCode, 1)))
+        removeOperation()
     }
 
     fun deleteFiles(operation: Operations, filesList: ArrayList<String>,
@@ -238,6 +243,11 @@ class OperationHelper(val context: Context) {
                 Operations.FOLDER_CREATION -> {
                     val file = File(operationInfo.operationData.arg1 + File.separator + operationInfo.operationData.arg2)
                     createFolder(operationInfo.operation, file, fileOperationCallback)
+                }
+
+                Operations.FILE_CREATION -> {
+                    val file = File(operationInfo.operationData.arg1 + File.separator + operationInfo.operationData.arg2 + EXT_TXT)
+                    createFile(operationInfo.operation, file, fileOperationCallback)
                 }
             }
         }
