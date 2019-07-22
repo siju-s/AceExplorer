@@ -152,14 +152,9 @@ class OperationHelper(val context: Context) {
                 fileOperationCallback.onOperationResult(
                         operation,
                         getOperationAction(OperationResult(OperationResultCode.SAF, 0)))
-                removeOperation()
             }
             OperationUtils.WriteMode.INTERNAL -> {
-                val success = FileOperations.mkdir(file)
-                val resultCode = if (success) OperationResultCode.SUCCESS else OperationResultCode.FAIL
-                fileOperationCallback.onOperationResult(operation, getOperationAction(
-                        OperationResult(resultCode, 1)))
-                removeOperation()
+                createFolder(operation, file, fileOperationCallback)
             }
         }
     }
@@ -241,15 +236,24 @@ class OperationHelper(val context: Context) {
                 }
 
                 Operations.FOLDER_CREATION -> {
-                    createFolder(operationInfo.operation,
-                                 operationInfo.operationData.arg1,
-                                 operationInfo.operationData.arg2,
-                                 fileOperationCallback)
+                    val file = File(operationInfo.operationData.arg1 + File.separator + operationInfo.operationData.arg2)
+                    createFolder(operationInfo.operation, file, fileOperationCallback)
                 }
             }
         }
 
     }
+
+    private fun createFolder(operation: Operations,
+                             file: File,
+                             fileOperationCallback: FileOperationCallback) {
+        val success = FileOperations.mkdir(file)
+        val resultCode = if (success) OperationResultCode.SUCCESS else OperationResultCode.FAIL
+        fileOperationCallback.onOperationResult(operation, getOperationAction(
+                OperationResult(resultCode, 1)))
+        removeOperation()
+    }
+
 
     fun copyFiles(context: Context, destinationDir: String, files: ArrayList<FileInfo>,
                   pasteActionInfo: ArrayList<PasteActionInfo>,

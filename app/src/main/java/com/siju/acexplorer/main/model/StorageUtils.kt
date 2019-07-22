@@ -237,8 +237,7 @@ object StorageUtils {
      * @return The main folder of the external SD card containing this file, if the file is on an SD card. Otherwise,
      * null is returned.
      */
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    private fun getExtSdCardFolder(file: File): String? {
+    private fun getExtSdCardRoot(file: File): String? {
         val extSdPaths = extSdCardPaths
         try {
             for (extSdPath in extSdPaths) {
@@ -261,7 +260,7 @@ object StorageUtils {
      */
     @TargetApi(Build.VERSION_CODES.KITKAT)
     fun isOnExtSdCard(file: File): Boolean {
-        return getExtSdCardFolder(file) != null
+        return getExtSdCardRoot(file) != null
     }
 
     /**
@@ -272,21 +271,19 @@ object StorageUtils {
      * @param isDirectory flag indicating if the file should be a directory.
      * @return The DocumentFile
      */
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     fun getDocumentFile(file: File, isDirectory: Boolean): DocumentFile? {
-        val baseFolder = getExtSdCardFolder(file)
+        val extSdRoot = getExtSdCardRoot(file)
         var originalDirectory = false
-        if (baseFolder == null) {
+        if (extSdRoot == null) {
             return null
         }
-
         var relativePath: String? = null
         try {
-            val fullPath = file.canonicalPath
-            if (baseFolder != fullPath) {
-                relativePath = fullPath.substring(baseFolder.length + 1)
-            } else {
+            val filePath = file.canonicalPath
+            if (extSdRoot == filePath) {
                 originalDirectory = true
+            } else {
+                relativePath = filePath.substring(extSdRoot.length + 1)
             }
         } catch (e: IOException) {
             return null
@@ -295,35 +292,35 @@ object StorageUtils {
         }
 
         val context = AceApplication.appContext
-        val `as` = PreferenceManager.getDefaultSharedPreferences(context).getString(FileConstants.SAF_URI, null)
+        val safUri = PreferenceManager.getDefaultSharedPreferences(context).getString(FileConstants.SAF_URI, null)
+                ?: return null
+        val treeUri = Uri.parse(safUri) ?: return null
 
-        var treeUri: Uri? = null
-        if (`as` != null) {
-            treeUri = Uri.parse(`as`)
-        }
-        if (treeUri == null) {
-            return null
-        }
+        return getDocumentFile(context, treeUri, relativePath, originalDirectory, isDirectory)
+    }
 
+    private fun getDocumentFile(context: Context, treeUri : Uri, relativeFilePath: String?,
+                                originalDirectory : Boolean,
+                                isDirectory: Boolean): DocumentFile? {
         // start with root of SD card and then parse through document tree.
         var document = DocumentFile.fromTreeUri(context, treeUri)
-        if (originalDirectory) {
+        if (originalDirectory || relativeFilePath == null) {
             return document
         }
-        val parts = relativePath!!.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        for (i in parts.indices) {
-            var nextDocument = document!!.findFile(parts[i])
+        val parts = relativeFilePath.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        for (part in parts.indices) {
+            var nextDocument = document?.findFile(parts[part])
 
             if (nextDocument == null) {
-                if (i < parts.size - 1 || isDirectory) {
-                    nextDocument = document.createDirectory(parts[i])
-                } else {
-                    nextDocument = document.createFile("image", parts[i])
+                nextDocument = if (part < parts.size - 1 || isDirectory) {
+                    document?.createDirectory(parts[part])
+                }
+                else {
+                    document?.createFile("image", parts[part])
                 }
             }
             document = nextDocument
         }
-
         return document
     }
 

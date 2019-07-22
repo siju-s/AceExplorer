@@ -143,8 +143,8 @@ object FileOperations {
         }
 
         // Try with Storage Access Framework.
-        if (isAtleastLollipop() && StorageUtils.isOnExtSdCard(file)) {
-            val document = StorageUtils.getDocumentFile(file, true)
+        if (isOnExtSdCard(file)) {
+            val document = getDocumentFile(file, true)
             // getDocumentFile implicitly creates the directory.
             return document != null && document.exists()
         }

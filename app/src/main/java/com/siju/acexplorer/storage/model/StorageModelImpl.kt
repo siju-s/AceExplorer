@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.common.types.FileInfo
+import com.siju.acexplorer.main.model.FileConstants
 import com.siju.acexplorer.main.model.data.DataFetcherFactory
 import com.siju.acexplorer.main.model.data.DataLoader
 import com.siju.acexplorer.main.model.groups.Category
@@ -102,11 +103,16 @@ class StorageModelImpl(val context: Context) : StorageModel {
     }
 
     override fun handleSafResult(uri: Uri, flags: Int) {
+        saveSafUri(uri)
         val newFlags = flags and (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent
                 .FLAG_GRANT_WRITE_URI_PERMISSION)
         // Persist URI - this is required for verification of writability.
         context.contentResolver.takePersistableUriPermission(uri, newFlags)
         operationHelper.onSafSuccess(fileOperationCallback)
+    }
+
+    private fun saveSafUri(uri: Uri) {
+        globalPreference.edit().putString(FileConstants.SAF_URI, uri.toString()).apply()
     }
 
     override fun onExit() {

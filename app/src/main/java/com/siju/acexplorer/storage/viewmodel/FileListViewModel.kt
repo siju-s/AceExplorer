@@ -142,7 +142,9 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         setCategory(category)
         setCurrentDir(path)
         uiScope.launch(Dispatchers.IO) {
-            _fileData.postValue(storageModel.loadData(path, category))
+            val data = storageModel.loadData(path, category)
+            Log.e(this.javaClass.name, "onDataloaded loadData: data ${data.size} , category $category")
+            _fileData.postValue(data)
         }
     }
 
