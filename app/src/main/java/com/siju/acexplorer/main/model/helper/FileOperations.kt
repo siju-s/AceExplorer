@@ -42,9 +42,9 @@ object FileOperations {
         }
 
         // Try the Storage Access Framework if it is just a rename within the same parent folder.
-        if (source.parent == target.parent && StorageUtils.isOnExtSdCard(source)) {
+        if (source.parent == target.parent && isOnExtSdCard(source)) {
 
-            val document = StorageUtils.getDocumentFile(source, true)
+            val document = getDocumentFile(source, true)
 
             Logger.log(TAG, " Document uri in rename=$document")
             if (document?.renameTo(target.name) == true) {
