@@ -4,8 +4,11 @@ import com.siju.acexplorer.common.types.FileInfo
 
 class OperationData private constructor(var arg1: String, var arg2: String) {
 
-    private var paths = emptyList<String>()
-    private var filesList = arrayListOf<FileInfo>()
+    var paths = arrayListOf<String>()
+    private set
+
+    var filesList = arrayListOf<FileInfo>()
+    private set
 
     constructor(paths: ArrayList<String>) : this("null", "null") {
         this.paths = paths

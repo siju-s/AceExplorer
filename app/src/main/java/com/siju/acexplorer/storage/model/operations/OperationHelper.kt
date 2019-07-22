@@ -212,16 +212,12 @@ class OperationHelper(val context: Context) {
         addOperation(operation, OperationData.createDeleteOperation(filesList))
         when (OperationUtils.getWriteMode(File(filesList[0]).parent)) {
             OperationUtils.WriteMode.INTERNAL -> {
-                val count = FileOperations.deleteFiles(filesList)
-                val resultCode =
-                        if (count > 0) {
-                            OperationResultCode.SUCCESS
-                        }
-                        else {
-                            OperationResultCode.FAIL
-                        }
-                fileOperationCallback.onOperationResult(operation, getOperationAction(
-                        OperationResult(resultCode, count)))
+                deleteWriteableFiles(filesList, fileOperationCallback, operation)
+            }
+            OperationUtils.WriteMode.EXTERNAL -> {
+                fileOperationCallback.onOperationResult(
+                        operation,
+                        getOperationAction(OperationResult(OperationResultCode.SAF, 0)))
             }
         }
     }
@@ -255,9 +251,31 @@ class OperationHelper(val context: Context) {
                     val file = File(operationInfo.operationData.arg1 + File.separator + operationInfo.operationData.arg2 + EXT_TXT)
                     createFile(operationInfo.operation, file, fileOperationCallback)
                 }
+
+                Operations.DELETE -> {
+                    val filesToDelete = operationInfo.operationData.paths
+                    deleteWriteableFiles(filesToDelete, fileOperationCallback,
+                                         operationInfo.operation)
+                }
             }
         }
 
+    }
+
+    private fun deleteWriteableFiles(filesList: ArrayList<String>,
+                                     fileOperationCallback: FileOperationCallback,
+                                     operation: Operations) {
+        val count = FileOperations.deleteFiles(filesList)
+        val resultCode =
+                if (count > 0) {
+                    OperationResultCode.SUCCESS
+                }
+                else {
+                    OperationResultCode.FAIL
+                }
+        fileOperationCallback.onOperationResult(operation, getOperationAction(
+                OperationResult(resultCode, count)))
+        removeOperation()
     }
 
     private fun createFolder(operation: Operations,
