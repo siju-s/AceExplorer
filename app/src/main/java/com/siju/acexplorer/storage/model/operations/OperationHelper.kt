@@ -262,6 +262,9 @@ class OperationHelper(val context: Context) {
                 Operations.EXTRACT -> {
                     extract(context, operationInfo.operationData.arg1, operationInfo.operationData.arg2, zipOperationCallback)
                 }
+                Operations.COMPRESS -> {
+                    compress(context, operationInfo.operationData.arg1, operationInfo.operationData.filesList, zipOperationCallback)
+                }
             }
         }
 
@@ -404,6 +407,7 @@ class OperationHelper(val context: Context) {
                     zipOperationCallback: ZipOperationCallback,
                     fileOperationCallback: FileOperationCallback) {
         setFileOperationCallback(fileOperationCallback)
+        setZipOperationCallback(zipOperationCallback)
         val newFile = File(destinationDir)
 
         if (FileUtils.isFileNameInvalid(newFile.name)) {
@@ -419,20 +423,35 @@ class OperationHelper(val context: Context) {
         }
         when (OperationUtils.getWriteMode(newFile.parent)) {
             OperationUtils.WriteMode.INTERNAL -> {
-                addOperation(Operations.EXTRACT, OperationData.createArchiveOperation(destinationDir, filesToArchive))
-                zipOperationCallback.onZipOperationStarted(Operations.COMPRESS, destinationDir, filesToArchive)
-                val intent = Intent(context, CreateZipService::class.java)
-                intent.apply {
-                    putExtra(OperationUtils.KEY_FILEPATH, destinationDir)
-                    putParcelableArrayListExtra(OperationUtils.KEY_FILES, filesToArchive)
-                }
-                if (SdkHelper.isAtleastOreo()) {
-                    context.startForegroundService(intent)
-                }
-                else {
-                    context.startService(intent)
-                }
+                addOperation(Operations.COMPRESS, OperationData.createArchiveOperation(destinationDir, filesToArchive))
+                compress(context, destinationDir, filesToArchive, zipOperationCallback)
             }
+
+            OperationUtils.WriteMode.EXTERNAL -> {
+                addOperation(Operations.COMPRESS, OperationData.createArchiveOperation(destinationDir, filesToArchive))
+                fileOperationCallback.onOperationResult(
+                        Operations.COMPRESS,
+                        getOperationAction(OperationResult(OperationResultCode.SAF, 0)))
+
+            }
+        }
+    }
+
+    private fun compress(context: Context, destinationDir: String,
+                         filesToArchive: ArrayList<FileInfo>,
+                         zipOperationCallback: ZipOperationCallback?) {
+        zipOperationCallback?.onZipOperationStarted(Operations.COMPRESS, destinationDir,
+                                                   filesToArchive)
+        val intent = Intent(context, CreateZipService::class.java)
+        intent.apply {
+            putExtra(OperationUtils.KEY_FILEPATH, destinationDir)
+            putParcelableArrayListExtra(OperationUtils.KEY_FILES, filesToArchive)
+        }
+        if (SdkHelper.isAtleastOreo()) {
+            context.startForegroundService(intent)
+        }
+        else {
+            context.startService(intent)
         }
     }
 
