@@ -35,7 +35,8 @@ class FileDataFetcher : DataFetcher {
 
     private fun getFileCount(path: String): Int {
         val file = File(path)
-        return file.list().size
+        val list : Array<out String>? = file.list()
+        return list?.size ?: 0
     }
 
     private fun fetchFiles(path: String?, sortMode: Int, showHidden: Boolean,

@@ -20,6 +20,7 @@ import android.Manifest
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.pm.PermissionInfo
 import android.net.Uri
@@ -70,16 +71,19 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
 
     private fun hasPermissions(context: Context): Boolean {
         Log.e(TAG, "hasPermissions")
-        val permissions: ArrayList<String>
+        val packageInfo: PackageInfo
         try {
-            permissions = getPermissions(context)
+            packageInfo = context.packageManager.getPackageInfo(context.packageName,
+                                                                PackageManager.GET_PERMISSIONS)
         }
         catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
             return false
         }
+        val dangerousPermissions = getDangerousPermissions(context, packageInfo)
+
         permissionsNeeded.clear()
-        for (permission in permissions) {
+        for (permission in dangerousPermissions) {
             if (isPermissionDenied(context, permission)) {
                 permissionsNeeded.add(permission)
             }
@@ -92,13 +96,18 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
                                               permission) == PackageManager.PERMISSION_DENIED
 
 
-    @Throws(PackageManager.NameNotFoundException::class)
-    private fun getPermissions(context: Context): ArrayList<String> {
-        val packageInfo = context.packageManager.getPackageInfo(context.packageName,
-                                                                PackageManager.GET_PERMISSIONS)
+    private fun getDangerousPermissions(context: Context,
+                                        packageInfo: PackageInfo): ArrayList<String> {
         val dangerousPermissions = arrayListOf<String>()
+
         for (permission in packageInfo.requestedPermissions) {
-            val permissionInfo = context.packageManager.getPermissionInfo(permission, 0)
+            val permissionInfo: PermissionInfo
+            try {
+                permissionInfo = context.packageManager.getPermissionInfo(permission, 0)
+            }
+            catch (exception: PackageManager.NameNotFoundException) {
+                continue
+            }
             when (getPermissionProtectionLevel(permissionInfo)) {
                 PermissionInfo.PROTECTION_DANGEROUS ->
                     dangerousPermissions.add(permission)
