@@ -21,7 +21,7 @@ import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
 import com.siju.acexplorer.common.types.FileInfo;
-import com.siju.acexplorer.home.model.LibrarySortModel;
+import com.siju.acexplorer.home.model.CategoryEdit;
 import com.siju.acexplorer.logging.Logger;
 
 import java.util.ArrayList;
@@ -43,8 +43,8 @@ public class SharedPreferenceWrapper {
     private static final String TEMP_STRING_DATA = "String_data";
 
 
-    public void addLibrary(Context context, LibrarySortModel librarySortModel) {
-        List<LibrarySortModel> libraries = getLibraries(context);
+    public void addLibrary(Context context, CategoryEdit librarySortModel) {
+        List<CategoryEdit> libraries = getLibraries(context);
         if (!libraries.contains(librarySortModel)) {
             libraries.add(librarySortModel);
             saveLibrary(context, libraries);
@@ -53,24 +53,24 @@ public class SharedPreferenceWrapper {
 
     }
 
-    public ArrayList<LibrarySortModel> getLibraries(Context context) {
+    private ArrayList<CategoryEdit> getLibraries(Context context) {
         SharedPreferences preferences;
-        ArrayList<LibrarySortModel> libraries = new ArrayList<>();
+        ArrayList<CategoryEdit> libraries = new ArrayList<>();
 
         preferences = context.getSharedPreferences(PREFS_NAME,
                 Context.MODE_PRIVATE);
         if (preferences.contains(LIBRARIES)) {
             String jsonFavorites = preferences.getString(LIBRARIES, null);
             Gson gson = new Gson();
-            LibrarySortModel[] libItems = gson.fromJson(jsonFavorites,
-                    LibrarySortModel[].class);
+            CategoryEdit[] libItems = gson.fromJson(jsonFavorites,
+                    CategoryEdit[].class);
             libraries.addAll(Arrays.asList(libItems));
         }
 
         return libraries;
     }
 
-    public void saveLibrary(Context context, List<LibrarySortModel> librarySortModel) {
+    private void saveLibrary(Context context, List<CategoryEdit> librarySortModel) {
         SharedPreferences settings;
         SharedPreferences.Editor editor;
 

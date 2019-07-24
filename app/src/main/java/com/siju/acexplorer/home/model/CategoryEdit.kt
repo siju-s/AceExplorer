@@ -14,8 +14,22 @@
  * limitations under the License.
  */
 
-package com.siju.acexplorer.home.types
+package com.siju.acexplorer.home.model
 
-import com.siju.acexplorer.main.model.groups.Category
+class CategoryEdit(val categoryId: Int, var checked : Boolean = false) {
 
-data class HomeLibraryInfo(var category: Category, var categoryName: String?, var resourceId: Int, var count: Int = 0)
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as CategoryEdit
+
+        if (categoryId != other.categoryId) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return categoryId
+    }
+}

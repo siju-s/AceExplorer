@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.siju.acexplorer.home;
+package com.siju.acexplorer.home.edit.view
 
 
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView
 
 /**
  * Listener for manual initiation of a drag.
@@ -29,6 +29,6 @@ interface OnStartDragListener {
      *
      * @param viewHolder The holder of the view to drag.
      */
-    void onStartDrag(RecyclerView.ViewHolder viewHolder);
+    fun onStartDrag(viewHolder: RecyclerView.ViewHolder)
 
 }

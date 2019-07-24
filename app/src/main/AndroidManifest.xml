@@ -112,9 +112,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.siju.acexplorer.home.LibrarySortActivity"
-            android:theme="@style/BaseDarkTheme"/>
+
         <activity android:name=".appmanager.AppDetailActivity"
             android:theme="@style/BaseDarkTheme">
         </activity>

@@ -10,15 +10,27 @@ import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper
 
 private const val COUNT_ZERO = 0
-private const val TAG = "CategoryCreator"
-object CategoryCreator {
+private const val TAG = "CategoryListFetcher"
+object CategoryListFetcher {
 
     private val resourceIds = listOf(R.drawable.ic_library_images, R.drawable.ic_library_music,
             R.drawable.ic_library_videos, R.drawable.ic_library_docs,
             R.drawable.ic_library_downloads, R.drawable.ic_library_recents)
     private val labels = arrayOf("Images", "Audio", "Videos", "Docs", "Downloads", "Recent")
-    private val categories = listOf(Category.IMAGE, Category.AUDIO, Category.VIDEO, Category.DOCS,
-                                    Category.DOWNLOADS, Category.RECENT)
+    private val defaultCategories = listOf(Category.IMAGE, Category.AUDIO, Category.VIDEO, Category.DOCS,
+                                           Category.DOWNLOADS, Category.RECENT)
+
+    private val totalCategoryList = arrayOf(Category.IMAGE,
+                                            Category.AUDIO,
+                                            Category.VIDEO,
+                                            Category.DOCS,
+                                            Category.DOWNLOADS,
+                                            Category.COMPRESSED,
+                                            Category.FAVORITES,
+                                            Category.PDF,
+                                            Category.APPS,
+                                            Category.LARGE_FILES,
+                                            Category.RECENT)
 
     fun getCategories(context: Context): ArrayList<HomeLibraryInfo> {
         val homeLibraryInfoList = arrayListOf<HomeLibraryInfo>()
@@ -35,7 +47,7 @@ object CategoryCreator {
 
     private fun addDefaultLibs(context: Context, homeLibraryInfoList: ArrayList<HomeLibraryInfo>) {
         val categoryIds = arrayListOf<Int>()
-        for ((index, category) in categories.withIndex()) {
+        for ((index, category) in defaultCategories.withIndex()) {
             addToList(HomeLibraryInfo(category, labels[index], resourceIds[index], COUNT_ZERO), homeLibraryInfoList)
             categoryIds.add(category.value)
         }
@@ -65,8 +77,33 @@ object CategoryCreator {
     }
 
     private fun saveCategoriesToPrefs(context: Context, categoryIds: ArrayList<Int>) {
-        Log.e(TAG, "saveCategoriesToPrefs:categories:${categoryIds.toArray()}")
+        Log.e(TAG, "saveCategoriesToPrefs:defaultCategories:${categoryIds.toArray()}")
         CategorySaver.saveCategories(context, categoryIds)
+    }
+
+    private fun getTotalCategoryList(context: Context): ArrayList<HomeLibraryInfo> {
+        val categories = arrayListOf<HomeLibraryInfo>()
+        for (category in totalCategoryList) {
+            categories.add(getCategoryInfo(context, category))
+        }
+        return categories
+    }
+
+    fun getUnsavedCategoryList(context: Context) : ArrayList<HomeLibraryInfo> {
+        val totalCategories = getTotalCategoryList(context)
+        val savedCategories : List<Category> = getCategories(context).map { it.category }
+        val unsavedCategories = arrayListOf<HomeLibraryInfo>()
+        for (category in totalCategories) {
+            if (!savedCategories.contains(category.category)) {
+                unsavedCategories.add(category)
+            }
+        }
+        return unsavedCategories
+    }
+
+    private fun getCategoryInfo(context: Context, category: Category): HomeLibraryInfo {
+        return HomeLibraryInfo(category, CategoryHelper.getCategoryName(context, category),
+                               CategoryHelper.getResourceIdForCategory(category))
     }
 
 

@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.ads.AdsView
+import com.siju.acexplorer.home.edit.view.CategoryEditFragment
 import com.siju.acexplorer.home.model.HomeModelImpl
 import com.siju.acexplorer.home.viewmodel.HomeViewModel
 import com.siju.acexplorer.home.viewmodel.HomeViewModelFactory
@@ -78,6 +79,18 @@ class HomeScreenFragment : Fragment() {
     private fun initList() {
         setupCategoriesList()
         setupStorageList()
+        editButton.setOnClickListener{
+            showCategoryEditScreen()
+        }
+    }
+
+    private fun showCategoryEditScreen() {
+        val transaction = activity?.supportFragmentManager?.beginTransaction()
+        transaction?.apply {
+            replace(R.id.main_container, CategoryEditFragment.newInstance())
+            addToBackStack(null)
+            commit()
+        }
     }
 
     private fun initObservers() {

@@ -15,7 +15,7 @@ private const val TAG = "HomeModelImpl"
 class HomeModelImpl(val context: Context) : HomeModel {
 
     override fun getCategories(): ArrayList<HomeLibraryInfo> {
-        return CategoryCreator.getCategories(context)
+        return CategoryListFetcher.getCategories(context)
     }
 
     override fun getStorage(): ArrayList<StorageItem> {
