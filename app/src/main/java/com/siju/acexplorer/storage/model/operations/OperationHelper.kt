@@ -490,6 +490,13 @@ class OperationHelper(val context: Context) {
         onOperationCompleted(Operations.FAVORITE, count)
     }
 
+    fun deleteFavorite(context: Context, favList: ArrayList<String>, fileOperationCallback: FileOperationCallback) {
+        setFileOperationCallback(fileOperationCallback)
+        addOperation(Operations.DELETE_FAVORITE, OperationData.createFavoriteOperation(favList))
+        val count = FavoriteHelper.removeFavorites(context, favList)
+        onOperationCompleted(Operations.DELETE_FAVORITE, count)
+    }
+
 
     interface FileOperationCallback {
         fun onOperationResult(operation: Operations, operationAction: OperationAction?)

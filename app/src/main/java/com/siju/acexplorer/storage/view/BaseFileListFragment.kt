@@ -432,6 +432,10 @@ open class BaseFileListFragment : Fragment() {
                 fileListViewModel.addToFavorite(operationData.second)
             }
 
+            Operations.DELETE_FAVORITE             -> {
+                fileListViewModel.removeFavorite(operationData.second)
+            }
+
             else                            -> {
             }
         }

@@ -102,6 +102,10 @@ class StorageModelImpl(val context: Context) : StorageModel {
         operationHelper.addToFavorite(context, favList, fileOperationCallback)
     }
 
+    override fun deleteFavorite(favPathList: java.util.ArrayList<String>) {
+        operationHelper.deleteFavorite(context, favPathList, fileOperationCallback)
+    }
+
     override fun handleSafResult(uri: Uri, flags: Int) {
         saveSafUri(uri)
         val newFlags = flags and (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent

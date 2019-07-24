@@ -64,14 +64,23 @@ object FavoriteHelper {
         return false
     }
 
-    fun removeFavorite(context: Context, favorite: String): Boolean {
+    private fun removeFavorite(favorites: ArrayList<String>, favorite: String): Boolean {
+        return favorites.remove(favorite)
+    }
+
+    fun removeFavorites(context: Context, favList: ArrayList<String>): Int {
         val favorites = getFavorites(context)
-        var isDeleted = false
-        if (favorites.remove(favorite)) {
-            isDeleted = true
+        var deletedCount = 0
+        for (favToDelete in favList) {
+            val deleted = removeFavorite(favorites, favToDelete)
+            if (deleted) {
+                deletedCount++
+            }
+        }
+        if (deletedCount > 0) {
             saveFavorites(context, favorites)
         }
-        return isDeleted
+        return deletedCount
     }
 
     fun resetFavorites(context: Context?) {

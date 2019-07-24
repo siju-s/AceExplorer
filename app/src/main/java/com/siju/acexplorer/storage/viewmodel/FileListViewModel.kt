@@ -143,7 +143,8 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         setCurrentDir(path)
         uiScope.launch(Dispatchers.IO) {
             val data = storageModel.loadData(path, category)
-            Log.e(this.javaClass.name, "onDataloaded loadData: data ${data.size} , category $category")
+            Log.e(this.javaClass.name,
+                  "onDataloaded loadData: data ${data.size} , category $category")
             _fileData.postValue(data)
         }
     }
@@ -381,7 +382,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     fun onMenuItemClick(itemId: Int) {
 
         when (itemId) {
-            R.id.action_edit    -> {
+            R.id.action_edit       -> {
                 if (multiSelectionHelper.hasSelectedItems()) {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_RENAME)
                     val fileInfo = _fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
@@ -392,7 +393,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                 }
             }
 
-            R.id.action_hide    -> {
+            R.id.action_hide       -> {
                 if (multiSelectionHelper.hasSelectedItems()) {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_HIDE)
                     val fileInfo = _fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
@@ -404,7 +405,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                 }
             }
 
-            R.id.action_info    -> {
+            R.id.action_info       -> {
                 if (multiSelectionHelper.hasSelectedItems()) {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_PROPERTIES)
                     val fileInfo = _fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
@@ -415,7 +416,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                 }
             }
 
-            R.id.action_delete  -> {
+            R.id.action_delete     -> {
                 if (multiSelectionHelper.hasSelectedItems()) {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_DELETE)
                     val filesToDelete = arrayListOf<FileInfo>()
@@ -429,7 +430,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                 }
             }
 
-            R.id.action_share   -> {
+            R.id.action_share      -> {
                 if (multiSelectionHelper.hasSelectedItems()) {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_SHARE)
                     val filesToShare = arrayListOf<FileInfo>()
@@ -445,7 +446,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                 }
             }
 
-            R.id.action_copy    -> {
+            R.id.action_copy       -> {
                 if (multiSelectionHelper.hasSelectedItems()) {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_COPY)
                     val filesToCopy = arrayListOf<FileInfo>()
@@ -459,7 +460,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                 }
             }
 
-            R.id.action_cut     -> {
+            R.id.action_cut        -> {
                 if (multiSelectionHelper.hasSelectedItems()) {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_CUT)
                     val filesToMove = arrayListOf<FileInfo>()
@@ -474,7 +475,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
             }
 
 
-            R.id.action_paste   -> {
+            R.id.action_paste      -> {
                 val operations = _multiSelectionOpData.value?.first
                 if (operations == Operations.COPY || operations == Operations.CUT) {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_PASTE)
@@ -486,7 +487,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                 }
             }
 
-            R.id.action_extract -> {
+            R.id.action_extract    -> {
                 if (multiSelectionHelper.hasSelectedItems()) {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_EXTRACT)
                     val fileInfo = _fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
@@ -497,7 +498,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                 }
             }
 
-            R.id.action_archive -> {
+            R.id.action_archive    -> {
                 if (multiSelectionHelper.hasSelectedItems()) {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_ARCHIVE)
                     val filesToArchive = arrayListOf<FileInfo>()
@@ -511,7 +512,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                 }
             }
 
-            R.id.action_fav   -> {
+            R.id.action_fav        -> {
                 if (multiSelectionHelper.hasSelectedItems()) {
                     Analytics.getLogger().operationClicked(Analytics.Logger.EV_ADD_FAV)
                     val favList = arrayListOf<FileInfo>()
@@ -524,6 +525,20 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                     }
                     endActionMode()
                     _multiSelectionOpData.value = Pair(Operations.FAVORITE, favList)
+                }
+            }
+
+            R.id.action_delete_fav -> {
+                if (multiSelectionHelper.hasSelectedItems()) {
+                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_DELETE_FAV)
+                    val favList = arrayListOf<FileInfo>()
+                    val selectedItems = multiSelectionHelper.selectedItems
+                    for (i in 0 until selectedItems.size()) {
+                        val fileInfo = _fileData.value?.get(selectedItems.keyAt(i))
+                        fileInfo?.let { favList.add(it) }
+                    }
+                    endActionMode()
+                    _multiSelectionOpData.value = Pair(Operations.DELETE_FAVORITE, favList)
                 }
             }
 
@@ -583,9 +598,10 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
             Operations.COMPRESS                -> {
                 val filesToArchive = multiSelectionOpData.value?.second
                 filesToArchive?.let {
-                    currentDir?.let { currentDir->
+                    currentDir?.let { currentDir ->
                         val destinationDir = "$currentDir/$name.zip"
-                        storageModel.compressFile(destinationDir, filesToArchive, zipOperationCallback)
+                        storageModel.compressFile(destinationDir, filesToArchive,
+                                                  zipOperationCallback)
                     }
                 }
             }
@@ -627,13 +643,23 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         }
     }
 
-    fun addToFavorite(favList:ArrayList<FileInfo>) {
+    fun addToFavorite(favList: ArrayList<FileInfo>) {
         val favPathList = ArrayList<String>()
         for (fav in favList) {
             favPathList.add(fav.filePath)
         }
         uiScope.launch(Dispatchers.IO) {
             storageModel.addToFavorite(favPathList)
+        }
+    }
+
+    fun removeFavorite(favList: ArrayList<FileInfo>) {
+        val favPathList = ArrayList<String>()
+        for (fav in favList) {
+            favPathList.add(fav.filePath)
+        }
+        uiScope.launch(Dispatchers.IO) {
+            storageModel.deleteFavorite(favPathList)
         }
     }
 

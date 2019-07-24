@@ -30,6 +30,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, val categ
     private lateinit var favItem: MenuItem
     private lateinit var extractItem: MenuItem
     private lateinit var permissionItem: MenuItem
+    private lateinit var deleteFavItem : MenuItem
 
     fun onStartActionMode() {
         Log.e(TAG, "onStartActionMode")
@@ -62,6 +63,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, val categ
         extractItem = menu.findItem(R.id.action_extract)
         shareItem = menu.findItem(R.id.action_share)
         permissionItem = menu.findItem(R.id.action_permissions)
+        deleteFavItem = menu.findItem(R.id.action_delete_fav)
     }
 
     fun onEndActionMode() {
@@ -132,6 +134,9 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, val categ
                 permissionItem.isVisible = false
                 hideItem.isVisible = false
             }
+            category == Category.FAVORITES -> {
+                deleteFavItem.isVisible = true
+            }
         }
     }
 
@@ -145,27 +150,15 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, val categ
         val filePath = fileInfo?.filePath
 
         val isRoot = RootUtils.isRootDir(filePath, externalSdList)
-        if (FileUtils.isFileCompressed(filePath)) {
-            extractItem.isVisible = true
-            archiveItem.isVisible = false
-        }
-        if (isRoot) {
-            permissionItem.isVisible = true
-            extractItem.isVisible = false
-            archiveItem.isVisible = false
-        }
+        toggleCompressedMenuVisibility(filePath)
+        toggleRootMenuVisibility(isRoot)
         if (isDir == false) {
             favItem.isVisible = false
         }
 
         when {
             category == Category.APP_MANAGER  -> {
-                renameItem.isVisible = false
-                permissionItem.isVisible = false
-                extractItem.isVisible = false
-                archiveItem.isVisible = false
-                shareItem.isVisible = false
-                hideItem.isVisible = false
+                toggleAppManagerMenuVisibility()
             }
 
             checkIfAnyMusicCategory(category) -> {
@@ -173,8 +166,33 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, val categ
                 extractItem.isVisible = false
                 archiveItem.isVisible = false
             }
+
         }
         //TODO Check directory, theme etc
+    }
+
+    private fun toggleAppManagerMenuVisibility() {
+        renameItem.isVisible = false
+        permissionItem.isVisible = false
+        extractItem.isVisible = false
+        archiveItem.isVisible = false
+        shareItem.isVisible = false
+        hideItem.isVisible = false
+    }
+
+    private fun toggleRootMenuVisibility(isRoot: Boolean) {
+        if (isRoot) {
+            permissionItem.isVisible = true
+            extractItem.isVisible = false
+            archiveItem.isVisible = false
+        }
+    }
+
+    private fun toggleCompressedMenuVisibility(filePath: String?) {
+        if (FileUtils.isFileCompressed(filePath)) {
+            extractItem.isVisible = true
+            archiveItem.isVisible = false
+        }
     }
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
