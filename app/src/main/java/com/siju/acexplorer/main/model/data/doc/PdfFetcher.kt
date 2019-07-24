@@ -29,9 +29,8 @@ class PdfFetcher : DataFetcher {
 
     private fun fetchPdf(context: Context, showHidden: Boolean): Cursor? {
         val uri = MediaStore.Files.getContentUri("external")
-        val pdf1 = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants
-                .EXT_PDF)
-        var selection: String? = null
+        val pdf1 = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_PDF)
+        var selection = ""
         if (!showHidden) {
             selection = constructionNoHiddenFilesArgs() + " AND "
         }

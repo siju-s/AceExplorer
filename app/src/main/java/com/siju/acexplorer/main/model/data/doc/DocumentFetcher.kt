@@ -26,10 +26,9 @@ class DocumentFetcher : DataFetcher {
 
     private fun fetchDocuments(context: Context, showHidden: Boolean): Cursor? {
         val uri = MediaStore.Files.getContentUri("external")
-        var selection: String?
-        selection = DocumentUtils.getDocMimeTypes()
+        var selection = DocumentUtils.getDocMimeTypes()
         if (!showHidden) {
-            selection = selection + " AND " + constructionNoHiddenFilesArgs()
+            selection+= " AND " + constructionNoHiddenFilesArgs()
         }
         return context.contentResolver.query(uri, null, selection, null,
                 null)

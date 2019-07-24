@@ -29,7 +29,7 @@ class LargeFilesFetcher : DataFetcher {
 
     private fun fetchLargeFiles(context: Context, showHidden: Boolean): Cursor? {
         val uri = MediaStore.Files.getContentUri("external")
-        var selection: String? = null
+        var selection = ""
         if (!showHidden) {
             selection = constructionNoHiddenFilesArgs() + " AND "
         }

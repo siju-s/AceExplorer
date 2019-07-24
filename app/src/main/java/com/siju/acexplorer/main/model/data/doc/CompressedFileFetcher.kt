@@ -26,8 +26,7 @@ class CompressedFileFetcher : DataFetcher {
 
     private fun fetchCompressedFiles(context: Context, showHidden: Boolean): Cursor? {
         val uri = MediaStore.Files.getContentUri("external")
-        var selection: String? = null
-        selection = DocumentUtils.getMediaTypeNone() + " AND " + DocumentUtils.getCompressedMimeType()
+        var selection = DocumentUtils.getMediaTypeNone() + " AND " + DocumentUtils.getCompressedMimeType()
         if (!showHidden) {
             selection = selection + " AND " + constructionNoHiddenFilesArgs()
         }
