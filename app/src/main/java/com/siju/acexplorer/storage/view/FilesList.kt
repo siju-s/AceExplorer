@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import android.util.Log
 import android.view.View
 import android.widget.TextView
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.siju.acexplorer.R
@@ -11,10 +12,11 @@ import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.storage.view.custom.CustomGridLayoutManager
 import com.siju.acexplorer.utils.ConfigurationHelper
+import com.siju.acexplorer.utils.ScrollInfo
 
 private const val TAG = "FilesList"
-
-class FilesList(val fragment: BaseFileListFragment, val view: View, val viewMode: ViewMode) {
+private const val DELAY_SCROLL_UPDATE_MS = 100L
+class FilesList(val fragment: BaseFileListFragment, val view: View, var viewMode: ViewMode) {
 
     private lateinit var fileList: RecyclerView
     private lateinit var emptyText: TextView
@@ -75,6 +77,7 @@ class FilesList(val fragment: BaseFileListFragment, val view: View, val viewMode
     fun onViewModeChanged(viewMode: ViewMode) {
         Log.e(TAG, "onViewModeChanged:$viewMode")
         setLayoutManager(fileList, viewMode)
+        this.viewMode = viewMode
         adapter.viewMode = viewMode
         fileList.adapter = adapter
     }
@@ -87,5 +90,35 @@ class FilesList(val fragment: BaseFileListFragment, val view: View, val viewMode
        adapter.setMultiSelectionHelper(multiSelectionHelper)
     }
 
+    fun getScrollInfo(): ScrollInfo {
+        val view = fileList.getChildAt(0)
+        val offset = view?.top ?: 0
+        val position = when(viewMode) {
+            ViewMode.LIST ->  {
+                val layoutManager = fileList.layoutManager as LinearLayoutManager
+                layoutManager.findFirstVisibleItemPosition()
+            }
+            ViewMode.GRID ->  {
+                val layoutManager = fileList.layoutManager as GridLayoutManager
+                layoutManager.findFirstVisibleItemPosition()
+            }
+        }
+        return ScrollInfo(position, offset)
+    }
 
+    fun scrollToPosition(scrollInfo: ScrollInfo) {
+        fileList.postDelayed({
+            Log.e(TAG, "scrollToPosition:${scrollInfo.position}, offset:${scrollInfo.offset}")
+            when (viewMode) {
+                ViewMode.LIST -> {
+                    val layoutManager = fileList.layoutManager as LinearLayoutManager
+                    layoutManager.scrollToPositionWithOffset(scrollInfo.position, scrollInfo.offset)
+                }
+                ViewMode.GRID -> {
+                    val layoutManager = fileList.layoutManager as GridLayoutManager
+                    layoutManager.scrollToPositionWithOffset(scrollInfo.position, scrollInfo.offset)
+                }
+            }
+        }, DELAY_SCROLL_UPDATE_MS)
+    }
 }

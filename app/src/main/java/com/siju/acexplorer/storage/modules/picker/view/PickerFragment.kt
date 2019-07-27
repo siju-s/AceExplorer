@@ -48,16 +48,16 @@ import com.siju.acexplorer.storage.modules.picker.types.PickerType
 import com.siju.acexplorer.storage.modules.picker.viewmodel.PickerViewModel
 import com.siju.acexplorer.storage.modules.picker.viewmodel.PickerViewModelFactory
 import com.siju.acexplorer.storage.view.FileListAdapter
+import com.siju.acexplorer.utils.ScrollInfo
 import java.util.*
 
 private const val TAG = "PickerFragment"
 private const val PERMISSIONS_REQUEST = 1
 const val KEY_PICKER_TYPE = "picker_type"
 const val RINGTONE_TYPE = "ringtone_type"
-//private const val INDEX = "index"
-//private const val TOP = "top"
+private const val DELAY_SCROLL_UPDATE_MS = 100L
 
-class PickerFragment private constructor(): DialogFragment() {
+class PickerFragment private constructor() : DialogFragment() {
 
     private lateinit var fileList: RecyclerView
     private lateinit var backButton: ImageButton
@@ -235,6 +235,18 @@ class PickerFragment private constructor(): DialogFragment() {
                 hideEmptyText()
             }
         })
+
+        viewModel.directoryClicked.observe(viewLifecycleOwner, Observer {
+            it?.apply {
+                viewModel.saveScrollInfo(getScrollInfo())
+            }
+        })
+
+        viewModel.scrollInfo.observe(viewLifecycleOwner, Observer {
+            it?.apply {
+                scrollToPosition(it)
+            }
+        })
     }
 
     private fun onCurrentPathChanged(path: String?) {
@@ -332,6 +344,24 @@ class PickerFragment private constructor(): DialogFragment() {
         viewModel.loadData(path)
     }
 
+    fun getScrollInfo(): ScrollInfo {
+        val view = fileList.getChildAt(0)
+        val offset = view?.top ?: 0
+
+        val layoutManager = fileList.layoutManager as LinearLayoutManager
+        val position = layoutManager.findFirstVisibleItemPosition()
+
+        return ScrollInfo(position, offset)
+    }
+
+    fun scrollToPosition(scrollInfo: ScrollInfo) {
+        fileList.postDelayed({
+                                 val layoutManager = fileList.layoutManager as LinearLayoutManager
+                                 layoutManager.scrollToPositionWithOffset(scrollInfo.position,
+                                                                          scrollInfo.offset)
+                             }
+                             , DELAY_SCROLL_UPDATE_MS)
+    }
 
 //    private fun computeScroll() {
 //        val vi = fileList.getChildAt(0)
@@ -373,7 +403,8 @@ class PickerFragment private constructor(): DialogFragment() {
 
     companion object {
 
-        fun newInstance(theme: Int, pickerType: PickerType, ringtoneType: Int = -1): PickerFragment {
+        fun newInstance(theme: Int, pickerType: PickerType,
+                        ringtoneType: Int = -1): PickerFragment {
             val dialogFragment = PickerFragment()
             dialogFragment.setStyle(STYLE_NORMAL, theme)
             val args = Bundle()

@@ -23,6 +23,7 @@ import com.siju.acexplorer.storage.model.operations.PasteData
 import com.siju.acexplorer.storage.model.task.PasteConflictChecker
 import com.siju.acexplorer.storage.view.*
 import com.siju.acexplorer.utils.InstallHelper
+import com.siju.acexplorer.utils.ScrollInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -130,6 +131,17 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     val showCompressDialog: LiveData<Triple<Operations, String, ArrayList<FileInfo>>>
         get() = _showCompressDialog
 
+    private val _directoryClicked = MutableLiveData<Boolean>()
+    val directoryClicked: LiveData<Boolean>
+        get() = _directoryClicked
+
+    private val _scrollInfo = MutableLiveData<ScrollInfo>()
+
+    val scrollInfo: LiveData<ScrollInfo>
+        get() = _scrollInfo
+
+    private var scrollPosition = hashMapOf<String?, ScrollInfo>()
+
     init {
         val model = storageModel as StorageModelImpl
         operationResult = model.operationData
@@ -146,6 +158,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
             Log.e(this.javaClass.name,
                   "onDataloaded loadData: data ${data.size} , category $category")
             _fileData.postValue(data)
+            handleScrollPosition()
         }
     }
 
@@ -156,7 +169,25 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         setCurrentDir(path)
         uiScope.launch(Dispatchers.IO) {
             _fileData.postValue(storageModel.loadData(path, category))
+            handleScrollPosition()
         }
+    }
+
+    private fun handleScrollPosition() {
+        currentDir?.let {
+            if (scrollPosition.containsKey(it)) {
+                val scrollInfo = scrollPosition[it]
+                _scrollInfo.postValue(scrollInfo)
+            }
+        }
+    }
+
+    fun saveScrollInfo(scrollInfo: ScrollInfo) {
+        scrollPosition[currentDir] = scrollInfo
+    }
+
+    private fun removeScrolledPos() {
+        scrollPosition.remove(currentDir)
     }
 
     fun getViewMode() = storageModel.getViewMode()
@@ -341,12 +372,12 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         backStackInfo.addToBackStack(path, category)
     }
 
-
     private fun hasBackStack() = backStackInfo.hasBackStack()
 
     fun onBackPress(): Boolean {
         if (hasBackStack()) {
             backStackInfo.remove()
+            removeScrolledPos()
             refreshList()
             return false
         }
@@ -362,6 +393,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     }
 
     private fun onDirectoryClicked(fileInfo: FileInfo) {
+        _directoryClicked.value = true
         loadData(fileInfo.filePath, FILES)
     }
 
@@ -662,6 +694,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
             storageModel.deleteFavorite(favPathList)
         }
     }
+
 
     val navigationCallback = object : NavigationCallback {
         override fun onHomeClicked() {

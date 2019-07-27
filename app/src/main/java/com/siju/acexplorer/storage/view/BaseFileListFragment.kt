@@ -229,7 +229,8 @@ open class BaseFileListFragment : Fragment() {
         fileListViewModel.selectedFileInfo.observe(viewLifecycleOwner, Observer {
             it?.apply {
                 if (fileListViewModel.actionModeState.value != ActionModeState.ENDED) {
-                    menuControls.onSelectedCountChanged(it.first, it.second, mainViewModel.getExternalSdList())
+                    menuControls.onSelectedCountChanged(it.first, it.second,
+                                                        mainViewModel.getExternalSdList())
                 }
             }
         })
@@ -306,6 +307,18 @@ open class BaseFileListFragment : Fragment() {
                 }
             }
         })
+
+        fileListViewModel.directoryClicked.observe(viewLifecycleOwner, Observer {
+            it?.apply {
+                fileListViewModel.saveScrollInfo(filesList.getScrollInfo())
+            }
+        })
+
+        fileListViewModel.scrollInfo.observe(viewLifecycleOwner, Observer {
+            it?.apply {
+                filesList.scrollToPosition(it)
+            }
+        })
     }
 
     private fun handlePasteOperation(pasteData: PasteData) {
@@ -344,20 +357,20 @@ open class BaseFileListFragment : Fragment() {
 
     private fun onOperationSuccess(operation: Operations, operationAction: OperationAction) {
         when (operation) {
-            Operations.DELETE -> {
+            Operations.DELETE   -> {
                 val count = operationAction.operationResult.count
                 context?.showToast(resources.getQuantityString(R.plurals.number_of_files, count,
                                                                count) +
                                            " " + resources.getString(R.string.msg_delete_success))
             }
 
-            Operations.COPY   -> {
+            Operations.COPY     -> {
                 val count = operationAction.operationResult.count
                 context?.showToast(String.format(
                         Locale.getDefault(), resources.getString(R.string.copied), count))
             }
 
-            Operations.CUT    -> {
+            Operations.CUT      -> {
                 val count = operationAction.operationResult.count
                 context?.showToast(String.format(
                         Locale.getDefault(), resources.getString(R.string.moved), count))
@@ -434,7 +447,7 @@ open class BaseFileListFragment : Fragment() {
                 fileListViewModel.addToFavorite(operationData.second)
             }
 
-            Operations.DELETE_FAVORITE             -> {
+            Operations.DELETE_FAVORITE      -> {
                 fileListViewModel.removeFavorite(operationData.second)
             }
 
@@ -558,7 +571,8 @@ open class BaseFileListFragment : Fragment() {
             val theme = mainViewModel.theme.value
             this@BaseFileListFragment.dialog = dialog
             theme?.let {
-                val dialogFragment = PickerFragment.newInstance(getThemeStyle(theme), PickerType.FILE)
+                val dialogFragment = PickerFragment.newInstance(getThemeStyle(theme),
+                                                                PickerType.FILE)
                 dialogFragment.setTargetFragment(this@BaseFileListFragment, EXTRACT_PATH_REQUEST)
                 this@BaseFileListFragment.fragmentManager?.let {
                     dialogFragment.show(it, "Browse Fragment")
@@ -715,7 +729,7 @@ open class BaseFileListFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, intent)
     }
 
-    //
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.filelist_base, menu)

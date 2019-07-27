@@ -10,6 +10,7 @@ import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.storage.modules.picker.model.PickerModel
 import com.siju.acexplorer.storage.modules.picker.model.PickerResultAction
 import com.siju.acexplorer.storage.modules.picker.types.PickerType
+import com.siju.acexplorer.utils.ScrollInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -50,6 +51,16 @@ class PickerViewModel(val model: PickerModel) : ViewModel(), PickerModel.Listene
     val showEmptyText: LiveData<Pair<PickerType, Boolean>>
         get() = _showEmptyText
 
+    private val _directoryClicked = MutableLiveData<Boolean>()
+    val directoryClicked: LiveData<Boolean>
+        get() = _directoryClicked
+
+    private val _scrollInfo = MutableLiveData<ScrollInfo>()
+
+    val scrollInfo: LiveData<ScrollInfo>
+        get() = _scrollInfo
+
+    private var scrollPosition = hashMapOf<String?, ScrollInfo>()
 
     init {
         model.setListener(this)
@@ -106,6 +117,7 @@ class PickerViewModel(val model: PickerModel) : ViewModel(), PickerModel.Listene
         when {
             File(filePath).isDirectory -> {
                 setRootStorageList(false)
+                _directoryClicked.postValue(true)
                 _currentPath.postValue(filePath)
             }
             rootStorageList            -> {
@@ -122,6 +134,22 @@ class PickerViewModel(val model: PickerModel) : ViewModel(), PickerModel.Listene
             }
         }
     }
+
+    private fun handleScrollPosition() {
+        if (scrollPosition.containsKey(currentPath.value)) {
+            val scrollInfo = scrollPosition[currentPath.value]
+            _scrollInfo.postValue(scrollInfo)
+        }
+    }
+
+    fun saveScrollInfo(scrollInfo: ScrollInfo) {
+        scrollPosition[currentPath.value] = scrollInfo
+    }
+
+    private fun removeScrolledPos() {
+        scrollPosition.remove(currentPath.value)
+    }
+
 
     private fun setRootStorageList(value: Boolean) {
         rootStorageList = value
@@ -142,8 +170,8 @@ class PickerViewModel(val model: PickerModel) : ViewModel(), PickerModel.Listene
                     _showEmptyText.postValue(Pair(it.first, false))
                 }
             }
-
             _fileData.postValue(data)
+            handleScrollPosition()
         }
     }
 
@@ -164,6 +192,7 @@ class PickerViewModel(val model: PickerModel) : ViewModel(), PickerModel.Listene
             for (storage in it) {
                 if (isMainStorageList(storage, _currentPath.value)) {
                     setRootStorageList(true)
+                    removeScrolledPos()
                     _currentPath.value = ""
                     _fileData.postValue(_storageList.value)
                     return
@@ -172,6 +201,7 @@ class PickerViewModel(val model: PickerModel) : ViewModel(), PickerModel.Listene
         }
         if (!rootStorageList) {
             val parentPath = File(_currentPath.value).parent
+            removeScrolledPos()
             _currentPath.value = parentPath
         }
     }
