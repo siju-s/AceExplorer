@@ -233,7 +233,7 @@ public class RootHelper {
         File f = new File(path);
         String p = f.getParent();
         if (p != null && p.length() > 0) {
-            ArrayList<FileInfo> ls = FileDataFetcher.Companion.getFilesList(p, true, true);
+            ArrayList<FileInfo> ls = FileDataFetcher.Companion.getFilesList(p, false, true, false);
             for (FileInfo strings : ls) {
                 if (strings.getFilePath() != null && strings.getFilePath().equals(path)) {
                     return true;

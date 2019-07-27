@@ -13,6 +13,10 @@ interface DataFetcher {
     fun fetchData(context: Context, path: String?, category: Category): ArrayList<FileInfo>
     fun fetchCount(context: Context, path: String? = null): Int
 
+    fun fetchData(context: Context, path: String?, category: Category, ringtonePicker: Boolean) : ArrayList<FileInfo>{
+        return arrayListOf<FileInfo>()
+    }
+
     fun getSortMode(context: Context): Int {
         return PreferenceManager.getDefaultSharedPreferences(context).getInt(
                 PreferenceConstants.KEY_SORT_MODE, PreferenceConstants.DEFAULT_VALUE_SORT_MODE)

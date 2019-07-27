@@ -17,18 +17,16 @@
 package com.siju.acexplorer.main.model.groups
 
 import android.content.Context
-import com.siju.acexplorer.R
 import com.siju.acexplorer.main.model.StorageItem
 import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.main.model.StorageUtils.StorageType.EXTERNAL
-import com.siju.acexplorer.main.model.StorageUtils.StorageType.INTERNAL
 import com.siju.acexplorer.main.model.StorageUtils.getSpaceLeft
 import com.siju.acexplorer.main.model.StorageUtils.getTotalSpace
 import com.siju.acexplorer.main.model.helper.FileUtils
+import com.siju.acexplorer.main.model.helper.StorageHelper.getStorageProperties
 import java.io.File
 
-private const val STORAGE_EMULATED_LEGACY = "/storage/emulated/legacy"
-private const val STORAGE_EMULATED_0 = "/storage/emulated/0"
+
 const val STORAGE_SDCARD1 = "/storage/sdcard1"
 
 class StorageFetcher(private val context: Context) {
@@ -50,6 +48,10 @@ class StorageFetcher(private val context: Context) {
             val name = triple.second
             storageType = triple.third
 
+            if (isExternalStorageType(storageType)) {
+                externalSDList.add(path)
+            }
+
             if (isValidStoragePath(file)) {
                 val spaceLeft = getSpaceLeft(file)
                 val totalSpace = getTotalSpace(file)
@@ -62,43 +64,13 @@ class StorageFetcher(private val context: Context) {
         return storageList
     }
 
-    private fun isValidStoragePath(file: File) = file.isFile || file.canExecute()
+    private fun isExternalStorageType(storageType: StorageUtils.StorageType) = storageType == EXTERNAL
 
-    private fun getStorageProperties(path: String, file: File): Triple<Int, String, StorageUtils.StorageType> {
-        val icon: Int
-        val storageType: StorageUtils.StorageType
-        val name: String
-        when {
-            isInternalStorage(path) -> {
-                icon = R.drawable.ic_phone_white
-                name = ""
-                storageType = INTERNAL
-            }
-            isExternalStorage(path) -> {
-                icon = R.drawable.ic_ext_white
-                storageType = EXTERNAL
-                name = path
-                externalSDList.add(path)
-            }
-            else -> {
-                name = file.name
-                icon = R.drawable.ic_ext_white
-                storageType = EXTERNAL
-                externalSDList.add(path)
-            }
-        }
-        return Triple(icon, name, storageType)
-    }
+    private fun isValidStoragePath(file: File) = file.isFile || file.canExecute()
 
     private fun addToStorageList(storageList: ArrayList<StorageItem>, storageItem: StorageItem) {
         storageList.add(storageItem)
     }
-
-    private fun isExternalStorage(path: String) = STORAGE_SDCARD1 == path
-
-    private fun isInternalStorage(path: String) =
-            STORAGE_EMULATED_LEGACY == path || STORAGE_EMULATED_0 == path
-
 
     private fun formatStorageSpace(spaceLeft: Long, totalSpace: Long): String {
         val freePlaceholder = "/" //" " + context.getResources().getString(R.string.msg_free) + " ";

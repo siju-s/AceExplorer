@@ -23,6 +23,12 @@ class FileDataFetcher : DataFetcher {
                           RootUtils.isRooted(context))
     }
 
+    override fun fetchData(context: Context, path: String?, category: Category,
+                           ringtonePicker: Boolean) : ArrayList<FileInfo> {
+        return fetchFiles(path, getSortMode(context), canShowHiddenFiles(context),
+                   RootUtils.isRooted(context), ringtonePicker)
+    }
+
     override fun fetchCount(context: Context, path: String?): Int {
         Log.e(TAG, "fetchCount:$path")
         return if (path == null) {
@@ -40,23 +46,24 @@ class FileDataFetcher : DataFetcher {
     }
 
     private fun fetchFiles(path: String?, sortMode: Int, showHidden: Boolean,
-                           isRooted: Boolean): ArrayList<FileInfo> {
+                           isRooted: Boolean,
+                           ringtonePicker: Boolean = false): ArrayList<FileInfo> {
         Log.e(TAG, "fetchFiles: path:$path, sortMode:$sortMode, hidden:$showHidden")
         if (path == null) {
             return ArrayList()
         }
-        val fileInfoList = getFilesList(path, isRooted, showHidden)
+        val fileInfoList = getFilesList(path, isRooted, showHidden, ringtonePicker)
         sortFiles(fileInfoList, sortMode)
         return fileInfoList
     }
 
     companion object {
         fun getFilesList(path: String, root: Boolean,
-                         showHidden: Boolean): ArrayList<FileInfo> {
+                         showHidden: Boolean, ringtonePicker: Boolean = false): ArrayList<FileInfo> {
             val fileInfoArrayList: ArrayList<FileInfo>
             val file = File(path)
             fileInfoArrayList = if (file.canRead()) {
-                getNonRootedList(file, showHidden)
+                getNonRootedList(file, showHidden, ringtonePicker)
             }
             else {
                 RootHelper.getRootedList(path, root, showHidden)
@@ -64,13 +71,9 @@ class FileDataFetcher : DataFetcher {
             return fileInfoArrayList
         }
 
-        private fun getNonRootedList(file: File, showHidden: Boolean): ArrayList<FileInfo> {
-            val listFiles = file.listFiles()
-            return getFilesList(listFiles, showHidden)
-        }
-
-        private fun getFilesList(listFiles: Array<File>?,
-                                 showHidden: Boolean): ArrayList<FileInfo> {
+        private fun getNonRootedList(sourceFile: File, showHidden: Boolean,
+                                     ringtonePicker: Boolean = false): ArrayList<FileInfo> {
+            val listFiles = sourceFile.listFiles()
             val filesList = ArrayList<FileInfo>()
             if (listFiles == null) {
                 return filesList
@@ -94,6 +97,9 @@ class FileDataFetcher : DataFetcher {
                     size = file.length()
                     extension = FileUtils.getExtension(filePath)
                     category = getCategoryFromExtension(extension)
+                    if (isNotRingtoneFile(ringtonePicker, filePath)) {
+                        continue
+                    }
                 }
                 val date = file.lastModified()
 
@@ -103,6 +109,10 @@ class FileDataFetcher : DataFetcher {
             }
             return filesList
         }
+
+        private fun isNotRingtoneFile(ringtonePicker: Boolean,
+                                      filePath: String?) =
+                ringtonePicker && !FileUtils.isFileMusic(filePath)
 
         private fun getDirectorySize(file: File): Long {
             var childFileListSize = 0

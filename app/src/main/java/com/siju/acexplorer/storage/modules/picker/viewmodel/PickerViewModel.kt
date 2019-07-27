@@ -1,0 +1,192 @@
+package com.siju.acexplorer.storage.modules.picker.viewmodel
+
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import com.siju.acexplorer.common.types.FileInfo
+import com.siju.acexplorer.main.model.StorageUtils
+import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.permission.PermissionHelper
+import com.siju.acexplorer.storage.modules.picker.model.PickerModel
+import com.siju.acexplorer.storage.modules.picker.model.PickerResultAction
+import com.siju.acexplorer.storage.modules.picker.types.PickerType
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import java.io.File
+
+class PickerViewModel(val model: PickerModel) : ViewModel(), PickerModel.Listener {
+
+    private val viewModelJob = Job()
+    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+
+    private lateinit var permissionHelper: PermissionHelper
+    lateinit var permissionStatus: LiveData<PermissionHelper.PermissionState>
+
+    private val _storageList = MutableLiveData<ArrayList<FileInfo>>()
+    val storage: LiveData<ArrayList<FileInfo>>
+        get() = _storageList
+
+    private val _pickerInfo = MutableLiveData<Triple<PickerType, String?, Int>>()
+    val pickerInfo: LiveData<Triple<PickerType, String?, Int>>
+        get() = _pickerInfo
+
+    private var rootStorageList = false
+    private val _currentPath = MutableLiveData<String>()
+
+    val currentPath: LiveData<String>
+        get() = _currentPath
+
+    private val _result = MutableLiveData<PickerResultAction>()
+    val result: LiveData<PickerResultAction>
+        get() = _result
+
+    private val _fileData = MutableLiveData<ArrayList<FileInfo>>()
+    val fileData: LiveData<ArrayList<FileInfo>>
+        get() = _fileData
+
+    private val _showEmptyText = MutableLiveData<Pair<PickerType, Boolean>>()
+    val showEmptyText: LiveData<Pair<PickerType, Boolean>>
+        get() = _showEmptyText
+
+
+    init {
+        model.setListener(this)
+    }
+
+    fun setArgs(args: Any) {
+        model.setArgs(args)
+    }
+
+    fun fetchStorageList() {
+        uiScope.launch(Dispatchers.IO) {
+            _storageList.postValue(model.getStorageList())
+
+        }
+    }
+
+    fun setPermissionHelper(permissionHelper: PermissionHelper) {
+        this.permissionHelper = permissionHelper
+        permissionStatus = permissionHelper.permissionStatus
+        permissionHelper.checkPermissions()
+    }
+
+    fun onPermissionResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        permissionHelper.onPermissionResult(requestCode, permissions, grantResults)
+    }
+
+    fun onResume() {
+        permissionHelper.onForeground()
+    }
+
+    fun requestPermissions() {
+        permissionHelper.requestPermission()
+    }
+
+    fun showPermissionRationale() {
+        permissionHelper.showRationale()
+    }
+
+    override fun onRingtonePicker(lastSavedRingtoneDir: String?, ringtoneType: Int) {
+        var directory = lastSavedRingtoneDir
+        if (lastSavedRingtoneDir == null || !File(lastSavedRingtoneDir).exists()) {
+            directory = StorageUtils.internalStorage
+        }
+        _pickerInfo.postValue(Triple(PickerType.RINGTONE, directory, ringtoneType))
+    }
+
+    override fun onFilePicker(path: String) {
+        _pickerInfo.postValue(Triple(PickerType.FILE, path, 0))
+        _currentPath.value = path
+    }
+
+    fun handleItemClick(fileInfo: FileInfo) {
+        val filePath = fileInfo.filePath
+        when {
+            File(filePath).isDirectory -> {
+                setRootStorageList(false)
+                _currentPath.postValue(filePath)
+            }
+            rootStorageList            -> {
+                setRootStorageList(false)
+                _currentPath.postValue(filePath)
+            }
+            else                       -> when (pickerInfo.value?.first) {
+                PickerType.RINGTONE -> {
+                    model.onRingtoneSelected(filePath, pickerInfo.value?.third)
+                }
+                PickerType.FILE     -> {
+                    model.onFileSelected(filePath)
+                }
+            }
+        }
+    }
+
+    private fun setRootStorageList(value: Boolean) {
+        rootStorageList = value
+    }
+
+    fun loadData(path: String?) {
+        if (path.isNullOrEmpty()) {
+            return
+        }
+        uiScope.launch(Dispatchers.IO) {
+            val data = model.loadData(path, Category.FILES,
+                                      pickerInfo.value?.first == PickerType.RINGTONE)
+            pickerInfo.value?.let {
+                if (data.isEmpty()) {
+                    _showEmptyText.postValue(Pair(it.first, true))
+                }
+                else {
+                    _showEmptyText.postValue(Pair(it.first, false))
+                }
+            }
+
+            _fileData.postValue(data)
+        }
+    }
+
+    fun okButtonClicked() {
+        currentPath.value?.let { model.onOkButtonClicked(it) }
+    }
+
+    override fun onPickerResultAction(pickerResultAction: PickerResultAction) {
+        _result.postValue(pickerResultAction)
+    }
+
+    fun onCancelButtonClicked() {
+        pickerInfo.value?.first?.let { model.onCancelButtonClicked(it) }
+    }
+
+    fun onNavigationBackButtonPressed() {
+        _storageList.value?.let {
+            for (storage in it) {
+                if (isMainStorageList(storage, _currentPath.value)) {
+                    setRootStorageList(true)
+                    _currentPath.value = ""
+                    _fileData.postValue(_storageList.value)
+                    return
+                }
+            }
+        }
+        if (!rootStorageList) {
+            val parentPath = File(_currentPath.value).parent
+            _currentPath.value = parentPath
+        }
+    }
+
+    private fun isMainStorageList(storage: FileInfo,
+                                  parentPath: String?) = storage.filePath == parentPath
+
+    fun onBackPressed() {
+        if (rootStorageList) {
+            _pickerInfo.value?.first?.let { model.onCancelButtonClicked(it) }
+        }
+        else {
+            onNavigationBackButtonPressed()
+        }
+    }
+
+
+}

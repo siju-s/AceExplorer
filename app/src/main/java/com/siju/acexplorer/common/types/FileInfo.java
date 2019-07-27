@@ -90,11 +90,15 @@ public class FileInfo implements Parcelable {
     }
 
     // For DialogPicker
-    public FileInfo(Category category, String fileName, String filePath, int icon) {
+    private FileInfo(Category category, String fileName, String filePath, int icon) {
+        this.category = category;
         this.fileName = fileName;
         this.filePath = filePath;
         this.icon = icon;
-        this.category = category;
+    }
+
+    public static FileInfo createPicker(Category category, String fileName, String filePath, int icon) {
+        return new FileInfo(category, fileName, filePath, icon);
     }
 
     // For HomeLib count

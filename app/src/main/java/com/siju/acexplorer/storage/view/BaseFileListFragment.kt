@@ -47,8 +47,9 @@ import com.siju.acexplorer.storage.model.SortMode
 import com.siju.acexplorer.storage.model.StorageModelImpl
 import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.storage.model.operations.*
-import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH
-import com.siju.acexplorer.storage.modules.picker.view.DialogBrowseFragment
+import com.siju.acexplorer.storage.modules.picker.model.PickerModelImpl
+import com.siju.acexplorer.storage.modules.picker.types.PickerType
+import com.siju.acexplorer.storage.modules.picker.view.PickerFragment
 import com.siju.acexplorer.storage.viewmodel.FileListViewModel
 import com.siju.acexplorer.storage.viewmodel.FileListViewModelFactory
 import com.siju.acexplorer.theme.Theme
@@ -292,6 +293,7 @@ open class BaseFileListFragment : Fragment() {
         fileListViewModel.showZipDialog.observe(viewLifecycleOwner, Observer {
             it?.apply {
                 context?.let { context ->
+                    dismissDialog()
                     OperationProgress().showExtractProgressDialog(context, it.second, it.third)
                 }
             }
@@ -552,15 +554,15 @@ open class BaseFileListFragment : Fragment() {
             fileListViewModel.onExtractOperation(operation, newFileName, destinationDir)
         }
 
-        override fun onSelectButtonClicked() {
-            val dialogFragment = DialogBrowseFragment()
-            dialogFragment.setTargetFragment(this@BaseFileListFragment, EXTRACT_PATH_REQUEST)
+        override fun onSelectButtonClicked(dialog: Dialog) {
             val theme = mainViewModel.theme.value
+            this@BaseFileListFragment.dialog = dialog
             theme?.let {
-                dialogFragment.setStyle(DialogBrowseFragment.STYLE_NORMAL, getThemeStyle(theme))
-            }
-            this@BaseFileListFragment.fragmentManager?.let {
-                dialogFragment.show(it, "Browse Fragment")
+                val dialogFragment = PickerFragment.newInstance(getThemeStyle(theme), PickerType.FILE)
+                dialogFragment.setTargetFragment(this@BaseFileListFragment, EXTRACT_PATH_REQUEST)
+                this@BaseFileListFragment.fragmentManager?.let {
+                    dialogFragment.show(it, "Browse Fragment")
+                }
             }
         }
     }
@@ -704,7 +706,7 @@ open class BaseFileListFragment : Fragment() {
 
             EXTRACT_PATH_REQUEST                       -> {
                 if (resultCode == RESULT_OK) {
-                    val destDir = intent?.getStringExtra(KEY_FILEPATH)
+                    val destDir = intent?.getStringExtra(PickerModelImpl.KEY_PICKER_SELECTED_PATH)
                     val pathButton = dialog?.findViewById<Button>(R.id.buttonPathSelect)
                     pathButton?.text = destDir
                 }

@@ -7,8 +7,14 @@ import java.util.*
 
 object DataLoader {
 
-    fun fetchDataByCategory(context: Context, dataFetcher: DataFetcher, category: Category, currentDir: String? = null): ArrayList<FileInfo> {
-        return dataFetcher.fetchData(context, currentDir, category)
+    fun fetchDataByCategory(context: Context, dataFetcher: DataFetcher, category: Category, currentDir: String? = null,
+                            isRingtonePicker: Boolean = false): ArrayList<FileInfo> {
+        return if (isRingtonePicker) {
+            dataFetcher.fetchData(context, currentDir, category, isRingtonePicker)
+        }
+        else {
+            dataFetcher.fetchData(context, currentDir, category)
+        }
     }
 
     fun fetchDataCount(context: Context, dataFetcher: DataFetcher, path: String? = null): Int {
