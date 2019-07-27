@@ -188,7 +188,7 @@ class PickerFragment private constructor() : DialogFragment() {
             it?.apply {
                 when (it.first) {
                     PickerType.RINGTONE -> {
-                        setupRingtonePicker(it.second)
+                        setupRingtonePicker()
                     }
                     PickerType.FILE     -> {
                         setupFilePicker()
@@ -306,11 +306,10 @@ class PickerFragment private constructor() : DialogFragment() {
         }
     }
 
-    private fun setupRingtonePicker(lastSavedRingtoneDir: String?) {
+    private fun setupRingtonePicker() {
         Analytics.getLogger().pickerShown(true)
         setTitle(getString(R.string.dialog_title_picker))
         okButton.visibility = View.GONE
-        currentPathText.text = lastSavedRingtoneDir
     }
 
     private fun setupFilePicker() {

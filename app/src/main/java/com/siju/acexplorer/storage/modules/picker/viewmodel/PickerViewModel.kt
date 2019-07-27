@@ -105,6 +105,7 @@ class PickerViewModel(val model: PickerModel) : ViewModel(), PickerModel.Listene
             directory = StorageUtils.internalStorage
         }
         _pickerInfo.postValue(Triple(PickerType.RINGTONE, directory, ringtoneType))
+        _currentPath.value = directory
     }
 
     override fun onFilePicker(path: String) {
