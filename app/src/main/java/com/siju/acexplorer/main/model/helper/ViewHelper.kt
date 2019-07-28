@@ -22,6 +22,7 @@ import android.webkit.MimeTypeMap.getSingleton
 import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.main.view.dialog.DialogHelper
+import java.util.*
 
 
 object ViewHelper {
@@ -30,7 +31,7 @@ object ViewHelper {
 
     fun viewFile(context: Context, path: String, extension: String) {
         val uri = UriHelper.createContentUri(context, path) ?: return
-        val ext = extension.toLowerCase()
+        val ext = extension.toLowerCase(Locale.ROOT)
         val mimeType = getSingleton().getMimeTypeFromExtension(ext)
 
         if (mimeType == null) {

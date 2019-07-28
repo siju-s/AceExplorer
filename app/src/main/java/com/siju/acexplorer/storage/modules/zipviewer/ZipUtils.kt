@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.siju.acexplorer.storage.modules.zip
+package com.siju.acexplorer.storage.modules.zipviewer
 
 import java.io.File
 

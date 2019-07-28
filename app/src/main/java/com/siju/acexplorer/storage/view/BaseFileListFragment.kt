@@ -50,6 +50,7 @@ import com.siju.acexplorer.storage.model.operations.*
 import com.siju.acexplorer.storage.modules.picker.model.PickerModelImpl
 import com.siju.acexplorer.storage.modules.picker.types.PickerType
 import com.siju.acexplorer.storage.modules.picker.view.PickerFragment
+import com.siju.acexplorer.storage.modules.zipviewer.view.ZipViewerFragment
 import com.siju.acexplorer.storage.viewmodel.FileListViewModel
 import com.siju.acexplorer.storage.viewmodel.FileListViewModelFactory
 import com.siju.acexplorer.theme.Theme
@@ -317,6 +318,14 @@ open class BaseFileListFragment : Fragment() {
         fileListViewModel.scrollInfo.observe(viewLifecycleOwner, Observer {
             it?.apply {
                 filesList.scrollToPosition(it)
+            }
+        })
+
+        fileListViewModel.openZipViewerEvent.observe(viewLifecycleOwner, Observer {
+            it?.apply {
+                val zipViewer = ZipViewerFragment(this@BaseFileListFragment, it.first,
+                                                  it.second)
+                fileListViewModel.setZipViewer(zipViewer)
             }
         })
     }

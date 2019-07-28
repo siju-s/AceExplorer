@@ -21,6 +21,10 @@ import com.siju.acexplorer.storage.model.operations.OperationHelper
 import com.siju.acexplorer.storage.model.operations.Operations
 import com.siju.acexplorer.storage.model.operations.PasteData
 import com.siju.acexplorer.storage.model.task.PasteConflictChecker
+import com.siju.acexplorer.storage.modules.zipviewer.ZipUtils
+import com.siju.acexplorer.storage.modules.zipviewer.ZipViewerCallback
+import com.siju.acexplorer.storage.modules.zipviewer.view.ZipViewer
+import com.siju.acexplorer.storage.modules.zipviewer.view.ZipViewerFragment
 import com.siju.acexplorer.storage.view.*
 import com.siju.acexplorer.utils.InstallHelper
 import com.siju.acexplorer.utils.ScrollInfo
@@ -32,6 +36,9 @@ import kotlinx.coroutines.launch
 private const val TAG = "FileListViewModel"
 
 class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
+
+    private var zipViewer: ZipViewer? = null
+    private var isZipMode = false
     var apkPath: String? = null
     private lateinit var navigationView: NavigationView
     lateinit var category: Category
@@ -49,6 +56,10 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     val viewFileEvent: LiveData<Pair<String, String?>>
         get() = _viewFileEvent
+
+    private val _openZipViewerEvent = MutableLiveData<Pair<String, ZipViewerCallback>>()
+    val openZipViewerEvent: LiveData<Pair<String, ZipViewerCallback>>
+        get() = _openZipViewerEvent
 
     private val _fileData = MutableLiveData<ArrayList<FileInfo>>()
 
@@ -162,6 +173,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         }
     }
 
+    //Reload data without adding to backstack again
     private fun reloadData(path: String?, category: Category) {
         Log.e(this.javaClass.name, "reloadData: path $path , category $category")
         addNavigation(path, category)
@@ -274,10 +286,10 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         when (category) {
             AUDIO, VIDEO, IMAGE, DOCS, PODCASTS, ALBUM_DETAIL, ARTIST_DETAIL, GENRE_DETAIL, FOLDER_IMAGES,
             FOLDER_VIDEOS, ALL_TRACKS, RECENT_AUDIO, RECENT_DOCS, RECENT_IMAGES, RECENT_VIDEOS -> {
-                onFileClicked(fileInfo)
+                onFileClicked(fileInfo, position)
             }
             FILES, DOWNLOADS, COMPRESSED, FAVORITES, PDF, APPS, LARGE_FILES, RECENT_APPS       -> {
-                onFileItemClicked(fileInfo)
+                onFileItemClicked(fileInfo, position)
             }
 
             GENERIC_MUSIC                                                                      -> {
@@ -323,17 +335,41 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     private fun isActionModeActive() = _actionModeState.value == ActionModeState.STARTED
 
-    private fun onFileItemClicked(fileInfo: FileInfo) {
+    private fun onFileItemClicked(fileInfo: FileInfo, position: Int) {
         if (fileInfo.isDirectory) {
-            onDirectoryClicked(fileInfo)
+            onDirectoryClicked(fileInfo, position)
         }
         else {
-            onFileClicked(fileInfo)
+            onFileClicked(fileInfo, position)
         }
     }
 
-    private fun onFileClicked(fileInfo: FileInfo) {
-        _viewFileEvent.postValue(Pair(fileInfo.filePath, fileInfo.extension))
+    private fun onDirectoryClicked(fileInfo: FileInfo, position: Int) {
+        _directoryClicked.value = true
+        if (isZipMode) {
+            zipViewer?.onDirectoryClicked(position)
+        }
+        else {
+            loadData(fileInfo.filePath, FILES)
+        }
+    }
+
+    private fun onFileClicked(fileInfo: FileInfo, position: Int) {
+        val path = fileInfo.filePath
+        when {
+            isZipFile(path) -> openZipViewer(path)
+            isZipMode       -> zipViewer?.onFileClicked(position)
+            else            -> _viewFileEvent.postValue(Pair(path, fileInfo.extension))
+        }
+    }
+
+    private fun isZipFile(path: String) = !isZipMode && ZipUtils.isZipViewable(path)
+
+    private fun openZipViewer(path: String?) {
+        path?.let {
+            isZipMode = true
+            _openZipViewerEvent.value = Pair(it, zipCallback)
+        }
     }
 
     fun handleLongClick(fileInfo: FileInfo, position: Int) {
@@ -375,8 +411,12 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     private fun hasBackStack() = backStackInfo.hasBackStack()
 
     fun onBackPress(): Boolean {
-        if (hasBackStack()) {
-            backStackInfo.remove()
+        if (isZipMode) {
+            zipViewer?.onBackPress()
+            return true
+        }
+        else if (hasBackStack()) {
+            backStackInfo.removeLastEntry()
             removeScrolledPos()
             refreshList()
             return false
@@ -390,11 +430,6 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         backStack?.let {
             reloadData(backStack.first, backStack.second)
         }
-    }
-
-    private fun onDirectoryClicked(fileInfo: FileInfo) {
-        _directoryClicked.value = true
-        loadData(fileInfo.filePath, FILES)
     }
 
     fun switchView(viewMode: ViewMode) {
@@ -695,6 +730,14 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         }
     }
 
+    fun setZipViewer(zipViewer: ZipViewerFragment) {
+        this.zipViewer = zipViewer
+        loadZipData()
+    }
+
+    private fun loadZipData() {
+        zipViewer?.loadData()
+    }
 
     val navigationCallback = object : NavigationCallback {
         override fun onHomeClicked() {
@@ -867,6 +910,48 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         override fun onZipOperationStarted(operation: Operations, sourceFilePath: String,
                                            destinationDir: String) {
             _showZipDialog.postValue(Triple(operation, sourceFilePath, destinationDir))
+        }
+    }
+
+    private val zipCallback = object : ZipViewerCallback {
+        override fun removeZipScrollPos(newPath: String) {
+
+        }
+
+        override fun onZipModeEnd(dir: String?) {
+            if (dir != null && dir.isNotEmpty()) {
+                currentDir = dir
+            }
+            isZipMode = false
+            backStackInfo.removeLastEntry()
+            reloadData(currentDir, category)
+        }
+
+        override fun calculateZipScroll(dir: String) {
+        }
+
+        override fun onZipContentsLoaded(data: ArrayList<FileInfo>) {
+            _fileData.postValue(data)
+        }
+
+        override fun openZipViewer(currentDir: String) {
+        }
+
+        override fun setNavDirectory(path: String, isHomeScreenEnabled: Boolean,
+                                     category: Category) {
+            navigation.setNavDirectory(path, category)
+        }
+
+        override fun addToBackStack(path: String, category: Category) {
+            backStackInfo.addToBackStack(path, category)
+        }
+
+        override fun removeFromBackStack() {
+            backStackInfo.removeLastEntry()
+        }
+
+        override fun setInitialDir(path: String) {
+            navigation.setInitialDir(path, FILES)
         }
 
     }

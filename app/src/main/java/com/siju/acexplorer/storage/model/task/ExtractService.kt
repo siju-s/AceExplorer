@@ -34,9 +34,9 @@ import com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastOreo
 import com.siju.acexplorer.storage.model.operations.*
 import com.siju.acexplorer.storage.model.operations.OperationUtils.*
 import com.siju.acexplorer.storage.model.operations.Operations.EXTRACT
-import com.siju.acexplorer.storage.modules.zip.ZipUtils
-import com.siju.acexplorer.storage.modules.zip.ZipUtils.EXT_TAR
-import com.siju.acexplorer.storage.modules.zip.ZipUtils.isTar
+import com.siju.acexplorer.storage.modules.zipviewer.ZipUtils
+import com.siju.acexplorer.storage.modules.zipviewer.ZipUtils.EXT_TAR
+import com.siju.acexplorer.storage.modules.zipviewer.ZipUtils.isTar
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import java.io.*

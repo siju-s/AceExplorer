@@ -58,7 +58,7 @@ class BackStackInfo {
         backStack.removeAt(index)
     }
 
-    fun remove() {
+    fun removeLastEntry() {
         val index = getLastIndex()
         if (index >= 0) {
             backStack.removeAt(index)
