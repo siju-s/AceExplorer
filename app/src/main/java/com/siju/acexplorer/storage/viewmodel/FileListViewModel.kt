@@ -54,6 +54,9 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     private val _viewFileEvent = MutableLiveData<Pair<String, String?>>()
     private val _sortEvent = MutableLiveData<SortMode>()
 
+    val sortEvent: LiveData<SortMode>
+        get() = _sortEvent
+
     val viewFileEvent: LiveData<Pair<String, String?>>
         get() = _viewFileEvent
 
@@ -91,9 +94,6 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         get() = _singleOpData
 
     val showFab = MutableLiveData<Boolean>()
-
-    val sortEvent: LiveData<SortMode>
-        get() = _sortEvent
 
     private val _viewMode = MutableLiveData<ViewMode>()
 
@@ -153,6 +153,8 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     private var scrollPosition = hashMapOf<String?, ScrollInfo>()
 
+    private var scrollToTop = false
+
     init {
         val model = storageModel as StorageModelImpl
         operationResult = model.operationData
@@ -186,6 +188,11 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     }
 
     private fun handleScrollPosition() {
+        if (scrollToTop) {
+            _scrollInfo.postValue(ScrollInfo(0, 0))
+            scrollToTop = false
+            return
+        }
         currentDir?.let {
             if (scrollPosition.containsKey(it)) {
                 val scrollInfo = scrollPosition[it]
@@ -268,6 +275,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     fun onHiddenFileSettingChanged(value: Boolean) {
         storageModel.saveHiddenFileSetting(value)
+        scrollToTop = true
         val backStack = backStackInfo.getCurrentBackStack()
         backStack?.let {
             reloadData(backStack.first, backStack.second)
@@ -443,7 +451,12 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     fun onSort(sortMode: SortMode) {
         storageModel.saveSortMode(sortMode)
+        setScrollToTop(true)
         refreshList()
+    }
+
+    private fun setScrollToTop(value: Boolean) {
+        this.scrollToTop = value
     }
 
     fun onMenuItemClick(itemId: Int) {

@@ -16,6 +16,7 @@ import com.siju.acexplorer.utils.ScrollInfo
 
 private const val TAG = "FilesList"
 private const val DELAY_SCROLL_UPDATE_MS = 100L
+
 class FilesList(val fragment: BaseFileListFragment, val view: View, var viewMode: ViewMode) {
 
     private lateinit var fileList: RecyclerView
@@ -87,18 +88,18 @@ class FilesList(val fragment: BaseFileListFragment, val view: View, var viewMode
     }
 
     fun setMultiSelectionHelper(multiSelectionHelper: MultiSelectionHelper) {
-       adapter.setMultiSelectionHelper(multiSelectionHelper)
+        adapter.setMultiSelectionHelper(multiSelectionHelper)
     }
 
     fun getScrollInfo(): ScrollInfo {
         val view = fileList.getChildAt(0)
         val offset = view?.top ?: 0
-        val position = when(viewMode) {
-            ViewMode.LIST ->  {
+        val position = when (viewMode) {
+            ViewMode.LIST -> {
                 val layoutManager = fileList.layoutManager as LinearLayoutManager
                 layoutManager.findFirstVisibleItemPosition()
             }
-            ViewMode.GRID ->  {
+            ViewMode.GRID -> {
                 val layoutManager = fileList.layoutManager as GridLayoutManager
                 layoutManager.findFirstVisibleItemPosition()
             }
@@ -106,19 +107,54 @@ class FilesList(val fragment: BaseFileListFragment, val view: View, var viewMode
         return ScrollInfo(position, offset)
     }
 
+    //TODO Find way to get right delay time (probably after list drawn)
     fun scrollToPosition(scrollInfo: ScrollInfo) {
         fileList.postDelayed({
-            Log.e(TAG, "scrollToPosition:${scrollInfo.position}, offset:${scrollInfo.offset}")
-            when (viewMode) {
-                ViewMode.LIST -> {
-                    val layoutManager = fileList.layoutManager as LinearLayoutManager
-                    layoutManager.scrollToPositionWithOffset(scrollInfo.position, scrollInfo.offset)
-                }
-                ViewMode.GRID -> {
-                    val layoutManager = fileList.layoutManager as GridLayoutManager
-                    layoutManager.scrollToPositionWithOffset(scrollInfo.position, scrollInfo.offset)
-                }
-            }
-        }, DELAY_SCROLL_UPDATE_MS)
+                                 Log.e(TAG,
+                                       "scrollToPosition:${scrollInfo.position}, offset:${scrollInfo.offset}")
+                                 when (viewMode) {
+                                     ViewMode.LIST -> {
+                                         val layoutManager = fileList.layoutManager as LinearLayoutManager
+                                         scrollListView(scrollInfo, layoutManager)
+                                     }
+                                     ViewMode.GRID -> {
+                                         val layoutManager = fileList.layoutManager as GridLayoutManager
+                                         scrollGridView(scrollInfo, layoutManager)
+                                     }
+                                 }
+                             }, DELAY_SCROLL_UPDATE_MS)
+    }
+
+    private fun scrollListView(scrollInfo: ScrollInfo,
+                               layoutManager: LinearLayoutManager) {
+        if (shouldScrollToTop(scrollInfo)) {
+            scrollListToTop(layoutManager)
+        }
+        else {
+            layoutManager.scrollToPositionWithOffset(scrollInfo.position,
+                                                     scrollInfo.offset)
+        }
+    }
+
+    private fun scrollGridView(scrollInfo: ScrollInfo,
+                               layoutManager: GridLayoutManager) {
+        if (shouldScrollToTop(scrollInfo)) {
+            scrollGridToTop(layoutManager)
+        }
+        else {
+            layoutManager.scrollToPositionWithOffset(scrollInfo.position,
+                                                     scrollInfo.offset)
+        }
+    }
+
+    private fun shouldScrollToTop(
+            scrollInfo: ScrollInfo) = scrollInfo.position == 0 && scrollInfo.offset == 0
+
+    private fun scrollListToTop(layoutManager: LinearLayoutManager) {
+        layoutManager.smoothScrollToPosition(fileList, null, 0)
+    }
+
+    private fun scrollGridToTop(layoutManager: GridLayoutManager) {
+        layoutManager.smoothScrollToPosition(fileList, null, 0)
     }
 }
