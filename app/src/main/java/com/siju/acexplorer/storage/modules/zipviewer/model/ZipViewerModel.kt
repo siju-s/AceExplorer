@@ -12,4 +12,5 @@ interface ZipViewerModel {
                       zipFileViewCallback: ExtractZipEntry.ZipFileViewCallback)
 
     fun clearCache()
+    fun populateZipList(parentZipPath: String)
 }

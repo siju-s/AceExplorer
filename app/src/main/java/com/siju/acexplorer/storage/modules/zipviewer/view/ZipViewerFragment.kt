@@ -36,15 +36,16 @@ private const val TAG = "ZipViewerFragment"
 
 class ZipViewerFragment(
         private val fragment: Fragment,
-        val path: String,
-        private val zipViewerCallback: ZipViewerCallback) : ZipViewer {
-
+        private val parentZipPath: String,
+        private val zipViewerCallback: ZipViewerCallback) : ZipViewer
+{
 
     private lateinit var viewModel: ZipViewerViewModel
 
     init {
         setupViewModel()
         initObservers()
+        viewModel.populateTotalZipList(parentZipPath)
     }
 
     private fun setupViewModel() {
@@ -55,7 +56,7 @@ class ZipViewerFragment(
     }
 
     override fun loadData() {
-        viewModel.loadData(null, path)
+        viewModel.loadData(null, parentZipPath)
     }
 
     private fun initObservers() {

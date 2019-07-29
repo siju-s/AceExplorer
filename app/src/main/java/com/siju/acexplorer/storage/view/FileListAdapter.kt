@@ -243,7 +243,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         override fun areItemsTheSame(oldItem: FileInfo,
                                      newItem: FileInfo): Boolean {
             if (oldItem.category == newItem.category) {
-                Log.e(TAG, "areItemssame:olditem:${oldItem.category}")
+                Log.e(TAG, "areItemssame:olditem:${oldItem.category}, oldPath:${oldItem.filePath}, newPath:${newItem.filePath}")
                 return when (oldItem.category) {
                     Category.FILES, Category.COMPRESSED, Category.IMAGE, Category.VIDEO, Category.FOLDER_IMAGES, Category.FOLDER_VIDEOS -> oldItem.filePath == newItem.filePath
                     Category.GENERIC_IMAGES, Category.GENERIC_VIDEOS               -> oldItem.bucketId == newItem.bucketId

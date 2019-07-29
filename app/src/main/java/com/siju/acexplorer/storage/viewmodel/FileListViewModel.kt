@@ -413,7 +413,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     fun onBackPress(): Boolean {
         if (isZipMode) {
             zipViewer?.onBackPress()
-            return true
+            return false
         }
         else if (hasBackStack()) {
             backStackInfo.removeLastEntry()

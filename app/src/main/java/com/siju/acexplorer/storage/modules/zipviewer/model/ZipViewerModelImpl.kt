@@ -18,6 +18,10 @@ class ZipViewerModelImpl(val context: Context) : ZipViewerModel {
 
     private val zipLoader = ZipLoader(context)
 
+    override fun populateZipList(parentZipPath: String) {
+        zipLoader.populateTotalZipList(parentZipPath)
+    }
+
     override fun loadData(path: String?, parentZipPath: String,
                           zipElementsResultCallback: ZipLoader.ZipElementsResultCallback): ArrayList<FileInfo> {
         return zipLoader.getZipContents(path, parentZipPath, zipElementsResultCallback)

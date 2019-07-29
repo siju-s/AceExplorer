@@ -48,6 +48,9 @@ class ZipViewerViewModel(val model: ZipViewerModel, val zipViewerCallback: ZipVi
     private var zipEntryFileName : String? = null
     private var zipEntry : ZipEntry? = null
 
+    fun populateTotalZipList(parentZipPath: String) {
+        model.populateZipList(parentZipPath)
+    }
 
     fun loadData(path : String?, parentZipPath : String) {
         this.parentZipPath = parentZipPath
@@ -80,8 +83,8 @@ class ZipViewerViewModel(val model: ZipViewerModel, val zipViewerCallback: ZipVi
         if (name?.startsWith(DELIMITER_SLASH) == true) {
             name = name.substring(1)
         }
-        val name1 = name?.substring(0, name.length - 1) // 2 so that / doesnt come
-        setZipEntryInfo(zipElements[position].entry, name)
+        val name1 = name?.substring(0, name.length - 1)
+        setZipEntryInfo(zipElements[position].entry, name1)
 
         if (isDirectory(zipEntryFileName)) {
             val dirPath = zipEntryFileName?.substringBeforeLast(DELIMITER_SLASH)

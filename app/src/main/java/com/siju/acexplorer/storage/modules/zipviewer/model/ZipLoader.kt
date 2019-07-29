@@ -2,74 +2,37 @@ package com.siju.acexplorer.storage.modules.zipviewer.model
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.RootHelper
 import com.siju.acexplorer.main.model.helper.SortHelper
 import com.siju.acexplorer.storage.model.ZipModel
-import com.siju.acexplorer.storage.modules.zipviewer.helper.ZipFormats
-import java.io.*
+import java.io.File
+import java.io.IOException
 import java.util.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import java.util.zip.ZipInputStream
 
-private const val BUFFER_SIZE_UNZIP_BYTES = 20480
+private const val TAG = "ZipLoader"
 
 class ZipLoader(val context: Context) {
 
     private var zipElementsResultCallback: ZipElementsResultCallback? = null
-    private val elements = arrayListOf<ZipModel>()
+    private var elements = arrayListOf<ZipModel>()
     private var totalZipList = arrayListOf<ZipModel>()
-
-    fun unzipEntry(entry: ZipEntry, path: String, outputPath: String,
-                   zipElementsResultCallback: ZipElementsResultCallback?) {
-        val zipFormat = ZipFormats.getFormatFromExt(
-                entry.name.substringAfterLast("."))
-        if (zipFormat == ZipFormats.ZIP) {
-            unzipEntry(ZipFile(path), entry, File(outputPath), zipElementsResultCallback)
-        }
-    }
-
-    @Throws(IOException::class)
-    private fun unzipEntry(zipFile: ZipFile, entry: ZipEntry, outputFile: File,
-                           zipElementsResultCallback: ZipElementsResultCallback?) {
-
-        val inputStream = BufferedInputStream(zipFile.getInputStream(entry))
-        val outputStream = BufferedOutputStream(FileOutputStream(outputFile))
-        try {
-            val buf = ByteArray(BUFFER_SIZE_UNZIP_BYTES)
-            var len = inputStream.read(buf)
-            while (len > 0) {
-                outputStream.write(buf, 0, len)
-                len = inputStream.read(buf)
-            }
-        }
-        finally {
-            try {
-                inputStream.close()
-            }
-            catch (e: IOException) {
-                //closing quietly
-            }
-
-            try {
-                outputStream.close()
-            }
-            catch (e: IOException) {
-                //closing quietly
-            }
-
-        }
-        getZipContents("", outputFile.absolutePath, zipElementsResultCallback)
-    }
 
     fun getZipContents(dir: String?, parentZipPath: String,
                        zipElementsResultCallback: ZipElementsResultCallback?): ArrayList<FileInfo> {
         this.zipElementsResultCallback = zipElementsResultCallback
+        elements = arrayListOf<ZipModel>()
+        var path = dir
+        if (path?.endsWith("/") == true) {
+            path = path.substring(0, path.length - 1)
+        }
         try {
-            totalZipList = populateTotalZipList(parentZipPath)
-            traverseZipElements(dir, elements, totalZipList)
+            traverseZipElements(path, elements, totalZipList)
         }
         catch (exception: IOException) {
         }
@@ -81,9 +44,10 @@ class ZipLoader(val context: Context) {
         return list
     }
 
+
     @Throws(IOException::class)
-    private fun populateTotalZipList(parentZipPath: String): ArrayList<ZipModel> {
-        val totalZipList = arrayListOf<ZipModel>()
+    fun populateTotalZipList(parentZipPath: String): ArrayList<ZipModel> {
+        totalZipList = arrayListOf()
         return if (File(parentZipPath).canRead()) {
             getZipParentContents(parentZipPath, totalZipList)
         }
@@ -170,6 +134,7 @@ class ZipLoader(val context: Context) {
                                 zipEntry: ZipModel) {
         if (!entriesList.contains(entryName)) {
             elements.add(createZipModel(entryName, zipEntry))
+            Log.e(TAG, "addFileZipEntry:entryName:$entryName, elements size:${elements.size}")
             entriesList.add(entryName)
         }
     }
@@ -203,6 +168,7 @@ class ZipLoader(val context: Context) {
             zipModel = ZipModel(ZipEntry(path), zipEntry.time, zipEntry
                     .size, true)
             elements.add(zipModel)
+            Log.e(TAG, "addFileZipEntry:entryName:$path, elements size:${elements.size}")
             entriesList.add(path)
         }
     }
