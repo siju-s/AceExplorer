@@ -17,7 +17,6 @@
 package com.siju.acexplorer.main.model.helper;
 
 import android.annotation.TargetApi;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -29,8 +28,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
 
-import com.siju.acexplorer.AceApplication;
-import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.main.model.StorageUtils;
 import com.siju.acexplorer.main.model.groups.Category;
 
@@ -45,7 +42,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
 
 import static com.siju.acexplorer.main.model.groups.Category.AUDIO;
@@ -61,88 +57,8 @@ public class FileUtils {
     private static final String TAG = "FileUtils";
     public static final int ACTION_NONE = 0;
     public static final int ACTION_KEEP = 3;
-    private static final HashMap<String, String> MIME_TYPES = new HashMap<>();
     public static final String EXT_APK = "apk";
 
-
-    static {
-
-		/*
-         * ================= MIME TYPES ====================
-		 */
-        MIME_TYPES.put("asm", "text/x-asm");
-        MIME_TYPES.put("def", "text/plain");
-        MIME_TYPES.put("in", "text/plain");
-        MIME_TYPES.put("rc", "text/plain");
-        MIME_TYPES.put("list", "text/plain");
-        MIME_TYPES.put("log", "text/plain");
-        MIME_TYPES.put("pl", "text/plain");
-        MIME_TYPES.put("prop", "text/plain");
-        MIME_TYPES.put("properties", "text/plain");
-        MIME_TYPES.put("rc", "text/plain");
-
-        MIME_TYPES.put("epub", "application/epub+zip");
-        MIME_TYPES.put("ibooks", "application/x-ibooks+zip");
-
-        MIME_TYPES.put("ifb", "text/calendar");
-        MIME_TYPES.put("eml", "message/rfc822");
-        MIME_TYPES.put("msg", "application/vnd.ms-outlook");
-
-        MIME_TYPES.put("ace", "application/x-ace-compressed");
-        MIME_TYPES.put("bz", "application/x-bzip");
-        MIME_TYPES.put("bz2", "application/x-bzip2");
-        MIME_TYPES.put("cab", "application/vnd.ms-cab-compressed");
-        MIME_TYPES.put("gz", "application/x-gzip");
-        MIME_TYPES.put("lrf", "application/octet-stream");
-        MIME_TYPES.put("jar", "application/java-archive");
-        MIME_TYPES.put("xz", "application/x-xz");
-        MIME_TYPES.put("Z", "application/x-compress");
-
-        MIME_TYPES.put("bat", "application/x-msdownload");
-        MIME_TYPES.put("ksh", "text/plain");
-        MIME_TYPES.put("sh", "application/x-sh");
-
-        MIME_TYPES.put("db", "application/octet-stream");
-        MIME_TYPES.put("db3", "application/octet-stream");
-
-        MIME_TYPES.put("otf", "application/x-font-otf");
-        MIME_TYPES.put("ttf", "application/x-font-ttf");
-        MIME_TYPES.put("psf", "application/x-font-linux-psf");
-
-        MIME_TYPES.put("cgm", "image/cgm");
-        MIME_TYPES.put("btif", "image/prs.btif");
-        MIME_TYPES.put("dwg", "image/vnd.dwg");
-        MIME_TYPES.put("dxf", "image/vnd.dxf");
-        MIME_TYPES.put("fbs", "image/vnd.fastbidsheet");
-        MIME_TYPES.put("fpx", "image/vnd.fpx");
-        MIME_TYPES.put("fst", "image/vnd.fst");
-        MIME_TYPES.put("mdi", "image/vnd.ms-mdi");
-        MIME_TYPES.put("npx", "image/vnd.net-fpx");
-        MIME_TYPES.put("xif", "image/vnd.xiff");
-        MIME_TYPES.put("pct", "image/x-pict");
-        MIME_TYPES.put("pic", "image/x-pict");
-
-        MIME_TYPES.put("adp", "audio/adpcm");
-        MIME_TYPES.put("au", "audio/basic");
-        MIME_TYPES.put("snd", "audio/basic");
-        MIME_TYPES.put("m2a", "audio/mpeg");
-        MIME_TYPES.put("m3a", "audio/mpeg");
-        MIME_TYPES.put("oga", "audio/ogg");
-        MIME_TYPES.put("spx", "audio/ogg");
-        MIME_TYPES.put("aac", "audio/x-aac");
-        MIME_TYPES.put("mka", "audio/x-matroska");
-
-        MIME_TYPES.put("jpgv", "video/jpeg");
-        MIME_TYPES.put("jpgm", "video/jpm");
-        MIME_TYPES.put("jpm", "video/jpm");
-        MIME_TYPES.put("mj2", "video/mj2");
-        MIME_TYPES.put("mjp2", "video/mj2");
-        MIME_TYPES.put("mpa", "video/mpeg");
-        MIME_TYPES.put("ogv", "video/ogg");
-        MIME_TYPES.put("flv", "video/x-flv");
-        MIME_TYPES.put("mkv", "video/x-matroska");
-
-    }
 
     public static boolean isFileMusic(String path) {
         return path.toLowerCase().endsWith(".mp3") || path.toLowerCase().endsWith(".amr") || path.
@@ -205,12 +121,6 @@ public class FileUtils {
         } catch (Exception ignored) {
         }
         return length;
-    }
-
-
-    public static boolean isMediaScanningRequired(String mimeType) {
-        return mimeType != null && (mimeType.startsWith("audio") ||
-                mimeType.startsWith("video") || mimeType.startsWith("image"));
     }
 
 
@@ -310,30 +220,6 @@ public class FileUtils {
     }
 
 
-    public static String getMimeType(File file) {
-        if (file.isDirectory()) {
-            return null;
-        }
-
-        String type = "*/*";
-        final String extension = getExtension(file.getName());
-
-        if (extension != null && !extension.isEmpty()) {
-            final String extensionLowerCase = extension.toLowerCase(Locale
-                    .getDefault());
-            final MimeTypeMap mime = MimeTypeMap.getSingleton();
-            type = mime.getMimeTypeFromExtension(extensionLowerCase);
-            if (type == null) {
-                type = MIME_TYPES.get(extensionLowerCase);
-            }
-        }
-        if (type == null) {
-            type = "*/*";
-        }
-        return type;
-    }
-
-
     /**
      * Check for a directory if it is possible to create files within this directory, either via normal writing or via
      * Storage Access Framework.
@@ -386,37 +272,17 @@ public class FileUtils {
      * @param file the file to be deleted.
      * @return True if successfully deleted.
      */
-    static boolean deleteFile(@NonNull final File file) {
+    private static boolean deleteFile(@NonNull final File file) {
         // First try the normal deletion.
-        boolean fileDelete = deleteFilesInFolder(file);
-        if (file.delete() || fileDelete) {
+        if (file.delete()) {
             return true;
         }
 
         // Try with Storage Access Framework.
-        if (isAtleastLollipop() && StorageUtils.INSTANCE.isOnExtSdCard(file)) {
-
+        if (StorageUtils.INSTANCE.isOnExtSdCard(file)) {
             DocumentFile document = StorageUtils.INSTANCE.getDocumentFile(file, false);
             return document != null && document.delete();
         }
-
-        // Try the Kitkat workaround.
-        if (isKitkat()) {
-            Context context = AceApplication.Companion.getAppContext();
-            ContentResolver resolver = context.getContentResolver();
-
-            try {
-                Uri uri = UriHelper.INSTANCE.getUriFromFile(file.getAbsolutePath(), context);
-                if (uri != null) {
-                    resolver.delete(uri, null, null);
-                }
-                return !file.exists();
-            } catch (Exception e) {
-                Logger.log(TAG, "Error when deleting file " + file.getAbsolutePath());
-                return false;
-            }
-        }
-
         return !file.exists();
     }
 
@@ -433,33 +299,6 @@ public class FileUtils {
 
     public static boolean isApk(String extension) {
         return EXT_APK.equals(extension);
-    }
-
-    /**
-     * Delete all files in a folder.
-     *
-     * @param file the folder
-     * @return true if successful.
-     */
-    private static boolean deleteFilesInFolder(final File file) {
-        boolean totalSuccess;
-        if (file == null) {
-            return false;
-        }
-        String path = file.getAbsolutePath();
-        if (file.isDirectory()) {
-            File [] fileList = file.listFiles();
-            if (fileList != null) {
-                for (File child : fileList) {
-                    deleteFilesInFolder(child);
-                }
-            }
-        }
-        totalSuccess = file.delete();
-        if (totalSuccess) {
-            MediaStoreHelper.removeMedia(AceApplication.Companion.getAppContext(), path, 0);
-        }
-        return totalSuccess;
     }
 
 
@@ -486,7 +325,7 @@ public class FileUtils {
             return null;
         }
         int dot = getLastDotIndex(path);
-        return substring(path,dot + 1);
+        return substring(path, dot + 1);
     }
 
     public static String getExtensionWithDot(String path) {

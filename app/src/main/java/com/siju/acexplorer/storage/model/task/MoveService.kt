@@ -26,10 +26,10 @@ import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
+import com.siju.acexplorer.helper.MediaScannerHelper
 import com.siju.acexplorer.logging.Logger
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.helper.FileUtils.getCategoryFromExtension
-import com.siju.acexplorer.main.model.helper.MediaStoreHelper.scanFile
 import com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastOreo
 import com.siju.acexplorer.main.model.root.RootDeniedException
 import com.siju.acexplorer.main.model.root.RootUtils
@@ -48,14 +48,16 @@ private const val THREAD_NAME = "MoveService"
 
 class MoveService : Service() {
 
+    private val filesToMediaIndex = arrayListOf<String>() // Doesn't include directories
+
     private lateinit var context: Context
     private lateinit var serviceHandler: ServiceHandler
     private lateinit var files: ArrayList<FileInfo>
+
     private lateinit var pasteActionInfo: List<PasteActionInfo>
-
     private var notificationManager: NotificationManager? = null
-    private var notifBuilder: NotificationCompat.Builder? = null
 
+    private var notifBuilder: NotificationCompat.Builder? = null
     private var filesMovedList = ArrayList<String>()
     private var oldFileList: ArrayList<String>? = null
     private var categories: ArrayList<Int>? = null
@@ -301,11 +303,18 @@ class MoveService : Service() {
             val newPath = newFile.absolutePath
             oldFileList?.add(sourcePath)
             filesMovedList.add(newPath)
-            scanFile(context, newPath)
-            //            MediaStoreHelper.removeMedia(context, sourcePath, sourceFileInfo.getCategory().getValue());
+            if (newFile.isFile) {
+                filesToMediaIndex.add(newPath)
+                filesToMediaIndex.add(sourcePath)
+            }
+            scanFiles()
             categories?.add(sourceFileInfo.category.value)
         }
         publishResults(fileName, files.size.toLong(), filesMovedList.size.toLong())
+    }
+
+    private fun scanFiles() {
+        MediaScannerHelper.scanFiles(context, filesToMediaIndex.toTypedArray())
     }
 
     private fun moveRoot(path: String, name: String, destinationPath: String) {

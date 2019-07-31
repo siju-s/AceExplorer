@@ -26,10 +26,10 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.siju.acexplorer.R
+import com.siju.acexplorer.helper.MediaScannerHelper
 import com.siju.acexplorer.logging.Logger
 import com.siju.acexplorer.main.model.helper.FileOperations
 import com.siju.acexplorer.main.model.helper.FileUtils
-import com.siju.acexplorer.main.model.helper.MediaStoreHelper
 import com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastOreo
 import com.siju.acexplorer.storage.model.operations.*
 import com.siju.acexplorer.storage.model.operations.OperationUtils.*
@@ -52,6 +52,8 @@ private const val BUFFER_SIZE_BYTES = 20480
 private const val TAG = "ExtractService"
 
 class ExtractService : Service() {
+
+    private val filesToMediaIndex = arrayListOf<String>() // Doesn't include directories
 
     private lateinit var context: Context
     private lateinit var serviceHandler: ServiceHandler
@@ -206,6 +208,7 @@ class ExtractService : Service() {
                 }
                 unzipEntry(zipFile, entry, destinationPath)
             }
+            scanFiles()
             sendRefreshBroadcast(1)
             calculateProgress(sourceFile.name, copiedbytes, totalbytes)
             zipFile.close()
@@ -217,6 +220,10 @@ class ExtractService : Service() {
             sendBroadcast(intent)
             publishResults(sourceFile.name, 100, totalbytes, copiedbytes)
         }
+    }
+
+    private fun scanFiles() {
+        MediaScannerHelper.scanFiles(context, filesToMediaIndex.toTypedArray())
     }
 
     private fun calculateZipFilesSize(arrayList: ArrayList<ZipEntry>) {
@@ -262,7 +269,7 @@ class ExtractService : Service() {
         }
     }
 
-    private fun sendRefreshBroadcast(count : Int) {
+    private fun sendRefreshBroadcast(count: Int) {
         val intent = Intent(ACTION_OP_REFRESH)
         intent.putExtra(KEY_OPERATION, EXTRACT)
         intent.putExtra(KEY_FILES_COUNT, count)
@@ -357,6 +364,9 @@ class ExtractService : Service() {
                 }
                 len = inputStream.read(buf)
             }
+            if (MediaScannerHelper.isMediaScanningRequired(outputFile)) {
+                filesToMediaIndex.add(outputFile.absolutePath)
+            }
         }
         finally {
             try {
@@ -374,7 +384,6 @@ class ExtractService : Service() {
             }
 
         }
-        MediaStoreHelper.scanFile(context, outputFile.absolutePath)
     }
 
     @Throws(Exception::class)

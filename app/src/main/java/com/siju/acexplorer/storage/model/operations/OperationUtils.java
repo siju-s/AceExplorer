@@ -22,8 +22,6 @@ import java.io.File;
 
 import static com.siju.acexplorer.main.model.helper.FileUtils.isFileNonWritable;
 import static com.siju.acexplorer.main.model.helper.FileUtils.isWritable;
-import static com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastLollipop;
-import static com.siju.acexplorer.main.model.helper.SdkHelper.isKitkat;
 
 public class OperationUtils {
 
@@ -67,7 +65,7 @@ public class OperationUtils {
             return WriteMode.ROOT;
         }
         File folder = new File(directory);
-        if (isAtleastLollipop() && StorageUtils.INSTANCE.isOnExtSdCard(folder)) {
+        if (StorageUtils.INSTANCE.isOnExtSdCard(folder)) {
             if (!folder.exists() || !folder.isDirectory()) {
                 return WriteMode.ROOT;
             }
@@ -76,9 +74,6 @@ public class OperationUtils {
             if (isFileNonWritable(folder)) {
                 return WriteMode.EXTERNAL;
             }
-            return WriteMode.INTERNAL;
-        } else if (isKitkat() && StorageUtils.INSTANCE.isOnExtSdCard(folder)) {
-            // Assume that Kitkat workaround works
             return WriteMode.INTERNAL;
         } else if (isWritable(new File(folder, "DummyFile"))) {
             return WriteMode.INTERNAL;

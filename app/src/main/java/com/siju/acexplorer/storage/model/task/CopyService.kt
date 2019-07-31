@@ -27,11 +27,12 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
+import com.siju.acexplorer.helper.MediaScannerHelper
+import com.siju.acexplorer.helper.MediaScannerHelper.isMediaScanningRequired
 import com.siju.acexplorer.logging.Logger
 import com.siju.acexplorer.main.model.data.FileDataFetcher
 import com.siju.acexplorer.main.model.helper.FileOperations
 import com.siju.acexplorer.main.model.helper.FileUtils
-import com.siju.acexplorer.main.model.helper.MediaStoreHelper.scanMultipleFiles
 import com.siju.acexplorer.main.model.helper.RootHelper
 import com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastOreo
 import com.siju.acexplorer.main.model.root.RootDeniedException
@@ -367,7 +368,7 @@ class CopyService : Service() {
         intent.putExtra(KEY_FILES_COUNT, filesCopied)
         intent.putExtra(KEY_RESULT, failedFiles.isEmpty())
         intent.putExtra(KEY_OPERATION, COPY)
-        scanMultipleFiles(AceApplication.appContext, filesToMediaIndex.toTypedArray())
+        MediaScannerHelper.scanFiles(AceApplication.appContext, filesToMediaIndex.toTypedArray())
         sendBroadcast(intent)
     }
 
@@ -382,7 +383,7 @@ class CopyService : Service() {
             RootUtils.mountRW(destinationPath)
             RootUtils.copy(path, targetPath)
             RootUtils.mountRO(destinationPath)
-            if (FileUtils.isMediaScanningRequired(FileUtils.getMimeType(File(targetPath)))) {
+            if (isMediaScanningRequired(File(targetPath))) {
                 filesToMediaIndex.add(targetPath)
             }
             copiedBytes++
@@ -506,7 +507,7 @@ class CopyService : Service() {
             count++
             val targetFile = File(targetPath)
             filesCopied++
-            if (FileUtils.isMediaScanningRequired(FileUtils.getMimeType(targetFile))) {
+            if (isMediaScanningRequired(targetFile)) {
                 filesToMediaIndex.add(targetPath)
             }
             Logger.log("CopyService", "Completed $name KEY_COUNT=$count")

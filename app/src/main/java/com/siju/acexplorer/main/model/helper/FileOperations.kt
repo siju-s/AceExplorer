@@ -18,11 +18,13 @@ package com.siju.acexplorer.main.model.helper
 
 import android.util.Log
 import com.siju.acexplorer.AceApplication
+import com.siju.acexplorer.extensions.getMimeType
 import com.siju.acexplorer.logging.Logger
 import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.main.model.StorageUtils.getDocumentFile
 import com.siju.acexplorer.main.model.StorageUtils.isOnExtSdCard
 import com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastLollipop
+import com.siju.acexplorer.storage.model.operations.DeleteOperation
 import java.io.*
 import java.nio.channels.FileChannel
 
@@ -73,6 +75,7 @@ object FileOperations {
             return true
         }
 
+        val filesToDelete = arrayListOf<String>()
         for (sourceFile in sourceFileList) {
             val fileName = sourceFile.name
             val targetFile = File(target, fileName)
@@ -80,10 +83,12 @@ object FileOperations {
                 // stop on first error
                 return false
             }
+            filesToDelete.add(sourceFile.absolutePath)
         }
+        val deleteOperation = DeleteOperation()
         // Only after successfully copying all files, delete files on source folder.
         for (sourceFile in sourceFileList) {
-            if (!FileUtils.deleteFile(sourceFile)) {
+            if (!deleteOperation.delete(sourceFile)) {
                 // stop on first error
                 return false
             }
@@ -116,7 +121,7 @@ object FileOperations {
             // getDocumentFile implicitly creates the directory.
             return try {
                 Logger.log(TAG, "mkfile--doc=$document")
-                result = document?.createFile(FileUtils.getMimeType(file)!!,
+                result = document?.createFile(file.getMimeType(),
                                               file.name) != null
                 result
             }
@@ -218,59 +223,6 @@ object FileOperations {
         return false
     }
 
-    fun deleteFiles(filesList: ArrayList<String>) : Int {
-        var filesDeleted = 0
-        for (i in 0 until filesList.size) {
-            val path = filesList[i]
-            val isDeleted = delete(File(path))
 
-            if (!isDeleted) {
-                val isRootDir = StorageUtils.isRootDirectory(path)
-                if (!isRootDir) {
-                    return filesDeleted
-                }
-            }
-            else {
-                filesDeleted++
-            }
-        }
-        return filesDeleted
-    }
-
-    private fun delete(file: File): Boolean {
-        val fileDelete = deleteFile(file)
-
-        if (file.delete() || fileDelete) {
-            return true
-        }
-
-        // Try with Storage Access Framework.
-        if (isOnExtSdCard(file)) {
-            val document = getDocumentFile(file, false)
-            return document != null && document.delete()
-        }
-        return !file.exists()
-    }
-
-    private fun deleteFile(file: File): Boolean {
-        // First try the normal deletion.
-        var isDeleted = false
-        if (file.isDirectory) {
-            val fileList = file.listFiles()
-            if (fileList != null) {
-                for (child in fileList) {
-                    val path = child.absolutePath
-                    isDeleted = deleteFile(child)
-                }
-                val path = file.absolutePath
-                isDeleted = file.delete()
-            }
-        }
-        else {
-            val path = file.absolutePath
-            isDeleted = file.delete()
-        }
-        return isDeleted
-    }
 
 }

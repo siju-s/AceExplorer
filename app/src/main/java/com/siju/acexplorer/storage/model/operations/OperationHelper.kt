@@ -267,13 +267,12 @@ class OperationHelper(val context: Context) {
                 }
             }
         }
-
     }
 
     private fun deleteWriteableFiles(filesList: ArrayList<String>,
                                      fileOperationCallback: FileOperationCallback,
                                      operation: Operations) {
-        val count = FileOperations.deleteFiles(filesList)
+        val count = DeleteOperation().deleteFiles(filesList)
         val resultCode =
                 if (count > 0) {
                     OperationResultCode.SUCCESS
