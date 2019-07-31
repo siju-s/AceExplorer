@@ -313,7 +313,7 @@ class OperationHelper(val context: Context) {
                     putParcelableArrayListExtra(OperationUtils.KEY_FILES, files)
                     putExtra(OperationUtils.KEY_FILEPATH, destinationDir)
                 }
-                if (SdkHelper.isAtleastOreo()) {
+                if (SdkHelper.isAtleastOreo) {
                     context.startForegroundService(intent)
                 }
                 else {
@@ -340,7 +340,7 @@ class OperationHelper(val context: Context) {
                     putParcelableArrayListExtra(OperationUtils.KEY_FILES, files)
                     putExtra(OperationUtils.KEY_FILEPATH, destinationDir)
                 }
-                if (SdkHelper.isAtleastOreo()) {
+                if (SdkHelper.isAtleastOreo) {
                     context.startForegroundService(intent)
                 }
                 else {
@@ -394,7 +394,7 @@ class OperationHelper(val context: Context) {
             putExtra(OperationUtils.KEY_FILEPATH, sourceFilePath)
             putExtra(OperationUtils.KEY_FILEPATH2, newPath)
         }
-        if (SdkHelper.isAtleastOreo()) {
+        if (SdkHelper.isAtleastOreo) {
             context.startForegroundService(intent)
         }
         else {
@@ -446,7 +446,7 @@ class OperationHelper(val context: Context) {
             putExtra(OperationUtils.KEY_FILEPATH, destinationDir)
             putParcelableArrayListExtra(OperationUtils.KEY_FILES, filesToArchive)
         }
-        if (SdkHelper.isAtleastOreo()) {
+        if (SdkHelper.isAtleastOreo) {
             context.startForegroundService(intent)
         }
         else {

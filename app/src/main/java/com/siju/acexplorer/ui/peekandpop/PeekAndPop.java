@@ -13,18 +13,17 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import com.siju.acexplorer.R;
-import com.siju.acexplorer.main.model.groups.Category;
-import com.siju.acexplorer.main.model.groups.CategoryHelper;
-import com.siju.acexplorer.main.model.helper.SdkHelper;
-import com.siju.acexplorer.ui.autoplay.AutoPlayContainer;
-
-import java.util.ArrayList;
-
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.siju.acexplorer.R;
+import com.siju.acexplorer.main.model.groups.Category;
+import com.siju.acexplorer.main.model.groups.CategoryHelper;
+import com.siju.acexplorer.ui.autoplay.AutoPlayContainer;
+
+import java.util.ArrayList;
 
 public class PeekAndPop {
 
@@ -115,15 +114,8 @@ public class PeekAndPop {
      * If lollipop or above, use elevation to bring peek views to the front
      */
     private void bringViewsToFront() {
-        if (SdkHelper.isAtleastLollipop()) {
-            peekLayout.setElevation(10f);
-            peekView.setElevation(10f);
-        } else {
-            peekLayout.bringToFront();
-            peekView.bringToFront();
-            contentView.requestLayout();
-            contentView.invalidate();
-        }
+        peekLayout.setElevation(10f);
+        peekView.setElevation(10f);
     }
 
     /**

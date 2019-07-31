@@ -16,7 +16,7 @@ object InstallHelper {
     const val UNKNOWN_APPS_INSTALL_REQUEST = 300
 
     fun canInstallApp(context: Context): Boolean {
-        return if (SdkHelper.isAtleastOreo()) {
+        return if (SdkHelper.isAtleastOreo) {
             context.packageManager.canRequestPackageInstalls()
         }
         else true
@@ -24,7 +24,7 @@ object InstallHelper {
 
     fun requestUnknownAppsInstallPermission(fragment: Fragment) {
         val context = fragment.context ?: return
-        if (SdkHelper.isAtleastOreo()) {
+        if (SdkHelper.isAtleastOreo) {
             val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES)
             val uri = Uri.fromParts(PACKAGE, context.packageName, null)
             intent.data = uri

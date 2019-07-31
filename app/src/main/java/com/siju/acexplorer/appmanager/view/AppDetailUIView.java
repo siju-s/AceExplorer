@@ -150,7 +150,7 @@ public class AppDetailUIView extends CoordinatorLayout implements AppDetailUi, V
     private void setPackageInfo(PackageInfo packageInfo, String source) {
         packageNameText.setText(packageName);
         versionNameText.setText(packageInfo.versionName);
-        if (SdkHelper.isAtleastPie()) {
+        if (SdkHelper.INSTANCE.isAtleastPie()) {
             versionCodeText.setText(String.valueOf(packageInfo.getLongVersionCode()));
         }
         else {
@@ -187,7 +187,7 @@ public class AppDetailUIView extends CoordinatorLayout implements AppDetailUi, V
         imageIcon.setContentDescription(appName);
 
         targetSdkText.setText(String.valueOf(applicationInfo.targetSdkVersion));
-        if (SdkHelper.isAtleastNougat()) {
+        if (SdkHelper.INSTANCE.isAtleastNougat()) {
             minSdkText.setText(String.valueOf(applicationInfo.minSdkVersion));
         } else {
             minSdkText.setVisibility(View.GONE);
@@ -228,7 +228,7 @@ public class AppDetailUIView extends CoordinatorLayout implements AppDetailUi, V
         Bitmap bitmap = null;
         if (drawable instanceof BitmapDrawable) {
             bitmap = ((BitmapDrawable) drawable).getBitmap();
-        } else if (SdkHelper.isAtleastOreo() && drawable instanceof AdaptiveIconDrawable) {
+        } else if (SdkHelper.INSTANCE.isAtleastOreo() && drawable instanceof AdaptiveIconDrawable) {
             bitmap = Bitmap
                     .createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
             final Canvas canvas = new Canvas(bitmap);
@@ -253,9 +253,7 @@ public class AppDetailUIView extends CoordinatorLayout implements AppDetailUi, V
         fab.setBackgroundTintList(ColorStateList.valueOf(vibrantColor));
         settingsButton.setBackgroundColor(vibrantColor);
         uninstallButton.setBackgroundColor(vibrantColor);
-        if (SdkHelper.isAtleastLollipop()) {
-            getActivity().getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
-        }
+        getActivity().getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
     }
 
     @Override

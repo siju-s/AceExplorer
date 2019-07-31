@@ -20,10 +20,8 @@ import android.util.Log
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.extensions.getMimeType
 import com.siju.acexplorer.logging.Logger
-import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.main.model.StorageUtils.getDocumentFile
 import com.siju.acexplorer.main.model.StorageUtils.isOnExtSdCard
-import com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastLollipop
 import com.siju.acexplorer.storage.model.operations.DeleteOperation
 import java.io.*
 import java.nio.channels.FileChannel
@@ -112,12 +110,11 @@ object FileOperations {
             e.printStackTrace()
         }
 
-        // Even after exception, In Kitkat file might have got created so return true
         if (file.exists()) return true
         val result: Boolean
         // Try with Storage Access Framework.
-        if (isAtleastLollipop() && StorageUtils.isOnExtSdCard(file)) {
-            val document = StorageUtils.getDocumentFile(file.parentFile, true)
+        if (isOnExtSdCard(file)) {
+            val document = getDocumentFile(file.parentFile, true)
             // getDocumentFile implicitly creates the directory.
             return try {
                 Logger.log(TAG, "mkfile--doc=$document")
@@ -175,7 +172,7 @@ object FileOperations {
             }
             else {
                 // Storage Access Framework
-                val targetDocument = StorageUtils.getDocumentFile(target, false)
+                val targetDocument = getDocumentFile(target, false)
                 if (targetDocument != null)
                     outputStream = AceApplication.appContext.contentResolver.openOutputStream(
                             targetDocument.uri)
@@ -222,7 +219,6 @@ object FileOperations {
         }
         return false
     }
-
 
 
 }

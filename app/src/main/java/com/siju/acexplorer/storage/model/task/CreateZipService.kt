@@ -109,7 +109,7 @@ class CreateZipService : Service() {
 
     @TargetApi(Build.VERSION_CODES.O)
     private fun createChannelId() {
-        if (isAtleastOreo()) {
+        if (isAtleastOreo) {
             val name = getString(R.string.operation)
             val importance = NotificationManager.IMPORTANCE_LOW
             val channel = NotificationChannel(CHANNEL_ID, name, importance)

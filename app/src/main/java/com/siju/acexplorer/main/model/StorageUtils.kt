@@ -17,13 +17,10 @@
 package com.siju.acexplorer.main.model
 
 import android.annotation.SuppressLint
-import android.annotation.TargetApi
 import android.content.Context
 import android.net.Uri
-import android.os.Build
 import android.os.Environment
 import android.text.TextUtils
-import androidx.annotation.RequiresApi
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
 import com.siju.acexplorer.AceApplication
@@ -47,7 +44,8 @@ object StorageUtils {
     private val DIR_SEPARATOR = Pattern.compile("/")
 
     val downloadsDirectory: String
-        get() = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
+        get() = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS).absolutePath
 
     val internalStorage: String
         get() = Environment.getExternalStorageDirectory().absolutePath
@@ -66,10 +64,11 @@ object StorageUtils {
     val storageDirectories: List<String>
         get() {
             val paths = LinkedHashSet<String>()
-            if (SdkHelper.isAtleastMarsh()) {
+            if (SdkHelper.isAtleastMarsh) {
                 addExternalSdPath(paths)
                 addUsbPath(paths)
-            } else {
+            }
+            else {
                 populateStoragePathForLollipop(paths)
             }
             return ArrayList(paths)
@@ -83,15 +82,18 @@ object StorageUtils {
         if (TextUtils.isEmpty(rawEmulatedStorage)) {
             if (rawExternalStorage.isNullOrEmpty()) {
                 paths.add(STORAGE_SDCARD0)
-            } else {
+            }
+            else {
                 paths.add(rawExternalStorage)
             }
-        } else {
+        }
+        else {
             val rawUserId = getRawStorageId()
             rawEmulatedStorage?.let {
                 if (rawUserId.isEmpty()) {
                     paths.add(it)
-                } else {
+                }
+                else {
                     paths.add(it + File.separator + rawUserId)
                 }
             }
@@ -102,7 +104,8 @@ object StorageUtils {
     private fun addRawSecStorage(rawSecondaryStorage: String?, paths: LinkedHashSet<String>) {
         rawSecondaryStorage?.let { storage ->
             if (storage.isNotEmpty()) {
-                val rawSecStorage = storage.split(File.pathSeparator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                val rawSecStorage = storage.split(File.pathSeparator.toRegex())
+                        .dropLastWhile { it.isEmpty() }.toTypedArray()
                 Collections.addAll(paths, *rawSecStorage)
             }
         }
@@ -117,7 +120,8 @@ object StorageUtils {
         try {
             Integer.valueOf(lastFolder)
             isDigit = true
-        } catch (ignored: NumberFormatException) {
+        }
+        catch (ignored: NumberFormatException) {
         }
 
         rawUserId = if (isDigit) lastFolder else ""
@@ -145,7 +149,6 @@ object StorageUtils {
 
     private
     val extSdCardPaths: Array<String>
-        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         get() {
             val context = AceApplication.appContext
             val paths = ArrayList<String>()
@@ -167,7 +170,8 @@ object StorageUtils {
                 var path = file.absolutePath.substring(0, index)
                 try {
                     path = File(path).canonicalPath
-                } catch (e: IOException) {
+                }
+                catch (e: IOException) {
                 }
 
                 if (!paths.contains(path)) {
@@ -198,7 +202,8 @@ object StorageUtils {
             storageDir = File(PATH_USB2)
             return if (isValidDrive(storageDir)) {
                 storageDir
-            } else {
+            }
+            else {
                 null
             }
         }
@@ -215,9 +220,9 @@ object StorageUtils {
 
             fun getStorageText(context: Context, storageType: StorageType): String {
                 return when (storageType) {
-                    ROOT -> context.getString(R.string.nav_menu_root)
+                    ROOT     -> context.getString(R.string.nav_menu_root)
                     INTERNAL -> context.getString(R.string.nav_menu_internal_storage)
-                    else -> context.getString(R.string.nav_menu_internal_storage)
+                    else     -> context.getString(R.string.nav_menu_internal_storage)
                 }
             }
         }
@@ -245,20 +250,14 @@ object StorageUtils {
                     return extSdPath
                 }
             }
-        } catch (e: IOException) {
+        }
+        catch (e: IOException) {
             return null
         }
 
         return null
     }
 
-    /**
-     * Determine if a file is on external sd card. (Kitkat or higher.)
-     *
-     * @param file The file.
-     * @return true if on external sd card.
-     */
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     fun isOnExtSdCard(file: File): Boolean {
         return getExtSdCardRoot(file) != null
     }
@@ -282,32 +281,37 @@ object StorageUtils {
             val filePath = file.canonicalPath
             if (extSdRoot == filePath) {
                 originalDirectory = true
-            } else {
+            }
+            else {
                 relativePath = filePath.substring(extSdRoot.length + 1)
             }
-        } catch (e: IOException) {
+        }
+        catch (e: IOException) {
             return null
-        } catch (f: Exception) {
+        }
+        catch (f: Exception) {
             originalDirectory = true
         }
 
         val context = AceApplication.appContext
-        val safUri = PreferenceManager.getDefaultSharedPreferences(context).getString(FileConstants.SAF_URI, null)
+        val safUri = PreferenceManager.getDefaultSharedPreferences(context).getString(
+                FileConstants.SAF_URI, null)
                 ?: return null
         val treeUri = Uri.parse(safUri) ?: return null
 
         return getDocumentFile(context, treeUri, relativePath, originalDirectory, isDirectory)
     }
 
-    private fun getDocumentFile(context: Context, treeUri : Uri, relativeFilePath: String?,
-                                originalDirectory : Boolean,
+    private fun getDocumentFile(context: Context, treeUri: Uri, relativeFilePath: String?,
+                                originalDirectory: Boolean,
                                 isDirectory: Boolean): DocumentFile? {
         // start with root of SD card and then parse through document tree.
         var document = DocumentFile.fromTreeUri(context, treeUri)
         if (originalDirectory || relativeFilePath == null) {
             return document
         }
-        val parts = relativeFilePath.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val parts = relativeFilePath.split("/".toRegex()).dropLastWhile { it.isEmpty() }
+                .toTypedArray()
         for (part in parts.indices) {
             var nextDocument = document?.findFile(parts[part])
 
@@ -337,7 +341,7 @@ object StorageUtils {
         val externalSDList = StorageFetcher(AceApplication.appContext).externalSDList
         when {
             path.contains(internalStorage) -> return false
-            externalSDList.size > 0 -> {
+            externalSDList.size > 0        -> {
                 for (extPath in externalSDList) {
                     if (path.contains(extPath)) {
                         return false
@@ -345,7 +349,7 @@ object StorageUtils {
                 }
                 return true
             }
-            else -> return true
+            else                           -> return true
         }
     }
 

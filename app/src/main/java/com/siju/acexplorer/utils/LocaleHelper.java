@@ -26,10 +26,10 @@ import android.os.LocaleList;
 import androidx.preference.PreferenceManager;
 
 import com.siju.acexplorer.logging.Logger;
+import com.siju.acexplorer.main.model.helper.SdkHelper;
 
 import java.util.Locale;
 
-import static com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastNougat;
 
 public class LocaleHelper extends ContextWrapper {
 
@@ -76,7 +76,7 @@ public class LocaleHelper extends ContextWrapper {
 
         Resources resources = context.getResources();
         Configuration config = resources.getConfiguration();
-        if (isAtleastNougat()) {
+        if (SdkHelper.INSTANCE.isAtleastNougat()) {
             LocaleList localeList = new LocaleList(locale);
             LocaleList.setDefault(localeList);
             config.setLocales(localeList);

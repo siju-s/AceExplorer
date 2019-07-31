@@ -16,11 +16,9 @@
 
 package com.siju.acexplorer.main.model.helper;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.text.format.Formatter;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
@@ -48,8 +46,6 @@ import static com.siju.acexplorer.main.model.groups.Category.AUDIO;
 import static com.siju.acexplorer.main.model.groups.Category.FILES;
 import static com.siju.acexplorer.main.model.groups.Category.IMAGE;
 import static com.siju.acexplorer.main.model.groups.Category.VIDEO;
-import static com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastLollipop;
-import static com.siju.acexplorer.main.model.helper.SdkHelper.isKitkat;
 
 
 public class FileUtils {
@@ -133,18 +129,12 @@ public class FileUtils {
                 // standard way
                 outStream = new FileOutputStream(target);
             } else {
-                if (isAtleastLollipop()) {
-                    // Storage Access Framework
-                    DocumentFile targetDocument = StorageUtils.INSTANCE.getDocumentFile(target, false);
-                    if (targetDocument != null) {
-                        outStream =
-                                context.getContentResolver().openOutputStream(targetDocument.getUri());
-                    }
-                } else if (isKitkat()) {
-                    // Workaround for Kitkat ext SD card
-                    return getOutputStream(context, target.getPath());
+                // Storage Access Framework
+                DocumentFile targetDocument = StorageUtils.INSTANCE.getDocumentFile(target, false);
+                if (targetDocument != null) {
+                    outStream =
+                            context.getContentResolver().openOutputStream(targetDocument.getUri());
                 }
-
 
             }
         } catch (Exception ignored) {
@@ -227,7 +217,6 @@ public class FileUtils {
      * @param folder The directory
      * @return true if it is possible to write in this directory.
      */
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     public static boolean isFileNonWritable(final File folder) {
         // Verify that this is a directory.
         if (folder == null) {
@@ -270,20 +259,23 @@ public class FileUtils {
      * Delete a file. May be even on external SD card.
      *
      * @param file the file to be deleted.
-     * @return True if successfully deleted.
      */
-    private static boolean deleteFile(@NonNull final File file) {
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private static void deleteFile(@NonNull final File file) {
         // First try the normal deletion.
         if (file.delete()) {
-            return true;
+            return;
         }
 
         // Try with Storage Access Framework.
         if (StorageUtils.INSTANCE.isOnExtSdCard(file)) {
             DocumentFile document = StorageUtils.INSTANCE.getDocumentFile(file, false);
-            return document != null && document.delete();
+            if (document != null) {
+                document.delete();
+            }
+            return;
         }
-        return !file.exists();
+        file.exists();
     }
 
 

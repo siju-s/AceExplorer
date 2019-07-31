@@ -33,7 +33,7 @@ object UriHelper {
         if (path == null || context == null) {
             return null
         }
-        return if (SdkHelper.isAtleastNougat()) {
+        return if (SdkHelper.isAtleastNougat) {
             val authority = context.packageName + ".fileprovider"
             FileProvider.getUriForFile(context, authority, File(path))
         }

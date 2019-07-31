@@ -14,7 +14,7 @@ import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.main.model.data.DataFetcherFactory
 import com.siju.acexplorer.main.model.data.DataLoader
 import com.siju.acexplorer.main.model.groups.Category
-import com.siju.acexplorer.main.model.helper.MediaStoreHack
+import com.siju.acexplorer.main.model.helper.RingtoneHelper
 import com.siju.acexplorer.main.model.helper.StorageHelper
 import com.siju.acexplorer.main.model.helper.UriHelper
 import com.siju.acexplorer.storage.modules.picker.types.PickerType
@@ -93,7 +93,7 @@ class PickerModelImpl : PickerModel {
 
     override fun onRingtoneSelected(path: String?, ringtoneType: Int?) {
         val uri = ringtoneType?.let {
-            MediaStoreHack.getCustomRingtoneUri(context.contentResolver, path, it)
+            RingtoneHelper.getCustomRingtoneUri(context.contentResolver, path, it)
         }
 
         if (uri == null) {
