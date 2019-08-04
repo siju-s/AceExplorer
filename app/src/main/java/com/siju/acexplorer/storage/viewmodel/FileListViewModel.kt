@@ -155,6 +155,10 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     private var scrollToTop = false
 
+    private val _homeClicked = MutableLiveData<Boolean>()
+    val homeClicked: LiveData<Boolean>
+        get() = _homeClicked
+
     init {
         val model = storageModel as StorageModelImpl
         operationResult = model.operationData
@@ -419,18 +423,41 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     private fun hasBackStack() = backStackInfo.hasBackStack()
 
     fun onBackPress(): Boolean {
-        if (isZipMode) {
-            zipViewer?.onBackPress()
-            return false
+        var result  = true
+        when {
+            isZipMode                 -> result = handleZipModeBackPress()
+            isActionModeActive()      -> result = handleActionModeBackPress()
+            homeClicked.value == true -> result = true
+            hasBackStack()            -> {
+                backStackInfo.removeLastEntry()
+                removeScrolledPos()
+                refreshList()
+                result = false
+            }
         }
-        else if (hasBackStack()) {
-            backStackInfo.removeLastEntry()
-            removeScrolledPos()
-            refreshList()
-            return false
+        if (result) {
+            storageModel.onExit()
         }
-        storageModel.onExit()
-        return true
+        return result
+    }
+
+    private fun handleZipModeBackPress(): Boolean {
+        if (homeClicked.value == true) {
+            zipViewer?.navigateTo(null)
+            return true
+        }
+        zipViewer?.onBackPress()
+        return false
+    }
+
+    private fun handleActionModeBackPress() : Boolean {
+        if (homeClicked.value == true) {
+            return true
+        }
+        else if (!isPasteOperationPending()) {
+            endActionMode()
+        }
+        return false
     }
 
     private fun refreshList() {
@@ -752,17 +779,69 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         zipViewer?.loadData()
     }
 
+    private fun isPasteOperationPending() = multiSelectionOpData.value?.first == Operations.CUT ||
+            multiSelectionOpData.value?.first == Operations.COPY
+
     val navigationCallback = object : NavigationCallback {
         override fun onHomeClicked() {
+            if (isActionModeActive()) {
+                endActionMode()
+            }
+            _homeClicked.value = true
         }
 
         override fun onNavButtonClicked(dir: String?) {
             if (navigation.shouldLoadDir(dir)) {
                 Analytics.getLogger().navBarClicked(false)
             }
+            if (isActionModeActive() && !isPasteOperationPending()) {
+                endActionMode()
+            }
+            if (isZipMode) {
+                zipViewer?.navigateTo(dir)
+            }
+            else {
+                setCurrentDir(dir)
+                removeBackStackEntries(dir)
+                refreshList()
+            }
         }
 
         override fun onNavButtonClicked(category: Category, bucketName: String?) {
+            if (isActionModeActive() && !isPasteOperationPending()) {
+                endActionMode()
+            }
+            removeBackStackEntriesCategory(category)
+            refreshList()
+            navigation.addLibSpecificNavigation(category, bucketName)
+        }
+    }
+
+    private fun removeBackStackEntries(currentDir: String?) {
+        var position = 0
+        val backStack = backStackInfo.getBackStack()
+        for (i in backStack.indices) {
+            if (currentDir == backStack[i].filePath) {
+                position = i
+                break
+            }
+        }
+        for (j in backStack.size - 1 downTo position + 1) {
+            backStackInfo.removeEntryAtIndex(j)
+        }
+    }
+
+    private fun removeBackStackEntriesCategory(category: Category) {
+        var position = 0
+        val backStack = backStackInfo.getBackStack()
+        for (i in backStack.indices) {
+            if (category == backStack[i].category) {
+                position = i
+                break
+            }
+        }
+        for (j in backStack.size - 1 downTo position + 1) {
+            backStackInfo.removeEntryAtIndex(j)
         }
     }
 

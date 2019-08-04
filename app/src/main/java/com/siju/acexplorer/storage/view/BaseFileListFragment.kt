@@ -250,6 +250,12 @@ open class BaseFileListFragment : Fragment() {
             }
         })
 
+        fileListViewModel.homeClicked.observe(viewLifecycleOwner, Observer {
+            it?.apply {
+                activity?.onBackPressed()
+            }
+        })
+
         fileListViewModel.operationResult.observe(viewLifecycleOwner, Observer {
             it?.apply {
                 handleOperationResult(it)

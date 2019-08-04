@@ -78,6 +78,8 @@ class BackStackInfo {
         return null
     }
 
+    fun getBackStack() = backStack
+
 //    fun getDirAtPosition(index: Int): String {
 //        return backStack[index].filePath
 //    }

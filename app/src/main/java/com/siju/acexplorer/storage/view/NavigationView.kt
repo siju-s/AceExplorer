@@ -84,6 +84,11 @@ class NavigationView(view: View, private val navigationCallback: NavigationCallb
     fun addLibraryTitle(category: Category) {
         val button = createLibraryTitleButton(category)
         addViewToNavigation(button)
+        button.setOnClickListener {
+            navigationCallback.onNavButtonClicked(category, getCategoryName(context,
+                                                                            category).toUpperCase(
+                    Locale.getDefault()))
+        }
     }
 
     private fun createLibraryTitleButton(

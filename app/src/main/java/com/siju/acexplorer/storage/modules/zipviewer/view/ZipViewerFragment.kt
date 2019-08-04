@@ -101,8 +101,7 @@ class ZipViewerFragment(
         viewModel.endZipMode(dir)
     }
 
-    //TODO 28-Jul-2019 Handle this when navigation button click implemented
-    fun navigateTo(dir: String?) {
+    override fun navigateTo(dir: String?) {
         viewModel.checkZipMode(dir)
     }
 
