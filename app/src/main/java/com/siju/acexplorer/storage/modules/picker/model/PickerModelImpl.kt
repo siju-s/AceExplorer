@@ -14,9 +14,9 @@ import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.main.model.data.DataFetcherFactory
 import com.siju.acexplorer.main.model.data.DataLoader
 import com.siju.acexplorer.main.model.groups.Category
-import com.siju.acexplorer.main.model.helper.RingtoneHelper
 import com.siju.acexplorer.main.model.helper.StorageHelper
 import com.siju.acexplorer.main.model.helper.UriHelper
+import com.siju.acexplorer.storage.modules.picker.ringtone.RingtoneHelper
 import com.siju.acexplorer.storage.modules.picker.types.PickerType
 import com.siju.acexplorer.storage.modules.picker.view.KEY_PICKER_TYPE
 import com.siju.acexplorer.storage.modules.picker.view.RINGTONE_TYPE
@@ -92,6 +92,10 @@ class PickerModelImpl : PickerModel {
     }
 
     override fun onRingtoneSelected(path: String?, ringtoneType: Int?) {
+        if (path == null) {
+            listener?.onPickerResultAction(PickerResultAction(PickerAction.RINGTONE_PICK, false, null))
+            return
+        }
         val uri = ringtoneType?.let {
             RingtoneHelper.getCustomRingtoneUri(context.contentResolver, path, it)
         }
