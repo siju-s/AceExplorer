@@ -23,10 +23,11 @@ import com.siju.acexplorer.utils.ThumbnailUtils.displayThumb
 private const val INVALID_POS = -1
 private const val TAG = "FileListAdapter"
 class FileListAdapter internal constructor(var viewMode: ViewMode, private val clickListener: (Pair<FileInfo, Int>) -> Unit,
-                                           private val longClickListener: (Pair<FileInfo, Int>) -> Unit) :
+                                           private val longClickListener: (FileInfo, Int, View) -> Unit) :
         ListAdapter<FileInfo, FileListAdapter.ViewHolder>(FileInfoDiffCallback()) {
 
 
+    private var draggedPosition = -1
     private var multiSelectionHelper: MultiSelectionHelper? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -36,11 +37,23 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val item = getItem(position)
-        viewHolder.bind(item, itemCount, multiSelectionHelper?.isSelected(position), clickListener, longClickListener)
+        viewHolder.bind(item, itemCount, multiSelectionHelper?.isSelected(position), position, draggedPosition,
+                        clickListener, longClickListener)
     }
 
     fun setMultiSelectionHelper(multiSelectionHelper: MultiSelectionHelper) {
         this.multiSelectionHelper = multiSelectionHelper
+    }
+
+    fun getMultiSelectionHelper() = multiSelectionHelper
+
+    fun setDraggedPosition(pos: Int) {
+        draggedPosition = pos
+        notifyDataSetChanged()
+    }
+
+    fun clearDragPosition() {
+        draggedPosition = -1
     }
 
     class ViewHolder private constructor(itemView: View,
@@ -58,11 +71,11 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             }
         }
 
-        fun bind(item: FileInfo, count: Int, selected : Boolean?,
+        fun bind(item: FileInfo, count: Int, selected : Boolean?, pos: Int, draggedPos: Int,
                  clickListener: (Pair<FileInfo, Int>) -> Unit,
-                 longClickListener: (Pair<FileInfo, Int>) -> Unit) {
+                 longClickListener: (FileInfo, Int, View) -> Unit) {
 //            Log.e("FileListAdapter", "bind:${item.fileName}")
-            onSelection(selected)
+            onSelection(selected, pos, draggedPos)
             bindViewByCategory(itemView.context, item)
             itemView.setOnClickListener {
                 val position = adapterPosition
@@ -74,18 +87,19 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             itemView.setOnLongClickListener {
                 val position = adapterPosition
                 if (position < count && position != RecyclerView.NO_POSITION) {
-                    longClickListener(Pair(item, position))
+                    longClickListener(item, position, it)
                 }
                 true
             }
         }
 
-        private fun onSelection(selected: Boolean?) {
-            if (selected == true) {
-                itemView.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.dark_actionModeItemSelected))
-            }
-            else {
-                itemView.setBackgroundColor(Color.TRANSPARENT)
+        private fun onSelection(selected: Boolean?, position: Int, draggedPos : Int) {
+            val color = ContextCompat.getColor(itemView.context,
+                                               R.color.dark_actionModeItemSelected)
+            when {
+                selected == true       -> itemView.setBackgroundColor(color)
+                position == draggedPos -> itemView.setBackgroundColor(color)
+                else                   -> itemView.setBackgroundColor(Color.TRANSPARENT)
             }
         }
 

@@ -1,7 +1,11 @@
 package com.siju.acexplorer.storage.view
 
+import android.content.ClipData
+import android.content.Intent
 import android.content.res.Configuration
 import android.util.Log
+import android.view.DragEvent
+import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
@@ -9,6 +13,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
+import com.siju.acexplorer.extensions.showToast
+import com.siju.acexplorer.main.model.FileConstants
+import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.main.model.helper.SdkHelper
+import com.siju.acexplorer.main.view.dialog.DialogHelper
 import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.storage.view.custom.CustomGridLayoutManager
 import com.siju.acexplorer.utils.ConfigurationHelper
@@ -17,11 +26,14 @@ import com.siju.acexplorer.utils.ScrollInfo
 private const val TAG = "FilesList"
 private const val DELAY_SCROLL_UPDATE_MS = 100L
 
-class FilesList(val fragment: BaseFileListFragment, val view: View, var viewMode: ViewMode) {
+class FilesList(val fragment: BaseFileListFragment, val view: View, var viewMode: ViewMode) :
+        View.OnTouchListener {
 
+    private var itemView: View? = null
     private lateinit var fileList: RecyclerView
     private lateinit var emptyText: TextView
     private lateinit var adapter: FileListAdapter
+    private val dragHelper = DragHelper(view.context, this)
 
     init {
         initializeViews()
@@ -40,11 +52,18 @@ class FilesList(val fragment: BaseFileListFragment, val view: View, var viewMode
                 {
                     fragment.handleItemClick(it.first, it.second)
                 },
-                {
-                    fragment.handleLongItemClick(it.first, it.second)
+                { fileInfo, pos, view ->
+                    fragment.handleLongItemClick(fileInfo, pos)
+                    val hasSelectedItems = adapter.getMultiSelectionHelper()?.hasSelectedItems()
+                    if (hasSelectedItems == true) {
+                        this.itemView = view
+                    }
                 }
         )
         fileList.adapter = adapter
+        fileList.setOnDragListener(dragHelper.dragListener)
+        fileList.setOnTouchListener(this)
+
     }
 
     private fun setLayoutManager(fileList: RecyclerView, viewMode: ViewMode) {
@@ -156,5 +175,122 @@ class FilesList(val fragment: BaseFileListFragment, val view: View, var viewMode
 
     private fun scrollGridToTop(layoutManager: GridLayoutManager) {
         layoutManager.smoothScrollToPosition(fileList, null, 0)
+    }
+
+    override fun onTouch(view: View?, event: MotionEvent): Boolean {
+        val touchEvent = event.actionMasked
+
+        if (fragment.isDragNotStarted()) {
+            return false
+        }
+
+        when(touchEvent) {
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                fragment.onUpEvent()
+            }
+
+            MotionEvent.ACTION_MOVE -> {
+                fragment.onMoveEvent()
+            }
+        }
+
+        return false
+    }
+
+    fun startDrag(category: Category, selectedCount: Int, draggedData: ArrayList<FileInfo>) {
+        itemView?.let {view ->
+            val intent = Intent()
+            intent.putParcelableArrayListExtra(FileConstants.KEY_PATH, draggedData)
+            intent.putExtra(KEY_CATEGORY, category.value)
+            val data = ClipData.newIntent("", intent)
+            val shadowBuilder = dragHelper.getDragShadowBuilder(view, selectedCount)
+
+            if (SdkHelper.isAtleastNougat) {
+                this.view.startDragAndDrop(data, shadowBuilder, draggedData, 0)
+            }
+            else {
+                this.view.startDrag(data, shadowBuilder, draggedData, 0)
+            }
+        }
+    }
+
+    fun onDragLocationEvent(event: DragEvent, oldPos: Int): Int {
+       val top = fileList.findChildViewUnder(event.x, event.y) ?: return oldPos
+
+        val newPos = fileList.getChildAdapterPosition(top)
+        if (oldPos != newPos && newPos != RecyclerView.NO_POSITION) {
+            if (oldPos != RecyclerView.NO_POSITION && newPos < oldPos) {
+                scrollUpTOPos(newPos)
+            }
+            else {
+                scrollDownToPos(newPos)
+            }
+            adapter.setDraggedPosition(newPos)
+        }
+        return newPos
+    }
+
+    fun onDragEnd(view: View, event: DragEvent) {
+        val top = fileList.findChildViewUnder(event.x, event.y) ?: return
+        val pos = fileList.getChildAdapterPosition(top)
+        if (!event.result && pos == RecyclerView.NO_POSITION) {
+            val clipData = event.clipData
+            if (clipData == null) {
+                fragment.endActionMode()
+                return
+            }
+            val item = clipData.getItemAt(0)
+            val intent = item.intent
+            if (intent == null) {
+                fragment.endActionMode()
+                return
+            }
+            val dragCategory = intent.getIntExtra(KEY_CATEGORY, 0)
+
+            if (dragCategory == Category.FILES.value && fragment.getCategory() != Category.FILES) {
+                view.context.showToast("Not supported")
+                return
+            }
+        }
+
+        view.post {
+            fragment.endActionMode()
+        }
+    }
+
+    fun onDragDropEvent(event: DragEvent) {
+        if (fragment.getCategory() != Category.FILES) {
+            view.context.showToast("Not supported")
+            return
+        }
+        val top = fileList.findChildViewUnder(event.x, event.y) ?: return
+        val pos = fileList.getChildAdapterPosition(top)
+        val data = event.localState
+        fragment.onDragDropEvent(pos, data as ArrayList<FileInfo>)
+    }
+
+    private fun scrollUpTOPos(newPos: Int) {
+        val changedPos = newPos - 2
+        if (changedPos >= 0) {
+            fileList.smoothScrollToPosition(changedPos)
+        }
+    }
+
+    private fun scrollDownToPos(newPos: Int) {
+        val changedPos = newPos + 2
+        // For scroll down
+        if (changedPos < adapter.itemCount) {
+            fileList.smoothScrollToPosition(changedPos)
+        }
+    }
+
+    fun showDragDialog(destinationDir: String?,
+                       draggedData: ArrayList<FileInfo>,
+                       dragDialogListener: DialogHelper.DragDialogListener) {
+        dragHelper.showDragDialog(draggedData, destinationDir, dragDialogListener)
+    }
+
+    fun onEndActionMode() {
+        adapter.clearDragPosition()
     }
 }

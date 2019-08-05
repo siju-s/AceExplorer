@@ -137,7 +137,7 @@ class PickerFragment private constructor() : DialogFragment() {
                 {
                     viewModel.handleItemClick(it.first)
                 },
-                {
+                { _,_,_ ->
 
                 }
         )

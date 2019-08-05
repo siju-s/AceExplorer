@@ -892,13 +892,20 @@ public class DialogHelper {
         positiveButton.setText(context.getString(R.string.msg_ok));
         negativeButton.setText(context.getString(R.string.dialog_cancel));
 
+        final Operations operation;
+        if (radioButtonCopy.isChecked()) {
+            operation = Operations.COPY;
+        }
+        else {
+            operation = Operations.CUT;
+        }
         positiveButton.setOnClickListener(new View
                 .OnClickListener() {
             @Override
             public void onClick(View view) {
                 alertDialog.dismiss();
                 dragDialogListener.onPositiveButtonClick(filesToPaste, destinationDir,
-                        !radioButtonCopy.isChecked());
+                        operation);
             }
         });
 
@@ -1062,7 +1069,7 @@ public class DialogHelper {
     public interface DragDialogListener {
 
         void onPositiveButtonClick(ArrayList<FileInfo> filesToPaste, String destinationDir,
-                                   boolean isMove);
+                                   Operations operation);
 
     }
 }

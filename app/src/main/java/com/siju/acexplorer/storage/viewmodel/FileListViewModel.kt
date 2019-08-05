@@ -9,6 +9,7 @@ import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.common.types.FileInfo
+import com.siju.acexplorer.logging.Logger
 import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.Category.*
@@ -32,14 +33,18 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.io.File
 
 private const val TAG = "FileListViewModel"
 
 class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
+    private var longPressedTimeMs = 0L
+    private var dragStarted = false
     private var zipViewer: ZipViewer? = null
     private var isZipMode = false
     var apkPath: String? = null
+
     private lateinit var navigationView: NavigationView
     lateinit var category: Category
         private set
@@ -73,8 +78,8 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     private val _multiSelectionOpData = MutableLiveData<Pair<Operations, ArrayList<FileInfo>>>()
 
-    private val _pasteOpData = MutableLiveData<Triple<Operations, Operations, ArrayList<FileInfo>>>()
-    val pasteOpData: LiveData<Triple<Operations, Operations, ArrayList<FileInfo>>>
+    private val _pasteOpData = MutableLiveData<PasteOpData>()
+    val pasteOpData: LiveData<PasteOpData>
         get() = _pasteOpData
 
     val multiSelectionOpData: LiveData<Pair<Operations, ArrayList<FileInfo>>>
@@ -158,6 +163,18 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     private val _homeClicked = MutableLiveData<Boolean>()
     val homeClicked: LiveData<Boolean>
         get() = _homeClicked
+
+    val draggedData = arrayListOf<FileInfo>()
+
+    private val _dragEvent = MutableLiveData<Triple<Category, Int, ArrayList<FileInfo>>>()
+
+    val dragEvent: LiveData<Triple<Category, Int, ArrayList<FileInfo>>>
+        get() = _dragEvent
+
+    private val _showDragDialog = MutableLiveData<Triple<String?, ArrayList<FileInfo>, DialogHelper.DragDialogListener>>()
+
+    val showDragDialog : LiveData<Triple<String?, ArrayList<FileInfo>, DialogHelper.DragDialogListener>>
+    get() = _showDragDialog
 
     init {
         val model = storageModel as StorageModelImpl
@@ -292,7 +309,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     fun handleItemClick(fileInfo: FileInfo, position: Int) {
         if (isActionModeActive()) {
             multiSelectionHelper.toggleSelection(position)
-            handleActionModeClick()
+            handleActionModeClick(fileInfo)
             return
         }
         when (category) {
@@ -386,21 +403,32 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     fun handleLongClick(fileInfo: FileInfo, position: Int) {
         Log.e(TAG, "handleLongClick:position $position")
-        multiSelectionHelper.toggleSelection(position, true)
-        handleActionModeClick()
+        if (CategoryHelper.isSortOrActionModeUnSupported(category)) {
+            return
+        }
+        if (canLongPress()) {
+            multiSelectionHelper.toggleSelection(position, true)
+            handleActionModeClick(fileInfo)
+            longPressedTimeMs = System.currentTimeMillis()
+            if (isActionModeActive() && multiSelectionHelper.hasSelectedItems()) {
+                dragStarted = true
+            }
+        }
     }
 
-    private fun handleActionModeClick() {
+    private fun handleActionModeClick(fileItem: FileInfo) {
         val hasCheckedItems = multiSelectionHelper.hasSelectedItems()
         Log.e(TAG, "handleActionModeClick state:${_actionModeState.value}")
         if (hasCheckedItems && !isActionModeActive()) {
             _actionModeState.value = ActionModeState.STARTED
+            draggedData.clear()
         }
         else if (!hasCheckedItems && isActionModeActive()) {
             endActionMode()
         }
         if (isActionModeActive()) {
             val selectedCount = multiSelectionHelper.getSelectedCount()
+            toggleDragData(fileItem)
             if (selectedCount == 1) {
                 val fileInfo = _fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
                 _selectedFileInfo.value = Pair(selectedCount, fileInfo)
@@ -408,6 +436,17 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
             else {
                 _selectedFileInfo.value = Pair(selectedCount, null)
             }
+        }
+    }
+
+    private fun canLongPress() = !isZipMode && !isPasteOperationPending()
+
+    private fun toggleDragData(fileInfo: FileInfo) {
+        if (draggedData.contains(fileInfo)) {
+            draggedData.remove(fileInfo)
+        }
+        else {
+            draggedData.add(fileInfo)
         }
     }
 
@@ -423,7 +462,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     private fun hasBackStack() = backStackInfo.hasBackStack()
 
     fun onBackPress(): Boolean {
-        var result  = true
+        var result = true
         when {
             isZipMode                 -> result = handleZipModeBackPress()
             isActionModeActive()      -> result = handleActionModeBackPress()
@@ -450,7 +489,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         return false
     }
 
-    private fun handleActionModeBackPress() : Boolean {
+    private fun handleActionModeBackPress(): Boolean {
         if (homeClicked.value == true) {
             return true
         }
@@ -589,7 +628,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
                     val list = _multiSelectionOpData.value?.second
                     endActionMode()
                     list?.let {
-                        _pasteOpData.value = Triple(Operations.PASTE, operations, list)
+                        _pasteOpData.value = PasteOpData(Operations.PASTE, operations, list, currentDir)
                     }
                 }
             }
@@ -674,7 +713,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         onOperation(Operations.HIDE, newName)
     }
 
-    private fun endActionMode() {
+    fun endActionMode() {
         multiSelectionHelper.clearSelection()
         _actionModeState.value = ActionModeState.ENDED
         _refreshEvent.value = false
@@ -779,6 +818,10 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         zipViewer?.loadData()
     }
 
+    fun setDraggedData() {
+
+    }
+
     private fun isPasteOperationPending() = multiSelectionOpData.value?.first == Operations.CUT ||
             multiSelectionOpData.value?.first == Operations.COPY
 
@@ -845,6 +888,72 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         }
     }
 
+    fun onUpTouchEvent() {
+        dragStarted = true
+        longPressedTimeMs = 0
+    }
+
+    fun onMoveTouchEvent() {
+        val timeElapsed = System.currentTimeMillis() - longPressedTimeMs
+        if (timeElapsed > 1500) {
+            longPressedTimeMs = 0
+            dragStarted = false
+            if (draggedData.isNotEmpty()) {
+                val count = multiSelectionHelper.getSelectedCount()
+                _dragEvent.value = Triple(category, count, draggedData)
+            }
+        }
+    }
+
+    fun isDragNotStarted() = !dragStarted
+
+    fun onDragDropEvent(pos: Int, data: ArrayList<FileInfo>) {
+        val paths = java.util.ArrayList<String>()
+
+        /*  ArrayList<FileInfo> paths = dragData.getParcelableArrayListExtra(FileConstants
+                            .KEY_PATH);*/
+
+        var destinationDir: String?
+        if (pos != -1) {
+            destinationDir = fileData.value?.get(pos)?.filePath
+        }
+        else {
+            destinationDir = currentDir
+        }
+
+        for (info in draggedData) {
+            paths.add(info.filePath)
+        }
+
+        val sourceParent = File(draggedData[0].filePath).parent
+        if (File(destinationDir).isFile) {
+            destinationDir = File(destinationDir).parent
+        }
+
+        val value = destinationDir == sourceParent
+        Logger.log(TAG, "Source parent=$sourceParent $value")
+
+
+        if (!paths.contains(destinationDir)) {
+            if (destinationDir != sourceParent) {
+                Logger.log(TAG, "Source parent=" + sourceParent + " Dest=" +
+                        destinationDir + "draggedFiles:" + draggedData.size)
+                _showDragDialog. value = Triple(destinationDir, draggedData, dragDialogListener)
+            }
+            else {
+                val info = ArrayList(draggedData)
+                Logger.log(TAG, "Source=" + draggedData.get(0) + "Dest=" +
+                        destinationDir)
+                onPasteAction(Operations.COPY, info, destinationDir)
+            }
+        }
+    }
+
+    private fun onPasteAction(operation: Operations, filesToPaste: ArrayList<FileInfo>, destinationDir: String?) {
+        endActionMode()
+        _pasteOpData.value = PasteOpData(Operations.PASTE, operation, filesToPaste, destinationDir)
+    }
+
     val apkDialogListener = object : DialogHelper.ApkDialogListener {
 
         override fun onInstallClicked(path: String?) {
@@ -865,6 +974,10 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         override fun refresh() {
             _refreshEvent.value = true
         }
+    }
+
+    val dragDialogListener = DialogHelper.DragDialogListener { filesToPaste, destinationDir, operation ->
+        onPasteAction(operation, filesToPaste, destinationDir)
     }
 
     private val pasteResultListener = object : PasteConflictChecker.PasteResultCallback {

@@ -43,6 +43,7 @@ import com.siju.acexplorer.main.model.helper.ViewHelper
 import com.siju.acexplorer.main.view.dialog.DialogHelper
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.permission.PermissionHelper
+import com.siju.acexplorer.storage.model.PasteOpData
 import com.siju.acexplorer.storage.model.SortMode
 import com.siju.acexplorer.storage.model.StorageModelImpl
 import com.siju.acexplorer.storage.model.ViewMode
@@ -222,6 +223,7 @@ open class BaseFileListFragment : Fragment() {
                             floatingView.showFab()
                         }
                         menuControls.onEndActionMode()
+                        filesList.onEndActionMode()
                     }
                 }
             }
@@ -279,8 +281,7 @@ open class BaseFileListFragment : Fragment() {
 
         fileListViewModel.pasteOpData.observe(viewLifecycleOwner, Observer {
             it?.apply {
-                val operationData = Pair(it.second, it.third)
-                handlePasteOperation(operationData)
+                handlePasteOperation(it)
             }
         })
 
@@ -332,6 +333,18 @@ open class BaseFileListFragment : Fragment() {
                 val zipViewer = ZipViewerFragment(this@BaseFileListFragment, it.first,
                                                   it.second)
                 fileListViewModel.setZipViewer(zipViewer)
+            }
+        })
+
+        fileListViewModel.dragEvent.observe(viewLifecycleOwner, Observer {
+            it?.apply {
+                filesList.startDrag(it.first, it.second, it.third)
+            }
+        })
+
+        fileListViewModel.showDragDialog.observe(viewLifecycleOwner, Observer {
+            it?.apply {
+                filesList.showDragDialog(it.first, it.second, it.third)
             }
         })
     }
@@ -471,9 +484,9 @@ open class BaseFileListFragment : Fragment() {
         }
     }
 
-    private fun handlePasteOperation(operationData: Pair<Operations, ArrayList<FileInfo>>) {
-        fileListViewModel.currentDir?.let {
-            fileListViewModel.onPaste(it, operationData)
+    private fun handlePasteOperation(pasteOpData: PasteOpData) {
+        pasteOpData.destinationDir?.let {
+            fileListViewModel.onPaste(it, Pair(pasteOpData.operations, pasteOpData.filesToPaste))
         }
     }
 
@@ -802,6 +815,26 @@ open class BaseFileListFragment : Fragment() {
     fun onMenuItemClick(item: MenuItem) {
         fileListViewModel.onMenuItemClick(item.itemId)
 
+    }
+
+    fun onUpEvent() {
+         fileListViewModel.onUpTouchEvent()
+    }
+
+    fun onMoveEvent() {
+        fileListViewModel.onMoveTouchEvent()
+    }
+
+    fun isDragNotStarted() = fileListViewModel.isDragNotStarted()
+
+    fun endActionMode() {
+        fileListViewModel.endActionMode()
+    }
+
+    fun getCategory() = fileListViewModel.category
+
+    fun onDragDropEvent(pos: Int, data: ArrayList<FileInfo>) {
+       fileListViewModel.onDragDropEvent(pos, data)
     }
 
     private val sortDialogListener = object : DialogHelper.SortDialogListener {
