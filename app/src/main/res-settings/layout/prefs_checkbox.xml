@@ -19,6 +19,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
+    android:background="?android:attr/selectableItemBackground"
     android:minHeight="?attr/listPreferredItemHeight"
     android:orientation="horizontal">
 
@@ -49,10 +50,10 @@
     </RelativeLayout>
 
 
-    <CheckBox
+    <androidx.appcompat.widget.SwitchCompat
         android:id="@android:id/checkbox"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/margin_16"
         android:clickable="false"
         android:focusable="false"

@@ -102,16 +102,16 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name="com.siju.acexplorer.settings.SettingsActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="@string/action_settings"
-            android:permission="android.permission.WRITE_SECURE_SETTINGS">
-            <intent-filter>
-                <action android:name="android.intent.action.APPLICATION_PREFERENCES"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
+<!--        <activity-->
+<!--            android:name="com.siju.acexplorer.settings.SettingsActivity"-->
+<!--            android:configChanges="orientation|screenSize|keyboardHidden"-->
+<!--            android:label="@string/action_settings"-->
+<!--            android:permission="android.permission.WRITE_SECURE_SETTINGS">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.APPLICATION_PREFERENCES"/>-->
+<!--                <category android:name="android.intent.category.DEFAULT"/>-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
 
         <activity android:name=".appmanager.AppDetailActivity"
             android:theme="@style/BaseDarkTheme">

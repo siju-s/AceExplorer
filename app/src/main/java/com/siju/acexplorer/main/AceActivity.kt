@@ -16,17 +16,20 @@
 
 package com.siju.acexplorer.main
 
-import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.kobakei.ratethisapp.RateThisApp
 import com.siju.acexplorer.R
 import com.siju.acexplorer.base.view.BaseActivity
+import com.siju.acexplorer.helper.ToolbarHelper
 import com.siju.acexplorer.main.view.FragmentsFactory
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.permission.PermissionHelper
@@ -35,7 +38,7 @@ import com.siju.billingsecure.BillingKey
 import kotlinx.android.synthetic.main.activity_main.*
 
 private const val TAG = "AceActivity"
-class AceActivity : BaseActivity() {
+class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
 
     private lateinit var mainViewModel: MainViewModel
 
@@ -89,9 +92,9 @@ class AceActivity : BaseActivity() {
         transaction.commit()
     }
 
-    override fun onNewIntent(intent: Intent) {
-//        mainUi.onIntentReceived(intent)
-    }
+//    override fun onNewIntent(intent: Intent) {
+////        mainUi.onIntentReceived(intent)
+//    }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
                                             grantResults: IntArray) {
@@ -130,6 +133,28 @@ class AceActivity : BaseActivity() {
        else {
            super.onBackPressed()
        }
+    }
+
+    override fun onPreferenceStartFragment(caller: PreferenceFragmentCompat,
+                                           pref: Preference): Boolean {
+        val args = pref.extras
+        val fragment = supportFragmentManager.fragmentFactory.instantiate(
+                ClassLoader.getSystemClassLoader(),
+                pref.fragment)
+        fragment.arguments = args
+        fragment.setTargetFragment(caller, 0)
+        replaceFragment(supportFragmentManager, fragment)
+        ToolbarHelper.setToolbarTitle(this, pref.title.toString())
+        ToolbarHelper.showToolbarAsUp(this)
+        return true
+    }
+
+    private fun replaceFragment(fragmentManager: FragmentManager,
+                                fragment: Fragment) {
+        fragmentManager.beginTransaction()
+                .replace(R.id.content, fragment)
+                .addToBackStack(null)
+                .commit()
     }
 //
 //    override fun onDestroy() {

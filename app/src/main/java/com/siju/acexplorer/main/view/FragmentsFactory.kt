@@ -2,7 +2,7 @@ package com.siju.acexplorer.main.view
 
 import com.siju.acexplorer.R
 import com.siju.acexplorer.home.view.HomeScreenFragment
-import com.siju.acexplorer.settings.SettingsPreferenceFragment
+import com.siju.acexplorer.settings.SettingsFragment
 
 object FragmentsFactory {
 
@@ -10,7 +10,7 @@ object FragmentsFactory {
             when (itemId) {
                 R.id.navigation_home -> HomeScreenFragment()
 //            R.id.navigation_tools ->
-                R.id.navigation_settings -> SettingsPreferenceFragment()
+                R.id.navigation_settings -> SettingsFragment()
                 else -> HomeScreenFragment()
             }
 }

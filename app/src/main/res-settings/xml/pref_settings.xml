@@ -14,67 +14,53 @@
   ~ limitations under the License.
   -->
 
-<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<androidx.preference.PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <ListPreference
-        android:defaultValue="1"
-        android:entries="@array/pref_themes"
-        android:entryValues="@array/pref_themes_values"
-        android:key="prefThemes"
-        android:layout="@layout/prefs_settings_item"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_title_theme" />
+        app:defaultValue="1"
+        app:entries="@array/pref_themes"
+        app:entryValues="@array/pref_themes_values"
+        app:key="prefThemes"
+        app:layout="@layout/prefs_settings_item"
+        app:negativeButtonText="@null"
+        app:positiveButtonText="@null"
+        app:title="@string/pref_title_theme" />
 
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="prefHomeScreen"
-        android:layout="@layout/prefs_checkbox"
-        android:title="@string/pref_title_homescreen" />
 
-    <CheckBoxPreference
-        android:key="prefHidden"
-        android:layout="@layout/prefs_checkbox"
-        android:title="@string/pref_title_show_hidden" />
-
-    <CheckBoxPreference
-        android:key="prefDualPane"
-        android:layout="@layout/prefs_checkbox"
-        android:title="@string/pref_title_disable_dual" />
+    <SwitchPreferenceCompat
+        app:key="prefDualPane"
+        app:title="@string/pref_title_disable_dual" />
 
     <Preference
-        android:key="prefsReset"
-        android:layout="@layout/prefs_settings_item"
-        android:title="@string/pref_title_reset_fav" />
-
+        app:key="prefsReset"
+        app:layout="@layout/prefs_settings_item"
+        app:title="@string/pref_title_reset_fav" />
 
     <ListPreference
-        android:entries="@array/changeLanguage"
-        android:entryValues="@array/changeLanguageValues"
-        android:key="prefLanguage"
-        android:layout="@layout/prefs_settings_item"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_title_change_lang" />
+        app:entries="@array/changeLanguage"
+        app:entryValues="@array/changeLanguageValues"
+        app:key="prefLanguage"
+        app:layout="@layout/prefs_settings_item"
+        app:negativeButtonText="@null"
+        app:positiveButtonText="@null"
+        app:title="@string/pref_title_change_lang" />
 
     <Preference
-        android:key="prefsUpdate"
-        android:layout="@layout/prefs_settings_item"
-        android:title="@string/pref_title_check_update" />
+        app:key="prefsUpdate"
+        app:layout="@layout/prefs_settings_item"
+        app:title="@string/pref_title_check_update" />
 
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="prefsAnalytics"
-        android:layout="@layout/prefs_checkbox"
-        android:summary="@string/analytics_summary"
-        android:title="@string/analytics_text" />
-
+    <SwitchPreferenceCompat
+        app:defaultValue="true"
+        app:key="prefsAnalytics"
+        app:summary="@string/analytics_summary"
+        app:title="@string/analytics_text" />
 
     <Preference
-        android:key="prefsAbout"
-        android:layout="@layout/prefs_settings_item"
-        android:title="@string/pref_title_about"
+        app:key="prefsAbout"
+        app:layout="@layout/prefs_settings_item"
+        app:title="@string/pref_title_about"
         app:fragment="com.siju.acexplorer.settings.AboutFragment" />
 
 
