@@ -178,6 +178,8 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, val categ
         archiveItem.isVisible = false
         shareItem.isVisible = false
         hideItem.isVisible = false
+        favItem.isVisible = false
+        deleteFavItem.isVisible = false
     }
 
     private fun toggleRootMenuVisibility(isRoot: Boolean) {

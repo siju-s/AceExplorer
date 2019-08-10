@@ -164,7 +164,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     val homeClicked: LiveData<Boolean>
         get() = _homeClicked
 
-    val draggedData = arrayListOf<FileInfo>()
+    private val draggedData = arrayListOf<FileInfo>()
 
     private val _dragEvent = MutableLiveData<Triple<Category, Int, ArrayList<FileInfo>>>()
 

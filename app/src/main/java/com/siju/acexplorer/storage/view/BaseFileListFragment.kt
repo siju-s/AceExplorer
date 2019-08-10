@@ -18,8 +18,10 @@ package com.siju.acexplorer.storage.view
 
 import android.app.Activity.RESULT_OK
 import android.app.Dialog
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -34,9 +36,12 @@ import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.ads.AdsView
 import com.siju.acexplorer.analytics.Analytics
+import com.siju.acexplorer.appmanager.helper.AppHelper
+import com.siju.acexplorer.appmanager.view.AppDetailActivity
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.extensions.showToast
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.main.model.groups.CategoryHelper.isAppManager
 import com.siju.acexplorer.main.model.helper.ShareHelper
 import com.siju.acexplorer.main.model.helper.UriHelper
 import com.siju.acexplorer.main.model.helper.ViewHelper
@@ -122,7 +127,12 @@ open class BaseFileListFragment : Fragment() {
 
     private fun setupNavigationView() {
         fileListViewModel.setNavigationView(navigationView)
-        navigationView.showNavigationView()
+        if (isAppManager(category)) {
+            navigationView.hideNavigationView()
+        }
+        else {
+            navigationView.showNavigationView()
+        }
     }
 
     private fun getArgs() {
@@ -145,9 +155,14 @@ open class BaseFileListFragment : Fragment() {
         mainViewModel.permissionStatus.observe(viewLifecycleOwner, Observer { permissionStatus ->
             Log.e(TAG, "permissionStatus state:$permissionStatus")
             when (permissionStatus) {
-                is PermissionHelper.PermissionState.Granted -> fileListViewModel.loadData(path,
-                                                                                          category)
-                else                                        -> {
+                is PermissionHelper.PermissionState.Granted -> {
+                    if (isAppManager(category)) {
+                        registerPackageReceiver(AceApplication.appContext)
+                    }
+                    fileListViewModel.loadData(path,
+                                               category)
+                }
+                else -> {
                 }
             }
         })
@@ -218,7 +233,7 @@ open class BaseFileListFragment : Fragment() {
                         floatingView.hideFab()
                         menuControls.onStartActionMode()
                     }
-                    ActionModeState.ENDED   -> {
+                    ActionModeState.ENDED -> {
                         if (Category.FILES == category) {
                             floatingView.showFab()
                         }
@@ -268,7 +283,7 @@ open class BaseFileListFragment : Fragment() {
             it?.apply {
                 when (it.first) {
                     Operations.FOLDER_CREATION -> showCreateFolderDialog(context)
-                    Operations.FILE_CREATION   -> showCreateFileDialog(context)
+                    Operations.FILE_CREATION -> showCreateFileDialog(context)
                 }
             }
         })
@@ -349,8 +364,27 @@ open class BaseFileListFragment : Fragment() {
         })
     }
 
+    private fun registerPackageReceiver(context: Context) {
+        val filter = IntentFilter(Intent.ACTION_PACKAGE_REMOVED)
+        filter.addAction(Intent.ACTION_PACKAGE_ADDED)
+        filter.addDataScheme(AppHelper.SCHEME_PACKAGE)
+        context.registerReceiver(packageChangeReceiver, filter)
+    }
+
+    private fun unregisterPackageReceiver(context: Context) {
+        context.unregisterReceiver(packageChangeReceiver)
+    }
+
     private fun handlePasteOperation(pasteData: PasteData) {
         DialogHelper.showConflictDialog(context, pasteData, fileListViewModel.pasteConflictListener)
+    }
+
+    private val packageChangeReceiver = object : BroadcastReceiver() {
+
+        override fun onReceive(context: Context, intent: Intent?) {
+            fileListViewModel.loadData(null, Category.APP_MANAGER)
+        }
+
     }
 
     private fun handleOperationResult(operationResult: Pair<Operations, OperationAction>) {
@@ -360,18 +394,18 @@ open class BaseFileListFragment : Fragment() {
         val context = context
         context?.let {
             when (action.operationResult.resultCode) {
-                OperationResultCode.SUCCESS      -> {
+                OperationResultCode.SUCCESS -> {
                     onOperationSuccess(operation, action)
                 }
-                OperationResultCode.SAF          -> {
+                OperationResultCode.SAF -> {
                     dismissDialog()
                     showSAFDialog(context, action.operationData.arg1)
                 }
                 OperationResultCode.INVALID_FILE -> onOperationError(operation, context.getString(
                         R.string.msg_error_invalid_name))
-                OperationResultCode.FILE_EXISTS  -> onOperationError(operation, context.getString(
+                OperationResultCode.FILE_EXISTS -> onOperationError(operation, context.getString(
                         R.string.msg_file_exists))
-                OperationResultCode.FAIL         -> {
+                OperationResultCode.FAIL -> {
                     onOperationFailed(context)
                 }
             }
@@ -385,20 +419,20 @@ open class BaseFileListFragment : Fragment() {
 
     private fun onOperationSuccess(operation: Operations, operationAction: OperationAction) {
         when (operation) {
-            Operations.DELETE   -> {
+            Operations.DELETE -> {
                 val count = operationAction.operationResult.count
                 context?.showToast(resources.getQuantityString(R.plurals.number_of_files, count,
                                                                count) +
                                            " " + resources.getString(R.string.msg_delete_success))
             }
 
-            Operations.COPY     -> {
+            Operations.COPY -> {
                 val count = operationAction.operationResult.count
                 context?.showToast(String.format(
                         Locale.getDefault(), resources.getString(R.string.copied), count))
             }
 
-            Operations.CUT      -> {
+            Operations.CUT -> {
                 val count = operationAction.operationResult.count
                 context?.showToast(String.format(
                         Locale.getDefault(), resources.getString(R.string.moved), count))
@@ -421,10 +455,10 @@ open class BaseFileListFragment : Fragment() {
     private fun handleSingleItemOperation(operationData: Pair<Operations, FileInfo>) {
         Log.e(TAG, "handleSingleItemOperation: ")
         when (operationData.first) {
-            Operations.RENAME  -> {
+            Operations.RENAME -> {
                 context?.let { context -> showRenameDialog(context, operationData.second) }
             }
-            Operations.INFO    -> {
+            Operations.INFO -> {
                 context?.let { context ->
                     DialogHelper.showInfoDialog(context, operationData.second,
                                                 Category.FILES == category)
@@ -438,19 +472,26 @@ open class BaseFileListFragment : Fragment() {
                                                    extractDialogListener)
                 }
             }
-            else               -> {
+            else -> {
             }
         }
     }
 
     private fun handleMultiItemOperation(operationData: Pair<Operations, ArrayList<FileInfo>>) {
         when (operationData.first) {
-            Operations.DELETE               -> {
+            Operations.DELETE -> {
                 context?.let { context ->
-                    showDeleteDialog(context, operationData.second)
+                    if (isAppManager(category)) {
+                        for (fileInfo in operationData.second) {
+                            AppHelper.uninstallApp(activity as AppCompatActivity, fileInfo.filePath)
+                        }
+                    }
+                    else {
+                        showDeleteDialog(context, operationData.second)
+                    }
                 }
             }
-            Operations.SHARE                -> {
+            Operations.SHARE -> {
                 context?.let { ShareHelper.shareFiles(it, operationData.second, category) }
             }
 
@@ -465,21 +506,21 @@ open class BaseFileListFragment : Fragment() {
                 }
             }
 
-            Operations.COMPRESS             -> {
+            Operations.COMPRESS -> {
                 context?.let {
                     showCompressDialog(it, operationData.second)
                 }
             }
 
-            Operations.FAVORITE             -> {
+            Operations.FAVORITE -> {
                 fileListViewModel.addToFavorite(operationData.second)
             }
 
-            Operations.DELETE_FAVORITE      -> {
+            Operations.DELETE_FAVORITE -> {
                 fileListViewModel.removeFavorite(operationData.second)
             }
 
-            else                            -> {
+            else -> {
             }
         }
     }
@@ -538,9 +579,9 @@ open class BaseFileListFragment : Fragment() {
                 editText?.requestFocus()
                 editText?.error = message
             }
-            Operations.HIDE                                                                                                  -> Toast.makeText(
+            Operations.HIDE -> Toast.makeText(
                     context, message, Toast.LENGTH_SHORT).show()
-            else                                                                                                             -> {
+            else -> {
             }
         }
     }
@@ -625,7 +666,7 @@ open class BaseFileListFragment : Fragment() {
 
     private fun getThemeStyle(theme: Theme): Int {
         return when (theme) {
-            Theme.DARK  -> R.style.BaseDarkTheme
+            Theme.DARK -> R.style.BaseDarkTheme
             Theme.LIGHT -> R.style.BaseLightTheme
         }
     }
@@ -672,7 +713,12 @@ open class BaseFileListFragment : Fragment() {
     }
 
     fun handleItemClick(fileInfo: FileInfo, position: Int) {
-        fileListViewModel.handleItemClick(fileInfo, position)
+        if (isAppManager(category)) {
+            context?.let { AppDetailActivity.openAppInfo(it, fileInfo.filePath) }
+        }
+        else {
+            fileListViewModel.handleItemClick(fileInfo, position)
+        }
     }
 
     fun handleLongItemClick(fileInfo: FileInfo, second: Int) {
@@ -686,7 +732,7 @@ open class BaseFileListFragment : Fragment() {
         val context = context
         context?.let {
             when (extension?.toLowerCase(Locale.ROOT)) {
-                null               -> {
+                null -> {
                     val uri = UriHelper.createContentUri(context, path)
                     uri?.let {
                         DialogHelper.openWith(it, context)
@@ -694,7 +740,7 @@ open class BaseFileListFragment : Fragment() {
                 }
                 ViewHelper.EXT_APK -> ViewHelper.viewApkFile(context, path,
                                                              fileListViewModel.apkDialogListener)
-                else               -> ViewHelper.viewFile(context, path, extension)
+                else -> ViewHelper.viewFile(context, path, extension)
             }
         }
     }
@@ -725,7 +771,7 @@ open class BaseFileListFragment : Fragment() {
                 }
             }
 
-            SAF_REQUEST                                -> {
+            SAF_REQUEST -> {
                 if (resultCode == RESULT_OK) {
                     val uri = intent?.data
                     if (uri == null) {
@@ -746,7 +792,7 @@ open class BaseFileListFragment : Fragment() {
                 }
             }
 
-            EXTRACT_PATH_REQUEST                       -> {
+            EXTRACT_PATH_REQUEST -> {
                 if (resultCode == RESULT_OK) {
                     val destDir = intent?.getStringExtra(PickerModelImpl.KEY_PICKER_SELECTED_PATH)
                     val pathButton = dialog?.findViewById<Button>(R.id.buttonPathSelect)
@@ -770,6 +816,13 @@ open class BaseFileListFragment : Fragment() {
 
     private fun setHiddenCheckedState(state: Boolean) {
         hiddenMenuItem?.isChecked = state
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (isAppManager(category)) {
+            unregisterPackageReceiver(AceApplication.appContext)
+        }
     }
 
     //
@@ -798,13 +851,13 @@ open class BaseFileListFragment : Fragment() {
                 fileListViewModel.switchView(ViewMode.GRID)
                 return true
             }
-            R.id.action_hidden    -> {
+            R.id.action_hidden -> {
                 item.isChecked = !item.isChecked
                 fileListViewModel.onHiddenFileSettingChanged(item.isChecked)
                 return true
             }
 
-            R.id.action_sort      -> {
+            R.id.action_sort -> {
                 fileListViewModel.onSortClicked()
                 return true
             }
@@ -818,7 +871,7 @@ open class BaseFileListFragment : Fragment() {
     }
 
     fun onUpEvent() {
-         fileListViewModel.onUpTouchEvent()
+        fileListViewModel.onUpTouchEvent()
     }
 
     fun onMoveEvent() {
@@ -834,7 +887,7 @@ open class BaseFileListFragment : Fragment() {
     fun getCategory() = fileListViewModel.category
 
     fun onDragDropEvent(pos: Int, data: ArrayList<FileInfo>) {
-       fileListViewModel.onDragDropEvent(pos, data)
+        fileListViewModel.onDragDropEvent(pos, data)
     }
 
     private val sortDialogListener = object : DialogHelper.SortDialogListener {

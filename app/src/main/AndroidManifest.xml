@@ -113,7 +113,7 @@
 <!--            </intent-filter>-->
 <!--        </activity>-->
 
-        <activity android:name=".appmanager.AppDetailActivity"
+        <activity android:name=".appmanager.view.AppDetailActivity"
             android:theme="@style/BaseDarkTheme">
         </activity>
 

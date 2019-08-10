@@ -30,7 +30,11 @@ import com.siju.acexplorer.extensions.inflateLayout
 import kotlinx.android.synthetic.main.toolbar_settings.*
 
 
-class SettingsFragment : Fragment() {
+class SettingsFragment private constructor(): Fragment() {
+
+    companion object {
+        fun newInstance() = SettingsFragment()
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {

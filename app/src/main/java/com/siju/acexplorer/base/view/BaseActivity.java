@@ -24,7 +24,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.appmanager.AppDetailActivity;
+import com.siju.acexplorer.appmanager.view.AppDetailActivity;
 import com.siju.acexplorer.base.model.BaseModel;
 import com.siju.acexplorer.base.model.BaseModelImpl;
 import com.siju.acexplorer.base.presenter.BasePresenter;

@@ -138,6 +138,9 @@ public class CategoryHelper {
         return RECENT.equals(category);
     }
 
+    public static boolean isAppManager(Category category) {
+        return APP_MANAGER.equals(category);
+    }
 
     public static boolean isGenericImagesCategory(Category category) {
         return GENERIC_IMAGES.equals(category) || IMAGE.equals(category);

@@ -257,7 +257,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                                      newItem: FileInfo): Boolean {
             if (oldItem.category == newItem.category) {
                 val result = when (oldItem.category) {
-                    Category.FILES, Category.COMPRESSED, Category.IMAGE, Category.VIDEO, Category.FOLDER_IMAGES, Category.FOLDER_VIDEOS -> oldItem.filePath == newItem.filePath
+                    Category.FILES, Category.COMPRESSED, Category.IMAGE, Category.VIDEO, Category.FOLDER_IMAGES, Category.FOLDER_VIDEOS, Category.APP_MANAGER -> oldItem.filePath == newItem.filePath
                     Category.GENERIC_IMAGES, Category.GENERIC_VIDEOS               -> oldItem.bucketId == newItem.bucketId
                     else                                                           -> {
                         TODO()

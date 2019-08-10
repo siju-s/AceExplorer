@@ -7,10 +7,11 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.MediaStore;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
@@ -19,8 +20,8 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.siju.acexplorer.R;
-import com.siju.acexplorer.main.model.FileConstants;
 import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.main.model.FileConstants;
 import com.siju.acexplorer.main.model.groups.Category;
 
 import java.io.File;
@@ -205,25 +206,6 @@ public class ThumbnailUtils {
     }
 
     private static void loadAppIcon(Context context, ImageView imageIcon, String name) {
-
-
-//        RequestOptions options = new RequestOptions()
-//                .centerCrop()
-//                .placeholder(R.drawable.ic_apk_green)
-//                .diskCacheStrategy(DiskCacheStrategy.NONE); // cannot disk cache
-//        // ApplicationInfo, nor Drawables
-//
-//        try {
-//            ApplicationInfo applicationInfo = context.getPackageManager().getApplicationInfo(packageName, 0);
-//            Glide.with(context)
-//                    .as(Drawable.class)
-//                    .apply(options.dontAnimate().dontTransform().priority(Priority.LOW))
-//                    .load(applicationInfo)
-//                    .into(imageIcon);
-//        } catch (PackageManager.NameNotFoundException e) {
-//            e.printStackTrace();
-//        }
-
         RequestOptions options = new RequestOptions()
                 .centerCrop()
                 .placeholder(R.drawable.ic_apk_green)

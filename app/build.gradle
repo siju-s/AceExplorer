@@ -136,7 +136,7 @@ dependencies {
     implementation deps.gson
 
     implementation      deps.glide.runtime
-    annotationProcessor deps.glide.compiler
+    kapt deps.glide.compiler
 
     implementation deps.apache_compress
     implementation deps.floating_button
