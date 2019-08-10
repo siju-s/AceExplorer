@@ -37,7 +37,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val item = getItem(position)
-        viewHolder.bind(item, itemCount, multiSelectionHelper?.isSelected(position), position, draggedPosition,
+        viewHolder.bind(item, itemCount, viewMode, multiSelectionHelper?.isSelected(position), position, draggedPosition,
                         clickListener, longClickListener)
     }
 
@@ -71,12 +71,12 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             }
         }
 
-        fun bind(item: FileInfo, count: Int, selected : Boolean?, pos: Int, draggedPos: Int,
+        fun bind(item: FileInfo, count: Int, viewMode: ViewMode, selected : Boolean?, pos: Int, draggedPos: Int,
                  clickListener: (Pair<FileInfo, Int>) -> Unit,
                  longClickListener: (FileInfo, Int, View) -> Unit) {
 //            Log.e("FileListAdapter", "bind:${item.fileName}")
             onSelection(selected, pos, draggedPos)
-            bindViewByCategory(itemView.context, item)
+            bindViewByCategory(itemView.context, item, viewMode)
             itemView.setOnClickListener {
                 val position = adapterPosition
                 if (position < count && position != RecyclerView.NO_POSITION) {
@@ -103,7 +103,9 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             }
         }
 
-        private fun bindViewByCategory(context: Context, fileInfo: FileInfo) {
+        private fun bindViewByCategory(context: Context,
+                                       fileInfo: FileInfo,
+                                       viewMode: ViewMode) {
             val category = fileInfo.category
             when {
                 category == Category.PICKER       -> {
@@ -115,7 +117,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                                                                                    fileInfo)
                 isGenericVideosCategory(category) -> bindGenericImagesVidsCategory(context,
                                                                                    fileInfo)
-                isAppManager(category)            -> bindAppManagerCategory(context, fileInfo)
+                isAppManager(category)            -> bindAppManagerCategory(context, fileInfo, viewMode)
                 isRecentCategory(category)        -> bindGenericRecent(context, fileInfo)
                 else                              -> {
                     bindFilesCategory(fileInfo, category, context)
@@ -224,16 +226,16 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             imageIcon.setImageResource(R.drawable.ic_folder)
         }
 
-        private fun bindAppManagerCategory(context: Context, fileInfo: FileInfo) {
+        private fun bindAppManagerCategory(context: Context, fileInfo: FileInfo, viewMode: ViewMode) {
 
             textFileName.text = fileInfo.fileName
             val size = fileInfo.size
             val fileSize = Formatter.formatFileSize(context, size)
             textNoOfFileOrSize.text = fileSize
             val fileDate = FileUtils.convertDate(fileInfo.date)
-//            if (mViewMode == ViewMode.LIST) {
-//                textFileModifiedDate.setText(fileDate)
-//            }
+            if (viewMode == ViewMode.LIST) {
+                dateText?.text = fileDate
+            }
             displayThumb(context, fileInfo, fileInfo.category, imageIcon,
                          imageThumbIcon)
         }
