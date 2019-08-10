@@ -63,7 +63,7 @@
         <com.siju.acexplorer.storage.view.custom.SplitToolbar
             android:id="@+id/toolbar_bottom"
             android:layout_width="match_parent"
-            android:layout_height="112dp"
+            android:layout_height="@dimen/actionbar_height"
             android:layout_gravity="bottom"
             android:background="@color/colorPrimary"
             android:visibility="gone"
