@@ -716,6 +716,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     fun endActionMode() {
         multiSelectionHelper.clearSelection()
         _actionModeState.value = ActionModeState.ENDED
+        dragStarted = false
         _refreshEvent.value = false
     }
 
