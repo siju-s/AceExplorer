@@ -51,7 +51,7 @@ import com.siju.acexplorer.main.model.helper.UriHelper;
 import com.siju.acexplorer.main.view.PasteConflictAdapter;
 import com.siju.acexplorer.storage.model.SortMode;
 import com.siju.acexplorer.storage.model.operations.Operations;
-import com.siju.acexplorer.storage.model.operations.PasteData;
+import com.siju.acexplorer.storage.model.operations.PasteConflictCheckData;
 import com.siju.acexplorer.utils.Clipboard;
 import com.stericson.RootTools.RootTools;
 
@@ -413,7 +413,7 @@ public class DialogHelper {
 
     }
 
-    public static void showConflictDialog(Context context, final PasteData pasteData,
+    public static void showConflictDialog(Context context, final PasteConflictCheckData pasteConflictCheckData,
                                           final PasteConflictListener pasteConflictListener) {
         String[] texts = new String[]{context.getString(R.string.msg_file_exists),
                 context.getString(R.string.dialog_skip), context.getString(R.string.dialog_keep_both),
@@ -434,11 +434,11 @@ public class DialogHelper {
 
         List<FileInfo> fileInfoList = new ArrayList<>();
 
-        final List<FileInfo> conflictFiles = pasteData.getConflictFiles();
-        final List<FileInfo> destFiles = pasteData.getDestFiles();
+        final List<FileInfo> conflictFiles = pasteConflictCheckData.getConflictFiles();
+        final List<FileInfo> destFiles = pasteConflictCheckData.getDestFiles();
 
-        final String destinationDir = pasteData.getDestinationDir();
-        final Operations operation = pasteData.getOperations();
+        final String destinationDir = pasteConflictCheckData.getDestinationDir();
+        final Operations operation = pasteConflictCheckData.getOperations();
         FileInfo fileToPaste = conflictFiles.get(0);
 
         String sourcePath = fileToPaste.getFilePath();
@@ -482,7 +482,7 @@ public class DialogHelper {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-                pasteConflictListener.onSkipClicked(pasteData, checked);
+                pasteConflictListener.onSkipClicked(pasteConflictCheckData, checked);
             }
         });
 
@@ -491,7 +491,7 @@ public class DialogHelper {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-                pasteConflictListener.onReplaceClicked(pasteData, checked);
+                pasteConflictListener.onReplaceClicked(pasteConflictCheckData, checked);
             }
         });
 
@@ -500,7 +500,7 @@ public class DialogHelper {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-                pasteConflictListener.onKeepBothClicked(pasteData, checked);
+                pasteConflictListener.onKeepBothClicked(pasteConflictCheckData, checked);
             }
         });
 
@@ -1059,11 +1059,11 @@ public class DialogHelper {
 
     public interface PasteConflictListener {
 
-        void onSkipClicked(PasteData pasteData, boolean isChecked);
+        void onSkipClicked(PasteConflictCheckData pasteConflictCheckData, boolean isChecked);
 
-        void onReplaceClicked(PasteData pasteData, boolean isChecked);
+        void onReplaceClicked(PasteConflictCheckData pasteConflictCheckData, boolean isChecked);
 
-        void onKeepBothClicked(PasteData pasteData, boolean isChecked);
+        void onKeepBothClicked(PasteConflictCheckData pasteConflictCheckData, boolean isChecked);
     }
 
     public interface DragDialogListener {

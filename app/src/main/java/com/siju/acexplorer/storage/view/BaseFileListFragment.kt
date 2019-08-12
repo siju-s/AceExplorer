@@ -114,10 +114,7 @@ open class BaseFileListFragment : Fragment() {
     }
 
     private fun setupMultiSelection() {
-        val multiSelectionHelper = MultiSelectionHelper()
-        fileListViewModel.multiSelectionHelper = multiSelectionHelper
-        filesList.setMultiSelectionHelper(multiSelectionHelper)
-        multiSelectionHelper.setMultiSelectionListener(fileListViewModel.multiSelectionListener)
+        filesList.setMultiSelectionHelper(fileListViewModel.multiSelectionHelper)
     }
 
     private fun setupToolbar() {
@@ -300,7 +297,7 @@ open class BaseFileListFragment : Fragment() {
             }
         })
 
-        fileListViewModel.pasteData.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.pasteConflictCheckData.observe(viewLifecycleOwner, Observer {
             it?.apply {
                 handlePasteOperation(it)
             }
@@ -375,8 +372,8 @@ open class BaseFileListFragment : Fragment() {
         context.unregisterReceiver(packageChangeReceiver)
     }
 
-    private fun handlePasteOperation(pasteData: PasteData) {
-        DialogHelper.showConflictDialog(context, pasteData, fileListViewModel.pasteConflictListener)
+    private fun handlePasteOperation(pasteConflictCheckData: PasteConflictCheckData) {
+        DialogHelper.showConflictDialog(context, pasteConflictCheckData, fileListViewModel.pasteConflictListener)
     }
 
     private val packageChangeReceiver = object : BroadcastReceiver() {
@@ -633,7 +630,7 @@ open class BaseFileListFragment : Fragment() {
                 operation: Operations,
                 sourceFilePath: String,
                 newFileName: String, destinationDir: String) {
-            fileListViewModel.onExtractOperation(operation, newFileName, destinationDir)
+            fileListViewModel.onExtractOperation(newFileName, destinationDir)
         }
 
         override fun onSelectButtonClicked(dialog: Dialog) {
@@ -656,7 +653,6 @@ open class BaseFileListFragment : Fragment() {
                                            paths: ArrayList<FileInfo>) {
             this@BaseFileListFragment.dialog = dialog
             fileListViewModel.onOperation(operation, newFileName)
-
         }
 
         override fun onNegativeButtonClick(operation: Operations?) {
@@ -867,7 +863,6 @@ open class BaseFileListFragment : Fragment() {
 
     fun onMenuItemClick(item: MenuItem) {
         fileListViewModel.onMenuItemClick(item.itemId)
-
     }
 
     fun onUpEvent() {
@@ -887,7 +882,7 @@ open class BaseFileListFragment : Fragment() {
     fun getCategory() = fileListViewModel.category
 
     fun onDragDropEvent(pos: Int, data: ArrayList<FileInfo>) {
-        fileListViewModel.onDragDropEvent(pos, data)
+        fileListViewModel.onDragDropEvent(pos)
     }
 
     private val sortDialogListener = object : DialogHelper.SortDialogListener {

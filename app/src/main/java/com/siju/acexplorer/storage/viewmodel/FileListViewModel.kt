@@ -6,10 +6,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.siju.acexplorer.AceApplication
-import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.common.types.FileInfo
-import com.siju.acexplorer.logging.Logger
 import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.Category.*
@@ -20,12 +18,15 @@ import com.siju.acexplorer.storage.model.backstack.BackStackInfo
 import com.siju.acexplorer.storage.model.operations.OperationAction
 import com.siju.acexplorer.storage.model.operations.OperationHelper
 import com.siju.acexplorer.storage.model.operations.Operations
-import com.siju.acexplorer.storage.model.operations.PasteData
-import com.siju.acexplorer.storage.model.task.PasteConflictChecker
+import com.siju.acexplorer.storage.model.operations.PasteConflictCheckData
 import com.siju.acexplorer.storage.modules.zipviewer.ZipUtils
 import com.siju.acexplorer.storage.modules.zipviewer.ZipViewerCallback
 import com.siju.acexplorer.storage.modules.zipviewer.view.ZipViewer
 import com.siju.acexplorer.storage.modules.zipviewer.view.ZipViewerFragment
+import com.siju.acexplorer.storage.presenter.OperationPresenter
+import com.siju.acexplorer.storage.presenter.OperationPresenterImpl
+import com.siju.acexplorer.storage.presenter.ZipPresenter
+import com.siju.acexplorer.storage.presenter.ZipPresenterImpl
 import com.siju.acexplorer.storage.view.*
 import com.siju.acexplorer.utils.InstallHelper
 import com.siju.acexplorer.utils.ScrollInfo
@@ -33,32 +34,28 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import java.io.File
 
 private const val TAG = "FileListViewModel"
 
 class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
-    private var longPressedTimeMs = 0L
-    private var dragStarted = false
     private var zipViewer: ZipViewer? = null
-    private var isZipMode = false
     var apkPath: String? = null
 
     private lateinit var navigationView: NavigationView
+
     lateinit var category: Category
         private set
-
     var currentDir: String? = null
         private set
 
     private val navigation = Navigation(this)
+
     private var bucketName: String? = null
     private val backStackInfo = BackStackInfo()
-
     private val _viewFileEvent = MutableLiveData<Pair<String, String?>>()
-    private val _sortEvent = MutableLiveData<SortMode>()
 
+    private val _sortEvent = MutableLiveData<SortMode>()
     val sortEvent: LiveData<SortMode>
         get() = _sortEvent
 
@@ -66,37 +63,23 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         get() = _viewFileEvent
 
     private val _openZipViewerEvent = MutableLiveData<Pair<String, ZipViewerCallback>>()
+
     val openZipViewerEvent: LiveData<Pair<String, ZipViewerCallback>>
         get() = _openZipViewerEvent
-
     private val _fileData = MutableLiveData<ArrayList<FileInfo>>()
 
     val fileData: LiveData<ArrayList<FileInfo>>
         get() = _fileData
 
-    private val _singleOpData = MutableLiveData<Pair<Operations, FileInfo>>()
-
-    private val _multiSelectionOpData = MutableLiveData<Pair<Operations, ArrayList<FileInfo>>>()
-
-    private val _pasteOpData = MutableLiveData<PasteOpData>()
     val pasteOpData: LiveData<PasteOpData>
-        get() = _pasteOpData
 
     val multiSelectionOpData: LiveData<Pair<Operations, ArrayList<FileInfo>>>
-        get() = _multiSelectionOpData
 
-    private val _pasteData = MutableLiveData<PasteData>()
-
-    val pasteData: LiveData<PasteData>
-        get() = _pasteData
-
-    private val _noOpData = MutableLiveData<Pair<Operations, String>>()
+    val pasteConflictCheckData: LiveData<PasteConflictCheckData>
 
     val noOpData: LiveData<Pair<Operations, String>>
-        get() = _noOpData
 
     val singleOpData: LiveData<Pair<Operations, FileInfo>>
-        get() = _singleOpData
 
     val showFab = MutableLiveData<Boolean>()
 
@@ -111,11 +94,11 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         get() = _installAppEvent
 
     private val viewModelJob = Job()
-    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
+    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
     private val _actionModeState = MutableLiveData<ActionModeState>()
 
-    lateinit var multiSelectionHelper: MultiSelectionHelper
+    val multiSelectionHelper = MultiSelectionHelper()
 
     val actionModeState: LiveData<ActionModeState>
         get() = _actionModeState
@@ -132,25 +115,18 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     val operationResult: LiveData<Pair<Operations, OperationAction>>
 
-    private val _showPasteDialog = MutableLiveData<Triple<Operations, String, ArrayList<FileInfo>>>()
-
     val showPasteDialog: LiveData<Triple<Operations, String, ArrayList<FileInfo>>>
-        get() = _showPasteDialog
-
-    private val _showZipDialog = MutableLiveData<Triple<Operations, String, String>>()
 
     val showZipDialog: LiveData<Triple<Operations, String, String>>
-        get() = _showZipDialog
-
-    private val _showCompressDialog = MutableLiveData<Triple<Operations, String, ArrayList<FileInfo>>>()
+        get() = zipPresenter.getShowZipDialogLiveData
 
     val showCompressDialog: LiveData<Triple<Operations, String, ArrayList<FileInfo>>>
-        get() = _showCompressDialog
+        get() = zipPresenter.showCompressDialog
 
     private val _directoryClicked = MutableLiveData<Boolean>()
+
     val directoryClicked: LiveData<Boolean>
         get() = _directoryClicked
-
     private val _scrollInfo = MutableLiveData<ScrollInfo>()
 
     val scrollInfo: LiveData<ScrollInfo>
@@ -161,24 +137,43 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     private var scrollToTop = false
 
     private val _homeClicked = MutableLiveData<Boolean>()
+
     val homeClicked: LiveData<Boolean>
         get() = _homeClicked
-
-    private val draggedData = arrayListOf<FileInfo>()
-
-    private val _dragEvent = MutableLiveData<Triple<Category, Int, ArrayList<FileInfo>>>()
-
     val dragEvent: LiveData<Triple<Category, Int, ArrayList<FileInfo>>>
-        get() = _dragEvent
+        get() = operationPresenter.getDragEvent()
 
-    private val _showDragDialog = MutableLiveData<Triple<String?, ArrayList<FileInfo>, DialogHelper.DragDialogListener>>()
+    val showDragDialog: LiveData<Triple<String?, ArrayList<FileInfo>, DialogHelper.DragDialogListener>>
+        get() = operationPresenter.showDragDialog
 
-    val showDragDialog : LiveData<Triple<String?, ArrayList<FileInfo>, DialogHelper.DragDialogListener>>
-    get() = _showDragDialog
+    private val operationPresenter: OperationPresenter
+
+    private val multiSelectionListener = object : MultiSelectionHelper.MultiSelectionListener {
+        override fun refresh() {
+            _refreshEvent.value = true
+        }
+    }
+
+    private val zipPresenter: ZipPresenter
+
+    val pasteConflictListener: DialogHelper.PasteConflictListener
+        get() = operationPresenter.getPasteConflictListener
+
+    val zipOperationCallback: OperationHelper.ZipOperationCallback
+        get() = zipPresenter.zipOperationCallback
 
     init {
         val model = storageModel as StorageModelImpl
         operationResult = model.operationData
+        zipPresenter = ZipPresenterImpl(this, navigation, backStackInfo)
+        multiSelectionHelper.setMultiSelectionListener(multiSelectionListener)
+        operationPresenter = OperationPresenterImpl(this, multiSelectionHelper, model)
+        multiSelectionOpData = operationPresenter.getMultiSelectionOpData()
+        pasteOpData = operationPresenter.getPasteOpData()
+        singleOpData = operationPresenter.getSingleOpData()
+        noOpData = operationPresenter.getNoOpData()
+        showPasteDialog = operationPresenter.showPasteDialog()
+        pasteConflictCheckData = operationPresenter.getPasteData()
     }
 
     fun loadData(path: String?, category: Category) {
@@ -190,7 +185,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         uiScope.launch(Dispatchers.IO) {
             val data = storageModel.loadData(path, category)
             Log.e(this.javaClass.name,
-                  "onDataloaded loadData: data ${data.size} , category $category")
+                    "onDataloaded loadData: data ${data.size} , category $category")
             _fileData.postValue(data)
             handleScrollPosition()
         }
@@ -239,10 +234,10 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     private fun setCurrentDir(currentDir: String?) {
         this.currentDir = currentDir
+        operationPresenter.currentDir = currentDir
     }
 
-    private fun canShowFab(category: Category) =
-            !CategoryHelper.checkIfLibraryCategory(category)
+    private fun canShowFab(category: Category) = !CategoryHelper.checkIfLibraryCategory(category)
 
     fun addHomeButton() {
         navigationView.addHomeButton()
@@ -258,7 +253,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     fun createNavButtonStorage(storageType: StorageUtils.StorageType, dir: String) {
         when (storageType) {
-            StorageUtils.StorageType.ROOT     -> navigationView.createRootStorageButton(dir)
+            StorageUtils.StorageType.ROOT -> navigationView.createRootStorageButton(dir)
             StorageUtils.StorageType.INTERNAL -> navigationView.createInternalStorageButton(dir)
             StorageUtils.StorageType.EXTERNAL -> navigationView.createExternalStorageButton(dir)
         }
@@ -272,15 +267,15 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         this.navigationView = navigationView
     }
 
-    fun setInitialDir(path: String?, category: Category) {
+    private fun setInitialDir(path: String?, category: Category) {
         navigation.setInitialDir(path, category)
     }
 
-    fun setNavDirectory(path: String?, category: Category) {
+    private fun setNavDirectory(path: String?, category: Category) {
         navigation.setNavDirectory(path, category)
     }
 
-    fun createNavigationForCategory(category: Category) {
+    private fun createNavigationForCategory(category: Category) {
         navigation.createNavigationForCategory(category)
     }
 
@@ -288,7 +283,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         navigationView.createLibraryTitleNavigation(category, bucketName)
     }
 
-    fun setupNavigation(path: String?, category: Category) {
+    private fun setupNavigation(path: String?, category: Category) {
         setInitialDir(path, category)
         setNavDirectory(path, category)
         createNavigationForCategory(category)
@@ -317,47 +312,47 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
             FOLDER_VIDEOS, ALL_TRACKS, RECENT_AUDIO, RECENT_DOCS, RECENT_IMAGES, RECENT_VIDEOS -> {
                 onFileClicked(fileInfo, position)
             }
-            FILES, DOWNLOADS, COMPRESSED, FAVORITES, PDF, APPS, LARGE_FILES, RECENT_APPS       -> {
+            FILES, DOWNLOADS, COMPRESSED, FAVORITES, PDF, APPS, LARGE_FILES, RECENT_APPS -> {
                 onFileItemClicked(fileInfo, position)
             }
 
-            GENERIC_MUSIC                                                                      -> {
+            GENERIC_MUSIC -> {
                 loadData(null, fileInfo.subcategory)
             }
 
-            ALBUMS                                                                             -> {
+            ALBUMS -> {
                 bucketName = fileInfo.title
                 loadData(fileInfo.id.toString(), ALBUM_DETAIL)
             }
 
-            ARTISTS                                                                            -> {
+            ARTISTS -> {
                 bucketName = fileInfo.title
                 loadData(fileInfo.id.toString(), ARTIST_DETAIL)
             }
 
-            GENRES                                                                             -> {
+            GENRES -> {
                 bucketName = fileInfo.title
                 loadData(fileInfo.id.toString(), GENRE_DETAIL)
             }
 
-            GENERIC_IMAGES                                                                     -> {
+            GENERIC_IMAGES -> {
                 bucketName = fileInfo.fileName
                 loadData(fileInfo.bucketId.toString(), FOLDER_IMAGES)
             }
 
-            GENERIC_VIDEOS                                                                     -> {
+            GENERIC_VIDEOS -> {
                 bucketName = fileInfo.fileName
                 loadData(fileInfo.bucketId.toString(), FOLDER_VIDEOS)
             }
 
-            RECENT                                                                             -> {
+            RECENT -> {
                 loadData(null, fileInfo.category)
             }
 
-            APP_MANAGER                                                                        -> {
+            APP_MANAGER -> {
 
             }
-            else                                                                               -> {
+            else -> {
             }
         }
     }
@@ -367,18 +362,16 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     private fun onFileItemClicked(fileInfo: FileInfo, position: Int) {
         if (fileInfo.isDirectory) {
             onDirectoryClicked(fileInfo, position)
-        }
-        else {
+        } else {
             onFileClicked(fileInfo, position)
         }
     }
 
     private fun onDirectoryClicked(fileInfo: FileInfo, position: Int) {
         _directoryClicked.value = true
-        if (isZipMode) {
+        if (zipPresenter.isZipMode) {
             zipViewer?.onDirectoryClicked(position)
-        }
-        else {
+        } else {
             loadData(fileInfo.filePath, FILES)
         }
     }
@@ -387,17 +380,17 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         val path = fileInfo.filePath
         when {
             isZipFile(path) -> openZipViewer(path)
-            isZipMode       -> zipViewer?.onFileClicked(position)
-            else            -> _viewFileEvent.postValue(Pair(path, fileInfo.extension))
+            zipPresenter.isZipMode -> zipViewer?.onFileClicked(position)
+            else -> _viewFileEvent.postValue(Pair(path, fileInfo.extension))
         }
     }
 
-    private fun isZipFile(path: String) = !isZipMode && ZipUtils.isZipViewable(path)
+    private fun isZipFile(path: String) = !zipPresenter.isZipMode && ZipUtils.isZipViewable(path)
 
     private fun openZipViewer(path: String?) {
         path?.let {
-            isZipMode = true
-            _openZipViewerEvent.value = Pair(it, zipCallback)
+            zipPresenter.isZipMode = true
+            _openZipViewerEvent.value = Pair(it, zipPresenter.zipCallback)
         }
     }
 
@@ -409,9 +402,9 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         if (canLongPress()) {
             multiSelectionHelper.toggleSelection(position, true)
             handleActionModeClick(fileInfo)
-            longPressedTimeMs = System.currentTimeMillis()
+            operationPresenter.setLongPressedTime(System.currentTimeMillis())
             if (isActionModeActive() && multiSelectionHelper.hasSelectedItems()) {
-                dragStarted = true
+                operationPresenter.onDragStarted()
             }
         }
     }
@@ -421,34 +414,24 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         Log.e(TAG, "handleActionModeClick state:${_actionModeState.value}")
         if (hasCheckedItems && !isActionModeActive()) {
             _actionModeState.value = ActionModeState.STARTED
-            draggedData.clear()
-        }
-        else if (!hasCheckedItems && isActionModeActive()) {
+            operationPresenter.clearDraggedData()
+        } else if (!hasCheckedItems && isActionModeActive()) {
             endActionMode()
         }
         if (isActionModeActive()) {
             val selectedCount = multiSelectionHelper.getSelectedCount()
-            toggleDragData(fileItem)
+            operationPresenter.toggleDragData(fileItem)
             if (selectedCount == 1) {
                 val fileInfo = _fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
                 _selectedFileInfo.value = Pair(selectedCount, fileInfo)
-            }
-            else {
+            } else {
                 _selectedFileInfo.value = Pair(selectedCount, null)
             }
         }
     }
 
-    private fun canLongPress() = !isZipMode && !isPasteOperationPending()
+    private fun canLongPress() = !zipPresenter.isZipMode && !isPasteOperationPending()
 
-    private fun toggleDragData(fileInfo: FileInfo) {
-        if (draggedData.contains(fileInfo)) {
-            draggedData.remove(fileInfo)
-        }
-        else {
-            draggedData.add(fileInfo)
-        }
-    }
 
     private fun addNavigation(path: String?, category: Category) {
         setupNavigation(path, category)
@@ -464,10 +447,10 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     fun onBackPress(): Boolean {
         var result = true
         when {
-            isZipMode                 -> result = handleZipModeBackPress()
-            isActionModeActive()      -> result = handleActionModeBackPress()
+            zipPresenter.isZipMode -> result = handleZipModeBackPress()
+            isActionModeActive() -> result = handleActionModeBackPress()
             homeClicked.value == true -> result = true
-            hasBackStack()            -> {
+            hasBackStack() -> {
                 backStackInfo.removeLastEntry()
                 removeScrolledPos()
                 refreshList()
@@ -492,8 +475,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     private fun handleActionModeBackPress(): Boolean {
         if (homeClicked.value == true) {
             return true
-        }
-        else if (!isPasteOperationPending()) {
+        } else if (!isPasteOperationPending()) {
             endActionMode()
         }
         return false
@@ -525,240 +507,19 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         this.scrollToTop = value
     }
 
-    fun onMenuItemClick(itemId: Int) {
-
-        when (itemId) {
-            R.id.action_edit       -> {
-                if (multiSelectionHelper.hasSelectedItems()) {
-                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_RENAME)
-                    val fileInfo = _fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
-                    endActionMode()
-                    fileInfo?.let {
-                        _singleOpData.value = Pair(Operations.RENAME, fileInfo)
-                    }
-                }
-            }
-
-            R.id.action_hide       -> {
-                if (multiSelectionHelper.hasSelectedItems()) {
-                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_HIDE)
-                    val fileInfo = _fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
-                    endActionMode()
-                    fileInfo?.let {
-                        _singleOpData.value = Pair(Operations.HIDE, fileInfo)
-                        onHideOperation(it)
-                    }
-                }
-            }
-
-            R.id.action_info       -> {
-                if (multiSelectionHelper.hasSelectedItems()) {
-                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_PROPERTIES)
-                    val fileInfo = _fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
-                    endActionMode()
-                    fileInfo?.let {
-                        _singleOpData.value = Pair(Operations.INFO, fileInfo)
-                    }
-                }
-            }
-
-            R.id.action_delete     -> {
-                if (multiSelectionHelper.hasSelectedItems()) {
-                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_DELETE)
-                    val filesToDelete = arrayListOf<FileInfo>()
-                    val selectedItems = multiSelectionHelper.selectedItems
-                    for (i in 0 until selectedItems.size()) {
-                        val fileInfo = _fileData.value?.get(selectedItems.keyAt(i))
-                        fileInfo?.let { filesToDelete.add(it) }
-                    }
-                    endActionMode()
-                    _multiSelectionOpData.value = Pair(Operations.DELETE, filesToDelete)
-                }
-            }
-
-            R.id.action_share      -> {
-                if (multiSelectionHelper.hasSelectedItems()) {
-                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_SHARE)
-                    val filesToShare = arrayListOf<FileInfo>()
-                    val selectedItems = multiSelectionHelper.selectedItems
-                    for (i in 0 until selectedItems.size()) {
-                        val fileInfo = _fileData.value?.get(selectedItems.keyAt(i))
-                        if (fileInfo?.isDirectory == false) {
-                            filesToShare.add(fileInfo)
-                        }
-                    }
-                    endActionMode()
-                    _multiSelectionOpData.value = Pair(Operations.SHARE, filesToShare)
-                }
-            }
-
-            R.id.action_copy       -> {
-                if (multiSelectionHelper.hasSelectedItems()) {
-                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_COPY)
-                    val filesToCopy = arrayListOf<FileInfo>()
-                    val selectedItems = multiSelectionHelper.selectedItems
-                    for (i in 0 until selectedItems.size()) {
-                        val fileInfo = _fileData.value?.get(selectedItems.keyAt(i))
-                        fileInfo?.let { filesToCopy.add(it) }
-                    }
-                    endActionMode()
-                    _multiSelectionOpData.value = Pair(Operations.COPY, filesToCopy)
-                }
-            }
-
-            R.id.action_cut        -> {
-                if (multiSelectionHelper.hasSelectedItems()) {
-                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_CUT)
-                    val filesToMove = arrayListOf<FileInfo>()
-                    val selectedItems = multiSelectionHelper.selectedItems
-                    for (i in 0 until selectedItems.size()) {
-                        val fileInfo = _fileData.value?.get(selectedItems.keyAt(i))
-                        fileInfo?.let { filesToMove.add(it) }
-                    }
-                    endActionMode()
-                    _multiSelectionOpData.value = Pair(Operations.CUT, filesToMove)
-                }
-            }
-
-
-            R.id.action_paste      -> {
-                val operations = _multiSelectionOpData.value?.first
-                if (operations == Operations.COPY || operations == Operations.CUT) {
-                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_PASTE)
-                    val list = _multiSelectionOpData.value?.second
-                    endActionMode()
-                    list?.let {
-                        _pasteOpData.value = PasteOpData(Operations.PASTE, operations, list, currentDir)
-                    }
-                }
-            }
-
-            R.id.action_extract    -> {
-                if (multiSelectionHelper.hasSelectedItems()) {
-                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_EXTRACT)
-                    val fileInfo = _fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
-                    endActionMode()
-                    fileInfo?.let {
-                        _singleOpData.value = Pair(Operations.EXTRACT, fileInfo)
-                    }
-                }
-            }
-
-            R.id.action_archive    -> {
-                if (multiSelectionHelper.hasSelectedItems()) {
-                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_ARCHIVE)
-                    val filesToArchive = arrayListOf<FileInfo>()
-                    val selectedItems = multiSelectionHelper.selectedItems
-                    for (i in 0 until selectedItems.size()) {
-                        val fileInfo = _fileData.value?.get(selectedItems.keyAt(i))
-                        fileInfo?.let { filesToArchive.add(it) }
-                    }
-                    endActionMode()
-                    _multiSelectionOpData.value = Pair(Operations.COMPRESS, filesToArchive)
-                }
-            }
-
-            R.id.action_fav        -> {
-                if (multiSelectionHelper.hasSelectedItems()) {
-                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_ADD_FAV)
-                    val favList = arrayListOf<FileInfo>()
-                    val selectedItems = multiSelectionHelper.selectedItems
-                    for (i in 0 until selectedItems.size()) {
-                        val fileInfo = _fileData.value?.get(selectedItems.keyAt(i))
-                        if (fileInfo?.isDirectory == true) {
-                            favList.add(fileInfo)
-                        }
-                    }
-                    endActionMode()
-                    _multiSelectionOpData.value = Pair(Operations.FAVORITE, favList)
-                }
-            }
-
-            R.id.action_delete_fav -> {
-                if (multiSelectionHelper.hasSelectedItems()) {
-                    Analytics.getLogger().operationClicked(Analytics.Logger.EV_DELETE_FAV)
-                    val favList = arrayListOf<FileInfo>()
-                    val selectedItems = multiSelectionHelper.selectedItems
-                    for (i in 0 until selectedItems.size()) {
-                        val fileInfo = _fileData.value?.get(selectedItems.keyAt(i))
-                        fileInfo?.let { favList.add(it) }
-                    }
-                    endActionMode()
-                    _multiSelectionOpData.value = Pair(Operations.DELETE_FAVORITE, favList)
-                }
-            }
-
-        }
-    }
-
     fun onFABClicked(operation: Operations, path: String?) {
-        when (operation) {
-            Operations.FOLDER_CREATION, Operations.FILE_CREATION -> {
-                Analytics.getLogger().operationClicked(Analytics.Logger.EV_FAB)
-                path?.let {
-                    _noOpData.value = Pair(operation, path)
-                }
-            }
-        }
-    }
-
-    private fun onHideOperation(fileInfo: FileInfo) {
-        val fileName = fileInfo.fileName
-        val newName = if (fileName.startsWith(".")) {
-            fileName.substring(1)
-        }
-        else {
-            ".$fileName"
-        }
-        onOperation(Operations.HIDE, newName)
+        operationPresenter.onFabClicked(operation, path)
     }
 
     fun endActionMode() {
         multiSelectionHelper.clearSelection()
         _actionModeState.value = ActionModeState.ENDED
-        dragStarted = false
+        operationPresenter.onDragEnded()
         _refreshEvent.value = false
-    }
-
-    fun onOperation(operation: Operations?, name: String?) {
-        when (operation) {
-            Operations.RENAME, Operations.HIDE -> {
-                val path = singleOpData.value?.second?.filePath
-                if (path != null && name != null) {
-                    storageModel.renameFile(operation, path, name)
-                }
-            }
-            Operations.FOLDER_CREATION         -> {
-                val path = noOpData.value?.second
-                if (path != null && name != null) {
-                    storageModel.createFolder(operation, path, name)
-                }
-            }
-
-            Operations.FILE_CREATION           -> {
-                val path = noOpData.value?.second
-                if (path != null && name != null) {
-                    storageModel.createFile(operation, path, name)
-                }
-            }
-
-            Operations.COMPRESS                -> {
-                val filesToArchive = multiSelectionOpData.value?.second
-                filesToArchive?.let {
-                    currentDir?.let { currentDir ->
-                        val destinationDir = "$currentDir/$name.zip"
-                        storageModel.compressFile(destinationDir, filesToArchive,
-                                                  zipOperationCallback)
-                    }
-                }
-            }
-        }
-
     }
 
     fun handleSafResult(uri: Uri, flags: Int) {
         storageModel.handleSafResult(uri, flags)
-
     }
 
     fun deleteFiles(filesToDelete: ArrayList<FileInfo?>) {
@@ -775,18 +536,14 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     fun onPaste(path: String, operationData: Pair<Operations, ArrayList<FileInfo>>) {
         uiScope.launch(Dispatchers.IO) {
-            val pasteConflictChecker = PasteConflictChecker(path, false,
-                                                            operationData.first,
-                                                            operationData.second)
-            pasteConflictChecker.setListener(pasteResultListener)
-            pasteConflictChecker.run()
+            operationPresenter.checkPasteConflict(path, operationData)
         }
     }
 
-    fun onExtractOperation(operation: Operations?, newFileName: String?, destinationDir: String) {
+    fun onExtractOperation(newFileName: String?, destinationDir: String) {
         val path = singleOpData.value?.second?.filePath
         if (path != null && newFileName != null) {
-            storageModel.extractFile(path, destinationDir, newFileName, zipOperationCallback)
+            storageModel.extractFile(path, destinationDir, newFileName, zipPresenter.zipOperationCallback)
         }
     }
 
@@ -819,10 +576,6 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         zipViewer?.loadData()
     }
 
-    fun setDraggedData() {
-
-    }
-
     private fun isPasteOperationPending() = multiSelectionOpData.value?.first == Operations.CUT ||
             multiSelectionOpData.value?.first == Operations.COPY
 
@@ -841,10 +594,9 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
             if (isActionModeActive() && !isPasteOperationPending()) {
                 endActionMode()
             }
-            if (isZipMode) {
+            if (zipPresenter.isZipMode) {
                 zipViewer?.navigateTo(dir)
-            }
-            else {
+            } else {
                 setCurrentDir(dir)
                 removeBackStackEntries(dir)
                 refreshList()
@@ -890,69 +642,36 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     }
 
     fun onUpTouchEvent() {
-        dragStarted = true
-        longPressedTimeMs = 0
+        operationPresenter.onUpTouchEvent()
     }
 
     fun onMoveTouchEvent() {
-        val timeElapsed = System.currentTimeMillis() - longPressedTimeMs
-        if (timeElapsed > 1500) {
-            longPressedTimeMs = 0
-            dragStarted = false
-            if (draggedData.isNotEmpty()) {
-                val count = multiSelectionHelper.getSelectedCount()
-                _dragEvent.value = Triple(category, count, draggedData)
-            }
-        }
+        operationPresenter.onMoveTouchEvent(category)
     }
 
-    fun isDragNotStarted() = !dragStarted
+    fun isDragNotStarted() = operationPresenter.isDragNotStarted()
 
-    fun onDragDropEvent(pos: Int, data: ArrayList<FileInfo>) {
-        val paths = java.util.ArrayList<String>()
-
-        /*  ArrayList<FileInfo> paths = dragData.getParcelableArrayListExtra(FileConstants
-                            .KEY_PATH);*/
-
-        var destinationDir: String?
-        if (pos != -1) {
-            destinationDir = fileData.value?.get(pos)?.filePath
-        }
-        else {
-            destinationDir = currentDir
-        }
-
-        for (info in draggedData) {
-            paths.add(info.filePath)
-        }
-
-        val sourceParent = File(draggedData[0].filePath).parent
-        if (File(destinationDir).isFile) {
-            destinationDir = File(destinationDir).parent
-        }
-
-        val value = destinationDir == sourceParent
-        Logger.log(TAG, "Source parent=$sourceParent $value")
-
-
-        if (!paths.contains(destinationDir)) {
-            if (destinationDir != sourceParent) {
-                Logger.log(TAG, "Source parent=" + sourceParent + " Dest=" +
-                        destinationDir + "draggedFiles:" + draggedData.size)
-                _showDragDialog. value = Triple(destinationDir, draggedData, dragDialogListener)
-            }
-            else {
-                val info = ArrayList(draggedData)
-                Logger.log(TAG, "Source=" + draggedData.get(0) + "Dest=" +
-                        destinationDir)
-                onPasteAction(Operations.COPY, info, destinationDir)
-            }
-        }
+    fun onDragDropEvent(pos: Int) {
+        operationPresenter.onDragDropEvent(pos)
     }
 
-    private fun onPasteAction(operation: Operations, filesToPaste: ArrayList<FileInfo>, destinationDir: String?) {
-        endActionMode()
-        _pasteOpData.value = PasteOpData(Operations.PASTE, operation, filesToPaste, destinationDir)
+    fun onOperation(operation: Operations?, newFileName: String?) {
+        operationPresenter.onOperation(operation, newFileName)
+    }
+
+    fun onMenuItemClick(itemId: Int) {
+        operationPresenter.handleMenuItemClick(itemId)
+    }
+
+    fun onZipContentsLoaded(data: ArrayList<FileInfo>) {
+        _fileData.postValue(data)
+    }
+
+    fun onZipModeEnd(dir: String?) {
+        if (dir != null && dir.isNotEmpty()) {
+            setCurrentDir(dir)
+        }
+        reloadData(dir, category)
     }
 
     val apkDialogListener = object : DialogHelper.ApkDialogListener {
@@ -968,199 +687,6 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
         override fun onOpenApkClicked(path: String) {
         }
-
     }
-
-    val multiSelectionListener = object : MultiSelectionHelper.MultiSelectionListener {
-        override fun refresh() {
-            _refreshEvent.value = true
-        }
-    }
-
-    val dragDialogListener = DialogHelper.DragDialogListener { filesToPaste, destinationDir, operation ->
-        onPasteAction(operation, filesToPaste, destinationDir)
-    }
-
-    private val pasteResultListener = object : PasteConflictChecker.PasteResultCallback {
-        override fun showConflictDialog(files: java.util.ArrayList<FileInfo>,
-                                        conflictFiles: java.util.ArrayList<FileInfo>,
-                                        destFiles: java.util.ArrayList<FileInfo>,
-                                        destinationDir: String, operation: Operations) {
-            Analytics.getLogger().conflictDialogShown()
-            _pasteData.postValue(
-                    PasteData(files, conflictFiles, destFiles, destinationDir, operation))
-        }
-
-        override fun checkWriteMode(destinationDir: String, files: java.util.ArrayList<FileInfo>,
-                                    operation: Operations) {
-            storageModel.checkPasteWriteMode(destinationDir, files, pasteActionInfo, operation,
-                                             pasteOperationCallback)
-        }
-
-
-        override fun onLowSpace() {
-        }
-
-    }
-
-    private val pasteActionInfo = arrayListOf<PasteActionInfo>()
-    val pasteConflictListener = object : DialogHelper.PasteConflictListener {
-
-        override fun onSkipClicked(pasteData: PasteData, isChecked: Boolean) {
-            var end = false
-            val filesToPaste = pasteData.files
-            if (isChecked) {
-                filesToPaste.removeAll(pasteData.conflictFiles)
-                end = true
-            }
-            else {
-                filesToPaste.remove(pasteData.conflictFiles[0])
-                pasteData.destFiles.removeAt(0)
-                pasteData.conflictFiles.removeAt(0)
-                if (pasteData.conflictFiles.isEmpty()) {
-                    end = true
-                }
-            }
-
-            if (end) {
-                if (filesToPaste.isNotEmpty()) {
-                    storageModel.checkPasteWriteMode(pasteData.destinationDir, filesToPaste,
-                                                     pasteActionInfo,
-                                                     pasteData.operations,
-                                                     pasteOperationCallback)
-                }
-            }
-            else {
-                _pasteData.postValue(
-                        PasteData(filesToPaste, pasteData.conflictFiles, pasteData.destFiles,
-                                  pasteData.destinationDir, pasteData.operations))
-            }
-        }
-
-        override fun onReplaceClicked(pasteData: PasteData, isChecked: Boolean) {
-            var end = false
-            val filesToPaste = pasteData.files
-            if (isChecked) {
-                end = true
-            }
-            else {
-                pasteData.destFiles.removeAt(0)
-                pasteData.conflictFiles.removeAt(0)
-                if (pasteData.conflictFiles.isEmpty()) {
-                    end = true
-                }
-            }
-
-            if (end) {
-                storageModel.checkPasteWriteMode(pasteData.destinationDir, filesToPaste,
-                                                 pasteActionInfo,
-                                                 pasteData.operations, pasteOperationCallback)
-            }
-            else {
-                _pasteData.postValue(
-                        PasteData(filesToPaste, pasteData.conflictFiles, pasteData.destFiles,
-                                  pasteData.destinationDir, pasteData.operations))
-            }
-        }
-
-        override fun onKeepBothClicked(pasteData: PasteData, isChecked: Boolean) {
-            var end = false
-            val filesToPaste = pasteData.files
-            if (isChecked) {
-                for (fileInfo in pasteData.conflictFiles) {
-                    pasteActionInfo.add(PasteActionInfo(fileInfo.filePath))
-                }
-                end = true
-            }
-            else {
-                pasteActionInfo.add(PasteActionInfo(pasteData.conflictFiles.get(0).filePath))
-                pasteData.destFiles.removeAt(0)
-                pasteData.conflictFiles.removeAt(0)
-                if (pasteData.conflictFiles.isEmpty()) {
-                    end = true
-                }
-            }
-
-            if (end) {
-                storageModel.checkPasteWriteMode(pasteData.destinationDir, filesToPaste,
-                                                 pasteActionInfo, pasteData.operations,
-                                                 pasteOperationCallback)
-            }
-            else {
-                _pasteData.postValue(
-                        PasteData(filesToPaste, pasteData.conflictFiles, pasteData.destFiles,
-                                  pasteData.destinationDir, pasteData.operations))
-            }
-        }
-
-    }
-
-    val pasteOperationCallback = object : OperationHelper.PasteOperationCallback {
-
-        override fun onPasteActionStarted(operation: Operations, destinationDir: String,
-                                          files: ArrayList<FileInfo>) {
-            when (operation) {
-                Operations.COPY -> {
-                    _showPasteDialog.postValue(Triple(operation, destinationDir, files))
-                }
-            }
-        }
-    }
-
-    private val zipOperationCallback = object : OperationHelper.ZipOperationCallback {
-        override fun onZipOperationStarted(operation: Operations, destinationDir: String,
-                                           filesToArchive: ArrayList<FileInfo>) {
-            _showCompressDialog.postValue(Triple(operation, destinationDir, filesToArchive))
-        }
-
-        override fun onZipOperationStarted(operation: Operations, sourceFilePath: String,
-                                           destinationDir: String) {
-            _showZipDialog.postValue(Triple(operation, sourceFilePath, destinationDir))
-        }
-    }
-
-    private val zipCallback = object : ZipViewerCallback {
-        override fun removeZipScrollPos(newPath: String) {
-
-        }
-
-        override fun onZipModeEnd(dir: String?) {
-            if (dir != null && dir.isNotEmpty()) {
-                currentDir = dir
-            }
-            isZipMode = false
-            backStackInfo.removeLastEntry()
-            reloadData(currentDir, category)
-        }
-
-        override fun calculateZipScroll(dir: String) {
-        }
-
-        override fun onZipContentsLoaded(data: ArrayList<FileInfo>) {
-            _fileData.postValue(data)
-        }
-
-        override fun openZipViewer(currentDir: String) {
-        }
-
-        override fun setNavDirectory(path: String, isHomeScreenEnabled: Boolean,
-                                     category: Category) {
-            navigation.setNavDirectory(path, category)
-        }
-
-        override fun addToBackStack(path: String, category: Category) {
-            backStackInfo.addToBackStack(path, category)
-        }
-
-        override fun removeFromBackStack() {
-            backStackInfo.removeLastEntry()
-        }
-
-        override fun setInitialDir(path: String) {
-            navigation.setInitialDir(path, FILES)
-        }
-
-    }
-
 
 }
