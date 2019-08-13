@@ -111,6 +111,13 @@ open class BaseFileListFragment : Fragment() {
         initObservers()
         Log.e(TAG, "onAct created:$hiddenMenuItem")
         setHiddenCheckedState(fileListViewModel.shouldShowHiddenFiles())
+        setupDualScreenMode()
+    }
+
+    private fun setupDualScreenMode() {
+        if (this is FileListFragment) {
+            mainViewModel.setStorageReady()
+        }
     }
 
     private fun setupMultiSelection() {
@@ -266,6 +273,7 @@ open class BaseFileListFragment : Fragment() {
 
         fileListViewModel.homeClicked.observe(viewLifecycleOwner, Observer {
             it?.apply {
+                mainViewModel.onHomeClicked()
                 activity?.onBackPressed()
             }
         })

@@ -19,6 +19,7 @@ package com.siju.acexplorer.main
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
@@ -29,21 +30,23 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.kobakei.ratethisapp.RateThisApp
 import com.siju.acexplorer.R
 import com.siju.acexplorer.base.view.BaseActivity
+import com.siju.acexplorer.extensions.isLandscape
 import com.siju.acexplorer.helper.ToolbarHelper
+import com.siju.acexplorer.main.model.StorageUtils
+import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.view.FragmentsFactory
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.storage.view.BaseFileListFragment
+import com.siju.acexplorer.storage.view.DualPaneFragment
 import com.siju.billingsecure.BillingKey
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
 
 private const val TAG = "AceActivity"
 class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
 
     private lateinit var mainViewModel: MainViewModel
-
-    private var configuration: Configuration? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +75,62 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
                 }
             }
         })
+
+        mainViewModel.dualMode.observe(this, Observer {
+            it?.apply {
+                if (it) {
+                    onDualModeEnabled(resources.configuration)
+                }
+                else {
+                    disableDualPane()
+                }
+            }
+        })
+
+        mainViewModel.storageScreenReady.observe(this, Observer {
+            it?.apply {
+                if (it) {
+                    onDualModeEnabled(resources.configuration)
+                }
+            }
+        })
+
+        mainViewModel.homeClicked.observe(this, Observer {
+            it?.apply {
+                if (it) {
+                    disableDualPane()
+                    mainViewModel.setHomeClickedFalse()
+                }
+            }
+        })
+    }
+
+    private fun onDualModeEnabled(configuration: Configuration?) {
+        if (canEnableDualPane(configuration)) {
+            enableDualPane()
+        }
+        mainViewModel.setStorageNotReady()
+    }
+
+    private fun enableDualPane() {
+        frame_container_dual.visibility = View.VISIBLE
+        viewSeparator.visibility = View.VISIBLE
+        createDualFragment()
+    }
+
+    private fun canEnableDualPane(configuration: Configuration?) = isCurrentScreenStorage() && configuration.isLandscape()
+
+    private fun disableDualPane() {
+        frame_container_dual.visibility = View.GONE
+        viewSeparator.visibility = View.GONE
+    }
+
+    private fun isCurrentScreenStorage() : Boolean {
+        val fragment = supportFragmentManager.findFragmentById(R.id.main_container)
+        if (fragment is BaseFileListFragment) {
+            return true
+        }
+        return false
     }
 
     private val navigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { menuItem ->
@@ -89,6 +148,13 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
     private fun openFragment(fragment: Fragment) {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.main_container, fragment)
+        transaction.commit()
+    }
+
+    private fun createDualFragment() {
+        val fragment = DualPaneFragment.newInstance(StorageUtils.internalStorage, Category.FILES)
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.frame_container_dual, fragment)
         transaction.commit()
     }
 
@@ -155,6 +221,16 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
                 .replace(R.id.content, fragment)
                 .addToBackStack(null)
                 .commit()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        if (mainViewModel.dualMode.value == true) {
+            onDualModeEnabled(newConfig)
+        }
+        else {
+            disableDualPane()
+        }
     }
 //
 //    override fun onDestroy() {

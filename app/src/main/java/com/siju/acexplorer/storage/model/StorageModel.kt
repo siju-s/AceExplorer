@@ -135,4 +135,5 @@ interface StorageModel {
 
     fun addToFavorite(favList: ArrayList<String>)
     fun deleteFavorite(favPathList: java.util.ArrayList<String>)
+    fun isDualModeEnabled(): Boolean
 }

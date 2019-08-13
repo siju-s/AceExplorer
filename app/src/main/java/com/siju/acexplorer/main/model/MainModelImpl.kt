@@ -32,12 +32,14 @@ class MainModelImpl : MainModel {
 
     private val context: Context = AceApplication.appContext
     val theme   = MutableLiveData<Theme>()
+    val dualMode = MutableLiveData<Boolean>()
 
     init {
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         setupFirstRunSettings(preferences)
         setupAnalytics(preferences)
         setupTheme()
+        dualMode.value = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(FileConstants.PREFS_DUAL_PANE, false)
     }
 
     private fun setupFirstRunSettings(preferences: SharedPreferences) {

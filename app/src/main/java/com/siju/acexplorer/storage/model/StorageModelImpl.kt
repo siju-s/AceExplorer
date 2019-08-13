@@ -56,6 +56,8 @@ class StorageModelImpl(val context: Context) : StorageModel {
         }
     }
 
+    override fun isDualModeEnabled() = sharedPreferences.getBoolean(FileConstants.KEY_DUAL_ENABLED, false)
+
     override fun shouldShowHiddenFiles() = globalPreference.getBoolean(
             PreferenceConstants.PREFS_HIDDEN, false)
 

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.siju.acexplorer.billing.repository.BillingRepository
 import com.siju.acexplorer.billing.repository.localdb.AugmentedSkuDetails
 import com.siju.acexplorer.billing.repository.localdb.Premium
@@ -22,11 +23,21 @@ class MainViewModel(val app: Application) : AndroidViewModel(app) {
     lateinit var permissionStatus: LiveData<PermissionHelper.PermissionState>
     val theme: LiveData<Theme>
     private var storageList: ArrayList<StorageItem>? = null
+    val dualMode : LiveData<Boolean>
+    private val _homeClicked = MutableLiveData<Boolean>()
+
+    val homeClicked: LiveData<Boolean>
+        get() = _homeClicked
+
+    private val _storageScreenReady = MutableLiveData<Boolean>()
+    val storageScreenReady : LiveData<Boolean>
+    get() = _storageScreenReady
 
     init {
         billingRepository.startDataSourceConnections()
         premiumLiveData = billingRepository.premiumLiveData
         theme = mainModel.theme
+        dualMode = mainModel.dualMode
     }
 
     override fun onCleared() {
@@ -75,6 +86,23 @@ class MainViewModel(val app: Application) : AndroidViewModel(app) {
             }
         }
         return extSdList
+    }
+
+    fun onHomeClicked() {
+        _homeClicked.value = true
+    }
+
+    fun setHomeClickedFalse() {
+        _homeClicked.value = false
+
+    }
+
+    fun setStorageReady() {
+       _storageScreenReady.value = true
+    }
+
+    fun setStorageNotReady() {
+        _storageScreenReady.value = false
     }
 
 }
