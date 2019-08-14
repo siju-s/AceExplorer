@@ -162,6 +162,11 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     val zipOperationCallback: OperationHelper.ZipOperationCallback
         get() = zipPresenter.zipOperationCallback
 
+    private val _navigationClicked = MutableLiveData<Boolean>()
+
+    val navigationClicked: LiveData<Boolean>
+        get() = _navigationClicked
+
     init {
         val model = storageModel as StorageModelImpl
         operationResult = model.operationData
@@ -591,6 +596,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
             if (navigation.shouldLoadDir(dir)) {
                 Analytics.getLogger().navBarClicked(false)
             }
+            _navigationClicked.value = true
             if (isActionModeActive() && !isPasteOperationPending()) {
                 endActionMode()
             }
@@ -604,6 +610,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         }
 
         override fun onNavButtonClicked(category: Category, bucketName: String?) {
+            _navigationClicked.value = true
             if (isActionModeActive() && !isPasteOperationPending()) {
                 endActionMode()
             }

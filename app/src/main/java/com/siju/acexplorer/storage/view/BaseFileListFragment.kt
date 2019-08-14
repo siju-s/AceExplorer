@@ -348,6 +348,7 @@ open class BaseFileListFragment : Fragment() {
         fileListViewModel.directoryClicked.observe(viewLifecycleOwner, Observer {
             it?.apply {
                 fileListViewModel.saveScrollInfo(filesList.getScrollInfo())
+                mainViewModel.setPaneFocus(this@BaseFileListFragment is DualPaneFragment)
             }
         })
 
@@ -374,6 +375,14 @@ open class BaseFileListFragment : Fragment() {
         fileListViewModel.showDragDialog.observe(viewLifecycleOwner, Observer {
             it?.apply {
                 filesList.showDragDialog(it.first, it.second, it.third)
+            }
+        })
+
+        fileListViewModel.navigationClicked.observe(viewLifecycleOwner, Observer {
+            it?.apply {
+                if (it) {
+                    mainViewModel.setPaneFocus(this@BaseFileListFragment is DualPaneFragment)
+                }
             }
         })
     }

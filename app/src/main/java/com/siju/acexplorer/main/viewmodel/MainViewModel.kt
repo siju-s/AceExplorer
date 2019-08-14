@@ -16,6 +16,9 @@ import com.siju.acexplorer.theme.Theme
 
 class MainViewModel(val app: Application) : AndroidViewModel(app) {
 
+    var isDualPaneInFocus = false
+    private set
+
     private val billingRepository = BillingRepository.getInstance(app)
     val premiumLiveData: LiveData<Premium>
     private val mainModel = MainModelImpl()
@@ -115,6 +118,10 @@ class MainViewModel(val app: Application) : AndroidViewModel(app) {
 
     fun setRefreshDone() {
         _refreshList.value = false
+    }
+
+    fun setPaneFocus(isDualPaneInFocus: Boolean) {
+        this.isDualPaneInFocus = isDualPaneInFocus
     }
 
 }

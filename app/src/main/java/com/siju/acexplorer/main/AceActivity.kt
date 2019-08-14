@@ -39,11 +39,13 @@ import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.storage.view.BaseFileListFragment
 import com.siju.acexplorer.storage.view.DualPaneFragment
+import com.siju.acexplorer.storage.view.FileListFragment
 import com.siju.billingsecure.BillingKey
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
 private const val TAG = "AceActivity"
+
 class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
 
     private lateinit var mainViewModel: MainViewModel
@@ -53,7 +55,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         setContentView(R.layout.activity_main)
 
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
-        mainViewModel.setPermissionHelper(PermissionHelper( this, applicationContext))
+        mainViewModel.setPermissionHelper(PermissionHelper(this, applicationContext))
 
         initObservers()
         initListeners()
@@ -80,8 +82,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
             it?.apply {
                 if (it) {
                     onDualModeEnabled(resources.configuration)
-                }
-                else {
+                } else {
                     disableDualPane()
                 }
             }
@@ -129,7 +130,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         }
     }
 
-    private fun isCurrentScreenStorage() : Boolean {
+    private fun isCurrentScreenStorage(): Boolean {
         val fragment = supportFragmentManager.findFragmentById(R.id.main_container)
         if (fragment is BaseFileListFragment) {
             return true
@@ -185,7 +186,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         mainViewModel.onResume()
     }
 
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+    //    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
 //        if (!mainUi.handleActivityResult(requestCode, resultCode, intent)) {
 //            super.onActivityResult(requestCode, resultCode, intent)
 //        }
@@ -193,16 +194,43 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
 //
 //
     override fun onBackPressed() {
-       val fragment = supportFragmentManager.findFragmentById(R.id.main_container)
-       if (fragment is BaseFileListFragment) {
-           val backPressNotHandled = fragment.onBackPressed()
-           if (backPressNotHandled) {
-               super.onBackPressed()
-           }
-       }
-       else {
-           super.onBackPressed()
-       }
+        val fragment = supportFragmentManager.findFragmentById(R.id.main_container)
+        if (fragment is BaseFileListFragment) {
+            when (val focusedFragment = getCurrentFocusFragment(fragment)) {
+                is DualPaneFragment -> {
+                    onDualPaneBackPress(focusedFragment)
+                }
+                is FileListFragment -> {
+                    onSinglePaneBackPress(focusedFragment)
+                }
+            }
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+    private fun onDualPaneBackPress(focusedFragment: DualPaneFragment) {
+        val backPressNotHandled = focusedFragment.onBackPressed()
+        if (backPressNotHandled) {
+            super.onBackPressed()
+            disableDualPane()
+        }
+    }
+
+    private fun onSinglePaneBackPress(focusedFragment: FileListFragment) {
+        val backPressNotHandled = focusedFragment.onBackPressed()
+        if (backPressNotHandled) {
+            super.onBackPressed()
+            disableDualPane()
+        }
+    }
+
+    private fun getCurrentFocusFragment(fragment: BaseFileListFragment): Fragment? {
+        if (mainViewModel.isDualPaneInFocus) {
+            return supportFragmentManager.findFragmentById(R.id.frame_container_dual)
+        } else {
+            return fragment
+        }
     }
 
     override fun onPreferenceStartFragment(caller: PreferenceFragmentCompat,
@@ -231,8 +259,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         super.onConfigurationChanged(newConfig)
         if (mainViewModel.dualMode.value == true && newConfig.isLandscape()) {
             onDualModeEnabled(newConfig)
-        }
-        else {
+        } else {
             disableDualPane()
         }
     }
