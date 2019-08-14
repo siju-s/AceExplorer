@@ -674,6 +674,8 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         reloadData(dir, category)
     }
 
+    fun isDualModeEnabled() = storageModel.isDualModeEnabled()
+
     val apkDialogListener = object : DialogHelper.ApkDialogListener {
 
         override fun onInstallClicked(path: String?) {

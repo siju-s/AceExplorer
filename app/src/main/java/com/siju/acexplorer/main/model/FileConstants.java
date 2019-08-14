@@ -22,7 +22,6 @@ public class FileConstants {
 
     public static final String PREFS_HIDDEN = "prefHidden";
     public static final String PREFS_DUAL_PANE = "prefDualPane";
-    public static final String KEY_DUAL_ENABLED = "dualEnabled";
     public static final String PREFS_HOMESCREEN = "prefHomeScreen";
     public static final String PREFS_RESET = "prefsReset";
     public static final String PREFS_FIRST_RUN = "first_app_run";

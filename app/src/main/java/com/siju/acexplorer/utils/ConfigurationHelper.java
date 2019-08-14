@@ -1,6 +1,7 @@
 package com.siju.acexplorer.utils;
 
 import android.content.res.Configuration;
+import android.util.Log;
 
 import static com.siju.acexplorer.utils.ConfigurationHelper.HomeGridColumns.COL_600DP;
 import static com.siju.acexplorer.utils.ConfigurationHelper.HomeGridColumns.COL_600DP_LAND;
@@ -132,6 +133,7 @@ public class ConfigurationHelper {
         } else {
            columns = StorageGridColumns.COL_DUAL.getValue();
         }
+        Log.e("ConfigurationHelper", "getStorageDualGridCols() called with: sw = [" + sw + "]" + " cols:"+columns);
         return columns;
     }
 

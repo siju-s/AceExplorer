@@ -67,6 +67,7 @@ class FilesList(val fragment: BaseFileListFragment, val view: View, var viewMode
     }
 
     private fun setLayoutManager(fileList: RecyclerView, viewMode: ViewMode) {
+        Log.e(TAG, "fragment is: $fragment")
         fileList.layoutManager = when (viewMode) {
             ViewMode.LIST -> LinearLayoutManager(view.context)
             ViewMode.GRID -> CustomGridLayoutManager(view.context,
@@ -75,13 +76,20 @@ class FilesList(val fragment: BaseFileListFragment, val view: View, var viewMode
     }
 
     private fun getGridColumns(configuration: Configuration): Int {
-        return if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+        return if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT || !fragment.isDualModeEnabled()) {
             ConfigurationHelper.getStorageGridCols(configuration)
         }
         else {
             ConfigurationHelper.getStorageDualGridCols(configuration)
         }
     }
+
+    fun refreshGridColumns() {
+        if (viewMode == ViewMode.GRID) {
+            setLayoutManager(fileList, viewMode)
+        }
+    }
+
 
     fun onDataLoaded(data: ArrayList<FileInfo>) {
         Log.e(TAG, "onDataLoaded:${data.size}")

@@ -33,6 +33,11 @@ class MainViewModel(val app: Application) : AndroidViewModel(app) {
     val storageScreenReady : LiveData<Boolean>
     get() = _storageScreenReady
 
+    private val _refreshList = MutableLiveData<Boolean>()
+
+    val refreshList : LiveData<Boolean>
+    get() = _refreshList
+
     init {
         billingRepository.startDataSourceConnections()
         premiumLiveData = billingRepository.premiumLiveData
@@ -94,7 +99,6 @@ class MainViewModel(val app: Application) : AndroidViewModel(app) {
 
     fun setHomeClickedFalse() {
         _homeClicked.value = false
-
     }
 
     fun setStorageReady() {
@@ -103,6 +107,14 @@ class MainViewModel(val app: Application) : AndroidViewModel(app) {
 
     fun setStorageNotReady() {
         _storageScreenReady.value = false
+    }
+
+    fun refreshData() {
+        _refreshList.value = true
+    }
+
+    fun setRefreshDone() {
+        _refreshList.value = false
     }
 
 }

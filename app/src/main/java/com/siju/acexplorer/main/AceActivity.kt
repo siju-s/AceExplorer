@@ -108,6 +108,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
     private fun onDualModeEnabled(configuration: Configuration?) {
         if (canEnableDualPane(configuration)) {
             enableDualPane()
+            mainViewModel.refreshData()
         }
         mainViewModel.setStorageNotReady()
     }
@@ -123,6 +124,9 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
     private fun disableDualPane() {
         frame_container_dual.visibility = View.GONE
         viewSeparator.visibility = View.GONE
+        if (isCurrentScreenStorage()) {
+            mainViewModel.refreshData()
+        }
     }
 
     private fun isCurrentScreenStorage() : Boolean {
@@ -225,7 +229,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        if (mainViewModel.dualMode.value == true) {
+        if (mainViewModel.dualMode.value == true && newConfig.isLandscape()) {
             onDualModeEnabled(newConfig)
         }
         else {

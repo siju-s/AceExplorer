@@ -196,6 +196,15 @@ open class BaseFileListFragment : Fragment() {
             }
         })
 
+        mainViewModel.refreshList.observe(viewLifecycleOwner, Observer {
+            it?.apply {
+                if (::filesList.isInitialized && it) {
+                    filesList.refreshGridColumns()
+                    mainViewModel.setRefreshDone()
+                }
+            }
+        })
+
         fileListViewModel.showFab.observe(viewLifecycleOwner, Observer { showFab ->
             if (showFab) {
                 floatingView.showFab()
@@ -892,6 +901,8 @@ open class BaseFileListFragment : Fragment() {
     fun onDragDropEvent(pos: Int, data: ArrayList<FileInfo>) {
         fileListViewModel.onDragDropEvent(pos)
     }
+
+    fun isDualModeEnabled() = fileListViewModel.isDualModeEnabled()
 
     private val sortDialogListener = object : DialogHelper.SortDialogListener {
         override fun onPositiveButtonClick(sortMode: SortMode) {

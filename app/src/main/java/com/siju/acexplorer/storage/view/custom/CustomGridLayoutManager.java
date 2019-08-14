@@ -18,10 +18,11 @@ package com.siju.acexplorer.storage.view.custom;
 
 import android.content.Context;
 import android.graphics.PointF;
+import android.util.DisplayMetrics;
+
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
-import android.util.DisplayMetrics;
 
 public class CustomGridLayoutManager extends GridLayoutManager {
     private static final float MILLISECONDS_PER_INCH = 500f;
