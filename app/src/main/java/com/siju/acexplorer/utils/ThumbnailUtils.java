@@ -65,10 +65,7 @@ public class ThumbnailUtils {
                     }
 
                 } else {
-                    if (imageThumbIcon != null) {
-                        imageThumbIcon.setVisibility(View.GONE);
-                        imageThumbIcon.setImageDrawable(null);
-                    }
+                    hideThumb(imageThumbIcon);
 
                     imageIcon.setImageDrawable(null);
                     String extension = fileInfo.getExtension();
@@ -83,6 +80,7 @@ public class ThumbnailUtils {
                 break;
             case AUDIO:
             case RECENT_AUDIO:
+                hideThumb(imageThumbIcon);
                 displayAudioAlbumArt(context, fileInfo.getBucketId(), imageIcon,
                                      filePath);
                 setThumbHiddenFilter(imageIcon, fileName);
@@ -92,6 +90,7 @@ public class ThumbnailUtils {
             case GENERIC_VIDEOS:
             case FOLDER_VIDEOS:
             case RECENT_VIDEOS:
+                hideThumb(imageThumbIcon);
                 displayVideoThumb(context, imageIcon, filePath);
                 setThumbHiddenFilter(imageIcon, fileName);
                 break;
@@ -100,11 +99,13 @@ public class ThumbnailUtils {
             case GENERIC_IMAGES:
             case FOLDER_IMAGES:
             case RECENT_IMAGES:
+                hideThumb(imageThumbIcon);
                 displayImageThumb(context, imageIcon, filePath);
                 setThumbHiddenFilter(imageIcon, fileName);
                 break;
             case DOCS: // For docs group
             case RECENT_DOCS:
+                hideThumb(imageThumbIcon);
                 String extension = fileInfo.getExtension();
                 extension = extension.toLowerCase();
                 changeFileIcon(context, imageIcon, extension, null);
@@ -118,6 +119,13 @@ public class ThumbnailUtils {
                 imageIcon.setImageResource(R.drawable.ic_folder);
                 break;
 
+        }
+    }
+
+    private static void hideThumb(ImageView imageThumbIcon) {
+        if (imageThumbIcon != null) {
+            imageThumbIcon.setVisibility(View.GONE);
+            imageThumbIcon.setImageDrawable(null);
         }
     }
 

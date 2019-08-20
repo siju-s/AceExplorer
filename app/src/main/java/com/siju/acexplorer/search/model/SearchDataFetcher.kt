@@ -6,30 +6,31 @@ import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.data.FileDataFetcher
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.FileUtils
+import com.siju.acexplorer.main.model.helper.FileUtils.EXT_APK
 import com.siju.acexplorer.main.model.helper.RootHelper
 import java.io.File
 
 class SearchDataFetcher(private val searchResultCallback: SearchResultCallback) {
-    private var filesList = ArrayList<FileInfo>()
+    private var searchHeaderMap = hashMapOf<Int, ArrayList<FileInfo>>()
 
     fun fetchData(context: Context, path: String?, category: Category, query: String) {
-        filesList = ArrayList()
+        searchHeaderMap = HashMap()
         searchFile(path, query)
     }
 
     private fun searchFile(path: String?, query: String) {
         val file = File(path)
         if (file.canRead()) {
-             getMatchingFiles(file, query)
+            getMatchingFiles(file, query)
         }
     }
 
     private fun getMatchingFiles(sourceFile: File, query: String) {
         val listFiles = sourceFile.listFiles() ?: return
         for (file in listFiles) {
-            Log.w("SearchDataFetcher", "getMatchingFiles : file:${file.name}, query:$query")
+//            Log.w("SearchDataFetcher", "getMatchingFiles : file:${file.name}, query:$query")
             if (isSearchResultFound(file, query)) {
-                Log.e("SearchDataFetcher", "FOUND : file:${file.name}, query:$query")
+//                Log.e("SearchDataFetcher", "FOUND : file:${file.name}, query:$query")
                 val filePath = file.absolutePath
                 var isDirectory = false
                 val size: Long
@@ -47,13 +48,11 @@ class SearchDataFetcher(private val searchResultCallback: SearchResultCallback) 
                 val date = file.lastModified()
                 val fileInfo = FileInfo(category, file.name, filePath, date, size,
                         isDirectory, extension, RootHelper.parseFilePermission(file), false)
-                filesList.add(fileInfo)
-                searchResultCallback.onSearchResultFound(filesList)
+                createSearchData(fileInfo)
                 if (isDirectory) {
                     getMatchingFiles(file, query)
                 }
-            }
-            else {
+            } else {
                 if (file.isDirectory) {
                     getMatchingFiles(file, query)
                 }
@@ -61,10 +60,60 @@ class SearchDataFetcher(private val searchResultCallback: SearchResultCallback) 
         }
     }
 
+    private fun createSearchData(fileInfo: FileInfo) {
+        val type = getType(fileInfo)
+//        Log.e("SearchDataFetcher", "createSearchData : fileInfo:${fileInfo.isDirectory}, category : ${fileInfo.category}, type:$type,  value : ${fileInfo.fileName}")
+        if (searchHeaderMap.contains(type)) {
+            searchHeaderMap[type]?.add(fileInfo)
+        }
+        else {
+            val list = arrayListOf<FileInfo>()
+            list.add(fileInfo)
+            searchHeaderMap[type] = list
+        }
+        val searchData = ArrayList<SearchDataItem>()
+        for ((headerType, itemList) in searchHeaderMap) {
+            Log.e("SearchDataFetcher","map: $headerType = ${itemList.size}")
+            searchData.add(SearchDataItem.Header(headerType, itemList.size))
+            for (item in itemList) {
+                searchData.add(SearchDataItem.Item(item))
+            }
+        }
+        searchResultCallback.onSearchResultFound(searchData)
+    }
+
+    private fun getType(fileInfo: FileInfo): Int {
+        return when {
+            fileInfo.isDirectory -> SearchHeaderType.FOLDER.value
+            fileInfo.category == Category.IMAGE -> SearchHeaderType.IMAGE.value
+            fileInfo.category == Category.VIDEO -> SearchHeaderType.VIDEO.value
+            fileInfo.category == Category.AUDIO -> SearchHeaderType.AUDIO.value
+            fileInfo.extension.endsWith(EXT_APK, true) -> SearchHeaderType.APP.value
+            else -> SearchHeaderType.OTHER.value
+
+        }
+    }
+
+    sealed class SearchDataItem {
+        data class Item(val fileInfo: FileInfo?) : SearchDataItem() {
+
+            override val id: String
+                get() = fileInfo?.filePath.toString()
+        }
+
+        data class Header(val headerType: Int, val count : Int) : SearchDataItem() {
+            override val id: String
+                get() = headerType.toString()
+        }
+
+        abstract val id: String
+
+    }
+
     private fun isSearchResultFound(file: File, query: String) =
             file.name.toLowerCase().contains(query.toLowerCase())
 
     interface SearchResultCallback {
-        fun onSearchResultFound(result : ArrayList<FileInfo>)
+        fun onSearchResultFound(result: ArrayList<SearchDataItem>)
     }
 }

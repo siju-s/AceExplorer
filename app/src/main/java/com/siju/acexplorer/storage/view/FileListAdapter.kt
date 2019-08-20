@@ -20,7 +20,7 @@ import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.utils.ThumbnailUtils.displayThumb
 
-private const val INVALID_POS = -1
+const val INVALID_POS = -1
 private const val TAG = "FileListAdapter"
 class FileListAdapter internal constructor(var viewMode: ViewMode, private val clickListener: (Pair<FileInfo, Int>) -> Unit,
                                            private val longClickListener: (FileInfo, Int, View) -> Unit) :

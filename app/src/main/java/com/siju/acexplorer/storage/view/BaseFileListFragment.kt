@@ -61,6 +61,7 @@ import com.siju.acexplorer.storage.viewmodel.FileListViewModel
 import com.siju.acexplorer.storage.viewmodel.FileListViewModelFactory
 import com.siju.acexplorer.theme.Theme
 import com.siju.acexplorer.utils.InstallHelper
+import com.siju.acexplorer.utils.InstallHelper.openInstallScreen
 import kotlinx.android.synthetic.main.main_list.*
 import kotlinx.android.synthetic.main.toolbar.*
 import java.util.*
@@ -231,7 +232,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         fileListViewModel.installAppEvent.observe(viewLifecycleOwner, Observer {
             val canInstall = it.first
             if (canInstall) {
-                openInstallScreen(it.second)
+                openInstallScreen(context, it.second)
             }
             else {
                 InstallHelper.requestUnknownAppsInstallPermission(this)
@@ -623,15 +624,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         DialogHelper.showSAFDialog(context, path, safDialogListener)
     }
 
-    private fun openInstallScreen(path: String?) {
-        val context = context
-        context?.let {
-            InstallHelper.openInstallAppScreen(context,
-                                               UriHelper.createContentUri(
-                                                       context.applicationContext,
-                                                       path))
-        }
-    }
+
 
     private fun dismissDialog() {
         dialog?.dismiss()
@@ -767,28 +760,11 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         }
     }
 
-
-    //    fun onBackPressed(): Boolean {
-//        return storagesUi!!.onBackPress()
-//    }
-//
-//    override fun onResume() {
-//        super.onResume()
-//        storagesUi!!.onResume()
-//    }
-//
-//
-//    override fun onPause() {
-//        storagesUi!!.onPause()
-//        super.onPause()
-//    }
-//
-//
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         when (requestCode) {
             InstallHelper.UNKNOWN_APPS_INSTALL_REQUEST -> {
                 if (resultCode == RESULT_OK) {
-                    openInstallScreen(fileListViewModel.apkPath)
+                    openInstallScreen(context, fileListViewModel.apkPath)
                     fileListViewModel.apkPath = null
                 }
             }
@@ -847,22 +823,6 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         }
     }
 
-    //
-//    override fun onConfigurationChanged(newConfig: Configuration) {
-//        super.onConfigurationChanged(newConfig)
-//        storagesUi!!.onConfigChanged(newConfig)
-//    }
-//
-//    override fun onDestroyView() {
-//        storagesUi!!.onViewDestroyed()
-//        super.onDestroyView()
-//    }
-//
-//    override fun onDestroy() {
-//        storagesUi!!.onExit()
-//        super.onDestroy()
-//    }
-//
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_view_list -> {

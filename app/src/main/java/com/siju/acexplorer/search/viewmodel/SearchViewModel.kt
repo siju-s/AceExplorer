@@ -2,9 +2,9 @@ package com.siju.acexplorer.search.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.search.model.SearchDataFetcher
 import com.siju.acexplorer.search.model.SearchModel
 import com.siju.acexplorer.search.model.SearchModelImpl
 import kotlinx.coroutines.CoroutineScope
@@ -13,14 +13,14 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 private const val TAG = "SearchViewModel"
-private const val MIN_CHAR_QUERY = 2
+private const val MIN_CHAR_QUERY = 3
 
 class SearchViewModel(private val searchModel: SearchModel) : ViewModel() {
 
     private val viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
-    val searchResult : LiveData<ArrayList<FileInfo>>
+    val searchResult : LiveData<ArrayList<SearchDataFetcher.SearchDataItem>>
 
     init {
         searchModel as SearchModelImpl
@@ -37,11 +37,8 @@ class SearchViewModel(private val searchModel: SearchModel) : ViewModel() {
                 searchModel.searchData(rootPath, query, category)
             }
         }
-        else {
+        else if (query.isNullOrBlank()){
             searchModel.emptyQuerySearch()
         }
     }
-
-
-
 }

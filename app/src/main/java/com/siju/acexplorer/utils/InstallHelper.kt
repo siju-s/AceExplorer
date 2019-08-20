@@ -9,6 +9,7 @@ import com.siju.acexplorer.R
 import com.siju.acexplorer.main.model.helper.FileUtils.showMessage
 import com.siju.acexplorer.main.model.helper.IntentResolver
 import com.siju.acexplorer.main.model.helper.SdkHelper
+import com.siju.acexplorer.main.model.helper.UriHelper
 
 object InstallHelper {
 
@@ -29,6 +30,15 @@ object InstallHelper {
             val uri = Uri.fromParts(PACKAGE, context.packageName, null)
             intent.data = uri
             fragment.startActivityForResult(intent, UNKNOWN_APPS_INSTALL_REQUEST)
+        }
+    }
+
+    fun openInstallScreen(context: Context?, path: String?) {
+        context?.let {
+            openInstallAppScreen(context,
+                    UriHelper.createContentUri(
+                            context.applicationContext,
+                            path))
         }
     }
 

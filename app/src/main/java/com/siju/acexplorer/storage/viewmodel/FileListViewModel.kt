@@ -19,7 +19,6 @@ import com.siju.acexplorer.storage.model.operations.OperationAction
 import com.siju.acexplorer.storage.model.operations.OperationHelper
 import com.siju.acexplorer.storage.model.operations.Operations
 import com.siju.acexplorer.storage.model.operations.PasteConflictCheckData
-import com.siju.acexplorer.storage.modules.zipviewer.ZipUtils
 import com.siju.acexplorer.storage.modules.zipviewer.ZipViewerCallback
 import com.siju.acexplorer.storage.modules.zipviewer.view.ZipViewer
 import com.siju.acexplorer.storage.modules.zipviewer.view.ZipViewerFragment
@@ -36,6 +35,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 private const val TAG = "FileListViewModel"
+private const val ZIP_EXT = ".zip"
 
 class FileListViewModel(private val storageModel: StorageModel, private val searchScreen: Boolean = false) : ViewModel() {
 
@@ -390,7 +390,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         }
     }
 
-    private fun isZipFile(path: String) = !zipPresenter.isZipMode && ZipUtils.isZipViewable(path)
+    private fun isZipFile(path: String) = !zipPresenter.isZipMode && path.toLowerCase().endsWith(ZIP_EXT)
 
     private fun openZipViewer(path: String?) {
         path?.let {
