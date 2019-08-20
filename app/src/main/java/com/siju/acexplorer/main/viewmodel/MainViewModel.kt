@@ -16,6 +16,7 @@ import com.siju.acexplorer.theme.Theme
 
 class MainViewModel(val app: Application) : AndroidViewModel(app) {
 
+    var navigateToSearch = MutableLiveData<Boolean>()
     var isDualPaneInFocus = false
     private set
 
@@ -102,6 +103,10 @@ class MainViewModel(val app: Application) : AndroidViewModel(app) {
 
     fun setHomeClickedFalse() {
         _homeClicked.value = false
+    }
+
+    fun setNavigatedToSearch() {
+        navigateToSearch.value = false
     }
 
     fun setStorageReady() {

@@ -114,7 +114,7 @@ class FileDataFetcher : DataFetcher {
                                       filePath: String?) =
                 ringtonePicker && !FileUtils.isFileMusic(filePath)
 
-        private fun getDirectorySize(file: File): Long {
+        fun getDirectorySize(file: File): Long {
             var childFileListSize = 0
             val list = file.list()
             if (list != null) {

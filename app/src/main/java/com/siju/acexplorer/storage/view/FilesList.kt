@@ -26,7 +26,7 @@ import com.siju.acexplorer.utils.ScrollInfo
 private const val TAG = "FilesList"
 private const val DELAY_SCROLL_UPDATE_MS = 100L
 
-class FilesList(val fragment: BaseFileListFragment, val view: View, var viewMode: ViewMode) :
+class FilesList(private val fileListHelper: FileListHelper, val view: View, private var viewMode: ViewMode) :
         View.OnTouchListener {
 
     private var itemView: View? = null
@@ -50,10 +50,10 @@ class FilesList(val fragment: BaseFileListFragment, val view: View, var viewMode
         adapter = FileListAdapter(
                 viewMode,
                 {
-                    fragment.handleItemClick(it.first, it.second)
+                    fileListHelper.handleItemClick(it.first, it.second)
                 },
                 { fileInfo, pos, view ->
-                    fragment.handleLongItemClick(fileInfo, pos)
+                    fileListHelper.handleLongItemClick(fileInfo, pos)
                     val hasSelectedItems = adapter.getMultiSelectionHelper()?.hasSelectedItems()
                     if (hasSelectedItems == true) {
                         this.itemView = view
@@ -67,7 +67,7 @@ class FilesList(val fragment: BaseFileListFragment, val view: View, var viewMode
     }
 
     private fun setLayoutManager(fileList: RecyclerView, viewMode: ViewMode) {
-        Log.e(TAG, "fragment is: $fragment")
+        Log.e(TAG, "fileListHelper is: $fileListHelper")
         fileList.layoutManager = when (viewMode) {
             ViewMode.LIST -> LinearLayoutManager(view.context)
             ViewMode.GRID -> CustomGridLayoutManager(view.context,
@@ -76,7 +76,7 @@ class FilesList(val fragment: BaseFileListFragment, val view: View, var viewMode
     }
 
     private fun getGridColumns(configuration: Configuration): Int {
-        return if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT || !fragment.isDualModeEnabled()) {
+        return if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT || !fileListHelper.isDualModeEnabled()) {
             ConfigurationHelper.getStorageGridCols(configuration)
         }
         else {
@@ -188,17 +188,17 @@ class FilesList(val fragment: BaseFileListFragment, val view: View, var viewMode
     override fun onTouch(view: View?, event: MotionEvent): Boolean {
         val touchEvent = event.actionMasked
 
-        if (fragment.isDragNotStarted()) {
+        if (fileListHelper.isDragNotStarted()) {
             return false
         }
 
         when(touchEvent) {
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                fragment.onUpEvent()
+                fileListHelper.onUpEvent()
             }
 
             MotionEvent.ACTION_MOVE -> {
-                fragment.onMoveEvent()
+                fileListHelper.onMoveEvent()
             }
         }
 
@@ -244,37 +244,37 @@ class FilesList(val fragment: BaseFileListFragment, val view: View, var viewMode
         if (!event.result && pos == RecyclerView.NO_POSITION) {
             val clipData = event.clipData
             if (clipData == null) {
-                fragment.endActionMode()
+                fileListHelper.endActionMode()
                 return
             }
             val item = clipData.getItemAt(0)
             val intent = item.intent
             if (intent == null) {
-                fragment.endActionMode()
+                fileListHelper.endActionMode()
                 return
             }
             val dragCategory = intent.getIntExtra(KEY_CATEGORY, 0)
 
-            if (dragCategory == Category.FILES.value && fragment.getCategory() != Category.FILES) {
+            if (dragCategory == Category.FILES.value && fileListHelper.getCategory() != Category.FILES) {
                 view.context.showToast("Not supported")
                 return
             }
         }
 
         view.post {
-            fragment.endActionMode()
+            fileListHelper.endActionMode()
         }
     }
 
     fun onDragDropEvent(event: DragEvent) {
-        if (fragment.getCategory() != Category.FILES) {
+        if (fileListHelper.getCategory() != Category.FILES) {
             view.context.showToast("Not supported")
             return
         }
         val top = fileList.findChildViewUnder(event.x, event.y) ?: return
         val pos = fileList.getChildAdapterPosition(top)
         val data = event.localState
-        fragment.onDragDropEvent(pos, data as ArrayList<FileInfo>)
+        fileListHelper.onDragDropEvent(pos, data as ArrayList<FileInfo>)
     }
 
     private fun scrollUpTOPos(newPos: Int) {

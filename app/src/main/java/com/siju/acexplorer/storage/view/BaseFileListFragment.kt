@@ -71,7 +71,7 @@ private const val TAG = "BaseFileListFragment"
 private const val SAF_REQUEST = 2000
 private const val EXTRACT_PATH_REQUEST = 5000
 
-open class BaseFileListFragment : Fragment() {
+open class BaseFileListFragment : Fragment(), FileListHelper {
 
     private var hiddenMenuItem: MenuItem? = null
     private var path: String? = null
@@ -734,7 +734,7 @@ open class BaseFileListFragment : Fragment() {
         adView.hideAds()
     }
 
-    fun handleItemClick(fileInfo: FileInfo, position: Int) {
+    override fun handleItemClick(fileInfo: FileInfo, position: Int) {
         if (isAppManager(category)) {
             context?.let { AppDetailActivity.openAppInfo(it, fileInfo.filePath) }
         }
@@ -743,7 +743,7 @@ open class BaseFileListFragment : Fragment() {
         }
     }
 
-    fun handleLongItemClick(fileInfo: FileInfo, second: Int) {
+    override fun handleLongItemClick(fileInfo: FileInfo, second: Int) {
         fileListViewModel.handleLongClick(fileInfo, second)
     }
 
@@ -883,35 +883,44 @@ open class BaseFileListFragment : Fragment() {
                 fileListViewModel.onSortClicked()
                 return true
             }
+
+            R.id.action_search -> {
+                navigateToSearchScreen()
+                return true
+            }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun navigateToSearchScreen() {
+        mainViewModel.navigateToSearch.value = true
     }
 
     fun onMenuItemClick(item: MenuItem) {
         fileListViewModel.onMenuItemClick(item.itemId)
     }
 
-    fun onUpEvent() {
+    override fun onUpEvent() {
         fileListViewModel.onUpTouchEvent()
     }
 
-    fun onMoveEvent() {
+    override fun onMoveEvent() {
         fileListViewModel.onMoveTouchEvent()
     }
 
-    fun isDragNotStarted() = fileListViewModel.isDragNotStarted()
+    override fun isDragNotStarted() = fileListViewModel.isDragNotStarted()
 
-    fun endActionMode() {
+    override fun endActionMode() {
         fileListViewModel.endActionMode()
     }
 
-    fun getCategory() = fileListViewModel.category
+    override fun getCategory() = fileListViewModel.category
 
-    fun onDragDropEvent(pos: Int, data: ArrayList<FileInfo>) {
+    override fun onDragDropEvent(pos: Int, data: ArrayList<FileInfo>) {
         fileListViewModel.onDragDropEvent(pos)
     }
 
-    fun isDualModeEnabled() = fileListViewModel.isDualModeEnabled()
+    override fun isDualModeEnabled() = fileListViewModel.isDualModeEnabled()
 
     private val sortDialogListener = object : DialogHelper.SortDialogListener {
         override fun onPositiveButtonClick(sortMode: SortMode) {
@@ -957,10 +966,10 @@ open class BaseFileListFragment : Fragment() {
 //
 //    fun hideDualPane() {
 //        storagesUi!!.hideDualPane()
-//        val fragment = activity!!.supportFragmentManager.findFragmentById(R.id.frame_container_dual)
-//        if (fragment != null) {
+//        val fileListHelper = activity!!.supportFragmentManager.findFragmentById(R.id.frame_container_dual)
+//        if (fileListHelper != null) {
 //            val fragmentTransaction = activity!!.supportFragmentManager.beginTransaction()
-//            fragmentTransaction.remove(fragment).commitAllowingStateLoss()
+//            fragmentTransaction.remove(fileListHelper).commitAllowingStateLoss()
 //        }
 //    }
 //

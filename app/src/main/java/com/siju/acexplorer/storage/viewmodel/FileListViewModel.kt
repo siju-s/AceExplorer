@@ -37,12 +37,12 @@ import kotlinx.coroutines.launch
 
 private const val TAG = "FileListViewModel"
 
-class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
+class FileListViewModel(private val storageModel: StorageModel, private val searchScreen: Boolean = false) : ViewModel() {
 
     private var zipViewer: ZipViewer? = null
     var apkPath: String? = null
 
-    private lateinit var navigationView: NavigationView
+    private var navigationView: NavigationView? = null
 
     lateinit var category: Category
         private set
@@ -232,7 +232,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
 
     fun getViewMode() = storageModel.getViewMode()
 
-    private fun setCategory(category: Category) {
+    fun setCategory(category: Category) {
         this.category = category
         showFab.postValue(canShowFab(category))
     }
@@ -245,27 +245,27 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     private fun canShowFab(category: Category) = !CategoryHelper.checkIfLibraryCategory(category)
 
     fun addHomeButton() {
-        navigationView.addHomeButton()
+        navigationView?.addHomeButton()
     }
 
     fun addGenericTitle(category: Category) {
-        navigationView.addGenericTitle(category)
+        navigationView?.addGenericTitle(category)
     }
 
     fun addLibraryTitle(category: Category) {
-        navigationView.addLibraryTitle(category)
+        navigationView?.addLibraryTitle(category)
     }
 
     fun createNavButtonStorage(storageType: StorageUtils.StorageType, dir: String) {
         when (storageType) {
-            StorageUtils.StorageType.ROOT -> navigationView.createRootStorageButton(dir)
-            StorageUtils.StorageType.INTERNAL -> navigationView.createInternalStorageButton(dir)
-            StorageUtils.StorageType.EXTERNAL -> navigationView.createExternalStorageButton(dir)
+            StorageUtils.StorageType.ROOT -> navigationView?.createRootStorageButton(dir)
+            StorageUtils.StorageType.INTERNAL -> navigationView?.createInternalStorageButton(dir)
+            StorageUtils.StorageType.EXTERNAL -> navigationView?.createExternalStorageButton(dir)
         }
     }
 
     fun createNavButtonStorageParts(path: String, dirName: String) {
-        navigationView.createNavButtonStorageParts(path, dirName)
+        navigationView?.createNavButtonStorageParts(path, dirName)
     }
 
     fun setNavigationView(navigationView: NavigationView) {
@@ -285,7 +285,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     }
 
     fun createLibraryTitleNavigation(category: Category, bucketName: String?) {
-        navigationView.createLibraryTitleNavigation(category, bucketName)
+        navigationView?.createLibraryTitleNavigation(category, bucketName)
     }
 
     private fun setupNavigation(path: String?, category: Category) {
@@ -447,7 +447,14 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
         backStackInfo.addToBackStack(path, category)
     }
 
-    private fun hasBackStack() = backStackInfo.hasBackStack()
+    private fun hasBackStack() : Boolean {
+        return if (searchScreen) {
+            backStackInfo.getBackStack().size >= 1
+        }
+        else {
+            backStackInfo.hasBackStack()
+        }
+    }
 
     fun onBackPress(): Boolean {
         var result = true
@@ -682,6 +689,7 @@ class FileListViewModel(private val storageModel: StorageModel) : ViewModel() {
     }
 
     fun isDualModeEnabled() = storageModel.isDualModeEnabled()
+    fun hasNoBackStackEntry() = backStackInfo.getBackStack().isEmpty()
 
     val apkDialogListener = object : DialogHelper.ApkDialogListener {
 

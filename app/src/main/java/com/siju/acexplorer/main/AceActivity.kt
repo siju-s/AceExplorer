@@ -37,6 +37,7 @@ import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.view.FragmentsFactory
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.permission.PermissionHelper
+import com.siju.acexplorer.search.view.SearchFragment
 import com.siju.acexplorer.storage.view.BaseFileListFragment
 import com.siju.acexplorer.storage.view.DualPaneFragment
 import com.siju.acexplorer.storage.view.FileListFragment
@@ -104,6 +105,16 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
                 }
             }
         })
+
+        mainViewModel.navigateToSearch.observe(this, Observer {
+            it?.apply {
+                if (it) {
+                    disableDualPane()
+                    mainViewModel.setNavigatedToSearch()
+                    openFragment(SearchFragment.newInstance(), true)
+                }
+            }
+        })
     }
 
     private fun onDualModeEnabled(configuration: Configuration?) {
@@ -150,9 +161,12 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
     }
 
 
-    private fun openFragment(fragment: Fragment) {
+    private fun openFragment(fragment: Fragment, addToBackStack : Boolean = false) {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.main_container, fragment)
+        if (addToBackStack) {
+            transaction.addToBackStack(null)
+        }
         transaction.commit()
     }
 
@@ -194,9 +208,8 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
 //
 //
     override fun onBackPressed() {
-        val fragment = supportFragmentManager.findFragmentById(R.id.main_container)
-        if (fragment is BaseFileListFragment) {
-            when (val focusedFragment = getCurrentFocusFragment(fragment)) {
+        when (val fragment = supportFragmentManager.findFragmentById(R.id.main_container)) {
+            is BaseFileListFragment -> when (val focusedFragment = getCurrentFocusFragment(fragment)) {
                 is DualPaneFragment -> {
                     onDualPaneBackPress(focusedFragment)
                 }
@@ -204,8 +217,8 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
                     onSinglePaneBackPress(focusedFragment)
                 }
             }
-        } else {
-            super.onBackPressed()
+            is SearchFragment -> onSearchBackPress(fragment)
+            else -> super.onBackPressed()
         }
     }
 
@@ -222,6 +235,13 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         if (backPressNotHandled) {
             super.onBackPressed()
             disableDualPane()
+        }
+    }
+
+    private fun onSearchBackPress(fragment: SearchFragment) {
+        val backPressNotHandled = fragment.onBackPressed()
+        if (backPressNotHandled) {
+            super.onBackPressed()
         }
     }
 

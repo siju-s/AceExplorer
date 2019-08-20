@@ -8,6 +8,7 @@ ext {
                              'src/main/res-screen/drawer',
                              'src/main/res-screen/home',
                              'src/main/res-screen/storage',
+                             'src/main/res-screen/search',
                              'src/main/res-screen/storage/common',
                              'src/main/res-screen/storage/info',
                              'src/main/res-screen/storage/operations',
