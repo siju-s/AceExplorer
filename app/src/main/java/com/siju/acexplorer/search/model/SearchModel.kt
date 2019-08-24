@@ -5,4 +5,6 @@ import com.siju.acexplorer.main.model.groups.Category
 interface SearchModel {
     fun searchData(path: String, query: String, category: Category)
     fun emptyQuerySearch()
+    fun getRecentSearches(authority: String)
+    fun clearRecentSearches()
 }

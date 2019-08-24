@@ -131,6 +131,11 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths"/>
         </provider>
+        <provider
+            android:name=".search.model.SearchSuggestionProvider"
+            android:authorities="com.siju.acexplorer.SearchSuggestionProvider"
+            android:exported="false" />
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="d34cf3ffdd00d6e0d7b3e85d558c4fa01210a6f1"/>

@@ -5,9 +5,13 @@ import android.app.SearchManager
 import android.content.Context.SEARCH_SERVICE
 import android.content.Intent
 import android.os.Bundle
+import android.provider.SearchRecentSuggestions
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -24,6 +28,7 @@ import com.siju.acexplorer.main.model.helper.UriHelper
 import com.siju.acexplorer.main.model.helper.ViewHelper
 import com.siju.acexplorer.main.view.dialog.DialogHelper
 import com.siju.acexplorer.search.model.SearchModelImpl
+import com.siju.acexplorer.search.model.SearchSuggestionProvider
 import com.siju.acexplorer.search.viewmodel.SearchViewModel
 import com.siju.acexplorer.search.viewmodel.SearchViewModelFactory
 import com.siju.acexplorer.storage.model.StorageModelImpl
@@ -37,6 +42,7 @@ import com.siju.acexplorer.utils.InstallHelper
 import com.siju.acexplorer.utils.ScrollInfo
 import kotlinx.android.synthetic.main.toolbar.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 private const val DELAY_SCROLL_UPDATE_MS = 100L
 
@@ -50,8 +56,16 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
     private lateinit var fileListViewModel: FileListViewModel
     private lateinit var searchView: SearchView
     private lateinit var filesList: RecyclerView
+    private lateinit var fileListContainer : RelativeLayout
     private lateinit var adapter: SearchAdapter
     private var fileListAdapter: FileListAdapter? = null
+    private lateinit var searchSuggestions: SearchSuggestions
+
+    private lateinit var recentSearchContainer: LinearLayout
+    private lateinit var recentSearchList: RecyclerView
+    private lateinit var clearRecentButton: Button
+    private lateinit var recentSearchAdapter: RecentSearchAdapter
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflateLayout(R.layout.search_main, container)
@@ -64,7 +78,9 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
         view?.let {
             setupUI(it)
             setupViewModel()
+            searchSuggestions = SearchSuggestions(it, this, fileListViewModel)
             initObservers()
+            loadData()
         }
     }
 
@@ -78,7 +94,29 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
     }
 
     private fun initializeViews(view: View) {
+        setupRecentSearch(view)
+        setupList(view)
+    }
+
+    private fun setupRecentSearch(view: View) {
+        recentSearchContainer = view.findViewById(R.id.recentSearchContainer)
+        recentSearchList = view.findViewById(R.id.listRecentSearch)
+        clearRecentButton = view.findViewById(R.id.buttonClear)
+        recentSearchAdapter = RecentSearchAdapter {
+            hideRecentSearch()
+            filesList.adapter = adapter
+            searchView.setQuery(it, false)
+        }
+        recentSearchList.adapter = recentSearchAdapter
+        clearRecentButton.setOnClickListener {
+            searchViewModel.clearRecentSearch()
+            recentSearchAdapter.submitList(emptyList())
+        }
+    }
+
+    private fun setupList(view: View) {
         filesList = view.findViewById(R.id.recyclerViewFileList)
+        fileListContainer = view.findViewById(R.id.fileListContainer)
         filesList.layoutManager = LinearLayoutManager(context)
         adapter = SearchAdapter {
             handleItemClick(it.first, it.second)
@@ -105,7 +143,13 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
         searchViewModel.searchResult.observe(viewLifecycleOwner, Observer {
             it?.apply {
                 if (::filesList.isInitialized) {
-                    Log.e("SearchFragment", " Search result:${it.size}")
+                    Log.e("SearchFragment", " Search result:${it.size}" +"list visibility:${filesList.visibility}, recentSearchVis : ${recentSearchContainer.visibility}, adapter: ${filesList.adapter}")
+                    if (it.isEmpty()) {
+                        searchSuggestions.showChipGroup()
+                        showRecentSearch()
+                    } else {
+                        showSearchList()
+                    }
                     adapter.addHeaderAndSubmitList(it)
                 }
             }
@@ -113,6 +157,7 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
 
         fileListViewModel.fileData.observe(viewLifecycleOwner, Observer {
             it?.apply {
+                showSearchList()
                 if (::filesList.isInitialized) {
                     fileListAdapter?.submitList(it)
                 }
@@ -121,6 +166,8 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
 
         fileListViewModel.directoryClicked.observe(viewLifecycleOwner, Observer {
             it?.apply {
+                hideRecentSearch()
+                saveQuery(searchView.query.toString())
                 filesList.adapter = fileListAdapter
                 fileListViewModel.saveScrollInfo(getScrollInfo())
             }
@@ -147,11 +194,34 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
             val canInstall = it.first
             if (canInstall) {
                 InstallHelper.openInstallScreen(context, it.second)
-            }
-            else {
+            } else {
                 InstallHelper.requestUnknownAppsInstallPermission(this)
             }
         })
+
+        searchViewModel.recentSearchList.observe(viewLifecycleOwner, Observer {
+            it?.apply {
+                searchSuggestions.showChipGroup()
+                showRecentSearch()
+                recentSearchAdapter.submitList(it)
+            }
+        })
+    }
+
+    private fun loadData() {
+        searchViewModel.fetchRecentSearches()
+    }
+
+    private val TAG = "SearchFragment"
+
+    private fun hideRecentSearch() {
+        Log.e(TAG, "hideRecentSearch")
+        recentSearchContainer.visibility = View.GONE
+    }
+
+    private fun showRecentSearch() {
+        Log.e(TAG, "showRecentSearch")
+        recentSearchContainer.visibility = View.VISIBLE
     }
 
     private fun viewFile(path: String, extension: String?) {
@@ -194,13 +264,41 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
 
     override fun onQueryTextSubmit(query: String?): Boolean {
         Log.e(SearchFragment::class.java.simpleName, "onQueryTextSubmit : $query")
+        saveQuery(query)
         return false
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
         Log.e(SearchFragment::class.java.simpleName, "onQueryTextChange : $newText")
+        searchSuggestions.hideSuggestions()
+        hideRecentSearch()
+        if (newText?.isEmpty() == true) {
+            hideSearchList()
+            searchViewModel.fetchRecentSearches()
+        }
         searchViewModel.search(null, newText)
         return true
+    }
+
+    private fun hideSearchList() {
+        Log.e(TAG, "hideSearchList")
+        fileListContainer.visibility = View.GONE
+    }
+
+    private fun showSearchList() {
+        Log.e(TAG, "showSearchList")
+        fileListContainer.visibility = View.VISIBLE
+    }
+
+    private fun saveQuery(query: String?) {
+        query?.let {
+            if (query.isNotBlank()) {
+                val suggestions = SearchRecentSuggestions(context,
+                        SearchSuggestionProvider.AUTHORITY,
+                        SearchSuggestionProvider.MODE)
+                searchViewModel.saveQuery(suggestions, query)
+            }
+        }
     }
 
     override fun handleItemClick(fileInfo: FileInfo, position: Int) {
@@ -281,6 +379,17 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
                 }
             }
         }
+    }
+
+    fun onSearchSuggestionClicked() {
+        hideRecentSearch()
+        filesList.adapter = fileListAdapter
+    }
+
+
+    fun setEmptyList() {
+        fileListAdapter?.submitList(ArrayList<FileInfo>())
+        showRecentSearch()
     }
 
 

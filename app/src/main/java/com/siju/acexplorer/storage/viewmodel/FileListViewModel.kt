@@ -691,6 +691,10 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
     fun isDualModeEnabled() = storageModel.isDualModeEnabled()
     fun hasNoBackStackEntry() = backStackInfo.getBackStack().isEmpty()
 
+    fun clearBackStack() {
+       backStackInfo.clearBackStack()
+    }
+
     val apkDialogListener = object : DialogHelper.ApkDialogListener {
 
         override fun onInstallClicked(path: String?) {

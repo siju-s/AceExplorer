@@ -11,6 +11,10 @@ import com.siju.acexplorer.main.model.data.recent.*
 import com.siju.acexplorer.main.model.data.video.VideoDetailFetcher
 import com.siju.acexplorer.main.model.data.video.VideoFetcher
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.search.model.SearchFolderAudio
+import com.siju.acexplorer.search.model.SearchFolderDoc
+import com.siju.acexplorer.search.model.SearchFolderImages
+import com.siju.acexplorer.search.model.SearchFolderVideos
 
 object DataFetcherFactory {
 
@@ -35,6 +39,18 @@ object DataFetcherFactory {
             Category.RECENT_VIDEOS -> return RecentVideoFetcher()
             Category.RECENT_DOCS -> return RecentDocFetcher()
             Category.RECENT_APPS -> return RecentAppFetcher()
+            Category.RECENT_FOLDER -> return RecentFolderFetcher()
+
+            Category.RECENT_IMAGES_FOLDER -> return RecentFolderImageFetcher()
+            Category.RECENT_VIDEOS_FOLDER -> return RecentFolderVideoFetcher()
+            Category.RECENT_AUDIO_FOLDER -> return RecentFolderAudioFetcher()
+            Category.RECENT_DOC_FOLDER -> return RecentFolderDocFetcher()
+
+            Category.SEARCH_FOLDER_DOCS -> return SearchFolderDoc()
+            Category.SEARCH_FOLDER_IMAGES -> return SearchFolderImages()
+            Category.SEARCH_FOLDER_VIDEOS -> return SearchFolderVideos()
+            Category.SEARCH_FOLDER_AUDIO -> return SearchFolderAudio()
+
             Category.APPS -> return AppDataFetcher()
 
             Category.VIDEO, Category.GENERIC_VIDEOS -> return VideoFetcher()
