@@ -18,9 +18,8 @@ package com.siju.acexplorer.home.view
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -61,10 +60,11 @@ class HomeScreenFragment private constructor(): Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        setHasOptionsMenu(true)
         setupViewModels()
         adView = AdsView(container)
-        toolbar.title = resources.getString(R.string.app_name)
 
+        setupToolbar()
         initList()
         initObservers()
     }
@@ -74,6 +74,11 @@ class HomeScreenFragment private constructor(): Fragment() {
         mainViewModel = ViewModelProviders.of(activity).get(MainViewModel::class.java)
         val viewModelFactory = HomeViewModelFactory(HomeModelImpl(AceApplication.appContext))
         homeViewModel = ViewModelProviders.of(this, viewModelFactory).get(HomeViewModel::class.java)
+    }
+
+    private fun setupToolbar() {
+        toolbar.title = resources.getString(R.string.app_name)
+        (activity as AppCompatActivity).setSupportActionBar(toolbar)
     }
 
     private fun initList() {
@@ -190,6 +195,25 @@ class HomeScreenFragment private constructor(): Fragment() {
             addToBackStack(null)
             commit()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.home, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_search -> {
+                navigateToSearchScreen()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun navigateToSearchScreen() {
+        mainViewModel.navigateToSearch.value = true
     }
 
     companion object {

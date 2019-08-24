@@ -16,6 +16,8 @@
 
 package com.siju.acexplorer.main
 
+import android.app.SearchManager
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
@@ -177,9 +179,17 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         transaction.commit()
     }
 
-//    override fun onNewIntent(intent: Intent) {
-////        mainUi.onIntentReceived(intent)
-//    }
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if (Intent.ACTION_SEARCH == intent.action) {
+            val query = intent.getStringExtra(SearchManager.QUERY)
+            val fragment = supportFragmentManager.findFragmentById(R.id
+                    .main_container)
+            if (fragment is SearchFragment) {
+                fragment.performVoiceSearch(query)
+            }
+        }
+    }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
                                             grantResults: IntArray) {
