@@ -24,6 +24,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.home.edit.model.CategoryEditModelImpl
@@ -67,13 +68,19 @@ class CategoryEditFragment : Fragment(), OnStartDragListener {
     }
 
     private fun setupList() {
+        setCategoryLayoutManager()
         adapter = CategoryEditAdapter(this)
-        categoryList.setHasFixedSize(true)
         categoryList.adapter = adapter
 
         val callback = SimpleItemTouchHelperCallback(adapter)
         itemTouchHelper = ItemTouchHelper(callback)
         itemTouchHelper.attachToRecyclerView(categoryList)
+    }
+
+    private fun setCategoryLayoutManager() {
+        val gridColumns = 3
+        val gridLayoutManager = StaggeredGridLayoutManager(gridColumns, StaggeredGridLayoutManager.VERTICAL)
+        categoryList.layoutManager = gridLayoutManager
     }
 
     private fun setupViewModels() {
@@ -106,7 +113,7 @@ class CategoryEditFragment : Fragment(), OnStartDragListener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_ok                        -> {
+            R.id.action_ok -> {
                 categoryEditViewModel.saveCategories(adapter.getCheckedCategories())
                 fragmentManager?.popBackStack()
             }

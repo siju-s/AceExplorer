@@ -8,9 +8,12 @@ import com.siju.acexplorer.home.types.HomeLibraryInfo
 import com.siju.acexplorer.main.model.FileConstants
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper
+import com.siju.acexplorer.search.helper.SearchUtils
+import java.io.File
 
 private const val COUNT_ZERO = 0
 private const val TAG = "CategoryListFetcher"
+
 object CategoryListFetcher {
 
     private val resourceIds = listOf(R.drawable.ic_library_images, R.drawable.ic_library_music,
@@ -18,19 +21,19 @@ object CategoryListFetcher {
             R.drawable.ic_library_downloads, R.drawable.ic_library_recents)
     private val labels = arrayOf("Images", "Audio", "Videos", "Docs", "Downloads", "Recent")
     private val defaultCategories = listOf(Category.IMAGE, Category.AUDIO, Category.VIDEO, Category.DOCS,
-                                           Category.DOWNLOADS, Category.RECENT)
+            Category.DOWNLOADS, Category.RECENT)
 
     private val totalCategoryList = arrayOf(Category.IMAGE,
-                                            Category.AUDIO,
-                                            Category.VIDEO,
-                                            Category.DOCS,
-                                            Category.DOWNLOADS,
-                                            Category.COMPRESSED,
-                                            Category.FAVORITES,
-                                            Category.PDF,
-                                            Category.APPS,
-                                            Category.LARGE_FILES,
-                                            Category.RECENT)
+            Category.AUDIO,
+            Category.VIDEO,
+            Category.DOCS,
+            Category.DOWNLOADS,
+            Category.COMPRESSED,
+            Category.FAVORITES,
+            Category.PDF,
+            Category.APPS,
+            Category.LARGE_FILES,
+            Category.RECENT)
 
     fun getCategories(context: Context): ArrayList<HomeLibraryInfo> {
         val homeLibraryInfoList = arrayListOf<HomeLibraryInfo>()
@@ -68,7 +71,7 @@ object CategoryListFetcher {
             val category = CategoryHelper.getCategory(categoryId)
             val resId = CategoryHelper.getResourceIdForCategory(category)
             val name = CategoryHelper.getCategoryName(context, category)
-            addToList(HomeLibraryInfo(category, name , resId, COUNT_ZERO), homeLibraryInfoList)
+            addToList(HomeLibraryInfo(category, name, resId, COUNT_ZERO), homeLibraryInfoList)
         }
     }
 
@@ -83,15 +86,44 @@ object CategoryListFetcher {
 
     private fun getTotalCategoryList(context: Context): ArrayList<HomeLibraryInfo> {
         val categories = arrayListOf<HomeLibraryInfo>()
-        for (category in totalCategoryList) {
-            categories.add(getCategoryInfo(context, category))
+        for ((index, category) in totalCategoryList.withIndex()) {
+            if (index == 5) {
+                addPathCategories(categories)
+            }
+            categories.add(createCategoryInfo(context, category))
         }
         return categories
     }
 
-    fun getUnsavedCategoryList(context: Context) : ArrayList<HomeLibraryInfo> {
+    private fun addPathCategories(categories : ArrayList<HomeLibraryInfo>) {
+        val cameraCategoryInfo  = createCategoryWithPath(SearchUtils.getCameraDirectory())
+        cameraCategoryInfo?.let {
+            categories.add(cameraCategoryInfo)
+        }
+        val screenshotCategoryInfo = createCategoryWithPath(SearchUtils.getScreenshotDirectory())
+        screenshotCategoryInfo?.let {
+            categories.add(screenshotCategoryInfo)
+        }
+        val whatsappCategoryInfo = createCategoryWithPath(SearchUtils.getWhatsappDirectory())
+        whatsappCategoryInfo?.let {
+            categories.add(whatsappCategoryInfo)
+        }
+        val telegramCategoryInfo = createCategoryWithPath(SearchUtils.getTelegramDirectory())
+        telegramCategoryInfo?.let {
+            categories.add(telegramCategoryInfo)
+        }
+    }
+
+    private fun createCategoryWithPath(path: String?): HomeLibraryInfo? {
+        if (File(path).exists()) {
+            return HomeLibraryInfo.createCategoryWithPath(Category.FILES, "Whatsapp", 0, 0, path)
+        }
+        return null
+    }
+
+    fun getUnsavedCategoryList(context: Context): ArrayList<HomeLibraryInfo> {
         val totalCategories = getTotalCategoryList(context)
-        val savedCategories : List<Category> = getCategories(context).map { it.category }
+        val savedCategories: List<Category> = getCategories(context).map { it.category }
         val unsavedCategories = arrayListOf<HomeLibraryInfo>()
         for (category in totalCategories) {
             if (!savedCategories.contains(category.category)) {
@@ -101,9 +133,9 @@ object CategoryListFetcher {
         return unsavedCategories
     }
 
-    private fun getCategoryInfo(context: Context, category: Category): HomeLibraryInfo {
+    private fun createCategoryInfo(context: Context, category: Category): HomeLibraryInfo {
         return HomeLibraryInfo(category, CategoryHelper.getCategoryName(context, category),
-                               CategoryHelper.getResourceIdForCategory(category))
+                CategoryHelper.getResourceIdForCategory(category))
     }
 
 

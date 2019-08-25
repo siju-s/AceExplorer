@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,36 +16,45 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
     android:orientation="vertical">
 
-    <CheckBox
-        android:id="@+id/checkbox"
+    <ImageView
+        android:id="@+id/imageLibrary"
+        android:layout_width="@dimen/home_library_width"
+        android:layout_height="@dimen/home_library_width"
+        android:layout_marginStart="@dimen/drawer_item_margin"
+        android:layout_marginLeft="@dimen/drawer_item_margin"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="@dimen/drawer_item_margin"
+        android:layout_marginRight="@dimen/drawer_item_margin"
+        android:background="@drawable/square"
+        android:contentDescription="@string/img_accessibility_icon_lib"
+        android:scaleType="center"
+        app:srcCompat="@drawable/ic_library_images" />
+
+    <ImageButton
+        android:id="@+id/checkedState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-       />
+        android:layout_alignEnd="@id/imageLibrary"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="-5dp"
+        android:background="@null"
+        android:gravity="center_horizontal|center_vertical"
+        tools:src="@drawable/ic_remove_category" />
 
     <TextView
         android:id="@+id/textLibrary"
-        android:layout_width="match_parent"
-        android:layout_toEndOf="@id/checkbox"
-        android:textSize="17sp"
-        android:paddingTop="5dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:layout_height="wrap_content"
-        android:paddingEnd="10dp"
-        android:paddingStart="10dp" />
-
-    <ImageView
-        android:id="@+id/imageSort"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:background="@null"
-        app:srcCompat="@drawable/ic_sort_black"
-        android:contentDescription="@string/action_sort"
-        />
+        android:layout_below="@+id/imageLibrary"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="3dp"
+        tools:text="@string/nav_menu_image" />
+
+
 </RelativeLayout>

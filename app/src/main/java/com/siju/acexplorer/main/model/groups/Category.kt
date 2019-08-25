@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.siju.acexplorer.main.model.groups;
+package com.siju.acexplorer.main.model.groups
 
-public enum Category {
+enum class Category private constructor(val value: Int) {
     FILES(0),
     AUDIO(1),
     VIDEO(2),
     IMAGE(3),
     DOCS(4),
     DOWNLOADS(5),
-//    ADD(6),
+    //    ADD(6),
     COMPRESSED(7),
     FAVORITES(8),
     PDF(9),
@@ -32,14 +32,14 @@ public enum Category {
     ZIP_VIEWER(12),
     GENERIC_LIST(13),
     PICKER(14),
-//    GIF(15),
+    //    GIF(15),
     RECENT(16),
     ALBUMS(17),
     ARTISTS(18),
     GENRES(19),
-//    ALARMS(20),
-//    NOTIFICATIONS(21),
-//    RINGTONES(22),
+    //    ALARMS(20),
+    //    NOTIFICATIONS(21),
+    //    RINGTONES(22),
     PODCASTS(23),
     GENERIC_MUSIC(24),
     ALL_TRACKS(25),
@@ -51,7 +51,7 @@ public enum Category {
     GENERIC_VIDEOS(31),
     FOLDER_VIDEOS(32),
     APP_MANAGER(33),
-//    TRASH(34),
+    //    TRASH(34),
     RECENT_IMAGES(35),
     RECENT_AUDIO(36),
     RECENT_VIDEOS(37),
@@ -67,15 +67,7 @@ public enum Category {
     SEARCH_FOLDER_AUDIO(47),
     SEARCH_FOLDER_DOCS(48);
 
-    private final int value;
-
-    Category(int value) {
-        this.value = value;
+    companion object {
+        fun valueOf(value: Int): Category? = Category.values().find { it.value == value }
     }
-
-    public int getValue() {
-
-        return value;
-    }
-
 }

@@ -1,6 +1,5 @@
 package com.siju.acexplorer.home.edit.model
 
-import com.siju.acexplorer.home.model.CategoryEdit
 import java.util.*
 
 interface CategoryEditModel {
@@ -10,7 +9,7 @@ interface CategoryEditModel {
 //    fun getUnsavedCategories() : ArrayList<HomeLibraryInfo>
 //
 //    fun saveCategories(categories: ArrayList<Category>)
-    fun getCategories(): List<CategoryEdit>
+    fun getCategories(): List<CategoryEditModelImpl.DataItem>
 
     fun saveCategories(categories: ArrayList<Int>)
 }

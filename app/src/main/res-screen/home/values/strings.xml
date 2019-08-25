@@ -8,5 +8,13 @@
     <string name="library_large">Large files</string>
     <string name="library_recent">Recent</string>
 
+    <string name="saved_category">SAVED</string>
+    <string name="other_category">OTHER</string>
+
+    <string name="category_whatsapp">Whatsapp</string>
+    <string name="category_telegram">Telegram</string>
+    <string name="category_camera">Camera</string>
+    <string name="category_screenshot">Screenshot</string>
+
     <string name="library_gif" translatable="false">GIF</string>
 </resources>

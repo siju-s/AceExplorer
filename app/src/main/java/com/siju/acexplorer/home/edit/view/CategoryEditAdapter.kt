@@ -18,32 +18,57 @@ package com.siju.acexplorer.home.edit.view
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.siju.acexplorer.R
+import com.siju.acexplorer.home.edit.model.CategoryEditModelImpl
+import com.siju.acexplorer.home.edit.model.CategoryEditType
 import com.siju.acexplorer.home.model.CategoryEdit
-import com.siju.acexplorer.main.model.groups.CategoryHelper.getCategory
-import com.siju.acexplorer.main.model.groups.CategoryHelper.getCategoryName
 import com.siju.acexplorer.storage.view.custom.helper.ItemTouchHelperAdapter
 import java.util.*
 
+
+private const val ITEM_VIEW_TYPE_HEADER = 0
+private const val ITEM_VIEW_TYPE_ITEM = 1
+
 class CategoryEditAdapter(private val dragStartListener: OnStartDragListener) :
-        ListAdapter<CategoryEdit, CategoryEditAdapter.ViewHolder>(CategoryDiffCallback()),
-        ItemTouchHelperAdapter
-{
-    private lateinit var data : List<CategoryEdit>
+        ListAdapter<CategoryEditModelImpl.DataItem, RecyclerView.ViewHolder>(CategoryDiffCallback()),
+        ItemTouchHelperAdapter {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder.from(parent)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            ITEM_VIEW_TYPE_HEADER -> HeaderViewHolder.from(parent)
+            ITEM_VIEW_TYPE_ITEM -> ViewHolder.from(parent)
+            else -> throw ClassCastException("Unknown viewType ${viewType}")
+        }
+    }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position), dragStartListener)
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is HeaderViewHolder -> {
+                val item = getItem(position) as CategoryEditModelImpl.DataItem.Header
+                val layoutParams = holder.itemView.layoutParams as StaggeredGridLayoutManager.LayoutParams
+                layoutParams.isFullSpan = true
+                holder.bind(item.headerType)
+            }
+            is ViewHolder -> {
+                val item = getItem(position) as CategoryEditModelImpl.DataItem.Content
+                holder.bind(item.categoryEdit, dragStartListener)
+            }
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when (getItem(position)) {
+            is CategoryEditModelImpl.DataItem.Header -> ITEM_VIEW_TYPE_HEADER
+            is CategoryEditModelImpl.DataItem.Content -> ITEM_VIEW_TYPE_ITEM
+        }
     }
 
     override fun onItemDismiss(position: Int) {
@@ -51,59 +76,56 @@ class CategoryEditAdapter(private val dragStartListener: OnStartDragListener) :
     }
 
     override fun onItemMove(fromPosition: Int, toPosition: Int) {
-        Collections.swap(data, fromPosition, toPosition)
+//        Collections.swap(data, fromPosition, toPosition)
         notifyItemMoved(fromPosition, toPosition)
     }
 
-    fun getCheckedCategories() : ArrayList<Int> {
+    fun getCheckedCategories(): ArrayList<Int> {
         val count = itemCount
         val selectedCategories = arrayListOf<Int>()
         for (index in 0 until count) {
-            val item = data[index]
-            if (item.checked) {
-                val category = item.categoryId
+            val item = getItem(index)
+            if (item is CategoryEditModelImpl.DataItem.Content && item.categoryEdit.checked) {
+                val category = item.categoryEdit.categoryId
                 selectedCategories.add(category)
             }
         }
         return selectedCategories
     }
 
-    fun submitData(data : List<CategoryEdit>) {
-        this.data = data
+    fun submitData(data: List<CategoryEditModelImpl.DataItem>) {
         submitList(data)
     }
 
     class ViewHolder private constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val sortImage: ImageView = itemView.findViewById(R.id.imageSort)
+
         private val categoryText: TextView = itemView.findViewById(R.id.textLibrary)
-        private val selectedState: CheckBox = itemView.findViewById(R.id.checkbox)
+        private val imageLibrary : ImageView = itemView.findViewById(R.id.imageLibrary)
+        private val selectedState: ImageView = itemView.findViewById(R.id.checkedState)
 
         fun bind(categoryEdit: CategoryEdit, dragStartListener: OnStartDragListener) {
-            val category = getCategory(categoryEdit.categoryId)
-            categoryText.text = getCategoryName(itemView.context, category)
-            selectedState.isChecked = categoryEdit.checked
+            categoryText.text = CategoryEdit.getCategoryName(itemView.context, categoryEdit.categoryId, categoryEdit.path)
+            imageLibrary.setImageResource(CategoryEdit.getResourceIdForCategory(categoryEdit.categoryId,
+                    categoryEdit.path))
+            handleSelectedState(categoryEdit)
             initListeners(categoryEdit, dragStartListener)
+        }
+
+        private fun handleSelectedState(categoryEdit: CategoryEdit) {
+            if (categoryEdit.checked) {
+                selectedState.setImageResource(R.drawable.ic_remove_category)
+            } else {
+                selectedState.setImageResource(R.drawable.ic_add_category)
+            }
         }
 
         @SuppressLint("ClickableViewAccessibility")
         private fun initListeners(categoryEdit: CategoryEdit,
                                   dragStartListener: OnStartDragListener) {
-            selectedState.setOnCheckedChangeListener { _, isChecked ->
-                categoryEdit.checked = isChecked
-            }
             categoryText.setOnClickListener {
                 val isChecked = categoryEdit.checked
                 categoryEdit.checked = !isChecked
-                selectedState.isChecked = !isChecked
-            }
-            sortImage.setOnTouchListener { view, event ->
-                if (event.actionMasked == MotionEvent.ACTION_DOWN) {
-                    dragStartListener.onStartDrag(this)
-                }
-                if (event.actionMasked == MotionEvent.ACTION_UP) {
-                    view.performClick()
-                }
-                false
+                handleSelectedState(categoryEdit)
             }
         }
 
@@ -116,13 +138,30 @@ class CategoryEditAdapter(private val dragStartListener: OnStartDragListener) :
             }
         }
     }
+
+    class HeaderViewHolder private constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        private var headerName: TextView = itemView.findViewById(R.id.headerNameText)
+
+        fun bind(headerType: CategoryEditType) {
+            headerName.text = CategoryEditType.getHeaderName(itemView.context, headerType)
+        }
+
+        companion object {
+            fun from(parent: ViewGroup): HeaderViewHolder {
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.category_edit_header,
+                        parent, false)
+                return HeaderViewHolder(view)
+            }
+        }
+    }
 }
 
-class CategoryDiffCallback : DiffUtil.ItemCallback<CategoryEdit>() {
-    override fun areItemsTheSame(oldItem: CategoryEdit,
-                                 newItem: CategoryEdit) = oldItem.categoryId == newItem.categoryId
+class CategoryDiffCallback : DiffUtil.ItemCallback<CategoryEditModelImpl.DataItem>() {
+    override fun areItemsTheSame(oldItem: CategoryEditModelImpl.DataItem,
+                                 newItem: CategoryEditModelImpl.DataItem) = oldItem.id == newItem.id
 
-    override fun areContentsTheSame(oldItem: CategoryEdit,
-                                    newItem: CategoryEdit): Boolean = oldItem == newItem
+    override fun areContentsTheSame(oldItem: CategoryEditModelImpl.DataItem,
+                                    newItem: CategoryEditModelImpl.DataItem): Boolean = oldItem.id == newItem.id
 
 }
