@@ -37,7 +37,7 @@ class CategoryEdit(var isHeader: Boolean, val categoryId: Int, var headerType: C
         if (categoryId == Category.FILES.value && other.categoryId == Category.FILES.value) {
             return path == other.path && headerType == other.headerType
         }
-        return true
+        return headerType == other.headerType
     }
 
     override fun hashCode(): Int {

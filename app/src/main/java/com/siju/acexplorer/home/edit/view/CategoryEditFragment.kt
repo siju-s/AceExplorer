@@ -17,6 +17,7 @@
 package com.siju.acexplorer.home.edit.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -69,7 +70,13 @@ class CategoryEditFragment : Fragment(), OnStartDragListener {
 
     private fun setupList() {
         setCategoryLayoutManager()
-        adapter = CategoryEditAdapter(this)
+        adapter = CategoryEditAdapter { item, pos ->
+            if (item.categoryEdit.checked) {
+                categoryEditViewModel.removeCategory(item, adapter.getCheckedItemCount())
+            } else {
+                categoryEditViewModel.addCategory(item, adapter.getCheckedItemCount())
+            }
+        }
         categoryList.adapter = adapter
 
         val callback = SimpleItemTouchHelperCallback(adapter)
@@ -93,7 +100,15 @@ class CategoryEditFragment : Fragment(), OnStartDragListener {
     private fun initObservers() {
         categoryEditViewModel.categories.observe(viewLifecycleOwner, Observer {
             it?.apply {
-                adapter.submitData(it)
+                Log.e("CategoryEditFragment", "count:${it.size}, itemsEdited:${categoryEditViewModel.itemsEdited.value}")
+                if (categoryEditViewModel.itemsEdited.value == true) {
+                    categoryEditViewModel.setItemEditComplete()
+                    adapter.submitData(it)
+                    adapter.notifyDataSetChanged()
+                }
+                else {
+                    adapter.submitData(it)
+                }
             }
         })
     }

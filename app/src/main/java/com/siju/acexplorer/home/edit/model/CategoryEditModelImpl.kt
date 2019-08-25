@@ -21,10 +21,10 @@ class CategoryEditModelImpl(val context: Context) : CategoryEditModel {
         CategorySaver.saveCategories(context, categories)
     }
 
-    override fun getCategories(): List<DataItem> {
+    override fun getCategories(): ArrayList<DataItem> {
         val savedCategoryEdit = addSavedCategories()
         val unsavedCategoryEdit = addUnsavedCategories()
-        return savedCategoryEdit + unsavedCategoryEdit
+        return (savedCategoryEdit + unsavedCategoryEdit) as ArrayList<DataItem>
     }
 
     private fun addSavedCategories(): List<DataItem> {
@@ -56,11 +56,34 @@ class CategoryEditModelImpl(val context: Context) : CategoryEditModel {
                 get() {
                     val categoryId = categoryEdit.categoryId
                     return if (categoryId == Category.FILES.value) {
-                        categoryEdit.path.toString()
+                        categoryEdit.path.toString() + categoryEdit.headerType
                     } else {
-                        categoryId.toString()
+                        categoryId.toString() + categoryEdit.headerType
                     }
                 }
+
+//            override fun equals(other: Any?): Boolean {
+//                if (this === other) return true
+//                if (other !is Content) return false
+//                if (!super.equals(other)) return false
+//
+//                if (this.categoryEdit.headerType == other.categoryEdit.headerType) {
+//                    return if (this.categoryEdit.categoryId == Category.FILES.value && other.categoryEdit.categoryId == Category.FILES.value) {
+//                        this.categoryEdit.path == other.categoryEdit.path
+//                    } else {
+//                        this.categoryEdit.categoryId == other.categoryEdit.categoryId
+//                    }
+//                }
+//                return false
+//            }
+//
+//            override fun hashCode(): Int {
+//                var result = super.hashCode()
+//                result = 31 * result + categoryEdit.hashCode()
+//                return result
+//            }
+
+
         }
 
         data class Header(val headerType: CategoryEditType) : DataItem() {
@@ -70,6 +93,31 @@ class CategoryEditModelImpl(val context: Context) : CategoryEditModel {
         }
 
         abstract val id: String
+
+//        override fun equals(other: Any?): Boolean {
+//            if (this === other) return true
+//            if (other !is DataItem) return false
+//
+//            if (this is Header && other is Header) {
+//                return this.id == other.id
+//            }
+//            else if (this is Content && other is Content) {
+//                return super.equals(this) == super.equals(other)
+//            }
+//            else if (this is Header && other is Content) {
+//                return false
+//            }
+//            else if (this is Content && other is Header) {
+//                return false
+//            }
+//            return false
+//        }
+//
+//        override fun hashCode(): Int {
+//            return id.hashCode()
+//        }
+
+
     }
 
 

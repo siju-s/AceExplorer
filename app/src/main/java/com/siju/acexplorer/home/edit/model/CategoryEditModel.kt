@@ -9,7 +9,7 @@ interface CategoryEditModel {
 //    fun getUnsavedCategories() : ArrayList<HomeLibraryInfo>
 //
 //    fun saveCategories(categories: ArrayList<Category>)
-    fun getCategories(): List<CategoryEditModelImpl.DataItem>
+    fun getCategories(): ArrayList<CategoryEditModelImpl.DataItem>
 
     fun saveCategories(categories: ArrayList<Int>)
 }

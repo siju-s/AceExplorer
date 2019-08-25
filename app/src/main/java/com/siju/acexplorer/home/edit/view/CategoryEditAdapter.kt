@@ -20,6 +20,7 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
@@ -37,7 +38,7 @@ import java.util.*
 private const val ITEM_VIEW_TYPE_HEADER = 0
 private const val ITEM_VIEW_TYPE_ITEM = 1
 
-class CategoryEditAdapter(private val dragStartListener: OnStartDragListener) :
+class CategoryEditAdapter(private val selectedStateListener: (CategoryEditModelImpl.DataItem.Content, Int) -> Unit) :
         ListAdapter<CategoryEditModelImpl.DataItem, RecyclerView.ViewHolder>(CategoryDiffCallback()),
         ItemTouchHelperAdapter {
 
@@ -59,7 +60,7 @@ class CategoryEditAdapter(private val dragStartListener: OnStartDragListener) :
             }
             is ViewHolder -> {
                 val item = getItem(position) as CategoryEditModelImpl.DataItem.Content
-                holder.bind(item.categoryEdit, dragStartListener)
+                holder.bind(item, selectedStateListener)
             }
         }
     }
@@ -93,6 +94,18 @@ class CategoryEditAdapter(private val dragStartListener: OnStartDragListener) :
         return selectedCategories
     }
 
+    fun getCheckedItemCount() : Int {
+        val count = itemCount
+        var checked = 0
+        for (index in 0 until count) {
+            val item = getItem(index)
+            if (item is CategoryEditModelImpl.DataItem.Content && item.categoryEdit.checked) {
+              checked++
+            }
+        }
+        return checked
+    }
+
     fun submitData(data: List<CategoryEditModelImpl.DataItem>) {
         submitList(data)
     }
@@ -101,14 +114,15 @@ class CategoryEditAdapter(private val dragStartListener: OnStartDragListener) :
 
         private val categoryText: TextView = itemView.findViewById(R.id.textLibrary)
         private val imageLibrary : ImageView = itemView.findViewById(R.id.imageLibrary)
-        private val selectedState: ImageView = itemView.findViewById(R.id.checkedState)
+        private val selectedState: ImageButton = itemView.findViewById(R.id.checkedState)
 
-        fun bind(categoryEdit: CategoryEdit, dragStartListener: OnStartDragListener) {
+        fun bind(item: CategoryEditModelImpl.DataItem.Content, selectedStateListener: (CategoryEditModelImpl.DataItem.Content, Int) -> Unit) {
+            val categoryEdit = item.categoryEdit
             categoryText.text = CategoryEdit.getCategoryName(itemView.context, categoryEdit.categoryId, categoryEdit.path)
             imageLibrary.setImageResource(CategoryEdit.getResourceIdForCategory(categoryEdit.categoryId,
                     categoryEdit.path))
             handleSelectedState(categoryEdit)
-            initListeners(categoryEdit, dragStartListener)
+            initListeners(item, selectedStateListener)
         }
 
         private fun handleSelectedState(categoryEdit: CategoryEdit) {
@@ -120,12 +134,16 @@ class CategoryEditAdapter(private val dragStartListener: OnStartDragListener) :
         }
 
         @SuppressLint("ClickableViewAccessibility")
-        private fun initListeners(categoryEdit: CategoryEdit,
-                                  dragStartListener: OnStartDragListener) {
-            categoryText.setOnClickListener {
-                val isChecked = categoryEdit.checked
-                categoryEdit.checked = !isChecked
-                handleSelectedState(categoryEdit)
+        private fun initListeners(categoryEdit: CategoryEditModelImpl.DataItem.Content,
+                                  selectedStateListener: (CategoryEditModelImpl.DataItem.Content, Int) -> Unit) {
+            selectedState.setOnClickListener {
+//                val isChecked = categoryEdit.checked
+//                categoryEdit.checked = !isChecked
+//                handleSelectedState(categoryEdit)
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    selectedStateListener(categoryEdit, position)
+                }
             }
         }
 
