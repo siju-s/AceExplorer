@@ -17,6 +17,7 @@
 package com.siju.acexplorer.home.edit.view
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,7 +27,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.siju.acexplorer.R
 import com.siju.acexplorer.home.edit.model.CategoryEditModelImpl
 import com.siju.acexplorer.home.edit.model.CategoryEditType
@@ -35,17 +35,15 @@ import com.siju.acexplorer.storage.view.custom.helper.ItemTouchHelperAdapter
 import java.util.*
 
 
-private const val ITEM_VIEW_TYPE_HEADER = 0
-private const val ITEM_VIEW_TYPE_ITEM = 1
-
 class CategoryEditAdapter(private val selectedStateListener: (CategoryEditModelImpl.DataItem.Content, Int) -> Unit) :
         ListAdapter<CategoryEditModelImpl.DataItem, RecyclerView.ViewHolder>(CategoryDiffCallback()),
         ItemTouchHelperAdapter {
 
+    private var data = arrayListOf<CategoryEditModelImpl.DataItem>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            ITEM_VIEW_TYPE_HEADER -> HeaderViewHolder.from(parent)
-            ITEM_VIEW_TYPE_ITEM -> ViewHolder.from(parent)
+            EDIT_ITEM_VIEW_TYPE_HEADER -> HeaderViewHolder.from(parent)
+            EDIT_ITEM_VIEW_TYPE_ITEM -> ViewHolder.from(parent)
             else -> throw ClassCastException("Unknown viewType ${viewType}")
         }
     }
@@ -54,12 +52,11 @@ class CategoryEditAdapter(private val selectedStateListener: (CategoryEditModelI
         when (holder) {
             is HeaderViewHolder -> {
                 val item = getItem(position) as CategoryEditModelImpl.DataItem.Header
-                val layoutParams = holder.itemView.layoutParams as StaggeredGridLayoutManager.LayoutParams
-                layoutParams.isFullSpan = true
                 holder.bind(item.headerType)
             }
             is ViewHolder -> {
                 val item = getItem(position) as CategoryEditModelImpl.DataItem.Content
+                Log.e("Adapter", "onBindViewHolder : pos:$position, headedrType:${item.categoryEdit.headerType}, checked: ${item.categoryEdit.checked}")
                 holder.bind(item, selectedStateListener)
             }
         }
@@ -67,8 +64,8 @@ class CategoryEditAdapter(private val selectedStateListener: (CategoryEditModelI
 
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
-            is CategoryEditModelImpl.DataItem.Header -> ITEM_VIEW_TYPE_HEADER
-            is CategoryEditModelImpl.DataItem.Content -> ITEM_VIEW_TYPE_ITEM
+            is CategoryEditModelImpl.DataItem.Header -> EDIT_ITEM_VIEW_TYPE_HEADER
+            is CategoryEditModelImpl.DataItem.Content -> EDIT_ITEM_VIEW_TYPE_ITEM
         }
     }
 
@@ -77,8 +74,58 @@ class CategoryEditAdapter(private val selectedStateListener: (CategoryEditModelI
     }
 
     override fun onItemMove(fromPosition: Int, toPosition: Int) {
-//        Collections.swap(data, fromPosition, toPosition)
+        Collections.swap(data, fromPosition, toPosition)
+        Log.e("Adapter", "itemMove : from:$fromPosition, to:$toPosition")
         notifyItemMoved(fromPosition, toPosition)
+    }
+
+    override fun onMoved(fromPos: Int, toPos: Int) {
+        val checkedCount = getCheckedItemCount()
+
+        if (fromPos <= checkedCount && toPos > checkedCount) {
+            onMovedFromSavedToOther(fromPos, toPos)
+        }
+        else  if (fromPos > checkedCount && toPos <= checkedCount) {
+            onMovedFromOtherToSaved(fromPos, toPos)
+        }
+        Log.e("Adapter", "onMoved : from:$fromPos, to:$toPos")
+
+    }
+
+    private fun onMovedFromSavedToOther(fromPos: Int, toPos: Int) {
+        val fromItem = data[fromPos]
+        val toItem = data[toPos]
+
+        fromItem as CategoryEditModelImpl.DataItem.Content
+        fromItem.categoryEdit.checked = true
+        fromItem.categoryEdit.headerType = CategoryEditType.SAVED
+        data[fromPos] = fromItem
+
+        toItem as CategoryEditModelImpl.DataItem.Content
+        toItem.categoryEdit.checked = false
+        toItem.categoryEdit.headerType = CategoryEditType.OTHER
+        data[toPos] = toItem
+
+        submitList(data)
+        notifyItemRangeChanged(fromPos, toPos - fromPos + 1)
+    }
+
+    private fun onMovedFromOtherToSaved(fromPos: Int, toPos: Int) {
+        val fromItem = data[fromPos]
+        val toItem = data[toPos]
+
+        fromItem as CategoryEditModelImpl.DataItem.Content
+        fromItem.categoryEdit.checked = false
+        fromItem.categoryEdit.headerType = CategoryEditType.OTHER
+        data[fromPos] = fromItem
+
+        toItem as CategoryEditModelImpl.DataItem.Content
+        toItem.categoryEdit.checked = true
+        toItem.categoryEdit.headerType = CategoryEditType.SAVED
+        data[toPos] = toItem
+
+        submitList(data)
+        notifyItemRangeChanged(toPos, fromPos - toPos + 1)
     }
 
     fun getCheckedCategories(): ArrayList<Int> {
@@ -106,7 +153,8 @@ class CategoryEditAdapter(private val selectedStateListener: (CategoryEditModelI
         return checked
     }
 
-    fun submitData(data: List<CategoryEditModelImpl.DataItem>) {
+    fun submitData(data: ArrayList<CategoryEditModelImpl.DataItem>) {
+        this.data = data
         submitList(data)
     }
 
@@ -172,6 +220,11 @@ class CategoryEditAdapter(private val selectedStateListener: (CategoryEditModelI
                 return HeaderViewHolder(view)
             }
         }
+    }
+
+    companion object {
+        const val EDIT_ITEM_VIEW_TYPE_HEADER = 0
+        const val EDIT_ITEM_VIEW_TYPE_ITEM = 1
     }
 }
 

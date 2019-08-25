@@ -23,9 +23,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.home.edit.model.CategoryEditModelImpl
@@ -86,7 +86,16 @@ class CategoryEditFragment : Fragment(), OnStartDragListener {
 
     private fun setCategoryLayoutManager() {
         val gridColumns = 3
-        val gridLayoutManager = StaggeredGridLayoutManager(gridColumns, StaggeredGridLayoutManager.VERTICAL)
+        val gridLayoutManager = GridLayoutManager(context, gridColumns)
+        gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return when(adapter.getItemViewType(position)) {
+                    CategoryEditAdapter.EDIT_ITEM_VIEW_TYPE_HEADER -> gridColumns
+                    CategoryEditAdapter.EDIT_ITEM_VIEW_TYPE_ITEM -> 1
+                    else -> 1
+                }
+            }
+        }
         categoryList.layoutManager = gridLayoutManager
     }
 

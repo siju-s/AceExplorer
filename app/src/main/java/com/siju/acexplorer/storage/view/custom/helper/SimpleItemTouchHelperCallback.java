@@ -17,6 +17,8 @@
 package com.siju.acexplorer.storage.view.custom.helper;
 
 import android.graphics.Canvas;
+
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -74,6 +76,12 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
         // Notify the adapter of the move
         mAdapter.onItemMove(source.getAdapterPosition(), target.getAdapterPosition());
         return true;
+    }
+
+    @Override
+    public void onMoved(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, int fromPos, @NonNull RecyclerView.ViewHolder target, int toPos, int x, int y) {
+        super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y);
+        mAdapter.onMoved(fromPos, toPos);
     }
 
     @Override
