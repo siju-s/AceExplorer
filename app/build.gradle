@@ -15,8 +15,8 @@
  */
 
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
 
@@ -113,7 +113,7 @@ dependencies {
 
     implementation deps.lifecycle.runtime
     implementation deps.lifecycle.extensions
-    annotationProcessor deps.lifecycle.compiler
+    kapt deps.lifecycle.compiler
     implementation deps.lifecycle.viewmodel_ktx
 
     implementation deps.room.runtime
@@ -126,7 +126,7 @@ dependencies {
     implementation deps.support.card_view
     implementation deps.support.palette
     implementation deps.support.preference
-    annotationProcessor deps.support.annotation
+    kapt deps.support.annotation
 
     implementation deps.firebase.core
     implementation deps.firebase.ads
