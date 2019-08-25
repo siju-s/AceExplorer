@@ -16,7 +16,7 @@
 
 package com.siju.acexplorer.main.model.groups
 
-enum class Category private constructor(val value: Int) {
+enum class Category(val value: Int) {
     FILES(0),
     AUDIO(1),
     VIDEO(2),
@@ -65,9 +65,13 @@ enum class Category private constructor(val value: Int) {
     SEARCH_FOLDER_IMAGES(45),
     SEARCH_FOLDER_VIDEOS(46),
     SEARCH_FOLDER_AUDIO(47),
-    SEARCH_FOLDER_DOCS(48);
+    SEARCH_FOLDER_DOCS(48),
+    CAMERA(49),
+    SCREENSHOT(50),
+    WHATSAPP(51),
+    TELEGRAM(52);
 
     companion object {
-        fun valueOf(value: Int): Category? = Category.values().find { it.value == value }
+        fun valueOf(value: Int): Category? = values().find { it.value == value }
     }
 }

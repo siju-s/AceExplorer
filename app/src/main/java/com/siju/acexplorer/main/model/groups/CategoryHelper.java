@@ -82,6 +82,7 @@ public class CategoryHelper {
                 return RECENT;
             case 33:
                 return APP_MANAGER;
+
 //            case 34:
 //                return TRASH;
         }
@@ -257,6 +258,15 @@ public class CategoryHelper {
                 return context.getString(R.string.all_tracks);
             case APP_MANAGER:
                 return context.getString(R.string.app_manager);
+            case CAMERA:
+                return context.getString(R.string.category_camera);
+            case SCREENSHOT:
+                return context.getString(R.string.category_screenshot);
+            case WHATSAPP:
+                return context.getString(R.string.category_whatsapp);
+            case TELEGRAM:
+                return context.getString(R.string.category_telegram);
+
 //            case TRASH:
 //                return context.getString(R.string.trash);
         }
@@ -287,6 +297,14 @@ public class CategoryHelper {
                 return R.drawable.ic_library_large;
             case RECENT:
                 return R.drawable.ic_library_recents;
+            case CAMERA:
+                return R.drawable.ic_camera;
+            case SCREENSHOT:
+                return R.drawable.ic_screenshot;
+            case WHATSAPP:
+                return R.drawable.ic_whatsapp;
+            case TELEGRAM:
+                return R.drawable.ic_telegram;
         }
         return 0;
     }

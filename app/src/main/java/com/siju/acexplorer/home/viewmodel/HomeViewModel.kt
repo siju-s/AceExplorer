@@ -9,6 +9,7 @@ import com.siju.acexplorer.home.types.HomeLibraryInfo
 import com.siju.acexplorer.main.model.StorageItem
 import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.search.helper.SearchUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -68,8 +69,22 @@ class HomeViewModel(private val homeModel: HomeModel) : ViewModel() {
     }
 
     private fun getPath(category: Category) : String? {
-        if (isDownloadCategory(category)) {
-            return StorageUtils.downloadsDirectory
+        when  {
+            isDownloadCategory(category) -> {
+                return StorageUtils.downloadsDirectory
+            }
+            category == Category.CAMERA -> {
+                return SearchUtils.getCameraDirectory()
+            }
+            category == Category.SCREENSHOT -> {
+                return SearchUtils.getScreenshotDirectory()
+            }
+            category == Category.WHATSAPP -> {
+                return SearchUtils.getWhatsappDirectory()
+            }
+            category == Category.TELEGRAM -> {
+                return SearchUtils.getTelegramDirectory()
+            }
         }
         return null
     }
@@ -91,6 +106,10 @@ class HomeViewModel(private val homeModel: HomeModel) : ViewModel() {
             Category.AUDIO     -> category1 = Category.GENERIC_MUSIC
             Category.IMAGE     -> category1 = Category.GENERIC_IMAGES
             Category.VIDEO     -> category1 = Category.GENERIC_VIDEOS
+            Category.CAMERA    -> path = SearchUtils.getCameraDirectory()
+            Category.SCREENSHOT    -> path = SearchUtils.getScreenshotDirectory()
+            Category.WHATSAPP    -> path = SearchUtils.getWhatsappDirectory()
+            Category.TELEGRAM    -> path = SearchUtils.getTelegramDirectory()
             else               -> {
             }
         }

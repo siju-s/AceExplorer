@@ -68,10 +68,12 @@ object CategoryListFetcher {
     private fun addSavedLibs(context: Context, homeLibraryInfoList: ArrayList<HomeLibraryInfo>) {
         val categoryIds = CategorySaver.getSavedCategories(context)
         for (categoryId in categoryIds) {
-            val category = CategoryHelper.getCategory(categoryId)
+            val category = Category.valueOf(categoryId)
             val resId = CategoryHelper.getResourceIdForCategory(category)
             val name = CategoryHelper.getCategoryName(context, category)
-            addToList(HomeLibraryInfo(category, name, resId, COUNT_ZERO), homeLibraryInfoList)
+            category?.let {
+                addToList(HomeLibraryInfo(category, name, resId, COUNT_ZERO), homeLibraryInfoList)
+            }
         }
     }
 
@@ -88,35 +90,35 @@ object CategoryListFetcher {
         val categories = arrayListOf<HomeLibraryInfo>()
         for ((index, category) in totalCategoryList.withIndex()) {
             if (index == 5) {
-                addPathCategories(categories)
+                addPathCategories(context, categories)
             }
             categories.add(createCategoryInfo(context, category))
         }
         return categories
     }
 
-    private fun addPathCategories(categories : ArrayList<HomeLibraryInfo>) {
-        val cameraCategoryInfo  = createCategoryWithPath(SearchUtils.getCameraDirectory())
+    private fun addPathCategories(context: Context, categories: ArrayList<HomeLibraryInfo>) {
+        val cameraCategoryInfo = createCategoryWithPath(context, Category.CAMERA, SearchUtils.getCameraDirectory())
         cameraCategoryInfo?.let {
             categories.add(cameraCategoryInfo)
         }
-        val screenshotCategoryInfo = createCategoryWithPath(SearchUtils.getScreenshotDirectory())
+        val screenshotCategoryInfo = createCategoryWithPath(context, Category.SCREENSHOT, SearchUtils.getScreenshotDirectory())
         screenshotCategoryInfo?.let {
             categories.add(screenshotCategoryInfo)
         }
-        val whatsappCategoryInfo = createCategoryWithPath(SearchUtils.getWhatsappDirectory())
+        val whatsappCategoryInfo = createCategoryWithPath(context, Category.WHATSAPP, SearchUtils.getWhatsappDirectory())
         whatsappCategoryInfo?.let {
             categories.add(whatsappCategoryInfo)
         }
-        val telegramCategoryInfo = createCategoryWithPath(SearchUtils.getTelegramDirectory())
+        val telegramCategoryInfo = createCategoryWithPath(context, Category.TELEGRAM, SearchUtils.getTelegramDirectory())
         telegramCategoryInfo?.let {
             categories.add(telegramCategoryInfo)
         }
     }
 
-    private fun createCategoryWithPath(path: String?): HomeLibraryInfo? {
+    private fun createCategoryWithPath(context: Context, category: Category, path: String?): HomeLibraryInfo? {
         if (File(path).exists()) {
-            return HomeLibraryInfo.createCategoryWithPath(Category.FILES, "Whatsapp", 0, 0, path)
+            return createCategoryInfo(context, category)
         }
         return null
     }

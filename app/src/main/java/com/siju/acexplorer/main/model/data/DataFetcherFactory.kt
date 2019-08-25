@@ -20,7 +20,7 @@ object DataFetcherFactory {
 
     fun createDataFetcher(category: Category): DataFetcher {
         when (category) {
-            Category.FILES, Category.DOWNLOADS -> return FileDataFetcher()
+            Category.FILES, Category.DOWNLOADS, Category.CAMERA, Category.SCREENSHOT, Category.WHATSAPP, Category.TELEGRAM -> return FileDataFetcher()
             Category.FAVORITES -> return FavoriteDataFetcher()
 
             Category.ALBUMS -> return AlbumDataFetcher()
