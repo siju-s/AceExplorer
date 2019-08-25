@@ -42,7 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_alignEnd="@id/imageLibrary"
         android:layout_alignParentTop="true"
-        android:layout_marginEnd="-5dp"
+        android:layout_marginEnd="-10dp"
         android:background="@null"
         android:gravity="center_horizontal|center_vertical"
         tools:src="@drawable/ic_remove_category" />

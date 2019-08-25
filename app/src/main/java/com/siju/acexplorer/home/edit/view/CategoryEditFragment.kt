@@ -28,12 +28,16 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
+import com.siju.acexplorer.extensions.showToast
 import com.siju.acexplorer.home.edit.model.CategoryEditModelImpl
 import com.siju.acexplorer.home.edit.viewmodel.CategoryEditViewModel
 import com.siju.acexplorer.home.edit.viewmodel.CategoryEditViewModelFactory
 import com.siju.acexplorer.storage.view.custom.helper.SimpleItemTouchHelperCallback
 import kotlinx.android.synthetic.main.category_edit.*
 import kotlinx.android.synthetic.main.toolbar.*
+
+private const val MIN_LIBRARY_ITEMS = 3
+private const val MAX_LIBRARY_ITEMS = 12
 
 class CategoryEditFragment : Fragment(), OnStartDragListener {
     private lateinit var categoryEditViewModel: CategoryEditViewModel
@@ -71,17 +75,38 @@ class CategoryEditFragment : Fragment(), OnStartDragListener {
     private fun setupList() {
         setCategoryLayoutManager()
         adapter = CategoryEditAdapter { item, pos ->
-            if (item.categoryEdit.checked) {
-                categoryEditViewModel.removeCategory(item, adapter.getCheckedItemCount())
-            } else {
-                categoryEditViewModel.addCategory(item, adapter.getCheckedItemCount())
-            }
+            onCategoryEdit(item)
         }
         categoryList.adapter = adapter
 
         val callback = SimpleItemTouchHelperCallback(adapter)
         itemTouchHelper = ItemTouchHelper(callback)
         itemTouchHelper.attachToRecyclerView(categoryList)
+    }
+
+    private fun onCategoryEdit(item: CategoryEditModelImpl.DataItem.Content) {
+        val checkedCount = adapter.getCheckedItemCount()
+        if (item.categoryEdit.checked) {
+            onCategoryRemove(checkedCount, item)
+        } else {
+            onCategoryAdd(checkedCount, item)
+        }
+    }
+
+    private fun onCategoryAdd(checkedCount: Int, item: CategoryEditModelImpl.DataItem.Content) {
+        if (checkedCount + 1 > MAX_LIBRARY_ITEMS) {
+            context.showToast(getString(R.string.category_max_min_items_error))
+        } else {
+            categoryEditViewModel.addCategory(item, checkedCount)
+        }
+    }
+
+    private fun onCategoryRemove(checkedCount: Int, item: CategoryEditModelImpl.DataItem.Content) {
+        if (checkedCount - 1 < MIN_LIBRARY_ITEMS) {
+            context.showToast(getString(R.string.category_max_min_items_error))
+        } else {
+            categoryEditViewModel.removeCategory(item, checkedCount)
+        }
     }
 
     private fun setCategoryLayoutManager() {
