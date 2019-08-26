@@ -17,6 +17,8 @@
 package com.siju.acexplorer.main.model.groups
 
 import android.content.Context
+import android.os.Environment.getRootDirectory
+import com.siju.acexplorer.R
 import com.siju.acexplorer.main.model.StorageItem
 import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.main.model.StorageUtils.StorageType.EXTERNAL
@@ -24,6 +26,7 @@ import com.siju.acexplorer.main.model.StorageUtils.getSpaceLeft
 import com.siju.acexplorer.main.model.StorageUtils.getTotalSpace
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.helper.StorageHelper.getStorageProperties
+import com.siju.acexplorer.main.model.root.RootUtils
 import java.io.File
 
 
@@ -61,7 +64,22 @@ class StorageFetcher(private val context: Context) {
                 addToStorageList(storageList, StorageItem(name, spaceText, icon, path, progress, Category.FILES, storageType))
             }
         }
+        if (RootUtils.isRooted(context) && RootUtils.hasRootAccess()) {
+            addRootDir(storageList)
+        }
         return storageList
+    }
+
+    private fun addRootDir(storageList: ArrayList<StorageItem>) {
+        val systemDir = getRootDirectory()
+        val rootDir = systemDir.parentFile
+
+        val spaceLeftRoot = getSpaceLeft(systemDir)
+        val totalSpaceRoot = getTotalSpace(systemDir)
+        val leftProgressRoot = (spaceLeftRoot.toFloat() / totalSpaceRoot * 100).toInt()
+        val progressRoot = 100 - leftProgressRoot
+        addToStorageList(storageList, StorageItem(context.getString(R.string.nav_menu_root), formatStorageSpace(spaceLeftRoot, totalSpaceRoot), R.drawable
+                .ic_root_white, FileUtils.getAbsolutePath(rootDir), progressRoot, Category.FILES, StorageUtils.StorageType.ROOT))
     }
 
     private fun isExternalStorageType(storageType: StorageUtils.StorageType) = storageType == EXTERNAL

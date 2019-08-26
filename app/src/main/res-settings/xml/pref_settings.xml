@@ -32,6 +32,10 @@
         app:key="prefDualPane"
         app:title="@string/pref_title_disable_dual" />
 
+    <SwitchPreferenceCompat
+        app:key="prefRooted"
+        app:title="@string/enable_root" />
+
     <Preference
         app:key="prefsReset"
         app:layout="@layout/prefs_settings_item"

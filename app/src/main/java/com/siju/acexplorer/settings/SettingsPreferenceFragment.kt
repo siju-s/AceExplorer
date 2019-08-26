@@ -20,6 +20,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.*
@@ -31,6 +32,7 @@ import com.siju.acexplorer.extensions.showToast
 import com.siju.acexplorer.home.model.FavoriteHelper
 import com.siju.acexplorer.logging.Logger
 import com.siju.acexplorer.main.model.FileConstants
+import com.siju.acexplorer.main.model.root.RootUtils
 import com.siju.acexplorer.theme.CURRENT_THEME
 import com.siju.acexplorer.theme.PREFS_THEME
 import com.siju.acexplorer.theme.Theme
@@ -57,11 +59,31 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         preferences = PreferenceManager.getDefaultSharedPreferences(context)
 
+        setupRootPref()
         setupLanguagePreference()
         setupThemePref()
         setupAnalyticsPref()
         setupResetFavPref()
         setupUpdatePref()
+    }
+
+    private fun setupRootPref() {
+        val rootPreference = findPreference(PREF_ROOT) as SwitchPreferenceCompat?
+        rootPreference?.setOnPreferenceClickListener{ pref ->
+            onRootPrefClicked(rootPreference.isChecked, rootPreference)
+            true
+        }
+    }
+
+    private fun onRootPrefClicked(newValue: Boolean, rootPreference: SwitchPreferenceCompat) {
+        if (newValue) {
+            val rooted = RootUtils.hasRootAccess()
+            Log.e("Settings", " rooted:$rooted")
+            rootPreference.isChecked = rooted
+        }
+        else {
+            rootPreference.isChecked = false
+        }
     }
 
     private fun setupLanguagePreference() {
@@ -208,5 +230,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
     companion object {
         const val PREFS_ANALYTICS = "prefsAnalytics"
+        const val PREF_ROOT = "prefRooted"
+
     }
 }

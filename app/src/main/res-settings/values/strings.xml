@@ -12,4 +12,5 @@
     <string name="msg_fav_reset">Favourites resetted to default.</string>
     <string name="analytics_text">Send analytics</string>
     <string name="analytics_summary">Help us improve app by sending anonymous usage data.</string>
+    <string name="enable_root">Enable Root access</string>
 </resources>

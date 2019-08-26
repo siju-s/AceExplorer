@@ -29,6 +29,8 @@ import com.stericson.RootTools.RootTools;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
+import static com.siju.acexplorer.settings.SettingsPreferenceFragment.PREF_ROOT;
+
 
 @SuppressWarnings("unused")
 public class RootUtils {
@@ -45,7 +47,7 @@ public class RootUtils {
 
     public static boolean isRooted(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean(PREFS_ROOTED, false);
+        return preferences.getBoolean(PREF_ROOT, false);
     }
 
     public static void setRooted(Context context) {
@@ -65,6 +67,15 @@ public class RootUtils {
                 }
             }
         return !path.startsWith(StorageUtils.INSTANCE.getInternalStorage()) && !isPathOnExt;
+    }
+
+    public static boolean hasRootAccess() {
+        try {
+            return RootTools.isAccessGiven();
+        }
+        catch (Exception e) {
+            return false;
+        }
     }
 
 
