@@ -9,12 +9,16 @@ import com.siju.acexplorer.home.model.FavoriteHelper
 import com.siju.acexplorer.main.model.helper.FileOperations
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.helper.SdkHelper
+import com.siju.acexplorer.main.model.root.RootDeniedException
+import com.siju.acexplorer.main.model.root.RootOperations
+import com.siju.acexplorer.main.model.root.RootUtils
 import com.siju.acexplorer.storage.model.PasteActionInfo
 import com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH
 import com.siju.acexplorer.storage.model.task.CopyService
 import com.siju.acexplorer.storage.model.task.CreateZipService
 import com.siju.acexplorer.storage.model.task.ExtractService
 import com.siju.acexplorer.storage.model.task.MoveService
+import com.stericson.RootTools.RootTools
 import java.io.File
 
 private const val EXT_TXT = ".txt"
@@ -146,25 +150,112 @@ class OperationHelper(val context: Context) {
             return
         }
         val file = File(path + File.separator + name)
-        if (file.exists()) {
-            fileOperationCallback.onOperationResult(operation,
-                                                    getOperationAction(
-                                                            OperationResult(
-                                                                    OperationResultCode.FILE_EXISTS,
-                                                                    0)))
-            removeOperation()
-            return
-        }
         when (OperationUtils.getWriteMode(path)) {
+            OperationUtils.WriteMode.ROOT -> {
+                createFolderInRoot(file, fileOperationCallback, operation)
+            }
             OperationUtils.WriteMode.EXTERNAL -> {
+                if (checkIfFileExists(file, fileOperationCallback, operation)) return
                 fileOperationCallback.onOperationResult(
                         operation,
                         getOperationAction(OperationResult(OperationResultCode.SAF, 0)))
             }
             OperationUtils.WriteMode.INTERNAL -> {
+                if (checkIfFileExists(file, fileOperationCallback, operation)) return
                 createFolder(operation, file, fileOperationCallback)
             }
         }
+    }
+
+    private fun createFolderInRoot(file: File, fileOperationCallback: FileOperationCallback, operation: Operations) {
+        val exists: Boolean
+        try {
+            exists = RootOperations.fileExists(file.absolutePath, true)
+        } catch (e: RootDeniedException) {
+            fileOperationCallback.onOperationResult(
+                    operation,
+                    getOperationAction(OperationResult(OperationResultCode.FAIL, 0)))
+            removeOperation()
+            return
+        }
+        if (exists) {
+            fileOperationCallback.onOperationResult(operation,
+                    getOperationAction(
+                            OperationResult(
+                                    OperationResultCode.FILE_EXISTS,
+                                    0)))
+            removeOperation()
+        } else {
+            var result = FileOperations.mkdir(file)
+            if (!result && RootTools.isAccessGiven()) {
+                try {
+                    val parentPath = file.parent
+                    RootUtils.mountRW(parentPath)
+                    RootUtils.mkDir(file.absolutePath)
+                    result = true
+                    RootUtils.mountRO(parentPath)
+                } catch (e: RootDeniedException) {
+                    result = false
+                }
+
+            }
+            val resultCode = if (result) OperationResultCode.SUCCESS else OperationResultCode.FAIL
+            fileOperationCallback.onOperationResult(operation, getOperationAction(
+                    OperationResult(resultCode, 1)))
+            removeOperation()
+        }
+    }
+
+    private fun createFileInRoot(file: File, fileOperationCallback: FileOperationCallback, operation: Operations) {
+        val exists: Boolean
+        try {
+            exists = RootOperations.fileExists(file.absolutePath, false)
+        } catch (e: RootDeniedException) {
+            fileOperationCallback.onOperationResult(
+                    operation,
+                    getOperationAction(OperationResult(OperationResultCode.FAIL, 0)))
+            removeOperation()
+            return
+        }
+        if (exists) {
+            fileOperationCallback.onOperationResult(operation,
+                    getOperationAction(
+                            OperationResult(
+                                    OperationResultCode.FILE_EXISTS,
+                                    0)))
+            removeOperation()
+        } else {
+            var result = FileOperations.mkfile(file)
+            if (!result && RootTools.isAccessGiven()) {
+                try {
+                    val parentPath = file.parent
+                    RootUtils.mountRW(parentPath)
+                    RootUtils.mkFile(file.absolutePath)
+                    result = true
+                    RootUtils.mountRO(parentPath)
+                } catch (e: RootDeniedException) {
+                    result = false
+                }
+
+            }
+            val resultCode = if (result) OperationResultCode.SUCCESS else OperationResultCode.FAIL
+            fileOperationCallback.onOperationResult(operation, getOperationAction(
+                    OperationResult(resultCode, 1)))
+            removeOperation()
+        }
+    }
+
+    private fun checkIfFileExists(file: File, fileOperationCallback: FileOperationCallback, operation: Operations): Boolean {
+        if (file.exists()) {
+            fileOperationCallback.onOperationResult(operation,
+                    getOperationAction(
+                            OperationResult(
+                                    OperationResultCode.FILE_EXISTS,
+                                    0)))
+            removeOperation()
+            return true
+        }
+        return false
     }
 
     fun createFile(operation: Operations, path: String, name: String,
@@ -186,12 +277,17 @@ class OperationHelper(val context: Context) {
             return
         }
         when (OperationUtils.getWriteMode(path)) {
+            OperationUtils.WriteMode.ROOT -> {
+                createFileInRoot(file, fileOperationCallback, operation)
+            }
             OperationUtils.WriteMode.EXTERNAL -> {
+                if (checkIfFileExists(file, fileOperationCallback, operation)) return
                 fileOperationCallback.onOperationResult(
                         operation,
                         getOperationAction(OperationResult(OperationResultCode.SAF, 0)))
             }
             OperationUtils.WriteMode.INTERNAL -> {
+                if (checkIfFileExists(file, fileOperationCallback, operation)) return
                 createFile(operation, file, fileOperationCallback)
             }
         }

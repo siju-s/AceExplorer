@@ -16,6 +16,8 @@
 
 package com.siju.acexplorer.main.model.helper;
 
+import android.util.Log;
+
 import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.common.types.FileInfo;
 import com.siju.acexplorer.main.model.data.FileDataFetcher;
@@ -162,20 +164,24 @@ public class RootHelper {
             hidden = "a ";
         }
         ArrayList<String> ls;
-
+        long time = System.currentTimeMillis();
+        Log.e(TAG, "getRootedList: time:"+time);
         boolean rootAccessGiven = RootTools.isAccessGiven();
         boolean rooted = root || rootAccessGiven;
         if (rooted) {
             String cpath = getCommandLineString(path);
             ls = runAndWait1("ls -l" + hidden + cpath, true);
+            long newTime = System.currentTimeMillis();
+            Log.e(TAG, "getRootedList: time taken for ls:"+(newTime - time));
             if (ls != null) {
                 for (int i = 0; i < ls.size(); i++) {
                     String file1 = ls.get(i);
                     if (!file1.contains("Permission denied")) {
                         try {
-                            BaseFile array = parseName(file1);
-                            if (array != null) {
-                                String name = array.getPath();
+                            BaseFile baseFile = parseFile(file1);
+                            Log.e(TAG, "getRootedList: parse time taken:"+(System.currentTimeMillis() - newTime));
+                            if (baseFile != null) {
+                                String name = baseFile.getPath();
                                 String path1;
 
                                 if (!path.equals("/")) {
@@ -184,15 +190,15 @@ public class RootHelper {
                                     path1 = "/" + name;
                                 }
                                 boolean isDirectory;
-                                if (array.getLink().trim().length() > 0) {
-                                    isDirectory = isDirectory(array.getLink(), true, 0);
+                                if (baseFile.getLink().trim().length() > 0) {
+                                    isDirectory = isDirectory(baseFile.getLink(), true, 0);
                                 } else {
-                                    isDirectory = isDirectory(array);
+                                    isDirectory = isDirectory(baseFile);
                                 }
-                                long size1 = array.getSize();
+                                long size1 = baseFile.getSize();
                                 fileInfoArrayList.add(new FileInfo(FILES, name, path1,
-                                                                   array.getDate(), size1, isDirectory, null,
-                                                                   array.getPermission(), true));
+                                                                   baseFile.getDate(), size1, isDirectory, null,
+                                                                   baseFile.getPermission(), true));
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -244,7 +250,7 @@ public class RootHelper {
     }
 
 
-    private static BaseFile parseName(String line) {
+    private static BaseFile parseFile(String line) {
         boolean linked = false;
         StringBuilder name = new StringBuilder();
         StringBuilder link = new StringBuilder();
@@ -325,7 +331,7 @@ public class RootHelper {
             for (String s : ls) {
                 if (contains(s.split(" "), name)) {
                     try {
-                        BaseFile path = parseName(s);
+                        BaseFile path = parseFile(s);
                         if (path == null) {
                             return file.isDirectory();
                         }
