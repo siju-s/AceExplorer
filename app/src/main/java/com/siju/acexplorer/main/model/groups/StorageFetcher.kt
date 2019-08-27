@@ -41,6 +41,19 @@ class StorageFetcher(private val context: Context) {
         return populateStorageList(storagePaths)
     }
 
+    fun getExternalSdList() : ArrayList<String> {
+        val storagePaths = StorageUtils.storageDirectories
+        for (path in storagePaths) {
+            val file = File(path)
+            val triple = getStorageProperties(path, file)
+            val storageType = triple.third
+            if (isExternalStorageType(storageType)) {
+                externalSDList.add(path)
+            }
+        }
+        return externalSDList
+    }
+
     private fun populateStorageList(storagePaths: List<String>): ArrayList<StorageItem> {
         var storageType: StorageUtils.StorageType
         val storageList = ArrayList<StorageItem>()

@@ -46,8 +46,10 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.analytics.Analytics;
 import com.siju.acexplorer.common.types.FileInfo;
+import com.siju.acexplorer.main.model.groups.StorageFetcher;
 import com.siju.acexplorer.main.model.helper.FileUtils;
 import com.siju.acexplorer.main.model.helper.UriHelper;
+import com.siju.acexplorer.main.model.root.RootUtils;
 import com.siju.acexplorer.main.view.PasteConflictAdapter;
 import com.siju.acexplorer.storage.model.SortMode;
 import com.siju.acexplorer.storage.model.operations.Operations;
@@ -692,7 +694,7 @@ public class DialogHelper {
             textHidden.setText(isHidden ? yes : no);
         }
 
-        if (new File(path).isDirectory()) {
+        if (new File(path).isDirectory() || (RootUtils.isRooted(context) && RootUtils.isRootDir(path, new StorageFetcher(context).getExternalSdList()))) {
             textMD5.setVisibility(View.GONE);
             textMD5Placeholder.setVisibility(View.GONE);
         } else {
