@@ -32,7 +32,12 @@ import com.siju.acexplorer.logging.Logger
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastOreo
 import com.siju.acexplorer.storage.model.operations.*
-import com.siju.acexplorer.storage.model.operations.OperationUtils.*
+import com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH
+import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_END
+import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH
+import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES
+import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES_COUNT
+import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION
 import com.siju.acexplorer.storage.model.operations.Operations.COMPRESS
 import java.io.*
 import java.util.*

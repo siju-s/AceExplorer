@@ -11,6 +11,7 @@ import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.helper.SdkHelper
 import com.siju.acexplorer.main.model.root.RootDeniedException
 import com.siju.acexplorer.main.model.root.RootOperations
+import com.siju.acexplorer.main.model.root.RootOperations.renameRoot
 import com.siju.acexplorer.main.model.root.RootUtils
 import com.siju.acexplorer.storage.model.PasteActionInfo
 import com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH
@@ -87,7 +88,9 @@ class OperationHelper(val context: Context) {
         }
         val parent = File(filePath).parent
         when (OperationUtils.getWriteMode(parent)) {
-
+            OperationUtils.WriteMode.ROOT -> {
+                renameFileRoot(operation, filePath, newName, fileOperationCallback)
+            }
             OperationUtils.WriteMode.EXTERNAL -> {
                 fileOperationCallback.onOperationResult(
                         operation,
@@ -98,6 +101,41 @@ class OperationHelper(val context: Context) {
                 renameFile(operation, filePath, parent, newName, fileOperationCallback)
             }
         }
+    }
+
+    private fun renameFileRoot(operation: Operations, filePath: String, newName: String, fileOperationCallback: FileOperationCallback) {
+        val oldFile = File(filePath)
+        var extension: String? = null
+        var isFile = false
+        if (File(filePath).isFile) {
+            extension = FileUtils.getExtensionWithDot(filePath)
+            isFile = true
+        }
+        val parent = File(filePath).parent
+        val newFilePath: String
+        newFilePath = if (isFile) {
+            parent + File.separator + newName + extension
+        }
+        else {
+            parent + File.separator + newName
+        }
+        val newFile = File(newFilePath)
+        var result = FileOperations.renameFolder(oldFile, newFile)
+        val fileCreated = !oldFile.exists() && newFile.exists()
+        if (!result) {
+            if (!fileCreated && RootUtils.isRooted(context)) {
+                try {
+                    renameRoot(oldFile, newFile.name)
+                } catch (e: RootDeniedException) {
+                }
+
+                result = true
+            }
+        }
+        val resultCode = if (result) OperationResultCode.SUCCESS else OperationResultCode.FAIL
+        fileOperationCallback.onOperationResult(operation, getOperationAction(
+                OperationResult(resultCode, 1)))
+        removeOperation()
     }
 
     private fun renameFile(operation: Operations,
@@ -308,7 +346,7 @@ class OperationHelper(val context: Context) {
                     fileOperationCallback: FileOperationCallback) {
         addOperation(operation, OperationData.createDeleteOperation(filesList))
         when (OperationUtils.getWriteMode(File(filesList[0]).parent)) {
-            OperationUtils.WriteMode.INTERNAL -> {
+            OperationUtils.WriteMode.INTERNAL, OperationUtils.WriteMode.ROOT -> {
                 deleteWriteableFiles(filesList, fileOperationCallback, operation)
             }
             OperationUtils.WriteMode.EXTERNAL -> {
@@ -478,6 +516,11 @@ class OperationHelper(val context: Context) {
                         getOperationAction(OperationResult(OperationResultCode.SAF, 0)))
 
             }
+            OperationUtils.WriteMode.ROOT -> {
+                fileOperationCallback.onOperationResult(
+                        Operations.EXTRACT,
+                        getOperationAction(OperationResult(OperationResultCode.FAIL, 0)))
+            }
         }
     }
 
@@ -528,6 +571,11 @@ class OperationHelper(val context: Context) {
                         Operations.COMPRESS,
                         getOperationAction(OperationResult(OperationResultCode.SAF, 0)))
 
+            }
+            OperationUtils.WriteMode.ROOT -> {
+                fileOperationCallback.onOperationResult(
+                        Operations.COMPRESS,
+                        getOperationAction(OperationResult(OperationResultCode.FAIL, 0)))
             }
         }
     }

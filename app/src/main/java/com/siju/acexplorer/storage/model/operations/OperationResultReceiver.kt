@@ -4,7 +4,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.siju.acexplorer.logging.Logger
-import com.siju.acexplorer.storage.model.operations.OperationUtils.*
+import com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH
+import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES_COUNT
+import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION
 import java.util.*
 
 private const val TAG = "OperationResultReceiver"
@@ -101,6 +103,8 @@ class OperationResultReceiver(private val operationHelper: OperationHelper) : Br
 //                val path = intent.getStringExtra(KEY_FILEPATH)
 //                onReloadList(path)
 //            }
+
+
             ACTION_OP_REFRESH  -> {
                 val bundle = intent.extras
                 val operation = bundle?.getSerializable(KEY_OPERATION) as Operations?

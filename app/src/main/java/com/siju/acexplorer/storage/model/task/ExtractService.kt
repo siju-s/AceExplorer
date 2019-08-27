@@ -32,7 +32,14 @@ import com.siju.acexplorer.main.model.helper.FileOperations
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastOreo
 import com.siju.acexplorer.storage.model.operations.*
-import com.siju.acexplorer.storage.model.operations.OperationUtils.*
+import com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_FAILED
+import com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH
+import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_END
+import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILENAME
+import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH
+import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH2
+import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES_COUNT
+import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION
 import com.siju.acexplorer.storage.model.operations.Operations.EXTRACT
 import com.siju.acexplorer.storage.modules.zipviewer.ZipUtils
 import com.siju.acexplorer.storage.modules.zipviewer.ZipUtils.EXT_TAR

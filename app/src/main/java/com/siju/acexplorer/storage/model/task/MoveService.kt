@@ -35,7 +35,15 @@ import com.siju.acexplorer.main.model.root.RootDeniedException
 import com.siju.acexplorer.main.model.root.RootUtils
 import com.siju.acexplorer.storage.model.PasteActionInfo
 import com.siju.acexplorer.storage.model.operations.*
-import com.siju.acexplorer.storage.model.operations.OperationUtils.*
+import com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REFRESH
+import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_CONFLICT_DATA
+import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_END
+import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH
+import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES
+import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES_COUNT
+import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OLD_FILES
+import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION
+import com.siju.acexplorer.storage.model.operations.OperationUtils.getWriteMode
 import com.siju.acexplorer.storage.model.operations.Operations.CUT
 import java.io.File
 import java.util.*
@@ -182,12 +190,12 @@ class MoveService : Service() {
     private fun checkWriteMode(destinationDir: String) {
 
         when (getWriteMode(destinationDir)) {
-            WriteMode.INTERNAL -> {
+            OperationUtils.WriteMode.INTERNAL -> {
                 moveOnInternalStorage(destinationDir)
                 publishCompletedResult()
             }
 
-            WriteMode.ROOT     -> {
+            OperationUtils.WriteMode.ROOT     -> {
                 moveOnRoot(destinationDir)
                 publishCompletedResult()
             }

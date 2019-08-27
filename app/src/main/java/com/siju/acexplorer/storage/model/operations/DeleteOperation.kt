@@ -3,6 +3,9 @@ package com.siju.acexplorer.storage.model.operations
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.helper.MediaScannerHelper
 import com.siju.acexplorer.main.model.StorageUtils
+import com.siju.acexplorer.main.model.root.RootDeniedException
+import com.siju.acexplorer.main.model.root.RootUtils
+import com.stericson.RootTools.RootTools
 import java.io.File
 
 class DeleteOperation {
@@ -19,6 +22,21 @@ class DeleteOperation {
                 val isRootDir = StorageUtils.isRootDirectory(path)
                 if (!isRootDir) {
                     return filesDeleted
+                }
+                else {
+                    val rooted = RootUtils.isRooted(AceApplication.appContext) && RootTools.isAccessGiven()
+                    if (rooted) {
+                        try {
+                            RootUtils.mountRW(path)
+                            RootUtils.delete(path)
+                            RootUtils.mountRO(path)
+                            filesDeleted++
+                            filesToMediaIndex.add(path)
+                        } catch (e: RootDeniedException) {
+                            e.printStackTrace()
+                        }
+
+                    }
                 }
             }
         }
