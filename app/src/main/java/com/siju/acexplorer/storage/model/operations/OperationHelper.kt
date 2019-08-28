@@ -463,10 +463,16 @@ class OperationHelper(val context: Context) {
                   pasteOperationCallback: PasteOperationCallback,
                   fileOperationCallback: FileOperationCallback) {
         setFileOperationCallback(fileOperationCallback)
-        when (OperationUtils.getWriteMode(destinationDir)) {
-            OperationUtils.WriteMode.INTERNAL -> {
+        when (val writeMode = OperationUtils.getWriteMode(destinationDir)) {
+            OperationUtils.WriteMode.INTERNAL, OperationUtils.WriteMode.ROOT -> {
                 addOperation(Operations.CUT,
                              OperationData.createCopyOperation(destinationDir, files))
+                if (writeMode == OperationUtils.WriteMode.ROOT && RootUtils.isRooted(context) && !RootUtils.hasRootAccess()) {
+                    fileOperationCallback.onOperationResult(Operations.CUT, getOperationAction(
+                            OperationResult(OperationResultCode.FAIL, 0)))
+                    removeOperation()
+                    return
+                }
                 pasteOperationCallback.onPasteActionStarted(Operations.CUT, destinationDir, files)
 
                 val intent = Intent(context, MoveService::class.java)

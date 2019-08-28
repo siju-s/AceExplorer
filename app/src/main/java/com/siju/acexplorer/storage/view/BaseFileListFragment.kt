@@ -412,9 +412,9 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     }
 
     private fun handleOperationResult(operationResult: Pair<Operations, OperationAction>) {
-        Log.e(TAG, "handleOperationResult: $operationResult")
         val action = operationResult.second
         val operation = operationResult.first
+        Log.e(TAG, "handleOperationResult: $operation, result:${action.operationResult.resultCode}")
         val context = context
         context?.let {
             when (action.operationResult.resultCode) {

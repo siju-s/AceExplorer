@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -43,13 +42,14 @@ public class RootHelper {
     public static synchronized ArrayList<String> executeCommand(String cmd) {
         Log.e(TAG, "executeCommand: "+cmd);
         final ArrayList<String> list = new ArrayList<>();
-        final CountDownLatch countDownLatch = new CountDownLatch(1);
+//        final CountDownLatch countDownLatch = new CountDownLatch(1);
         final AtomicReference<ArrayList<String>> resultRef = new AtomicReference<>();
         Command command = new Command(0, cmd) {
             @Override
             public void commandOutput(int id, String line) {
                 super.commandOutput(id, line);
                 list.add(line);
+                Log.e(TAG, "command commandOutput:"+line);
             }
 
             @Override
@@ -61,8 +61,9 @@ public class RootHelper {
             @Override
             public void commandCompleted(int id, int exitcode) {
                 super.commandCompleted(id, exitcode);
+                Log.e(TAG, "command commandCompleted:"+list.size());
                 resultRef.set(list);
-                countDownLatch.countDown();
+//                countDownLatch.countDown();
             }
         };
         try {
@@ -160,18 +161,18 @@ public class RootHelper {
         if (showHidden) {
             hidden = "a ";
         }
-        ArrayList<String> ls;
+        ArrayList<String> list;
         long time = System.currentTimeMillis();
         Log.e(TAG, "getRootedList: time:" + time);
         boolean rootAccessGiven = RootTools.isAccessGiven();
         boolean rooted = root || rootAccessGiven;
         if (rooted) {
-            ls = executeCommand("ls -l " + hidden + getCommandLineString(path));
+            list = executeCommand("ls -l " + getCommandLineString(path));
             long newTime = System.currentTimeMillis();
-            Log.e(TAG, "getRootedList: time taken for ls:" + (newTime - time));
-            if (ls != null) {
-                for (int i = 0; i < ls.size(); i++) {
-                    String file1 = ls.get(i);
+            Log.e(TAG, "getRootedList: time taken for ls:" + (newTime - time) +" list:"+list);
+            if (list != null) {
+                for (int i = 0; i < list.size(); i++) {
+                    String file1 = list.get(i);
                     parseFileNew(path, file1, fileInfoArrayList);
                 }
             }

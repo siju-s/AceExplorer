@@ -358,7 +358,7 @@ class CopyService : Service() {
         if (isCompleted) {
             return
         }
-        Log.e(TAG, "publishCompletionResult: ")
+        Log.e(TAG, "publishCompletionResult: filesCopied:$filesCopied, failedfiles:${failedFiles.size}")
         isCompleted = true
         cancelNotification()
         if (stopService) {
@@ -387,6 +387,7 @@ class CopyService : Service() {
             }
             copiedBytes++
             calculateProgress(name)
+            filesCopied++
         }
         catch (e: RootDeniedException) {
             e.printStackTrace()
