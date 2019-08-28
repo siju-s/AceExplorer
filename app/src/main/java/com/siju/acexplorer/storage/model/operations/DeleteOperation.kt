@@ -27,9 +27,7 @@ class DeleteOperation {
                     val rooted = RootUtils.isRooted(AceApplication.appContext) && RootTools.isAccessGiven()
                     if (rooted) {
                         try {
-                            RootUtils.mountRW(path)
                             RootUtils.delete(path)
-                            RootUtils.mountRO(path)
                             filesDeleted++
                             filesToMediaIndex.add(path)
                         } catch (e: RootDeniedException) {

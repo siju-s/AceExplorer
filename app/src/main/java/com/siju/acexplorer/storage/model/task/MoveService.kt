@@ -325,16 +325,15 @@ class MoveService : Service() {
         MediaScannerHelper.scanFiles(context, filesToMediaIndex.toTypedArray())
     }
 
-    private fun moveRoot(path: String, name: String, destinationPath: String) {
+    private fun moveRoot(sourcePath: String, name: String, destinationPath: String) {
         val targetPath = when (destinationPath) {
             File.separator -> destinationPath + name
             else           -> destinationPath + File.separator + name
         }
         try {
             RootUtils.mountRW(destinationPath)
-            RootUtils.move(path, targetPath)
-            RootUtils.mountRO(destinationPath)
-            oldFileList?.add(path)
+            RootUtils.move(sourcePath, targetPath)
+            oldFileList?.add(sourcePath)
             filesMovedList.add(targetPath)
             val extension = name.substring(name.lastIndexOf(".") + 1)
             val category = getCategoryFromExtension(extension).value

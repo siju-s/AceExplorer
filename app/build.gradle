@@ -104,7 +104,8 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation fileTree(include: ['*.aar'], dir: 'libs')
-    implementation project(':RootShell')
+    implementation('com.github.Stericson:RootTools:5.0') { transitive = false }
+    implementation 'com.github.Stericson:RootShell:1.6'
     implementation project(':billingsecure')
 
     implementation deps.kotlin.stdlib

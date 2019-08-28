@@ -382,7 +382,6 @@ class CopyService : Service() {
         try {
             RootUtils.mountRW(destinationPath)
             RootUtils.copy(path, targetPath)
-            RootUtils.mountRO(destinationPath)
             if (isMediaScanningRequired(File(targetPath))) {
                 filesToMediaIndex.add(targetPath)
             }

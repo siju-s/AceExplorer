@@ -17,6 +17,8 @@
 package com.siju.acexplorer.main.model.root;
 
 
+import com.stericson.RootTools.RootTools;
+
 import java.io.File;
 
 public class RootOperations {
@@ -26,13 +28,9 @@ public class RootOperations {
         String destinationPath = sourceFile.getParent() + File.separator + newFileName;
         RootUtils.mountRW(sourceFile.getPath());
         RootUtils.move(sourceFile.getPath(), destinationPath);
-        RootUtils.mountRO(sourceFile.getPath());
     }
 
-    public static boolean fileExists(String path, boolean isDir) throws RootDeniedException {
-        RootUtils.mountRW(path);
-        boolean exists = RootUtils.fileExists(path, isDir);
-        RootUtils.mountRO(path);
-        return exists;
+    public static boolean fileExists(String path, boolean isDir) {
+        return RootTools.exists(path, isDir);
     }
 }

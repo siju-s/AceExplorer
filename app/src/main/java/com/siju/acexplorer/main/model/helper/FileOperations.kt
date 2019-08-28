@@ -110,7 +110,9 @@ object FileOperations {
             e.printStackTrace()
         }
 
-        if (file.exists()) return true
+        if (file.exists()) {
+            return true
+        }
         val result: Boolean
         // Try with Storage Access Framework.
         if (isOnExtSdCard(file)) {

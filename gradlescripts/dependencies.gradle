@@ -105,5 +105,6 @@ static def addRepos(RepositoryHandler handler) {
     handler.google()
     handler.jcenter()
     handler.maven { url 'https://maven.fabric.io/public' }
+    handler.maven { url 'https://jitpack.io' }
 }
 ext.addRepos = this.&addRepos

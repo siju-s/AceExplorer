@@ -206,6 +206,7 @@ class OperationHelper(val context: Context) {
     }
 
     private fun createFolderInRoot(file: File, fileOperationCallback: FileOperationCallback, operation: Operations) {
+        RootTools.debugMode = true
         val exists: Boolean
         try {
             exists = RootOperations.fileExists(file.absolutePath, true)
@@ -227,11 +228,8 @@ class OperationHelper(val context: Context) {
             var result = FileOperations.mkdir(file)
             if (!result && RootTools.isAccessGiven()) {
                 try {
-                    val parentPath = file.parent
-                    RootUtils.mountRW(parentPath)
                     RootUtils.mkDir(file.absolutePath)
                     result = true
-                    RootUtils.mountRO(parentPath)
                 } catch (e: RootDeniedException) {
                     result = false
                 }
@@ -264,17 +262,14 @@ class OperationHelper(val context: Context) {
             removeOperation()
         } else {
             var result = FileOperations.mkfile(file)
+            Log.e("OpHelper", "Result createFileInRoot:$result")
             if (!result && RootTools.isAccessGiven()) {
-                try {
-                    val parentPath = file.parent
-                    RootUtils.mountRW(parentPath)
+                result = try {
                     RootUtils.mkFile(file.absolutePath)
-                    result = true
-                    RootUtils.mountRO(parentPath)
+                    true
                 } catch (e: RootDeniedException) {
-                    result = false
+                    false
                 }
-
             }
             val resultCode = if (result) OperationResultCode.SUCCESS else OperationResultCode.FAIL
             fileOperationCallback.onOperationResult(operation, getOperationAction(

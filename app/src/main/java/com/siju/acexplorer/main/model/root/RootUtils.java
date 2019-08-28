@@ -18,14 +18,15 @@ package com.siju.acexplorer.main.model.root;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
-import com.siju.acexplorer.logging.Logger;
 import com.siju.acexplorer.main.model.StorageUtils;
 import com.siju.acexplorer.main.model.helper.RootHelper;
 import com.stericson.RootTools.RootTools;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -34,11 +35,11 @@ import static com.siju.acexplorer.settings.SettingsPreferenceFragment.PREF_ROOT;
 
 @SuppressWarnings("unused")
 public class RootUtils {
-    public static final  String DATA_APP_DIR   = "/data/app";
-    private static final String LS             = "ls -lAnH \"%\" --color=never";
-    private static final String LSDIR          = "ls -land \"%\" --color=never";
-    public static final  String SYSTEM_APP_DIR = "/system/app";
-    private static final  String PREFS_ROOTED   = "is_rooted";
+    public static final String DATA_APP_DIR = "/data/app";
+    private static final String LS = "ls -lAnH \"%\" --color=never";
+    private static final String LSDIR = "ls -land \"%\" --color=never";
+    public static final String SYSTEM_APP_DIR = "/system/app";
+    private static final String PREFS_ROOTED = "is_rooted";
     private static final Pattern mLsPattern;
 
     static {
@@ -60,20 +61,19 @@ public class RootUtils {
             return false;
         }
         boolean isPathOnExt = false;
-            for(String extSD: externalSdList) {
-                if (path.startsWith(extSD)) {
-                    isPathOnExt = true;
-                    break;
-                }
+        for (String extSD : externalSdList) {
+            if (path.startsWith(extSD)) {
+                isPathOnExt = true;
+                break;
             }
+        }
         return !path.startsWith(StorageUtils.INSTANCE.getInternalStorage()) && !isPathOnExt;
     }
 
     public static boolean hasRootAccess() {
         try {
             return RootTools.isAccessGiven();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return false;
         }
     }
@@ -99,87 +99,70 @@ public class RootUtils {
         if (!RootTools.isAccessGiven()) {
             throw new RootDeniedException();
         }
-        String command = "chmod %s %s";
-        Object[] args = new Object[2];
-        args[0] = octalNotation;
-        args[1] = path;
-
-        RootHelper.runAndWait(String.format(command, args));
+        String command = "chmod ";
+//        Object[] args = new Object[2];
+//        args[0] = octalNotation;
+//        args[1] = path;
+        RootHelper.executeCommand(octalNotation + " " + RootHelper.getCommandLineString(path));
     }
 
     public static void mountRW(String path) throws RootDeniedException {
-        if (!RootTools.isAccessGiven()) {
-            throw new RootDeniedException();
-        }
-        String str = "mount -o %s,remount %s";
-        String mountPoint = "/";
-        if (path.startsWith("/system")) {
-            mountPoint = "/system";
-        }
-        Object[] objArr = new Object[2];
-        objArr[0] = "rw";
-        objArr[1] = mountPoint;
-        String cmd = String.format(str, objArr);
-        Logger.log("RootUtils", "Command=" + cmd);
-        RootHelper.runAndWait(cmd);
+//        if (!RootTools.isAccessGiven()) {
+//            throw new RootDeniedException();
+//        }
+        Log.e("RootUtils", "mountRW() called with: path = [" + path + "]");
+        RootTools.remount(path, "RW");
+//        String str = "mount -o %s,remount %s";
+//        String mountPoint = "/";
+//        if (path.startsWith("/system")) {
+//            mountPoint = "/system";
+//        }
+//        Object[] objArr = new Object[2];
+//        objArr[0] = "rw";
+//        objArr[1] = mountPoint;
+//        String cmd = String.format(str, objArr);
+//        Log.e("RootUtils", "Command=" + cmd);
+//        RootHelper.runAndWait(cmd);
     }
 
     public static boolean fileExists(String path, boolean isDir) throws RootDeniedException {
         return RootTools.exists(path, isDir);
     }
 
-    public static void mountRO(String path) throws RootDeniedException {
-        if (!RootTools.isAccessGiven()) {
-            throw new RootDeniedException();
-        }
-        String str = "mount -o %s,remount %s";
-        String mountPoint = "/";
-        if (path.startsWith("/system")) {
-            mountPoint = "/system";
-        }
-        Object[] objArr = new Object[2];
-        objArr[0] = "ro";
-        objArr[1] = mountPoint;
-
-        String cmd = String.format(str, objArr);
-        Logger.log("RootUtils", "Command=" + cmd);
-        RootHelper.runAndWait(cmd);
-
+    public static void mountRO(String path) {
+        Log.e("RootUtils", "mountRO() called with: path = [" + path + "]");
+        RootTools.remount(path, "RO");
     }
 
-    /**
-     * @param source
-     * @param destination
-     * @throws RootDeniedException
-     */
-    public static void copy(String source, String destination) throws RootDeniedException {
-        RootHelper.runAndWait("cp " + source + " " + destination);
+    public static void copy(String source, String destination) {
+        RootHelper.executeCommand("cp -fr " + RootHelper.getCommandLineString(source) + " " +
+                RootHelper.getCommandLineString(destination));
     }
 
     public static void mkDir(String path) throws RootDeniedException {
-        RootHelper.runAndWait("mkdir " + path);
+        String parentPath = new File(path).getParent();
+        RootUtils.mountRW(parentPath);
+        RootHelper.runAndWait("mkdir " + RootHelper.getCommandLineString(path));
     }
 
     public static void mkFile(String path) throws RootDeniedException {
-        RootHelper.runAndWait("touch " + path);
+        Log.e("RootUtils", "mkFile: "+path);
+        String parentPath = new File(path).getParent();
+        RootUtils.mountRW(parentPath);
+        RootHelper.runAndWait("touch " + RootHelper.getCommandLineString(path));
     }
 
-    /**
-     * Recursively removes a path with it's contents (if any)
-     *
-     * @param path
-     * @throws RootDeniedException
-     */
-    public static void delete(String path) throws RootDeniedException {
-        RootHelper.runAndWait("rm -r " + path);
+    public static void delete(String path) throws RootDeniedException{
+        RootUtils.mountRW(path);
+        if (new File(path).isDirectory()) {
+            RootHelper.executeCommand("rm -f -r " + RootHelper.getCommandLineString(path));
+        } else {
+            RootHelper.executeCommand("rm -r " + RootHelper.getCommandLineString(path));
+        }
     }
 
-    /**
-     * @param path
-     * @param destination
-     * @throws RootDeniedException
-     */
-    public static void move(String path, String destination) throws RootDeniedException {
-        RootHelper.runAndWait("mv " + path + " " + destination);
+    public static void move(String source, String destination)  {
+        RootHelper.executeCommand("mv " + RootHelper.getCommandLineString(source) + " "+
+                RootHelper.getCommandLineString(destination));
     }
 }
