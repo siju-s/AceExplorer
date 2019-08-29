@@ -4,10 +4,12 @@ import com.siju.acexplorer.main.model.data.doc.CompressedFileFetcher
 import com.siju.acexplorer.main.model.data.doc.DocumentFetcher
 import com.siju.acexplorer.main.model.data.doc.LargeFilesFetcher
 import com.siju.acexplorer.main.model.data.doc.PdfFetcher
+import com.siju.acexplorer.main.model.data.image.ImageAllFetcher
 import com.siju.acexplorer.main.model.data.image.ImageDataFetcher
 import com.siju.acexplorer.main.model.data.image.ImageDetailFetcher
 import com.siju.acexplorer.main.model.data.music.*
 import com.siju.acexplorer.main.model.data.recent.*
+import com.siju.acexplorer.main.model.data.video.VideoAllFetcher
 import com.siju.acexplorer.main.model.data.video.VideoDetailFetcher
 import com.siju.acexplorer.main.model.data.video.VideoFetcher
 import com.siju.acexplorer.main.model.groups.Category
@@ -55,9 +57,11 @@ object DataFetcherFactory {
 
             Category.VIDEO, Category.GENERIC_VIDEOS -> return VideoFetcher()
             Category.FOLDER_VIDEOS -> return VideoDetailFetcher()
+            Category.VIDEO_ALL -> return VideoAllFetcher()
 
             Category.IMAGE, Category.GENERIC_IMAGES -> return ImageDataFetcher()
             Category.FOLDER_IMAGES -> return ImageDetailFetcher()
+            Category.IMAGES_ALL -> return ImageAllFetcher()
 
             Category.DOCS -> return DocumentFetcher()
             Category.COMPRESSED -> return CompressedFileFetcher()

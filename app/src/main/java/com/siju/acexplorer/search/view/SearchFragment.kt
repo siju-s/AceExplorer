@@ -11,7 +11,6 @@ import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -56,7 +55,6 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
     private lateinit var fileListViewModel: FileListViewModel
     private lateinit var searchView: SearchView
     private lateinit var filesList: RecyclerView
-    private lateinit var fileListContainer : RelativeLayout
     private lateinit var adapter: SearchAdapter
     private var fileListAdapter: FileListAdapter? = null
     private lateinit var searchSuggestions: SearchSuggestions
@@ -116,7 +114,6 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
 
     private fun setupList(view: View) {
         filesList = view.findViewById(R.id.recyclerViewFileList)
-        fileListContainer = view.findViewById(R.id.fileListContainer)
         filesList.layoutManager = LinearLayoutManager(context)
         adapter = SearchAdapter {
             handleItemClick(it.first, it.second)
@@ -282,12 +279,12 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
 
     private fun hideSearchList() {
         Log.e(TAG, "hideSearchList")
-        fileListContainer.visibility = View.GONE
+        filesList.visibility = View.GONE
     }
 
     private fun showSearchList() {
         Log.e(TAG, "showSearchList")
-        fileListContainer.visibility = View.VISIBLE
+        filesList.visibility = View.VISIBLE
     }
 
     private fun saveQuery(query: String?) {

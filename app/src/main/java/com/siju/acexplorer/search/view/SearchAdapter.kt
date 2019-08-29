@@ -86,7 +86,7 @@ class SearchAdapter(private val clickListener: (Pair<FileInfo, Int>) -> Unit) : 
             when {
                 CategoryHelper.isGenericMusic(category) -> bindGenericMusic(context, fileInfo)
                 CategoryHelper.isMusicCategory(category) -> bindMusicCategory(context, fileInfo)
-                CategoryHelper.isImageSearchCategory(category) -> bindGenericImagesVidsCategory(context,
+                CategoryHelper.isGenericImagesCategory(category) -> bindGenericImagesVidsCategory(context,
                         fileInfo)
                 CategoryHelper.isGenericVideosCategory(category) -> bindGenericImagesVidsCategory(context,
                         fileInfo)
@@ -100,7 +100,7 @@ class SearchAdapter(private val clickListener: (Pair<FileInfo, Int>) -> Unit) : 
                                       category: Category?,
                                       context: Context) {
             val fileName = fileInfo.fileName
-            bindDate(category, fileInfo)
+            category?.let { bindDate(it, fileInfo) }
 
             val isDirectory = fileInfo.isDirectory
             val fileNumOrSize: String
@@ -115,7 +115,7 @@ class SearchAdapter(private val clickListener: (Pair<FileInfo, Int>) -> Unit) : 
                     imageThumbIcon)
         }
 
-        private fun bindDate(category: Category?,
+        private fun bindDate(category: Category,
                              fileInfo: FileInfo) {
             val dateMs = if (CategoryHelper.isDateInMs(category)) {
                 fileInfo.date

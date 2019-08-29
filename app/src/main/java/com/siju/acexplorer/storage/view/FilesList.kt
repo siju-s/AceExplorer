@@ -26,9 +26,10 @@ import com.siju.acexplorer.utils.ScrollInfo
 private const val TAG = "FilesList"
 private const val DELAY_SCROLL_UPDATE_MS = 100L
 
-class FilesList(private val fileListHelper: FileListHelper, val view: View, private var viewMode: ViewMode) :
-        View.OnTouchListener {
-
+class FilesList(private val fileListHelper: FileListHelper, val view: View, private var viewMode: ViewMode
+                , val category: Category) :
+        View.OnTouchListener
+{
     private var itemView: View? = null
     private lateinit var fileList: RecyclerView
     private lateinit var emptyText: TextView
@@ -60,6 +61,7 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
                     }
                 }
         )
+        adapter.setMainCategory(category)
         fileList.adapter = adapter
         fileList.setOnDragListener(dragHelper.dragListener)
         fileList.setOnTouchListener(this)
@@ -71,15 +73,14 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
         fileList.layoutManager = when (viewMode) {
             ViewMode.LIST -> LinearLayoutManager(view.context)
             ViewMode.GRID -> CustomGridLayoutManager(view.context,
-                                                     getGridColumns(view.resources.configuration))
+                    getGridColumns(view.resources.configuration))
         }
     }
 
     private fun getGridColumns(configuration: Configuration): Int {
         return if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT || !fileListHelper.isDualModeEnabled()) {
             ConfigurationHelper.getStorageGridCols(configuration)
-        }
-        else {
+        } else {
             ConfigurationHelper.getStorageDualGridCols(configuration)
         }
     }
@@ -95,8 +96,7 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
         Log.e(TAG, "onDataLoaded:${data.size}")
         if (data.isEmpty()) {
             emptyText.visibility = View.VISIBLE
-        }
-        else {
+        } else {
             emptyText.visibility = View.GONE
         }
         adapter.submitList(data)
@@ -137,29 +137,28 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
     //TODO Find way to get right delay time (probably after list drawn)
     fun scrollToPosition(scrollInfo: ScrollInfo) {
         fileList.postDelayed({
-                                 Log.e(TAG,
-                                       "scrollToPosition:${scrollInfo.position}, offset:${scrollInfo.offset}")
-                                 when (viewMode) {
-                                     ViewMode.LIST -> {
-                                         val layoutManager = fileList.layoutManager as LinearLayoutManager
-                                         scrollListView(scrollInfo, layoutManager)
-                                     }
-                                     ViewMode.GRID -> {
-                                         val layoutManager = fileList.layoutManager as GridLayoutManager
-                                         scrollGridView(scrollInfo, layoutManager)
-                                     }
-                                 }
-                             }, DELAY_SCROLL_UPDATE_MS)
+            Log.e(TAG,
+                    "scrollToPosition:${scrollInfo.position}, offset:${scrollInfo.offset}")
+            when (viewMode) {
+                ViewMode.LIST -> {
+                    val layoutManager = fileList.layoutManager as LinearLayoutManager
+                    scrollListView(scrollInfo, layoutManager)
+                }
+                ViewMode.GRID -> {
+                    val layoutManager = fileList.layoutManager as GridLayoutManager
+                    scrollGridView(scrollInfo, layoutManager)
+                }
+            }
+        }, DELAY_SCROLL_UPDATE_MS)
     }
 
     private fun scrollListView(scrollInfo: ScrollInfo,
                                layoutManager: LinearLayoutManager) {
         if (shouldScrollToTop(scrollInfo)) {
             scrollListToTop(layoutManager)
-        }
-        else {
+        } else {
             layoutManager.scrollToPositionWithOffset(scrollInfo.position,
-                                                     scrollInfo.offset)
+                    scrollInfo.offset)
         }
     }
 
@@ -167,10 +166,9 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
                                layoutManager: GridLayoutManager) {
         if (shouldScrollToTop(scrollInfo)) {
             scrollGridToTop(layoutManager)
-        }
-        else {
+        } else {
             layoutManager.scrollToPositionWithOffset(scrollInfo.position,
-                                                     scrollInfo.offset)
+                    scrollInfo.offset)
         }
     }
 
@@ -192,7 +190,7 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
             return false
         }
 
-        when(touchEvent) {
+        when (touchEvent) {
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 fileListHelper.onUpEvent()
             }
@@ -206,7 +204,7 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
     }
 
     fun startDrag(category: Category, selectedCount: Int, draggedData: ArrayList<FileInfo>) {
-        itemView?.let {view ->
+        itemView?.let { view ->
             val intent = Intent()
             intent.putParcelableArrayListExtra(FileConstants.KEY_PATH, draggedData)
             intent.putExtra(KEY_CATEGORY, category.value)
@@ -215,22 +213,20 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
 
             if (SdkHelper.isAtleastNougat) {
                 this.view.startDragAndDrop(data, shadowBuilder, draggedData, 0)
-            }
-            else {
+            } else {
                 this.view.startDrag(data, shadowBuilder, draggedData, 0)
             }
         }
     }
 
     fun onDragLocationEvent(event: DragEvent, oldPos: Int): Int {
-       val top = fileList.findChildViewUnder(event.x, event.y) ?: return oldPos
+        val top = fileList.findChildViewUnder(event.x, event.y) ?: return oldPos
 
         val newPos = fileList.getChildAdapterPosition(top)
         if (oldPos != newPos && newPos != RecyclerView.NO_POSITION) {
             if (oldPos != RecyclerView.NO_POSITION && newPos < oldPos) {
                 scrollUpTOPos(newPos)
-            }
-            else {
+            } else {
                 scrollDownToPos(newPos)
             }
             adapter.setDraggedPosition(newPos)

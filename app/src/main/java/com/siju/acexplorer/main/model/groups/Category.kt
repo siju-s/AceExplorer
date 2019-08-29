@@ -34,6 +34,7 @@ enum class Category(val value: Int) {
     PICKER(14),
     //    GIF(15),
     RECENT(16),
+
     ALBUMS(17),
     ARTISTS(18),
     GENRES(19),
@@ -46,10 +47,13 @@ enum class Category(val value: Int) {
     ALBUM_DETAIL(26),
     ARTIST_DETAIL(27),
     GENRE_DETAIL(28),
+
     GENERIC_IMAGES(29),
     FOLDER_IMAGES(30),
+
     GENERIC_VIDEOS(31),
     FOLDER_VIDEOS(32),
+
     APP_MANAGER(33),
     //    TRASH(34),
     RECENT_IMAGES(35),
@@ -69,7 +73,9 @@ enum class Category(val value: Int) {
     CAMERA(49),
     SCREENSHOT(50),
     WHATSAPP(51),
-    TELEGRAM(52);
+    TELEGRAM(52),
+    IMAGES_ALL(53),
+    VIDEO_ALL(54);
 
     companion object {
         fun valueOf(value: Int): Category? = values().find { it.value == value }

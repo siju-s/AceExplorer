@@ -103,7 +103,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
 
         val view = view
         view?.let {
-            filesList = FilesList(this, view, fileListViewModel.getViewMode())
+            filesList = FilesList(this, view, fileListViewModel.getViewMode(), category)
             floatingView = FloatingView(view, this)
             navigationView = NavigationView(view, fileListViewModel.navigationCallback)
             menuControls = MenuControls(this, view, category)

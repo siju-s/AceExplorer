@@ -90,6 +90,7 @@ public class ThumbnailUtils {
             case GENERIC_VIDEOS:
             case FOLDER_VIDEOS:
             case RECENT_VIDEOS:
+            case VIDEO_ALL:
                 hideThumb(imageThumbIcon);
                 displayVideoThumb(context, imageIcon, filePath);
                 setThumbHiddenFilter(imageIcon, fileName);
@@ -99,6 +100,7 @@ public class ThumbnailUtils {
             case GENERIC_IMAGES:
             case FOLDER_IMAGES:
             case RECENT_IMAGES:
+            case IMAGES_ALL:
                 hideThumb(imageThumbIcon);
                 displayImageThumb(context, imageIcon, filePath);
                 setThumbHiddenFilter(imageIcon, fileName);

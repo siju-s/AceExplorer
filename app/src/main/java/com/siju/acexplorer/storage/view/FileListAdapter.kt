@@ -16,7 +16,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
-import com.siju.acexplorer.main.model.groups.CategoryHelper.*
+import com.siju.acexplorer.main.model.groups.CategoryHelper.getCategoryName
+import com.siju.acexplorer.main.model.groups.CategoryHelper.isDateInMs
+import com.siju.acexplorer.main.model.groups.CategoryHelper.isGenericImagesCategory
+import com.siju.acexplorer.main.model.groups.CategoryHelper.isGenericMusic
+import com.siju.acexplorer.main.model.groups.CategoryHelper.isGenericVideosCategory
+import com.siju.acexplorer.main.model.groups.CategoryHelper.isMusicCategory
+import com.siju.acexplorer.main.model.groups.CategoryHelper.isRecentCategory
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.utils.ThumbnailUtils.displayThumb
@@ -27,18 +33,17 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                                            private val longClickListener: (FileInfo, Int, View) -> Unit) :
         ListAdapter<FileInfo, FileListAdapter.ViewHolder>(FileInfoDiffCallback()) {
 
-
     private var draggedPosition = -1
     private var multiSelectionHelper: MultiSelectionHelper? = null
+    private var mainCategory: Category? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-//        Log.e("FileListAdapter", "onCreateViewHolder:$viewMode")
         return ViewHolder.from(parent, viewMode)
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val item = getItem(position)
-        viewHolder.bind(item, itemCount, viewMode, multiSelectionHelper?.isSelected(position), position, draggedPosition,
+        viewHolder.bind(item, itemCount, viewMode, mainCategory, multiSelectionHelper?.isSelected(position), position, draggedPosition,
                         clickListener, longClickListener)
     }
 
@@ -57,6 +62,10 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         draggedPosition = -1
     }
 
+    fun setMainCategory(category: Category) {
+        this.mainCategory = category
+    }
+
     class ViewHolder private constructor(itemView: View,
                                          viewMode: ViewMode) : RecyclerView.ViewHolder(itemView) {
 
@@ -72,12 +81,12 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             }
         }
 
-        fun bind(item: FileInfo, count: Int, viewMode: ViewMode, selected : Boolean?, pos: Int, draggedPos: Int,
+        fun bind(item: FileInfo, count: Int, viewMode: ViewMode, mainCategory: Category?, selected : Boolean?, pos: Int, draggedPos: Int,
                  clickListener: (Pair<FileInfo, Int>) -> Unit,
                  longClickListener: (FileInfo, Int, View) -> Unit) {
-//            Log.e("FileListAdapter", "bind:${item.fileName}")
+            Log.e("FileListAdapter", "bind:${item.fileName}, mainCategory:$mainCategory")
             onSelection(selected, pos, draggedPos)
-            bindViewByCategory(itemView.context, item, viewMode)
+            bindViewByCategory(itemView.context, item, viewMode, mainCategory)
             itemView.setOnClickListener {
                 val position = adapterPosition
                 if (position < count && position != RecyclerView.NO_POSITION) {
@@ -106,7 +115,8 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
 
         private fun bindViewByCategory(context: Context,
                                        fileInfo: FileInfo,
-                                       viewMode: ViewMode) {
+                                       viewMode: ViewMode,
+                                       mainCategory: Category?) {
             val category = fileInfo.category
             when {
                 category == Category.PICKER       -> {
@@ -121,7 +131,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                 isAppManager(category)            -> bindAppManagerCategory(context, fileInfo, viewMode)
                 isRecentCategory(category)        -> bindGenericRecent(context, fileInfo)
                 else                              -> {
-                    bindFilesCategory(fileInfo, category, context)
+                    bindFilesCategory(fileInfo, category, mainCategory, context)
                 }
             }
         }
@@ -130,10 +140,16 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
 
         private fun bindFilesCategory(fileInfo: FileInfo,
                                       category: Category?,
+                                      mainCategory: Category?,
                                       context: Context) {
 
             val fileName = fileInfo.fileName
-            bindDate(Category.FILES, fileInfo)
+            if (mainCategory == null) {
+                category?.let { bindDate(it, fileInfo) }
+            }
+            else {
+                bindDate(mainCategory, fileInfo)
+            }
 
             val isDirectory = fileInfo.isDirectory
             val fileNumOrSize: String
@@ -149,7 +165,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                          imageThumbIcon)
         }
 
-        private fun bindDate(category: Category?,
+        private fun bindDate(category: Category,
                              fileInfo: FileInfo) {
             dateText?.let {
                 val dateMs = if (isDateInMs(category)) {
@@ -262,10 +278,9 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             if (oldItem.category == newItem.category) {
                 Log.e(TAG, "category:${oldItem.category}, path:${oldItem.filePath}")
                 val result = when (oldItem.category) {
-                    Category.FILES, Category.COMPRESSED, Category.IMAGE, Category.VIDEO, Category.AUDIO, Category.FOLDER_IMAGES, Category.FOLDER_VIDEOS, Category.APP_MANAGER -> oldItem.filePath == newItem.filePath
                     Category.GENERIC_IMAGES, Category.GENERIC_VIDEOS               -> oldItem.bucketId == newItem.bucketId
                     else                                                           -> {
-                        TODO()
+                        oldItem.filePath == newItem.filePath
                     }
                 }
                 return result
@@ -275,8 +290,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
 
         override fun areContentsTheSame(oldItem: FileInfo,
                                         newItem: FileInfo): Boolean {
-            val result = oldItem == newItem
-            return result
+            return oldItem == newItem
         }
 
     }

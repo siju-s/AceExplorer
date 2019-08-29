@@ -8,7 +8,10 @@ import androidx.appcompat.widget.Toolbar
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
-import com.siju.acexplorer.main.model.groups.CategoryHelper.*
+import com.siju.acexplorer.main.model.groups.CategoryHelper.checkIfAnyMusicCategory
+import com.siju.acexplorer.main.model.groups.CategoryHelper.isRecentCategory
+import com.siju.acexplorer.main.model.groups.CategoryHelper.isRecentGenericCategory
+import com.siju.acexplorer.main.model.groups.CategoryHelper.isSortOrActionModeUnSupported
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.root.RootUtils
 

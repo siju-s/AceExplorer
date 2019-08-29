@@ -55,8 +55,8 @@ class SearchSuggestions(val view: View, private val fragment: SearchFragment, pr
     private fun initCategoryChip() {
         chipRecent.tag = Category.RECENT
         chipAudio.tag = Category.AUDIO
-        chipVideos.tag = Category.VIDEO
-        chipImages.tag = Category.IMAGE
+        chipVideos.tag = Category.VIDEO_ALL
+        chipImages.tag = Category.IMAGES_ALL
         chipDocuments.tag = Category.DOCS
     }
 
@@ -225,8 +225,8 @@ class SearchSuggestions(val view: View, private val fragment: SearchFragment, pr
 
     private fun getSelectedCategory(): Category {
         val category = when {
-            chipImages.isChecked -> Category.IMAGE
-            chipVideos.isChecked -> Category.VIDEO
+            chipImages.isChecked -> Category.IMAGES_ALL
+            chipVideos.isChecked -> Category.VIDEO_ALL
             chipAudio.isChecked -> Category.AUDIO
             chipDocuments.isChecked -> Category.DOCS
             else -> {
