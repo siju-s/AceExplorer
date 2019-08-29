@@ -19,36 +19,48 @@
     android:layout_margin="@dimen/margin_16"
     android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/textTitle"
+        style="@style/DialogTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/permissions" />
+
     <TableLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_16"
+        android:layout_gravity="center_horizontal">
 
         <TableRow
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:layout_marginBottom="@dimen/margin_16">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
                 android:text="" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
+                android:layout_marginStart="@dimen/margin_permission_start"
+                android:layout_marginEnd="@dimen/margin_permission_start"
                 android:text="@string/permission_read" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
+                android:layout_marginStart="@dimen/margin_permission_start"
+                android:layout_marginEnd="@dimen/margin_permission_start"
                 android:text="@string/permission_write" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
+                android:layout_marginStart="@dimen/margin_permission_start"
+                android:layout_marginEnd="@dimen/margin_permission_start"
                 android:text="@string/permission_execute" />
 
         </TableRow>
@@ -63,27 +75,31 @@
                 android:text="@string/permission_owner" />
 
             <CheckBox
-                android:id="@+id/creadown"
+                android:id="@+id/readOwnerState"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp" />
+                android:layout_marginStart="@dimen/margin_permission_start"
+                android:layout_marginEnd="@dimen/margin_permission_start" />
 
             <CheckBox
-                android:id="@+id/cwriteown"
+                android:id="@+id/writeOwnerState"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp" />
+                android:layout_marginStart="@dimen/margin_permission_start"
+                android:layout_marginEnd="@dimen/margin_permission_start" />
 
             <CheckBox
-                android:id="@+id/cexeown"
+                android:id="@+id/execOwnerState"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp" />
+                android:layout_marginStart="@dimen/margin_permission_start"
+                android:layout_marginEnd="@dimen/margin_permission_start" />
         </TableRow>
 
         <TableRow
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:layout_marginTop="@dimen/margin_16">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -91,24 +107,31 @@
                 android:text="@string/permission_group" />
 
             <CheckBox
-                android:id="@+id/creadgroup"
+                android:id="@+id/readGroupState"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_permission_start"
+                android:layout_marginEnd="@dimen/margin_permission_start" />
 
             <CheckBox
-                android:id="@+id/cwritegroup"
+                android:id="@+id/writeGroupState"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_permission_start"
+                android:layout_marginEnd="@dimen/margin_permission_start" />
 
             <CheckBox
-                android:id="@+id/cexegroup"
+                android:id="@+id/execGroupState"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_permission_start"
+                android:layout_marginEnd="@dimen/margin_permission_start" />
         </TableRow>
 
         <TableRow
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:layout_marginTop="@dimen/margin_16">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -116,19 +139,25 @@
                 android:text="@string/other" />
 
             <CheckBox
-                android:id="@+id/creadother"
+                android:id="@+id/readOtherState"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_permission_start"
+                android:layout_marginEnd="@dimen/margin_permission_start" />
 
             <CheckBox
-                android:id="@+id/cwriteother"
+                android:id="@+id/writeOtherState"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_permission_start"
+                android:layout_marginEnd="@dimen/margin_permission_start" />
 
             <CheckBox
-                android:id="@+id/cexeother"
+                android:id="@+id/execOtherState"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_permission_start"
+                android:layout_marginEnd="@dimen/margin_permission_start" />
         </TableRow>
     </TableLayout>
 

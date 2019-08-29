@@ -108,6 +108,10 @@ class StorageModelImpl(val context: Context) : StorageModel {
         operationHelper.deleteFavorite(context, favPathList, fileOperationCallback)
     }
 
+    override fun setPermissions(path: String, permissions: String, dir: Boolean) {
+        operationHelper.setPermissions(Operations.PERMISSIONS, path, permissions, dir, fileOperationCallback)
+    }
+
     override fun handleSafResult(uri: Uri, flags: Int) {
         saveSafUri(uri)
         val newFlags = flags and (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent
@@ -164,6 +168,5 @@ class StorageModelImpl(val context: Context) : StorageModel {
             }
         }
     }
-
 
 }

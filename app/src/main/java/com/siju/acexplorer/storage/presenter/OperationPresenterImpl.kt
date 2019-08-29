@@ -116,6 +116,9 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
             R.id.action_delete_fav -> {
                 onDeleteFavClicked()
             }
+            R.id.action_permissions -> {
+                onPermissionClicked()
+            }
         }
     }
 
@@ -132,6 +135,18 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
             _multiSelectionOperationData.value = Pair(Operations.DELETE_FAVORITE, favList)
         }
     }
+
+    private fun onPermissionClicked() {
+        if (hasSelectedItems()) {
+            Analytics.getLogger().operationClicked(Analytics.Logger.EV_PERMISSIONS)
+            val fileInfo = viewModel.fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
+            viewModel.endActionMode()
+            fileInfo?.let {
+                _singleOpData.value = Pair(Operations.PERMISSIONS, fileInfo)
+            }
+        }
+    }
+
 
     private fun onAddToFavClicked() {
         if (hasSelectedItems()) {

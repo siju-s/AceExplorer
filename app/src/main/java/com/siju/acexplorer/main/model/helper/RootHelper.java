@@ -267,4 +267,5 @@ public class RootHelper {
         }
         return (newLength != length) ? new String(newPath, 0, newLength) : origPath;
     }
+
 }

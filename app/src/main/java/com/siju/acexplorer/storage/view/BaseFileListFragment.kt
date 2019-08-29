@@ -42,6 +42,7 @@ import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.extensions.showToast
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper.isAppManager
+import com.siju.acexplorer.main.model.helper.PermissionsHelper
 import com.siju.acexplorer.main.model.helper.ShareHelper
 import com.siju.acexplorer.main.model.helper.UriHelper
 import com.siju.acexplorer.main.model.helper.ViewHelper
@@ -477,7 +478,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
 
 
     private fun handleSingleItemOperation(operationData: Pair<Operations, FileInfo>) {
-        Log.e(TAG, "handleSingleItemOperation: ")
+        Log.e(TAG, "handleSingleItemOperation: ${operationData.second.permissions}")
         when (operationData.first) {
             Operations.RENAME -> {
                 context?.let { context -> showRenameDialog(context, operationData.second) }
@@ -494,6 +495,14 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
                     DialogHelper.showExtractDialog(context, operationData.second.filePath,
                                                    fileListViewModel.currentDir,
                                                    extractDialogListener)
+                }
+            }
+            Operations.PERMISSIONS -> {
+                context?.let { context ->
+                    val fileInfo = operationData.second
+                    val permissions = fileInfo.permissions
+                    val permissionList = PermissionsHelper.parse(permissions)
+                    DialogHelper.showPermissionsDialog(context, fileInfo.filePath, fileInfo.isDirectory, permissionList, permissionDialogListener)
                 }
             }
             else -> {
@@ -631,6 +640,10 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     }
 
     private var dialog: Dialog? = null
+
+    private val permissionDialogListener = DialogHelper.PermissionDialogListener { path, isDir, permissions ->
+         fileListViewModel.setPermissions(path, permissions, isDir)
+    }
 
     private val alertDialogListener = object : DialogHelper.DialogCallback {
 

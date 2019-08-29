@@ -32,6 +32,7 @@ enum class Operations constructor(val value: Int) {
     SHARE(10),
     PASTE(11),
     FAVORITE(12),
-    DELETE_FAVORITE(13)
+    DELETE_FAVORITE(13),
+    PERMISSIONS(14)
 
 }

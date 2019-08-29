@@ -524,15 +524,15 @@ public class DialogHelper {
 
         final AlertDialog alertDialog = builder.create();
 
-        final CheckBox readown = dialogView.findViewById(R.id.creadown);
-        final CheckBox readgroup = dialogView.findViewById(R.id.creadgroup);
-        final CheckBox readother = dialogView.findViewById(R.id.creadother);
-        final CheckBox writeown = dialogView.findViewById(R.id.cwriteown);
-        final CheckBox writegroup = dialogView.findViewById(R.id.cwritegroup);
-        final CheckBox writeother = dialogView.findViewById(R.id.cwriteother);
-        final CheckBox exeown = dialogView.findViewById(R.id.cexeown);
-        final CheckBox exegroup = dialogView.findViewById(R.id.cexegroup);
-        final CheckBox exeother = dialogView.findViewById(R.id.cexeother);
+        final CheckBox readown = dialogView.findViewById(R.id.readOwnerState);
+        final CheckBox readgroup = dialogView.findViewById(R.id.readGroupState);
+        final CheckBox readother = dialogView.findViewById(R.id.readOtherState);
+        final CheckBox writeown = dialogView.findViewById(R.id.writeOwnerState);
+        final CheckBox writegroup = dialogView.findViewById(R.id.writeGroupState);
+        final CheckBox writeother = dialogView.findViewById(R.id.writeOtherState);
+        final CheckBox exeown = dialogView.findViewById(R.id.execOwnerState);
+        final CheckBox exegroup = dialogView.findViewById(R.id.execGroupState);
+        final CheckBox exeother = dialogView.findViewById(R.id.execOtherState);
 
         Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
         Button negativeButton = dialogView.findViewById(R.id.buttonNegative);

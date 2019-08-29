@@ -26,7 +26,11 @@ import com.siju.acexplorer.main.model.StorageUtils;
 import com.siju.acexplorer.main.model.helper.RootHelper;
 import com.stericson.RootTools.RootTools;
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -78,7 +82,6 @@ public class RootUtils {
         }
     }
 
-
     public static boolean isValid(String str) {
         return mLsPattern.matcher(str).matches();
     }
@@ -87,51 +90,64 @@ public class RootUtils {
         return str.startsWith("/proc") || str.startsWith("/sys");
     }
 
+    private static boolean isRWMounted() {
+        File mountFile = new File("/proc/mounts");
+        StringBuilder procData = new StringBuilder();
+        if (mountFile.exists()) {
+            try {
+                FileInputStream fis = new FileInputStream(mountFile.toString());
+                DataInputStream dis = new DataInputStream(fis);
+                BufferedReader br = new BufferedReader(new InputStreamReader(
+                        dis));
+                String data;
+                while ((data = br.readLine()) != null) {
+                    procData.append(data).append("\n");
+                }
+
+                br.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+
+            String[] tmp = procData.toString().split("\n");
+            for (String aTmp : tmp) {
+                // Kept simple here on purpose different devices have
+                // different blocks
+                if (aTmp.contains("/dev/block")
+                        && aTmp.contains("/system")) {
+                    if (aTmp.contains("rw")) {
+                        // system is rw
+                        return true;
+                    } else if (aTmp.contains("ro")) {
+                        // system is ro
+                        return false;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
     /**
      * Change permissions (owner/group/others) of a specified path
-     *
-     * @param path
-     * @param octalNotation octal notation of permission
-     * @throws RootDeniedException
      */
-    public static void chmod(String path, int octalNotation) throws RootDeniedException {
-        if (!RootTools.isAccessGiven()) {
-            throw new RootDeniedException();
-        }
+    public static void chmod(String path, int octalNotation) {
         String command = "chmod ";
-//        Object[] args = new Object[2];
-//        args[0] = octalNotation;
-//        args[1] = path;
         RootHelper.executeCommand(octalNotation + " " + RootHelper.getCommandLineString(path));
     }
 
-    public static void mountRW(String path) throws RootDeniedException {
-//        if (!RootTools.isAccessGiven()) {
-//            throw new RootDeniedException();
-//        }
-        Log.e("RootUtils", "mountRW() called with: path = [" + path + "]");
-        RootTools.remount(path, "RW");
-//        String str = "mount -o %s,remount %s";
-//        String mountPoint = "/";
-//        if (path.startsWith("/system")) {
-//            mountPoint = "/system";
-//        }
-//        Object[] objArr = new Object[2];
-//        objArr[0] = "rw";
-//        objArr[1] = mountPoint;
-//        String cmd = String.format(str, objArr);
-//        Log.e("RootUtils", "Command=" + cmd);
-//        RootHelper.runAndWait(cmd);
+    public static void mountRW(String path) {
+        if (!isRWMounted()) {
+            Log.e("RootUtils", "mountRW() called with: path = [" + path + "]");
+            RootTools.remount(path, "RW");
+        }
     }
 
-    public static boolean fileExists(String path, boolean isDir) throws RootDeniedException {
+    public static boolean fileExists(String path, boolean isDir) {
         return RootTools.exists(path, isDir);
-    }
-
-    public static void mountRO(String path) {
-        Log.e("RootUtils", "mountRO() called with: path = [" + path + "]");
-        RootTools.remount(path, "RO");
     }
 
     public static void copy(String source, String destination) {
@@ -139,20 +155,20 @@ public class RootUtils {
                 RootHelper.getCommandLineString(destination));
     }
 
-    public static void mkDir(String path) throws RootDeniedException {
+    public static void mkDir(String path) {
         String parentPath = new File(path).getParent();
         RootUtils.mountRW(parentPath);
         RootHelper.runAndWait("mkdir " + RootHelper.getCommandLineString(path));
     }
 
-    public static void mkFile(String path) throws RootDeniedException {
-        Log.e("RootUtils", "mkFile: "+path);
+    public static void mkFile(String path) {
+        Log.e("RootUtils", "mkFile: " + path);
         String parentPath = new File(path).getParent();
         RootUtils.mountRW(parentPath);
         RootHelper.runAndWait("touch " + RootHelper.getCommandLineString(path));
     }
 
-    public static void delete(String path) throws RootDeniedException{
+    public static void delete(String path) {
         RootUtils.mountRW(path);
         if (new File(path).isDirectory()) {
             RootHelper.executeCommand("rm -f -r " + RootHelper.getCommandLineString(path));
@@ -161,8 +177,8 @@ public class RootUtils {
         }
     }
 
-    public static void move(String source, String destination)  {
-        RootHelper.executeCommand("mv " + RootHelper.getCommandLineString(source) + " "+
+    public static void move(String source, String destination) {
+        RootHelper.executeCommand("mv " + RootHelper.getCommandLineString(source) + " " +
                 RootHelper.getCommandLineString(destination));
     }
 }

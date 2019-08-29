@@ -17,6 +17,7 @@
 package com.siju.acexplorer.main.model.root;
 
 
+import com.stericson.RootShell.execution.Command;
 import com.stericson.RootTools.RootTools;
 
 import java.io.File;
@@ -33,4 +34,23 @@ public class RootOperations {
     public static boolean fileExists(String path, boolean isDir) {
         return RootTools.exists(path, isDir);
     }
+
+    public static boolean setPermissions(String path, boolean isDir, String permissions) {
+
+        String command = "chmod " + permissions + " " + path;
+        if (isDir) {
+            command = "chmod -R " + permissions + " \"" + path + "\"";
+        }
+        Command com = new Command(1, command);
+        try {
+            RootUtils.mountRW(path);
+            RootTools.getShell(true).add(com);
+            return true;
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+        return false;
+    }
+
+
 }

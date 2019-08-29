@@ -695,6 +695,10 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
        backStackInfo.clearBackStack()
     }
 
+    fun setPermissions(path: String, permissions: String, dir: Boolean) {
+        storageModel.setPermissions(path, permissions, dir)
+    }
+
     val apkDialogListener = object : DialogHelper.ApkDialogListener {
 
         override fun onInstallClicked(path: String?) {

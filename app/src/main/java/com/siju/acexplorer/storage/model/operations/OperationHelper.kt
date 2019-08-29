@@ -647,6 +647,21 @@ class OperationHelper(val context: Context) {
         onOperationCompleted(Operations.DELETE_FAVORITE, count)
     }
 
+    fun setPermissions(operation: Operations, path: String, permissions: String, dir: Boolean, fileOperationCallback: FileOperationCallback) {
+        addOperation(operation, OperationData.createPermissionOperation(path))
+        val result = RootOperations.setPermissions(path, dir, permissions)
+        val resultCode = if (result) {
+            OperationResultCode.SUCCESS
+        }
+        else {
+            OperationResultCode.FAIL
+        }
+        fileOperationCallback.onOperationResult(
+                Operations.PERMISSIONS,
+                getOperationAction(OperationResult(resultCode, 1)))
+        removeOperation()
+    }
+
 
     interface FileOperationCallback {
         fun onOperationResult(operation: Operations, operationAction: OperationAction?)
