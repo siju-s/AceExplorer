@@ -131,8 +131,9 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         private fun bindFilesCategory(fileInfo: FileInfo,
                                       category: Category?,
                                       context: Context) {
+
             val fileName = fileInfo.fileName
-            bindDate(category, fileInfo)
+            bindDate(Category.FILES, fileInfo)
 
             val isDirectory = fileInfo.isDirectory
             val fileNumOrSize: String

@@ -144,6 +144,10 @@ public class CategoryHelper {
     }
 
     public static boolean isGenericImagesCategory(Category category) {
+        return GENERIC_IMAGES.equals(category);
+    }
+
+    public static boolean isImageSearchCategory(Category category) {
         return GENERIC_IMAGES.equals(category) || IMAGE.equals(category);
     }
 

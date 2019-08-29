@@ -86,7 +86,7 @@ class SearchAdapter(private val clickListener: (Pair<FileInfo, Int>) -> Unit) : 
             when {
                 CategoryHelper.isGenericMusic(category) -> bindGenericMusic(context, fileInfo)
                 CategoryHelper.isMusicCategory(category) -> bindMusicCategory(context, fileInfo)
-                CategoryHelper.isGenericImagesCategory(category) -> bindGenericImagesVidsCategory(context,
+                CategoryHelper.isImageSearchCategory(category) -> bindGenericImagesVidsCategory(context,
                         fileInfo)
                 CategoryHelper.isGenericVideosCategory(category) -> bindGenericImagesVidsCategory(context,
                         fileInfo)
