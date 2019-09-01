@@ -31,6 +31,7 @@ class OperationHelper(val context: Context) {
     private var fileOperationCallback: FileOperationCallback? = null
     private var zipOperationCallback: ZipOperationCallback? = null
     private val operationResultReceiver = OperationResultReceiver(this)
+    private var receiverRegistered = false
 
     init {
         registerReceiver()
@@ -44,11 +45,15 @@ class OperationHelper(val context: Context) {
 
     private fun registerReceiver() {
         val intentFilter = IntentFilter(ACTION_OP_REFRESH)
+        receiverRegistered = true
         context.registerReceiver(operationResultReceiver, intentFilter)
     }
 
     private fun unregisterReceiver() {
-        context.unregisterReceiver(operationResultReceiver)
+        if (receiverRegistered) {
+            context.unregisterReceiver(operationResultReceiver)
+        }
+        receiverRegistered = false
     }
 
 
@@ -394,6 +399,7 @@ class OperationHelper(val context: Context) {
                 Operations.COMPRESS -> {
                     compress(context, operationInfo.operationData.arg1, operationInfo.operationData.filesList, zipOperationCallback)
                 }
+                else -> {}
             }
         }
     }

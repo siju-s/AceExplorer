@@ -140,7 +140,7 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
         searchViewModel.searchResult.observe(viewLifecycleOwner, Observer {
             it?.apply {
                 if (::filesList.isInitialized) {
-                    Log.e("SearchFragment", " Search result:${it.size}" +"list visibility:${filesList.visibility}, recentSearchVis : ${recentSearchContainer.visibility}, adapter: ${filesList.adapter}")
+                    Log.e("SearchFragment", " Search result:${it.size}" + "list visibility:${filesList.visibility}, recentSearchVis : ${recentSearchContainer.visibility}, adapter: ${filesList.adapter}")
                     if (it.isEmpty()) {
                         searchSuggestions.showChipGroup()
                         showRecentSearch()
@@ -362,6 +362,10 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
         if (!result && fileListViewModel.hasNoBackStackEntry()) {
             filesList.adapter = adapter
             searchViewModel.search(null, searchView.query.toString())
+            return false
+        } else if (result && searchView.query.isNotBlank()) {
+            searchSuggestions.showChipGroup()
+            searchView.setQuery("", false)
             return false
         }
         return result
