@@ -42,6 +42,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
+        Log.e(TAG, "onBindViewHolder : $position")
         val item = getItem(position)
         viewHolder.bind(item, itemCount, viewMode, mainCategory, multiSelectionHelper?.isSelected(position), position, draggedPosition,
                         clickListener, longClickListener)
@@ -84,7 +85,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         fun bind(item: FileInfo, count: Int, viewMode: ViewMode, mainCategory: Category?, selected : Boolean?, pos: Int, draggedPos: Int,
                  clickListener: (Pair<FileInfo, Int>) -> Unit,
                  longClickListener: (FileInfo, Int, View) -> Unit) {
-            Log.e("FileListAdapter", "bind:${item.fileName}, mainCategory:$mainCategory")
+//            Log.e("FileListAdapter", "bind:${item.fileName}, mainCategory:$mainCategory")
             onSelection(selected, pos, draggedPos)
             bindViewByCategory(itemView.context, item, viewMode, mainCategory)
             itemView.setOnClickListener {

@@ -113,7 +113,7 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
     }
 
     private fun setupList(view: View) {
-        filesList = view.findViewById(R.id.recyclerViewFileList)
+        filesList = view.findViewById(R.id.filesList)
         filesList.layoutManager = LinearLayoutManager(context)
         adapter = SearchAdapter {
             handleItemClick(it.first, it.second)
