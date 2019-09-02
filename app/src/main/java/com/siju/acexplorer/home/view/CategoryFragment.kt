@@ -74,6 +74,7 @@ class CategoryFragment : Fragment() {
         val allCategory = when (category) {
             Category.GENERIC_IMAGES -> Category.IMAGES_ALL
             Category.GENERIC_VIDEOS -> Category.VIDEO_ALL
+            Category.GENERIC_MUSIC -> Category.ALL_TRACKS
             else -> null
         }
         var fragment1 = FileListFragment.newInstance(path, category, false)
@@ -89,8 +90,9 @@ class CategoryFragment : Fragment() {
 
     private fun getTitle(context: Context, category: Category): String {
         return when (category) {
-            Category.GENERIC_IMAGES -> context.getString(R.string.image)
-            Category.GENERIC_VIDEOS -> context.getString(R.string.nav_menu_video)
+            Category.GENERIC_IMAGES -> context.getString(R.string.categories_folder)
+            Category.GENERIC_VIDEOS -> context.getString(R.string.categories_folder)
+            Category.GENERIC_MUSIC -> context.getString(R.string.categories)
             else -> "null"
         }
     }

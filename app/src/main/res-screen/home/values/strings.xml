@@ -19,4 +19,6 @@
 
     <string name="library_gif" translatable="false">GIF</string>
     <string name="category_all">All</string>
+    <string name="categories">Categories</string>
+    <string name="categories_folder">Folder</string>
 </resources>
