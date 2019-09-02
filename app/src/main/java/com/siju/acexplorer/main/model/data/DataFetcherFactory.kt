@@ -2,8 +2,8 @@ package com.siju.acexplorer.main.model.data
 
 import com.siju.acexplorer.main.model.data.doc.CompressedFileFetcher
 import com.siju.acexplorer.main.model.data.doc.DocumentFetcher
-import com.siju.acexplorer.main.model.data.doc.LargeFilesFetcher
 import com.siju.acexplorer.main.model.data.doc.PdfFetcher
+import com.siju.acexplorer.main.model.data.doc.largefiles.*
 import com.siju.acexplorer.main.model.data.image.ImageAllFetcher
 import com.siju.acexplorer.main.model.data.image.ImageDataFetcher
 import com.siju.acexplorer.main.model.data.image.ImageDetailFetcher
@@ -66,7 +66,15 @@ object DataFetcherFactory {
             Category.DOCS -> return DocumentFetcher()
             Category.COMPRESSED -> return CompressedFileFetcher()
             Category.PDF -> return PdfFetcher()
-            Category.LARGE_FILES -> return LargeFilesFetcher()
+
+            Category.LARGE_FILES, Category.LARGE_FILES_ALL -> return LargeFilesFetcher()
+            Category.LARGE_FILES_AUDIO -> return LargeAudioFilesFetcher()
+            Category.LARGE_FILES_VIDEOS -> return LargeVideoFilesFetcher()
+            Category.LARGE_FILES_IMAGES -> return LargeImageFilesFetcher()
+            Category.LARGE_FILES_DOC -> return LargeDocFilesFetcher()
+            Category.LARGE_FILES_COMPRESSED -> return LargeCompressedFilesFetcher()
+            Category.LARGE_FILES_APP -> return LargeAppFilesFetcher()
+            Category.LARGE_FILES_OTHER -> return LargeOtherFilesFetcher()
 
             Category.ZIP_VIEWER -> TODO()
             Category.GENERIC_LIST -> TODO()

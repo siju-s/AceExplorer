@@ -2,9 +2,11 @@ package com.siju.acexplorer.main.model.data.doc
 
 import android.database.Cursor
 import android.provider.MediaStore
+import android.util.Log
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.HiddenFileHelper
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.helper.FileUtils.getCategoryFromExtension
 import java.io.File
@@ -13,8 +15,7 @@ import java.util.*
 object DocumentCursorData {
 
     fun getDataFromCursor(cursor: Cursor?, category: Category,
-                                  showHidden: Boolean): ArrayList<FileInfo> {
-//        var sortMode = sortMode
+                          showHidden: Boolean): ArrayList<FileInfo> {
         val fileInfoList = ArrayList<FileInfo>()
         if (cursor == null) {
             return fileInfoList
@@ -25,6 +26,9 @@ object DocumentCursorData {
             val dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_MODIFIED)
             val fileIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID)
             val pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)
+            val mimeIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MIME_TYPE)
+            val mediaTypeIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MEDIA_TYPE)
+
             do {
                 val path = cursor.getString(pathIndex)
                 val file = File(path)
@@ -32,6 +36,9 @@ object DocumentCursorData {
                     continue
                 }
                 val fileName = cursor.getString(titleIndex)
+                val mime = cursor.getString(mimeIndex)
+                val mediaType = cursor.getInt(mediaTypeIndex)
+                Log.d("DocCursor", "filename:$fileName, mime:$mime, mediaType:$mediaType")
                 val extension = FileUtils.getExtension(path)
                 val nameWithExt = FileUtils.constructFileNameWithExtension(fileName, extension)
                 val size = cursor.getLong(sizeIndex)
@@ -41,11 +48,10 @@ object DocumentCursorData {
             } while (cursor.moveToNext())
         }
         cursor.close()
-//        if (isLargeFilesCategory(category)) {
-//            sortMode = 5 // (Size desc) TODO 29-Aug-2018 Replace sort mode with enums
-//        }
-//        sortFiles(fileInfoList, sortMode)
-        return fileInfoList
+
+        return if (CategoryHelper.isLargeFilesOrganisedCategory(category)) {
+            DocumentUtils.getLargeFilesCategoryList(fileInfoList)
+        } else fileInfoList
     }
 
 }

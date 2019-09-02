@@ -17,6 +17,7 @@ import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper.getCategoryName
+import com.siju.acexplorer.main.model.groups.CategoryHelper.isAnyLargeFilesCategory
 import com.siju.acexplorer.main.model.groups.CategoryHelper.isDateInMs
 import com.siju.acexplorer.main.model.groups.CategoryHelper.isGenericImagesCategory
 import com.siju.acexplorer.main.model.groups.CategoryHelper.isGenericMusic
@@ -119,6 +120,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                                        viewMode: ViewMode,
                                        mainCategory: Category?) {
             val category = fileInfo.category
+            Log.d(TAG, "bindViewByCategory:$category, name:")
             when {
                 category == Category.PICKER       -> {
                     bindPickerView(fileInfo)
@@ -131,6 +133,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                                                                                    fileInfo)
                 isAppManager(category)            -> bindAppManagerCategory(context, fileInfo, viewMode)
                 isRecentCategory(category)        -> bindGenericRecent(context, fileInfo)
+                isAnyLargeFilesCategory(category) -> bindLargeFilesGeneric(context, fileInfo)
                 else                              -> {
                     bindFilesCategory(fileInfo, category, mainCategory, context)
                 }
@@ -240,6 +243,15 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             val count = fileInfo.count
             val files = context.resources.getQuantityString(R.plurals.number_of_files,
                                                             count, count)
+            textFileName.text = getCategoryName(context, fileInfo.subcategory)
+            textNoOfFileOrSize.text = files
+            imageIcon.setImageResource(R.drawable.ic_folder)
+        }
+
+        private fun bindLargeFilesGeneric(context: Context, fileInfo: FileInfo) {
+            val count = fileInfo.count
+            val files = context.resources.getQuantityString(R.plurals.number_of_files,
+                    count, count)
             textFileName.text = getCategoryName(context, fileInfo.subcategory)
             textNoOfFileOrSize.text = files
             imageIcon.setImageResource(R.drawable.ic_folder)

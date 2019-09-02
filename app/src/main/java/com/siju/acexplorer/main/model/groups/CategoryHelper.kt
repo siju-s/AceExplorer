@@ -4,7 +4,11 @@ package com.siju.acexplorer.main.model.groups
 import android.content.Context
 import android.webkit.MimeTypeMap
 import com.siju.acexplorer.R
+import com.siju.acexplorer.main.model.FileConstants.EXT_TAR
+import com.siju.acexplorer.main.model.FileConstants.EXT_ZIP
+import com.siju.acexplorer.main.model.data.doc.DocumentUtils
 import com.siju.acexplorer.main.model.groups.Category.*
+import java.util.*
 
 private const val MIME_TYPE_APK = "application/vnd.android.package-archive"
 
@@ -56,8 +60,19 @@ object CategoryHelper {
                 RECENT_DOCS == category
     }
 
+    fun isAnyLargeFilesCategory(category: Category): Boolean {
+        return LARGE_FILES_IMAGES == category || LARGE_FILES_AUDIO == category ||
+                LARGE_FILES_VIDEOS == category || LARGE_FILES_DOC == category ||
+                LARGE_FILES_APP == category || LARGE_FILES_COMPRESSED == category ||
+                LARGE_FILES_OTHER == category
+    }
+
     fun isRecentGenericCategory(category: Category): Boolean {
         return RECENT == category
+    }
+
+    fun isLargeFilesOrganisedCategory(category: Category) : Boolean {
+        return category == LARGE_FILES
     }
 
     fun isAppManager(category: Category): Boolean {
@@ -66,10 +81,6 @@ object CategoryHelper {
 
     fun isGenericImagesCategory(category: Category): Boolean {
         return GENERIC_IMAGES == category
-    }
-
-    fun isImageSearchCategory(category: Category): Boolean {
-        return GENERIC_IMAGES == category || IMAGE == category
     }
 
     fun isGenericVideosCategory(category: Category): Boolean {
@@ -95,14 +106,14 @@ object CategoryHelper {
     }
 
     fun getCategoryForRecentFromExtension(extension: String?): Category {
-        var extension = extension
+        var ext = extension
 
         var value = RECENT_DOCS
-        if (extension == null) {
+        if (ext == null) {
             return RECENT_DOCS
         }
-        extension = extension.toLowerCase() // necessary
-        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+        ext = ext.toLowerCase(Locale.ROOT) // necessary
+        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext)
         //        Log.d("CategoryHelper", "getCategoryForRecentFromExtension: ext;"+extension + " mime:"+mimeType);
         if (mimeType != null) {
             if (mimeType.indexOf("image") == 0) {
@@ -119,14 +130,14 @@ object CategoryHelper {
     }
 
     fun getSubCategoryForRecentFromExtension(extension: String?): Category {
-        var extension = extension
+        var ext = extension
 
         var value = DOCS
-        if (extension == null) {
+        if (ext == null) {
             return DOCS
         }
-        extension = extension.toLowerCase() // necessary
-        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+        ext = ext.toLowerCase(Locale.ROOT) // necessary
+        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext)
         //        Log.d("CategoryHelper", "getCategoryForRecentFromExtension: ext;"+extension + " mime:"+mimeType);
         if (mimeType != null) {
             if (mimeType.indexOf("image") == 0) {
@@ -137,6 +148,66 @@ object CategoryHelper {
                 value = AUDIO
             } else if (MIME_TYPE_APK == mimeType) {
                 value = APPS
+            }
+        }
+        return value
+    }
+
+    fun getCategoryForLargeFilesFromExtension(extension: String?): Category {
+        var ext = extension
+
+        var value = LARGE_FILES_OTHER
+        if (ext == null) {
+            return LARGE_FILES_OTHER
+        }
+        ext = ext.toLowerCase(Locale.ROOT)
+        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext)
+        //        Log.d("CategoryHelper", "getCategoryForRecentFromExtension: ext;"+extension + " mime:"+mimeType);
+        if (mimeType != null) {
+            if (mimeType.indexOf("image") == 0) {
+                value = LARGE_FILES_IMAGES
+            } else if (mimeType.indexOf("video") == 0) {
+                value = LARGE_FILES_VIDEOS
+            } else if (mimeType.indexOf("audio") == 0) {
+                value = LARGE_FILES_AUDIO
+            } else if (MIME_TYPE_APK == mimeType) {
+                value = LARGE_FILES_APP
+            }
+            else if (ext.endsWith(EXT_ZIP) || ext.endsWith(EXT_TAR)) {
+                value = LARGE_FILES_COMPRESSED
+            }
+            else if (DocumentUtils.isDocumentFileType(ext)) {
+                value = LARGE_FILES_DOC
+            }
+        }
+        return value
+    }
+
+    fun getSubcategoryForLargeFilesFromExtension(extension: String?): Category {
+        var ext = extension
+
+        var value = LARGE_FILES_OTHER
+        if (ext == null) {
+            return LARGE_FILES_OTHER
+        }
+        ext = ext.toLowerCase(Locale.ROOT)
+        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext)
+        //        Log.d("CategoryHelper", "getCategoryForRecentFromExtension: ext;"+extension + " mime:"+mimeType);
+        if (mimeType != null) {
+            if (mimeType.indexOf("image") == 0) {
+                value = IMAGE
+            } else if (mimeType.indexOf("video") == 0) {
+                value = VIDEO
+            } else if (mimeType.indexOf("audio") == 0) {
+                value = AUDIO
+            } else if (MIME_TYPE_APK == mimeType) {
+                value = APPS
+            }
+            else if (ext.endsWith(EXT_ZIP) || ext.endsWith(EXT_TAR)) {
+                value = COMPRESSED
+            }
+            else if (DocumentUtils.isDocumentFileType(ext)) {
+                value = DOCS
             }
         }
         return value
@@ -165,6 +236,7 @@ object CategoryHelper {
             SCREENSHOT -> return context.getString(R.string.category_screenshot)
             WHATSAPP -> return context.getString(R.string.category_whatsapp)
             TELEGRAM -> return context.getString(R.string.category_telegram)
+            LARGE_FILES_OTHER -> return context.getString(R.string.search_type_other)
             else -> return ""
         }
 

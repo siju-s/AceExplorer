@@ -2,8 +2,11 @@ package com.siju.acexplorer.main.model.data.doc
 
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
+import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.FileConstants
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.main.model.groups.CategoryHelper
+import java.util.*
 
 object DocumentUtils {
 
@@ -49,5 +52,48 @@ object DocumentUtils {
                 + "'" + tar + "'" + ","
                 + "'" + tgz + "'" + ","
                 + "'" + rar + "'" + ")")
+    }
+
+    fun isDocumentFileType(extension : String) : Boolean {
+        return extension == FileConstants.EXT_TEXT || extension == FileConstants.EXT_DOC ||
+                extension == FileConstants.EXT_DOCX || extension == FileConstants.EXT_CSV ||
+                extension == FileConstants.EXT_XLS || extension == FileConstants.EXT_XLXS ||
+                extension == FileConstants.EXT_PDF || extension == FileConstants.EXT_PPT ||
+                extension == FileConstants.EXT_PPTX
+    }
+
+    fun getMediaStoreImageMediaType() : String {
+        return MediaStore.Files.FileColumns.MEDIA_TYPE + " = " + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
+    }
+
+    fun getMediaStoreVideoMediaType() : String {
+        return MediaStore.Files.FileColumns.MEDIA_TYPE + " = " + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO
+    }
+
+    fun getMediaStoreAudioMediaType() : String {
+        return MediaStore.Files.FileColumns.MEDIA_TYPE + " = " + MediaStore.Files.FileColumns.MEDIA_TYPE_AUDIO
+    }
+
+    fun getLargeFilesCategoryList(fileList: ArrayList<FileInfo>): ArrayList<FileInfo> {
+//        SortHelper.sortRecentCategory(fileList)
+        val categories = ArrayList<Category>()
+        var count = 0
+        val fileInfoList = ArrayList<FileInfo>()
+        for (fileInfo in fileList) {
+            val newCategory = CategoryHelper.getCategoryForLargeFilesFromExtension(fileInfo.extension)
+            if (!categories.contains(newCategory)) {
+                count = 1
+                val itemFileInfo = FileInfo(newCategory,
+                        CategoryHelper.getSubcategoryForLargeFilesFromExtension(
+                                fileInfo.extension),
+                        count)
+                fileInfoList.add(itemFileInfo)
+                categories.add(newCategory)
+            } else {
+                count++
+                fileInfoList[categories.indexOf(newCategory)].count = count
+            }
+        }
+        return fileInfoList
     }
 }

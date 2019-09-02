@@ -309,6 +309,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
 
 
     fun handleItemClick(fileInfo: FileInfo, position: Int) {
+        Log.e(TAG, "handleItemClick: category:$category")
         if (isActionModeActive()) {
             multiSelectionHelper.toggleSelection(position)
             handleActionModeClick(fileInfo)
@@ -317,10 +318,11 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         when (category) {
             AUDIO, VIDEO, IMAGE, DOCS, PODCASTS, ALBUM_DETAIL, ARTIST_DETAIL, GENRE_DETAIL, FOLDER_IMAGES,
             FOLDER_VIDEOS, ALL_TRACKS, RECENT_AUDIO, RECENT_DOCS, RECENT_IMAGES, RECENT_VIDEOS,
-            IMAGES_ALL, VIDEO_ALL, RECENT_ALL -> {
+            IMAGES_ALL, VIDEO_ALL, RECENT_ALL, LARGE_FILES_AUDIO, LARGE_FILES_VIDEOS, LARGE_FILES_IMAGES,
+            LARGE_FILES_DOC -> {
                 onFileClicked(fileInfo, position)
             }
-            FILES, DOWNLOADS, COMPRESSED, FAVORITES, PDF, APPS, LARGE_FILES, RECENT_APPS -> {
+            FILES, LARGE_FILES_ALL, LARGE_FILES_COMPRESSED, LARGE_FILES_APP, LARGE_FILES_OTHER, DOWNLOADS, COMPRESSED, FAVORITES, PDF, APPS, RECENT_APPS -> {
                 onFileItemClicked(fileInfo, position)
             }
 
@@ -353,7 +355,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
                 loadData(fileInfo.bucketId.toString(), FOLDER_VIDEOS)
             }
 
-            RECENT -> {
+            RECENT, LARGE_FILES -> {
                 loadData(null, fileInfo.category)
             }
 
