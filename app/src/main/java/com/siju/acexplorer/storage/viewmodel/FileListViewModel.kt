@@ -33,6 +33,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.util.*
+import kotlin.collections.ArrayList
 
 private const val TAG = "FileListViewModel"
 private const val ZIP_EXT = ".zip"
@@ -315,7 +317,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         when (category) {
             AUDIO, VIDEO, IMAGE, DOCS, PODCASTS, ALBUM_DETAIL, ARTIST_DETAIL, GENRE_DETAIL, FOLDER_IMAGES,
             FOLDER_VIDEOS, ALL_TRACKS, RECENT_AUDIO, RECENT_DOCS, RECENT_IMAGES, RECENT_VIDEOS,
-            IMAGES_ALL, VIDEO_ALL -> {
+            IMAGES_ALL, VIDEO_ALL, RECENT_ALL -> {
                 onFileClicked(fileInfo, position)
             }
             FILES, DOWNLOADS, COMPRESSED, FAVORITES, PDF, APPS, LARGE_FILES, RECENT_APPS -> {
@@ -391,7 +393,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         }
     }
 
-    private fun isZipFile(path: String) = !zipPresenter.isZipMode && path.toLowerCase().endsWith(ZIP_EXT)
+    private fun isZipFile(path: String) = !zipPresenter.isZipMode && path.toLowerCase(Locale.ROOT).endsWith(ZIP_EXT)
 
     private fun openZipViewer(path: String?) {
         path?.let {

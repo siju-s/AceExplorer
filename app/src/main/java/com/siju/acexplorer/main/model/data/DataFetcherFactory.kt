@@ -35,7 +35,7 @@ object DataFetcherFactory {
             Category.ARTIST_DETAIL -> return ArtistDetailDataFetcher()
             Category.GENRE_DETAIL -> return GenreDetailFetcher()
 
-            Category.RECENT -> return RecentFetcher()
+            Category.RECENT, Category.RECENT_ALL -> return RecentFetcher()
             Category.RECENT_IMAGES -> return RecentImageFetcher()
             Category.RECENT_AUDIO -> return RecentAudioFetcher()
             Category.RECENT_VIDEOS -> return RecentVideoFetcher()

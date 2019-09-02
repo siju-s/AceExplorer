@@ -75,7 +75,8 @@ enum class Category(val value: Int) {
     WHATSAPP(51),
     TELEGRAM(52),
     IMAGES_ALL(53),
-    VIDEO_ALL(54);
+    VIDEO_ALL(54),
+    RECENT_ALL(55);
 
     companion object {
         fun valueOf(value: Int): Category? = values().find { it.value == value }
