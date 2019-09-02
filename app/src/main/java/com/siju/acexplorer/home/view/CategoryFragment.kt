@@ -77,6 +77,7 @@ class CategoryFragment : Fragment() {
             Category.GENERIC_MUSIC -> Category.ALL_TRACKS
             Category.RECENT -> Category.RECENT_ALL
             Category.LARGE_FILES -> Category.LARGE_FILES_ALL
+            Category.CAMERA_GENERIC -> Category.CAMERA
             else -> null
         }
         var fragment1 = FileListFragment.newInstance(path, category, false)
@@ -94,7 +95,7 @@ class CategoryFragment : Fragment() {
         return when (category) {
             Category.GENERIC_IMAGES -> context.getString(R.string.categories_folder)
             Category.GENERIC_VIDEOS -> context.getString(R.string.categories_folder)
-            Category.GENERIC_MUSIC, Category.RECENT, Category.LARGE_FILES -> context.getString(R.string.categories)
+            Category.GENERIC_MUSIC, Category.RECENT, Category.LARGE_FILES, Category.CAMERA_GENERIC -> context.getString(R.string.categories)
             else -> "null"
         }
     }

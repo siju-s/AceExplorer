@@ -85,7 +85,11 @@ enum class Category(val value: Int) {
     LARGE_FILES_COMPRESSED(60),
     LARGE_FILES_APP(61),
     LARGE_FILES_OTHER(62),
-    LARGE_FILES_ALL(63);
+    LARGE_FILES_ALL(63),
+
+    CAMERA_GENERIC(64),
+    CAMERA_IMAGES(65),
+    CAMERA_VIDEO(66);
 
     companion object {
         fun valueOf(value: Int): Category? = values().find { it.value == value }

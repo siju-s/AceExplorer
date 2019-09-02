@@ -106,7 +106,10 @@ class HomeViewModel(private val homeModel: HomeModel) : ViewModel() {
             Category.AUDIO     -> category1 = Category.GENERIC_MUSIC
             Category.IMAGE     -> category1 = Category.GENERIC_IMAGES
             Category.VIDEO     -> category1 = Category.GENERIC_VIDEOS
-            Category.CAMERA    -> path = SearchUtils.getCameraDirectory()
+            Category.CAMERA    -> {
+                path = SearchUtils.getCameraDirectory()
+                category1 = Category.CAMERA_GENERIC
+            }
             Category.SCREENSHOT    -> path = SearchUtils.getScreenshotDirectory()
             Category.WHATSAPP    -> path = SearchUtils.getWhatsappDirectory()
             Category.TELEGRAM    -> path = SearchUtils.getTelegramDirectory()

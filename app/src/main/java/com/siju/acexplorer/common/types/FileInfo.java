@@ -114,6 +114,18 @@ public class FileInfo implements Parcelable {
         this.count = count;
     }
 
+    //For camera
+    public FileInfo(Category category, Category subcategory, String filePath, int count) {
+        this.category = category;
+        this.subcategory = subcategory;
+        this.filePath = filePath;
+        this.count = count;
+    }
+
+    public static FileInfo createCameraGenericInfo(Category category, Category subcategory, String filePath, int count) {
+        return new FileInfo(category, subcategory, filePath, count);
+    }
+
     private FileInfo(Parcel in) {
         category = (Category) in.readSerializable();
         fileName = in.readString();

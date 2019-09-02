@@ -1,5 +1,8 @@
 package com.siju.acexplorer.main.model.data
 
+import com.siju.acexplorer.main.model.data.camera.CameraGenericFetcher
+import com.siju.acexplorer.main.model.data.camera.CameraImageFetcher
+import com.siju.acexplorer.main.model.data.camera.CameraVideoFetcher
 import com.siju.acexplorer.main.model.data.doc.CompressedFileFetcher
 import com.siju.acexplorer.main.model.data.doc.DocumentFetcher
 import com.siju.acexplorer.main.model.data.doc.PdfFetcher
@@ -75,6 +78,10 @@ object DataFetcherFactory {
             Category.LARGE_FILES_COMPRESSED -> return LargeCompressedFilesFetcher()
             Category.LARGE_FILES_APP -> return LargeAppFilesFetcher()
             Category.LARGE_FILES_OTHER -> return LargeOtherFilesFetcher()
+
+            Category.CAMERA_GENERIC -> return CameraGenericFetcher()
+            Category.CAMERA_IMAGES -> return CameraImageFetcher()
+            Category.CAMERA_VIDEO -> return CameraVideoFetcher()
 
             Category.ZIP_VIEWER -> TODO()
             Category.GENERIC_LIST -> TODO()

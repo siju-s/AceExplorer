@@ -17,6 +17,7 @@ import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper.getCategoryName
+import com.siju.acexplorer.main.model.groups.CategoryHelper.isAnyCameraCategory
 import com.siju.acexplorer.main.model.groups.CategoryHelper.isAnyLargeFilesCategory
 import com.siju.acexplorer.main.model.groups.CategoryHelper.isDateInMs
 import com.siju.acexplorer.main.model.groups.CategoryHelper.isGenericImagesCategory
@@ -134,6 +135,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                 isAppManager(category)            -> bindAppManagerCategory(context, fileInfo, viewMode)
                 isRecentCategory(category)        -> bindGenericRecent(context, fileInfo)
                 isAnyLargeFilesCategory(category) -> bindLargeFilesGeneric(context, fileInfo)
+                isAnyCameraCategory(category)     -> bindCameraGeneric(context, fileInfo)
                 else                              -> {
                     bindFilesCategory(fileInfo, category, mainCategory, context)
                 }
@@ -249,6 +251,15 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         }
 
         private fun bindLargeFilesGeneric(context: Context, fileInfo: FileInfo) {
+            val count = fileInfo.count
+            val files = context.resources.getQuantityString(R.plurals.number_of_files,
+                    count, count)
+            textFileName.text = getCategoryName(context, fileInfo.subcategory)
+            textNoOfFileOrSize.text = files
+            imageIcon.setImageResource(R.drawable.ic_folder)
+        }
+
+        private fun bindCameraGeneric(context: Context, fileInfo: FileInfo) {
             val count = fileInfo.count
             val files = context.resources.getQuantityString(R.plurals.number_of_files,
                     count, count)

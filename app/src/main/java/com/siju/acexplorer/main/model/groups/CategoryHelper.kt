@@ -67,6 +67,8 @@ object CategoryHelper {
                 LARGE_FILES_OTHER == category
     }
 
+    fun isAnyCameraCategory(category: Category)  = category == CAMERA_IMAGES || category == CAMERA_VIDEO
+
     fun isRecentGenericCategory(category: Category): Boolean {
         return RECENT == category
     }

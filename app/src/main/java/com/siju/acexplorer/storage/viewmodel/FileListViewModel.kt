@@ -13,6 +13,7 @@ import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.Category.*
 import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.view.dialog.DialogHelper
+import com.siju.acexplorer.search.helper.SearchUtils
 import com.siju.acexplorer.storage.model.*
 import com.siju.acexplorer.storage.model.backstack.BackStackInfo
 import com.siju.acexplorer.storage.model.operations.OperationAction
@@ -319,10 +320,10 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
             AUDIO, VIDEO, IMAGE, DOCS, PODCASTS, ALBUM_DETAIL, ARTIST_DETAIL, GENRE_DETAIL, FOLDER_IMAGES,
             FOLDER_VIDEOS, ALL_TRACKS, RECENT_AUDIO, RECENT_DOCS, RECENT_IMAGES, RECENT_VIDEOS,
             IMAGES_ALL, VIDEO_ALL, RECENT_ALL, LARGE_FILES_AUDIO, LARGE_FILES_VIDEOS, LARGE_FILES_IMAGES,
-            LARGE_FILES_DOC -> {
+            LARGE_FILES_DOC, CAMERA_IMAGES, CAMERA_VIDEO -> {
                 onFileClicked(fileInfo, position)
             }
-            FILES, LARGE_FILES_ALL, LARGE_FILES_COMPRESSED, LARGE_FILES_APP, LARGE_FILES_OTHER, DOWNLOADS, COMPRESSED, FAVORITES, PDF, APPS, RECENT_APPS -> {
+            FILES, CAMERA, LARGE_FILES_ALL, LARGE_FILES_COMPRESSED, LARGE_FILES_APP, LARGE_FILES_OTHER, DOWNLOADS, COMPRESSED, FAVORITES, PDF, APPS, RECENT_APPS -> {
                 onFileItemClicked(fileInfo, position)
             }
 
@@ -357,6 +358,10 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
 
             RECENT, LARGE_FILES -> {
                 loadData(null, fileInfo.category)
+            }
+
+            CAMERA_GENERIC ->  {
+                loadData(SearchUtils.getCameraDirectory(), fileInfo.category)
             }
 
             APP_MANAGER -> {
