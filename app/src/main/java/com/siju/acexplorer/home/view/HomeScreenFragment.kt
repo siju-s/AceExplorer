@@ -43,13 +43,13 @@ import kotlinx.android.synthetic.main.toolbar.*
 private const val TAG = "HomeScreenFragment"
 
 //TODO Add Navigation to this class
-class HomeScreenFragment private constructor(): Fragment() {
+class HomeScreenFragment private constructor() : Fragment() {
 
     private lateinit var mainViewModel: MainViewModel
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var categoryAdapter: HomeLibAdapter
     private lateinit var storageAdapter: HomeStorageAdapter
-    private lateinit var adView : AdsView
+    private lateinit var adView: AdsView
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -84,7 +84,7 @@ class HomeScreenFragment private constructor(): Fragment() {
     private fun initList() {
         setupCategoriesList()
         setupStorageList()
-        editButton.setOnClickListener{
+        editButton.setOnClickListener {
             showCategoryEditScreen()
         }
     }
@@ -104,14 +104,13 @@ class HomeScreenFragment private constructor(): Fragment() {
             it?.apply {
                 if (it.entitled) {
                     hideAds()
-                }
-                else {
+                } else {
                     showAds()
                 }
             }
         })
 
-        homeViewModel.categories.observe(viewLifecycleOwner, Observer {categoryList ->
+        homeViewModel.categories.observe(viewLifecycleOwner, Observer { categoryList ->
             Log.e(TAG, "categories: ${categoryList.size}")
             categoryAdapter.submitList(categoryList)
             homeViewModel.fetchCount(categoryList)
@@ -139,12 +138,10 @@ class HomeScreenFragment private constructor(): Fragment() {
 
         homeViewModel.categoryClickEvent.observe(viewLifecycleOwner, Observer {
             it?.apply {
-                loadList(first, second)
+                loadCategory(first, second)
                 homeViewModel.setCategoryClickEvent(null)
             }
         })
-
-//        lifecycle.addObserver(adView)
     }
 
     private fun showAds() {
@@ -192,6 +189,15 @@ class HomeScreenFragment private constructor(): Fragment() {
         val transaction = activity?.supportFragmentManager?.beginTransaction()
         transaction?.apply {
             replace(R.id.main_container, FileListFragment.newInstance(path, category))
+            addToBackStack(null)
+            commit()
+        }
+    }
+
+    private fun loadCategory(path: String?, category: Category) {
+        val transaction = activity?.supportFragmentManager?.beginTransaction()
+        transaction?.apply {
+            replace(R.id.main_container, CategoryFragment.newInstance(path, category))
             addToBackStack(null)
             commit()
         }

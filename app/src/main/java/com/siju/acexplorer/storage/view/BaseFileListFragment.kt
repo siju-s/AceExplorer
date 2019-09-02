@@ -69,15 +69,13 @@ import java.util.*
 
 const val KEY_PATH = "path"
 const val KEY_CATEGORY = "category"
+const val KEY_SHOW_NAVIGATION = "show_navigation"
 private const val TAG = "BaseFileListFragment"
 private const val SAF_REQUEST = 2000
 private const val EXTRACT_PATH_REQUEST = 5000
 
 open class BaseFileListFragment : Fragment(), FileListHelper {
 
-    private var hiddenMenuItem: MenuItem? = null
-    private var path: String? = null
-    private var category = Category.FILES
     private lateinit var filesList: FilesList
     private lateinit var floatingView: FloatingView
     private lateinit var navigationView: NavigationView
@@ -85,6 +83,11 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     private lateinit var fileListViewModel: FileListViewModel
     private lateinit var adView: AdsView
     private lateinit var menuControls: MenuControls
+
+    private var showNavigation = true
+    private var hiddenMenuItem: MenuItem? = null
+    private var path: String? = null
+    private var category = Category.FILES
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -127,13 +130,18 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     }
 
     private fun setupToolbar() {
-        toolbar.title = resources.getString(R.string.app_name)
-        (activity as AppCompatActivity).setSupportActionBar(toolbar)
+        if (!showNavigation) {
+            appbar.visibility = View.GONE
+        }
+        else {
+            toolbar.title = resources.getString(R.string.app_name)
+            (activity as AppCompatActivity).setSupportActionBar(toolbar)
+        }
     }
 
     private fun setupNavigationView() {
         fileListViewModel.setNavigationView(navigationView)
-        if (isAppManager(category)) {
+        if (isAppManager(category) || !showNavigation) {
             navigationView.hideNavigationView()
         }
         else {
@@ -146,6 +154,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         args?.let {
             path = it.getString(KEY_PATH)
             category = it.getSerializable(KEY_CATEGORY) as Category
+            showNavigation = it.getBoolean(KEY_SHOW_NAVIGATION)
         }
     }
 
@@ -300,6 +309,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
                 when (it.first) {
                     Operations.FOLDER_CREATION -> showCreateFolderDialog(context)
                     Operations.FILE_CREATION -> showCreateFileDialog(context)
+                    else -> {}
                 }
             }
         })
@@ -468,6 +478,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
                 context?.showToast(String.format(
                         Locale.getDefault(), resources.getString(R.string.msg_added_to_fav), count))
             }
+            else -> {}
         }
         dismissDialog()
         if (operation != Operations.FAVORITE) {

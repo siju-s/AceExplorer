@@ -18,4 +18,5 @@
     <string name="category_max_min_items_error">Saved categories can be minimum 3 , maximum 12</string>
 
     <string name="library_gif" translatable="false">GIF</string>
+    <string name="category_all">All</string>
 </resources>

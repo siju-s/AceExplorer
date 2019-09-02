@@ -34,6 +34,7 @@ import com.siju.acexplorer.R
 import com.siju.acexplorer.base.view.BaseActivity
 import com.siju.acexplorer.extensions.isLandscape
 import com.siju.acexplorer.helper.ToolbarHelper
+import com.siju.acexplorer.home.view.CategoryFragment
 import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.view.FragmentsFactory
@@ -225,6 +226,12 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
                 }
                 is FileListFragment -> {
                     onSinglePaneBackPress(focusedFragment)
+                }
+            }
+            is CategoryFragment -> {
+                val backPressed = fragment.onBackPressed()
+                if (backPressed) {
+                    super.onBackPressed()
                 }
             }
             is SearchFragment -> onSearchBackPress(fragment)

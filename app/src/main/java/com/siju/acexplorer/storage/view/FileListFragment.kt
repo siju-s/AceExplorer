@@ -22,11 +22,12 @@ import com.siju.acexplorer.main.model.groups.Category
 
 class FileListFragment private constructor(): BaseFileListFragment() {
     companion object {
-        fun newInstance(path: String?, category: Category): FileListFragment {
+        fun newInstance(path: String?, category: Category, showNavigation : Boolean = true): FileListFragment {
             val bundle = Bundle()
             bundle.apply {
                 putString(KEY_PATH, path)
                 putSerializable(KEY_CATEGORY, category)
+                putBoolean(KEY_SHOW_NAVIGATION, showNavigation)
             }
             //        args.putBoolean(FileConstants.KEY_DUAL_ENABLED, isDualMode);
             val fileList = FileListFragment()
