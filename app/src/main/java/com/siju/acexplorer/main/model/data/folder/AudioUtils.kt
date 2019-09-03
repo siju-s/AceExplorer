@@ -1,32 +1,36 @@
-package com.siju.acexplorer.main.model.data.camera
+package com.siju.acexplorer.main.model.data.folder
 
-import android.content.Context
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.HiddenFileHelper
-import com.siju.acexplorer.main.model.data.DataFetcher
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.helper.RootHelper
 import java.io.File
 import java.util.*
 
-class CameraVideoFetcher : DataFetcher {
+private const val EXT_MP3 = ".mp3"
+private const val EXT_AAC = ".aac"
+private const val EXT_M4A = ".m4a"
+private const val EXT_FLAC = ".flac"
+private const val EXT_WAV = ".wav"
+private const val EXT_OGG = ".ogg"
+private const val EXT_AMR = ".amr"
+private const val EXT_OPUS = ".opus"
 
-    override fun fetchData(context: Context, path: String?, category: Category): ArrayList<FileInfo> {
-        val file = File(path)
-        return getFileList(file, canShowHiddenFiles(context))
-    }
+object AudioUtils {
 
-    override fun fetchCount(context: Context, path: String?): Int {
-        return 0
-    }
-
-    private fun getFileList(sourceFile: File, showHidden: Boolean): ArrayList<FileInfo> {
+    fun getFolderAudioFileList(sourceFile: File, showHidden: Boolean): ArrayList<FileInfo> {
         val filesList = ArrayList<FileInfo>()
         val listFiles = sourceFile.listFiles { _, name ->
-            name?.toLowerCase(Locale.ROOT)?.endsWith(".mp4") == true ||
-                    name?.toLowerCase(Locale.ROOT)?.endsWith(".ts") == true ||
-                    name?.toLowerCase(Locale.ROOT)?.endsWith(".mkv") == true
+            name?.endsWith(EXT_MP3, true) == true ||
+                    name?.endsWith(EXT_AAC, true) == true ||
+                    name?.endsWith(EXT_M4A, true) == true ||
+                    name?.endsWith(EXT_FLAC, true) == true ||
+                    name?.endsWith(EXT_WAV, true) == true ||
+                    name?.endsWith(EXT_OGG, true) == true ||
+                    name?.endsWith(EXT_AMR, true) == true ||
+                    name?.endsWith(EXT_OPUS, true) == true
+
         } ?: return filesList
 
         for (file in listFiles) {

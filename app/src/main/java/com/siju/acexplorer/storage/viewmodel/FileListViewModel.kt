@@ -320,7 +320,8 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
             AUDIO, VIDEO, IMAGE, DOCS, PODCASTS, ALBUM_DETAIL, ARTIST_DETAIL, GENRE_DETAIL, FOLDER_IMAGES,
             FOLDER_VIDEOS, ALL_TRACKS, RECENT_AUDIO, RECENT_DOCS, RECENT_IMAGES, RECENT_VIDEOS,
             IMAGES_ALL, VIDEO_ALL, RECENT_ALL, LARGE_FILES_AUDIO, LARGE_FILES_VIDEOS, LARGE_FILES_IMAGES,
-            LARGE_FILES_DOC, CAMERA_IMAGES, CAMERA_VIDEO -> {
+            LARGE_FILES_DOC, CAMERA_IMAGES, CAMERA_VIDEO, SEARCH_FOLDER_IMAGES, SEARCH_FOLDER_VIDEOS, SEARCH_FOLDER_AUDIO,
+            SEARCH_FOLDER_DOCS -> {
                 onFileClicked(fileInfo, position)
             }
             FILES, CAMERA, LARGE_FILES_ALL, LARGE_FILES_COMPRESSED, LARGE_FILES_APP, LARGE_FILES_OTHER, DOWNLOADS, COMPRESSED, FAVORITES, PDF, APPS, RECENT_APPS -> {
@@ -362,6 +363,10 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
 
             CAMERA_GENERIC ->  {
                 loadData(SearchUtils.getCameraDirectory(), fileInfo.category)
+            }
+
+            WHATSAPP, TELEGRAM -> {
+                loadData(fileInfo.filePath, fileInfo.category)
             }
 
             APP_MANAGER -> {

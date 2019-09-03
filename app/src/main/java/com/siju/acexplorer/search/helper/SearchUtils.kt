@@ -29,7 +29,7 @@ object SearchUtils {
     }
 
     fun getWhatsappDocDirectory() : String? {
-        return getWhatsappDirectory() + "/WhatsApp Document"
+        return getWhatsappDirectory() + "/WhatsApp Documents"
     }
 
     fun getTelegramDirectory() : String? {

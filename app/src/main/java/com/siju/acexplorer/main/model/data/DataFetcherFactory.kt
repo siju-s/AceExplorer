@@ -1,12 +1,14 @@
 package com.siju.acexplorer.main.model.data
 
 import com.siju.acexplorer.main.model.data.camera.CameraGenericFetcher
-import com.siju.acexplorer.main.model.data.camera.CameraImageFetcher
-import com.siju.acexplorer.main.model.data.camera.CameraVideoFetcher
 import com.siju.acexplorer.main.model.data.doc.CompressedFileFetcher
 import com.siju.acexplorer.main.model.data.doc.DocumentFetcher
 import com.siju.acexplorer.main.model.data.doc.PdfFetcher
 import com.siju.acexplorer.main.model.data.doc.largefiles.*
+import com.siju.acexplorer.main.model.data.folder.FolderAudioFetcher
+import com.siju.acexplorer.main.model.data.folder.FolderDocFetcher
+import com.siju.acexplorer.main.model.data.folder.FolderImageFetcher
+import com.siju.acexplorer.main.model.data.folder.FolderVideoFetcher
 import com.siju.acexplorer.main.model.data.image.ImageAllFetcher
 import com.siju.acexplorer.main.model.data.image.ImageDataFetcher
 import com.siju.acexplorer.main.model.data.image.ImageDetailFetcher
@@ -16,10 +18,6 @@ import com.siju.acexplorer.main.model.data.video.VideoAllFetcher
 import com.siju.acexplorer.main.model.data.video.VideoDetailFetcher
 import com.siju.acexplorer.main.model.data.video.VideoFetcher
 import com.siju.acexplorer.main.model.groups.Category
-import com.siju.acexplorer.search.model.SearchFolderAudio
-import com.siju.acexplorer.search.model.SearchFolderDoc
-import com.siju.acexplorer.search.model.SearchFolderImages
-import com.siju.acexplorer.search.model.SearchFolderVideos
 
 object DataFetcherFactory {
 
@@ -51,10 +49,10 @@ object DataFetcherFactory {
             Category.RECENT_AUDIO_FOLDER -> return RecentFolderAudioFetcher()
             Category.RECENT_DOC_FOLDER -> return RecentFolderDocFetcher()
 
-            Category.SEARCH_FOLDER_DOCS -> return SearchFolderDoc()
-            Category.SEARCH_FOLDER_IMAGES -> return SearchFolderImages()
-            Category.SEARCH_FOLDER_VIDEOS -> return SearchFolderVideos()
-            Category.SEARCH_FOLDER_AUDIO -> return SearchFolderAudio()
+            Category.SEARCH_FOLDER_DOCS -> return FolderDocFetcher()
+            Category.SEARCH_FOLDER_IMAGES -> return FolderImageFetcher()
+            Category.SEARCH_FOLDER_VIDEOS -> return FolderVideoFetcher()
+            Category.SEARCH_FOLDER_AUDIO -> return FolderAudioFetcher()
 
             Category.APPS -> return AppDataFetcher()
 
@@ -80,8 +78,8 @@ object DataFetcherFactory {
             Category.LARGE_FILES_OTHER -> return LargeOtherFilesFetcher()
 
             Category.CAMERA_GENERIC -> return CameraGenericFetcher()
-            Category.CAMERA_IMAGES -> return CameraImageFetcher()
-            Category.CAMERA_VIDEO -> return CameraVideoFetcher()
+            Category.CAMERA_IMAGES -> return FolderImageFetcher()
+            Category.CAMERA_VIDEO -> return FolderVideoFetcher()
 
             Category.ZIP_VIEWER -> TODO()
             Category.GENERIC_LIST -> TODO()
