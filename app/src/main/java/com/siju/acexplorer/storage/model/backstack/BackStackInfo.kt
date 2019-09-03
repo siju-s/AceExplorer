@@ -16,6 +16,7 @@
 
 package com.siju.acexplorer.storage.model.backstack
 
+import android.util.Log
 import com.siju.acexplorer.logging.Logger
 import com.siju.acexplorer.main.model.groups.Category
 import java.util.*
@@ -28,9 +29,9 @@ class BackStackInfo {
 
     fun addToBackStack(path: String?, category: Category) {
         if (isPathNotInBackStack(category, path)) {
-            Logger.log(TAG,
-                       "addToBackStack--size=" + backStack.size + " Path=" + path + "Category=" + category)
             backStack.add(BackStackModel(path, category))
+            Log.e(TAG,
+                    "addToBackStack--size=" + backStack.size + " Path=" + path + "Category=" + category)
         }
     }
 
@@ -68,6 +69,7 @@ class BackStackInfo {
 
     fun removeLastEntry() {
         val index = getLastIndex()
+        Log.e(TAG, "removeLastEntry--size= ${backStack.size}, index:$index")
         if (index >= 0) {
             backStack.removeAt(index)
         }

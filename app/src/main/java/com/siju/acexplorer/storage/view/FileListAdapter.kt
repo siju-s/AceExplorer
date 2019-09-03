@@ -44,7 +44,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        Log.e(TAG, "onBindViewHolder : $position")
+//        Log.e(TAG, "onBindViewHolder : $position")
         val item = getItem(position)
         viewHolder.bind(item, itemCount, viewMode, mainCategory, multiSelectionHelper?.isSelected(position), position, draggedPosition,
                         clickListener, longClickListener)

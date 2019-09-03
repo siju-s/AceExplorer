@@ -199,7 +199,6 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         })
 
         fileListViewModel.fileData.observe(viewLifecycleOwner, Observer {
-            Log.e(TAG, "fileData:$it")
             it?.apply {
                 if (::filesList.isInitialized) {
                     filesList.onDataLoaded(it)

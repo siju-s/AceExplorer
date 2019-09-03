@@ -32,7 +32,7 @@ class ZipPresenterImpl(private val viewModel: FileListViewModel, private val nav
         override fun onZipModeEnd(dir: String?) {
             isZipMode = false
             backStackInfo.removeLastEntry()
-            viewModel.onZipModeEnd(dir)
+            viewModel.onZipModeEnd(backStackInfo.getCurrentBackStack()?.first)
         }
 
         override fun calculateZipScroll(dir: String) {

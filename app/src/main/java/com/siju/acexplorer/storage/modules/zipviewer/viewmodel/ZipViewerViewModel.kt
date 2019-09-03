@@ -23,7 +23,7 @@ import java.util.zip.ZipEntry
 
 private const val TAG = "ZipViewerViewModel"
 private const val DELIMITER_SLASH = "/"
-class ZipViewerViewModel(val model: ZipViewerModel, val zipViewerCallback: ZipViewerCallback) : ViewModel() {
+class ZipViewerViewModel(val model: ZipViewerModel, private val zipViewerCallback: ZipViewerCallback) : ViewModel() {
 
     private val viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
@@ -168,7 +168,6 @@ class ZipViewerViewModel(val model: ZipViewerModel, val zipViewerCallback: ZipVi
         zipElements.clear()
         with(zipViewerCallback) {
             removeZipScrollPos(parentZipPath)
-            removeFromBackStack()
             onZipModeEnd(dir)
         }
         model.clearCache()

@@ -205,7 +205,7 @@ public class ThumbnailUtils {
 
                                 @Override
                                 public void onLoadCleared(@Nullable Drawable placeholder) {
-                                    imageIcon.setImageDrawable(placeholder);
+                                    imageIcon.setImageResource(0);
                                 }
 
                                 @Override

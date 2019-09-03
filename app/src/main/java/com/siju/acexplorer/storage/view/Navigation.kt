@@ -1,6 +1,5 @@
 package com.siju.acexplorer.storage.view
 
-import android.util.Log
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.logging.Logger
 import com.siju.acexplorer.main.model.StorageUtils
@@ -61,7 +60,7 @@ class Navigation(private val viewModel: FileListViewModel) {
 
 
     fun setNavDirectory(path: String?, category: Category) {
-        Log.e(TAG, "setNavDirectory:path$path, category:$category")
+//        Log.e(TAG, "setNavDirectory:path$path, category:$category")
         if (CategoryHelper.checkIfLibraryCategory(category) || path == null) {
             return
         }
