@@ -134,6 +134,7 @@ class HomeScreenFragment private constructor() : Fragment() {
         homeViewModel.categoryData.observe(viewLifecycleOwner, Observer {
             Log.e(TAG, "categorydata: ${it.first}, ${it.second}")
             categoryAdapter.notifyItemChanged(it.first, it.second)
+            categoryAdapter.notifyDataSetChanged()
         })
 
         homeViewModel.categoryClickEvent.observe(viewLifecycleOwner, Observer {
