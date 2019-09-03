@@ -6,6 +6,8 @@ import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.FileConstants
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper
+import com.siju.acexplorer.main.model.helper.SortHelper
+import com.siju.acexplorer.storage.model.SortMode
 import java.util.*
 
 object DocumentUtils {
@@ -71,8 +73,7 @@ object DocumentUtils {
     }
 
     fun getLargeFilesCategoryList(fileList: ArrayList<FileInfo>): ArrayList<FileInfo> {
-        // TODO("sort it")
-//        SortHelper.sortRecentCategory(fileList)
+        SortHelper.sortFiles(fileList, SortMode.TYPE_DESC.value)
         val categories = ArrayList<Category>()
         var count = 0
         val fileInfoList = ArrayList<FileInfo>()
