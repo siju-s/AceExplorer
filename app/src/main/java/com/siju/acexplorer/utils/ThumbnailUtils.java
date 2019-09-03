@@ -17,7 +17,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.common.types.FileInfo;
@@ -171,6 +171,7 @@ public class ThumbnailUtils {
             Glide.with(context).load(uri).apply(options)
                     .into(imageIcon);
         } else {
+            imageIcon.setImageResource(R.drawable.ic_music_default);
             Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
             String[] projection = new String[]{MediaStore.Audio.Media.ALBUM_ID};
             String selection = MediaStore.Audio.Media.DATA + " = ?";
@@ -196,10 +197,15 @@ public class ThumbnailUtils {
                             .fallback(R.drawable.ic_music_default);
                     Glide.with(context).load(newUri)
                             .apply(options)
-                            .into(new SimpleTarget<Drawable>() {
+                            .into(new CustomTarget<Drawable>() {
                                 @Override
                                 public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
                                     imageIcon.setImageDrawable(resource);
+                                }
+
+                                @Override
+                                public void onLoadCleared(@Nullable Drawable placeholder) {
+                                    imageIcon.setImageDrawable(placeholder);
                                 }
 
                                 @Override

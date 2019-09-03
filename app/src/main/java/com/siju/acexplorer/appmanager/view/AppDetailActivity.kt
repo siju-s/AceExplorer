@@ -26,7 +26,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.siju.acexplorer.AceApplication
@@ -68,7 +68,7 @@ class AppDetailActivity : BaseActivity(), View.OnClickListener {
     private lateinit var fabStore: FloatingActionButton
     private lateinit var viewModel: AppDetailViewModel
 
-    private lateinit var packageValue : String
+    private lateinit var packageValue: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -171,8 +171,7 @@ class AppDetailActivity : BaseActivity(), View.OnClickListener {
         if (permissions == null) {
             permissionText.visibility = View.GONE
             permissionHolderText.visibility = View.GONE
-        }
-        else {
+        } else {
             val permissionList = StringBuilder()
             for (permission in permissions) {
                 permissionList.append(permission)
@@ -195,8 +194,7 @@ class AppDetailActivity : BaseActivity(), View.OnClickListener {
         if (minSdk == 0) {
             minSdkText.visibility = View.GONE
             minSdkTextHolder.visibility = View.GONE
-        }
-        else {
+        } else {
             minSdkText.text = appInfo.minSdk.toString()
         }
         setupAppIcon(appInfo.packageName)
@@ -215,7 +213,11 @@ class AppDetailActivity : BaseActivity(), View.OnClickListener {
                 .`as`(Drawable::class.java)
                 .apply(options.dontAnimate().dontTransform().priority(Priority.LOW))
                 .load(packageName)
-                .into(object : SimpleTarget<Drawable>() {
+                .into(object : CustomTarget<Drawable>() {
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                        imageIcon.setImageDrawable(placeholder)
+                    }
+
                     override fun onResourceReady(drawable: Drawable,
                                                  transition: Transition<in Drawable>?) {
                         imageIcon.setImageDrawable(drawable)
@@ -231,11 +233,10 @@ class AppDetailActivity : BaseActivity(), View.OnClickListener {
         var bitmap: Bitmap? = null
         if (drawable is BitmapDrawable) {
             bitmap = drawable.bitmap
-        }
-        else if (SdkHelper.isAtleastOreo && drawable is AdaptiveIconDrawable) {
+        } else if (SdkHelper.isAtleastOreo && drawable is AdaptiveIconDrawable) {
             bitmap = Bitmap
                     .createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(),
-                                  Bitmap.Config.ARGB_8888)
+                            Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap!!)
             drawable.setBounds(0, 0, canvas.width, canvas.height)
             drawable.draw(canvas)
@@ -284,10 +285,9 @@ class AppDetailActivity : BaseActivity(), View.OnClickListener {
             R.id.uninstallButton -> AppHelper.uninstallApp(this, packageValue)
             R.id.fabStore -> try {
                 startActivity(Intent(Intent.ACTION_VIEW,
-                                     Uri.parse(
-                                             "market://details?id=" + this.packageValue)))
-            }
-            catch (exception: ActivityNotFoundException) {
+                        Uri.parse(
+                                "market://details?id=" + this.packageValue)))
+            } catch (exception: ActivityNotFoundException) {
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(
                         URL_STORE + this.packageValue)))
             }
