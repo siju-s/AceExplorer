@@ -14,8 +14,7 @@
   ~ limitations under the License.
   -->
 
-<androidx.preference.PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"   >
 
     <ListPreference
         app:defaultValue="1"
@@ -27,13 +26,16 @@
         app:positiveButtonText="@null"
         app:title="@string/pref_title_theme" />
 
-
-    <SwitchPreferenceCompat
+    <CheckBoxPreference
         app:key="prefDualPane"
+        app:layout="@layout/prefs_checkbox"
+        app:iconSpaceReserved="false"
         app:title="@string/pref_title_disable_dual" />
 
-    <SwitchPreferenceCompat
+    <CheckBoxPreference
         app:key="prefRooted"
+        app:layout="@layout/prefs_checkbox"
+        app:iconSpaceReserved="false"
         app:title="@string/enable_root" />
 
     <Preference
@@ -55,8 +57,10 @@
         app:layout="@layout/prefs_settings_item"
         app:title="@string/pref_title_check_update" />
 
-    <SwitchPreferenceCompat
+    <CheckBoxPreference
         app:defaultValue="true"
+        app:iconSpaceReserved="false"
+        app:layout="@layout/prefs_checkbox"
         app:key="prefsAnalytics"
         app:summary="@string/analytics_summary"
         app:title="@string/analytics_text" />
@@ -68,4 +72,4 @@
         app:fragment="com.siju.acexplorer.settings.AboutFragment" />
 
 
-</androidx.preference.PreferenceScreen>
+</PreferenceScreen>

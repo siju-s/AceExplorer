@@ -68,14 +68,14 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     }
 
     private fun setupRootPref() {
-        val rootPreference = findPreference(PREF_ROOT) as SwitchPreferenceCompat?
+        val rootPreference = findPreference(PREF_ROOT) as CheckBoxPreference?
         rootPreference?.setOnPreferenceClickListener{ pref ->
             onRootPrefClicked(rootPreference.isChecked, rootPreference)
             true
         }
     }
 
-    private fun onRootPrefClicked(newValue: Boolean, rootPreference: SwitchPreferenceCompat) {
+    private fun onRootPrefClicked(newValue: Boolean, rootPreference: CheckBoxPreference) {
         if (newValue) {
             val rooted = RootUtils.hasRootAccess()
             Log.e("Settings", " rooted:$rooted")
@@ -101,7 +101,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     }
 
     private fun setupAnalyticsPref() {
-        val analyticsPreference = findPreference(PREFS_ANALYTICS) as SwitchPreferenceCompat?
+        val analyticsPreference = findPreference(PREFS_ANALYTICS) as CheckBoxPreference?
         analyticsPreference?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
             Analytics.getLogger().sendAnalytics(newValue as Boolean)
             true
