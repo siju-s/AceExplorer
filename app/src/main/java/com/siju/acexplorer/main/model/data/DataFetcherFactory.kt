@@ -3,6 +3,7 @@ package com.siju.acexplorer.main.model.data
 import com.siju.acexplorer.main.model.data.camera.CameraGenericFetcher
 import com.siju.acexplorer.main.model.data.doc.CompressedFileFetcher
 import com.siju.acexplorer.main.model.data.doc.DocumentFetcher
+import com.siju.acexplorer.main.model.data.doc.OtherDocFilesFetcher
 import com.siju.acexplorer.main.model.data.doc.PdfFetcher
 import com.siju.acexplorer.main.model.data.doc.largefiles.*
 import com.siju.acexplorer.main.model.data.folder.FolderAudioFetcher
@@ -67,6 +68,7 @@ object DataFetcherFactory {
             Category.DOCS -> return DocumentFetcher()
             Category.COMPRESSED -> return CompressedFileFetcher()
             Category.PDF -> return PdfFetcher()
+            Category.DOCS_OTHER -> return OtherDocFilesFetcher()
 
             Category.LARGE_FILES, Category.LARGE_FILES_ALL -> return LargeFilesFetcher()
             Category.LARGE_FILES_AUDIO -> return LargeAudioFilesFetcher()

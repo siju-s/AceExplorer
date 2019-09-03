@@ -212,7 +212,8 @@ class HomeScreenFragment private constructor() : Fragment() {
         return category == Category.WHATSAPP || category == Category.TELEGRAM ||
                 category == Category.GENERIC_MUSIC || category == Category.GENERIC_IMAGES ||
                 category == Category.GENERIC_VIDEOS || category == Category.CAMERA_GENERIC ||
-                category == Category.RECENT || category == Category.LARGE_FILES
+                category == Category.RECENT || category == Category.LARGE_FILES ||
+                category == Category.DOCS
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

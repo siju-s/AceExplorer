@@ -74,6 +74,8 @@ class CategoryFragment : Fragment() {
     private fun createFragment(path: String?, category: Category) {
         if (category == Category.WHATSAPP || category == Category.TELEGRAM) {
             addFolderCategoryFragments(path, category)
+        } else if (category == Category.DOCS) {
+            addDocCategoryFragments(path, category)
         } else {
             addGenericCategoryFragments(path, category)
         }
@@ -89,10 +91,12 @@ class CategoryFragment : Fragment() {
             Category.CAMERA_GENERIC -> Category.CAMERA
             else -> null
         }
+
         var fragment1 = FileListFragment.newInstance(path, category, false)
         allCategory?.let {
             fragment1 = FileListFragment.newInstance(path, allCategory, false)
         }
+
         val fragment2 = FileListFragment.newInstance(path, category, false)
         context?.let { context ->
             pagerAdapter.addFragment(fragment1, context.getString(R.string.category_all))
@@ -109,6 +113,8 @@ class CategoryFragment : Fragment() {
             Category.SEARCH_FOLDER_VIDEOS -> context.getString(R.string.nav_menu_video)
             Category.SEARCH_FOLDER_AUDIO -> context.getString(R.string.audio)
             Category.SEARCH_FOLDER_DOCS -> context.getString(R.string.home_docs)
+            Category.PDF -> context.getString(R.string.pdf)
+            Category.DOCS_OTHER -> context.getString(R.string.other)
             else -> "null"
         }
     }
@@ -129,27 +135,40 @@ class CategoryFragment : Fragment() {
         }
     }
 
-    private fun getSubDirImagePath(path: String?, category: Category) : String? {
+    private fun addDocCategoryFragments(path: String?, category: Category) {
+        val fragment1 = FileListFragment.newInstance(path, category, false)
+
+        val fragment2 = FileListFragment.newInstance(path, Category.PDF, false)
+        val fragment3 = FileListFragment.newInstance(path, Category.DOCS_OTHER, false)
+
+        context?.let { context ->
+            pagerAdapter.addFragment(fragment1, context.getString(R.string.category_all))
+            pagerAdapter.addFragment(fragment2, getTitle(context, Category.PDF))
+            pagerAdapter.addFragment(fragment3, getTitle(context, Category.DOCS_OTHER))
+        }
+    }
+
+    private fun getSubDirImagePath(path: String?, category: Category): String? {
         if (path == null) {
             return null
         }
-        when(path) {
+        when (path) {
             SearchUtils.getWhatsappDirectory() -> {
-                when(category) {
-                    Category.SEARCH_FOLDER_IMAGES -> return SearchUtils.getWhatsappImagesDirectory()
-                    Category.SEARCH_FOLDER_VIDEOS -> return SearchUtils.getWhatsappVideosDirectory()
-                    Category.SEARCH_FOLDER_AUDIO -> return SearchUtils.getWhatsappAudioDirectory()
-                    Category.SEARCH_FOLDER_DOCS -> return SearchUtils.getWhatsappDocDirectory()
-                    else -> return path
+                return when (category) {
+                    Category.SEARCH_FOLDER_IMAGES -> SearchUtils.getWhatsappImagesDirectory()
+                    Category.SEARCH_FOLDER_VIDEOS -> SearchUtils.getWhatsappVideosDirectory()
+                    Category.SEARCH_FOLDER_AUDIO -> SearchUtils.getWhatsappAudioDirectory()
+                    Category.SEARCH_FOLDER_DOCS -> SearchUtils.getWhatsappDocDirectory()
+                    else -> path
                 }
             }
             SearchUtils.getTelegramDirectory() -> {
-                when(category) {
-                    Category.SEARCH_FOLDER_IMAGES -> return SearchUtils.getTelegramImagesDirectory()
-                    Category.SEARCH_FOLDER_VIDEOS -> return SearchUtils.getTelegramVideosDirectory()
-                    Category.SEARCH_FOLDER_AUDIO -> return SearchUtils.getTelegramAudioDirectory()
-                    Category.SEARCH_FOLDER_DOCS -> return SearchUtils.getTelegramDocsDirectory()
-                    else -> return path
+                return when (category) {
+                    Category.SEARCH_FOLDER_IMAGES -> SearchUtils.getTelegramImagesDirectory()
+                    Category.SEARCH_FOLDER_VIDEOS -> SearchUtils.getTelegramVideosDirectory()
+                    Category.SEARCH_FOLDER_AUDIO -> SearchUtils.getTelegramAudioDirectory()
+                    Category.SEARCH_FOLDER_DOCS -> SearchUtils.getTelegramDocsDirectory()
+                    else -> path
                 }
             }
         }

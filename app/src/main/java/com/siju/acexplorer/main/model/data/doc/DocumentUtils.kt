@@ -14,10 +14,6 @@ object DocumentUtils {
         return MediaStore.Files.FileColumns.MEDIA_TYPE + " = " + MediaStore.Files.FileColumns.MEDIA_TYPE_NONE
     }
 
-    fun isLargeFilesCategory(category: Category): Boolean {
-        return Category.LARGE_FILES == category
-    }
-
     fun getDocMimeTypes(): String {
         val doc = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_DOC)
         val docx = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_DOCX)
@@ -75,6 +71,7 @@ object DocumentUtils {
     }
 
     fun getLargeFilesCategoryList(fileList: ArrayList<FileInfo>): ArrayList<FileInfo> {
+        // TODO("sort it")
 //        SortHelper.sortRecentCategory(fileList)
         val categories = ArrayList<Category>()
         var count = 0
