@@ -34,13 +34,21 @@ class BackStackInfo {
         }
     }
 
-    private fun isPathNotInBackStack(category: Category, path: String?) = category != Category.FILES ||
+    private fun isPathNotInBackStack(category: Category, path: String?) = getLastIndexCategory() != category ||
             path != getLastIndexPath()
 
     private fun getLastIndexPath() : String? {
         val index = getLastIndex()
         if (index >= 0) {
             return backStack[index].filePath
+        }
+        return null
+    }
+
+    private fun getLastIndexCategory() : Category? {
+        val index = getLastIndex()
+        if (index >= 0) {
+            return backStack[index].category
         }
         return null
     }

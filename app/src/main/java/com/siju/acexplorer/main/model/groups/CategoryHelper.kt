@@ -2,6 +2,7 @@ package com.siju.acexplorer.main.model.groups
 
 
 import android.content.Context
+import android.util.Log
 import android.webkit.MimeTypeMap
 import com.siju.acexplorer.R
 import com.siju.acexplorer.main.model.FileConstants.EXT_TAR
@@ -67,13 +68,13 @@ object CategoryHelper {
                 LARGE_FILES_OTHER == category
     }
 
-    fun isAnyCameraCategory(category: Category)  = category == CAMERA_IMAGES || category == CAMERA_VIDEO
+    fun isAnyCameraCategory(category: Category) = category == CAMERA_IMAGES || category == CAMERA_VIDEO
 
     fun isRecentGenericCategory(category: Category): Boolean {
         return RECENT == category
     }
 
-    fun isLargeFilesOrganisedCategory(category: Category) : Boolean {
+    fun isLargeFilesOrganisedCategory(category: Category): Boolean {
         return category == LARGE_FILES
     }
 
@@ -95,16 +96,12 @@ object CategoryHelper {
                 RECENT_IMAGES == category || GENERIC_IMAGES == category
     }
 
-    fun showLibSpecificNavigation(category: Category): Boolean {
-        return checkIfAnyMusicCategory(category) ||
-                category == FOLDER_IMAGES || category == FOLDER_VIDEOS ||
-                isRecentCategory(category)
-    }
-
     fun isSortOrActionModeUnSupported(category: Category): Boolean {
+        Log.d("CategoryHelper", "isSortOrActionModeUnSupported :$category")
         return isMusicCategory(category) || isGenericMusic(category) ||
                 isGenericVideosCategory(category) ||
-                isGenericImagesCategory(category)
+                isGenericImagesCategory(category) || category == LARGE_FILES ||
+                category == CAMERA_GENERIC || category == RECENT
     }
 
     fun getCategoryForRecentFromExtension(extension: String?): Category {
@@ -118,14 +115,11 @@ object CategoryHelper {
         val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext)
         //        Log.d("CategoryHelper", "getCategoryForRecentFromExtension: ext;"+extension + " mime:"+mimeType);
         if (mimeType != null) {
-            if (mimeType.indexOf("image") == 0) {
-                value = RECENT_IMAGES
-            } else if (mimeType.indexOf("video") == 0) {
-                value = RECENT_VIDEOS
-            } else if (mimeType.indexOf("audio") == 0) {
-                value = RECENT_AUDIO
-            } else if (MIME_TYPE_APK == mimeType) {
-                value = RECENT_APPS
+            when {
+                mimeType.indexOf("image") == 0 -> value = RECENT_IMAGES
+                mimeType.indexOf("video") == 0 -> value = RECENT_VIDEOS
+                mimeType.indexOf("audio") == 0 -> value = RECENT_AUDIO
+                MIME_TYPE_APK == mimeType -> value = RECENT_APPS
             }
         }
         return value
@@ -142,14 +136,11 @@ object CategoryHelper {
         val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext)
         //        Log.d("CategoryHelper", "getCategoryForRecentFromExtension: ext;"+extension + " mime:"+mimeType);
         if (mimeType != null) {
-            if (mimeType.indexOf("image") == 0) {
-                value = IMAGE
-            } else if (mimeType.indexOf("video") == 0) {
-                value = VIDEO
-            } else if (mimeType.indexOf("audio") == 0) {
-                value = AUDIO
-            } else if (MIME_TYPE_APK == mimeType) {
-                value = APPS
+            when {
+                mimeType.indexOf("image") == 0 -> value = IMAGE
+                mimeType.indexOf("video") == 0 -> value = VIDEO
+                mimeType.indexOf("audio") == 0 -> value = AUDIO
+                MIME_TYPE_APK == mimeType -> value = APPS
             }
         }
         return value
@@ -174,11 +165,9 @@ object CategoryHelper {
                 value = LARGE_FILES_AUDIO
             } else if (MIME_TYPE_APK == mimeType) {
                 value = LARGE_FILES_APP
-            }
-            else if (ext.endsWith(EXT_ZIP) || ext.endsWith(EXT_TAR)) {
+            } else if (ext.endsWith(EXT_ZIP) || ext.endsWith(EXT_TAR)) {
                 value = LARGE_FILES_COMPRESSED
-            }
-            else if (DocumentUtils.isDocumentFileType(ext)) {
+            } else if (DocumentUtils.isDocumentFileType(ext)) {
                 value = LARGE_FILES_DOC
             }
         }
@@ -204,11 +193,9 @@ object CategoryHelper {
                 value = AUDIO
             } else if (MIME_TYPE_APK == mimeType) {
                 value = APPS
-            }
-            else if (ext.endsWith(EXT_ZIP) || ext.endsWith(EXT_TAR)) {
+            } else if (ext.endsWith(EXT_ZIP) || ext.endsWith(EXT_TAR)) {
                 value = COMPRESSED
-            }
-            else if (DocumentUtils.isDocumentFileType(ext)) {
+            } else if (DocumentUtils.isDocumentFileType(ext)) {
                 value = DOCS
             }
         }
