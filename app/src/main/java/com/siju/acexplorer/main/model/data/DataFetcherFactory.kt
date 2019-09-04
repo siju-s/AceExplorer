@@ -6,10 +6,7 @@ import com.siju.acexplorer.main.model.data.doc.DocumentFetcher
 import com.siju.acexplorer.main.model.data.doc.OtherDocFilesFetcher
 import com.siju.acexplorer.main.model.data.doc.PdfFetcher
 import com.siju.acexplorer.main.model.data.doc.largefiles.*
-import com.siju.acexplorer.main.model.data.folder.FolderAudioFetcher
-import com.siju.acexplorer.main.model.data.folder.FolderDocFetcher
-import com.siju.acexplorer.main.model.data.folder.FolderImageFetcher
-import com.siju.acexplorer.main.model.data.folder.FolderVideoFetcher
+import com.siju.acexplorer.main.model.data.folder.*
 import com.siju.acexplorer.main.model.data.image.ImageAllFetcher
 import com.siju.acexplorer.main.model.data.image.ImageDataFetcher
 import com.siju.acexplorer.main.model.data.image.ImageDetailFetcher
@@ -24,7 +21,8 @@ object DataFetcherFactory {
 
     fun createDataFetcher(category: Category): DataFetcher {
         when (category) {
-            Category.FILES, Category.DOWNLOADS, Category.CAMERA, Category.SCREENSHOT, Category.WHATSAPP, Category.TELEGRAM -> return FileDataFetcher()
+            Category.FILES, Category.DOWNLOADS, Category.CAMERA, Category.SCREENSHOT -> return FileDataFetcher()
+            Category.WHATSAPP, Category.TELEGRAM -> return FolderGenericFetcher()
             Category.FAVORITES -> return FavoriteDataFetcher()
 
             Category.ALBUMS -> return AlbumDataFetcher()
