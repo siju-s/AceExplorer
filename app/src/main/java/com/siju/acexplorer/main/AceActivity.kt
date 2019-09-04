@@ -287,7 +287,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
     private fun replaceFragment(fragmentManager: FragmentManager,
                                 fragment: Fragment) {
         fragmentManager.beginTransaction()
-                .replace(R.id.content, fragment)
+                .replace(R.id.frameSettings, fragment)
                 .addToBackStack(null)
                 .commit()
     }

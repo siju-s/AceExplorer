@@ -49,7 +49,7 @@ class SettingsFragment private constructor(): Fragment() {
         setupActionBar()
 
         getSupportFragmentManager()?.beginTransaction()
-                ?.replace(R.id.content, SettingsPreferenceFragment())
+                ?.replace(R.id.frameSettings, SettingsPreferenceFragment())
                 ?.commit()
 
         getSupportFragmentManager()?.addOnBackStackChangedListener {
