@@ -15,33 +15,33 @@ import com.siju.acexplorer.main.model.root.RootUtils
 import java.io.File
 
 private const val TAG = "FileDataFetcher"
+
 class FileDataFetcher : DataFetcher {
 
     override fun fetchData(context: Context, path: String?,
                            category: Category): ArrayList<FileInfo> {
         return fetchFiles(path, getSortMode(context), canShowHiddenFiles(context),
-                          RootUtils.isRooted(context))
+                RootUtils.isRooted(context))
     }
 
     override fun fetchData(context: Context, path: String?, category: Category,
-                           ringtonePicker: Boolean) : ArrayList<FileInfo> {
+                           ringtonePicker: Boolean): ArrayList<FileInfo> {
         return fetchFiles(path, getSortMode(context), canShowHiddenFiles(context),
-                   RootUtils.isRooted(context), ringtonePicker)
+                RootUtils.isRooted(context), ringtonePicker)
     }
 
     override fun fetchCount(context: Context, path: String?): Int {
         Log.e(TAG, "fetchCount:$path")
         return if (path == null) {
             0
-        }
-        else {
+        } else {
             getFileCount(path)
         }
     }
 
     private fun getFileCount(path: String): Int {
         val file = File(path)
-        val list : Array<out String>? = file.list()
+        val list: Array<out String>? = file.list()
         return list?.size ?: 0
     }
 
@@ -64,8 +64,7 @@ class FileDataFetcher : DataFetcher {
             val file = File(path)
             fileInfoArrayList = if (file.canRead()) {
                 getNonRootedList(file, showHidden, ringtonePicker)
-            }
-            else {
+            } else {
                 RootHelper.getRootedList(path, root, showHidden)
             }
             return fileInfoArrayList
@@ -92,8 +91,7 @@ class FileDataFetcher : DataFetcher {
                 if (file.isDirectory) {
                     isDirectory = true
                     size = getDirectorySize(file)
-                }
-                else {
+                } else {
                     size = file.length()
                     extension = FileUtils.getExtension(filePath)
                     category = getCategoryFromExtension(extension)
@@ -104,7 +102,7 @@ class FileDataFetcher : DataFetcher {
                 val date = file.lastModified()
 
                 val fileInfo = FileInfo(category, file.name, filePath, date, size,
-                                        isDirectory, extension, parseFilePermission(file), false)
+                        isDirectory, extension, parseFilePermission(file), false)
                 filesList.add(fileInfo)
             }
             return filesList
@@ -114,11 +112,19 @@ class FileDataFetcher : DataFetcher {
                                       filePath: String?) =
                 ringtonePicker && !FileUtils.isFileMusic(filePath)
 
-        fun getDirectorySize(file: File): Long {
+        fun getDirectorySize(file: File, showHidden: Boolean = false): Long {
             var childFileListSize = 0
-            val list = file.list()
-            if (list != null) {
-                childFileListSize = list.size
+            val listFiles: Array<out String>
+            listFiles = if (!showHidden) {
+                file.list { _, name ->
+                    name != ".nomedia"
+                }
+            } else {
+                file.list()
+            }
+
+            if (listFiles != null) {
+                childFileListSize = listFiles.size
             }
             return childFileListSize.toLong()
         }
