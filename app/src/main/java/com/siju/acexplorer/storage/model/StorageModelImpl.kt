@@ -3,6 +3,8 @@ package com.siju.acexplorer.storage.model
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Handler
+import android.provider.MediaStore
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -27,11 +29,14 @@ class StorageModelImpl(val context: Context) : StorageModel {
     private val globalPreference = PreferenceManager.getDefaultSharedPreferences(context)
     private val operationHelper = OperationHelper(AceApplication.appContext)
     private val _operationData = MutableLiveData<Pair<Operations, OperationAction>>()
-
+    private val mediaObserver = MediaObserver(Handler())
     val operationData: LiveData<Pair<Operations, OperationAction>>
         get() = _operationData
+    private lateinit var category: Category
+    val _refreshData = MutableLiveData<Boolean>()
 
     override fun loadData(path: String?, category: Category): ArrayList<FileInfo> {
+        this.category = category
         return DataLoader.fetchDataByCategory(context,
                                               DataFetcherFactory.createDataFetcher(category),
                                               category, path)
@@ -129,6 +134,49 @@ class StorageModelImpl(val context: Context) : StorageModel {
         operationHelper.cleanup()
     }
 
+    override fun onResume() {
+        registerContentObserver()
+    }
+
+    override fun onPause() {
+        unregisterContentObserver()
+    }
+
+    private fun registerContentObserver() {
+        var uri : Uri? = null
+        when(category) {
+            Category.IMAGES_ALL, Category.GENERIC_IMAGES -> uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            Category.VIDEO_ALL, Category.GENERIC_VIDEOS -> uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+            Category.ALL_TRACKS, Category.GENERIC_MUSIC -> uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+            Category.RECENT, Category.RECENT_ALL, Category.DOCS, Category.PDF, Category.DOCS_OTHER,
+            Category.COMPRESSED, Category.APPS, Category.LARGE_FILES_ALL, Category.LARGE_FILES-> uri = MediaStore.Files.getContentUri("external")
+            else -> {}
+        }
+        uri?.let {
+            Log.d("Model", "registerContentObserver:category:$category, uri :$uri")
+            context.contentResolver.registerContentObserver(uri, true, mediaObserver)
+            mediaObserver.addMediaObserverListener(mediaObserverListener)
+        }
+    }
+
+    fun setRefreshDataFalse() {
+        _refreshData.postValue(false)
+    }
+
+    private fun unregisterContentObserver() {
+        Log.d("Model", "unregisterContentObserver:category:$category")
+        context.contentResolver.unregisterContentObserver(mediaObserver)
+        mediaObserver.removeMediaObserverListener(mediaObserverListener)
+
+    }
+
+    private val mediaObserverListener = object : MediaObserver.MediaObserverListener {
+        override fun onMediaChanged(uri: Uri) {
+            Log.d("Model", "onMediaChanged:uri:$uri")
+            _refreshData.postValue(true)
+        }
+    }
+
     override fun checkPasteWriteMode(destinationDir: String,
                                      files: ArrayList<FileInfo>,
                                      pasteActionInfo: ArrayList<PasteActionInfo>,
@@ -143,6 +191,7 @@ class StorageModelImpl(val context: Context) : StorageModel {
                                                          pasteActionInfo,
                                                          pasteOperationCallback,
                                                          fileOperationCallback)
+            else -> {}
         }
     }
 

@@ -396,6 +396,25 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
                 }
             }
         })
+
+        fileListViewModel.refreshData.observe(viewLifecycleOwner, Observer {
+            it?.apply {
+                if (it) {
+                    fileListViewModel.refreshList()
+                    fileListViewModel.setRefreshStateFalse()
+                }
+            }
+        })
+    }
+
+    override fun onPause() {
+        super.onPause()
+        fileListViewModel.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        fileListViewModel.onResume()
     }
 
     private fun registerPackageReceiver(context: Context) {

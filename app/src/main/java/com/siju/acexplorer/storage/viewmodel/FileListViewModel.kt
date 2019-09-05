@@ -170,6 +170,8 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
     val navigationClicked: LiveData<Boolean>
         get() = _navigationClicked
 
+    val refreshData : LiveData<Boolean>
+
     init {
         val model = storageModel as StorageModelImpl
         operationResult = model.operationData
@@ -182,6 +184,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         noOpData = operationPresenter.getNoOpData()
         showPasteDialog = operationPresenter.showPasteDialog()
         pasteConflictCheckData = operationPresenter.getPasteData()
+        refreshData = model._refreshData
     }
 
     fun loadData(path: String?, category: Category) {
@@ -508,7 +511,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         return false
     }
 
-    private fun refreshList() {
+    fun refreshList() {
         val backStack = backStackInfo.getCurrentBackStack()
         backStack?.let {
             reloadData(backStack.first, backStack.second)
@@ -712,6 +715,19 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
 
     fun setPermissions(path: String, permissions: String, dir: Boolean) {
         storageModel.setPermissions(path, permissions, dir)
+    }
+
+    fun onPause() {
+        storageModel.onPause()
+    }
+
+    fun onResume() {
+        storageModel.onResume()
+    }
+
+    fun setRefreshStateFalse() {
+        storageModel as StorageModelImpl
+        storageModel.setRefreshDataFalse()
     }
 
     val apkDialogListener = object : DialogHelper.ApkDialogListener {

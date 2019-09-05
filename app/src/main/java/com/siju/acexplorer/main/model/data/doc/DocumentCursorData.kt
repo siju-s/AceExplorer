@@ -2,7 +2,6 @@ package com.siju.acexplorer.main.model.data.doc
 
 import android.database.Cursor
 import android.provider.MediaStore
-import android.util.Log
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.HiddenFileHelper
 import com.siju.acexplorer.main.model.groups.Category
@@ -26,8 +25,6 @@ object DocumentCursorData {
             val dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_MODIFIED)
             val fileIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID)
             val pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)
-            val mimeIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MIME_TYPE)
-            val mediaTypeIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MEDIA_TYPE)
 
             do {
                 val path = cursor.getString(pathIndex)
@@ -36,9 +33,6 @@ object DocumentCursorData {
                     continue
                 }
                 val fileName = cursor.getString(titleIndex)
-                val mime = cursor.getString(mimeIndex)
-                val mediaType = cursor.getInt(mediaTypeIndex)
-                Log.d("DocCursor", "filename:$fileName, mime:$mime, mediaType:$mediaType")
                 val extension = FileUtils.getExtension(path)
                 val nameWithExt = FileUtils.constructFileNameWithExtension(fileName, extension)
                 val size = cursor.getLong(sizeIndex)

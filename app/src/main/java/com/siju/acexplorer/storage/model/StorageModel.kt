@@ -139,4 +139,7 @@ interface StorageModel {
     fun setPermissions(path: String, permissions: String, dir: Boolean) {
 
     }
+
+    fun onPause()
+    fun onResume()
 }
