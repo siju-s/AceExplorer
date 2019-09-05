@@ -429,7 +429,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         }
     }
 
-    private fun handleActionModeClick(fileItem: FileInfo) {
+    fun handleActionModeClick(fileItem: FileInfo?) {
         val hasCheckedItems = multiSelectionHelper.hasSelectedItems()
         Log.e(TAG, "handleActionModeClick state:${_actionModeState.value}")
         if (hasCheckedItems && !isActionModeActive()) {
@@ -440,7 +440,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         }
         if (isActionModeActive()) {
             val selectedCount = multiSelectionHelper.getSelectedCount()
-            operationPresenter.toggleDragData(fileItem)
+            fileItem?.let { operationPresenter.toggleDragData(it) }
             if (selectedCount == 1) {
                 val fileInfo = _fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
                 _selectedFileInfo.value = Pair(selectedCount, fileInfo)

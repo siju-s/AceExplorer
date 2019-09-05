@@ -15,6 +15,14 @@ class MultiSelectionHelper {
         }
     }
 
+    fun selectAll(position: Int) {
+        selectedItems.put(position, true)
+    }
+
+    fun unselectAll() {
+        clearSelection()
+    }
+
     private fun selectView(position: Int, value: Boolean) {
         if (value) {
             selectedItems.put(position, value)
@@ -39,6 +47,10 @@ class MultiSelectionHelper {
     fun isSelected(position: Int) = selectedItems[position]
 
     fun hasSelectedItems() = selectedItems.size() > 0
+
+    fun refresh() {
+        multiSelectionListener?.refresh()
+    }
 
     interface MultiSelectionListener {
         fun refresh()

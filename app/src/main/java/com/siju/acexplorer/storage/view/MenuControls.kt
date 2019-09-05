@@ -79,11 +79,17 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, val categ
 
     private fun setupActionModeToolbar() {
         toolbar.menu.clear()
+        toolbar.setNavigationIcon(R.drawable.ic_back_white)
         toolbar.inflateMenu(R.menu.action_mode)
+        toolbar.setOnMenuItemClickListener(this)
+        toolbar.setNavigationOnClickListener {
+            fragment.onBackPressed()
+        }
     }
 
     private fun clearActionModeToolbar() {
         toolbar.menu.clear()
+        toolbar.navigationIcon = null
     }
 
     private fun setupBaseMenu() {

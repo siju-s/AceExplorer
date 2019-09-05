@@ -119,7 +119,35 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
             R.id.action_permissions -> {
                 onPermissionClicked()
             }
+            R.id.action_select_all -> {
+                onSelectAllClicked()
+            }
         }
+    }
+
+    private fun onSelectAllClicked() {
+        val list = viewModel.fileData.value
+        list?.let {
+            if (multiSelectionHelper.getSelectedCount() < list.size) {
+                selectAllItems(list)
+            }
+            else {
+                unselectAllItems()
+            }
+            viewModel.handleActionModeClick(null)
+        }
+    }
+
+    private fun selectAllItems(list: ArrayList<FileInfo>) {
+        for (item in list.withIndex()) {
+            multiSelectionHelper.selectAll(item.index)
+        }
+        multiSelectionHelper.refresh()
+    }
+
+    private fun unselectAllItems() {
+        multiSelectionHelper.unselectAll()
+        viewModel.endActionMode()
     }
 
     private fun onDeleteFavClicked() {
