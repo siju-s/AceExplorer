@@ -12,9 +12,7 @@ object VideoUtils {
     fun getFolderVideoFileList(sourceFile: File, showHidden: Boolean): ArrayList<FileInfo> {
         val filesList = ArrayList<FileInfo>()
         val listFiles = sourceFile.listFiles { _, name ->
-            name?.toLowerCase(Locale.ROOT)?.endsWith(".mp4") == true ||
-                    name?.toLowerCase(Locale.ROOT)?.endsWith(".ts") == true ||
-                    name?.toLowerCase(Locale.ROOT)?.endsWith(".mkv") == true
+            isVideoFile(name)
         } ?: return filesList
 
         for (file in listFiles) {
@@ -36,5 +34,11 @@ object VideoUtils {
             filesList.add(fileInfo)
         }
         return filesList
+    }
+
+    private fun isVideoFile(name: String?): Boolean {
+        return name?.toLowerCase(Locale.ROOT)?.endsWith(".mp4") == true ||
+                name?.toLowerCase(Locale.ROOT)?.endsWith(".ts") == true ||
+                name?.toLowerCase(Locale.ROOT)?.endsWith(".mkv") == true
     }
 }

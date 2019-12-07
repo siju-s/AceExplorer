@@ -22,14 +22,7 @@ object AudioUtils {
     fun getFolderAudioFileList(sourceFile: File, showHidden: Boolean): ArrayList<FileInfo> {
         val filesList = ArrayList<FileInfo>()
         val listFiles = sourceFile.listFiles { _, name ->
-            name?.endsWith(EXT_MP3, true) == true ||
-                    name?.endsWith(EXT_AAC, true) == true ||
-                    name?.endsWith(EXT_M4A, true) == true ||
-                    name?.endsWith(EXT_FLAC, true) == true ||
-                    name?.endsWith(EXT_WAV, true) == true ||
-                    name?.endsWith(EXT_OGG, true) == true ||
-                    name?.endsWith(EXT_AMR, true) == true ||
-                    name?.endsWith(EXT_OPUS, true) == true
+            isAudioFile(name)
 
         } ?: return filesList
 
@@ -53,4 +46,16 @@ object AudioUtils {
         }
         return filesList
     }
-}
+
+
+    private fun isAudioFile(name : String?) : Boolean {
+        return name?.endsWith(EXT_MP3, true) == true ||
+                name?.endsWith(EXT_AAC, true) == true ||
+                name?.endsWith(EXT_M4A, true) == true ||
+                name?.endsWith(EXT_FLAC, true) == true ||
+                name?.endsWith(EXT_WAV, true) == true ||
+                name?.endsWith(EXT_OGG, true) == true ||
+                name?.endsWith(EXT_AMR, true) == true ||
+                name?.endsWith(EXT_OPUS, true) == true
+    }
+ }

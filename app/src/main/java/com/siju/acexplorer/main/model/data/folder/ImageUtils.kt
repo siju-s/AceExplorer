@@ -13,10 +13,7 @@ object ImageUtils {
     fun getFolderImageFileList(sourceFile: File, showHidden: Boolean): ArrayList<FileInfo> {
         val filesList = ArrayList<FileInfo>()
         val listFiles = sourceFile.listFiles { _, name ->
-            name?.toLowerCase(Locale.ROOT)?.endsWith(".jpg") == true ||
-                    name?.toLowerCase(Locale.ROOT)?.endsWith(".jpeg") == true ||
-                    name?.toLowerCase(Locale.ROOT)?.endsWith(".heif") == true ||
-                    name?.toLowerCase(Locale.ROOT)?.endsWith(".heic") == true
+            isImageFile(name)
         } ?: return filesList
 
         for (file in listFiles) {
@@ -38,5 +35,12 @@ object ImageUtils {
             filesList.add(fileInfo)
         }
         return filesList
+    }
+
+    private fun isImageFile(name: String?): Boolean {
+        return name?.toLowerCase(Locale.ROOT)?.endsWith(".jpg") == true ||
+                name?.toLowerCase(Locale.ROOT)?.endsWith(".jpeg") == true ||
+                name?.toLowerCase(Locale.ROOT)?.endsWith(".heif") == true ||
+                name?.toLowerCase(Locale.ROOT)?.endsWith(".heic") == true
     }
 }
