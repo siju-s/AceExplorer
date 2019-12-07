@@ -23,11 +23,14 @@ import com.siju.acexplorer.main.model.StorageItem
 import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.main.model.StorageUtils.StorageType.EXTERNAL
 import com.siju.acexplorer.main.model.StorageUtils.getSpaceLeft
+import com.siju.acexplorer.main.model.StorageUtils.getSpaceUsed
 import com.siju.acexplorer.main.model.StorageUtils.getTotalSpace
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.helper.StorageHelper.getStorageProperties
 import com.siju.acexplorer.main.model.root.RootUtils
 import java.io.File
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 const val STORAGE_SDCARD1 = "/storage/sdcard1"
@@ -71,9 +74,9 @@ class StorageFetcher(private val context: Context) {
             if (isValidStoragePath(file)) {
                 val spaceLeft = getSpaceLeft(file)
                 val totalSpace = getTotalSpace(file)
-                val leftProgress = (spaceLeft.toFloat() / totalSpace * 100).toInt()
-                val progress = 100 - leftProgress
-                val spaceText = formatStorageSpace(spaceLeft, totalSpace)
+                val usedSpace = getSpaceUsed(totalSpace, spaceLeft)
+                val progress = (usedSpace.toFloat() / totalSpace * 100).toInt()
+                val spaceText = formatStorageSpace(usedSpace, totalSpace)
                 addToStorageList(storageList, StorageItem(name, spaceText, icon, path, progress, Category.FILES, storageType))
             }
         }
@@ -87,12 +90,12 @@ class StorageFetcher(private val context: Context) {
         val systemDir = getRootDirectory()
         val rootDir = systemDir.parentFile
 
-        val spaceLeftRoot = getSpaceLeft(systemDir)
-        val totalSpaceRoot = getTotalSpace(systemDir)
-        val leftProgressRoot = (spaceLeftRoot.toFloat() / totalSpaceRoot * 100).toInt()
-        val progressRoot = 100 - leftProgressRoot
-        addToStorageList(storageList, StorageItem(context.getString(R.string.nav_menu_root), formatStorageSpace(spaceLeftRoot, totalSpaceRoot), R.drawable
-                .ic_root_white, FileUtils.getAbsolutePath(rootDir), progressRoot, Category.FILES, StorageUtils.StorageType.ROOT))
+        val spaceLeft = getSpaceLeft(systemDir)
+        val totalSpace = getTotalSpace(systemDir)
+        val usedSpace = getSpaceUsed(totalSpace, spaceLeft)
+        val usedProgress = (usedSpace.toFloat() / totalSpace * 100).toInt()
+        addToStorageList(storageList, StorageItem(context.getString(R.string.nav_menu_root), formatStorageSpace(usedSpace, totalSpace), R.drawable
+                .ic_root_white, FileUtils.getAbsolutePath(rootDir), usedProgress, Category.FILES, StorageUtils.StorageType.ROOT))
     }
 
     private fun isExternalStorageType(storageType: StorageUtils.StorageType) = storageType == EXTERNAL
@@ -103,10 +106,9 @@ class StorageFetcher(private val context: Context) {
         storageList.add(storageItem)
     }
 
-    private fun formatStorageSpace(spaceLeft: Long, totalSpace: Long): String {
-        val freePlaceholder = "/" //" " + context.getResources().getString(R.string.msg_free) + " ";
-        return FileUtils.formatSize(context, spaceLeft) + freePlaceholder +
-                FileUtils.formatSize(context, totalSpace)
+    private fun formatStorageSpace(usedSpace: Long, totalSpace: Long): String {
+        return String.format(Locale.ROOT, context.getString(R.string.storage_space), FileUtils.formatSize(context, usedSpace) ,
+                FileUtils.formatSize(context, totalSpace))
     }
 
 }

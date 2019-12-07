@@ -3,7 +3,6 @@ package com.siju.acexplorer.home.view
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
@@ -12,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.siju.acexplorer.R
 import com.siju.acexplorer.main.model.StorageItem
 import com.siju.acexplorer.main.model.StorageUtils
+import java.util.*
 
 
 class HomeStorageAdapter(private val clickListener: (StorageItem) -> Unit) : ListAdapter<StorageItem,
@@ -23,41 +23,33 @@ class HomeStorageAdapter(private val clickListener: (StorageItem) -> Unit) : Lis
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
-        holder.bind(item, position, itemCount, clickListener)
+        holder.bind(item, clickListener)
     }
 
     class ViewHolder private constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        private val image: ImageView = itemView.findViewById(R.id.imageStorage)
+        private val storageProgressText: TextView = itemView.findViewById(R.id.textProgress)
         private val storageNameText: TextView = itemView.findViewById(R.id.textStorageName)
         private val storageSpaceText: TextView = itemView.findViewById(R.id.textStorageSpace)
         private val spaceProgress: ProgressBar = itemView.findViewById(R.id.progressBarSD)
-        private val storageDivider: View = itemView.findViewById<View>(R.id.home_storages_divider)
 
-        fun bind(item: StorageItem, position: Int, size: Int, clickListener: (StorageItem) -> Unit) {
-            image.setImageResource(item.icon)
+        fun bind(item: StorageItem, clickListener: (StorageItem) -> Unit) {
             setStorageNameText(item)
-            storageSpaceText.text = StorageUtils.getStorageSpaceText(itemView.context, item.secondLine)
-            spaceProgress.progress = item.progress
-            setDividerVisibility(size, position)
+            storageSpaceText.text = item.secondLine
+            val progress = item.progress
+            spaceProgress.progress = progress
+            storageProgressText.text = String.format(Locale.getDefault(), itemView.context.
+                    getString(R.string.storage_progress_percent), progress, progress)
             itemView.tag = item.path
-
             itemView.setOnClickListener { clickListener(item) }
         }
 
-        private fun setDividerVisibility(size: Int, position: Int) {
-            if (position >= size - 1) {
-                storageDivider.visibility = View.GONE
-            } else {
-                storageDivider.visibility = View.VISIBLE
-            }
-        }
 
         private fun setStorageNameText(storageItem: StorageItem) {
             val storageType = storageItem.storageType
 
             if (storageType == StorageUtils.StorageType.EXTERNAL) {
-                storageNameText.text = storageItem.firstLine
+                storageNameText.text = storageItem.name
             } else {
                 storageNameText.text = StorageUtils.StorageType.getStorageText(itemView.context, storageType)
             }

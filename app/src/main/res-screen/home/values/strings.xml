@@ -21,4 +21,6 @@
     <string name="category_all">All</string>
     <string name="categories">Categories</string>
     <string name="categories_folder">Folder</string>
+    <string name="storage_space" translatable="false">%s / %s</string>
+    <string name="storage_progress_percent" translatable="false">%d %%</string>
 </resources>

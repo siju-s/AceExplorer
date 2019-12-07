@@ -18,7 +18,7 @@ package com.siju.acexplorer.main.model
 
 import com.siju.acexplorer.main.model.groups.Category
 
-data class StorageItem(val firstLine: String, val secondLine: String, var icon: Int,
+data class StorageItem(val name: String, val secondLine: String, var icon: Int,
                        var path: String,
                        var progress: Int,
                        var category: Category, var storageType: StorageUtils.StorageType)

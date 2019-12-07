@@ -190,7 +190,7 @@ object StorageUtils {
             val files = storageDir.listFiles()
             if (files != null) {
                 for (file in files) {
-                    if (isValidDrive(file) && file.name.toLowerCase().contains("usb")) {
+                    if (isValidDrive(file) && file.name.toLowerCase(Locale.ROOT).contains("usb")) {
                         return file
                     }
                 }
@@ -335,6 +335,10 @@ object StorageUtils {
 
     fun getTotalSpace(file: File): Long {
         return file.totalSpace
+    }
+
+    fun getSpaceUsed(total : Long, freeSpace : Long): Long {
+        return total - freeSpace
     }
 
     fun isRootDirectory(path: String): Boolean {

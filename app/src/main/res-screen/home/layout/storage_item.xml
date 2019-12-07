@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/textStorageName"
+        android:layout_width="wrap_content"
+        style="@style/HeaderText"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_16"
+        android:layout_centerHorizontal="true"
+        android:textAllCaps="true"
+        tools:text="@string/nav_menu_internal_storage" />
+
+    <RelativeLayout
+        android:id="@+id/progressContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textStorageName"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="@dimen/margin_16">
+
+        <ProgressBar
+            android:id="@+id/progressBarSD"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="@dimen/homescreen_storage_progress_size"
+            android:layout_height="@dimen/homescreen_storage_progress_size"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="@dimen/margin_16"
+            android:layout_marginEnd="@dimen/homescreen_storage_margin"
+            android:background="@drawable/shape_circle"
+            android:indeterminate="false"
+            android:max="100"
+            android:progressDrawable="@drawable/circular_progress_bar"
+            tools:progress="50" />
+
+        <TextView
+            android:id="@+id/textProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/progressBarSD"
+            android:layout_centerInParent="true"
+            android:text="@string/storage_progress_percent"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            tools:text="50%" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/textStorageSpace"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/progressContainer"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="@dimen/margin_16"
+        android:layout_marginTop="@dimen/margin_16"
+        tools:text="@string/storage_space" />
+
+</RelativeLayout>
