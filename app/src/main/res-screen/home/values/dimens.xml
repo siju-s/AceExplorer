@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="home_library_width">78dp</dimen>
-    <dimen name="homescreen_storage_margin">16dp</dimen>
+    <dimen name="homescreen_storage_margin">8dp</dimen>
     <dimen name="library_count_font_size">11sp</dimen>
     <dimen name="homescreen_storage_progress_size">150dp</dimen>
+    <dimen name="homescreen_storage_progress_text_margin_top">60dp</dimen>
     <dimen name="home_progress_circle_thickness">15dp</dimen>
     <dimen name="storage_header_size">16sp</dimen>
+    <dimen name="storage_card_margin_start">16dp</dimen>
+    <dimen name="storage_card_margin_top">8dp</dimen>
+    <dimen name="storage_name_margin_top">8dp</dimen>
+    <dimen name="storage_progress_margin">8dp</dimen>
 </resources>

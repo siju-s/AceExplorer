@@ -35,15 +35,13 @@
             android:layout_marginBottom="2dp"
             android:background="@color/colorPrimaryDark" />
 
-        <androidx.recyclerview.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/storageList"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:layout_marginTop="@dimen/margin_16"
-            android:layout_marginBottom="@dimen/margin_16"
-            tools:listitem="@layout/storage_item"/>
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="2"
+            tools:listitem="@layout/storage_item" />
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

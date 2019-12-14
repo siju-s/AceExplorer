@@ -6,6 +6,6 @@
     android:thickness="@dimen/home_progress_circle_thickness"
     android:useLevel="false">
 
-    <solid android:color="#CCC" />
+    <solid android:color="@color/home_storage_card_bg_color" />
 
 </shape>

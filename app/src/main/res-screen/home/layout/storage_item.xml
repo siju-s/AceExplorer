@@ -14,38 +14,32 @@
   ~ limitations under the License.
   -->
 
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
-
-    <TextView
-        android:id="@+id/textStorageName"
-        android:layout_width="wrap_content"
-        style="@style/HeaderText"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_16"
-        android:layout_centerHorizontal="true"
-        android:textAllCaps="true"
-        tools:text="@string/nav_menu_internal_storage" />
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/storage_card_margin_start"
+    android:layout_marginTop="@dimen/storage_card_margin_start"
+    android:layout_marginEnd="@dimen/storage_card_margin_start"
+    android:layout_marginBottom="@dimen/storage_card_margin_start"
+    card_view:cardCornerRadius="8dp"
+    card_view:cardElevation="8dp">
 
     <RelativeLayout
-        android:id="@+id/progressContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textStorageName"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="@dimen/margin_16">
+        android:layout_marginStart="@dimen/storage_progress_margin"
+        android:layout_marginTop="@dimen/storage_card_margin_start"
+        android:layout_marginEnd="@dimen/storage_progress_margin"
+        android:layout_marginBottom="@dimen/storage_card_margin_top">
 
         <ProgressBar
             android:id="@+id/progressBarSD"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="@dimen/homescreen_storage_progress_size"
             android:layout_height="@dimen/homescreen_storage_progress_size"
-            android:layout_centerInParent="true"
-            android:layout_marginStart="@dimen/margin_16"
-            android:layout_marginEnd="@dimen/homescreen_storage_margin"
+            android:layout_centerHorizontal="true"
             android:background="@drawable/shape_circle"
             android:indeterminate="false"
             android:max="100"
@@ -56,21 +50,29 @@
             android:id="@+id/textProgress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/progressBarSD"
-            android:layout_centerInParent="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/homescreen_storage_progress_text_margin_top"
             android:text="@string/storage_progress_percent"
             android:textAppearance="?android:attr/textAppearanceMedium"
             tools:text="50%" />
+
+        <TextView
+            android:id="@+id/textStorageName"
+            style="@style/HeaderText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/progressBarSD"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/storage_name_margin_top"
+            tools:text="@string/nav_menu_internal_storage" />
+
+        <TextView
+            android:id="@+id/textStorageSpace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textStorageName"
+            android:layout_centerHorizontal="true"
+            tools:text="@string/storage_space" />
+
     </RelativeLayout>
-
-    <TextView
-        android:id="@+id/textStorageSpace"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/progressContainer"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="@dimen/margin_16"
-        android:layout_marginTop="@dimen/margin_16"
-        tools:text="@string/storage_space" />
-
-</RelativeLayout>
+</androidx.cardview.widget.CardView>
