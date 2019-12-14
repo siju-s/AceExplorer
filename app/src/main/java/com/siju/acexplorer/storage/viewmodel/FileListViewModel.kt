@@ -236,7 +236,15 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         scrollPosition.remove(currentDir)
     }
 
-    fun getViewMode() = storageModel.getViewMode()
+    fun getViewMode(category: Category) : ViewMode {
+        val viewMode = storageModel.getViewMode()
+        return if (CategoryHelper.isDefaultGalleryCategory(category)) {
+            ViewMode.GALLERY
+        }
+        else {
+            viewMode
+        }
+    }
 
     fun setCategory(category: Category) {
         this.category = category

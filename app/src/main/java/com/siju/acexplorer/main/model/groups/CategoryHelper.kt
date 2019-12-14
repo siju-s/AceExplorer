@@ -64,6 +64,13 @@ object CategoryHelper {
                 category == AUDIO
     }
 
+    fun isDefaultGalleryCategory(category: Category?) : Boolean {
+        return category == IMAGES_ALL || category == GENERIC_IMAGES ||
+                category == VIDEO_ALL || category == GENERIC_VIDEOS ||
+                category == SEARCH_FOLDER_IMAGES || category == SEARCH_FOLDER_VIDEOS
+                || category == CAMERA
+    }
+
     fun isRecentCategory(category: Category): Boolean {
         return RECENT_IMAGES == category || RECENT_AUDIO == category ||
                 RECENT_APPS == category || RECENT_VIDEOS == category ||

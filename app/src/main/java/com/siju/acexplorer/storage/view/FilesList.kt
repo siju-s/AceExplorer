@@ -49,6 +49,7 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setupList() {
+        Log.e(TAG , "setupList:category:$category, viewMode:$viewMode")
         setLayoutManager(fileList, viewMode)
         adapter = FileListAdapter(
                 viewMode,
@@ -67,7 +68,6 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
         fileList.adapter = adapter
         fileList.setOnDragListener(dragHelper.dragListener)
         fileList.setOnTouchListener(this)
-
     }
 
     private fun setLayoutManager(fileList: RecyclerView, viewMode: ViewMode) {
