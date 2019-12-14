@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.model.groups.CategoryHelper.getCategoryName
 import com.siju.acexplorer.main.model.groups.CategoryHelper.isAnyCameraCategory
 import com.siju.acexplorer.main.model.groups.CategoryHelper.isAnyLargeFilesCategory
@@ -47,7 +48,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
 //        Log.e(TAG, "onBindViewHolder : $position")
         val item = getItem(position)
         viewHolder.bind(item, itemCount, viewMode, mainCategory, multiSelectionHelper?.isSelected(position), position, draggedPosition,
-                        clickListener, longClickListener)
+                clickListener, longClickListener)
     }
 
     fun setMultiSelectionHelper(multiSelectionHelper: MultiSelectionHelper) {
@@ -70,21 +71,21 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
     }
 
     class ViewHolder private constructor(itemView: View,
-                                         viewMode: ViewMode) : RecyclerView.ViewHolder(itemView) {
+                                         private val viewMode: ViewMode) : RecyclerView.ViewHolder(itemView) {
 
         private val textFileName: TextView = itemView.findViewById(R.id.textFolderName)
         private val textNoOfFileOrSize: TextView = itemView.findViewById(R.id.textSecondLine)
         private val imageIcon: ImageView = itemView.findViewById(R.id.imageIcon)
         private val imageThumbIcon: ImageView = itemView.findViewById(R.id.imageThumbIcon)
-        private var dateText : TextView? = null
+        private var dateText: TextView? = null
 
         init {
             if (viewMode == ViewMode.LIST) {
-                dateText  = itemView.findViewById(R.id.textDate)
+                dateText = itemView.findViewById(R.id.textDate)
             }
         }
 
-        fun bind(item: FileInfo, count: Int, viewMode: ViewMode, mainCategory: Category?, selected : Boolean?, pos: Int, draggedPos: Int,
+        fun bind(item: FileInfo, count: Int, viewMode: ViewMode, mainCategory: Category?, selected: Boolean?, pos: Int, draggedPos: Int,
                  clickListener: (Pair<FileInfo, Int>) -> Unit,
                  longClickListener: (FileInfo, Int, View) -> Unit) {
 //            Log.e("FileListAdapter", "bind:${item.fileName}, mainCategory:$mainCategory")
@@ -106,9 +107,9 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             }
         }
 
-        private fun onSelection(selected: Boolean?, position: Int, draggedPos : Int) {
+        private fun onSelection(selected: Boolean?, position: Int, draggedPos: Int) {
             val color = ContextCompat.getColor(itemView.context,
-                                               R.color.dark_actionModeItemSelected)
+                    R.color.dark_actionModeItemSelected)
             when {
                 selected == true       -> itemView.setBackgroundColor(color)
                 position == draggedPos -> itemView.setBackgroundColor(color)
@@ -121,7 +122,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                                        viewMode: ViewMode,
                                        mainCategory: Category?) {
             val category = fileInfo.category
-            Log.d(TAG, "bindViewByCategory:$category, name:")
+            Log.d(TAG, "bindViewByCategory:$category")
             when {
                 category == Category.PICKER       -> {
                     bindPickerView(fileInfo)
@@ -156,7 +157,6 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             else {
                 bindDate(mainCategory, fileInfo)
             }
-
             val isDirectory = fileInfo.isDirectory
             val fileNumOrSize: String
             fileNumOrSize = if (isDirectory) {
@@ -167,8 +167,16 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             }
             textFileName.text = fileName
             textNoOfFileOrSize.text = fileNumOrSize
-            displayThumb(context, fileInfo, category, imageIcon,
-                         imageThumbIcon)
+            toggleGalleryViewVisibility(category)
+            displayThumb(context, fileInfo, category, getThumbIcon(category), imageThumbIcon)
+        }
+
+        private fun getThumbIcon(category: Category?) : ImageView {
+            return if (viewMode == ViewMode.GALLERY && (category != Category.FILES)) {
+                itemView.findViewById(R.id.imageThumb) as ImageView
+            } else {
+                imageIcon
+            }
         }
 
         private fun bindDate(category: Category,
@@ -210,7 +218,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         private fun bindGenericMusic(context: Context, fileInfo: FileInfo) {
             val count = fileInfo.count
             val files = context.resources.getQuantityString(R.plurals.number_of_files,
-                                                            count, count)
+                    count, count)
             textFileName.text = getCategoryName(context, fileInfo.subcategory)
             textNoOfFileOrSize.text = files
             imageIcon.setImageResource(R.drawable.ic_folder)
@@ -221,30 +229,53 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             val num = fileInfo.numTracks.toInt()
             if (num != INVALID_POS) {
                 val files = context.resources.getQuantityString(R.plurals.number_of_files,
-                                                                num, num)
+                        num, num)
                 textNoOfFileOrSize.text = files
             }
-            displayThumb(context, fileInfo, fileInfo.category, imageIcon,
-                         imageThumbIcon)
+            displayThumb(context, fileInfo, fileInfo.category, imageIcon, imageThumbIcon)
         }
 
         private fun bindGenericImagesVidsCategory(context: Context, fileInfo: FileInfo) {
-
+            val category = fileInfo.category
+            toggleGalleryViewVisibility(category)
             textFileName.text = fileInfo.fileName
             val num = fileInfo.numTracks.toInt()
             if (num != INVALID_POS) {
                 val files = context.resources.getQuantityString(R.plurals.number_of_files,
-                                                                num, num)
+                        num, num)
                 textNoOfFileOrSize.text = files
             }
-            displayThumb(context, fileInfo, fileInfo.category, imageIcon,
-                         imageThumbIcon)
+            displayThumb(context, fileInfo, category, getThumbIcon(category),
+                    imageThumbIcon)
+        }
+
+        private fun toggleGalleryViewVisibility(category: Category?) {
+            Log.e(TAG, "toggleGalleryViewVisibility:$category")
+            if (viewMode == ViewMode.GALLERY) {
+                val imageGalleryThumb: ImageView = itemView.findViewById(R.id.imageThumb)
+                if (category == Category.FILES) {
+                    imageGalleryThumb.visibility = View.GONE
+                    imageIcon.visibility = View.VISIBLE
+                    textFileName.visibility = View.VISIBLE
+                }
+                else if (category == Category.GENERIC_IMAGES || category == Category.GENERIC_VIDEOS ||
+                        CategoryHelper.isGalleryMusicCategory(category) || category == Category.DOCS) {
+                    imageIcon.visibility = View.GONE
+                    imageGalleryThumb.visibility = View.VISIBLE
+                    textFileName.visibility = View.VISIBLE
+                }
+                else {
+                    imageIcon.visibility = View.GONE
+                    textFileName.visibility = View.GONE
+                    imageGalleryThumb.visibility = View.VISIBLE
+                }
+            }
         }
 
         private fun bindGenericRecent(context: Context, fileInfo: FileInfo) {
             val count = fileInfo.count
             val files = context.resources.getQuantityString(R.plurals.number_of_files,
-                                                            count, count)
+                    count, count)
             textFileName.text = getCategoryName(context, fileInfo.subcategory)
             textNoOfFileOrSize.text = files
             imageIcon.setImageResource(R.drawable.ic_folder)
@@ -279,16 +310,17 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                 dateText?.text = fileDate
             }
             displayThumb(context, fileInfo, fileInfo.category, imageIcon,
-                         imageThumbIcon)
+                    imageThumbIcon)
         }
 
         companion object {
             fun from(parent: ViewGroup,
                      viewMode: ViewMode): ViewHolder {
 
-                val layoutId = when(viewMode) {
+                val layoutId = when (viewMode) {
                     ViewMode.LIST -> R.layout.file_list_item
                     ViewMode.GRID -> R.layout.file_grid_item
+                    ViewMode.GALLERY -> R.layout.file_gallery_item
                 }
                 val view = LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
                 return ViewHolder(view, viewMode)

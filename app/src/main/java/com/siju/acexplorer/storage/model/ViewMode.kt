@@ -21,7 +21,8 @@ import java.security.InvalidParameterException
 enum class ViewMode(val value : Int) {
 
     LIST(0),
-    GRID(1);
+    GRID(1),
+    GALLERY(2);
 
     fun getValue(viewMode: ViewMode) = viewMode.value
 
@@ -30,8 +31,10 @@ enum class ViewMode(val value : Int) {
             return when (value) {
                 0    -> LIST
                 1    -> GRID
+                2    -> GALLERY
                 else -> throw InvalidParameterException(
-                        "View mode value should be either ${LIST.value} or ${GRID.value}")
+                        "View mode value should be either ${LIST.value}, ${GRID.value} or" +
+                                "${GALLERY.value}")
             }
         }
     }

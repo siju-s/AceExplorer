@@ -55,6 +55,15 @@ object CategoryHelper {
                 category == ALL_TRACKS
     }
 
+    fun isGalleryMusicCategory(category: Category?): Boolean {
+        return  category == ALBUMS ||
+                category == ARTISTS ||
+                category == GENRES ||
+                category == PODCASTS ||
+                category == ALL_TRACKS ||
+                category == AUDIO
+    }
+
     fun isRecentCategory(category: Category): Boolean {
         return RECENT_IMAGES == category || RECENT_AUDIO == category ||
                 RECENT_APPS == category || RECENT_VIDEOS == category ||

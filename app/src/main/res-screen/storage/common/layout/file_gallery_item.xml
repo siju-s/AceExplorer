@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,33 +15,45 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/container_list"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="5dp">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container_list"
+    android:layout_width="@dimen/folder_icon_gallery_size"
+    android:layout_height="@dimen/folder_icon_gallery_size"
+    android:padding="5dp">
 
     <ImageView
         android:id="@+id/imageIcon"
-        android:layout_width="@dimen/folder_icon_grid"
-        android:layout_height="@dimen/folder_icon_grid"
+        android:layout_width="@dimen/folder_icon"
+        android:layout_height="@dimen/folder_icon"
+        android:layout_centerInParent="true"
+        android:scaleType="centerCrop"
+        tools:ignore="ContentDescription"
+        tools:src="@drawable/ic_library_docs"
+        tools:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/imageThumb"
+        android:layout_width="@dimen/folder_icon_gallery_size"
+        android:layout_height="@dimen/folder_icon_gallery_size"
         android:layout_centerHorizontal="true"
         android:scaleType="centerCrop"
-        tools:ignore="ContentDescription"/>
+        tools:ignore="ContentDescription"
+        tools:src="@android:drawable/sym_def_app_icon" />
 
     <TextView
         android:id="@+id/textFolderName"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/imageIcon"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="2dp"
+        android:background="@color/gallery_item_text_background"
         android:ellipsize="end"
         android:gravity="center"
-        android:maxLines="4"
-        android:textSize="14sp"/>
+        android:maxLines="2"
+        android:minHeight="@dimen/gallery_item_text_min_height"
+        android:textSize="12sp"
+        tools:text="Title" />
 
-    <!-- This will be no of files for directory & size for file respectively-->
     <TextView
         android:id="@+id/textSecondLine"
         android:layout_width="wrap_content"
@@ -52,16 +63,17 @@
         android:layout_marginTop="3dp"
         android:gravity="center"
         android:textAppearance="?attr/textAppearanceListItemSmall"
-        android:textSize="12sp"/>
+        android:textSize="12sp"
+        android:visibility="gone" />
 
 
     <ImageView
         android:id="@+id/imageThumbIcon"
         android:layout_width="@dimen/folder_thumb_icon_grid"
         android:layout_height="@dimen/folder_thumb_icon_grid"
-        android:layout_alignBottom="@id/imageIcon"
         android:layout_alignEnd="@+id/imageIcon"
+        android:layout_alignBottom="@id/imageIcon"
         android:scaleType="centerCrop"
-        tools:ignore="ContentDescription"/>
+        tools:ignore="ContentDescription" />
 
 </RelativeLayout>

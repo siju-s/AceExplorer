@@ -42,6 +42,11 @@
                 android:title="@string/action_view_grid"
                 app:showAsAction="never" />
 
+            <item
+                android:id="@+id/action_view_gallery"
+                android:title="@string/action_view_gallery"
+                app:showAsAction="never" />
+
         </menu>
     </item>
 

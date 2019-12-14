@@ -13,4 +13,6 @@
     <dimen name="drag_shadow_font">20sp</dimen>
     <dimen name="round_corner_radius">4dp</dimen>
     <dimen name="file_list_thumb_min_height">72dp</dimen>
+    <dimen name="folder_icon_gallery_size">150dp</dimen>
+    <dimen name="gallery_item_text_min_height">36dp</dimen>
 </resources>

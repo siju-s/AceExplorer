@@ -875,6 +875,10 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
                 fileListViewModel.switchView(ViewMode.GRID)
                 return true
             }
+            R.id.action_view_gallery -> {
+                fileListViewModel.switchView(ViewMode.GALLERY)
+                return true
+            }
             R.id.action_hidden -> {
                 item.isChecked = !item.isChecked
                 fileListViewModel.onHiddenFileSettingChanged(item.isChecked)

@@ -1,5 +1,6 @@
 package com.siju.acexplorer.storage.view
 
+import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.Intent
 import android.content.res.Configuration
@@ -46,6 +47,7 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
         emptyText = view.findViewById(R.id.textEmpty)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setupList() {
         setLayoutManager(fileList, viewMode)
         adapter = FileListAdapter(
@@ -72,16 +74,16 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
         Log.e(TAG, "fileListHelper is: $fileListHelper")
         fileList.layoutManager = when (viewMode) {
             ViewMode.LIST -> LinearLayoutManager(view.context)
-            ViewMode.GRID -> CustomGridLayoutManager(view.context,
-                    getGridColumns(view.resources.configuration))
+            ViewMode.GRID, ViewMode.GALLERY -> CustomGridLayoutManager(view.context,
+                    getGridColumns(view.resources.configuration, viewMode))
         }
     }
 
-    private fun getGridColumns(configuration: Configuration): Int {
+    private fun getGridColumns(configuration: Configuration, viewMode: ViewMode): Int {
         return if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT || !fileListHelper.isDualModeEnabled()) {
-            ConfigurationHelper.getStorageGridCols(configuration)
+            ConfigurationHelper.getStorageGridCols(configuration, viewMode)
         } else {
-            ConfigurationHelper.getStorageDualGridCols(configuration)
+            ConfigurationHelper.getStorageDualGridCols(configuration, viewMode)
         }
     }
 
@@ -126,7 +128,7 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
                 val layoutManager = fileList.layoutManager as LinearLayoutManager
                 layoutManager.findFirstVisibleItemPosition()
             }
-            ViewMode.GRID -> {
+            ViewMode.GRID, ViewMode.GALLERY -> {
                 val layoutManager = fileList.layoutManager as GridLayoutManager
                 layoutManager.findFirstVisibleItemPosition()
             }
@@ -144,7 +146,7 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
                     val layoutManager = fileList.layoutManager as LinearLayoutManager
                     scrollListView(scrollInfo, layoutManager)
                 }
-                ViewMode.GRID -> {
+                ViewMode.GRID, ViewMode.GALLERY -> {
                     val layoutManager = fileList.layoutManager as GridLayoutManager
                     scrollGridView(scrollInfo, layoutManager)
                 }
@@ -193,6 +195,7 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
         when (touchEvent) {
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 fileListHelper.onUpEvent()
+                view?.performClick()
             }
 
             MotionEvent.ACTION_MOVE -> {
@@ -262,6 +265,7 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun onDragDropEvent(event: DragEvent) {
         if (fileListHelper.getCategory() != Category.FILES) {
             view.context.showToast("Not supported")
