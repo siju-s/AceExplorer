@@ -28,51 +28,60 @@
 
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/storage_progress_margin"
-        android:layout_marginTop="@dimen/storage_card_margin_start"
-        android:layout_marginEnd="@dimen/storage_progress_margin"
-        android:layout_marginBottom="@dimen/storage_card_margin_top">
+        android:layout_height="wrap_content">
 
-        <ProgressBar
-            android:id="@+id/progressBarSD"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="@dimen/homescreen_storage_progress_size"
-            android:layout_height="@dimen/homescreen_storage_progress_size"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/shape_circle"
-            android:indeterminate="false"
-            android:max="100"
-            android:progressDrawable="@drawable/circular_progress_bar"
-            tools:progress="50" />
+        <RelativeLayout
+            android:id="@+id/containerProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/home_card_image_bg">
 
-        <TextView
-            android:id="@+id/textProgress"
+            <ProgressBar
+                android:id="@+id/progressBarSD"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="@dimen/homescreen_storage_progress_width"
+                android:layout_height="@dimen/homescreen_storage_progress_height"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/shape_ring_progress"
+                android:indeterminate="false"
+                android:max="100"
+                android:progressDrawable="@drawable/circular_progress_bar"
+                tools:progress="50" />
+
+            <TextView
+                android:id="@+id/textProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="@string/storage_progress_percent"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                tools:text="50%" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/homescreen_storage_progress_text_margin_top"
-            android:text="@string/storage_progress_percent"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            tools:text="50%" />
+            android:layout_below="@id/containerProgress">
 
-        <TextView
-            android:id="@+id/textStorageName"
-            style="@style/HeaderText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/progressBarSD"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/storage_name_margin_top"
-            tools:text="@string/nav_menu_internal_storage" />
+            <TextView
+                android:id="@+id/textStorageName"
+                style="@style/HeaderText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="@string/nav_menu_internal_storage" />
 
-        <TextView
-            android:id="@+id/textStorageSpace"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/textStorageName"
-            android:layout_centerHorizontal="true"
-            tools:text="@string/storage_space" />
+            <TextView
+                android:id="@+id/textStorageSpace"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textStorageName"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/home_library_count_margin_bottom"
+                tools:text="@string/storage_space" />
 
+        </RelativeLayout>
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

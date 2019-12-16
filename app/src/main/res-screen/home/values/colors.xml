@@ -15,4 +15,5 @@
     <color name="gif_bg_dark">#DAA520</color>
     <color name="recents_bg_dark">#8a36b5</color>
     <color name="home_storage_card_bg_color">#80262626</color>
+    <color name="home_card_image_bg">#595959</color>
 </resources>

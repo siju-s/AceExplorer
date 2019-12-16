@@ -16,7 +16,7 @@
   -->
 
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
-       android:shape="oval">
+       android:shape="rectangle">
     <solid
-        android:color="#e53e6f"/>
+        android:color="@color/home_card_image_bg"/>
 </shape>

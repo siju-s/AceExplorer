@@ -3,7 +3,7 @@
     android:fromDegrees="270"
     android:toDegrees="270">
     <shape
-        android:innerRadiusRatio="2.5"
+        android:innerRadiusRatio="@dimen/home_progress_radius"
         android:shape="ring"
         android:thickness="@dimen/home_progress_circle_thickness"
         android:useLevel="true">
