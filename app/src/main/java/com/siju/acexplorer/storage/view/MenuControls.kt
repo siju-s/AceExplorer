@@ -74,7 +74,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, val categ
         hideBottomToolbar()
         clearActionModeToolbar()
         setupBaseMenu()
-        setToolbarText(context.getString(R.string.app_name))
+        setToolbarTitle(context.getString(R.string.app_name))
     }
 
     private fun setupActionModeToolbar() {
@@ -95,10 +95,6 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, val categ
     private fun setupBaseMenu() {
         toolbar.inflateMenu(R.menu.filelist_base)
         setupMenuItems(toolbar.menu)
-    }
-
-    private fun setToolbarText(text: String) {
-        toolbar.title = text
     }
 
     private fun showBottomToolbar() {
@@ -214,7 +210,8 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, val categ
     fun onSelectedCountChanged(count: Int,
                                fileInfo: FileInfo?,
                                externalSdList: ArrayList<String>) {
-        setToolbarText(count.toString())
+        Log.e(TAG, "onSelectedCountChanged:$count")
+        setToolbarTitle(count.toString())
         toggleMenuVisibility(count, fileInfo, externalSdList)
     }
 

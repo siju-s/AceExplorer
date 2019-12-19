@@ -478,12 +478,28 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
             val selectedCount = multiSelectionHelper.getSelectedCount()
             fileItem?.let { operationPresenter.toggleDragData(it) }
             if (selectedCount == 1) {
-                val fileInfo = _fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
+                val fileInfo = getFileInfo(category)
                 _selectedFileInfo.value = Pair(selectedCount, fileInfo)
             } else {
                 _selectedFileInfo.value = Pair(selectedCount, null)
             }
         }
+    }
+
+    private fun getFileInfo(category: Category) : FileInfo? {
+        if (RecentTimeHelper.isRecentTimeLineCategory(category)) {
+            val fileList = _recentFileData.value?.second
+            fileList?.let {
+                val recentDataItem = it[multiSelectionHelper.selectedItems.keyAt(0)]
+                recentDataItem as RecentTimeData.RecentDataItem.Item
+                return recentDataItem.fileInfo
+            }
+
+        }
+        else {
+            return _fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
+        }
+        return null
     }
 
     private fun canLongPress() = !zipPresenter.isZipMode && !isPasteOperationPending()

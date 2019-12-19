@@ -1,12 +1,14 @@
 package com.siju.acexplorer.storage.view
 
 import android.content.Context
+import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -25,12 +27,15 @@ private const val TAG = "RecentAdapter"
 class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<FileInfo, Int>) -> Unit,
                     private val longClickListener: (FileInfo, Int, View) -> Unit) : ListAdapter<RecentTimeData.RecentDataItem,
         RecyclerView.ViewHolder>(RecentDiffCallback()), BaseListAdapter {
-    override fun setMultiSelectionHelper(multiSelectionHelper: MultiSelectionHelper) {
 
+    private var multiSelectionHelper: MultiSelectionHelper? = null
+
+    override fun setMultiSelectionHelper(multiSelectionHelper: MultiSelectionHelper) {
+        this.multiSelectionHelper = multiSelectionHelper
     }
 
     override fun getMultiSelectionHelper(): MultiSelectionHelper? {
-        return null
+        return multiSelectionHelper
     }
 
     override fun setDraggedPosition(pos: Int) {
@@ -63,7 +68,8 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
             }
             is ItemViewHolder -> {
                 val item = getItem(position) as RecentTimeData.RecentDataItem.Item
-                holder.bind(item.fileInfo, clickListener)
+                holder.bind(item.fileInfo, itemCount, multiSelectionHelper?.isSelected(position), position, -1,
+                        clickListener, longClickListener)
             }
         }
     }
@@ -83,14 +89,24 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
         private val secondLineText: TextView = itemView.findViewById(R.id.textSecondLine)
         private val imageThumbIcon: ImageView = itemView.findViewById(R.id.imageThumbIcon)
 
-        fun bind(item: FileInfo?, clickListener: (Pair<FileInfo, Int>) -> Unit) {
+        fun bind(item: FileInfo?, count: Int, selected: Boolean?, pos: Int, draggedPos: Int,
+                 clickListener: (Pair<FileInfo, Int>) -> Unit, longClickListener: (FileInfo, Int, View) -> Unit) {
             item?.let {
+                onSelection(selected, pos, draggedPos)
                 bindViewByCategory(itemView.context, it)
+
                 itemView.setOnClickListener {
                     val position = adapterPosition
                     if (position != RecyclerView.NO_POSITION) {
                         clickListener(Pair(item, position))
                     }
+                }
+                itemView.setOnLongClickListener {
+                    val position = adapterPosition
+                    if (position < count && position != RecyclerView.NO_POSITION) {
+                        longClickListener(item, position, it)
+                    }
+                    true
                 }
             }
         }
@@ -124,6 +140,16 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
                 itemView.findViewById(R.id.imageThumb)
             } else {
                 imageIcon
+            }
+        }
+
+        private fun onSelection(selected: Boolean?, position: Int, draggedPos: Int) {
+            val color = ContextCompat.getColor(itemView.context,
+                    R.color.dark_actionModeItemSelected)
+            when {
+                selected == true       -> itemView.setBackgroundColor(color)
+                position == draggedPos -> itemView.setBackgroundColor(color)
+                else                   -> itemView.setBackgroundColor(Color.TRANSPARENT)
             }
         }
 
