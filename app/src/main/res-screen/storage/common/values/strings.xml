@@ -26,5 +26,11 @@
     <string name="msg_free">free of</string>
     <string name="no_search_results">No results found</string>
 
+    <string name="recent_today">Today</string>
+    <string name="recent_yesterday">Yesterday</string>
+    <string name="recent_this_week">This week</string>
+    <string name="recent_this_month">This month</string>
+    <string name="recent_items_count">%d items</string>
+
     <string name="zero_percent" translatable="false">0%</string>
 </resources>

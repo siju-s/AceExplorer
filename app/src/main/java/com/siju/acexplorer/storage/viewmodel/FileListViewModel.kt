@@ -74,6 +74,11 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
     val fileData: LiveData<ArrayList<FileInfo>>
         get() = _fileData
 
+    private val _recentFileData = MutableLiveData<Pair<Category, ArrayList<RecentTimeData.RecentDataItem>>>()
+
+    val recentFileData : LiveData<Pair<Category, ArrayList<RecentTimeData.RecentDataItem>>>
+        get() = _recentFileData
+
     val pasteOpData: LiveData<PasteOpData>
 
     val multiSelectionOpData: LiveData<Pair<Operations, ArrayList<FileInfo>>>
@@ -193,12 +198,23 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         addToBackStack(path, category)
         setCategory(category)
         setCurrentDir(path)
-        uiScope.launch(Dispatchers.IO) {
-            val data = storageModel.loadData(path, category)
-            Log.e(this.javaClass.name,
-                    "onDataloaded loadData: data ${data.size} , category $category")
-            _fileData.postValue(data)
-            handleScrollPosition()
+        if (RecentTimeHelper.isRecentTimeLineCategory(category)) {
+            uiScope.launch(Dispatchers.IO) {
+                val data = storageModel.loadRecentData(path, category)
+                Log.e(this.javaClass.name,
+                        "onDataloaded loadData: data ${data.size} , category $category")
+                _recentFileData.postValue(Pair(category, data))
+                handleScrollPosition()
+            }
+        }
+        else {
+            uiScope.launch(Dispatchers.IO) {
+                val data = storageModel.loadData(path, category)
+                Log.e(this.javaClass.name,
+                        "onDataloaded loadData: data ${data.size} , category $category")
+                _fileData.postValue(data)
+                handleScrollPosition()
+            }
         }
     }
 
@@ -208,9 +224,18 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         addNavigation(path, category)
         setCategory(category)
         setCurrentDir(path)
-        uiScope.launch(Dispatchers.IO) {
-            _fileData.postValue(storageModel.loadData(path, category))
-            handleScrollPosition()
+        if (RecentTimeHelper.isRecentTimeLineCategory(category)) {
+            uiScope.launch(Dispatchers.IO) {
+                val data = storageModel.loadRecentData(path, category)
+                _recentFileData.postValue(Pair(category, data))
+                handleScrollPosition()
+            }
+        }
+        else {
+            uiScope.launch(Dispatchers.IO) {
+                _fileData.postValue(storageModel.loadData(path, category))
+                handleScrollPosition()
+            }
         }
     }
 

@@ -19,6 +19,8 @@ import com.siju.acexplorer.main.model.FileConstants
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.SdkHelper
 import com.siju.acexplorer.main.view.dialog.DialogHelper
+import com.siju.acexplorer.storage.model.RecentTimeData
+import com.siju.acexplorer.storage.model.RecentTimeHelper.isRecentTimeLineCategory
 import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.storage.view.custom.CustomGridLayoutManager
 import com.siju.acexplorer.utils.ConfigurationHelper
@@ -34,7 +36,9 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
     private var itemView: View? = null
     private lateinit var fileList: RecyclerView
     private lateinit var emptyText: TextView
-    private lateinit var adapter: FileListAdapter
+    private          var adapter: FileListAdapter? = null
+    private          var recentAdapter: RecentAdapter? = null
+
     private val dragHelper = DragHelper(view.context, this)
 
     init {
@@ -50,7 +54,16 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
     @SuppressLint("ClickableViewAccessibility")
     private fun setupList() {
         Log.e(TAG , "setupList:category:$category, viewMode:$viewMode")
-        setLayoutManager(fileList, viewMode)
+        setLayoutManager(fileList, viewMode, category)
+        setAdapter()
+        fileList.setOnTouchListener(this)
+    }
+
+    private fun setAdapter() {
+        if (isRecentTimeLineCategory(category)) {
+            setRecentAdapter()
+            return
+        }
         adapter = FileListAdapter(
                 viewMode,
                 {
@@ -58,24 +71,61 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
                 },
                 { fileInfo, pos, view ->
                     fileListHelper.handleLongItemClick(fileInfo, pos)
-                    val hasSelectedItems = adapter.getMultiSelectionHelper()?.hasSelectedItems()
+                    val hasSelectedItems = adapter?.getMultiSelectionHelper()?.hasSelectedItems()
                     if (hasSelectedItems == true) {
                         this.itemView = view
                     }
                 }
         )
-        adapter.setMainCategory(category)
+        adapter?.setMainCategory(category)
         fileList.adapter = adapter
         fileList.setOnDragListener(dragHelper.dragListener)
-        fileList.setOnTouchListener(this)
     }
 
-    private fun setLayoutManager(fileList: RecyclerView, viewMode: ViewMode) {
-        Log.e(TAG, "fileListHelper is: $fileListHelper")
+    private fun setRecentAdapter() {
+        recentAdapter = RecentAdapter(
+                viewMode,
+                {
+                    fileListHelper.handleItemClick(it.first, it.second)
+                },
+                { fileInfo, pos, view ->
+                    fileListHelper.handleLongItemClick(fileInfo, pos)
+                    val hasSelectedItems = adapter?.getMultiSelectionHelper()?.hasSelectedItems()
+                    if (hasSelectedItems == true) {
+                        this.itemView = view
+                    }
+                }
+        )
+        fileList.adapter = recentAdapter
+    }
+
+    private fun setLayoutManager(fileList: RecyclerView, viewMode: ViewMode, category: Category) {
+        Log.e(TAG, "setLayoutManager viewMode: $viewMode")
         fileList.layoutManager = when (viewMode) {
             ViewMode.LIST -> LinearLayoutManager(view.context)
-            ViewMode.GRID, ViewMode.GALLERY -> CustomGridLayoutManager(view.context,
-                    getGridColumns(view.resources.configuration, viewMode))
+            ViewMode.GRID, ViewMode.GALLERY -> {
+                val gridColumns = getGridColumns(view.resources.configuration, viewMode)
+                val gridLayoutManager = CustomGridLayoutManager(view.context,
+                        gridColumns)
+                setSpanSize(gridLayoutManager, gridColumns, category)
+                gridLayoutManager
+            }
+        }
+    }
+
+    private fun setSpanSize(gridLayoutManager: CustomGridLayoutManager, spanSize: Int, category: Category) {
+        if (isRecentTimeLineCategory(category)) {
+            gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    val itemViewType = recentAdapter?.getItemViewType(position)
+                    val count = when(itemViewType) {
+                        RecentAdapter.ITEM_VIEW_TYPE_HEADER -> spanSize
+                        else -> 1
+                    }
+                    Log.e(TAG, "Span size : $count, viewTYpe:$itemViewType")
+                    return count
+                }
+            }
         }
     }
 
@@ -89,7 +139,7 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
 
     fun refreshGridColumns() {
         if (viewMode == ViewMode.GRID) {
-            setLayoutManager(fileList, viewMode)
+            setLayoutManager(fileList, viewMode, category)
         }
     }
 
@@ -101,23 +151,57 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
         } else {
             emptyText.visibility = View.GONE
         }
-        adapter.submitList(data)
+        if (adapter == null) {
+            setupList()
+            recentAdapter = null
+        }
+        adapter?.submitList(data)
+    }
+
+    fun onRecentDataLoaded(category: Category, data: ArrayList<RecentTimeData.RecentDataItem>) {
+        Log.e(TAG, "onRecentDataLoaded:${data.size}, recentAdapter:$recentAdapter")
+        if (data.isEmpty()) {
+            emptyText.visibility = View.VISIBLE
+        } else {
+            emptyText.visibility = View.GONE
+        }
+        if (recentAdapter == null) {
+            setLayoutManager(fileList, viewMode, category)
+            setRecentAdapter()
+            adapter = null
+        }
+        recentAdapter?.submitList(data)
     }
 
     fun onViewModeChanged(viewMode: ViewMode) {
         Log.e(TAG, "onViewModeChanged:$viewMode")
-        setLayoutManager(fileList, viewMode)
+        setLayoutManager(fileList, viewMode, category)
         this.viewMode = viewMode
-        adapter.viewMode = viewMode
-        fileList.adapter = adapter
+        if (isRecentTimeLineCategory(category)) {
+            recentAdapter?.viewMode = viewMode
+            fileList.adapter = recentAdapter
+        }
+        else {
+            adapter?.viewMode = viewMode
+            fileList.adapter = adapter
+        }
     }
 
     fun refresh() {
-        adapter.notifyDataSetChanged()
+        getAdapter()?.refresh()
     }
 
     fun setMultiSelectionHelper(multiSelectionHelper: MultiSelectionHelper) {
-        adapter.setMultiSelectionHelper(multiSelectionHelper)
+        getAdapter()?.setMultiSelectionHelper(multiSelectionHelper)
+    }
+
+    private fun getAdapter() : BaseListAdapter? {
+        return if (isRecentTimeLineCategory(category)) {
+            recentAdapter
+        }
+        else {
+            adapter
+        }
     }
 
     fun getScrollInfo(): ScrollInfo {
@@ -206,6 +290,7 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
         return false
     }
 
+    @Suppress("DEPRECATION")
     fun startDrag(category: Category, selectedCount: Int, draggedData: ArrayList<FileInfo>) {
         itemView?.let { view ->
             val intent = Intent()
@@ -232,7 +317,7 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
             } else {
                 scrollDownToPos(newPos)
             }
-            adapter.setDraggedPosition(newPos)
+            adapter?.setDraggedPosition(newPos)
         }
         return newPos
     }
@@ -285,10 +370,12 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
     }
 
     private fun scrollDownToPos(newPos: Int) {
-        val changedPos = newPos + 2
-        // For scroll down
-        if (changedPos < adapter.itemCount) {
-            fileList.smoothScrollToPosition(changedPos)
+        adapter?.let {
+            val changedPos = newPos + 2
+            // For scroll down
+            if (changedPos < it.itemCount) {
+                fileList.smoothScrollToPosition(changedPos)
+            }
         }
     }
 
@@ -299,6 +386,6 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
     }
 
     fun onEndActionMode() {
-        adapter.clearDragPosition()
+        adapter?.clearDragPosition()
     }
 }

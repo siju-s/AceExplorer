@@ -34,7 +34,7 @@ const val INVALID_POS = -1
 private const val TAG = "FileListAdapter"
 class FileListAdapter internal constructor(var viewMode: ViewMode, private val clickListener: (Pair<FileInfo, Int>) -> Unit,
                                            private val longClickListener: (FileInfo, Int, View) -> Unit) :
-        ListAdapter<FileInfo, FileListAdapter.ViewHolder>(FileInfoDiffCallback()) {
+        ListAdapter<FileInfo, FileListAdapter.ViewHolder>(FileInfoDiffCallback()), BaseListAdapter {
 
     private var draggedPosition = -1
     private var multiSelectionHelper: MultiSelectionHelper? = null
@@ -51,23 +51,27 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                 clickListener, longClickListener)
     }
 
-    fun setMultiSelectionHelper(multiSelectionHelper: MultiSelectionHelper) {
+    override fun setMultiSelectionHelper(multiSelectionHelper: MultiSelectionHelper) {
         this.multiSelectionHelper = multiSelectionHelper
     }
 
-    fun getMultiSelectionHelper() = multiSelectionHelper
+    override fun getMultiSelectionHelper() = multiSelectionHelper
 
-    fun setDraggedPosition(pos: Int) {
+    override fun setDraggedPosition(pos: Int) {
         draggedPosition = pos
         notifyDataSetChanged()
     }
 
-    fun clearDragPosition() {
+    override fun clearDragPosition() {
         draggedPosition = -1
     }
 
-    fun setMainCategory(category: Category) {
+    override fun setMainCategory(category: Category) {
         this.mainCategory = category
+    }
+
+    override fun refresh() {
+        notifyDataSetChanged()
     }
 
     class ViewHolder private constructor(itemView: View,
@@ -312,7 +316,6 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             displayThumb(context, fileInfo, fileInfo.category, imageIcon,
                     imageThumbIcon)
         }
-
         companion object {
             fun from(parent: ViewGroup,
                      viewMode: ViewMode): ViewHolder {

@@ -206,6 +206,14 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
             }
         })
 
+        fileListViewModel.recentFileData.observe(viewLifecycleOwner, Observer {
+            it?.apply {
+                if (::filesList.isInitialized) {
+                    filesList.onRecentDataLoaded(it.first, it.second)
+                }
+            }
+        })
+
         mainViewModel.refreshList.observe(viewLifecycleOwner, Observer {
             it?.apply {
                 if (::filesList.isInitialized && it) {

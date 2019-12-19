@@ -38,16 +38,24 @@ class StorageModelImpl(val context: Context) : StorageModel {
     override fun loadData(path: String?, category: Category): ArrayList<FileInfo> {
         this.category = category
         return DataLoader.fetchDataByCategory(context,
-                                              DataFetcherFactory.createDataFetcher(category),
-                                              category, path)
+                DataFetcherFactory.createDataFetcher(category),
+                category, path)
+    }
+
+
+    override fun loadRecentData(path: String?, category: Category): ArrayList<RecentTimeData.RecentDataItem> {
+        this.category = category
+        val data = DataLoader.fetchDataByCategory(context,
+                DataFetcherFactory.createDataFetcher(category),
+                category, path)
+        return RecentTimeData.getRecentTimeData(data)
     }
 
     override fun getViewMode(): ViewMode {
         return if (sharedPreferences.contains(PREFS_VIEW_MODE)) {
             ViewMode.getViewModeFromValue(
                     sharedPreferences.getInt(PREFS_VIEW_MODE, ViewMode.LIST.value))
-        }
-        else {
+        } else {
             ViewMode.LIST
         }
     }
@@ -105,7 +113,7 @@ class StorageModelImpl(val context: Context) : StorageModel {
         operationHelper.deleteFiles(operation, files, fileOperationCallback)
     }
 
-    override fun addToFavorite(favList: ArrayList<String>)  {
+    override fun addToFavorite(favList: ArrayList<String>) {
         operationHelper.addToFavorite(context, favList, fileOperationCallback)
     }
 
@@ -143,14 +151,15 @@ class StorageModelImpl(val context: Context) : StorageModel {
     }
 
     private fun registerContentObserver() {
-        var uri : Uri? = null
-        when(category) {
+        var uri: Uri? = null
+        when (category) {
             Category.IMAGES_ALL, Category.GENERIC_IMAGES -> uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             Category.VIDEO_ALL, Category.GENERIC_VIDEOS -> uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
             Category.ALL_TRACKS, Category.GENERIC_MUSIC -> uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
             Category.RECENT, Category.RECENT_ALL, Category.DOCS, Category.PDF, Category.DOCS_OTHER,
-            Category.COMPRESSED, Category.APPS, Category.LARGE_FILES_ALL, Category.LARGE_FILES-> uri = MediaStore.Files.getContentUri("external")
-            else -> {}
+            Category.COMPRESSED, Category.APPS, Category.LARGE_FILES_ALL, Category.LARGE_FILES -> uri = MediaStore.Files.getContentUri("external")
+            else -> {
+            }
         }
         uri?.let {
             Log.d("Model", "registerContentObserver:category:$category, uri :$uri")

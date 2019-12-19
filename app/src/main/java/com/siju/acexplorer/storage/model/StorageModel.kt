@@ -142,4 +142,5 @@ interface StorageModel {
 
     fun onPause()
     fun onResume()
+    fun loadRecentData(path: String?, category: Category): ArrayList<RecentTimeData.RecentDataItem>
 }
