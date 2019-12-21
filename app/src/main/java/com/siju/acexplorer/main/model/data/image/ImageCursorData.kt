@@ -22,15 +22,19 @@ object ImageCursorData {
             var count = 0
             do {
                 val path = cursor.getString(pathIndex)
-                val bucketName = cursor.getString(bucketNameIndex)
+                var bucketName = cursor.getString(bucketNameIndex)
                 val bucketId = cursor.getLong(bucketIdIndex)
                 if (!ids.contains(bucketId)) {
                     count = 1
                     Log.e("ImageCursor", "bucket:$bucketName, bucketId:$bucketId")
+                    if (bucketName == null) {
+                        bucketName = 0.toString()
+                    }
                     val fileInfo = FileInfo(category, bucketId, bucketName, path, count)
                     fileInfoList.add(fileInfo)
                     ids.add(bucketId)
                 } else {
+                    Log.e("ImageCursor", "bucket:$bucketName, path:$path")
                     count++
                     fileInfoList[ids.indexOf(bucketId)].numTracks = count.toLong()
                 }
