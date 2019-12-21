@@ -28,9 +28,19 @@ object CategoryHelper {
     }
 
     fun isDateInMs(category: Category): Boolean {
+        Log.e(this.javaClass.simpleName, "isDateInMs:category:$category")
         return category == FILES ||
                 category == DOWNLOADS ||
-                category == FAVORITES
+                category == FAVORITES ||
+                category == WHATSAPP ||
+                category == SEARCH_FOLDER_AUDIO ||
+                category == SEARCH_FOLDER_VIDEOS ||
+                category == SEARCH_FOLDER_IMAGES ||
+                category == SEARCH_FOLDER_DOCS ||
+                category == TELEGRAM ||
+                category == SCREENSHOT ||
+                category == CAMERA_GENERIC ||
+                category == CAMERA
     }
 
     fun isGenericMusic(category: Category): Boolean {
