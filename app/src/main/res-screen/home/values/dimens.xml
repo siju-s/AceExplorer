@@ -16,4 +16,6 @@
     <dimen name="storage_card_margin_top">8dp</dimen>
     <dimen name="storage_name_margin_top">8dp</dimen>
     <dimen name="storage_progress_margin">8dp</dimen>
+
+    <dimen name="category_edit_text_min_height">36dp</dimen>
 </resources>
