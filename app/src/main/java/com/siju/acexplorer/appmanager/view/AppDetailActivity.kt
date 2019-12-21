@@ -182,6 +182,7 @@ class AppDetailActivity : BaseActivity(), View.OnClickListener {
     }
 
     private fun setupAppProperties(appInfo: AppInfo) {
+        packageNameText.text = packageValue
         val enabled = appInfo.enabled
         enabledText.text = if (enabled) getString(R.string.yes)
         else getString(R.string.no)
