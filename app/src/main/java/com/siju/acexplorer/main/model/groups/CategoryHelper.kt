@@ -28,7 +28,7 @@ object CategoryHelper {
     }
 
     fun isDateInMs(category: Category): Boolean {
-        Log.e(this.javaClass.simpleName, "isDateInMs:category:$category")
+//        Log.e(this.javaClass.simpleName, "isDateInMs:category:$category")
         return category == FILES ||
                 category == DOWNLOADS ||
                 category == FAVORITES ||

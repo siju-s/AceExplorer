@@ -1,5 +1,6 @@
 package com.siju.acexplorer.storage.presenter
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.logging.Logger
@@ -9,7 +10,7 @@ import com.siju.acexplorer.storage.model.operations.Operations
 import com.siju.acexplorer.storage.viewmodel.FileListViewModel
 import java.io.File
 
-private const val DRAG_TIME_MS = 1500
+private const val MIN_DRAG_TIME_MS = 1500
 private const val TAG = "DragOperation"
 
 class DragOperation(private val viewModel: FileListViewModel, private val operationPresenter: OperationPresenter) {
@@ -21,13 +22,17 @@ class DragOperation(private val viewModel: FileListViewModel, private val operat
     private var dragStarted = false
 
     fun onUpTouchEvent() {
-        dragStarted = true
+        dragStarted = false
         longPressedTimeMs = 0
     }
 
     fun onMoveTouchEvent(selectedCount: Int, category: Category) {
+        if (longPressedTimeMs == 0L) {
+            return
+        }
         val timeElapsed = System.currentTimeMillis() - longPressedTimeMs
-        if (timeElapsed > DRAG_TIME_MS) {
+        Log.e(TAG, "onMoveTouchEvent:timeElapsed:$timeElapsed, longpressTime:$longPressedTimeMs")
+        if (timeElapsed > MIN_DRAG_TIME_MS) {
             longPressedTimeMs = 0
             dragStarted = false
             if (draggedData.isNotEmpty()) {
@@ -89,10 +94,12 @@ class DragOperation(private val viewModel: FileListViewModel, private val operat
 
     fun onDragStarted() {
         dragStarted = true
+        Log.e(TAG, "onDragStarted")
     }
 
     fun dragEnded() {
         dragStarted = false
+        Log.e(TAG, "dragEnded")
     }
 
     private val dragDialogListener = DialogHelper.DragDialogListener { filesToPaste, destinationDir, operation ->

@@ -459,7 +459,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
             multiSelectionHelper.toggleSelection(position, true)
             handleActionModeClick(fileInfo)
             operationPresenter.setLongPressedTime(System.currentTimeMillis())
-            if (isActionModeActive() && multiSelectionHelper.hasSelectedItems()) {
+            if (isActionModeActive() && multiSelectionHelper.getSelectedCount() >= 1) {
                 operationPresenter.onDragStarted()
             }
         }

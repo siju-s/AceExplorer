@@ -126,7 +126,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                                        viewMode: ViewMode,
                                        mainCategory: Category?) {
             val category = fileInfo.category
-            Log.d(TAG, "bindViewByCategory:$category")
+//            Log.d(TAG, "bindViewByCategory:$category")
             when {
                 category == Category.PICKER       -> {
                     bindPickerView(fileInfo)

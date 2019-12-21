@@ -272,19 +272,21 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
     override fun onTouch(view: View?, event: MotionEvent): Boolean {
         val touchEvent = event.actionMasked
 
-        if (fileListHelper.isDragNotStarted()) {
+        if (fileListHelper.isDragNotStarted() || isDragUnsupported(category)) {
             return false
         }
+        Log.e(TAG, "onTouch:$touchEvent")
 
         when (touchEvent) {
+            MotionEvent.ACTION_MOVE -> {
+                fileListHelper.onMoveEvent()
+            }
+
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 fileListHelper.onUpEvent()
                 view?.performClick()
             }
 
-            MotionEvent.ACTION_MOVE -> {
-                fileListHelper.onMoveEvent()
-            }
         }
 
         return false
@@ -338,9 +340,9 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
                 return
             }
             val dragCategory = intent.getIntExtra(KEY_CATEGORY, 0)
-
-            if (dragCategory == Category.FILES.value && fileListHelper.getCategory() != Category.FILES) {
-                view.context.showToast("Not supported")
+            Log.e(TAG, "dragCategory:$dragCategory")
+            if (isDragEndUnsupported(dragCategory)) {
+                showError(view)
                 return
             }
         }
@@ -350,10 +352,19 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
         }
     }
 
+    private fun showError(view: View) {
+        view.context.showToast(view.context.getString(R.string.error_unsupported))
+    }
+
+    private fun isDragEndUnsupported(dragCategory: Int) =
+            dragCategory == Category.FILES.value && fileListHelper.getCategory() != Category.FILES
+
+    private fun isDragUnsupported(category: Category) = category != Category.FILES
+
     @Suppress("UNCHECKED_CAST")
     fun onDragDropEvent(event: DragEvent) {
         if (fileListHelper.getCategory() != Category.FILES) {
-            view.context.showToast("Not supported")
+            showError(view)
             return
         }
         val top = fileList.findChildViewUnder(event.x, event.y) ?: return
