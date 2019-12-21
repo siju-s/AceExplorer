@@ -40,6 +40,7 @@ import com.siju.acexplorer.appmanager.helper.AppHelper
 import com.siju.acexplorer.appmanager.view.AppDetailActivity
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.extensions.showToast
+import com.siju.acexplorer.home.view.CategoryMenuHelper
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper.isAppManager
 import com.siju.acexplorer.main.model.helper.PermissionsHelper
@@ -85,6 +86,8 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     private lateinit var menuControls: MenuControls
 
     private var showNavigation = true
+
+    private var categoryMenuHelper: CategoryMenuHelper? = null
     private var hiddenMenuItem: MenuItem? = null
     private var path: String? = null
     private var category = Category.FILES
@@ -109,7 +112,13 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
             filesList = FilesList(this, view, fileListViewModel.getViewMode(category), category)
             floatingView = FloatingView(view, this)
             navigationView = NavigationView(view, fileListViewModel.navigationCallback)
-            menuControls = MenuControls(this, view, category)
+            val appbarView = if (!showNavigation) {
+                categoryMenuHelper?.getCategoryView()
+            }
+            else {
+                it
+            }
+            menuControls = MenuControls(this, view, appbarView!!, category)
         }
         setupMultiSelection()
         setupNavigationView()
@@ -944,6 +953,10 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         override fun onNegativeButtonClick(view: View?) {
         }
 
+    }
+
+    fun setCategoryMenuHelper(categoryMenuHelper: CategoryMenuHelper) {
+        this.categoryMenuHelper = categoryMenuHelper
     }
 //
 //    fun performVoiceSearch(query: String) {

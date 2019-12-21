@@ -17,11 +17,11 @@ import com.siju.acexplorer.main.model.root.RootUtils
 
 private const val TAG = "MenuControls"
 
-class MenuControls(val fragment: BaseFileListFragment, val view: View, val category: Category) :
+class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryFragmentView : View, val category: Category) :
         Toolbar.OnMenuItemClickListener {
 
     private var bottomToolbar: Toolbar = view.findViewById(R.id.toolbar_bottom)
-    private var toolbar: Toolbar = view.findViewById(R.id.toolbar)
+    private var toolbar: Toolbar = categoryFragmentView.findViewById(R.id.toolbar)
     private val context = view.context
     private lateinit var searchItem: MenuItem
     private lateinit var sortItem: MenuItem
@@ -98,10 +98,12 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, val categ
     }
 
     private fun showBottomToolbar() {
+        Log.e(TAG, "showBottomToolbar")
         bottomToolbar.visibility = View.VISIBLE
     }
 
     private fun hideBottomToolbar() {
+        Log.e(TAG, "hideBottomToolbar")
         bottomToolbar.visibility = View.GONE
     }
 

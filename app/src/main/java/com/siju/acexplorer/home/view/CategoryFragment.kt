@@ -18,8 +18,7 @@ import com.siju.acexplorer.storage.view.KEY_CATEGORY
 import com.siju.acexplorer.storage.view.KEY_PATH
 import kotlinx.android.synthetic.main.toolbar.*
 
-class CategoryFragment : Fragment() {
-
+class CategoryFragment : Fragment(), CategoryMenuHelper {
     private lateinit var pagerAdapter: CategoryPagerAdapter
     private lateinit var viewPager: ViewPager
 
@@ -41,6 +40,8 @@ class CategoryFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         return inflater.inflateLayout(R.layout.category_pager, container)
     }
+
+    override fun getCategoryView() = view
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupUI(view)
@@ -96,8 +97,11 @@ class CategoryFragment : Fragment() {
         allCategory?.let {
             fragment1 = FileListFragment.newInstance(path, allCategory, false)
         }
+        fragment1.setCategoryMenuHelper(this)
 
         val fragment2 = FileListFragment.newInstance(path, category, false)
+        fragment2.setCategoryMenuHelper(this)
+
         context?.let { context ->
             pagerAdapter.addFragment(fragment1, context.getString(R.string.category_all))
             pagerAdapter.addFragment(fragment2, getTitle(context, category))
@@ -126,6 +130,12 @@ class CategoryFragment : Fragment() {
         val fragment4 = FileListFragment.newInstance(getSubDirImagePath(path, Category.SEARCH_FOLDER_AUDIO), Category.SEARCH_FOLDER_AUDIO, false)
         val fragment5 = FileListFragment.newInstance(getSubDirImagePath(path, Category.SEARCH_FOLDER_DOCS), Category.SEARCH_FOLDER_DOCS, false)
 
+        fragment1.setCategoryMenuHelper(this)
+        fragment2.setCategoryMenuHelper(this)
+        fragment3.setCategoryMenuHelper(this)
+        fragment4.setCategoryMenuHelper(this)
+        fragment5.setCategoryMenuHelper(this)
+
         context?.let { context ->
             pagerAdapter.addFragment(fragment1, context.getString(R.string.category_all))
             pagerAdapter.addFragment(fragment2, getTitle(context, Category.SEARCH_FOLDER_IMAGES))
@@ -137,9 +147,12 @@ class CategoryFragment : Fragment() {
 
     private fun addDocCategoryFragments(path: String?, category: Category) {
         val fragment1 = FileListFragment.newInstance(path, category, false)
-
         val fragment2 = FileListFragment.newInstance(path, Category.PDF, false)
         val fragment3 = FileListFragment.newInstance(path, Category.DOCS_OTHER, false)
+
+        fragment1.setCategoryMenuHelper(this)
+        fragment2.setCategoryMenuHelper(this)
+        fragment3.setCategoryMenuHelper(this)
 
         context?.let { context ->
             pagerAdapter.addFragment(fragment1, context.getString(R.string.category_all))
