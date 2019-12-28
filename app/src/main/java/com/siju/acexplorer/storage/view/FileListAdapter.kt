@@ -3,7 +3,6 @@ package com.siju.acexplorer.storage.view
 import android.content.Context
 import android.graphics.Color
 import android.text.format.Formatter
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -254,7 +253,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         }
 
         private fun toggleGalleryViewVisibility(category: Category?) {
-            Log.e(TAG, "toggleGalleryViewVisibility:$category")
+//            Log.e(TAG, "toggleGalleryViewVisibility:$category")
             if (viewMode == ViewMode.GALLERY) {
                 val imageGalleryThumb: ImageView = itemView.findViewById(R.id.imageThumb)
                 if (category == Category.FILES) {

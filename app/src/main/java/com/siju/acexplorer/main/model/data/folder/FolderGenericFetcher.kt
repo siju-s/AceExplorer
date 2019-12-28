@@ -3,7 +3,6 @@ package com.siju.acexplorer.main.model.data.folder
 import android.content.Context
 import android.database.Cursor
 import android.provider.MediaStore
-import android.util.Log
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.HiddenFileHelper
 import com.siju.acexplorer.main.model.data.DataFetcher
@@ -24,7 +23,6 @@ class FolderGenericFetcher : DataFetcher {
 
 
     override fun fetchCount(context: Context, path: String?): Int {
-        Log.e(TAG, "fetchCount:$path")
         return if (path == null) {
             0
         } else {

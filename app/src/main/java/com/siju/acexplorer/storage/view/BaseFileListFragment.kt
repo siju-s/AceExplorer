@@ -24,7 +24,10 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -88,7 +91,6 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     private var showNavigation = true
 
     private var categoryMenuHelper: CategoryMenuHelper? = null
-    private var hiddenMenuItem: MenuItem? = null
     private var path: String? = null
     private var category = Category.FILES
 
@@ -100,7 +102,6 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        setHasOptionsMenu(true)
 
         getArgs()
         adView = AdsView(main_content)
@@ -123,8 +124,6 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         setupMultiSelection()
         setupNavigationView()
         initObservers()
-        Log.e(TAG, "onAct created:$hiddenMenuItem")
-        setHiddenCheckedState(fileListViewModel.shouldShowHiddenFiles())
         setupDualScreenMode()
     }
 
@@ -144,7 +143,6 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         }
         else {
             toolbar.title = resources.getString(R.string.app_name)
-            (activity as AppCompatActivity).setSupportActionBar(toolbar)
         }
     }
 
@@ -861,20 +859,6 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     }
 
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.filelist_base, menu)
-        Log.e(TAG, "onCreateOptionsMenu")
-        hiddenMenuItem = menu.findItem(R.id.action_hidden)
-        if (::fileListViewModel.isInitialized) {
-            setHiddenCheckedState(fileListViewModel.shouldShowHiddenFiles())
-        }
-    }
-
-    private fun setHiddenCheckedState(state: Boolean) {
-        hiddenMenuItem?.isChecked = state
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         if (isAppManager(category)) {
@@ -882,45 +866,37 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_view_list -> {
-                fileListViewModel.switchView(ViewMode.LIST)
-                return true
-            }
-            R.id.action_view_grid -> {
-                fileListViewModel.switchView(ViewMode.GRID)
-                return true
-            }
-            R.id.action_view_gallery -> {
-                fileListViewModel.switchView(ViewMode.GALLERY)
-                return true
-            }
-            R.id.action_hidden -> {
-                item.isChecked = !item.isChecked
-                fileListViewModel.onHiddenFileSettingChanged(item.isChecked)
-                return true
-            }
-
-            R.id.action_sort -> {
-                fileListViewModel.onSortClicked()
-                return true
-            }
-
-            R.id.action_search -> {
-                navigateToSearchScreen()
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     private fun navigateToSearchScreen() {
         mainViewModel.navigateToSearch.value = true
     }
 
     fun onMenuItemClick(item: MenuItem) {
-        fileListViewModel.onMenuItemClick(item.itemId)
+        when (item.itemId) {
+            R.id.action_view_list -> {
+                fileListViewModel.switchView(ViewMode.LIST)
+            }
+            R.id.action_view_grid -> {
+                fileListViewModel.switchView(ViewMode.GRID)
+            }
+            R.id.action_view_gallery -> {
+                fileListViewModel.switchView(ViewMode.GALLERY)
+            }
+            R.id.action_hidden -> {
+                item.isChecked = !item.isChecked
+                fileListViewModel.onHiddenFileSettingChanged(item.isChecked)
+            }
+            R.id.action_sort -> {
+                fileListViewModel.onSortClicked()
+            }
+            R.id.action_search -> {
+                navigateToSearchScreen()
+            }
+            else -> {
+                if (item.itemId != R.id.action_view) {
+                    fileListViewModel.onMenuItemClick(item.itemId)
+                }
+            }
+        }
     }
 
     override fun onUpEvent() {
@@ -957,6 +933,21 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
 
     fun setCategoryMenuHelper(categoryMenuHelper: CategoryMenuHelper) {
         this.categoryMenuHelper = categoryMenuHelper
+    }
+
+    fun refreshDataOnSettingChange() {
+        Log.e(TAG, "refreshDataOnSettingChange")
+        if (::filesList.isInitialized) {
+            val viewMode = fileListViewModel.getViewMode(category)
+            filesList.onViewModeChanged(viewMode)
+        }
+    }
+
+    fun shouldShowHiddenFiles(): Boolean {
+        if (::fileListViewModel.isInitialized) {
+            return fileListViewModel.shouldShowHiddenFiles()
+        }
+        return false
     }
 //
 //    fun performVoiceSearch(query: String) {

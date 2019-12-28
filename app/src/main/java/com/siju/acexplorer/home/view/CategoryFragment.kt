@@ -2,10 +2,12 @@ package com.siju.acexplorer.home.view
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
@@ -18,11 +20,13 @@ import com.siju.acexplorer.storage.view.KEY_CATEGORY
 import com.siju.acexplorer.storage.view.KEY_PATH
 import kotlinx.android.synthetic.main.toolbar.*
 
-class CategoryFragment : Fragment(), CategoryMenuHelper {
+class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClickListener {
+
     private lateinit var pagerAdapter: CategoryPagerAdapter
-    private lateinit var viewPager: ViewPager
+    private lateinit var viewPager   : ViewPager
 
     companion object {
+
         fun newInstance(path: String?, category: Category): CategoryFragment {
             val bundle = Bundle()
             bundle.apply {
@@ -50,6 +54,7 @@ class CategoryFragment : Fragment(), CategoryMenuHelper {
     private fun setupUI(view: View) {
         setupToolbar()
         viewPager = view.findViewById(R.id.categoryPager)
+        viewPager.addOnPageChangeListener(pageChangeListener)
         val tabLayout = view.findViewById<TabLayout>(R.id.categoryTabs)
         tabLayout.setupWithViewPager(viewPager)
         pagerAdapter = CategoryPagerAdapter(childFragmentManager)
@@ -58,7 +63,8 @@ class CategoryFragment : Fragment(), CategoryMenuHelper {
 
     private fun setupToolbar() {
         toolbar.title = resources.getString(R.string.app_name)
-        (activity as AppCompatActivity).setSupportActionBar(toolbar)
+        toolbar.inflateMenu(R.menu.filelist_base)
+        toolbar.setOnMenuItemClickListener(this)
     }
 
     private fun setupAdapter() {
@@ -68,6 +74,35 @@ class CategoryFragment : Fragment(), CategoryMenuHelper {
             val category = args.getSerializable(KEY_CATEGORY) as Category
             createFragment(path, category)
             viewPager.adapter = pagerAdapter
+        }
+    }
+
+    override fun onMenuItemClick(item: MenuItem): Boolean {
+        val fragment = pagerAdapter.getItem(viewPager.currentItem)
+        if (fragment is FileListFragment) {
+            fragment.onMenuItemClick(item)
+            return true
+        }
+        return false
+    }
+
+    private val pageChangeListener = object : ViewPager.OnPageChangeListener {
+        override fun onPageScrollStateChanged(state: Int) {
+
+        }
+
+        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+        }
+
+        override fun onPageSelected(position: Int) {
+            Log.e(this.javaClass.simpleName, "onPageSelected:$position")
+            if (position == -1) {
+                return
+            }
+            val fragment = pagerAdapter.getItem(position)
+            if (fragment is FileListFragment) {
+                fragment.refreshDataOnSettingChange()
+            }
         }
     }
 

@@ -122,7 +122,7 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
                         RecentAdapter.ITEM_VIEW_TYPE_HEADER -> spanSize
                         else -> 1
                     }
-                    Log.e(TAG, "Span size : $count, viewTYpe:$itemViewType")
+//                    Log.e(TAG, "Span size : $count, viewTYpe:$itemViewType")
                     return count
                 }
             }
@@ -174,6 +174,9 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
     }
 
     fun onViewModeChanged(viewMode: ViewMode) {
+        if (this.viewMode == viewMode) {
+            return
+        }
         Log.e(TAG, "onViewModeChanged:$viewMode")
         setLayoutManager(fileList, viewMode, category)
         this.viewMode = viewMode

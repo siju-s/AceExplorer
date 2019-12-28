@@ -35,6 +35,17 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     private lateinit var permissionItem: MenuItem
     private lateinit var deleteFavItem : MenuItem
 
+    private var hiddenMenuItem: MenuItem? = null
+
+    init {
+        if (category == Category.FILES) {
+            setupBaseMenu()
+        }
+        else {
+            setupMenuItems(toolbar.menu)
+        }
+    }
+
     fun onStartActionMode() {
         Log.e(TAG, "onStartActionMode")
         setupActionModeToolbar()
@@ -93,7 +104,9 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     }
 
     private fun setupBaseMenu() {
+        toolbar.menu.clear()
         toolbar.inflateMenu(R.menu.filelist_base)
+        toolbar.setOnMenuItemClickListener(this)
         setupMenuItems(toolbar.menu)
     }
 
@@ -107,13 +120,22 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
         bottomToolbar.visibility = View.GONE
     }
 
-    private fun setupMenuItems(menu: Menu) {
-        searchItem = menu.findItem(R.id.action_search)
-        sortItem = menu.findItem(R.id.action_sort)
-        setupSortVisibility()
+    private fun setupMenuItems(menu: Menu?) {
+        menu?.let {
+            searchItem = menu.findItem(R.id.action_search)
+            sortItem = menu.findItem(R.id.action_sort)
+            setupSortVisibility()
+            hiddenMenuItem = menu.findItem(R.id.action_hidden)
+            setHiddenCheckedState(fragment.shouldShowHiddenFiles())
+        }
+    }
+
+    private fun setHiddenCheckedState(state: Boolean) {
+        hiddenMenuItem?.isChecked = state
     }
 
     private fun setupSortVisibility() {
+        Log.e(TAG, "setupSortVisibility:$category")
         if (isSortOrActionModeUnSupported(category) || isRecentGenericCategory(
                         category) || isRecentCategory(category)) {
             searchItem.isVisible = false
