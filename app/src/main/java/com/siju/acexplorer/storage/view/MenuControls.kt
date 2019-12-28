@@ -8,6 +8,7 @@ import androidx.appcompat.widget.Toolbar
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.model.groups.CategoryHelper.checkIfAnyMusicCategory
 import com.siju.acexplorer.main.model.groups.CategoryHelper.isRecentCategory
 import com.siju.acexplorer.main.model.groups.CategoryHelper.isRecentGenericCategory
@@ -38,7 +39,9 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     private var hiddenMenuItem: MenuItem? = null
 
     init {
-        if (category == Category.FILES) {
+        // When Categoryfragment with viewpager is not shown, the BaseFileListFragment toolbar inflates the menu
+        // else the CategoryFragment is responsible for inflating menu items so that duplicate menu items are not created by BaseFileListFragment
+        if (CategoryHelper.checkIfFileCategory(category) || category == Category.SCREENSHOT) {
             setupBaseMenu()
         }
         else {
