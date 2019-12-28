@@ -30,6 +30,19 @@
         android:scaleType="centerCrop"
         tools:ignore="ContentDescription"/>
 
+    <ImageView
+        android:id="@+id/imageSelection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@id/imageIcon"
+        android:src="@drawable/ic_check"
+        android:background="@drawable/ic_circle"
+        android:layout_marginStart="@dimen/selection_margin_start"
+        android:layout_marginTop="@dimen/selection_margin_start"
+        android:visibility="gone"
+        tools:visibility="visible"
+        tools:ignore="ContentDescription" />
+
     <TextView
         android:id="@+id/textFolderName"
         android:layout_width="wrap_content"

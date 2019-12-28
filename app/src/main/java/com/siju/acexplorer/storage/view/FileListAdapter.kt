@@ -81,6 +81,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         private val imageIcon: ImageView = itemView.findViewById(R.id.imageIcon)
         private val imageThumbIcon: ImageView = itemView.findViewById(R.id.imageThumbIcon)
         private var dateText: TextView? = null
+        private val imageSelection: ImageView = itemView.findViewById(R.id.imageSelection)
 
         init {
             if (viewMode == ViewMode.LIST) {
@@ -114,9 +115,15 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             val color = ContextCompat.getColor(itemView.context,
                     R.color.dark_actionModeItemSelected)
             when {
-                selected == true       -> itemView.setBackgroundColor(color)
+                selected == true       -> {
+                    itemView.setBackgroundColor(color)
+                    imageSelection.visibility = View.VISIBLE
+                }
                 position == draggedPos -> itemView.setBackgroundColor(color)
-                else                   -> itemView.setBackgroundColor(Color.TRANSPARENT)
+                else                   -> {
+                    itemView.setBackgroundColor(Color.TRANSPARENT)
+                    imageSelection.visibility = View.GONE
+                }
             }
         }
 
