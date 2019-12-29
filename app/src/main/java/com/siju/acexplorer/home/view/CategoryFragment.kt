@@ -14,11 +14,13 @@ import com.google.android.material.tabs.TabLayout
 import com.siju.acexplorer.R
 import com.siju.acexplorer.extensions.inflateLayout
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.search.helper.SearchUtils
 import com.siju.acexplorer.storage.view.FileListFragment
 import com.siju.acexplorer.storage.view.KEY_CATEGORY
 import com.siju.acexplorer.storage.view.KEY_PATH
 import kotlinx.android.synthetic.main.toolbar.*
+import java.util.*
 
 class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClickListener {
 
@@ -62,9 +64,12 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
     }
 
     private fun setupToolbar() {
-        toolbar.title = resources.getString(R.string.app_name)
         toolbar.inflateMenu(R.menu.filelist_base)
         toolbar.setOnMenuItemClickListener(this)
+    }
+
+    private fun setToolbarTitle(title : String) {
+        toolbar.title = title
     }
 
     private fun setupAdapter() {
@@ -108,6 +113,8 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
 
 
     private fun createFragment(path: String?, category: Category) {
+        Log.e(this.javaClass.simpleName, "category:$category")
+        setToolbarTitle(CategoryHelper.getCategoryName(context, category).toUpperCase(Locale.getDefault()))
         if (category == Category.WHATSAPP || category == Category.TELEGRAM) {
             addFolderCategoryFragments(path, category)
         } else if (category == Category.DOCS) {

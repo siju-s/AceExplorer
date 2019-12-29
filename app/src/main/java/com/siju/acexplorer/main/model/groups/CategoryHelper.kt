@@ -228,9 +228,12 @@ object CategoryHelper {
         return value
     }
 
-    fun getCategoryName(context: Context, category: Category?): String {
+    fun getCategoryName(context: Context?, category: Category?): String {
+        if (context == null) {
+            return ""
+        }
         when (category) {
-            RECENT_AUDIO, AUDIO -> return context.getString(R.string.audio)
+            RECENT_AUDIO, AUDIO, GENERIC_MUSIC -> return context.getString(R.string.audio)
             RECENT_VIDEOS, VIDEO, GENERIC_VIDEOS -> return context.getString(R.string.nav_menu_video)
             RECENT_IMAGES, IMAGE, GENERIC_IMAGES -> return context.getString(R.string.nav_menu_image)
             RECENT_DOCS, DOCS -> return context.getString(R.string.nav_menu_docs)
@@ -247,7 +250,7 @@ object CategoryHelper {
             PODCASTS -> return context.getString(R.string.podcasts)
             ALL_TRACKS -> return context.getString(R.string.all_tracks)
             APP_MANAGER -> return context.getString(R.string.app_manager)
-            CAMERA -> return context.getString(R.string.category_camera)
+            CAMERA, CAMERA_GENERIC -> return context.getString(R.string.category_camera)
             SCREENSHOT -> return context.getString(R.string.category_screenshot)
             WHATSAPP -> return context.getString(R.string.category_whatsapp)
             TELEGRAM -> return context.getString(R.string.category_telegram)

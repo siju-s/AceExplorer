@@ -41,13 +41,17 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     init {
         // When Categoryfragment with viewpager is not shown, the BaseFileListFragment toolbar inflates the menu
         // else the CategoryFragment is responsible for inflating menu items so that duplicate menu items are not created by BaseFileListFragment
-        if (CategoryHelper.checkIfFileCategory(category) || category == Category.SCREENSHOT || category == Category.APP_MANAGER) {
+        if (shouldInflateBaseMenu()) {
             setupBaseMenu()
         }
         else {
             setupMenuItems(toolbar.menu)
         }
     }
+
+    private fun shouldInflateBaseMenu() =
+            CategoryHelper.checkIfFileCategory(category) || category == Category.SCREENSHOT || category == Category.APP_MANAGER ||
+                    category == Category.PDF || category == Category.APPS
 
     fun onStartActionMode() {
         Log.e(TAG, "onStartActionMode")
