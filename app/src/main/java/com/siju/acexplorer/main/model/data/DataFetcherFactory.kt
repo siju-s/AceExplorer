@@ -85,6 +85,7 @@ object DataFetcherFactory {
             Category.GENERIC_LIST -> TODO()
             Category.PICKER -> TODO()
             Category.APP_MANAGER -> return AppManagerDataFetcher()
+            Category.TOOLS -> return AppManagerDataFetcher()
 //            Category.TRASH -> TODO()
         }
     }

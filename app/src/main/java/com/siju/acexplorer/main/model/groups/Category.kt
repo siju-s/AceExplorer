@@ -91,7 +91,9 @@ enum class Category(val value: Int) {
     CAMERA_IMAGES(65),
     CAMERA_VIDEO(66),
 
-    DOCS_OTHER(67);
+    DOCS_OTHER(67),
+
+    TOOLS(68);
 
     companion object {
         fun valueOf(value: Int): Category? = values().find { it.value == value }
