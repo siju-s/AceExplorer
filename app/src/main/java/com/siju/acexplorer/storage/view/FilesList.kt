@@ -29,17 +29,21 @@ import com.siju.acexplorer.utils.ScrollInfo
 private const val TAG = "FilesList"
 private const val DELAY_SCROLL_UPDATE_MS = 100L
 
-class FilesList(private val fileListHelper: FileListHelper, val view: View, private var viewMode: ViewMode
-                , val category: Category) :
-        View.OnTouchListener
+class FilesList(private val fileListHelper: FileListHelper,
+                val view: View,
+                private var viewMode: ViewMode,
+                val category: Category) : View.OnTouchListener
 {
-    private var itemView: View? = null
+    private val dragHelper = DragHelper(view.context, this)
+
     private lateinit var fileList: RecyclerView
     private lateinit var emptyText: TextView
-    private          var adapter: FileListAdapter? = null
-    private          var recentAdapter: RecentAdapter? = null
 
-    private val dragHelper = DragHelper(view.context, this)
+    private var recentData: ArrayList<RecentTimeData.RecentDataItem>? = null
+    private var itemView: View? = null
+    private var adapter: FileListAdapter? = null
+    private var recentAdapter: RecentAdapter? = null
+    private var multiSelectionHelper : MultiSelectionHelper? = null
 
     init {
         initializeViews()
@@ -53,7 +57,7 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setupList() {
-        Log.e(TAG , "setupList:category:$category, viewMode:$viewMode")
+        Log.e(TAG, "setupList:category:$category, viewMode:$viewMode")
         setLayoutManager(fileList, viewMode, category)
         setAdapter()
         fileList.setOnTouchListener(this)
@@ -94,9 +98,35 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
                     if (hasSelectedItems == true) {
                         this.itemView = view
                     }
+                },
+                { pos, checked ->
+                    onRecentHeaderClicked(pos, checked, recentData)
                 }
         )
         fileList.adapter = recentAdapter
+    }
+
+    private fun onRecentHeaderClicked(pos: Int, checked : Boolean, recentData: ArrayList<RecentTimeData.RecentDataItem>?) {
+        if (recentData == null) {
+            return
+        }
+        for (index in 0 until recentData.size) {
+            if (index <= pos) {
+                continue
+            }
+            val dataItem = recentData[index]
+            if (dataItem is RecentTimeData.RecentDataItem.Item) {
+                if (checked && multiSelectionHelper?.isSelected(index) == false) {
+                    fileListHelper.handleItemClick(dataItem.fileInfo, index)
+                }
+                else if (!checked) {
+                    fileListHelper.handleItemClick(dataItem.fileInfo, index)
+                }
+            }
+            else {
+                break
+            }
+        }
     }
 
     private fun setLayoutManager(fileList: RecyclerView, viewMode: ViewMode, category: Category) {
@@ -117,13 +147,10 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
         if (isRecentTimeLineCategory(category)) {
             gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
-                    val itemViewType = recentAdapter?.getItemViewType(position)
-                    val count = when(itemViewType) {
+                    return when (recentAdapter?.getItemViewType(position)) {
                         RecentAdapter.ITEM_VIEW_TYPE_HEADER -> spanSize
                         else -> 1
                     }
-//                    Log.e(TAG, "Span size : $count, viewTYpe:$itemViewType")
-                    return count
                 }
             }
         }
@@ -160,6 +187,7 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
 
     fun onRecentDataLoaded(category: Category, data: ArrayList<RecentTimeData.RecentDataItem>) {
         Log.e(TAG, "onRecentDataLoaded:${data.size}, recentAdapter:$recentAdapter")
+        this.recentData = data
         if (data.isEmpty()) {
             emptyText.visibility = View.VISIBLE
         } else {
@@ -183,8 +211,7 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
         if (isRecentTimeLineCategory(category)) {
             recentAdapter?.viewMode = viewMode
             fileList.adapter = recentAdapter
-        }
-        else {
+        } else {
             adapter?.viewMode = viewMode
             fileList.adapter = adapter
         }
@@ -195,14 +222,14 @@ class FilesList(private val fileListHelper: FileListHelper, val view: View, priv
     }
 
     fun setMultiSelectionHelper(multiSelectionHelper: MultiSelectionHelper) {
+        this.multiSelectionHelper = multiSelectionHelper
         getAdapter()?.setMultiSelectionHelper(multiSelectionHelper)
     }
 
-    private fun getAdapter() : BaseListAdapter? {
+    private fun getAdapter(): BaseListAdapter? {
         return if (isRecentTimeLineCategory(category)) {
             recentAdapter
-        }
-        else {
+        } else {
             adapter
         }
     }
