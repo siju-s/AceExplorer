@@ -57,6 +57,10 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
     private var bucketName: String? = null
     private val backStackInfo = BackStackInfo()
     private val _viewFileEvent = MutableLiveData<Pair<String, String?>>()
+    private val _viewImageFileEvent = MutableLiveData<Pair<ArrayList<FileInfo>, Int>>()
+
+    val viewImageFileEvent : LiveData<Pair<ArrayList<FileInfo>, Int>>
+    get() = _viewImageFileEvent
 
     private val _sortEvent = MutableLiveData<SortMode>()
     val sortEvent: LiveData<SortMode>
@@ -437,6 +441,11 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         when {
             isZipFile(path) -> openZipViewer(path)
             zipPresenter.isZipMode -> zipViewer?.onFileClicked(position)
+            CategoryHelper.isAnyImagesCategory(fileInfo.category) -> {
+                fileData.value?.let {
+                    _viewImageFileEvent.postValue(Pair(it, position))
+                }
+            }
             else -> _viewFileEvent.postValue(Pair(path, fileInfo.extension))
         }
     }

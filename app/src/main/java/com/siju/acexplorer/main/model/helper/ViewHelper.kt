@@ -18,11 +18,16 @@ package com.siju.acexplorer.main.model.helper
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.webkit.MimeTypeMap.getSingleton
 import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
+import com.siju.acexplorer.common.types.FileInfo
+import com.siju.acexplorer.imageviewer.ImageViewerActivity
+import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.view.dialog.DialogHelper
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 object ViewHelper {
@@ -57,6 +62,24 @@ object ViewHelper {
                             context.getString(R.string.dialog_cancel),
                             context.getString(R.string.view))
         DialogHelper.showApkDialog(context, texts, path, apkDialogListener)
+    }
+
+    fun openImage(context: Context?, data: ArrayList<FileInfo>, pos: Int) {
+        if (context == null) {
+            return
+        }
+        val path = data[pos].filePath
+        Log.e("ViewHelper", "path:$path, pos: $pos, size : ${data.size}")
+        val newList = ArrayList(data.filter { it.category == Category.IMAGE })
+        var newPos = 0
+        for ((index, item) in newList.withIndex()) {
+            if (path == item.filePath) {
+                newPos = index
+                break
+            }
+        }
+        Log.e("ViewHelper", "newpos: $newPos, size : ${newList.size}, newPath:${newList[newPos].filePath}")
+        ImageViewerActivity.createImageViewer(context, newList, newPos)
     }
 
 }

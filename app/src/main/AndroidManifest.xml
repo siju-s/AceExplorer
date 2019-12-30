@@ -116,6 +116,8 @@
         <activity android:name=".appmanager.view.AppDetailActivity"
             android:theme="@style/BaseDarkTheme">
         </activity>
+        <activity android:name=".imageviewer.ImageViewerActivity"
+            android:theme="@style/BaseDarkTheme"/>
 
         <service android:name=".storage.model.task.CreateZipService"/>
         <service android:name=".storage.model.task.CopyService"/>

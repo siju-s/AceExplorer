@@ -66,7 +66,7 @@ object CategoryHelper {
     }
 
     fun isGalleryMusicCategory(category: Category?): Boolean {
-        return  category == ALBUMS ||
+        return category == ALBUMS ||
                 category == ARTISTS ||
                 category == GENRES ||
                 category == PODCASTS ||
@@ -74,7 +74,7 @@ object CategoryHelper {
                 category == AUDIO
     }
 
-    fun isDefaultGalleryCategory(category: Category?) : Boolean {
+    fun isDefaultGalleryCategory(category: Category?): Boolean {
         return category == IMAGES_ALL || category == GENERIC_IMAGES ||
                 category == VIDEO_ALL || category == GENERIC_VIDEOS ||
                 category == SEARCH_FOLDER_IMAGES || category == SEARCH_FOLDER_VIDEOS
@@ -114,6 +114,10 @@ object CategoryHelper {
 
     fun isGenericVideosCategory(category: Category): Boolean {
         return GENERIC_VIDEOS == category
+    }
+
+    fun isAnyImagesCategory(category: Category): Boolean {
+        return category == IMAGE
     }
 
     fun isPeekPopCategory(category: Category): Boolean {

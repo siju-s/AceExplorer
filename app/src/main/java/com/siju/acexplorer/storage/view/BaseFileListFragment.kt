@@ -243,6 +243,10 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
             viewFile(it.first, it.second)
         })
 
+        fileListViewModel.viewImageFileEvent.observe(viewLifecycleOwner, Observer {
+            ViewHelper.openImage(context, it.first, it.second)
+        })
+
         fileListViewModel.viewMode.observe(viewLifecycleOwner, Observer {
             if (::filesList.isInitialized) {
                 filesList.onViewModeChanged(it)
