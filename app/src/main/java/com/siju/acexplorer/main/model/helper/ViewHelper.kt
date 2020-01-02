@@ -23,7 +23,8 @@ import android.webkit.MimeTypeMap.getSingleton
 import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.common.types.FileInfo
-import com.siju.acexplorer.imageviewer.ImageViewerActivity
+import com.siju.acexplorer.imageviewer.KEY_POS
+import com.siju.acexplorer.imageviewer.KEY_URI_LIST
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.view.dialog.DialogHelper
 import java.util.*
@@ -81,7 +82,16 @@ object ViewHelper {
             val uri = UriHelper.createContentUri(context, item.filePath)
             uriList.add(uri)
         }
-        ImageViewerActivity.createImageViewer(context, uriList, newPos)
+
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.setDataAndType(uriList[newPos], "image/*")
+        intent.putExtra(KEY_POS, pos)
+        intent.putExtra(KEY_URI_LIST, data)
+
+        val granted = UriHelper.canGrantUriPermission(context, intent)
+        if (granted) {
+            context.startActivity(intent)
+        }
     }
 
 }

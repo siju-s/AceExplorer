@@ -1,6 +1,5 @@
 package com.siju.acexplorer.imageviewer
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -19,22 +18,13 @@ import com.siju.acexplorer.imageviewer.view.ImageViewerView
 import com.siju.acexplorer.imageviewer.viewmodel.ImageViewerViewModel
 import com.siju.acexplorer.imageviewer.viewmodel.ImageViewerViewModelFactory
 
-private const val KEY_POS = "pos"
-private const val KEY_URI_LIST = "list"
+const val KEY_POS = "pos"
+const val KEY_URI_LIST = "list"
 
 class ImageViewerActivity : AppCompatActivity() {
 
     private lateinit var view: ImageViewerView
     private lateinit var viewModel : ImageViewerViewModel
-
-    companion object {
-        fun createImageViewer(context: Context, data: ArrayList<Uri?>, pos: Int) {
-            val intent = Intent(context, ImageViewerActivity::class.java)
-            intent.putExtra(KEY_POS, pos)
-            intent.putExtra(KEY_URI_LIST, data)
-            context.startActivity(intent)
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +43,8 @@ class ImageViewerActivity : AppCompatActivity() {
     private fun setup(intent: Intent) {
         var pos = 0
         var list = arrayListOf<Uri?>()
-        if (isViewIntent(intent)) {
+
+        if (intent.getIntExtra(KEY_POS, -1) == -1) {
             val uri = intent.data
             if (uri == null) {
                 finish()
