@@ -16,6 +16,7 @@
 
 <resources>
     <string name="app_name">Ace Explorer</string>
+    <string name="image_viewer_title">Ace Image Viewer</string>
 
     <string name="empty">Empty</string>
     <string name="background">Background</string>

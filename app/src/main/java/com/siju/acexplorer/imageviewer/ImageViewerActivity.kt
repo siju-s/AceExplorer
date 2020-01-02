@@ -49,10 +49,30 @@ class ImageViewerActivity : AppCompatActivity() {
         }
     }
 
-    private fun setup(intent: Intent) {
-        val pos = intent.getIntExtra(KEY_POS, 0)
-        val list = intent.getSerializableExtra(KEY_URI_LIST) as ArrayList<Uri?>
 
+    private fun setup(intent: Intent) {
+        var pos = 0
+        var list = arrayListOf<Uri?>()
+        if (isViewIntent(intent)) {
+            val uri = intent.data
+            if (uri == null) {
+                finish()
+            }
+            else {
+                list.add(uri)
+            }
+        }
+        else {
+            pos = intent.getIntExtra(KEY_POS, 0)
+            list = intent.getSerializableExtra(KEY_URI_LIST) as ArrayList<Uri?>
+
+        }
+        setupUI(pos, list)
+    }
+
+    private fun isViewIntent(intent: Intent) = intent.action == Intent.ACTION_VIEW
+
+    private fun setupUI(pos: Int, list: ArrayList<Uri?>) {
         view = findViewById<ImageViewerUiView>(R.id.container)
         view.setActivity(this)
         view.setPosition(pos)

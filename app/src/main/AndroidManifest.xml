@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,22 +15,22 @@
   -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          package="com.siju.acexplorer">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.siju.acexplorer">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- To install apps -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <!-- For setting alarm, ringtone !-->
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
     <!-- Normal permission(auto granted) -->
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- For starting foreground service in Android P and above -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <!-- For deleting packages in App manager in Android P and above -->
-    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES"/>
+    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
 
     <application
         android:name=".AceApplication"
@@ -44,16 +43,17 @@
 
         <activity
             android:name=".welcome.WelcomeActivity"
-            android:theme="@style/WelcomeScreen"
+            android:configChanges="screenSize|orientation"
             android:screenOrientation="userPortrait"
-            android:configChanges="screenSize|orientation">
+            android:theme="@style/WelcomeScreen">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <meta-data android:name="android.app.shortcuts"
-                       android:resource="@xml/shortcuts" />
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
         </activity>
 
 
@@ -61,9 +61,9 @@
             android:name="com.siju.acexplorer.main.AceActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|smallestScreenSize"
             android:label="@string/app_name"
-            android:theme="@style/BaseDarkTheme"
-            android:resizeableActivity="true"
             android:launchMode="singleTask"
+            android:resizeableActivity="true"
+            android:theme="@style/BaseDarkTheme"
             tools:targetApi="n">
 
             <meta-data
@@ -90,38 +90,51 @@
             android:name=".picker.TransparentActivity"
             android:theme="@style/TransparentTheme">
             <intent-filter>
-                <action android:name="android.intent.action.RINGTONE_PICKER"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="android.intent.action.RINGTONE_PICKER" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT"/>
-                <data android:mimeType="*/*"/>
+                <action android:name="android.intent.action.GET_CONTENT" />
+                <data android:mimeType="*/*" />
 
-                <category android:name="android.intent.category.OPENABLE"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.OPENABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
-<!--        <activity-->
-<!--            android:name="com.siju.acexplorer.settings.SettingsActivity"-->
-<!--            android:configChanges="orientation|screenSize|keyboardHidden"-->
-<!--            android:label="@string/action_settings"-->
-<!--            android:permission="android.permission.WRITE_SECURE_SETTINGS">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.APPLICATION_PREFERENCES"/>-->
-<!--                <category android:name="android.intent.category.DEFAULT"/>-->
-<!--            </intent-filter>-->
-<!--        </activity>-->
+        <!--        <activity-->
+        <!--            android:name="com.siju.acexplorer.settings.SettingsActivity"-->
+        <!--            android:configChanges="orientation|screenSize|keyboardHidden"-->
+        <!--            android:label="@string/action_settings"-->
+        <!--            android:permission="android.permission.WRITE_SECURE_SETTINGS">-->
+        <!--            <intent-filter>-->
+        <!--                <action android:name="android.intent.action.APPLICATION_PREFERENCES"/>-->
+        <!--                <category android:name="android.intent.category.DEFAULT"/>-->
+        <!--            </intent-filter>-->
+        <!--        </activity>-->
 
-        <activity android:name=".appmanager.view.AppDetailActivity"
-            android:theme="@style/BaseDarkTheme">
-        </activity>
-        <activity android:name=".imageviewer.ImageViewerActivity"
+        <activity
+            android:name=".appmanager.view.AppDetailActivity"
             android:theme="@style/BaseDarkTheme"/>
 
-        <service android:name=".storage.model.task.CreateZipService"/>
-        <service android:name=".storage.model.task.CopyService"/>
-        <service android:name=".storage.model.task.ExtractService"/>
+        <activity
+            android:name=".imageviewer.ImageViewerActivity"
+            android:label="@string/image_viewer_title"
+            android:theme="@style/BaseDarkTheme">
+            <intent-filter tools:ignore="AppLinkUrlError">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data
+                    android:mimeType="image/*"/>
+                <data
+                    android:mimeType="vnd.android.cursor.dir/image" />
+            </intent-filter>
+        </activity>
+
+        <service android:name=".storage.model.task.CreateZipService" />
+        <service android:name=".storage.model.task.CopyService" />
+        <service android:name=".storage.model.task.ExtractService" />
         <service android:name=".storage.model.task.MoveService" />
 
         <provider
@@ -131,7 +144,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
         <provider
             android:name=".search.model.SearchSuggestionProvider"
@@ -140,11 +153,11 @@
 
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="d34cf3ffdd00d6e0d7b3e85d558c4fa01210a6f1"/>
+            android:value="d34cf3ffdd00d6e0d7b3e85d558c4fa01210a6f1" />
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713"/>
+            android:value="ca-app-pub-3940256099942544~3347511713" />
 
         <!-- Required for targeting API level 28 and higher -->
         <uses-library
