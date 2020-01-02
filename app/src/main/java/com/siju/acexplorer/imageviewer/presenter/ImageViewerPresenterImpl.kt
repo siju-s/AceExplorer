@@ -12,10 +12,13 @@ class ImageViewerPresenterImpl(private val view : ImageViewerView,
         view.inflate()
     }
 
-    override fun shareClicked(fileInfo: FileInfo) {
+    override fun loadData(uri: Any): FileInfo? {
+        return imageViewerModel.loadInfo(uri)
     }
 
-    override fun deleteClicked(fileInfo: FileInfo) {
+    override fun deleteFile(uri: Any) = imageViewerModel.deleteFile(uri)
+
+    override fun shareClicked(fileInfo: FileInfo) {
     }
 
     override fun infoClicked(fileInfo: FileInfo) {

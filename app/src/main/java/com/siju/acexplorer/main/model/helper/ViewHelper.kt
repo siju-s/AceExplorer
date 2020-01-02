@@ -18,7 +18,7 @@ package com.siju.acexplorer.main.model.helper
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
+import android.net.Uri
 import android.webkit.MimeTypeMap.getSingleton
 import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
@@ -27,7 +27,6 @@ import com.siju.acexplorer.imageviewer.ImageViewerActivity
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.view.dialog.DialogHelper
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 object ViewHelper {
@@ -69,8 +68,8 @@ object ViewHelper {
             return
         }
         val path = data[pos].filePath
-        Log.e("ViewHelper", "path:$path, pos: $pos, size : ${data.size}")
         val newList = ArrayList(data.filter { it.category == Category.IMAGE })
+        val uriList = arrayListOf<Uri?>()
         var newPos = 0
         for ((index, item) in newList.withIndex()) {
             if (path == item.filePath) {
@@ -78,8 +77,11 @@ object ViewHelper {
                 break
             }
         }
-        Log.e("ViewHelper", "newpos: $newPos, size : ${newList.size}, newPath:${newList[newPos].filePath}")
-        ImageViewerActivity.createImageViewer(context, newList, newPos)
+        for (item in newList) {
+            val uri = UriHelper.createContentUri(context, item.filePath)
+            uriList.add(uri)
+        }
+        ImageViewerActivity.createImageViewer(context, uriList, newPos)
     }
 
 }

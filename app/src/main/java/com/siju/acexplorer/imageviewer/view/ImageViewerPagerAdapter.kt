@@ -1,6 +1,7 @@
 package com.siju.acexplorer.imageviewer.view
 
 import android.content.Context
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,9 +12,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.siju.acexplorer.R
-import com.siju.acexplorer.common.types.FileInfo
 
-class ImageViewerPagerAdapter(private val context: Context, private val list: ArrayList<FileInfo>) : PagerAdapter() {
+class ImageViewerPagerAdapter(private val context: Context, private val list: ArrayList<Uri?>) : PagerAdapter() {
 
     override fun isViewFromObject(view: View, `object`: Any): Boolean {
         return view == `object`
@@ -23,7 +23,7 @@ class ImageViewerPagerAdapter(private val context: Context, private val list: Ar
         val itemView = LayoutInflater.from(context).inflate(R.layout.image_viewer_item,
                 container, false)
         val image = itemView.findViewById<ImageView>(R.id.image)
-        Glide.with(context).load(list[position].filePath)
+        Glide.with(context).load(list[position])
                 .apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC))
                 .into(image)
         container.addView(itemView)
@@ -35,4 +35,13 @@ class ImageViewerPagerAdapter(private val context: Context, private val list: Ar
     }
 
     override fun getCount() = list.size
+
+    fun removeItem(currentPos: Int) {
+        list.removeAt(currentPos)
+        notifyDataSetChanged()
+    }
+
+    override fun getItemPosition(`object`: Any): Int {
+        return POSITION_NONE
+    }
 }

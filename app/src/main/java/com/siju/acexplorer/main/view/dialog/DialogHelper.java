@@ -667,9 +667,7 @@ public class DialogHelper {
             long size = fileInfo.getSize();
             fileNoOrSize = Formatter.formatFileSize(context, size);
         }
-        boolean isReadable = new File(path).canRead();
-        boolean isWriteable = new File(path).canWrite();
-        boolean isHidden = new File(path).isHidden();
+
 
         textFileName.setText(fileName);
         textPath.setText(path);
@@ -686,6 +684,10 @@ public class DialogHelper {
             textWriteable.setVisibility(View.GONE);
             textHidden.setVisibility(View.GONE);
         } else {
+            boolean isReadable = new File(path).canRead();
+            boolean isWriteable = new File(path).canWrite();
+            boolean isHidden = new File(path).isHidden();
+
             String yes = context.getString(R.string.yes);
             String no = context.getString(R.string.no);
 
@@ -694,7 +696,7 @@ public class DialogHelper {
             textHidden.setText(isHidden ? yes : no);
         }
 
-        if (new File(path).isDirectory() || (RootUtils.isRooted(context) && RootUtils.isRootDir(path, new StorageFetcher(context).getExternalSdList()))) {
+        if (path == null || new File(path).isDirectory() || (RootUtils.isRooted(context) && RootUtils.isRootDir(path, new StorageFetcher(context).getExternalSdList()))) {
             textMD5.setVisibility(View.GONE);
             textMD5Placeholder.setVisibility(View.GONE);
         } else {
@@ -704,7 +706,13 @@ public class DialogHelper {
             }
         }
 
-        displayThumb(context, fileInfo, fileInfo.getCategory(), imageFileIcon, null);
+        if (path != null) {
+            displayThumb(context, fileInfo, fileInfo.getCategory(), imageFileIcon, null);
+        }
+        else {
+            textPathHolder.setVisibility(View.GONE);
+            imageFileIcon.setVisibility(View.GONE);
+        }
 
         Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
         Button neutralButton = dialogView.findViewById(R.id.buttonNeutral);
@@ -720,7 +728,6 @@ public class DialogHelper {
         neutralButton.setText(context.getString(R.string.copy_path).toUpperCase(Locale.getDefault
                 ()));
         neutralButton.setVisibility(View.VISIBLE);
-
 
         positiveButton.setOnClickListener(new View
                 .OnClickListener() {
@@ -741,7 +748,6 @@ public class DialogHelper {
         });
 
         alertDialog.show();
-
     }
 
 

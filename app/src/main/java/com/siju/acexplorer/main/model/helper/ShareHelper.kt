@@ -56,4 +56,17 @@ object ShareHelper {
         }
     }
 
+    fun shareImage(context: Context, uri: Uri?) {
+        if (uri == null) {
+            return
+        }
+        val intent = Intent()
+        intent.action = Intent.ACTION_SEND
+        intent.type = "image/*"
+        intent.putExtra(Intent.EXTRA_STREAM, uri)
+        if (context.canHandleIntent(intent)) {
+            context.startActivity(intent)
+        }
+    }
+
 }
