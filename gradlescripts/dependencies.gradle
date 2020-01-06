@@ -30,6 +30,7 @@ versions.leakcanary          = "1.5.4"
 
 versions.junit               = "4.12"
 versions.espresso            = "3.1.0-alpha4"
+versions.mockito             = "3.2.4"
 
 ext.versions = versions
 
@@ -92,6 +93,7 @@ deps.leak_canary_rel  = "com.squareup.leakcanary:leakcanary-android-no-op:$versi
 def testing = [:]
 testing.junit =    "junit:junit:$versions.junit"
 testing.espresso = "androidx.test.espresso:espresso-core:$versions.espresso"
+testing.mockito  = "org.mockito:mockito-core:$versions.mockito"
 deps.testing = testing
 
 def build_versions = [:]

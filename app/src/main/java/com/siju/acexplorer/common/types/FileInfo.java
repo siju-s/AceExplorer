@@ -52,8 +52,12 @@ public class FileInfo implements Parcelable {
     private             long              numTracks;
     private             long              date;
     private             long              size;
+    private             long              width;
+    private             long              height;
+
     private             boolean           isDirectory;
     private             boolean           isRootMode;
+
 
     // For Images, Audio, Video
     public FileInfo(Category category, long id, long bucketId, String fileName, String filePath,
@@ -62,6 +66,16 @@ public class FileInfo implements Parcelable {
     {
         this(category, id, fileName, filePath, fileDate, size, extension);
         this.bucketId = bucketId;
+    }
+
+
+    public static FileInfo createImagePropertiesInfo(Category category, long id, long bucketId, String fileName, String filePath,
+                                     long fileDate, long size,
+                                     String extension, long width, long height) {
+        FileInfo info = new FileInfo(category, id, bucketId, fileName, filePath, fileDate, size, extension);
+        info.width = width;
+        info.height = height;
+        return info;
     }
 
 
@@ -138,7 +152,8 @@ public class FileInfo implements Parcelable {
         bucketId = in.readLong();
         permissions = in.readString();
         isRootMode = in.readByte() != 0;
-
+        width = in.readLong();
+        height = in.readLong();
     }
 
     public FileInfo(Category category, long albumId, String title, long numTracks) {
@@ -327,6 +342,22 @@ public class FileInfo implements Parcelable {
         this.numTracks = numTracks;
     }
 
+    public long getWidth() {
+        return width;
+    }
+
+    public void setWidth(long width) {
+        this.width = width;
+    }
+
+    public long getHeight() {
+        return height;
+    }
+
+    public void setHeight(long height) {
+        this.height = height;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -345,6 +376,8 @@ public class FileInfo implements Parcelable {
         parcel.writeLong(bucketId);
         parcel.writeString(permissions);
         parcel.writeByte((byte) (isRootMode ? 1 : 0));
+        parcel.writeLong(width);
+        parcel.writeLong(height);
     }
 
 

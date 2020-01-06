@@ -4,12 +4,18 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import com.siju.acexplorer.common.types.FileInfo
+import com.siju.acexplorer.main.model.helper.ShareHelper
 
 class ImageViewerModelImpl(val context: Context) : ImageViewerModel {
 
     override fun loadInfo(uri: Any): FileInfo? {
         Log.e("ImageViewerModelImpl", "info:$uri")
-        return ImageUriFetcher.fetchData(context, uri as Uri)
+        return if (uri is Uri) {
+            SingleImageDataFetcher.fetchData(context, uri)
+        }
+        else {
+            SingleImageDataFetcher.getImageInfo(context, uri as String)
+        }
     }
 
     override fun deleteFile(uri: Any): Int {
@@ -18,5 +24,9 @@ class ImageViewerModelImpl(val context: Context) : ImageViewerModel {
             context.contentResolver.notifyChange(uri, null)
         }
         return count
+    }
+
+    override fun shareClicked(uri: Any) {
+        ShareHelper.shareImage(context, uri as Uri)
     }
 }

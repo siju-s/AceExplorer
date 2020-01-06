@@ -23,6 +23,7 @@ import android.webkit.MimeTypeMap.getSingleton
 import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.common.types.FileInfo
+import com.siju.acexplorer.imageviewer.KEY_PATH_LIST
 import com.siju.acexplorer.imageviewer.KEY_POS
 import com.siju.acexplorer.imageviewer.KEY_URI_LIST
 import com.siju.acexplorer.main.model.groups.Category
@@ -69,24 +70,25 @@ object ViewHelper {
             return
         }
         val path = data[pos].filePath
-        val newList = ArrayList(data.filter { it.category == Category.IMAGE })
+        val imagePathList = ArrayList(data.filter { it.category == Category.IMAGE }.map { it.filePath })
         val uriList = arrayListOf<Uri?>()
         var newPos = 0
-        for ((index, item) in newList.withIndex()) {
-            if (path == item.filePath) {
+        for ((index, item) in imagePathList.withIndex()) {
+            if (path == item) {
                 newPos = index
                 break
             }
         }
-        for (item in newList) {
-            val uri = UriHelper.createContentUri(context, item.filePath)
+        for (item in imagePathList) {
+            val uri = UriHelper.createContentUri(context, item)
             uriList.add(uri)
         }
 
         val intent = Intent(Intent.ACTION_VIEW)
         intent.setDataAndType(uriList[newPos], "image/*")
         intent.putExtra(KEY_POS, pos)
-        intent.putExtra(KEY_URI_LIST, data)
+        intent.putExtra(KEY_URI_LIST, uriList)
+        intent.putStringArrayListExtra(KEY_PATH_LIST, imagePathList)
 
         val granted = UriHelper.canGrantUriPermission(context, intent)
         if (granted) {

@@ -18,8 +18,9 @@ import com.siju.acexplorer.imageviewer.view.ImageViewerView
 import com.siju.acexplorer.imageviewer.viewmodel.ImageViewerViewModel
 import com.siju.acexplorer.imageviewer.viewmodel.ImageViewerViewModelFactory
 
-const val KEY_POS = "pos"
-const val KEY_URI_LIST = "list"
+const val KEY_POS       = "pos"
+const val KEY_URI_LIST  = "list"
+const val KEY_PATH_LIST = "paths"
 
 class ImageViewerActivity : AppCompatActivity() {
 
@@ -40,9 +41,11 @@ class ImageViewerActivity : AppCompatActivity() {
     }
 
 
+    @Suppress("UNCHECKED_CAST")
     private fun setup(intent: Intent) {
         var pos = 0
         var list = arrayListOf<Uri?>()
+        var pathList = arrayListOf<String?>()
 
         if (intent.getIntExtra(KEY_POS, -1) == -1) {
             val uri = intent.data
@@ -56,19 +59,19 @@ class ImageViewerActivity : AppCompatActivity() {
         else {
             pos = intent.getIntExtra(KEY_POS, 0)
             list = intent.getSerializableExtra(KEY_URI_LIST) as ArrayList<Uri?>
-
+            pathList = intent.getStringArrayListExtra(KEY_PATH_LIST)
         }
-        setupUI(pos, list)
+        setupUI(pos, list, pathList)
     }
 
-    private fun isViewIntent(intent: Intent) = intent.action == Intent.ACTION_VIEW
-
-    private fun setupUI(pos: Int, list: ArrayList<Uri?>) {
+    private fun setupUI(pos: Int, list: ArrayList<Uri?>, pathList: ArrayList<String?>) {
         view = findViewById<ImageViewerUiView>(R.id.container)
         view.setActivity(this)
         view.setPosition(pos)
-        view.setFileInfoList(list)
-
+        view.setUriList(list)
+        if (pathList.isNotEmpty()) {
+            view.setPathList(pathList)
+        }
         val model = ImageViewerModelImpl(AceApplication.appContext)
 
         val presenter = ImageViewerPresenterImpl(view, model)

@@ -9,7 +9,7 @@ interface ImageViewerView {
 
     fun setActivity(activity : AppCompatActivity)
     fun setPosition(pos : Int)
-    fun setFileInfoList(list : ArrayList<Uri?>)
+    fun setUriList(list : ArrayList<Uri?>)
     fun inflate()
     fun onFileInfoFetched(fileInfo: FileInfo?)
     fun shareClicked()
@@ -18,4 +18,5 @@ interface ImageViewerView {
     fun setViewModel(viewModel: ImageViewerViewModel)
     fun onDeleteSuccess()
     fun onDeleteFailed()
+    fun setPathList(pathList: ArrayList<String?>)
 }

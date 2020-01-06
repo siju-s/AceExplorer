@@ -23,11 +23,11 @@ class ImageViewerViewModel(private val view : ImageViewerView, private val prese
     val fileData: LiveData<FileInfo?>
         get() = _fileData
 
-    fun infoClicked(uri : Uri) {
+    fun infoClicked(uri : Any) {
         Log.e("ViewModel", "info:$uri")
         uiScope.launch {
             Log.e("ViewModel", "info inside:$uri")
-            val data = presenter.loadData(uri as Any)
+            val data = presenter.loadInfo(uri)
             _fileData.postValue(data)
         }
     }
@@ -42,5 +42,9 @@ class ImageViewerViewModel(private val view : ImageViewerView, private val prese
               view.onDeleteFailed()
           }
       }
+    }
+
+    fun shareClicked(uri: Uri?) {
+        presenter.shareClicked(uri as Any?)
     }
 }

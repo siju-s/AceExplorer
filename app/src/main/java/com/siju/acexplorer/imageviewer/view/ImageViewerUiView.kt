@@ -18,7 +18,6 @@ import androidx.viewpager.widget.ViewPager
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.imageviewer.viewmodel.ImageViewerViewModel
-import com.siju.acexplorer.main.model.helper.ShareHelper
 import com.siju.acexplorer.main.view.dialog.DialogHelper
 
 class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayout(context, attrs),
@@ -32,6 +31,7 @@ View.OnTouchListener
     private lateinit var toolbar: Toolbar
     private lateinit var pagerAdapter: ImageViewerPagerAdapter
     private var uriList = arrayListOf<Uri?>()
+    private var pathList = arrayListOf<String?>()
 
     private var isTouched = false
     private var pos = 0
@@ -46,8 +46,12 @@ View.OnTouchListener
         this.pos = pos
     }
 
-    override fun setFileInfoList(list: ArrayList<Uri?>) {
+    override fun setUriList(list: ArrayList<Uri?>) {
         this.uriList = list
+    }
+
+    override fun setPathList(pathList: ArrayList<String?>) {
+        this.pathList = pathList
     }
 
     override fun inflate() {
@@ -97,7 +101,7 @@ View.OnTouchListener
     }
 
     override fun shareClicked() {
-        ShareHelper.shareImage(activity, uriList[pager.currentItem])
+        viewModel.shareClicked(uriList[pager.currentItem])
     }
 
     override fun deleteClicked() {
@@ -107,8 +111,16 @@ View.OnTouchListener
     override fun infoClicked() {
         val uri = uriList[pager.currentItem]
         Log.e("View", "info:$uri")
-        uri?.let {
-            viewModel.infoClicked(uri)
+        if (pathList.isNotEmpty()) {
+            val path = pathList[pager.currentItem]
+            path?.let {
+                viewModel.infoClicked(path)
+            }
+        }
+        else {
+            uri?.let {
+                viewModel.infoClicked(uri)
+            }
         }
     }
 
