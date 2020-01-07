@@ -142,6 +142,7 @@ dependencies {
     implementation deps.apache_compress
     implementation deps.floating_button
     implementation deps.ratethisapp
+    implementation deps.photoview
 
     debugImplementation   deps.leak_canary
     releaseImplementation deps.leak_canary_rel

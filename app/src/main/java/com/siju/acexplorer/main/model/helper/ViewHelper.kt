@@ -26,7 +26,7 @@ import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.imageviewer.KEY_PATH_LIST
 import com.siju.acexplorer.imageviewer.KEY_POS
 import com.siju.acexplorer.imageviewer.KEY_URI_LIST
-import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.view.dialog.DialogHelper
 import java.util.*
 
@@ -70,7 +70,7 @@ object ViewHelper {
             return
         }
         val path = data[pos].filePath
-        val imagePathList = ArrayList(data.filter { it.category == Category.IMAGE }.map { it.filePath })
+        val imagePathList = ArrayList(data.filter { CategoryHelper.isAnyImagesCategory(it.category)}.map { it.filePath })
         val uriList = arrayListOf<Uri?>()
         var newPos = 0
         for ((index, item) in imagePathList.withIndex()) {

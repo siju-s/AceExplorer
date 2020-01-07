@@ -437,13 +437,35 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
     }
 
     private fun onFileClicked(fileInfo: FileInfo, position: Int) {
+        if (RecentTimeHelper.isRecentTimeLineCategory(category)) {
+            handleRecentItemFileClicked(fileInfo, position)
+            return
+        }
         val path = fileInfo.filePath
+        Log.e(TAG, "onFileClicked:category:${fileInfo.category}, rootCategory:$category, path:$path")
         when {
             isZipFile(path) -> openZipViewer(path)
             zipPresenter.isZipMode -> zipViewer?.onFileClicked(position)
             CategoryHelper.isAnyImagesCategory(fileInfo.category) -> {
                 fileData.value?.let {
                     _viewImageFileEvent.postValue(Pair(it, position))
+                }
+            }
+            else -> _viewFileEvent.postValue(Pair(path, fileInfo.extension))
+        }
+    }
+
+    private fun handleRecentItemFileClicked(fileInfo: FileInfo, position: Int) {
+        val path = fileInfo.filePath
+        Log.e(TAG, "onFileClicked:category:${fileInfo.category}, rootCategory:$category, path:$path")
+        when {
+            isZipFile(path) -> openZipViewer(path)
+            zipPresenter.isZipMode -> zipViewer?.onFileClicked(position)
+            CategoryHelper.isAnyImagesCategory(fileInfo.category) -> {
+                recentFileData.value?.let {
+                     val dataItemList = it.second
+                     val newList = ArrayList(dataItemList.filterIsInstance<RecentTimeData.RecentDataItem.Item>().map { it.fileInfo })
+                    _viewImageFileEvent.postValue(Pair(newList, position))
                 }
             }
             else -> _viewFileEvent.postValue(Pair(path, fileInfo.extension))

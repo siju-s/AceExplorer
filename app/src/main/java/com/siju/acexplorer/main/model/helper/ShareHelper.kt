@@ -64,6 +64,7 @@ object ShareHelper {
         intent.action = Intent.ACTION_SEND
         intent.type = "image/*"
         intent.putExtra(Intent.EXTRA_STREAM, uri)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         if (context.canHandleIntent(intent)) {
             context.startActivity(intent)
         }

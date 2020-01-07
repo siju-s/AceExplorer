@@ -3,8 +3,6 @@ package com.siju.acexplorer.imageviewer
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -90,22 +88,6 @@ class ImageViewerActivity : AppCompatActivity() {
         viewModel.fileData.observe(this, Observer{
             view.onFileInfoFetched(it)
         })
-    }
-
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_image_viewer, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
-            android.R.id.home -> finish()
-            R.id.action_share -> view.shareClicked()
-            R.id.action_info -> view.infoClicked()
-            R.id.action_delete -> view.deleteClicked()
-        }
-        return super.onOptionsItemSelected(item)
     }
 
 }

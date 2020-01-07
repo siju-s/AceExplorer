@@ -3,40 +3,44 @@ package com.siju.acexplorer.imageviewer.view
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
-import android.os.Handler
-import android.os.Looper
 import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
+import android.view.MenuItem
 import android.view.View
+import android.widget.ImageButton
 import android.widget.RelativeLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
+import androidx.appcompat.widget.PopupMenu
 import androidx.viewpager.widget.ViewPager
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.imageviewer.viewmodel.ImageViewerViewModel
 import com.siju.acexplorer.main.view.dialog.DialogHelper
 
+
 class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayout(context, attrs),
-        ImageViewerView, ViewPager.OnPageChangeListener, View.OnSystemUiVisibilityChangeListener,
-View.OnTouchListener
-{
+        ImageViewerView,
+        ViewPager.OnPageChangeListener,
+        View.OnClickListener,
+        PopupMenu.OnMenuItemClickListener {
 
     private lateinit var viewModel: ImageViewerViewModel
     private lateinit var activity: AppCompatActivity
     private lateinit var pager: ViewPager
-    private lateinit var toolbar: Toolbar
     private lateinit var pagerAdapter: ImageViewerPagerAdapter
+    private lateinit var topContainer: RelativeLayout
+    private lateinit var backButton: ImageButton
+    private lateinit var shareButton: ImageButton
+    private lateinit var overflowButton: ImageButton
+    private lateinit var titleText: TextView
+
     private var uriList = arrayListOf<Uri?>()
     private var pathList = arrayListOf<String?>()
 
-    private var isTouched = false
-    private var pos = 0
-    private var mLastSystemUiVis: Int = 0
-    private val viewHandler = Handler(Looper.getMainLooper())
+    private var pos       = 0
 
     override fun setActivity(activity: AppCompatActivity) {
         this.activity = activity
@@ -65,34 +69,25 @@ View.OnTouchListener
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setupUI() {
-        setupToolbar()
-        setOnSystemUiVisibilityChangeListener(this)
+        setupTopContainer()
         pager = findViewById(R.id.pager)
         pagerAdapter = ImageViewerPagerAdapter(context, uriList)
         pager.addOnPageChangeListener(this)
         pager.adapter = pagerAdapter
         pager.setCurrentItem(pos, true)
-        setNavVisibility(true)
-        pager.setOnTouchListener(this)
     }
 
-    private fun setupToolbar() {
-        toolbar = findViewById(R.id.toolbar)
-        activity.setSupportActionBar(toolbar)
-        activity.supportActionBar?.apply {
-            setHomeButtonEnabled(true)
-            setDisplayHomeAsUpEnabled(true)
-            title = ""
-        }
+    private fun setupTopContainer() {
+        topContainer = findViewById(R.id.topView)
+        backButton = findViewById(R.id.imgButtonBack)
+        shareButton = findViewById(R.id.imgButtonShare)
+        overflowButton = findViewById(R.id.imgButtonOverflow)
+        titleText = findViewById(R.id.titleText)
+        shareButton.setOnClickListener(this)
+        overflowButton.setOnClickListener(this)
+        backButton.setOnClickListener(this)
     }
 
-    override fun onTouch(view: View?, event: MotionEvent?): Boolean {
-        Log.e(this.javaClass.simpleName, "onTOuch:$isTouched")
-        when(event?.action) {
-            MotionEvent.ACTION_DOWN -> isTouched = true
-        }
-        return super.onTouchEvent(event)
-    }
 
     override fun onFileInfoFetched(fileInfo: FileInfo?) {
         fileInfo?.let {
@@ -116,8 +111,7 @@ View.OnTouchListener
             path?.let {
                 viewModel.infoClicked(path)
             }
-        }
-        else {
+        } else {
             uri?.let {
                 viewModel.infoClicked(uri)
             }
@@ -127,8 +121,7 @@ View.OnTouchListener
     override fun onDeleteSuccess() {
         if (uriList.size == 1) {
             activity.finish()
-        }
-        else {
+        } else {
             val currentPos = pager.currentItem
             pagerAdapter.removeItem(currentPos)
         }
@@ -138,35 +131,27 @@ View.OnTouchListener
         Toast.makeText(context, resources.getString(R.string.msg_delete_failure), Toast.LENGTH_SHORT).show()
     }
 
-    private fun setNavVisibility(visible: Boolean) {
-        Log.e(this.javaClass.simpleName, "setNavVisibility:$visible, touched:$isTouched")
-        var newVis = (View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
-        if (visible && !isTouched) {
-            viewHandler.postDelayed(navHider, 2000)
-        }
-        else {
-            newVis = newVis or (View.SYSTEM_UI_FLAG_LOW_PROFILE
-                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
-        }
-        // Set the new desired visibility.
-        systemUiVisibility = newVis
-        toolbar.visibility = if (visible) View.VISIBLE else View.INVISIBLE
-    }
-
-    private var navHider: Runnable = Runnable {
-        if (!isTouched) {
-            setNavVisibility(false)
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.imgButtonShare -> shareClicked()
+            R.id.imgButtonBack -> activity.finish()
+            R.id.imgButtonOverflow -> createPopupMenu(v)
         }
     }
 
-
-    override fun onSystemUiVisibilityChange(visibility: Int) {
-        val diff = mLastSystemUiVis xor visibility
-        mLastSystemUiVis = visibility
-        if (diff and View.SYSTEM_UI_FLAG_HIDE_NAVIGATION != 0 && visibility and View.SYSTEM_UI_FLAG_HIDE_NAVIGATION == 0) {
-            setNavVisibility(true)
+    override fun onMenuItemClick(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.action_info -> infoClicked()
+            R.id.action_delete -> deleteClicked()
         }
+        return false
+    }
+
+    private fun createPopupMenu(view: View) {
+        val popupMenu = PopupMenu(context, view)
+        popupMenu.menuInflater.inflate(R.menu.image_viewer, popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener(this)
+        popupMenu.show()
     }
 
     override fun onPageScrollStateChanged(state: Int) {

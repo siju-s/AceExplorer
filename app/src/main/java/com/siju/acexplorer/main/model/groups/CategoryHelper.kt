@@ -117,7 +117,7 @@ object CategoryHelper {
     }
 
     fun isAnyImagesCategory(category: Category): Boolean {
-        return category == IMAGE
+        return category == IMAGE || category == IMAGES_ALL
     }
 
     fun isPeekPopCategory(category: Category): Boolean {
