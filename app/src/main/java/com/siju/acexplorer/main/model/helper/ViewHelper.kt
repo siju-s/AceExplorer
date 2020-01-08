@@ -86,7 +86,7 @@ object ViewHelper {
 
         val intent = Intent(Intent.ACTION_VIEW)
         intent.setDataAndType(uriList[newPos], "image/*")
-        intent.putExtra(KEY_POS, pos)
+        intent.putExtra(KEY_POS, newPos)
         intent.putExtra(KEY_URI_LIST, uriList)
         intent.putStringArrayListExtra(KEY_PATH_LIST, imagePathList)
 

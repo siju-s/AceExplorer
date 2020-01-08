@@ -78,6 +78,10 @@ public class FileInfo implements Parcelable {
         return info;
     }
 
+    public static FileInfo createDummyRecentItem() {
+        return new FileInfo(Category.RECENT, 0);
+    }
+
 
     // Used for apk
     public FileInfo(Category category, long id, String fileName, String filePath, long fileDate,
