@@ -82,6 +82,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         private val imageThumbIcon: ImageView = itemView.findViewById(R.id.imageThumbIcon)
         private var dateText: TextView? = null
         private val imageSelection: ImageView = itemView.findViewById(R.id.imageSelection)
+        private val imageVideoThumb : ImageView = itemView.findViewById(R.id.imageVideoThumb)
 
         init {
             if (viewMode == ViewMode.LIST) {
@@ -178,7 +179,16 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             textFileName.text = fileName
             textNoOfFileOrSize.text = fileNumOrSize
             toggleGalleryViewVisibility(category)
+            setVideoThumbVisibility(category)
             displayThumb(context, fileInfo, category, getThumbIcon(category), imageThumbIcon)
+        }
+
+        private fun setVideoThumbVisibility(category: Category?) {
+            if (CategoryHelper.isAnyVideoCategory(category)) {
+                imageVideoThumb.visibility = View.VISIBLE
+            } else {
+                imageVideoThumb.visibility = View.GONE
+            }
         }
 
         private fun getThumbIcon(category: Category?) : ImageView {

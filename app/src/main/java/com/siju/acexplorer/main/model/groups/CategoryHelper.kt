@@ -120,6 +120,8 @@ object CategoryHelper {
         return category == IMAGE || category == IMAGES_ALL
     }
 
+    fun isAnyVideoCategory(category: Category?) = category == VIDEO || category == VIDEO_ALL
+
     fun isPeekPopCategory(category: Category): Boolean {
         return category == IMAGE || category == VIDEO || category == AUDIO ||
                 category == FOLDER_IMAGES || category == FOLDER_VIDEOS ||

@@ -87,6 +87,7 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
         private val secondLineText: TextView = itemView.findViewById(R.id.textSecondLine)
         private val imageThumbIcon: ImageView = itemView.findViewById(R.id.imageThumbIcon)
         private val imageSelection: ImageView = itemView.findViewById(R.id.imageSelection)
+        private val imageVideoThumb : ImageView = itemView.findViewById(R.id.imageVideoThumb)
 
         fun bind(item: FileInfo?, count: Int, selected: Boolean?, pos: Int, draggedPos: Int,
                  clickListener: (Pair<FileInfo, Int>) -> Unit, longClickListener: (FileInfo, Int, View) -> Unit) {
@@ -131,8 +132,18 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
             val fileName = fileInfo.fileName
             textFileName.text = fileName
             toggleGalleryViewVisibility(category)
+            setVideoThumbVisibility(category)
             ThumbnailUtils.displayThumb(context, fileInfo, category, getThumbIcon(category), imageThumbIcon)
         }
+
+        private fun setVideoThumbVisibility(category: Category?) {
+            if (CategoryHelper.isAnyVideoCategory(category)) {
+                imageVideoThumb.visibility = View.VISIBLE
+            } else {
+                imageVideoThumb.visibility = View.GONE
+            }
+        }
+
 
         private fun getThumbIcon(category: Category?): ImageView {
             return if (viewMode == ViewMode.GALLERY && (category != Category.FILES)) {
