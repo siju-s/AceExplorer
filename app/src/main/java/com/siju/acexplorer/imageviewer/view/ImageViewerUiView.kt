@@ -18,7 +18,7 @@ import androidx.viewpager.widget.ViewPager
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.imageviewer.viewmodel.ImageViewerViewModel
-import com.siju.acexplorer.main.view.dialog.DialogHelper
+import com.siju.acexplorer.main.view.InfoFragment
 
 
 class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayout(context, attrs),
@@ -91,7 +91,10 @@ class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayou
 
     override fun onFileInfoFetched(fileInfo: FileInfo?) {
         fileInfo?.let {
-            DialogHelper.showInfoDialog(activity, fileInfo, false)
+            val infoFragment = InfoFragment.newInstance()
+            infoFragment.setCategory(fileInfo.category)
+            infoFragment.setFileInfo(fileInfo)
+            infoFragment.show(activity.supportFragmentManager, "TAG_INFO")
         }
     }
 
