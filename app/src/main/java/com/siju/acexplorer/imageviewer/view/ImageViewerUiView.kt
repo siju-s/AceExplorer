@@ -94,6 +94,7 @@ class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayou
             val infoFragment = InfoFragment.newInstance()
             infoFragment.setCategory(fileInfo.category)
             infoFragment.setFileInfo(fileInfo)
+            infoFragment.setFileUri(uriList[pager.currentItem])
             infoFragment.show(activity.supportFragmentManager, "TAG_INFO")
         }
     }

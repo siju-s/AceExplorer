@@ -2,4 +2,5 @@
 <resources>
     <dimen name="info_image_height">300dp</dimen>
     <dimen name="info_collapsed_toolbar_height">60dp</dimen>
+    <dimen name="info_item_margin_top">10dp</dimen>
 </resources>
