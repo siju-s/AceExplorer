@@ -16,7 +16,7 @@ import java.util.*
 class ImageDetailFetcher : DataFetcher {
     override fun fetchData(context: Context, path: String?,
                            category: Category): ArrayList<FileInfo> {
-        val data = fetchBucketDetail(context, category, path, canShowHiddenFiles(context))
+        val data = fetchBucketDetail(context, Category.IMAGE, path, canShowHiddenFiles(context))
         return SortHelper.sortFiles(data, getSortMode(context))
     }
 
@@ -24,6 +24,7 @@ class ImageDetailFetcher : DataFetcher {
         return 0
     }
 
+    @Suppress("SameParameterValue")
     private fun fetchBucketDetail(context: Context, category: Category, bucketId: String?,
                                   showHidden: Boolean): ArrayList<FileInfo> {
         val uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
