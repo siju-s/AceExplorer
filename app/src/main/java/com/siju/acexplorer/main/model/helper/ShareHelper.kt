@@ -24,6 +24,7 @@ import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.extensions.canHandleIntent
 import com.siju.acexplorer.logging.Logger
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.model.groups.CategoryHelper.checkIfFileCategory
 import java.util.*
 
@@ -56,18 +57,28 @@ object ShareHelper {
         }
     }
 
-    fun shareImage(context: Context, uri: Uri?) {
-        if (uri == null) {
+    fun shareMedia(context: Context, category: Category, uri: Uri?, path : String? = null) {
+        if (uri == null && path == null) {
             return
         }
         val intent = Intent()
         intent.action = Intent.ACTION_SEND
-        intent.type = "image/*"
-        intent.putExtra(Intent.EXTRA_STREAM, uri)
+        if (CategoryHelper.isAnyVideoCategory(category)) {
+            intent.type = "video/*"
+        }
+        else {
+            intent.type = "image/*"
+        }
+        if (uri == null) {
+            val newUri = UriHelper.createContentUri(context, path)
+            intent.putExtra(Intent.EXTRA_STREAM, newUri)
+        }
+        else {
+            intent.putExtra(Intent.EXTRA_STREAM, uri)
+        }
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         if (context.canHandleIntent(intent)) {
             context.startActivity(intent)
         }
     }
-
 }

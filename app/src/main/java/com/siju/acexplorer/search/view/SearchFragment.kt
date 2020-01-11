@@ -123,8 +123,17 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
             handleItemClick(it.first, it.second)
         },
                 { _, _, _ ->
-                }
+                },
+                null
         )
+    }
+
+    override fun getActivityInstance(): AppCompatActivity {
+        return activity as AppCompatActivity
+    }
+
+    override fun isActionModeActive(): Boolean {
+        return false
     }
 
     private fun setupViewModel() {

@@ -125,7 +125,8 @@ object CategoryHelper {
     fun isPeekPopCategory(category: Category): Boolean {
         return category == IMAGE || category == VIDEO || category == AUDIO ||
                 category == FOLDER_IMAGES || category == FOLDER_VIDEOS ||
-                RECENT_IMAGES == category || GENERIC_IMAGES == category
+                RECENT_IMAGES == category || GENERIC_IMAGES == category ||
+                category == VIDEO_ALL || category == IMAGES_ALL
     }
 
     fun isSortOrActionModeUnSupported(category: Category): Boolean {

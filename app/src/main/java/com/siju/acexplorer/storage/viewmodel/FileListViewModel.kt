@@ -417,7 +417,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         }
     }
 
-    private fun isActionModeActive() = _actionModeState.value == ActionModeState.STARTED
+    fun isActionModeActive() = _actionModeState.value == ActionModeState.STARTED
 
     private fun onFileItemClicked(fileInfo: FileInfo, position: Int) {
         if (fileInfo.isDirectory) {

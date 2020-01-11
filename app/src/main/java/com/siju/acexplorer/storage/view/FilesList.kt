@@ -18,11 +18,16 @@ import com.siju.acexplorer.extensions.showToast
 import com.siju.acexplorer.main.model.FileConstants
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.SdkHelper
+import com.siju.acexplorer.main.model.helper.ShareHelper
+import com.siju.acexplorer.main.model.helper.UriHelper
+import com.siju.acexplorer.main.view.InfoFragment
 import com.siju.acexplorer.main.view.dialog.DialogHelper
 import com.siju.acexplorer.storage.model.RecentTimeData
 import com.siju.acexplorer.storage.model.RecentTimeHelper.isRecentTimeLineCategory
 import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.storage.view.custom.CustomGridLayoutManager
+import com.siju.acexplorer.ui.peekandpop.PeekPopUiView
+import com.siju.acexplorer.ui.peekandpop.PeekPopView
 import com.siju.acexplorer.utils.ConfigurationHelper
 import com.siju.acexplorer.utils.ScrollInfo
 
@@ -43,7 +48,8 @@ class FilesList(private val fileListHelper: FileListHelper,
     private var itemView: View? = null
     private var adapter: FileListAdapter? = null
     private var recentAdapter: RecentAdapter? = null
-    private var multiSelectionHelper : MultiSelectionHelper? = null
+    private var multiSelectionHelper: MultiSelectionHelper? = null
+    private var peekAndPop: PeekPopView? = null
 
     init {
         initializeViews()
@@ -59,6 +65,7 @@ class FilesList(private val fileListHelper: FileListHelper,
     private fun setupList() {
         Log.e(TAG, "setupList:category:$category, viewMode:$viewMode")
         setLayoutManager(fileList, viewMode, category)
+        setupPeekPop()
         setAdapter()
         fileList.setOnTouchListener(this)
     }
@@ -79,7 +86,8 @@ class FilesList(private val fileListHelper: FileListHelper,
                     if (hasSelectedItems == true) {
                         this.itemView = view
                     }
-                }
+                },
+                peekAndPop
         )
         adapter?.setMainCategory(category)
         fileList.adapter = adapter
@@ -106,7 +114,7 @@ class FilesList(private val fileListHelper: FileListHelper,
         fileList.adapter = recentAdapter
     }
 
-    private fun onRecentHeaderClicked(pos: Int, checked : Boolean, recentData: ArrayList<RecentTimeData.RecentDataItem>?) {
+    private fun onRecentHeaderClicked(pos: Int, checked: Boolean, recentData: ArrayList<RecentTimeData.RecentDataItem>?) {
         if (recentData == null) {
             return
         }
@@ -143,6 +151,32 @@ class FilesList(private val fileListHelper: FileListHelper,
         }
     }
 
+    private fun setupPeekPop() {
+        peekAndPop = PeekPopUiView(fileListHelper.getActivityInstance(), fileList)
+        peekAndPop?.setPeekPopCallback(object : PeekPopView.PeekPopCallback {
+            override fun onItemClick(view: View, fileInfo: FileInfo, pos: Int) {
+                when (view.id) {
+                    R.id.imagePeekView, R.id.autoPlayView, R.id.imageIcon -> {
+                        fileListHelper.handleItemClick(fileInfo, pos)
+                    }
+                    R.id.imageButtonShare -> {
+                        ShareHelper.shareMedia(view.context, fileInfo.category, null, fileInfo.filePath)
+                    }
+                    R.id.imageButtonInfo -> {
+                        InfoFragment.newInstance(fileListHelper.getActivityInstance().supportFragmentManager,
+                                fileInfo, UriHelper.createContentUri(view.context, fileInfo.filePath))
+                    }
+                    R.id.buttonNext -> peekAndPop?.loadPeekView(pos + 1)
+                    R.id.buttonPrev -> peekAndPop?.loadPeekView(pos - 1)
+                }
+            }
+
+            override fun canShowPeek(): Boolean {
+                return !fileListHelper.isActionModeActive()
+            }
+        })
+    }
+
     private fun setSpanSize(gridLayoutManager: CustomGridLayoutManager, spanSize: Int, category: Category) {
         if (isRecentTimeLineCategory(category)) {
             gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
@@ -173,6 +207,7 @@ class FilesList(private val fileListHelper: FileListHelper,
 
     fun onDataLoaded(data: ArrayList<FileInfo>) {
         Log.e(TAG, "onDataLoaded:${data.size}")
+        peekAndPop?.setFileList(data)
         if (data.isEmpty()) {
             emptyText.visibility = View.VISIBLE
         } else {

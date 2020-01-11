@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.fragment.app.FragmentManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -27,11 +28,18 @@ import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.helper.ShareHelper
 import java.util.*
 
-
+private const val TAG_INFO = "Info"
 class InfoFragment : BottomSheetDialogFragment() {
 
     companion object {
-        fun newInstance() = InfoFragment()
+        fun newInstance(fragmentManager: FragmentManager?, fileInfo: FileInfo, uri: Uri?) : InfoFragment {
+            val infoFragment = InfoFragment()
+            infoFragment.setCategory(fileInfo.category)
+            infoFragment.setFileInfo(fileInfo)
+            infoFragment.setFileUri(uri)
+            fragmentManager?.let { infoFragment.show(it, TAG_INFO) }
+            return infoFragment
+        }
     }
 
     private lateinit var category: Category
@@ -41,15 +49,15 @@ class InfoFragment : BottomSheetDialogFragment() {
     private var sheetView        : View? = null
     private var uri              : Uri? = null
 
-    fun setFileInfo(fileInfo: FileInfo) {
+    private fun setFileInfo(fileInfo: FileInfo) {
         this.fileInfo = fileInfo
     }
 
-    fun setCategory(category: Category) {
+    private fun setCategory(category: Category) {
         this.category = category
     }
 
-    fun setFileUri(uri: Uri?) {
+    private fun setFileUri(uri: Uri?) {
         this.uri = uri
     }
 
@@ -161,7 +169,7 @@ class InfoFragment : BottomSheetDialogFragment() {
         when (item.itemId) {
             android.R.id.home -> dismiss()
             R.id.action_share -> {
-                context?.let { ShareHelper.shareImage(it, uri) }
+                context?.let { ShareHelper.shareMedia(it, fileInfo.category, uri) }
             }
         }
         return super.onOptionsItemSelected(item)

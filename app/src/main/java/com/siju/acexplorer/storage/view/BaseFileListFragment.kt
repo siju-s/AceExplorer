@@ -681,8 +681,6 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         DialogHelper.showSAFDialog(context, path, safDialogListener)
     }
 
-
-
     private fun dismissDialog() {
         dialog?.dismiss()
     }
@@ -800,6 +798,12 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     override fun handleLongItemClick(fileInfo: FileInfo, second: Int) {
         fileListViewModel.handleLongClick(fileInfo, second)
     }
+
+    override fun isActionModeActive(): Boolean {
+        return fileListViewModel.isActionModeActive()
+    }
+
+    override fun getActivityInstance() : AppCompatActivity = this.activity as AppCompatActivity
 
     fun onBackPressed() = fileListViewModel.onBackPress()
 

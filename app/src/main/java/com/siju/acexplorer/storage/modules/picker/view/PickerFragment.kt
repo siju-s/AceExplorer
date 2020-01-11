@@ -139,7 +139,8 @@ class PickerFragment private constructor() : DialogFragment() {
                 },
                 { _,_,_ ->
 
-                }
+                },
+                null
         )
         fileList.adapter = adapter
     }

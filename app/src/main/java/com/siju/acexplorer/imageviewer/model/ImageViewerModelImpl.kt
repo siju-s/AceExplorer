@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import com.siju.acexplorer.common.types.FileInfo
+import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.ShareHelper
 
 class ImageViewerModelImpl(val context: Context) : ImageViewerModel {
@@ -27,6 +28,6 @@ class ImageViewerModelImpl(val context: Context) : ImageViewerModel {
     }
 
     override fun shareClicked(uri: Any) {
-        ShareHelper.shareImage(context, uri as Uri)
+        ShareHelper.shareMedia(context, Category.IMAGE, uri as Uri)
     }
 }

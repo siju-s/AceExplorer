@@ -3,6 +3,7 @@ package com.siju.acexplorer.storage.view
 import android.content.Context
 import android.graphics.Color
 import android.text.format.Formatter
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,17 +28,24 @@ import com.siju.acexplorer.main.model.groups.CategoryHelper.isMusicCategory
 import com.siju.acexplorer.main.model.groups.CategoryHelper.isRecentCategory
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.storage.model.ViewMode
+import com.siju.acexplorer.ui.peekandpop.PeekPopView
 import com.siju.acexplorer.utils.ThumbnailUtils.displayThumb
+
 
 const val INVALID_POS = -1
 private const val TAG = "FileListAdapter"
 class FileListAdapter internal constructor(var viewMode: ViewMode, private val clickListener: (Pair<FileInfo, Int>) -> Unit,
-                                           private val longClickListener: (FileInfo, Int, View) -> Unit) :
+                                           private val longClickListener: (FileInfo, Int, View) -> Unit,
+                                           private val peekPopView: PeekPopView?) :
         ListAdapter<FileInfo, FileListAdapter.ViewHolder>(FileInfoDiffCallback()), BaseListAdapter {
 
     private var draggedPosition = -1
     private var multiSelectionHelper: MultiSelectionHelper? = null
     private var mainCategory: Category? = null
+
+    init {
+        peekPopView?.setPeekPopListener()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder.from(parent, viewMode)
@@ -47,7 +55,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
 //        Log.e(TAG, "onBindViewHolder : $position")
         val item = getItem(position)
         viewHolder.bind(item, itemCount, viewMode, mainCategory, multiSelectionHelper?.isSelected(position), position, draggedPosition,
-                clickListener, longClickListener)
+                clickListener, longClickListener, peekPopView)
     }
 
     override fun setMultiSelectionHelper(multiSelectionHelper: MultiSelectionHelper) {
@@ -92,10 +100,11 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
 
         fun bind(item: FileInfo, count: Int, viewMode: ViewMode, mainCategory: Category?, selected: Boolean?, pos: Int, draggedPos: Int,
                  clickListener: (Pair<FileInfo, Int>) -> Unit,
-                 longClickListener: (FileInfo, Int, View) -> Unit) {
+                 longClickListener: (FileInfo, Int, View) -> Unit,
+                 peekPopView: PeekPopView?) {
 //            Log.e("FileListAdapter", "bind:${item.fileName}, mainCategory:$mainCategory")
             onSelection(selected, pos, draggedPos)
-            bindViewByCategory(itemView.context, item, viewMode, mainCategory)
+            bindViewByCategory(itemView.context, item, viewMode, mainCategory, peekPopView, pos)
             itemView.setOnClickListener {
                 val position = adapterPosition
                 if (position < count && position != RecyclerView.NO_POSITION) {
@@ -131,7 +140,9 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         private fun bindViewByCategory(context: Context,
                                        fileInfo: FileInfo,
                                        viewMode: ViewMode,
-                                       mainCategory: Category?) {
+                                       mainCategory: Category?,
+                                       peekPopView: PeekPopView?,
+                                       pos: Int) {
             val category = fileInfo.category
 //            Log.d(TAG, "bindViewByCategory:$category")
             when {
@@ -149,7 +160,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                 isAnyLargeFilesCategory(category) -> bindLargeFilesGeneric(context, fileInfo)
                 isAnyCameraCategory(category)     -> bindCameraGeneric(context, fileInfo)
                 else                              -> {
-                    bindFilesCategory(fileInfo, category, mainCategory, context)
+                    bindFilesCategory(fileInfo, category, mainCategory, context, peekPopView, pos)
                 }
             }
         }
@@ -159,7 +170,9 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         private fun bindFilesCategory(fileInfo: FileInfo,
                                       category: Category?,
                                       mainCategory: Category?,
-                                      context: Context) {
+                                      context: Context,
+                                      peekPopView: PeekPopView?,
+                                      pos: Int) {
 
             val fileName = fileInfo.fileName
             if (mainCategory == null) {
@@ -180,10 +193,18 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             textNoOfFileOrSize.text = fileNumOrSize
             toggleGalleryViewVisibility(category)
             setVideoThumbVisibility(category)
+            if (viewMode != ViewMode.GALLERY) {
+                category?.let { addPeekPop(peekPopView, imageIcon, pos, it) }
+            }
             displayThumb(context, fileInfo, category, getThumbIcon(category), imageThumbIcon)
         }
 
+        private fun addPeekPop(peekPopView: PeekPopView?, icon: ImageView, pos : Int, category: Category) {
+              peekPopView?.addClickView(icon, pos, category)
+        }
+
         private fun setVideoThumbVisibility(category: Category?) {
+            Log.e(TAG, "setVideoThumbVisibility:$category")
             if (CategoryHelper.isAnyVideoCategory(category)) {
                 imageVideoThumb.visibility = View.VISIBLE
             } else {

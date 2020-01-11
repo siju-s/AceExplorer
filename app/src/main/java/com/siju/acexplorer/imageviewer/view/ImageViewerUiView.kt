@@ -40,7 +40,7 @@ class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayou
     private var uriList = arrayListOf<Uri?>()
     private var pathList = arrayListOf<String?>()
 
-    private var pos       = 0
+    private var pos = 0
 
     override fun setActivity(activity: AppCompatActivity) {
         this.activity = activity
@@ -91,11 +91,7 @@ class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayou
 
     override fun onFileInfoFetched(fileInfo: FileInfo?) {
         fileInfo?.let {
-            val infoFragment = InfoFragment.newInstance()
-            infoFragment.setCategory(fileInfo.category)
-            infoFragment.setFileInfo(fileInfo)
-            infoFragment.setFileUri(uriList[pager.currentItem])
-            infoFragment.show(activity.supportFragmentManager, "TAG_INFO")
+            InfoFragment.newInstance(activity.supportFragmentManager, fileInfo, uriList[pager.currentItem])
         }
     }
 

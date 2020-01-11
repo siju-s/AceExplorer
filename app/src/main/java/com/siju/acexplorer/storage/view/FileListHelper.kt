@@ -1,5 +1,6 @@
 package com.siju.acexplorer.storage.view
 
+import androidx.appcompat.app.AppCompatActivity
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
 import java.util.*
@@ -15,4 +16,6 @@ interface FileListHelper {
     fun endActionMode()
     fun getCategory() : Category
     fun onDragDropEvent(pos: Int, data: ArrayList<FileInfo>)
+    fun getActivityInstance() : AppCompatActivity
+    fun isActionModeActive() : Boolean
 }
