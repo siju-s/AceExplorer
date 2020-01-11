@@ -16,7 +16,7 @@ import java.util.*
 class VideoDetailFetcher : DataFetcher {
     override fun fetchData(context: Context, path: String?,
                            category: Category): ArrayList<FileInfo> {
-        val data = fetchBucketDetail(context, path, category, canShowHiddenFiles(context))
+        val data = fetchBucketDetail(context, path, Category.VIDEO, canShowHiddenFiles(context))
         return SortHelper.sortFiles(data, getSortMode(context))
     }
 
@@ -24,6 +24,7 @@ class VideoDetailFetcher : DataFetcher {
         return 0
     }
 
+    @Suppress("SameParameterValue")
     private fun fetchBucketDetail(context: Context, bucketId: String?, category: Category,
                                   showHidden: Boolean): ArrayList<FileInfo> {
 
