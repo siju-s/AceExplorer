@@ -153,14 +153,22 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
     }
 
     private val navigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { menuItem ->
+        clearBackStack()
         val fragment = FragmentsFactory.createFragment(menuItem.itemId)
         openFragment(fragment)
         true
     }
 
     private val navigationItemReselectedListener = BottomNavigationView.OnNavigationItemReselectedListener { menuItem ->
+        clearBackStack()
         val fragment = FragmentsFactory.createFragment(menuItem.itemId)
         openFragment(fragment)
+    }
+
+    private fun clearBackStack() {
+        for (i in 0 until supportFragmentManager.backStackEntryCount) {
+            supportFragmentManager.popBackStack()
+        }
     }
 
 
