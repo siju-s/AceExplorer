@@ -14,6 +14,7 @@ import com.siju.acexplorer.main.model.groups.Category.*
 import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.view.dialog.DialogHelper
 import com.siju.acexplorer.search.helper.SearchUtils
+import com.siju.acexplorer.storage.helper.RecentDataConverter.getRecentItemList
 import com.siju.acexplorer.storage.model.*
 import com.siju.acexplorer.storage.model.backstack.BackStackInfo
 import com.siju.acexplorer.storage.model.operations.OperationAction
@@ -468,20 +469,6 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
             }
             else -> _viewFileEvent.postValue(Pair(path, fileInfo.extension))
         }
-    }
-
-    private fun getRecentItemList(list : ArrayList<RecentTimeData.RecentDataItem>): ArrayList<FileInfo> {
-        val fileList = arrayListOf<FileInfo>()
-        for (item in list) {
-            if (item is RecentTimeData.RecentDataItem.Header) {
-                fileList.add(FileInfo.createDummyRecentItem())
-            }
-            else {
-                item as RecentTimeData.RecentDataItem.Item
-                fileList.add(item.fileInfo)
-            }
-        }
-        return fileList
     }
 
     private fun isZipFile(path: String) = !zipPresenter.isZipMode && path.toLowerCase(Locale.ROOT).endsWith(ZIP_EXT)

@@ -1,6 +1,5 @@
 package com.siju.acexplorer.ui.peekandpop
 
-import android.R.attr.category
 import android.util.Log
 import android.view.View
 import android.view.View.GONE
@@ -47,7 +46,7 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
         peekAndPop.setOnGeneralActionListener(object : PeekAndPop.OnGeneralActionListener {
             override fun onPeek(longClickView: View, position: Int) {
                 Log.d(TAG, "onPeek() called with: longClickView = [$longClickView], position = [$position]")
-                loadPeekView(position, true)
+                loadPeekView(PeekPopView.PeekButton.GENERIC, position, true)
             }
 
             override fun onPop(longClickView: View, position: Int) {
@@ -77,19 +76,29 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
     }
 
     override fun addClickView(view: View, pos: Int, category: Category) {
+        Log.e(TAG, "addClickView:pos:$pos, category:$category")
         peekAndPop?.addClickView(view, pos, category)
     }
 
-    override fun loadPeekView(position: Int, firstRun: Boolean) {
+    override fun loadPeekView(peekButton: PeekPopView.PeekButton, position: Int, firstRun: Boolean) {
         Log.d(TAG, "loadPeekView: pos:" + position + "list size:" + fileList.size)
         if (position >= fileList.size || position == INVALID_POS) {
             return
         }
-        Log.d(TAG, "loadPeekView: category:$category")
         val category: Category = fileList[position].category
-        this.peekPos = position
         val view = peekAndPop.peekView
-        changePeekButtonsState(position, view)
+        Log.d(TAG, "loadPeekView: category:$category")
+        var pos = position
+        if (!isPeekPopCategory(category)) {
+            pos = getPeekDataPos(position, peekButton)
+            if (pos == position) {
+                changePeekButtonsState(position, view)
+                return
+            }
+        }
+
+        this.peekPos = pos
+        changePeekButtonsState(pos, view)
         val thumb: ImageView = view.findViewById(R.id.imagePeekView)
         val autoPlayView: AutoPlayContainer = view.findViewById(R.id.autoPlayView)
         val shareButton = view.findViewById<ImageButton>(R.id.imageButtonShare)
@@ -105,7 +114,7 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
         val customVideoView = autoPlayView.customVideoView
         val volume: ImageView = view.findViewById(R.id.imageVolume)
         val fileNameText = view.findViewById<TextView>(R.id.textFileName)
-        val fileInfo: FileInfo = fileList[position]
+        val fileInfo: FileInfo = fileList[pos]
         val isPlaying = customVideoView.isPlaying
         when (category) {
             VIDEO, FOLDER_VIDEOS, AUDIO -> {
@@ -162,6 +171,36 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
             }
         }
         displayThumb(context, fileInfo, fileInfo.category, thumb, null)
+    }
+
+    private fun getPeekDataPos(position: Int, peekButton: PeekPopView.PeekButton): Int {
+        return when (peekButton) {
+            PeekPopView.PeekButton.NEXT -> {
+                getNextPeekPos(position)
+            }
+            PeekPopView.PeekButton.PREVIOUS -> {
+                getPreviousPeekPos(position)
+            }
+            else -> position
+        }
+    }
+
+    private fun getNextPeekPos(position: Int): Int {
+        val pos = position + 1
+        return if (pos < fileList.size) {
+            pos
+        } else {
+            position
+        }
+    }
+
+    private fun getPreviousPeekPos(position: Int): Int {
+        val pos = position - 1
+        return if (pos >= 0) {
+            pos
+        } else {
+            position
+        }
     }
 
     private fun disablePeekButton(view: View) {

@@ -22,6 +22,7 @@ import com.siju.acexplorer.main.model.helper.ShareHelper
 import com.siju.acexplorer.main.model.helper.UriHelper
 import com.siju.acexplorer.main.view.InfoFragment
 import com.siju.acexplorer.main.view.dialog.DialogHelper
+import com.siju.acexplorer.storage.helper.RecentDataConverter
 import com.siju.acexplorer.storage.model.RecentTimeData
 import com.siju.acexplorer.storage.model.RecentTimeHelper.isRecentTimeLineCategory
 import com.siju.acexplorer.storage.model.ViewMode
@@ -109,7 +110,8 @@ class FilesList(private val fileListHelper: FileListHelper,
                 },
                 { pos, checked ->
                     onRecentHeaderClicked(pos, checked, recentData)
-                }
+                },
+                peekAndPop
         )
         fileList.adapter = recentAdapter
     }
@@ -166,8 +168,8 @@ class FilesList(private val fileListHelper: FileListHelper,
                         InfoFragment.newInstance(fileListHelper.getActivityInstance().supportFragmentManager,
                                 fileInfo, UriHelper.createContentUri(view.context, fileInfo.filePath))
                     }
-                    R.id.buttonNext -> peekAndPop?.loadPeekView(pos + 1)
-                    R.id.buttonPrev -> peekAndPop?.loadPeekView(pos - 1)
+                    R.id.buttonNext -> peekAndPop?.loadPeekView(PeekPopView.PeekButton.NEXT, pos + 1)
+                    R.id.buttonPrev -> peekAndPop?.loadPeekView(PeekPopView.PeekButton.PREVIOUS, pos - 1)
                 }
             }
 
@@ -223,6 +225,7 @@ class FilesList(private val fileListHelper: FileListHelper,
     fun onRecentDataLoaded(category: Category, data: ArrayList<RecentTimeData.RecentDataItem>) {
         Log.e(TAG, "onRecentDataLoaded:${data.size}, recentAdapter:$recentAdapter")
         this.recentData = data
+        peekAndPop?.setFileList(RecentDataConverter.getRecentItemList(data))
         if (data.isEmpty()) {
             emptyText.visibility = View.VISIBLE
         } else {

@@ -11,10 +11,16 @@ interface PeekPopView {
     fun setFileList(list : ArrayList<FileInfo>)
     fun addClickView(view: View, pos : Int, category: Category)
     fun stopAutoPlayVid()
-    fun loadPeekView(position: Int, firstRun : Boolean = false)
+    fun loadPeekView(peekButton: PeekButton = PeekButton.GENERIC, position: Int, firstRun : Boolean = false)
 
     interface PeekPopCallback {
         fun onItemClick(view : View, fileInfo: FileInfo, pos : Int)
         fun canShowPeek() : Boolean
+    }
+
+    enum class PeekButton {
+        GENERIC,
+        PREVIOUS,
+        NEXT
     }
 }

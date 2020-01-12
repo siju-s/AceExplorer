@@ -18,13 +18,19 @@ import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.model.groups.CategoryHelper.getCategoryName
 import com.siju.acexplorer.storage.model.RecentTimeData
 import com.siju.acexplorer.storage.model.ViewMode
+import com.siju.acexplorer.ui.peekandpop.PeekPopView
 import com.siju.acexplorer.utils.ThumbnailUtils
 
 
 class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<FileInfo, Int>) -> Unit,
                     private val longClickListener: (FileInfo, Int, View) -> Unit,
-                    private val imageClickListener: (Int, Boolean) -> Unit) : ListAdapter<RecentTimeData.RecentDataItem,
+                    private val imageClickListener: (Int, Boolean) -> Unit,
+                    private val peekPopView: PeekPopView?) : ListAdapter<RecentTimeData.RecentDataItem,
         RecyclerView.ViewHolder>(RecentDiffCallback()), BaseListAdapter {
+
+    init {
+        peekPopView?.setPeekPopListener()
+    }
 
     private var multiSelectionHelper: MultiSelectionHelper? = null
 
@@ -67,7 +73,7 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
             is ItemViewHolder -> {
                 val item = getItem(position) as RecentTimeData.RecentDataItem.Item
                 holder.bind(item.fileInfo, itemCount, multiSelectionHelper?.isSelected(position), position, -1,
-                        clickListener, longClickListener)
+                        clickListener, longClickListener, peekPopView)
             }
         }
     }
@@ -90,10 +96,10 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
         private val imageVideoThumb : ImageView = itemView.findViewById(R.id.imageVideoThumb)
 
         fun bind(item: FileInfo?, count: Int, selected: Boolean?, pos: Int, draggedPos: Int,
-                 clickListener: (Pair<FileInfo, Int>) -> Unit, longClickListener: (FileInfo, Int, View) -> Unit) {
+                 clickListener: (Pair<FileInfo, Int>) -> Unit, longClickListener: (FileInfo, Int, View) -> Unit, peekPopView: PeekPopView?) {
             item?.let {
                 onSelection(selected, pos, draggedPos)
-                bindViewByCategory(itemView.context, it)
+                bindViewByCategory(itemView.context, it, peekPopView, pos)
 
                 itemView.setOnClickListener {
                     val position = adapterPosition
@@ -111,7 +117,7 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
             }
         }
 
-        private fun bindViewByCategory(context: Context, fileInfo: FileInfo) {
+        private fun bindViewByCategory(context: Context, fileInfo: FileInfo, peekPopView: PeekPopView?, pos: Int) {
             val category = fileInfo.category
             when {
                 CategoryHelper.isGenericMusic(category) -> bindGenericMusic(context, fileInfo)
@@ -121,19 +127,28 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
                 CategoryHelper.isGenericVideosCategory(category) -> bindGenericImagesVidsCategory(context,
                         fileInfo)
                 else -> {
-                    bindFilesCategory(fileInfo, category, context)
+                    bindFilesCategory(fileInfo, category, context, peekPopView, pos)
                 }
             }
         }
 
         private fun bindFilesCategory(fileInfo: FileInfo,
                                       category: Category?,
-                                      context: Context) {
+                                      context: Context,
+                                      peekPopView: PeekPopView?,
+                                      pos: Int) {
             val fileName = fileInfo.fileName
             textFileName.text = fileName
             toggleGalleryViewVisibility(category)
+            if (viewMode != ViewMode.GALLERY) {
+                category?.let { addPeekPop(peekPopView, imageIcon, pos, it) }
+            }
             setVideoThumbVisibility(category)
             ThumbnailUtils.displayThumb(context, fileInfo, category, getThumbIcon(category), imageThumbIcon)
+        }
+
+        private fun addPeekPop(peekPopView: PeekPopView?, icon: ImageView, pos : Int, category: Category) {
+            peekPopView?.addClickView(icon, pos, category)
         }
 
         private fun setVideoThumbVisibility(category: Category?) {
