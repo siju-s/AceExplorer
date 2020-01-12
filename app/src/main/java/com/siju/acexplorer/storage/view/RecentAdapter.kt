@@ -2,6 +2,7 @@ package com.siju.acexplorer.storage.view
 
 import android.content.Context
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,6 +36,7 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
     private var multiSelectionHelper: MultiSelectionHelper? = null
 
     override fun setMultiSelectionHelper(multiSelectionHelper: MultiSelectionHelper) {
+        Log.e("REcentAdapter", "setMultiSelectionHelper:$multiSelectionHelper, instance:$this")
         this.multiSelectionHelper = multiSelectionHelper
     }
 

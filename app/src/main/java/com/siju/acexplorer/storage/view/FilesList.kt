@@ -234,6 +234,7 @@ class FilesList(private val fileListHelper: FileListHelper,
         if (recentAdapter == null) {
             setLayoutManager(fileList, viewMode, category)
             setRecentAdapter()
+            multiSelectionHelper?.let { getAdapter()?.setMultiSelectionHelper(it) }
             adapter = null
         }
         recentAdapter?.submitList(data)
@@ -256,16 +257,18 @@ class FilesList(private val fileListHelper: FileListHelper,
     }
 
     fun refresh() {
+        Log.e(TAG, "refresh:$category, this:$this")
         getAdapter()?.refresh()
     }
 
     fun setMultiSelectionHelper(multiSelectionHelper: MultiSelectionHelper) {
         this.multiSelectionHelper = multiSelectionHelper
+        Log.e(TAG, "setMultiSelectionHelper:$category, this:$this")
         getAdapter()?.setMultiSelectionHelper(multiSelectionHelper)
     }
 
     private fun getAdapter(): BaseListAdapter? {
-        return if (isRecentTimeLineCategory(category)) {
+        return if (isRecentTimeLineCategory(category) || category == Category.RECENT) {
             recentAdapter
         } else {
             adapter

@@ -76,7 +76,7 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
     }
 
     override fun addClickView(view: View, pos: Int, category: Category) {
-        Log.e(TAG, "addClickView:pos:$pos, category:$category")
+//        Log.e(TAG, "addClickView:pos:$pos, category:$category")
         peekAndPop?.addClickView(view, pos, category)
     }
 
