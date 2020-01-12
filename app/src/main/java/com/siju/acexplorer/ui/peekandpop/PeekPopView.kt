@@ -12,6 +12,9 @@ interface PeekPopView {
     fun addClickView(view: View, pos : Int, category: Category)
     fun stopAutoPlayVid()
     fun loadPeekView(peekButton: PeekButton = PeekButton.GENERIC, position: Int, firstRun : Boolean = false)
+    fun isPeekMode(): Boolean
+    fun endPeekMode()
+    fun pausePeekMode()
 
     interface PeekPopCallback {
         fun onItemClick(view : View, fileInfo: FileInfo, pos : Int)

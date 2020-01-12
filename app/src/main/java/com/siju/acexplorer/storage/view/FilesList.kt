@@ -272,6 +272,15 @@ class FilesList(private val fileListHelper: FileListHelper,
         }
     }
 
+    fun isPeekMode() : Boolean {
+        peekAndPop ?: return false
+        return peekAndPop!!.isPeekMode()
+    }
+
+    fun endPeekMode() {
+        peekAndPop?.endPeekMode()
+    }
+
     fun getScrollInfo(): ScrollInfo {
         val view = fileList.getChildAt(0)
         val offset = view?.top ?: 0

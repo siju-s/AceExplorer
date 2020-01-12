@@ -805,158 +805,167 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
 
     override fun getActivityInstance() : AppCompatActivity = this.activity as AppCompatActivity
 
-    fun onBackPressed() = fileListViewModel.onBackPress()
-
-    private fun viewFile(path: String, extension: String?) {
-        Log.e(TAG, "Viewfile:path:$path, extension:$extension")
-        val context = context
-        context?.let {
-            when (extension?.toLowerCase(Locale.ROOT)) {
-                null -> {
-                    val uri = UriHelper.createContentUri(context, path)
-                    uri?.let {
-                        DialogHelper.openWith(it, context)
-                    }
-                }
-                ViewHelper.EXT_APK -> ViewHelper.viewApkFile(context, path,
-                                                             fileListViewModel.apkDialogListener)
-                else -> ViewHelper.viewFile(context, path, extension)
-            }
+    fun onBackPressed() : Boolean {
+        val isPeekMode = filesList.isPeekMode()
+        return if (isPeekMode) {
+            filesList.endPeekMode()
+            false
+        }
+        else {
+            fileListViewModel.onBackPress()
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        when (requestCode) {
-            InstallHelper.UNKNOWN_APPS_INSTALL_REQUEST -> {
-                if (resultCode == RESULT_OK) {
-                    openInstallScreen(context, fileListViewModel.apkPath)
-                    fileListViewModel.apkPath = null
+        private fun viewFile(path: String, extension: String?) {
+            Log.e(TAG, "Viewfile:path:$path, extension:$extension")
+            val context = context
+            context?.let {
+                when (extension?.toLowerCase(Locale.ROOT)) {
+                    null -> {
+                        val uri = UriHelper.createContentUri(context, path)
+                        uri?.let {
+                            DialogHelper.openWith(it, context)
+                        }
+                    }
+                    ViewHelper.EXT_APK -> ViewHelper.viewApkFile(context, path,
+                            fileListViewModel.apkDialogListener)
+                    else -> ViewHelper.viewFile(context, path, extension)
                 }
             }
+        }
 
-            SAF_REQUEST -> {
-                if (resultCode == RESULT_OK) {
-                    val uri = intent?.data
-                    if (uri == null) {
-                        Toast.makeText(context, resources.getString(R.string
-                                                                            .access_denied_external),
-                                       Toast.LENGTH_LONG).show()
+        override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+            when (requestCode) {
+                InstallHelper.UNKNOWN_APPS_INSTALL_REQUEST -> {
+                    if (resultCode == RESULT_OK) {
+                        openInstallScreen(context, fileListViewModel.apkPath)
+                        fileListViewModel.apkPath = null
+                    }
+                }
+
+                SAF_REQUEST -> {
+                    if (resultCode == RESULT_OK) {
+                        val uri = intent?.data
+                        if (uri == null) {
+                            Toast.makeText(context, resources.getString(R.string
+                                    .access_denied_external),
+                                    Toast.LENGTH_LONG).show()
+                        }
+                        else {
+                            fileListViewModel.handleSafResult(uri, intent.flags)
+                        }
+
                     }
                     else {
-                        fileListViewModel.handleSafResult(uri, intent.flags)
+                        Analytics.getLogger().SAFResult(false)
+                        Toast.makeText(context, resources.getString(R.string
+                                .access_denied_external),
+                                Toast.LENGTH_LONG).show()
                     }
-
                 }
-                else {
-                    Analytics.getLogger().SAFResult(false)
-                    Toast.makeText(context, resources.getString(R.string
-                                                                        .access_denied_external),
-                                   Toast.LENGTH_LONG).show()
+
+                EXTRACT_PATH_REQUEST -> {
+                    if (resultCode == RESULT_OK) {
+                        val destDir = intent?.getStringExtra(PickerModelImpl.KEY_PICKER_SELECTED_PATH)
+                        val pathButton = dialog?.findViewById<Button>(R.id.buttonPathSelect)
+                        pathButton?.text = destDir
+                    }
                 }
             }
+            super.onActivityResult(requestCode, resultCode, intent)
+        }
 
-            EXTRACT_PATH_REQUEST -> {
-                if (resultCode == RESULT_OK) {
-                    val destDir = intent?.getStringExtra(PickerModelImpl.KEY_PICKER_SELECTED_PATH)
-                    val pathButton = dialog?.findViewById<Button>(R.id.buttonPathSelect)
-                    pathButton?.text = destDir
-                }
+
+        override fun onDestroy() {
+            super.onDestroy()
+            if (isAppManager(category)) {
+                unregisterPackageReceiver(AceApplication.appContext)
             }
         }
-        super.onActivityResult(requestCode, resultCode, intent)
-    }
 
-
-    override fun onDestroy() {
-        super.onDestroy()
-        if (isAppManager(category)) {
-            unregisterPackageReceiver(AceApplication.appContext)
+        private fun navigateToSearchScreen() {
+            mainViewModel.navigateToSearch.value = true
         }
-    }
 
-    private fun navigateToSearchScreen() {
-        mainViewModel.navigateToSearch.value = true
-    }
-
-    fun onMenuItemClick(item: MenuItem) {
-        when (item.itemId) {
-            R.id.action_view_list -> {
-                fileListViewModel.switchView(ViewMode.LIST)
-            }
-            R.id.action_view_grid -> {
-                fileListViewModel.switchView(ViewMode.GRID)
-            }
-            R.id.action_view_gallery -> {
-                fileListViewModel.switchView(ViewMode.GALLERY)
-            }
-            R.id.action_hidden -> {
-                item.isChecked = !item.isChecked
-                fileListViewModel.onHiddenFileSettingChanged(item.isChecked)
-            }
-            R.id.action_sort -> {
-                fileListViewModel.onSortClicked()
-            }
-            R.id.action_search -> {
-                navigateToSearchScreen()
-            }
-            else -> {
-                if (item.itemId != R.id.action_view) {
-                    fileListViewModel.onMenuItemClick(item.itemId)
+        fun onMenuItemClick(item: MenuItem) {
+            when (item.itemId) {
+                R.id.action_view_list -> {
+                    fileListViewModel.switchView(ViewMode.LIST)
+                }
+                R.id.action_view_grid -> {
+                    fileListViewModel.switchView(ViewMode.GRID)
+                }
+                R.id.action_view_gallery -> {
+                    fileListViewModel.switchView(ViewMode.GALLERY)
+                }
+                R.id.action_hidden -> {
+                    item.isChecked = !item.isChecked
+                    fileListViewModel.onHiddenFileSettingChanged(item.isChecked)
+                }
+                R.id.action_sort -> {
+                    fileListViewModel.onSortClicked()
+                }
+                R.id.action_search -> {
+                    navigateToSearchScreen()
+                }
+                else -> {
+                    if (item.itemId != R.id.action_view) {
+                        fileListViewModel.onMenuItemClick(item.itemId)
+                    }
                 }
             }
         }
-    }
 
-    override fun onUpEvent() {
-        fileListViewModel.onUpTouchEvent()
-    }
-
-    override fun onMoveEvent() {
-        fileListViewModel.onMoveTouchEvent()
-    }
-
-    override fun isDragNotStarted() = fileListViewModel.isDragNotStarted()
-
-    override fun endActionMode() {
-        fileListViewModel.endActionMode()
-    }
-
-    override fun getCategory() = fileListViewModel.category
-
-    override fun onDragDropEvent(pos: Int, data: ArrayList<FileInfo>) {
-        fileListViewModel.onDragDropEvent(pos)
-    }
-
-    override fun isDualModeEnabled() = fileListViewModel.isDualModeEnabled()
-
-    private val sortDialogListener = object : DialogHelper.SortDialogListener {
-        override fun onPositiveButtonClick(sortMode: SortMode) {
-            fileListViewModel.onSort(sortMode)
+        override fun onUpEvent() {
+            fileListViewModel.onUpTouchEvent()
         }
 
-        override fun onNegativeButtonClick(view: View?) {
+        override fun onMoveEvent() {
+            fileListViewModel.onMoveTouchEvent()
         }
 
-    }
+        override fun isDragNotStarted() = fileListViewModel.isDragNotStarted()
 
-    fun setCategoryMenuHelper(categoryMenuHelper: CategoryMenuHelper) {
-        this.categoryMenuHelper = categoryMenuHelper
-    }
-
-    fun refreshDataOnSettingChange() {
-        Log.e(TAG, "refreshDataOnSettingChange")
-        if (::filesList.isInitialized) {
-            val viewMode = fileListViewModel.getViewMode(category)
-            filesList.onViewModeChanged(viewMode)
+        override fun endActionMode() {
+            fileListViewModel.endActionMode()
         }
-    }
 
-    fun shouldShowHiddenFiles(): Boolean {
-        if (::fileListViewModel.isInitialized) {
-            return fileListViewModel.shouldShowHiddenFiles()
+        override fun getCategory() = fileListViewModel.category
+
+        override fun onDragDropEvent(pos: Int, data: ArrayList<FileInfo>) {
+            fileListViewModel.onDragDropEvent(pos)
         }
-        return false
-    }
+
+        override fun isDualModeEnabled() = fileListViewModel.isDualModeEnabled()
+
+        private val sortDialogListener = object : DialogHelper.SortDialogListener {
+            override fun onPositiveButtonClick(sortMode: SortMode) {
+                fileListViewModel.onSort(sortMode)
+            }
+
+            override fun onNegativeButtonClick(view: View?) {
+            }
+
+        }
+
+        fun setCategoryMenuHelper(categoryMenuHelper: CategoryMenuHelper) {
+            this.categoryMenuHelper = categoryMenuHelper
+        }
+
+        fun refreshDataOnSettingChange() {
+            Log.e(TAG, "refreshDataOnSettingChange")
+            if (::filesList.isInitialized) {
+                val viewMode = fileListViewModel.getViewMode(category)
+                filesList.onViewModeChanged(viewMode)
+            }
+        }
+
+        fun shouldShowHiddenFiles(): Boolean {
+            if (::fileListViewModel.isInitialized) {
+                return fileListViewModel.shouldShowHiddenFiles()
+            }
+            return false
+        }
 //
 //    fun performVoiceSearch(query: String) {
 //        storagesUi!!.performVoiceSearch(query)

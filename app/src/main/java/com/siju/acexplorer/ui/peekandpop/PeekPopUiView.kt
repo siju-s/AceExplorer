@@ -90,9 +90,8 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
         Log.d(TAG, "loadPeekView: category:$category")
         var pos = position
         if (!isPeekPopCategory(category)) {
-            pos = getPeekDataPos(position, peekButton)
+            pos = handlePeekDataPos(view, position, peekButton)
             if (pos == position) {
-                changePeekButtonsState(position, view)
                 return
             }
         }
@@ -173,13 +172,21 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
         displayThumb(context, fileInfo, fileInfo.category, thumb, null)
     }
 
-    private fun getPeekDataPos(position: Int, peekButton: PeekPopView.PeekButton): Int {
+    private fun handlePeekDataPos(view: View, position: Int, peekButton: PeekPopView.PeekButton): Int {
         return when (peekButton) {
             PeekPopView.PeekButton.NEXT -> {
-                getNextPeekPos(position)
+                val pos = getNextPeekPos(position)
+                if (pos == position) {
+                   disablePeekButton(view.findViewById<View>(R.id.buttonNext))
+                }
+                pos
             }
             PeekPopView.PeekButton.PREVIOUS -> {
-                getPreviousPeekPos(position)
+                val pos = getPreviousPeekPos(position)
+                if (pos == position) {
+                    disablePeekButton(view.findViewById<View>(R.id.buttonPrev))
+                }
+                pos
             }
             else -> position
         }
@@ -187,7 +194,7 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
 
     private fun getNextPeekPos(position: Int): Int {
         val pos = position + 1
-        return if (pos < fileList.size) {
+        return if (pos < fileList.size && isPeekPopCategory(fileList[pos].category)) {
             pos
         } else {
             position
@@ -196,7 +203,7 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
 
     private fun getPreviousPeekPos(position: Int): Int {
         val pos = position - 1
-        return if (pos >= 0) {
+        return if (pos >= 0 && isPeekPopCategory(fileList[pos].category)) {
             pos
         } else {
             position
@@ -225,6 +232,18 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
             disablePeekButton(nextButton)
         } else {
             enablePeekButton(nextButton)
+        }
+    }
+
+    override fun isPeekMode() = peekAndPop.peekView.isShown
+
+    override fun endPeekMode() {
+        stopAutoPlayVid()
+    }
+
+    override fun pausePeekMode() {
+        if (isPeekMode()) {
+            stopAutoPlayVid()
         }
     }
 
