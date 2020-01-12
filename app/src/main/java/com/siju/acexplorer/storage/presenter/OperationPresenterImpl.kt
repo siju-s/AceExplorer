@@ -7,6 +7,8 @@ import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.view.dialog.DialogHelper
+import com.siju.acexplorer.storage.helper.RecentDataConverter
+import com.siju.acexplorer.storage.model.RecentTimeHelper
 import com.siju.acexplorer.storage.model.StorageModel
 import com.siju.acexplorer.storage.model.operations.Operations
 import com.siju.acexplorer.storage.view.MultiSelectionHelper
@@ -20,6 +22,8 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
     private val _noOpData = MutableLiveData<Pair<Operations, String>>()
 
     override var currentDir: String? = null
+
+    override var category: Category? = null
 
     override fun getMultiSelectionOpData() = _multiSelectionOperationData
 
@@ -126,6 +130,10 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
     }
 
     private fun onSelectAllClicked() {
+        if (RecentTimeHelper.isRecentTimeLineCategory(category)) {
+            onRecentSelectAllClicked()
+            return
+        }
         val list = viewModel.fileData.value
         list?.let {
             if (multiSelectionHelper.getSelectedCount() < list.size) {
@@ -136,6 +144,28 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
             }
             viewModel.handleActionModeClick(null)
         }
+    }
+
+    private fun onRecentSelectAllClicked() {
+        val data = RecentDataConverter.getRecentItemListWithHeaderCount(viewModel.recentFileData.value?.second)
+        val headerCount = data.first.size
+        val fileList = data.second
+        if (multiSelectionHelper.getSelectedCount() + headerCount < fileList.size ) {
+            selectAllRecentItems(fileList, data.first)
+        }
+        else {
+            unselectAllItems()
+        }
+        viewModel.handleActionModeClick(null)
+    }
+
+    private fun selectAllRecentItems(list: ArrayList<FileInfo>, headerPosList : ArrayList<Int>) {
+        for (item in list.withIndex()) {
+            if (!headerPosList.contains(item.index)) {
+                multiSelectionHelper.selectAll(item.index)
+            }
+        }
+        multiSelectionHelper.refresh()
     }
 
     private fun selectAllItems(list: ArrayList<FileInfo>) {

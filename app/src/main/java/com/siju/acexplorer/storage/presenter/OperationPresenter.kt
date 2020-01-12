@@ -14,6 +14,7 @@ interface OperationPresenter {
     val showDragDialog: LiveData<Triple<String?, ArrayList<FileInfo>, DialogHelper.DragDialogListener>>
     val getPasteConflictListener: DialogHelper.PasteConflictListener
     var currentDir: String?
+    var category: Category?
 
     fun handleMenuItemClick(itemId : Int)
     fun getMultiSelectionOpData() : LiveData<Pair<Operations, ArrayList<FileInfo>>>

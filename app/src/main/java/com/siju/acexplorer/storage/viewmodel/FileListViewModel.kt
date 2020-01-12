@@ -279,6 +279,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
     fun setCategory(category: Category) {
         this.category = category
         showFab.postValue(canShowFab(category))
+        operationPresenter.category = category
     }
 
     private fun setCurrentDir(currentDir: String?) {
