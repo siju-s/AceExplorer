@@ -38,7 +38,7 @@ private const val DELAY_SCROLL_UPDATE_MS = 100L
 class FilesList(private val fileListHelper: FileListHelper,
                 val view: View,
                 private var viewMode: ViewMode,
-                val category: Category) : View.OnTouchListener
+                var category: Category) : View.OnTouchListener
 {
     private val dragHelper = DragHelper(view.context, this)
 
@@ -207,8 +207,9 @@ class FilesList(private val fileListHelper: FileListHelper,
     }
 
 
-    fun onDataLoaded(data: ArrayList<FileInfo>) {
+    fun onDataLoaded(data: ArrayList<FileInfo>, category: Category) {
         Log.e(TAG, "onDataLoaded:${data.size}")
+        this.category = category
         peekAndPop?.setFileList(data)
         if (data.isEmpty()) {
             emptyText.visibility = View.VISIBLE
@@ -225,6 +226,7 @@ class FilesList(private val fileListHelper: FileListHelper,
     fun onRecentDataLoaded(category: Category, data: ArrayList<RecentTimeData.RecentDataItem>) {
         Log.e(TAG, "onRecentDataLoaded:${data.size}, recentAdapter:$recentAdapter")
         this.recentData = data
+        this.category = category
         peekAndPop?.setFileList(RecentDataConverter.getRecentItemList(data))
         if (data.isEmpty()) {
             emptyText.visibility = View.VISIBLE
@@ -244,7 +246,7 @@ class FilesList(private val fileListHelper: FileListHelper,
         if (this.viewMode == viewMode) {
             return
         }
-        Log.e(TAG, "onViewModeChanged:$viewMode")
+        Log.e(TAG, "onViewModeChanged:$viewMode, category:$category")
         setLayoutManager(fileList, viewMode, category)
         this.viewMode = viewMode
         if (isRecentTimeLineCategory(category)) {
@@ -268,7 +270,7 @@ class FilesList(private val fileListHelper: FileListHelper,
     }
 
     private fun getAdapter(): BaseListAdapter? {
-        return if (isRecentTimeLineCategory(category) || category == Category.RECENT) {
+        return if (isRecentTimeLineCategory(category)) {
             recentAdapter
         } else {
             adapter
