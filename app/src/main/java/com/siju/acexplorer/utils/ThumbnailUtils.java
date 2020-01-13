@@ -31,7 +31,7 @@ import static com.siju.acexplorer.main.model.helper.AppUtils.getAppIconForFolder
 
 public class ThumbnailUtils {
 
-    private static final Uri AUDIO_URI = Uri.parse("content://media/external/audio/albumart");
+    public static final Uri AUDIO_URI = Uri.parse("content://media/external/audio/albumart");
 
     public static void displayThumb(Context context, FileInfo fileInfo, Category category, ImageView
             imageIcon, ImageView imageThumbIcon) {

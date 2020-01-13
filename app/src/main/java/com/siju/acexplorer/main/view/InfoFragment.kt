@@ -3,6 +3,7 @@ package com.siju.acexplorer.main.view
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.ContentUris
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
@@ -26,6 +27,7 @@ import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.helper.ShareHelper
+import com.siju.acexplorer.utils.ThumbnailUtils
 import java.util.*
 
 private const val TAG_INFO = "Info"
@@ -110,7 +112,7 @@ class InfoFragment : BottomSheetDialogFragment() {
         }
 
         val icon = sheetView?.findViewById<ImageView>(R.id.imageIcon)
-        icon?.let { setIcon(context, it, uri) }
+        icon?.let { setIcon(context, it, uri, category) }
 
         val nameText = sheetView?.findViewById<TextView>(R.id.textName)
         nameText?.text = fileInfo.fileName
@@ -132,9 +134,21 @@ class InfoFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun setIcon(context: Context?, icon: ImageView, uri: Uri?) {
-        context?.let {
-            Glide.with(it).load(uri)
+    private fun setIcon(context: Context?, icon: ImageView, uri: Uri?, category: Category) {
+        if (context == null) {
+            return
+        }
+        if (category == Category.AUDIO) {
+            val audioUri = ContentUris.withAppendedId(ThumbnailUtils.AUDIO_URI, fileInfo.bucketId)
+            val options = RequestOptions()
+                    .centerCrop()
+                    .placeholder(R.drawable.ic_music_default)
+            Glide.with(context).load(audioUri).apply(options)
+                    .into(icon)
+            return
+        }
+        else {
+            Glide.with(context).load(uri)
                     .apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC))
                     .into(icon)
         }

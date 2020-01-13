@@ -66,6 +66,9 @@ object ShareHelper {
         if (CategoryHelper.isAnyVideoCategory(category)) {
             intent.type = "video/*"
         }
+        else if (category == Category.AUDIO || CategoryHelper.isMusicCategory(category)) {
+            intent.type = "audio/*"
+        }
         else {
             intent.type = "image/*"
         }
