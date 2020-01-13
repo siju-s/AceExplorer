@@ -110,7 +110,8 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
 
         val view = view
         view?.let {
-            filesList = FilesList(this, view, fileListViewModel.getViewMode(category), category)
+            val viewMode = fileListViewModel.getViewMode(category)
+            filesList = FilesList(this, view, viewMode, category)
             floatingView = FloatingView(view, this)
             navigationView = NavigationView(view, fileListViewModel.navigationCallback)
             val appbarView = if (!showNavigation) {
@@ -119,7 +120,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
             else {
                 it
             }
-            menuControls = MenuControls(this, view, appbarView!!, category)
+            menuControls = MenuControls(this, view, appbarView!!, category, viewMode)
         }
         setupMultiSelection()
         setupNavigationView()
@@ -890,12 +891,15 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         fun onMenuItemClick(item: MenuItem) {
             when (item.itemId) {
                 R.id.action_view_list -> {
+                    item.isChecked = true
                     fileListViewModel.switchView(ViewMode.LIST)
                 }
                 R.id.action_view_grid -> {
+                    item.isChecked = true
                     fileListViewModel.switchView(ViewMode.GRID)
                 }
                 R.id.action_view_gallery -> {
+                    item.isChecked = true
                     fileListViewModel.switchView(ViewMode.GALLERY)
                 }
                 R.id.action_hidden -> {

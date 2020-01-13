@@ -15,10 +15,12 @@ import com.siju.acexplorer.main.model.groups.CategoryHelper.isRecentGenericCateg
 import com.siju.acexplorer.main.model.groups.CategoryHelper.isSortOrActionModeUnSupported
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.root.RootUtils
+import com.siju.acexplorer.storage.model.ViewMode
 
 private const val TAG = "MenuControls"
 
-class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryFragmentView : View, val category: Category) :
+class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryFragmentView: View,
+                   val category: Category, val viewMode: ViewMode) :
         Toolbar.OnMenuItemClickListener {
 
     private var bottomToolbar: Toolbar = view.findViewById(R.id.toolbar_bottom)
@@ -34,7 +36,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     private lateinit var favItem: MenuItem
     private lateinit var extractItem: MenuItem
     private lateinit var permissionItem: MenuItem
-    private lateinit var deleteFavItem : MenuItem
+    private lateinit var deleteFavItem: MenuItem
 
     private var hiddenMenuItem: MenuItem? = null
 
@@ -134,6 +136,15 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
             setupSortVisibility()
             hiddenMenuItem = menu.findItem(R.id.action_hidden)
             setHiddenCheckedState(fragment.shouldShowHiddenFiles())
+            toggleViewModeMenuItemState(viewMode, menu)
+        }
+    }
+
+    private fun toggleViewModeMenuItemState(viewMode: ViewMode, menu: Menu) {
+        when (viewMode) {
+            ViewMode.LIST -> menu.findItem(R.id.action_view_list).isChecked = true
+            ViewMode.GRID -> menu.findItem(R.id.action_view_grid).isChecked = true
+            ViewMode.GALLERY -> menu.findItem(R.id.action_view_gallery).isChecked = true
         }
     }
 
