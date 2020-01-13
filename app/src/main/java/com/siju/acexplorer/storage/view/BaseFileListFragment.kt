@@ -252,6 +252,9 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
             if (::filesList.isInitialized) {
                 filesList.onViewModeChanged(it)
             }
+            if (::menuControls.isInitialized) {
+                menuControls.onViewModeChanged(it)
+            }
         })
 
         fileListViewModel.sortEvent.observe(viewLifecycleOwner, Observer { sortMode ->

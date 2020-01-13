@@ -119,6 +119,14 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                 }
                 true
             }
+
+            imageIcon.setOnLongClickListener {
+                val position = adapterPosition
+                if (position < count && position != RecyclerView.NO_POSITION) {
+                    longClickListener(item, position, it)
+                }
+                true
+            }
         }
 
         private fun onSelection(selected: Boolean?, position: Int, draggedPos: Int) {

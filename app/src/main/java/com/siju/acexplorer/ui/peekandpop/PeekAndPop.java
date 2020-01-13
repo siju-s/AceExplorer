@@ -59,9 +59,6 @@ public class PeekAndPop {
 
     protected void init() {
         this.onGeneralActionListener = builder.onGeneralActionListener;
-//        this.gestureListener = new GestureListener();
-//        this.gestureDetector = new GestureDetector(builder.activity, this.gestureListener);
-        initialiseGestureListeners();
         this.orientation = builder.activity.getResources().getConfiguration().orientation;
         this.peekViewMargin = DimensionUtil.convertDpToPx(builder.activity.getApplicationContext(), PEEK_VIEW_MARGIN_DP);
         initialisePeekView();
@@ -128,16 +125,6 @@ public class PeekAndPop {
                 initialisePeekViewOriginalPosition();
             }
         });
-    }
-
-    /**
-     * Set an onClick and onTouch listener for each long click view.
-     */
-    private void initialiseGestureListeners() {
-        for (int i = 0; i < builder.longClickViews.size(); i++) {
-            initialiseGestureListener(builder.longClickViews.get(i), -1, Category.FILES);
-        }
-//        gestureDetector.setIsLongpressEnabled(false);
     }
 
     private void initialiseGestureListener(@NonNull View view, final int position, Category category) {

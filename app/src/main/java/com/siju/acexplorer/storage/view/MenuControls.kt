@@ -20,7 +20,7 @@ import com.siju.acexplorer.storage.model.ViewMode
 private const val TAG = "MenuControls"
 
 class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryFragmentView: View,
-                   val category: Category, val viewMode: ViewMode) :
+                   val category: Category, var viewMode: ViewMode) :
         Toolbar.OnMenuItemClickListener {
 
     private var bottomToolbar: Toolbar = view.findViewById(R.id.toolbar_bottom)
@@ -141,6 +141,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     }
 
     private fun toggleViewModeMenuItemState(viewMode: ViewMode, menu: Menu) {
+        Log.e(TAG, "toggleViewModeMenuItemState:$viewMode")
         when (viewMode) {
             ViewMode.LIST -> menu.findItem(R.id.action_view_list).isChecked = true
             ViewMode.GRID -> menu.findItem(R.id.action_view_grid).isChecked = true
@@ -265,6 +266,10 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
         bottomToolbar.visibility = View.VISIBLE
         bottomToolbar.menu.clear()
         bottomToolbar.inflateMenu(R.menu.action_mode_paste)
+    }
+
+    fun onViewModeChanged(viewMode: ViewMode) {
+        this.viewMode = viewMode
     }
 
 }
