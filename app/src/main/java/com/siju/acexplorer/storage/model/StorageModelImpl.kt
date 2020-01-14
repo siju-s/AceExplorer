@@ -22,6 +22,8 @@ import com.siju.acexplorer.storage.model.operations.Operations
 
 private const val PREFS_NAME = "PREFS"
 private const val PREFS_VIEW_MODE = "view-mode"
+private const val PREFS_VIEW_MODE_IMAGE = "view-mode-image"
+private const val PREFS_VIEW_MODE_VIDEO = "view-mode-video"
 
 class StorageModelImpl(val context: Context) : StorageModel {
 
@@ -60,10 +62,46 @@ class StorageModelImpl(val context: Context) : StorageModel {
         }
     }
 
+    override fun getImageViewMode(): ViewMode {
+        return if (sharedPreferences.contains(PREFS_VIEW_MODE_IMAGE)) {
+            ViewMode.getViewModeFromValue(
+                    sharedPreferences.getInt(PREFS_VIEW_MODE_IMAGE, ViewMode.GALLERY.value))
+        } else {
+            ViewMode.GALLERY
+        }
+    }
+
+    override fun getVideoViewMode(): ViewMode {
+        return if (sharedPreferences.contains(PREFS_VIEW_MODE_VIDEO)) {
+            ViewMode.getViewModeFromValue(
+                    sharedPreferences.getInt(PREFS_VIEW_MODE_VIDEO, ViewMode.GALLERY.value))
+        } else {
+            ViewMode.GALLERY
+        }
+    }
+
     override fun saveViewMode(viewMode: ViewMode?) {
         viewMode?.let {
             sharedPreferences.edit().apply {
                 putInt(PREFS_VIEW_MODE, viewMode.value)
+                apply()
+            }
+        }
+    }
+
+    override fun saveImageViewMode(viewMode: ViewMode?) {
+        viewMode?.let {
+            sharedPreferences.edit().apply {
+                putInt(PREFS_VIEW_MODE_IMAGE, viewMode.value)
+                apply()
+            }
+        }
+    }
+
+    override fun saveVideoViewMode(viewMode: ViewMode?) {
+        viewMode?.let {
+            sharedPreferences.edit().apply {
+                putInt(PREFS_VIEW_MODE_VIDEO, viewMode.value)
                 apply()
             }
         }

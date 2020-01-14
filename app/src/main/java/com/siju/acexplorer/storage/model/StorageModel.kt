@@ -143,4 +143,8 @@ interface StorageModel {
     fun onPause()
     fun onResume()
     fun loadRecentData(path: String?, category: Category): ArrayList<RecentTimeData.RecentDataItem>
+    fun getImageViewMode(): ViewMode
+    fun saveImageViewMode(viewMode: ViewMode?)
+    fun getVideoViewMode(): ViewMode
+    fun saveVideoViewMode(viewMode: ViewMode?)
 }

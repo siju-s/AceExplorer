@@ -74,11 +74,16 @@ object CategoryHelper {
                 category == AUDIO
     }
 
-    fun isDefaultGalleryCategory(category: Category?): Boolean {
+    fun isDefaultGalleryImageCategory(category: Category?): Boolean {
         return category == IMAGES_ALL || category == GENERIC_IMAGES ||
-                category == VIDEO_ALL || category == GENERIC_VIDEOS ||
-                category == SEARCH_FOLDER_IMAGES || category == SEARCH_FOLDER_VIDEOS
-                || category == CAMERA
+                category == SEARCH_FOLDER_IMAGES
+                || category == CAMERA ||  category == CAMERA_IMAGES || category == CAMERA_GENERIC ||
+                category == CAMERA_VIDEO
+    }
+
+    fun isDefaultGalleryVideoCategory(category: Category?): Boolean {
+        return category == VIDEO_ALL || category == GENERIC_VIDEOS ||
+                category == SEARCH_FOLDER_VIDEOS
     }
 
     fun isRecentCategory(category: Category): Boolean {

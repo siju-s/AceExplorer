@@ -267,12 +267,10 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
     }
 
     fun getViewMode(category: Category) : ViewMode {
-        val viewMode = storageModel.getViewMode()
-        return if (CategoryHelper.isDefaultGalleryCategory(category)) {
-            ViewMode.GALLERY
-        }
-        else {
-            viewMode
+        return when {
+            CategoryHelper.isDefaultGalleryImageCategory(category) -> storageModel.getImageViewMode()
+            CategoryHelper.isDefaultGalleryVideoCategory(category) -> storageModel.getVideoViewMode()
+            else -> storageModel.getViewMode()
         }
     }
 
@@ -600,7 +598,11 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
 
     fun switchView(viewMode: ViewMode) {
         _viewMode.value = viewMode
-        storageModel.saveViewMode(viewMode)
+        when {
+            CategoryHelper.isDefaultGalleryImageCategory(category) -> storageModel.saveImageViewMode(viewMode)
+            CategoryHelper.isDefaultGalleryVideoCategory(category) -> storageModel.saveVideoViewMode(viewMode)
+            else -> storageModel.saveViewMode(viewMode)
+        }
     }
 
     fun onSortClicked() {
