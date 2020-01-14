@@ -20,7 +20,6 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.text.format.Formatter;
 import android.view.LayoutInflater;
@@ -952,14 +951,11 @@ public class DialogHelper {
                     @Override
                     public View getView(int position, @Nullable View convertView, @NonNull
                             ViewGroup parent) {
-                        TextView textView = (TextView) super.getView(position, convertView, parent);
-                        textView.setTextColor(Color.BLACK);
-                        return textView;
+                        return super.getView(position, convertView, parent);
                     }
                 };
 
         listView.setAdapter(itemsAdapter);
-
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -990,7 +986,6 @@ public class DialogHelper {
             }
         });
         bottomSheetDialog.show();
-
     }
 
 

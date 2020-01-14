@@ -28,6 +28,7 @@
     <dimen name="card_home_radius">5dp</dimen>
     <dimen name="margin_30">30dp</dimen>
     <dimen name="margin_20">20dp</dimen>
+    <dimen name="height_48">48dp</dimen>
 
     <bool name="isTablet">false</bool>
 
