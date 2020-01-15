@@ -121,7 +121,7 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
         val fileInfo: FileInfo = fileList[pos]
         val isPlaying = customVideoView.isPlaying
         when (category) {
-            VIDEO, FOLDER_VIDEOS, AUDIO -> {
+            VIDEO, VIDEO_ALL, FOLDER_VIDEOS, AUDIO -> {
                 fileNameText.visibility = View.VISIBLE
                 fileNameText.text = fileInfo.fileName
                 if (AUDIO == category) {
