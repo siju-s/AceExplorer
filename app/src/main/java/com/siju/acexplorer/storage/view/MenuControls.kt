@@ -4,8 +4,11 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.inputmethod.EditorInfo
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import com.siju.acexplorer.R
+import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper
@@ -21,7 +24,7 @@ private const val TAG = "MenuControls"
 
 class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryFragmentView: View,
                    val category: Category, var viewMode: ViewMode) :
-        Toolbar.OnMenuItemClickListener {
+        Toolbar.OnMenuItemClickListener, SearchView.OnQueryTextListener {
 
     private var bottomToolbar: Toolbar = view.findViewById(R.id.toolbar_bottom)
     private var toolbar: Toolbar = categoryFragmentView.findViewById(R.id.toolbar)
@@ -38,7 +41,9 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     private lateinit var permissionItem: MenuItem
     private lateinit var deleteFavItem: MenuItem
 
+    private var searchView: SearchView? = null
     private var hiddenMenuItem: MenuItem? = null
+    private var isSearchActive = false
 
     init {
         // When Categoryfragment with viewpager is not shown, the BaseFileListFragment toolbar inflates the menu
@@ -65,7 +70,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     private fun setupActionModeMenu() {
         bottomToolbar.menu.clear()
         EnhancedMenuInflater.inflate(fragment.activity?.menuInflater, bottomToolbar.menu,
-                                     category)
+                category)
         val menu = bottomToolbar.menu
         setupActionModeMenuItems(menu)
         if (category != Category.FILES) {
@@ -95,6 +100,14 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
         clearActionModeToolbar()
         setupBaseMenu()
         setToolbarTitle(context.getString(R.string.app_name))
+        if (isSearchActive) {
+            setSearchActive(false)
+        }
+    }
+
+    fun setSearchActive(value: Boolean) {
+        this.isSearchActive = value
+        Log.e(TAG, "setSearchActive:$isSearchActive")
     }
 
     private fun setupActionModeToolbar() {
@@ -114,7 +127,12 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
 
     private fun setupBaseMenu() {
         toolbar.menu.clear()
-        toolbar.inflateMenu(R.menu.filelist_base)
+        if (CategoryHelper.isAppManager(category)) {
+            toolbar.inflateMenu(R.menu.search)
+        }
+        else {
+            toolbar.inflateMenu(R.menu.filelist_base)
+        }
         toolbar.setOnMenuItemClickListener(this)
         setupMenuItems(toolbar.menu)
     }
@@ -132,8 +150,12 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     private fun setupMenuItems(menu: Menu?) {
         menu?.let {
             searchItem = menu.findItem(R.id.action_search)
+            if (CategoryHelper.isAppManager(category)) {
+                searchView = searchItem.actionView as SearchView
+            }
             sortItem = menu.findItem(R.id.action_sort)
-            setupSortVisibility()
+            setupMenuItemVisibility()
+            setupSearchView()
             hiddenMenuItem = menu.findItem(R.id.action_hidden)
             setHiddenCheckedState(fragment.shouldShowHiddenFiles())
             toggleViewModeMenuItemState(viewMode, menu)
@@ -153,29 +175,77 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
         hiddenMenuItem?.isChecked = state
     }
 
-    private fun setupSortVisibility() {
+    private fun setupMenuItemVisibility() {
         Log.e(TAG, "setupSortVisibility:$category")
         if (isSortOrActionModeUnSupported(category) || isRecentGenericCategory(
                         category) || isRecentCategory(category)) {
             searchItem.isVisible = false
             sortItem.isVisible = false
-        }
-        else if (Category.LARGE_FILES == category) {
+        } else if (Category.LARGE_FILES == category) {
             searchItem.isVisible = true
             sortItem.isVisible = false
-        }
-        else {
+        } else if (Category.APP_MANAGER == category) {
+            searchItem.isVisible = true
+            sortItem.isVisible = true
+            hiddenMenuItem?.isVisible = false
+        } else {
             searchItem.isVisible = true
             sortItem.isVisible = true
         }
     }
 
-    private fun toggleMenuVisibility(count: Int,
-                                     fileInfo: FileInfo?,
-                                     externalSdList: ArrayList<String>) {
+
+    private fun setupSearchView() {
+        if (!CategoryHelper.isAppManager(category)) {
+            return
+        }
+        searchView?.imeOptions = EditorInfo.IME_FLAG_NO_EXTRACT_UI
+        searchView?.imeOptions = EditorInfo.IME_ACTION_SEARCH
+        searchView?.setOnQueryTextListener(this)
+        searchView?.maxWidth = Int.MAX_VALUE
+        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
+                Analytics.getLogger().searchClicked(false)
+                setSearchActive(true)
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
+                setSearchActive(false)
+                return true
+            }
+        })
+        searchView?.setOnSearchClickListener {
+            setSearchActive(true)
+        }
+        searchView?.setOnCloseListener {
+            setSearchActive(false)
+            false
+        }
+    }
+
+    private fun hideSearchView() {
+        searchItem.collapseActionView()
+    }
+
+    fun endSearch() {
+        Log.e(TAG, "endSearch:$isSearchActive")
+        searchView?.setQuery("", false)
+        hideSearchView()
+        searchView?.isIconified = true
+    }
+
+    fun isSearchActive(): Boolean {
+        Log.e(TAG, "isSearchActive:$isSearchActive")
+        return isSearchActive
+    }
+
+    private fun toggleActionModeMenuVisibility(count: Int,
+                                               fileInfo: FileInfo?,
+                                               externalSdList: ArrayList<String>) {
         when {
             count == 1 -> onSingleItemSelected(fileInfo, externalSdList)
-            count > 1  -> {
+            count > 1 -> {
                 renameItem.isVisible = false
                 infoItem.isVisible = false
                 extractItem.isVisible = false
@@ -205,7 +275,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
         }
 
         when {
-            category == Category.APP_MANAGER  -> {
+            category == Category.APP_MANAGER -> {
                 toggleAppManagerMenuVisibility()
             }
 
@@ -255,7 +325,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
                                externalSdList: ArrayList<String>) {
         Log.e(TAG, "onSelectedCountChanged:$count")
         setToolbarTitle(count.toString())
-        toggleMenuVisibility(count, fileInfo, externalSdList)
+        toggleActionModeMenuVisibility(count, fileInfo, externalSdList)
     }
 
     fun setToolbarTitle(title: String) {
@@ -270,6 +340,20 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
 
     fun onViewModeChanged(viewMode: ViewMode) {
         this.viewMode = viewMode
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        Log.e(TAG, "onQueryTextChange:$query")
+        return false
+    }
+
+    override fun onQueryTextChange(query: String?): Boolean {
+        Log.e(TAG, "onQueryTextChange:$query")
+        if (fragment.isActionModeActive()) {
+            return true
+        }
+        fragment.onQueryTextChange(query)
+        return true
     }
 
 }

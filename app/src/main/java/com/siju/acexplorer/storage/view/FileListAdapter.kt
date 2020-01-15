@@ -30,6 +30,8 @@ import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.ui.peekandpop.PeekPopView
 import com.siju.acexplorer.utils.ThumbnailUtils.displayThumb
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 const val INVALID_POS = -1
@@ -42,7 +44,8 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
     private var draggedPosition = -1
     private var multiSelectionHelper: MultiSelectionHelper? = null
     private var mainCategory: Category? = null
-
+    private var filteredList: ArrayList<FileInfo> = ArrayList()
+    private var fileList = arrayListOf<FileInfo>()
     init {
         peekPopView?.setPeekPopListener()
     }
@@ -56,6 +59,13 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         val item = getItem(position)
         viewHolder.bind(item, itemCount, viewMode, mainCategory, multiSelectionHelper?.isSelected(position), position, draggedPosition,
                 clickListener, longClickListener, peekPopView)
+    }
+
+    fun onDataLoaded(data: java.util.ArrayList<FileInfo>) {
+        this.fileList = data
+        filteredList.clear()
+        filteredList.addAll(fileList)
+        submitList(data)
     }
 
     override fun setMultiSelectionHelper(multiSelectionHelper: MultiSelectionHelper) {
@@ -78,6 +88,36 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
     }
 
     override fun refresh() {
+        notifyDataSetChanged()
+    }
+
+    fun filter(text: String) {
+        if (text.isEmpty()) {
+            populateOriginalList(filteredList)
+        } else {
+            addSearchResults(text)
+        }
+    }
+
+    private fun populateOriginalList(fileData: ArrayList<FileInfo>) {
+        this.fileList.clear()
+        fileList.addAll(fileData)
+        submitList(fileList)
+        notifyDataSetChanged()
+    }
+
+    private fun addSearchResults(query: String) {
+        var text = query
+        val result: ArrayList<FileInfo> = ArrayList()
+        text = text.toLowerCase(Locale.getDefault())
+        for (item in filteredList) {
+            if (item.fileName.toLowerCase(Locale.getDefault()).contains(text)) {
+                result.add(item)
+            }
+        }
+        fileList.clear()
+        fileList.addAll(result)
+        submitList(fileList)
         notifyDataSetChanged()
     }
 

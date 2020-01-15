@@ -222,7 +222,7 @@ class FilesList(private val fileListHelper: FileListHelper,
             setupList()
             recentAdapter = null
         }
-        adapter?.submitList(data)
+        adapter?.onDataLoaded(data)
     }
 
     fun onRecentDataLoaded(category: Category, data: ArrayList<RecentTimeData.RecentDataItem>) {
@@ -482,5 +482,11 @@ class FilesList(private val fileListHelper: FileListHelper,
 
     fun onEndActionMode() {
         adapter?.clearDragPosition()
+    }
+
+    fun onQueryChanged(query: String?) {
+        if (query != null ) {
+            peekAndPop?.let { adapter?.filter(query) }
+        }
     }
 }

@@ -755,7 +755,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         }
     }
 
-    private val deleteDialogListener = DialogHelper.DeleteDialogListener { view, isTrashEnabled, filesToDelete ->
+    private val deleteDialogListener = DialogHelper.DeleteDialogListener { _, _, filesToDelete ->
         fileListViewModel.deleteFiles(filesToDelete)
     }
 
@@ -798,7 +798,10 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
 
     override fun handleItemClick(fileInfo: FileInfo, position: Int) {
         if (isAppManager(category)) {
-            context?.let { AppDetailActivity.openAppInfo(it, fileInfo.filePath) }
+            context?.let {
+                menuControls.endSearch()
+                AppDetailActivity.openAppInfo(it, fileInfo.filePath)
+            }
         }
         else {
             fileListViewModel.handleItemClick(fileInfo, position)
@@ -817,12 +820,18 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
 
     fun onBackPressed() : Boolean {
         val isPeekMode = filesList.isPeekMode()
-        return if (isPeekMode) {
-            filesList.endPeekMode()
-            false
-        }
-        else {
-            fileListViewModel.onBackPress()
+        return when {
+            isPeekMode -> {
+                filesList.endPeekMode()
+                false
+            }
+            menuControls.isSearchActive() -> {
+                menuControls.endSearch()
+                false
+            }
+            else -> {
+                fileListViewModel.onBackPress()
+            }
         }
     }
 
@@ -919,7 +928,9 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
                     fileListViewModel.onSortClicked()
                 }
                 R.id.action_search -> {
-                    navigateToSearchScreen()
+                    if (category != Category.APP_MANAGER) {
+                        navigateToSearchScreen()
+                    }
                 }
                 else -> {
                     if (item.itemId != R.id.action_view) {
@@ -979,6 +990,11 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
             }
             return false
         }
+
+    fun onQueryTextChange(query: String?) {
+        filesList.onQueryChanged(query)
+    }
+
 //
 //    fun performVoiceSearch(query: String) {
 //        storagesUi!!.performVoiceSearch(query)

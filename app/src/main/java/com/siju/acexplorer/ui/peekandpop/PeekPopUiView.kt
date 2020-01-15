@@ -38,6 +38,10 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
         this.fileList = list
     }
 
+    override fun getFileData(): java.util.ArrayList<FileInfo> {
+        return fileList
+    }
+
     override fun setPeekPopListener() {
         if (peekAndPop == null) {
             return

@@ -15,6 +15,7 @@ interface PeekPopView {
     fun isPeekMode(): Boolean
     fun endPeekMode()
     fun pausePeekMode()
+    fun getFileData(): java.util.ArrayList<FileInfo>
 
     interface PeekPopCallback {
         fun onItemClick(view : View, fileInfo: FileInfo, pos : Int)
