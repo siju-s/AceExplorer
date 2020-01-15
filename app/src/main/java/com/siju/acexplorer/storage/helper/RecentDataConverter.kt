@@ -22,6 +22,19 @@ object RecentDataConverter {
         return fileList
     }
 
+    fun getRecentItemListWithoutHeader(list : ArrayList<RecentTimeData.RecentDataItem>?): ArrayList<FileInfo> {
+        val fileList = arrayListOf<FileInfo>()
+        if (list == null) {
+            return fileList
+        }
+        for (item in list) {
+            if (item is RecentTimeData.RecentDataItem.Item) {
+                fileList.add(item.fileInfo)
+            }
+        }
+        return fileList
+    }
+
     fun getRecentItemListWithHeaderCount(list : ArrayList<RecentTimeData.RecentDataItem>?): Pair<ArrayList<Int>,ArrayList<FileInfo>> {
         val fileList = arrayListOf<FileInfo>()
         if (list == null) {

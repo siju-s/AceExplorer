@@ -457,7 +457,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
 
     private fun handleRecentItemFileClicked(fileInfo: FileInfo, position: Int) {
         val path = fileInfo.filePath
-        Log.e(TAG, "onFileClicked:category:${fileInfo.category}, rootCategory:$category, path:$path")
+        Log.e(TAG, "handleRecentItemFileClicked:category:${fileInfo.category}, rootCategory:$category, path:$path")
         when {
             isZipFile(path) -> openZipViewer(path)
             zipPresenter.isZipMode -> zipViewer?.onFileClicked(position)

@@ -30,6 +30,7 @@ import com.siju.acexplorer.search.model.SearchModelImpl
 import com.siju.acexplorer.search.model.SearchSuggestionProvider
 import com.siju.acexplorer.search.viewmodel.SearchViewModel
 import com.siju.acexplorer.search.viewmodel.SearchViewModelFactory
+import com.siju.acexplorer.storage.helper.RecentDataConverter
 import com.siju.acexplorer.storage.model.StorageModelImpl
 import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.storage.modules.zipviewer.view.ZipViewerFragment
@@ -170,6 +171,15 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
             }
         })
 
+        fileListViewModel.recentFileData.observe(viewLifecycleOwner, Observer {
+            it?.apply {
+                showSearchList()
+                if (::filesList.isInitialized) {
+                    fileListAdapter?.submitList(RecentDataConverter.getRecentItemListWithoutHeader(it.second))
+                }
+            }
+        })
+
         fileListViewModel.directoryClicked.observe(viewLifecycleOwner, Observer {
             it?.apply {
                 hideRecentSearch()
@@ -196,6 +206,11 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
         fileListViewModel.viewFileEvent.observe(viewLifecycleOwner, Observer {
             viewFile(it.first, it.second)
         })
+
+        fileListViewModel.viewImageFileEvent.observe(viewLifecycleOwner, Observer {
+            ViewHelper.openImage(context, it.first, it.second)
+        })
+
         fileListViewModel.installAppEvent.observe(viewLifecycleOwner, Observer {
             val canInstall = it.first
             if (canInstall) {
