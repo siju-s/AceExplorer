@@ -32,7 +32,9 @@ class SearchSuggestions(val view: View, private val fragment: SearchFragment, pr
     private var chipScreenshot: Chip? = null
     private var chipWhatsapp: Chip? = null
     private var chipTelegram: Chip? = null
+    private var clearAll = false
 
+    private val checkedChipList = arrayListOf<Chip?>()
 
     init {
         initializeViews()
@@ -102,18 +104,24 @@ class SearchSuggestions(val view: View, private val fragment: SearchFragment, pr
     }
 
     private fun initChipListener() {
-        chipRecent.setOnCheckedChangeListener { _, position ->
-            onChipSelected()
+        chipRecent.setOnCheckedChangeListener { _, _ ->
+            if (!clearAll) {
+                onChipSelected(chipRecent.id)
+            }
         }
 
-        categoryChipGroup.setOnCheckedChangeListener { button, checkedChipId ->
+        categoryChipGroup.setOnCheckedChangeListener { _, checkedChipId ->
             Log.e(TAG, "categoryChipGroup, pos:$checkedChipId, count :${categoryChipGroup.childCount}, ${categoryChipGroup.checkedChipId}")
-            onChipGroupCheckedListener(checkedChipId)
+            if (!clearAll) {
+                onChipGroupCheckedListener(checkedChipId)
+            }
         }
 
         folderChipGroup.setOnCheckedChangeListener { _, checkedChipId ->
             Log.e(TAG, "Folder chip group, pos:$checkedChipId, count :${folderChipGroup.childCount}")
-            onChipGroupCheckedListener(checkedChipId)
+            if (!clearAll) {
+                onChipGroupCheckedListener(checkedChipId)
+            }
         }
     }
 
@@ -122,17 +130,40 @@ class SearchSuggestions(val view: View, private val fragment: SearchFragment, pr
             if (isNoneChecked()) {
                 fileListViewModel.clearBackStack()
                 fragment.setEmptyList()
+                checkedChipList.clear()
             } else {
-                onChipSelected()
+                onChipSelected(checkedChipId)
             }
-        }
-        else {
-            onChipSelected()
+        } else {
+            onChipSelected(checkedChipId)
         }
     }
 
-    private fun onChipSelected() {
-        fileListViewModel.clearBackStack()
+    private fun handleSelectedChipId(checkedChipId: Int) {
+        val chip = when (checkedChipId) {
+            chipRecent.id -> chipRecent
+            chipImages.id -> chipImages
+            chipVideos.id -> chipVideos
+            chipAudio.id -> chipAudio
+            chipDocuments.id -> chipDocuments
+            chipCamera?.id -> chipCamera
+            chipScreenshot?.id -> chipScreenshot
+            chipWhatsapp?.id -> chipWhatsapp
+            chipTelegram?.id -> chipTelegram
+            else -> { null}
+        }
+                ?: return
+        if (checkedChipList.contains(chip)) {
+            checkedChipList.remove(chip)
+        } else {
+            checkedChipList.add(chip)
+        }
+        Log.e(TAG, "handleSelectedChipId:checkedChipList:${checkedChipList.size}, chip:$chip")
+
+    }
+
+    private fun onChipSelected(checkedChipId: Int) {
+        handleSelectedChipId(checkedChipId)
         fragment.onSearchSuggestionClicked()
 
         val chipInfo = if (chipRecent.isChecked) {
@@ -140,16 +171,17 @@ class SearchSuggestions(val view: View, private val fragment: SearchFragment, pr
         } else {
             onRecentItemUnchecked()
         }
-
         if (chipInfo == null) {
             fragment.setEmptyList()
+            fileListViewModel.clearBackStack()
+            checkedChipList.clear()
         } else {
             fileListViewModel.loadData(chipInfo.path, chipInfo.category)
         }
     }
 
     private fun onRecentItemChecked(): ChipInfo {
-        val chipInfo = when {
+        return when {
             isAnyCategoryChecked() && isAnyFolderItemChecked() -> {
                 ChipInfo.createRecentCategoryFolder(getSelectedFolderChipPath(), getRecentFolderCategory())
             }
@@ -163,11 +195,10 @@ class SearchSuggestions(val view: View, private val fragment: SearchFragment, pr
                 ChipInfo.createRecent()
             }
         }
-        return chipInfo
     }
 
     private fun onRecentItemUnchecked(): ChipInfo? {
-        val chipInfo = when {
+        return when {
             isAnyCategoryChecked() && isAnyFolderItemChecked() -> {
                 ChipInfo.createFolderCategory(getSelectedFolderChipPath(), getFolderCategory())
             }
@@ -181,11 +212,10 @@ class SearchSuggestions(val view: View, private val fragment: SearchFragment, pr
                 null
             }
         }
-        return chipInfo
     }
 
     private fun getRecentFolderCategory(): Category {
-        val category = when {
+        return when {
             chipImages.isChecked -> Category.RECENT_IMAGES_FOLDER
             chipVideos.isChecked -> Category.RECENT_VIDEOS_FOLDER
             chipAudio.isChecked -> Category.RECENT_AUDIO_FOLDER
@@ -194,11 +224,10 @@ class SearchSuggestions(val view: View, private val fragment: SearchFragment, pr
                 throw IllegalArgumentException("We Shouldn't be here")
             }
         }
-        return category
     }
 
     private fun getRecentCategory(): Category {
-        val category = when {
+        return when {
             chipImages.isChecked -> Category.RECENT_IMAGES
             chipVideos.isChecked -> Category.RECENT_VIDEOS
             chipAudio.isChecked -> Category.RECENT_AUDIO
@@ -207,11 +236,10 @@ class SearchSuggestions(val view: View, private val fragment: SearchFragment, pr
                 throw IllegalArgumentException("We Shouldn't be here")
             }
         }
-        return category
     }
 
     private fun getFolderCategory(): Category {
-        val category = when {
+        return when {
             chipImages.isChecked -> Category.SEARCH_FOLDER_IMAGES
             chipVideos.isChecked -> Category.SEARCH_FOLDER_VIDEOS
             chipAudio.isChecked -> Category.SEARCH_FOLDER_AUDIO
@@ -220,11 +248,10 @@ class SearchSuggestions(val view: View, private val fragment: SearchFragment, pr
                 throw IllegalArgumentException("We Shouldn't be here")
             }
         }
-        return category
     }
 
     private fun getSelectedCategory(): Category {
-        val category = when {
+        return when {
             chipImages.isChecked -> Category.IMAGES_ALL
             chipVideos.isChecked -> Category.VIDEO_ALL
             chipAudio.isChecked -> Category.AUDIO
@@ -233,7 +260,6 @@ class SearchSuggestions(val view: View, private val fragment: SearchFragment, pr
                 throw IllegalArgumentException("We Shouldn't be here")
             }
         }
-        return category
     }
 
 
@@ -247,43 +273,51 @@ class SearchSuggestions(val view: View, private val fragment: SearchFragment, pr
     }
 
     private fun getWhatsappMediaPath(): String? {
-        val path = when {
+        return when {
             isAnyCategoryChecked() -> {
-                if (chipImages.isChecked) {
-                    SearchUtils.getWhatsappImagesDirectory()
-                } else if (chipVideos.isChecked) {
-                    SearchUtils.getWhatsappVideosDirectory()
-                } else if (chipAudio.isChecked) {
-                    SearchUtils.getWhatsappAudioDirectory()
-                } else {
-                    SearchUtils.getWhatsappDocDirectory()
+                when {
+                    chipImages.isChecked -> {
+                        SearchUtils.getWhatsappImagesDirectory()
+                    }
+                    chipVideos.isChecked -> {
+                        SearchUtils.getWhatsappVideosDirectory()
+                    }
+                    chipAudio.isChecked -> {
+                        SearchUtils.getWhatsappAudioDirectory()
+                    }
+                    else -> {
+                        SearchUtils.getWhatsappDocDirectory()
+                    }
                 }
             }
             else -> {
                 chipWhatsapp?.tag as String
             }
         }
-        return path
     }
 
     private fun getTelegramMediaPath(): String? {
-        val path = when {
+        return when {
             isAnyCategoryChecked() -> {
-                if (chipImages.isChecked) {
-                    SearchUtils.getTelegramImagesDirectory()
-                } else if (chipVideos.isChecked) {
-                    SearchUtils.getTelegramVideosDirectory()
-                } else if (chipAudio.isChecked) {
-                    SearchUtils.getTelegramAudioDirectory()
-                } else {
-                    SearchUtils.getTelegramDocsDirectory()
+                when {
+                    chipImages.isChecked -> {
+                        SearchUtils.getTelegramImagesDirectory()
+                    }
+                    chipVideos.isChecked -> {
+                        SearchUtils.getTelegramVideosDirectory()
+                    }
+                    chipAudio.isChecked -> {
+                        SearchUtils.getTelegramAudioDirectory()
+                    }
+                    else -> {
+                        SearchUtils.getTelegramDocsDirectory()
+                    }
                 }
             }
             else -> {
                 chipTelegram?.tag as String
             }
         }
-        return path
     }
 
     private fun isNoneChecked(): Boolean {
@@ -298,5 +332,25 @@ class SearchSuggestions(val view: View, private val fragment: SearchFragment, pr
     private fun isAnyCategoryChecked(): Boolean {
         return chipImages.isChecked || chipVideos.isChecked || chipDocuments.isChecked
                 || chipAudio.isChecked
+    }
+
+    fun removeLastCheckedChip() {
+        val size = checkedChipList.size
+        if (checkedChipList.isNotEmpty()) {
+            val chip = checkedChipList.removeAt(size - 1)
+            chip?.isChecked = false
+            Log.e(TAG, "removeLastCheckedChip:checkedChipList:${checkedChipList.size}, chip:$chip")
+        }
+    }
+
+    fun clearAllCheckedItems() {
+        clearAll = true
+        categoryChipGroup.clearCheck()
+        folderChipGroup.clearCheck()
+        chipRecent.isChecked = false
+        fileListViewModel.clearBackStack()
+        fragment.setEmptyList()
+        checkedChipList.clear()
+        clearAll = false
     }
 }

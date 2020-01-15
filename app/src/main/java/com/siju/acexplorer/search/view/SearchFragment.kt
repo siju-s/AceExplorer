@@ -45,6 +45,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 private const val DELAY_SCROLL_UPDATE_MS = 100L
+private const val TAG = "SearchFragment"
 
 class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextListener, FileListHelper {
 
@@ -154,6 +155,7 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
                     if (it.isEmpty()) {
                         searchSuggestions.showChipGroup()
                         showRecentSearch()
+                        clearAllCheckedItems()
                     } else {
                         showSearchList()
                     }
@@ -224,6 +226,7 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
             it?.apply {
                 searchSuggestions.showChipGroup()
                 showRecentSearch()
+                clearAllCheckedItems()
                 recentSearchAdapter.submitList(it)
             }
         })
@@ -233,7 +236,9 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
         searchViewModel.fetchRecentSearches()
     }
 
-    private val TAG = "SearchFragment"
+    private fun clearAllCheckedItems() {
+        searchSuggestions.clearAllCheckedItems()
+    }
 
     private fun hideRecentSearch() {
         Log.e(TAG, "hideRecentSearch")
@@ -382,17 +387,22 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
     }
 
     fun onBackPressed(): Boolean {
-        val result = fileListViewModel.onBackPress()
-        if (!result && fileListViewModel.hasNoBackStackEntry()) {
+        val backPressNotHandled = fileListViewModel.onBackPress()
+        if (!backPressNotHandled && fileListViewModel.hasNoBackStackEntry()) {
+            searchSuggestions.clearAllCheckedItems()
             filesList.adapter = adapter
             searchViewModel.search(null, searchView.query.toString())
             return false
-        } else if (result && searchView.query.isNotBlank()) {
+        } else if (backPressNotHandled && searchView.query.isNotBlank()) {
+            searchSuggestions.clearAllCheckedItems()
             searchSuggestions.showChipGroup()
             searchView.setQuery("", false)
             return false
         }
-        return result
+        else {
+            searchSuggestions.removeLastCheckedChip()
+        }
+        return backPressNotHandled
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
@@ -410,7 +420,6 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
         hideRecentSearch()
         filesList.adapter = fileListAdapter
     }
-
 
     fun setEmptyList() {
         fileListAdapter?.submitList(ArrayList<FileInfo>())

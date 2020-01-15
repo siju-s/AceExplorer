@@ -28,6 +28,8 @@ class BackStackInfo {
     private val backStack = ArrayList<BackStackModel>()
 
     fun addToBackStack(path: String?, category: Category) {
+        Log.e(TAG,
+                "addToBackStack--size=" + backStack.size + " Path=" + path + "Category=" + category)
         if (isPathNotInBackStack(category, path)) {
             backStack.add(BackStackModel(path, category))
             Log.e(TAG,
@@ -55,6 +57,7 @@ class BackStackInfo {
     }
 
     fun clearBackStack() {
+        Log.e(TAG, "clearBackStack")
         backStack.clear()
     }
 
