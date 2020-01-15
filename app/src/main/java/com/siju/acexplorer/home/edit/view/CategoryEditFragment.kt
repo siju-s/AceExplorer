@@ -16,6 +16,8 @@
 
 package com.siju.acexplorer.home.edit.view
 
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -74,7 +76,7 @@ class CategoryEditFragment : Fragment(), OnStartDragListener {
 
     private fun setupList() {
         setCategoryLayoutManager()
-        adapter = CategoryEditAdapter { item, pos ->
+        adapter = CategoryEditAdapter { item, _ ->
             onCategoryEdit(item)
         }
         categoryList.adapter = adapter
@@ -110,11 +112,12 @@ class CategoryEditFragment : Fragment(), OnStartDragListener {
     }
 
     private fun setCategoryLayoutManager() {
-        val gridColumns = 3
+        val gridColumns = getGridColumns()
+        Log.e("CategoryEdit", "gridCols:$gridColumns")
         val gridLayoutManager = GridLayoutManager(context, gridColumns)
         gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
-                return when(adapter.getItemViewType(position)) {
+                return when (adapter.getItemViewType(position)) {
                     CategoryEditAdapter.EDIT_ITEM_VIEW_TYPE_HEADER -> gridColumns
                     CategoryEditAdapter.EDIT_ITEM_VIEW_TYPE_ITEM -> 1
                     else -> 1
@@ -122,6 +125,12 @@ class CategoryEditFragment : Fragment(), OnStartDragListener {
             }
         }
         categoryList.layoutManager = gridLayoutManager
+    }
+
+    private fun getGridColumns(): Int {
+        val imageSize = resources.getDimensionPixelSize(R.dimen.home_library_width) +
+                2 * resources.getDimensionPixelSize(R.dimen.margin_16)
+        return Resources.getSystem().displayMetrics.widthPixels / imageSize
     }
 
     private fun setupViewModels() {
@@ -139,8 +148,7 @@ class CategoryEditFragment : Fragment(), OnStartDragListener {
                     categoryEditViewModel.setItemEditComplete()
                     adapter.submitData(it)
                     adapter.notifyDataSetChanged()
-                }
-                else {
+                } else {
                     adapter.submitData(it)
                 }
             }
@@ -170,6 +178,12 @@ class CategoryEditFragment : Fragment(), OnStartDragListener {
             R.id.action_cancel, android.R.id.home -> fragmentManager?.popBackStack()
         }
         return true
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        Log.e(this.javaClass.simpleName, "onConfigurationChanged:${newConfig.orientation}")
+        setCategoryLayoutManager()
     }
 
     companion object {

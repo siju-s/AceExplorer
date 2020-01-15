@@ -40,11 +40,12 @@ class CategoryEditAdapter(private val selectedStateListener: (CategoryEditModelI
         ItemTouchHelperAdapter {
 
     private var data = arrayListOf<CategoryEditModelImpl.DataItem>()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             EDIT_ITEM_VIEW_TYPE_HEADER -> HeaderViewHolder.from(parent)
             EDIT_ITEM_VIEW_TYPE_ITEM -> ViewHolder.from(parent)
-            else -> throw ClassCastException("Unknown viewType ${viewType}")
+            else -> throw ClassCastException("Unknown viewType $viewType")
         }
     }
 
@@ -82,10 +83,10 @@ class CategoryEditAdapter(private val selectedStateListener: (CategoryEditModelI
     override fun onMoved(fromPos: Int, toPos: Int) {
         val checkedCount = getCheckedItemCount()
 
-        if (fromPos <= checkedCount && toPos > checkedCount) {
+        if (checkedCount in fromPos until toPos) {
             onMovedFromSavedToOther(fromPos, toPos)
         }
-        else  if (fromPos > checkedCount && toPos <= checkedCount) {
+        else  if (checkedCount in toPos until fromPos) {
             onMovedFromOtherToSaved(fromPos, toPos)
         }
         Log.e("Adapter", "onMoved : from:$fromPos, to:$toPos")
