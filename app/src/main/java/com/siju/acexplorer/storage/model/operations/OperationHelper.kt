@@ -626,6 +626,9 @@ class OperationHelper(val context: Context) {
                 if (count > 0) {
                     OperationResultCode.SUCCESS
                 }
+                else if (count == 0 && operation == Operations.FAVORITE) {
+                    OperationResultCode.FAVORITE_EXISTS
+                }
                 else {
                     OperationResultCode.FAIL
                 }

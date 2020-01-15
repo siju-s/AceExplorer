@@ -50,6 +50,7 @@
         android:id="@+id/action_delete_fav"
         android:icon="@drawable/ic_library_favorite"
         android:orderInCategory="5"
+        android:visible="false"
         android:title="@string/delete_fav"
         app:showAsAction="ifRoom" />
 

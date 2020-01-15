@@ -466,8 +466,8 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     private fun handleOperationResult(operationResult: Pair<Operations, OperationAction>) {
         val action = operationResult.second
         val operation = operationResult.first
-        Log.e(TAG, "handleOperationResult: $operation, result:${action.operationResult.resultCode}")
         val context = context
+        Log.e(TAG, "handleOperationResult: $operation, result:${action.operationResult.resultCode}")
         context?.let {
             when (action.operationResult.resultCode) {
                 OperationResultCode.SUCCESS -> {
@@ -477,10 +477,17 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
                     dismissDialog()
                     showSAFDialog(context, action.operationData.arg1)
                 }
-                OperationResultCode.INVALID_FILE -> onOperationError(operation, context.getString(
-                        R.string.msg_error_invalid_name))
-                OperationResultCode.FILE_EXISTS -> onOperationError(operation, context.getString(
-                        R.string.msg_file_exists))
+                OperationResultCode.INVALID_FILE -> {
+                    onOperationError(operation, context.getString(
+                            R.string.msg_error_invalid_name))
+                }
+                OperationResultCode.FILE_EXISTS -> {
+                    onOperationError(operation, context.getString(
+                            R.string.msg_file_exists))
+                }
+                OperationResultCode.FAVORITE_EXISTS -> {
+                    onOperationError(operation, context.getString(R.string.fav_exists))
+                }
                 OperationResultCode.FAIL -> {
                     onOperationFailed(context)
                 }
@@ -656,15 +663,14 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         DialogHelper.showCompressDialog(context, files, compressDialogListener)
     }
 
-    private fun onOperationError(operation: Operations,
-                                 message: String) {
+    private fun onOperationError(operation: Operations, message: String) {
         when (operation) {
             Operations.FOLDER_CREATION, Operations.FILE_CREATION, Operations.EXTRACT, Operations.RENAME, Operations.COMPRESS -> {
                 val editText = dialog?.findViewById<EditText>(R.id.editFileName)
                 editText?.requestFocus()
                 editText?.error = message
             }
-            Operations.HIDE -> Toast.makeText(
+            Operations.HIDE, Operations.FAVORITE -> Toast.makeText(
                     context, message, Toast.LENGTH_SHORT).show()
             else -> {
             }

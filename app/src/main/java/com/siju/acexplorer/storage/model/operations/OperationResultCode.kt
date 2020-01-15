@@ -5,5 +5,6 @@ enum class OperationResultCode(val code : Int) {
     SAF(1),
     FAIL(-1),
     FILE_EXISTS(-2),
-    INVALID_FILE(-3)
+    INVALID_FILE(-3),
+    FAVORITE_EXISTS(-4)
 }
