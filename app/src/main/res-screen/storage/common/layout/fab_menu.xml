@@ -21,7 +21,7 @@
         fab:fab_addButtonColorPressed="@color/colorPrimaryDark"
         fab:fab_addButtonPlusIconColor="@color/white"
         fab:fab_addButtonStrokeVisible="false"
-        fab:fab_labelStyle="@style/menu_labels_style"
+        fab:fab_labelStyle="@style/FabMenuLabels"
         fab:fab_labelsPosition="left">
 
 

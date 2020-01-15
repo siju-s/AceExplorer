@@ -10,8 +10,8 @@
         <item name="rippleColor">@android:color/white</item>
     </style>
 
-    <style name="menu_labels_style">
-        <item name="background">@drawable/fab_background</item>
+    <style name="FabMenuLabels">
+        <item name="android:background">@drawable/fab_background</item>
         <item name="android:textColor">@color/fabButtonText</item>
     </style>
 
