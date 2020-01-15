@@ -162,9 +162,11 @@ class FilesList(private val fileListHelper: FileListHelper,
                         fileListHelper.handleItemClick(fileInfo, pos)
                     }
                     R.id.imageButtonShare -> {
+                        peekAndPop?.endPeekMode()
                         ShareHelper.shareMedia(view.context, fileInfo.category, null, fileInfo.filePath)
                     }
                     R.id.imageButtonInfo -> {
+                        peekAndPop?.endPeekMode()
                         InfoFragment.newInstance(fileListHelper.getActivityInstance().supportFragmentManager,
                                 fileInfo, UriHelper.createContentUri(view.context, fileInfo.filePath))
                     }

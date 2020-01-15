@@ -85,7 +85,7 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
         if (position >= fileList.size || position == INVALID_POS) {
             return
         }
-        val category: Category = fileList[position].category
+        var category: Category = fileList[position].category
         val view = peekAndPop.peekView
         Log.d(TAG, "loadPeekView: category:$category")
         var pos = position
@@ -97,6 +97,7 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
         }
 
         this.peekPos = pos
+        category = fileList[pos].category
         changePeekButtonsState(pos, view)
         val thumb: ImageView = view.findViewById(R.id.imagePeekView)
         val autoPlayView: AutoPlayContainer = view.findViewById(R.id.autoPlayView)
