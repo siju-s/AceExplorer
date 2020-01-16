@@ -32,7 +32,7 @@ private const val BUFFER_SIZE_KB = 16384
 
 object FileOperations {
 
-    fun renameFolder(source: File, target: File): Boolean {
+    fun renameFile(source: File, target: File): Boolean {
         // First try the normal rename.
         if (rename(source, target)) {
             return true
@@ -216,8 +216,14 @@ object FileOperations {
 
     private fun rename(file: File, newFile: File): Boolean {
         if (file.parentFile.canWrite()) {
-            Logger.log(TAG, "Rename--canWrite=" + true)
-            return file.renameTo(newFile)
+            Logger.log(TAG, "file:$file, newFIle:$newFile")
+            return try {
+                file.renameTo(newFile)
+            } catch (exception : SecurityException) {
+                false
+            } catch (exception : NullPointerException) {
+                false
+            }
         }
         return false
     }

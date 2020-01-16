@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
 import com.siju.acexplorer.common.types.FileInfo
+import com.siju.acexplorer.helper.MediaScannerHelper
 import com.siju.acexplorer.home.model.FavoriteHelper
 import com.siju.acexplorer.main.model.helper.FileOperations
 import com.siju.acexplorer.main.model.helper.FileUtils
@@ -125,7 +126,7 @@ class OperationHelper(val context: Context) {
             parent + File.separator + newName
         }
         val newFile = File(newFilePath)
-        var result = FileOperations.renameFolder(oldFile, newFile)
+        var result = FileOperations.renameFile(oldFile, newFile)
         val fileCreated = !oldFile.exists() && newFile.exists()
         if (!result) {
             if (!fileCreated && RootUtils.isRooted(context)) {
@@ -173,8 +174,12 @@ class OperationHelper(val context: Context) {
         else {
             val oldFile = File(filePath)
             val newFile = File(newFilePath)
-            val result = FileOperations.renameFolder(oldFile, newFile)
-              Log.e("OperationHelper", "renameFile: result : $result")
+            val result = FileOperations.renameFile(oldFile, newFile)
+            if (result && MediaScannerHelper.isMediaScanningRequired(newFile)) {
+                MediaScannerHelper.scanFiles(context, arrayOf(filePath))
+                MediaScannerHelper.scanFiles(context, arrayOf(newFilePath))
+            }
+            Log.e("OperationHelper", "renameFile: result : $result")
             val resultCode = if (result) OperationResultCode.SUCCESS else OperationResultCode.FAIL
             fileOperationCallback.onOperationResult(operation, getOperationAction(
                     OperationResult(resultCode, 1)))
