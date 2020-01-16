@@ -293,7 +293,13 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
             val filesToShare = arrayListOf<FileInfo>()
             val selectedItems = multiSelectionHelper.selectedItems
             for (i in 0 until selectedItems.size()) {
-                val fileInfo = viewModel.fileData.value?.get(selectedItems.keyAt(i))
+                val index = selectedItems.keyAt(i)
+                val fileInfo =  if (RecentTimeHelper.isRecentTimeLineCategory(category)) {
+                    RecentDataConverter.getRecentItemList(viewModel.recentFileData.value?.second)[index]
+                }
+                else {
+                    viewModel.fileData.value?.get(index)
+                }
                 if (fileInfo?.isDirectory == false) {
                     filesToShare.add(fileInfo)
                 }
@@ -309,7 +315,13 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
             val filesToDelete = arrayListOf<FileInfo>()
             val selectedItems = multiSelectionHelper.selectedItems
             for (i in 0 until selectedItems.size()) {
-                val fileInfo = viewModel.fileData.value?.get(selectedItems.keyAt(i))
+                val index = selectedItems.keyAt(i)
+                val fileInfo =  if (RecentTimeHelper.isRecentTimeLineCategory(category)) {
+                    RecentDataConverter.getRecentItemList(viewModel.recentFileData.value?.second)[index]
+                }
+                else {
+                    viewModel.fileData.value?.get(index)
+                }
                 fileInfo?.let { filesToDelete.add(it) }
             }
             viewModel.endActionMode()
@@ -320,7 +332,13 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
     private fun onInfoClicked() {
         if (hasSelectedItems()) {
             Analytics.getLogger().operationClicked(Analytics.Logger.EV_PROPERTIES)
-            val fileInfo = viewModel.fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
+            val index = multiSelectionHelper.selectedItems.keyAt(0)
+            val fileInfo =  if (RecentTimeHelper.isRecentTimeLineCategory(category)) {
+                RecentDataConverter.getRecentItemList(viewModel.recentFileData.value?.second)[index]
+            }
+            else {
+                viewModel.fileData.value?.get(index)
+            }
             viewModel.endActionMode()
             fileInfo?.let {
                 _singleOpData.value = Pair(Operations.INFO, fileInfo)
@@ -331,7 +349,13 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
     private fun onHideClicked() {
         if (hasSelectedItems()) {
             Analytics.getLogger().operationClicked(Analytics.Logger.EV_HIDE)
-            val fileInfo = viewModel.fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
+            val index = multiSelectionHelper.selectedItems.keyAt(0)
+            val fileInfo =  if (RecentTimeHelper.isRecentTimeLineCategory(category)) {
+                RecentDataConverter.getRecentItemList(viewModel.recentFileData.value?.second)[index]
+            }
+            else {
+                viewModel.fileData.value?.get(index)
+            }
             viewModel.endActionMode()
             fileInfo?.let {
                 _singleOpData.value = Pair(Operations.HIDE, fileInfo)
@@ -406,7 +430,13 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
     private fun onEditClicked() {
         if (hasSelectedItems()) {
             Analytics.getLogger().operationClicked(Analytics.Logger.EV_RENAME)
-            val fileInfo = viewModel.fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
+            val index = multiSelectionHelper.selectedItems.keyAt(0)
+            val fileInfo =  if (RecentTimeHelper.isRecentTimeLineCategory(category)) {
+                RecentDataConverter.getRecentItemList(viewModel.recentFileData.value?.second)[index]
+            }
+            else {
+                viewModel.fileData.value?.get(index)
+            }
             viewModel.endActionMode()
             fileInfo?.let {
                 _singleOpData.value = Pair(Operations.RENAME, fileInfo)
