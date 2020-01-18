@@ -328,7 +328,13 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
     }
 
     override fun handleItemClick(fileInfo: FileInfo, position: Int) {
-        fileListViewModel.handleItemClick(fileInfo, position)
+        if (searchSuggestions.isNoneChecked()) {
+            fileListViewModel.handleItemClick(fileInfo, position)
+        }
+        else {
+            fileListViewModel.clearBackStack()
+            fileListViewModel.handleItemClick(fileInfo, position)
+        }
     }
 
     override fun handleLongItemClick(fileInfo: FileInfo, second: Int) {
@@ -400,7 +406,7 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
             return false
         }
         else {
-            searchSuggestions.removeLastCheckedChip()
+            searchSuggestions.clearAllCheckedItems()
         }
         return backPressNotHandled
     }

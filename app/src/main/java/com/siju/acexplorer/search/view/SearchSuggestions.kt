@@ -176,6 +176,7 @@ class SearchSuggestions(val view: View, private val fragment: SearchFragment, pr
             fileListViewModel.clearBackStack()
             checkedChipList.clear()
         } else {
+            fileListViewModel.clearBackStack()
             fileListViewModel.loadData(chipInfo.path, chipInfo.category)
         }
     }
@@ -320,7 +321,7 @@ class SearchSuggestions(val view: View, private val fragment: SearchFragment, pr
         }
     }
 
-    private fun isNoneChecked(): Boolean {
+    fun isNoneChecked(): Boolean {
         return !chipRecent.isChecked && !isAnyFolderItemChecked() && !isAnyCategoryChecked()
     }
 
@@ -332,15 +333,6 @@ class SearchSuggestions(val view: View, private val fragment: SearchFragment, pr
     private fun isAnyCategoryChecked(): Boolean {
         return chipImages.isChecked || chipVideos.isChecked || chipDocuments.isChecked
                 || chipAudio.isChecked
-    }
-
-    fun removeLastCheckedChip() {
-        val size = checkedChipList.size
-        if (checkedChipList.isNotEmpty()) {
-            val chip = checkedChipList.removeAt(size - 1)
-            chip?.isChecked = false
-            Log.e(TAG, "removeLastCheckedChip:checkedChipList:${checkedChipList.size}, chip:$chip")
-        }
     }
 
     fun clearAllCheckedItems() {
