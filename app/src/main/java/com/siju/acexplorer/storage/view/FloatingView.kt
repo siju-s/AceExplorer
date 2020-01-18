@@ -22,7 +22,7 @@ class FloatingView(view: View,
     private lateinit var fabCreateFile: FloatingActionButton
     private lateinit var fabOperation: FloatingActionButton
 
-    internal val isFabExpanded: Boolean
+    val isFabExpanded: Boolean
         get() = fabCreateMenu.isExpanded
 
     init {

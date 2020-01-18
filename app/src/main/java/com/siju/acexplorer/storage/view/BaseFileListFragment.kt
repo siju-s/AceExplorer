@@ -825,6 +825,10 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
                 filesList.endPeekMode()
                 false
             }
+            floatingView.isFabExpanded -> {
+                floatingView.collapseFab()
+                false
+            }
             menuControls.isSearchActive() -> {
                 menuControls.endSearch()
                 false
