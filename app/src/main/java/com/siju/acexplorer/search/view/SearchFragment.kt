@@ -157,6 +157,7 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
                         showRecentSearch()
                         clearAllCheckedItems()
                     } else {
+                        hideRecentSearch()
                         showSearchList()
                     }
                     adapter.addHeaderAndSubmitList(it)

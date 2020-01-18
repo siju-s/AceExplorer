@@ -15,7 +15,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 private const val TAG = "SearchViewModel"
-private const val MIN_CHAR_QUERY = 3
+private const val MIN_CHAR_QUERY = 2
 
 class SearchViewModel(private val searchModel: SearchModel) : ViewModel() {
 

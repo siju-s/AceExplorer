@@ -23,7 +23,7 @@ class SearchModelImpl(val context: Context) : SearchModel, SearchDataFetcher.Sea
     private val searchDataFetcher = SearchDataFetcher(this)
 
     override fun searchData(path : String, query : String, category: Category) {
-        searchDataFetcher.fetchData(context, path, category, query)
+        searchDataFetcher.fetchData(path, query)
     }
     override fun onSearchResultFound(result: ArrayList<SearchDataFetcher.SearchDataItem>) {
        _searchResult.postValue(result)

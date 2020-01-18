@@ -1,7 +1,5 @@
 package com.siju.acexplorer.search.model
 
-import android.content.Context
-import android.util.Log
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.data.FileDataFetcher
 import com.siju.acexplorer.main.model.groups.Category
@@ -9,11 +7,14 @@ import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.helper.FileUtils.EXT_APK
 import com.siju.acexplorer.main.model.helper.RootHelper
 import java.io.File
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class SearchDataFetcher(private val searchResultCallback: SearchResultCallback) {
     private var searchHeaderMap = hashMapOf<Int, ArrayList<FileInfo>>()
 
-    fun fetchData(context: Context, path: String?, category: Category, query: String) {
+    fun fetchData(path: String?, query: String) {
         searchHeaderMap = HashMap()
         searchFile(path, query)
     }
@@ -73,7 +74,7 @@ class SearchDataFetcher(private val searchResultCallback: SearchResultCallback) 
         }
         val searchData = ArrayList<SearchDataItem>()
         for ((headerType, itemList) in searchHeaderMap) {
-            Log.e("SearchDataFetcher","map: $headerType = ${itemList.size}")
+//            Log.e("SearchDataFetcher","map: $headerType = ${itemList.size}")
             searchData.add(SearchDataItem.Header(headerType, itemList.size))
             for (item in itemList) {
                 searchData.add(SearchDataItem.Item(item))
@@ -111,7 +112,7 @@ class SearchDataFetcher(private val searchResultCallback: SearchResultCallback) 
     }
 
     private fun isSearchResultFound(file: File, query: String) =
-            file.name.toLowerCase().contains(query.toLowerCase())
+            file.name.toLowerCase(Locale.getDefault()).contains(query.toLowerCase(Locale.getDefault()))
 
     interface SearchResultCallback {
         fun onSearchResultFound(result: ArrayList<SearchDataItem>)

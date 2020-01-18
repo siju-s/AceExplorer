@@ -336,6 +336,9 @@ class SearchSuggestions(val view: View, private val fragment: SearchFragment, pr
     }
 
     fun clearAllCheckedItems() {
+        if (isNoneChecked()) {
+            return
+        }
         clearAll = true
         categoryChipGroup.clearCheck()
         folderChipGroup.clearCheck()
