@@ -13,8 +13,6 @@ import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.model.groups.CategoryHelper.checkIfAnyMusicCategory
-import com.siju.acexplorer.main.model.groups.CategoryHelper.isRecentCategory
-import com.siju.acexplorer.main.model.groups.CategoryHelper.isRecentGenericCategory
 import com.siju.acexplorer.main.model.groups.CategoryHelper.isSortOrActionModeUnSupported
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.root.RootUtils
@@ -177,9 +175,8 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
 
     private fun setupMenuItemVisibility() {
         Log.e(TAG, "setupSortVisibility:$category")
-        if (isSortOrActionModeUnSupported(category) || isRecentGenericCategory(
-                        category) || isRecentCategory(category)) {
-            searchItem.isVisible = false
+        if (isSortOrActionModeUnSupported(category)) {
+            searchItem.isVisible = true
             sortItem.isVisible = false
         } else if (Category.LARGE_FILES == category) {
             searchItem.isVisible = true
