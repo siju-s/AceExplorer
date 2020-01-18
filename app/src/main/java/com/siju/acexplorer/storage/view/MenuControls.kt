@@ -154,9 +154,9 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
                 searchView = searchItem.actionView as SearchView
             }
             sortItem = menu.findItem(R.id.action_sort)
+            hiddenMenuItem = menu.findItem(R.id.action_hidden)
             setupMenuItemVisibility()
             setupSearchView()
-            hiddenMenuItem = menu.findItem(R.id.action_hidden)
             setHiddenCheckedState(fragment.shouldShowHiddenFiles())
             toggleViewModeMenuItemState(viewMode, menu)
         }
@@ -176,7 +176,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     }
 
     private fun setupMenuItemVisibility() {
-        Log.e(TAG, "setupSortVisibility:$category")
+        Log.e(TAG, "setupMenuItemVisibility:$category")
         if (isSortOrActionModeUnSupported(category)) {
             searchItem.isVisible = true
             sortItem.isVisible = false
