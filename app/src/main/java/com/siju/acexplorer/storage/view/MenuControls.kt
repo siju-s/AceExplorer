@@ -38,6 +38,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     private lateinit var extractItem: MenuItem
     private lateinit var permissionItem: MenuItem
     private lateinit var deleteFavItem: MenuItem
+    private lateinit var deleteItem: MenuItem
 
     private var searchView: SearchView? = null
     private var hiddenMenuItem: MenuItem? = null
@@ -90,6 +91,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
         shareItem = menu.findItem(R.id.action_share)
         permissionItem = menu.findItem(R.id.action_permissions)
         deleteFavItem = menu.findItem(R.id.action_delete_fav)
+        deleteItem = menu.findItem(R.id.action_delete)
     }
 
     fun onEndActionMode() {
@@ -248,9 +250,10 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
                 extractItem.isVisible = false
                 permissionItem.isVisible = false
                 hideItem.isVisible = false
-            }
-            category == Category.FAVORITES -> {
-                deleteFavItem.isVisible = true
+                if (category == Category.FAVORITES)  {
+                    deleteFavItem.isVisible = true
+                    deleteItem.isVisible = false
+                }
             }
         }
     }
@@ -274,6 +277,11 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
         when {
             category == Category.APP_MANAGER -> {
                 toggleAppManagerMenuVisibility()
+            }
+
+            category == Category.FAVORITES -> {
+                deleteFavItem.isVisible = true
+                deleteItem.isVisible = false
             }
 
             checkIfAnyMusicCategory(category) -> {
