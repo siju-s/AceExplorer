@@ -22,6 +22,7 @@ import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.extensions.inflateLayout
+import com.siju.acexplorer.helper.KeyboardHelper
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.UriHelper
 import com.siju.acexplorer.main.model.helper.ViewHelper
@@ -329,6 +330,7 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
     }
 
     override fun handleItemClick(fileInfo: FileInfo, position: Int) {
+        KeyboardHelper.hideKeyboard(searchView)
         if (searchSuggestions.isNoneChecked()) {
             fileListViewModel.handleItemClick(fileInfo, position)
         }
