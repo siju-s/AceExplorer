@@ -23,11 +23,11 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.siju.acexplorer.R
 import com.siju.acexplorer.extensions.inflateLayout
-import kotlinx.android.synthetic.main.toolbar_settings.*
 
 
 class SettingsFragment private constructor(): Fragment() {
@@ -61,7 +61,8 @@ class SettingsFragment private constructor(): Fragment() {
     }
 
     private fun setupActionBar() {
-        toolbar.title = resources.getString(R.string.action_settings)
+        val toolbar = view?.findViewById<Toolbar>(R.id.toolbar)
+        toolbar?.title = resources.getString(R.string.action_settings)
         val activity = activity as AppCompatActivity
         activity.setSupportActionBar(toolbar)
     }
@@ -76,15 +77,6 @@ class SettingsFragment private constructor(): Fragment() {
         activity.supportActionBar?.setHomeButtonEnabled(false)
         activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
     }
-
-
-//    override fun onSupportNavigateUp(): Boolean {
-//        return if (supportFragmentManager.popBackStackImmediate()) {
-//            true
-//        }
-//        else super.onSupportNavigateUp()
-//    }
-
 
     private fun getSupportFragmentManager() = activity?.supportFragmentManager
 

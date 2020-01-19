@@ -21,7 +21,7 @@
 
     <include
         android:id="@+id/appbar"
-        layout="@layout/toolbar_settings" />
+        layout="@layout/app_bar" />
 
     <FrameLayout
         android:id="@+id/frameSettings"
