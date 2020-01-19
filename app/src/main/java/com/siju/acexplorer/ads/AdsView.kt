@@ -23,11 +23,12 @@ class AdsView(private val view: ViewGroup) : LifecycleObserver {
         get() = view.findViewById(R.id.adviewLayout)
 
     fun showAds() {
+        Log.e(this.javaClass.simpleName, "showAds")
         if (adView == null) {
             createAd()
         }
         else {
-            (adView?.parent as ViewGroup).removeAllViews()
+            adContainer.removeAllViews()
         }
         if (adView?.isLoading == false) {
             loadAd()
@@ -51,6 +52,7 @@ class AdsView(private val view: ViewGroup) : LifecycleObserver {
     }
 
     fun hideAds() {
+        Log.e(this.javaClass.simpleName, "hideAds")
         val adviewLayout = adContainer
         if (adviewLayout.childCount != 0) {
             adviewLayout.removeView(adView)

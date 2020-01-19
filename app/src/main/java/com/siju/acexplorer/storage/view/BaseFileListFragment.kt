@@ -32,6 +32,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -85,14 +86,13 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     private lateinit var navigationView: NavigationView
     private lateinit var mainViewModel: MainViewModel
     private lateinit var fileListViewModel: FileListViewModel
-    private lateinit var adView: AdsView
     private lateinit var menuControls: MenuControls
 
-    private var showNavigation = true
-
+    private var adView: AdsView? = null
     private var categoryMenuHelper: CategoryMenuHelper? = null
     private var path: String? = null
     private var category = Category.FILES
+    private var showNavigation = true
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -104,11 +104,15 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         super.onActivityCreated(savedInstanceState)
         Log.e(TAG, "onActivityCreated:$this")
         getArgs()
-        adView = AdsView(main_content)
+        val view = view
+        val container = view?.findViewById<CoordinatorLayout>(R.id.main_content)
+        container?.let {
+            adView = AdsView(it)
+        }
         setupToolbar()
         setupViewModels()
 
-        val view = view
+
         view?.let {
             val viewMode = fileListViewModel.getViewMode(category)
             filesList = FilesList(this, view, viewMode, category)
@@ -276,6 +280,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
                 when (it) {
                     ActionModeState.STARTED -> {
                         floatingView.hideFab()
+                        hideAds()
                         menuControls.onStartActionMode()
                     }
                     ActionModeState.ENDED -> {
@@ -284,6 +289,9 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
                         }
                         menuControls.onEndActionMode()
                         filesList.onEndActionMode()
+                        if (mainViewModel.premiumLiveData.value?.entitled == false) {
+                            showAds()
+                        }
                     }
                 }
             }
@@ -788,11 +796,11 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     }
 
     private fun showAds() {
-        adView.showAds()
+        adView?.showAds()
     }
 
     private fun hideAds() {
-        adView.hideAds()
+        adView?.hideAds()
     }
 
     override fun handleItemClick(fileInfo: FileInfo, position: Int) {
