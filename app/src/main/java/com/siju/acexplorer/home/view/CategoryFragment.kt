@@ -13,6 +13,7 @@ import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import com.siju.acexplorer.R
 import com.siju.acexplorer.extensions.inflateLayout
+import com.siju.acexplorer.home.types.CategoryData
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.search.helper.SearchUtils
@@ -54,6 +55,7 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
     }
 
     private fun setupUI(view: View) {
+        Log.e("CategoryFrag", "setupUI")
         setupToolbar()
         viewPager = view.findViewById(R.id.categoryPager)
         viewPager.addOnPageChangeListener(pageChangeListener)
@@ -83,7 +85,7 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
     }
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
-        val fragment = pagerAdapter.getItem(viewPager.currentItem)
+        val fragment = pagerAdapter.getFragment(viewPager.currentItem)
         if (fragment is FileListFragment) {
             fragment.onMenuItemClick(item)
             return true
@@ -134,19 +136,14 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
             Category.CAMERA_GENERIC -> Category.CAMERA
             else -> null
         }
-
-        var fragment1 = FileListFragment.newInstance(path, category, false)
-        allCategory?.let {
-            fragment1 = FileListFragment.newInstance(path, allCategory, false)
-        }
-        fragment1.setCategoryMenuHelper(this)
-
-        val fragment2 = FileListFragment.newInstance(path, category, false)
-        fragment2.setCategoryMenuHelper(this)
-
         context?.let { context ->
-            pagerAdapter.addFragment(fragment1, context.getString(R.string.category_all))
-            pagerAdapter.addFragment(fragment2, getTitle(context, category))
+            if (allCategory == null) {
+                pagerAdapter.addData(CategoryData( path, category, context.getString(R.string.category_all), this))
+            }
+            else {
+                pagerAdapter.addData(CategoryData( path, allCategory, context.getString(R.string.category_all), this))
+            }
+            pagerAdapter.addData(CategoryData( path, category, getTitle(context, category), this))
         }
     }
 
@@ -166,40 +163,26 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
     }
 
     private fun addFolderCategoryFragments(path: String?, category: Category) {
-        val fragment1 = FileListFragment.newInstance(path, category, false)
-        val fragment2 = FileListFragment.newInstance(getSubDirImagePath(path, Category.SEARCH_FOLDER_IMAGES), Category.SEARCH_FOLDER_IMAGES, false)
-        val fragment3 = FileListFragment.newInstance(getSubDirImagePath(path, Category.SEARCH_FOLDER_VIDEOS), Category.SEARCH_FOLDER_VIDEOS, false)
-        val fragment4 = FileListFragment.newInstance(getSubDirImagePath(path, Category.SEARCH_FOLDER_AUDIO), Category.SEARCH_FOLDER_AUDIO, false)
-        val fragment5 = FileListFragment.newInstance(getSubDirImagePath(path, Category.SEARCH_FOLDER_DOCS), Category.SEARCH_FOLDER_DOCS, false)
-
-        fragment1.setCategoryMenuHelper(this)
-        fragment2.setCategoryMenuHelper(this)
-        fragment3.setCategoryMenuHelper(this)
-        fragment4.setCategoryMenuHelper(this)
-        fragment5.setCategoryMenuHelper(this)
-
         context?.let { context ->
-            pagerAdapter.addFragment(fragment1, context.getString(R.string.category_all))
-            pagerAdapter.addFragment(fragment2, getTitle(context, Category.SEARCH_FOLDER_IMAGES))
-            pagerAdapter.addFragment(fragment3, getTitle(context, Category.SEARCH_FOLDER_VIDEOS))
-            pagerAdapter.addFragment(fragment4, getTitle(context, Category.SEARCH_FOLDER_AUDIO))
-            pagerAdapter.addFragment(fragment5, getTitle(context, Category.SEARCH_FOLDER_DOCS))
+            pagerAdapter.addData(CategoryData( path, category, context.getString(R.string.category_all), this))
+            pagerAdapter.addData(CategoryData( getSubDirImagePath(path, Category.SEARCH_FOLDER_IMAGES),
+                    Category.SEARCH_FOLDER_IMAGES, getTitle(context, Category.SEARCH_FOLDER_IMAGES), this))
+            pagerAdapter.addData(CategoryData( getSubDirImagePath(path, Category.SEARCH_FOLDER_VIDEOS),
+                    Category.SEARCH_FOLDER_VIDEOS, getTitle(context, Category.SEARCH_FOLDER_VIDEOS), this))
+            pagerAdapter.addData(CategoryData( getSubDirImagePath(path, Category.SEARCH_FOLDER_AUDIO),
+                    Category.SEARCH_FOLDER_AUDIO, getTitle(context, Category.SEARCH_FOLDER_AUDIO), this))
+            pagerAdapter.addData(CategoryData( getSubDirImagePath(path, Category.SEARCH_FOLDER_DOCS),
+                    Category.SEARCH_FOLDER_DOCS, getTitle(context, Category.SEARCH_FOLDER_DOCS), this))
         }
     }
 
     private fun addDocCategoryFragments(path: String?, category: Category) {
-        val fragment1 = FileListFragment.newInstance(path, category, false)
-        val fragment2 = FileListFragment.newInstance(path, Category.PDF, false)
-        val fragment3 = FileListFragment.newInstance(path, Category.DOCS_OTHER, false)
-
-        fragment1.setCategoryMenuHelper(this)
-        fragment2.setCategoryMenuHelper(this)
-        fragment3.setCategoryMenuHelper(this)
-
         context?.let { context ->
-            pagerAdapter.addFragment(fragment1, context.getString(R.string.category_all))
-            pagerAdapter.addFragment(fragment2, getTitle(context, Category.PDF))
-            pagerAdapter.addFragment(fragment3, getTitle(context, Category.DOCS_OTHER))
+            pagerAdapter.addData(CategoryData( path, category, context.getString(R.string.category_all), this))
+            pagerAdapter.addData(CategoryData( path,
+                    Category.PDF, getTitle(context, Category.PDF), this))
+            pagerAdapter.addData(CategoryData( path,
+                    Category.DOCS_OTHER, getTitle(context, Category.DOCS_OTHER), this))
         }
     }
 
@@ -231,7 +214,7 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
     }
 
     fun onBackPressed(): Boolean {
-        val fragment = pagerAdapter.getItem(viewPager.currentItem)
+        val fragment = pagerAdapter.getFragment(viewPager.currentItem)
         if (fragment is FileListFragment) {
             return fragment.onBackPressed()
         }

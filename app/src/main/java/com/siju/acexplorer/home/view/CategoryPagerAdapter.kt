@@ -1,20 +1,28 @@
 package com.siju.acexplorer.home.view
 
+import android.util.Log
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
+import com.siju.acexplorer.home.types.CategoryData
+import com.siju.acexplorer.storage.view.FileListFragment
 
 class CategoryPagerAdapter(fragmentManager: FragmentManager) : FragmentStatePagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
-    private val fragments = ArrayList<Fragment>()
-    private val titleList = ArrayList<String>()
+
+    private val categoryDataList = arrayListOf<CategoryData>()
+    private val fragmentMap = hashMapOf<Int, Fragment>()
 
     override fun getItem(position: Int): Fragment {
-        return fragments[position]
+        val  data = categoryDataList[position]
+        val fragment = FileListFragment.newInstance(data.path, data.category, false)
+        Log.e("Adapter", "getITem:pos:$position, frag:$fragment")
+        fragment.setCategoryMenuHelper(data.categoryMenuHelper)
+        return fragment
     }
 
-    fun addFragment(fragment: Fragment, title: String) {
-        fragments.add(fragment)
-        titleList.add(title)
+    fun addData(categoryData: CategoryData) {
+        categoryDataList.add(categoryData)
     }
 
     /**
@@ -23,11 +31,28 @@ class CategoryPagerAdapter(fragmentManager: FragmentManager) : FragmentStatePage
      * @return
      */
     override fun getPageTitle(position: Int): CharSequence? {
-        return titleList[position]
+        return categoryDataList[position].title
     }
 
     override fun getCount(): Int {
-        return fragments.size
+        return categoryDataList.size
+    }
+
+    fun getFragment(position: Int) : Fragment? {
+        return fragmentMap[position]
+    }
+
+    override fun instantiateItem(container: ViewGroup, position: Int): Any {
+        val fragment =  super.instantiateItem(container, position)
+        Log.e("Adapter", "instantiateItem:$position")
+        fragmentMap[position] = fragment as Fragment
+        return fragment
+    }
+
+    override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+        super.destroyItem(container, position, `object`)
+        Log.e("Adapter", "destroyItem:$position")
+        fragmentMap.remove(position)
     }
 
 }

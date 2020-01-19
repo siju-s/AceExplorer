@@ -102,7 +102,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
+        Log.e(TAG, "onActivityCreated:$this")
         getArgs()
         adView = AdsView(main_content)
         setupToolbar()
@@ -167,6 +167,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     }
 
     private fun setupViewModels() {
+        Log.e(TAG, "setupViewModels:$this")
         val activity = requireNotNull(activity)
         mainViewModel = ViewModelProviders.of(activity).get(MainViewModel::class.java)
         val viewModelFactory = FileListViewModelFactory(StorageModelImpl(AceApplication.appContext))
@@ -176,7 +177,6 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
 
     private fun initObservers() {
         mainViewModel.permissionStatus.observe(viewLifecycleOwner, Observer { permissionStatus ->
-            Log.e(TAG, "permissionStatus state:$permissionStatus")
             when (permissionStatus) {
                 is PermissionHelper.PermissionState.Granted -> {
                     if (isAppManager(category)) {
@@ -191,7 +191,6 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         })
 
         mainViewModel.premiumLiveData.observe(viewLifecycleOwner, Observer {
-            Log.e(TAG, "Premium state:$it")
             it?.apply {
                 if (it.entitled) {
                     hideAds()
@@ -819,6 +818,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     override fun getActivityInstance() : AppCompatActivity = this.activity as AppCompatActivity
 
     fun onBackPressed() : Boolean {
+        Log.e(TAG, "onBackPressed:$this")
         val isPeekMode = filesList.isPeekMode()
         return when {
             isPeekMode -> {
@@ -907,6 +907,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         }
 
         private fun navigateToSearchScreen() {
+            Log.e(TAG, "navigateToSearchScreen:$this")
             mainViewModel.navigateToSearch.value = true
         }
 
