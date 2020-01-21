@@ -132,6 +132,7 @@ dependencies {
     implementation deps.firebase.core
     implementation deps.firebase.ads
     implementation deps.firebase.invites
+    implementation deps.firebase.analytics
 
     implementation deps.billing
     implementation deps.gson

@@ -1,7 +1,7 @@
 // Auto generate VERSION_CODE & VERSION_NAME
 def versionPropsFile = file("${projectDir}/version.properties")
 def code = 1
-def versionMajor = 2
+def versionMajor = 3
 def versionMinor = 0
 def versionPatch = 0
 
@@ -9,6 +9,7 @@ def version
 def devReleaseTask = "assembledevRelease"
 def prodReleaseTask = "assembleprodRelease"
 def prodReleaseTaskStudio = "assembleProdRelease"
+def prodReleaseTaskBundle = "bundleProdRelease"
 def devReleaseTaskStudio = "assembleDevRelease"
 def genericRelease = "assembleRelease"
 
@@ -20,7 +21,8 @@ if (versionPropsFile.canRead()) {
     def isRelease = false
     for (String item : runTasks) {
         if (item.contains(devReleaseTask) || item.contains(prodReleaseTask) || item.contains(genericRelease) ||
-                item.contains(devReleaseTaskStudio) || item.contains(prodReleaseTaskStudio)) {
+                item.contains(devReleaseTaskStudio) || item.contains(prodReleaseTaskStudio) ||
+                item.contains(prodReleaseTaskBundle)) {
             isRelease = true
             break
         }

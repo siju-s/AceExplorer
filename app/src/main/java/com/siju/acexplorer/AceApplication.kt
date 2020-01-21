@@ -21,6 +21,7 @@ import android.content.Context
 import android.os.StrictMode
 
 import com.crashlytics.android.Crashlytics
+import com.crashlytics.android.core.CrashlyticsCore
 import com.kobakei.ratethisapp.RateThisApp
 import com.squareup.leakcanary.LeakCanary
 
@@ -43,9 +44,12 @@ class AceApplication : Application() {
     }
 
     private fun initCrashlytics() {
-        if (BuildConfig.ENABLE_CRASHLYTICS) {
-            Fabric.with(this, Crashlytics())
-        }
+        Crashlytics.Builder()
+                .core(CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
+                .build()
+                .also { crashlyticsKit ->
+                    Fabric.with(this, crashlyticsKit)
+                }
     }
 
     private fun initRateApp() {
