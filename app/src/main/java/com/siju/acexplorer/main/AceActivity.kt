@@ -41,6 +41,7 @@ import com.siju.acexplorer.main.view.FragmentsFactory
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.search.view.SearchFragment
+import com.siju.acexplorer.settings.AboutFragment
 import com.siju.acexplorer.storage.view.BaseFileListFragment
 import com.siju.acexplorer.storage.view.DualPaneFragment
 import com.siju.acexplorer.storage.view.FileListFragment
@@ -281,9 +282,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
     override fun onPreferenceStartFragment(caller: PreferenceFragmentCompat,
                                            pref: Preference): Boolean {
         val args = pref.extras
-        val fragment = supportFragmentManager.fragmentFactory.instantiate(
-                ClassLoader.getSystemClassLoader(),
-                pref.fragment)
+        val fragment = AboutFragment()
         fragment.arguments = args
         fragment.setTargetFragment(caller, 0)
         replaceFragment(supportFragmentManager, fragment)
