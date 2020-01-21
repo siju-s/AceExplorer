@@ -25,7 +25,7 @@ private const val PREFS_VIEW_MODE = "view-mode"
 private const val PREFS_VIEW_MODE_IMAGE = "view-mode-image"
 private const val PREFS_VIEW_MODE_VIDEO = "view-mode-video"
 
-class StorageModelImpl(val context: Context) : StorageModel {
+class StorageModelImpl(val context: Context, var category: Category = Category.FILES) : StorageModel {
 
     private val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     private val globalPreference = PreferenceManager.getDefaultSharedPreferences(context)
@@ -34,7 +34,6 @@ class StorageModelImpl(val context: Context) : StorageModel {
     private val mediaObserver = MediaObserver(Handler())
     val operationData: LiveData<Pair<Operations, OperationAction>>
         get() = _operationData
-    private lateinit var category: Category
     val _refreshData = MutableLiveData<Boolean>()
 
     override fun loadData(path: String?, category: Category): ArrayList<FileInfo> {

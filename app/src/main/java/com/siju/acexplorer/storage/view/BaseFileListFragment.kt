@@ -112,7 +112,6 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         setupToolbar()
         setupViewModels()
 
-
         view?.let {
             val viewMode = fileListViewModel.getViewMode(category)
             filesList = FilesList(this, view, viewMode, category)
@@ -174,7 +173,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         Log.e(TAG, "setupViewModels:$this")
         val activity = requireNotNull(activity)
         mainViewModel = ViewModelProviders.of(activity).get(MainViewModel::class.java)
-        val viewModelFactory = FileListViewModelFactory(StorageModelImpl(AceApplication.appContext))
+        val viewModelFactory = FileListViewModelFactory(StorageModelImpl(AceApplication.appContext, category))
         fileListViewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(FileListViewModel::class.java)
     }
