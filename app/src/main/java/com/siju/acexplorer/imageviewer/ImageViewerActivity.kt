@@ -56,8 +56,14 @@ class ImageViewerActivity : AppCompatActivity() {
         }
         else {
             pos = intent.getIntExtra(KEY_POS, 0)
-            list = intent.getSerializableExtra(KEY_URI_LIST) as ArrayList<Uri?>
-            pathList = intent.getStringArrayListExtra(KEY_PATH_LIST)
+            val imageViewerDataHolder = ImageViewerDataHolder.getInstance()
+            if (imageViewerDataHolder == null) {
+                finish()
+            }
+            else {
+                list = imageViewerDataHolder.getUriList()
+                pathList = imageViewerDataHolder.getPathList()
+            }
         }
         setupUI(pos, list, pathList)
     }
@@ -88,6 +94,11 @@ class ImageViewerActivity : AppCompatActivity() {
         viewModel.fileData.observe(this, Observer{
             view.onFileInfoFetched(it)
         })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        ImageViewerDataHolder.getInstance()?.clearData()
     }
 
 }
