@@ -80,6 +80,9 @@ class DeleteOperation {
         var isDeleted = false
         if (file.isDirectory) {
             isDeleted = deleteDirectoryFiles(file, isDeleted)
+            if (isDeleted) {
+                filesDeleted++
+            }
         }
         else {
             val path = file.absolutePath
