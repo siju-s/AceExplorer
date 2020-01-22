@@ -192,21 +192,19 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                                        peekPopView: PeekPopView?,
                                        pos: Int) {
             val category = fileInfo.category
-//            Log.d(TAG, "bindViewByCategory:$category")
+            Log.d(TAG, "bindViewByCategory:$category")
             when {
                 category == Category.PICKER       -> {
                     bindPickerView(fileInfo)
                 }
                 isGenericMusic(category)          -> bindGenericMusic(context, fileInfo)
                 isMusicCategory(category)         -> bindMusicCategory(context, fileInfo)
-                isGenericImagesCategory(category) -> bindGenericImagesVidsCategory(context,
-                                                                                   fileInfo)
-                isGenericVideosCategory(category) -> bindGenericImagesVidsCategory(context,
-                                                                                   fileInfo)
+                isGenericImagesCategory(category) || isGenericVideosCategory(category) -> bindGenericImagesVidsCategory(context,
+                                                                                   fileInfo, pos, peekPopView)
                 isAppManager(category)            -> bindAppManagerCategory(context, fileInfo, viewMode)
-                isRecentCategory(category)        -> bindGenericRecent(context, fileInfo)
-                isAnyLargeFilesCategory(category) -> bindLargeFilesGeneric(context, fileInfo)
-                isAnyCameraCategory(category)     -> bindCameraGeneric(context, fileInfo)
+                isRecentCategory(category)        -> bindGenericRecent(context, fileInfo, category, pos, peekPopView)
+                isAnyLargeFilesCategory(category) -> bindLargeFilesGeneric(context, fileInfo, category, pos, peekPopView)
+                isAnyCameraCategory(category)     -> bindCameraGeneric(context, fileInfo, category, pos, peekPopView)
                 else                              -> {
                     bindFilesCategory(fileInfo, category, mainCategory, context, peekPopView, pos)
                 }
@@ -241,9 +239,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             textNoOfFileOrSize.text = fileNumOrSize
             toggleGalleryViewVisibility(category)
             setVideoThumbVisibility(category)
-            if (viewMode != ViewMode.GALLERY) {
-                category?.let { addPeekPop(peekPopView, imageIcon, pos, it) }
-            }
+            category?.let { addPeekPop(peekPopView, imageIcon, pos, it) }
             displayThumb(context, fileInfo, category, getThumbIcon(category), imageThumbIcon)
         }
 
@@ -324,7 +320,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             displayThumb(context, fileInfo, fileInfo.category, imageIcon, imageThumbIcon)
         }
 
-        private fun bindGenericImagesVidsCategory(context: Context, fileInfo: FileInfo) {
+        private fun bindGenericImagesVidsCategory(context: Context, fileInfo: FileInfo, pos: Int, peekPopView: PeekPopView?) {
             val category = fileInfo.category
             toggleGalleryViewVisibility(category)
             textFileName.text = fileInfo.fileName
@@ -336,6 +332,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             }
             displayThumb(context, fileInfo, category, getThumbIcon(category),
                     imageThumbIcon)
+            addPeekPop(peekPopView, imageIcon, pos, category)
         }
 
         private fun toggleGalleryViewVisibility(category: Category?) {
@@ -361,31 +358,34 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             }
         }
 
-        private fun bindGenericRecent(context: Context, fileInfo: FileInfo) {
+        private fun bindGenericRecent(context: Context, fileInfo: FileInfo, category: Category, pos: Int, peekPopView: PeekPopView?) {
             val count = fileInfo.count
             val files = context.resources.getQuantityString(R.plurals.number_of_files,
                     count, count)
             textFileName.text = getCategoryName(context, fileInfo.subcategory)
             textNoOfFileOrSize.text = files
             imageIcon.setImageResource(R.drawable.ic_folder)
+            addPeekPop(peekPopView, imageIcon, pos, category)
         }
 
-        private fun bindLargeFilesGeneric(context: Context, fileInfo: FileInfo) {
+        private fun bindLargeFilesGeneric(context: Context, fileInfo: FileInfo, category: Category, pos: Int, peekPopView: PeekPopView?) {
             val count = fileInfo.count
             val files = context.resources.getQuantityString(R.plurals.number_of_files,
                     count, count)
             textFileName.text = getCategoryName(context, fileInfo.subcategory)
             textNoOfFileOrSize.text = files
             imageIcon.setImageResource(R.drawable.ic_folder)
+            addPeekPop(peekPopView, imageIcon, pos, category)
         }
 
-        private fun bindCameraGeneric(context: Context, fileInfo: FileInfo) {
+        private fun bindCameraGeneric(context: Context, fileInfo: FileInfo, category: Category, pos: Int, peekPopView: PeekPopView?) {
             val count = fileInfo.count
             val files = context.resources.getQuantityString(R.plurals.number_of_files,
                     count, count)
             textFileName.text = getCategoryName(context, fileInfo.subcategory)
             textNoOfFileOrSize.text = files
             imageIcon.setImageResource(R.drawable.ic_folder)
+            addPeekPop(peekPopView, imageIcon, pos, category)
         }
 
         private fun bindAppManagerCategory(context: Context, fileInfo: FileInfo, viewMode: ViewMode) {
