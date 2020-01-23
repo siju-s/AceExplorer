@@ -220,6 +220,7 @@ class FilesList(private val fileListHelper: FileListHelper,
         }
         if (adapter == null) {
             setupList()
+            multiSelectionHelper?.let { getAdapter()?.setMultiSelectionHelper(it) }
             recentAdapter = null
         }
         adapter?.onDataLoaded(data)
