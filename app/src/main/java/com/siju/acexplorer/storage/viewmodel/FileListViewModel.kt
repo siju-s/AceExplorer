@@ -480,7 +480,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
     }
 
     fun handleLongClick(fileInfo: FileInfo, position: Int) {
-        Log.e(TAG, "handleLongClick:position $position")
+        Log.e(TAG, "handleLongClick:position $position, canLongpress:${canLongPress()}")
         if (CategoryHelper.isSortOrActionModeUnSupported(category)) {
             return
         }
@@ -531,7 +531,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         return null
     }
 
-    private fun canLongPress() = !zipPresenter.isZipMode && !isPasteOperationPending()
+    private fun canLongPress() = !zipPresenter.isZipMode && operationPresenter.isNotPasteOperation()
 
 
     private fun addNavigation(path: String?, category: Category) {

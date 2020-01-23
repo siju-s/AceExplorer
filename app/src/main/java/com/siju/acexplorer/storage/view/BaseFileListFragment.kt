@@ -466,7 +466,6 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         override fun onReceive(context: Context, intent: Intent?) {
             fileListViewModel.loadData(null, Category.APP_MANAGER)
         }
-
     }
 
     private fun handleOperationResult(operationResult: Pair<Operations, OperationAction>) {
