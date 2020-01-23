@@ -142,7 +142,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                  clickListener: (Pair<FileInfo, Int>) -> Unit,
                  longClickListener: (FileInfo, Int, View) -> Unit,
                  peekPopView: PeekPopView?) {
-//            Log.e("FileListAdapter", "bind:${item.fileName}, mainCategory:$mainCategory")
+            Log.e("FileListAdapter", "bind:${item.fileName}, mainCategory:$mainCategory, selected:$selected")
             onSelection(selected, pos, draggedPos)
             bindViewByCategory(itemView.context, item, viewMode, mainCategory, peekPopView, pos)
             itemView.setOnClickListener {

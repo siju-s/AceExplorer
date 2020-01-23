@@ -210,9 +210,8 @@ class FilesList(private val fileListHelper: FileListHelper,
 
 
     fun onDataLoaded(data: ArrayList<FileInfo>, category: Category) {
-        Log.e(TAG, "onDataLoaded:${data.size}")
+        Log.e(TAG, "onDataLoaded:${data.size}, peekPop:$peekAndPop, adapter:$adapter")
         this.category = category
-        peekAndPop?.setFileList(data)
         if (data.isEmpty()) {
             emptyText.visibility = View.VISIBLE
         } else {
@@ -220,8 +219,12 @@ class FilesList(private val fileListHelper: FileListHelper,
         }
         if (adapter == null) {
             setupList()
+            peekAndPop?.setFileList(data)
             multiSelectionHelper?.let { getAdapter()?.setMultiSelectionHelper(it) }
             recentAdapter = null
+        }
+        else {
+            peekAndPop?.setFileList(data)
         }
         adapter?.onDataLoaded(data)
     }

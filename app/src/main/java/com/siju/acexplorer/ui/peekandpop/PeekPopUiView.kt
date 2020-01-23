@@ -36,6 +36,7 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
 
     override fun setFileList(list: ArrayList<FileInfo>) {
         this.fileList = list
+        Log.e(TAG, "setFileList:${list.size}, this:$this")
     }
 
     override fun getFileData(): java.util.ArrayList<FileInfo> {
@@ -80,7 +81,7 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
     }
 
     override fun addClickView(view: View, pos: Int, category: Category) {
-//        Log.e(TAG, "addClickView:pos:$pos, category:$category")
+        Log.e(TAG, "addClickView:pos:$pos, category:$category, this:$this")
         peekAndPop?.addClickView(view, pos, category)
     }
 
