@@ -425,6 +425,8 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
 //                Log.e(TAG, "category:${oldItem.category}, path:${oldItem.filePath}")
                 val result = when (oldItem.category) {
                     Category.GENERIC_IMAGES, Category.GENERIC_VIDEOS               -> oldItem.bucketId == newItem.bucketId
+                    Category.RECENT_IMAGES, Category.RECENT_VIDEOS, Category.RECENT_AUDIO, Category.RECENT_DOCS,
+                        Category.RECENT_APPS -> oldItem.category == newItem.category
                     else                                                           -> {
                         oldItem.filePath == newItem.filePath
                     }

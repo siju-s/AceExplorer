@@ -211,6 +211,12 @@ public class FileInfo implements Parcelable {
             return false;
         }
         FileInfo o = (FileInfo) obj;
+        if (o.filePath == null && this.filePath == null) {
+            return true;
+        }
+        else if (o.filePath == null || this.filePath == null) {
+            return false;
+        }
         return o.filePath.equals(this.filePath);
     }
 
