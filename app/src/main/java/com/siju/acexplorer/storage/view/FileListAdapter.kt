@@ -197,8 +197,8 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                 category == Category.PICKER       -> {
                     bindPickerView(fileInfo)
                 }
-                isGenericMusic(category)          -> bindGenericMusic(context, fileInfo)
-                isMusicCategory(category)         -> bindMusicCategory(context, fileInfo)
+                isGenericMusic(category)          -> bindGenericMusic(context, fileInfo, pos, peekPopView)
+                isMusicCategory(category)         -> bindMusicCategory(context, fileInfo, pos, peekPopView)
                 isGenericImagesCategory(category) || isGenericVideosCategory(category) -> bindGenericImagesVidsCategory(context,
                                                                                    fileInfo, pos, peekPopView)
                 isAppManager(category)            -> bindAppManagerCategory(context, fileInfo, viewMode)
@@ -300,16 +300,17 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             textNoOfFileOrSize.text = fileInfo.filePath
         }
 
-        private fun bindGenericMusic(context: Context, fileInfo: FileInfo) {
+        private fun bindGenericMusic(context: Context, fileInfo: FileInfo, pos: Int, peekPopView: PeekPopView?) {
             val count = fileInfo.count
             val files = context.resources.getQuantityString(R.plurals.number_of_files,
                     count, count)
             textFileName.text = getCategoryName(context, fileInfo.subcategory)
             textNoOfFileOrSize.text = files
             imageIcon.setImageResource(R.drawable.ic_folder)
+            addPeekPop(peekPopView, imageIcon, pos, fileInfo.category)
         }
 
-        private fun bindMusicCategory(context: Context, fileInfo: FileInfo) {
+        private fun bindMusicCategory(context: Context, fileInfo: FileInfo, pos: Int, peekPopView: PeekPopView?) {
             textFileName.text = fileInfo.title
             val num = fileInfo.numTracks.toInt()
             if (num != INVALID_POS) {
@@ -318,6 +319,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                 textNoOfFileOrSize.text = files
             }
             displayThumb(context, fileInfo, fileInfo.category, imageIcon, imageThumbIcon)
+            addPeekPop(peekPopView, imageIcon, pos, fileInfo.category)
         }
 
         private fun bindGenericImagesVidsCategory(context: Context, fileInfo: FileInfo, pos: Int, peekPopView: PeekPopView?) {
