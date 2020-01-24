@@ -243,6 +243,14 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             displayThumb(context, fileInfo, category, getThumbIcon(category), imageThumbIcon)
         }
 
+        private fun hideDateView() {
+            dateText?.visibility = View.GONE
+        }
+
+        private fun showDateView() {
+            dateText?.visibility = View.VISIBLE
+        }
+
         private fun addPeekPop(peekPopView: PeekPopView?, icon: ImageView, pos : Int, category: Category) {
               peekPopView?.addClickView(icon, pos, category)
         }
@@ -275,6 +283,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                 }
                 it.text = FileUtils.convertDate(dateMs)
             }
+            showDateView()
         }
 
         private fun getDirectoryFileCount(context: Context,
@@ -307,6 +316,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             textFileName.text = getCategoryName(context, fileInfo.subcategory)
             textNoOfFileOrSize.text = files
             imageIcon.setImageResource(R.drawable.ic_folder)
+            hideDateView()
             addPeekPop(peekPopView, imageIcon, pos, fileInfo.category)
         }
 
@@ -319,6 +329,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                 textNoOfFileOrSize.text = files
             }
             displayThumb(context, fileInfo, fileInfo.category, imageIcon, imageThumbIcon)
+            hideDateView()
             addPeekPop(peekPopView, imageIcon, pos, fileInfo.category)
         }
 
@@ -332,6 +343,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                         num, num)
                 textNoOfFileOrSize.text = files
             }
+            hideDateView()
             displayThumb(context, fileInfo, category, getThumbIcon(category),
                     imageThumbIcon)
             addPeekPop(peekPopView, imageIcon, pos, category)
@@ -367,6 +379,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             textFileName.text = getCategoryName(context, fileInfo.subcategory)
             textNoOfFileOrSize.text = files
             imageIcon.setImageResource(R.drawable.ic_folder)
+            hideDateView()
             addPeekPop(peekPopView, imageIcon, pos, category)
         }
 
@@ -377,6 +390,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             textFileName.text = getCategoryName(context, fileInfo.subcategory)
             textNoOfFileOrSize.text = files
             imageIcon.setImageResource(R.drawable.ic_folder)
+            hideDateView()
             addPeekPop(peekPopView, imageIcon, pos, category)
         }
 
@@ -387,6 +401,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             textFileName.text = getCategoryName(context, fileInfo.subcategory)
             textNoOfFileOrSize.text = files
             imageIcon.setImageResource(R.drawable.ic_folder)
+            hideDateView()
             addPeekPop(peekPopView, imageIcon, pos, category)
         }
 
@@ -399,6 +414,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             val fileDate = FileUtils.convertDate(fileInfo.date)
             if (viewMode == ViewMode.LIST) {
                 dateText?.text = fileDate
+                showDateView()
             }
             displayThumb(context, fileInfo, fileInfo.category, imageIcon,
                     imageThumbIcon)
