@@ -142,7 +142,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                  clickListener: (Pair<FileInfo, Int>) -> Unit,
                  longClickListener: (FileInfo, Int, View) -> Unit,
                  peekPopView: PeekPopView?) {
-            Log.e("FileListAdapter", "bind:${item.fileName}, mainCategory:$mainCategory, selected:$selected")
+//            Log.e("FileListAdapter", "bind:${item.fileName}, mainCategory:$mainCategory, selected:$selected")
             onSelection(selected, pos, draggedPos)
             bindViewByCategory(itemView.context, item, viewMode, mainCategory, peekPopView, pos)
             itemView.setOnClickListener {
@@ -192,7 +192,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                                        peekPopView: PeekPopView?,
                                        pos: Int) {
             val category = fileInfo.category
-            Log.d(TAG, "bindViewByCategory:$category")
+//            Log.d(TAG, "bindViewByCategory:$category")
             when {
                 category == Category.PICKER       -> {
                     bindPickerView(fileInfo)

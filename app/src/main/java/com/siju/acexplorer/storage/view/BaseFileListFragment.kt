@@ -988,7 +988,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         }
 
         fun refreshDataOnSettingChange() {
-            Log.e(TAG, "refreshDataOnSettingChange")
+            Log.e(TAG, "refreshDataOnSettingChange:category:$category, viewMode: ${fileListViewModel.getViewMode(category)}this:$this")
             if (::filesList.isInitialized) {
                 val viewMode = fileListViewModel.getViewMode(category)
                 filesList.onViewModeChanged(viewMode)

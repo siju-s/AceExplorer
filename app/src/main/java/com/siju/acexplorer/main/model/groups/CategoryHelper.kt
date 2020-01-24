@@ -76,13 +76,13 @@ object CategoryHelper {
 
     fun isDefaultGalleryImageCategory(category: Category?): Boolean {
         return category == IMAGES_ALL || category == GENERIC_IMAGES ||
-                category == SEARCH_FOLDER_IMAGES
+                category == SEARCH_FOLDER_IMAGES || category == FOLDER_IMAGES
                 || category == CAMERA ||  category == CAMERA_IMAGES || category == CAMERA_GENERIC ||
                 category == CAMERA_VIDEO
     }
 
     fun isDefaultGalleryVideoCategory(category: Category?): Boolean {
-        return category == VIDEO_ALL || category == GENERIC_VIDEOS ||
+        return category == VIDEO_ALL || category == GENERIC_VIDEOS || category == FOLDER_VIDEOS ||
                 category == SEARCH_FOLDER_VIDEOS
     }
 

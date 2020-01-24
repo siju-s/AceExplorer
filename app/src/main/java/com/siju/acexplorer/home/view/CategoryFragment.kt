@@ -106,7 +106,7 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
             if (position == -1) {
                 return
             }
-            val fragment = pagerAdapter.getItem(position)
+            val fragment = pagerAdapter.getFragment(position)
             if (fragment is FileListFragment) {
                 fragment.refreshDataOnSettingChange()
             }
