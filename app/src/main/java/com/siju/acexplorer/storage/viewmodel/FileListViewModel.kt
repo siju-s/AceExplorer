@@ -597,13 +597,13 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
     }
 
     fun switchView(viewMode: ViewMode) {
-        _viewMode.value = viewMode
         Log.e(TAG, "switchView:${category}")
         when {
             CategoryHelper.isDefaultGalleryImageCategory(category) -> storageModel.saveImageViewMode(viewMode)
             CategoryHelper.isDefaultGalleryVideoCategory(category) -> storageModel.saveVideoViewMode(viewMode)
             else -> storageModel.saveViewMode(viewMode)
         }
+        _viewMode.value = viewMode
     }
 
     fun onSortClicked() {

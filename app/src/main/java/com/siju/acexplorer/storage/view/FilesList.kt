@@ -202,9 +202,13 @@ class FilesList(private val fileListHelper: FileListHelper,
         }
     }
 
-    fun refreshGridColumns() {
-        if (viewMode == ViewMode.GRID) {
-            setLayoutManager(fileList, viewMode, category)
+    fun refreshGridColumns(viewMode: ViewMode) {
+        Log.e(TAG, "refreshGridColumns:$viewMode")
+        if (this.viewMode == viewMode) {
+            setLayoutManager(fileList, this.viewMode, category)
+        }
+        else {
+            onViewModeChanged(viewMode)
         }
     }
 

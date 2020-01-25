@@ -53,6 +53,7 @@ import com.siju.acexplorer.main.model.helper.UriHelper
 import com.siju.acexplorer.main.model.helper.ViewHelper
 import com.siju.acexplorer.main.view.dialog.DialogHelper
 import com.siju.acexplorer.main.viewmodel.MainViewModel
+import com.siju.acexplorer.main.viewmodel.Pane
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.storage.model.PasteOpData
 import com.siju.acexplorer.storage.model.SortMode
@@ -224,11 +225,24 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
             }
         })
 
-        mainViewModel.refreshList.observe(viewLifecycleOwner, Observer {
+        mainViewModel.refreshGridCols.observe(viewLifecycleOwner, Observer {
             it?.apply {
-                if (::filesList.isInitialized && it) {
-                    filesList.refreshGridColumns()
-                    mainViewModel.setRefreshDone()
+                Log.e(TAG, "refreshGridCols pane:${it.first}, reload:${it.second}, this:${this@BaseFileListFragment is FileListFragment}")
+                if (::filesList.isInitialized && shouldRefreshPane(it.first, it.second)) {
+                    filesList.refreshGridColumns(fileListViewModel.getViewMode(category))
+                    mainViewModel.setRefreshDone(it.first)
+                }
+            }
+        })
+
+        mainViewModel.reloadPane.observe(viewLifecycleOwner, Observer {
+            it?.apply {
+                val pane = it.first
+                val reload = it.second
+                Log.e(TAG, "Reload pane:$pane, reload:$reload, this:${this@BaseFileListFragment is FileListFragment}")
+                if (shouldRefreshPane(pane, reload)) {
+                    fileListViewModel.refreshList()
+                    mainViewModel.setReloadPane(pane, false)
                 }
             }
         })
@@ -253,6 +267,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         fileListViewModel.viewMode.observe(viewLifecycleOwner, Observer {
             if (::filesList.isInitialized) {
                 filesList.onViewModeChanged(it)
+                refreshGridCols()
             }
             if (::menuControls.isInitialized) {
                 menuControls.onViewModeChanged(it)
@@ -436,6 +451,34 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         })
     }
 
+    private fun shouldRefreshPane(pane : Pane, reload : Boolean) : Boolean {
+        Log.e(TAG, "Reload pane:$pane, reload:$reload, this:${this@BaseFileListFragment is FileListFragment}")
+        return (reload && ((this@BaseFileListFragment is FileListFragment && pane == Pane.SINGLE) ||
+                        this@BaseFileListFragment is DualPaneFragment && pane == Pane.DUAL ))
+    }
+
+    private fun reloadPane() {
+        if (fileListViewModel.isDualModeEnabled()) {
+            val paneToReload = getPane()
+            mainViewModel.setReloadPane(paneToReload, true)
+        }
+    }
+
+    private fun refreshGridCols() {
+        if (fileListViewModel.isDualModeEnabled()) {
+            val paneToRefresh = getPane()
+            mainViewModel.refreshLayout(paneToRefresh)
+        }
+    }
+
+    private fun getPane(): Pane {
+        return if (this is DualPaneFragment) {
+            Pane.SINGLE
+        } else {
+            Pane.DUAL
+        }
+    }
+
     override fun onPause() {
         super.onPause()
         fileListViewModel.onPause()
@@ -537,6 +580,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         if (operation != Operations.FAVORITE) {
             fileListViewModel.loadData(fileListViewModel.currentDir,
                                        fileListViewModel.category)
+            reloadPane()
         }
     }
 
@@ -976,6 +1020,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         private val sortDialogListener = object : DialogHelper.SortDialogListener {
             override fun onPositiveButtonClick(sortMode: SortMode) {
                 fileListViewModel.onSort(sortMode)
+                reloadPane()
             }
 
             override fun onNegativeButtonClick(view: View?) {

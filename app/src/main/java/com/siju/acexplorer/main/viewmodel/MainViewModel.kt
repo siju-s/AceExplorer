@@ -2,6 +2,7 @@ package com.siju.acexplorer.main.viewmodel
 
 import android.app.Activity
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,6 +15,10 @@ import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.theme.Theme
 
+enum class Pane {
+    SINGLE,
+    DUAL
+}
 class MainViewModel(val app: Application) : AndroidViewModel(app) {
 
     var navigateToSearch = MutableLiveData<Boolean>()
@@ -37,10 +42,15 @@ class MainViewModel(val app: Application) : AndroidViewModel(app) {
     val storageScreenReady : LiveData<Boolean>
     get() = _storageScreenReady
 
-    private val _refreshList = MutableLiveData<Boolean>()
+    private val _refreshGridColumns = MutableLiveData<Pair<Pane, Boolean>>()
 
-    val refreshList : LiveData<Boolean>
-    get() = _refreshList
+    val refreshGridCols : LiveData<Pair<Pane, Boolean>>
+    get() = _refreshGridColumns
+
+    private val _reloadPane = MutableLiveData<Pair<Pane, Boolean>>()
+
+    val reloadPane : LiveData<Pair<Pane, Boolean>>
+    get() = _reloadPane
 
     init {
         billingRepository.startDataSourceConnections()
@@ -117,12 +127,18 @@ class MainViewModel(val app: Application) : AndroidViewModel(app) {
         _storageScreenReady.value = false
     }
 
-    fun refreshData() {
-        _refreshList.value = true
+    fun refreshLayout(pane: Pane) {
+        Log.e(this.javaClass.simpleName, "refreshLayout:$pane")
+        _refreshGridColumns.value = Pair(pane, true)
     }
 
-    fun setRefreshDone() {
-        _refreshList.value = false
+    fun setRefreshDone(pane: Pane) {
+        _refreshGridColumns.value = Pair(pane, false)
+    }
+
+    fun setReloadPane(pane: Pane, reload : Boolean) {
+        Log.e(this.javaClass.simpleName, "setReloadPane:$pane, reload:$reload")
+        _reloadPane.value = Pair(pane, reload)
     }
 
     fun setPaneFocus(isDualPaneInFocus: Boolean) {

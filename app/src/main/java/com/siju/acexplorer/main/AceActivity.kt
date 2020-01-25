@@ -39,6 +39,7 @@ import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.view.FragmentsFactory
 import com.siju.acexplorer.main.viewmodel.MainViewModel
+import com.siju.acexplorer.main.viewmodel.Pane
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.search.view.SearchFragment
 import com.siju.acexplorer.settings.AboutFragment
@@ -124,7 +125,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
     private fun onDualModeEnabled(configuration: Configuration?) {
         if (canEnableDualPane(configuration)) {
             enableDualPane()
-            mainViewModel.refreshData()
+            mainViewModel.refreshLayout(Pane.SINGLE)
         }
         mainViewModel.setStorageNotReady()
     }
@@ -141,7 +142,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         frame_container_dual.visibility = View.GONE
         viewSeparator.visibility = View.GONE
         if (isCurrentScreenStorage()) {
-            mainViewModel.refreshData()
+            mainViewModel.refreshLayout(Pane.SINGLE)
         }
     }
 
@@ -301,6 +302,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
+        Log.e(TAG, "onConfigurationChanged:${newConfig.isLandscape()}")
         if (mainViewModel.dualMode.value == true && newConfig.isLandscape()) {
             onDualModeEnabled(newConfig)
         } else {
