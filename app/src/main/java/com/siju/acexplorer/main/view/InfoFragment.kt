@@ -27,6 +27,7 @@ import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.helper.ShareHelper
+import com.siju.acexplorer.main.model.helper.ViewHelper
 import com.siju.acexplorer.utils.ThumbnailUtils
 import java.util.*
 
@@ -111,8 +112,16 @@ class InfoFragment : BottomSheetDialogFragment() {
             pathText?.text = path
         }
 
+        val imageThumbIcon = sheetView?.findViewById<ImageView>(R.id.imageThumbIcon)
+        if (category == Category.AUDIO || CategoryHelper.isAnyVideoCategory(category)) {
+            imageThumbIcon?.visibility = View.VISIBLE
+        }
+
         val icon = sheetView?.findViewById<ImageView>(R.id.imageIcon)
         icon?.let { setIcon(context, it, uri, category) }
+        icon?.setOnClickListener {
+            ViewHelper.viewFile(it.context, path, fileInfo.extension)
+        }
 
         val nameText = sheetView?.findViewById<TextView>(R.id.textName)
         nameText?.text = fileInfo.fileName

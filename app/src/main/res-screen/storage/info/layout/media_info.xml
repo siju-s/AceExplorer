@@ -43,7 +43,16 @@
                 android:scaleType="centerCrop"
                 app:layout_collapseMode="parallax"
                 app:layout_collapseParallaxMultiplier="1.0"
-                app:srcCompat="@drawable/ic_folder"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/imageThumbIcon"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_video_thumb"
+                android:visibility="gone"
                 tools:ignore="ContentDescription" />
 
             <androidx.appcompat.widget.Toolbar
