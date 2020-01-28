@@ -689,6 +689,10 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         zipViewer?.loadData()
     }
 
+    private fun refreshDataOnNavClicked() {
+        reloadData(currentDir, category)
+    }
+
     private fun isPasteOperationPending() = multiSelectionOpData.value?.first == Operations.CUT ||
             multiSelectionOpData.value?.first == Operations.COPY
 
@@ -713,7 +717,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
             } else {
                 setCurrentDir(dir)
                 removeBackStackEntries(dir)
-                refreshList()
+                refreshDataOnNavClicked()
             }
         }
 
