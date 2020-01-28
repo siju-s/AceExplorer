@@ -20,6 +20,7 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.HorizontalScrollView
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import com.google.android.material.button.MaterialButton
 import com.siju.acexplorer.R
@@ -42,8 +43,8 @@ class NavigationView(view: View, private val navigationCallback: NavigationCallb
     private val storageRoot: String
     private val storageExternal: String
 
-    private val homeButton = LayoutInflater.from(context).inflate(R.layout.material_button_icon,
-                                                                  null) as MaterialButton
+    private val homeButton = LayoutInflater.from(context).inflate(R.layout.navigation_button,
+                                                                  null) as ImageButton
 
     init {
         storageRoot = context.resources.getString(R.string.nav_menu_root)
@@ -70,7 +71,7 @@ class NavigationView(view: View, private val navigationCallback: NavigationCallb
     }
 
     private fun setupHomeButton() {
-        homeButton.setIconResource(R.drawable.ic_home_white_48)
+        homeButton.setImageResource(R.drawable.ic_home_white_48)
         homeButton.setOnClickListener {
             Analytics.getLogger().navBarClicked(true)
             navigationCallback.onHomeClicked()
@@ -120,16 +121,7 @@ class NavigationView(view: View, private val navigationCallback: NavigationCallb
         Logger.log(TAG, "Dir=$dir currentDir=$dir")
         navigationCallback.onNavButtonClicked(dir)
     }
-
-
-    fun removeHomeFromNavPath() {
-        Logger.log(TAG, "Nav directory count=" + navDirectory.childCount)
-
-        for (i in 0 until Math.min(navDirectory.childCount, 2)) {
-            navDirectory.removeViewAt(0)
-        }
-    }
-
+    
     private fun addViewToNavigation(view: View) {
         navDirectory.addView(view)
     }
@@ -140,9 +132,12 @@ class NavigationView(view: View, private val navigationCallback: NavigationCallb
 
 
     private fun createNavigationButton() =
-        LayoutInflater.from(context).inflate(R.layout.material_button_icon,
-                                                    null) as MaterialButton
+        LayoutInflater.from(context).inflate(R.layout.navigation_button,
+                                                    null) as ImageButton
 
+    private fun createNavigationTextButton() =
+            LayoutInflater.from(context).inflate(R.layout.material_button,
+                    null) as MaterialButton
 
     private fun clearNavigation() {
         navDirectory.removeAllViews()
@@ -166,24 +161,23 @@ class NavigationView(view: View, private val navigationCallback: NavigationCallb
 
     fun createRootStorageButton(path: String) {
         val button = createNavigationButton()
-        button.setIconResource(R.drawable.ic_root_white_48)
+        button.setImageResource(R.drawable.ic_root_white_48)
         setupCommonStorageAction(button, path)
     }
 
     fun createInternalStorageButton(path: String) {
         val button = createNavigationButton()
-        button.setIconResource(R.drawable.ic_storage_white_48)
+        button.setImageResource(R.drawable.ic_storage_white_48)
         setupCommonStorageAction(button, path)
     }
 
     fun createExternalStorageButton(path: String) {
         val button = createNavigationButton()
-        button.setIconResource(R.drawable.ic_ext_sd_white_48)
+        button.setImageResource(R.drawable.ic_ext_sd_white_48)
         setupCommonStorageAction(button, path)
     }
 
-    private fun setupCommonStorageAction(button: MaterialButton,
-                                         path: String) {
+    private fun setupCommonStorageAction(button: View, path: String) {
         button.setOnClickListener {
             navButtonOnClick(path)
         }
@@ -192,11 +186,10 @@ class NavigationView(view: View, private val navigationCallback: NavigationCallb
 
     fun createNavButtonStorageParts(path: String, dirName: String) {
         addViewToNavigation(createNavigationArrow())
-        val button = createNavigationButton()
+        val button = createNavigationTextButton()
         button.text = dirName
         setupCommonStorageAction(button, path)
         scrollNavigation()
-
     }
 
     fun createLibraryTitleNavigation(category: Category, bucketName: String?) {
