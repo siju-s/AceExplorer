@@ -43,12 +43,15 @@ import com.siju.acexplorer.main.viewmodel.Pane
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.search.view.SearchFragment
 import com.siju.acexplorer.settings.AboutFragment
+import com.siju.acexplorer.settings.SettingsFragment
 import com.siju.acexplorer.storage.view.BaseFileListFragment
 import com.siju.acexplorer.storage.view.DualPaneFragment
 import com.siju.acexplorer.storage.view.FileListFragment
+import com.siju.acexplorer.tools.ToolsFragment
 import com.siju.billingsecure.BillingKey
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+
 
 private const val TAG = "AceActivity"
 
@@ -174,7 +177,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
     }
 
 
-    private fun openFragment(fragment: Fragment, addToBackStack : Boolean = false) {
+    private fun openFragment(fragment: Fragment, addToBackStack: Boolean = false) {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.main_container, fragment)
         if (addToBackStack) {
@@ -245,8 +248,25 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
                 }
             }
             is SearchFragment -> onSearchBackPress(fragment)
+            is ToolsFragment -> {
+                clearBackStack()
+                switchToHomeScreen()
+            }
+            is SettingsFragment -> {
+                if (supportFragmentManager.backStackEntryCount == 0) {
+                    clearBackStack()
+                    switchToHomeScreen()
+                }
+                else {
+                    super.onBackPressed()
+                }
+            }
             else -> super.onBackPressed()
         }
+    }
+
+    private fun switchToHomeScreen() {
+        bottom_navigation.selectedItemId = R.id.navigation_home
     }
 
     private fun onDualPaneBackPress(focusedFragment: DualPaneFragment) {
@@ -273,10 +293,10 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
     }
 
     private fun getCurrentFocusFragment(fragment: BaseFileListFragment): Fragment? {
-        if (mainViewModel.isDualPaneInFocus) {
-            return supportFragmentManager.findFragmentById(R.id.frame_container_dual)
+        return if (mainViewModel.isDualPaneInFocus) {
+            supportFragmentManager.findFragmentById(R.id.frame_container_dual)
         } else {
-            return fragment
+            fragment
         }
     }
 
