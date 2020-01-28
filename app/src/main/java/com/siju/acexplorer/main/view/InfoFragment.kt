@@ -3,7 +3,6 @@ package com.siju.acexplorer.main.view
 
 import android.annotation.SuppressLint
 import android.app.Dialog
-import android.content.ContentUris
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
@@ -11,23 +10,23 @@ import android.text.format.Formatter
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.FragmentManager
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.siju.acexplorer.R
+import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.helper.ShareHelper
 import com.siju.acexplorer.main.model.helper.ViewHelper
+import com.siju.acexplorer.utils.Clipboard
 import com.siju.acexplorer.utils.ThumbnailUtils
 import java.util.*
 
@@ -118,10 +117,8 @@ class InfoFragment : BottomSheetDialogFragment() {
         }
 
         val icon = sheetView?.findViewById<ImageView>(R.id.imageIcon)
-        icon?.let { setIcon(context, it, uri, category) }
-        icon?.setOnClickListener {
-            ViewHelper.viewFile(it.context, path, fileInfo.extension)
-        }
+        icon?.let { setIcon(context, it, category) }
+        setIconListener(icon, path, fileInfo)
 
         val nameText = sheetView?.findViewById<TextView>(R.id.textName)
         nameText?.text = fileInfo.fileName
@@ -131,6 +128,7 @@ class InfoFragment : BottomSheetDialogFragment() {
 
         val sizeText = sheetView?.findViewById<TextView>(R.id.textFileSize)
         sizeText?.text = Formatter.formatFileSize(context, fileInfo.size)
+        bindSize(sizeText)
 
         val context = context
         if (CategoryHelper.isAnyImagesCategory(category) && path != null && context != null) {
@@ -143,24 +141,44 @@ class InfoFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun setIcon(context: Context?, icon: ImageView, uri: Uri?, category: Category) {
+    private fun bindSize(sizeText: TextView?) {
+        val isDirectory = fileInfo.isDirectory
+        val fileNoOrSize: String
+        fileNoOrSize = if (isDirectory) {
+            when (val childFileListSize = fileInfo.size.toInt()) {
+                0 -> {
+                    context!!.getString(R.string.empty)
+                }
+                -1 -> {
+                    ""
+                }
+                else -> {
+                    context!!.resources.getQuantityString(R.plurals.number_of_files,
+                            childFileListSize,
+                            childFileListSize)
+                }
+            }
+        } else {
+            val size = fileInfo.size
+            Formatter.formatFileSize(context, size)
+        }
+        sizeText?.text = fileNoOrSize
+    }
+
+    private fun setIconListener(icon: ImageView?, path: String, fileInfo: FileInfo) {
+        if (category == Category.AUDIO || CategoryHelper.isAnyVideoCategory(category) ||
+                CategoryHelper.isAnyImagesCategory(category)) {
+            icon?.setOnClickListener {
+                ViewHelper.viewFile(it.context, path, fileInfo.extension)
+            }
+        }
+    }
+
+    private fun setIcon(context: Context?, icon: ImageView, category: Category) {
         if (context == null) {
             return
         }
-        if (category == Category.AUDIO) {
-            val audioUri = ContentUris.withAppendedId(ThumbnailUtils.AUDIO_URI, fileInfo.bucketId)
-            val options = RequestOptions()
-                    .centerCrop()
-                    .placeholder(R.drawable.ic_music_default)
-            Glide.with(context).load(audioUri).apply(options)
-                    .into(icon)
-            return
-        }
-        else {
-            Glide.with(context).load(uri)
-                    .apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC))
-                    .into(icon)
-        }
+        ThumbnailUtils.displayThumb(context, fileInfo, category, icon, null)
     }
 
     private fun setupToolbar() {
@@ -186,6 +204,13 @@ class InfoFragment : BottomSheetDialogFragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.media_info_menu, menu)
+        if (fileInfo.isDirectory) {
+            menu.findItem(R.id.action_share).isVisible = false
+        }
+        if (fileInfo.filePath == null) {
+            menu.findItem(R.id.action_copy_path).isVisible = false
+        }
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -193,6 +218,12 @@ class InfoFragment : BottomSheetDialogFragment() {
             android.R.id.home -> dismiss()
             R.id.action_share -> {
                 context?.let { ShareHelper.shareMedia(it, fileInfo.category, uri) }
+            }
+
+            R.id.action_copy_path -> {
+                Analytics.getLogger().pathCopied()
+                Clipboard.copyTextToClipBoard(context, fileInfo.filePath)
+                Toast.makeText(context, context!!.getString(R.string.text_copied_clipboard), Toast.LENGTH_SHORT).show()
             }
         }
         return super.onOptionsItemSelected(item)

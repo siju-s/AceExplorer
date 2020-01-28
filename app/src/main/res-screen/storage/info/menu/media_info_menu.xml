@@ -7,4 +7,9 @@
         android:title="@string/action_share"
         android:icon="@drawable/ic_share"/>
 
+    <item android:id="@+id/action_copy_path"
+        app:showAsAction="ifRoom"
+        android:title="@string/copy_path"
+        android:icon="@drawable/ic_paste_white"/>
+
 </menu>

@@ -51,6 +51,7 @@ import com.siju.acexplorer.main.model.helper.PermissionsHelper
 import com.siju.acexplorer.main.model.helper.ShareHelper
 import com.siju.acexplorer.main.model.helper.UriHelper
 import com.siju.acexplorer.main.model.helper.ViewHelper
+import com.siju.acexplorer.main.view.InfoFragment
 import com.siju.acexplorer.main.view.dialog.DialogHelper
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.main.viewmodel.Pane
@@ -593,8 +594,9 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
             }
             Operations.INFO -> {
                 context?.let { context ->
-                    DialogHelper.showInfoDialog(context, operationData.second,
-                                                Category.FILES == category)
+                    val fileInfo = operationData.second
+                    InfoFragment.newInstance(activity?.supportFragmentManager,
+                            fileInfo, UriHelper.createContentUri(context, fileInfo.filePath))
                 }
             }
 
@@ -834,10 +836,6 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
             Toast.makeText(context, context?.getString(R.string.error), Toast
                     .LENGTH_SHORT).show()
         }
-
-        override fun onNeutralButtonClick(view: View?) {
-        }
-
     }
 
     private fun showAds() {
@@ -1025,10 +1023,6 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
                 fileListViewModel.onSort(sortMode)
                 reloadPane()
             }
-
-            override fun onNegativeButtonClick(view: View?) {
-            }
-
         }
 
         fun setCategoryMenuHelper(categoryMenuHelper: CategoryMenuHelper) {
