@@ -41,14 +41,18 @@
         <!--android:layout_marginTop="8dp"-->
         <!--android:layout_above="@+id/layoutDummy">-->
 
-        <androidx.recyclerview.widget.RecyclerView
+        <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
             android:id="@+id/recyclerViewFileList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/layoutDummy"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            tools:listitem="@layout/file_gallery_item"
-            />
+            app:fastScrollAutoHide="true"
+            app:fastScrollAutoHideDelay="1500"
+            app:fastScrollThumbColor="@color/colorAccent"
+            app:fastScrollEnableThumbInactiveColor="true"
+            app:fastScrollThumbInactiveColor="@color/colorPrimary"
+            tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            tools:listitem="@layout/file_gallery_item" />
 
     <!--</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>-->
 

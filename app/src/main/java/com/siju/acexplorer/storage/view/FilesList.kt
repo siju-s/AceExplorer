@@ -31,6 +31,7 @@ import com.siju.acexplorer.ui.peekandpop.PeekPopUiView
 import com.siju.acexplorer.ui.peekandpop.PeekPopView
 import com.siju.acexplorer.utils.ConfigurationHelper
 import com.siju.acexplorer.utils.ScrollInfo
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
 
 private const val TAG = "FilesList"
 private const val DELAY_SCROLL_UPDATE_MS = 100L
@@ -42,7 +43,7 @@ class FilesList(private val fileListHelper: FileListHelper,
 {
     private val dragHelper = DragHelper(view.context, this)
 
-    private lateinit var fileList: RecyclerView
+    private lateinit var fileList: FastScrollRecyclerView
     private lateinit var emptyText: TextView
 
     private var recentData: ArrayList<RecentTimeData.RecentDataItem>? = null

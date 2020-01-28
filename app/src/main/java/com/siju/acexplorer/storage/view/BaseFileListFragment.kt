@@ -773,12 +773,15 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         override fun onSelectButtonClicked(dialog: Dialog) {
             val theme = mainViewModel.theme.value
             this@BaseFileListFragment.dialog = dialog
-            theme?.let {
-                val dialogFragment = PickerFragment.newInstance(getThemeStyle(theme),
-                                                                PickerType.FILE)
+            if (theme == null) {
+                return
+            }
+            activity?.let {
+                val dialogFragment = PickerFragment.newInstance(it as AppCompatActivity, getThemeStyle(theme),
+                        PickerType.FILE)
                 dialogFragment.setTargetFragment(this@BaseFileListFragment, EXTRACT_PATH_REQUEST)
-                this@BaseFileListFragment.fragmentManager?.let {
-                    dialogFragment.show(it, "Browse Fragment")
+                this@BaseFileListFragment.fragmentManager?.let { fragmentManager ->
+                    dialogFragment.show(fragmentManager, "Browse Fragment")
                 }
             }
         }
@@ -1050,59 +1053,4 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     fun onQueryTextChange(query: String?) {
         filesList.onQueryChanged(query)
     }
-
-//
-//    fun performVoiceSearch(query: String) {
-//        storagesUi!!.performVoiceSearch(query)
-//    }
-//
-//    fun collapseFab() {
-//        storagesUi!!.collapseFab()
-//    }
-//
-//    fun reloadList(directory: String, category: Category) {
-//        storagesUi!!.reloadList(directory, category)
-//    }
-//
-//    fun refreshList() {
-//        storagesUi!!.refreshList()
-//    }
-//
-//    fun removeHomeFromNavPath() {
-//        storagesUi!!.removeHomeFromNavPath()
-//    }
-//
-//    fun addHomeNavPath() {
-//        storagesUi!!.addHomeNavPath()
-//    }
-//
-//    fun refreshSpan() {
-//        storagesUi!!.refreshSpan()
-//    }
-//
-//    fun showDualPane() {
-//        storagesUi!!.showDualPane()
-//    }
-//
-//    fun hideDualPane() {
-//        storagesUi!!.hideDualPane()
-//        val fileListHelper = activity!!.supportFragmentManager.findFragmentById(R.id.frame_container_dual)
-//        if (fileListHelper != null) {
-//            val fragmentTransaction = activity!!.supportFragmentManager.beginTransaction()
-//            fragmentTransaction.remove(fileListHelper).commitAllowingStateLoss()
-//        }
-//    }
-//
-//
-//    fun setHidden(showHidden: Boolean) {
-//        storagesUi!!.setHidden(showHidden)
-//    }
-//
-//    fun switchView(viewMode: Int) {
-//        storagesUi!!.switchView(viewMode)
-//    }
-//
-//    fun collapseSearchView() {
-//        storagesUi!!.collapseSearchView()
-//    }
 }

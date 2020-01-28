@@ -33,7 +33,6 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
@@ -49,6 +48,7 @@ import com.siju.acexplorer.storage.modules.picker.viewmodel.PickerViewModel
 import com.siju.acexplorer.storage.modules.picker.viewmodel.PickerViewModelFactory
 import com.siju.acexplorer.storage.view.FileListAdapter
 import com.siju.acexplorer.utils.ScrollInfo
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
 import java.util.*
 
 private const val TAG = "PickerFragment"
@@ -57,9 +57,10 @@ const val KEY_PICKER_TYPE = "picker_type"
 const val RINGTONE_TYPE = "ringtone_type"
 private const val DELAY_SCROLL_UPDATE_MS = 100L
 
-class PickerFragment private constructor() : DialogFragment() {
+@Suppress("UNNECESSARY_SAFE_CALL")
+class PickerFragment private constructor(private val activity: AppCompatActivity) : DialogFragment() {
 
-    private lateinit var fileList: RecyclerView
+    private lateinit var fileList: FastScrollRecyclerView
     private lateinit var backButton: ImageButton
     private lateinit var currentPathText: TextView
     private lateinit var okButton: Button
@@ -103,7 +104,7 @@ class PickerFragment private constructor() : DialogFragment() {
         viewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(PickerViewModel::class.java)
         viewModel.setPermissionHelper(
-                PermissionHelper(activity as AppCompatActivity, AceApplication.appContext))
+                PermissionHelper(activity, AceApplication.appContext))
     }
 
     private fun setupUI(view: View) {
@@ -271,12 +272,12 @@ class PickerFragment private constructor() : DialogFragment() {
     private fun onRingtonePickerResult(pickerResultAction: PickerResultAction) {
         when (pickerResultAction.result) {
             true  -> {
-                activity?.setResult(RESULT_OK, pickerResultAction.data)
-                activity?.finish()
+                activity.setResult(RESULT_OK, pickerResultAction.data)
+                activity.finish()
             }
             false -> {
-                activity?.setResult(RESULT_CANCELED, null)
-                activity?.finish()
+                activity.setResult(RESULT_CANCELED, null)
+                activity.finish()
             }
         }
     }
@@ -284,8 +285,8 @@ class PickerFragment private constructor() : DialogFragment() {
     private fun onFilePickerResult(pickerResultAction: PickerResultAction) {
         when (pickerResultAction.result) {
             true -> {
-                activity?.setResult(RESULT_OK, pickerResultAction.data)
-                activity?.finish()
+                activity.setResult(RESULT_OK, pickerResultAction.data)
+                activity.finish()
             }
         }
     }
@@ -296,10 +297,10 @@ class PickerFragment private constructor() : DialogFragment() {
     }
 
     private fun onCancelButtonResult(pickerResultAction: PickerResultAction) {
-        activity?.setResult(RESULT_CANCELED, null)
+        activity.setResult(RESULT_CANCELED, null)
         when (pickerResultAction.data?.getSerializableExtra(KEY_PICKER_TYPE)) {
             PickerType.RINGTONE -> {
-                activity?.finish()
+                activity.finish()
             }
             else                -> {
                 dialog?.dismiss()
@@ -320,7 +321,7 @@ class PickerFragment private constructor() : DialogFragment() {
 
 
     private fun setTitle(title: String) {
-        val actionBar = (activity as AppCompatActivity).supportActionBar
+        val actionBar = activity.supportActionBar
         actionBar?.title = title
     }
 
@@ -403,9 +404,9 @@ class PickerFragment private constructor() : DialogFragment() {
 
     companion object {
 
-        fun newInstance(theme: Int, pickerType: PickerType,
+        fun newInstance(activity: AppCompatActivity, theme: Int, pickerType: PickerType,
                         ringtoneType: Int = -1): PickerFragment {
-            val dialogFragment = PickerFragment()
+            val dialogFragment = PickerFragment(activity )
             dialogFragment.setStyle(STYLE_NORMAL, theme)
             val args = Bundle()
             with(args) {

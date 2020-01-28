@@ -144,6 +144,7 @@ dependencies {
     implementation deps.floating_button
     implementation deps.ratethisapp
     implementation deps.photoview
+    implementation deps.fastscroll_recyclerview
 
     debugImplementation   deps.leak_canary
     releaseImplementation deps.leak_canary_rel

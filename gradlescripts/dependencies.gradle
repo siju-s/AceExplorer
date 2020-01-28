@@ -29,6 +29,7 @@ versions.ratethisapp         = "1.2.0"
 versions.floating_button     = "1.10.1"
 versions.leakcanary          = "1.5.4"
 versions.photoview           = "2.3.0"
+versions.fastscroll_recycler = "2.0.0"
 
 versions.junit               = "4.12"
 versions.espresso            = "3.1.0-alpha4"
@@ -93,6 +94,7 @@ deps.ratethisapp      = "io.github.kobakei:ratethisapp:$versions.ratethisapp"
 deps.leak_canary      = "com.squareup.leakcanary:leakcanary-android:$versions.leakcanary"
 deps.leak_canary_rel  = "com.squareup.leakcanary:leakcanary-android-no-op:$versions.leakcanary"
 deps.photoview        = "com.github.chrisbanes:PhotoView:$versions.photoview"
+deps.fastscroll_recyclerview = "com.simplecityapps:recyclerview-fastscroll:$versions.fastscroll_recycler"
 
 def testing = [:]
 testing.junit =    "junit:junit:$versions.junit"

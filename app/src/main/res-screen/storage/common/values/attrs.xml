@@ -17,19 +17,4 @@
 
 <resources>
     <attr name="toolbar_theme" format="reference" />
-    <declare-styleable name="FastScrollRecyclerView">
-        <attr name="fastScrollThumbColor" format="reference|color" />
-        <attr name="fastScrollTrackColor" format="reference|color" />
-        <attr name="fastScrollPopupBgColor" format="reference|color" />
-        <attr name="fastScrollPopupTextColor" format="reference|color" />
-        <attr name="fastScrollPopupTextSize" format="reference|dimension" />
-        <attr name="fastScrollPopupBackgroundSize" format="reference|dimension" />
-        <attr name="fastScrollAutoHide" format="boolean" />
-        <attr name="fastScrollAutoHideDelay" format="integer" />
-        <attr name="fastScrollThumbInactiveColor" format="reference|boolean" />
-        <attr name="fastScrollPopupPosition" format="enum">
-            <enum name="adjacent" value="0"/>
-            <enum name="center" value="1"/>
-        </attr>
-    </declare-styleable>
 </resources>

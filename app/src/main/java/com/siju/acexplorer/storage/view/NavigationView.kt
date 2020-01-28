@@ -121,7 +121,7 @@ class NavigationView(view: View, private val navigationCallback: NavigationCallb
         Logger.log(TAG, "Dir=$dir currentDir=$dir")
         navigationCallback.onNavButtonClicked(dir)
     }
-    
+
     private fun addViewToNavigation(view: View) {
         navDirectory.addView(view)
     }

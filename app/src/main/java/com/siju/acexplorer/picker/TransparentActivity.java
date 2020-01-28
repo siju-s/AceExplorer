@@ -67,7 +67,7 @@ public class TransparentActivity extends AppCompatActivity {
 
     private void showPickerDialog(Intent intent, PickerType pickerType) {
 
-        PickerFragment dialogFragment = PickerFragment.Companion.newInstance(checkTheme(),
+        PickerFragment dialogFragment = PickerFragment.Companion.newInstance(this, checkTheme(),
                 pickerType,
                 intent.getIntExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, 0));
         String FRAGMENT_TAG = "Browse_Frag";
