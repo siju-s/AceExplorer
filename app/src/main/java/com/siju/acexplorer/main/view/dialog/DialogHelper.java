@@ -106,6 +106,67 @@ public class DialogHelper {
         alertDialog.show();
     }
 
+    public static void showAlertDialog(final Context context, String[] text,
+                                       final AlertDialogListener dialogListener) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View dialogView = inflater.inflate(R.layout.alert_dialog, null);
+        builder.setView(dialogView);
+        builder.setCancelable(false);
+
+        final AlertDialog alertDialog = builder.create();
+
+        TextView title = dialogView.findViewById(R.id.textTitle);
+        TextView msg = dialogView.findViewById(R.id.textMessage);
+
+        Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
+        Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
+        Button neutralButton = dialogView.findViewById(R.id.buttonNeutral);
+
+
+        title.setText(text[0]);
+        msg.setText(text[1]);
+        positiveButton.setText(text[2]);
+
+
+        positiveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogListener.onPositiveButtonClick(v);
+                alertDialog.dismiss();
+            }
+        });
+
+        if (text.length > 3) {
+            negativeButton.setVisibility(View.VISIBLE);
+            negativeButton.setText(text[3]);
+            negativeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialogListener.onNegativeButtonClick(v);
+                    alertDialog.dismiss();
+                }
+            });
+        }
+
+        if (text.length > 4) {
+            neutralButton.setVisibility(View.VISIBLE);
+            neutralButton.setText(text[4]);
+            neutralButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialogListener.onNeutralButtonClick(v);
+                    alertDialog.dismiss();
+                }
+            });
+        }
+
+        alertDialog.show();
+        alertDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup
+                .LayoutParams.WRAP_CONTENT);
+    }
+
     public static void showSortDialog(final Context context, final SortMode sortMode, final
     SortDialogListener sortDialogListener) {
         String title = context.getString(R.string.action_sort);
@@ -796,6 +857,7 @@ public class DialogHelper {
 
         void onNegativeButtonClick(View view);
 
+        void onNeutralButtonClick(View view);
     }
 
     public interface ApkDialogListener {

@@ -22,6 +22,7 @@ import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.android.billingclient.api.*
+import com.siju.acexplorer.BuildConfig
 import com.siju.acexplorer.billing.repository.BillingRepository.AppSku.INAPP_SKUS
 import com.siju.acexplorer.billing.repository.localdb.AugmentedSkuDetails
 import com.siju.acexplorer.billing.repository.localdb.Entitlement
@@ -506,6 +507,9 @@ class BillingRepository private constructor(private val application: Application
         Log.d(LOG_TAG, "queryPurchasesAsync INAPP results: ${result?.purchasesList?.size}")
         result?.purchasesList?.apply { purchasesResult.addAll(this) }
         processPurchases(purchasesResult)
+        if (BuildConfig.DEBUG) {
+            consumePurchase(purchasesResult)
+        }
     }
 
     private fun processPurchases(purchasesResult: Set<Purchase>) {
@@ -644,6 +648,26 @@ class BillingRepository private constructor(private val application: Application
                 .setOldSku(null).build()
         playStoreBillingClient.launchBillingFlow(activity, purchaseParams)
     }
+
+    fun purchaseFullVersion(activity: Activity) {
+        CoroutineScope(Job() + Dispatchers.IO).launch {
+            val skuDetails = localCacheBillingClient.skuDetailsDao().getById(AppSku.SKU_REMOVE_ADS)
+            Log.e("Billing", "SKU:${skuDetails}")
+            skuDetails?.let { launchBillingFlow(activity, it) }
+        }
+    }
+
+
+    private fun consumePurchase(purchasesResult: HashSet<Purchase>) {
+        if (purchasesResult.isNotEmpty()) {
+            val purchase = purchasesResult.first()
+            val consumeParams = ConsumeParams.newBuilder().setPurchaseToken(purchase.purchaseToken).build()
+            playStoreBillingClient.consumeAsync(consumeParams) { billingResult, _ ->
+                Log.e(this.javaClass.simpleName, "Billing consume:${billingResult.debugMessage}, response:${billingResult.responseCode}")
+             }
+        }
+    }
+
 
 
     /**

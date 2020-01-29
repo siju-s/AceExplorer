@@ -53,6 +53,11 @@
         app:title="@string/pref_title_change_lang" />
 
     <Preference
+        app:key="prefsUnlockFull"
+        app:layout="@layout/prefs_settings_item"
+        app:title="@string/unlock_full_version" />
+
+    <Preference
         app:key="prefsUpdate"
         app:layout="@layout/prefs_settings_item"
         app:title="@string/pref_title_check_update" />

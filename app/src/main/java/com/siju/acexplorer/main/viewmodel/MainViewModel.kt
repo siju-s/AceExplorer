@@ -7,7 +7,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.siju.acexplorer.billing.repository.BillingRepository
-import com.siju.acexplorer.billing.repository.localdb.AugmentedSkuDetails
 import com.siju.acexplorer.billing.repository.localdb.Premium
 import com.siju.acexplorer.main.model.MainModelImpl
 import com.siju.acexplorer.main.model.StorageItem
@@ -64,8 +63,8 @@ class MainViewModel(val app: Application) : AndroidViewModel(app) {
         billingRepository.endDataSourceConnections()
     }
 
-    fun makePurchase(activity: Activity, augmentedSkuDetails: AugmentedSkuDetails) {
-        billingRepository.launchBillingFlow(activity, augmentedSkuDetails)
+    fun buyPremiumVersion(activity: Activity) {
+        billingRepository.purchaseFullVersion(activity)
     }
 
     fun setPermissionHelper(permissionHelper: PermissionHelper) {

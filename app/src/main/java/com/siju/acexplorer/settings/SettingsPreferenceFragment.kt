@@ -23,6 +23,8 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.preference.*
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
@@ -33,6 +35,8 @@ import com.siju.acexplorer.home.model.FavoriteHelper
 import com.siju.acexplorer.logging.Logger
 import com.siju.acexplorer.main.model.FileConstants
 import com.siju.acexplorer.main.model.root.RootUtils
+import com.siju.acexplorer.main.viewmodel.MainViewModel
+import com.siju.acexplorer.premium.Premium
 import com.siju.acexplorer.theme.CURRENT_THEME
 import com.siju.acexplorer.theme.PREFS_THEME
 import com.siju.acexplorer.theme.Theme
@@ -40,6 +44,7 @@ import com.siju.acexplorer.utils.LocaleHelper
 
 const val PREFS_UPDATE = "prefsUpdate"
 const val PREFS_LANGUAGE = "prefLanguage"
+private const val PREFS_FULL_VERSION = "prefsUnlockFull"
 private const val URL_PLAYSTORE = "https://play.google.com/store/apps/details?id="
 private const val URL_PLAYSTORE_MARKET = "market://details?id="
 
@@ -48,6 +53,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     private var preferences: SharedPreferences? = null
     private var currentLanguage: String? = null
     private var theme = 0
+    private lateinit var mainViewModel: MainViewModel
 
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -59,12 +65,38 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         preferences = PreferenceManager.getDefaultSharedPreferences(context)
 
+        setupViewModels()
         setupRootPref()
         setupLanguagePreference()
         setupThemePref()
         setupAnalyticsPref()
         setupResetFavPref()
         setupUpdatePref()
+        setupUnlockFullVersionPref()
+    }
+
+    private fun setupViewModels() {
+        val activity = requireNotNull(activity)
+        mainViewModel = ViewModelProviders.of(activity).get(MainViewModel::class.java)
+        mainViewModel.premiumLiveData.observe(this, Observer {
+            it?.apply {
+                if (it.entitled) {
+                    findPreference<Preference>(PREFS_FULL_VERSION)?.isVisible = false
+                }
+            }
+        })
+    }
+
+    private fun setupUnlockFullVersionPref() {
+        val preference = findPreference<Preference>(PREFS_FULL_VERSION)
+        preference?.setOnPreferenceClickListener {
+            val activity = activity as AppCompatActivity?
+            activity?.let {
+                val premium = Premium(it, mainViewModel)
+                premium.showPremiumDialog(it)
+            }
+            true
+        }
     }
 
     private fun setupRootPref() {

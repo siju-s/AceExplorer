@@ -247,7 +247,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
     private fun handleScrollPosition() {
         if (scrollToTop) {
             _scrollInfo.postValue(ScrollInfo(0, 0))
-            scrollToTop = false
+            setScrollToTop(false)
             return
         }
         currentDir?.let {

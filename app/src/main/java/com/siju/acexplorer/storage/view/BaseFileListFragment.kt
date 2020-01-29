@@ -832,6 +832,10 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
             triggerStorageAccessFramework()
         }
 
+        override fun onNeutralButtonClick(view: View?) {
+
+        }
+
         override fun onNegativeButtonClick(view: View?) {
             Toast.makeText(context, context?.getString(R.string.error), Toast
                     .LENGTH_SHORT).show()
