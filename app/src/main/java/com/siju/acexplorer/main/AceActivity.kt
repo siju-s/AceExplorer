@@ -41,6 +41,7 @@ import com.siju.acexplorer.main.view.FragmentsFactory
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.main.viewmodel.Pane
 import com.siju.acexplorer.permission.PermissionHelper
+import com.siju.acexplorer.premium.PremiumUtils
 import com.siju.acexplorer.search.view.SearchFragment
 import com.siju.acexplorer.settings.AboutFragment
 import com.siju.acexplorer.settings.SettingsFragment
@@ -58,6 +59,7 @@ private const val TAG = "AceActivity"
 class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
 
     private lateinit var mainViewModel: MainViewModel
+    private var premiumUtils : PremiumUtils? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +72,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         initListeners()
         bottom_navigation.selectedItemId = R.id.navigation_home
         Log.e(TAG, "billing key:${BillingKey.getBillingKey()}")
+        setupPremiumUtils()
     }
 
     private fun initListeners() {
@@ -123,6 +126,12 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
                 }
             }
         })
+    }
+
+    private fun setupPremiumUtils() {
+        premiumUtils = PremiumUtils()
+        premiumUtils?.onStart(this)
+        premiumUtils?.showPremiumDialogIfNeeded(this, mainViewModel)
     }
 
     private fun onDualModeEnabled(configuration: Configuration?) {
@@ -224,13 +233,6 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         mainViewModel.onResume()
     }
 
-    //    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-//        if (!mainUi.handleActivityResult(requestCode, resultCode, intent)) {
-//            super.onActivityResult(requestCode, resultCode, intent)
-//        }
-//    }
-//
-//
     override fun onBackPressed() {
         when (val fragment = supportFragmentManager.findFragmentById(R.id.main_container)) {
             is BaseFileListFragment -> when (val focusedFragment = getCurrentFocusFragment(fragment)) {
@@ -329,69 +331,5 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
             disableDualPane()
         }
     }
-//
-//    override fun onDestroy() {
-//        mainUi.onExit()
-//        super.onDestroy()
-//    }
-//
-//
-//    override fun onRestart() {
-//        super.onRestart()
-//        mainUi.checkForPreferenceChanges()
-//    }
-//
-//    override fun onCreateContextMenu(menu: ContextMenu, v: View,
-//                                     menuInfo: ContextMenu.ContextMenuInfo) {
-//        super.onCreateContextMenu(menu, v, menuInfo)
-//        mainUi.onCreateContextMenu(menu, v, menuInfo)
-//    }
-//
-//    override fun onContextItemSelected(item: MenuItem): Boolean {
-//        mainUi.onContextItemSelected(item)
-//        return super.onContextItemSelected(item)
-//    }
-//
-//    fun showDualFrame() {
-//        mainUi.showDualFrame()
-//    }
-//
-//    fun setDualPaneFocusState(isDualPaneInFocus: Boolean) {
-//        mainUi.setDualPaneFocusState(isDualPaneInFocus)
-//    }
-//
-//    override fun onConfigurationChanged(newConfig: Configuration) {
-//        super.onConfigurationChanged(newConfig)
-//        configuration = newConfig
-//        mainUi.onConfigChanged(newConfig)
-//    }
-//
-//    override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, newConfig: Configuration) {
-//        super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig)
-//        mainUi.onMultiWindowChanged(isInMultiWindowMode, newConfig)
-//    }
-//
-//    fun getConfiguration(): Configuration {
-//        return configuration ?: resources.configuration
-//    }
-//
-//    fun switchView(viewMode: Int, isDual: Boolean) {
-//        configuration = getConfiguration()
-//        if (configuration!!.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//            mainUi.switchView(viewMode, isDual)
-//        }
-//    }
-//
-//    fun refreshList(isDual: Boolean) {
-//        configuration = getConfiguration()
-//        if (configuration!!.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//            mainUi.refreshList(isDual)
-//        }
-//    }
-//
-//    fun onSearchClicked() {
-//        mainUi.onSearchClicked()
-//    }
-
 
 }
