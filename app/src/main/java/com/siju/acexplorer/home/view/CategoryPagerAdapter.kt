@@ -44,7 +44,7 @@ class CategoryPagerAdapter(fragmentManager: FragmentManager) : FragmentStatePage
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val fragment =  super.instantiateItem(container, position)
-        Log.e("Adapter", "instantiateItem:$position")
+        Log.e("Adapter", "instantiateItem:$position, fragment:$fragment")
         fragmentMap[position] = fragment as Fragment
         return fragment
     }

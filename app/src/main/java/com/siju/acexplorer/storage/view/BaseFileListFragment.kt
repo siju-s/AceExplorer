@@ -104,8 +104,8 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        Log.e(TAG, "onActivityCreated:$this")
         getArgs()
+        Log.e(TAG, "onActivityCreated:$this, category:$category")
         val view = view
         val container = view?.findViewById<CoordinatorLayout>(R.id.main_content)
         container?.let {

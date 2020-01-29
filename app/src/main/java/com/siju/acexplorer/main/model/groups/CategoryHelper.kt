@@ -23,8 +23,7 @@ object CategoryHelper {
         return category == FILES ||
                 category == COMPRESSED ||
                 category == DOWNLOADS ||
-                category == FAVORITES ||
-                category == LARGE_FILES
+                category == FAVORITES
     }
 
     fun isDateInMs(category: Category): Boolean {
