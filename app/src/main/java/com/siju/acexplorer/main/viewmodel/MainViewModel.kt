@@ -73,6 +73,9 @@ class MainViewModel(val app: Application) : AndroidViewModel(app) {
         permissionHelper.checkPermissions()
     }
 
+    fun isPremiumVersion() = premiumLiveData.value?.entitled == true
+
+    fun isFreeVersion() = premiumLiveData.value?.entitled == false
 
     fun onPermissionResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         permissionHelper.onPermissionResult(requestCode, permissions, grantResults)

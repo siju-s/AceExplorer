@@ -55,11 +55,15 @@ import kotlinx.android.synthetic.main.content_main.*
 
 
 private const val TAG = "AceActivity"
+private const val ACTION_IMAGES = "android.intent.action.SHORTCUT_IMAGES"
+private const val ACTION_MUSIC = "android.intent.action.SHORTCUT_MUSIC"
+private const val ACTION_VIDEOS = "android.intent.action.SHORTCUT_VIDEOS"
 
 class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
 
     private lateinit var mainViewModel: MainViewModel
-    private var premiumUtils : PremiumUtils? = null
+    private var premiumUtils: PremiumUtils? = null
+    private var category: Category? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +74,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
 
         initObservers()
         initListeners()
+        checkIfInAppShortcut(intent)
         bottom_navigation.selectedItemId = R.id.navigation_home
         Log.e(TAG, "billing key:${BillingKey.getBillingKey()}")
         setupPremiumUtils()
@@ -134,6 +139,28 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         premiumUtils?.showPremiumDialogIfNeeded(this, mainViewModel)
     }
 
+    private fun checkIfInAppShortcut(intent: Intent?) {
+        if (intent == null || intent.action == null) {
+            setCategory(null)
+            return
+        }
+        var category: Category? = null
+        when (intent.action) {
+            ACTION_IMAGES -> category = Category.GENERIC_IMAGES
+            ACTION_MUSIC -> category = Category.GENERIC_MUSIC
+            ACTION_VIDEOS -> category = Category.GENERIC_VIDEOS
+        }
+        if (mainViewModel.permissionStatus.value is PermissionHelper.PermissionState.Granted) {
+            setCategory(category)
+        } else {
+            setCategory(null)
+        }
+    }
+
+    private fun setCategory(value: Category?) {
+        this.category = value
+    }
+
     private fun onDualModeEnabled(configuration: Configuration?) {
         if (canEnableDualPane(configuration)) {
             enableDualPane()
@@ -175,7 +202,13 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
 
     private val navigationItemReselectedListener = BottomNavigationView.OnNavigationItemReselectedListener { menuItem ->
         clearBackStack()
-        val fragment = FragmentsFactory.createFragment(menuItem.itemId)
+        val fragment = if (category != null) {
+            CategoryFragment.newInstance(null, category!!)
+        }
+        else {
+            FragmentsFactory.createFragment(menuItem.itemId)
+        }
+        setCategory(null)
         openFragment(fragment)
     }
 
