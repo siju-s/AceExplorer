@@ -208,6 +208,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
 
         mainViewModel.theme.observe(viewLifecycleOwner, Observer {
             floatingView.setTheme(it)
+            menuControls.setTheme(it)
         })
 
         fileListViewModel.fileData.observe(viewLifecycleOwner, Observer {

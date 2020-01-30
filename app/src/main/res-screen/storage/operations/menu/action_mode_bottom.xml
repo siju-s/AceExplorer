@@ -71,13 +71,13 @@
 
             <item
                 android:id="@+id/action_info"
-                android:icon="@drawable/ic_info_white"
+                android:icon="@drawable/ic_info"
                 android:title="@string/action_info"
                 app:showAsAction="ifRoom" />
 
             <item
                 android:id="@+id/action_permissions"
-                android:icon="@drawable/ic_permissions_white"
+                android:icon="@drawable/ic_permissions"
                 android:title="@string/permissions"
                 android:visible="false"
                 app:showAsAction="ifRoom" />
@@ -85,13 +85,13 @@
 
             <item
                 android:id="@+id/action_archive"
-                android:icon="@drawable/ic_archive_white"
+                android:icon="@drawable/ic_archive"
                 android:title="@string/action_archive"
                 app:showAsAction="never" />
 
             <item
                 android:id="@+id/action_extract"
-                android:icon="@drawable/ic_extract_white"
+                android:icon="@drawable/ic_extract"
                 android:title="@string/extract_to"
                 android:visible="false"
                 app:showAsAction="never" />
@@ -104,7 +104,7 @@
 
             <item
                 android:id="@+id/action_hide"
-                android:icon="@drawable/ic_hide_white"
+                android:icon="@drawable/ic_hide"
                 android:title="@string/hide"
                 app:showAsAction="never" />
         </menu>

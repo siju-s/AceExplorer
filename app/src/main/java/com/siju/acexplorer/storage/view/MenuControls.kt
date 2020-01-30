@@ -17,6 +17,8 @@ import com.siju.acexplorer.main.model.groups.CategoryHelper.isSortOrActionModeUn
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.root.RootUtils
 import com.siju.acexplorer.storage.model.ViewMode
+import com.siju.acexplorer.theme.Theme
+
 
 private const val TAG = "MenuControls"
 
@@ -24,8 +26,8 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
                    val category: Category, var viewMode: ViewMode) :
         Toolbar.OnMenuItemClickListener, SearchView.OnQueryTextListener {
 
-    private var bottomToolbar: Toolbar = view.findViewById(R.id.toolbar_bottom)
-    private var toolbar: Toolbar = categoryFragmentView.findViewById(R.id.toolbar)
+    private val bottomToolbar: Toolbar = view.findViewById(R.id.toolbar_bottom)
+    private val toolbar: Toolbar = categoryFragmentView.findViewById(R.id.toolbar)
     private val context = view.context
     private lateinit var searchItem: MenuItem
     private lateinit var sortItem: MenuItem
@@ -43,6 +45,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     private var searchView: SearchView? = null
     private var hiddenMenuItem: MenuItem? = null
     private var isSearchActive = false
+    private var theme : Theme? = null
 
     init {
         // When Categoryfragment with viewpager is not shown, the BaseFileListFragment toolbar inflates the menu
@@ -263,6 +266,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
         renameItem.isVisible = true
         infoItem.isVisible = true
         hideItem.isVisible = true
+        setHideItemProperties(fileInfo?.fileName)
 
         val isDir = fileInfo?.isDirectory
         val filePath = fileInfo?.filePath
@@ -291,7 +295,20 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
             }
 
         }
-        //TODO Check directory, theme etc
+    }
+
+    private fun setHideItemProperties(fileName : String?) {
+        if (fileName == null) {
+            return
+        }
+        if (fileName.startsWith(".")) {
+            hideItem.setIcon(R.drawable.ic_unhide)
+            hideItem.setTitle(R.string.unhide)
+        }
+        else {
+            hideItem.setIcon(R.drawable.ic_hide)
+            hideItem.setTitle(R.string.hide)
+        }
     }
 
     private fun toggleAppManagerMenuVisibility() {
@@ -359,6 +376,20 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
         }
         fragment.onQueryTextChange(query)
         return true
+    }
+
+     fun setTheme(theme: Theme) {
+        this.theme = theme
+        when (theme) {
+            Theme.DARK -> {
+                toolbar.popupTheme = R.style.Dark_AppTheme_PopupOverlay
+                bottomToolbar.popupTheme = R.style.Dark_AppTheme_PopupOverlay
+            }
+            Theme.LIGHT -> {
+                toolbar.popupTheme = R.style.AppTheme_PopupOverlay
+                bottomToolbar.popupTheme = R.style.AppTheme_PopupOverlay
+            }
+        }
     }
 
 }
