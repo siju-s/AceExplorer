@@ -16,6 +16,7 @@
 
 package com.siju.acexplorer.home.view
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -234,6 +235,12 @@ class HomeScreenFragment private constructor() : Fragment() {
 
     private fun navigateToSearchScreen() {
         mainViewModel.navigateToSearch.value = true
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        Log.e(TAG, "onConfigurationChanged:$newConfig")
+        setCategoryLayoutManager()
     }
 
     companion object {
