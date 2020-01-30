@@ -1,6 +1,7 @@
 package com.siju.acexplorer.search.viewmodel
 
 import android.provider.SearchRecentSuggestions
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.siju.acexplorer.main.model.StorageUtils
@@ -33,6 +34,7 @@ class SearchViewModel(private val searchModel: SearchModel) : ViewModel() {
 
     fun search(path : String?, query : String?, category: Category = Category.FILES) {
         if (query != null && query.isNotBlank() && query.length >= MIN_CHAR_QUERY) {
+            Log.e(TAG, "Search query:$query")
             var rootPath = path
             if (rootPath == null) {
                 rootPath = StorageUtils.internalStorage
@@ -42,6 +44,7 @@ class SearchViewModel(private val searchModel: SearchModel) : ViewModel() {
             }
         }
         else if (query.isNullOrBlank()){
+            searchModel.cancelSearch()
             searchModel.emptyQuerySearch()
         }
     }

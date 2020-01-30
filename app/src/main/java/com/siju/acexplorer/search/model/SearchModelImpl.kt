@@ -23,14 +23,21 @@ class SearchModelImpl(val context: Context) : SearchModel, SearchDataFetcher.Sea
     private val searchDataFetcher = SearchDataFetcher(this)
 
     override fun searchData(path : String, query : String, category: Category) {
+        searchDataFetcher.cancelSearch()
+        _searchResult.postValue(ArrayList())
         searchDataFetcher.fetchData(path, query)
     }
+
+    override fun cancelSearch() {
+        searchDataFetcher.cancelSearch()
+    }
+
     override fun onSearchResultFound(result: ArrayList<SearchDataFetcher.SearchDataItem>) {
        _searchResult.postValue(result)
     }
 
     override fun emptyQuerySearch() {
-        _searchResult.postValue(ArrayList<SearchDataFetcher.SearchDataItem>())
+        _searchResult.postValue(ArrayList())
     }
 
     override fun getRecentSearches(authority: String) {

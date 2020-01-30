@@ -152,8 +152,8 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
         searchViewModel.searchResult.observe(viewLifecycleOwner, Observer {
             it?.apply {
                 if (::filesList.isInitialized) {
-                    Log.e("SearchFragment", " Search result:${it.size}" + "list visibility:${filesList.visibility}, recentSearchVis : ${recentSearchContainer.visibility}, adapter: ${filesList.adapter}")
-                    if (it.isEmpty()) {
+//                    Log.e("SearchFragment", " Search result:${it.size}" + "list visibility:${filesList.visibility}, recentSearchVis : ${recentSearchContainer.visibility}, adapter: ${filesList.adapter}")
+                    if (searchView.query.isEmpty()) {
                         searchSuggestions.showChipGroup()
                         showRecentSearch()
                         clearAllCheckedItems()
@@ -281,8 +281,7 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
         searchView.setIconifiedByDefault(false)
         searchView.clearFocus()
         searchView.maxWidth = Integer.MAX_VALUE
-        searchView.imeOptions = EditorInfo.IME_FLAG_NO_EXTRACT_UI
-        searchView.imeOptions = EditorInfo.IME_ACTION_SEARCH
+        searchView.imeOptions = searchView.imeOptions or EditorInfo.IME_FLAG_NO_FULLSCREEN or EditorInfo.IME_ACTION_SEARCH
         searchView.setOnQueryTextListener(this)
         val searchManager = context?.getSystemService(
                 SEARCH_SERVICE) as SearchManager

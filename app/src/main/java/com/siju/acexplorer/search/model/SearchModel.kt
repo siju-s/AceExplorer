@@ -7,4 +7,5 @@ interface SearchModel {
     fun emptyQuerySearch()
     fun getRecentSearches(authority: String)
     fun clearRecentSearches()
+    fun cancelSearch()
 }

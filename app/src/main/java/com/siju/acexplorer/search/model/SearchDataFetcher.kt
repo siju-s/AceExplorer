@@ -1,5 +1,6 @@
 package com.siju.acexplorer.search.model
 
+import android.util.Log
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.data.FileDataFetcher
 import com.siju.acexplorer.main.model.groups.Category
@@ -13,9 +14,13 @@ import kotlin.collections.HashMap
 
 class SearchDataFetcher(private val searchResultCallback: SearchResultCallback) {
     private var searchHeaderMap = hashMapOf<Int, ArrayList<FileInfo>>()
+    private var cancelSearch = false
 
     fun fetchData(path: String?, query: String) {
+        //TODO 30 Jan 2020 Should use coroutine cancel somehow instead of a flag here
+        Log.e("SearchDataFetcher", "fetchData query:$query, cancel:$cancelSearch")
         searchHeaderMap = HashMap()
+        cancelSearch = false
         searchFile(path, query)
     }
 
@@ -26,10 +31,17 @@ class SearchDataFetcher(private val searchResultCallback: SearchResultCallback) 
         }
     }
 
+    fun cancelSearch() {
+        cancelSearch = true
+    }
+
     private fun getMatchingFiles(sourceFile: File, query: String) {
         val listFiles = sourceFile.listFiles() ?: return
         for (file in listFiles) {
-//            Log.w("SearchDataFetcher", "getMatchingFiles : file:${file.name}, query:$query")
+//            Log.e("SearchDataFetcher", "getMatchingFiles : file:${file.name}, query:$query, cancel:$cancelSearch")
+            if (cancelSearch) {
+                break
+            }
             if (isSearchResultFound(file, query)) {
 //                Log.e("SearchDataFetcher", "FOUND : file:${file.name}, query:$query")
                 val filePath = file.absolutePath
@@ -62,6 +74,9 @@ class SearchDataFetcher(private val searchResultCallback: SearchResultCallback) 
     }
 
     private fun createSearchData(fileInfo: FileInfo) {
+        if (cancelSearch) {
+            return
+        }
         val type = getType(fileInfo)
 //        Log.e("SearchDataFetcher", "createSearchData : fileInfo:${fileInfo.isDirectory}, category : ${fileInfo.category}, type:$type,  value : ${fileInfo.fileName}")
         if (searchHeaderMap.contains(type)) {
@@ -75,12 +90,16 @@ class SearchDataFetcher(private val searchResultCallback: SearchResultCallback) 
         val searchData = ArrayList<SearchDataItem>()
         for ((headerType, itemList) in searchHeaderMap) {
 //            Log.e("SearchDataFetcher","map: $headerType = ${itemList.size}")
-            searchData.add(SearchDataItem.Header(headerType, itemList.size))
-            for (item in itemList) {
-                searchData.add(SearchDataItem.Item(item))
+            if (cancelSearch) {
+                break
             }
+            searchData.add(SearchDataItem.Header(headerType, itemList.size))
+            val iterator = itemList.iterator()
+            searchData.add(SearchDataItem.Item(iterator.next()))
         }
-        searchResultCallback.onSearchResultFound(searchData)
+        if (!cancelSearch) {
+            searchResultCallback.onSearchResultFound(searchData)
+        }
     }
 
     private fun getType(fileInfo: FileInfo): Int {
