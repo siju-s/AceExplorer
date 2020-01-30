@@ -69,7 +69,9 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
         when (holder) {
             is HeaderViewHolder -> {
                 val item = getItem(position) as RecentTimeData.RecentDataItem.Header
-                holder.bind(item.headerType, item.count, multiSelectionHelper?.hasSelectedItems(), position,
+                holder.bind(item.headerType, item.count, multiSelectionHelper?.hasSelectedItems(),
+                        multiSelectionHelper?.isCompleteRecentHeaderSelected(item.headerType, item.count),
+                        position,
                         imageClickListener)
             }
             is ItemViewHolder -> {
@@ -177,6 +179,7 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
                 selected == true       -> {
                     itemView.setBackgroundColor(color)
                     imageSelection.visibility = View.VISIBLE
+                    imageSelection.isSelected = selected
                 }
                 position == draggedPos -> itemView.setBackgroundColor(color)
                 else                   -> {
@@ -264,7 +267,8 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
         private var imageSelection : ImageView = itemView.findViewById(R.id.imageSelection)
 
         fun bind(headerType: RecentTimeData.HeaderType, count: Int, hasSelectedItems: Boolean?,
-                 position: Int, imageClickListener: (Int, Boolean) -> Unit) {
+                 headerItemsChecked: Boolean?, position: Int, imageClickListener: (Int, Boolean) -> Unit) {
+            Log.e("RecentAdapter", "bindHeader:type:$headerType, itemChecked:$headerItemsChecked, count:$count")
             dateText.text = RecentTimeData.getHeaderName(itemView.context, headerType)
             countText.text = itemView.context.resources.getQuantityString(R.plurals.number_of_files, count, count)
 
@@ -277,6 +281,8 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
                 countText.visibility = View.VISIBLE
             }
 
+            imageSelection.isSelected = headerItemsChecked == true
+
             imageSelection.setOnClickListener {
                 val tag = imageSelection.tag
                 if (tag == null) {
@@ -286,6 +292,8 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
                     tag as Boolean
                     imageSelection.tag = !tag
                 }
+                imageSelection.isSelected = imageSelection.tag == true
+
                 imageClickListener(position, imageSelection.tag as Boolean)
             }
         }

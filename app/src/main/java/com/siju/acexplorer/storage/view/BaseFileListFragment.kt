@@ -294,19 +294,10 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
             it?.apply {
                 when (it) {
                     ActionModeState.STARTED -> {
-                        floatingView.hideFab()
-                        hideAds()
-                        menuControls.onStartActionMode()
+                        onActionModeStarted()
                     }
                     ActionModeState.ENDED -> {
-                        if (Category.FILES == category) {
-                            floatingView.showFab()
-                        }
-                        menuControls.onEndActionMode()
-                        filesList.onEndActionMode()
-                        if (mainViewModel.premiumLiveData.value?.entitled == false) {
-                            showAds()
-                        }
+                        onActionModeEnded()
                     }
                 }
             }
@@ -450,6 +441,23 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
                 }
             }
         })
+    }
+
+    private fun onActionModeStarted() {
+        floatingView.hideFab()
+        hideAds()
+        menuControls.onStartActionMode()
+    }
+
+    private fun onActionModeEnded() {
+        if (Category.FILES == category) {
+            floatingView.showFab()
+        }
+        menuControls.onEndActionMode()
+        filesList.onEndActionMode()
+        if (mainViewModel.isFreeVersion()) {
+            showAds()
+        }
     }
 
     private fun shouldRefreshPane(pane : Pane, reload : Boolean) : Boolean {

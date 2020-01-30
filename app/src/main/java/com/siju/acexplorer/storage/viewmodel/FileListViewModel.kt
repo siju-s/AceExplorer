@@ -352,7 +352,12 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
     fun handleItemClick(fileInfo: FileInfo, position: Int) {
         Log.e(TAG, "handleItemClick: category:$category")
         if (isActionModeActive()) {
-            multiSelectionHelper.toggleSelection(position)
+            if (RecentTimeHelper.isRecentTimeLineCategory(category)) {
+                handleRecentSelection(position)
+            }
+            else {
+                multiSelectionHelper.toggleSelection(position, false)
+            }
             handleActionModeClick(fileInfo)
             return
         }
@@ -414,6 +419,14 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
             }
             else -> {
             }
+        }
+    }
+
+    private fun handleRecentSelection(position: Int) {
+        val data = recentFileData.value?.second?.get(position)
+        if (data is RecentTimeData.RecentDataItem.Item) {
+            multiSelectionHelper.toggleSelection(position, false, data.headerType)
+
         }
     }
 
@@ -480,12 +493,17 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
     }
 
     fun handleLongClick(fileInfo: FileInfo, position: Int) {
-        Log.e(TAG, "handleLongClick:position $position, canLongpress:${canLongPress()}")
+        Log.e(TAG, "handleLongClick:position $position, canLongpress:${canLongPress()}, category:$category")
         if (CategoryHelper.isSortOrActionModeUnSupported(category)) {
             return
         }
         if (canLongPress()) {
-            multiSelectionHelper.toggleSelection(position, true)
+            if (RecentTimeHelper.isRecentTimeLineCategory(category)) {
+                handleRecentSelection(position)
+            }
+            else {
+                multiSelectionHelper.toggleSelection(position, true)
+            }
             handleActionModeClick(fileInfo)
             operationPresenter.setLongPressedTime(System.currentTimeMillis())
             if (isActionModeActive() && multiSelectionHelper.getSelectedCount() >= 1) {

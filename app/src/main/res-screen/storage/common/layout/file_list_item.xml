@@ -93,8 +93,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
-        android:src="@drawable/ic_check"
-        android:background="@drawable/ic_circle"
+        android:src="@drawable/ic_select_checked_state"
         android:visibility="gone"
         tools:visibility="visible"
         tools:ignore="ContentDescription" />

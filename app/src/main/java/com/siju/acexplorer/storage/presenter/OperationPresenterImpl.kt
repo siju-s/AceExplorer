@@ -8,6 +8,7 @@ import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.view.dialog.DialogHelper
 import com.siju.acexplorer.storage.helper.RecentDataConverter
+import com.siju.acexplorer.storage.model.RecentTimeData
 import com.siju.acexplorer.storage.model.RecentTimeHelper
 import com.siju.acexplorer.storage.model.StorageModel
 import com.siju.acexplorer.storage.model.operations.Operations
@@ -153,7 +154,7 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
         val headerCount = data.first.size
         val fileList = data.second
         if (multiSelectionHelper.getSelectedCount() + headerCount < fileList.size ) {
-            selectAllRecentItems(fileList, data.first)
+            selectAllRecentItems(fileList, data.first, viewModel.recentFileData.value?.second)
         }
         else {
             unselectAllItems()
@@ -161,10 +162,13 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
         viewModel.handleActionModeClick(null)
     }
 
-    private fun selectAllRecentItems(list: ArrayList<FileInfo>, headerPosList : ArrayList<Int>) {
+    private fun selectAllRecentItems(list: ArrayList<FileInfo>, headerPosList: ArrayList<Int>, dataItem: ArrayList<RecentTimeData.RecentDataItem>?) {
         for (item in list.withIndex()) {
             if (!headerPosList.contains(item.index)) {
-                multiSelectionHelper.selectAll(item.index)
+                val recentItem = dataItem?.get(item.index)
+                if (recentItem is RecentTimeData.RecentDataItem.Item) {
+                    multiSelectionHelper.selectAll(item.index, recentItem.headerType)
+                }
             }
         }
         multiSelectionHelper.refresh()

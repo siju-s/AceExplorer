@@ -31,7 +31,7 @@ object RecentTimeData {
             Log.e("RecentTimeData", "map: $headerType = ${itemList.size}")
             recentData.add(RecentDataItem.Header(headerType, itemList.size))
             for (item in itemList) {
-                recentData.add(RecentDataItem.Item(item))
+                recentData.add(RecentDataItem.Item(headerType, item))
             }
         }
         return recentData
@@ -59,7 +59,7 @@ object RecentTimeData {
 
 
     sealed class RecentDataItem {
-        data class Item(val fileInfo: FileInfo) : RecentDataItem() {
+        data class Item(val headerType: HeaderType, val fileInfo: FileInfo) : RecentDataItem() {
 
             override val id: String
                 get() = fileInfo.filePath

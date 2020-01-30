@@ -176,10 +176,13 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                 selected == true       -> {
                     itemView.setBackgroundColor(color)
                     imageSelection.visibility = View.VISIBLE
+                    imageSelection.isSelected = true
+
                 }
                 position == draggedPos -> itemView.setBackgroundColor(color)
                 else                   -> {
                     itemView.setBackgroundColor(Color.TRANSPARENT)
+                    imageSelection.isSelected = false
                     imageSelection.visibility = View.GONE
                 }
             }
