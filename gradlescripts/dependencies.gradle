@@ -104,7 +104,7 @@ deps.testing = testing
 
 def build_versions = [:]
 build_versions.min_sdk    = 21
-build_versions.target_sdk = 28
+build_versions.target_sdk = 29
 ext.build_versions        = build_versions
 
 ext.deps = deps

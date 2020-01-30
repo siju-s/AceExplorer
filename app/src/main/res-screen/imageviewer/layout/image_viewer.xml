@@ -24,7 +24,8 @@
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:layout_marginStart="@dimen/margin_16"
-            android:background="@drawable/ic_back_white" />
+            android:background="@drawable/ic_back_white"
+            tools:ignore="ContentDescription" />
 
 
         <ImageButton
@@ -34,7 +35,8 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/margin_16"
-            android:background="@drawable/ic_overflow" />
+            android:background="@drawable/ic_overflow"
+            tools:ignore="ContentDescription" />
 
 
         <ImageButton
@@ -43,8 +45,9 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/margin_16"
+            android:contentDescription="@string/action_share"
             android:layout_toStartOf="@+id/imgButtonOverflow"
-            android:background="@drawable/ic_share" />
+            android:background="@drawable/ic_share_white" />
 
         <TextView
             android:id="@+id/titleText"
