@@ -152,7 +152,7 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
         searchViewModel.searchResult.observe(viewLifecycleOwner, Observer {
             it?.apply {
                 if (::filesList.isInitialized) {
-//                    Log.e("SearchFragment", " Search result:${it.size}" + "list visibility:${filesList.visibility}, recentSearchVis : ${recentSearchContainer.visibility}, adapter: ${filesList.adapter}")
+                    Log.e("SearchFragment", " Search result:${it.size}")
                     if (searchView.query.isEmpty()) {
                         searchSuggestions.showChipGroup()
                         showRecentSearch()

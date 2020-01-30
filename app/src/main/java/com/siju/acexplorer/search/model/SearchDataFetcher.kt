@@ -38,10 +38,10 @@ class SearchDataFetcher(private val searchResultCallback: SearchResultCallback) 
     private fun getMatchingFiles(sourceFile: File, query: String) {
         val listFiles = sourceFile.listFiles() ?: return
         for (file in listFiles) {
-//            Log.e("SearchDataFetcher", "getMatchingFiles : file:${file.name}, query:$query, cancel:$cancelSearch")
             if (cancelSearch) {
                 break
             }
+//            Log.e("SearchDataFetcher", "getMatchingFiles : file:${file.name}, query:$query, cancel:$cancelSearch")
             if (isSearchResultFound(file, query)) {
 //                Log.e("SearchDataFetcher", "FOUND : file:${file.name}, query:$query")
                 val filePath = file.absolutePath
@@ -78,7 +78,6 @@ class SearchDataFetcher(private val searchResultCallback: SearchResultCallback) 
             return
         }
         val type = getType(fileInfo)
-//        Log.e("SearchDataFetcher", "createSearchData : fileInfo:${fileInfo.isDirectory}, category : ${fileInfo.category}, type:$type,  value : ${fileInfo.fileName}")
         if (searchHeaderMap.contains(type)) {
             searchHeaderMap[type]?.add(fileInfo)
         }
@@ -87,15 +86,17 @@ class SearchDataFetcher(private val searchResultCallback: SearchResultCallback) 
             list.add(fileInfo)
             searchHeaderMap[type] = list
         }
+        Log.e("SearchDataFetcher", "createSearchData : fileInfo:${fileInfo.isDirectory}, category : ${fileInfo.category}, type:$type,  value : ${fileInfo.fileName}")
         val searchData = ArrayList<SearchDataItem>()
         for ((headerType, itemList) in searchHeaderMap) {
-//            Log.e("SearchDataFetcher","map: $headerType = ${itemList.size}")
             if (cancelSearch) {
                 break
             }
             searchData.add(SearchDataItem.Header(headerType, itemList.size))
             val iterator = itemList.iterator()
-            searchData.add(SearchDataItem.Item(iterator.next()))
+            while (iterator.hasNext()) {
+                searchData.add(SearchDataItem.Item(iterator.next()))
+            }
         }
         if (!cancelSearch) {
             searchResultCallback.onSearchResultFound(searchData)
