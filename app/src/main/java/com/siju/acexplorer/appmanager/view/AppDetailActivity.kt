@@ -68,7 +68,7 @@ class AppDetailActivity : BaseActivity(), View.OnClickListener {
     private lateinit var fabStore: FloatingActionButton
     private lateinit var viewModel: AppDetailViewModel
 
-    private lateinit var packageValue: String
+    private var packageValue: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -282,8 +282,8 @@ class AppDetailActivity : BaseActivity(), View.OnClickListener {
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.settingsButton -> AppHelper.openAppSettings(this, packageValue)
-            R.id.uninstallButton -> AppHelper.uninstallApp(this, packageValue)
+            R.id.settingsButton -> packageValue?.let { AppHelper.openAppSettings(this, it) }
+            R.id.uninstallButton -> packageValue?.let { AppHelper.uninstallApp(this, it) }
             R.id.fabStore -> try {
                 startActivity(Intent(Intent.ACTION_VIEW,
                         Uri.parse(
