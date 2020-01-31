@@ -57,7 +57,6 @@ import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.main.viewmodel.Pane
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.storage.model.PasteOpData
-import com.siju.acexplorer.storage.model.SortMode
 import com.siju.acexplorer.storage.model.StorageModelImpl
 import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.storage.model.operations.*
@@ -148,7 +147,12 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
             appbar.visibility = View.GONE
         }
         else {
-            toolbar.title = resources.getString(R.string.app_name)
+            if (isAppManager(category)) {
+                toolbar.title = resources.getString(R.string.app_manager)
+            }
+            else {
+                toolbar.title = resources.getString(R.string.app_name)
+            }
         }
     }
 
@@ -904,7 +908,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     }
 
         private fun viewFile(path: String, extension: String?) {
-            Log.e(TAG, "Viewfile:path:$path, extension:$extension")
+            Log.e(TAG, "viewFile:path:$path, extension:$extension")
             val context = context
             context?.let {
                 when (extension?.toLowerCase(Locale.ROOT)) {
@@ -1031,11 +1035,9 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
 
         override fun isDualModeEnabled() = fileListViewModel.isDualModeEnabled()
 
-        private val sortDialogListener = object : DialogHelper.SortDialogListener {
-            override fun onPositiveButtonClick(sortMode: SortMode) {
-                fileListViewModel.onSort(sortMode)
-                reloadPane()
-            }
+        private val sortDialogListener = DialogHelper.SortDialogListener { sortMode ->
+            fileListViewModel.onSort(sortMode)
+            reloadPane()
         }
 
         fun setCategoryMenuHelper(categoryMenuHelper: CategoryMenuHelper) {
