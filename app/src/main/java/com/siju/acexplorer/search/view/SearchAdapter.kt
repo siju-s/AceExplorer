@@ -2,6 +2,7 @@ package com.siju.acexplorer.search.view
 
 import android.content.Context
 import android.text.format.Formatter
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,7 +36,7 @@ class SearchAdapter(private val clickListener: (Pair<FileInfo, Int>) -> Unit) : 
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-//        Log.e("SearchAdapter", "onBindViewHolder $position, ${holder is HeaderViewHolder}")
+        Log.e("SearchAdapter", "onBindViewHolder $position, ${holder is HeaderViewHolder}")
         when (holder) {
             is HeaderViewHolder -> {
                 val item = getItem(position) as SearchDataFetcher.SearchDataItem.Header

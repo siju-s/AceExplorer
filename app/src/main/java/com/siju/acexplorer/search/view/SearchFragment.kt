@@ -162,6 +162,7 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
                         showSearchList()
                     }
                     adapter.addHeaderAndSubmitList(it)
+                    adapter.notifyDataSetChanged()
                 }
             }
         })
@@ -243,8 +244,10 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
     }
 
     private fun hideRecentSearch() {
-        Log.e(TAG, "hideRecentSearch")
-        recentSearchContainer.visibility = View.GONE
+        if (recentSearchContainer.visibility != View.GONE) {
+            Log.e(TAG, "hideRecentSearch")
+            recentSearchContainer.visibility = View.GONE
+        }
     }
 
     private fun showRecentSearch() {
@@ -313,8 +316,10 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
     }
 
     private fun showSearchList() {
-        Log.e(TAG, "showSearchList")
-        filesList.visibility = View.VISIBLE
+        if (filesList.visibility != View.VISIBLE) {
+            Log.e(TAG, "showSearchList")
+            filesList.visibility = View.VISIBLE
+        }
     }
 
     private fun saveQuery(query: String?) {

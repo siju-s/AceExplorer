@@ -15,20 +15,28 @@ import kotlin.collections.HashMap
 class SearchDataFetcher(private val searchResultCallback: SearchResultCallback) {
     private var searchHeaderMap = hashMapOf<Int, ArrayList<FileInfo>>()
     private var cancelSearch = false
+    private var time1 : Long = 0
+    private var searchData = ArrayList<SearchDataItem>()
+
 
     fun fetchData(path: String?, query: String) {
         //TODO 30 Jan 2020 Should use coroutine cancel somehow instead of a flag here
+        time1 = System.currentTimeMillis()
         Log.e("SearchDataFetcher", "fetchData query:$query, cancel:$cancelSearch")
         searchHeaderMap = HashMap()
+        searchData = ArrayList()
         cancelSearch = false
-        searchFile(path, query)
+        path?.let {
+            searchFile(path, query)
+        }
     }
 
-    private fun searchFile(path: String?, query: String) {
+    private fun searchFile(path: String, query: String) {
         val file = File(path)
         if (file.canRead()) {
             getMatchingFiles(file, query)
         }
+        Log.e("SearchDataFetcher", "Search completed, size : ${searchData.size},  time:${System.currentTimeMillis() - time1}")
     }
 
     fun cancelSearch() {
@@ -79,23 +87,38 @@ class SearchDataFetcher(private val searchResultCallback: SearchResultCallback) 
         }
         val type = getType(fileInfo)
         if (searchHeaderMap.contains(type)) {
-            searchHeaderMap[type]?.add(fileInfo)
+            val arrayList = searchHeaderMap[type]
+            arrayList?.let {
+                arrayList.add(fileInfo)
+            }
         }
         else {
             val list = arrayListOf<FileInfo>()
             list.add(fileInfo)
             searchHeaderMap[type] = list
-        }
-        Log.e("SearchDataFetcher", "createSearchData : fileInfo:${fileInfo.isDirectory}, category : ${fileInfo.category}, type:$type,  value : ${fileInfo.fileName}")
-        val searchData = ArrayList<SearchDataItem>()
-        for ((headerType, itemList) in searchHeaderMap) {
-            if (cancelSearch) {
-                break
+            searchData.add(SearchDataItem.Header(type, 1))
+            searchData.add(SearchDataItem.Item(fileInfo))
+            if (!cancelSearch) {
+                searchResultCallback.onSearchResultFound(searchData)
             }
-            searchData.add(SearchDataItem.Header(headerType, itemList.size))
-            val iterator = itemList.iterator()
-            while (iterator.hasNext()) {
-                searchData.add(SearchDataItem.Item(iterator.next()))
+            return
+        }
+        for ((headerType, itemList) in searchHeaderMap) {
+            if (type == headerType) {
+                val iterator = searchData.iterator()
+                var pos = -1
+                while (iterator.hasNext()) {
+                    if (cancelSearch) {
+                        break
+                    }
+                    val data = iterator.next()
+                    pos++
+                    if (data is SearchDataItem.Header && data.headerType == headerType) {
+                        searchData[pos] = SearchDataItem.Header(type, itemList.size)
+                        searchData.add(pos + itemList.size - 1, SearchDataItem.Item(fileInfo))
+                        break
+                    }
+                }
             }
         }
         if (!cancelSearch) {
