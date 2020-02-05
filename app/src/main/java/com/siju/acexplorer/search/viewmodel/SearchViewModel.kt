@@ -4,9 +4,9 @@ import android.provider.SearchRecentSuggestions
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.main.model.groups.Category
-import com.siju.acexplorer.search.model.SearchDataFetcher
 import com.siju.acexplorer.search.model.SearchModel
 import com.siju.acexplorer.search.model.SearchModelImpl
 import com.siju.acexplorer.search.model.SearchSuggestionProvider
@@ -23,7 +23,7 @@ class SearchViewModel(private val searchModel: SearchModel) : ViewModel() {
     private val viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
-    val searchResult : LiveData<ArrayList<SearchDataFetcher.SearchDataItem>>
+    val searchResult : LiveData<ArrayList<FileInfo>>
     val recentSearchList : LiveData<ArrayList<String>>
 
     init {

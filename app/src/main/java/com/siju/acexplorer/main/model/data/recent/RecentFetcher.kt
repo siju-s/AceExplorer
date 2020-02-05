@@ -7,6 +7,7 @@ import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.HiddenFileHelper.constructionNoHiddenFilesArgs
 import com.siju.acexplorer.main.model.data.AppDataFetcher
 import com.siju.acexplorer.main.model.data.DataFetcher
+import com.siju.acexplorer.main.model.data.DataFetcher.Companion.canShowHiddenFiles
 import com.siju.acexplorer.main.model.data.doc.DocumentUtils
 import com.siju.acexplorer.main.model.groups.Category
 import java.util.*

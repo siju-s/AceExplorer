@@ -5,6 +5,7 @@ import android.database.Cursor
 import android.provider.MediaStore
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.data.DataFetcher
+import com.siju.acexplorer.main.model.data.DataFetcher.Companion.canShowHiddenFiles
 import com.siju.acexplorer.main.model.groups.Category
 import java.util.*
 
@@ -12,16 +13,16 @@ class RecentFolderFetcher : DataFetcher {
 
     override fun fetchData(context: Context, path: String?, category: Category): ArrayList<FileInfo> {
         val showHidden = canShowHiddenFiles(context)
-        val cursor = fetchRecentFolder(context, path, showHidden)
+        val cursor = fetchRecentFolder(context, path)
         return RecentCursorData.getDataFromCursor(cursor, category, showHidden)
     }
 
     override fun fetchCount(context: Context, path: String?): Int {
-        val cursor = fetchRecentFolder(context, path, canShowHiddenFiles(context))
+        val cursor = fetchRecentFolder(context, path)
         return getCursorCount(cursor)
     }
 
-    private fun fetchRecentFolder(context: Context, path: String?, showHidden: Boolean): Cursor? {
+    private fun fetchRecentFolder(context: Context, path: String?): Cursor? {
         if (path == null) {
             return null
         }

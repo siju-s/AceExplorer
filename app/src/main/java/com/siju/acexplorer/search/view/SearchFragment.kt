@@ -58,7 +58,6 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
     private lateinit var fileListViewModel: FileListViewModel
     private lateinit var searchView: SearchView
     private lateinit var filesList: RecyclerView
-    private lateinit var adapter: SearchAdapter
     private var fileListAdapter: FileListAdapter? = null
     private lateinit var searchSuggestions: SearchSuggestions
 
@@ -105,7 +104,7 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
         clearRecentButton = view.findViewById(R.id.buttonClear)
         recentSearchAdapter = RecentSearchAdapter {
             hideRecentSearch()
-            filesList.adapter = adapter
+//            filesList.adapter = fileListAdapter
             searchView.setQuery(it, false)
         }
         recentSearchList.adapter = recentSearchAdapter
@@ -118,10 +117,6 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
     private fun setupList(view: View) {
         filesList = view.findViewById(R.id.filesList)
         filesList.layoutManager = LinearLayoutManager(context)
-        adapter = SearchAdapter {
-            handleItemClick(it.first, it.second)
-        }
-        filesList.adapter = adapter
         fileListAdapter = FileListAdapter(ViewMode.LIST, {
             handleItemClick(it.first, it.second)
         },
@@ -129,6 +124,8 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
                 },
                 null
         )
+        fileListAdapter?.setMainCategory(Category.FILES)
+        filesList.adapter = fileListAdapter
     }
 
     override fun getActivityInstance(): AppCompatActivity {
@@ -161,8 +158,7 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
                         hideRecentSearch()
                         showSearchList()
                     }
-                    adapter.addHeaderAndSubmitList(it)
-                    adapter.notifyDataSetChanged()
+                    fileListViewModel.setFileData(it)
                 }
             }
         })
@@ -172,6 +168,7 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
                 showSearchList()
                 if (::filesList.isInitialized) {
                     fileListAdapter?.submitList(it)
+                    fileListAdapter?.notifyDataSetChanged()
                 }
             }
         })
@@ -403,7 +400,6 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
         val backPressNotHandled = fileListViewModel.onBackPress()
         if (!backPressNotHandled && fileListViewModel.hasNoBackStackEntry()) {
             searchSuggestions.clearAllCheckedItems()
-            filesList.adapter = adapter
             searchViewModel.search(null, searchView.query.toString())
             return false
         } else if (backPressNotHandled && searchView.query.isNotBlank()) {

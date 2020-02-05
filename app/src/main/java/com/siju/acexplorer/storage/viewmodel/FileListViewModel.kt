@@ -835,6 +835,10 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         storageModel.setRefreshDataFalse()
     }
 
+    fun setFileData(data: ArrayList<FileInfo>?) {
+        _fileData.postValue(data)
+    }
+
     val apkDialogListener = object : DialogHelper.ApkDialogListener {
 
         override fun onInstallClicked(path: String?) {

@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.HiddenFileHelper
+import com.siju.acexplorer.main.model.data.DataFetcher.Companion.canShowHiddenFiles
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.Category.FILES
 import com.siju.acexplorer.main.model.helper.FileUtils
@@ -114,7 +115,7 @@ class FileDataFetcher : DataFetcher {
 
         fun getDirectorySize(file: File, showHidden: Boolean = false): Long {
             var childFileListSize = 0
-            val listFiles: Array<out String>
+            val listFiles: Array<String?>?
             listFiles = if (!showHidden) {
                 file.list { _, name ->
                     name != ".nomedia"

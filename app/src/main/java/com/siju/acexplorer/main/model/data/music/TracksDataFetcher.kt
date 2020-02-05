@@ -3,6 +3,7 @@ package com.siju.acexplorer.main.model.data.music
 import android.content.Context
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.data.DataFetcher
+import com.siju.acexplorer.main.model.data.DataFetcher.Companion.canShowHiddenFiles
 import com.siju.acexplorer.main.model.data.music.TracksCommonData.getTracksCursorData
 import com.siju.acexplorer.main.model.data.music.TracksCommonData.queryTracks
 import com.siju.acexplorer.main.model.groups.Category

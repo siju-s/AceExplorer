@@ -4,6 +4,7 @@ import android.content.Context
 import android.provider.MediaStore
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.data.DataFetcher
+import com.siju.acexplorer.main.model.data.DataFetcher.Companion.canShowHiddenFiles
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.SortHelper
 import java.util.*

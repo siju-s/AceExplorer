@@ -8,6 +8,7 @@ import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.FileConstants
 import com.siju.acexplorer.main.model.HiddenFileHelper.constructionNoHiddenFilesArgs
 import com.siju.acexplorer.main.model.data.DataFetcher
+import com.siju.acexplorer.main.model.data.DataFetcher.Companion.canShowHiddenFiles
 import com.siju.acexplorer.main.model.data.doc.DocumentUtils.getMediaTypeNone
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.SortHelper

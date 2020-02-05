@@ -7,12 +7,13 @@ import android.net.Uri
 import android.provider.SearchRecentSuggestions
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
 
 class SearchModelImpl(val context: Context) : SearchModel, SearchDataFetcher.SearchResultCallback {
-    private val _searchResult = MutableLiveData<ArrayList<SearchDataFetcher.SearchDataItem>>()
+    private val _searchResult = MutableLiveData<ArrayList<FileInfo>>()
 
-    val searchResult : LiveData<ArrayList<SearchDataFetcher.SearchDataItem>>
+    val searchResult : LiveData<ArrayList<FileInfo>>
     get() = _searchResult
 
     private val _recentSearchList = MutableLiveData<ArrayList<String>>()
@@ -32,7 +33,7 @@ class SearchModelImpl(val context: Context) : SearchModel, SearchDataFetcher.Sea
         searchDataFetcher.cancelSearch()
     }
 
-    override fun onSearchResultFound(result: ArrayList<SearchDataFetcher.SearchDataItem>) {
+    override fun onSearchResultFound(result: ArrayList<FileInfo>) {
        _searchResult.postValue(result)
     }
 

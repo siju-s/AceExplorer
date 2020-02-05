@@ -14,7 +14,7 @@ interface DataFetcher {
     fun fetchCount(context: Context, path: String? = null): Int
 
     fun fetchData(context: Context, path: String?, category: Category, ringtonePicker: Boolean) : ArrayList<FileInfo>{
-        return arrayListOf<FileInfo>()
+        return arrayListOf()
     }
 
     fun getSortMode(context: Context): Int {
@@ -22,9 +22,12 @@ interface DataFetcher {
                 PreferenceConstants.KEY_SORT_MODE, PreferenceConstants.DEFAULT_VALUE_SORT_MODE)
     }
 
-    fun canShowHiddenFiles(context: Context): Boolean {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(PreferenceConstants.PREFS_HIDDEN, false)
+    companion object {
+
+        fun canShowHiddenFiles(context: Context): Boolean {
+            return PreferenceManager.getDefaultSharedPreferences(context)
+                    .getBoolean(PreferenceConstants.PREFS_HIDDEN, false)
+        }
     }
 
     fun getCursorCount(cursor: Cursor?): Int {

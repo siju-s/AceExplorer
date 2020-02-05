@@ -195,7 +195,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                                        peekPopView: PeekPopView?,
                                        pos: Int) {
             val category = fileInfo.category
-//            Log.d(TAG, "bindViewByCategory:$category")
+//            Log.e(TAG, "bindViewByCategory:$category, file:${fileInfo.filePath}, date:${fileInfo.date}")
             when {
                 category == Category.PICKER       -> {
                     bindPickerView(fileInfo)
@@ -222,7 +222,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                                       context: Context,
                                       peekPopView: PeekPopView?,
                                       pos: Int) {
-
+//            Log.e(TAG, "bindFilesCategory:$category, file:${fileInfo.filePath}, date:${fileInfo.date}")
             val fileName = fileInfo.fileName
             if (mainCategory == null) {
                 category?.let { bindDate(it, fileInfo) }
@@ -259,7 +259,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         }
 
         private fun setVideoThumbVisibility(category: Category?) {
-            Log.e(TAG, "setVideoThumbVisibility:$category")
+//            Log.e(TAG, "setVideoThumbVisibility:$category")
             if (CategoryHelper.isAnyVideoCategory(category)) {
                 imageVideoThumb.visibility = View.VISIBLE
             } else {
@@ -284,6 +284,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                 else {
                     fileInfo.date * 1000
                 }
+                Log.e(TAG, "file:${fileInfo.filePath}, category:$category, Date:$dateMs")
                 it.text = FileUtils.convertDate(dateMs)
             }
             showDateView()
