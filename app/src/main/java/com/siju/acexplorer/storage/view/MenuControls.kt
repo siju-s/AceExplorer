@@ -60,7 +60,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
 
     private fun shouldInflateBaseMenu() =
             CategoryHelper.checkIfFileCategory(category) || category == Category.SCREENSHOT || category == Category.APP_MANAGER ||
-                    category == Category.APPS
+                    category == Category.APPS || category == Category.PDF
 
     fun onStartActionMode() {
         Log.e(TAG, "onStartActionMode")
