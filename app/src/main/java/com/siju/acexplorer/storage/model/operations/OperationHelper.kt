@@ -39,7 +39,7 @@ class OperationHelper(val context: Context) {
     }
 
     private fun addOperation(operations: Operations, operationData: OperationData) {
-        Log.e("OperationHelper", "addOperation: ${operationData}")
+        Log.e("OperationHelper", "addOperation: $operationData")
         operationId++
         operationList.add(OperationInfo(operationId, operations, operationData))
     }
@@ -104,7 +104,9 @@ class OperationHelper(val context: Context) {
             }
 
             OperationUtils.WriteMode.INTERNAL -> {
-                renameFile(operation, filePath, parent, newName, fileOperationCallback)
+                parent?.let {
+                    renameFile(operation, filePath, parent, newName, fileOperationCallback)
+                }
             }
         }
     }
@@ -118,6 +120,12 @@ class OperationHelper(val context: Context) {
             isFile = true
         }
         val parent = File(filePath).parent
+        if (parent == null) {
+            fileOperationCallback.onOperationResult(operation, getOperationAction(
+                    OperationResult(OperationResultCode.FAIL, 1)))
+            removeOperation()
+            return
+        }
         val newFilePath: String
         newFilePath = if (isFile) {
             parent + File.separator + newName + extension
@@ -150,7 +158,7 @@ class OperationHelper(val context: Context) {
                            fileOperationCallback: FileOperationCallback) {
         var extension: String? = null
         var isFile = false
-        if (File(filePath).isFile) {
+        if (File(filePath).isFile && operation == Operations.RENAME) {
             extension = FileUtils.getExtensionWithDot(filePath)
             isFile = true
         }
@@ -237,11 +245,11 @@ class OperationHelper(val context: Context) {
         } else {
             var result = FileOperations.mkdir(file)
             if (!result && RootTools.isAccessGiven()) {
-                try {
+                result = try {
                     RootUtils.mkDir(file.absolutePath)
-                    result = true
+                    true
                 } catch (e: RootDeniedException) {
-                    result = false
+                    false
                 }
 
             }
@@ -378,8 +386,11 @@ class OperationHelper(val context: Context) {
             when (operationInfo.operation) {
                 Operations.RENAME          -> {
                     val path = operationInfo.operationData.arg1
-                    renameFile(operationInfo.operation, path, File(path).parent, operationInfo.operationData.arg2,
-                               fileOperationCallback)
+                    val parent = File(path).parent
+                    parent?.let {
+                        renameFile(operationInfo.operation, path, parent, operationInfo.operationData.arg2,
+                                fileOperationCallback)
+                    }
                 }
 
                 Operations.FOLDER_CREATION -> {
