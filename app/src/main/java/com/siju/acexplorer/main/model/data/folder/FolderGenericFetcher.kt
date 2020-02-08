@@ -9,6 +9,7 @@ import com.siju.acexplorer.main.model.data.DataFetcher
 import com.siju.acexplorer.main.model.data.DataFetcher.Companion.canShowHiddenFiles
 import com.siju.acexplorer.main.model.data.FileDataFetcher
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.main.model.helper.SortHelper
 
 private const val TAG = "FolderGenericFetcher"
 
@@ -17,7 +18,8 @@ class FolderGenericFetcher : DataFetcher {
     override fun fetchData(context: Context, path: String?,
                            category: Category): ArrayList<FileInfo> {
         path?.let {
-            return FileDataFetcher.getFilesList(it, false, canShowHiddenFiles(context))
+            val data =  FileDataFetcher.getFilesList(it, false, canShowHiddenFiles(context))
+            return SortHelper.sortFiles(data, getSortMode(context))
         }
         return ArrayList()
     }

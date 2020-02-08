@@ -39,7 +39,8 @@ private const val DELAY_SCROLL_UPDATE_MS = 100L
 class FilesList(private val fileListHelper: FileListHelper,
                 val view: View,
                 private var viewMode: ViewMode,
-                var category: Category) : View.OnTouchListener
+                var category: Category,
+                var sortMode: Int) : View.OnTouchListener
 {
     private val dragHelper = DragHelper(view.context, this)
 
@@ -215,7 +216,7 @@ class FilesList(private val fileListHelper: FileListHelper,
 
 
     fun onDataLoaded(data: ArrayList<FileInfo>, category: Category) {
-        Log.e(TAG, "onDataLoaded:${data.size}, peekPop:$peekAndPop, adapter:$adapter")
+        Log.e(TAG, "onDataLoaded:${data.size}")
         this.category = category
         if (data.isEmpty()) {
             emptyText.visibility = View.VISIBLE
@@ -267,6 +268,15 @@ class FilesList(private val fileListHelper: FileListHelper,
             adapter?.viewMode = viewMode
             fileList.adapter = adapter
         }
+    }
+
+    fun onSortModeChanged(sortMode: Int) {
+        Log.e(TAG, "onSortModeChanged:$sortMode, category:$category")
+        if (this.sortMode == sortMode) {
+            return
+        }
+        this.sortMode = sortMode
+        fileListHelper.refreshList()
     }
 
     fun refresh() {

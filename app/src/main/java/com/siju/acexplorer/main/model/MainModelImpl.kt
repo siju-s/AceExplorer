@@ -25,7 +25,9 @@ import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.main.model.FileConstants.PREFS_FIRST_RUN
+import com.siju.acexplorer.preferences.PreferenceConstants
 import com.siju.acexplorer.preferences.SharedPreferenceBooleanLiveData
+import com.siju.acexplorer.preferences.SharedPreferenceIntLiveData
 import com.siju.acexplorer.settings.SettingsPreferenceFragment
 import com.siju.acexplorer.theme.Theme
 import com.siju.acexplorer.utils.Utils
@@ -36,6 +38,7 @@ class MainModelImpl : MainModel {
     val theme   = MutableLiveData<Theme>()
     val preferences : SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     val dualMode = SharedPreferenceBooleanLiveData(preferences, FileConstants.PREFS_DUAL_PANE, false)
+    val sortMode = SharedPreferenceIntLiveData(preferences, FileConstants.KEY_SORT_MODE, PreferenceConstants.DEFAULT_VALUE_SORT_MODE)
 
     init {
         setupFirstRunSettings(preferences)

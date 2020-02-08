@@ -6,6 +6,7 @@ import com.siju.acexplorer.main.model.data.DataFetcher
 import com.siju.acexplorer.main.model.data.DataFetcher.Companion.canShowHiddenFiles
 import com.siju.acexplorer.main.model.data.folder.VideoUtils.getFolderVideoFileList
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.main.model.helper.SortHelper
 import java.io.File
 import java.util.*
 
@@ -16,7 +17,8 @@ class FolderVideoFetcher : DataFetcher {
             return arrayListOf()
         }
         val file = File(path)
-        return getFolderVideoFileList(file, canShowHiddenFiles(context))
+        val data = getFolderVideoFileList(file, canShowHiddenFiles(context))
+        return SortHelper.sortFiles(data, getSortMode(context))
     }
 
     override fun fetchCount(context: Context, path: String?): Int {

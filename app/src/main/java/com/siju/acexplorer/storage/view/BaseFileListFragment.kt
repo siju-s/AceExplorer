@@ -115,7 +115,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
 
         view?.let {
             val viewMode = fileListViewModel.getViewMode(category)
-            filesList = FilesList(this, view, viewMode, category)
+            filesList = FilesList(this, view, viewMode, category, mainViewModel.getSortMode())
             floatingView = FloatingView(view, this)
             navigationView = NavigationView(view, fileListViewModel.navigationCallback)
             val appbarView = if (!showNavigation) {
@@ -229,6 +229,12 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
                 if (::filesList.isInitialized) {
                     filesList.onRecentDataLoaded(it.first, it.second)
                 }
+            }
+        })
+
+        mainViewModel.sortMode.observe(viewLifecycleOwner, object : Observer<Int> {
+            override fun onChanged(t: Int?) {
+                Log.e(TAG, "Sort mode:$t")
             }
         })
 
@@ -1036,6 +1042,10 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
 
         override fun isDualModeEnabled() = fileListViewModel.isDualModeEnabled()
 
+        override fun refreshList() {
+            fileListViewModel.refreshList()
+        }
+
         private val sortDialogListener = DialogHelper.SortDialogListener { sortMode ->
             fileListViewModel.onSort(sortMode)
             reloadPane()
@@ -1045,11 +1055,12 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
             this.categoryMenuHelper = categoryMenuHelper
         }
 
-        fun refreshDataOnSettingChange() {
+        fun refreshDataOnTabSelected() {
             Log.e(TAG, "refreshDataOnSettingChange:category:$category, viewMode: ${fileListViewModel.getViewMode(category)}this:$this")
             if (::filesList.isInitialized) {
                 val viewMode = fileListViewModel.getViewMode(category)
                 filesList.onViewModeChanged(viewMode)
+                filesList.onSortModeChanged(mainViewModel.getSortMode())
             }
         }
 

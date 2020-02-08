@@ -425,6 +425,10 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
         }
     }
 
+    override fun refreshList() {
+        //no-op
+    }
+
     fun onSearchSuggestionClicked() {
         hideRecentSearch()
         filesList.adapter = fileListAdapter

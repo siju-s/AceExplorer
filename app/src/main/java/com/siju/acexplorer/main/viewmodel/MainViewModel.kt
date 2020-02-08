@@ -12,6 +12,7 @@ import com.siju.acexplorer.main.model.MainModelImpl
 import com.siju.acexplorer.main.model.StorageItem
 import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.permission.PermissionHelper
+import com.siju.acexplorer.preferences.PreferenceConstants
 import com.siju.acexplorer.theme.Theme
 
 enum class Pane {
@@ -32,6 +33,7 @@ class MainViewModel(val app: Application) : AndroidViewModel(app) {
     val theme: LiveData<Theme>
     private var storageList: ArrayList<StorageItem>? = null
     val dualMode : LiveData<Boolean>
+    val sortMode: LiveData<Int>
     private val _homeClicked = MutableLiveData<Boolean>()
 
     val homeClicked: LiveData<Boolean>
@@ -56,6 +58,7 @@ class MainViewModel(val app: Application) : AndroidViewModel(app) {
         premiumLiveData = billingRepository.premiumLiveData
         theme = mainModel.theme
         dualMode = mainModel.dualMode
+        sortMode = mainModel.sortMode
     }
 
     override fun onCleared() {
@@ -78,6 +81,10 @@ class MainViewModel(val app: Application) : AndroidViewModel(app) {
     fun isFreeVersion() = premiumLiveData.value?.entitled == false
 
     fun isDualPaneEnabled() = dualMode.value == true
+
+    fun getSortMode() : Int {
+        return sortMode.value ?: PreferenceConstants.DEFAULT_VALUE_SORT_MODE
+    }
 
     fun onPermissionResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         permissionHelper.onPermissionResult(requestCode, permissions, grantResults)

@@ -9,6 +9,7 @@ import com.siju.acexplorer.main.model.data.DataFetcher
 import com.siju.acexplorer.main.model.data.DataFetcher.Companion.canShowHiddenFiles
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.FileUtils
+import com.siju.acexplorer.main.model.helper.SortHelper
 import java.io.File
 import java.util.*
 
@@ -16,7 +17,8 @@ class ImageAllFetcher : DataFetcher {
 
     override fun fetchData(context: Context, path: String?, category: Category): ArrayList<FileInfo> {
         val cursor = fetchImages(context)
-        return getImageAllDataFromCursor(cursor, category, canShowHiddenFiles(context))
+        val data =  getImageAllDataFromCursor(cursor, category, canShowHiddenFiles(context))
+        return SortHelper.sortFiles(data, getSortMode(context))
     }
 
     override fun fetchCount(context: Context, path: String?): Int {

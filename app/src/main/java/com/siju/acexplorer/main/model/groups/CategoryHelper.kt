@@ -141,6 +141,10 @@ object CategoryHelper {
                 category == CAMERA_GENERIC || category == RECENT
     }
 
+    fun shouldShowSort(category: Category?) : Boolean {
+        return category != RECENT && category != LARGE_FILES && category != LARGE_FILES_ALL
+    }
+
     fun getCategoryForRecentFromExtension(extension: String?): Category {
         var ext = extension
 

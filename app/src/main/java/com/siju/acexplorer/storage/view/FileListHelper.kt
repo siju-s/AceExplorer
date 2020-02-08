@@ -18,4 +18,5 @@ interface FileListHelper {
     fun onDragDropEvent(pos: Int, data: ArrayList<FileInfo>)
     fun getActivityInstance() : AppCompatActivity
     fun isActionModeActive() : Boolean
+    fun refreshList()
 }

@@ -13,7 +13,7 @@ import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.model.groups.CategoryHelper.checkIfAnyMusicCategory
-import com.siju.acexplorer.main.model.groups.CategoryHelper.isSortOrActionModeUnSupported
+import com.siju.acexplorer.main.model.groups.CategoryHelper.shouldShowSort
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.root.RootUtils
 import com.siju.acexplorer.storage.model.ViewMode
@@ -180,19 +180,10 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
 
     private fun setupMenuItemVisibility() {
         Log.e(TAG, "setupMenuItemVisibility:$category")
-        if (isSortOrActionModeUnSupported(category)) {
-            searchItem.isVisible = true
-            sortItem.isVisible = false
-        } else if (Category.LARGE_FILES == category) {
-            searchItem.isVisible = true
-            sortItem.isVisible = false
-        } else if (Category.APP_MANAGER == category) {
-            searchItem.isVisible = true
-            sortItem.isVisible = true
+        searchItem.isVisible = true
+        sortItem.isVisible = shouldShowSort(category)
+        if (Category.APP_MANAGER == category) {
             hiddenMenuItem?.isVisible = false
-        } else {
-            searchItem.isVisible = true
-            sortItem.isVisible = true
         }
     }
 
