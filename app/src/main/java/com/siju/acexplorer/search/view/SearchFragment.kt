@@ -431,6 +431,7 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
 
     fun onSearchSuggestionClicked() {
         hideRecentSearch()
+        KeyboardHelper.hideKeyboard(searchView)
         filesList.adapter = fileListAdapter
     }
 
