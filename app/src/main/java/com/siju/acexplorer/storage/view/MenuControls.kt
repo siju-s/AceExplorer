@@ -277,6 +277,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
             category == Category.FAVORITES -> {
                 deleteFavItem.isVisible = true
                 deleteItem.isVisible = false
+                renameItem.isVisible = false
             }
 
             checkIfAnyMusicCategory(category) -> {
