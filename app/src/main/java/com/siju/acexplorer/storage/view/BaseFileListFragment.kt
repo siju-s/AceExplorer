@@ -46,6 +46,7 @@ import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.extensions.showToast
 import com.siju.acexplorer.home.view.CategoryMenuHelper
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.model.groups.CategoryHelper.isAppManager
 import com.siju.acexplorer.main.model.helper.PermissionsHelper
 import com.siju.acexplorer.main.model.helper.ShareHelper
@@ -151,8 +152,11 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
             if (isAppManager(category)) {
                 toolbar.title = resources.getString(R.string.app_manager)
             }
-            else {
+            else if (category == Category.FILES){
                 toolbar.title = resources.getString(R.string.app_name)
+            }
+            else {
+                toolbar.title = CategoryHelper.getCategoryName(context, category).toUpperCase(Locale.getDefault())
             }
         }
     }
