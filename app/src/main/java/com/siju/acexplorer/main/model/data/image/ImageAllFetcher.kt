@@ -44,6 +44,9 @@ class ImageAllFetcher : DataFetcher {
         val imageIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
         val bucketIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID)
         val pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+        val widthIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH)
+        val heightIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT)
+
         if (cursor.moveToFirst()) {
             do {
                 val path = cursor.getString(pathIndex)
@@ -58,9 +61,11 @@ class ImageAllFetcher : DataFetcher {
                 val fileName = cursor.getString(titleIndex)
                 val extension = FileUtils.getExtension(path)
                 val nameWithExt = FileUtils.constructFileNameWithExtension(fileName, extension)
-                fileInfoList.add(
-                        FileInfo(category, imageId, bucketId, nameWithExt, path, date, size,
-                                extension))
+                val width = cursor.getLong(widthIndex)
+                val height = cursor.getLong(heightIndex)
+
+                fileInfoList.add(FileInfo.createImagePropertiesInfo(category, imageId, bucketId, nameWithExt, path, date,
+                        size, extension, width, height))
             }
             while (cursor.moveToNext())
         }
