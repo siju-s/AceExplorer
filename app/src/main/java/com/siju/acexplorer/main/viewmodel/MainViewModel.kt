@@ -77,6 +77,8 @@ class MainViewModel(val app: Application) : AndroidViewModel(app) {
 
     fun isFreeVersion() = premiumLiveData.value?.entitled == false
 
+    fun isDualPaneEnabled() = dualMode.value == true
+
     fun onPermissionResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         permissionHelper.onPermissionResult(requestCode, permissions, grantResults)
     }

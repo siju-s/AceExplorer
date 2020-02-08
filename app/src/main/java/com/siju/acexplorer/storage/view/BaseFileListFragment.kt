@@ -133,7 +133,8 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     }
 
     private fun setupDualScreenMode() {
-        if (this is FileListFragment) {
+        Log.e(TAG, "setupDualScreenMode:dualMode:${mainViewModel.isDualPaneEnabled()}")
+        if (this is FileListFragment && mainViewModel.isDualPaneEnabled()) {
             mainViewModel.setStorageReady()
         }
     }

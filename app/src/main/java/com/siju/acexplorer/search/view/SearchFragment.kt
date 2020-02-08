@@ -435,8 +435,10 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
         showRecentSearch()
     }
 
-    fun performVoiceSearch(query: String) {
-        searchView.setQuery(query, false)
+    fun performVoiceSearch(query: String?) {
+        query?.let {
+            searchView.setQuery(query, false)
+        }
     }
 
 

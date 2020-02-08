@@ -18,12 +18,14 @@ package com.siju.acexplorer.main.model
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.main.model.FileConstants.PREFS_FIRST_RUN
+import com.siju.acexplorer.preferences.SharedPreferenceBooleanLiveData
 import com.siju.acexplorer.settings.SettingsPreferenceFragment
 import com.siju.acexplorer.theme.Theme
 import com.siju.acexplorer.utils.Utils
@@ -32,14 +34,14 @@ class MainModelImpl : MainModel {
 
     private val context: Context = AceApplication.appContext
     val theme   = MutableLiveData<Theme>()
-    val dualMode = MutableLiveData<Boolean>()
+    val preferences : SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+    val dualMode = SharedPreferenceBooleanLiveData(preferences, FileConstants.PREFS_DUAL_PANE, false)
 
     init {
-        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         setupFirstRunSettings(preferences)
         setupAnalytics(preferences)
         setupTheme()
-        dualMode.value = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(FileConstants.PREFS_DUAL_PANE, false)
+        Log.e("MainModel", "Dualmode:${dualMode.value}")
     }
 
     private fun setupFirstRunSettings(preferences: SharedPreferences) {

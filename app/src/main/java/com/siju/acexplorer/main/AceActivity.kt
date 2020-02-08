@@ -96,6 +96,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         })
 
         mainViewModel.dualMode.observe(this, Observer {
+            Log.e(TAG, "Dual mode value:$it")
             it?.apply {
                 if (it) {
                     onDualModeEnabled(resources.configuration)
@@ -195,6 +196,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
 
     private val navigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { menuItem ->
         clearBackStack()
+        disableDualPane()
         val fragment = FragmentsFactory.createFragment(menuItem.itemId)
         openFragment(fragment)
         true
@@ -202,6 +204,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
 
     private val navigationItemReselectedListener = BottomNavigationView.OnNavigationItemReselectedListener { menuItem ->
         clearBackStack()
+        disableDualPane()
         val fragment = if (category != null) {
             CategoryFragment.newInstance(null, category!!)
         }
@@ -357,7 +360,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        Log.e(TAG, "onConfigurationChanged:${newConfig.isLandscape()}")
+        Log.e(TAG, "onConfigurationChanged:${newConfig.isLandscape()}, dualMode:${mainViewModel.dualMode.value}")
         if (mainViewModel.dualMode.value == true && newConfig.isLandscape()) {
             onDualModeEnabled(newConfig)
         } else {
