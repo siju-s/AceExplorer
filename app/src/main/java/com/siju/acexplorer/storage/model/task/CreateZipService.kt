@@ -28,6 +28,7 @@ import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
+import com.siju.acexplorer.helper.MediaScannerHelper
 import com.siju.acexplorer.logging.Logger
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.helper.SdkHelper.isAtleastOreo
@@ -349,6 +350,9 @@ class CreateZipService : Service() {
         intent.putExtra(KEY_OPERATION, COMPRESS)
         intent.putExtra(KEY_FILES_COUNT, 1)
         sendBroadcast(intent)
+        destPath?.let {
+            MediaScannerHelper.scanFiles(context, arrayOf(it))
+        }
         notificationManager?.cancel(NOTIFICATION_ID)
     }
 
