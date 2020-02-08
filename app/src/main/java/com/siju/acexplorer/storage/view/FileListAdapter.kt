@@ -26,6 +26,7 @@ import com.siju.acexplorer.main.model.groups.CategoryHelper.isGenericMusic
 import com.siju.acexplorer.main.model.groups.CategoryHelper.isGenericVideosCategory
 import com.siju.acexplorer.main.model.groups.CategoryHelper.isMusicCategory
 import com.siju.acexplorer.main.model.groups.CategoryHelper.isRecentCategory
+import com.siju.acexplorer.main.model.groups.CategoryHelper.shouldHideGalleryThumb
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.ui.peekandpop.PeekPopView
@@ -195,7 +196,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                                        peekPopView: PeekPopView?,
                                        pos: Int) {
             val category = fileInfo.category
-//            Log.e(TAG, "bindViewByCategory:$category, file:${fileInfo.filePath}, date:${fileInfo.date}")
+            Log.e(TAG, "bindViewByCategory:$category, file:${fileInfo.filePath}, date:${fileInfo.date}")
             when {
                 category == Category.PICKER       -> {
                     bindPickerView(fileInfo)
@@ -314,6 +315,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         }
 
         private fun bindGenericMusic(context: Context, fileInfo: FileInfo, pos: Int, peekPopView: PeekPopView?) {
+            Log.e(TAG, "bindGenericMusic:category:${fileInfo.category}, file:${fileInfo.count}")
             val count = fileInfo.count
             val files = context.resources.getQuantityString(R.plurals.number_of_files,
                     count, count)
@@ -321,10 +323,12 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             textNoOfFileOrSize.text = files
             imageIcon.setImageResource(R.drawable.ic_folder)
             hideDateView()
+            toggleGalleryViewVisibility(fileInfo.category)
             addPeekPop(peekPopView, imageIcon, pos, fileInfo.category)
         }
 
         private fun bindMusicCategory(context: Context, fileInfo: FileInfo, pos: Int, peekPopView: PeekPopView?) {
+            Log.e(TAG, "bindMusicCategory:category:${fileInfo.category}, file:${fileInfo.filePath}")
             textFileName.text = fileInfo.title
             val num = fileInfo.numTracks.toInt()
             if (num != INVALID_POS) {
@@ -354,10 +358,10 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         }
 
         private fun toggleGalleryViewVisibility(category: Category?) {
-//            Log.e(TAG, "toggleGalleryViewVisibility:$category")
+            Log.e(TAG, "toggleGalleryViewVisibility:$category")
             if (viewMode == ViewMode.GALLERY) {
                 val imageGalleryThumb: ImageView = itemView.findViewById(R.id.imageThumb)
-                if (category == Category.FILES) {
+                if (shouldHideGalleryThumb(category)) {
                     imageGalleryThumb.visibility = View.GONE
                     imageIcon.visibility = View.VISIBLE
                     textFileName.visibility = View.VISIBLE
@@ -399,12 +403,14 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         }
 
         private fun bindCameraGeneric(context: Context, fileInfo: FileInfo, category: Category, pos: Int, peekPopView: PeekPopView?) {
+            Log.e(TAG, "bindCameraGeneric:category:$category, file:${fileInfo.filePath}")
             val count = fileInfo.count
             val files = context.resources.getQuantityString(R.plurals.number_of_files,
                     count, count)
             textFileName.text = getCategoryName(context, fileInfo.subcategory)
             textNoOfFileOrSize.text = files
             imageIcon.setImageResource(R.drawable.ic_folder)
+            toggleGalleryViewVisibility(category)
             hideDateView()
             addPeekPop(peekPopView, imageIcon, pos, category)
         }

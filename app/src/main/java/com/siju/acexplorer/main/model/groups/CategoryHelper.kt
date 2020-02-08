@@ -73,6 +73,11 @@ object CategoryHelper {
                 category == AUDIO
     }
 
+    fun shouldHideGalleryThumb(category: Category?) : Boolean {
+        return category == FILES || category == CAMERA_IMAGES || category == CAMERA_VIDEO ||
+                category == GENERIC_MUSIC
+    }
+
     fun isDefaultGalleryImageCategory(category: Category?): Boolean {
         return category == IMAGES_ALL || category == GENERIC_IMAGES ||
                 category == SEARCH_FOLDER_IMAGES || category == FOLDER_IMAGES
