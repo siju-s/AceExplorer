@@ -256,7 +256,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
                                      externalSdList: ArrayList<String>) {
         renameItem.isVisible = true
         infoItem.isVisible = true
-        hideItem.isVisible = true
+        hideItem.isVisible = category != Category.FAVORITES
         setHideItemProperties(fileInfo?.fileName)
 
         val isDir = fileInfo?.isDirectory
