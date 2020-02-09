@@ -72,7 +72,7 @@ class FloatingView(view: View,
     fun setTheme(theme: Theme) {
         val backgroundColor = when (theme) {
             Theme.DARK  -> R.color.dark_overlay
-            Theme.LIGHT -> R.color.whiteOverlay
+            Theme.LIGHT, Theme.DEVICE -> R.color.whiteOverlay
         }
         fabContainer.setBackgroundColor(ContextCompat.getColor(context, backgroundColor))
         makeFabMenuTransparent()

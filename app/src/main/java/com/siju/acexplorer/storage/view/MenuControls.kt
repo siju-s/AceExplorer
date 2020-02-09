@@ -380,7 +380,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
                 bottomToolbar.popupTheme = R.style.Dark_AppTheme_PopupOverlay
                 bottomToolbar.setBackgroundColor(ContextCompat.getColor(context, R.color.tab_bg_color))
             }
-            Theme.LIGHT -> {
+            Theme.LIGHT, Theme.DEVICE -> {
                 toolbar.popupTheme = R.style.AppTheme_PopupOverlay
                 bottomToolbar.popupTheme = R.style.AppTheme_PopupOverlay
                 bottomToolbar.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary))

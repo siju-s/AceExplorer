@@ -66,6 +66,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
     private lateinit var mainViewModel: MainViewModel
     private var premiumUtils: PremiumUtils? = null
     private var category: Category? = null
+    private var isNightMode = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,10 +90,26 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
     }
 
     private fun setTabColor() {
-        when (currentTheme) {
-            null, Theme.DARK -> bottom_navigation.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.tab_bg_color))
-            Theme.LIGHT -> bottom_navigation.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorPrimary))
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        val isNightMode = currentNightMode == Configuration.UI_MODE_NIGHT_YES
+        if (isNightMode) {
+            setNightModeFlag(true)
         }
+        else {
+            setNightModeFlag(false)
+        }
+        when {
+            currentTheme == Theme.DARK || isNightMode -> {
+                bottom_navigation.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.tab_bg_color))
+            }
+            currentTheme == Theme.LIGHT || currentNightMode == Configuration.UI_MODE_NIGHT_NO -> {
+                bottom_navigation.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorPrimary))
+            }
+        }
+    }
+
+    private fun setNightModeFlag(isNightMode: Boolean) {
+        this.isNightMode = isNightMode
     }
 
     private fun initObservers() {
@@ -370,6 +387,16 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
+        val currentNightMode = newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        when (currentNightMode) {
+            Configuration.UI_MODE_NIGHT_NO -> {
+                // Night mode is not active, we're using the light theme
+                Log.e(TAG, "Night mode off")
+            }
+            Configuration.UI_MODE_NIGHT_YES -> {
+                Log.e(TAG, "Night mode on")
+            } // Night mode is active, we're using dark theme
+        }
         Log.d(TAG, "onConfigurationChanged:${newConfig.isLandscape()}, dualMode:${mainViewModel.dualMode.value}")
         if (mainViewModel.dualMode.value == true && newConfig.isLandscape()) {
             onDualModeEnabled(newConfig)

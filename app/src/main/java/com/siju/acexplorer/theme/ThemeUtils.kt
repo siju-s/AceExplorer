@@ -26,7 +26,8 @@ const val CURRENT_THEME = "theme"
 enum class Theme constructor(val value: Int) {
 
     LIGHT(0),
-    DARK(1);
+    DARK(1),
+    DEVICE(2);
 
 
     companion object {
@@ -35,6 +36,7 @@ enum class Theme constructor(val value: Int) {
             when (position) {
                 0 -> return LIGHT
                 1 -> return DARK
+                2 -> return DEVICE
             }
             return DARK
         }

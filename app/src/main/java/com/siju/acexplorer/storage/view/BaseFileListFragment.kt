@@ -829,7 +829,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     private fun getThemeStyle(theme: Theme): Int {
         return when (theme) {
             Theme.DARK -> R.style.BaseDarkTheme
-            Theme.LIGHT -> R.style.BaseLightTheme
+            Theme.LIGHT, Theme.DEVICE -> R.style.BaseLightTheme
         }
     }
 

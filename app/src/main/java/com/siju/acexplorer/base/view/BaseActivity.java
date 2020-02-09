@@ -64,6 +64,7 @@ public class BaseActivity extends AppCompatActivity {
                 }
                 break;
             case LIGHT:
+            case DEVICE:
                 if (this instanceof AppDetailActivity) {
                     setTheme(R.style.BaseLightTheme_AppInfo);
                 } else {
