@@ -18,6 +18,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.gms.google-services'
 apply plugin: 'io.fabric'
 
 android {
@@ -129,12 +130,12 @@ dependencies {
     implementation deps.support.preference
     kapt deps.support.annotation
 
-    implementation deps.firebase.core
     implementation deps.firebase.ads
     implementation deps.firebase.invites
     implementation deps.firebase.analytics
 
     implementation deps.billing
+    implementation deps.billing_ktx
     implementation deps.gson
 
     implementation      deps.glide.runtime
@@ -146,16 +147,13 @@ dependencies {
     implementation deps.photoview
     implementation deps.fastscroll_recyclerview
 
-    debugImplementation   deps.leak_canary
-    releaseImplementation deps.leak_canary_rel
+    debugImplementation deps.leak_canary
 
-    implementation(deps.crashlytics) {
-        transitive = true
-    }
+    implementation deps.crashlytics
+
     testImplementation deps.testing.junit
     testImplementation deps.testing.mockito
     androidTestImplementation(deps.testing.espresso, {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 }
-apply plugin: 'com.google.gms.google-services'
