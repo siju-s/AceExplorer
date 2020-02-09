@@ -19,7 +19,9 @@ package com.siju.acexplorer.main.model.helper
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.webkit.MimeTypeMap
+import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.extensions.canHandleIntent
 import com.siju.acexplorer.logging.Logger
@@ -53,11 +55,12 @@ object ShareHelper {
 
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files)
         if (context.canHandleIntent(intent)) {
-            context.startActivity(intent)
+            context.startActivity(Intent.createChooser(intent, context.getString(R.string.action_share)))
         }
     }
 
     fun shareMedia(context: Context, category: Category, uri: Uri?, path : String? = null) {
+        Log.e("ShareHelper", "shareMedia:$path, category:$category, uri:$uri")
         if (uri == null && path == null) {
             return
         }
@@ -79,9 +82,10 @@ object ShareHelper {
         else {
             intent.putExtra(Intent.EXTRA_STREAM, uri)
         }
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
         if (context.canHandleIntent(intent)) {
-            context.startActivity(intent)
+            context.startActivity(Intent.createChooser(intent, context.getString(R.string.action_share)))
         }
     }
 }
