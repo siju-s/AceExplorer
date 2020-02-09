@@ -1,11 +1,11 @@
 package com.siju.acexplorer.main.viewmodel
 
 import android.app.Activity
-import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.billing.repository.BillingRepository
 import com.siju.acexplorer.billing.repository.localdb.Premium
 import com.siju.acexplorer.main.model.MainModelImpl
@@ -19,13 +19,13 @@ enum class Pane {
     SINGLE,
     DUAL
 }
-class MainViewModel(val app: Application) : AndroidViewModel(app) {
+class MainViewModel : ViewModel() {
 
     var navigateToSearch = MutableLiveData<Boolean>()
     var isDualPaneInFocus = false
     private set
 
-    private val billingRepository = BillingRepository.getInstance(app)
+    private val billingRepository = BillingRepository.getInstance(AceApplication.appContext)
     val premiumLiveData: LiveData<Premium>
     private val mainModel = MainModelImpl()
     private lateinit var permissionHelper: PermissionHelper

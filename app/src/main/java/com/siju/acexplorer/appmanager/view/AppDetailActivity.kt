@@ -20,7 +20,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.palette.graphics.Palette
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
@@ -104,7 +104,7 @@ class AppDetailActivity : BaseActivity(), View.OnClickListener {
     private fun setupViewModels() {
         val viewModelFactory = AppDetailViewModelFactory(
                 AppDetailDetailModelImpl(AceApplication.appContext))
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
+        viewModel = ViewModelProvider(this, viewModelFactory)
                 .get(AppDetailViewModel::class.java)
     }
 

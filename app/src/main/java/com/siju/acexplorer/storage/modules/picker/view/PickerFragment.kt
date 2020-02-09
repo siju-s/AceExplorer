@@ -31,7 +31,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
@@ -101,7 +101,7 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
 
     private fun setupViewModels() {
         val viewModelFactory = PickerViewModelFactory(PickerModelImpl())
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
+        viewModel = ViewModelProvider(this, viewModelFactory)
                 .get(PickerViewModel::class.java)
         viewModel.setPermissionHelper(
                 PermissionHelper(activity, AceApplication.appContext))

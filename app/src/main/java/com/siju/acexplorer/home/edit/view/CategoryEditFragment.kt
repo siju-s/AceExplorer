@@ -24,7 +24,7 @@ import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -136,7 +136,7 @@ class CategoryEditFragment : Fragment(), OnStartDragListener {
     private fun setupViewModels() {
         val viewModelFactory = CategoryEditViewModelFactory(
                 CategoryEditModelImpl(AceApplication.appContext))
-        categoryEditViewModel = ViewModelProviders.of(this, viewModelFactory)
+        categoryEditViewModel = ViewModelProvider(this, viewModelFactory)
                 .get(CategoryEditViewModel::class.java)
     }
 

@@ -23,7 +23,7 @@ import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
@@ -72,9 +72,9 @@ class HomeScreenFragment private constructor() : Fragment() {
 
     private fun setupViewModels() {
         val activity = requireNotNull(activity)
-        mainViewModel = ViewModelProviders.of(activity).get(MainViewModel::class.java)
+        mainViewModel = ViewModelProvider(activity).get(MainViewModel::class.java)
         val viewModelFactory = HomeViewModelFactory(HomeModelImpl(AceApplication.appContext))
-        homeViewModel = ViewModelProviders.of(this, viewModelFactory).get(HomeViewModel::class.java)
+        homeViewModel = ViewModelProvider(this, viewModelFactory).get(HomeViewModel::class.java)
     }
 
     private fun setupToolbar() {

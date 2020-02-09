@@ -35,7 +35,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.ads.AdsView
@@ -183,9 +183,9 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     private fun setupViewModels() {
         Log.d(TAG, "setupViewModels:$this")
         val activity = requireNotNull(activity)
-        mainViewModel = ViewModelProviders.of(activity).get(MainViewModel::class.java)
+        mainViewModel = ViewModelProvider(activity).get(MainViewModel::class.java)
         val viewModelFactory = FileListViewModelFactory(StorageModelImpl(AceApplication.appContext, category))
-        fileListViewModel = ViewModelProviders.of(this, viewModelFactory)
+        fileListViewModel = ViewModelProvider(this, viewModelFactory)
                 .get(FileListViewModel::class.java)
     }
 

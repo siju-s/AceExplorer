@@ -15,7 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.siju.acexplorer.AceApplication
@@ -138,9 +138,9 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
 
     private fun setupViewModel() {
         val viewModelFactory = SearchViewModelFactory(SearchModelImpl(AceApplication.appContext))
-        searchViewModel = ViewModelProviders.of(this, viewModelFactory).get(SearchViewModel::class.java)
+        searchViewModel = ViewModelProvider(this, viewModelFactory).get(SearchViewModel::class.java)
         val fileListViewModelFactory = FileListViewModelFactory(StorageModelImpl(AceApplication.appContext), true)
-        fileListViewModel = ViewModelProviders.of(this, fileListViewModelFactory)
+        fileListViewModel = ViewModelProvider(this, fileListViewModelFactory)
                 .get(FileListViewModel::class.java)
         fileListViewModel.setCategory(Category.FILES)
     }

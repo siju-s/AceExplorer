@@ -24,7 +24,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.preference.*
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
@@ -77,7 +77,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
     private fun setupViewModels() {
         val activity = requireNotNull(activity)
-        mainViewModel = ViewModelProviders.of(activity).get(MainViewModel::class.java)
+        mainViewModel = ViewModelProvider(activity).get(MainViewModel::class.java)
         mainViewModel.premiumLiveData.observe(this, Observer {
             it?.apply {
                 if (it.entitled) {

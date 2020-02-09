@@ -20,7 +20,7 @@ package com.siju.acexplorer.storage.modules.zipviewer.view
 import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.main.model.helper.UriHelper
 import com.siju.acexplorer.main.model.helper.ViewHelper
@@ -51,7 +51,7 @@ class ZipViewerFragment(
     private fun setupViewModel() {
         val viewModelFactory = ZipViewerViewModelFactory(
                 ZipViewerModelImpl(AceApplication.appContext), zipViewerCallback)
-        viewModel = ViewModelProviders.of(fragment, viewModelFactory)
+        viewModel = ViewModelProvider(fragment, viewModelFactory)
                 .get(ZipViewerViewModel::class.java)
     }
 

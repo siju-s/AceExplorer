@@ -5,7 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.imageviewer.model.ImageViewerModelImpl
@@ -86,7 +86,7 @@ class ImageViewerActivity : AppCompatActivity() {
 
     private fun setupViewModel(view: ImageViewerView, presenter : ImageViewerPresenter) {
         val factory = ImageViewerViewModelFactory(view, presenter)
-        viewModel = ViewModelProviders.of(this, factory).get(ImageViewerViewModel::class.java)
+        viewModel = ViewModelProvider(this, factory).get(ImageViewerViewModel::class.java)
         view.setViewModel(viewModel)
     }
 

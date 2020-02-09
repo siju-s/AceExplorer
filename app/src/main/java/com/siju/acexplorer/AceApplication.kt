@@ -17,14 +17,11 @@
 package com.siju.acexplorer
 
 import android.app.Application
-import android.content.Context
 import android.os.StrictMode
-
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
 import com.kobakei.ratethisapp.RateThisApp
 import com.squareup.leakcanary.LeakCanary
-
 import io.fabric.sdk.android.Fabric
 
 private const val RATE_APP_CRITERIA_INSTALL_DAYS = 7
@@ -84,7 +81,7 @@ class AceApplication : Application() {
     }
 
     companion object {
-        lateinit var appContext: Context
+        lateinit var appContext: AceApplication
             private set
     }
 
