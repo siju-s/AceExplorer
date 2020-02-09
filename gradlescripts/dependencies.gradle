@@ -9,6 +9,7 @@ versions.firebase_invites    = "16.1.0"
 versions.firebase_analytics  = "16.3.0"
 
 versions.support             = "1.0.0"
+versions.recyclerview        = "1.1.0"
 versions.preference          = "1.1.0-rc01"
 versions.billing             = "2.0.0"
 versions.gson                = "2.8.2"
@@ -44,7 +45,7 @@ deps.android_gradle_plugin = "com.android.tools.build:gradle:$versions.android_g
 def support = [:]
 support.app_compat       = "androidx.appcompat:appcompat:$versions.support"
 support.design           = "com.google.android.material:material:$versions.support"
-support.recycler_view    = "androidx.recyclerview:recyclerview:$versions.support"
+support.recycler_view    = "androidx.recyclerview:recyclerview:$versions.recyclerview"
 support.card_view        = "androidx.cardview:cardview:$versions.support"
 support.palette          = "androidx.palette:palette:$versions.support"
 support.annotation       = "androidx.annotation:annotation:$versions.support"
