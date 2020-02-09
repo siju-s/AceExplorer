@@ -32,7 +32,7 @@ class FileDataFetcher : DataFetcher {
     }
 
     override fun fetchCount(context: Context, path: String?): Int {
-        Log.e(TAG, "fetchCount:$path")
+        Log.d(TAG, "fetchCount:$path")
         return if (path == null) {
             0
         } else {
@@ -49,7 +49,7 @@ class FileDataFetcher : DataFetcher {
     private fun fetchFiles(path: String?, sortMode: Int, showHidden: Boolean,
                            isRooted: Boolean,
                            ringtonePicker: Boolean = false): ArrayList<FileInfo> {
-        Log.e(TAG, "fetchFiles: path:$path, sortMode:$sortMode, hidden:$showHidden")
+        Log.d(TAG, "fetchFiles: path:$path, sortMode:$sortMode, hidden:$showHidden")
         if (path == null) {
             return ArrayList()
         }

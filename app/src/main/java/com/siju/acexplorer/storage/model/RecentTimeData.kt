@@ -28,7 +28,7 @@ object RecentTimeData {
         }
         val recentData = ArrayList<RecentDataItem>()
         for ((headerType, itemList) in dataMap) {
-            Log.e("RecentTimeData", "map: $headerType = ${itemList.size}")
+            Log.d("RecentTimeData", "map: $headerType = ${itemList.size}")
             recentData.add(RecentDataItem.Header(headerType, itemList.size))
             for (item in itemList) {
                 recentData.add(RecentDataItem.Item(headerType, item))

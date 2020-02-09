@@ -41,7 +41,7 @@ class CategoryEditViewModel(private val
     }
 
     fun removeCategory(item: CategoryEditModelImpl.DataItem.Content, checkedItemCount: Int) {
-        Log.e("CategoryEditVM", "Remove category:$item, checkedCount : $checkedItemCount")
+        Log.d("CategoryEditVM", "Remove category:$item, checkedCount : $checkedItemCount")
         val categories = _categories.value
         categories?.remove(item)
         val newItem = item
@@ -53,7 +53,7 @@ class CategoryEditViewModel(private val
     }
 
     fun addCategory(item: CategoryEditModelImpl.DataItem.Content, checkedItemCount: Int) {
-        Log.e("CategoryEditVM", "addCategory:$item, checkedCount : $checkedItemCount")
+        Log.d("CategoryEditVM", "addCategory:$item, checkedCount : $checkedItemCount")
         val categories = _categories.value
         categories?.remove(item)
         val newItem = item

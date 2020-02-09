@@ -59,7 +59,7 @@ class ZipViewerModelImpl(val context: Context) : ZipViewerModel {
         if (!outputDir.exists()) {
             createCacheDir(outputDir)
         }
-        Log.e(TAG, "Zip entry NEW:$zipEntry")
+        Log.d(TAG, "Zip entry NEW:$zipEntry")
 
         if (isZipExtension(name)) {
             return

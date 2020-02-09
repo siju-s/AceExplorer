@@ -221,7 +221,7 @@ class ExtractService : Service() {
             zipFile.close()
         }
         catch (e: Exception) {
-            Log.e(this.javaClass.simpleName, "Error while extracting file $sourceFile", e)
+            Log.d(this.javaClass.simpleName, "Error while extracting file $sourceFile", e)
             val intent = Intent(ACTION_OP_FAILED)
             intent.putExtra(KEY_OPERATION, EXTRACT)
             sendBroadcast(intent)

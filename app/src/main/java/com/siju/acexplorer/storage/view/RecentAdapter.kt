@@ -36,7 +36,7 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
     private var multiSelectionHelper: MultiSelectionHelper? = null
 
     override fun setMultiSelectionHelper(multiSelectionHelper: MultiSelectionHelper) {
-        Log.e("REcentAdapter", "setMultiSelectionHelper:$multiSelectionHelper, instance:$this")
+        Log.d("REcentAdapter", "setMultiSelectionHelper:$multiSelectionHelper, instance:$this")
         this.multiSelectionHelper = multiSelectionHelper
     }
 
@@ -190,7 +190,7 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
         }
 
         private fun toggleGalleryViewVisibility(category: Category?) {
-//            Log.e(TAG, "toggleGalleryViewVisibility:$category")
+//            Log.d(TAG, "toggleGalleryViewVisibility:$category")
             if (viewMode == ViewMode.GALLERY) {
                 val imageGalleryThumb: ImageView = itemView.findViewById(R.id.imageThumb)
                 if (category == Category.FILES) {
@@ -268,7 +268,7 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
 
         fun bind(headerType: RecentTimeData.HeaderType, count: Int, hasSelectedItems: Boolean?,
                  headerItemsChecked: Boolean?, position: Int, imageClickListener: (Int, Boolean) -> Unit) {
-            Log.e("RecentAdapter", "bindHeader:type:$headerType, itemChecked:$headerItemsChecked, count:$count")
+            Log.d("RecentAdapter", "bindHeader:type:$headerType, itemChecked:$headerItemsChecked, count:$count")
             dateText.text = RecentTimeData.getHeaderName(itemView.context, headerType)
             countText.text = itemView.context.resources.getQuantityString(R.plurals.number_of_files, count, count)
 

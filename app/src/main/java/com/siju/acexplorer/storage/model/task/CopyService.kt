@@ -358,7 +358,7 @@ class CopyService : Service() {
         if (isCompleted) {
             return
         }
-        Log.e(TAG, "publishCompletionResult: filesCopied:$filesCopied, failedfiles:${failedFiles.size}")
+        Log.d(TAG, "publishCompletionResult: filesCopied:$filesCopied, failedfiles:${failedFiles.size}")
         isCompleted = true
         cancelNotification()
         if (stopService) {

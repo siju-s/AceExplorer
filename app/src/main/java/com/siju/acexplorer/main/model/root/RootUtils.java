@@ -141,7 +141,7 @@ public class RootUtils {
 
     public static void mountRW(String path) {
         if (!isRWMounted()) {
-            Log.e("RootUtils", "mountRW() called with: path = [" + path + "]");
+            Log.d("RootUtils", "mountRW() called with: path = [" + path + "]");
             RootTools.remount(path, "RW");
         }
     }
@@ -162,7 +162,7 @@ public class RootUtils {
     }
 
     public static void mkFile(String path) {
-        Log.e("RootUtils", "mkFile: " + path);
+        Log.d("RootUtils", "mkFile: " + path);
         String parentPath = new File(path).getParent();
         RootUtils.mountRW(parentPath);
         RootHelper.runAndWait("touch " + RootHelper.getCommandLineString(path));

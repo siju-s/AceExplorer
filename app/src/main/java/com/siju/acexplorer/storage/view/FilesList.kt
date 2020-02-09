@@ -66,7 +66,7 @@ class FilesList(private val fileListHelper: FileListHelper,
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setupList() {
-        Log.e(TAG, "setupList:category:$category, viewMode:$viewMode")
+        Log.d(TAG, "setupList:category:$category, viewMode:$viewMode")
         setLayoutManager(fileList, viewMode, category)
         setupPeekPop()
         setAdapter()
@@ -142,7 +142,7 @@ class FilesList(private val fileListHelper: FileListHelper,
     }
 
     private fun setLayoutManager(fileList: RecyclerView, viewMode: ViewMode, category: Category) {
-        Log.e(TAG, "setLayoutManager viewMode: $viewMode")
+        Log.d(TAG, "setLayoutManager viewMode: $viewMode")
         fileList.layoutManager = when (viewMode) {
             ViewMode.LIST -> LinearLayoutManager(view.context)
             ViewMode.GRID, ViewMode.GALLERY -> {
@@ -205,7 +205,7 @@ class FilesList(private val fileListHelper: FileListHelper,
     }
 
     fun refreshGridColumns(viewMode: ViewMode) {
-        Log.e(TAG, "refreshGridColumns:$viewMode")
+        Log.d(TAG, "refreshGridColumns:$viewMode")
         if (this.viewMode == viewMode) {
             setLayoutManager(fileList, this.viewMode, category)
         }
@@ -216,7 +216,7 @@ class FilesList(private val fileListHelper: FileListHelper,
 
 
     fun onDataLoaded(data: ArrayList<FileInfo>, category: Category) {
-        Log.e(TAG, "onDataLoaded:${data.size}")
+        Log.d(TAG, "onDataLoaded:${data.size}")
         this.category = category
         if (data.isEmpty()) {
             emptyText.visibility = View.VISIBLE
@@ -236,7 +236,7 @@ class FilesList(private val fileListHelper: FileListHelper,
     }
 
     fun onRecentDataLoaded(category: Category, data: ArrayList<RecentTimeData.RecentDataItem>) {
-        Log.e(TAG, "onRecentDataLoaded:${data.size}, recentAdapter:$recentAdapter")
+        Log.d(TAG, "onRecentDataLoaded:${data.size}, recentAdapter:$recentAdapter")
         this.recentData = data
         this.category = category
         peekAndPop?.setFileList(RecentDataConverter.getRecentItemList(data))
@@ -258,7 +258,7 @@ class FilesList(private val fileListHelper: FileListHelper,
         if (this.viewMode == viewMode) {
             return
         }
-        Log.e(TAG, "onViewModeChanged:$viewMode, category:$category")
+        Log.d(TAG, "onViewModeChanged:$viewMode, category:$category")
         setLayoutManager(fileList, viewMode, category)
         this.viewMode = viewMode
         if (isRecentTimeLineCategory(category)) {
@@ -271,7 +271,7 @@ class FilesList(private val fileListHelper: FileListHelper,
     }
 
     fun onSortModeChanged(sortMode: Int) {
-        Log.e(TAG, "onSortModeChanged:$sortMode, category:$category")
+        Log.d(TAG, "onSortModeChanged:$sortMode, category:$category")
         if (this.sortMode == sortMode) {
             return
         }
@@ -280,13 +280,13 @@ class FilesList(private val fileListHelper: FileListHelper,
     }
 
     fun refresh() {
-        Log.e(TAG, "refresh:$category, this:$this")
+        Log.d(TAG, "refresh:$category, this:$this")
         getAdapter()?.refresh()
     }
 
     fun setMultiSelectionHelper(multiSelectionHelper: MultiSelectionHelper) {
         this.multiSelectionHelper = multiSelectionHelper
-        Log.e(TAG, "setMultiSelectionHelper:$category, this:$this")
+        Log.d(TAG, "setMultiSelectionHelper:$category, this:$this")
         getAdapter()?.setMultiSelectionHelper(multiSelectionHelper)
     }
 
@@ -326,7 +326,7 @@ class FilesList(private val fileListHelper: FileListHelper,
     //TODO Find way to get right delay time (probably after list drawn)
     fun scrollToPosition(scrollInfo: ScrollInfo) {
         fileList.postDelayed({
-            Log.e(TAG,
+            Log.d(TAG,
                     "scrollToPosition:${scrollInfo.position}, offset:${scrollInfo.offset}")
             when (viewMode) {
                 ViewMode.LIST -> {
@@ -378,7 +378,7 @@ class FilesList(private val fileListHelper: FileListHelper,
         if (fileListHelper.isDragNotStarted() || isDragUnsupported(category)) {
             return false
         }
-        Log.e(TAG, "onTouch:$touchEvent")
+        Log.d(TAG, "onTouch:$touchEvent")
 
         when (touchEvent) {
             MotionEvent.ACTION_MOVE -> {
@@ -443,7 +443,7 @@ class FilesList(private val fileListHelper: FileListHelper,
                 return
             }
             val dragCategory = intent.getIntExtra(KEY_CATEGORY, 0)
-            Log.e(TAG, "dragCategory:$dragCategory")
+            Log.d(TAG, "dragCategory:$dragCategory")
             if (isDragEndUnsupported(dragCategory)) {
                 showError(view)
                 return

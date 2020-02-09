@@ -111,14 +111,14 @@ class SearchSuggestions(val view: View, private val fragment: SearchFragment, pr
         }
 
         categoryChipGroup.setOnCheckedChangeListener { _, checkedChipId ->
-            Log.e(TAG, "categoryChipGroup, pos:$checkedChipId, count :${categoryChipGroup.childCount}, ${categoryChipGroup.checkedChipId}")
+            Log.d(TAG, "categoryChipGroup, pos:$checkedChipId, count :${categoryChipGroup.childCount}, ${categoryChipGroup.checkedChipId}")
             if (!clearAll) {
                 onChipGroupCheckedListener(checkedChipId)
             }
         }
 
         folderChipGroup.setOnCheckedChangeListener { _, checkedChipId ->
-            Log.e(TAG, "Folder chip group, pos:$checkedChipId, count :${folderChipGroup.childCount}")
+            Log.d(TAG, "Folder chip group, pos:$checkedChipId, count :${folderChipGroup.childCount}")
             if (!clearAll) {
                 onChipGroupCheckedListener(checkedChipId)
             }
@@ -158,7 +158,7 @@ class SearchSuggestions(val view: View, private val fragment: SearchFragment, pr
         } else {
             checkedChipList.add(chip)
         }
-        Log.e(TAG, "handleSelectedChipId:checkedChipList:${checkedChipList.size}, chip:$chip")
+        Log.d(TAG, "handleSelectedChipId:checkedChipList:${checkedChipList.size}, chip:$chip")
 
     }
 

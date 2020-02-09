@@ -49,7 +49,7 @@ class MultiSelectionHelper {
 
     fun isCompleteRecentHeaderSelected(headerType: RecentTimeData.HeaderType, count : Int): Boolean {
         var selectedCount = 0
-        Log.e("Multi", "isCompleteRecentHeaderSelected:count:$count, selected:${recentItemSelectedList.size}")
+        Log.d("Multi", "isCompleteRecentHeaderSelected:count:$count, selected:${recentItemSelectedList.size}")
         for ((_, header) in recentItemSelectedList) {
             if (header == headerType) {
                 selectedCount++

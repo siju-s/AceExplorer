@@ -44,7 +44,7 @@ class MainModelImpl : MainModel {
         setupFirstRunSettings(preferences)
         setupAnalytics(preferences)
         setupTheme()
-        Log.e("MainModel", "Dualmode:${dualMode.value}")
+        Log.d("MainModel", "Dualmode:${dualMode.value}")
     }
 
     private fun setupFirstRunSettings(preferences: SharedPreferences) {

@@ -63,7 +63,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
                     category == Category.APPS || category == Category.PDF
 
     fun onStartActionMode() {
-        Log.e(TAG, "onStartActionMode")
+        Log.d(TAG, "onStartActionMode")
         setupActionModeToolbar()
         setupActionModeMenu()
         showBottomToolbar()
@@ -98,7 +98,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     }
 
     fun onEndActionMode() {
-        Log.e(TAG, "onEndActionMode")
+        Log.d(TAG, "onEndActionMode")
         hideBottomToolbar()
         clearActionModeToolbar()
         setupBaseMenu()
@@ -110,7 +110,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
 
     fun setSearchActive(value: Boolean) {
         this.isSearchActive = value
-        Log.e(TAG, "setSearchActive:$isSearchActive")
+        Log.d(TAG, "setSearchActive:$isSearchActive")
     }
 
     private fun setupActionModeToolbar() {
@@ -141,12 +141,12 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     }
 
     private fun showBottomToolbar() {
-        Log.e(TAG, "showBottomToolbar")
+        Log.d(TAG, "showBottomToolbar")
         bottomToolbar.visibility = View.VISIBLE
     }
 
     private fun hideBottomToolbar() {
-        Log.e(TAG, "hideBottomToolbar")
+        Log.d(TAG, "hideBottomToolbar")
         bottomToolbar.visibility = View.GONE
     }
 
@@ -166,7 +166,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     }
 
     private fun toggleViewModeMenuItemState(viewMode: ViewMode, menu: Menu) {
-        Log.e(TAG, "toggleViewModeMenuItemState:$viewMode")
+        Log.d(TAG, "toggleViewModeMenuItemState:$viewMode")
         when (viewMode) {
             ViewMode.LIST -> menu.findItem(R.id.action_view_list).isChecked = true
             ViewMode.GRID -> menu.findItem(R.id.action_view_grid).isChecked = true
@@ -179,7 +179,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     }
 
     private fun setupMenuItemVisibility() {
-        Log.e(TAG, "setupMenuItemVisibility:$category")
+        Log.d(TAG, "setupMenuItemVisibility:$category")
         searchItem.isVisible = true
         sortItem.isVisible = shouldShowSort(category)
         if (Category.APP_MANAGER == category) {
@@ -222,14 +222,14 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     }
 
     fun endSearch() {
-        Log.e(TAG, "endSearch:$isSearchActive")
+        Log.d(TAG, "endSearch:$isSearchActive")
         searchView?.setQuery("", false)
         hideSearchView()
         searchView?.isIconified = true
     }
 
     fun isSearchActive(): Boolean {
-        Log.e(TAG, "isSearchActive:$isSearchActive")
+        Log.d(TAG, "isSearchActive:$isSearchActive")
         return isSearchActive
     }
 
@@ -337,7 +337,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     fun onSelectedCountChanged(count: Int,
                                fileInfo: FileInfo?,
                                externalSdList: ArrayList<String>) {
-        Log.e(TAG, "onSelectedCountChanged:$count")
+        Log.d(TAG, "onSelectedCountChanged:$count")
         setToolbarTitle(count.toString())
         toggleActionModeMenuVisibility(count, fileInfo, externalSdList)
     }
@@ -357,12 +357,12 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-        Log.e(TAG, "onQueryTextChange:$query")
+        Log.d(TAG, "onQueryTextChange:$query")
         return false
     }
 
     override fun onQueryTextChange(query: String?): Boolean {
-        Log.e(TAG, "onQueryTextChange:$query")
+        Log.d(TAG, "onQueryTextChange:$query")
         if (fragment.isActionModeActive()) {
             return true
         }

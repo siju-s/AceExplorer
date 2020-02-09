@@ -401,7 +401,7 @@ public class PeekAndPop {
 
         @Override
         public void onClick(View v) {
-            Log.e("PeekListener", "onClick:"+category);
+            Log.d("PeekListener", "onClick:"+position);
             boolean canShowPeek = onClickListener.canShowPeek() && CategoryHelper.INSTANCE.isPeekPopCategory(category);
 
             if (!canShowPeek) {

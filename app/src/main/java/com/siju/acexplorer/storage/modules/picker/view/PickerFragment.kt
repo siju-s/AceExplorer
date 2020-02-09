@@ -252,7 +252,7 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
     }
 
     private fun onCurrentPathChanged(path: String?) {
-        Log.e(TAG, "onCurrentPathChanged:$path")
+        Log.d(TAG, "onCurrentPathChanged:$path")
         path?.let {
             currentPathText.text = path
             refreshList(path)

@@ -513,7 +513,7 @@ class BillingRepository private constructor(private val application: Application
     }
 
     private fun processPurchases(purchasesResult: Set<Purchase>) {
-        Log.e(LOG_TAG, "processPurchases: size:${purchasesResult.size}")
+        Log.d(LOG_TAG, "processPurchases: size:${purchasesResult.size}")
         if (purchasesResult.isEmpty()) {
             onFreeVersion()
         }
@@ -629,7 +629,7 @@ class BillingRepository private constructor(private val application: Application
                     }
                 }
                 else                                 -> {
-                    Log.e(LOG_TAG, billingResult.debugMessage)
+                    Log.d(LOG_TAG, billingResult.debugMessage)
                 }
             }
         }
@@ -652,7 +652,7 @@ class BillingRepository private constructor(private val application: Application
     fun purchaseFullVersion(activity: Activity) {
         CoroutineScope(Job() + Dispatchers.IO).launch {
             val skuDetails = localCacheBillingClient.skuDetailsDao().getById(AppSku.SKU_REMOVE_ADS)
-            Log.e("Billing", "SKU:${skuDetails}")
+            Log.d("Billing", "SKU:${skuDetails}")
             skuDetails?.let { launchBillingFlow(activity, it) }
         }
     }
@@ -663,7 +663,7 @@ class BillingRepository private constructor(private val application: Application
             val purchase = purchasesResult.first()
             val consumeParams = ConsumeParams.newBuilder().setPurchaseToken(purchase.purchaseToken).build()
             playStoreBillingClient.consumeAsync(consumeParams) { billingResult, _ ->
-                Log.e(this.javaClass.simpleName, "Billing consume:${billingResult.debugMessage}, response:${billingResult.responseCode}")
+                Log.d(this.javaClass.simpleName, "Billing consume:${billingResult.debugMessage}, response:${billingResult.responseCode}")
              }
         }
     }

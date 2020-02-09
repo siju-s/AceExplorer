@@ -10,7 +10,7 @@ import com.siju.acexplorer.main.model.helper.ShareHelper
 class ImageViewerModelImpl(val context: Context) : ImageViewerModel {
 
     override fun loadInfo(uri: Any): FileInfo? {
-        Log.e("ImageViewerModelImpl", "info:$uri")
+        Log.d("ImageViewerModelImpl", "info:$uri")
         return if (uri is Uri) {
             SingleImageDataFetcher.fetchData(context, uri)
         }

@@ -101,7 +101,7 @@ class HomeScreenFragment private constructor() : Fragment() {
 
     private fun initObservers() {
         mainViewModel.premiumLiveData.observe(viewLifecycleOwner, Observer {
-            Log.e(TAG, "Premium state:$it")
+            Log.d(TAG, "Premium state:$it")
             it?.apply {
                 if (it.entitled) {
                     hideAds()
@@ -112,7 +112,7 @@ class HomeScreenFragment private constructor() : Fragment() {
         })
 
         homeViewModel.categories.observe(viewLifecycleOwner, Observer { categoryList ->
-            Log.e(TAG, "categories: ${categoryList.size}")
+            Log.d(TAG, "categories: ${categoryList.size}")
             categoryAdapter.submitList(categoryList)
             homeViewModel.fetchCount(categoryList)
         })
@@ -133,7 +133,7 @@ class HomeScreenFragment private constructor() : Fragment() {
         })
 
         homeViewModel.categoryData.observe(viewLifecycleOwner, Observer {
-            Log.e(TAG, "categorydata: ${it.first}, ${it.second}")
+            Log.d(TAG, "categorydata: ${it.first}, ${it.second}")
             categoryAdapter.notifyItemChanged(it.first, it.second)
             categoryAdapter.notifyDataSetChanged()
         })
@@ -155,7 +155,7 @@ class HomeScreenFragment private constructor() : Fragment() {
     }
 
     private fun setupCategoriesList() {
-        Log.e(TAG, "setupCategoriesList")
+        Log.d(TAG, "setupCategoriesList")
         categoryList.isNestedScrollingEnabled = true
         setCategoryLayoutManager()
         categoryAdapter = HomeLibAdapter {
@@ -166,7 +166,7 @@ class HomeScreenFragment private constructor() : Fragment() {
     }
 
     private fun setupStorageList() {
-        Log.e(TAG, "setupStorageList")
+        Log.d(TAG, "setupStorageList")
         storageList.isNestedScrollingEnabled = true
         storageAdapter = HomeStorageAdapter { storageItem ->
             loadList(storageItem.path, storageItem.category)
@@ -182,7 +182,7 @@ class HomeScreenFragment private constructor() : Fragment() {
 
     private fun setCategoryLayoutManager() {
         val gridColumns = homeViewModel.getCategoryGridColumns()
-        Log.e(TAG, "gridColumns$gridColumns")
+        Log.d(TAG, "gridColumns$gridColumns")
         val gridLayoutManager = GridLayoutManager(context, gridColumns)
         categoryList.layoutManager = gridLayoutManager
     }
@@ -239,7 +239,7 @@ class HomeScreenFragment private constructor() : Fragment() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        Log.e(TAG, "onConfigurationChanged:$newConfig")
+        Log.d(TAG, "onConfigurationChanged:$newConfig")
         setCategoryLayoutManager()
     }
 

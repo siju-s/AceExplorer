@@ -17,7 +17,7 @@ class MediaObserver(private val handler: Handler) : ContentObserver(handler), Ru
     }
 
     override fun onChange(selfChange: Boolean, uri: Uri?) {
-        Log.e("MediaObserver", "onChange:$uri")
+        Log.d("MediaObserver", "onChange:$uri")
         if (uri == null) {
             return
         }

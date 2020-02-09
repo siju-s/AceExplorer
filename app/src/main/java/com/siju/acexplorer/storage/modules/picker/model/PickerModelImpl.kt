@@ -46,7 +46,7 @@ class PickerModelImpl : PickerModel {
     }
 
     override fun setArgs(args: Any) {
-        Log.e("PickerModelImpl", "setArgs:$args")
+        Log.d("PickerModelImpl", "setArgs:$args")
         val arguments = args as Bundle
         when (arguments.getSerializable(KEY_PICKER_TYPE) as PickerType) {
             PickerType.RINGTONE -> {

@@ -38,11 +38,11 @@ object CategoryListFetcher {
     fun getCategories(context: Context): ArrayList<HomeLibraryInfo> {
         val homeLibraryInfoList = arrayListOf<HomeLibraryInfo>()
         if (isFirstRun(context)) {
-            Log.e(TAG, "getCategories: addDefault")
+            Log.d(TAG, "getCategories: addDefault")
             addDefaultLibs(context, homeLibraryInfoList)
             persistFirstRunPref(context)
         } else {
-            Log.e(TAG, "getCategories: addSavedLibs")
+            Log.d(TAG, "getCategories: addSavedLibs")
             addSavedLibs(context, homeLibraryInfoList)
         }
         return homeLibraryInfoList
@@ -82,7 +82,7 @@ object CategoryListFetcher {
     }
 
     private fun saveCategoriesToPrefs(context: Context, categoryIds: ArrayList<Int>) {
-        Log.e(TAG, "saveCategoriesToPrefs:defaultCategories:${categoryIds.toArray()}")
+        Log.d(TAG, "saveCategoriesToPrefs:defaultCategories:${categoryIds.toArray()}")
         CategorySaver.saveCategories(context, categoryIds)
     }
 

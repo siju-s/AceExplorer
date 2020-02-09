@@ -113,7 +113,7 @@ class CategoryEditFragment : Fragment(), OnStartDragListener {
 
     private fun setCategoryLayoutManager() {
         val gridColumns = getGridColumns()
-        Log.e("CategoryEdit", "gridCols:$gridColumns")
+        Log.d("CategoryEdit", "gridCols:$gridColumns")
         val gridLayoutManager = GridLayoutManager(context, gridColumns)
         gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
@@ -143,7 +143,7 @@ class CategoryEditFragment : Fragment(), OnStartDragListener {
     private fun initObservers() {
         categoryEditViewModel.categories.observe(viewLifecycleOwner, Observer {
             it?.apply {
-                Log.e("CategoryEditFragment", "count:${it.size}, itemsEdited:${categoryEditViewModel.itemsEdited.value}")
+                Log.d("CategoryEditFragment", "count:${it.size}, itemsEdited:${categoryEditViewModel.itemsEdited.value}")
                 if (categoryEditViewModel.itemsEdited.value == true) {
                     categoryEditViewModel.setItemEditComplete()
                     adapter.submitData(it)
@@ -182,7 +182,7 @@ class CategoryEditFragment : Fragment(), OnStartDragListener {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        Log.e(this.javaClass.simpleName, "onConfigurationChanged:${newConfig.orientation}")
+        Log.d(this.javaClass.simpleName, "onConfigurationChanged:${newConfig.orientation}")
         setCategoryLayoutManager()
     }
 

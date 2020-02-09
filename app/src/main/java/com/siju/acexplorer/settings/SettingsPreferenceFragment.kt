@@ -110,7 +110,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     private fun onRootPrefClicked(newValue: Boolean, rootPreference: CheckBoxPreference) {
         if (newValue) {
             val rooted = RootUtils.hasRootAccess()
-            Log.e("Settings", " rooted:$rooted")
+            Log.d("Settings", " rooted:$rooted")
             rootPreference.isChecked = rooted
         }
         else {

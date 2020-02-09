@@ -105,7 +105,7 @@ class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayou
 
     override fun infoClicked() {
         val uri = uriList[pager.currentItem]
-        Log.e("View", "info:$uri")
+        Log.d("View", "info:$uri")
         if (pathList.isNotEmpty()) {
             val path = pathList[pager.currentItem]
             path?.let {
@@ -161,7 +161,7 @@ class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayou
     }
 
     override fun onPageSelected(position: Int) {
-//        Log.e(this.javaClass.simpleName, "onPageSelected:${uriList[position].fileName}")
+//        Log.d(this.javaClass.simpleName, "onPageSelected:${uriList[position].fileName}")
 //        setToolbarTitle(uriList[position].fileName)
     }
 

@@ -76,7 +76,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         initListeners()
         checkIfInAppShortcut(intent)
         bottom_navigation.selectedItemId = R.id.navigation_home
-        Log.e(TAG, "billing key:${BillingKey.getBillingKey()}")
+        Log.d(TAG, "billing key:${BillingKey.getBillingKey()}")
         setupPremiumUtils()
     }
 
@@ -96,7 +96,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         })
 
         mainViewModel.dualMode.observe(this, Observer {
-            Log.e(TAG, "Dual mode value:$it")
+            Log.d(TAG, "Dual mode value:$it")
             it?.apply {
                 if (it) {
                     onDualModeEnabled(resources.configuration)
@@ -171,6 +171,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
     }
 
     private fun enableDualPane() {
+        Log.d(TAG, "enableDualPane")
         frame_container_dual.visibility = View.VISIBLE
         viewSeparator.visibility = View.VISIBLE
         createDualFragment()
@@ -179,6 +180,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
     private fun canEnableDualPane(configuration: Configuration?) = isCurrentScreenStorage() && configuration.isLandscape()
 
     private fun disableDualPane() {
+        Log.d(TAG, "disableDualPane")
         frame_container_dual.visibility = View.GONE
         viewSeparator.visibility = View.GONE
         if (isCurrentScreenStorage()) {
@@ -360,7 +362,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        Log.e(TAG, "onConfigurationChanged:${newConfig.isLandscape()}, dualMode:${mainViewModel.dualMode.value}")
+        Log.d(TAG, "onConfigurationChanged:${newConfig.isLandscape()}, dualMode:${mainViewModel.dualMode.value}")
         if (mainViewModel.dualMode.value == true && newConfig.isLandscape()) {
             onDualModeEnabled(newConfig)
         } else {

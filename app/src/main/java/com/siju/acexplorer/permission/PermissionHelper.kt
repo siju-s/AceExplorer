@@ -60,7 +60,7 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
     }
 
     fun onForeground() {
-        Log.e(TAG, "onForeground")
+        Log.d(TAG, "onForeground")
         if (permissionRationaleDialog?.isShowing == true) {
             if (hasPermissions(context)) {
                 dismissRationaleDialog()
@@ -70,7 +70,7 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
     }
 
     private fun hasPermissions(context: Context): Boolean {
-        Log.e(TAG, "hasPermissions")
+        Log.d(TAG, "hasPermissions")
         val packageInfo: PackageInfo
         try {
             packageInfo = context.packageManager.getPackageInfo(context.packageName,
@@ -134,7 +134,7 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
     }
 
     fun onPermissionResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        Log.e(TAG, "onPermissionResult")
+        Log.d(TAG, "onPermissionResult")
         if (hasPermissions(context)) {
             Logger.log(TAG, "Permission granted")
             permissionStatus.value = PermissionState.Granted()
@@ -177,7 +177,7 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
     }
 
     private fun onRationaleDialogDismissed() {
-        Log.e(TAG, "onRationaleDialogDismissed")
+        Log.d(TAG, "onRationaleDialogDismissed")
         if (!hasPermissions(context)) {
             activity.finish()
         }
@@ -197,7 +197,7 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
     }
 
     private fun dismissRationaleDialog() {
-        Log.e(TAG, "dismissRationaleDialog")
+        Log.d(TAG, "dismissRationaleDialog")
         permissionRationaleDialog?.dismiss()
     }
 

@@ -153,7 +153,7 @@ class DragHelper(private val context: Context, private val filesList: FilesList)
                 }
 
                 // An unknown action type was received.
-                else                           -> Log.e(TAG,
+                else                           -> Log.d(TAG,
                                                         "Unknown action type received by OnDragListener.")
             }
 

@@ -22,7 +22,7 @@ class SearchDataFetcher(private val searchResultCallback: SearchResultCallback) 
     fun fetchData(path: String?, query: String) {
         //TODO 30 Jan 2020 Should use coroutine cancel somehow instead of a flag here
         time1 = System.currentTimeMillis()
-        Log.e("SearchDataFetcher", "fetchData query:$query, cancel:$cancelSearch")
+        Log.d("SearchDataFetcher", "fetchData query:$query, cancel:$cancelSearch")
         searchData = ArrayList()
         cancelSearch = false
         path?.let {
@@ -35,7 +35,7 @@ class SearchDataFetcher(private val searchResultCallback: SearchResultCallback) 
         if (file.canRead()) {
             getMatchingFiles(file, query, DataFetcher.canShowHiddenFiles(AceApplication.appContext))
         }
-        Log.e("SearchDataFetcher", "Search completed, size : ${searchData.size},  time:${System.currentTimeMillis() - time1}")
+        Log.d("SearchDataFetcher", "Search completed, size : ${searchData.size},  time:${System.currentTimeMillis() - time1}")
     }
 
     fun cancelSearch() {
@@ -48,9 +48,9 @@ class SearchDataFetcher(private val searchResultCallback: SearchResultCallback) 
             if (cancelSearch) {
                 break
             }
-//            Log.e("SearchDataFetcher", "getMatchingFiles : file:${file.name}, query:$query, cancel:$cancelSearch")
+//            Log.d("SearchDataFetcher", "getMatchingFiles : file:${file.name}, query:$query, cancel:$cancelSearch")
             if (isSearchResultFound(file, query)) {
-//                Log.e("SearchDataFetcher", "FOUND : file:${file.name}, query:$query")
+//                Log.d("SearchDataFetcher", "FOUND : file:${file.name}, query:$query")
                 val filePath = file.absolutePath
                 var isDirectory = false
                 val size: Long

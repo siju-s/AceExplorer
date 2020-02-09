@@ -56,7 +56,6 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-//        Log.e(TAG, "onBindViewHolder : $position")
         val item = getItem(position)
         viewHolder.bind(item, itemCount, viewMode, mainCategory, multiSelectionHelper?.isSelected(position), position, draggedPosition,
                 clickListener, longClickListener, peekPopView)
@@ -143,7 +142,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                  clickListener: (Pair<FileInfo, Int>) -> Unit,
                  longClickListener: (FileInfo, Int, View) -> Unit,
                  peekPopView: PeekPopView?) {
-//            Log.e("FileListAdapter", "bind:${item.fileName}, mainCategory:$mainCategory, selected:$selected")
+            Log.d("FileListAdapter", "bind:${item.fileName}, pos:$pos")
             onSelection(selected, pos, draggedPos)
             bindViewByCategory(itemView.context, item, viewMode, mainCategory, peekPopView, pos)
             itemView.setOnClickListener {
@@ -196,7 +195,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                                        peekPopView: PeekPopView?,
                                        pos: Int) {
             val category = fileInfo.category
-            Log.e(TAG, "bindViewByCategory:$category, file:${fileInfo.filePath}, date:${fileInfo.date}")
+//            Log.d(TAG, "bindViewByCategory:$category, file:${fileInfo.filePath}, date:${fileInfo.date}")
             when {
                 category == Category.PICKER       -> {
                     bindPickerView(fileInfo)
@@ -223,7 +222,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                                       context: Context,
                                       peekPopView: PeekPopView?,
                                       pos: Int) {
-//            Log.e(TAG, "bindFilesCategory:$category, file:${fileInfo.filePath}, date:${fileInfo.date}")
+//            Log.d(TAG, "bindFilesCategory:$category, file:${fileInfo.filePath}, date:${fileInfo.date}")
             val fileName = fileInfo.fileName
             if (mainCategory == null) {
                 category?.let { bindDate(it, fileInfo) }
@@ -260,7 +259,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         }
 
         private fun setVideoThumbVisibility(category: Category?) {
-//            Log.e(TAG, "setVideoThumbVisibility:$category")
+//            Log.d(TAG, "setVideoThumbVisibility:$category")
             if (CategoryHelper.isAnyVideoCategory(category)) {
                 imageVideoThumb.visibility = View.VISIBLE
             } else {
@@ -285,7 +284,6 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                 else {
                     fileInfo.date * 1000
                 }
-                Log.e(TAG, "file:${fileInfo.filePath}, category:$category, Date:$dateMs")
                 it.text = FileUtils.convertDate(dateMs)
             }
             showDateView()
@@ -315,7 +313,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         }
 
         private fun bindGenericMusic(context: Context, fileInfo: FileInfo, pos: Int, peekPopView: PeekPopView?) {
-            Log.e(TAG, "bindGenericMusic:category:${fileInfo.category}, file:${fileInfo.count}")
+            Log.d(TAG, "bindGenericMusic:category:${fileInfo.category}, file:${fileInfo.count}")
             val count = fileInfo.count
             val files = context.resources.getQuantityString(R.plurals.number_of_files,
                     count, count)
@@ -328,7 +326,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         }
 
         private fun bindMusicCategory(context: Context, fileInfo: FileInfo, pos: Int, peekPopView: PeekPopView?) {
-            Log.e(TAG, "bindMusicCategory:category:${fileInfo.category}, file:${fileInfo.filePath}")
+            Log.d(TAG, "bindMusicCategory:category:${fileInfo.category}, file:${fileInfo.filePath}")
             textFileName.text = fileInfo.title
             val num = fileInfo.numTracks.toInt()
             if (num != INVALID_POS) {
@@ -358,7 +356,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         }
 
         private fun toggleGalleryViewVisibility(category: Category?) {
-            Log.e(TAG, "toggleGalleryViewVisibility:$category")
+//            Log.d(TAG, "toggleGalleryViewVisibility:$category")
             if (viewMode == ViewMode.GALLERY) {
                 val imageGalleryThumb: ImageView = itemView.findViewById(R.id.imageThumb)
                 if (shouldHideGalleryThumb(category)) {
@@ -403,7 +401,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         }
 
         private fun bindCameraGeneric(context: Context, fileInfo: FileInfo, category: Category, pos: Int, peekPopView: PeekPopView?) {
-            Log.e(TAG, "bindCameraGeneric:category:$category, file:${fileInfo.filePath}")
+//            Log.d(TAG, "bindCameraGeneric:category:$category, file:${fileInfo.filePath}")
             val count = fileInfo.count
             val files = context.resources.getQuantityString(R.plurals.number_of_files,
                     count, count)
@@ -448,7 +446,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         override fun areItemsTheSame(oldItem: FileInfo,
                                      newItem: FileInfo): Boolean {
             if (oldItem.category == newItem.category) {
-//                Log.e(TAG, "category:${oldItem.category}, path:${oldItem.filePath}")
+//                Log.d(TAG, "category:${oldItem.category}, path:${oldItem.filePath}")
                 val result = when (oldItem.category) {
                     Category.GENERIC_IMAGES, Category.GENERIC_VIDEOS               -> oldItem.bucketId == newItem.bucketId
                     Category.RECENT_IMAGES, Category.RECENT_VIDEOS, Category.RECENT_AUDIO, Category.RECENT_DOCS,

@@ -195,7 +195,7 @@ public class ConfigurationHelper {
             columns = viewMode == ViewMode.GALLERY ? StorageGridColumns.GALLERY_COL_DUAL.getValue()
                     : StorageGridColumns.COL_DUAL.getValue();
         }
-        Log.e("ConfigurationHelper", "getStorageDualGridCols() called with: sw = [" + sw + "]" + " cols:" + columns);
+        Log.d("ConfigurationHelper", "getStorageDualGridCols() called with: sw = [" + sw + "]" + " cols:" + columns);
         return columns;
     }
 

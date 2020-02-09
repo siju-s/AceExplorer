@@ -12,7 +12,7 @@ import com.siju.acexplorer.main.model.helper.FileUtils
 object SingleImageDataFetcher {
 
     fun fetchData(context: Context, uri: Uri): FileInfo? {
-        Log.e(this.javaClass.simpleName, "fetchData:uri=$uri, authority:${uri.authority}, schem:${uri.scheme}")
+        Log.d(this.javaClass.simpleName, "fetchData:uri=$uri, authority:${uri.authority}, schem:${uri.scheme}")
         val cursor = fetchImageDetail(context, uri)
         return getImageData(cursor)
     }

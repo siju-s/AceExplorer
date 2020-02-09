@@ -55,7 +55,7 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
     }
 
     private fun setupUI(view: View) {
-        Log.e("CategoryFrag", "setupUI")
+        Log.d("CategoryFrag", "setupUI")
         setupToolbar()
         viewPager = view.findViewById(R.id.categoryPager)
         viewPager.addOnPageChangeListener(pageChangeListener)
@@ -102,7 +102,7 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
         }
 
         override fun onPageSelected(position: Int) {
-            Log.e(this.javaClass.simpleName, "onPageSelected:$position")
+            Log.d(this.javaClass.simpleName, "onPageSelected:$position")
             if (position == -1) {
                 return
             }
@@ -115,7 +115,7 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
 
 
     private fun createFragment(path: String?, category: Category) {
-        Log.e(this.javaClass.simpleName, "category:$category")
+        Log.d(this.javaClass.simpleName, "category:$category")
         setToolbarTitle(CategoryHelper.getCategoryName(context, category).toUpperCase(Locale.getDefault()))
         if (category == Category.WHATSAPP || category == Category.TELEGRAM) {
             addFolderCategoryFragments(path, category)

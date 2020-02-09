@@ -39,7 +39,7 @@ class OperationHelper(val context: Context) {
     }
 
     private fun addOperation(operations: Operations, operationData: OperationData) {
-        Log.e("OperationHelper", "addOperation: $operationData")
+        Log.d("OperationHelper", "addOperation: $operationData")
         operationId++
         operationList.add(OperationInfo(operationId, operations, operationData))
     }
@@ -59,7 +59,7 @@ class OperationHelper(val context: Context) {
 
 
     private fun removeOperation() {
-        Log.e("OperationHelper", "removeOperation: ")
+        Log.d("OperationHelper", "removeOperation: ")
         if (hasOperations()) {
             operationList.removeAt(0)
         }
@@ -169,9 +169,9 @@ class OperationHelper(val context: Context) {
         else {
             parent + File.separator + newName
         }
-        Log.e(this.javaClass.simpleName, "renameFile : parent $parent newName $newName newpath : $newFilePath")
+        Log.d(this.javaClass.simpleName, "renameFile : parent $parent newName $newName newpath : $newFilePath")
         if (FileUtils.isFileExisting(parent, newName)) {
-            Log.e(this.javaClass.simpleName, "renameFile : existing")
+            Log.d(this.javaClass.simpleName, "renameFile : existing")
             fileOperationCallback.onOperationResult(operation,
                                                     getOperationAction(
                                                             OperationResult(
@@ -187,7 +187,7 @@ class OperationHelper(val context: Context) {
                 MediaScannerHelper.scanFiles(context, arrayOf(filePath))
                 MediaScannerHelper.scanFiles(context, arrayOf(newFilePath))
             }
-            Log.e("OperationHelper", "renameFile: result : $result")
+            Log.d("OperationHelper", "renameFile: result : $result")
             val resultCode = if (result) OperationResultCode.SUCCESS else OperationResultCode.FAIL
             fileOperationCallback.onOperationResult(operation, getOperationAction(
                     OperationResult(resultCode, 1)))
@@ -280,7 +280,7 @@ class OperationHelper(val context: Context) {
             removeOperation()
         } else {
             var result = FileOperations.mkfile(file)
-            Log.e("OpHelper", "Result createFileInRoot:$result")
+            Log.d("OpHelper", "Result createFileInRoot:$result")
             if (!result && RootTools.isAccessGiven()) {
                 result = try {
                     RootUtils.mkFile(file.absolutePath)
@@ -373,7 +373,7 @@ class OperationHelper(val context: Context) {
 
     private fun getOperationAction(operationResult: OperationResult): OperationAction? {
         val operationData = getOperationData()
-        Log.e("OperationHelper", "getOperationAction: data:$operationData")
+        Log.d("OperationHelper", "getOperationAction: data:$operationData")
         operationData?.let {
             return OperationAction(operationResult, it)
         }

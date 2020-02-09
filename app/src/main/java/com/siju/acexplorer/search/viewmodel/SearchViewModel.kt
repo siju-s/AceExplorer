@@ -34,7 +34,7 @@ class SearchViewModel(private val searchModel: SearchModel) : ViewModel() {
 
     fun search(path : String?, query : String?, category: Category = Category.FILES) {
         if (query != null && query.isNotBlank() && query.length >= MIN_CHAR_QUERY) {
-            Log.e(TAG, "Search query:$query")
+            Log.d(TAG, "Search query:$query")
             var rootPath = path
             if (rootPath == null) {
                 rootPath = StorageUtils.internalStorage

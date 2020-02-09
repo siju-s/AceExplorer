@@ -28,11 +28,11 @@ class BackStackInfo {
     private val backStack = ArrayList<BackStackModel>()
 
     fun addToBackStack(path: String?, category: Category) {
-        Log.e(TAG,
+        Log.d(TAG,
                 "addToBackStack--size=" + backStack.size + " Path=" + path + "Category=" + category)
         if (isPathNotInBackStack(category, path)) {
             backStack.add(BackStackModel(path, category))
-            Log.e(TAG,
+            Log.d(TAG,
                     "addToBackStack--size=" + backStack.size + " Path=" + path + "Category=" + category)
         }
     }
@@ -57,7 +57,7 @@ class BackStackInfo {
     }
 
     fun clearBackStack() {
-        Log.e(TAG, "clearBackStack")
+        Log.d(TAG, "clearBackStack")
         backStack.clear()
     }
 
@@ -72,7 +72,7 @@ class BackStackInfo {
 
     fun removeLastEntry() {
         val index = getLastIndex()
-        Log.e(TAG, "removeLastEntry--size= ${backStack.size}, index:$index")
+        Log.d(TAG, "removeLastEntry--size= ${backStack.size}, index:$index")
         if (index >= 0) {
             backStack.removeAt(index)
         }

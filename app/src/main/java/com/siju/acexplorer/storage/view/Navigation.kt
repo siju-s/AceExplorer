@@ -60,7 +60,7 @@ class Navigation(private val viewModel: FileListViewModel) {
 
 
     fun setNavDirectory(path: String?, category: Category) {
-//        Log.e(TAG, "setNavDirectory:path$path, category:$category")
+//        Log.d(TAG, "setNavDirectory:path$path, category:$category")
         if (CategoryHelper.checkIfLibraryCategory(category) || path == null) {
             return
         }

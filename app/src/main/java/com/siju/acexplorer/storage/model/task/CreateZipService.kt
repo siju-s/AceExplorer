@@ -311,7 +311,7 @@ class CreateZipService : Service() {
         }
         notificationManager?.notify(NOTIFICATION_ID, notifBuilder?.build())
 
-        Log.e("CreateZip", "publishResults: progress:$progress total:$total")
+        Log.d("CreateZip", "publishResults: progress:$progress total:$total")
         if (progress == 100 || total == 0L) {
             publishCompletedResult()
         }

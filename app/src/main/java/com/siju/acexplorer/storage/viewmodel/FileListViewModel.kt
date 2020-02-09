@@ -198,7 +198,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
     }
 
     fun loadData(path: String?, category: Category) {
-        Log.e(this.javaClass.name, "loadData: path $path , category $category")
+        Log.d(this.javaClass.name, "loadData: path $path , category $category")
         addNavigation(path, category)
         addToBackStack(path, category)
         setCategory(category)
@@ -206,7 +206,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         if (RecentTimeHelper.isRecentTimeLineCategory(category)) {
             uiScope.launch(Dispatchers.IO) {
                 val data = storageModel.loadRecentData(path, category)
-                Log.e(this.javaClass.name,
+                Log.d(this.javaClass.name,
                         "onDataloaded loadData: data ${data.size} , category $category")
                 _recentFileData.postValue(Pair(category, data))
                 handleScrollPosition()
@@ -215,7 +215,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         else {
             uiScope.launch(Dispatchers.IO) {
                 val data = storageModel.loadData(path, category)
-                Log.e(this.javaClass.name,
+                Log.d(this.javaClass.name,
                         "onDataloaded loadData: data ${data.size} , category $category")
                 _fileData.postValue(data)
                 handleScrollPosition()
@@ -225,7 +225,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
 
     //Reload data without adding to backstack again
     private fun reloadData(path: String?, category: Category) {
-        Log.e(this.javaClass.name, "reloadData: path $path , category $category")
+        Log.d(this.javaClass.name, "reloadData: path $path , category $category")
         addNavigation(path, category)
         setCategory(category)
         setCurrentDir(path)
@@ -350,7 +350,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
 
 
     fun handleItemClick(fileInfo: FileInfo, position: Int) {
-        Log.e(TAG, "handleItemClick: category:$category")
+        Log.d(TAG, "handleItemClick: category:$category")
         if (isActionModeActive()) {
             if (RecentTimeHelper.isRecentTimeLineCategory(category)) {
                 handleRecentSelection(position)
@@ -455,7 +455,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
             return
         }
         val path = fileInfo.filePath
-        Log.e(TAG, "onFileClicked:category:${fileInfo.category}, rootCategory:$category, path:$path")
+        Log.d(TAG, "onFileClicked:category:${fileInfo.category}, rootCategory:$category, path:$path")
         when {
             isZipFile(path) -> openZipViewer(path)
             zipPresenter.isZipMode -> zipViewer?.onFileClicked(position)
@@ -470,7 +470,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
 
     private fun handleRecentItemFileClicked(fileInfo: FileInfo, position: Int) {
         val path = fileInfo.filePath
-        Log.e(TAG, "handleRecentItemFileClicked:category:${fileInfo.category}, rootCategory:$category, path:$path")
+        Log.d(TAG, "handleRecentItemFileClicked:category:${fileInfo.category}, rootCategory:$category, path:$path")
         when {
             isZipFile(path) -> openZipViewer(path)
             zipPresenter.isZipMode -> zipViewer?.onFileClicked(position)
@@ -493,7 +493,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
     }
 
     fun handleLongClick(fileInfo: FileInfo, position: Int) {
-        Log.e(TAG, "handleLongClick:position $position, canLongpress:${canLongPress()}, category:$category")
+        Log.d(TAG, "handleLongClick:position $position, canLongpress:${canLongPress()}, category:$category")
         if (CategoryHelper.isSortOrActionModeUnSupported(category)) {
             return
         }
@@ -514,7 +514,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
 
     fun handleActionModeClick(fileItem: FileInfo?) {
         val hasCheckedItems = multiSelectionHelper.hasSelectedItems()
-        Log.e(TAG, "handleActionModeClick state:${_actionModeState.value}")
+        Log.d(TAG, "handleActionModeClick state:${_actionModeState.value}")
         if (hasCheckedItems && !isActionModeActive()) {
             _actionModeState.value = ActionModeState.STARTED
             operationPresenter.clearDraggedData()
@@ -615,7 +615,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
     }
 
     fun switchView(viewMode: ViewMode) {
-        Log.e(TAG, "switchView:${category}")
+        Log.d(TAG, "switchView:${category}")
         when {
             CategoryHelper.isDefaultGalleryImageCategory(category) -> storageModel.saveImageViewMode(viewMode)
             CategoryHelper.isDefaultGalleryVideoCategory(category) -> storageModel.saveVideoViewMode(viewMode)

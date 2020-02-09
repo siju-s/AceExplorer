@@ -60,7 +60,7 @@ object ShareHelper {
     }
 
     fun shareMedia(context: Context, category: Category, uri: Uri?, path : String? = null) {
-        Log.e("ShareHelper", "shareMedia:$path, category:$category, uri:$uri")
+        Log.d("ShareHelper", "shareMedia:$path, category:$category, uri:$uri")
         if (uri == null && path == null) {
             return
         }

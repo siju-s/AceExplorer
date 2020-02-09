@@ -149,7 +149,7 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
         searchViewModel.searchResult.observe(viewLifecycleOwner, Observer {
             it?.apply {
                 if (::filesList.isInitialized) {
-                    Log.e("SearchFragment", " Search result:${it.size}")
+                    Log.d("SearchFragment", " Search result:${it.size}")
                     if (searchView.query.isEmpty()) {
                         searchSuggestions.showChipGroup()
                         showRecentSearch()
@@ -242,13 +242,13 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
 
     private fun hideRecentSearch() {
         if (recentSearchContainer.visibility != View.GONE) {
-            Log.e(TAG, "hideRecentSearch")
+            Log.d(TAG, "hideRecentSearch")
             recentSearchContainer.visibility = View.GONE
         }
     }
 
     private fun showRecentSearch() {
-        Log.e(TAG, "showRecentSearch")
+        Log.d(TAG, "showRecentSearch")
         recentSearchContainer.visibility = View.VISIBLE
     }
 
@@ -271,7 +271,7 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        Log.e(SearchFragment::class.java.simpleName, "onCreateOptionsMenu")
+        Log.d(SearchFragment::class.java.simpleName, "onCreateOptionsMenu")
         inflater.inflate(R.menu.search, menu)
         searchView = menu.findItem(R.id.action_search).actionView as SearchView
         setupSearchView()
@@ -290,13 +290,13 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-        Log.e(SearchFragment::class.java.simpleName, "onQueryTextSubmit : $query")
+        Log.d(SearchFragment::class.java.simpleName, "onQueryTextSubmit : $query")
         saveQuery(query)
         return false
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
-        Log.e(SearchFragment::class.java.simpleName, "onQueryTextChange : $newText")
+        Log.d(SearchFragment::class.java.simpleName, "onQueryTextChange : $newText")
         searchSuggestions.hideSuggestions()
         hideRecentSearch()
         if (newText?.isEmpty() == true) {
@@ -308,13 +308,13 @@ class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextL
     }
 
     private fun hideSearchList() {
-        Log.e(TAG, "hideSearchList")
+        Log.d(TAG, "hideSearchList")
         filesList.visibility = View.GONE
     }
 
     private fun showSearchList() {
         if (filesList.visibility != View.VISIBLE) {
-            Log.e(TAG, "showSearchList")
+            Log.d(TAG, "showSearchList")
             filesList.visibility = View.VISIBLE
         }
     }

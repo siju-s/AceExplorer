@@ -106,7 +106,7 @@ class ZipViewerFragment(
     }
 
     private fun viewFile(path: String, extension: String?) {
-        Log.e(TAG, "Viewfile:path:$path, extension:$extension")
+        Log.d(TAG, "Viewfile:path:$path, extension:$extension")
         val context = fragment.context
         context?.let {
             when (extension?.toLowerCase(Locale.ROOT)) {

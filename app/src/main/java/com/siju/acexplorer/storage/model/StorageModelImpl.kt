@@ -112,7 +112,7 @@ class StorageModelImpl(val context: Context, var category: Category = Category.F
             PreferenceConstants.PREFS_HIDDEN, false)
 
     override fun saveHiddenFileSetting(value: Boolean) {
-        Log.e(this.javaClass.name, "saveHiddenFileSetting: value:$value")
+        Log.d(this.javaClass.name, "saveHiddenFileSetting: value:$value")
         globalPreference.edit().apply {
             putBoolean(PreferenceConstants.PREFS_HIDDEN, value)
             apply()
@@ -127,7 +127,7 @@ class StorageModelImpl(val context: Context, var category: Category = Category.F
     }
 
     override fun saveSortMode(sortMode: SortMode) {
-        Log.e(this.javaClass.name, "saveSortMode: value:$sortMode")
+        Log.d(this.javaClass.name, "saveSortMode: value:$sortMode")
         globalPreference.edit().apply {
             putInt(PreferenceConstants.KEY_SORT_MODE, sortMode.value)
             apply()

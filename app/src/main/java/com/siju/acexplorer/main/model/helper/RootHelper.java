@@ -40,7 +40,7 @@ public class RootHelper {
     private static final String TAG = "RootHelper";
 
     public static synchronized ArrayList<String> executeCommand(String cmd) {
-        Log.e(TAG, "executeCommand: "+cmd);
+        Log.d(TAG, "executeCommand: "+cmd);
         final ArrayList<String> list = new ArrayList<>();
 //        final CountDownLatch countDownLatch = new CountDownLatch(1);
         final AtomicReference<ArrayList<String>> resultRef = new AtomicReference<>();
@@ -49,19 +49,19 @@ public class RootHelper {
             public void commandOutput(int id, String line) {
                 super.commandOutput(id, line);
                 list.add(line);
-                Log.e(TAG, "command commandOutput:"+line);
+                Log.d(TAG, "command commandOutput:"+line);
             }
 
             @Override
             public void commandTerminated(int id, String reason) {
                 super.commandTerminated(id, reason);
-                Log.e(TAG, "command terminated:"+reason);
+                Log.d(TAG, "command terminated:"+reason);
             }
 
             @Override
             public void commandCompleted(int id, int exitcode) {
                 super.commandCompleted(id, exitcode);
-                Log.e(TAG, "command commandCompleted:"+list.size());
+                Log.d(TAG, "command commandCompleted:"+list.size());
                 resultRef.set(list);
 //                countDownLatch.countDown();
             }
@@ -163,13 +163,13 @@ public class RootHelper {
         }
         ArrayList<String> list;
         long time = System.currentTimeMillis();
-        Log.e(TAG, "getRootedList: time:" + time);
+        Log.d(TAG, "getRootedList: time:" + time);
         boolean rootAccessGiven = RootTools.isAccessGiven();
         boolean rooted = root || rootAccessGiven;
         if (rooted) {
             list = executeCommand("ls -l " + getCommandLineString(path));
             long newTime = System.currentTimeMillis();
-            Log.e(TAG, "getRootedList: time taken for ls:" + (newTime - time) +" list:"+list);
+            Log.d(TAG, "getRootedList: time taken for ls:" + (newTime - time) +" list:"+list);
             if (list != null) {
                 for (int i = 0; i < list.size(); i++) {
                     String file1 = list.get(i);
@@ -200,7 +200,7 @@ public class RootHelper {
     private static void parseFileNew(String path, String result, ArrayList<FileInfo> fileInfoArrayList) {
         String[] array = result.trim().split("\\s+");
         int arrayLength = array.length;
-        Log.e(TAG, "parseFileNew: arrayLength:" + arrayLength);
+        Log.d(TAG, "parseFileNew: arrayLength:" + arrayLength);
         if (array.length > 3) {
             String trimName;
             String date;

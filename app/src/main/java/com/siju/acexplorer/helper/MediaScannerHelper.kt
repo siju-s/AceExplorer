@@ -8,7 +8,7 @@ import java.io.File
 object MediaScannerHelper {
 
     fun scanFiles(context: Context?, pathList: Array<String>) {
-        Log.e("MediaScannerHelper", "scanFiles : ${pathList.size}")
+        Log.d("MediaScannerHelper", "scanFiles : ${pathList.size}")
         context?.let {
             if (pathList.isNotEmpty()) {
                 MediaScannerConnection.scanFile(context, pathList, null,
@@ -18,7 +18,7 @@ object MediaScannerHelper {
     }
 
     private val mediaScannerConnectionCallback = MediaScannerConnection.OnScanCompletedListener { path, _ ->
-        Log.e("MediaScannerHelper", "scanned : $path")
+        Log.d("MediaScannerHelper", "scanned : $path")
     }
 
     fun isMediaScanningRequired(file: File): Boolean {

@@ -57,7 +57,7 @@ class CategoryEditAdapter(private val selectedStateListener: (CategoryEditModelI
             }
             is ViewHolder -> {
                 val item = getItem(position) as CategoryEditModelImpl.DataItem.Content
-                Log.e("Adapter", "onBindViewHolder : pos:$position, headedrType:${item.categoryEdit.headerType}, checked: ${item.categoryEdit.checked}")
+                Log.d("Adapter", "onBindViewHolder : pos:$position, headedrType:${item.categoryEdit.headerType}, checked: ${item.categoryEdit.checked}")
                 holder.bind(item, selectedStateListener)
             }
         }
@@ -76,7 +76,7 @@ class CategoryEditAdapter(private val selectedStateListener: (CategoryEditModelI
 
     override fun onItemMove(fromPosition: Int, toPosition: Int) {
         Collections.swap(data, fromPosition, toPosition)
-        Log.e("Adapter", "itemMove : from:$fromPosition, to:$toPosition")
+        Log.d("Adapter", "itemMove : from:$fromPosition, to:$toPosition")
         notifyItemMoved(fromPosition, toPosition)
     }
 
@@ -89,7 +89,7 @@ class CategoryEditAdapter(private val selectedStateListener: (CategoryEditModelI
         else  if (checkedCount in toPos until fromPos) {
             onMovedFromOtherToSaved(fromPos, toPos)
         }
-        Log.e("Adapter", "onMoved : from:$fromPos, to:$toPos")
+        Log.d("Adapter", "onMoved : from:$fromPos, to:$toPos")
 
     }
 

@@ -16,7 +16,7 @@ class CategoryPagerAdapter(fragmentManager: FragmentManager) : FragmentStatePage
     override fun getItem(position: Int): Fragment {
         val  data = categoryDataList[position]
         val fragment = FileListFragment.newInstance(data.path, data.category, false)
-        Log.e("Adapter", "getITem:pos:$position, frag:$fragment")
+        Log.d("Adapter", "getITem:pos:$position, frag:$fragment")
         fragment.setCategoryMenuHelper(data.categoryMenuHelper)
         return fragment
     }
@@ -44,14 +44,14 @@ class CategoryPagerAdapter(fragmentManager: FragmentManager) : FragmentStatePage
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val fragment =  super.instantiateItem(container, position)
-        Log.e("Adapter", "instantiateItem:$position, fragment:$fragment")
+        Log.d("Adapter", "instantiateItem:$position, fragment:$fragment")
         fragmentMap[position] = fragment as Fragment
         return fragment
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
         super.destroyItem(container, position, `object`)
-        Log.e("Adapter", "destroyItem:$position")
+        Log.d("Adapter", "destroyItem:$position")
         fragmentMap.remove(position)
     }
 

@@ -139,7 +139,7 @@ class MainViewModel(val app: Application) : AndroidViewModel(app) {
     }
 
     fun refreshLayout(pane: Pane) {
-        Log.e(this.javaClass.simpleName, "refreshLayout:$pane")
+        Log.d(this.javaClass.simpleName, "refreshLayout:$pane")
         _refreshGridColumns.value = Pair(pane, true)
     }
 
@@ -148,7 +148,7 @@ class MainViewModel(val app: Application) : AndroidViewModel(app) {
     }
 
     fun setReloadPane(pane: Pane, reload : Boolean) {
-        Log.e(this.javaClass.simpleName, "setReloadPane:$pane, reload:$reload")
+        Log.d(this.javaClass.simpleName, "setReloadPane:$pane, reload:$reload")
         _reloadPane.value = Pair(pane, reload)
     }
 

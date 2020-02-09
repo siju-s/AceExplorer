@@ -134,7 +134,7 @@ class ZipLoader(val context: Context) {
                                 zipEntry: ZipModel) {
         if (!entriesList.contains(entryName)) {
             elements.add(createZipModel(entryName, zipEntry))
-            Log.e(TAG, "addFileZipEntry:entryName:$entryName, elements size:${elements.size}")
+            Log.d(TAG, "addFileZipEntry:entryName:$entryName, elements size:${elements.size}")
             entriesList.add(entryName)
         }
     }
@@ -168,7 +168,7 @@ class ZipLoader(val context: Context) {
             zipModel = ZipModel(ZipEntry(path), zipEntry.time, zipEntry
                     .size, true)
             elements.add(zipModel)
-            Log.e(TAG, "addFileZipEntry:entryName:$path, elements size:${elements.size}")
+            Log.d(TAG, "addFileZipEntry:entryName:$path, elements size:${elements.size}")
             entriesList.add(path)
         }
     }

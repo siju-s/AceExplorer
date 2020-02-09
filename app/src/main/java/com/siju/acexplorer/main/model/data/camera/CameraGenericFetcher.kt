@@ -31,7 +31,7 @@ class CameraGenericFetcher : DataFetcher {
         val fileInfoList = java.util.ArrayList<FileInfo>()
         for (fileInfo in fileList) {
             val category = fileInfo.category
-            Log.e(TAG, "Category:$category, count : $count")
+            Log.d(TAG, "Category:$category, count : $count")
             if (!categories.contains(category)) {
                 count = 1
                 val itemFileInfo = FileInfo.createCameraGenericInfo(getGenericCategoryForType(category), category, fileInfo.filePath, count)
@@ -54,7 +54,7 @@ class CameraGenericFetcher : DataFetcher {
     }
 
     override fun fetchCount(context: Context, path: String?): Int {
-        Log.e(TAG, "fetchCount:$path")
+        Log.d(TAG, "fetchCount:$path")
         return if (path == null) {
             0
         } else {

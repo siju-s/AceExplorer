@@ -45,7 +45,7 @@ class HomeViewModel(private val homeModel: HomeModel) : ViewModel() {
     }
 
     private fun fetchCategories() {
-        Log.e(TAG, "fetchCategories")
+        Log.d(TAG, "fetchCategories")
         uiScope.launch(Dispatchers.IO) {
             _categories.postValue(homeModel.getCategories())
         }
@@ -62,7 +62,7 @@ class HomeViewModel(private val homeModel: HomeModel) : ViewModel() {
             categoryInfoList.forEachIndexed { index, homeLibraryInfo ->
                 val fileInfo = homeModel.loadCountForCategory(homeLibraryInfo.category, getPath(homeLibraryInfo.category) )
                 homeLibraryInfo.count = fileInfo.count
-                Log.e(TAG, "fetchCount : index:$index, category:${homeLibraryInfo.category}, count:${homeLibraryInfo.count}")
+//                Log.d(TAG, "fetchCount : index:$index, category:${homeLibraryInfo.category}, count:${homeLibraryInfo.count}")
                 _categoryData.postValue(Pair(index, homeLibraryInfo))
             }
         }

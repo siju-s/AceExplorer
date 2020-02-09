@@ -31,7 +31,7 @@ class DragOperation(private val viewModel: FileListViewModel, private val operat
             return
         }
         val timeElapsed = System.currentTimeMillis() - longPressedTimeMs
-        Log.e(TAG, "onMoveTouchEvent:timeElapsed:$timeElapsed, longpressTime:$longPressedTimeMs")
+        Log.d(TAG, "onMoveTouchEvent:timeElapsed:$timeElapsed, longpressTime:$longPressedTimeMs")
         if (timeElapsed > MIN_DRAG_TIME_MS) {
             longPressedTimeMs = 0
             dragStarted = false
@@ -94,12 +94,12 @@ class DragOperation(private val viewModel: FileListViewModel, private val operat
 
     fun onDragStarted() {
         dragStarted = true
-        Log.e(TAG, "onDragStarted")
+        Log.d(TAG, "onDragStarted")
     }
 
     fun dragEnded() {
         dragStarted = false
-        Log.e(TAG, "dragEnded")
+        Log.d(TAG, "dragEnded")
     }
 
     private val dragDialogListener = DialogHelper.DragDialogListener { filesToPaste, destinationDir, operation ->

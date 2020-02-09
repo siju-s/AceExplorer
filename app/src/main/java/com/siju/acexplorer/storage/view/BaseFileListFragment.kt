@@ -105,7 +105,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         getArgs()
-        Log.e(TAG, "onActivityCreated:$this, category:$category")
+        Log.d(TAG, "onActivityCreated:$this, category:$category")
         val view = view
         val container = view?.findViewById<CoordinatorLayout>(R.id.main_content)
         container?.let {
@@ -134,7 +134,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     }
 
     private fun setupDualScreenMode() {
-        Log.e(TAG, "setupDualScreenMode:dualMode:${mainViewModel.isDualPaneEnabled()}")
+        Log.d(TAG, "setupDualScreenMode:dualMode:${mainViewModel.isDualPaneEnabled()}")
         if (this is FileListFragment && mainViewModel.isDualPaneEnabled()) {
             mainViewModel.setStorageReady()
         }
@@ -181,7 +181,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     }
 
     private fun setupViewModels() {
-        Log.e(TAG, "setupViewModels:$this")
+        Log.d(TAG, "setupViewModels:$this")
         val activity = requireNotNull(activity)
         mainViewModel = ViewModelProviders.of(activity).get(MainViewModel::class.java)
         val viewModelFactory = FileListViewModelFactory(StorageModelImpl(AceApplication.appContext, category))
@@ -238,13 +238,13 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
 
         mainViewModel.sortMode.observe(viewLifecycleOwner, object : Observer<Int> {
             override fun onChanged(t: Int?) {
-                Log.e(TAG, "Sort mode:$t")
+                Log.d(TAG, "Sort mode:$t")
             }
         })
 
         mainViewModel.refreshGridCols.observe(viewLifecycleOwner, Observer {
             it?.apply {
-                Log.e(TAG, "refreshGridCols pane:${it.first}, reload:${it.second}, this:${this@BaseFileListFragment is FileListFragment}")
+                Log.d(TAG, "refreshGridCols pane:${it.first}, reload:${it.second}, this:${this@BaseFileListFragment is FileListFragment}")
                 if (::filesList.isInitialized && shouldRefreshPane(it.first, it.second)) {
                     filesList.refreshGridColumns(fileListViewModel.getViewMode(category))
                     mainViewModel.setRefreshDone(it.first)
@@ -256,7 +256,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
             it?.apply {
                 val pane = it.first
                 val reload = it.second
-                Log.e(TAG, "Reload pane:$pane, reload:$reload, this:${this@BaseFileListFragment is FileListFragment}")
+                Log.d(TAG, "Reload pane:$pane, reload:$reload, this:${this@BaseFileListFragment is FileListFragment}")
                 if (shouldRefreshPane(pane, reload)) {
                     fileListViewModel.refreshList()
                     mainViewModel.setReloadPane(pane, false)
@@ -306,7 +306,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         })
 
         fileListViewModel.actionModeState.observe(viewLifecycleOwner, Observer {
-            Log.e(TAG, "actionModeState:$it")
+            Log.d(TAG, "actionModeState:$it")
             it?.apply {
                 when (it) {
                     ActionModeState.STARTED -> {
@@ -477,7 +477,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     }
 
     private fun shouldRefreshPane(pane : Pane, reload : Boolean) : Boolean {
-        Log.e(TAG, "Reload pane:$pane, reload:$reload, this:${this@BaseFileListFragment is FileListFragment}")
+        Log.d(TAG, "Reload pane:$pane, reload:$reload, this:${this@BaseFileListFragment is FileListFragment}")
         return (reload && ((this@BaseFileListFragment is FileListFragment && pane == Pane.SINGLE) ||
                         this@BaseFileListFragment is DualPaneFragment && pane == Pane.DUAL ))
     }
@@ -540,7 +540,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         val action = operationResult.second
         val operation = operationResult.first
         val context = context
-        Log.e(TAG, "handleOperationResult: $operation, result:${action.operationResult.resultCode}")
+        Log.d(TAG, "handleOperationResult: $operation, result:${action.operationResult.resultCode}")
         context?.let {
             when (action.operationResult.resultCode) {
                 OperationResultCode.SUCCESS -> {
@@ -611,7 +611,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
 
 
     private fun handleSingleItemOperation(operationData: Pair<Operations, FileInfo>) {
-        Log.e(TAG, "handleSingleItemOperation: ${operationData.second.permissions}")
+        Log.d(TAG, "handleSingleItemOperation: ${operationData.second.permissions}")
         when (operationData.first) {
             Operations.RENAME -> {
                 context?.let { context -> showRenameDialog(context, operationData.second) }
@@ -897,7 +897,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     override fun getActivityInstance() : AppCompatActivity = this.activity as AppCompatActivity
 
     fun onBackPressed() : Boolean {
-        Log.e(TAG, "onBackPressed:$this")
+        Log.d(TAG, "onBackPressed:$this")
         val isPeekMode = filesList.isPeekMode()
         return when {
             isPeekMode -> {
@@ -919,7 +919,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     }
 
         private fun viewFile(path: String, extension: String?) {
-            Log.e(TAG, "viewFile:path:$path, extension:$extension")
+            Log.d(TAG, "viewFile:path:$path, extension:$extension")
             val context = context
             context?.let {
                 when (extension?.toLowerCase(Locale.ROOT)) {
@@ -986,7 +986,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         }
 
         private fun navigateToSearchScreen() {
-            Log.e(TAG, "navigateToSearchScreen:$this")
+            Log.d(TAG, "navigateToSearchScreen:$this")
             mainViewModel.navigateToSearch.value = true
         }
 
@@ -1060,7 +1060,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         }
 
         fun refreshDataOnTabSelected() {
-            Log.e(TAG, "refreshDataOnSettingChange:category:$category, viewMode: ${fileListViewModel.getViewMode(category)}this:$this")
+            Log.d(TAG, "refreshDataOnSettingChange:category:$category, viewMode: ${fileListViewModel.getViewMode(category)}this:$this")
             if (::filesList.isInitialized) {
                 val viewMode = fileListViewModel.getViewMode(category)
                 filesList.onViewModeChanged(viewMode)

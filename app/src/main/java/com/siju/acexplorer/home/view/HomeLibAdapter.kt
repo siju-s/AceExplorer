@@ -22,7 +22,7 @@ class HomeLibAdapter internal constructor(private val clickListener: (HomeLibrar
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val item = getItem(position)
-//        Log.e(TAG, "onBindViewHolder $position")
+//        Log.d(TAG, "onBindViewHolder $position")
         viewHolder.bind(item, clickListener)
     }
 
