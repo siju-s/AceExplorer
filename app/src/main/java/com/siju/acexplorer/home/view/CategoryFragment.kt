@@ -8,10 +8,12 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import com.siju.acexplorer.R
+import com.siju.acexplorer.base.view.BaseActivity
 import com.siju.acexplorer.extensions.inflateLayout
 import com.siju.acexplorer.home.types.CategoryData
 import com.siju.acexplorer.main.model.groups.Category
@@ -20,6 +22,7 @@ import com.siju.acexplorer.search.helper.SearchUtils
 import com.siju.acexplorer.storage.view.FileListFragment
 import com.siju.acexplorer.storage.view.KEY_CATEGORY
 import com.siju.acexplorer.storage.view.KEY_PATH
+import com.siju.acexplorer.theme.Theme
 import kotlinx.android.synthetic.main.toolbar.*
 import java.util.*
 
@@ -61,8 +64,29 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
         viewPager.addOnPageChangeListener(pageChangeListener)
         val tabLayout = view.findViewById<TabLayout>(R.id.categoryTabs)
         tabLayout.setupWithViewPager(viewPager)
+        setTabColor(tabLayout)
         pagerAdapter = CategoryPagerAdapter(childFragmentManager)
         setupAdapter()
+    }
+
+    private fun setTabColor(tabLayout: TabLayout) {
+        val activity = activity
+        val context = context
+        context?.let {
+            if (activity is BaseActivity) {
+                when (activity.currentTheme) {
+                    null, Theme.DARK -> {
+                        tabLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.tab_bg_color))
+                    }
+                    Theme.LIGHT -> {
+                        tabLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                        tabLayout.setTabTextColors(ContextCompat.getColor(context, R.color.tab_text_color),
+                                ContextCompat.getColor(context, R.color.tab_selected_text_color))
+                        tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(context, R.color.colorAccent))
+                    }
+                }
+            }
+        }
     }
 
     private fun setupToolbar() {

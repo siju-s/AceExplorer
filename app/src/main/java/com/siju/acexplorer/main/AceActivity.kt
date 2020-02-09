@@ -22,6 +22,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
@@ -48,6 +49,7 @@ import com.siju.acexplorer.settings.SettingsFragment
 import com.siju.acexplorer.storage.view.BaseFileListFragment
 import com.siju.acexplorer.storage.view.DualPaneFragment
 import com.siju.acexplorer.storage.view.FileListFragment
+import com.siju.acexplorer.theme.Theme
 import com.siju.acexplorer.tools.ToolsFragment
 import com.siju.billingsecure.BillingKey
 import kotlinx.android.synthetic.main.activity_main.*
@@ -72,6 +74,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         mainViewModel.setPermissionHelper(PermissionHelper(this, applicationContext))
 
+        setTabColor()
         initObservers()
         initListeners()
         checkIfInAppShortcut(intent)
@@ -83,6 +86,13 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
     private fun initListeners() {
         bottom_navigation.setOnNavigationItemSelectedListener(navigationItemSelectedListener)
         bottom_navigation.setOnNavigationItemReselectedListener(navigationItemReselectedListener)
+    }
+
+    private fun setTabColor() {
+        when (currentTheme) {
+            null, Theme.DARK -> bottom_navigation.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.tab_bg_color))
+            Theme.LIGHT -> bottom_navigation.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorPrimary))
+        }
     }
 
     private fun initObservers() {
@@ -209,8 +219,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         disableDualPane()
         val fragment = if (category != null) {
             CategoryFragment.newInstance(null, category!!)
-        }
-        else {
+        } else {
             FragmentsFactory.createFragment(menuItem.itemId)
         }
         setCategory(null)
@@ -296,8 +305,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
                 if (supportFragmentManager.backStackEntryCount == 0) {
                     clearBackStack()
                     switchToHomeScreen()
-                }
-                else {
+                } else {
                     super.onBackPressed()
                 }
             }

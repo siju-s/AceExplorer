@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +15,7 @@
   -->
 <resources>
 
-     <style name="BaseLightTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="BaseLightTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -24,7 +23,6 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@color/colorPrimary</item>
-        <item name="drawerArrowStyle">@style/DrawerIconStyle</item>
         <item name="autoCompleteTextViewStyle">@style/SearchAutoCompleteTextView</item>
         <item name="android:textDirection">locale</item>
         <item name="android:textAlignment">gravity</item>
@@ -38,7 +36,6 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@color/colorPrimary</item>
-        <item name="drawerArrowStyle">@style/DrawerIconStyle</item>
         <item name="autoCompleteTextViewStyle">@style/SearchAutoCompleteTextView</item>
         <item name="android:textDirection">locale</item>
         <item name="android:textAlignment">gravity</item>
@@ -90,10 +87,9 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" >
-        <item name="android:windowBackground">@color/colorPrimary</item>
-        <item name="android:colorBackground">@color/colorPrimary</item>
-    </style>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar"/>
+
+    <style name="AppTheme.Light_AppBarOverlay" parent="ThemeOverlay.MaterialComponents.ActionBar"/>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light" />
 

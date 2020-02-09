@@ -29,6 +29,7 @@ import com.siju.acexplorer.main.model.groups.CategoryHelper.isRecentCategory
 import com.siju.acexplorer.main.model.groups.CategoryHelper.shouldHideGalleryThumb
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.storage.model.ViewMode
+import com.siju.acexplorer.theme.Theme
 import com.siju.acexplorer.ui.peekandpop.PeekPopView
 import com.siju.acexplorer.utils.ThumbnailUtils.displayThumb
 import java.util.*
@@ -47,6 +48,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
     private var mainCategory: Category? = null
     private var filteredList: ArrayList<FileInfo> = ArrayList()
     private var fileList = arrayListOf<FileInfo>()
+
     init {
         peekPopView?.setPeekPopListener()
     }
@@ -170,8 +172,13 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         }
 
         private fun onSelection(selected: Boolean?, position: Int, draggedPos: Int) {
-            val color = ContextCompat.getColor(itemView.context,
-                    R.color.dark_actionModeItemSelected)
+            val color = when (Theme.getTheme(itemView.context)) {
+                       Theme.LIGHT ->  ContextCompat.getColor(itemView.context,
+                               R.color.actionModeItemSelected)
+                else ->  ContextCompat.getColor(itemView.context,
+                        R.color.dark_actionModeItemSelected)
+            }
+
             when {
                 selected == true       -> {
                     itemView.setBackgroundColor(color)

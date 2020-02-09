@@ -7,6 +7,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.common.types.FileInfo
@@ -372,14 +373,17 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
 
      fun setTheme(theme: Theme) {
         this.theme = theme
+         Log.e(TAG, "setTheme:$theme")
         when (theme) {
             Theme.DARK -> {
                 toolbar.popupTheme = R.style.Dark_AppTheme_PopupOverlay
                 bottomToolbar.popupTheme = R.style.Dark_AppTheme_PopupOverlay
+                bottomToolbar.setBackgroundColor(ContextCompat.getColor(context, R.color.tab_bg_color))
             }
             Theme.LIGHT -> {
                 toolbar.popupTheme = R.style.AppTheme_PopupOverlay
                 bottomToolbar.popupTheme = R.style.AppTheme_PopupOverlay
+                bottomToolbar.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary))
             }
         }
     }
