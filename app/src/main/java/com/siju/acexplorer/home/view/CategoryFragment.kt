@@ -1,7 +1,6 @@
 package com.siju.acexplorer.home.view
 
 import android.content.Context
-import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -75,17 +74,14 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
         val context = context
         context?.let {
             if (activity is BaseActivity) {
-                val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-                when  {
-                    activity.currentTheme == Theme.DARK || currentNightMode == Configuration.UI_MODE_NIGHT_YES -> {
-                        tabLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.tab_bg_color))
-                    }
-                    activity.currentTheme == Theme.LIGHT || currentNightMode == Configuration.UI_MODE_NIGHT_NO -> {
-                        tabLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                        tabLayout.setTabTextColors(ContextCompat.getColor(context, R.color.tab_text_color),
-                                ContextCompat.getColor(context, R.color.tab_selected_text_color))
-                        tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(context, R.color.colorAccent))
-                    }
+                val darkColoredTheme = Theme.isDarkColoredTheme(resources, activity.currentTheme)
+                if (darkColoredTheme) {
+                    tabLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.tab_bg_color))
+                } else {
+                    tabLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                    tabLayout.setTabTextColors(ContextCompat.getColor(context, R.color.tab_text_color),
+                            ContextCompat.getColor(context, R.color.tab_selected_text_color))
+                    tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(context, R.color.colorAccent))
                 }
             }
         }

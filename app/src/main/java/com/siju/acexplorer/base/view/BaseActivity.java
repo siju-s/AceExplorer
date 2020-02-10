@@ -57,19 +57,13 @@ public class BaseActivity extends AppCompatActivity {
     private void setTheme() {
         switch (currentTheme) {
             case DARK:
-                if (this instanceof AppDetailActivity) {
-                    setTheme(R.style.BaseDarkTheme_AppInfo);
-                } else {
-                    setTheme(R.style.BaseDarkTheme);
-                }
+                setTheme(R.style.BaseDarkTheme);
                 break;
             case LIGHT:
+                setTheme(R.style.BaseLightTheme);
+                break;
             case DEVICE:
-                if (this instanceof AppDetailActivity) {
-                    setTheme(R.style.BaseLightTheme_AppInfo);
-                } else {
-                    setTheme(R.style.BaseLightTheme);
-                }
+                setTheme(R.style.BaseDeviceTheme);
                 break;
         }
     }

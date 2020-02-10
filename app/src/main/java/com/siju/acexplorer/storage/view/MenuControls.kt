@@ -46,15 +46,14 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     private var searchView: SearchView? = null
     private var hiddenMenuItem: MenuItem? = null
     private var isSearchActive = false
-    private var theme : Theme? = null
+    private var theme: Theme? = null
 
     init {
         // When Categoryfragment with viewpager is not shown, the BaseFileListFragment toolbar inflates the menu
         // else the CategoryFragment is responsible for inflating menu items so that duplicate menu items are not created by BaseFileListFragment
         if (shouldInflateBaseMenu()) {
             setupBaseMenu()
-        }
-        else {
+        } else {
             setupMenuItems(toolbar.menu)
         }
     }
@@ -133,8 +132,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
         toolbar.menu.clear()
         if (CategoryHelper.isAppManager(category)) {
             toolbar.inflateMenu(R.menu.search)
-        }
-        else {
+        } else {
             toolbar.inflateMenu(R.menu.filelist_base)
         }
         toolbar.setOnMenuItemClickListener(this)
@@ -245,7 +243,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
                 extractItem.isVisible = false
                 permissionItem.isVisible = false
                 hideItem.isVisible = false
-                if (category == Category.FAVORITES)  {
+                if (category == Category.FAVORITES) {
                     deleteFavItem.isVisible = true
                     deleteItem.isVisible = false
                 }
@@ -290,15 +288,14 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
         }
     }
 
-    private fun setHideItemProperties(fileName : String?) {
+    private fun setHideItemProperties(fileName: String?) {
         if (fileName == null) {
             return
         }
         if (fileName.startsWith(".")) {
             hideItem.setIcon(R.drawable.ic_unhide)
             hideItem.setTitle(R.string.unhide)
-        }
-        else {
+        } else {
             hideItem.setIcon(R.drawable.ic_hide)
             hideItem.setTitle(R.string.hide)
         }
@@ -371,20 +368,18 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
         return true
     }
 
-     fun setTheme(theme: Theme) {
+    fun setTheme(theme: Theme) {
         this.theme = theme
-         Log.e(TAG, "setTheme:$theme")
-        when (theme) {
-            Theme.DARK -> {
-                toolbar.popupTheme = R.style.Dark_AppTheme_PopupOverlay
-                bottomToolbar.popupTheme = R.style.Dark_AppTheme_PopupOverlay
-                bottomToolbar.setBackgroundColor(ContextCompat.getColor(context, R.color.tab_bg_color))
-            }
-            Theme.LIGHT, Theme.DEVICE -> {
-                toolbar.popupTheme = R.style.AppTheme_PopupOverlay
-                bottomToolbar.popupTheme = R.style.AppTheme_PopupOverlay
-                bottomToolbar.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary))
-            }
+        Log.e(TAG, "setTheme:$theme")
+        val darkColoredTheme = Theme.isDarkColoredTheme(fragment.resources, theme)
+        if (darkColoredTheme) {
+            toolbar.popupTheme = R.style.Dark_AppTheme_PopupOverlay
+            bottomToolbar.popupTheme = R.style.Dark_AppTheme_PopupOverlay
+            bottomToolbar.setBackgroundColor(ContextCompat.getColor(context, R.color.tab_bg_color))
+        } else {
+            toolbar.popupTheme = R.style.AppTheme_PopupOverlay
+            bottomToolbar.popupTheme = R.style.AppTheme_PopupOverlay
+            bottomToolbar.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary))
         }
     }
 

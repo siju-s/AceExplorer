@@ -90,21 +90,11 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
     }
 
     private fun setTabColor() {
-        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        val isNightMode = currentNightMode == Configuration.UI_MODE_NIGHT_YES
-        if (isNightMode) {
-            setNightModeFlag(true)
-        }
-        else {
-            setNightModeFlag(false)
-        }
-        when {
-            currentTheme == Theme.DARK || isNightMode -> {
-                bottom_navigation.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.tab_bg_color))
-            }
-            currentTheme == Theme.LIGHT || currentNightMode == Configuration.UI_MODE_NIGHT_NO -> {
-                bottom_navigation.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorPrimary))
-            }
+        val darkColoredTheme = Theme.isDarkColoredTheme(resources, currentTheme)
+        if (darkColoredTheme) {
+            bottom_navigation.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.tab_bg_color))
+        } else {
+            bottom_navigation.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorPrimary))
         }
     }
 
