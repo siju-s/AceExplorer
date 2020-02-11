@@ -102,7 +102,6 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
         hideBottomToolbar()
         clearActionModeToolbar()
         setupBaseMenu()
-        setToolbarTitle(context.getString(R.string.app_name))
         if (isSearchActive) {
             setSearchActive(false)
         }

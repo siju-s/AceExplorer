@@ -34,6 +34,7 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
     private lateinit var pagerAdapter: CategoryPagerAdapter
     private lateinit var viewPager   : ViewPager2
     private lateinit var tabLayout   : TabLayout
+    private var category = Category.GENERIC_IMAGES
 
     companion object {
 
@@ -96,15 +97,15 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
         toolbar.setOnMenuItemClickListener(this)
     }
 
-    private fun setToolbarTitle(title : String) {
-        toolbar.title = title
+    override fun setToolbarTitle() {
+        toolbar.title = CategoryHelper.getCategoryName(context, category).toUpperCase(Locale.getDefault())
     }
 
     private fun setupAdapter() {
         val args = arguments
         args?.let {
             val path = args.getString(KEY_PATH)
-            val category = args.getSerializable(KEY_CATEGORY) as Category
+            category = args.getSerializable(KEY_CATEGORY) as Category
             createFragment(path, category)
             viewPager.adapter = pagerAdapter
         }
@@ -164,7 +165,7 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
 
     private fun createFragment(path: String?, category: Category) {
         Log.d(this.javaClass.simpleName, "category:$category")
-        setToolbarTitle(CategoryHelper.getCategoryName(context, category).toUpperCase(Locale.getDefault()))
+        setToolbarTitle()
         if (category == Category.WHATSAPP || category == Category.TELEGRAM) {
             addFolderCategoryFragments(path, category)
         } else if (category == Category.DOCS) {

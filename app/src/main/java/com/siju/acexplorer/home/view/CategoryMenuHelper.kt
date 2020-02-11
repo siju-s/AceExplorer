@@ -7,4 +7,5 @@ interface CategoryMenuHelper {
     fun getCategoryView() : View?
     fun disableTab()
     fun enableTab()
+    fun setToolbarTitle()
 }

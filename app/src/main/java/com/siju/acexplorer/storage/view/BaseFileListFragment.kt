@@ -32,6 +32,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -149,13 +150,19 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
             appbar.visibility = View.GONE
         }
         else {
-            if (isAppManager(category)) {
+            setToolbarTitle(toolbar)
+        }
+    }
+
+    private fun setToolbarTitle(toolbar: Toolbar) {
+        when {
+            isAppManager(category) -> {
                 toolbar.title = resources.getString(R.string.app_manager)
             }
-            else if (category == Category.FILES){
+            category == Category.FILES -> {
                 toolbar.title = resources.getString(R.string.app_name)
             }
-            else {
+            else -> {
                 toolbar.title = CategoryHelper.getCategoryName(context, category).toUpperCase(Locale.getDefault())
             }
         }
@@ -475,7 +482,13 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         if (mainViewModel.isFreeVersion()) {
             showAds()
         }
-        categoryMenuHelper?.enableTab()
+        if (categoryMenuHelper == null) {
+            setToolbarTitle(toolbar)
+        }
+        else {
+            categoryMenuHelper?.enableTab()
+            categoryMenuHelper?.setToolbarTitle()
+        }
     }
 
     private fun shouldRefreshPane(pane : Pane, reload : Boolean) : Boolean {
