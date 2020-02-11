@@ -7,11 +7,13 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.siju.acexplorer.R
 import com.siju.acexplorer.base.view.BaseActivity
 import com.siju.acexplorer.extensions.inflateLayout
@@ -26,10 +28,12 @@ import com.siju.acexplorer.theme.Theme
 import kotlinx.android.synthetic.main.toolbar.*
 import java.util.*
 
+
 class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClickListener {
 
     private lateinit var pagerAdapter: CategoryPagerAdapter
-    private lateinit var viewPager   : ViewPager
+    private lateinit var viewPager   : ViewPager2
+    private lateinit var tabLayout   : TabLayout
 
     companion object {
 
@@ -61,12 +65,12 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
         Log.d("CategoryFrag", "setupUI")
         setupToolbar()
         viewPager = view.findViewById(R.id.categoryPager)
-        viewPager.addOnPageChangeListener(pageChangeListener)
-        val tabLayout = view.findViewById<TabLayout>(R.id.categoryTabs)
-        tabLayout.setupWithViewPager(viewPager)
+        viewPager.registerOnPageChangeCallback(pageChangeListener)
+        tabLayout = view.findViewById<TabLayout>(R.id.categoryTabs)
         setTabColor(tabLayout)
-        pagerAdapter = CategoryPagerAdapter(childFragmentManager)
+        pagerAdapter = CategoryPagerAdapter(activity!!)
         setupAdapter()
+        setupTabWithPager()
     }
 
     private fun setTabColor(tabLayout: TabLayout) {
@@ -115,7 +119,25 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
         return false
     }
 
-    private val pageChangeListener = object : ViewPager.OnPageChangeListener {
+    override fun disableTab() {
+        viewPager.isUserInputEnabled = false
+        val tabStrip: LinearLayout = tabLayout.getChildAt(0) as LinearLayout
+        for (pos in 0 until pagerAdapter.itemCount) {
+            tabStrip.getChildAt(pos).setOnTouchListener { _, _ -> true }
+        }
+        tabLayout.alpha = 0.5f
+    }
+
+    override fun enableTab() {
+        viewPager.isUserInputEnabled = true
+        val tabStrip: LinearLayout = tabLayout.getChildAt(0) as LinearLayout
+        for (pos in 0 until pagerAdapter.itemCount) {
+            tabStrip.getChildAt(pos).setOnTouchListener { _, _ -> false }
+        }
+        tabLayout.alpha = 1f
+    }
+
+    private val pageChangeListener = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageScrollStateChanged(state: Int) {
 
         }
@@ -134,7 +156,11 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
             }
         }
     }
-
+    private fun setupTabWithPager() {
+       TabLayoutMediator(tabLayout, viewPager) { tab, pos ->
+          tab.text = pagerAdapter.getTitle(pos)
+        }.attach()
+    }
 
     private fun createFragment(path: String?, category: Category) {
         Log.d(this.javaClass.simpleName, "category:$category")
@@ -241,6 +267,12 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
             return fragment.onBackPressed()
         }
         return true
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewPager.unregisterOnPageChangeCallback(pageChangeListener)
+        pagerAdapter.clear()
     }
 
 

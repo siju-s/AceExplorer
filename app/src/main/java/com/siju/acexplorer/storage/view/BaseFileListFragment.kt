@@ -463,6 +463,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         floatingView.hideFab()
         hideAds()
         menuControls.onStartActionMode()
+        categoryMenuHelper?.disableTab()
     }
 
     private fun onActionModeEnded() {
@@ -474,6 +475,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         if (mainViewModel.isFreeVersion()) {
             showAds()
         }
+        categoryMenuHelper?.enableTab()
     }
 
     private fun shouldRefreshPane(pane : Pane, reload : Boolean) : Boolean {
