@@ -67,7 +67,7 @@ private const val ACTION_IMAGES = "android.intent.action.SHORTCUT_IMAGES"
 private const val ACTION_MUSIC = "android.intent.action.SHORTCUT_MUSIC"
 private const val ACTION_VIDEOS = "android.intent.action.SHORTCUT_VIDEOS"
 
-class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
+class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFragmentCallback, MainCommunicator {
 
     private lateinit var mainViewModel: MainViewModel
     private var premiumUtils: PremiumUtils? = null
@@ -89,6 +89,11 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         updateChecker = UpdateChecker(baseContext, this, updateCallback)
         Log.d(TAG, "billing key:${BillingKey.getBillingKey()}")
         setupPremiumUtils()
+        showUpdateBadge()
+    }
+
+    override fun getUpdateChecker(): UpdateChecker? {
+        return updateChecker
     }
 
     private fun initListeners() {
@@ -288,6 +293,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
     override fun onResume() {
         super.onResume()
         mainViewModel.onResume()
+        updateChecker?.onResume()
     }
 
     override fun onBackPressed() {
@@ -430,6 +436,11 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         } else {
             disableDualPane()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        updateChecker?.onDestroy()
     }
 
 }

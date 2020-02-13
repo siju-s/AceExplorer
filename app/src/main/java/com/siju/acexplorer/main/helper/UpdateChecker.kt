@@ -14,13 +14,16 @@ const val REQUEST_CODE_UPDATE = 300
 
 class UpdateChecker(val context: Context, val activity: AppCompatActivity, private val updateCallback: UpdateCallback) {
     private val appUpdateManager = AppUpdateManagerFactory.create(context)
+    private var isUpdateAvailable = false
 
     private val installStateUpdatedListener = InstallStateUpdatedListener {
         if (it.installStatus() == InstallStatus.DOWNLOADED) {
             updateCallback.onUpdateDownloaded(appUpdateManager)
+            isUpdateAvailable = true
         }
         else if (it.installStatus() == InstallStatus.INSTALLED) {
             updateCallback.onUpdateInstalled()
+            isUpdateAvailable = false
         }
     }
 
@@ -52,17 +55,15 @@ class UpdateChecker(val context: Context, val activity: AppCompatActivity, priva
                 REQUEST_CODE_UPDATE)
     }
 
-
     fun startUpdate() {
         appUpdateManager.completeUpdate()
     }
 
-
-
-
     fun onDestroy() {
         appUpdateManager.unregisterListener(installStateUpdatedListener)
     }
+
+    fun isUpdateAvailable()  = isUpdateAvailable
 
     interface UpdateCallback {
         fun onUpdateDownloaded(appUpdateManager: AppUpdateManager)

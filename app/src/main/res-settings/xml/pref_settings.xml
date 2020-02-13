@@ -16,6 +16,13 @@
 
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"   >
 
+    <Preference
+        app:key="prefsUpdate"
+        app:isPreferenceVisible="false"
+        app:layout="@layout/prefs_update_item"
+        app:title="@string/update_available"
+        app:summary="@string/install"/>
+
     <ListPreference
         app:defaultValue="1"
         app:entries="@array/pref_themes"
@@ -57,10 +64,6 @@
         app:layout="@layout/prefs_settings_item"
         app:title="@string/unlock_full_version" />
 
-    <Preference
-        app:key="prefsUpdate"
-        app:layout="@layout/prefs_settings_item"
-        app:title="@string/pref_title_check_update" />
 
     <CheckBoxPreference
         app:defaultValue="true"

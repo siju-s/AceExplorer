@@ -16,9 +16,8 @@
 
 package com.siju.acexplorer.settings
 
-import android.content.Intent
+import android.content.Context
 import android.content.SharedPreferences
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -29,10 +28,10 @@ import androidx.preference.*
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
-import com.siju.acexplorer.extensions.canHandleIntent
-import com.siju.acexplorer.extensions.showToast
 import com.siju.acexplorer.home.model.FavoriteHelper
 import com.siju.acexplorer.logging.Logger
+import com.siju.acexplorer.main.MainCommunicator
+import com.siju.acexplorer.main.helper.UpdateChecker
 import com.siju.acexplorer.main.model.FileConstants
 import com.siju.acexplorer.main.model.root.RootUtils
 import com.siju.acexplorer.main.viewmodel.MainViewModel
@@ -45,8 +44,6 @@ import com.siju.acexplorer.utils.LocaleHelper
 const val PREFS_UPDATE = "prefsUpdate"
 const val PREFS_LANGUAGE = "prefLanguage"
 private const val PREFS_FULL_VERSION = "prefsUnlockFull"
-private const val URL_PLAYSTORE = "https://play.google.com/store/apps/details?id="
-private const val URL_PLAYSTORE_MARKET = "market://details?id="
 
 class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
@@ -54,10 +51,19 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     private var currentLanguage: String? = null
     private var theme = 0
     private lateinit var mainViewModel: MainViewModel
+    private var updateChecker : UpdateChecker? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is MainCommunicator) {
+            updateChecker = context.getUpdateChecker()
+        }
+    }
 
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.pref_settings, rootKey)
+        setupUpdatePref()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -66,13 +72,12 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         preferences = PreferenceManager.getDefaultSharedPreferences(context)
 
         setupViewModels()
+        setupUnlockFullVersionPref()
         setupRootPref()
         setupLanguagePreference()
         setupThemePref()
         setupAnalyticsPref()
         setupResetFavPref()
-        setupUpdatePref()
-        setupUnlockFullVersionPref()
     }
 
     private fun setupViewModels() {
@@ -156,30 +161,15 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
     private fun setupUpdatePref() {
         val updatePreference = findPreference(PREFS_UPDATE) as Preference?
+        updatePreference?.isVisible = updateChecker?.isUpdateAvailable() == true
         updatePreference?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            val intent = Intent(Intent.ACTION_VIEW)
-            updateClicked(intent)
-
+            updateClicked()
             true
         }
     }
 
-    private fun updateClicked(intent: Intent) {
-        // Try Google play
-        intent.data = Uri.parse(URL_PLAYSTORE_MARKET + activity!!.packageName)
-
-        if (context?.canHandleIntent(intent) == true) {
-            startActivity(intent)
-        }
-        else {
-            intent.data = Uri.parse(URL_PLAYSTORE + context?.packageName)
-            if (context?.canHandleIntent(intent) == true) {
-                startActivity(intent)
-            }
-            else {
-                context.showToast(getString(R.string.msg_error_not_supported))
-            }
-        }
+    private fun updateClicked() {
+        updateChecker?.startUpdate()
     }
 
 
@@ -252,11 +242,11 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
     private fun restartApp() {
         val activity = activity as AppCompatActivity? ?: return
-        val enter_anim = android.R.anim.fade_in
-        val exit_anim = android.R.anim.fade_out
-        activity.overridePendingTransition(enter_anim, exit_anim)
+        val enterAnim = android.R.anim.fade_in
+        val exitAnim = android.R.anim.fade_out
+        activity.overridePendingTransition(enterAnim, exitAnim)
         activity.finish()
-        activity.overridePendingTransition(enter_anim, exit_anim)
+        activity.overridePendingTransition(enterAnim, exitAnim)
         activity.startActivity(activity.intent)
     }
 
