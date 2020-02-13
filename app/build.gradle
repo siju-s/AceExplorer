@@ -137,6 +137,7 @@ dependencies {
     implementation deps.billing
     implementation deps.billing_ktx
     implementation deps.gson
+    implementation deps.play_core
 
     implementation      deps.glide.runtime
     kapt deps.glide.compiler

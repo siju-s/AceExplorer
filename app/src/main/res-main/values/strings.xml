@@ -36,6 +36,8 @@
     <string name="restore">Restore</string>
     <string name="moving_title_trash">Moving to Trash</string>
     <string name="restoring_title_trash">Restoring</string>
+    <string name="update_available">Update available</string>
+    <string name="restart">Restart</string>
 
     <string name="test_banner_ad_unit_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
     <string name="banner_ad_unit_id" translatable="false">ca-app-pub-9999245634890753/6045569427</string>

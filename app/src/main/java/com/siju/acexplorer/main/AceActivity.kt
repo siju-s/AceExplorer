@@ -16,6 +16,7 @@
 
 package com.siju.acexplorer.main
 
+import android.app.Activity
 import android.app.SearchManager
 import android.content.Intent
 import android.content.res.Configuration
@@ -30,12 +31,17 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.install.model.ActivityResult
 import com.kobakei.ratethisapp.RateThisApp
 import com.siju.acexplorer.R
 import com.siju.acexplorer.base.view.BaseActivity
 import com.siju.acexplorer.extensions.isLandscape
 import com.siju.acexplorer.helper.ToolbarHelper
 import com.siju.acexplorer.home.view.CategoryFragment
+import com.siju.acexplorer.main.helper.REQUEST_CODE_UPDATE
+import com.siju.acexplorer.main.helper.UpdateChecker
 import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.view.FragmentsFactory
@@ -66,7 +72,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
     private lateinit var mainViewModel: MainViewModel
     private var premiumUtils: PremiumUtils? = null
     private var category: Category? = null
-    private var isNightMode = false
+    private var updateChecker: UpdateChecker? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,6 +86,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         initListeners()
         checkIfInAppShortcut(intent)
         bottom_navigation.selectedItemId = R.id.navigation_home
+        updateChecker = UpdateChecker(baseContext, this, updateCallback)
         Log.d(TAG, "billing key:${BillingKey.getBillingKey()}")
         setupPremiumUtils()
     }
@@ -96,10 +103,6 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         } else {
             bottom_navigation.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorPrimary))
         }
-    }
-
-    private fun setNightModeFlag(isNightMode: Boolean) {
-        this.isNightMode = isNightMode
     }
 
     private fun initObservers() {
@@ -375,18 +378,52 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
                 .commit()
     }
 
+    private val updateCallback = object : UpdateChecker.UpdateCallback {
+        override fun onUpdateDownloaded(appUpdateManager: AppUpdateManager) {
+            showUpdateAvailableSnackbar()
+        }
+
+        override fun onUpdateInstalled() {
+            removeUpdateBadge()
+        }
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_UPDATE) {
+            when (resultCode) {
+                Activity.RESULT_OK -> {
+
+                }
+                Activity.RESULT_CANCELED -> {
+                    showUpdateBadge()
+                }
+                ActivityResult.RESULT_IN_APP_UPDATE_FAILED -> { //  handle update failure }
+                }
+            }
+        }
+    }
+
+    private fun showUpdateAvailableSnackbar() {
+        Snackbar.make(findViewById(R.id.container_main), getString(R.string.update_available), Snackbar.LENGTH_LONG)
+                .apply {
+                    setAction(R.string.restart) {
+                        updateChecker?.startUpdate()
+                    }
+                }.show()
+    }
+
+    private fun showUpdateBadge() {
+        bottom_navigation.getOrCreateBadge(R.id.navigation_settings)
+    }
+
+    private fun removeUpdateBadge() {
+        bottom_navigation.removeBadge(R.id.navigation_settings)
+    }
+
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        val currentNightMode = newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        when (currentNightMode) {
-            Configuration.UI_MODE_NIGHT_NO -> {
-                // Night mode is not active, we're using the light theme
-                Log.e(TAG, "Night mode off")
-            }
-            Configuration.UI_MODE_NIGHT_YES -> {
-                Log.e(TAG, "Night mode on")
-            } // Night mode is active, we're using dark theme
-        }
         Log.d(TAG, "onConfigurationChanged:${newConfig.isLandscape()}, dualMode:${mainViewModel.dualMode.value}")
         if (mainViewModel.dualMode.value == true && newConfig.isLandscape()) {
             onDualModeEnabled(newConfig)
