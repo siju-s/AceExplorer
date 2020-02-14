@@ -16,4 +16,8 @@
 
 package com.siju.acexplorer.main.model
 
-interface MainModel
+interface MainModel {
+    fun saveUserCancelledUpdate()
+    fun hasUserCancelledUpdate(): Boolean
+    fun onUpdateComplete()
+}

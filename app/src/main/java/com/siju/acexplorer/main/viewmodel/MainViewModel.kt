@@ -156,4 +156,14 @@ class MainViewModel : ViewModel() {
         this.isDualPaneInFocus = isDualPaneInFocus
     }
 
+    fun userCancelledUpdate() {
+        mainModel.saveUserCancelledUpdate()
+    }
+
+    fun onUpdateInstalled() {
+        mainModel.onUpdateComplete()
+    }
+
+    fun hasUserCancelledUpdate() = mainModel.hasUserCancelledUpdate()
+
 }

@@ -161,6 +161,12 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
     private fun setupUpdatePref() {
         val updatePreference = findPreference(PREFS_UPDATE) as Preference?
+        updatePreference?.title = if (updateChecker?.isUpdateDownloaded() == true) {
+            getString(R.string.restart_apply_update)
+        }
+        else {
+            getString(R.string.update_available)
+        }
         updatePreference?.isVisible = updateChecker?.isUpdateAvailable() == true
         updatePreference?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             updateClicked()
@@ -171,7 +177,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     private fun updateClicked() {
         updateChecker?.startUpdate()
     }
-
 
     /**
      * Binds a preference's summary to its value. More specifically, when the

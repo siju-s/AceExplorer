@@ -20,8 +20,7 @@
         app:key="prefsUpdate"
         app:isPreferenceVisible="false"
         app:layout="@layout/prefs_update_item"
-        app:title="@string/update_available"
-        app:summary="@string/install"/>
+        app:title="@string/update_available"/>
 
     <ListPreference
         app:defaultValue="1"

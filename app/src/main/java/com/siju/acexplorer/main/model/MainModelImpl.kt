@@ -18,6 +18,7 @@ package com.siju.acexplorer.main.model
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
@@ -25,6 +26,7 @@ import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.main.model.FileConstants.PREFS_FIRST_RUN
+import com.siju.acexplorer.main.model.helper.SdkHelper
 import com.siju.acexplorer.preferences.PreferenceConstants
 import com.siju.acexplorer.preferences.SharedPreferenceBooleanLiveData
 import com.siju.acexplorer.preferences.SharedPreferenceIntLiveData
@@ -32,6 +34,8 @@ import com.siju.acexplorer.settings.SettingsPreferenceFragment
 import com.siju.acexplorer.theme.Theme
 import com.siju.acexplorer.utils.Utils
 
+
+private const val PREF_UPDATE_CANCELLED = "update_cancelled_"
 class MainModelImpl : MainModel {
 
     private val context: Context = AceApplication.appContext
@@ -81,4 +85,39 @@ class MainModelImpl : MainModel {
     private fun setupTheme() {
         theme.postValue(Theme.getTheme(context))
     }
+
+    @Suppress("DEPRECATION")
+    override fun saveUserCancelledUpdate() {
+        val versionCode = getVersionCode()
+        preferences.edit().putBoolean(PREF_UPDATE_CANCELLED + versionCode, true).apply()
+    }
+
+    @Suppress("DEPRECATION")
+    private fun getVersionCode(): Int {
+        val versionCode: Int
+        versionCode = try {
+            val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+            if (SdkHelper.isAtleastPie) {
+                packageInfo.longVersionCode.toInt()
+            } else {
+                packageInfo.versionCode
+            }
+        } catch (e: PackageManager.NameNotFoundException) {
+            0
+        }
+        return versionCode
+    }
+
+
+    override fun hasUserCancelledUpdate() : Boolean {
+        return preferences.getBoolean(PREF_UPDATE_CANCELLED + getVersionCode(), false)
+    }
+
+    override fun onUpdateComplete() {
+        if (hasUserCancelledUpdate()) {
+            preferences.edit().remove(PREF_UPDATE_CANCELLED + getVersionCode()).apply()
+        }
+    }
+
+
 }

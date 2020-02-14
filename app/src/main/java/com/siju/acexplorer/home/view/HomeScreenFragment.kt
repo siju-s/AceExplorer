@@ -25,6 +25,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.ads.AdsView
@@ -32,6 +34,7 @@ import com.siju.acexplorer.home.edit.view.CategoryEditFragment
 import com.siju.acexplorer.home.model.HomeModelImpl
 import com.siju.acexplorer.home.viewmodel.HomeViewModel
 import com.siju.acexplorer.home.viewmodel.HomeViewModelFactory
+import com.siju.acexplorer.main.helper.UpdateChecker
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.permission.PermissionHelper
@@ -241,6 +244,25 @@ class HomeScreenFragment private constructor() : Fragment() {
         super.onConfigurationChanged(newConfig)
         Log.d(TAG, "onConfigurationChanged:$newConfig")
         setCategoryLayoutManager()
+    }
+
+    fun showUpdateSnackbar(updateChecker: UpdateChecker?) {
+        val view = view
+        view?.let {
+            val snackbar = Snackbar.make(view.findViewById(R.id.container), getString(R.string.update_available), Snackbar.LENGTH_INDEFINITE)
+                    .apply {
+                        setAction(R.string.restart) {
+                            updateChecker?.startUpdate()
+                        }
+                    }
+            snackbar.addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar?>() {
+                override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                    super.onDismissed(transientBottomBar, event)
+                    updateChecker?.onUpdateSnackbarDismissed()
+                }
+            })
+            snackbar.show()
+        }
     }
 
     companion object {

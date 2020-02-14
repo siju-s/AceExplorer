@@ -31,7 +31,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.install.model.ActivityResult
 import com.kobakei.ratethisapp.RateThisApp
@@ -40,6 +39,7 @@ import com.siju.acexplorer.base.view.BaseActivity
 import com.siju.acexplorer.extensions.isLandscape
 import com.siju.acexplorer.helper.ToolbarHelper
 import com.siju.acexplorer.home.view.CategoryFragment
+import com.siju.acexplorer.home.view.HomeScreenFragment
 import com.siju.acexplorer.main.helper.REQUEST_CODE_UPDATE
 import com.siju.acexplorer.main.helper.UpdateChecker
 import com.siju.acexplorer.main.model.StorageUtils
@@ -57,7 +57,6 @@ import com.siju.acexplorer.storage.view.DualPaneFragment
 import com.siju.acexplorer.storage.view.FileListFragment
 import com.siju.acexplorer.theme.Theme
 import com.siju.acexplorer.tools.ToolsFragment
-import com.siju.billingsecure.BillingKey
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
@@ -87,14 +86,14 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         checkIfInAppShortcut(intent)
         bottom_navigation.selectedItemId = R.id.navigation_home
         updateChecker = UpdateChecker(baseContext, this, updateCallback)
-        Log.d(TAG, "billing key:${BillingKey.getBillingKey()}")
         setupPremiumUtils()
-        showUpdateBadge()
     }
 
     override fun getUpdateChecker(): UpdateChecker? {
         return updateChecker
     }
+
+    fun getViewModel() = mainViewModel
 
     private fun initListeners() {
         bottom_navigation.setOnNavigationItemSelectedListener(navigationItemSelectedListener)
@@ -391,33 +390,37 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
 
         override fun onUpdateInstalled() {
             removeUpdateBadge()
+            mainViewModel.onUpdateInstalled()
         }
 
+        override fun onUpdateCancelledByUser() {
+            showUpdateBadge()
+        }
+
+        override fun onUpdateSnackbarDismissed() {
+            showUpdateBadge()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_UPDATE) {
             when (resultCode) {
-                Activity.RESULT_OK -> {
-
-                }
                 Activity.RESULT_CANCELED -> {
+                    mainViewModel.userCancelledUpdate()
                     showUpdateBadge()
                 }
-                ActivityResult.RESULT_IN_APP_UPDATE_FAILED -> { //  handle update failure }
+                ActivityResult.RESULT_IN_APP_UPDATE_FAILED -> {
                 }
             }
         }
     }
 
     private fun showUpdateAvailableSnackbar() {
-        Snackbar.make(findViewById(R.id.container_main), getString(R.string.update_available), Snackbar.LENGTH_LONG)
-                .apply {
-                    setAction(R.string.restart) {
-                        updateChecker?.startUpdate()
-                    }
-                }.show()
+        val fragment = supportFragmentManager.findFragmentById(R.id.main_container)
+        if (fragment is HomeScreenFragment) {
+            fragment.showUpdateSnackbar(updateChecker)
+        }
     }
 
     private fun showUpdateBadge() {
