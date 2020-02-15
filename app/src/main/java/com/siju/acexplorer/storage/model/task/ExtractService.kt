@@ -109,7 +109,7 @@ class ExtractService : Service() {
     }
 
     private fun createCancelIntent(): PendingIntent? {
-        val cancelIntent = Intent(context, CopyService::class.java)
+        val cancelIntent = Intent(context, ExtractService::class.java)
         cancelIntent.action = OperationProgress.ACTION_STOP
         return PendingIntent.getService(context, NOTIFICATION_ID, cancelIntent,
                                         PendingIntent.FLAG_UPDATE_CURRENT)

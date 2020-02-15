@@ -41,7 +41,6 @@ import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES_COU
 import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION
 import com.siju.acexplorer.storage.model.operations.Operations.COMPRESS
 import java.io.*
-import java.util.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
@@ -55,13 +54,12 @@ class CreateZipService : Service() {
 
     private lateinit var context: Context
     private lateinit var serviceHandler: ServiceHandler
-    private lateinit var filesToArchive: List<FileInfo>
+    private lateinit var filesToArchive: ArrayList<FileInfo>
 
     private var notificationManager: NotificationManager? = null
     private var notifBuilder: NotificationCompat.Builder? = null
 
     private var zipOutputStream: ZipOutputStream? = null
-    private var filePath: String? = null
     private var destPath: String? = null
     private var stopService = false
     private var isCompleted = false
@@ -96,20 +94,20 @@ class CreateZipService : Service() {
             setOnlyAlertOnce(true)
             setDefaults(0)
             addAction(NotificationCompat.Action(R.drawable.ic_cancel,
-                                                getString(R.string.dialog_cancel),
-                                                pendingCancelIntent))
+                    getString(R.string.dialog_cancel),
+                    pendingCancelIntent))
         }
 
         return notifBuilder?.build()
     }
 
     private fun createCancelIntent(): PendingIntent? {
-        val cancelIntent = Intent(context, CopyService::class.java)
+        val cancelIntent = Intent(context, CreateZipService::class.java)
         cancelIntent.action = OperationProgress.ACTION_STOP
         return PendingIntent.getService(context,
-                                        NOTIFICATION_ID,
-                                        cancelIntent,
-                                        PendingIntent.FLAG_UPDATE_CURRENT)
+                NOTIFICATION_ID,
+                cancelIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
 
@@ -125,7 +123,7 @@ class CreateZipService : Service() {
 
     private fun startThread() {
         val thread = HandlerThread(THREAD_NAME,
-                                   Process.THREAD_PRIORITY_BACKGROUND)
+                Process.THREAD_PRIORITY_BACKGROUND)
         thread.start()
         val serviceLooper = thread.looper
         serviceHandler = ServiceHandler(serviceLooper)
@@ -134,35 +132,43 @@ class CreateZipService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Logger.log(TAG, "onStartCommand: " + intent + "startId:" + startId)
         if (intent == null) {
-            stopSelf()
-            return START_NOT_STICKY
+            return stopService()
         }
         val action = intent.action
         if (action == OperationProgress.ACTION_STOP) {
-            stopService = true
-            stopSelf()
-            return START_NOT_STICKY
+            return stopService()
         }
 
         destPath = intent.getStringExtra(KEY_FILEPATH)
-        filesToArchive = intent.getParcelableArrayListExtra(KEY_FILES)
-        createZipFile()
+        val filesList: ArrayList<FileInfo>? = intent.getParcelableArrayListExtra(KEY_FILES)
+        if (destPath == null || filesList == null) {
+            return stopService()
+        }
+        filesToArchive = filesList
+        destPath?.let {
+            createZipFile(it)
+        }
         val msg = serviceHandler.obtainMessage()
         msg.arg1 = startId
         serviceHandler.sendMessage(msg)
         return START_STICKY
     }
 
-    private fun createZipFile() {
-        val zipName = File(destPath)
+    private fun createZipFile(path: String) {
+        val zipName = File(path)
         if (!zipName.exists()) {
             try {
                 zipName.createNewFile()
-            }
-            catch (e: IOException) {
+            } catch (e: IOException) {
                 e.printStackTrace()
             }
         }
+    }
+
+    private fun stopService(): Int {
+        stopService = true
+        stopSelf()
+        return START_NOT_STICKY
     }
 
     override fun onBind(intent: Intent): IBinder? {
@@ -190,15 +196,15 @@ class CreateZipService : Service() {
 
     private fun run(filesToZip: ArrayList<File>, destPath: String) {
         calculateTotalSize(filesToZip)
-        val out: OutputStream?
-        filePath = destPath
+        val outputStream: OutputStream?
         val zipDirectory = File(destPath)
 
         try {
-            out = FileUtils.getOutputStream(zipDirectory, context)
-            zipOutputStream = ZipOutputStream(BufferedOutputStream(out))
-        }
-        catch (ignored: Exception) {
+            outputStream = FileUtils.getOutputStream(zipDirectory, context)
+            outputStream?.let {
+                zipOutputStream = ZipOutputStream(BufferedOutputStream(outputStream))
+            }
+        } catch (ignored: Exception) {
         }
 
         for (file in filesToZip) {
@@ -208,16 +214,14 @@ class CreateZipService : Service() {
             }
             try {
                 compress(file, "")
-            }
-            catch (ignored: Exception) {
+            } catch (ignored: Exception) {
             }
         }
         try {
             zipOutputStream?.flush()
             zipOutputStream?.close()
 
-        }
-        catch (ignored: Exception) {
+        } catch (ignored: Exception) {
         }
 
     }
@@ -226,8 +230,7 @@ class CreateZipService : Service() {
         for (file in zipFiles) {
             totalBytes += if (file.isDirectory) {
                 FileUtils.getFolderSize(file)
-            }
-            else {
+            } else {
                 file.length()
             }
         }
@@ -238,8 +241,7 @@ class CreateZipService : Service() {
     private fun compress(sourceFile: File, destPath: String) {
         if (sourceFile.isFile) {
             compressFile(sourceFile, destPath)
-        }
-        else {
+        } else {
             compressDirectory(sourceFile, destPath)
         }
     }
@@ -247,12 +249,11 @@ class CreateZipService : Service() {
     @Throws(IOException::class)
     private fun compressFile(file: File, path: String) {
         if (file.length() == 0L) {
-            calculateProgress(filePath, size, totalBytes)
-        }
-        else {
+            calculateProgress(file.path, size, totalBytes)
+        } else {
             val inputStream = BufferedInputStream(FileInputStream(file))
             zipOutputStream?.putNextEntry(ZipEntry(path + "/" + file.name))
-            zipFile(inputStream)
+            zipFile(inputStream, file.path)
             inputStream.close()
         }
     }
@@ -262,8 +263,7 @@ class CreateZipService : Service() {
         val files = file.list()
         if (files == null) {
             return
-        }
-        else if (files.isEmpty()) {
+        } else if (files.isEmpty()) {
             compressEmptyFolder(destDir + File.separator + file.name + "/")
         }
         for (fileName in files) {
@@ -273,7 +273,7 @@ class CreateZipService : Service() {
     }
 
     @Throws(IOException::class)
-    private fun zipFile(inputStream: BufferedInputStream) {
+    private fun zipFile(inputStream: BufferedInputStream, path: String) {
         val buf = ByteArray(BUFFER_SIZE_BYTES)
         var len = inputStream.read(buf)
         while (len > 0) {
@@ -285,7 +285,7 @@ class CreateZipService : Service() {
             size += len.toLong()
             val progress = (size / totalBytes.toFloat() * 100).toInt()
             if (progress != lastProgress || lastProgress == 0) {
-                calculateProgress(filePath, size, totalBytes)
+                calculateProgress(path, size, totalBytes)
             }
             lastProgress = progress
             len = inputStream.read(buf)
@@ -296,34 +296,39 @@ class CreateZipService : Service() {
     @Throws(IOException::class)
     private fun compressEmptyFolder(path: String) {
         zipOutputStream?.putNextEntry(ZipEntry(path))
-        calculateProgress(filePath, size, totalBytes)
+        calculateProgress(path, size, totalBytes)
     }
 
-    private fun publishResults(filePath: String?, progress: Int, done: Long, total: Long) {
+    private fun calculateProgress(filePath: String, copiedBytes: Long, totalBytes: Long) {
+        val progress = (copiedBytes / totalBytes.toFloat() * 100).toInt()
+        lastProgress = copiedBytes.toInt()
+        publishResults(filePath, progress, copiedBytes, totalBytes)
+    }
+
+    private fun publishResults(filePath: String, progress: Int, done: Long, total: Long) {
 
         notifBuilder?.apply {
-            setProgress(100, progress, false)
             setOngoing(true)
             setContentTitle(getString(R.string.zip_progress_title))
-            setContentText(File(filePath).name + " " + Formatter.formatFileSize(context,
-                                                                                done) + "/" + Formatter.formatFileSize(
+            setContentText(Formatter.formatFileSize(context, done) + "/" + Formatter.formatFileSize(
                     context, total))
+            setProgress(100, progress, false)
+
         }
         notificationManager?.notify(NOTIFICATION_ID, notifBuilder?.build())
 
-        Log.d("CreateZip", "publishResults: progress:$progress total:$total")
+        Log.d("CreateZip", "publishResults: filePath:$filePath, $progress total:$total")
         if (progress == 100 || total == 0L) {
             publishCompletedResult()
         }
-        sendBroadcast(filePath, progress, done, total)
+        sendProgressBroadcast(filePath, progress, done, total)
     }
 
-    private fun sendBroadcast(filePath: String?, progress: Int, done: Long, total: Long) {
+    private fun sendProgressBroadcast(filePath: String?, progress: Int, done: Long, total: Long) {
         val intent = Intent(ZIP_PROGRESS)
         if (progress == 100 || total == 0L) {
             intent.putExtra(KEY_PROGRESS, 100)
-        }
-        else {
+        } else {
             intent.putExtra(KEY_PROGRESS, progress)
         }
         intent.putExtra(KEY_COMPLETED, done)
@@ -354,12 +359,6 @@ class CreateZipService : Service() {
             MediaScannerHelper.scanFiles(context, arrayOf(it))
         }
         notificationManager?.cancel(NOTIFICATION_ID)
-    }
-
-    private fun calculateProgress(name: String?, copiedBytes: Long, totalBytes: Long) {
-        val progress = (copiedBytes / totalBytes.toFloat() * 100).toInt()
-        lastProgress = copiedBytes.toInt()
-        publishResults(name, progress, copiedBytes, totalBytes)
     }
 }
 
