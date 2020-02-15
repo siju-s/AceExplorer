@@ -156,21 +156,25 @@ class OperationProgress {
         textFileCount = dialogView.findViewById(R.id.textFilesLeft)
         textProgress = dialogView.findViewById(R.id.textProgressPercent)
         progressBarPaste = dialogView.findViewById(R.id.progressBarPaste)
+        val titleText = dialogView.findViewById<TextView>(R.id.textTitle)
 
         val positiveButton = dialogView.findViewById<Button>(R.id.buttonPositive)
         val negativeButton = dialogView.findViewById<Button>(R.id.buttonNegative)
 
+        textFileName?.visibility = View.GONE
+        titleText.text = title
         positiveButton.text = texts[1]
         negativeButton.text = texts[2]
 
         copiedFileInfo = files
         copiedFilesSize = copiedFileInfo.size
         Logger.log(TAG, "Totalfiles=$copiedFilesSize")
-        textFileName?.text = title
         textFileFromPath?.text = destinationPath
         textProgress?.setText(R.string.zero_percent)
 
-        positiveButton.setOnClickListener { progressDialog?.dismiss() }
+        positiveButton.setOnClickListener {
+            progressDialog?.dismiss()
+        }
 
         negativeButton.setOnClickListener {
             stopZipService()
@@ -204,10 +208,12 @@ class OperationProgress {
         textFileCount = dialogView.findViewById(R.id.textFilesLeft)
         textProgress = dialogView.findViewById(R.id.textProgressPercent)
         progressBarPaste = dialogView.findViewById(R.id.progressBarPaste)
+        val titleText = dialogView.findViewById<TextView>(R.id.textTitle)
 
         val positiveButton = dialogView.findViewById<Button>(R.id.buttonPositive)
         val negativeButton = dialogView.findViewById<Button>(R.id.buttonNegative)
 
+        titleText.text = title
         positiveButton.text = texts[1]
         negativeButton.text = texts[2]
 
