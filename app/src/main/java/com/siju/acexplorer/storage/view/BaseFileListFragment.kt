@@ -410,6 +410,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         fileListViewModel.showCompressDialog.observe(viewLifecycleOwner, Observer {
             it?.apply {
                 context?.let { context ->
+                    dismissDialog()
                     OperationProgress().showZipProgressDialog(context, it.second, it.third)
                 }
             }
@@ -838,7 +839,6 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
 
         override fun onNegativeButtonClick(operation: Operations?) {
         }
-
     }
 
     private fun getThemeStyle(theme: Theme): Int {
