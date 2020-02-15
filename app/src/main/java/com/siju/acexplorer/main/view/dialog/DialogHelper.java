@@ -594,7 +594,7 @@ public class DialogHelper {
         if (!(new File(filePath).isDirectory())) {
             zipName = fileName.substring(0, fileName.lastIndexOf("."));
         }
-        String title = context.getString(R.string.create);
+        String title = context.getString(R.string.action_archive);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -605,16 +605,17 @@ public class DialogHelper {
         final AlertDialog alertDialog = builder.create();
 
         TextView titleText = dialogView.findViewById(R.id.textTitle);
+        TextView msgText = dialogView.findViewById(R.id.textMessage);
         final EditText inputText = dialogView.findViewById(R.id.editFileName);
 
         Button positiveButton = dialogView.findViewById(R.id.buttonPositive);
         Button negativeButton = dialogView.findViewById(R.id.buttonNegative);
 
+        msgText.setVisibility(View.GONE);
         titleText.setText(title);
         inputText.setText(zipName);
-        positiveButton.setText(title);
+        positiveButton.setText(context.getString(R.string.create));
         negativeButton.setText(context.getString(R.string.dialog_cancel));
-
 
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
