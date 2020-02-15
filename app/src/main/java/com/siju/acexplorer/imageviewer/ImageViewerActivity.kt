@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.imageviewer.model.ImageViewerModelImpl
 import com.siju.acexplorer.imageviewer.presenter.ImageViewerPresenter
@@ -17,8 +16,6 @@ import com.siju.acexplorer.imageviewer.viewmodel.ImageViewerViewModel
 import com.siju.acexplorer.imageviewer.viewmodel.ImageViewerViewModelFactory
 
 const val KEY_POS       = "pos"
-const val KEY_URI_LIST  = "list"
-const val KEY_PATH_LIST = "paths"
 
 class ImageViewerActivity : AppCompatActivity() {
 
@@ -76,7 +73,7 @@ class ImageViewerActivity : AppCompatActivity() {
         if (pathList.isNotEmpty()) {
             view.setPathList(pathList)
         }
-        val model = ImageViewerModelImpl(AceApplication.appContext)
+        val model = ImageViewerModelImpl(this)
 
         val presenter = ImageViewerPresenterImpl(view, model)
         setupViewModel(view, presenter)

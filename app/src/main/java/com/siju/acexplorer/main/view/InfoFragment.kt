@@ -117,8 +117,11 @@ class InfoFragment : BottomSheetDialogFragment() {
         }
 
         val icon = sheetView?.findViewById<ImageView>(R.id.imageIcon)
-        icon?.let { setIcon(context, it, category) }
-        setIconListener(icon, path, fileInfo)
+        icon?.let {
+            setIcon(context, it, category, uri)
+            setIconListener(icon, path, fileInfo)
+        }
+
 
         val nameText = sheetView?.findViewById<TextView>(R.id.textName)
         nameText?.text = fileInfo.fileName
@@ -165,20 +168,20 @@ class InfoFragment : BottomSheetDialogFragment() {
         sizeText?.text = fileNoOrSize
     }
 
-    private fun setIconListener(icon: ImageView?, path: String, fileInfo: FileInfo) {
+    private fun setIconListener(icon: ImageView, path: String?, fileInfo: FileInfo) {
         if (category == Category.AUDIO || CategoryHelper.isAnyVideoCategory(category) ||
-                CategoryHelper.isAnyImagesCategory(category)) {
-            icon?.setOnClickListener {
+                CategoryHelper.isAnyImagesCategory(category) && path != null) {
+            icon.setOnClickListener {
                 ViewHelper.viewFile(it.context, path, fileInfo.extension)
             }
         }
     }
 
-    private fun setIcon(context: Context?, icon: ImageView, category: Category) {
+    private fun setIcon(context: Context?, icon: ImageView, category: Category, uri : Uri?) {
         if (context == null) {
             return
         }
-        ThumbnailUtils.displayThumb(context, fileInfo, category, icon, null)
+        ThumbnailUtils.displayThumb(context, fileInfo, category, icon, null, uri)
     }
 
     private fun setupToolbar() {

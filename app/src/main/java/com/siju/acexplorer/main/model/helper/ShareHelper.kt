@@ -78,11 +78,13 @@ object ShareHelper {
         if (uri == null) {
             val newUri = UriHelper.createContentUri(context, path)
             intent.putExtra(Intent.EXTRA_STREAM, newUri)
+            intent.data = uri
         }
         else {
             intent.putExtra(Intent.EXTRA_STREAM, uri)
+            intent.data = uri
         }
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
 
         if (context.canHandleIntent(intent)) {
             context.startActivity(Intent.createChooser(intent, context.getString(R.string.action_share)))

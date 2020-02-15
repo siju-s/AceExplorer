@@ -83,7 +83,7 @@ public class PasteConflictAdapter extends BaseAdapter {
         String filePath = conflictFileInfo.getFilePath();
 
         displayThumb(context, conflictFileInfo, conflictFileInfo.getCategory(), fileInfoHolder
-                .imageIcon, null);
+                .imageIcon, null, null);
 
         fileInfoHolder.titleText.setText(conflictFileInfo.getFileName());
         fileInfoHolder.pathText.setText(filePath);

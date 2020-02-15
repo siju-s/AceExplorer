@@ -34,8 +34,16 @@ object ViewHelper {
 
     const val EXT_APK = "apk"
 
-    fun viewFile(context: Context, path: String, extension: String) {
-        val uri = UriHelper.createContentUri(context, path) ?: return
+    fun viewFile(context: Context, path: String?, extension: String, fileUri : Uri? = null) {
+        val uri  = if (path == null && fileUri == null) {
+            return
+        }
+        else if (path == null) {
+            fileUri
+        }
+        else {
+            UriHelper.createContentUri(context, path)
+        }
         val ext = extension.toLowerCase(Locale.ROOT)
         val mimeType = getSingleton().getMimeTypeFromExtension(ext)
 
