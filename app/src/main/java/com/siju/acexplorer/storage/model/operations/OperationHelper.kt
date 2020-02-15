@@ -520,6 +520,7 @@ class OperationHelper(val context: Context) {
         setZipOperationCallback(zipOperationCallback)
 
         val newPath = "$destinationDir/$newName"
+        addOperation(Operations.EXTRACT, OperationData.createExtractOperation(sourceFilePath, newPath))
 
         if (FileUtils.isFileNameInvalid(newName)) {
             fileOperationCallback.onOperationResult(Operations.EXTRACT, getOperationAction(
@@ -534,12 +535,10 @@ class OperationHelper(val context: Context) {
         }
         when (OperationUtils.getWriteMode(destinationDir)) {
             OperationUtils.WriteMode.INTERNAL -> {
-                addOperation(Operations.EXTRACT, OperationData.createExtractOperation(sourceFilePath, newPath))
                 extract(context, sourceFilePath, newPath, zipOperationCallback)
             }
 
             OperationUtils.WriteMode.EXTERNAL -> {
-                addOperation(Operations.EXTRACT, OperationData.createExtractOperation(sourceFilePath, newPath))
                 fileOperationCallback.onOperationResult(
                         Operations.EXTRACT,
                         getOperationAction(OperationResult(OperationResultCode.SAF, 0)))
@@ -576,6 +575,7 @@ class OperationHelper(val context: Context) {
         setFileOperationCallback(fileOperationCallback)
         setZipOperationCallback(zipOperationCallback)
         val newFile = File(destinationDir)
+        addOperation(Operations.COMPRESS, OperationData.createArchiveOperation(destinationDir, filesToArchive))
 
         if (FileUtils.isFileNameInvalid(newFile.name)) {
             fileOperationCallback.onOperationResult(Operations.COMPRESS, getOperationAction(
@@ -590,12 +590,10 @@ class OperationHelper(val context: Context) {
         }
         when (OperationUtils.getWriteMode(newFile.parent)) {
             OperationUtils.WriteMode.INTERNAL -> {
-                addOperation(Operations.COMPRESS, OperationData.createArchiveOperation(destinationDir, filesToArchive))
                 compress(context, destinationDir, filesToArchive, zipOperationCallback)
             }
 
             OperationUtils.WriteMode.EXTERNAL -> {
-                addOperation(Operations.COMPRESS, OperationData.createArchiveOperation(destinationDir, filesToArchive))
                 fileOperationCallback.onOperationResult(
                         Operations.COMPRESS,
                         getOperationAction(OperationResult(OperationResultCode.SAF, 0)))
