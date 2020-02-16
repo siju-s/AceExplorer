@@ -93,6 +93,10 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         return updateChecker
     }
 
+    override fun isPremiumVersion(): Boolean {
+        return mainViewModel.isPremiumVersion()
+    }
+
     fun getViewModel() = mainViewModel
 
     private fun initListeners() {

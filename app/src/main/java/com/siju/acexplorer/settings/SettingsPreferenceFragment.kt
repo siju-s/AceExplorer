@@ -47,23 +47,25 @@ private const val PREFS_FULL_VERSION = "prefsUnlockFull"
 
 class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
+    private lateinit var mainViewModel: MainViewModel
+    private lateinit var mainCommunicator : MainCommunicator
     private var preferences: SharedPreferences? = null
     private var currentLanguage: String? = null
-    private var theme = 0
-    private lateinit var mainViewModel: MainViewModel
     private var updateChecker : UpdateChecker? = null
+    private var theme = 0
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is MainCommunicator) {
             updateChecker = context.getUpdateChecker()
+            mainCommunicator = context
         }
     }
-
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.pref_settings, rootKey)
         setupUpdatePref()
+        setupUnlockFullVersionPref()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -72,7 +74,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         preferences = PreferenceManager.getDefaultSharedPreferences(context)
 
         setupViewModels()
-        setupUnlockFullVersionPref()
         setupRootPref()
         setupLanguagePreference()
         setupThemePref()
@@ -94,6 +95,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
     private fun setupUnlockFullVersionPref() {
         val preference = findPreference<Preference>(PREFS_FULL_VERSION)
+        preference?.isVisible = !mainCommunicator.isPremiumVersion()
         preference?.setOnPreferenceClickListener {
             val activity = activity as AppCompatActivity?
             activity?.let {
@@ -106,7 +108,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
     private fun setupRootPref() {
         val rootPreference = findPreference(PREF_ROOT) as CheckBoxPreference?
-        rootPreference?.setOnPreferenceClickListener{ pref ->
+        rootPreference?.setOnPreferenceClickListener{ _ ->
             onRootPrefClicked(rootPreference.isChecked, rootPreference)
             true
         }
@@ -132,7 +134,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     }
 
     private fun setupThemePref() {
-        val themePreference = findPreference<ListPreference>(PREFS_THEME) as ListPreference
+        val themePreference = findPreference<ListPreference>(PREFS_THEME)
         theme = Theme.getUserThemeValue(activity!!)
         bindPreferenceSummaryToValue(themePreference)
     }
