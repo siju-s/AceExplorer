@@ -46,6 +46,7 @@ import com.siju.acexplorer.appmanager.view.AppDetailActivity
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.extensions.showToast
 import com.siju.acexplorer.home.view.CategoryMenuHelper
+import com.siju.acexplorer.main.helper.UpdateChecker
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.model.groups.CategoryHelper.isAppManager
@@ -194,6 +195,10 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         val viewModelFactory = FileListViewModelFactory(StorageModelImpl(AceApplication.appContext, category))
         fileListViewModel = ViewModelProvider(this, viewModelFactory)
                 .get(FileListViewModel::class.java)
+    }
+
+    fun showUpdateSnackbar(updateChecker: UpdateChecker?) {
+        updateChecker?.showUpdateSnackbar(view?.findViewById(R.id.main_content))
     }
 
     private fun initObservers() {

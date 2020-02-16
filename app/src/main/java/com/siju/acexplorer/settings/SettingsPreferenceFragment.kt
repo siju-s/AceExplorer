@@ -25,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.*
+import com.google.android.play.core.appupdate.AppUpdateManager
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
@@ -48,10 +49,11 @@ private const val PREFS_FULL_VERSION = "prefsUnlockFull"
 class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
     private lateinit var mainViewModel: MainViewModel
-    private lateinit var mainCommunicator : MainCommunicator
+    private lateinit var mainCommunicator: MainCommunicator
     private var preferences: SharedPreferences? = null
+    private var updatePreference: Preference? = null
     private var currentLanguage: String? = null
-    private var updateChecker : UpdateChecker? = null
+    private var updateChecker: UpdateChecker? = null
     private var theme = 0
 
     override fun onAttach(context: Context) {
@@ -108,7 +110,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
     private fun setupRootPref() {
         val rootPreference = findPreference(PREF_ROOT) as CheckBoxPreference?
-        rootPreference?.setOnPreferenceClickListener{ _ ->
+        rootPreference?.setOnPreferenceClickListener { _ ->
             onRootPrefClicked(rootPreference.isChecked, rootPreference)
             true
         }
@@ -119,8 +121,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             val rooted = RootUtils.hasRootAccess()
             Log.d("Settings", " rooted:$rooted")
             rootPreference.isChecked = rooted
-        }
-        else {
+        } else {
             rootPreference.isChecked = false
         }
     }
@@ -162,12 +163,11 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     }
 
     private fun setupUpdatePref() {
-        val updatePreference = findPreference(PREFS_UPDATE) as Preference?
-        updatePreference?.title = if (updateChecker?.isUpdateDownloaded() == true) {
-            getString(R.string.restart_apply_update)
-        }
-        else {
-            getString(R.string.update_available)
+        updatePreference = findPreference<Preference?>(PREFS_UPDATE)
+        if (updateChecker?.isUpdateDownloaded() == true) {
+            onUpdateDownloaded()
+        } else {
+            updatePreference?.title = getString(R.string.update_available)
         }
         updatePreference?.isVisible = updateChecker?.isUpdateAvailable() == true
         updatePreference?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
@@ -177,7 +177,34 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     }
 
     private fun updateClicked() {
+        updateChecker?.setUpdateCallback(updateCallback)
         updateChecker?.startUpdate()
+    }
+
+    private val updateCallback = object : UpdateChecker.UpdateCallback {
+        override fun onUpdateDownloaded(appUpdateManager: AppUpdateManager) {
+            onUpdateDownloaded()
+        }
+
+        override fun onUpdateInstalled() {
+            updatePreference?.isVisible = false
+        }
+
+        override fun onUpdateDownloading() {
+            updatePreference?.title = getString(R.string.update_downloading)
+        }
+
+        override fun onUpdateCancelledByUser() {
+
+        }
+
+        override fun onUpdateSnackbarDismissed() {
+        }
+    }
+
+    private fun onUpdateDownloaded() {
+        updatePreference?.title = getString(R.string.update_downloaded)
+        updatePreference?.summary = getString(R.string.install_update)
     }
 
     /**
@@ -196,11 +223,11 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         // Trigger the listener immediately with the preference's
         // current value.
         bindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                                                                PreferenceManager
-                                                                        .getDefaultSharedPreferences(
-                                                                                preference?.context)
-                                                                        .getString(preference?.key,
-                                                                                   ""))
+                PreferenceManager
+                        .getDefaultSharedPreferences(
+                                preference?.context)
+                        .getString(preference?.key,
+                                ""))
     }
 
     private val bindPreferenceSummaryToValueListener = Preference.OnPreferenceChangeListener { preference, value ->
@@ -218,13 +245,11 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
             if (preference.key == PREFS_LANGUAGE) {
                 onLanguagePrefChanged(stringValue)
-            }
-            else if (preference.key == PREFS_THEME) {
+            } else if (preference.key == PREFS_THEME) {
                 onThemeChanged(stringValue)
             }
 
-        }
-        else {
+        } else {
             preference.summary = stringValue
         }
         true

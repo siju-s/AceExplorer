@@ -25,8 +25,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import com.google.android.material.snackbar.BaseTransientBottomBar
-import com.google.android.material.snackbar.Snackbar
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.ads.AdsView
@@ -67,6 +65,7 @@ class HomeScreenFragment private constructor() : Fragment() {
         setHasOptionsMenu(true)
         setupViewModels()
         adView = AdsView(container)
+        lifecycle.addObserver(adView)
 
         setupToolbar()
         initList()
@@ -247,22 +246,12 @@ class HomeScreenFragment private constructor() : Fragment() {
     }
 
     fun showUpdateSnackbar(updateChecker: UpdateChecker?) {
-        val view = view
-        view?.let {
-            val snackbar = Snackbar.make(view.findViewById(R.id.container), getString(R.string.update_available), Snackbar.LENGTH_INDEFINITE)
-                    .apply {
-                        setAction(R.string.restart) {
-                            updateChecker?.startUpdate()
-                        }
-                    }
-            snackbar.addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar?>() {
-                override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                    super.onDismissed(transientBottomBar, event)
-                    updateChecker?.onUpdateSnackbarDismissed()
-                }
-            })
-            snackbar.show()
-        }
+       updateChecker?.showUpdateSnackbar(view?.findViewById(R.id.container))
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        lifecycle.removeObserver(adView)
     }
 
     companion object {

@@ -78,8 +78,6 @@ class SettingsFragment private constructor(): Fragment() {
         activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
     }
 
-
-
     private fun getSupportFragmentManager() = activity?.supportFragmentManager
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

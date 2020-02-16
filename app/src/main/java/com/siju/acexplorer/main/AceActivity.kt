@@ -23,6 +23,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -389,7 +390,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
 
     private val updateCallback = object : UpdateChecker.UpdateCallback {
         override fun onUpdateDownloaded(appUpdateManager: AppUpdateManager) {
-            showUpdateAvailableSnackbar()
+            showUpdateDownloadedSnackbar()
         }
 
         override fun onUpdateInstalled() {
@@ -403,6 +404,10 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
 
         override fun onUpdateSnackbarDismissed() {
             showUpdateBadge()
+        }
+
+        override fun onUpdateDownloading() {
+            Toast.makeText(this@AceActivity, getString(R.string.update_downloading), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -420,9 +425,12 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         }
     }
 
-    private fun showUpdateAvailableSnackbar() {
+    private fun showUpdateDownloadedSnackbar() {
         val fragment = supportFragmentManager.findFragmentById(R.id.main_container)
         if (fragment is HomeScreenFragment) {
+            fragment.showUpdateSnackbar(updateChecker)
+        }
+        else if (fragment is BaseFileListFragment) {
             fragment.showUpdateSnackbar(updateChecker)
         }
     }

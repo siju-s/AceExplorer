@@ -16,6 +16,7 @@
 
 package com.siju.acexplorer.main.model.helper
 
+import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -78,11 +79,11 @@ object ShareHelper {
         if (uri == null) {
             val newUri = UriHelper.createContentUri(context, path)
             intent.putExtra(Intent.EXTRA_STREAM, newUri)
-            intent.data = uri
+            intent.clipData = ClipData.newUri(context.contentResolver, null, uri)
         }
         else {
             intent.putExtra(Intent.EXTRA_STREAM, uri)
-            intent.data = uri
+            intent.clipData = ClipData.newUri(context.contentResolver, null, uri)
         }
         intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
 
