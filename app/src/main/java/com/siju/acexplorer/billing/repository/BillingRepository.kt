@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:Suppress("KDocUnresolvedReference")
+
 package com.siju.acexplorer.billing.repository
 
 import android.app.Activity
@@ -332,7 +334,7 @@ class BillingRepository private constructor(private val application: Application
      * (re)created for each [Activity] or [Fragment] or is kept open for the life of the application
      * is a matter of choice.
      */
-    lateinit private var playStoreBillingClient: BillingClient
+    private lateinit var playStoreBillingClient: BillingClient
 
     /**
      * A local cache billing client is important in that the Play Store may be temporarily
@@ -348,7 +350,7 @@ class BillingRepository private constructor(private val application: Application
      * The data that lives here should be refreshed at regular intervals so that it reflects what's
      * in the Google Play Store.
      */
-    lateinit private var localCacheBillingClient: LocalBillingDb
+    private lateinit var localCacheBillingClient: LocalBillingDb
 
     // START list of each distinct item user may own (i.e. entitlements)
 
@@ -405,7 +407,7 @@ class BillingRepository private constructor(private val application: Application
      * the app can have appropriate access to the data it needs. Still, it may be effective to
      * track the opening (and sometimes closing) of data source connections based on lifecycle
      * events. One convenient way of doing that is by calling this
-     * [startDataSourceConnections] when the [BillingViewModel] is instantiated and
+     * [startDataSourceConnections] when the [com.siju.acexplorer.main.viewmodel.MainViewModel] is instantiated and
      * [endDataSourceConnections] inside [ViewModel.onCleared]
      */
     fun startDataSourceConnections() {
@@ -445,7 +447,7 @@ class BillingRepository private constructor(private val application: Application
         when (billingResult.responseCode) {
             BillingClient.BillingResponseCode.OK                  -> {
                 Log.d(LOG_TAG, "onBillingSetupFinished successfully")
-                querySkuDetailsAsync(BillingClient.SkuType.INAPP, AppSku.INAPP_SKUS)
+                querySkuDetailsAsync(BillingClient.SkuType.INAPP, INAPP_SKUS)
                 queryPurchasesAsync()
             }
             BillingClient.BillingResponseCode.BILLING_UNAVAILABLE -> {
@@ -504,8 +506,8 @@ class BillingRepository private constructor(private val application: Application
         Log.d(LOG_TAG, "queryPurchasesAsync called")
         val purchasesResult = HashSet<Purchase>()
         val result = playStoreBillingClient.queryPurchases(BillingClient.SkuType.INAPP)
-        Log.d(LOG_TAG, "queryPurchasesAsync INAPP results: ${result?.purchasesList?.size}")
-        result?.purchasesList?.apply { purchasesResult.addAll(this) }
+        Log.d(LOG_TAG, "queryPurchasesAsync INAPP results: ${result.purchasesList?.size}")
+        result.purchasesList?.apply { purchasesResult.addAll(this) }
         processPurchases(purchasesResult)
         if (BuildConfig.DEBUG) {
             consumePurchase(purchasesResult)
@@ -612,6 +614,7 @@ class BillingRepository private constructor(private val application: Application
      * of product IDs and returns the matching list of SkuDetails.
      *
      */
+    @Suppress("SameParameterValue")
     private fun querySkuDetailsAsync(
             @BillingClient.SkuType skuType: String,
             skuList: List<String>) {
@@ -640,12 +643,12 @@ class BillingRepository private constructor(private val application: Application
      * launch the Google Play Billing flow. The response to this call is returned in
      * [onPurchasesUpdated]
      */
-    fun launchBillingFlow(activity: Activity, augmentedSkuDetails: AugmentedSkuDetails) =
+    private fun launchBillingFlow(activity: Activity, augmentedSkuDetails: AugmentedSkuDetails) =
             launchBillingFlow(activity, SkuDetails(augmentedSkuDetails.originalJson))
 
     private fun launchBillingFlow(activity: Activity, skuDetails: SkuDetails) {
         val purchaseParams = BillingFlowParams.newBuilder().setSkuDetails(skuDetails)
-                .setOldSku(null).build()
+                .build()
         playStoreBillingClient.launchBillingFlow(activity, purchaseParams)
     }
 
@@ -707,7 +710,7 @@ class BillingRepository private constructor(private val application: Application
     }
 
     @WorkerThread
-    suspend private fun insert(entitlement: Entitlement) = withContext(Dispatchers.IO) {
+    private suspend fun insert(entitlement: Entitlement) = withContext(Dispatchers.IO) {
         localCacheBillingClient.entitlementsDao().insert(entitlement)
     }
 
@@ -741,7 +744,7 @@ class BillingRepository private constructor(private val application: Application
 
     private object AppSku {
 
-        val SKU_REMOVE_ADS = "com.siju.acexplorer.pro"
+        const val SKU_REMOVE_ADS = "com.siju.acexplorer.pro"
 
         val INAPP_SKUS = listOf(SKU_REMOVE_ADS)
     }
