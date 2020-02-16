@@ -20,7 +20,7 @@ package com.siju.acexplorer.storage.view
 import android.os.Bundle
 import com.siju.acexplorer.main.model.groups.Category
 
-class DualPaneFragment private constructor(): BaseFileListFragment() {
+class DualPaneFragment : BaseFileListFragment() {
     companion object {
         fun newInstance(path: String?, category: Category, showNavigation : Boolean = true): DualPaneFragment {
             val args = Bundle()

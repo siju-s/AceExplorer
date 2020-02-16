@@ -30,7 +30,7 @@ import com.siju.acexplorer.R
 import com.siju.acexplorer.extensions.inflateLayout
 
 
-class SettingsFragment private constructor(): Fragment() {
+class SettingsFragment : Fragment() {
 
     companion object {
         fun newInstance() = SettingsFragment()

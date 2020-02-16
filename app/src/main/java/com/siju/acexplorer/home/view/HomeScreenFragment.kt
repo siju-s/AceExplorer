@@ -45,7 +45,7 @@ import kotlinx.android.synthetic.main.toolbar.*
 private const val TAG = "HomeScreenFragment"
 
 //TODO Add Navigation to this class
-class HomeScreenFragment private constructor() : Fragment() {
+class HomeScreenFragment : Fragment() {
 
     private lateinit var mainViewModel: MainViewModel
     private lateinit var homeViewModel: HomeViewModel

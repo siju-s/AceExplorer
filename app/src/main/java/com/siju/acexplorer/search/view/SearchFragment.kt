@@ -48,7 +48,7 @@ import kotlin.collections.ArrayList
 private const val DELAY_SCROLL_UPDATE_MS = 100L
 private const val TAG = "SearchFragment"
 
-class SearchFragment private constructor() : Fragment(), SearchView.OnQueryTextListener, FileListHelper {
+class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelper {
 
     companion object {
         fun newInstance() = SearchFragment()

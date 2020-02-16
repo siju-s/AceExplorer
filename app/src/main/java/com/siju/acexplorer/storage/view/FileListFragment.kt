@@ -20,7 +20,7 @@ package com.siju.acexplorer.storage.view
 import android.os.Bundle
 import com.siju.acexplorer.main.model.groups.Category
 
-class FileListFragment private constructor(): BaseFileListFragment() {
+class FileListFragment : BaseFileListFragment() {
     companion object {
         fun newInstance(path: String?, category: Category, showNavigation : Boolean = true): FileListFragment {
             val bundle = Bundle()
