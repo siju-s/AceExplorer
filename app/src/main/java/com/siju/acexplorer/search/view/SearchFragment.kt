@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.SearchManager
 import android.content.Context.SEARCH_SERVICE
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.provider.SearchRecentSuggestions
 import android.util.Log
@@ -360,6 +361,10 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
     override fun getCategory() = Category.FILES
 
     override fun onDragDropEvent(pos: Int, data: ArrayList<FileInfo>) {
+    }
+
+    override fun openPeekPopInfo(fileInfo: FileInfo, uri: Uri?) {
+
     }
 
     private fun getScrollInfo(): ScrollInfo {

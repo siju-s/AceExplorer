@@ -1,5 +1,6 @@
 package com.siju.acexplorer.storage.view
 
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
@@ -19,4 +20,5 @@ interface FileListHelper {
     fun getActivityInstance() : AppCompatActivity
     fun isActionModeActive() : Boolean
     fun refreshList()
+    fun openPeekPopInfo(fileInfo: FileInfo, uri: Uri?)
 }

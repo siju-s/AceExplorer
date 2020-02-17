@@ -7,6 +7,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.text.format.Formatter
+import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
@@ -15,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -26,53 +28,64 @@ import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.helper.ShareHelper
 import com.siju.acexplorer.main.model.helper.ViewHelper
+import com.siju.acexplorer.main.viewmodel.InfoSharedViewModel
 import com.siju.acexplorer.utils.Clipboard
 import com.siju.acexplorer.utils.ThumbnailUtils
 import java.util.*
 
 private const val TAG_INFO = "Info"
+
 class InfoFragment : BottomSheetDialogFragment() {
 
     companion object {
-        fun newInstance(fragmentManager: FragmentManager?, fileInfo: FileInfo, uri: Uri?) : InfoFragment {
+        fun newInstance(fragmentManager: FragmentManager?): InfoFragment {
             val infoFragment = InfoFragment()
-            infoFragment.setCategory(fileInfo.category)
-            infoFragment.setFileInfo(fileInfo)
-            infoFragment.setFileUri(uri)
             fragmentManager?.let { infoFragment.show(it, TAG_INFO) }
             return infoFragment
         }
     }
 
+    private var infoSharedViewModel: InfoSharedViewModel? = null
     private lateinit var category: Category
     private lateinit var fileInfo: FileInfo
 
     private var bottomSheetDialog: BottomSheetDialog? = null
-    private var sheetView        : View? = null
-    private var uri              : Uri? = null
+    private var sheetView: View? = null
+    private var uri: Uri? = null
 
-    private fun setFileInfo(fileInfo: FileInfo) {
-        this.fileInfo = fileInfo
-    }
-
-    private fun setCategory(category: Category) {
-        this.category = category
-    }
-
-    private fun setFileUri(uri: Uri?) {
-        this.uri = uri
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        Log.d("Info", "attach")
     }
 
     @SuppressLint("InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         bottomSheetDialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
+        Log.d("Info", "onCreateDialog")
         sheetView = LayoutInflater.from(context).inflate(R.layout.media_info, null)
         sheetView?.let {
             bottomSheetDialog?.setContentView(it)
         }
-        showInfo(fileInfo, category)
+        infoSharedViewModel = activity?.let { ViewModelProvider(it).get(InfoSharedViewModel::class.java) }
         setHasOptionsMenu(true)
+        initObservers()
         return bottomSheetDialog as BottomSheetDialog
+    }
+
+    private fun initObservers() {
+        Log.d("INfo", "fileInfo:${infoSharedViewModel?.fileInfo?.value}")
+        infoSharedViewModel?.fileInfo?.observe(this, androidx.lifecycle.Observer {
+            it?.apply {
+                this@InfoFragment.fileInfo = it
+                this@InfoFragment.category = it.category
+                showInfo(fileInfo, category)
+            }
+        })
+        infoSharedViewModel?.uri?.observe(this, androidx.lifecycle.Observer {
+            it?.apply {
+                this@InfoFragment.uri = it
+            }
+        })
     }
 
     override fun onStart() {
@@ -177,7 +190,7 @@ class InfoFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun setIcon(context: Context?, icon: ImageView, category: Category, uri : Uri?) {
+    private fun setIcon(context: Context?, icon: ImageView, category: Category, uri: Uri?) {
         if (context == null) {
             return
         }
@@ -207,13 +220,14 @@ class InfoFragment : BottomSheetDialogFragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.media_info_menu, menu)
-        if (fileInfo.isDirectory) {
-            menu.findItem(R.id.action_share).isVisible = false
+        if (::fileInfo.isInitialized) {
+            if (fileInfo.isDirectory) {
+                menu.findItem(R.id.action_share).isVisible = false
+            }
+            if (fileInfo.filePath == null) {
+                menu.findItem(R.id.action_copy_path).isVisible = false
+            }
         }
-        if (fileInfo.filePath == null) {
-            menu.findItem(R.id.action_copy_path).isVisible = false
-        }
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

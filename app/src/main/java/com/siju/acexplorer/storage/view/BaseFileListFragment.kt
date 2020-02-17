@@ -22,6 +22,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -56,6 +57,7 @@ import com.siju.acexplorer.main.model.helper.UriHelper
 import com.siju.acexplorer.main.model.helper.ViewHelper
 import com.siju.acexplorer.main.view.InfoFragment
 import com.siju.acexplorer.main.view.dialog.DialogHelper
+import com.siju.acexplorer.main.viewmodel.InfoSharedViewModel
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.main.viewmodel.Pane
 import com.siju.acexplorer.permission.PermissionHelper
@@ -91,6 +93,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     private lateinit var mainViewModel: MainViewModel
     private lateinit var fileListViewModel: FileListViewModel
     private lateinit var menuControls: MenuControls
+    private lateinit var infoSharedViewModel: InfoSharedViewModel
 
     private var adView: AdsView? = null
     private var categoryMenuHelper: CategoryMenuHelper? = null
@@ -127,7 +130,9 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
             else {
                 it
             }
-            menuControls = MenuControls(this, view, appbarView!!, category, viewMode)
+            if (appbarView != null) {
+                menuControls = MenuControls(this, view, appbarView, category, viewMode)
+            }
         }
         setupMultiSelection()
         setupNavigationView()
@@ -195,6 +200,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         val viewModelFactory = FileListViewModelFactory(StorageModelImpl(AceApplication.appContext, category))
         fileListViewModel = ViewModelProvider(this, viewModelFactory)
                 .get(FileListViewModel::class.java)
+        infoSharedViewModel = ViewModelProvider(activity).get(InfoSharedViewModel::class.java)
     }
 
     fun showUpdateSnackbar(updateChecker: UpdateChecker?) {
@@ -228,8 +234,10 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         })
 
         mainViewModel.theme.observe(viewLifecycleOwner, Observer {
-            floatingView.setTheme(it)
-            menuControls.setTheme(it)
+            if (::menuControls.isInitialized) {
+                floatingView.setTheme(it)
+                menuControls.setTheme(it)
+            }
         })
 
         fileListViewModel.fileData.observe(viewLifecycleOwner, Observer {
@@ -472,6 +480,14 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         })
     }
 
+    override fun openPeekPopInfo(fileInfo: FileInfo, uri: Uri?) {
+        infoSharedViewModel.apply {
+            setFileInfo(fileInfo)
+            setUri(uri)
+        }
+        InfoFragment.newInstance(activity?.supportFragmentManager)
+    }
+
     private fun onActionModeStarted() {
         floatingView.hideFab()
         hideAds()
@@ -640,8 +656,9 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
             Operations.INFO -> {
                 context?.let { context ->
                     val fileInfo = operationData.second
-                    InfoFragment.newInstance(activity?.supportFragmentManager,
-                            fileInfo, UriHelper.createContentUri(context, fileInfo.filePath))
+                    infoSharedViewModel.setFileInfo(fileInfo)
+                    infoSharedViewModel.setUri(UriHelper.createContentUri(context, fileInfo.filePath))
+                    InfoFragment.newInstance(activity?.supportFragmentManager)
                 }
             }
 
@@ -1000,6 +1017,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
 
         override fun onDestroy() {
             super.onDestroy()
+            Log.e(TAG, "onDestroy")
             if (isAppManager(category)) {
                 unregisterPackageReceiver(AceApplication.appContext)
             }

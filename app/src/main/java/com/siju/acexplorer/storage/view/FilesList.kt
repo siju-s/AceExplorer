@@ -20,7 +20,6 @@ import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.SdkHelper
 import com.siju.acexplorer.main.model.helper.ShareHelper
 import com.siju.acexplorer.main.model.helper.UriHelper
-import com.siju.acexplorer.main.view.InfoFragment
 import com.siju.acexplorer.main.view.dialog.DialogHelper
 import com.siju.acexplorer.storage.helper.RecentDataConverter
 import com.siju.acexplorer.storage.model.RecentTimeData
@@ -169,8 +168,7 @@ class FilesList(private val fileListHelper: FileListHelper,
                     }
                     R.id.imageButtonInfo -> {
                         peekAndPop?.endPeekMode()
-                        InfoFragment.newInstance(fileListHelper.getActivityInstance().supportFragmentManager,
-                                fileInfo, UriHelper.createContentUri(view.context, fileInfo.filePath))
+                        fileListHelper.openPeekPopInfo(fileInfo, UriHelper.createContentUri(view.context, fileInfo.filePath))
                     }
                     R.id.buttonNext -> peekAndPop?.loadPeekView(PeekPopView.PeekButton.NEXT, pos + 1)
                     R.id.buttonPrev -> peekAndPop?.loadPeekView(PeekPopView.PeekButton.PREVIOUS, pos - 1)

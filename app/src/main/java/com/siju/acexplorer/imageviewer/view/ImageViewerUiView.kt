@@ -14,11 +14,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.imageviewer.viewmodel.ImageViewerViewModel
 import com.siju.acexplorer.main.view.InfoFragment
+import com.siju.acexplorer.main.viewmodel.InfoSharedViewModel
 
 
 class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayout(context, attrs),
@@ -28,6 +30,7 @@ class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayou
         PopupMenu.OnMenuItemClickListener {
 
     private lateinit var viewModel: ImageViewerViewModel
+    private lateinit var infoSharedViewModel: InfoSharedViewModel
     private lateinit var activity: AppCompatActivity
     private lateinit var pager: ViewPager
     private lateinit var pagerAdapter: ImageViewerPagerAdapter
@@ -60,6 +63,7 @@ class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayou
 
     override fun inflate() {
         LayoutInflater.from(context).inflate(R.layout.image_viewer, this, true)
+        infoSharedViewModel = ViewModelProvider(activity).get(InfoSharedViewModel::class.java)
         setupUI()
     }
 
@@ -91,7 +95,11 @@ class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayou
 
     override fun onFileInfoFetched(fileInfo: FileInfo?) {
         fileInfo?.let {
-            InfoFragment.newInstance(activity.supportFragmentManager, fileInfo, uriList[pager.currentItem])
+            infoSharedViewModel.apply {
+                setFileInfo(it)
+                setUri(uriList[pager.currentItem])
+            }
+            InfoFragment.newInstance(activity.supportFragmentManager)
         }
     }
 

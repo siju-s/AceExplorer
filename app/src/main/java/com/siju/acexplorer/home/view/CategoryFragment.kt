@@ -67,7 +67,7 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
         setupToolbar()
         viewPager = view.findViewById(R.id.categoryPager)
         viewPager.registerOnPageChangeCallback(pageChangeListener)
-        tabLayout = view.findViewById<TabLayout>(R.id.categoryTabs)
+        tabLayout = view.findViewById(R.id.categoryTabs)
         setTabColor(tabLayout)
         pagerAdapter = CategoryPagerAdapter(activity!!)
         setupAdapter()
