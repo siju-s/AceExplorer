@@ -3,6 +3,7 @@ package com.siju.acexplorer.main.helper
 import android.content.Context
 import android.util.Log
 import android.view.View
+import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.appupdate.AppUpdateInfo
@@ -17,6 +18,7 @@ import com.siju.acexplorer.R
 import com.siju.acexplorer.main.AceActivity
 
 const val REQUEST_CODE_UPDATE = 300
+private const val TAG = "UpdateChecker"
 
 class UpdateChecker(val context: Context, val activity: AceActivity, private var updateCallback: UpdateCallback) {
     private val appUpdateManager = AppUpdateManagerFactory.create(context)
@@ -24,19 +26,27 @@ class UpdateChecker(val context: Context, val activity: AceActivity, private var
     private var updateStatus = InstallStatus.UNKNOWN
 
     private val installStateUpdatedListener = InstallStateUpdatedListener {
-        updateStatus = it.installStatus()
+        val installStatus = it.installStatus()
+        if (installStatus == updateStatus) {
+            return@InstallStateUpdatedListener
+        }
+        updateStatus = installStatus
         Log.d(this.javaClass.simpleName, "installStateUpdatedListener:updateStatus:$updateStatus")
         isUpdateAvailable = when {
-            it.installStatus() == InstallStatus.DOWNLOADED -> {
+            installStatus == InstallStatus.DOWNLOADED -> {
                 updateCallback.onUpdateDownloaded(appUpdateManager)
                 true
             }
-            it.installStatus() == InstallStatus.INSTALLED -> {
+            installStatus == InstallStatus.INSTALLED -> {
                 updateCallback.onUpdateInstalled()
                 false
             }
-            it.installStatus() == InstallStatus.DOWNLOADING -> {
+            installStatus == InstallStatus.DOWNLOADING -> {
                 updateCallback.onUpdateDownloading()
+                true
+            }
+            installStatus == InstallStatus.CANCELED -> {
+                updateCallback.onUpdateCancelledByUser()
                 true
             }
             else -> {
@@ -56,7 +66,7 @@ class UpdateChecker(val context: Context, val activity: AceActivity, private var
         this.updateCallback = updateCallback
     }
 
-    private fun startUpdateTask(appUpdateInfoTask: Task<AppUpdateInfo>, userInitiated : Boolean = false) {
+    private fun startUpdateTask(appUpdateInfoTask: Task<AppUpdateInfo>, userInitiated: Boolean = false) {
         appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
             if (appUpdateInfo.updateAvailability() == UPDATE_AVAILABLE
                     && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
@@ -75,15 +85,14 @@ class UpdateChecker(val context: Context, val activity: AceActivity, private var
         }
     }
 
-    private fun requestUpdate(appUpdateInfo: AppUpdateInfo, userInitiated : Boolean = false) {
+    private fun requestUpdate(appUpdateInfo: AppUpdateInfo, userInitiated: Boolean = false) {
         val viewModel = activity.getViewModel()
         isUpdateAvailable = true
         updateStatus = appUpdateInfo.installStatus()
         Log.d(this.javaClass.simpleName, "requestUpdate:updateStatus:$updateStatus")
         if (!userInitiated && viewModel.hasUserCancelledUpdate()) {
             updateCallback.onUpdateCancelledByUser()
-        }
-        else {
+        } else {
             startUpdateFlow(appUpdateInfo)
         }
     }
@@ -101,7 +110,7 @@ class UpdateChecker(val context: Context, val activity: AceActivity, private var
         when (updateStatus) {
             InstallStatus.DOWNLOADED -> appUpdateManager.completeUpdate()
             InstallStatus.PENDING, InstallStatus.CANCELED, InstallStatus.UNKNOWN -> {
-               startUpdateTask(appUpdateManager.appUpdateInfo, true)
+                startUpdateTask(appUpdateManager.appUpdateInfo, true)
             }
         }
     }
@@ -110,7 +119,7 @@ class UpdateChecker(val context: Context, val activity: AceActivity, private var
         appUpdateManager.unregisterListener(installStateUpdatedListener)
     }
 
-    fun isUpdateAvailable()  = isUpdateAvailable
+    fun isUpdateAvailable() = isUpdateAvailable
 
     fun isUpdateDownloaded() = updateStatus == InstallStatus.DOWNLOADED
 
@@ -118,14 +127,15 @@ class UpdateChecker(val context: Context, val activity: AceActivity, private var
         updateCallback.onUpdateSnackbarDismissed()
     }
 
-    fun showUpdateSnackbar(view : View?) {
+    fun showUpdateSnackbar(view: View?) {
         view?.let {
             val context = view.context
-            val snackbar = Snackbar.make(view, context.getString(R.string.update_available), Snackbar.LENGTH_INDEFINITE)
+            val snackbar = Snackbar.make(view, context.getString(R.string.update_downloaded), Snackbar.LENGTH_INDEFINITE)
                     .apply {
                         setAction(R.string.restart) {
                             startUpdate()
                         }
+                        setActionTextColor(ContextCompat.getColor(context, R.color.colorAccent))
                     }
             snackbar.addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar?>() {
                 override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
@@ -135,6 +145,10 @@ class UpdateChecker(val context: Context, val activity: AceActivity, private var
             })
             snackbar.show()
         }
+    }
+
+    fun isUpdateDownloading(): Boolean {
+        return updateStatus == InstallStatus.DOWNLOADING
     }
 
     interface UpdateCallback {

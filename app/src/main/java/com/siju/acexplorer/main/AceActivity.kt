@@ -407,7 +407,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         }
 
         override fun onUpdateDownloading() {
-            Toast.makeText(this@AceActivity, getString(R.string.update_downloading), Toast.LENGTH_LONG).show()
+            Toast.makeText(this@AceActivity, getString(R.string.update_downloading), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -420,6 +420,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
                     showUpdateBadge()
                 }
                 ActivityResult.RESULT_IN_APP_UPDATE_FAILED -> {
+                    showUpdateBadge()
                 }
             }
         }

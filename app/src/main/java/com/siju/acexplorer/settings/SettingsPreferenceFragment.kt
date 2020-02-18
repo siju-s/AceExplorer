@@ -18,7 +18,10 @@ package com.siju.acexplorer.settings
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.net.ConnectivityManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -41,6 +44,7 @@ import com.siju.acexplorer.theme.CURRENT_THEME
 import com.siju.acexplorer.theme.PREFS_THEME
 import com.siju.acexplorer.theme.Theme
 import com.siju.acexplorer.utils.LocaleHelper
+import com.siju.acexplorer.utils.NetworkHelper
 
 const val PREFS_UPDATE = "prefsUpdate"
 const val PREFS_LANGUAGE = "prefLanguage"
@@ -55,6 +59,9 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     private var currentLanguage: String? = null
     private var updateChecker: UpdateChecker? = null
     private var theme = 0
+    private var connectivityManager : ConnectivityManager? = null
+    private var networkHelper : NetworkHelper? = null
+    private val handler = Handler(Looper.getMainLooper())
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -164,12 +171,36 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
     private fun setupUpdatePref() {
         updatePreference = findPreference<Preference?>(PREFS_UPDATE)
-        if (updateChecker?.isUpdateDownloaded() == true) {
-            onUpdateDownloaded()
-        } else {
-            updatePreference?.title = getString(R.string.update_available)
+        val updateAvailable = updateChecker?.isUpdateAvailable()
+        if (updateAvailable == false) {
+            return
         }
-        updatePreference?.isVisible = updateChecker?.isUpdateAvailable() == true
+        networkHelper = NetworkHelper(networkChangeCallback)
+        setupUpdatePrefText(NetworkHelper.isConnectedToInternet(context))
+        connectivityManager = networkHelper?.getConnectivityManager(context)
+        networkHelper?.registerNetworkRequest(connectivityManager)
+        updatePreference?.isVisible = true
+        initUpdatePrefListener()
+    }
+
+    private fun setupUpdatePrefText(networkAvailable : Boolean = true) {
+        handler.post {
+            when {
+                updateChecker?.isUpdateDownloaded() == true -> {
+                    onUpdateDownloaded()
+                }
+                networkAvailable && updateChecker?.isUpdateDownloading() == true -> {
+                    onUpdateDownloading()
+                }
+                else -> {
+                    updatePreference?.title = getString(R.string.update_available)
+                    handleInternetSetting(networkAvailable)
+                }
+            }
+        }
+    }
+
+    private fun initUpdatePrefListener() {
         updatePreference?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             updateClicked()
             true
@@ -179,6 +210,29 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     private fun updateClicked() {
         updateChecker?.setUpdateCallback(updateCallback)
         updateChecker?.startUpdate()
+    }
+
+    private val networkChangeCallback = object : NetworkHelper.NetworkChangeCallback {
+        override fun onNetworkAvailable() {
+             if (updateChecker?.isUpdateAvailable() == true) {
+                 setupUpdatePrefText(true)
+             }
+        }
+
+        override fun onNetworkUnavailable() {
+            if (updateChecker?.isUpdateAvailable() == true) {
+                setupUpdatePrefText(false)
+            }
+        }
+    }
+
+    private fun handleInternetSetting(networkAvailable: Boolean = true) {
+        if (networkAvailable) {
+            updatePreference?.summary = ""
+        }
+        else {
+            updatePreference?.summary = getString(R.string.connect_internet_download_update)
+        }
     }
 
     private val updateCallback = object : UpdateChecker.UpdateCallback {
@@ -191,11 +245,12 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         }
 
         override fun onUpdateDownloading() {
-            updatePreference?.title = getString(R.string.update_downloading)
+            this@SettingsPreferenceFragment.onUpdateDownloading()
         }
 
         override fun onUpdateCancelledByUser() {
-
+            updatePreference?.title = getString(R.string.update_available)
+            handleInternetSetting(false)
         }
 
         override fun onUpdateSnackbarDismissed() {
@@ -205,6 +260,11 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     private fun onUpdateDownloaded() {
         updatePreference?.title = getString(R.string.update_downloaded)
         updatePreference?.summary = getString(R.string.install_update)
+    }
+
+    private fun onUpdateDownloading() {
+        updatePreference?.title = getString(R.string.update_downloading)
+        updatePreference?.summary = ""
     }
 
     /**
@@ -280,6 +340,11 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         activity.finish()
         activity.overridePendingTransition(enterAnim, exitAnim)
         activity.startActivity(activity.intent)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        networkHelper?.unregisterNetworkRequest(connectivityManager)
     }
 
     companion object {
