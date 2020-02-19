@@ -30,6 +30,7 @@ import com.siju.acexplorer.main.model.groups.CategoryHelper.shouldHideGalleryThu
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.theme.Theme
+import com.siju.acexplorer.theme.Theme.Companion.getTheme
 import com.siju.acexplorer.ui.peekandpop.PeekPopView
 import com.siju.acexplorer.utils.ThumbnailUtils.displayThumb
 import java.util.*
@@ -172,11 +173,14 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         }
 
         private fun onSelection(selected: Boolean?, position: Int, draggedPos: Int) {
-            val color = when (Theme.getTheme(itemView.context)) {
-                       Theme.LIGHT ->  ContextCompat.getColor(itemView.context,
-                               R.color.actionModeItemSelected)
-                else ->  ContextCompat.getColor(itemView.context,
+            val context = itemView.context
+            val color = if (Theme.isDarkColoredTheme(context.resources, getTheme(context))) {
+                ContextCompat.getColor(itemView.context,
                         R.color.dark_actionModeItemSelected)
+            }
+                else   {
+                ContextCompat.getColor(itemView.context,
+                        R.color.actionModeItemSelected)
             }
 
             when {
