@@ -77,6 +77,9 @@ class ZipViewerViewModel(val model: ZipViewerModel, private val zipViewerCallbac
 
     private fun isZipExtension(name: String?) = name?.endsWith(EXT_ZIP) == true
 
+    fun endViewFileEvent() {
+        _viewFileEvent.value = null
+    }
 
     fun onDirectoryClicked(position: Int) {
         var name = zipElements[position].name

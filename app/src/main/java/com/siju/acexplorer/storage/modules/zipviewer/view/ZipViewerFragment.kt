@@ -61,7 +61,10 @@ class ZipViewerFragment(
 
     private fun initObservers() {
         viewModel.viewFileEvent.observe(fragment.viewLifecycleOwner, Observer {
-            viewFile(it.first, it.second)
+            it?.apply {
+                viewFile(it.first, it.second)
+                viewModel.endViewFileEvent()
+            }
         })
 
         viewModel.installAppEvent.observe(fragment.viewLifecycleOwner, Observer {

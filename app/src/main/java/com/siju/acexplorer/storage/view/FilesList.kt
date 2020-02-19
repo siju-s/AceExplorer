@@ -64,16 +64,16 @@ class FilesList(private val fileListHelper: FileListHelper,
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun setupList() {
+    private fun setupList(zipMode: Boolean = false) {
         Log.d(TAG, "setupList:category:$category, viewMode:$viewMode")
         setLayoutManager(fileList, viewMode, category)
         setupPeekPop()
-        setAdapter()
+        setAdapter(zipMode)
         fileList.setOnTouchListener(this)
     }
 
-    private fun setAdapter() {
-        if (isRecentTimeLineCategory(category)) {
+    private fun setAdapter(isZipMode: Boolean = false) {
+        if (!isZipMode && isRecentTimeLineCategory(category)) {
             setRecentAdapter()
             return
         }
@@ -213,7 +213,7 @@ class FilesList(private val fileListHelper: FileListHelper,
     }
 
 
-    fun onDataLoaded(data: ArrayList<FileInfo>, category: Category) {
+    fun onDataLoaded(data: ArrayList<FileInfo>, category: Category, isZipMode : Boolean = false) {
         Log.d(TAG, "onDataLoaded:${data.size}")
         this.category = category
         if (data.isEmpty()) {
@@ -222,9 +222,16 @@ class FilesList(private val fileListHelper: FileListHelper,
             emptyText.visibility = View.GONE
         }
         if (adapter == null) {
-            setupList()
+            setupList(isZipMode)
             peekAndPop?.setFileList(data)
-            multiSelectionHelper?.let { getAdapter()?.setMultiSelectionHelper(it) }
+            multiSelectionHelper?.let {
+                if (isZipMode) {
+                    adapter?.setMultiSelectionHelper(it)
+                }
+                else {
+                    getAdapter()?.setMultiSelectionHelper(it)
+                }
+            }
             recentAdapter = null
         }
         else {

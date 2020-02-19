@@ -470,16 +470,20 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
 
     private fun handleRecentItemFileClicked(fileInfo: FileInfo, position: Int) {
         val path = fileInfo.filePath
-        Log.d(TAG, "handleRecentItemFileClicked:category:${fileInfo.category}, rootCategory:$category, path:$path")
-        when {
-            isZipFile(path) -> openZipViewer(path)
-            zipPresenter.isZipMode -> zipViewer?.onFileClicked(position)
-            CategoryHelper.isAnyImagesCategory(fileInfo.category) -> {
-                recentFileData.value?.let {
-                    _viewImageFileEvent.postValue(Pair(getRecentItemList(it.second), position))
+        Log.d(TAG, "handleRecentItemFileClicked:category:${fileInfo.category}, dir:${fileInfo.isDirectory}, rootCategory:$category, path:$path")
+        if (fileInfo.isDirectory) {
+            onDirectoryClicked(fileInfo, position)
+        } else {
+            when {
+                isZipFile(path) -> openZipViewer(path)
+                zipPresenter.isZipMode -> zipViewer?.onFileClicked(position)
+                CategoryHelper.isAnyImagesCategory(fileInfo.category) -> {
+                    recentFileData.value?.let {
+                        _viewImageFileEvent.postValue(Pair(getRecentItemList(it.second), position))
+                    }
                 }
+                else -> _viewFileEvent.postValue(Pair(path, fileInfo.extension))
             }
-            else -> _viewFileEvent.postValue(Pair(path, fileInfo.extension))
         }
     }
 
@@ -803,6 +807,8 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
     fun onZipContentsLoaded(data: ArrayList<FileInfo>) {
         _fileData.postValue(data)
     }
+
+    fun isZipMode() = zipPresenter.isZipMode
 
     fun onZipModeEnd(dir: String?) {
         if (dir != null && dir.isNotEmpty()) {

@@ -243,7 +243,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         fileListViewModel.fileData.observe(viewLifecycleOwner, Observer {
             it?.apply {
                 if (::filesList.isInitialized) {
-                    filesList.onDataLoaded(it, fileListViewModel.category)
+                    filesList.onDataLoaded(it, fileListViewModel.category, fileListViewModel.isZipMode())
                 }
             }
         })
@@ -294,7 +294,10 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         })
 
         fileListViewModel.viewFileEvent.observe(viewLifecycleOwner, Observer {
-            viewFile(it.first, it.second)
+            Log.e(TAG, "viewFileEVent:$it")
+            it?.apply {
+                viewFile(it.first, it.second)
+            }
         })
 
         fileListViewModel.viewImageFileEvent.observe(viewLifecycleOwner, Observer {
