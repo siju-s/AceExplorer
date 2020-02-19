@@ -21,6 +21,7 @@ import android.app.SearchManager
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -66,7 +67,7 @@ private const val TAG = "AceActivity"
 private const val ACTION_IMAGES = "android.intent.action.SHORTCUT_IMAGES"
 private const val ACTION_MUSIC = "android.intent.action.SHORTCUT_MUSIC"
 private const val ACTION_VIDEOS = "android.intent.action.SHORTCUT_VIDEOS"
-
+private const val SELECTED_TAB = "selected_tab"
 class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFragmentCallback, MainCommunicator {
 
     private lateinit var mainViewModel: MainViewModel
@@ -85,9 +86,32 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         initObservers()
         initListeners()
         checkIfInAppShortcut(intent)
-        bottom_navigation.selectedItemId = R.id.navigation_home
+        setupSelectedTabPosition(savedInstanceState)
         updateChecker = UpdateChecker(baseContext, this, updateCallback)
         setupPremiumUtils()
+    }
+
+    private fun setupSelectedTabPosition(savedInstanceState: Bundle?) {
+        when {
+            savedInstanceState == null -> {
+                setSelectedTab(R.id.navigation_home)
+            }
+            savedInstanceState.getInt(SELECTED_TAB, -1) != -1 -> {
+                setSelectedTab(savedInstanceState.getInt(SELECTED_TAB))
+            }
+            else -> {
+                setSelectedTab(R.id.navigation_home)
+            }
+        }
+    }
+
+    private fun setSelectedTab(tab : Int) {
+        bottom_navigation.selectedItemId = tab
+    }
+
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        super.onSaveInstanceState(outState, outPersistentState)
+        outState.putInt(SELECTED_TAB, bottom_navigation.selectedItemId)
     }
 
     override fun getUpdateChecker(): UpdateChecker? {
@@ -95,7 +119,10 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
     }
 
     override fun isPremiumVersion(): Boolean {
-        return mainViewModel.isPremiumVersion()
+        if (::mainViewModel.isInitialized) {
+            return mainViewModel.isPremiumVersion()
+        }
+        return false
     }
 
     fun getViewModel() = mainViewModel

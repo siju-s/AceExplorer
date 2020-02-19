@@ -28,6 +28,7 @@ import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.siju.acexplorer.R
 import com.siju.acexplorer.extensions.inflateLayout
+import com.siju.acexplorer.helper.ToolbarHelper
 
 
 class SettingsFragment : Fragment() {
@@ -46,13 +47,17 @@ class SettingsFragment : Fragment() {
         setHasOptionsMenu(true)
 
         PreferenceManager.setDefaultValues(context, R.xml.pref_settings, false)
-        setupActionBar()
 
-        getSupportFragmentManager()?.beginTransaction()
-                ?.replace(R.id.frameSettings, SettingsPreferenceFragment())
-                ?.commit()
+        val supportFragmentManager = getSupportFragmentManager()
 
-        getSupportFragmentManager()?.addOnBackStackChangedListener {
+        val fragment = supportFragmentManager?.findFragmentById(R.id.frameSettings)
+        setupActionBar(fragment)
+        if (fragment == null) {
+            supportFragmentManager?.beginTransaction()
+                    ?.replace(R.id.frameSettings, SettingsPreferenceFragment())
+                    ?.commit()
+        }
+        supportFragmentManager?.addOnBackStackChangedListener {
             if (activity?.supportFragmentManager?.backStackEntryCount == 0) {
                 removeToolbarAsUp()
                 setToolbarTitle(getString(R.string.action_settings))
@@ -60,11 +65,17 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    private fun setupActionBar() {
+    private fun setupActionBar(fragment: Fragment?) {
         val toolbar = view?.findViewById<Toolbar>(R.id.toolbar)
-        toolbar?.title = resources.getString(R.string.action_settings)
-        val activity = activity as AppCompatActivity
-        activity.setSupportActionBar(toolbar)
+        val activity = activity as AppCompatActivity?
+        activity?.setSupportActionBar(toolbar)
+        if (fragment is AboutFragment) {
+            ToolbarHelper.setToolbarTitle(activity, getString(R.string.pref_title_about))
+            ToolbarHelper.showToolbarAsUp(activity)
+        }
+        else {
+            toolbar?.title = resources.getString(R.string.action_settings)
+        }
     }
 
     private fun setToolbarTitle(title: String) {

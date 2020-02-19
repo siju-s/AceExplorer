@@ -87,6 +87,7 @@ private const val EXTRACT_PATH_REQUEST = 5000
 
 open class BaseFileListFragment : Fragment(), FileListHelper {
 
+    private var packageReceiverRegistered = false
     private lateinit var filesList: FilesList
     private lateinit var floatingView: FloatingView
     private lateinit var navigationView: NavigationView
@@ -555,6 +556,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     }
 
     private fun registerPackageReceiver(context: Context) {
+        packageReceiverRegistered = true
         val filter = IntentFilter(Intent.ACTION_PACKAGE_REMOVED)
         filter.addAction(Intent.ACTION_PACKAGE_ADDED)
         filter.addDataScheme(AppHelper.SCHEME_PACKAGE)
@@ -562,7 +564,10 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     }
 
     private fun unregisterPackageReceiver(context: Context) {
-        context.unregisterReceiver(packageChangeReceiver)
+        if (packageReceiverRegistered) {
+            context.unregisterReceiver(packageChangeReceiver)
+            packageReceiverRegistered = false
+        }
     }
 
     private fun handlePasteOperation(pasteConflictCheckData: PasteConflictCheckData) {

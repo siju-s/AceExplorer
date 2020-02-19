@@ -172,7 +172,8 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     private fun setupUpdatePref() {
         updatePreference = findPreference<Preference?>(PREFS_UPDATE)
         val updateAvailable = updateChecker?.isUpdateAvailable()
-        if (updateAvailable == false) {
+        if (updateChecker == null || updateAvailable == false) {
+            updatePreference?.isVisible = false
             return
         }
         networkHelper = NetworkHelper(networkChangeCallback)
@@ -185,6 +186,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
     private fun setupUpdatePrefText(networkAvailable : Boolean = true) {
         handler.post {
+            context ?: return@post
             when {
                 updateChecker?.isUpdateDownloaded() == true -> {
                     onUpdateDownloaded()
