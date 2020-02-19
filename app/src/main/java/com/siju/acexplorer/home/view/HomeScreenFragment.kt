@@ -37,6 +37,7 @@ import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.storage.view.FileListFragment
+import com.siju.acexplorer.theme.Theme
 import kotlinx.android.synthetic.main.home_categories.*
 import kotlinx.android.synthetic.main.home_storage.*
 import kotlinx.android.synthetic.main.homescreen.*
@@ -144,6 +145,16 @@ class HomeScreenFragment : Fragment() {
             it?.apply {
                 loadCategory(first, second)
                 homeViewModel.setCategoryClickEvent(null)
+            }
+        })
+        mainViewModel.theme.observe(viewLifecycleOwner, Observer {
+            it?.apply {
+                if (Theme.isDarkColoredTheme(resources, this)) {
+                    editButton.setImageResource(R.drawable.ic_rename_white)
+                }
+                else {
+                    editButton.setImageResource(R.drawable.ic_edit)
+                }
             }
         })
     }
