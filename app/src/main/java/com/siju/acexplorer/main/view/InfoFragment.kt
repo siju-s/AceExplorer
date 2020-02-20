@@ -73,17 +73,16 @@ class InfoFragment : BottomSheetDialogFragment() {
     }
 
     private fun initObservers() {
-        Log.d("INfo", "fileInfo:${infoSharedViewModel?.fileInfo?.value}")
+        infoSharedViewModel?.uri?.observe(this, androidx.lifecycle.Observer {
+            it?.apply {
+                this@InfoFragment.uri = it
+            }
+        })
         infoSharedViewModel?.fileInfo?.observe(this, androidx.lifecycle.Observer {
             it?.apply {
                 this@InfoFragment.fileInfo = it
                 this@InfoFragment.category = it.category
                 showInfo(fileInfo, category)
-            }
-        })
-        infoSharedViewModel?.uri?.observe(this, androidx.lifecycle.Observer {
-            it?.apply {
-                this@InfoFragment.uri = it
             }
         })
     }
