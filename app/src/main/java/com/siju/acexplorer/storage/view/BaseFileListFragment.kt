@@ -448,6 +448,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
 
         fileListViewModel.openZipViewerEvent.observe(viewLifecycleOwner, Observer {
             it?.apply {
+                fileListViewModel.saveScrollInfo(filesList.getScrollInfo())
                 val zipViewer = ZipViewerFragment(this@BaseFileListFragment, it.first,
                                                   it.second)
                 fileListViewModel.setZipViewer(zipViewer)
