@@ -16,7 +16,7 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="@dimen/home_library_width"
     android:layout_height="wrap_content"
     android:layout_marginStart="@dimen/storage_card_margin_start"
     android:layout_marginTop="@dimen/storage_card_margin_top"
@@ -27,7 +27,7 @@
     tools:showIn="@layout/category_edit">
 
     <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <ImageView
@@ -46,17 +46,17 @@
             android:layout_alignEnd="@id/imageLibrary"
             android:layout_alignParentTop="true"
             android:background="@null"
-            tools:src="@drawable/ic_remove_category"
-            tools:ignore="ContentDescription" />
+            tools:ignore="ContentDescription"
+            tools:src="@drawable/ic_remove_category" />
 
         <TextView
             android:id="@+id/textLibrary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="@dimen/category_edit_text_min_height"
             android:layout_below="@+id/imageLibrary"
+            android:layout_centerHorizontal="true"
             android:gravity="center"
-            android:layout_centerInParent="true"
+            android:minHeight="@dimen/category_edit_text_min_height"
             tools:text="@string/nav_menu_image" />
 
     </RelativeLayout>

@@ -65,9 +65,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/textLibrary"
             android:layout_centerHorizontal="true"
-            android:textSize="@dimen/library_count_font_size"
             android:layout_marginTop="@dimen/home_library_count_margin_bottom"
             android:layout_marginBottom="@dimen/home_library_count_margin_bottom"
+            android:textSize="@dimen/library_count_font_size"
             tools:text="5" />
 
     </RelativeLayout>
