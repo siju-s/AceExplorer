@@ -170,12 +170,10 @@ class HomeScreenFragment : Fragment() {
     private fun setupCategoriesList() {
         Log.d(TAG, "setupCategoriesList")
         categoryList.isNestedScrollingEnabled = true
-        setCategoryLayoutManager()
         categoryAdapter = HomeLibAdapter {
             homeViewModel.onCategoryClick(it.category)
         }
-//        setItemTouchHelper()
-        categoryList.adapter = categoryAdapter
+        setupCategoryAdapter()
     }
 
     private fun setupStorageList() {
@@ -187,17 +185,12 @@ class HomeScreenFragment : Fragment() {
         storageList.adapter = storageAdapter
     }
 
-//    private fun setItemTouchHelper() {
-//        val callback = SimpleItemTouchHelperCallback(categoryAdapter)
-//        val itemTouchHelper = ItemTouchHelper(callback)
-//        itemTouchHelper.attachToRecyclerView(categoryList)
-//    }
-
-    private fun setCategoryLayoutManager() {
+    private fun setupCategoryAdapter() {
         val gridColumns = homeViewModel.getCategoryGridColumns()
         Log.d(TAG, "gridColumns$gridColumns")
         val gridLayoutManager = GridLayoutManager(context, gridColumns)
         categoryList.layoutManager = gridLayoutManager
+        categoryList.adapter = categoryAdapter
     }
 
     private fun loadList(path: String?, category: Category) {
@@ -253,7 +246,7 @@ class HomeScreenFragment : Fragment() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         Log.d(TAG, "onConfigurationChanged:$newConfig")
-        setCategoryLayoutManager()
+        setupCategoryAdapter()
     }
 
     fun showUpdateSnackbar(updateChecker: UpdateChecker?) {
