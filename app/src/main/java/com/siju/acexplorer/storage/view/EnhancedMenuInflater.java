@@ -23,9 +23,6 @@ import android.view.MenuItem;
 import com.siju.acexplorer.R;
 import com.siju.acexplorer.main.model.groups.Category;
 
-import androidx.appcompat.view.menu.MenuItemImpl;
-import androidx.core.internal.view.SupportMenuItem;
-
 import static com.siju.acexplorer.main.model.groups.Category.FAVORITES;
 import static com.siju.acexplorer.main.model.groups.Category.FILES;
 
@@ -42,14 +39,10 @@ class EnhancedMenuInflater {
                 menu.findItem(R.id.action_share).setVisible(false);
             }
         }
-
         int size = menu.size();
         for (int i = 0; i < size; i++) {
             MenuItem item = menu.getItem(i);
-            // check if app:showAsAction = "ifRoom"
-            if (((MenuItemImpl) item).requestsActionButton()) {
-                item.setShowAsAction(SupportMenuItem.SHOW_AS_ACTION_ALWAYS);
-            }
+            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }
     }
 }

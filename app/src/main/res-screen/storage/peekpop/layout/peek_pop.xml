@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:padding="@dimen/padding_5"
+        android:contentDescription="@string/peek_button_prev"
         android:background="@color/white"
         app:srcCompat="@drawable/ic_left_arrow" />
 
@@ -89,8 +90,6 @@
 
     </androidx.cardview.widget.CardView>
 
-
-
     <ImageButton
         android:id="@+id/buttonNext"
         android:layout_width="wrap_content"
@@ -99,6 +98,7 @@
         android:layout_toEndOf="@id/cardView"
         android:layout_centerVertical="true"
         android:padding="@dimen/padding_5"
+        android:contentDescription="@string/peek_button_next"
         app:srcCompat="@drawable/ic_right_arrow" />
 
 </RelativeLayout>

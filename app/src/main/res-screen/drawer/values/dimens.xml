@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="drawer_width">300dp</dimen>
-    <dimen name="nav_header_height">130dp</dimen>
-    <dimen name="drawer_list_margin_top">5dp</dimen>
-    <dimen name="drawer_item_icon_width">50dp</dimen>
-    <dimen name="drawer_item_margin">16dp</dimen>
-    <dimen name="drawer_item_text_margin">18dp</dimen>
-</resources>

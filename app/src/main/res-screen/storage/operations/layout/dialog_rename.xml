@@ -19,14 +19,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-
     <EditText
         android:id="@+id/editFileName"
         style="@style/EditTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="none"
-        tools:text="12dd" />
+        android:labelFor="@id/textMessage"
+        tools:text="12dd"
+        android:importantForAutofill="no" />
 
     <include layout="@layout/dialog_buttons" />
 
