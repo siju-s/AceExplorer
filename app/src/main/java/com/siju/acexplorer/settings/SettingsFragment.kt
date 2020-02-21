@@ -89,6 +89,16 @@ class SettingsFragment : Fragment() {
         activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        val fragment = getSupportFragmentManager()?.findFragmentById(R.id.frameSettings)
+        fragment?.let {
+            getSupportFragmentManager()?.beginTransaction()
+                ?.remove(it)
+                ?.commit()
+        }
+    }
+
     private fun getSupportFragmentManager() = activity?.supportFragmentManager
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
