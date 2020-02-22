@@ -17,6 +17,5 @@
 <resources>
     <string name="pref_title_about">за нас</string>
     <string name="pref_title_version">верзија</string>
-    <string name="prefs_summary_dev">инвеститорот</string>
     <string name="open_source_license">отворен код лиценци</string>
 </resources>

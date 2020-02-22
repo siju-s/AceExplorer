@@ -18,7 +18,6 @@
     <string name="app_detail">Pojedinosti o aplikaciji</string>
     <string name="uninstall">Uninstall</string>
     <string name="package_name">Naziv paketa</string>
-    <string name="version_name">Verzija</string>
     <string name="installed_source">Izvor</string>
     <string name="min_sdk">Min SDK</string>
     <string name="target_sdk">Ciljani SDK</string>

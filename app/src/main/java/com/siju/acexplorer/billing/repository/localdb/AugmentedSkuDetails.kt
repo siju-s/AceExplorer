@@ -21,13 +21,11 @@ import com.android.billingclient.api.SkuDetails
 
 
 /**
- * The Play [BillingClient] provides a [SkuDetails] list that the [BillingRepository] could pass
+ * The Play provides a [SkuDetails] list that the could pass
  * along to clients to tell them what the app sells. With that approach, however, clients would have
  * to figure out all correlations between SkuDetails and [entitlements][Entitlement]. For example:
- * When the [gas tank][GasTank] is full, the client would have to figure it out and disable the
- * [SkuDetails] button for buying more gas.
  *
- * Therefore, in the spirit of being client-friendly, whereas the [BillingRepository] is in a
+ * Therefore, in the spirit of being client-friendly, whereas the is in a
  * better position to determine the correlations between a [SkuDetails] and its [Entitlement],
  * the API should provide an [AugmentedSkuDetails] object instead of the basic [SkuDetails].
  * This object not only passes to clients the actual [SkuDetails] object from Google, but also

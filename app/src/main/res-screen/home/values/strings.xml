@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="home_add">Add</string>
     <string name="home_docs">Docs</string>
     <string name="compressed">Compressed</string>
     <string name="apk">Apps</string>
@@ -17,7 +16,6 @@
     <string name="category_screenshot">Screenshot</string>
     <string name="category_max_min_items_error">Saved categories can be minimum 3 , maximum 12</string>
 
-    <string name="library_gif" translatable="false">GIF</string>
     <string name="category_all">All</string>
     <string name="categories">Categories</string>
     <string name="categories_folder">Folder</string>

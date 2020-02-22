@@ -16,8 +16,6 @@
 
 <resources>
     <string name="app_name">Ace Explorer</string>
-    <string name="navigation_drawer_open">Otvaranje ladice za navigaciju</string>
-    <string name="navigation_drawer_close">Zatvaranje ladice za navigaciju</string>
     <string name="action_settings">Postavke</string>
     <string name="nav_menu_internal_storage">Unutarnja pohrana</string>
     <string name="nav_menu_root">Korijen</string>
@@ -29,8 +27,6 @@
     <string name="nav_header_storages">skladišta</string>
     <string name="nav_header_favourites">Omiljeno</string>
     <string name="nav_header_collections">Knjižnica</string>
-    <string name="nav_header_others">Drugi</string>
-    <string name="msg_free">bez</string>
     <string name="empty">Prazan</string>
     <plurals name="number_of_files">
         <item quantity="one">%d file</item>
@@ -48,8 +44,6 @@
     <string name="action_share">Udio</string>
     <string name="msg_cut_copy">file (s) kopirati u međuspremnik</string>
     <string name="msg_delete_success">uspješno izbrisana</string>
-    <string name="msg_copy_failure">Kopiranje nije uspjelo</string>
-    <string name="msg_move_failure">Premjestiti Operacija nije uspjela</string>
     <string name="msg_delete_failure">Brisanje nije uspjelo</string>
     <string name="dialog_skip">Preskočiti</string>
     <string name="dialog_replace">Zamijeniti</string>
@@ -66,17 +60,12 @@
     <string name="path">Staza:</string>
     <string name="size">Veličina:</string>
     <string name="date_modified">Datum promjene:</string>
-    <string name="hidden">Skriven:</string>
-    <string name="readable">Čitljiv:</string>
-    <string name="writeable">dijeljenim resursima:</string>
-    <string name="md5">MD5:</string>
     <string name="permissions">Dozvole</string>
     <string name="yes">Da</string>
     <string name="no">Ne</string>
     <string name="properties">Nekretnine</string>
     <string name="new_folder">Nova mapa</string>
     <string name="new_file">Nova datoteka</string>
-    <string name="rate_us">Ocijeni nas</string>
     <string name="add_fav">Dodati u favorite</string>
     <string name="msg_added_to_fav">Dodano u favorite</string>
     <string name="msg_error_not_supported">Nema aplikacija za obradu akciju</string>
@@ -102,16 +91,12 @@
     <string name="pref_title_reset_fav">Reset favorite</string>
     <string name="pref_title_show_hidden">Prikaži skrivene datoteke</string>
     <string name="pref_title_disable_dual">Dual okno u krajoliku</string>
-    <string name="pref_title_check_update">Provjeri ažuriranja</string>
     <string name="pref_title_change_lang">Promijeni jezik</string>
     <string name="hide">Sakriti</string>
     <string name="unhide">Otkrij</string>
-    <string name="more">više</string>
     <string name="drag">kočnica</string>
     <string name="move">Potez</string>
     <string name="msg_fav_reset">Favoriti resetted na zadane vrijednosti.</string>
-    <string name="pref_title_homescreen">Prikaži na početnom zaslonu</string>
-    <string name="home_add">Dodati</string>
     <string name="home_docs">Dokumenti</string>
     <string name="compressed">komprimirani</string>
     <string name="apk">Aplikacije</string>
@@ -127,11 +112,8 @@
     <string name="needsaccess">Napišite Potreban je pristup</string>
     <string name="needs_access_summary">Odaberite korijenski direktorij %1$s odobriti pristup pisanja za rad</string>
     <string name="error">greška</string>
-    <string name="completed">dovršen</string>
     <string name="msg_operation_failed">Operacija nije uspjela</string>
-    <string name="selected">odabran</string>
     <string name="enter_name">Unesite ime</string>
-    <string name="storage_low">Nedovoljno prostora</string>
     <string name="paste_conflict_remember">Zapamtiti</string>
     <string name="copying">Kopiranje datoteka</string>
     <string name="moving">Premještanje datoteke</string>
@@ -139,7 +121,6 @@
     <string name="view">Pogled</string>
     <string name="install">Instaliranje</string>
     <string name="package_installer_content">Koji radnju želite učiniti?</string>
-    <string name="need_permission">treba dozvolu</string>
     <string name="permission_setting_hint">Dodirnite Postavke -> Dozvole a zatim Storage dalje.</string>
     <string name="access_denied_external">Pisanje pristup vanjskoj ne sd odobrena</string>
     <string name="permission_read">Čitati</string>
@@ -159,30 +140,19 @@
     <string name="slide_4_title">Teme</string>
     <string name="slide_4_desc">Tamno ili svijetlo način! Tvoj izbor.</string>
     <string name="no_music"> Nema glazbene datoteke</string>
-    <string name="fav_removed">Uklonjeno iz favorita</string>
     <string name="img_accessibility_back">Nazad</string>
     <string name="img_accessibility_permission">Davanje dozvola</string>
-    <string name="img_accessibility_expand">Proširili ili saželi</string>
-    <string name="img_accessibility_brand">logotip aplikacije</string>
     <string name="img_accessibility_icon_lib">ikona knjižnica</string>
-    <string name="img_accessibility_storage_icon">ikona za pohranu</string>
-	<string name="unlock_full_version">Otključaj punu verziju</string>
+    <string name="unlock_full_version">Otključaj punu verziju</string>
     <string name="full_version_buy_ask">Puna verzija uklanja dosadnih oglasa. Želite li ga kupiti?</string>
     <string name="dialog_title_picker">Odaberite glazbenu datoteku</string>
-	<string name="app_invite_title">aplikacija pozvati</string>
-    <string name="app_invite_msg">Probajte ovu cool upravitelj datoteka !!</string>
-    <string name="app_invite_failed">Slanje pozivnica nije uspjelo.</string>
 
     <string name="browse">pretraživati</string>
-    <string name="msg_error_unrooted">Pristup rootu je odbijen.</string>
-    <string name="billing_unsupported">Kupnje putem aplikacije nisu podržane na ovom uređaju.</string>
     <string name="action_more">Više</string>
     <string name="directory">Imenik</string>
     <string name="operation">operacija</string>
-    <string name="extract_complete">Izvršen je završetak</string>
     <string name="clipboard">%d u međuspremnik</string>
     <string name="fav_exists">Omiljeni već postoji.</string>
-    <string name="msg_added_fav">%d stavke dodane Favorites (Favoriti).</string>
     <string name="header_source">Izvor</string>
     <string name="header_destination">Odredište</string>
     <string name="error_unsupported">Nije podržano</string>
@@ -190,9 +160,8 @@
     <string name="text_copied_clipboard">Kopirano je u međuspremnik.</string>
     <string name="analytics_text">Pošaljite analitiku</string>
     <string name="analytics_summary">Pomozite nam da poboljšamo aplikaciju slanjem anonimnih podataka o upotrebi.</string>
-    <string name="move_complete">Premjesti dovršeno</string>
-	
-	<string name="dual_pane_intro_title">Dva okna</string>
+
+    <string name="dual_pane_intro_title">Dva okna</string>
     <string name="dual_pane_intro_subtitle">Dvostruki način rada za bolju upotrebljivost.</string>
     <string name="sort_name">Ime</string>
     <string name="sort_type">Tip</string>
@@ -204,21 +173,12 @@
     <string name="artists">umjetnici</string>
     <string name="genres">Žanrovi</string>
     <string name="all_tracks">Sve pjesme</string>
-    <string name="notifications">Obavijesti</string>
-    <string name="alarms">alarmi</string>
-    <string name="ringtones">Melodije</string>
     <string name="podcasts">Podcasts</string>
     <string name="mute">nijem</string>
     <string name="unmute">Uključi mikrofon</string>
-    <string name="nav_header_tools">alat</string>
     <string name="app_manager">Upravitelj aplikacija</string>
-    <string name="category">Kategorija</string>
     <string name="unknown">nepoznat</string>
     <string name="enabled">Omogućeno</string>
-    <string name="trash">Smeće</string>
     <string name="move_trash">Baci u smeće</string>
-    <string name="restore">Vratiti</string>
-    <string name="moving_title_trash">Premještanje u otpad</string>
-    <string name="restoring_title_trash">Vraćanje</string>
 
 </resources>

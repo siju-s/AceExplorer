@@ -17,6 +17,5 @@
 <resources>
     <string name="pref_title_about">O podjetju</string>
     <string name="pref_title_version">različica</string>
-    <string name="prefs_summary_dev">razvijalec</string>
     <string name="open_source_license">Odprtokodne licence</string>
 </resources>

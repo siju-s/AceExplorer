@@ -18,7 +18,6 @@
     <string name="app_detail">Podrobnosti o aplikaciji</string>
     <string name="uninstall">Odstrani</string>
     <string name="package_name">Ime paketa</string>
-    <string name="version_name">Različica</string>
     <string name="installed_source">Vir</string>
     <string name="min_sdk">Min SDK</string>
     <string name="target_sdk">Target SDK</string>

@@ -3,10 +3,6 @@
     <string name="path">Path</string>
     <string name="size">Size</string>
     <string name="date_modified">Date Modified</string>
-    <string name="hidden">Hidden</string>
-    <string name="readable">Readable</string>
-    <string name="writeable">Writeable</string>
-    <string name="md5">MD5</string>
     <string name="permissions">Permissions</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>

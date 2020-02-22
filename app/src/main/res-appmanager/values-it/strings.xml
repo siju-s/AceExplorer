@@ -18,7 +18,6 @@
     <string name="app_detail">Dettaglio dell\'app</string>
     <string name="uninstall">Disinstallare</string>
     <string name="package_name">Nome del pacchetto</string>
-    <string name="version_name">Versione</string>
     <string name="installed_source">fonte</string>
     <string name="min_sdk">SDK minimo</string>
     <string name="target_sdk">SDK target</string>

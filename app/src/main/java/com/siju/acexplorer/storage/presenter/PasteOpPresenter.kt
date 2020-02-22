@@ -102,7 +102,7 @@ class PasteOpPresenter(val storageModel: StorageModel) {
                 end = true
             }
             else {
-                pasteActionInfo.add(PasteActionInfo(pasteConflictCheckData.conflictFiles.get(0).filePath))
+                pasteActionInfo.add(PasteActionInfo(pasteConflictCheckData.conflictFiles[0].filePath))
                 pasteConflictCheckData.destFiles.removeAt(0)
                 pasteConflictCheckData.conflictFiles.removeAt(0)
                 if (pasteConflictCheckData.conflictFiles.isEmpty()) {

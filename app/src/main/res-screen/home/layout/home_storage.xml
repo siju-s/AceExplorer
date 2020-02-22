@@ -11,7 +11,6 @@
     tools:showIn="@layout/homescreen">
 
     <LinearLayout
-        android:id="@+id/layoutStorage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -28,7 +27,6 @@
             android:textStyle="bold" />
 
         <View
-            android:id="@+id/divider"
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_marginTop="2dp"

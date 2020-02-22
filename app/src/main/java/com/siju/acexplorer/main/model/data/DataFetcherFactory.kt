@@ -89,28 +89,4 @@ object DataFetcherFactory {
 //            Category.TRASH -> TODO()
         }
     }
-
-    private fun isFilesCategory(category: Category): Boolean {
-        return category == Category.FILES || category == Category.DOWNLOADS
-    }
-
-    private fun isMusicCategory(category: Category): Boolean {
-        return (category == Category.AUDIO || category == Category.GENERIC_MUSIC || category == Category.ALBUMS
-                || category == Category.ARTISTS || category == Category.GENRES || category == Category.PODCASTS ||
-                category == Category.ALBUM_DETAIL || category == Category.ARTIST_DETAIL || category == Category.GENRE_DETAIL ||
-                category == Category.ALL_TRACKS)
-    }
-
-    private fun isVideoCategory(category: Category): Boolean {
-        return category == Category.VIDEO || category == Category.GENERIC_VIDEOS || category == Category.FOLDER_VIDEOS
-    }
-
-    private fun isImagesCategory(category: Category): Boolean {
-        return category == Category.IMAGE || category == Category.GENERIC_IMAGES || category == Category.FOLDER_IMAGES
-    }
-
-    private fun isDocCategory(category: Category): Boolean {
-        return category == Category.DOCS || category == Category.COMPRESSED || category == Category.PDF ||
-                category == Category.LARGE_FILES
-    }
 }

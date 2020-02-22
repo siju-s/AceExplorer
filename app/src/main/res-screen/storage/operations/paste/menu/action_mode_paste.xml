@@ -26,7 +26,6 @@
         app:showAsAction="ifRoom"/>
 
     <item
-        android:id="@+id/action_create"
         android:icon="@drawable/ic_folder_paste"
         android:orderInCategory="2"
         android:title="@string/create"

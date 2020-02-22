@@ -18,7 +18,6 @@
     <string name="app_detail">Appdetaljer</string>
     <string name="uninstall">Avinstaller</string>
     <string name="package_name">Pakkenavn</string>
-    <string name="version_name">Versjon</string>
     <string name="installed_source">Kilde</string>
     <string name="min_sdk">Min SDK</string>
     <string name="target_sdk">Mål SDK</string>

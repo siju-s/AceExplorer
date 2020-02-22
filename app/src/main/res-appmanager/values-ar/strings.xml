@@ -18,7 +18,6 @@
     <string name="app_detail">تفاصيل التطبيق</string>
     <string name="uninstall">الغاء التثبيت</string>
     <string name="package_name">اسم الحزمة</string>
-    <string name="version_name">الإصدار</string>
     <string name="installed_source">مصدر</string>
     <string name="min_sdk">مين سك</string>
     <string name="target_sdk">استهداف سك</string>

@@ -17,6 +17,5 @@
 <resources>
     <string name="pref_title_about">Hakkımızda</string>
     <string name="pref_title_version">versiyon</string>
-    <string name="prefs_summary_dev">Geliştirici</string>
     <string name="open_source_license">Açık kaynak lisansları</string>
 </resources>

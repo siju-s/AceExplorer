@@ -16,8 +16,6 @@
 
 <resources>
     <string name="app_name">Ace Explorer</string>
-    <string name="navigation_drawer_open">Բացել նավիգացիոն դարակը</string>
-    <string name="navigation_drawer_close">Փակել նավիգացիոն դարակը</string>
     <string name="action_settings">Կարգավորումներ</string>
     <string name="nav_menu_internal_storage">ներքին Storage</string>
     <string name="nav_menu_root">արմատ</string>
@@ -29,8 +27,6 @@
     <string name="nav_header_storages">պահեստարաններ</string>
     <string name="nav_header_favourites">ԸՆՏՐՅԱԼ ԹԵՄԱՆԵՐ</string>
     <string name="nav_header_collections">գրադարան</string>
-    <string name="nav_header_others">Մյուսները</string>
-    <string name="msg_free">անվճար</string>
     <string name="empty">դատարկ</string>
     <plurals name="number_of_files">
         <item quantity="one">%d ֆայլ</item>
@@ -47,8 +43,6 @@
     <string name="action_share">բաժնետոմս</string>
     <string name="msg_cut_copy">ֆայլ (եր) պատճենահանվել է clipboard</string>
     <string name="msg_delete_success">ջնջվել հաջողությամբ</string>
-    <string name="msg_copy_failure">Copy գործողությունը ձախողվեց</string>
-    <string name="msg_move_failure">Տեղափոխել գործողությունը ձախողվեց</string>
     <string name="msg_delete_failure">Ջնջել գործողությունը ձախողվեց</string>
     <string name="dialog_skip">ցատկել</string>
     <string name="dialog_replace">փոխարինել</string>
@@ -65,17 +59,12 @@
     <string name="path">path:</string>
     <string name="size">Չափ:</string>
     <string name="date_modified">Ամսաթիվ Փոփոխված:</string>
-    <string name="hidden">թաքցված:</string>
-    <string name="readable">ընթեռնելի:</string>
-    <string name="writeable">գրվող:</string>
-    <string name="md5">MD5:</string>
     <string name="permissions">թույլտվությունները</string>
     <string name="yes">այո</string>
     <string name="no">Ոչ</string>
     <string name="properties">Հատկություններ</string>
     <string name="new_folder">Նոր թղթապանակ</string>
     <string name="new_file">Նոր ֆայլի</string>
-    <string name="rate_us">Գնահատել մեզ</string>
     <string name="add_fav">Ավելացնել նախընտրածում</string>
     <string name="msg_added_to_fav">Ավելացված է նախընտրածում</string>
     <string name="msg_error_not_supported">Ոչ ծրագիրը կարգավորել ակցիան</string>
@@ -101,17 +90,13 @@
     <string name="pref_title_reset_fav">Զրոյացնել Ընտրվածներ</string>
     <string name="pref_title_show_hidden">Ցույց տալ թաքնված ֆայլերը</string>
     <string name="pref_title_disable_dual">Dual թրաշ է լանդշաֆտային</string>
-    <string name="pref_title_check_update">Ստուգել թարմացումները</string>
     <string name="pref_title_change_lang">Փոխել լեզուն</string>
 
     <string name="hide">թաքցնել</string>
     <string name="unhide">Բացահայտել</string>
-    <string name="more">ավելի շատ</string>
     <string name="drag">քաշել</string>
     <string name="move">քայլ</string>
     <string name="msg_fav_reset">ԸՆՏՐՅԱԼ ԹԵՄԱՆԵՐ resetted լռելյայն.</string>
-    <string name="pref_title_homescreen">Ցույց տալ էկրանը</string>
-    <string name="home_add">ավելացնել</string>
     <string name="home_docs">Docs</string>
     <string name="compressed">սեղմված</string>
     <string name="apk">Apps</string>
@@ -127,11 +112,8 @@
     <string name="needsaccess">Գրեք Access Պահանջվում</string>
     <string name="needs_access_summary">Խնդրում ենք ընտրել արմատային դիրեկտորիայի %1$s շնորհել գրելու հնարավորությունը գործել</string>
     <string name="error">սխալ</string>
-    <string name="completed">Ավարտված</string>
     <string name="msg_operation_failed">Operation ձախողվեց</string>
-    <string name="selected">ընտրված</string>
     <string name="enter_name">Մուտքագրեք անունը</string>
-    <string name="storage_low">Անբավարար տարածք</string>
     <string name="paste_conflict_remember">Հիշել</string>
     <string name="copying">Պատճենահանման ֆայլեր</string>
     <string name="moving">Շարժվող ֆայլեր</string>
@@ -139,7 +121,6 @@
     <string name="view">տեսարան</string>
     <string name="install">Տեղադրեք</string>
     <string name="package_installer_content">Որ ակցիան կցանկանայիք անել:</string>
-    <string name="need_permission">անհրաժեշտ է թույլտվություն</string>
     <string name="permission_setting_hint">Թակել Պարամետրեր -> Թույլտվություններ, ապա միացնել պահպանման:</string>
     <string name="access_denied_external">Գրեք հասանելիության արտաքին SD չի տրամադրվում</string>
     <string name="permission_read">կարդալ</string>
@@ -159,30 +140,19 @@
     <string name="slide_4_title">Թեմաներ</string>
     <string name="slide_4_desc">Dark կամ թեթեւ ճանապարհ. Ձեր ընտրությունը.</string>
     <string name="no_music"> Ոչ երաժշտական ​​ֆայլերը</string>
-    <string name="fav_removed">Հեռացվել է դնել</string>
     <string name="img_accessibility_back">Վերադառնալ</string>
     <string name="img_accessibility_permission">Grant թույլտվություն</string>
-    <string name="img_accessibility_expand">Ընդլայնել կամ Ամբողջությամբ ցուցադրել</string>
-    <string name="img_accessibility_brand">App լոգոն</string>
     <string name="img_accessibility_icon_lib">Գրադարան պատկերակը</string>
-    <string name="img_accessibility_storage_icon">Storage պատկերակը</string>
-	<string name="unlock_full_version">Բացել ամբողջական տարբերակը</string>
+    <string name="unlock_full_version">Բացել ամբողջական տարբերակը</string>
     <string name="full_version_buy_ask">Ամբողջական հեռացնում annoying ազդերը. Դուք ցանկանում եք գնել այն.</string>
     <string name="dialog_title_picker">Ընտրեք երաժշտությունը ֆայլ</string>
-	<string name="app_invite_title">App հրավիրում</string>
-    <string name="app_invite_msg">Փորձեք այս առաջնակարգ ֆայլ մենեջերի !!</string>
-    <string name="app_invite_failed">Ուղարկում հրավիրել ձախողվեց:</string>
 
     <string name="browse">Փնտրել</string>
-    <string name="msg_error_unrooted">Արմատային մուտքն արգելված է:</string>
-    <string name="billing_unsupported">Ներկառուցված գնումները չեն աջակցվում այս սարքում:</string>
     <string name="action_more">Ավելին</string>
     <string name="directory">Տեղեկատու</string>
     <string name="operation">Օպերացիա</string>
-    <string name="extract_complete">Քաղվածքը ավարտված է</string>
     <string name="clipboard">%d ընդգրկույթում</string>
     <string name="fav_exists">Սիրված արդեն գոյություն ունի:</string>
-    <string name="msg_added_fav">%d կետ (ներ) ը ավելացվել է Ընտրվածներին:</string>
     <string name="header_source">Աղբյուրը</string>
     <string name="header_destination">Նպատակը</string>
     <string name="error_unsupported">Չի ապահովվում</string>
@@ -190,9 +160,8 @@
     <string name="text_copied_clipboard">Պատճենված է clipboard:</string>
     <string name="analytics_text">Վերլուծություն ուղարկեք</string>
     <string name="analytics_summary">Օգնեք մեզ բարելավել ծրագիրը `ուղարկելով անանուն օգտագործման տվյալները:</string>
-    <string name="move_complete">Տեղափոխումը ավարտվեց</string>
-	
-	<string name="dual_pane_intro_title">Երկակի խցիկ</string>
+
+    <string name="dual_pane_intro_title">Երկակի խցիկ</string>
     <string name="dual_pane_intro_subtitle">Երկակի ռեժիմ, ավելի հարմարավետության համար:</string>
     <string name="sort_name">Անուն</string>
     <string name="sort_type">Տիպ</string>
@@ -204,21 +173,12 @@
     <string name="artists">Նկարիչներ</string>
     <string name="genres">Ժանրեր</string>
     <string name="all_tracks">Բոլոր երգերը</string>
-    <string name="notifications">Ծանուցումներ</string>
-    <string name="alarms">Ձայնագրություններ</string>
-    <string name="ringtones">Զանգեր</string>
     <string name="podcasts">Ձայնագրություններ</string>
     <string name="mute">Համր</string>
     <string name="unmute">Մնացեք</string>
-    <string name="nav_header_tools">Գործիքներ</string>
     <string name="app_manager">Հավելվածի կառավարիչ</string>
-    <string name="category">Կատեգորիա</string>
     <string name="unknown">Անհայտ</string>
     <string name="enabled">Հասանելի է</string>
-    <string name="trash">Աղբարկղ</string>
     <string name="move_trash">Տեղափոխեք աղբարկղ</string>
-    <string name="restore">Վերականգնել</string>
-    <string name="moving_title_trash">Տեղափոխվել է աղբարկղ</string>
-    <string name="restoring_title_trash">Վերականգնում</string>
 
 </resources>

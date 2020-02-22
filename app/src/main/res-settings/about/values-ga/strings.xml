@@ -17,6 +17,5 @@
 <resources>
     <string name="pref_title_about">Fúinn</string>
     <string name="pref_title_version">Leagan</string>
-    <string name="prefs_summary_dev">Forbróir</string>
     <string name="open_source_license">ceadúnas foinse oscailte</string>
 </resources>

@@ -228,13 +228,6 @@ object StorageUtils {
         }
     }
 
-    fun getStorageSpaceText(context: Context, text: String): String {
-        val arr = text.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        return arr[0] + " " + context.resources.getString(R.string.msg_free) +
-                " " + arr[1]
-    }
-
-
     /**
      * Determine the main folder of the external SD card containing the given file.
      *

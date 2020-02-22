@@ -16,8 +16,6 @@
 
 <resources>
     <string name="app_name">Ace Explorer</string>
-    <string name="navigation_drawer_open">Open навигация чекмедже</string>
-    <string name="navigation_drawer_close">Затваряне на панела за навигация</string>
     <string name="action_settings">Настройки</string>
     <string name="nav_menu_internal_storage">Вътрешна памет</string>
     <string name="nav_menu_root">корен</string>
@@ -29,8 +27,6 @@
     <string name="nav_header_storages">Складовете</string>
     <string name="nav_header_favourites">Любими</string>
     <string name="nav_header_collections">Библиотека</string>
-    <string name="nav_header_others">Други</string>
-    <string name="msg_free">свободен от</string>
     <string name="empty">празен</string>
     <plurals name="number_of_files">
         <item quantity="one">%d досие</item>
@@ -47,8 +43,6 @@
     <string name="action_share">Дял</string>
     <string name="msg_cut_copy">файл (а), копирана в клипборда</string>
     <string name="msg_delete_success">заличава успешно</string>
-    <string name="msg_copy_failure">Копирането не бе успешно</string>
-    <string name="msg_move_failure">операция Move провали</string>
     <string name="msg_delete_failure">Изтриване на операция се провали</string>
     <string name="dialog_skip">подскачам</string>
     <string name="dialog_replace">Замяна</string>
@@ -65,17 +59,12 @@
     <string name="path">Path:</string>
     <string name="size">Размер:</string>
     <string name="date_modified">Дата на промяна:</string>
-    <string name="hidden">Скрити:</string>
-    <string name="readable">Разбираемо:</string>
-    <string name="writeable">записваеми:</string>
-    <string name="md5">MD5:</string>
     <string name="permissions">Разрешения</string>
     <string name="yes">да</string>
     <string name="no">Не</string>
     <string name="properties">Имоти</string>
     <string name="new_folder">Нова папка</string>
     <string name="new_file">Нов файл</string>
-    <string name="rate_us">Оцени ни</string>
     <string name="add_fav">Добави в избрани</string>
     <string name="msg_added_to_fav">Добавено към фаворити</string>
     <string name="msg_error_not_supported">Не приложение, за да се справят с действието</string>
@@ -101,16 +90,12 @@
     <string name="pref_title_reset_fav">Reset любими</string>
     <string name="pref_title_show_hidden">Покажи скритите файлове</string>
     <string name="pref_title_disable_dual">Dual стъкло в Пейзаж</string>
-    <string name="pref_title_check_update">Провери за актуализации</string>
     <string name="pref_title_change_lang">Смени езика</string>
     <string name="hide">Крия</string>
     <string name="unhide">Разкрий</string>
-    <string name="more">Повече ▼</string>
     <string name="drag">влача</string>
     <string name="move">Ход</string>
     <string name="msg_fav_reset">Любими resetted по подразбиране.</string>
-    <string name="pref_title_homescreen">Покажи началния екран</string>
-    <string name="home_add">Добави</string>
     <string name="home_docs">Документи</string>
     <string name="compressed">Сгъстен</string>
     <string name="apk">Apps</string>
@@ -126,11 +111,8 @@
     <string name="needsaccess">Напиши Задължително Access</string>
     <string name="needs_access_summary">Моля изберете главната директория на %1$s за предоставяне на достъп за запис, за да работят</string>
     <string name="error">грешка</string>
-    <string name="completed">завършен</string>
     <string name="msg_operation_failed">операцията е неуспешна</string>
-    <string name="selected">подбран</string>
     <string name="enter_name">Въведете име</string>
-    <string name="storage_low">Недостатъчно място</string>
     <string name="paste_conflict_remember">Помня</string>
     <string name="copying">Копиране на файлове</string>
     <string name="moving">Преместване на файлове</string>
@@ -138,7 +120,6 @@
     <string name="view">изглед</string>
     <string name="install">Инсталирай</string>
     <string name="package_installer_content">Кои действия бихте искали да направите?</string>
-    <string name="need_permission">Има нужда от разрешение</string>
     <string name="permission_setting_hint">Докоснете Настройки -> Разрешения и след това включете съхранение на.</string>
     <string name="access_denied_external">Напиши достъп до външно не SD отпуска</string>
     <string name="permission_read">Прочети</string>
@@ -158,30 +139,19 @@
     <string name="slide_4_title">Теми</string>
     <string name="slide_4_desc">Тъмен или светъл начин! Твой избор.</string>
     <string name="no_music"> Не музикални файлове</string>
-    <string name="fav_removed">Премахнато от любими</string>
     <string name="img_accessibility_back">обратно</string>
     <string name="img_accessibility_permission">разрешение Grant</string>
-    <string name="img_accessibility_expand">Разгъване или свиване</string>
-    <string name="img_accessibility_brand">лого App</string>
     <string name="img_accessibility_icon_lib">икона библиотека</string>
-    <string name="img_accessibility_storage_icon">икона за съхранение</string>
-	<string name="unlock_full_version">Отключване на пълна версия</string>
+    <string name="unlock_full_version">Отключване на пълна версия</string>
     <string name="full_version_buy_ask">Пълен версия премахва досадни реклами. Искате ли да го купя?</string>
     <string name="dialog_title_picker">Изберете музикален файл</string>
-	<string name="app_invite_title">App покани</string>
-    <string name="app_invite_msg">Опитайте тази готина файлов мениджър !!</string>
-    <string name="app_invite_failed">Изпращането не покани.</string>
 
     <string name="browse">паса</string>
-    <string name="msg_error_unrooted">Достъпът до корен е отказан.</string>
-    <string name="billing_unsupported">Покупките в приложение не се поддържат на това устройство.</string>
     <string name="action_more">| Повече ▼</string>
     <string name="directory">указател</string>
     <string name="operation">операция</string>
-    <string name="extract_complete">Екстрактът е завършен</string>
     <string name="clipboard">%d в клипборда</string>
     <string name="fav_exists">Любими вече съществува.</string>
-    <string name="msg_added_fav">%d елемент (и), добавен в Любими.</string>
     <string name="header_source">източник</string>
     <string name="header_destination">Дестинация</string>
     <string name="error_unsupported">Не се поддържа</string>
@@ -189,10 +159,9 @@
     <string name="text_copied_clipboard">Копирано в клипборда.</string>
     <string name="analytics_text">Изпратете аналитични данни</string>
     <string name="analytics_summary">Помогнете ни да подобрим приложението, като изпратите анонимни данни за използването.</string>
-    <string name="move_complete">Преместване завършено</string>
-	
 
-	<string name="dual_pane_intro_title">Двойно стъкло</string>
+
+    <string name="dual_pane_intro_title">Двойно стъкло</string>
     <string name="dual_pane_intro_subtitle">Двоен режим за по-добра използваемост.</string>
     <string name="sort_name">име</string>
     <string name="sort_type">Тип</string>
@@ -204,21 +173,12 @@
     <string name="artists">Художници</string>
     <string name="genres">Жанрове</string>
     <string name="all_tracks">Всички песни</string>
-    <string name="notifications">Известия</string>
-    <string name="alarms">Аларми</string>
-    <string name="ringtones">Мелодии</string>
     <string name="podcasts">Подкастове</string>
     <string name="mute">ням</string>
     <string name="unmute">Със звук</string>
-    <string name="nav_header_tools">Инструменти</string>
     <string name="app_manager">Мениджър на приложения</string>
-    <string name="category">категория</string>
     <string name="unknown">неизвестен</string>
     <string name="enabled">Enabled</string>
-    <string name="trash">боклук</string>
     <string name="move_trash">Преместване в кошчето</string>
-    <string name="restore">Възстанови</string>
-    <string name="moving_title_trash">Преместване в кошчето</string>
-    <string name="restoring_title_trash">Възстановяване</string>
 
 </resources>

@@ -27,7 +27,8 @@
         android:inputType="none"
         android:labelFor="@id/textMessage"
         tools:text="12dd"
-        android:importantForAutofill="no" />
+        android:importantForAutofill="no"
+        tools:ignore="LabelFor" />
 
     <include layout="@layout/dialog_buttons" />
 

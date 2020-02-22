@@ -17,6 +17,5 @@
 <resources>
     <string name="pref_title_about">Մեր մասին</string>
     <string name="pref_title_version">տարբերակ</string>
-    <string name="prefs_summary_dev">Developer</string>
     <string name="open_source_license">Բաց կոդով լիցենզիաներ</string>
 </resources>

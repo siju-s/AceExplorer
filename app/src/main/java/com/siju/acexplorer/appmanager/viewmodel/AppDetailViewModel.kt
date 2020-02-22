@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.siju.acexplorer.appmanager.model.*
 
-class AppDetailViewModel(val appDetailModel: AppDetailModel) : ViewModel() {
+class AppDetailViewModel(private val appDetailModel: AppDetailModel) : ViewModel() {
 
     val versionInfo: LiveData<AppVersionInfo>
 

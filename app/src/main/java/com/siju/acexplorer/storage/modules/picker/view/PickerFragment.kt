@@ -345,7 +345,7 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
         viewModel.loadData(path)
     }
 
-    fun getScrollInfo(): ScrollInfo {
+    private fun getScrollInfo(): ScrollInfo {
         val view = fileList.getChildAt(0)
         val offset = view?.top ?: 0
 
@@ -355,7 +355,7 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
         return ScrollInfo(position, offset)
     }
 
-    fun scrollToPosition(scrollInfo: ScrollInfo) {
+    private fun scrollToPosition(scrollInfo: ScrollInfo) {
         fileList.postDelayed({
                                  val layoutManager = fileList.layoutManager as LinearLayoutManager
                                  layoutManager.scrollToPositionWithOffset(scrollInfo.position,

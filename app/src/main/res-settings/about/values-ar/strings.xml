@@ -17,6 +17,5 @@
 <resources>
     <string name="pref_title_about">معلومات عنا</string>
     <string name="pref_title_version">الإصدار</string>
-    <string name="prefs_summary_dev">مطور</string>
     <string name="open_source_license">تراخيص مفتوحة المصدر</string>
    </resources>

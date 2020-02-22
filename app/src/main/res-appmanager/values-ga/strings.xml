@@ -18,7 +18,6 @@
     <string name="app_detail">Sonraí an App</string>
     <string name="uninstall">Dhíshuiteáil</string>
     <string name="package_name">Ainm an phacáiste</string>
-    <string name="version_name">Leagan</string>
     <string name="installed_source">Foinse</string>
     <string name="min_sdk">SDK Min</string>
     <string name="target_sdk">Sprioc SDK</string>

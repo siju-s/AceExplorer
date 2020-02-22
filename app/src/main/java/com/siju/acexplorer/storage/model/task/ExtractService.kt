@@ -216,7 +216,7 @@ class ExtractService : Service() {
                 unzipEntry(zipFile, entry, destinationPath)
             }
             scanFiles()
-            sendRefreshBroadcast(1)
+            sendRefreshBroadcast()
             calculateProgress(sourceFile.name, copiedbytes, totalbytes)
             zipFile.close()
         }
@@ -242,12 +242,10 @@ class ExtractService : Service() {
     private fun extractTar(archive: File, destinationPath: String?) {
         try {
             val archiveEntries = ArrayList<TarArchiveEntry>()
-            val inputStream: TarArchiveInputStream
-            if (archive.name.endsWith(EXT_TAR)) {
-                inputStream = TarArchiveInputStream(BufferedInputStream(FileInputStream(archive)))
-            }
-            else {
-                inputStream = TarArchiveInputStream(GZIPInputStream(FileInputStream(archive)))
+            val inputStream: TarArchiveInputStream = if (archive.name.endsWith(EXT_TAR)) {
+                TarArchiveInputStream(BufferedInputStream(FileInputStream(archive)))
+            } else {
+                TarArchiveInputStream(GZIPInputStream(FileInputStream(archive)))
             }
             publishResults(archive.name, 0, totalbytes, copiedbytes)
             var tarArchiveEntry: TarArchiveEntry? = inputStream.nextTarEntry
@@ -265,7 +263,7 @@ class ExtractService : Service() {
             }
 
             inputStream.close()
-            sendRefreshBroadcast(1)
+            sendRefreshBroadcast()
             publishResults(archive.name, 100, totalbytes, copiedbytes)
 
         }
@@ -276,10 +274,10 @@ class ExtractService : Service() {
         }
     }
 
-    private fun sendRefreshBroadcast(count: Int) {
+    private fun sendRefreshBroadcast() {
         val intent = Intent(ACTION_OP_REFRESH)
         intent.putExtra(KEY_OPERATION, EXTRACT)
-        intent.putExtra(KEY_FILES_COUNT, count)
+        intent.putExtra(KEY_FILES_COUNT, 1)
         sendBroadcast(intent)
     }
 

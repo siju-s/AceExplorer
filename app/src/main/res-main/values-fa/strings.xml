@@ -16,8 +16,6 @@
 
 <resources>
     <string name="app_name">آس اکسپلورر</string>
-    <string name="navigation_drawer_open">باز کردن کشوی پیمایش</string>
-    <string name="navigation_drawer_close">بستن کشوی پیمایش</string>
     <string name="action_settings">تنظیمات</string>
     <string name="nav_menu_internal_storage">حافظه داخلی</string>
     <string name="nav_menu_root">ریشه</string>
@@ -29,8 +27,6 @@
     <string name="nav_header_storages">انبار</string>
     <string name="nav_header_favourites">مورد علاقه ها</string>
     <string name="nav_header_collections">کتابخانه</string>
-    <string name="nav_header_others">دیگران</string>
-    <string name="msg_free">آزاد از</string>
     <string name="empty">خالی</string>
     <plurals name="number_of_files">
         <item quantity="one">%d پرونده</item>
@@ -47,8 +43,6 @@
     <string name="action_share">اشتراک گذاری</string>
     <string name="msg_cut_copy">فایل (ها) کپی به کلیپ بورد</string>
     <string name="msg_delete_success">حذف موفقیت</string>
-    <string name="msg_copy_failure">عملیات کپی شکست خورده</string>
-    <string name="msg_move_failure">عملیات انتقال انجام نشد</string>
     <string name="msg_delete_failure">عملیات حذف ناموفق</string>
     <string name="dialog_skip">رفتن</string>
     <string name="dialog_replace">جایگزین کردن</string>
@@ -65,17 +59,12 @@
     <string name="path">مسیر:</string>
     <string name="size">اندازه:</string>
     <string name="date_modified">تاریخ اصلاح:</string>
-    <string name="hidden">پنهان:</string>
-    <string name="readable">قابل خواندن:</string>
-    <string name="writeable">نوشتن:</string>
-    <string name="md5">MD5:</string>
     <string name="permissions">مجوز</string>
     <string name="yes">بله</string>
     <string name="no">خیر</string>
     <string name="properties">خواص</string>
     <string name="new_folder">پوشه جدید</string>
     <string name="new_file">فایل جدید</string>
-    <string name="rate_us">به ما رای دهید</string>
     <string name="add_fav">اضافه کردن به علاقه مندی ها</string>
     <string name="msg_added_to_fav">اضافه شده به مورد علاقه ها</string>
     <string name="msg_error_not_supported">برنامهای برای انجام عمل</string>
@@ -101,17 +90,13 @@
     <string name="pref_title_reset_fav">مورد علاقه های تنظیم مجدد</string>
     <string name="pref_title_show_hidden">نمایش فایلهای مخفی</string>
     <string name="pref_title_disable_dual">پنجره دو در چشم انداز</string>
-    <string name="pref_title_check_update">به روز رسانی ها رو بررسی کن</string>
     <string name="pref_title_change_lang">تغییر زبان</string>
 
     <string name="hide">پنهان شدن</string>
     <string name="unhide">آشکار کردن</string>
-    <string name="more">بیش</string>
     <string name="drag">کشیدن</string>
     <string name="move">حرکت</string>
     <string name="msg_fav_reset">مورد علاقه ها ریست به طور پیش فرض.</string>
-    <string name="pref_title_homescreen">نمایش صفحه اصلی</string>
-    <string name="home_add">اضافه کردن</string>
     <string name="home_docs">اسناد</string>
     <string name="compressed">فشرده</string>
     <string name="apk">نرم افزار</string>
@@ -127,11 +112,8 @@
     <string name="needsaccess">ارسال دسترسی مورد نیاز</string>
     <string name="needs_access_summary">لطفا پوشه ریشه از %1$s را انتخاب کنید تا اجازه دسترسی به این عمل</string>
     <string name="error">خطا</string>
-    <string name="completed">تکمیل شده</string>
     <string name="msg_operation_failed">عملیات شکست خورد</string>
-    <string name="selected">انتخاب شد</string>
     <string name="enter_name">نام را وارد کنید</string>
-    <string name="storage_low">فضای ناکافی</string>
     <string name="paste_conflict_remember">یاد آوردن</string>
     <string name="copying">کپی کردن فایل های</string>
     <string name="moving">انتقال فایل ها</string>
@@ -139,7 +121,6 @@
     <string name="view">چشم انداز</string>
     <string name="install">نصب</string>
     <string name="package_installer_content">کدام عمل را می خواهید انجام دهید؟</string>
-    <string name="need_permission">نیاز به اجازه</string>
     <string name="permission_setting_hint">تنظیمات ضربه بزنید -> مجوز و پس از آن نوبت ذخیره سازی است.</string>
     <string name="access_denied_external">دسترسی برای نوشتن خارجی SD داده نمی</string>
     <string name="permission_read">خواندن</string>
@@ -159,30 +140,19 @@
     <string name="slide_4_title">تم</string>
     <string name="slide_4_desc">تیره یا روشن راه! انتخاب شما.</string>
     <string name="no_music"> بدون فایل های موسیقی</string>
-    <string name="fav_removed">حذف از علاقه مندی ها</string>
     <string name="img_accessibility_back">بازگشت</string>
     <string name="img_accessibility_permission">ارائه مجوز</string>
-    <string name="img_accessibility_expand">بزرگ کردن یا کوچک</string>
-    <string name="img_accessibility_brand">آرم برنامه</string>
     <string name="img_accessibility_icon_lib">آیکون کتابخانه</string>
-    <string name="img_accessibility_storage_icon">آیکون ذخیره سازی</string>
-	<string name="unlock_full_version">باز کردن نسخه کامل</string>
+    <string name="unlock_full_version">باز کردن نسخه کامل</string>
     <string name="full_version_buy_ask">نسخه کامل حذف تبلیغات مزاحم است. آیا می خواهید به آن را خرید؟</string>
     <string name="dialog_title_picker">انتخاب فایل موسیقی</string>
-	<string name="app_invite_title">برنامه دعوت</string>
-    <string name="app_invite_msg">سعی کنید این مدیر فایل سرد!</string>
-    <string name="app_invite_failed">در حال ارسال دعوت شکست خورده است.</string>
 
     <string name="browse">مرور کردن</string>
-    <string name="msg_error_unrooted">دسترسی ریشه انکار شد</string>
-    <string name="billing_unsupported">خریدهای برنامه در این دستگاه پشتیبانی نمی شوند.</string>
     <string name="action_more">بیشتر</string>
     <string name="directory">دایرکتوری</string>
     <string name="operation">عمل</string>
-    <string name="extract_complete">استخراج تکمیل شده</string>
     <string name="clipboard">%d در کلیپ بورد</string>
     <string name="fav_exists">مورد علاقه در حال حاضر وجود دارد.</string>
-    <string name="msg_added_fav">%d مورد (ها) به موارد دلخواه اضافه شده است.</string>
     <string name="header_source">منبع</string>
     <string name="header_destination">مقصد</string>
     <string name="error_unsupported">پشتیبانی نشده</string>
@@ -190,9 +160,8 @@
     <string name="text_copied_clipboard">کپی به کلیپ بورد</string>
     <string name="analytics_text">ارسال تجزیه و تحلیل</string>
     <string name="analytics_summary">با ارسال دادههای استفاده ناشناس از ما برای بهبود برنامه کمک بگیرید.</string>
-    <string name="move_complete">حرکت کامل شده است</string>
-	
-	<string name="dual_pane_intro_title">دوگانه</string>
+
+    <string name="dual_pane_intro_title">دوگانه</string>
     <string name="dual_pane_intro_subtitle">حالت دوگانه برای قابلیت استفاده بهتر.</string>
     <string name="sort_name">نام</string>
     <string name="sort_type">تایپ کنید</string>
@@ -204,21 +173,12 @@
     <string name="artists">هنرمندان</string>
     <string name="genres">ژانرها</string>
     <string name="all_tracks">همه آهنگ ها</string>
-    <string name="notifications">اطلاعیه</string>
-    <string name="alarms">هشدار دهنده</string>
-    <string name="ringtones">زنگ ها</string>
     <string name="podcasts">پادکست ها</string>
     <string name="mute">بی صدا</string>
     <string name="unmute">خاموش کردن</string>
-    <string name="nav_header_tools">ابزارها</string>
     <string name="app_manager">مدیر برنامه</string>
-    <string name="category">دسته بندی</string>
     <string name="unknown">ناشناخته</string>
     <string name="enabled">فعال شده است</string>
-    <string name="trash">زباله ها</string>
     <string name="move_trash">انتقال به سطل زباله</string>
-    <string name="restore">بازگرداندن</string>
-    <string name="moving_title_trash">رفتن به سطل زباله</string>
-    <string name="restoring_title_trash">بازگرداندن</string>
 
-	</resources>
+</resources>

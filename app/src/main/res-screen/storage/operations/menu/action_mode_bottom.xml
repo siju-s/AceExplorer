@@ -55,7 +55,6 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_overflow"
         android:icon="@drawable/ic_overflow"
         android:orderInCategory="6"
         android:title="@string/action_more"

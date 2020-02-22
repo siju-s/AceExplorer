@@ -17,6 +17,5 @@
 <resources>
     <string name="pref_title_about">Rreth nesh</string>
     <string name="pref_title_version">Version</string>
-    <string name="prefs_summary_dev">zhvillues</string>
     <string name="open_source_license">kod të hapur</string>
 </resources>

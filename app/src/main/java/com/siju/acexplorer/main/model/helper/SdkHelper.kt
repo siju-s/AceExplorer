@@ -33,5 +33,4 @@ object SdkHelper {
     val isAtleastPie: Boolean
         get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
 
-    val isAtleastAndroid10 = Build.VERSION.SDK_INT >= 29
 }

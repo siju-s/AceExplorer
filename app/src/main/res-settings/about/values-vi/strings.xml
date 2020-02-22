@@ -17,6 +17,5 @@
 <resources>
     <string name="pref_title_about">Về chúng tôi</string>
     <string name="pref_title_version">Phiên bản</string>
-    <string name="prefs_summary_dev">Nhà phát triển</string>
     <string name="open_source_license">giấy phép mã nguồn mở</string>
 </resources>

@@ -24,7 +24,7 @@ object ZipUtils {
     private const val EXT_ZIP = ".zip"
     private const val EXT_APK = ".apk"
     const val EXT_TAR = ".tar"
-    const val EXT_TAR_GZ = ".tar.gz"
+    private const val EXT_TAR_GZ = ".tar.gz"
 
     /**
      * To be used when RAR as viewable not needed

@@ -18,7 +18,6 @@
     <string name="app_detail">Uygulama ayrıntısı</string>
     <string name="uninstall">Kaldırma</string>
     <string name="package_name">Paket ismi</string>
-    <string name="version_name">versiyon</string>
     <string name="installed_source">Kaynak</string>
     <string name="min_sdk">Min SDK</string>
     <string name="target_sdk">Hedef SDK</string>

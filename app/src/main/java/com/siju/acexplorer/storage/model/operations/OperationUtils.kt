@@ -23,33 +23,20 @@ import java.io.File
 
 object OperationUtils {
 
-    const val ACTION_SAF = "ACTION_SAF"
     const val KEY_FILENAME = "filename"
     const val KEY_FILEPATH = "filepath"
     const val KEY_FILEPATH2 = "filepath2"
     const val KEY_OPERATION = "operation"
     const val KEY_FILES = "op_files"
-    const val KEY_MEDIA_INDEX_FILES = "mediastore_files"
 
     const val KEY_OLD_FILES = "old_op_files"
-    const val KEY_POSITION = "pos"
     const val KEY_CONFLICT_DATA = "conflict_data"
     const val ACTION_OP_REFRESH = "refresh"
-    const val ACTION_RELOAD_LIST = "reload"
     const val ACTION_OP_FAILED = "failed"
     const val KEY_RESULT = "result"
     const val KEY_FILES_COUNT = "files_count"
 
     const val KEY_END = "end"
-
-    const val KEY_MOVE = "move"
-    const val KEY_COUNT = "count"
-    const val KEY_SHOW_RESULT = "show_result"
-    const val KEY_IS_TRASH = "trash"
-    const val KEY_IS_RESTORE = "restore"
-
-    const val KEY_TRASH_DATA = "trash_data"
-
 
     enum class WriteMode {
         ROOT,

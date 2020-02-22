@@ -18,7 +18,6 @@
     <string name="app_detail">App detail</string>
     <string name="uninstall">verwyder</string>
     <string name="package_name">Pakket naam</string>
-    <string name="version_name">weergawe</string>
     <string name="installed_source">Bron</string>
     <string name="min_sdk">Min SDK</string>
     <string name="target_sdk">Teiken SDK</string>

@@ -17,6 +17,5 @@
 <resources>
     <string name="pref_title_about">Rólunk</string>
     <string name="pref_title_version">Változat</string>
-    <string name="prefs_summary_dev">Fejlesztő</string>
     <string name="open_source_license">Nyílt forráskódú licencek</string>
 </resources>

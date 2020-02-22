@@ -18,7 +18,6 @@
     <string name="app_detail">ऐप का विवरण</string>
     <string name="uninstall">स्थापना रद्द करें</string>
     <string name="package_name">पैकेज का नाम</string>
-    <string name="version_name">संस्करण</string>
     <string name="installed_source">स्रोत</string>
     <string name="min_sdk">न्यूनतम एसडीके</string>
     <string name="target_sdk">एसडीके को लक्षित करें</string>

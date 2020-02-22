@@ -18,7 +18,6 @@
     <string name="app_detail">פירוט האפליקציה</string>
     <string name="uninstall">הסר את ההתקנה</string>
     <string name="package_name">שם חבילה</string>
-    <string name="version_name">גִרְסָה</string>
     <string name="installed_source">מָקוֹר</string>
     <string name="min_sdk">SDK מינימלי</string>
     <string name="target_sdk">יעד ל- SDK</string>

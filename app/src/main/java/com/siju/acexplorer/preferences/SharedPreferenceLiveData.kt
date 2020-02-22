@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.siju.acexplorer.preferences
 
 import android.content.SharedPreferences
@@ -6,7 +8,7 @@ import androidx.lifecycle.LiveData
 
 abstract class SharedPreferenceLiveData<T>(val sharedPrefs: SharedPreferences,
                                            val key: String,
-                                           val defValue: T) : LiveData<T>() {
+                                           private val defValue: T) : LiveData<T>() {
 
     init {
         value = this.getValueFromPreferences(key, defValue)

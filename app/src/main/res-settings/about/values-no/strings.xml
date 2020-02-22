@@ -17,6 +17,5 @@
 <resources>
     <string name="pref_title_about">Om oss</string>
     <string name="pref_title_version">Versjon</string>
-    <string name="prefs_summary_dev">Utvikler</string>
     <string name="open_source_license">Åpen kildekode-lisenser</string>
 </resources>

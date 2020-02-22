@@ -17,6 +17,5 @@
 <resources>
     <string name="pref_title_about">हमारे बारे में</string>
     <string name="pref_title_version">संस्करण</string>
-    <string name="prefs_summary_dev">डेवलपर</string>
     <string name="open_source_license">ओपन सोर्स लाइसेंस</string>
  </resources>

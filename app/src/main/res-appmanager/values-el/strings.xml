@@ -18,7 +18,6 @@
     <string name="app_detail">Λεπτομέρειες εφαρμογής</string>
     <string name="uninstall">Καταργήστε την εγκατάσταση</string>
     <string name="package_name">Ονομα πακέτου</string>
-    <string name="version_name">Εκδοχή</string>
     <string name="installed_source">Πηγή</string>
     <string name="min_sdk">Ελάχιστο SDK</string>
     <string name="target_sdk">Στόχος SDK</string>

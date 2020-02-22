@@ -18,7 +18,6 @@
     <string name="app_detail">აპლიკაცია დეტალურად</string>
     <string name="uninstall">დეინსტალაცია</string>
     <string name="package_name">პაკეტის სახელი</string>
-    <string name="version_name">ვერსია</string>
     <string name="installed_source">წყარო</string>
     <string name="min_sdk">მინ SDK</string>
     <string name="target_sdk">სამიზნე SDK</string>

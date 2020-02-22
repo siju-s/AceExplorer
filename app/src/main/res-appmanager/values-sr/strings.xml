@@ -18,7 +18,6 @@
     <string name="app_detail">Детаљи о апликацији</string>
     <string name="uninstall">Деинсталирајте</string>
     <string name="package_name">Назив пакета</string>
-    <string name="version_name">Верзија</string>
     <string name="installed_source">Извор</string>
     <string name="min_sdk">Мин СДК</string>
     <string name="target_sdk">Циљни СДК</string>

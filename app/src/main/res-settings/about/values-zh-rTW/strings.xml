@@ -17,6 +17,5 @@
 <resources>
     <string name="pref_title_about">關於我們</string>
     <string name="pref_title_version">版</string>
-    <string name="prefs_summary_dev">開發人員</string>
     <string name="open_source_license">開源許可證</string>
 </resources>

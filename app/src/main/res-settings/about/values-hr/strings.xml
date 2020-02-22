@@ -17,6 +17,5 @@
 <resources>
     <string name="pref_title_about">O nama</string>
     <string name="pref_title_version">Verzija</string>
-    <string name="prefs_summary_dev">razvijač</string>
     <string name="open_source_license">Open source licence</string>
 </resources>

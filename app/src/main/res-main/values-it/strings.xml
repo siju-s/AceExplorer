@@ -16,8 +16,6 @@
 
 <resources>
     <string name="app_name">Ace Explorer</string>
-    <string name="navigation_drawer_open">cassetto navigazione Aperto</string>
-    <string name="navigation_drawer_close">Chiudere il cassetto di navigazione</string>
     <string name="action_settings">impostazioni</string>
     <string name="nav_menu_internal_storage">Archiviazione interna</string>
     <string name="nav_menu_root">Radice</string>
@@ -29,8 +27,6 @@
     <string name="nav_header_storages">depositi</string>
     <string name="nav_header_favourites">Preferiti</string>
     <string name="nav_header_collections">Biblioteca</string>
-    <string name="nav_header_others">Altri</string>
-    <string name="msg_free">libero da</string>
     <string name="empty">Vuoto</string>
     <plurals name="number_of_files">
         <item quantity="one">%d file</item>
@@ -47,8 +43,6 @@
     <string name="action_share">Condividere</string>
     <string name="msg_cut_copy">file (s) copiato negli appunti</string>
     <string name="msg_delete_success">cancellato con successo</string>
-    <string name="msg_copy_failure">Operazione di copia non è riuscita</string>
-    <string name="msg_move_failure">operazione di spostamento non è riuscita</string>
     <string name="msg_delete_failure">Elimina operazione non è riuscita</string>
     <string name="dialog_skip">Salta</string>
     <string name="dialog_replace">Sostituire</string>
@@ -65,17 +59,12 @@
     <string name="path">Il percorso:</string>
     <string name="size">Dimensione:</string>
     <string name="date_modified">Data modificata:</string>
-    <string name="hidden">Nascosto:</string>
-    <string name="readable">Leggibile:</string>
-    <string name="writeable">scrivibile:</string>
-    <string name="md5">MD5:</string>
     <string name="permissions">Permessi</string>
     <string name="yes">sì</string>
     <string name="no">No</string>
     <string name="properties">Proprietà</string>
     <string name="new_folder">Nuova cartella</string>
     <string name="new_file">Nuovo file</string>
-    <string name="rate_us">tasso degli Stati Uniti</string>
     <string name="add_fav">Aggiungi ai preferiti</string>
     <string name="msg_added_to_fav">Aggiunto ai preferiti</string>
     <string name="msg_error_not_supported">No app per gestire l\'azione</string>
@@ -100,17 +89,13 @@
     <string name="pref_title_reset_fav">Ripristina preferiti</string>
     <string name="pref_title_show_hidden">Mostra file nascosti</string>
     <string name="pref_title_disable_dual">A doppio pannello in Landscape</string>
-    <string name="pref_title_check_update">Controlla gli aggiornamenti</string>
     <string name="pref_title_change_lang">Lingua</string>
 
     <string name="hide">nascondere</string>
     <string name="unhide">unhide</string>
-    <string name="more">Di Più</string>
     <string name="drag">Trascinare</string>
     <string name="move">Mossa</string>
     <string name="msg_fav_reset">Favoriti azzerati per difetto.</string>
-    <string name="pref_title_homescreen">Visualizza HomeScreen</string>
-    <string name="home_add">Aggiungere</string>
     <string name="home_docs">Documenti</string>
     <string name="compressed">compressa</string>
     <string name="apk">applicazioni</string>
@@ -127,11 +112,8 @@
     <string name="needs_access_summary">Scegliere la directory principale %1$s per concedere l\'accesso in
         scrittura per operare</string>
     <string name="error">Errore</string>
-    <string name="completed">Completato</string>
     <string name="msg_operation_failed">Operazione fallita</string>
-    <string name="selected">selezionato</string>
     <string name="enter_name">Inserisci il nome</string>
-    <string name="storage_low">Spazio insufficiente</string>
     <string name="paste_conflict_remember">Ricorda</string>
     <string name="copying">copia dei file</string>
     <string name="moving">spostamento dei file</string>
@@ -139,7 +121,6 @@
     <string name="view">vista</string>
     <string name="install">Installa</string>
     <string name="package_installer_content">Quale azione vorresti fare?</string>
-    <string name="need_permission">Ha bisogno il permesso</string>
     <string name="permission_setting_hint">Toccare Impostazioni -> Permessi e poi girare di archiviazione su.</string>
     <string name="access_denied_external">Accesso in scrittura a esterno non SD concesso</string>
     <string name="permission_read">Leggi</string>
@@ -160,30 +141,19 @@
     <string name="slide_4_title">Temi</string>
     <string name="slide_4_desc">modo scuro o chiaro! La tua scelta.</string>
     <string name="no_music"> Nessun file musicali</string>
-    <string name="fav_removed">Rimosso dai preferiti</string>
     <string name="img_accessibility_back">Indietro</string>
     <string name="img_accessibility_permission">Concedere l\'autorizzazione</string>
-    <string name="img_accessibility_expand">Espandere o comprimere</string>
-    <string name="img_accessibility_brand">App logo</string>
     <string name="img_accessibility_icon_lib">icon library</string>
-    <string name="img_accessibility_storage_icon">icona di archiviazione</string>
-	<string name="unlock_full_version">Sblocca la versione completa</string>
+    <string name="unlock_full_version">Sblocca la versione completa</string>
     <string name="full_version_buy_ask">La versione completa rimuove i fastidiosi annunci. Vuoi comprarlo?</string>
     <string name="dialog_title_picker">Scegli file musicale</string>
-	<string name="app_invite_title">App invito</string>
-    <string name="app_invite_msg">Prova questo file manager fresco !!</string>
-    <string name="app_invite_failed">L\'invio di invitare fallito.</string>
 
     <string name="browse">Navigare</string>
-    <string name="msg_error_unrooted">Accesso di root negato.</string>
-    <string name="billing_unsupported">Gli acquisti in-app non sono supportati su questo dispositivo.</string>
     <string name="action_more">Di Più</string>
     <string name="directory">elenco</string>
     <string name="operation">operazione</string>
-    <string name="extract_complete">Estratto completato</string>
     <string name="clipboard">%d negli appunti</string>
     <string name="fav_exists">Il preferito esiste già.</string>
-    <string name="msg_added_fav">%d articolo / i aggiunto ai preferiti.</string>
     <string name="header_source">fonte</string>
     <string name="header_destination">Destinazione</string>
     <string name="error_unsupported">Non supportato</string>
@@ -191,9 +161,8 @@
     <string name="text_copied_clipboard">Copiato negli appunti.</string>
     <string name="analytics_text">Invia analisi</string>
     <string name="analytics_summary">Aiutaci a migliorare l\'app inviando dati di utilizzo anonimi.</string>
-    <string name="move_complete">Sposta completato</string>
-	
-	<string name="dual_pane_intro_title">Doppio riquadro</string>
+
+    <string name="dual_pane_intro_title">Doppio riquadro</string>
     <string name="dual_pane_intro_subtitle">Modalità doppia per una migliore usabilità.</string>
     <string name="sort_name">Nome</string>
     <string name="sort_type">genere</string>
@@ -205,21 +174,12 @@
     <string name="artists">artisti</string>
     <string name="genres">generi</string>
     <string name="all_tracks">Tutte le canzoni</string>
-    <string name="notifications">notifiche</string>
-    <string name="alarms">Allarmi</string>
-    <string name="ringtones">Suonerie</string>
     <string name="podcasts">podcast</string>
     <string name="mute">muto</string>
     <string name="unmute">Attiva</string>
-    <string name="nav_header_tools">Utensili</string>
     <string name="app_manager">Gestore delle applicazioni</string>
-    <string name="category">Categoria</string>
     <string name="unknown">Sconosciuto</string>
     <string name="enabled">Abilitato</string>
-    <string name="trash">Spazzatura</string>
     <string name="move_trash">Sposta nel cestino</string>
-    <string name="restore">Ristabilire</string>
-    <string name="moving_title_trash">Traslocare in Cestino</string>
-    <string name="restoring_title_trash">Ripristino</string>
 
 </resources>

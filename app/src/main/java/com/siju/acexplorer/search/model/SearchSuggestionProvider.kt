@@ -9,7 +9,7 @@ class SearchSuggestionProvider : SearchRecentSuggestionsProvider() {
     }
 
     companion object {
-        val AUTHORITY = "com.siju.acexplorer.SearchSuggestionProvider"
-        val MODE = SearchRecentSuggestionsProvider.DATABASE_MODE_QUERIES
+        const val AUTHORITY = "com.siju.acexplorer.SearchSuggestionProvider"
+        const val MODE = DATABASE_MODE_QUERIES
     }
 }

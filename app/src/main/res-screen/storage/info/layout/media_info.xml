@@ -31,7 +31,6 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/collapsingToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap|enterAlways">
@@ -82,7 +81,6 @@
             <TableRow>
 
                 <TextView
-                    android:id="@+id/textNamePlaceholder"
                     style="@style/InfoItem"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

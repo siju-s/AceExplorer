@@ -18,7 +18,6 @@
     <string name="app_detail">Chi tiết ứng dụng</string>
     <string name="uninstall">Gỡ cài đặt</string>
     <string name="package_name">Tên gói hàng</string>
-    <string name="version_name">Phiên bản</string>
     <string name="installed_source">Nguồn</string>
     <string name="min_sdk">SDK tối thiểu</string>
     <string name="target_sdk">SDK mục tiêu</string>

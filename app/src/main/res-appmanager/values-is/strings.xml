@@ -18,7 +18,6 @@
     <string name="app_detail">Smáatriði smáatriði</string>
     <string name="uninstall">Uninstall</string>
     <string name="package_name">Pakki nafn</string>
-    <string name="version_name">Útgáfa</string>
     <string name="installed_source">Heimild</string>
     <string name="min_sdk">Min SDK</string>
     <string name="target_sdk">Markmið SDK</string>

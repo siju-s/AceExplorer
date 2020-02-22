@@ -4,8 +4,6 @@
     <string name="action_copy">Copy</string>
     <string name="action_paste">Paste</string>
     <string name="msg_cut_copy">file(s) copied to clipboard</string>
-    <string name="msg_copy_failure">Copy operation failed</string>
-    <string name="msg_move_failure">Move operation failed</string>
     <string name="dialog_skip">Skip</string>
     <string name="dialog_replace">Replace</string>
     <string name="dialog_keep_both">Keep both</string>
@@ -15,7 +13,6 @@
     <string name="moving">Moving files</string>
     <string name="clipboard">%d in clipboard</string>
     <string name="text_copied_clipboard">Copied to clipboard.</string>
-    <string name="move_complete">Move Completed</string>
     <string name="moved">%d files moved</string>
     <string name="copied">%d files copied</string>
     <string name="paste_conflict_remember">Remember</string>

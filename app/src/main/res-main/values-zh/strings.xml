@@ -16,8 +16,6 @@
 
 <resources>
     <string name="app_name">Ace探索者</string>
-    <string name="navigation_drawer_open">打开导航抽屉</string>
-    <string name="navigation_drawer_close">关闭导航抽屉</string>
     <string name="action_settings">设置</string>
     <string name="nav_menu_internal_storage">内部存储器</string>
     <string name="nav_menu_root">根</string>
@@ -29,8 +27,6 @@
     <string name="nav_header_storages">存储</string>
     <string name="nav_header_favourites">收藏</string>
     <string name="nav_header_collections">图书馆</string>
-    <string name="nav_header_others">其他</string>
-    <string name="msg_free">免费</string>
     <string name="empty">空</string>
     <plurals name="number_of_files">
         <item quantity="other">%d 文件</item>
@@ -46,8 +42,6 @@
     <string name="action_share">分享</string>
     <string name="msg_cut_copy">文件复制到剪贴板</string>
     <string name="msg_delete_success">已成功删除</string>
-    <string name="msg_copy_failure">复制操作失败</string>
-    <string name="msg_move_failure">移动操作失败</string>
     <string name="msg_delete_failure">删除操作失败</string>
     <string name="dialog_skip">跳跃</string>
     <string name="dialog_replace">更换</string>
@@ -64,17 +58,12 @@
     <string name="path">路径：</string>
     <string name="size">尺寸：</string>
     <string name="date_modified">修改日期：</string>
-    <string name="hidden">隐：</string>
-    <string name="readable">可读：</string>
-    <string name="writeable">可写：</string>
-    <string name="md5">MD5：</string>
     <string name="permissions">权限</string>
     <string name="yes">是</string>
     <string name="no">没有</string>
     <string name="properties">属性</string>
     <string name="new_folder">新文件夹</string>
     <string name="new_file">新文件</string>
-    <string name="rate_us">价格我们</string>
     <string name="add_fav">加入“最喜欢的</string>
     <string name="msg_added_to_fav">已添加到收藏夹</string>
     <string name="msg_error_not_supported">没有应用程序处理操作</string>
@@ -99,17 +88,13 @@
     <string name="pref_title_reset_fav">重置收藏夹</string>
     <string name="pref_title_show_hidden">显示隐藏文件</string>
     <string name="pref_title_disable_dual">横向的双窗格</string>
-    <string name="pref_title_check_update">检查更新</string>
     <string name="pref_title_change_lang">语言</string>
 
     <string name="hide">隐藏</string>
     <string name="unhide">取消隐藏</string>
-    <string name="more">更多</string>
     <string name="drag">拖动</string>
     <string name="move">移动</string>
     <string name="msg_fav_reset">收藏已重置为默认值。</string>
-    <string name="pref_title_homescreen">显示HomeScreen</string>
-    <string name="home_add">加</string>
     <string name="home_docs">文件</string>
     <string name="compressed">压缩</string>
     <string name="apk">应用</string>
@@ -125,11 +110,8 @@
     <string name="needsaccess">需要写访问</string>
     <string name="needs_access_summary">请选择 %1$s 的根目录以授予操作的写入权限</string>
     <string name="error">错误</string>
-    <string name="completed">已完成</string>
     <string name="msg_operation_failed">手术失败</string>
-    <string name="selected">选择</string>
     <string name="enter_name">输入名字</string>
-    <string name="storage_low">空间不足</string>
     <string name="paste_conflict_remember">记得</string>
     <string name="copying">正在复制文件</string>
     <string name="moving">移动文件</string>
@@ -137,7 +119,6 @@
     <string name="view">视图</string>
     <string name="install">安装</string>
     <string name="package_installer_content">你想做哪个动作？</string>
-    <string name="need_permission">需要许可</string>
     <string name="permission_setting_hint">点击设置 - >权限，然后打开存储。</string>
     <string name="access_denied_external">未授予对外部SD的写访问权限</string>
     <string name="permission_read">读</string>
@@ -158,30 +139,19 @@
     <string name="slide_4_title">主题</string>
     <string name="slide_4_desc">黑暗或光的方式！你的选择。</string>
     <string name="no_music"> 无音乐文件</string>
-    <string name="fav_removed">已从收藏中移除</string>
     <string name="img_accessibility_back">背部</string>
     <string name="img_accessibility_permission">授予权限</string>
-    <string name="img_accessibility_expand">展开或折叠</string>
-    <string name="img_accessibility_brand">应用标志</string>
     <string name="img_accessibility_icon_lib">图书馆图标</string>
-    <string name="img_accessibility_storage_icon">存储图标</string>
-	<string name="unlock_full_version">解锁完整版本</string>
+    <string name="unlock_full_version">解锁完整版本</string>
     <string name="full_version_buy_ask">完整版本删除烦人的广告。 你想买吗？</string>
     <string name="dialog_title_picker">选择音乐文件</string>
-	<string name="app_invite_title">应用程式邀请</string>
-    <string name="app_invite_msg">尝试这个酷文件管理器！</string>
-    <string name="app_invite_failed">发送邀请失败。</string>
 
     <string name="browse">浏览</string>
-    <string name="msg_error_unrooted">根访问被拒绝。</string>
-    <string name="billing_unsupported">此设备不支持应用内购买。</string>
     <string name="action_more">更多</string>
     <string name="directory">目录</string>
     <string name="operation">手术</string>
-    <string name="extract_complete">提取完成</string>
     <string name="clipboard">%d在剪贴板中</string>
     <string name="fav_exists">收藏已存在。</string>
-    <string name="msg_added_fav">%d个项目添加到收藏夹。</string>
     <string name="header_source">资源</string>
     <string name="header_destination">目的地</string>
     <string name="error_unsupported">不支持</string>
@@ -189,9 +159,8 @@
     <string name="text_copied_clipboard">复制到剪贴板。</string>
     <string name="analytics_text">发送分析</string>
     <string name="analytics_summary">通过发送匿名使用数据帮助我们改进应用程序。</string>
-    <string name="move_complete">移动完成</string>
-	
-	<string name="dual_pane_intro_title">双窗格</string>
+
+    <string name="dual_pane_intro_title">双窗格</string>
     <string name="dual_pane_intro_subtitle">双模式更好的可用性。</string>
     <string name="sort_name">名称</string>
     <string name="sort_type">类型</string>
@@ -203,21 +172,12 @@
     <string name="artists">艺术家</string>
     <string name="genres">流派</string>
     <string name="all_tracks">所有歌曲</string>
-    <string name="notifications">通知</string>
-    <string name="alarms">警报</string>
-    <string name="ringtones">手机铃声</string>
     <string name="podcasts">播客</string>
     <string name="mute">静音</string>
     <string name="unmute">取消静音</string>
-    <string name="nav_header_tools">工具</string>
     <string name="app_manager">应用管理器</string>
-    <string name="category">类别</string>
     <string name="unknown">未知</string>
     <string name="enabled">启用</string>
-    <string name="trash">垃圾</string>
     <string name="move_trash">移到废纸篓</string>
-    <string name="restore">恢复</string>
-    <string name="moving_title_trash">搬到垃圾箱</string>
-    <string name="restoring_title_trash">恢复</string>
 
 </resources>

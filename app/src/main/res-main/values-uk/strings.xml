@@ -16,8 +16,6 @@
 
 <resources>
     <string name="app_name">Ace Провідник</string>
-    <string name="navigation_drawer_open">Відкрити панель навігації</string>
-    <string name="navigation_drawer_close">Закрити панель навігації</string>
     <string name="action_settings">настройки</string>
     <string name="nav_menu_internal_storage">Внутрішня пам\'ять</string>
     <string name="nav_menu_root">корінь</string>
@@ -29,8 +27,6 @@
     <string name="nav_header_storages">сховища</string>
     <string name="nav_header_favourites">Вибране</string>
     <string name="nav_header_collections">бібліотека</string>
-    <string name="nav_header_others">інші</string>
-    <string name="msg_free">без</string>
     <string name="empty">порожній</string>
     <plurals name="number_of_files">
         <item quantity="one">%d файл</item>
@@ -49,8 +45,6 @@
     <string name="action_share">частка</string>
     <string name="msg_cut_copy">файл (и) копіюється в буфер обміну</string>
     <string name="msg_delete_success">успішно видалений</string>
-    <string name="msg_copy_failure">Чи не вдалося виконати копіювання</string>
-    <string name="msg_move_failure">Операція Move не вдалося</string>
     <string name="msg_delete_failure">Видалити операція не вдалася</string>
     <string name="dialog_skip">скакати</string>
     <string name="dialog_replace">заміщати</string>
@@ -67,17 +61,12 @@
     <string name="path">шлях:</string>
     <string name="size">Розмір:</string>
     <string name="date_modified">Дата зміни:</string>
-    <string name="hidden">приховані:</string>
-    <string name="readable">читаються:</string>
-    <string name="writeable">Writeable:</string>
-    <string name="md5">MD5:</string>
     <string name="permissions">Дозволи</string>
     <string name="yes">Так</string>
     <string name="no">Немає</string>
     <string name="properties">властивості</string>
     <string name="new_folder">Нова папка</string>
     <string name="new_file">новий файл</string>
-    <string name="rate_us">Оцініть нас</string>
     <string name="add_fav">Додати в обране</string>
     <string name="msg_added_to_fav">Додано в обране</string>
     <string name="msg_error_not_supported">Ні додаток не обробляти дії</string>
@@ -102,17 +91,13 @@
     <string name="pref_title_reset_fav">повалити обраний</string>
     <string name="pref_title_show_hidden">Показувати приховані файли</string>
     <string name="pref_title_disable_dual">Подвійна панель в ландшафтному</string>
-    <string name="pref_title_check_update">Перевірити наявність оновлень</string>
     <string name="pref_title_change_lang">Мова</string>
 
     <string name="hide">приховувати</string>
     <string name="unhide">Unhide</string>
-    <string name="more">більше</string>
     <string name="drag">лобове опір</string>
     <string name="move">переміщення</string>
     <string name="msg_fav_reset">Вибране обнулити за замовчуванням.</string>
-    <string name="pref_title_homescreen">Показати HomeScreen</string>
-    <string name="home_add">додавати</string>
     <string name="home_docs">документи</string>
     <string name="compressed">стиснутий</string>
     <string name="apk">додатки</string>
@@ -129,11 +114,8 @@
     <string name="needs_access_summary">Будь ласка, виберіть кореневий каталог %1$s, щоб надати доступ на запис
         для роботи</string>
     <string name="error">помилка</string>
-    <string name="completed">завершений</string>
     <string name="msg_operation_failed">Чи не вдалося виконати операцію</string>
-    <string name="selected">обраний</string>
     <string name="enter_name">Введіть ім\'я</string>
-    <string name="storage_low">недостатньо місця</string>
     <string name="paste_conflict_remember">запам\'ятати</string>
     <string name="copying">копіювання файлів</string>
     <string name="moving">переміщення файлів</string>
@@ -141,7 +123,6 @@
     <string name="view">вид</string>
     <string name="install">встановлювати</string>
     <string name="package_installer_content">Які дії ви хотіли б зробити?</string>
-    <string name="need_permission">потрібен дозвіл</string>
     <string name="permission_setting_hint">Натисніть Настройки -> Права доступу, а потім увімкніть зберігання на.</string>
     <string name="access_denied_external">Запис доступу до зовнішніх джерелами не SD надано</string>
     <string name="permission_read">зчитування</string>
@@ -162,30 +143,19 @@
     <string name="slide_4_title">теми</string>
     <string name="slide_4_desc">Темний або Світлий шлях! Ваш вибір.</string>
     <string name="no_music"> Ні музичних файлів</string>
-    <string name="fav_removed">Вилучені з обраного</string>
     <string name="img_accessibility_back">назад</string>
     <string name="img_accessibility_permission">дозвіл гранту</string>
-    <string name="img_accessibility_expand">Розгорнути або згорнути</string>
-    <string name="img_accessibility_brand">App логотип</string>
     <string name="img_accessibility_icon_lib">значок бібліотеки</string>
-    <string name="img_accessibility_storage_icon">значок зберігання</string>
-	<string name="unlock_full_version">Розблокувати повну версію</string>
+    <string name="unlock_full_version">Розблокувати повну версію</string>
     <string name="full_version_buy_ask">Повна версія видаляє настирливу рекламу. Хочете купити його?</string>
     <string name="dialog_title_picker">Виберіть музичний файл</string>
-	<string name="app_invite_title">App запросити</string>
-    <string name="app_invite_msg">Спробуйте цей прохолодний файловий менеджер !!</string>
-    <string name="app_invite_failed">Відправка запросить не вдалося.</string>
 
     <string name="browse">Перегляньте</string>
-    <string name="msg_error_unrooted">Керований доступ відхилено.</string>
-    <string name="billing_unsupported">Покупки через додаток не підтримуються на цьому пристрої.</string>
     <string name="action_more">Більше</string>
     <string name="directory">Довідник</string>
     <string name="operation">Операція</string>
-    <string name="extract_complete">Витяг виконано</string>
     <string name="clipboard">%d у буфері обміну</string>
     <string name="fav_exists">Улюблений вже існує.</string>
-    <string name="msg_added_fav">%d елементів додано до вибраного.</string>
     <string name="header_source">Джерело</string>
     <string name="header_destination">Місце призначення</string>
     <string name="error_unsupported">Не підтримується</string>
@@ -193,9 +163,8 @@
     <string name="text_copied_clipboard">Скопійовано в буфер обміну.</string>
     <string name="analytics_text">Надіслати аналітику</string>
     <string name="analytics_summary">Допоможіть нам покращити додаток, надіславши анонімні дані про використання.</string>
-    <string name="move_complete">Перемістити завершено</string>
-	
-	<string name="dual_pane_intro_title">Подвійна панель</string>
+
+    <string name="dual_pane_intro_title">Подвійна панель</string>
     <string name="dual_pane_intro_subtitle">Подвійний режим для кращої юзабіліті.</string>
     <string name="sort_name">Ім\'я</string>
     <string name="sort_type">Тип</string>
@@ -207,21 +176,12 @@
     <string name="artists">Художники</string>
     <string name="genres">Жанри</string>
     <string name="all_tracks">Всі пісні</string>
-    <string name="notifications">Сповіщення</string>
-    <string name="alarms">Сигналізація</string>
-    <string name="ringtones">Мелодії дзвінка</string>
     <string name="podcasts">Подкасти</string>
     <string name="mute">Вимкнути звук</string>
     <string name="unmute">Увімкнути звук</string>
-    <string name="nav_header_tools">Інструменти</string>
     <string name="app_manager">Менеджер програм</string>
-    <string name="category">Категорія</string>
     <string name="unknown">Невідомий</string>
     <string name="enabled">Увімкнено</string>
-    <string name="trash">Сміття</string>
     <string name="move_trash">Перемістити в кошик</string>
-    <string name="restore">Відновлення</string>
-    <string name="moving_title_trash">Переміщення в кошик</string>
-    <string name="restoring_title_trash">Відновлення</string>
 
 </resources>

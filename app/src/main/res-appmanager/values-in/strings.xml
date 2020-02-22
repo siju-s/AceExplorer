@@ -18,7 +18,6 @@
     <string name="app_detail">Detail app</string>
     <string name="uninstall">Uninstall</string>
     <string name="package_name">Nama paket</string>
-    <string name="version_name">Versi</string>
     <string name="installed_source">Sumber</string>
     <string name="min_sdk">Min SDK</string>
     <string name="target_sdk">Targetkan SDK</string>

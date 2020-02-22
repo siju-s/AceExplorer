@@ -16,8 +16,6 @@
 
 <resources>
     <string name="app_name">에이스 탐색기</string>
-    <string name="navigation_drawer_open">열기 탐색 창</string>
-    <string name="navigation_drawer_close">탐색 창 닫기</string>
     <string name="action_settings">설정</string>
     <string name="nav_menu_internal_storage">내부 저장</string>
     <string name="nav_menu_root">뿌리</string>
@@ -29,8 +27,6 @@
     <string name="nav_header_storages">창고</string>
     <string name="nav_header_favourites">즐겨 찾기</string>
     <string name="nav_header_collections">도서관</string>
-    <string name="nav_header_others">기타</string>
-    <string name="msg_free">무료</string>
     <string name="empty">빈</string>
     <plurals name="number_of_files">
         <item quantity="other">%d 파일</item>
@@ -46,8 +42,6 @@
     <string name="action_share">몫</string>
     <string name="msg_cut_copy">파일 (들)을 클립 보드에 복사</string>
     <string name="msg_delete_success">성공적으로 삭제</string>
-    <string name="msg_copy_failure">복사 작업이 실패</string>
-    <string name="msg_move_failure">이동 작업이 실패</string>
     <string name="msg_delete_failure">삭제 작업이 실패</string>
     <string name="dialog_skip">버킷</string>
     <string name="dialog_replace">바꾸다</string>
@@ -64,17 +58,12 @@
     <string name="path">통로:</string>
     <string name="size">크기:</string>
     <string name="date_modified">날짜 수정 된 항목 :</string>
-    <string name="hidden">숨겨진:</string>
-    <string name="readable">읽을 수 :</string>
-    <string name="writeable">쓰기 :</string>
-    <string name="md5">MD5 :</string>
     <string name="permissions">권한</string>
     <string name="yes">예</string>
     <string name="no">아니</string>
     <string name="properties">속성</string>
     <string name="new_folder">새 폴더</string>
     <string name="new_file">새 파일</string>
-    <string name="rate_us">요금 소개</string>
     <string name="add_fav">즐겨 찾기에 추가</string>
     <string name="msg_added_to_fav">즐겨 찾기에 추가</string>
     <string name="msg_error_not_supported">어떤 응용 프로그램은 작업을 처리 할 없습니다</string>
@@ -99,17 +88,13 @@
     <string name="pref_title_reset_fav">리셋 즐겨 찾기</string>
     <string name="pref_title_show_hidden">숨김 파일</string>
     <string name="pref_title_disable_dual">풍경 듀얼 창</string>
-    <string name="pref_title_check_update">업데이트 확인</string>
     <string name="pref_title_change_lang">언어</string>
 
     <string name="hide">숨는 장소</string>
     <string name="unhide">숨기기 해제</string>
-    <string name="more">더</string>
     <string name="drag">견인</string>
     <string name="move">움직임</string>
     <string name="msg_fav_reset">즐겨 찾기는 기본값으로 resetted.</string>
-    <string name="pref_title_homescreen">보기 홈 화면</string>
-    <string name="home_add">더하다</string>
     <string name="home_docs">문서</string>
     <string name="compressed">압축</string>
     <string name="apk">앱</string>
@@ -125,11 +110,8 @@
     <string name="needsaccess">액세스 필수 쓰기</string>
     <string name="needs_access_summary">작동 쓰기 액세스 권한을 부여  %1$s 의 루트 디렉토리를 선택하십시오</string>
     <string name="error">오류</string>
-    <string name="completed">완료</string>
     <string name="msg_operation_failed">작업이 실패</string>
-    <string name="selected">선택된</string>
     <string name="enter_name">이름을 입력</string>
-    <string name="storage_low">공간이 부족</string>
     <string name="paste_conflict_remember">생각해 내다</string>
     <string name="copying">파일 복사</string>
     <string name="moving">파일을 이동</string>
@@ -137,7 +119,6 @@
     <string name="view">전망</string>
     <string name="install">설치</string>
     <string name="package_installer_content">어떤 행동을하기를 원하십니까?</string>
-    <string name="need_permission">권한이 필요합니다</string>
     <string name="permission_setting_hint">탭 설정 -> 권한 및 다음에 저장을 켭니다.</string>
     <string name="access_denied_external">외부에 대한 쓰기 권한이 부여되지 않은 (SD)</string>
     <string name="permission_read">독서</string>
@@ -158,30 +139,19 @@
     <string name="slide_4_title">테마</string>
     <string name="slide_4_desc">어둡거나 밝은 방법! 당신의 선택입니다.</string>
     <string name="no_music"> 어떤 음악 파일 없음</string>
-    <string name="fav_removed">즐겨 찾기에서 제거</string>
     <string name="img_accessibility_back">뒤로</string>
     <string name="img_accessibility_permission">부여 권한</string>
-    <string name="img_accessibility_expand">확장 또는 축소</string>
-    <string name="img_accessibility_brand">앱 로고</string>
     <string name="img_accessibility_icon_lib">도서관 아이콘</string>
-    <string name="img_accessibility_storage_icon">저장 아이콘</string>
-	<string name="unlock_full_version">정식 버전 잠금 해제</string>
+    <string name="unlock_full_version">정식 버전 잠금 해제</string>
     <string name="full_version_buy_ask">가득 차있는 버전은 성가신 광고를 제거합니다. 그것을 사고 싶습니까?</string>
     <string name="dialog_title_picker">음악 파일 선택</string>
-	<string name="app_invite_title">앱 초대</string>
-    <string name="app_invite_msg">이 멋진 파일 관리자를 사용해보십시오 !!</string>
-    <string name="app_invite_failed">초대장 보내기가 실패했습니다.</string>
 
     <string name="browse">검색</string>
-    <string name="msg_error_unrooted">루트 액세스가 거부되었습니다.</string>
-    <string name="billing_unsupported">이 기기에서 지원되지 않는 인앱 구매입니다.</string>
     <string name="action_more">더</string>
     <string name="directory">예배 규칙서</string>
     <string name="operation">조작</string>
-    <string name="extract_complete">추출 완료</string>
     <string name="clipboard">클립 보드에 %d 개</string>
     <string name="fav_exists">즐겨 찾기가 이미 있습니다.</string>
-    <string name="msg_added_fav">%d 개의 항목이 즐겨 찾기에 추가되었습니다.</string>
     <string name="header_source">출처</string>
     <string name="header_destination">목적지</string>
     <string name="error_unsupported">지원되지 않음</string>
@@ -189,9 +159,8 @@
     <string name="text_copied_clipboard">클립 보드에 복사되었습니다.</string>
     <string name="analytics_text">애널리틱스 보내기</string>
     <string name="analytics_summary">익명의 사용 데이터를 보내 앱을 개선 할 수 있도록 도와주세요.</string>
-    <string name="move_complete">완료 완료</string>
-	
-	<string name="dual_pane_intro_title">이중 창</string>
+
+    <string name="dual_pane_intro_title">이중 창</string>
     <string name="dual_pane_intro_subtitle">더 나은 사용성을위한 듀얼 모드.</string>
     <string name="sort_name">이름</string>
     <string name="sort_type">유형</string>
@@ -203,21 +172,12 @@
     <string name="artists">연예인</string>
     <string name="genres">장르</string>
     <string name="all_tracks">모든 노래들</string>
-    <string name="notifications">알림</string>
-    <string name="alarms">경보</string>
-    <string name="ringtones">벨소리</string>
     <string name="podcasts">포드 캐스트</string>
     <string name="mute">묵자</string>
     <string name="unmute">음소거 해제</string>
-    <string name="nav_header_tools">도구들</string>
     <string name="app_manager">앱 매니저</string>
-    <string name="category">범주</string>
     <string name="unknown">알 수 없는</string>
     <string name="enabled">사용</string>
-    <string name="trash">폐물</string>
     <string name="move_trash">휴지통으로 이동</string>
-    <string name="restore">복원</string>
-    <string name="moving_title_trash">휴지통으로 이동</string>
-    <string name="restoring_title_trash">복원 중</string>
 
 </resources>

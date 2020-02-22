@@ -12,18 +12,8 @@
     <string name="nav_header_storages">Storages</string>
     <string name="nav_header_favourites">Favorites</string>
     <string name="nav_header_collections">Library</string>
-    <string name="nav_header_others">Others</string>
-    <string name="nav_header_tools">Tools</string>
     <string name="app_manager">App manager</string>
-    <string name="app_invite_title">App invite</string>
-    <string name="app_invite_msg">Try this cool file manager !!</string>
-    <string name="app_invite_failed">Sending invite failed.</string>
-    <string name="fav_removed">Removed from favorites</string>
-    <string name="rate_us">Rate Us</string>
     <string name="unlock_full_version">Unlock full version</string>
     <string name="full_version_buy_ask">Full version removes annoying ads. Do you want to buy it?</string>
-    <string name="img_accessibility_expand">Expand or Collapse</string>
-    <string name="img_accessibility_brand">App logo</string>
     <string name="img_accessibility_icon_lib">Library icon</string>
-    <string name="img_accessibility_storage_icon">Storage icon</string>
 </resources>

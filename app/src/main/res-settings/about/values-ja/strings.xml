@@ -17,6 +17,5 @@
 <resources>
     <string name="pref_title_about">私たちに関しては</string>
     <string name="pref_title_version">バージョン</string>
-    <string name="prefs_summary_dev">ディベロッパー</string>
     <string name="open_source_license">オープンソースライセンス</string>
 </resources>

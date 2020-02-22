@@ -16,8 +16,6 @@
 
 <resources>
     <string name="app_name">Άσσος Explorer</string>
-    <string name="navigation_drawer_open">Άνοιγμα συρταριού πλοήγησης</string>
-    <string name="navigation_drawer_close">Κλείστε το συρτάρι πλοήγησης</string>
     <string name="action_settings">Ρυθμίσεις</string>
     <string name="nav_menu_internal_storage">Εσωτερική αποθήκευση</string>
     <string name="nav_menu_root">Ρίζα</string>
@@ -29,8 +27,6 @@
     <string name="nav_header_storages">αποθηκεύσεις</string>
     <string name="nav_header_favourites">Αγαπημένα</string>
     <string name="nav_header_collections">Βιβλιοθήκη</string>
-    <string name="nav_header_others">άλλα</string>
-    <string name="msg_free">χωρίς</string>
     <string name="empty">Αδειάζω</string>
     <plurals name="number_of_files">
         <item quantity="one">%d αρχείο</item>
@@ -47,8 +43,6 @@
     <string name="action_share">Μερίδιο</string>
     <string name="msg_cut_copy">αρχείο (α) αντιγράφονται στο πρόχειρο</string>
     <string name="msg_delete_success">διαγράφηκε με επιτυχία</string>
-    <string name="msg_copy_failure">Αποτυχία λειτουργίας αντιγραφής</string>
-    <string name="msg_move_failure">λειτουργία μετακίνησης απέτυχε</string>
     <string name="msg_delete_failure">Διαγραφή λειτουργία απέτυχε</string>
     <string name="dialog_skip">Παραλείπω</string>
     <string name="dialog_replace">Αντικαθιστώ</string>
@@ -65,17 +59,12 @@
     <string name="path">Μονοπάτι:</string>
     <string name="size">Μέγεθος:</string>
     <string name="date_modified">Ημερομηνία τροποποίησης:</string>
-    <string name="hidden">Κεκρυμμένος:</string>
-    <string name="readable">Αναγνώσιμος:</string>
-    <string name="writeable">εγγράψιμο:</string>
-    <string name="md5">MD5:</string>
     <string name="permissions">δικαιώματα</string>
     <string name="yes">Ναί</string>
     <string name="no">Όχι</string>
     <string name="properties">Ιδιότητες</string>
     <string name="new_folder">Νέος φάκελος</string>
     <string name="new_file">νέο αρχείο</string>
-    <string name="rate_us">Βαθμολογήστε μας</string>
     <string name="add_fav">Προσθήκη στα αγαπημένα</string>
     <string name="msg_added_to_fav">Προστέθηκε στα Αγαπημένα</string>
     <string name="msg_error_not_supported">Όχι εφαρμογή για να χειριστεί την δράση</string>
@@ -101,17 +90,13 @@
     <string name="pref_title_reset_fav">επαναφορά αγαπημένα</string>
     <string name="pref_title_show_hidden">Εμφάνιση κρυφών αρχείων</string>
     <string name="pref_title_disable_dual">Διπλή παράθυρο στο τοπίο</string>
-    <string name="pref_title_check_update">Έλεγχος για ενημερώσεις</string>
     <string name="pref_title_change_lang">Άλλαξε γλώσσα</string>
 
     <string name="hide">Κρύβω</string>
     <string name="unhide">Επανεμφάνιση</string>
-    <string name="more">περισσότερο</string>
     <string name="drag">Σέρνω</string>
     <string name="move">Κίνηση</string>
     <string name="msg_fav_reset">Αγαπημένα resetted στην προεπιλογή.</string>
-    <string name="pref_title_homescreen">Εμφάνιση homescreen</string>
-    <string name="home_add">Προσθέτω</string>
     <string name="home_docs">Έγγραφα</string>
     <string name="compressed">συμπιεσμένο</string>
     <string name="apk">εφαρμογές</string>
@@ -128,11 +113,8 @@
     <string name="needs_access_summary">Παρακαλώ επιλέξτε το ριζικό του %1$s να επιτρέψει την πρόσβαση εγγραφής για
         να λειτουργήσει</string>
     <string name="error">Λάθος</string>
-    <string name="completed">Ολοκληρώθηκε το</string>
     <string name="msg_operation_failed">Η λειτουργία απέτυχε</string>
-    <string name="selected">επιλεγμένα</string>
     <string name="enter_name">Πληκτρολογήστε το όνομα</string>
-    <string name="storage_low">ανεπαρκής χώρος</string>
     <string name="paste_conflict_remember">Θυμάμαι</string>
     <string name="copying">αντιγραφή αρχείων</string>
     <string name="moving">μετακίνηση αρχείων</string>
@@ -140,7 +122,6 @@
     <string name="view">Θέα</string>
     <string name="install">Εγκαθιστώ</string>
     <string name="package_installer_content">Ποια μέτρα θα θέλατε να κάνετε;</string>
-    <string name="need_permission">χρειάζεται άδεια</string>
     <string name="permission_setting_hint">Πατήστε Ρυθμίσεις -> Δικαιώματα και στη συνέχεια ενεργοποιήστε Αποθήκευση σε.</string>
     <string name="access_denied_external">Γράψτε την πρόσβαση σε εξωτερικές δεν SD χορηγηθεί</string>
     <string name="permission_read">Διαβάζω</string>
@@ -160,30 +141,19 @@
     <string name="slide_4_title">θέματα</string>
     <string name="slide_4_desc">Σκούρο ή φως τρόπο! Επιλογή σου.</string>
     <string name="no_music"> Δεν υπάρχουν αρχεία μουσικής</string>
-    <string name="fav_removed">Καταργήθηκε από τα αγαπημένα</string>
     <string name="img_accessibility_back">Πίσω</string>
     <string name="img_accessibility_permission">να χορηγήσει άδεια</string>
-    <string name="img_accessibility_expand">Ανάπτυξη ή σύμπτυξη</string>
-    <string name="img_accessibility_brand">App logo</string>
     <string name="img_accessibility_icon_lib">εικονίδιο βιβλιοθήκη</string>
-    <string name="img_accessibility_storage_icon">εικονίδιο αποθήκευσης</string>
-	<string name="unlock_full_version">Ξεκλειδώστε πλήρη έκδοση</string>
+    <string name="unlock_full_version">Ξεκλειδώστε πλήρη έκδοση</string>
     <string name="full_version_buy_ask">Η πλήρης έκδοση αφαιρεί τις ενοχλητικές διαφημίσεις. Θέλετε να το αγοράσει;</string>
     <string name="dialog_title_picker">Επιλέξτε το αρχείο μουσικής</string>
-	<string name="app_invite_title">App προσκαλούν</string>
-    <string name="app_invite_msg">Δοκιμάστε αυτό το δροσερό διαχειριστή αρχείων !!</string>
-    <string name="app_invite_failed">Η αποστολή απέτυχε Πρόσκληση.</string>
 
     <string name="browse">Ξεφυλλίζω</string>
-    <string name="msg_error_unrooted">Η πρόσβαση στην ρίζα απορρίφθηκε.</string>
-    <string name="billing_unsupported">Οι αγορές εντός εφαρμογής δεν υποστηρίζονται σε αυτήν τη συσκευή.</string>
     <string name="action_more">Περισσότερο</string>
     <string name="directory">Ευρετήριο</string>
     <string name="operation">Λειτουργία</string>
-    <string name="extract_complete">Το απόσπασμα ολοκληρώθηκε</string>
     <string name="clipboard">%d στο πρόχειρο</string>
     <string name="fav_exists">Το αγαπημένο υπάρχει ήδη.</string>
-    <string name="msg_added_fav">%d αντικείμενα που προστέθηκαν στα Αγαπημένα.</string>
     <string name="header_source">Πηγή</string>
     <string name="header_destination">Προορισμός</string>
     <string name="error_unsupported">Δεν υποστηρίζεται</string>
@@ -191,10 +161,9 @@
     <string name="text_copied_clipboard">Αντιγραφή στο πρόχειρο.</string>
     <string name="analytics_text">Αποστολή αναλυτικών στοιχείων</string>
     <string name="analytics_summary">Βοηθήστε μας να βελτιώσουμε την εφαρμογή αποστέλλοντας ανώνυμα δεδομένα χρήσης.</string>
-    <string name="move_complete">Μετακίνηση Ολοκληρώθηκε</string>
-	
-	
-	<string name="dual_pane_intro_title">Διπλό παράθυρο</string>
+
+
+    <string name="dual_pane_intro_title">Διπλό παράθυρο</string>
     <string name="dual_pane_intro_subtitle">Διπλή λειτουργία για καλύτερη χρηστικότητα.</string>
     <string name="sort_name">Ονομα</string>
     <string name="sort_type">Τύπος</string>
@@ -206,21 +175,12 @@
     <string name="artists">Καλλιτέχνες</string>
     <string name="genres">Genres</string>
     <string name="all_tracks">Ολα τα τραγούδια</string>
-    <string name="notifications">Ειδοποιήσεις</string>
-    <string name="alarms">Συναγερμός</string>
-    <string name="ringtones">Ήχοι κλήσης</string>
     <string name="podcasts">Podcasts</string>
     <string name="mute">Βουβός</string>
     <string name="unmute">Αναίρεση σίγασης</string>
-    <string name="nav_header_tools">Εργαλεία</string>
     <string name="app_manager">Διαχειριστής εφαρμογής</string>
-    <string name="category">Κατηγορία</string>
     <string name="unknown">Αγνωστος</string>
     <string name="enabled">Ενεργοποιήθηκε</string>
-    <string name="trash">Σκουπίδια</string>
     <string name="move_trash">Μετακίνηση σε Κάδο απορριμμάτων</string>
-    <string name="restore">Επαναφέρω</string>
-    <string name="moving_title_trash">Μετακίνηση σε Κάδο απορριμμάτων</string>
-    <string name="restoring_title_trash">Επαναφορά</string>
 
 </resources>

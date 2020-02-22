@@ -17,6 +17,5 @@
 <resources>
     <string name="pref_title_about">Oor ons</string>
     <string name="pref_title_version">weergawe</string>
-    <string name="prefs_summary_dev">Ontwikkelaar</string>
     <string name="open_source_license">Open source lisensies</string>
  </resources>

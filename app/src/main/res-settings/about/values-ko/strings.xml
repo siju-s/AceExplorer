@@ -17,6 +17,5 @@
 <resources>
     <string name="pref_title_about">회사 소개</string>
     <string name="pref_title_version">번역</string>
-    <string name="prefs_summary_dev">개발자</string>
     <string name="open_source_license">오픈 소스 라이센스</string>
 </resources>

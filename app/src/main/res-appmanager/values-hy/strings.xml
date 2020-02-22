@@ -18,7 +18,6 @@
     <string name="app_detail">Հավելվածի մանրամասն</string>
     <string name="uninstall">Տեղահանեք</string>
     <string name="package_name">Փաթեթի անունը</string>
-    <string name="version_name">Տարբերակ</string>
     <string name="installed_source">Աղբյուրը</string>
     <string name="min_sdk">Min SDK- ն</string>
     <string name="target_sdk">Թիրախային SDK</string>

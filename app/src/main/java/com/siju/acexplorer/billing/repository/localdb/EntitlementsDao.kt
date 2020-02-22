@@ -37,12 +37,6 @@ interface EntitlementsDao {
     @Delete
     fun delete(premium: Premium)
 
-
-    /**
-     * This is purely for convenience. The clients of this DAO don't have to discriminate among
-     * [GasTank] vs [Premium] vs [GoldStatus] but can simply send in a list of
-     * [entitlements][Entitlement].
-     */
     @Transaction
     fun insert(vararg entitlements: Entitlement) {
         entitlements.forEach {

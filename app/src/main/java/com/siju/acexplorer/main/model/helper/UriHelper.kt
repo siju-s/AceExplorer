@@ -16,13 +16,9 @@
 
 package com.siju.acexplorer.main.model.helper
 
-import android.annotation.SuppressLint
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.provider.BaseColumns
-import android.provider.MediaStore
 import androidx.core.content.FileProvider
 import com.siju.acexplorer.R
 import com.siju.acexplorer.main.model.helper.IntentResolver.canHandleIntent
@@ -54,30 +50,4 @@ object UriHelper {
             false
         }
     }
-
-    @SuppressLint("Recycle")
-    fun getUriFromFile(path: String, context: Context): Uri? {
-        val resolver = context.contentResolver
-        val cursor = resolver.query(MediaStore.Files.getContentUri("external"),
-                                        arrayOf(BaseColumns._ID),
-                                        MediaStore.MediaColumns.DATA + " = ?",
-                                        arrayOf(path), MediaStore.MediaColumns.DATE_ADDED + " desc")
-                ?: return null
-
-        cursor.moveToFirst()
-        return if (cursor.isAfterLast) {
-            cursor.close()
-            val values = ContentValues()
-            values.put(MediaStore.MediaColumns.DATA, path)
-            resolver.insert(MediaStore.Files.getContentUri("external"), values)
-        }
-        else {
-            val imageId = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID))
-            cursor.close()
-            val uri = MediaStore.Files.getContentUri("external").buildUpon().appendPath(
-                    imageId.toString()).build()
-            uri
-        }
-    }
-
 }

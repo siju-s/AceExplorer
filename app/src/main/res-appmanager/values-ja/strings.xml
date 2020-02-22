@@ -18,7 +18,6 @@
     <string name="app_detail">アプリの詳細</string>
     <string name="uninstall">アンインストール</string>
     <string name="package_name">パッケージ名</string>
-    <string name="version_name">バージョン</string>
     <string name="installed_source">ソース</string>
     <string name="min_sdk">最小SDK</string>
     <string name="target_sdk">ターゲットSDK</string>

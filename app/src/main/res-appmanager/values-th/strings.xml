@@ -18,7 +18,6 @@
     <string name="app_detail">รายละเอียดแอป</string>
     <string name="uninstall">ถอนการติดตั้ง</string>
     <string name="package_name">ชื่อแพ็กเกจ</string>
-    <string name="version_name">รุ่น</string>
     <string name="installed_source">แหล่ง</string>
     <string name="min_sdk">SDK ขั้นต่ำ</string>
     <string name="target_sdk">กำหนดเป้าหมาย SDK</string>

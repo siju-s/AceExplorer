@@ -18,7 +18,6 @@
     <string name="app_detail">Детальна інформація про програму</string>
     <string name="uninstall">Видалити</string>
     <string name="package_name">Назва пакета</string>
-    <string name="version_name">Версія</string>
     <string name="installed_source">Джерело</string>
     <string name="min_sdk">Міні SDK</string>
     <string name="target_sdk">Цільовий SDK</string>

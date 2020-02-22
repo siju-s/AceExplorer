@@ -31,7 +31,6 @@ class HomeLibAdapter internal constructor(private val clickListener: (HomeLibrar
         private var imageLibrary: ImageView = itemView.findViewById(R.id.imageLibrary)
         private var textLibraryName: TextView = itemView.findViewById(R.id.textLibrary)
         private var textCount: TextView = itemView.findViewById(R.id.textCount)
-        private var imageDone: ImageView = itemView.findViewById(R.id.imageDone)
 
         fun bind(item: HomeLibraryInfo, clickListener: (HomeLibraryInfo) -> Unit) {
             imageLibrary.setImageResource(item.resourceId)

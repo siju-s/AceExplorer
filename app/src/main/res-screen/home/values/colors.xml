@@ -1,19 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Colors for library items in Homescreen -->
-    <color name="audio_bg_dark">#8B2252</color>
-    <color name="video_bg_dark">#74489d</color>
-    <color name="image_bg_dark">#458B74</color>
-    <color name="docs_bg_dark">#1e91d0</color>
-    <color name="downloads_bg_dark">#3266cc</color>
-    <color name="add_bg_dark">#ff9933</color>
-    <color name="compressed_bg_dark">#00a3b6</color>
-    <color name="fav_bg_dark">#a70048</color>
-    <color name="pdf_bg_dark">#bf3c4e</color>
-    <color name="apps_bg_dark">#006600</color>
-    <color name="large_files_bg_dark">#cd0067</color>
-    <color name="gif_bg_dark">#DAA520</color>
-    <color name="recents_bg_dark">#8a36b5</color>
     <color name="home_storage_card_bg_color">#80262626</color>
     <color name="home_card_image_bg">#595959</color>
 </resources>

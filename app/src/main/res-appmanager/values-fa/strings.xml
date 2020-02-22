@@ -18,7 +18,6 @@
     <string name="app_detail">جزئیات برنامه</string>
     <string name="uninstall">حذف کردن</string>
     <string name="package_name">نام بسته</string>
-    <string name="version_name">نسخه</string>
     <string name="installed_source">منبع</string>
     <string name="min_sdk">حداقل SDK</string>
     <string name="target_sdk">هدف SDK</string>

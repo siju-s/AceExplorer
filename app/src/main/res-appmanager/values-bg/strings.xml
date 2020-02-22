@@ -18,7 +18,6 @@
     <string name="app_detail">Подробности за приложението</string>
     <string name="uninstall">Uninstall</string>
     <string name="package_name">Име на пакета</string>
-    <string name="version_name">версия</string>
     <string name="installed_source">източник</string>
     <string name="min_sdk">Мин. SDK</string>
     <string name="target_sdk">Целеви SDK</string>

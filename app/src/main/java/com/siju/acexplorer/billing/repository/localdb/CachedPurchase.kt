@@ -39,7 +39,7 @@ import com.android.billingclient.api.Purchase
  *
  * While it would be more natural to simply call this class "Purchase," that might confuse new
  * developers to your team since [BillingClient] already calls its data [Purchase]. So it's better
- * to give it a different name. Also recall that [BillingRepository] must handle three different
+ * to give it a different name. Also recall that [com.siju.acexplorer.billing.repository.BillingRepository] must handle three different
  * data sources. So letting each source call its data by a slightly different name might make
  * reading the code easier.
  */

@@ -16,24 +16,12 @@
 package com.siju.acexplorer.main.model
 
 object FileConstants {
-    const val PREFS_HIDDEN = "prefHidden"
     const val PREFS_DUAL_PANE = "prefDualPane"
-    const val PREFS_HOMESCREEN = "prefHomeScreen"
     const val PREFS_RESET = "prefsReset"
     const val PREFS_FIRST_RUN = "first_app_run"
-    const val PREFS_VIEW_MODE = "view_mode"
-    const val PREFS_TRASH = "prefTrash"
-    const val PREFS_ADD_RECENT = "recent_add_default"
     const val SAF_URI = "saf_uri"
     const val KEY_PATH = "PATH"
-    const val KEY_LIB_SORTLIST = "LIB_LIST"
-    const val KEY_GRID_COLUMNS = "grid_columns"
-    const val KEY_POSITION = "position"
-    const val KEY_OFFSET = "offset"
     const val APK_EXTENSION = "apk"
-    const val KEY_CATEGORY = "Category"
-    const val KEY_PREMIUM = "PREMIUM"
-    const val KEY_ZIP = "ZIP"
     const val KEY_SORT_MODE = "sort_mode"
     const val KEY_SORT_NAME = 0
     /********** DOCUMENT EXTENSIONS */
@@ -51,6 +39,4 @@ object FileConstants {
     const val EXT_TAR = "tar"
     const val EXT_TGZ = "tgz"
     const val EXT_RAR = "rar"
-    const val ADS = "ACTION_ADS"
-    const val EXT_GIF = "gif"
 }

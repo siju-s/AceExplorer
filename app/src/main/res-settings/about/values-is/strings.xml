@@ -17,6 +17,5 @@
 <resources>
     <string name="pref_title_about">Um okkur</string>
     <string name="pref_title_version">útgáfa</string>
-    <string name="prefs_summary_dev">Hönnuður</string>
     <string name="open_source_license">Opinn uppspretta leyfi</string>
 </resources>

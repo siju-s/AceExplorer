@@ -17,6 +17,5 @@
 <resources>
     <string name="pref_title_about">עלינו</string>
     <string name="pref_title_version">גִרְסָה</string>
-    <string name="prefs_summary_dev">מפתח</string>
     <string name="open_source_license">רישיונות קוד פתוח</string>
 </resources>

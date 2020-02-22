@@ -19,12 +19,4 @@ package com.siju.acexplorer.home.types
 import com.siju.acexplorer.main.model.groups.Category
 
 data class HomeLibraryInfo(var category: Category, var categoryName: String?, var resourceId: Int, var count: Int = 0,
-                           var path : String? = null) {
-
-    companion object {
-        fun createCategoryWithPath(category: Category, categoryName: String?, resourceId: Int, count: Int = 0,
-                                   path : String?) : HomeLibraryInfo {
-            return HomeLibraryInfo(category, categoryName, resourceId, count, path)
-        }
-    }
-}
+                           var path : String? = null)

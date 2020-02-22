@@ -2,9 +2,7 @@
 <resources>
     <string name="pref_title_about">About Us</string>
     <string name="pref_title_version">Version</string>
-    <string name="prefs_summary_dev">Developer</string>
     <string name="open_source_license">Open source licenses</string>
     <string name="privacy_policy">Privacy Policy</string>
 
-    <string name="dev_name" translatable="false">Siju</string>
 </resources>

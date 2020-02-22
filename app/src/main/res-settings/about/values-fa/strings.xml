@@ -17,6 +17,5 @@
 <resources>
     <string name="pref_title_about">دربارهی ما</string>
     <string name="pref_title_version">نسخه</string>
-    <string name="prefs_summary_dev">توسعه دهنده</string>
     <string name="open_source_license">مجوزهای منبع باز</string>
 </resources>

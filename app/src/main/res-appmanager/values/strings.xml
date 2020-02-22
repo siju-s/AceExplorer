@@ -3,7 +3,6 @@
     <string name="app_detail">App detail</string>
     <string name="uninstall">Uninstall</string>
     <string name="package_name">Package name</string>
-    <string name="version_name">Version</string>
     <string name="installed_source">Source</string>
     <string name="min_sdk">Min OS Version</string>
     <string name="target_sdk">Target OS Version</string>

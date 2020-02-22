@@ -16,11 +16,9 @@
 
 package com.siju.acexplorer.storage.model
 
-import android.content.Intent
 import android.net.Uri
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
-import com.siju.acexplorer.main.view.dialog.DialogHelper
 import com.siju.acexplorer.storage.model.operations.OperationHelper
 import com.siju.acexplorer.storage.model.operations.Operations
 
@@ -29,90 +27,11 @@ import com.siju.acexplorer.storage.model.operations.Operations
  */
 interface StorageModel {
 
-//    val userPrefs: Bundle
-//
-//    val sortMode: Int
-//
-//
-//    fun setListener(listener: Listener)
-//
-//    fun startPasteOperation(currentDir: String, isMove: Boolean, rooted: Boolean, info: ArrayList<FileInfo>)
-//
-//
-//    fun handleSAFResult(operationIntent: Intent, treeUri: Uri, rooted: Boolean, flags: Int)
-//
-//    fun saveOldSAFUri(path: String)
-//
-//    fun createDir(currentDir: String, name: String, rooted: Boolean)
-//
-//    fun createFile(currentDir: String, name: String, rooted: Boolean)
-//
-//    fun deleteFiles(filesToDelete: ArrayList<FileInfo>)
-//
-//    fun onExtractPositiveClick(currentFilePath: String, newFileName: String, isChecked: Boolean,
-//                               selectedPath: String)
-//
-//    fun hideUnHideFiles(infoList: ArrayList<FileInfo>, pos: ArrayList<Int>)
-//
-//    fun getFilePermissions(filePath: String, directory: Boolean)
-//
-//    fun persistSortMode(position: Int)
-//
-//    fun persistTrashState(value: Boolean)
-//
-//    fun onCompressFile(newFilePath: String, paths: ArrayList<FileInfo>)
-//
-//    fun setPermissions(path: String, isDir: Boolean, permissions: String)
-//
-//    fun saveSettingsOnExit(gridCols: Int, viewMode: Int)
-//
-//    fun updateFavorites(favInfoArrayList: ArrayList<FavInfo>)
-//
-//    fun renameFile(filePath: String, newFilePath: String, name: String, rooted: Boolean)
-//
-//    fun moveToTrash(filesToDelete: ArrayList<FileInfo>, trashDir: String)
-
     fun loadData(path: String?, category: Category) : ArrayList<FileInfo>
     fun getViewMode(): ViewMode
     fun saveViewMode(viewMode: ViewMode?)
     fun shouldShowHiddenFiles() : Boolean
     fun onExit()
-
-
-    interface Listener {
-
-        fun showSAFDialog(path: String, data: Intent)
-
-        fun onFileExists(operation: Operations, msg: String)
-
-        fun showConflictDialog(conflictFiles: List<FileInfo>,
-                               destFiles: List<FileInfo>, destinationDir: String, isMove: Boolean,
-                               pasteConflictListener: DialogHelper.PasteConflictListener)
-
-        fun onLowSpace()
-
-        fun showPasteProgressDialog(destinationDir: String, files: List<FileInfo>, copyData: List<PasteActionInfo>, isMove: Boolean)
-
-        fun onOperationFailed(operation: Operations)
-
-        fun onInvalidName(extract: Operations)
-
-        fun dismissDialog(operation: Operations)
-
-        fun onPermissionsFetched(permissionList: ArrayList<Array<Boolean>>)
-
-        fun onPermissionSetError()
-
-        fun onPermissionsSet()
-
-        fun showExtractDialog(intent: Intent)
-
-        fun onFavExists()
-
-        fun onFavAdded(count: Int)
-
-        fun showZipProgressDialog(files: ArrayList<FileInfo>, absolutePath: String)
-    }
 
     fun saveHiddenFileSetting(value: Boolean)
     fun getSortMode(): SortMode

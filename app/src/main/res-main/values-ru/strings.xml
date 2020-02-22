@@ -16,8 +16,6 @@
 
 <resources>
     <string name="app_name">Ace Проводник</string>
-    <string name="navigation_drawer_open">Открыть панель навигации</string>
-    <string name="navigation_drawer_close">Закрыть панель навигации</string>
     <string name="action_settings">настройки</string>
     <string name="nav_menu_internal_storage">Внутреннее хранилище</string>
     <string name="nav_menu_root">корень</string>
@@ -29,8 +27,6 @@
     <string name="nav_header_storages">Хранилища</string>
     <string name="nav_header_favourites">Избранное</string>
     <string name="nav_header_collections">Библиотека</string>
-    <string name="nav_header_others">другие</string>
-    <string name="msg_free">без</string>
     <string name="empty">пустой</string>
     <plurals name="number_of_files">
         <item quantity="one">%d файл</item>
@@ -49,8 +45,6 @@
     <string name="action_share">Поделиться</string>
     <string name="msg_cut_copy">файл (ы) копируется в буфер обмена</string>
     <string name="msg_delete_success">успешно удален</string>
-    <string name="msg_copy_failure">Не удалось выполнить копирование</string>
-    <string name="msg_move_failure">Операция Move не удалось</string>
     <string name="msg_delete_failure">Удалить операция не удалась</string>
     <string name="dialog_skip">Пропускать</string>
     <string name="dialog_replace">замещать</string>
@@ -67,17 +61,12 @@
     <string name="path">Дорожка:</string>
     <string name="size">Размер:</string>
     <string name="date_modified">Дата изменена:</string>
-    <string name="hidden">Скрытые:</string>
-    <string name="readable">Удобочитаемый:</string>
-    <string name="writeable">Writeable:</string>
-    <string name="md5">MD5:</string>
     <string name="permissions">Разрешения</string>
     <string name="yes">да</string>
     <string name="no">Нет</string>
     <string name="properties">свойства</string>
     <string name="new_folder">Новая папка</string>
     <string name="new_file">Новый файл</string>
-    <string name="rate_us">Оцените нас</string>
     <string name="add_fav">Добавить в избранное</string>
     <string name="msg_added_to_fav">Добавлено в избранное</string>
     <string name="msg_error_not_supported">Нет приложение не обрабатывать действия</string>
@@ -102,17 +91,13 @@
     <string name="pref_title_reset_fav">Сбросить избранное</string>
     <string name="pref_title_show_hidden">Показать скрытые файлы</string>
     <string name="pref_title_disable_dual">Двойная панель в ландшафтном</string>
-    <string name="pref_title_check_update">Проверить наличие обновлений</string>
     <string name="pref_title_change_lang">язык</string>
 
     <string name="hide">Спрятать</string>
     <string name="unhide">Unhide</string>
-    <string name="more">Больше</string>
     <string name="drag">Бремя</string>
     <string name="move">Переехать</string>
     <string name="msg_fav_reset">Избранное обнулить по умолчанию.</string>
-    <string name="pref_title_homescreen">Показать HomeScreen</string>
-    <string name="home_add">Добавить</string>
     <string name="home_docs">Документы</string>
     <string name="compressed">Сжатый</string>
     <string name="apk">Программы</string>
@@ -129,11 +114,8 @@
     <string name="needs_access_summary">Пожалуйста, выберите корневой каталог %1$s, чтобы предоставить доступ на
         запись для работы</string>
     <string name="error">ошибка</string>
-    <string name="completed">Завершенный</string>
     <string name="msg_operation_failed">Операция не удалась</string>
-    <string name="selected">выбранный</string>
     <string name="enter_name">Введите имя</string>
-    <string name="storage_low">Недостаточно места</string>
     <string name="paste_conflict_remember">Запомнить</string>
     <string name="copying">Копирование файлов</string>
     <string name="moving">Перемещение файлов</string>
@@ -141,7 +123,6 @@
     <string name="view">Посмотреть</string>
     <string name="install">устанавливать</string>
     <string name="package_installer_content">Какие действия вы хотели бы сделать?</string>
-    <string name="need_permission">Требуется разрешение</string>
     <string name="permission_setting_hint">Нажмите Настройки -> Права доступа, а затем включите хранение на.</string>
     <string name="access_denied_external">Запись доступа к внешним источникам не SD предоставлено</string>
     <string name="permission_read">Читать</string>
@@ -162,30 +143,19 @@
     <string name="slide_4_title">Темы</string>
     <string name="slide_4_desc">Темный или Светлый путь! Твой выбор.</string>
     <string name="no_music"> Нет музыкальных файлов</string>
-    <string name="fav_removed">Удалены из избранного</string>
     <string name="img_accessibility_back">назад</string>
     <string name="img_accessibility_permission">разрешение гранта</string>
-    <string name="img_accessibility_expand">Развернуть или свернуть</string>
-    <string name="img_accessibility_brand">App логотип</string>
     <string name="img_accessibility_icon_lib">значок библиотеки</string>
-    <string name="img_accessibility_storage_icon">значок хранения</string>
-	<string name="unlock_full_version">Разблокировать полную версию</string>
+    <string name="unlock_full_version">Разблокировать полную версию</string>
     <string name="full_version_buy_ask">Полная версия удаляет назойливую рекламу. Вы хотите купить?</string>
     <string name="dialog_title_picker">Выберите музыкальный файл</string>
-	<string name="app_invite_title">App пригласить</string>
-    <string name="app_invite_msg">Попробуйте этот прохладный файловый менеджер !!</string>
-    <string name="app_invite_failed">Отправка пригласит не удалось.</string>
 
     <string name="browse">Просматривать</string>
-    <string name="msg_error_unrooted">Запрет доступа к корням.</string>
-    <string name="billing_unsupported">Покупки в приложении не поддерживаются на этом устройстве.</string>
     <string name="action_more">Больше</string>
     <string name="directory">каталог</string>
     <string name="operation">операция</string>
-    <string name="extract_complete">Экстракт завершен</string>
     <string name="clipboard">%d в буфере обмена</string>
     <string name="fav_exists">Фаворит уже существует.</string>
-    <string name="msg_added_fav">%d элементов добавлено в Избранное.</string>
     <string name="header_source">Источник</string>
     <string name="header_destination">Место назначения</string>
     <string name="error_unsupported">Не поддерживается</string>
@@ -193,9 +163,8 @@
     <string name="text_copied_clipboard">Скопировано в буфер обмена.</string>
     <string name="analytics_text">Отправить аналитику</string>
     <string name="analytics_summary">Помогите нам улучшить приложение, отправив данные анонимного использования.</string>
-    <string name="move_complete">Переместить завершено</string>
-	
-	<string name="dual_pane_intro_title">Двойная панель</string>
+
+    <string name="dual_pane_intro_title">Двойная панель</string>
     <string name="dual_pane_intro_subtitle">Двойной режим для лучшего удобства использования.</string>
     <string name="sort_name">имя</string>
     <string name="sort_type">Тип</string>
@@ -207,21 +176,12 @@
     <string name="artists">Художники</string>
     <string name="genres">Жанры</string>
     <string name="all_tracks">Все песни</string>
-    <string name="notifications">Уведомления</string>
-    <string name="alarms">сигнализация</string>
-    <string name="ringtones">Мелодии</string>
     <string name="podcasts">Подкасты</string>
     <string name="mute">безгласный</string>
     <string name="unmute">Unmute</string>
-    <string name="nav_header_tools">инструменты</string>
     <string name="app_manager">Менеджер приложений</string>
-    <string name="category">категория</string>
     <string name="unknown">неизвестный</string>
     <string name="enabled">Включено</string>
-    <string name="trash">дрянь</string>
     <string name="move_trash">Переместить в корзину</string>
-    <string name="restore">Восстановить</string>
-    <string name="moving_title_trash">Перемещение в корзину</string>
-    <string name="restoring_title_trash">Восстановление</string>
 
 </resources>

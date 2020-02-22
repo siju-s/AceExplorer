@@ -16,8 +16,6 @@
 
 <resources>
     <string name="app_name">エースエクスプローラ</string>
-    <string name="navigation_drawer_open">オープンナビゲーションドロワー</string>
-    <string name="navigation_drawer_close">ナビゲーションドロワーを閉じます</string>
     <string name="action_settings">設定</string>
     <string name="nav_menu_internal_storage">内部記憶装置</string>
     <string name="nav_menu_root">ルート</string>
@@ -29,8 +27,6 @@
     <string name="nav_header_storages">ストレージ</string>
     <string name="nav_header_favourites">お気に入り</string>
     <string name="nav_header_collections">ライブラリ</string>
-    <string name="nav_header_others">他人</string>
-    <string name="msg_free">無料</string>
     <string name="empty">空の</string>
     <plurals name="number_of_files">
         <item quantity="other">%d ファイル</item>
@@ -46,8 +42,6 @@
     <string name="action_share">シェア</string>
     <string name="msg_cut_copy">ファイル（複数可）をクリップボードにコピー</string>
     <string name="msg_delete_success">正常に削除されました</string>
-    <string name="msg_copy_failure">コピー操作が失敗しました。</string>
-    <string name="msg_move_failure">移動操作が失敗しました。</string>
     <string name="msg_delete_failure">削除操作に失敗しました</string>
     <string name="dialog_skip">スキップ</string>
     <string name="dialog_replace">置き換える</string>
@@ -64,17 +58,12 @@
     <string name="path">パス：</string>
     <string name="size">サイズ：</string>
     <string name="date_modified">日付が変更されました：</string>
-    <string name="hidden">隠されています：</string>
-    <string name="readable">読み取り可能：</string>
-    <string name="writeable">書き込み可能：</string>
-    <string name="md5">MD5：</string>
     <string name="permissions">パーミッション</string>
     <string name="yes">はい</string>
     <string name="no">いいえ</string>
     <string name="properties">プロパティ</string>
     <string name="new_folder">新規フォルダ</string>
     <string name="new_file">新しいファイル</string>
-    <string name="rate_us">私たちを評価してください</string>
     <string name="add_fav">お気に入りに追加</string>
     <string name="msg_added_to_fav">お気に入りに追加しました</string>
     <string name="msg_error_not_supported">アクションを処理するために、いいえアプリはありません</string>
@@ -99,17 +88,13 @@
     <string name="pref_title_reset_fav">お気に入りをリセット</string>
     <string name="pref_title_show_hidden">隠しファイルを表示</string>
     <string name="pref_title_disable_dual">風景の中にデュアルペイン</string>
-    <string name="pref_title_check_update">アップデートを確認</string>
     <string name="pref_title_change_lang">言語</string>
 
     <string name="hide">隠す</string>
     <string name="unhide">再表示</string>
-    <string name="more">もっと</string>
     <string name="drag">ドラッグ</string>
     <string name="move">移動</string>
     <string name="msg_fav_reset">デフォルトにresettedお気に入り。</string>
-    <string name="pref_title_homescreen">ショーのホーム画面</string>
-    <string name="home_add">加えます</string>
     <string name="home_docs">ドキュメント</string>
     <string name="compressed">圧縮されました</string>
     <string name="apk">アプリ</string>
@@ -125,11 +110,8 @@
     <string name="needsaccess">アクセス必須書きます</string>
     <string name="needs_access_summary">動作させるために、書き込みアクセスを許可するには、%1$s のルートディレクトリを選択してください</string>
     <string name="error">エラー</string>
-    <string name="completed">完成しました</string>
     <string name="msg_operation_failed">操作が失敗しました</string>
-    <string name="selected">選択</string>
     <string name="enter_name">名前を入力</string>
-    <string name="storage_low">十分なスペース</string>
     <string name="paste_conflict_remember">覚えています</string>
     <string name="copying">ファイルのコピー</string>
     <string name="moving">ファイルの移動</string>
@@ -137,7 +119,6 @@
     <string name="view">ビュー</string>
     <string name="install">インストール</string>
     <string name="package_installer_content">どのアクションをしますか？</string>
-    <string name="need_permission">許可が必要</string>
     <string name="permission_setting_hint">タップ設定] - > [権限と、その後にストレージをオンにします。</string>
     <string name="access_denied_external">付与されていない外部SDへの書き込みアクセス</string>
     <string name="permission_read">読む</string>
@@ -158,30 +139,19 @@
     <string name="slide_4_title">テーマ</string>
     <string name="slide_4_desc">ダークまたはライト方法！あなたの選択。</string>
     <string name="no_music"> いいえ音楽ファイルがありません</string>
-    <string name="fav_removed">お気に入りから削除</string>
     <string name="img_accessibility_back">バック</string>
     <string name="img_accessibility_permission">権限を付与</string>
-    <string name="img_accessibility_expand">展開または折りたたみます</string>
-    <string name="img_accessibility_brand">アプリのロゴ</string>
     <string name="img_accessibility_icon_lib">ライブラリアイコン</string>
-    <string name="img_accessibility_storage_icon">ストレージのアイコン</string>
-	<string name="unlock_full_version">フルバージョンのロックを解除</string>
+    <string name="unlock_full_version">フルバージョンのロックを解除</string>
     <string name="full_version_buy_ask">完全版は迷惑な広告を削除します。 あなたはそれを購入したいですか？</string>
     <string name="dialog_title_picker">音楽ファイルを選択</string>
-	 <string name="app_invite_title">アプリを招待する</string>
-    <string name="app_invite_msg">このクールなファイルマネージャを試してみてください！</string>
-    <string name="app_invite_failed">招待を送信できませんでした。</string>
 
     <string name="browse">ブラウズ</string>
-    <string name="msg_error_unrooted">ルートアクセスが拒否されました。</string>
-    <string name="billing_unsupported">このデバイスでサポートされていないアプリ内購入。</string>
     <string name="action_more">もっと</string>
     <string name="directory">ディレクトリ</string>
     <string name="operation">操作</string>
-    <string name="extract_complete">抽出が完了しました</string>
     <string name="clipboard">クリップボードの%d</string>
     <string name="fav_exists">お気に入りは既に存在します。</string>
-    <string name="msg_added_fav">アイテム%d個がお気に入りに追加されました。</string>
     <string name="header_source">ソース</string>
     <string name="header_destination">先</string>
     <string name="error_unsupported">サポートされていません</string>
@@ -189,9 +159,8 @@
     <string name="text_copied_clipboard">クリップボードにコピーされました。</string>
     <string name="analytics_text">アナリティクスの送信</string>
     <string name="analytics_summary">匿名の利用状況データを送信してアプリを改善するのに役立ちます。</string>
-    <string name="move_complete">完了した移動</string>
-	
-	<string name="dual_pane_intro_title">二重ペイン</string>
+
+    <string name="dual_pane_intro_title">二重ペイン</string>
     <string name="dual_pane_intro_subtitle">より使い勝手の良いデュアルモード。</string>
     <string name="sort_name">名</string>
     <string name="sort_type">タイプ</string>
@@ -203,21 +172,12 @@
     <string name="artists">アーティスト</string>
     <string name="genres">ジャンル</string>
     <string name="all_tracks">すべての曲</string>
-    <string name="notifications">通知</string>
-    <string name="alarms">アラーム</string>
-    <string name="ringtones">着メロ</string>
     <string name="podcasts">ポッドキャスト</string>
     <string name="mute">ミュート</string>
     <string name="unmute">ミュート解除</string>
-    <string name="nav_header_tools">ツール</string>
     <string name="app_manager">アプリマネージャー</string>
-    <string name="category">カテゴリー</string>
     <string name="unknown">未知の</string>
     <string name="enabled">有効</string>
-    <string name="trash">ごみ</string>
     <string name="move_trash">ゴミ箱に移動</string>
-    <string name="restore">リストア</string>
-    <string name="moving_title_trash">ごみ箱に移動する</string>
-    <string name="restoring_title_trash">復元</string>
 
 </resources>

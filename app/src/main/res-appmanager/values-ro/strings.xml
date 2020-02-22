@@ -18,7 +18,6 @@
     <string name="app_detail">Detalii despre aplicație</string>
     <string name="uninstall">Dezinstalați</string>
     <string name="package_name">Numele pachetului</string>
-    <string name="version_name">Versiune</string>
     <string name="installed_source">Sursă</string>
     <string name="min_sdk">Min SDK</string>
     <string name="target_sdk">SDK destinație</string>

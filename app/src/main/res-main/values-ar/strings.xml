@@ -16,8 +16,6 @@
 
 <resources>
     <string name="app_name">أس إكسبلورر</string>
-    <string name="navigation_drawer_open">فتح درج الملاحة</string>
-    <string name="navigation_drawer_close">انهيار درج الملاحة</string>
     <string name="action_settings">إعدادات</string>
     <string name="nav_menu_internal_storage">التخزين الداخلي</string>
     <string name="nav_menu_root">جذر</string>
@@ -29,8 +27,6 @@
     <string name="nav_header_storages">المخازن</string>
     <string name="nav_header_favourites">مفضلة</string>
     <string name="nav_header_collections">مكتبة</string>
-    <string name="nav_header_others">آخرون</string>
-    <string name="msg_free">خالي من</string>
     <string name="empty">فارغة</string>
     <plurals name="number_of_files">
         <item quantity="few">%d ملفات</item>
@@ -51,8 +47,6 @@
     <string name="action_share">شارك</string>
     <string name="msg_cut_copy">ملف (ق) نسخها إلى الحافظة</string>
     <string name="msg_delete_success">حذف بنجاح</string>
-    <string name="msg_copy_failure">فشلت عملية النسخ</string>
-    <string name="msg_move_failure">فشلت عملية نقل</string>
     <string name="msg_delete_failure">حذف فشلت عملية</string>
     <string name="dialog_skip">تخطى</string>
     <string name="dialog_replace">يحل محل</string>
@@ -69,17 +63,12 @@
     <string name="path">مسار:</string>
     <string name="size">حجم:</string>
     <string name="date_modified">التاريخ عدل:</string>
-    <string name="hidden">مخفي:</string>
-    <string name="readable">يمكن قراءتها:</string>
-    <string name="writeable">للكتابة:</string>
-    <string name="md5">MD5:</string>
     <string name="permissions">أذونات</string>
     <string name="yes">نعم فعلا</string>
     <string name="no">لا</string>
     <string name="properties">الخصائص</string>
     <string name="new_folder">ملف جديد</string>
     <string name="new_file">ملف جديد</string>
-    <string name="rate_us">قيمنا</string>
     <string name="add_fav">أضف إلى المفضلة</string>
     <string name="msg_added_to_fav">إضافة إلى المفضلة</string>
     <string name="msg_error_not_supported">ليس هناك أي تطبيق للتعامل مع العمل</string>
@@ -105,16 +94,12 @@
     <string name="pref_title_reset_fav">المفضلة إعادة تعيين</string>
     <string name="pref_title_show_hidden">أظهر الملفات المخفية</string>
     <string name="pref_title_disable_dual">جزء المزدوج في المناظر الطبيعية</string>
-    <string name="pref_title_check_update">تحقق من وجود تحديثات</string>
     <string name="pref_title_change_lang">غير اللغة</string>
     <string name="hide">إخفاء</string>
     <string name="unhide">ظهار</string>
-    <string name="more">أكثر</string>
     <string name="drag">سحب</string>
     <string name="move">خطوة</string>
     <string name="msg_fav_reset">مفضلة resetted الافتراضي.</string>
-    <string name="pref_title_homescreen">مشاهدة الشاشة الرئيسية</string>
-    <string name="home_add">إضافة</string>
     <string name="home_docs">مستندات</string>
     <string name="compressed">مضغوط</string>
     <string name="apk">التطبيقات</string>
@@ -131,11 +116,8 @@
     <string name="needs_access_summary">الرجاء اختيار الدليل الجذر من  %1$s إلى منح حقالوصول للكتابة ل
         العمل</string>
     <string name="error">خطأ</string>
-    <string name="completed">منجز</string>
     <string name="msg_operation_failed">فشلت العملية</string>
-    <string name="selected">مختار</string>
     <string name="enter_name">أدخل الاسم</string>
-    <string name="storage_low">مساحة غير كافية</string>
     <string name="paste_conflict_remember">تذكر</string>
     <string name="copying">نسخ الملفات</string>
     <string name="moving">نقل الملفات</string>
@@ -143,7 +125,6 @@
     <string name="view">رأي</string>
     <string name="install">تثبيت</string>
     <string name="package_installer_content">فما الإجراء الذي تريد أن تفعل؟</string>
-    <string name="need_permission">تحتاج لتصريح</string>
     <string name="permission_setting_hint">انقر فوق إعدادات -> ضوابط وثم تتحول التخزين على.</string>
     <string name="access_denied_external">الكتابة الوصول لجهات خارجية SD لم تمنح</string>
     <string name="permission_read">اقرأ</string>
@@ -163,30 +144,19 @@
     <string name="slide_4_title">المواضيع</string>
     <string name="slide_4_desc">الظلام أو الضوء الطريق! اختيارك.</string>
     <string name="no_music"> لا توجد ملفات الموسيقى</string>
-    <string name="fav_removed">إزالة من المفضلة</string>
     <string name="img_accessibility_back">الى الخلف</string>
     <string name="img_accessibility_permission">يعطي الأذن</string>
-    <string name="img_accessibility_expand">توسيع أو طي</string>
-    <string name="img_accessibility_brand">التطبيق شعار</string>
     <string name="img_accessibility_icon_lib">رمز المكتبة</string>
-    <string name="img_accessibility_storage_icon">رمز التخزين</string>
     <string name="unlock_full_version">فتح النسخة الكاملة</string>
     <string name="full_version_buy_ask">النسخة الكاملة يزيل الإعلانات المزعجة. هل تريد أن تشتريه؟</string>
     <string name="dialog_title_picker">اختيار الملفات الموسيقية</string>
-	<string name="app_invite_title">التطبيق دعوة</string>
-    <string name="app_invite_msg">حاول هذا المدير ملف بارد !!</string>
-    <string name="app_invite_failed">مع المدعوين فشل الإرسال.</string>
 
     <string name="browse">تصفح</string>
-    <string name="msg_error_unrooted">تم رفض وصول الجذر.</string>
-    <string name="billing_unsupported">عمليات الشراء داخل التطبيق غير معتمدة على هذا الجهاز.</string>
     <string name="action_more">أكثر من</string>
     <string name="directory">دليل</string>
     <string name="operation">عملية</string>
-    <string name="extract_complete">اكتمل الاستخراج</string>
     <string name="clipboard">%d في الحافظة</string>
     <string name="fav_exists">المفضلة موجود بالفعل.</string>
-    <string name="msg_added_fav"> تمت الإضافة إلى المفضلة %d</string>
     <string name="header_source">مصدر</string>
     <string name="header_destination">المكان المقصود</string>
     <string name="error_unsupported">غير معتمد</string>
@@ -194,10 +164,9 @@
     <string name="text_copied_clipboard">نسخ إلى الحافظة.</string>
     <string name="analytics_text">إرسال تحليلات</string>
     <string name="analytics_summary">مساعدتنا على تحسين التطبيق عن طريق إرسال بيانات الاستخدام المجهول.</string>
-    <string name="move_complete">اكتمل النقل</string>
-	
-	 
-	<string name="dual_pane_intro_title">الجزء المزدوج</string>
+
+
+    <string name="dual_pane_intro_title">الجزء المزدوج</string>
     <string name="dual_pane_intro_subtitle">وضع مزدوج لتحسين الاستخدام.</string>
     <string name="sort_name">اسم</string>
     <string name="sort_type">اكتب</string>
@@ -209,21 +178,12 @@
     <string name="artists">الفنانين</string>
     <string name="genres">الجنس الأدبي</string>
     <string name="all_tracks">جميع أغاني</string>
-    <string name="notifications">إخطارات</string>
-    <string name="alarms">إنذار</string>
-    <string name="ringtones">نغمات</string>
     <string name="podcasts">المدونة الصوتية</string>
     <string name="mute">كتم الصوت</string>
     <string name="unmute">غير الصامت</string>
-    <string name="nav_header_tools">أدوات</string>
     <string name="app_manager">مدير التطبيق</string>
-    <string name="category">الفئة</string>
     <string name="unknown">غير معروف</string>
     <string name="enabled">تمكين</string>
-    <string name="trash">قمامة، يدمر، يهدم</string>
     <string name="move_trash">ارسال الى سلة المحذوفات</string>
-    <string name="restore">استعادة</string>
-    <string name="moving_title_trash">جار النقل إلى المهملات</string>
-    <string name="restoring_title_trash">استعادة</string>
 
 </resources>

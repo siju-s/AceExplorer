@@ -16,8 +16,6 @@
 
 <resources>
     <string name="app_name">Ace Explorer ที่</string>
-    <string name="navigation_drawer_open">เปิดลิ้นชักการนำทาง</string>
-    <string name="navigation_drawer_close">ปิดลิ้นชักการนำทาง</string>
     <string name="action_settings">การตั้งค่า</string>
     <string name="nav_menu_internal_storage">หน่วยความจำภายใน</string>
     <string name="nav_menu_root">ราก</string>
@@ -29,8 +27,6 @@
     <string name="nav_header_storages">การเก็บรักษา</string>
     <string name="nav_header_favourites">รายการโปรด</string>
     <string name="nav_header_collections">ห้องสมุด</string>
-    <string name="nav_header_others">คนอื่น ๆ</string>
-    <string name="msg_free">ฟรี</string>
     <string name="empty">ว่างเปล่า</string>
     <plurals name="number_of_files">
         <item quantity="other">%d ไฟล์</item>
@@ -46,8 +42,6 @@
     <string name="action_share">หุ้น</string>
     <string name="msg_cut_copy">file (s) คัดลอกไปที่คลิปบอร์ด</string>
     <string name="msg_delete_success">ลบเรียบร้อยแล้ว</string>
-    <string name="msg_copy_failure">ดำเนินการคัดลอกล้มเหลว</string>
-    <string name="msg_move_failure">ล้มเหลวในการดำเนินการย้าย</string>
     <string name="msg_delete_failure">ลบดำเนินการล้มเหลว</string>
     <string name="dialog_skip">กระโดด</string>
     <string name="dialog_replace">แทนที่</string>
@@ -64,17 +58,12 @@
     <string name="path">เส้นทาง:</string>
     <string name="size">ขนาด:</string>
     <string name="date_modified">วันที่แก้ไข:</string>
-    <string name="hidden">ที่ซ่อนอยู่:</string>
-    <string name="readable">อ่านได้:</string>
-    <string name="writeable">เขียนได้:</string>
-    <string name="md5">MD5:</string>
     <string name="permissions">สิทธิ์</string>
     <string name="yes">ใช่</string>
     <string name="no">ไม่</string>
     <string name="properties">คุณสมบัติ</string>
     <string name="new_folder">แฟ้มใหม่</string>
     <string name="new_file">ไฟล์ใหม่</string>
-    <string name="rate_us">ให้คะแนนเรา</string>
     <string name="add_fav">เพิ่มในรายการโปรด</string>
     <string name="msg_added_to_fav">เพิ่มในคนที่ถูกใจ</string>
     <string name="msg_error_not_supported">ไม่มีแอปที่จะจัดการกับการกระทำ</string>
@@ -99,17 +88,13 @@
     <string name="pref_title_reset_fav">รายการโปรดรีเซ็ต</string>
     <string name="pref_title_show_hidden">แสดงไฟล์ที่ซ่อน</string>
     <string name="pref_title_disable_dual">บานหน้าต่างสองในภูมิทัศน์</string>
-    <string name="pref_title_check_update">ตรวจสอบสำหรับการอัพเดต</string>
     <string name="pref_title_change_lang">ภาษา</string>
 
     <string name="hide">ปิดบัง</string>
     <string name="unhide">ยกเลิกการซ่อน</string>
-    <string name="more">มากกว่า</string>
     <string name="drag">ลาก</string>
     <string name="move">ย้าย</string>
     <string name="msg_fav_reset">รายการโปรด resetted ที่จะเริ่มต้น</string>
-    <string name="pref_title_homescreen">แสดงหน้าจอ</string>
-    <string name="home_add">เพิ่ม</string>
     <string name="home_docs">เอกสาร</string>
     <string name="compressed">การบีบอัด</string>
     <string name="apk">ปพลิเคชัน</string>
@@ -126,11 +111,8 @@
     <string name="needs_access_summary">กรุณาเลือกไดเรกทอรีรากของ %1$s
         ให้สิทธิการเข้าถึงการเขียนในการดำเนินงาน</string>
     <string name="error">ความผิดพลาด</string>
-    <string name="completed">เสร็จ</string>
     <string name="msg_operation_failed">การดำเนินการล้มเหลว</string>
-    <string name="selected">เลือก</string>
     <string name="enter_name">ใส่ชื่อ</string>
-    <string name="storage_low">เนื้อที่ไม่เพียงพอ</string>
     <string name="paste_conflict_remember">จำ</string>
     <string name="copying">คัดลอกไฟล์</string>
     <string name="moving">ย้ายไฟล์</string>
@@ -138,7 +120,6 @@
     <string name="view">ดู</string>
     <string name="install">ติดตั้ง</string>
     <string name="package_installer_content">ซึ่งการกระทำที่คุณต้องการจะทำอย่างไร?</string>
-    <string name="need_permission">ต้องได้รับอนุญาต</string>
     <string name="permission_setting_hint">แตะการตั้งค่า -> การอนุญาตและเปิดการเก็บรักษาต่อ</string>
     <string name="access_denied_external">การเขียนการเข้าถึงภายนอก SD ไม่ได้รับ</string>
     <string name="permission_read">อ่าน</string>
@@ -159,30 +140,19 @@
     <string name="slide_4_title">ธีม</string>
     <string name="slide_4_desc">วิธีที่มืดหรือสว่าง! ตัวเลือกของคุณ.</string>
     <string name="no_music"> ไม่มีไฟล์เพลง</string>
-    <string name="fav_removed">ลบออกจากรายการโปรด</string>
     <string name="img_accessibility_back">กลับ</string>
     <string name="img_accessibility_permission">แกรนท์ได้รับอนุญาต</string>
-    <string name="img_accessibility_expand">ขยายหรือยุบ</string>
-    <string name="img_accessibility_brand">โลโก้แอป</string>
     <string name="img_accessibility_icon_lib">ไอคอนห้องสมุด</string>
-    <string name="img_accessibility_storage_icon">ไอคอนการจัดเก็บข้อมูล</string>
-	<string name="unlock_full_version">ปลดล็อคเวอร์ชันเต็ม</string>
+    <string name="unlock_full_version">ปลดล็อคเวอร์ชันเต็ม</string>
     <string name="full_version_buy_ask">เวอร์ชันเต็มลบโฆษณาที่น่ารำคาญ คุณต้องการที่จะซื้อได้หรือไม่</string>
     <string name="dialog_title_picker">เลือกไฟล์เพลง</string>
-	<string name="app_invite_title">App เชิญ</string>
-    <string name="app_invite_msg">ลองจัดการไฟล์เย็นนี้ !!</string>
-    <string name="app_invite_failed">ส่งเชิญล้มเหลว</string>
 
     <string name="browse">หมวด</string>
-    <string name="msg_error_unrooted">การเข้าถึงรากถูกปฏิเสธ</string>
-    <string name="billing_unsupported">การซื้อในแอปไม่ได้รับการสนับสนุนบนอุปกรณ์นี้</string>
     <string name="action_more">มากกว่า</string>
     <string name="directory">ไดเรกทอรี</string>
     <string name="operation">การทำงาน</string>
-    <string name="extract_complete">สารสกัดสมบูรณ์</string>
     <string name="clipboard">%d ในคลิปบอร์ด</string>
     <string name="fav_exists">รายการโปรดมีอยู่แล้ว</string>
-    <string name="msg_added_fav">เพิ่ม%d รายการลงในรายการโปรดแล้ว</string>
     <string name="header_source">แหล่ง</string>
     <string name="header_destination">ปลายทาง</string>
     <string name="error_unsupported">ไม่สนับสนุน</string>
@@ -190,9 +160,8 @@
     <string name="text_copied_clipboard">คัดลอกไปยังคลิปบอร์ดแล้ว</string>
     <string name="analytics_text">ส่งการวิเคราะห์</string>
     <string name="analytics_summary">ช่วยเราปรับปรุงแอปด้วยการส่งข้อมูลการใช้งานที่ไม่ระบุตัวตน</string>
-    <string name="move_complete">ย้ายเสร็จแล้ว</string>
-	
-	<string name="dual_pane_intro_title">บานหน้าต่างแบบคู่</string>
+
+    <string name="dual_pane_intro_title">บานหน้าต่างแบบคู่</string>
     <string name="dual_pane_intro_subtitle">โหมดคู่เพื่อการใช้งานที่ดียิ่งขึ้น</string>
     <string name="sort_name">ชื่อ</string>
     <string name="sort_type">ชนิด</string>
@@ -204,21 +173,12 @@
     <string name="artists">ศิลปิน</string>
     <string name="genres">ประเภท</string>
     <string name="all_tracks">ทุกเพลง</string>
-    <string name="notifications">การแจ้งเตือน</string>
-    <string name="alarms">สัญญาณเตือน</string>
-    <string name="ringtones">เสียงเรียกเข้า</string>
     <string name="podcasts">พอดคาสต์</string>
     <string name="mute">ใบ้</string>
     <string name="unmute">เปิดเสียง</string>
-    <string name="nav_header_tools">เครื่องมือ</string>
     <string name="app_manager">ผู้จัดการแอ็พ</string>
-    <string name="category">ประเภท</string>
     <string name="unknown">ไม่ทราบ</string>
     <string name="enabled">เปิดการใช้งาน</string>
-    <string name="trash">ขยะ</string>
     <string name="move_trash">ย้ายไปที่ถังขยะ</string>
-    <string name="restore">ฟื้นฟู</string>
-    <string name="moving_title_trash">กำลังย้ายไปที่ถังขยะ</string>
-    <string name="restoring_title_trash">การเรียกคืน</string>
 
 </resources>
