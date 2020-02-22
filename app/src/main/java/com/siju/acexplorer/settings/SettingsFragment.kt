@@ -45,14 +45,18 @@ class SettingsFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         setHasOptionsMenu(true)
-
         PreferenceManager.setDefaultValues(context, R.xml.pref_settings, false)
 
         val supportFragmentManager = getSupportFragmentManager()
 
         val fragment = supportFragmentManager?.findFragmentById(R.id.frameSettings)
         setupActionBar(fragment)
-        if (fragment == null) {
+        if (savedInstanceState == null) {
+            supportFragmentManager?.beginTransaction()
+                    ?.replace(R.id.frameSettings, SettingsPreferenceFragment())
+                    ?.commit()
+        }
+        else if (fragment == null) {
             supportFragmentManager?.beginTransaction()
                     ?.replace(R.id.frameSettings, SettingsPreferenceFragment())
                     ?.commit()
@@ -74,7 +78,7 @@ class SettingsFragment : Fragment() {
             ToolbarHelper.showToolbarAsUp(activity)
         }
         else {
-            toolbar?.title = resources.getString(R.string.action_settings)
+            ToolbarHelper.setToolbarTitle(activity, getString(R.string.action_settings))
         }
     }
 
@@ -87,16 +91,6 @@ class SettingsFragment : Fragment() {
         val activity = activity as AppCompatActivity
         activity.supportActionBar?.setHomeButtonEnabled(false)
         activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        val fragment = getSupportFragmentManager()?.findFragmentById(R.id.frameSettings)
-        fragment?.let {
-            getSupportFragmentManager()?.beginTransaction()
-                ?.remove(it)
-                ?.commit()
-        }
     }
 
     private fun getSupportFragmentManager() = activity?.supportFragmentManager

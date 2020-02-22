@@ -21,7 +21,6 @@ import android.app.SearchManager
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -67,7 +66,7 @@ private const val TAG = "AceActivity"
 private const val ACTION_IMAGES = "android.intent.action.SHORTCUT_IMAGES"
 private const val ACTION_MUSIC = "android.intent.action.SHORTCUT_MUSIC"
 private const val ACTION_VIDEOS = "android.intent.action.SHORTCUT_VIDEOS"
-private const val SELECTED_TAB = "selected_tab"
+private const val DEFAULT_TAB_ID = R.id.navigation_home
 class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFragmentCallback, MainCommunicator {
 
     private lateinit var mainViewModel: MainViewModel
@@ -92,26 +91,15 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
     }
 
     private fun setupSelectedTabPosition(savedInstanceState: Bundle?) {
-        when {
-            savedInstanceState == null -> {
-                setSelectedTab(R.id.navigation_home)
-            }
-            savedInstanceState.getInt(SELECTED_TAB, -1) != -1 -> {
-                setSelectedTab(savedInstanceState.getInt(SELECTED_TAB))
-            }
-            else -> {
-                setSelectedTab(R.id.navigation_home)
+        when (savedInstanceState) {
+            null -> {
+                setDefaultTab()
             }
         }
     }
 
-    private fun setSelectedTab(tab : Int) {
-        bottom_navigation.selectedItemId = tab
-    }
-
-    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
-        super.onSaveInstanceState(outState, outPersistentState)
-        outState.putInt(SELECTED_TAB, bottom_navigation.selectedItemId)
+    private fun setDefaultTab() {
+        bottom_navigation.selectedItemId = DEFAULT_TAB_ID
     }
 
     override fun getUpdateChecker(): UpdateChecker? {
