@@ -309,13 +309,13 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
     }
 
     private fun setupRingtonePicker() {
-        Analytics.getLogger().pickerShown(true)
+        Analytics.logger.pickerShown(true)
         setTitle(getString(R.string.dialog_title_picker))
         okButton.visibility = View.GONE
     }
 
     private fun setupFilePicker() {
-        Analytics.getLogger().pickerShown(false)
+        Analytics.logger.pickerShown(false)
         setTitle(getString(R.string.dialog_title_browse))
     }
 

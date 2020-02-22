@@ -31,7 +31,7 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
         RecyclerView.ViewHolder>(RecentDiffCallback()), BaseListAdapter {
 
     init {
-        peekPopView?.setPeekPopListener()
+        peekPopView?.initPeekPopListener()
     }
 
     private var multiSelectionHelper: MultiSelectionHelper? = null

@@ -74,7 +74,7 @@ object ThumbnailUtils {
             Category.DOCS, Category.RECENT_DOCS -> {
                 hideThumb(imageThumbIcon)
                 var extension = fileInfo.extension
-                extension = extension.toLowerCase(Locale.ROOT)
+                extension = extension?.toLowerCase(Locale.ROOT)
                 changeFileIcon(context, imageIcon, extension, null)
                 setThumbHiddenFilter(imageIcon, fileName)
             }
@@ -93,15 +93,19 @@ object ThumbnailUtils {
         }
     }
 
-    private fun setThumbHiddenFilter(imageIcon: ImageView, fileName: String) {
-        if (fileName.startsWith(".")) {
+    private fun setThumbHiddenFilter(imageIcon: ImageView, fileName: String?) {
+        if (fileName?.startsWith(".") == true) {
             imageIcon.setColorFilter(Color.argb(200, 255, 255, 255))
         } else {
             imageIcon.clearColorFilter()
         }
     }
 
-    private fun displayVideoThumb(context: Context, imageIcon: ImageView, path: String) {
+    private fun displayVideoThumb(context: Context, imageIcon: ImageView, path: String?) {
+        if (path == null) {
+            imageIcon.setImageResource(R.drawable.ic_movie)
+            return
+        }
         val videoUri = Uri.fromFile(File(path))
         val options = RequestOptions()
                 .centerCrop()
@@ -195,7 +199,7 @@ object ThumbnailUtils {
                 .into(imageIcon)
     }
 
-    private fun changeFileIcon(context: Context, imageIcon: ImageView, extension: String, path: String?) {
+    private fun changeFileIcon(context: Context, imageIcon: ImageView, extension: String?, path: String?) {
         when (extension) {
             FileConstants.APK_EXTENSION -> loadAppIcon(context, imageIcon, path)
             FileConstants.EXT_DOC, FileConstants.EXT_DOCX -> imageIcon.setImageResource(R.drawable.ic_doc)

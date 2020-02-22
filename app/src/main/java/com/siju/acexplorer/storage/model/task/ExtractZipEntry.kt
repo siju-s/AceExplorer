@@ -37,7 +37,7 @@ class ExtractZipEntry {
             writeToFile(zipFile, entry, output)
         }
         val extension = FileUtils.getExtension(output.absolutePath)
-        zipFileViewCallback.openZipFile(output.absolutePath, extension)
+        extension?.let { zipFileViewCallback.openZipFile(output.absolutePath, it) }
     }
 
     private fun writeToFile(zipfile: ZipFile, entry: ZipEntry,

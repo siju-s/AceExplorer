@@ -135,7 +135,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
     private fun setupLanguagePreference() {
         val languagePreference = findPreference(PREFS_LANGUAGE) as ListPreference?
-        val value = LocaleHelper.getLanguage(activity)
+        val value = LocaleHelper.getLanguage(context)
         languagePreference?.value = value
         currentLanguage = value
         bindPreferenceSummaryToValue(languagePreference)
@@ -150,7 +150,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     private fun setupAnalyticsPref() {
         val analyticsPreference = findPreference(PREFS_ANALYTICS) as CheckBoxPreference?
         analyticsPreference?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
-            Analytics.getLogger().sendAnalytics(newValue as Boolean)
+            Analytics.logger.sendAnalytics(newValue as Boolean)
             true
         }
     }

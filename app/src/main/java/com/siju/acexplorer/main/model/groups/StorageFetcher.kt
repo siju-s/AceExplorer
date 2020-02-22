@@ -94,8 +94,12 @@ class StorageFetcher(private val context: Context) {
         val totalSpace = getTotalSpace(systemDir)
         val usedSpace = getSpaceUsed(totalSpace, spaceLeft)
         val usedProgress = (usedSpace.toFloat() / totalSpace * 100).toInt()
+        var path = FileUtils.getAbsolutePath(rootDir)
+        if (path == null) {
+           path = "/"
+        }
         addToStorageList(storageList, StorageItem(context.getString(R.string.nav_menu_root), formatStorageSpace(usedSpace, totalSpace), R.drawable
-                .ic_root_white, FileUtils.getAbsolutePath(rootDir), usedProgress, Category.FILES, StorageUtils.StorageType.ROOT))
+                .ic_root_white, path, usedProgress, Category.FILES, StorageUtils.StorageType.ROOT))
     }
 
     private fun isExternalStorageType(storageType: StorageUtils.StorageType) = storageType == EXTERNAL

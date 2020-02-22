@@ -196,7 +196,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
         searchView?.maxWidth = Int.MAX_VALUE
         searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem): Boolean {
-                Analytics.getLogger().searchClicked(false)
+                Analytics.logger.searchClicked(false)
                 setSearchActive(true)
                 return true
             }

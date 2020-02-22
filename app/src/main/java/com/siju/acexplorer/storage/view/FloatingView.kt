@@ -93,7 +93,7 @@ class FloatingView(view: View,
     }
 
     override fun onClick(view: View) {
-        Analytics.getLogger().operationClicked(Analytics.Logger.EV_FAB)
+        Analytics.logger.operationClicked(Analytics.Logger.EV_FAB)
         when (view.id) {
             R.id.fabCreateFile   -> {
                 baseFileListFragment.onCreateFileClicked()

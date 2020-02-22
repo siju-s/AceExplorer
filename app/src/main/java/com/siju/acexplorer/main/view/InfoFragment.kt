@@ -45,9 +45,9 @@ class InfoFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private var infoSharedViewModel: InfoSharedViewModel? = null
-    private lateinit var category: Category
     private lateinit var fileInfo: FileInfo
+    private var infoSharedViewModel: InfoSharedViewModel? = null
+    private var category: Category? = null
 
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var sheetView: View? = null
@@ -103,16 +103,16 @@ class InfoFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun showInfo(fileInfo: FileInfo, category: Category) {
+    private fun showInfo(fileInfo: FileInfo, category: Category?) {
         setupUI(fileInfo, category)
     }
 
-    private fun setupUI(fileInfo: FileInfo, category: Category) {
+    private fun setupUI(fileInfo: FileInfo, category: Category?) {
         setupToolbar()
         bindViews(fileInfo, category)
     }
 
-    private fun bindViews(fileInfo: FileInfo, category: Category) {
+    private fun bindViews(fileInfo: FileInfo, category: Category?) {
         val path = fileInfo.filePath
         val pathText = sheetView?.findViewById<TextView>(R.id.textPath)
 
@@ -189,7 +189,7 @@ class InfoFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun setIcon(context: Context?, icon: ImageView, category: Category, uri: Uri?) {
+    private fun setIcon(context: Context?, icon: ImageView, category: Category?, uri: Uri?) {
         if (context == null) {
             return
         }
@@ -204,7 +204,7 @@ class InfoFragment : BottomSheetDialogFragment() {
         activity.supportActionBar?.title = ""
     }
 
-    private fun bindDate(dateText: TextView?, category: Category,
+    private fun bindDate(dateText: TextView?, category: Category?,
                          fileInfo: FileInfo) {
         dateText?.let {
             val dateMs = if (CategoryHelper.isDateInMs(category)) {
@@ -237,7 +237,7 @@ class InfoFragment : BottomSheetDialogFragment() {
             }
 
             R.id.action_copy_path -> {
-                Analytics.getLogger().pathCopied()
+                Analytics.logger.pathCopied()
                 Clipboard.copyTextToClipBoard(context, fileInfo.filePath)
                 Toast.makeText(context, context!!.getString(R.string.text_copied_clipboard), Toast.LENGTH_SHORT).show()
             }

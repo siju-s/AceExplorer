@@ -43,11 +43,7 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
         return fileList
     }
 
-    override fun setPeekPopListener() {
-        if (peekAndPop == null) {
-            return
-        }
-
+    override fun initPeekPopListener() {
         peekAndPop.setOnGeneralActionListener(object : PeekAndPop.OnGeneralActionListener {
             override fun onPeek(longClickView: View, position: Int) {
                 Log.d(TAG, "onPeek() called with: longClickView = [$longClickView], position = [$position]")
@@ -82,7 +78,7 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
 
     override fun addClickView(view: View, pos: Int, category: Category) {
 //        Log.d(TAG, "addClickView:pos:$pos, category:$category, this:$this")
-        peekAndPop?.addClickView(view, pos, category)
+        peekAndPop.addClickView(view, pos, category)
     }
 
     override fun loadPeekView(peekButton: PeekPopView.PeekButton, position: Int, firstRun: Boolean) {
@@ -90,8 +86,8 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
         if (position >= fileList.size || position == INVALID_POS) {
             return
         }
-        var category: Category = fileList[position].category
-        val view = peekAndPop.peekView
+        var category: Category? = fileList[position].category
+        val view = peekAndPop.getPeekView()
         Log.d(TAG, "loadPeekView: category:$category")
         var pos = position
         if (!isPeekPopCategory(category)) {
@@ -113,7 +109,7 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
             shareButton.visibility = GONE
         }
         if (firstRun) {
-            Analytics.getLogger().enterPeekMode()
+            Analytics.logger.enterPeekMode()
             autoPlayView.init()
         }
         val customVideoView = autoPlayView.customVideoView
@@ -133,7 +129,7 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
                     autoPlayView.visibility = View.VISIBLE
                 }
                 customVideoView.isLooping = true
-                customVideoView.source = fileInfo.filePath
+                customVideoView.setDataSource(fileInfo.filePath)
                 customVideoView.setListener(peekPopVideoCallback)
                 customVideoView.setVideoMode(AUDIO != category)
                 val initialized = customVideoView.init()
@@ -241,7 +237,7 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
         }
     }
 
-    override fun isPeekMode() = peekAndPop.peekView.isShown
+    override fun isPeekMode() = peekAndPop.getPeekView().isShown
 
     override fun endPeekMode() {
         stopAutoPlayVid()
@@ -253,11 +249,16 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
         }
     }
 
-    private val peekPopVideoCallback = PeekPopVideoCallback { peekAndPop.resetViews() }
+    private val peekPopVideoCallback = object : PeekPopVideoCallback {
+
+        override fun onSurfaceDestroyed() {
+            peekAndPop.resetViews()
+        }
+    }
 
 
     override fun stopAutoPlayVid() {
-        val view = peekAndPop.peekView
+        val view = peekAndPop.getPeekView()
         peekAndPop.resetViews()
         val autoPlayView: AutoPlayContainer = view.findViewById(R.id.autoPlayView)
         autoPlayView.customVideoView.clearAll()

@@ -62,7 +62,7 @@ class MoveService : Service() {
     private lateinit var serviceHandler: ServiceHandler
     private lateinit var files: ArrayList<FileInfo>
 
-    private lateinit var pasteActionInfo: List<PasteActionInfo>
+    private var pasteActionInfo: List<PasteActionInfo>? = null
     private var notificationManager: NotificationManager? = null
 
     private var notifBuilder: NotificationCompat.Builder? = null
@@ -149,7 +149,9 @@ class MoveService : Service() {
     }
 
     private fun getArgs(intent: Intent, startId: Int): Boolean {
-        files = intent.getParcelableArrayListExtra(KEY_FILES)
+        val list : ArrayList<FileInfo> = intent.getParcelableArrayListExtra(KEY_FILES)
+                ?: return false
+        files = list
         if (files.isNullOrEmpty()) {
             stopService()
             return true
@@ -199,6 +201,7 @@ class MoveService : Service() {
                 moveOnRoot(destinationDir)
                 publishCompletedResult()
             }
+            else -> {}
         }
     }
 
@@ -210,14 +213,19 @@ class MoveService : Service() {
                 break
             }
             try {
+                val fileName = sourceFile.fileName
                 if (isNonReadable(sourceFile.filePath)) {
-                    moveRoot(sourceFile.filePath, sourceFile.fileName, destDir)
+                    val filePath = sourceFile.filePath
+                    if (filePath != null && fileName != null) {
+                        moveRoot(filePath, fileName, destDir)
+                    }
                     continue
                 }
-                val fileName = sourceFile.fileName
                 val action = getAction(sourceFile)
                 val path = getNewPathForAction(destDir, index, action)
-                moveFiles(sourceFile, fileName, path)
+                if (path != null && fileName != null) {
+                    moveFiles(sourceFile, fileName, path)
+                }
             }
             catch (e: Exception) {
                 e.printStackTrace()
@@ -229,43 +237,61 @@ class MoveService : Service() {
     private fun moveOnRoot(destDir: String) {
         for (index in files.indices) {
             val fileInfo = files[index]
-            moveRoot(fileInfo.filePath, fileInfo.fileName, destDir)
+            val sourcePath = fileInfo.filePath
+            val name = fileInfo.fileName
+            if (sourcePath != null && name != null) {
+                moveRoot(sourcePath, name, destDir)
+            }
         }
     }
 
-    private fun isNonReadable(path: String) = !File(path).canRead()
+    private fun isNonReadable(path: String?): Boolean {
+        path ?: return true
+        return !File(path).canRead()
+    }
 
     private fun getAction(sourceFile: FileInfo): Int {
-        for (pasteAction in pasteActionInfo) {
-            if (pasteAction.filePath == sourceFile.filePath) {
-                return pasteAction.action
+        pasteActionInfo ?: return FileUtils.ACTION_NONE
+        pasteActionInfo?.let {
+            for (pasteAction in it) {
+                if (pasteAction.filePath == sourceFile.filePath) {
+                    return pasteAction.action
+                }
             }
         }
         return FileUtils.ACTION_NONE
     }
 
-    private fun getNewPathForAction(destDir: String, index: Int, action: Int): String {
-        val fileName = files[index].fileName
+    private fun getNewPathForAction(destDir: String, index: Int, action: Int): String? {
+        val fileName = files[index].fileName ?: return null
+
         var path = destDir + SEPARATOR + fileName
 
         if (action == FileUtils.ACTION_KEEP) {
             val isDirectory = File(path).isDirectory
             path = if (isDirectory) {
-                getNewName(destDir, fileName, true, files[index].extension)
+                getNewName(destDir, fileName, true)
             }
             else {
                 val fileNameWithoutExt = fileName.substring(0, fileName.lastIndexOf("."))
-                destDir + SEPARATOR + getNewName(destDir, fileNameWithoutExt,
-                                                 false, files[index].extension)
+                val extension = files[index].extension
+                if (extension == null) {
+                    return null
+                } else {
+                    destDir + SEPARATOR + getNewName(destDir, fileNameWithoutExt,
+                            false, extension)
+                }
+
             }
         }
         return path
     }
 
     private fun getNewName(destDir: String, fileName: String, isDirectory: Boolean,
-                           extension: String): String {
+                           extension: String = ""): String {
         val file = File(destDir)
-        val files = listOf(*file.list())
+        val list = file.list() ?: return ""
+        val files = list.toList()
         val suffix = 1
         val newFileName = "$fileName ($suffix)"
         return if (isDirectory) {
@@ -304,7 +330,7 @@ class MoveService : Service() {
 
     private fun moveFiles(sourceFileInfo: FileInfo, fileName: String, destinationPath: String) {
 
-        val sourcePath = sourceFileInfo.filePath
+        val sourcePath = sourceFileInfo.filePath ?: return
         val newFile = File(destinationPath)
         val oldFile = File(sourcePath)
         if (oldFile.renameTo(newFile)) {
@@ -316,7 +342,7 @@ class MoveService : Service() {
                 filesToMediaIndex.add(sourcePath)
             }
             scanFiles()
-            categories?.add(sourceFileInfo.category.value)
+            sourceFileInfo.category?.value?.let { categories?.add(it) }
         }
         publishResults(fileName, files.size.toLong(), filesMovedList.size.toLong())
     }

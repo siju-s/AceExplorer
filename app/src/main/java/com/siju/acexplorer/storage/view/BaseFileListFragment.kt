@@ -57,11 +57,13 @@ import com.siju.acexplorer.main.model.helper.UriHelper
 import com.siju.acexplorer.main.model.helper.ViewHelper
 import com.siju.acexplorer.main.view.InfoFragment
 import com.siju.acexplorer.main.view.dialog.DialogHelper
+import com.siju.acexplorer.main.view.dialog.DialogHelper.PermissionDialogListener
 import com.siju.acexplorer.main.viewmodel.InfoSharedViewModel
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.main.viewmodel.Pane
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.storage.model.PasteOpData
+import com.siju.acexplorer.storage.model.SortMode
 import com.siju.acexplorer.storage.model.StorageModelImpl
 import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.storage.model.operations.*
@@ -316,7 +318,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         })
 
         fileListViewModel.sortEvent.observe(viewLifecycleOwner, Observer { sortMode ->
-            DialogHelper.showSortDialog(context, sortMode, sortDialogListener)
+            context?.let { DialogHelper.showSortDialog(it, sortMode, sortDialogListener) }
         })
 
         fileListViewModel.installAppEvent.observe(viewLifecycleOwner, Observer {
@@ -572,7 +574,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     }
 
     private fun handlePasteOperation(pasteConflictCheckData: PasteConflictCheckData) {
-        DialogHelper.showConflictDialog(context, pasteConflictCheckData, fileListViewModel.pasteConflictListener)
+        context?.let { DialogHelper.showConflictDialog(it, pasteConflictCheckData, fileListViewModel.pasteConflictListener) }
     }
 
     private val packageChangeReceiver = object : BroadcastReceiver() {
@@ -819,8 +821,13 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
 
     private var dialog: Dialog? = null
 
-    private val permissionDialogListener = DialogHelper.PermissionDialogListener { path, isDir, permissions ->
-         fileListViewModel.setPermissions(path, permissions, isDir)
+    private val permissionDialogListener = object : PermissionDialogListener {
+
+        override fun onPositiveButtonClick(path: String?, isDir: Boolean, permissions: String?) {
+            if (path != null && permissions != null) {
+                fileListViewModel.setPermissions(path, permissions, isDir)
+            }
+        }
     }
 
     private val alertDialogListener = object : DialogHelper.DialogCallback {
@@ -861,8 +868,8 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     }
 
     private val compressDialogListener = object : DialogHelper.CompressDialogListener {
-        override fun onPositiveButtonClick(dialog: Dialog?, operation: Operations?,
-                                           newFileName: String?,
+        override fun onPositiveButtonClick(dialog: Dialog?, operation: Operations,
+                                           newFileName: String,
                                            paths: ArrayList<FileInfo>) {
             this@BaseFileListFragment.dialog = dialog
             fileListViewModel.onOperation(operation, newFileName)
@@ -879,8 +886,10 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         }
     }
 
-    private val deleteDialogListener = DialogHelper.DeleteDialogListener { _, _, filesToDelete ->
-        fileListViewModel.deleteFiles(filesToDelete)
+    private val deleteDialogListener = object : DialogHelper.DeleteDialogListener {
+        override fun onPositiveButtonClick(view: View, isTrashEnabled: Boolean, filesToDelete: ArrayList<FileInfo>) {
+            fileListViewModel.deleteFiles(filesToDelete)
+        }
     }
 
     private fun triggerStorageAccessFramework() {
@@ -898,15 +907,15 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
 
     private val safDialogListener = object : DialogHelper.AlertDialogListener {
 
-        override fun onPositiveButtonClick(view: View?) {
+        override fun onPositiveButtonClick(view: View) {
             triggerStorageAccessFramework()
         }
 
-        override fun onNeutralButtonClick(view: View?) {
+        override fun onNeutralButtonClick(view: View) {
 
         }
 
-        override fun onNegativeButtonClick(view: View?) {
+        override fun onNegativeButtonClick(view: View) {
             Toast.makeText(context, context?.getString(R.string.error), Toast
                     .LENGTH_SHORT).show()
         }
@@ -1005,7 +1014,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
 
                     }
                     else {
-                        Analytics.getLogger().SAFResult(false)
+                        Analytics.logger.safResult(false)
                         Toast.makeText(context, resources.getString(R.string
                                 .access_denied_external),
                                 Toast.LENGTH_LONG).show()
@@ -1097,9 +1106,11 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
             fileListViewModel.refreshList()
         }
 
-        private val sortDialogListener = DialogHelper.SortDialogListener { sortMode ->
-            fileListViewModel.onSort(sortMode)
-            reloadPane()
+        private val sortDialogListener = object : DialogHelper.SortDialogListener {
+            override fun onPositiveButtonClick(sortMode: SortMode) {
+                fileListViewModel.onSort(sortMode)
+                reloadPane()
+            }
         }
 
         fun setCategoryMenuHelper(categoryMenuHelper: CategoryMenuHelper) {

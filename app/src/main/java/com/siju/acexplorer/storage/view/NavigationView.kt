@@ -73,7 +73,7 @@ class NavigationView(view: View, private val navigationCallback: NavigationCallb
     private fun setupHomeButton() {
         homeButton.setImageResource(R.drawable.ic_home_white_48)
         homeButton.setOnClickListener {
-            Analytics.getLogger().navBarClicked(true)
+            Analytics.logger.navBarClicked(true)
             navigationCallback.onHomeClicked()
         }
     }

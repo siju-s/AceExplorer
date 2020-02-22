@@ -34,7 +34,7 @@ object ViewHelper {
 
     const val EXT_APK = "apk"
 
-    fun viewFile(context: Context, path: String?, extension: String, fileUri : Uri? = null) {
+    fun viewFile(context: Context, path: String?, extension: String?, fileUri : Uri? = null) {
         val uri  = if (path == null && fileUri == null) {
             return
         }
@@ -44,15 +44,15 @@ object ViewHelper {
         else {
             UriHelper.createContentUri(context, path)
         }
-        val ext = extension.toLowerCase(Locale.ROOT)
+        val ext = extension?.toLowerCase(Locale.ROOT)
         val mimeType = getSingleton().getMimeTypeFromExtension(ext)
 
         if (mimeType == null) {
-            Analytics.getLogger().openAsDialogShown()
+            Analytics.logger.openAsDialogShown()
             DialogHelper.openWith(uri, context)
         }
         else {
-            Analytics.getLogger().openFile()
+            Analytics.logger.openFile()
             val intent = Intent(Intent.ACTION_VIEW)
             intent.setDataAndType(uri, mimeType)
             val granted = UriHelper.canGrantUriPermission(context, intent)

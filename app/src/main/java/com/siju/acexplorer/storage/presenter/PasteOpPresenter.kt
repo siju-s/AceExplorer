@@ -128,10 +128,8 @@ class PasteOpPresenter(val storageModel: StorageModel) {
 
         override fun onPasteActionStarted(operation: Operations, destinationDir: String,
                                           files: ArrayList<FileInfo>) {
-            when (operation) {
-                Operations.COPY -> {
-                    _showPasteDialog.postValue(Triple(operation, destinationDir, files))
-                }
+            if (operation == Operations.COPY) {
+                _showPasteDialog.postValue(Triple(operation, destinationDir, files))
             }
         }
     }
@@ -141,7 +139,7 @@ class PasteOpPresenter(val storageModel: StorageModel) {
                                         conflictFiles: java.util.ArrayList<FileInfo>,
                                         destFiles: java.util.ArrayList<FileInfo>,
                                         destinationDir: String, operation: Operations) {
-            Analytics.getLogger().conflictDialogShown()
+            Analytics.logger.conflictDialogShown()
             _pasteData.postValue(
                     PasteConflictCheckData(files, conflictFiles, destFiles, destinationDir, operation))
         }

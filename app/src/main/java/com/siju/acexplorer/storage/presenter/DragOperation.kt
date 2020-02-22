@@ -66,10 +66,15 @@ class DragOperation(private val viewModel: FileListViewModel, private val operat
         }
 
         for (info in draggedData) {
-            paths.add(info.filePath)
+            info.filePath?.let { paths.add(it) }
         }
 
-        val sourceParent = File(draggedData[0].filePath).parent
+        val sourcePath = draggedData[0].filePath
+        if (sourcePath == null || destinationDir == null) {
+            return
+        }
+
+        val sourceParent = File(sourcePath).parent
         if (File(destinationDir).isFile) {
             destinationDir = File(destinationDir).parent
         }
@@ -102,7 +107,9 @@ class DragOperation(private val viewModel: FileListViewModel, private val operat
         Log.d(TAG, "dragEnded")
     }
 
-    private val dragDialogListener = DialogHelper.DragDialogListener { filesToPaste, destinationDir, operation ->
-        operationPresenter.onPasteAction(operation, filesToPaste, destinationDir)
+    private val dragDialogListener = object : DialogHelper.DragDialogListener {
+        override fun onPositiveButtonClick(filesToPaste: ArrayList<FileInfo>, destinationDir: String?, operation: Operations) {
+            operationPresenter.onPasteAction(operation, filesToPaste, destinationDir)
+        }
     }
 }

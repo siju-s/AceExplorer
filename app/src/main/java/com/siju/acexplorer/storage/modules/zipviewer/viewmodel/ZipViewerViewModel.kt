@@ -146,7 +146,9 @@ class ZipViewerViewModel(val model: ZipViewerModel, private val zipViewerCallbac
     private fun reloadData() {
         zipViewerCallback.removeFromBackStack()
         zipViewerCallback.removeZipScrollPos(newPath!!)
-        currentDir = File(currentDir).parent
+        if (currentDir != null) {
+            currentDir = File(currentDir!!).parent
+        }
         if (currentDir == File.separator) {
             currentDir = null
         }
@@ -217,7 +219,7 @@ class ZipViewerViewModel(val model: ZipViewerModel, private val zipViewerCallbac
         override fun onCancelClicked() {
         }
 
-        override fun onOpenApkClicked(path: String) {
+        override fun onOpenApkClicked(path: String?) {
         }
 
     }

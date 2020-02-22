@@ -77,9 +77,9 @@ class MainModelImpl : MainModel {
     private fun setupAnalytics(preferences: SharedPreferences) {
         val sendAnalytics = preferences.getBoolean(SettingsPreferenceFragment.PREFS_ANALYTICS, true)
 
-        Analytics.getLogger().sendAnalytics(sendAnalytics)
-        Analytics.getLogger().register(context)
-        Analytics.getLogger().reportDeviceName()
+        Analytics.logger.sendAnalytics(sendAnalytics)
+        Analytics.logger.register(context)
+        Analytics.logger.reportDeviceName()
     }
 
     private fun setupTheme() {

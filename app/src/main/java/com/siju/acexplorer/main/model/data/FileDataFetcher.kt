@@ -59,8 +59,11 @@ class FileDataFetcher : DataFetcher {
     }
 
     companion object {
-        fun getFilesList(path: String, root: Boolean,
+        fun getFilesList(path: String?, root: Boolean,
                          showHidden: Boolean, ringtonePicker: Boolean = false): ArrayList<FileInfo> {
+            if (path == null) {
+                return arrayListOf()
+            }
             val fileInfoArrayList: ArrayList<FileInfo>
             val file = File(path)
             fileInfoArrayList = if (file.canRead()) {

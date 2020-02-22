@@ -36,7 +36,7 @@ class CameraGenericFetcher : DataFetcher {
                 count = 1
                 val itemFileInfo = FileInfo.createCameraGenericInfo(getGenericCategoryForType(category), category, fileInfo.filePath, count)
                 fileInfoList.add(itemFileInfo)
-                categories.add(category)
+                category?.let { categories.add(it) }
             } else {
                 count++
                 fileInfoList[categories.indexOf(category)].count = count
@@ -45,7 +45,7 @@ class CameraGenericFetcher : DataFetcher {
         return fileInfoList
     }
 
-    private fun getGenericCategoryForType(category: Category): Category {
+    private fun getGenericCategoryForType(category: Category?): Category {
         return if (category == Category.IMAGE) {
             Category.CAMERA_IMAGES
         } else {

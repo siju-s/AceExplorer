@@ -26,7 +26,7 @@ object CategoryHelper {
                 category == FAVORITES
     }
 
-    fun isDateInMs(category: Category): Boolean {
+    fun isDateInMs(category: Category?): Boolean {
 //        Log.d(this.javaClass.simpleName, "isDateInMs:category:$category")
         return category == FILES ||
                 category == DOWNLOADS ||
@@ -42,11 +42,11 @@ object CategoryHelper {
                 category == CAMERA
     }
 
-    fun isGenericMusic(category: Category): Boolean {
+    fun isGenericMusic(category: Category?): Boolean {
         return category == GENERIC_MUSIC
     }
 
-    fun isMusicCategory(category: Category): Boolean {
+    fun isMusicCategory(category: Category?): Boolean {
         return category == ALBUMS ||
                 category == ARTISTS ||
                 category == GENRES
@@ -90,20 +90,20 @@ object CategoryHelper {
                 category == SEARCH_FOLDER_VIDEOS
     }
 
-    fun isRecentCategory(category: Category): Boolean {
+    fun isRecentCategory(category: Category?): Boolean {
         return RECENT_IMAGES == category || RECENT_AUDIO == category ||
                 RECENT_APPS == category || RECENT_VIDEOS == category ||
                 RECENT_DOCS == category
     }
 
-    fun isAnyLargeFilesCategory(category: Category): Boolean {
+    fun isAnyLargeFilesCategory(category: Category?): Boolean {
         return LARGE_FILES_IMAGES == category || LARGE_FILES_AUDIO == category ||
                 LARGE_FILES_VIDEOS == category || LARGE_FILES_DOC == category ||
                 LARGE_FILES_APP == category || LARGE_FILES_COMPRESSED == category ||
                 LARGE_FILES_OTHER == category
     }
 
-    fun isAnyCameraCategory(category: Category) = category == CAMERA_IMAGES || category == CAMERA_VIDEO
+    fun isAnyCameraCategory(category: Category?) = category == CAMERA_IMAGES || category == CAMERA_VIDEO
 
     fun isRecentGenericCategory(category: Category): Boolean {
         return RECENT == category
@@ -117,21 +117,21 @@ object CategoryHelper {
         return APP_MANAGER == category
     }
 
-    fun isGenericImagesCategory(category: Category): Boolean {
+    fun isGenericImagesCategory(category: Category?): Boolean {
         return GENERIC_IMAGES == category
     }
 
-    fun isGenericVideosCategory(category: Category): Boolean {
+    fun isGenericVideosCategory(category: Category?): Boolean {
         return GENERIC_VIDEOS == category
     }
 
-    fun isAnyImagesCategory(category: Category): Boolean {
+    fun isAnyImagesCategory(category: Category?): Boolean {
         return category == IMAGE || category == IMAGES_ALL
     }
 
     fun isAnyVideoCategory(category: Category?) = category == VIDEO || category == VIDEO_ALL
 
-    fun isPeekPopCategory(category: Category): Boolean {
+    fun isPeekPopCategory(category: Category?): Boolean {
         return category == IMAGE || category == VIDEO || category == AUDIO ||
                 category == FOLDER_IMAGES || category == FOLDER_VIDEOS ||
                 GENERIC_IMAGES == category ||

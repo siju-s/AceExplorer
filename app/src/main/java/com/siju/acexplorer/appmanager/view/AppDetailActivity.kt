@@ -306,7 +306,8 @@ class AppDetailActivity : BaseActivity(), View.OnClickListener {
 
         const val REQUEST_CODE_UNINSTALL = 1
 
-        fun openAppInfo(context: Context, packageName: String) {
+        fun openAppInfo(context: Context, packageName: String?) {
+            packageName ?: return
             val intent = Intent(context, AppDetailActivity::class.java)
             intent.putExtra(EXTRA_PACKAGE_NAME, packageName)
             context.startActivity(intent)

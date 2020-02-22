@@ -52,7 +52,7 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
     override fun onFabClicked(operation: Operations, path: String?) {
         when (operation) {
             Operations.FOLDER_CREATION, Operations.FILE_CREATION -> {
-                Analytics.getLogger().operationClicked(Analytics.Logger.EV_FAB)
+                Analytics.logger.operationClicked(Analytics.Logger.EV_FAB)
                 path?.let {
                     _noOpData.value = Pair(operation, path)
                 }
@@ -188,7 +188,7 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
 
     private fun onDeleteFavClicked() {
         if (hasSelectedItems()) {
-            Analytics.getLogger().operationClicked(Analytics.Logger.EV_DELETE_FAV)
+            Analytics.logger.operationClicked(Analytics.Logger.EV_DELETE_FAV)
             val favList = arrayListOf<FileInfo>()
             val selectedItems = multiSelectionHelper.selectedItems
             for (i in 0 until selectedItems.size()) {
@@ -202,7 +202,7 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
 
     private fun onPermissionClicked() {
         if (hasSelectedItems()) {
-            Analytics.getLogger().operationClicked(Analytics.Logger.EV_PERMISSIONS)
+            Analytics.logger.operationClicked(Analytics.Logger.EV_PERMISSIONS)
             val fileInfo = viewModel.fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
             viewModel.endActionMode()
             fileInfo?.let {
@@ -214,7 +214,7 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
 
     private fun onAddToFavClicked() {
         if (hasSelectedItems()) {
-            Analytics.getLogger().operationClicked(Analytics.Logger.EV_ADD_FAV)
+            Analytics.logger.operationClicked(Analytics.Logger.EV_ADD_FAV)
             val favList = arrayListOf<FileInfo>()
             val selectedItems = multiSelectionHelper.selectedItems
             for (i in 0 until selectedItems.size()) {
@@ -230,7 +230,7 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
 
     private fun onArchiveClicked() {
         if (hasSelectedItems()) {
-            Analytics.getLogger().operationClicked(Analytics.Logger.EV_ARCHIVE)
+            Analytics.logger.operationClicked(Analytics.Logger.EV_ARCHIVE)
             val filesToArchive = arrayListOf<FileInfo>()
             val selectedItems = multiSelectionHelper.selectedItems
             for (i in 0 until selectedItems.size()) {
@@ -244,7 +244,7 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
 
     private fun onExtractClicked() {
         if (hasSelectedItems()) {
-            Analytics.getLogger().operationClicked(Analytics.Logger.EV_EXTRACT)
+            Analytics.logger.operationClicked(Analytics.Logger.EV_EXTRACT)
             val fileInfo = viewModel.fileData.value?.get(multiSelectionHelper.selectedItems.keyAt(0))
             viewModel.endActionMode()
             fileInfo?.let {
@@ -256,7 +256,7 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
     private fun onPasteClicked() {
         val operations = _multiSelectionOperationData.value?.first
         if (operations == Operations.COPY || operations == Operations.CUT) {
-            Analytics.getLogger().operationClicked(Analytics.Logger.EV_PASTE)
+            Analytics.logger.operationClicked(Analytics.Logger.EV_PASTE)
             val list = _multiSelectionOperationData.value?.second
             viewModel.endActionMode()
             list?.let {
@@ -267,7 +267,7 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
 
     private fun onCutClicked() {
         if (hasSelectedItems()) {
-            Analytics.getLogger().operationClicked(Analytics.Logger.EV_CUT)
+            Analytics.logger.operationClicked(Analytics.Logger.EV_CUT)
             val filesToMove = arrayListOf<FileInfo>()
             val selectedItems = multiSelectionHelper.selectedItems
             for (i in 0 until selectedItems.size()) {
@@ -282,7 +282,7 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
 
     private fun onCopyClicked() {
         if (hasSelectedItems()) {
-            Analytics.getLogger().operationClicked(Analytics.Logger.EV_COPY)
+            Analytics.logger.operationClicked(Analytics.Logger.EV_COPY)
             val filesToCopy = arrayListOf<FileInfo>()
             val selectedItems = multiSelectionHelper.selectedItems
             for (i in 0 until selectedItems.size()) {
@@ -297,7 +297,7 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
 
     private fun onShareClicked() {
         if (hasSelectedItems()) {
-            Analytics.getLogger().operationClicked(Analytics.Logger.EV_SHARE)
+            Analytics.logger.operationClicked(Analytics.Logger.EV_SHARE)
             val filesToShare = arrayListOf<FileInfo>()
             val selectedItems = multiSelectionHelper.selectedItems
             for (i in 0 until selectedItems.size()) {
@@ -319,7 +319,7 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
 
     private fun onDeleteClicked() {
         if (hasSelectedItems()) {
-            Analytics.getLogger().operationClicked(Analytics.Logger.EV_DELETE)
+            Analytics.logger.operationClicked(Analytics.Logger.EV_DELETE)
             val filesToDelete = arrayListOf<FileInfo>()
             val selectedItems = multiSelectionHelper.selectedItems
             for (i in 0 until selectedItems.size()) {
@@ -339,7 +339,7 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
 
     private fun onInfoClicked() {
         if (hasSelectedItems()) {
-            Analytics.getLogger().operationClicked(Analytics.Logger.EV_PROPERTIES)
+            Analytics.logger.operationClicked(Analytics.Logger.EV_PROPERTIES)
             val index = multiSelectionHelper.selectedItems.keyAt(0)
             val fileInfo =  if (RecentTimeHelper.isRecentTimeLineCategory(category)) {
                 RecentDataConverter.getRecentItemList(viewModel.recentFileData.value?.second)[index]
@@ -356,7 +356,7 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
 
     private fun onHideClicked() {
         if (hasSelectedItems()) {
-            Analytics.getLogger().operationClicked(Analytics.Logger.EV_HIDE)
+            Analytics.logger.operationClicked(Analytics.Logger.EV_HIDE)
             val index = multiSelectionHelper.selectedItems.keyAt(0)
             val fileInfo =  if (RecentTimeHelper.isRecentTimeLineCategory(category)) {
                 RecentDataConverter.getRecentItemList(viewModel.recentFileData.value?.second)[index]
@@ -373,7 +373,7 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
     }
 
     private fun onHideOperation(fileInfo: FileInfo) {
-        val fileName = fileInfo.fileName
+        val fileName = fileInfo.fileName ?: return
         val newName = if (fileName.startsWith(".")) {
             fileName.substring(1)
         } else {
@@ -437,7 +437,7 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
 
     private fun onEditClicked() {
         if (hasSelectedItems()) {
-            Analytics.getLogger().operationClicked(Analytics.Logger.EV_RENAME)
+            Analytics.logger.operationClicked(Analytics.Logger.EV_RENAME)
             val index = multiSelectionHelper.selectedItems.keyAt(0)
             val fileInfo =  if (RecentTimeHelper.isRecentTimeLineCategory(category)) {
                 RecentDataConverter.getRecentItemList(viewModel.recentFileData.value?.second)[index]

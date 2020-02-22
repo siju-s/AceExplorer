@@ -113,7 +113,7 @@ class DragHelper(private val context: Context, private val filesList: FilesList)
     fun showDragDialog(sourcePaths: ArrayList<FileInfo>, destinationDir: String?,
                        dragDialogListener: DialogHelper.DragDialogListener) {
 
-        Analytics.getLogger().dragDialogShown()
+        Analytics.logger.dragDialogShown()
         DialogHelper.showDragDialog(context, sourcePaths, destinationDir, dragDialogListener)
     }
 

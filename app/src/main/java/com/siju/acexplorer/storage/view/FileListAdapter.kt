@@ -51,7 +51,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
     private var fileList = arrayListOf<FileInfo>()
 
     init {
-        peekPopView?.setPeekPopListener()
+        peekPopView?.initPeekPopListener()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -114,8 +114,11 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         val result: ArrayList<FileInfo> = ArrayList()
         text = text.toLowerCase(Locale.getDefault())
         for (item in filteredList) {
-            if (item.fileName.toLowerCase(Locale.getDefault()).contains(text)) {
-                result.add(item)
+            val fileName = item.fileName
+            fileName?.let {
+                if (fileName.toLowerCase(Locale.getDefault()).contains(text)) {
+                    result.add(item)
+                }
             }
         }
         fileList.clear()
@@ -265,8 +268,8 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             dateText?.visibility = View.VISIBLE
         }
 
-        private fun addPeekPop(peekPopView: PeekPopView?, icon: ImageView, pos : Int, category: Category) {
-              peekPopView?.addClickView(icon, pos, category)
+        private fun addPeekPop(peekPopView: PeekPopView?, icon: ImageView, pos : Int, category: Category?) {
+            category?.let { peekPopView?.addClickView(icon, pos, it) }
         }
 
         private fun setVideoThumbVisibility(category: Category?) {
@@ -389,7 +392,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             }
         }
 
-        private fun bindGenericRecent(context: Context, fileInfo: FileInfo, category: Category, pos: Int, peekPopView: PeekPopView?) {
+        private fun bindGenericRecent(context: Context, fileInfo: FileInfo, category: Category?, pos: Int, peekPopView: PeekPopView?) {
             val count = fileInfo.count
             val files = context.resources.getQuantityString(R.plurals.number_of_files,
                     count, count)
@@ -400,7 +403,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             addPeekPop(peekPopView, imageIcon, pos, category)
         }
 
-        private fun bindLargeFilesGeneric(context: Context, fileInfo: FileInfo, category: Category, pos: Int, peekPopView: PeekPopView?) {
+        private fun bindLargeFilesGeneric(context: Context, fileInfo: FileInfo, category: Category?, pos: Int, peekPopView: PeekPopView?) {
             val count = fileInfo.count
             val files = context.resources.getQuantityString(R.plurals.number_of_files,
                     count, count)
@@ -411,7 +414,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             addPeekPop(peekPopView, imageIcon, pos, category)
         }
 
-        private fun bindCameraGeneric(context: Context, fileInfo: FileInfo, category: Category, pos: Int, peekPopView: PeekPopView?) {
+        private fun bindCameraGeneric(context: Context, fileInfo: FileInfo, category: Category?, pos: Int, peekPopView: PeekPopView?) {
 //            Log.d(TAG, "bindCameraGeneric:category:$category, file:${fileInfo.filePath}")
             val count = fileInfo.count
             val files = context.resources.getQuantityString(R.plurals.number_of_files,

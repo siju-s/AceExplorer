@@ -18,7 +18,8 @@ object AppHelper {
     const val SCHEME_PACKAGE = "package"
     private const val PREFIX_PACKAGE_URI = "package:"
 
-    fun uninstallApp(activity: AppCompatActivity, packageName: String) {
+    fun uninstallApp(activity: AppCompatActivity, packageName: String?) {
+        packageName ?: return
         val packageUri = Uri.parse(PREFIX_PACKAGE_URI + packageName)
         val uninstallIntent = Intent(Intent.ACTION_UNINSTALL_PACKAGE, packageUri)
         uninstallIntent.putExtra(Intent.EXTRA_RETURN_RESULT, true)
@@ -38,12 +39,12 @@ object AppHelper {
             return true
         }
         val pm = context.packageManager
-        try {
+        return try {
             pm.getPackageInfo(packageName, PackageManager.GET_META_DATA)
-            return false
+            false
         }
         catch (e: PackageManager.NameNotFoundException) {
-            return true
+            true
         }
     }
 

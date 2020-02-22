@@ -49,7 +49,6 @@ import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION
 import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_RESULT
 import com.siju.acexplorer.storage.model.operations.Operations.COPY
 import java.io.*
-import java.util.*
 
 private const val NOTIFICATION_ID = 1000
 private const val SEPARATOR = "/"
@@ -64,7 +63,7 @@ class CopyService : Service() {
     private lateinit var context: Context
     private lateinit var serviceHandler: ServiceHandler
     private lateinit var files: ArrayList<FileInfo>
-    private lateinit var pasteActionInfo: List<PasteActionInfo>
+    private var pasteActionInfo: List<PasteActionInfo>? = null
 
     private var notificationManager: NotificationManager? = null
     private var notifBuilder: NotificationCompat.Builder? = null
@@ -106,8 +105,8 @@ class CopyService : Service() {
             setOnlyAlertOnce(true)
             setDefaults(0)
             addAction(NotificationCompat.Action(R.drawable.ic_cancel,
-                                                getString(R.string.dialog_cancel),
-                                                pendingCancelIntent))
+                    getString(R.string.dialog_cancel),
+                    pendingCancelIntent))
         }
 
         return notifBuilder?.build()
@@ -117,7 +116,7 @@ class CopyService : Service() {
         val cancelIntent = Intent(context, CopyService::class.java)
         cancelIntent.action = OperationProgress.ACTION_STOP
         return PendingIntent.getService(context, NOTIFICATION_ID, cancelIntent,
-                                        PendingIntent.FLAG_UPDATE_CURRENT)
+                PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
     @TargetApi(Build.VERSION_CODES.O)
@@ -132,7 +131,7 @@ class CopyService : Service() {
 
     private fun startThread() {
         val thread = HandlerThread(THREAD_NAME,
-                                   Process.THREAD_PRIORITY_BACKGROUND)
+                Process.THREAD_PRIORITY_BACKGROUND)
         thread.start()
         val serviceLooper = thread.looper
         serviceHandler = ServiceHandler(serviceLooper)
@@ -156,7 +155,9 @@ class CopyService : Service() {
     }
 
     private fun hasArgs(intent: Intent, startId: Int): Boolean {
-        files = intent.getParcelableArrayListExtra(KEY_FILES)
+        val list : java.util.ArrayList<FileInfo> = intent.getParcelableArrayListExtra(KEY_FILES)
+                ?: return false
+        files = list
         if (files.isNullOrEmpty()) {
             stopService()
             return true
@@ -188,16 +189,17 @@ class CopyService : Service() {
 
 
     private fun checkWriteMode(currentDir: String) {
-
         when (OperationUtils.getWriteMode(currentDir)) {
             OperationUtils.WriteMode.INTERNAL -> {
                 copyOnInternalStorage(currentDir)
                 publishCompletionResult()
             }
 
-            OperationUtils.WriteMode.ROOT     -> {
+            OperationUtils.WriteMode.ROOT -> {
                 onRoot(currentDir)
                 publishCompletionResult()
+            }
+            else -> {
             }
         }
     }
@@ -207,7 +209,9 @@ class CopyService : Service() {
         for (i in files.indices) {
             val path = files[i].filePath
             val name = files[i].fileName
-            copyRoot(path, name, currentDir)
+            if (path != null && name != null) {
+                copyRoot(path, name, currentDir)
+            }
             val newFileInfo = files[i]
             newFileInfo.filePath = currentDir + SEPARATOR + newFileInfo.fileName
             if (isFileCopied(files[i], newFileInfo)) {
@@ -226,7 +230,11 @@ class CopyService : Service() {
             }
             try {
                 if (isNonReadable(index)) {
-                    copyRoot(files[index].filePath, files[index].fileName, destinationDir)
+                    val filePath = files[index].filePath
+                    val fileName = files[index].fileName
+                    if (filePath != null && fileName != null) {
+                        copyRoot(filePath, fileName, destinationDir)
+                    }
                     continue
                 }
 
@@ -237,8 +245,7 @@ class CopyService : Service() {
                 Logger.log("CopyService", "Execute-Dest file path=" + destFile
                         .filePath)
                 startCopy(sourceFile, destFile)
-            }
-            catch (e: Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
                 populateFailedFiles(index)
                 break
@@ -249,33 +256,41 @@ class CopyService : Service() {
     private fun createDestFile(
             sourceFile: FileInfo): FileInfo {
         return FileInfo(sourceFile.category, sourceFile.fileName,
-                        sourceFile.filePath, sourceFile.date, sourceFile
-                                .size, sourceFile.isDirectory,
-                        sourceFile.extension, sourceFile.permissions, false)
+                sourceFile.filePath, sourceFile.date, sourceFile
+                .size, sourceFile.isDirectory,
+                sourceFile.extension, sourceFile.permissions, false)
     }
 
-    private fun getNewPathForAction(destDir: String, index: Int, action: Int): String {
-        val fileName = files[index].fileName
+    private fun getNewPathForAction(destDir: String, index: Int, action: Int): String? {
+        val fileName = files[index].fileName ?: return null
+
         var path = destDir + SEPARATOR + fileName
 
         if (action == FileUtils.ACTION_KEEP) {
             val isDirectory = File(path).isDirectory
             path = if (isDirectory) {
-                getNewName(destDir, fileName, true, files[index].extension)
-            }
-            else {
+                getNewName(destDir, fileName, true)
+            } else {
                 val fileNameWithoutExt = fileName.substring(0, fileName.lastIndexOf("."))
-                destDir + SEPARATOR + getNewName(destDir, fileNameWithoutExt,
-                                                 false, files[index].extension)
+                val extension = files[index].extension
+                if (extension == null) {
+                    return null
+                } else {
+                    destDir + SEPARATOR + getNewName(destDir, fileNameWithoutExt,
+                            false, extension)
+                }
             }
         }
         return path
     }
 
     private fun getAction(sourceFile: FileInfo): Int {
-        for (pasteAction in pasteActionInfo) {
-            if (pasteAction.filePath == sourceFile.filePath) {
-                return pasteAction.action
+        pasteActionInfo ?: return FileUtils.ACTION_NONE
+        pasteActionInfo?.let {
+            for (pasteAction in it) {
+                if (pasteAction.filePath == sourceFile.filePath) {
+                    return pasteAction.action
+                }
             }
         }
         return FileUtils.ACTION_NONE
@@ -288,18 +303,22 @@ class CopyService : Service() {
         }
     }
 
-    private fun isNonReadable(i: Int) = !File(files[i].filePath).canRead()
+    private fun isNonReadable(i: Int): Boolean {
+        val filePath = files[i].filePath
+        filePath ?: return true
+        return !File(filePath).canRead()
+    }
 
     private fun getNewName(destDir: String, fileName: String, isDirectory: Boolean,
-                           extension: String): String {
+                           extension: String = ""): String {
         val file = File(destDir)
-        val files = Arrays.asList(*file.list())
+        val list = file.list() ?: return ""
+        val files = list.toList()
         val suffix = 1
         val newFileName = "$fileName ($suffix)"
         return if (isDirectory) {
             getNewDirectoryName(files, suffix, newFileName, fileName)
-        }
-        else {
+        } else {
             getNewFileName(files, suffix, newFileName, fileName, extension)
         }
     }
@@ -311,8 +330,7 @@ class CopyService : Service() {
             suffix1++
             val newFileName = "$originalFileName ($suffix1)"
             getNewFileName(files, suffix1, newFileName, originalFileName, extension)
-        }
-        else {
+        } else {
             "$fileName.$extension"
         }
     }
@@ -324,8 +342,7 @@ class CopyService : Service() {
             suffix1++
             val newFileName = "$originalFileName ($suffix1)"
             getNewDirectoryName(files, suffix1, newFileName, originalFileName)
-        }
-        else {
+        } else {
             fileName
         }
     }
@@ -336,11 +353,15 @@ class CopyService : Service() {
         var totalBytes = 0L
         for (i in files.indices) {
             val file = files[i]
-            totalBytes += if (file.isDirectory) {
-                FileUtils.getFolderSize(File(file.filePath))
+            val filePath = file.filePath
+            if (filePath == null) {
+                totalBytes += 0
+                continue
             }
-            else {
-                File(file.filePath).length()
+            totalBytes += if (file.isDirectory) {
+                FileUtils.getFolderSize(File(filePath))
+            } else {
+                File(filePath).length()
             }
         }
         this.totalBytes = totalBytes
@@ -375,8 +396,7 @@ class CopyService : Service() {
     private fun copyRoot(path: String, name: String, destinationPath: String) {
         val targetPath = if (destinationPath == File.separator) {
             destinationPath + name
-        }
-        else {
+        } else {
             destinationPath + File.separator + name
         }
         try {
@@ -388,8 +408,7 @@ class CopyService : Service() {
             copiedBytes++
             calculateProgress(name)
             filesCopied++
-        }
-        catch (e: RootDeniedException) {
+        } catch (e: RootDeniedException) {
             e.printStackTrace()
         }
 
@@ -399,15 +418,19 @@ class CopyService : Service() {
     private fun startCopy(sourceFile: FileInfo, targetFile: FileInfo) {
         if (sourceFile.isDirectory) {
             copyDirectory(sourceFile, targetFile)
-        }
-        else {
+        } else {
             copyFiles(sourceFile, targetFile)
         }
     }
 
     @Throws(IOException::class)
     private fun copyDirectory(sourceFile: FileInfo, targetFile: FileInfo) {
-        val destinationDir = File(targetFile.filePath)
+        val targetPath = targetFile.filePath
+        if (targetPath == null) {
+            failedFiles.add(sourceFile)
+            return
+        }
+        val destinationDir = File(targetPath)
         var isExists = true
         if (!destinationDir.exists()) {
             isExists = FileOperations.mkdir(destinationDir)
@@ -417,8 +440,12 @@ class CopyService : Service() {
             return
         }
 
-        val fileList = FileDataFetcher.getFilesList(sourceFile.filePath,
-                                                    root = false, showHidden = true)
+        val path = sourceFile.filePath
+        val fileList = if (path == null) {
+            arrayListOf()
+        } else {
+            FileDataFetcher.getFilesList(path, root = false, showHidden = true)
+        }
 
         if (fileList.isEmpty()) {
             sendBroadcast(100, 0, totalBytes, 1)
@@ -432,7 +459,7 @@ class CopyService : Service() {
             }
 
             val destFile = createDestFile(sourceFile)
-            destFile.filePath = targetFile.filePath + SEPARATOR + file.fileName
+            destFile.filePath = targetPath + SEPARATOR + file.fileName
             startCopy(file, destFile)
         }
     }
@@ -451,26 +478,33 @@ class CopyService : Service() {
 
     @Throws(IOException::class)
     private fun copyFiles(sourceFile: FileInfo, targetFile: FileInfo) {
-        val size = File(sourceFile.filePath).length()
-        Logger.log("Copy", "target file=" + targetFile.filePath)
+        val sourcePath = sourceFile.filePath
+        val targetPath = targetFile.filePath
+
+        if (sourcePath == null || targetPath == null) {
+            failedFiles.add(sourceFile)
+            return
+        }
+
+        val size = File(sourcePath).length()
+        Logger.log("Copy", "target file=$targetPath")
         var out: BufferedOutputStream? = null
         try {
-            val target = File(targetFile.filePath)
+            val target = File(targetPath)
             val outputStream = FileUtils.getOutputStream(target, context)
             if (outputStream != null) {
                 out = BufferedOutputStream(outputStream)
             }
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
 
-        val `in` = BufferedInputStream(FileInputStream(sourceFile.filePath))
+        val `in` = BufferedInputStream(FileInputStream(sourcePath))
         if (out == null) {
             failedFiles.add(sourceFile)
             return
         }
-        copy(`in`, out, size, sourceFile, targetFile.filePath)
+        copy(`in`, out, size, sourceFile, targetPath)
     }
 
 
@@ -497,7 +531,7 @@ class CopyService : Service() {
             fileBytes += length.toLong()
             val time1 = System.nanoTime() / 500000000
             if (time1.toInt() > time.toInt()) {
-                calculateProgress(name)
+                name?.let { calculateProgress(it) }
                 time = System.nanoTime() / 500000000
             }
             length = inputStream.read(data, 0, buffer)
@@ -537,7 +571,7 @@ class CopyService : Service() {
             setOngoing(true)
             setContentTitle(getString(title))
             setContentText(File(fileName).name + " " + FileUtils.formatSize(context,
-                                                                            done) + SEPARATOR + FileUtils
+                    done) + SEPARATOR + FileUtils
                     .formatSize(context, total))
         }
         notificationManager?.notify(NOTIFICATION_ID, notifBuilder?.build())
@@ -556,8 +590,7 @@ class CopyService : Service() {
     private fun isFileCopied(oldFileInfo: FileInfo, newFileInfo: FileInfo): Boolean {
         return if (oldFileInfo.isDirectory) {
             isRootDirectoryCopied(newFileInfo, oldFileInfo)
-        }
-        else {
+        } else {
             isRootFileCopied(oldFileInfo)
         }
     }
@@ -568,7 +601,7 @@ class CopyService : Service() {
             return false
         }
         val filesList = FileDataFetcher.getFilesList(oldFileInfo.filePath, root = true,
-                                                     showHidden = true)
+                showHidden = true)
         if (filesList.isNotEmpty()) {
             var copied = true
             for (file in filesList) {
@@ -583,13 +616,14 @@ class CopyService : Service() {
     }
 
     private fun isRootFileCopied(oldFileInfo: FileInfo): Boolean {
-        val parent = File(oldFileInfo.filePath).parent
+        val filePath = oldFileInfo.filePath ?: return true
+        val parent = File(filePath).parent
         val fileList = FileDataFetcher.getFilesList(parent, root = true, showHidden = true)
         var i = -1
         var index = -1
         for (file in fileList) {
             i++
-            if (file.filePath == oldFileInfo.filePath) {
+            if (file.filePath == filePath) {
                 index = i
                 break
             }

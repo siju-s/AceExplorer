@@ -7,7 +7,7 @@ import com.siju.acexplorer.main.model.groups.Category
 interface PeekPopView {
 
     fun setPeekPopCallback(peekPopCallback: PeekPopCallback?)
-    fun setPeekPopListener()
+    fun initPeekPopListener()
     fun setFileList(list : ArrayList<FileInfo>)
     fun addClickView(view: View, pos : Int, category: Category)
     fun stopAutoPlayVid()

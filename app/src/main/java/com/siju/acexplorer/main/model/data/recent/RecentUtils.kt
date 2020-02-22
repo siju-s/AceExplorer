@@ -30,7 +30,7 @@ object RecentUtils {
         return MediaStore.Files.FileColumns.MEDIA_TYPE + " = " + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO
     }
 
-    fun shouldSkipApk(category: Category, extension: String): Boolean {
+    fun shouldSkipApk(category: Category, extension: String?): Boolean {
         return Category.RECENT_DOCS == category && isApk(extension)
     }
 

@@ -61,7 +61,7 @@ object RecentTimeData {
     sealed class RecentDataItem {
         data class Item(val headerType: HeaderType, val fileInfo: FileInfo) : RecentDataItem() {
 
-            override val id: String
+            override val id: String?
                 get() = fileInfo.filePath
         }
 
@@ -70,7 +70,7 @@ object RecentTimeData {
                 get() = headerType.name
         }
 
-        abstract val id: String
+        abstract val id: String?
 
     }
 }

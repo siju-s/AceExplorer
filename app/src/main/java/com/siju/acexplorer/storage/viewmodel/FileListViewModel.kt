@@ -374,7 +374,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
             }
 
             GENERIC_MUSIC -> {
-                loadData(null, fileInfo.subcategory)
+                fileInfo.subcategory?.let { loadData(null, it) }
             }
 
             ALBUMS -> {
@@ -403,15 +403,15 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
             }
 
             RECENT, LARGE_FILES -> {
-                loadData(null, fileInfo.category)
+                fileInfo.category?.let { loadData(null, it) }
             }
 
             CAMERA_GENERIC ->  {
-                loadData(SearchUtils.getCameraDirectory(), fileInfo.category)
+                fileInfo.category?.let { loadData(SearchUtils.getCameraDirectory(), it) }
             }
 
             WHATSAPP, TELEGRAM -> {
-                loadData(fileInfo.filePath, fileInfo.category)
+                fileInfo.category?.let { loadData(fileInfo.filePath, it) }
             }
 
             APP_MANAGER -> {
@@ -464,7 +464,11 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
                     _viewImageFileEvent.postValue(Pair(it, position))
                 }
             }
-            else -> _viewFileEvent.postValue(Pair(path, fileInfo.extension))
+            else -> {
+                path?.let {
+                    _viewFileEvent.postValue(Pair(path, fileInfo.extension))
+                }
+            }
         }
     }
 
@@ -482,12 +486,19 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
                         _viewImageFileEvent.postValue(Pair(getRecentItemList(it.second), position))
                     }
                 }
-                else -> _viewFileEvent.postValue(Pair(path, fileInfo.extension))
+                else -> {
+                    path?.let {
+                        _viewFileEvent.postValue(Pair(path, fileInfo.extension))
+                    }
+                }
             }
         }
     }
 
-    private fun isZipFile(path: String) = !zipPresenter.isZipMode && path.toLowerCase(Locale.ROOT).endsWith(ZIP_EXT)
+    private fun isZipFile(path: String?) : Boolean {
+        path ?: return false
+        return !zipPresenter.isZipMode && path.toLowerCase(Locale.ROOT).endsWith(ZIP_EXT)
+    }
 
     private fun openZipViewer(path: String?) {
         path?.let {
@@ -657,13 +668,11 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         storageModel.handleSafResult(uri, flags)
     }
 
-    fun deleteFiles(filesToDelete: ArrayList<FileInfo?>) {
+    fun deleteFiles(filesToDelete: ArrayList<FileInfo>) {
         uiScope.launch(Dispatchers.IO) {
             val files = arrayListOf<String>()
             for (fileInfo in filesToDelete) {
-                fileInfo?.let {
-                    files.add(it.filePath)
-                }
+                fileInfo.filePath?.let { it1 -> files.add(it1) }
             }
             storageModel.deleteFiles(Operations.DELETE, files)
         }
@@ -685,7 +694,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
     fun addToFavorite(favList: ArrayList<FileInfo>) {
         val favPathList = ArrayList<String>()
         for (fav in favList) {
-            favPathList.add(fav.filePath)
+            fav.filePath?.let { favPathList.add(it) }
         }
         uiScope.launch(Dispatchers.IO) {
             storageModel.addToFavorite(favPathList)
@@ -695,7 +704,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
     fun removeFavorite(favList: ArrayList<FileInfo>) {
         val favPathList = ArrayList<String>()
         for (fav in favList) {
-            favPathList.add(fav.filePath)
+            fav.filePath?.let { favPathList.add(it) }
         }
         uiScope.launch(Dispatchers.IO) {
             storageModel.deleteFavorite(favPathList)
@@ -728,7 +737,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
 
         override fun onNavButtonClicked(dir: String?) {
             if (navigation.shouldLoadDir(dir)) {
-                Analytics.getLogger().navBarClicked(false)
+                Analytics.logger.navBarClicked(false)
             }
             _navigationClicked.value = true
             if (isActionModeActive() && !isPasteOperationPending()) {
@@ -856,7 +865,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         override fun onCancelClicked() {
         }
 
-        override fun onOpenApkClicked(path: String) {
+        override fun onOpenApkClicked(path: String?) {
         }
     }
 
