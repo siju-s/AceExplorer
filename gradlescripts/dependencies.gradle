@@ -14,6 +14,7 @@ versions.annotation          = "1.1.0"
 versions.recyclerview        = "1.1.0"
 versions.preference          = "1.1.0"
 versions.material            = "1.1.0"
+versions.viewpager           = "1.0.0"
 
 versions.billing             = "2.1.0"
 versions.gson                = "2.8.6"
@@ -49,6 +50,7 @@ deps.android_gradle_plugin = "com.android.tools.build:gradle:$versions.android_g
 def support = [:]
 support.app_compat       = "androidx.appcompat:appcompat:$versions.appcompat"
 support.design           = "com.google.android.material:material:$versions.material"
+support.viewpager        = "androidx.viewpager2:viewpager2:$versions.viewpager"
 support.recycler_view    = "androidx.recyclerview:recyclerview:$versions.recyclerview"
 support.card_view        = "androidx.cardview:cardview:$versions.support"
 support.palette          = "androidx.palette:palette:$versions.support"

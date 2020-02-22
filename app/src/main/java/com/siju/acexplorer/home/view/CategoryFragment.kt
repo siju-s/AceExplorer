@@ -63,15 +63,22 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
     }
 
     private fun setupUI(view: View) {
-        Log.d("CategoryFrag", "setupUI")
         setupToolbar()
         viewPager = view.findViewById(R.id.categoryPager)
         viewPager.registerOnPageChangeCallback(pageChangeListener)
+        //TODO 22 Feb 2020 AE-183 - Temporary solution to layout wrong if adjoining tab has no files
+        // on tab click only. Works fine on swipe. Verify with new versions of viewpager > 1.0
+        viewPager.offscreenPageLimit = 2
         tabLayout = view.findViewById(R.id.categoryTabs)
         setTabColor(tabLayout)
-        pagerAdapter = CategoryPagerAdapter(activity!!)
+        pagerAdapter = CategoryPagerAdapter(this)
         setupAdapter()
         setupTabWithPager()
+    }
+
+    private fun setupToolbar() {
+        toolbar.inflateMenu(R.menu.filelist_base)
+        toolbar.setOnMenuItemClickListener(this)
     }
 
     private fun setTabColor(tabLayout: TabLayout) {
@@ -92,11 +99,6 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
         }
     }
 
-    private fun setupToolbar() {
-        toolbar.inflateMenu(R.menu.filelist_base)
-        toolbar.setOnMenuItemClickListener(this)
-    }
-
     override fun setToolbarTitle() {
         toolbar.title = CategoryHelper.getCategoryName(context, category).toUpperCase(Locale.getDefault())
     }
@@ -106,9 +108,15 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
         args?.let {
             val path = args.getString(KEY_PATH)
             category = args.getSerializable(KEY_CATEGORY) as Category
-            createFragment(path, category)
+            createCategoryData(path, category)
             viewPager.adapter = pagerAdapter
         }
+    }
+
+    private fun setupTabWithPager() {
+        TabLayoutMediator(tabLayout, viewPager) { tab, pos ->
+            tab.text = pagerAdapter.getTitle(pos)
+        }.attach()
     }
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
@@ -138,6 +146,7 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
         tabLayout.alpha = 1f
     }
 
+
     private val pageChangeListener = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageScrollStateChanged(state: Int) {
 
@@ -147,7 +156,7 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
         }
 
         override fun onPageSelected(position: Int) {
-            Log.d(this.javaClass.simpleName, "onPageSelected:$position")
+            Log.d("CategoryFragment", "onPageSelected:$position")
             if (position == -1) {
                 return
             }
@@ -157,25 +166,20 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
             }
         }
     }
-    private fun setupTabWithPager() {
-       TabLayoutMediator(tabLayout, viewPager) { tab, pos ->
-          tab.text = pagerAdapter.getTitle(pos)
-        }.attach()
-    }
 
-    private fun createFragment(path: String?, category: Category) {
+    private fun createCategoryData(path: String?, category: Category) {
         Log.d(this.javaClass.simpleName, "category:$category")
         setToolbarTitle()
         if (category == Category.WHATSAPP || category == Category.TELEGRAM) {
-            addFolderCategoryFragments(path, category)
+            createFolderCategoryData(path, category)
         } else if (category == Category.DOCS) {
-            addDocCategoryFragments(path, category)
+            createDocCategoryData(path, category)
         } else {
-            addGenericCategoryFragments(path, category)
+            createGenericCategoryData(path, category)
         }
     }
 
-    private fun addGenericCategoryFragments(path: String?, category: Category) {
+    private fun createGenericCategoryData(path: String?, category: Category) {
         val allCategory = when (category) {
             Category.GENERIC_IMAGES -> Category.IMAGES_ALL
             Category.GENERIC_VIDEOS -> Category.VIDEO_ALL
@@ -211,7 +215,7 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
         }
     }
 
-    private fun addFolderCategoryFragments(path: String?, category: Category) {
+    private fun createFolderCategoryData(path: String?, category: Category) {
         context?.let { context ->
             pagerAdapter.addData(CategoryData( path, category, context.getString(R.string.category_all), this))
             pagerAdapter.addData(CategoryData( getSubDirImagePath(path, Category.SEARCH_FOLDER_IMAGES),
@@ -225,7 +229,7 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
         }
     }
 
-    private fun addDocCategoryFragments(path: String?, category: Category) {
+    private fun createDocCategoryData(path: String?, category: Category) {
         context?.let { context ->
             pagerAdapter.addData(CategoryData( path, category, context.getString(R.string.category_all), this))
             pagerAdapter.addData(CategoryData( path,

@@ -125,6 +125,7 @@ dependencies {
     implementation deps.support.app_compat
     implementation deps.support.recycler_view
     implementation deps.support.design
+    implementation deps.support.viewpager
     implementation deps.support.card_view
     implementation deps.support.palette
     implementation deps.support.preference

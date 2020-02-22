@@ -2,12 +2,11 @@ package com.siju.acexplorer.home.view
 
 import android.util.Log
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.siju.acexplorer.home.types.CategoryData
 import com.siju.acexplorer.storage.view.FileListFragment
 
-class CategoryPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
+class CategoryPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
     private val categoryDataList = arrayListOf<CategoryData>()
     private val fragmentMap = hashMapOf<Int, Fragment>()
@@ -31,7 +30,7 @@ class CategoryPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAd
     override fun createFragment(position: Int): Fragment {
         val  data = categoryDataList[position]
         val fragment = FileListFragment.newInstance(data.path, data.category, false)
-        Log.d("Adapter", "createFragment:pos:$position, frag:$fragment")
+        Log.d("Adapter", "createFragment:pos:$position, category:${data.category}, frag:$fragment")
         fragment.setCategoryMenuHelper(data.categoryMenuHelper)
         fragmentMap[position] = fragment
         return fragment
@@ -39,5 +38,6 @@ class CategoryPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAd
 
     fun clear() {
         fragmentMap.clear()
+        categoryDataList.clear()
     }
 }
