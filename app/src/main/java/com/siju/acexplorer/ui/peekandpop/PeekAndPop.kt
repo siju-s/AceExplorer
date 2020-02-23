@@ -42,7 +42,7 @@ open class PeekAndPop(var builder: Builder) {
 
     private fun initialisePeekView() {
         val inflater = LayoutInflater.from(builder.activity)
-        contentView = builder.activity.findViewById<View>(R.id.content)?.rootView as ViewGroup?
+        contentView = builder.activity.findViewById<View>(android.R.id.content)?.rootView as ViewGroup?
         // Center onPeek view in the onPeek layout and add to the container view group
         peekLayout = inflater.inflate(R.layout.peek_background, contentView, false) as FrameLayout
         peekView = inflater.inflate(builder.peekLayoutId, peekLayout, false)
