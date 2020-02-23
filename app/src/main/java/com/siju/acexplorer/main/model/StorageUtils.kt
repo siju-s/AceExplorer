@@ -263,7 +263,8 @@ object StorageUtils {
      * @param isDirectory flag indicating if the file should be a directory.
      * @return The DocumentFile
      */
-    fun getDocumentFile(file: File, isDirectory: Boolean): DocumentFile? {
+    fun getDocumentFile(file: File?, isDirectory: Boolean): DocumentFile? {
+        file ?: return null
         val extSdRoot = getExtSdCardRoot(file)
         var originalDirectory = false
         if (extSdRoot == null) {

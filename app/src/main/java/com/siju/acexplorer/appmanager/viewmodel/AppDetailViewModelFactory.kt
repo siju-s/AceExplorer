@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.siju.acexplorer.appmanager.model.AppDetailModel
 
+@Suppress("UNCHECKED_CAST")
 class AppDetailViewModelFactory(private val appDetailModel: AppDetailModel) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {

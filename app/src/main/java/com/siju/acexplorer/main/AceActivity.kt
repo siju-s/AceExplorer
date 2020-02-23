@@ -297,7 +297,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
                                             grantResults: IntArray) {
-        mainViewModel.onPermissionResult(requestCode, permissions, grantResults)
+        mainViewModel.onPermissionResult()
     }
 
 

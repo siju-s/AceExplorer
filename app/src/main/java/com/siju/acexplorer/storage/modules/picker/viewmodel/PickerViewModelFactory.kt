@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.siju.acexplorer.storage.modules.picker.model.PickerModel
 
+@Suppress("UNCHECKED_CAST")
 class PickerViewModelFactory(private val pickerModel: PickerModel) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {

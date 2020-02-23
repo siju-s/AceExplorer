@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.siju.acexplorer.search.model.SearchModel
 
+@Suppress("UNCHECKED_CAST")
 class SearchViewModelFactory(private val searchModel: SearchModel) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {

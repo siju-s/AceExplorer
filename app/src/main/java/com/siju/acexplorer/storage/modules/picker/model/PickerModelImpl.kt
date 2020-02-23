@@ -56,6 +56,7 @@ class PickerModelImpl : PickerModel {
             PickerType.FILE -> {
                 listener?.onFilePicker(StorageUtils.internalStorage)
             }
+            else -> {}
         }
     }
 
@@ -76,9 +77,11 @@ class PickerModelImpl : PickerModel {
         return storageList
     }
 
-    override fun saveLastRingtoneDir(currentPath: String) {
-        val editor = preferences.edit()
-        editor.putString(RINGTONE_PICKER_PATH, currentPath).apply()
+    override fun saveLastRingtoneDir(currentPath: String?) {
+        currentPath?.let {
+            val editor = preferences.edit()
+            editor.putString(RINGTONE_PICKER_PATH, currentPath).apply()
+        }
     }
 
     override fun getLastSavedRingtoneDir(): String? {

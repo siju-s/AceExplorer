@@ -14,7 +14,7 @@ abstract class SharedPreferenceLiveData<T>(val sharedPrefs: SharedPreferences,
         value = this.getValueFromPreferences(key, defValue)
     }
 
-    private val preferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+    private val preferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         if (key == this.key) {
             value = getValueFromPreferences(key, defValue)
             Log.d(this.javaClass.simpleName, "pref:$key, value:$value")

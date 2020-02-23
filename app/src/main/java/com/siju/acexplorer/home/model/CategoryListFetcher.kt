@@ -117,6 +117,7 @@ object CategoryListFetcher {
     }
 
     private fun createCategoryWithPath(context: Context, category: Category, path: String?): HomeLibraryInfo? {
+        path ?: return null
         if (File(path).exists()) {
             return createCategoryInfo(context, category)
         }

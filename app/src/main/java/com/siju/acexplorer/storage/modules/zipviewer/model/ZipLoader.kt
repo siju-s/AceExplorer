@@ -88,17 +88,15 @@ class ZipLoader(val context: Context) {
                                     totalZipList: ArrayList<ZipModel>) {
         val entriesList = arrayListOf<String?>()
         for (entry in totalZipList) {
-            val entryName = entry.name
+            val entryName = entry.name ?: continue
             val file = File(entryName)
+
             when {
                 dir.isNullOrBlank()       -> addZipEntry(entry, file, entriesList, entryName,
                                                          elements)
                 isFileZipEntry(dir, file) -> addFileZipEntry(entriesList, entryName, elements,
                                                              entry)
                 else                      -> {
-                    if (entryName == null) {
-                        return
-                    }
                     val entryNameStartIndex = dir.length + 1
                     if (entryName.startsWith(
                                     dir + File.separator) && entryName.length > entryNameStartIndex) {
@@ -146,13 +144,13 @@ class ZipLoader(val context: Context) {
     private fun addDirectoryZipEntry(elements: ArrayList<ZipModel>,
                                      entriesList: ArrayList<String?>, entry: ZipModel,
                                      entryName: String) {
-        var entryName = entryName
+        var name = entryName
         var hasSeparator = false
-        if (entryName.startsWith(File.separator)) {
+        if (name.startsWith(File.separator)) {
             hasSeparator = true
-            entryName = entryName.substring(1)
+            name = name.substring(1)
         }
-        var path = entryName.substring(0, entryName.indexOf(File.separator) + 1)
+        var path = name.substring(0, name.indexOf(File.separator) + 1)
         if (hasSeparator) {
             path = "/$path"
         }

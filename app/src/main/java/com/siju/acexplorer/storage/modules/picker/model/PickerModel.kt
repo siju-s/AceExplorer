@@ -9,7 +9,7 @@ interface PickerModel {
 
     fun getStorageList() : ArrayList<FileInfo>
 
-    fun saveLastRingtoneDir(currentPath: String)
+    fun saveLastRingtoneDir(currentPath: String?)
 
     fun setArgs(args: Any)
 

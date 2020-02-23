@@ -83,7 +83,7 @@ class PickerViewModel(val model: PickerModel) : ViewModel(), PickerModel.Listene
         permissionHelper.checkPermissions()
     }
 
-    fun onPermissionResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    fun onPermissionResult() {
         permissionHelper.onPermissionResult()
     }
 
@@ -116,7 +116,7 @@ class PickerViewModel(val model: PickerModel) : ViewModel(), PickerModel.Listene
     fun handleItemClick(fileInfo: FileInfo) {
         val filePath = fileInfo.filePath
         when {
-            File(filePath).isDirectory -> {
+            filePath != null && File(filePath).isDirectory -> {
                 setRootStorageList(false)
                 _directoryClicked.postValue(true)
                 _currentPath.postValue(filePath)
@@ -132,6 +132,7 @@ class PickerViewModel(val model: PickerModel) : ViewModel(), PickerModel.Listene
                 PickerType.FILE     -> {
                     model.onFileSelected(filePath)
                 }
+                else -> {}
             }
         }
     }
@@ -201,9 +202,12 @@ class PickerViewModel(val model: PickerModel) : ViewModel(), PickerModel.Listene
             }
         }
         if (!rootStorageList) {
-            val parentPath = File(_currentPath.value).parent
-            removeScrolledPos()
-            _currentPath.value = parentPath
+            val path = _currentPath.value
+            path?.let {
+                val parentPath = File(it).parent
+                removeScrolledPos()
+                _currentPath.value = parentPath
+            }
         }
     }
 

@@ -1,3 +1,5 @@
+@file:Suppress("UNCHECKED_CAST")
+
 package com.siju.acexplorer.home.viewmodel
 
 import androidx.lifecycle.ViewModel

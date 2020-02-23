@@ -64,13 +64,13 @@ class PasteConflictChecker(private val destinationDir: String, private val roote
         for (i in totalFilesToPaste.indices) {
             val fileInfo = totalFilesToPaste[i]
 
-            fileInfo.let {
-                totalBytes = if (fileInfo.isDirectory) {
-                    totalBytes + FileUtils.getFolderSize(File(fileInfo.filePath))
-                }
-                else {
-                    totalBytes + File(fileInfo.filePath).length()
-                }
+            val filePath = fileInfo.filePath ?: continue
+
+            totalBytes = if (fileInfo.isDirectory) {
+                totalBytes + FileUtils.getFolderSize(File(filePath))
+            }
+            else {
+                totalBytes + File(filePath).length()
             }
         }
         return totalBytes

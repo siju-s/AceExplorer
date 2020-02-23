@@ -327,9 +327,7 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
                                             grantResults: IntArray) {
         when (requestCode) {
-            PERMISSIONS_REQUEST -> viewModel.onPermissionResult(requestCode,
-                                                                permissions,
-                                                                grantResults)
+            PERMISSIONS_REQUEST -> viewModel.onPermissionResult()
         }
     }
 

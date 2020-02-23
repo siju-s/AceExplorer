@@ -70,6 +70,7 @@ class SearchSuggestions(val view: View, private val fragment: SearchFragment, pr
     }
 
     private fun addDirectory(name: String, path: String?): Chip? {
+        path ?: return null
         if (File(path).exists()) {
             val chip = createChip(name, path)
             addChip(chip)

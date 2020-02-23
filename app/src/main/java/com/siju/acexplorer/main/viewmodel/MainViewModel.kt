@@ -86,7 +86,7 @@ class MainViewModel : ViewModel() {
         return sortMode.value ?: PreferenceConstants.DEFAULT_VALUE_SORT_MODE
     }
 
-    fun onPermissionResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    fun onPermissionResult() {
         permissionHelper.onPermissionResult()
     }
 

@@ -340,14 +340,18 @@ class ExtractService : Service() {
         }
         val outputFile = File(outputDir, entry.name)
         Logger.log(TAG, "unzipEntry: $outputFile")
-        if (!outputFile.parentFile.exists()) {
-            createDir(outputFile.parentFile)
+        val parentFile = outputFile.parentFile
+        if (outputDir == null || parentFile == null) {
+            return
+        }
+        if (!parentFile.exists()) {
+            createDir(parentFile)
         }
 
-        val inputStream = BufferedInputStream(
-                zipFile.getInputStream(entry))
-        val outputStream = BufferedOutputStream(
-                FileUtils.getOutputStream(outputFile, context))
+        val inputStream = BufferedInputStream(zipFile.getInputStream(entry))
+        val outputStream1 = FileUtils.getOutputStream(outputFile, context)
+        outputStream1 ?: return
+        val outputStream = BufferedOutputStream(outputStream1)
 
         try {
             val buf = ByteArray(BUFFER_SIZE_BYTES)
@@ -401,12 +405,15 @@ class ExtractService : Service() {
             return
         }
         val outputFile = File(outputDir, name)
-        if (!outputFile.parentFile.exists()) {
-            createDir(outputFile.parentFile)
+        val parentFile = outputFile.parentFile
+        parentFile ?: return
+        if (!parentFile.exists()) {
+            createDir(parentFile)
         }
 
-        val outputStream = BufferedOutputStream(
-                FileUtils.getOutputStream(outputFile, baseContext))
+        val outputStream1 = FileUtils.getOutputStream(outputFile, baseContext)
+        outputStream1 ?: return
+        val outputStream = BufferedOutputStream(outputStream1)
         try {
             val buf = ByteArray(BUFFER_SIZE_BYTES)
             var len = zipFile.read(buf)

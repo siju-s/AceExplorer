@@ -215,7 +215,9 @@ object FileOperations {
     }
 
     private fun rename(file: File, newFile: File): Boolean {
-        if (file.parentFile.canWrite()) {
+        val parentFile = file.parentFile
+        parentFile ?: return false
+        if (parentFile.canWrite()) {
             Logger.log(TAG, "file:$file, newFIle:$newFile")
             return try {
                 file.renameTo(newFile)

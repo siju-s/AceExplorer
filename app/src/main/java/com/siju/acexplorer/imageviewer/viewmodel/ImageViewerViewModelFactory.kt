@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.siju.acexplorer.imageviewer.presenter.ImageViewerPresenter
 import com.siju.acexplorer.imageviewer.view.ImageViewerView
 
+@Suppress("UNCHECKED_CAST")
 class ImageViewerViewModelFactory(private val view : ImageViewerView, private val presenter: ImageViewerPresenter) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {

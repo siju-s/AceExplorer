@@ -189,7 +189,10 @@ class CreateZipService : Service() {
     private fun convertToFileList(fileInfoList: List<FileInfo>): ArrayList<File> {
         val fileList = ArrayList<File>()
         for (i in fileInfoList.indices) {
-            fileList.add(File(fileInfoList[i].filePath))
+            val filePath = fileInfoList[i].filePath
+            filePath?.let {
+                fileList.add(File(filePath))
+            }
         }
         return fileList
     }
