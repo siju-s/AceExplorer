@@ -37,6 +37,8 @@ versions.leakcanary          = "2.2"
 versions.photoview           = "2.3.0"
 versions.fastscroll_recycler = "2.0.0"
 
+versions.ktlint              = "9.2.1"
+
 versions.junit               = "4.12"
 versions.espresso            = "3.1.0-alpha4"
 versions.mockito             = "3.2.4"
@@ -104,6 +106,8 @@ deps.leak_canary      = "com.squareup.leakcanary:leakcanary-android:$versions.le
 deps.photoview        = "com.github.chrisbanes:PhotoView:$versions.photoview"
 deps.fastscroll_recyclerview = "com.simplecityapps:recyclerview-fastscroll:$versions.fastscroll_recycler"
 
+deps.ktlint           = "org.jlleitschuh.gradle:ktlint-gradle:$versions.ktlint"
+
 def testing = [:]
 testing.junit =    "junit:junit:$versions.junit"
 testing.espresso = "androidx.test.espresso:espresso-core:$versions.espresso"
@@ -122,5 +126,8 @@ static def addRepos(RepositoryHandler handler) {
     handler.jcenter()
     handler.maven { url 'https://maven.fabric.io/public' }
     handler.maven { url 'https://jitpack.io' }
+    handler.maven {
+        url "https://plugins.gradle.org/m2/"
+    }
 }
 ext.addRepos = this.&addRepos

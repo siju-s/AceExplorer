@@ -16,6 +16,7 @@ buildscript {
         classpath deps.google_services
         classpath deps.fabric
         classpath deps.kotlin.plugin
+        classpath deps.ktlint
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -24,6 +25,7 @@ buildscript {
 
 allprojects {
     addRepos(repositories)
+    apply plugin: "org.jlleitschuh.gradle.ktlint"
 }
 
 task clean(type: Delete) {
