@@ -45,6 +45,7 @@ class AppDetailDetailModelImpl(val context: Context) : AppDetailModel {
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun createVersionInfo(packageInfo: PackageInfo): AppVersionInfo {
         val versionCode = if (SdkHelper.isAtleastPie) {
             packageInfo.longVersionCode.toInt()
@@ -86,10 +87,10 @@ class AppDetailDetailModelImpl(val context: Context) : AppDetailModel {
     }
 
     private fun getInstallerSourceName(packageName: String?): String {
-        return when {
-            packageName == null -> context.getString(R.string.unknown)
-            PACKAGE_NAME_PLAYSTORE == packageName -> context.getString(R.string.play_store)
-            PACKAGE_NAME_AMAZON_APPSTORE == packageName -> context.getString(
+        return when (packageName) {
+            null -> context.getString(R.string.unknown)
+            PACKAGE_NAME_PLAYSTORE -> context.getString(R.string.play_store)
+            PACKAGE_NAME_AMAZON_APPSTORE -> context.getString(
                     R.string.amazon_play_store)
             else -> context.getString(R.string.unknown)
         }

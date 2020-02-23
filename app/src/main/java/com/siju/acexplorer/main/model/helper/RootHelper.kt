@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 @file:Suppress("RegExpRedundantEscape")
-
 package com.siju.acexplorer.main.model.helper
 
+import android.annotation.SuppressLint
 import android.util.Log
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.logging.Logger.log
@@ -36,6 +36,7 @@ private const val TAG = "RootHelper"
 private const val COMMAND_WAIT_MS = 2000
 private const val UNIX_ESCAPE_EXPRESSION = "(\\(|\\)|\\[|\\]|\\s|\'|\"|`|\\{|\\}|&|\\\\|\\?)"
 
+@SuppressLint("StaticFieldLeak")
 object RootHelper {
     private val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH)
 
@@ -77,7 +78,6 @@ object RootHelper {
         return resultRef.get()
     }
 
-    @JvmStatic
     fun runAndWait(cmd: String?) {
         val c: Command = object : Command(0, cmd) {
             override fun commandOutput(i: Int, s: String) {
@@ -123,7 +123,6 @@ object RootHelper {
         return true
     }
 
-    @JvmStatic
     fun getCommandLineString(input: String): String {
         return input.replace(UNIX_ESCAPE_EXPRESSION.toRegex(), "\\\\$1")
     }

@@ -34,6 +34,7 @@ class StorageModelImpl(val context: Context, var category: Category = Category.F
     private val mediaObserver = MediaObserver(Handler())
     val operationData: LiveData<Pair<Operations, OperationAction>>
         get() = _operationData
+    @Suppress("PropertyName")
     val _refreshData = MutableLiveData<Boolean>()
 
     override fun loadData(path: String?, category: Category): ArrayList<FileInfo> {

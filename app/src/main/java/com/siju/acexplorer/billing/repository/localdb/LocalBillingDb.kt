@@ -40,7 +40,7 @@ abstract class LocalBillingDb : RoomDatabase() {
     companion object {
         @Volatile
         private var INSTANCE: LocalBillingDb? = null
-        private val DATABASE_NAME = "purchase_db"
+        private const val DATABASE_NAME = "purchase_db"
 
         fun getInstance(context: Context): LocalBillingDb =
                 INSTANCE ?: synchronized(this) {

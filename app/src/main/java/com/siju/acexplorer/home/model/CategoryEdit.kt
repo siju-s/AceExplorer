@@ -23,8 +23,7 @@ import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.search.helper.SearchUtils
 
-class CategoryEdit(var isHeader: Boolean, val categoryId: Int, var headerType: CategoryEditType, var checked: Boolean = false,
-                   var path: String? = null) {
+class CategoryEdit(val categoryId: Int, var headerType: CategoryEditType, var checked: Boolean = false, var path: String? = null) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

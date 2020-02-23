@@ -73,7 +73,6 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
     //TODO DO this while adding scroll to File List
     private val scrollPosition = HashMap<String, Bundle>()
 
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return object : Dialog(activity, theme) {
             override fun onBackPressed() {

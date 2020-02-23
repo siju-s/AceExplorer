@@ -52,10 +52,10 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
 
     fun checkPermissions() {
         if (hasPermissions(context)) {
-            permissionStatus.value = PermissionState.Granted()
+            permissionStatus.value = PermissionState.Granted
         }
         else {
-            permissionStatus.value = PermissionState.Required()
+            permissionStatus.value = PermissionState.Required
         }
     }
 
@@ -64,7 +64,7 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
         if (permissionRationaleDialog?.isShowing == true) {
             if (hasPermissions(context)) {
                 dismissRationaleDialog()
-                permissionStatus.value = PermissionState.Granted()
+                permissionStatus.value = PermissionState.Granted
             }
         }
     }
@@ -117,6 +117,7 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
         return dangerousPermissions
     }
 
+    @Suppress("DEPRECATION")
     private fun getPermissionProtectionLevel(permissionInfo: PermissionInfo): Int {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             permissionInfo.protection
@@ -133,15 +134,15 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
                                           PERMISSIONS_REQUEST)
     }
 
-    fun onPermissionResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    fun onPermissionResult() {
         Log.d(TAG, "onPermissionResult")
         if (hasPermissions(context)) {
             Logger.log(TAG, "Permission granted")
-            permissionStatus.value = PermissionState.Granted()
+            permissionStatus.value = PermissionState.Granted
             dismissRationaleDialog()
         }
         else {
-            permissionStatus.value = PermissionState.Rationale()
+            permissionStatus.value = PermissionState.Rationale
         }
     }
 
@@ -202,9 +203,9 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
     }
 
     sealed class PermissionState {
-        class Granted : PermissionState()
-        class Required : PermissionState()
-        class Rationale : PermissionState()
+        object Granted : PermissionState()
+        object Required : PermissionState()
+        object Rationale : PermissionState()
     }
 
 }

@@ -260,7 +260,7 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
             val list = _multiSelectionOperationData.value?.second
             viewModel.endActionMode()
             list?.let {
-                pasteOpPresenter.createPasteOpData(Operations.PASTE, operations, list, currentDir)
+                pasteOpPresenter.createPasteOpData(operations, list, currentDir)
             }
         }
     }
@@ -457,7 +457,7 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
     }
 
     override fun onPasteAction(operation: Operations, filesToPaste: ArrayList<FileInfo>, destinationDir: String?) {
-        pasteOpPresenter.createPasteOpData(Operations.PASTE, operation, filesToPaste, destinationDir)
+        pasteOpPresenter.createPasteOpData(operation, filesToPaste, destinationDir)
         viewModel.endActionMode()
     }
 

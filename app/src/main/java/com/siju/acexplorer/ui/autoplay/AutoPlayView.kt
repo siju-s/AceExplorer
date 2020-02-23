@@ -11,7 +11,7 @@ import java.io.IOException
 
 private const val TAG = "AutoPlayView"
 
-class AutoPlayView @JvmOverloads constructor(context: Context?, attrs: AttributeSet? = null, defStyle: Int = 0) : SurfaceView(context, attrs, defStyle), SurfaceHolder.Callback {
+class AutoPlayView constructor(context: Context?, attrs: AttributeSet? = null, defStyle: Int = 0) : SurfaceView(context, attrs, defStyle), SurfaceHolder.Callback {
     private var mediaPlayer: MediaPlayer? = null
     var path: String? = null
         private set

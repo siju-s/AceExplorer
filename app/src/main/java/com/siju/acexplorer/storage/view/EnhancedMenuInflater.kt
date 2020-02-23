@@ -15,6 +15,7 @@
  */
 package com.siju.acexplorer.storage.view
 
+import android.annotation.SuppressLint
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -22,6 +23,7 @@ import com.siju.acexplorer.R
 import com.siju.acexplorer.main.model.groups.Category
 
 internal object EnhancedMenuInflater {
+    @SuppressLint("AlwaysShowAction")
     fun inflate(inflater: MenuInflater?, menu: Menu, category: Category) {
         inflater ?: return
         inflater.inflate(R.menu.action_mode_bottom, menu)
@@ -35,7 +37,7 @@ internal object EnhancedMenuInflater {
         val size = menu.size()
         for (i in 0 until size) {
             val item = menu.getItem(i)
-            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS) // Required to show more icons in bottom menu
         }
     }
 }

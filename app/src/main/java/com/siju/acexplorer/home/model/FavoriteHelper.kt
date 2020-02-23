@@ -5,8 +5,6 @@ import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import com.siju.acexplorer.main.model.StorageUtils
-import java.util.*
-import kotlin.collections.ArrayList
 
 private const val FAVORITES = "Favorites"
 private const val FAVORITES_OLD = "Product_Favorite"
@@ -50,7 +48,7 @@ object FavoriteHelper {
             val jsonFavorites = sharedPreferences.getString(FAVORITES, null)
             val favoriteItems = Gson().fromJson(jsonFavorites,
                     Array<String>::class.java)
-            favorites.addAll(Arrays.asList(*favoriteItems))
+            favorites.addAll(listOf(*favoriteItems))
         }
         return favorites
     }

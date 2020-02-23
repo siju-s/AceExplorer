@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="action_cut">Cut</string>
     <string name="action_copy">Copy</string>
     <string name="action_paste">Paste</string>
@@ -13,8 +13,8 @@
     <string name="moving">Moving files</string>
     <string name="clipboard">%d in clipboard</string>
     <string name="text_copied_clipboard">Copied to clipboard.</string>
-    <string name="moved">%d files moved</string>
-    <string name="copied">%d files copied</string>
+    <string name="moved" tools:ignore="PluralsCandidate">%d files moved</string>
+    <string name="copied" tools:ignore="PluralsCandidate">%d files copied</string>
     <string name="paste_conflict_remember">Remember</string>
 
 </resources>

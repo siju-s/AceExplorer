@@ -20,6 +20,7 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.siju.acexplorer.BuildConfig
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import java.util.*
 
@@ -82,7 +83,6 @@ class PremiumUtils {
     companion object {
         private val TAG = PremiumUtils::class.java.simpleName
         const val PREF_NAME = "PremiumUtils"
-        private const val DEBUG = true
         private const val KEY_INSTALL_DATE = "install_date"
         private const val KEY_LAUNCH_TIMES = "launch_times"
         private const val KEY_ASK_LATER_DATE = "ask_later_date"
@@ -123,7 +123,7 @@ class PremiumUtils {
          * @param message
          */
         private fun log(message: String) {
-            if (DEBUG) {
+            if (BuildConfig.DEBUG) {
                 Log.v(TAG, message)
             }
         }

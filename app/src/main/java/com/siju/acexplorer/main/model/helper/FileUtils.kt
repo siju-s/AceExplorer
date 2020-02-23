@@ -43,7 +43,6 @@ object FileUtils {
         return file?.absolutePath
     }
 
-    @JvmStatic
     fun convertDate(dateInMs: Long): String {
         val df2 = SimpleDateFormat("MMM dd, yyyy hh:mm a", Locale.getDefault())
         val date = Date(dateInMs)
@@ -257,7 +256,6 @@ object FileUtils {
         return "$fileName.$extension"
     }
 
-    @JvmStatic
     fun getFileNameWithoutExt(filePath: String?): String? {
         if (filePath == null) {
             return null

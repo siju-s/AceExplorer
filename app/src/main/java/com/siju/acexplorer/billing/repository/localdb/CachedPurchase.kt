@@ -15,7 +15,10 @@
  */
 package com.siju.acexplorer.billing.repository.localdb
 
-import androidx.room.*
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverter
+import androidx.room.TypeConverters
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.Purchase
 
@@ -29,7 +32,7 @@ import com.android.billingclient.api.Purchase
  *   Drive decide to share one premium car purchase amongst themselves. So one user would buy the
  *   car and then log into the Play Store on each phone and as soon as they open the Trivial Drive
  *   app on a phone, they would see a Premium car. That would be fraudulent, but since this [Entity] is part
- *   of the local cache, the [BillingRepository] would notice there is a purchase in this local
+ *   of the local cache, the BillingRepository would notice there is a purchase in this local
  *   cache that the secure server does not recognize as belonging to this user. The secure server
  *   would then conduct further investigations and discover the fraud.
  *
@@ -59,15 +62,10 @@ class CachedPurchase(val data: Purchase) {
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0
 
-    @Ignore
-    val purchaseToken = data.purchaseToken
-    @Ignore
-    val sku = data.sku
-
     override fun equals(other: Any?): Boolean {
         return when (other) {
-            is CachedPurchase -> data.equals(other.data)
-            is Purchase -> data.equals(other)
+            is CachedPurchase -> data == other.data
+            is Purchase -> data == other
             else -> false
         }
     }
@@ -75,7 +73,6 @@ class CachedPurchase(val data: Purchase) {
     override fun hashCode(): Int {
         return data.hashCode()
     }
-
 }
 
 class PurchaseTypeConverter {

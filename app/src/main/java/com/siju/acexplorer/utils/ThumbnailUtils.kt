@@ -25,7 +25,7 @@ import java.util.*
 
 object ThumbnailUtils {
     private val AUDIO_URI = Uri.parse("content://media/external/audio/albumart")
-    @JvmStatic
+
     fun displayThumb(context: Context, fileInfo: FileInfo, category: Category?, imageIcon: ImageView, imageThumbIcon: ImageView?, uri : Uri? = null) {
         val filePath = fileInfo.filePath
         val fileName = fileInfo.fileName

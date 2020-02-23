@@ -22,6 +22,7 @@
     android:orientation="horizontal"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="@layout/activity_main"
+    android:fitsSystemWindows="true"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <FrameLayout

@@ -44,10 +44,9 @@ class CategoryEditViewModel(private val
         Log.d("CategoryEditVM", "Remove category:$item, checkedCount : $checkedItemCount")
         val categories = _categories.value
         categories?.remove(item)
-        val newItem = item
-        newItem.categoryEdit.checked = false
-        newItem.categoryEdit.headerType = CategoryEditType.OTHER
-        categories?.add(checkedItemCount + 1, newItem) //Extra 1 for headerType
+        item.categoryEdit.checked = false
+        item.categoryEdit.headerType = CategoryEditType.OTHER
+        categories?.add(checkedItemCount + 1, item) //Extra 1 for headerType
         _itemsEdited.postValue(true)
         _categories.postValue(categories)
     }
@@ -56,10 +55,9 @@ class CategoryEditViewModel(private val
         Log.d("CategoryEditVM", "addCategory:$item, checkedCount : $checkedItemCount")
         val categories = _categories.value
         categories?.remove(item)
-        val newItem = item
-        newItem.categoryEdit.checked = true
-        newItem.categoryEdit.headerType = CategoryEditType.SAVED
-        categories?.add(checkedItemCount + 1, newItem) //Extra 1 for headerType
+        item.categoryEdit.checked = true
+        item.categoryEdit.headerType = CategoryEditType.SAVED
+        categories?.add(checkedItemCount + 1, item) //Extra 1 for headerType
         _itemsEdited.postValue(true)
         _categories.postValue(categories)
     }

@@ -38,7 +38,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        tools:text="10 items" />
+        tools:text="10 items"
+        tools:ignore="RelativeOverlap" />
 
     <ImageView
         android:id="@+id/imageSelection"

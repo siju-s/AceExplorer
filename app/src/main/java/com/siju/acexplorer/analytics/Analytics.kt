@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 
 object Analytics {
-    @JvmStatic
     val logger: Logger = GoogleAnalytics()
 
     interface Logger {

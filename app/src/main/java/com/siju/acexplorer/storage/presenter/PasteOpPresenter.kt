@@ -1,3 +1,5 @@
+@file:Suppress("PropertyName")
+
 package com.siju.acexplorer.storage.presenter
 
 import androidx.lifecycle.MutableLiveData
@@ -28,10 +30,9 @@ class PasteOpPresenter(val storageModel: StorageModel) {
         pasteConflictChecker.run()
     }
 
-    fun createPasteOpData(operation: Operations, operations: Operations, list: ArrayList<FileInfo>, currentDir: String?) {
-        _pasteOpData.value = PasteOpData(operation, operations, list, currentDir)
+    fun createPasteOpData(operations: Operations, list: ArrayList<FileInfo>, currentDir: String?) {
+        _pasteOpData.value = PasteOpData(operations, list, currentDir)
     }
-
 
     val pasteConflictListener = object : DialogHelper.PasteConflictListener {
 

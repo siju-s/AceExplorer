@@ -33,7 +33,7 @@ class CategoryEditModelImpl(val context: Context) : CategoryEditModel {
 
         val categories = getSavedCategories()
         val savedCategoryItems = categories.map {
-            DataItem.Content(CategoryEdit(false, it.category.value, CategoryEditType.SAVED, true, it.path))
+            DataItem.Content(CategoryEdit(it.category.value, CategoryEditType.SAVED, true, it.path))
         }
         return dataItem + savedCategoryItems
     }
@@ -44,7 +44,7 @@ class CategoryEditModelImpl(val context: Context) : CategoryEditModel {
 
         val unsavedCategoryList = getUnsavedCategories()
         val unsavedCategoryItems = unsavedCategoryList.map {
-            DataItem.Content(CategoryEdit(false, it.category.value, CategoryEditType.OTHER, false, it.path))
+            DataItem.Content(CategoryEdit(it.category.value, CategoryEditType.OTHER, false, it.path))
         }
         return dataItem + unsavedCategoryItems
     }

@@ -84,7 +84,7 @@ class PickerViewModel(val model: PickerModel) : ViewModel(), PickerModel.Listene
     }
 
     fun onPermissionResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        permissionHelper.onPermissionResult(requestCode, permissions, grantResults)
+        permissionHelper.onPermissionResult()
     }
 
     fun onResume() {

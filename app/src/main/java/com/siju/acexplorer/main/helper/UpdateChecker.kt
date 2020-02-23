@@ -32,20 +32,20 @@ class UpdateChecker(val context: Context, val activity: AceActivity, private var
         }
         updateStatus = installStatus
         Log.d(this.javaClass.simpleName, "installStateUpdatedListener:updateStatus:$updateStatus")
-        isUpdateAvailable = when {
-            installStatus == InstallStatus.DOWNLOADED -> {
+        isUpdateAvailable = when (installStatus) {
+            InstallStatus.DOWNLOADED -> {
                 updateCallback.onUpdateDownloaded(appUpdateManager)
                 true
             }
-            installStatus == InstallStatus.INSTALLED -> {
+            InstallStatus.INSTALLED -> {
                 updateCallback.onUpdateInstalled()
                 false
             }
-            installStatus == InstallStatus.DOWNLOADING -> {
+            InstallStatus.DOWNLOADING -> {
                 updateCallback.onUpdateDownloading()
                 true
             }
-            installStatus == InstallStatus.CANCELED -> {
+            InstallStatus.CANCELED -> {
                 updateCallback.onUpdateCancelledByUser()
                 true
             }

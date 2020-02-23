@@ -210,6 +210,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         updateChecker?.showUpdateSnackbar(view?.findViewById(R.id.main_content))
     }
 
+    @Suppress("ObjectLiteralToLambda")
     private fun initObservers() {
         mainViewModel.permissionStatus.observe(viewLifecycleOwner, Observer { permissionStatus ->
             when (permissionStatus) {
@@ -259,6 +260,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
             }
         })
 
+        //TODO 23 Feb 2020 Empty observer since we need atleast 1 observer for sort mode to reflect changes and we don't need lambda that's why suppressed lint warning.
         mainViewModel.sortMode.observe(viewLifecycleOwner, object : Observer<Int> {
             override fun onChanged(t: Int?) {
                 Log.d(TAG, "Sort mode:$t")

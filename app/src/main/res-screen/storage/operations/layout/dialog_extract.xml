@@ -74,6 +74,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/buttonPathSelect"
             android:hint="@string/enter_file_name"
+            android:importantForAutofill="no"
             android:inputType="text" />
 
         <include

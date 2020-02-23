@@ -26,7 +26,7 @@ class ZipLoader(val context: Context) {
     fun getZipContents(dir: String?, parentZipPath: String,
                        zipElementsResultCallback: ZipElementsResultCallback?): ArrayList<FileInfo> {
         this.zipElementsResultCallback = zipElementsResultCallback
-        elements = arrayListOf<ZipModel>()
+        elements = arrayListOf()
         var path = dir
         if (path?.endsWith("/") == true) {
             path = path.substring(0, path.length - 1)

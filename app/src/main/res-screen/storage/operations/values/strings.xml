@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="action_rename">Rename</string>
     <string name="action_info">Properties</string>
     <string name="action_archive">Archive</string>
@@ -7,7 +7,7 @@
     <string name="action_share">Share</string>
     <string name="msg_delete_success">deleted successfully</string>
     <string name="msg_delete_failure">Delete operation failed</string>
-    <string name="dialog_delete_title">Are you sure you want to delete %d files?</string>
+    <string name="dialog_delete_title" tools:ignore="PluralsCandidate">Are you sure you want to delete %d files?</string>
     <string name="new_folder">New folder</string>
     <string name="new_file">New file</string>
     <string name="add_fav">Add to Favourites</string>
