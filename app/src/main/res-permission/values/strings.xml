@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="permission_setting_hint">Tap Settings -> Permissions and then turn Storage on.</string>
-    <string name="access_denied_external">Write access to External SD not granted</string>
-    <string name="permission_request">Need storage permission to show all the files</string>
-    <string name="action_grant">GRANT</string>
-    <string name="img_accessibility_permission">Grant permission</string>
-</resources>

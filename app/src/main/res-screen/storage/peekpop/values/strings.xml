@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="mute">Mute</string>
-    <string name="unmute">Unmute</string>
-    <string name="peek_button_prev">Previous</string>
-    <string name="peek_button_next">Next</string>
-</resources>
