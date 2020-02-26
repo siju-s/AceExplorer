@@ -336,7 +336,7 @@ object StorageUtils {
     }
 
     fun isRootDirectory(path: String): Boolean {
-        val externalSDList = StorageFetcher(AceApplication.appContext).externalSDList
+        val externalSDList = StorageFetcher(AceApplication.appContext).getExternalSdList()
         when {
             path.contains(internalStorage) -> return false
             externalSDList.size > 0        -> {

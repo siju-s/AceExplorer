@@ -13,7 +13,7 @@ private const val TAG = "Navigation"
 private const val SEPARATOR = "/"
 
 class Navigation(private val viewModel: FileListViewModel) {
-    private val externalSDPaths = StorageFetcher(AceApplication.appContext).externalSDList
+    private val externalSDPaths = StorageFetcher(AceApplication.appContext).getExternalSdList()
     private var currentDir: String? = null
     private var initialDir = StorageUtils.internalStorage
     private var isCurrentDirRoot: Boolean = false

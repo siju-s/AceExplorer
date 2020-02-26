@@ -37,14 +37,14 @@ const val STORAGE_SDCARD1 = "/storage/sdcard1"
 
 class StorageFetcher(private val context: Context) {
 
-    val externalSDList = ArrayList<String>()
+    private val externalSDList = ArrayList<String>()
 
     fun getStorageList(): ArrayList<StorageItem> {
         val storagePaths = StorageUtils.storageDirectories
         return populateStorageList(storagePaths)
     }
 
-    private fun populateStorageList(storagePaths: List<String>): ArrayList<StorageItem> {
+    private fun populateStorageList(storagePaths: List<String>, onlyExternal : Boolean = false): ArrayList<StorageItem> {
         var storageType: StorageUtils.StorageType
         val storageList = ArrayList<StorageItem>()
         for (path in storagePaths) {
@@ -56,6 +56,9 @@ class StorageFetcher(private val context: Context) {
 
             if (isExternalStorageType(storageType)) {
                 externalSDList.add(path)
+            }
+            else if (onlyExternal) {
+                continue
             }
 
             if (isValidStoragePath(file)) {
@@ -71,6 +74,11 @@ class StorageFetcher(private val context: Context) {
             addRootDir(storageList)
         }
         return storageList
+    }
+
+    fun getExternalSdList(): ArrayList<String> {
+        populateStorageList(StorageUtils.storageDirectories, true)
+        return externalSDList
     }
 
     private fun addRootDir(storageList: ArrayList<StorageItem>) {

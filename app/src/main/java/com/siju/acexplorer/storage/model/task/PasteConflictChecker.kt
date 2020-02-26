@@ -78,7 +78,7 @@ class PasteConflictChecker(private val destinationDir: String, private val roote
 
     private fun checkIfRootDir(): Boolean {
         var isRootDir = !destinationDir.startsWith(StorageUtils.internalStorage)
-        val externalSDList = StorageFetcher(AceApplication.appContext).externalSDList
+        val externalSDList = StorageFetcher(AceApplication.appContext).getExternalSdList()
 
         for (dir in externalSDList) {
             if (destinationDir.startsWith(dir)) {
