@@ -42,8 +42,8 @@ class WelcomeActivity : AppCompatActivity(), View.OnClickListener, OnPageChangeL
             R.raw.dualpane,
             R.raw.theme
     )
-    private var prefManager: PrefManager? = null
-    private var adapter: WelcomePagerAdapter? = null
+    private lateinit var prefManager: PrefManager
+    private lateinit var adapter: WelcomePagerAdapter
     private val dots = arrayListOf<ImageView>()
     private var dotsCount = 0
 
@@ -51,12 +51,13 @@ class WelcomeActivity : AppCompatActivity(), View.OnClickListener, OnPageChangeL
         super.onCreate(savedInstanceState)
         prefManager = PrefManager(this)
 
-        if (prefManager?.isFirstTimeLaunch == false) {
-            launchHomeScreen()
-            return
+        if (prefManager.isFirstTimeLaunch) {
+            setContentView(R.layout.activity_welcome)
+            initializeViews()
         }
-        setContentView(R.layout.activity_welcome)
-        initializeViews()
+        else {
+            launchHomeScreen()
+        }
     }
 
     private fun initializeViews() {
@@ -89,9 +90,10 @@ class WelcomeActivity : AppCompatActivity(), View.OnClickListener, OnPageChangeL
     }
 
     private fun addBottomDots() {
-        dotsCount = adapter!!.count
+        dotsCount = adapter.count
         for (i in 0 until dotsCount) {
-            dots[i] = ImageView(this)
+            val element = ImageView(this)
+            dots.add(element)
             dots[i].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.intro_unselecteditem))
             val params = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -104,7 +106,7 @@ class WelcomeActivity : AppCompatActivity(), View.OnClickListener, OnPageChangeL
     }
 
     private fun launchHomeScreen() {
-        prefManager!!.setFirstTimeLaunch()
+        prefManager.setFirstTimeLaunch()
         startActivity(Intent(this@WelcomeActivity, AceActivity::class.java))
         finish()
     }

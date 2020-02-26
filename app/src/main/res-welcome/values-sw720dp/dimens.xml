@@ -16,5 +16,5 @@
   -->
 
 <resources>
-    <dimen name="intro_img_height">750dp</dimen>
+    <dimen name="intro_img_height">550dp</dimen>
 </resources>

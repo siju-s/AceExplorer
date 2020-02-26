@@ -41,12 +41,12 @@
         android:supportsRtl="true"
         android:extractNativeLibs="false"
         android:requestLegacyExternalStorage="true"
-        tools:ignore="GoogleAppIndexingWarning">
+        tools:ignore="GoogleAppIndexingWarning"
+        tools:targetApi="q">
 
         <activity
             android:name=".welcome.WelcomeActivity"
-            android:configChanges="screenSize|orientation"
-            android:screenOrientation="userPortrait"
+            android:screenOrientation="fullSensor"
             android:theme="@style/WelcomeScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
