@@ -22,16 +22,23 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/toolbar"/>
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <include layout="@layout/toolbar" />
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout
         android:id="@+id/layoutFileNavigate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/toolbar"
-        android:layout_marginStart="10dp"
+        android:layout_below="@id/appbar"
+        android:paddingStart="@dimen/padding_10"
+        android:paddingEnd="@dimen/padding_10"
         android:minHeight="?attr/actionBarSize"
         android:orientation="horizontal">
 
@@ -42,7 +49,7 @@
             android:layout_gravity="center_vertical"
             android:background="@null"
             android:contentDescription="@string/img_accessibility_back"
-            app:srcCompat="@drawable/ic_back_black" />
+            app:srcCompat="@drawable/ic_back_white" />
 
         <TextView
             android:id="@+id/textPath"
@@ -51,6 +58,7 @@
             android:layout_height="match_parent"
             android:layout_marginStart="10dp"
             android:gravity="center_vertical"
+            android:textColor="@color/white"
             xmlns:tools="http://schemas.android.com/tools"
             tools:text="/storage/emulated"
             android:maxLines="1" />

@@ -24,7 +24,7 @@ import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.settings.SettingsPreferenceFragment
 import com.siju.acexplorer.storage.modules.picker.types.PickerType
-import com.siju.acexplorer.storage.modules.picker.view.PickerFragment.Companion.newInstance
+import com.siju.acexplorer.storage.modules.picker.view.PickerFragment
 import com.siju.acexplorer.theme.Theme
 
 private const val FRAGMENT_TAG = "Browse_Frag"
@@ -56,7 +56,7 @@ class TransparentActivity : AppCompatActivity() {
     }
 
     private fun showPickerDialog(intent: Intent, pickerType: PickerType) {
-        val dialogFragment = newInstance(this, checkTheme(),
+        val dialogFragment = PickerFragment.newInstance(this, checkTheme(),
                 pickerType,
                 intent.getIntExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, 0))
         dialogFragment.show(supportFragmentManager, FRAGMENT_TAG)

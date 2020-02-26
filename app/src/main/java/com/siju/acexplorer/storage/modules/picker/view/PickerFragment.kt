@@ -19,6 +19,7 @@ package com.siju.acexplorer.storage.modules.picker.view
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -26,9 +27,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -47,6 +50,7 @@ import com.siju.acexplorer.storage.modules.picker.types.PickerType
 import com.siju.acexplorer.storage.modules.picker.viewmodel.PickerViewModel
 import com.siju.acexplorer.storage.modules.picker.viewmodel.PickerViewModelFactory
 import com.siju.acexplorer.storage.view.FileListAdapter
+import com.siju.acexplorer.theme.Theme
 import com.siju.acexplorer.utils.ScrollInfo
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
 import java.util.*
@@ -69,9 +73,6 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
     private lateinit var emptyText: TextView
     private lateinit var adapter: FileListAdapter
     private lateinit var viewModel: PickerViewModel
-
-    //TODO DO this while adding scroll to File List
-    private val scrollPosition = HashMap<String, Bundle>()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return object : Dialog(activity, theme) {
@@ -115,6 +116,11 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
 
     private fun setupToolbar(view: View) {
         toolbar = view.findViewById(R.id.toolbar)
+        val pathContainer = view.findViewById<LinearLayout>(R.id.layoutFileNavigate)
+        context?.let {
+            val theme = Theme.getTheme(it)
+            setTheme(it, theme, pathContainer)
+        }
         (activity as AppCompatActivity?)?.setSupportActionBar(toolbar)
     }
 
@@ -318,10 +324,20 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
         setTitle(getString(R.string.dialog_title_browse))
     }
 
-
     private fun setTitle(title: String) {
         val actionBar = activity.supportActionBar
         actionBar?.title = title
+    }
+
+    private fun setTheme(context: Context, theme: Theme, pathContainer: LinearLayout) {
+        val darkColoredTheme = Theme.isDarkColoredTheme(resources, theme)
+        if (darkColoredTheme) {
+            toolbar.setBackgroundColor(ContextCompat.getColor(context, R.color.tab_bg_color))
+            pathContainer.setBackgroundColor(ContextCompat.getColor(context, R.color.tab_bg_color))
+        } else {
+            toolbar.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary))
+            pathContainer.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary))
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
@@ -330,7 +346,6 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
             PERMISSIONS_REQUEST -> viewModel.onPermissionResult()
         }
     }
-
 
     override fun onResume() {
         super.onResume()
@@ -378,11 +393,9 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
         super.onDestroyView()
     }
 
-
     private fun onDataLoaded(data: ArrayList<FileInfo>) {
         adapter.submitList(data)
     }
-
 
     private fun showEmptyText(pickerType: PickerType) {
         if (pickerType == PickerType.RINGTONE) {
@@ -397,7 +410,6 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
     private fun hideEmptyText() {
         emptyText.visibility = View.GONE
     }
-
 
     companion object {
 
